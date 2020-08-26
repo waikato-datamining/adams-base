@@ -83,6 +83,10 @@ adams.flow.transformer.AbstractSpreadSheetTransformer=\
 adams.flow.transformer.plotgenerator.AbstractPlotGenerator=\
   adams.flow.transformer.plotgenerator
 
+# the spreadsheet previews
+adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview=\
+  adams.gui.core.spreadsheetpreview
+
 # the spreadsheet processor sources
 adams.gui.tools.spreadsheetprocessor.sources.AbstractSource=\
   adams.gui.tools.spreadsheetprocessor.sources

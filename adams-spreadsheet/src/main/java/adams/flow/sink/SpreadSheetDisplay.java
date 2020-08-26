@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDisplay.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -31,6 +31,7 @@ import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.SearchPanel;
@@ -39,19 +40,22 @@ import adams.gui.core.SpreadSheetColumnComboBox;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview;
+import adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview.AbstractSpreadSheetPreviewPanel;
+import adams.gui.core.spreadsheetpreview.NullPreview;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.ProcessSelectedRows;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.event.SearchEvent;
-import adams.gui.event.SearchListener;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
@@ -71,6 +75,7 @@ import java.util.List;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheetSupporter<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -85,27 +90,40 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetDisplay
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
  *
  * <pre>-width &lt;int&gt; (property: width)
@@ -145,24 +163,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
- * <pre>-use-custom-negative-background &lt;boolean&gt; (property: useCustomNegativeBackground)
- * &nbsp;&nbsp;&nbsp;Whether to use a custom background color for negative values.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-negative-background &lt;java.awt.Color&gt; (property: negativeBackground)
- * &nbsp;&nbsp;&nbsp;The custom background for negative values (must be enabled).
- * &nbsp;&nbsp;&nbsp;default: #ffffff
- * </pre>
- *
- * <pre>-use-custom-positive-background &lt;boolean&gt; (property: useCustomPositiveBackground)
- * &nbsp;&nbsp;&nbsp;Whether to use a custom background color for positive values.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-positive-background &lt;java.awt.Color&gt; (property: positiveBackground)
- * &nbsp;&nbsp;&nbsp;The custom background for positive values (must be enabled).
- * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * <pre>-cell-rendering-customizer &lt;adams.gui.core.spreadsheettable.CellRenderingCustomizer&gt; (property: cellRenderingCustomizer)
+ * &nbsp;&nbsp;&nbsp;The customizer for the cell rendering.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
  * </pre>
  *
  * <pre>-show-formulas &lt;boolean&gt; (property: showFormulas)
@@ -176,9 +179,29 @@ import java.util.List;
  * </pre>
  *
  * <pre>-optimal-column-width &lt;boolean&gt; (property: optimalColumnWidth)
- * &nbsp;&nbsp;&nbsp;Whether to calculate the optimal column width whenever a token is displayed 
+ * &nbsp;&nbsp;&nbsp;Whether to calculate the optimal column width whenever a token is displayed
  * &nbsp;&nbsp;&nbsp;(= enabled) or only when flow finishes.
  * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-read-only &lt;boolean&gt; (property: readOnly)
+ * &nbsp;&nbsp;&nbsp;Whether cells are read-only or editable.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-writer &lt;adams.data.io.output.AbstractTextWriter&gt; (property: writer)
+ * &nbsp;&nbsp;&nbsp;The writer to use for storing the textual output.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.NullWriter
+ * </pre>
+ *
+ * <pre>-selected-rows-processor &lt;adams.gui.core.spreadsheettable.ProcessSelectedRows&gt; [-selected-rows-processor ...] (property: selectedRowsProcessors)
+ * &nbsp;&nbsp;&nbsp;The schemes that allow processing of the selected rows.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-preview &lt;adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview&gt; (property: preview)
+ * &nbsp;&nbsp;&nbsp;The preview to use for selected rows.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.core.spreadsheetpreview.NullPreview
  * </pre>
  *
  <!-- options-end -->
@@ -239,7 +262,29 @@ public class SpreadSheetDisplay
       m_Table      = new SpreadSheetTable(m_TableModel);
       m_Table.setColumnWidthApproach(m_Owner.getOptimalColumnWidth() ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
       m_Table.setFont(m_Owner.getFont());
-      add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+
+      final AbstractSpreadSheetPreviewPanel previewPanel = m_Owner.getPreview().generate();
+      if (previewPanel == null) {
+	add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+      }
+      else {
+	BaseSplitPane splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+	splitPane.setOneTouchExpandable(true);
+	splitPane.setResizeWeight(1.0);
+	splitPane.setTopComponent(new BaseScrollPane(m_Table));
+	splitPane.setBottomComponent(previewPanel);
+	splitPane.setDividerLocation((int) (m_Owner.getHeight() * 0.5));
+	splitPane.setUISettingsParameters(SpreadSheetDisplay.class, "previewDividerLocation");
+	add(splitPane, BorderLayout.CENTER);
+	m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+	  int[] sel = m_Table.getSelectedRows();
+	  int[] rows = new int[sel.length];
+	  for (int i = 0; i < rows.length; i++)
+	    rows[i] = m_Table.getActualRow(sel[i]);
+	  previewPanel.preview(m_Table.toSpreadSheet(), rows);
+	});
+      }
+
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       SpreadSheetColumnComboBox columnCombo = new SpreadSheetColumnComboBox(m_Table);
       panel.add(columnCombo);
@@ -247,12 +292,8 @@ public class SpreadSheetDisplay
       m_PanelSearch = null;
       if (m_Owner.getAllowSearch()) {
 	m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-	m_PanelSearch.addSearchListener(new SearchListener() {
-	  @Override
-	  public void searchInitiated(SearchEvent e) {
-	    m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-	  }
-	});
+	m_PanelSearch.addSearchListener((SearchEvent e) ->
+	    m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
 	add(m_PanelSearch, BorderLayout.SOUTH);
       }
 
@@ -374,6 +415,9 @@ public class SpreadSheetDisplay
   /** for processing the selected rows. */
   protected ProcessSelectedRows[] m_SelectedRowsProcessors;
 
+  /** the preview to use. */
+  protected AbstractSpreadSheetPreview m_Preview;
+
   /**
    * Returns a string describing the object.
    *
@@ -424,6 +468,10 @@ public class SpreadSheetDisplay
     m_OptionManager.add(
       "selected-rows-processor", "selectedRowsProcessors",
       new ProcessSelectedRows[0]);
+
+    m_OptionManager.add(
+      "preview", "preview",
+      new NullPreview());
   }
 
   /**
@@ -564,7 +612,7 @@ public class SpreadSheetDisplay
   }
 
   /**
-   * Sets whether calculate the optimal column widht whenever a token is 
+   * Sets whether calculate the optimal column widht whenever a token is
    * displayed (= true) or just when the flow finishes.
    *
    * @param value 	true if to always recaculate
@@ -575,7 +623,7 @@ public class SpreadSheetDisplay
   }
 
   /**
-   * Returns whether calculate the optimal column widht whenever a token is 
+   * Returns whether calculate the optimal column widht whenever a token is
    * displayed (= true) or just when the flow finishes.
    *
    * @return 		true if to always recalculate
@@ -653,6 +701,35 @@ public class SpreadSheetDisplay
   }
 
   /**
+   * Sets the preview to use for selected rows.
+   *
+   * @param value 	the preview
+   */
+  public void setPreview(AbstractSpreadSheetPreview value) {
+    m_Preview = value;
+    reset();
+  }
+
+  /**
+   * Returns the preview to use for selected rows.
+   *
+   * @return 		the preview
+   */
+  public AbstractSpreadSheetPreview getPreview() {
+    return m_Preview;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String previewTipText() {
+    return "The preview to use for selected rows.";
+  }
+
+  /**
    * Returns the default width for the dialog.
    *
    * @return		the default width
@@ -688,10 +765,12 @@ public class SpreadSheetDisplay
    */
   @Override
   public BasePanel newPanel() {
-    BasePanel			result;
-    JPanel			panel;
-    SpreadSheetColumnComboBox	columnCombo;
-    PopupMenuCustomizer		customizer;
+    BasePanel					result;
+    JPanel					panel;
+    BaseSplitPane				splitPane;
+    SpreadSheetColumnComboBox			columnCombo;
+    PopupMenuCustomizer				customizer;
+    final AbstractSpreadSheetPreviewPanel	previewPanel;
 
     result       = new BasePanel(new BorderLayout());
     m_TableModel = new SpreadSheetTableModel(new DefaultSpreadSheet());
@@ -699,7 +778,27 @@ public class SpreadSheetDisplay
     m_Table      = new SpreadSheetTable(m_TableModel);
     m_Table.setFont(m_Font);
     m_Table.setColumnWidthApproach(m_OptimalColumnWidth ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
-    result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+    previewPanel = m_Preview.generate();
+    if (previewPanel == null) {
+      result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+    }
+    else {
+      splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+      splitPane.setOneTouchExpandable(true);
+      splitPane.setResizeWeight(1.0);
+      splitPane.setTopComponent(new BaseScrollPane(m_Table));
+      splitPane.setBottomComponent(previewPanel);
+      splitPane.setDividerLocation((int) (m_Height * 0.5));
+      splitPane.setUISettingsParameters(SpreadSheetDisplay.class, "previewDividerLocation");
+      result.add(splitPane, BorderLayout.CENTER);
+      m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+	int[] sel = m_Table.getSelectedRows();
+	int[] rows = new int[sel.length];
+	for (int i = 0; i < rows.length; i++)
+	  rows[i] = m_Table.getActualRow(sel[i]);
+	previewPanel.preview(m_Table.toSpreadSheet(), rows);
+      });
+    }
 
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     columnCombo = new SpreadSheetColumnComboBox(m_Table);
@@ -709,12 +808,8 @@ public class SpreadSheetDisplay
     m_PanelSearch = null;
     if (m_AllowSearch) {
       m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-      m_PanelSearch.addSearchListener(new SearchListener() {
-	@Override
-	public void searchInitiated(SearchEvent e) {
-	  m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp());
-	}
-      });
+      m_PanelSearch.addSearchListener((SearchEvent e) ->
+	m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
       result.add(m_PanelSearch, BorderLayout.SOUTH);
     }
 
@@ -735,7 +830,7 @@ public class SpreadSheetDisplay
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.data.spreadsheet.SpreadSheet.class, adams.data.spreadsheet.SpreadSheetSupporter.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{SpreadSheet.class, SpreadSheetSupporter.class};
