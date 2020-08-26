@@ -26,6 +26,8 @@ adams.flow.control.Trigger
 						adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
 					-writer
 						adams.data.io.output.NullWriter
+					-preview
+						adams.gui.core.spreadsheetpreview.NullPreview
 
 
 --> adams.flow.template.OptionTraverserWithSpreadSheetDisplay-out1.txt
@@ -54,5 +56,7 @@ adams.flow.control.Once
 						adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
 					-writer
 						adams.data.io.output.NullWriter
+					-preview
+						adams.gui.core.spreadsheetpreview.NullPreview
 
 
