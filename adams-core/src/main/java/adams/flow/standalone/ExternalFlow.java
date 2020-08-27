@@ -26,6 +26,7 @@ import adams.core.VariablesHandler;
 import adams.core.io.FlowFile;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
+import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -66,19 +67,31 @@ import java.util.List;
  * </pre>
  * 
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-file &lt;adams.core.io.FlowFile&gt; (property: flowFile)
  * &nbsp;&nbsp;&nbsp;The file containing the external flow.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-execution-type &lt;SYNCHRONOUS|SYNCHRONOUS_IMMEDIATE_CLEANUP|ASYNCHRONOUS&gt; (property: executionType)
  * &nbsp;&nbsp;&nbsp;Determines how the flow is executed.
  * &nbsp;&nbsp;&nbsp;default: SYNCHRONOUS
+ * </pre>
+ *
+ * <pre>-headless &lt;boolean&gt; (property: headless)
+ * &nbsp;&nbsp;&nbsp;Whether to execute the flow in headless mode.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
  <!-- options-end -->
@@ -92,10 +105,9 @@ public class ExternalFlow
   private static final long serialVersionUID = 6212392783858480058L;
 
   /**
-   * Determines how the flow is exected.
+   * Determines how the flow is executed.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum ExecutionType {
     /** wait for flow to finish. */
@@ -111,7 +123,10 @@ public class ExternalFlow
 
   /** how to execute the flow. */
   protected ExecutionType m_ExecutionType;
-  
+
+  /** whether to run in headless mode. */
+  protected boolean m_HeadlessMode;
+
   /** the external flow itself. */
   protected Actor m_ExternalFlow;
 
@@ -145,12 +160,16 @@ public class ExternalFlow
     super.defineOptions();
 
     m_OptionManager.add(
-	    "file", "flowFile",
-	    new FlowFile("."));
+      "file", "flowFile",
+      new FlowFile("."));
 
     m_OptionManager.add(
-	    "execution-type", "executionType",
-	    ExecutionType.SYNCHRONOUS);
+      "execution-type", "executionType",
+      ExecutionType.SYNCHRONOUS);
+
+    m_OptionManager.add(
+      "headless-mode", "headlessMode",
+      false);
   }
 
   /**
@@ -174,7 +193,8 @@ public class ExternalFlow
     
     result  = QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "file: ");
     result += QuickInfoHelper.toString(this, "executionType", m_ExecutionType, ", execution: ");
-    
+    result += QuickInfoHelper.toString(this, "headlessMode", m_HeadlessMode, "headless", ", ");
+
     return result;
   }
 
@@ -237,6 +257,35 @@ public class ExternalFlow
   }
 
   /**
+   * Sets whether to execute the flow in headless mode.
+   *
+   * @param value	true if headless
+   */
+  public void setHeadlessMode(boolean value) {
+    m_HeadlessMode = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to execute the flow in headless mode.
+   *
+   * @return		true if headless
+   */
+  public boolean getHeadlessMode() {
+    return m_HeadlessMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String headlessModeTipText() {
+    return "Whether to execute the flow in headless mode.";
+  }
+
+  /**
    * Gets triggered when a variable changed (added, modified, removed).
    *
    * @param e		the event
@@ -281,6 +330,8 @@ public class ExternalFlow
       }
       else {
 	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
+	if (m_ExternalFlow instanceof Flow)
+	  ((Flow) m_ExternalFlow).setHeadless(m_HeadlessMode);
 	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
 	result = m_ExternalFlow.setUp();
 	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
