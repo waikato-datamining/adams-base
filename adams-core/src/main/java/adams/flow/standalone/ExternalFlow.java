@@ -30,7 +30,9 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.AutomatableInteraction;
 import adams.flow.core.RunnableWithLogging;
+import adams.flow.processor.ManageInteractiveActors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +91,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: SYNCHRONOUS
  * </pre>
  *
- * <pre>-headless &lt;boolean&gt; (property: headless)
+ * <pre>-headless-mode &lt;boolean&gt; (property: headlessMode)
  * &nbsp;&nbsp;&nbsp;Whether to execute the flow in headless mode.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-non-interactive-mode &lt;boolean&gt; (property: nonInteractiveMode)
+ * &nbsp;&nbsp;&nbsp;Whether to run flow in non-interactive mode (disable interactivity of actors
+ * &nbsp;&nbsp;&nbsp;implementing adams.flow.core.AutomatableInteraction).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  * 
@@ -126,6 +134,9 @@ public class ExternalFlow
 
   /** whether to run in headless mode. */
   protected boolean m_HeadlessMode;
+
+  /** whether to run in non-interactive mode. */
+  protected boolean m_NonInteractiveMode;
 
   /** the external flow itself. */
   protected Actor m_ExternalFlow;
@@ -170,6 +181,10 @@ public class ExternalFlow
     m_OptionManager.add(
       "headless-mode", "headlessMode",
       false);
+
+    m_OptionManager.add(
+      "non-interactive-mode", "nonInteractiveMode",
+      false);
   }
 
   /**
@@ -194,6 +209,7 @@ public class ExternalFlow
     result  = QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "file: ");
     result += QuickInfoHelper.toString(this, "executionType", m_ExecutionType, ", execution: ");
     result += QuickInfoHelper.toString(this, "headlessMode", m_HeadlessMode, "headless", ", ");
+    result += QuickInfoHelper.toString(this, "nonInteractiveMode", m_NonInteractiveMode, "non-interactive", ", ");
 
     return result;
   }
@@ -286,6 +302,36 @@ public class ExternalFlow
   }
 
   /**
+   * Sets whether to run the flow in non-interactive mode.
+   *
+   * @param value	true if non-interactive
+   */
+  public void setNonInteractiveMode(boolean value) {
+    m_NonInteractiveMode = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to run the flow in non-interactive mode.
+   *
+   * @return		true if non-interactive
+   */
+  public boolean getNonInteractiveMode() {
+    return m_NonInteractiveMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String nonInteractiveModeTipText() {
+    return "Whether to run flow in non-interactive mode (disable interactivity "
+      + "of actors implementing " + AutomatableInteraction.class.getName() + ").";
+  }
+
+  /**
    * Gets triggered when a variable changed (added, modified, removed).
    *
    * @param e		the event
@@ -311,8 +357,9 @@ public class ExternalFlow
    * @return		null if everything is fine, otherwise error message
    */
   public String setUpExternalActor() {
-    String		result;
-    MessageCollection 	errors;
+    String			result;
+    MessageCollection 		errors;
+    ManageInteractiveActors	interactive;
 
     result = null;
 
@@ -330,6 +377,16 @@ public class ExternalFlow
       }
       else {
 	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
+	if (m_NonInteractiveMode) {
+	  interactive = new ManageInteractiveActors();
+	  interactive.setEnable(false);
+	  interactive.process(m_ExternalFlow);
+	  if (interactive.isModified()) {
+	    if (isLoggingEnabled())
+	      getLogger().info("Disabled interactive actors for: " + m_FlowFile);
+	    m_ExternalFlow = interactive.getModifiedActor();
+	  }
+	}
 	if (m_ExternalFlow instanceof Flow)
 	  ((Flow) m_ExternalFlow).setHeadless(m_HeadlessMode);
 	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
