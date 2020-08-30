@@ -31,6 +31,7 @@ import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.AutomatableInteraction;
+import adams.flow.core.ExternalActorFileHandler;
 import adams.flow.core.RunnableWithLogging;
 import adams.flow.processor.ManageInteractiveActors;
 
@@ -107,7 +108,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ExternalFlow
-  extends AbstractActor {
+  extends AbstractActor
+  implements ExternalActorFileHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 6212392783858480058L;
@@ -127,7 +129,7 @@ public class ExternalFlow
   }
   
   /** the file the external flow is stored in. */
-  protected FlowFile m_FlowFile;
+  protected FlowFile m_ActorFile;
 
   /** how to execute the flow. */
   protected ExecutionType m_ExecutionType;
@@ -171,7 +173,7 @@ public class ExternalFlow
     super.defineOptions();
 
     m_OptionManager.add(
-      "file", "flowFile",
+      "file", "actorFile",
       new FlowFile("."));
 
     m_OptionManager.add(
@@ -206,7 +208,7 @@ public class ExternalFlow
   public String getQuickInfo() {
     String	result;
     
-    result  = QuickInfoHelper.toString(this, "flowFile", m_FlowFile, "file: ");
+    result  = QuickInfoHelper.toString(this, "actorFile", m_ActorFile, "file: ");
     result += QuickInfoHelper.toString(this, "executionType", m_ExecutionType, ", execution: ");
     result += QuickInfoHelper.toString(this, "headlessMode", m_HeadlessMode, "headless", ", ");
     result += QuickInfoHelper.toString(this, "nonInteractiveMode", m_NonInteractiveMode, "non-interactive", ", ");
@@ -219,8 +221,8 @@ public class ExternalFlow
    *
    * @param value	the flow file
    */
-  public void setFlowFile(FlowFile value) {
-    m_FlowFile = value;
+  public void setActorFile(FlowFile value) {
+    m_ActorFile = value;
     reset();
   }
 
@@ -229,8 +231,8 @@ public class ExternalFlow
    *
    * @return		the flow file
    */
-  public FlowFile getFlowFile() {
-    return m_FlowFile;
+  public FlowFile getActorFile() {
+    return m_ActorFile;
   }
 
   /**
@@ -239,7 +241,7 @@ public class ExternalFlow
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String flowFileTipText() {
+  public String actorFileTipText() {
     return "The file containing the external flow.";
   }
 
@@ -363,17 +365,17 @@ public class ExternalFlow
 
     result = null;
 
-    if (!m_FlowFile.isFile()) {
-      result = "'" + m_FlowFile.getAbsolutePath() + "' does not point to a file!";
+    if (!m_ActorFile.isFile()) {
+      result = "'" + m_ActorFile.getAbsolutePath() + "' does not point to a file!";
     }
     else {
       errors = new MessageCollection();
-      m_ExternalFlow = ActorUtils.read(m_FlowFile.getAbsolutePath(), errors);
+      m_ExternalFlow = ActorUtils.read(m_ActorFile.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "':\n" + errors;
+	result = "Error loading external flow '" + m_ActorFile.getAbsolutePath() + "':\n" + errors;
       }
       else if (m_ExternalFlow == null) {
-	result = "Error loading external flow '" + m_FlowFile.getAbsolutePath() + "'!";
+	result = "Error loading external flow '" + m_ActorFile.getAbsolutePath() + "'!";
       }
       else {
 	m_ExternalFlow = ActorUtils.removeDisabledActors(m_ExternalFlow);
@@ -383,15 +385,15 @@ public class ExternalFlow
 	  interactive.process(m_ExternalFlow);
 	  if (interactive.isModified()) {
 	    if (isLoggingEnabled())
-	      getLogger().info("Disabled interactive actors for: " + m_FlowFile);
+	      getLogger().info("Disabled interactive actors for: " + m_ActorFile);
 	    m_ExternalFlow = interactive.getModifiedActor();
 	  }
 	}
 	if (m_ExternalFlow instanceof Flow)
 	  ((Flow) m_ExternalFlow).setHeadless(m_HeadlessMode);
-	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
+	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_ActorFile);
 	result = m_ExternalFlow.setUp();
-	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_FlowFile);
+	ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_ExternalFlow, m_ActorFile);
       }
     }
 

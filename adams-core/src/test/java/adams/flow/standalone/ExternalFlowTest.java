@@ -20,14 +20,14 @@
 
 package adams.flow.standalone;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for ExternalFlow actor.
@@ -112,7 +112,7 @@ public class ExternalFlowTest
       // Flow.ExternalFlow
       adams.flow.standalone.ExternalFlow externalflow2 = new adams.flow.standalone.ExternalFlow();
       argOption = (AbstractArgumentOption) externalflow2.getOptionManager().findByProperty("flowFile");
-      externalflow2.setFlowFile((adams.core.io.FlowFile) argOption.valueOf("${TMP}/external_flow.flow"));
+      externalflow2.setActorFile((adams.core.io.FlowFile) argOption.valueOf("${TMP}/external_flow.flow"));
       actors1[0] = externalflow2;
       flow.setActors(actors1);
 
