@@ -35,7 +35,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -93,6 +92,97 @@ public class BaseTabbedPane
     public boolean selected;
   }
 
+  /**
+   * For storing the tab undo containers.
+   *
+   * Clearing or removing cleans up the tabs if the implement {@link CleanUpHandler}.
+   */
+  public static class TabUndoList
+    extends ArrayList<TabUndo> {
+
+    private static final long serialVersionUID = 5710141119325238633L;
+
+    /**
+     * Clears the list.
+     */
+    @Override
+    public void clear() {
+      int	i;
+
+      for (i = 0; i < size(); i++) {
+	if (get(i).component instanceof CleanUpHandler)
+	  ((CleanUpHandler) get(i).component).cleanUp();
+      }
+
+      super.clear();
+    }
+
+    /**
+     * Removes the specified range.
+     *
+     * @param fromIndex	the start (incl)
+     * @param toIndex	the end (excl)
+     */
+    @Override
+    protected void removeRange(int fromIndex, int toIndex) {
+      int	i;
+
+      for (i = fromIndex; i < toIndex; i++) {
+	if (get(i).component instanceof CleanUpHandler)
+	  ((CleanUpHandler) get(i).component).cleanUp();
+      }
+
+      super.removeRange(fromIndex, toIndex);
+    }
+
+    /**
+     * Removes the specified index.
+     *
+     * @param index	the index to remove
+     * @return		the removed object
+     */
+    @Override
+    public TabUndo remove(int index) {
+      return remove(index, true);
+    }
+
+    /**
+     * Removes the specified index.
+     *
+     * @param index	the index to remove
+     * @param cleanUp 	whether to clean up the component
+     * @return		the removed object
+     */
+    public TabUndo remove(int index, boolean cleanUp) {
+      if (cleanUp) {
+	if (get(index).component instanceof CleanUpHandler)
+	  ((CleanUpHandler) get(index).component).cleanUp();
+      }
+      return super.remove(index);
+    }
+
+    /**
+     * Removes the specified object.
+     *
+     * @param o		the object to remove
+     * @return		true if removed successfully
+     */
+    @Override
+    public boolean remove(Object o) {
+      boolean	result;
+      TabUndo	undo;
+
+      result = super.remove(o);
+      if (result) {
+        undo = (TabUndo) o;
+	if (undo.component instanceof CleanUpHandler)
+	  ((CleanUpHandler) undo.component).cleanUp();
+      }
+
+      return result;
+    }
+  }
+
   /** Allows the user to close tabs with the middle mouse button. */
   protected boolean m_CloseTabsWithMiddleMouseButton;
 
@@ -115,7 +205,7 @@ public class BaseTabbedPane
   protected int m_MaxTabCloseUndo;
 
   /** the list of tabs to undo. */
-  protected transient List<TabUndo> m_TabUndoList;
+  protected transient TabUndoList m_TabUndoList;
 
   /** whether to skip tab undo. */
   protected boolean m_SkipTabUndo;
@@ -516,9 +606,9 @@ public class BaseTabbedPane
    *
    * @return		the list
    */
-  protected List<TabUndo> getTabUndoList() {
+  protected TabUndoList getTabUndoList() {
     if (m_TabUndoList == null)
-      m_TabUndoList = new ArrayList<>();
+      m_TabUndoList = new TabUndoList();
     return m_TabUndoList;
   }
 
@@ -555,7 +645,7 @@ public class BaseTabbedPane
     getTabUndoList().add(generateTabUndo(index));
 
     while (getTabUndoList().size() > m_MaxTabCloseUndo)
-      getTabUndoList().remove(0);
+      getTabUndoList().remove(0, true);
   }
 
   /**
@@ -581,7 +671,7 @@ public class BaseTabbedPane
       return false;
 
     undo = getTabUndoList().get(size - 1);
-    getTabUndoList().remove(size - 1);
+    getTabUndoList().remove(size - 1, false);
     insertTab(undo.title, undo.icon, undo.component, undo.tiptext, undo.index);
     setTabComponentAt(undo.index, undo.tabComponent);
     if (undo.selected)
