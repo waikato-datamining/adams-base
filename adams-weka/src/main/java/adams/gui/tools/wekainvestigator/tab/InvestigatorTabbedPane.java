@@ -31,7 +31,6 @@ import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 
 import javax.swing.JPopupMenu;
-import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -118,25 +117,6 @@ public class InvestigatorTabbedPane
 
     if (show)
       setSelectedIndex(getTabCount() - 1);
-  }
-
-  /**
-   * Removes the tab.
-   *
-   * @param index	the index of the tab to remove
-   */
-  @Override
-  public void removeTabAt(int index) {
-    Component comp;
-
-    comp = getComponentAt(index);
-
-    super.removeTabAt(index);
-
-    if (!m_MovingTab) {
-      if (comp instanceof CleanUpHandler)
-	((CleanUpHandler) comp).cleanUp();
-    }
   }
 
   /**
