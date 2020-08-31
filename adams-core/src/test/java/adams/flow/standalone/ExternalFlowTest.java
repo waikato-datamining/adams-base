@@ -15,7 +15,7 @@
 
 /*
  * ExternalFlowTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -34,7 +34,6 @@ import junit.framework.TestSuite;
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class ExternalFlowTest
   extends AbstractFlowTest {
@@ -111,7 +110,7 @@ public class ExternalFlowTest
 
       // Flow.ExternalFlow
       adams.flow.standalone.ExternalFlow externalflow2 = new adams.flow.standalone.ExternalFlow();
-      argOption = (AbstractArgumentOption) externalflow2.getOptionManager().findByProperty("flowFile");
+      argOption = (AbstractArgumentOption) externalflow2.getOptionManager().findByProperty("actorFile");
       externalflow2.setActorFile((adams.core.io.FlowFile) argOption.valueOf("${TMP}/external_flow.flow"));
       actors1[0] = externalflow2;
       flow.setActors(actors1);
