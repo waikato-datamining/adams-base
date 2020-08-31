@@ -15,24 +15,26 @@
 
 /*
  * SpreadSheetDialog.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
 import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Dialog for displaying a spreadsheet.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetDialog
   extends ApprovalDialog {
@@ -141,6 +143,17 @@ public class SpreadSheetDialog
     setDiscardVisible(false);
     
     m_Panel = new SpreadSheetPanel();
+    m_Panel.getTable().addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isDoubleClick(e)) {
+          if (m_Panel.getTable().getSelectedRowCount() > 0)
+            m_ButtonApprove.doClick();
+        }
+        if (!e.isConsumed())
+          super.mouseClicked(e);
+      }
+    });
     getContentPane().add(m_Panel);
     setJMenuBar(m_Panel.getMenuBar());
     
