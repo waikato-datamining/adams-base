@@ -36,6 +36,7 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -135,6 +136,11 @@ import java.awt.event.MouseEvent;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
  * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting
  * &nbsp;&nbsp;&nbsp;user.
@@ -144,6 +150,11 @@ import java.awt.event.MouseEvent;
  * <pre>-allow-search &lt;boolean&gt; (property: allowSearch)
  * &nbsp;&nbsp;&nbsp;Whether to allow the user to search the list.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-multi-selection &lt;boolean&gt; (property: multiSelection)
+ * &nbsp;&nbsp;&nbsp;Whether to allow the user to select multiple rows or just a single one.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
  <!-- options-end -->
@@ -166,6 +177,9 @@ public class SpreadSheetSelectSubset
 
   /** the label for the message. */
   protected JLabel m_LabelMessage;
+
+  /** whether to allow multiple rows to be selected. */
+  protected boolean m_MultiSelection;
 
   /** whether the data was accepted. */
   protected boolean m_Accepted;
@@ -196,6 +210,10 @@ public class SpreadSheetSelectSubset
     m_OptionManager.add(
       "allow-search", "allowSearch",
       false);
+
+    m_OptionManager.add(
+      "multi-selection", "multiSelection",
+      true);
   }
 
   /**
@@ -206,9 +224,14 @@ public class SpreadSheetSelectSubset
   @Override
   public String getQuickInfo() {
     String	result;
+    String	value;
 
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "message", m_Message, ", message: ");
+    result += QuickInfoHelper.toString(this, "allowSearch", m_AllowSearch, "searchable", ", ");
+    value = QuickInfoHelper.toString(this, "multiSelection", (m_MultiSelection ? "" : "single-selection"), ", ");
+    if (value != null)
+      result += value;
 
     return result;
   }
@@ -312,6 +335,35 @@ public class SpreadSheetSelectSubset
   }
 
   /**
+   * Sets whether to allow the user to select multiple rows.
+   *
+   * @param value 	true if to allow multiple row selection
+   */
+  public void setMultiSelection(boolean value) {
+    m_MultiSelection = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to allow the user to select multiple rows.
+   *
+   * @return 		true if to allow multiple row selection
+   */
+  public boolean getMultiSelection() {
+    return m_MultiSelection;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String multiSelectionTipText() {
+    return "Whether to allow the user to select multiple rows or just a single one.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -360,6 +412,10 @@ public class SpreadSheetSelectSubset
     result.add(panelCenter, BorderLayout.CENTER);
 
     m_Table = new SpreadSheetTable(new SpreadSheetTableModel());
+    if (m_MultiSelection)
+      m_Table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    else
+      m_Table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     panelCenter.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
 
     m_LabelMessage = new JLabel();
