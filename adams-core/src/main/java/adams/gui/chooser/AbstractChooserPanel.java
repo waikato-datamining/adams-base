@@ -153,6 +153,9 @@ public abstract class AbstractChooserPanel<T>
   /** the color for invalid input. */
   protected Color m_ColorInvalid;
 
+  /** the tool tip (ignore if null). */
+  protected String m_ToolTip;
+
   /**
    * Initializes the panel with no value.
    */
@@ -174,6 +177,7 @@ public abstract class AbstractChooserPanel<T>
     m_NoChooseYet          = true;
     m_ChooseListeners      = new HashSet<>();
     m_ColorInvalid         = Color.RED;
+    m_ToolTip              = null;
   }
 
   /**
@@ -421,7 +425,7 @@ public abstract class AbstractChooserPanel<T>
 
     m_TextSelection.setText(str);
     m_TextSelection.setCaretPosition(0);
-    m_TextSelection.setToolTipText(str);
+    m_TextSelection.setToolTipText(m_ToolTip == null ? str : m_ToolTip);
 
     afterSetCurrent(value, result);
 
@@ -707,6 +711,7 @@ public abstract class AbstractChooserPanel<T>
    */
   @Override
   public void setToolTipText(String text) {
+    m_ToolTip = text;
     super.setToolTipText(text);
     m_TextSelection.setToolTipText(text);
   }
