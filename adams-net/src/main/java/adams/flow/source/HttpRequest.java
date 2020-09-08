@@ -31,6 +31,9 @@ import com.github.fracpete.requests4j.request.Method;
 import com.github.fracpete.requests4j.request.Request;
 import com.github.fracpete.requests4j.response.BasicResponse;
 
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -355,6 +358,8 @@ public class HttpRequest
     HttpRequestResult 	cont;
     Map<String,String>  cookies;
     BasicResponse 	r;
+    CookieManager	manager;
+    CookieStore 	store;
 
     result = null;
 
@@ -362,13 +367,17 @@ public class HttpRequest
       cookies = (Map<String,String>) getStorageHandler().getStorage().get(m_Cookies);
     else
       cookies = new HashMap<>();
+    manager = new CookieManager();
+    store = manager.getCookieStore();
+    for (String key: cookies.keySet())
+      store.add(null, new HttpCookie(key, cookies.get(key)));
 
     try {
       r = new Request(m_Method)
         .url(m_URL.urlValue())
         .headers(BaseKeyValuePair.toMap(m_Headers))
 	.formData(new FormData().add(BaseKeyValuePair.toMap(m_Parameters)))
-	.cookies(cookies)
+	.cookies(manager)
 	.execute();
       cont = new HttpRequestResult(r.statusCode(), r.statusMessage(), r.text());
       m_OutputToken = new Token(cont);
