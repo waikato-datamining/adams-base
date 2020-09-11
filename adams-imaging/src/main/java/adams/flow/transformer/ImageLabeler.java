@@ -920,12 +920,14 @@ public class ImageLabeler
     // any old interactions?
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
-      try {
-	parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-	array  = (JSONArray) parser.parse(value);
-      }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+      if (value.length() > 0) {
+	try {
+	  parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+	  array = (JSONArray) parser.parse(value);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+	}
       }
     }
 
