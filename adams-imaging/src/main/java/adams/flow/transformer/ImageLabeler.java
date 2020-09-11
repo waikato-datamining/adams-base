@@ -442,7 +442,7 @@ public class ImageLabeler
       m_PanelImage.getInteractionLoggingFilter().filterInteractionLog(new InteractionEvent(m_PanelImage, new Date(), "change label", data));
       if (m_PanelImage.getAdditionalProperties() != null) {
 	m_PanelImage.getAdditionalProperties().addField(m_Field);
-	m_PanelImage.getAdditionalProperties().setValue(m_Field, label);
+	m_PanelImage.getAdditionalProperties().setValue(m_Field, (label == null ? "" : label));
 	m_PanelImage.displayProperties();
       }
 
