@@ -15,7 +15,7 @@
 
 /*
  * BaseObject.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -33,7 +33,6 @@ import java.util.Map;
  * Super class for wrappers around classes like String, Integer, etc.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class BaseObject
   implements Comparable, CloneHandler<BaseObject>, Serializable {
@@ -102,6 +101,8 @@ public abstract class BaseObject
    */
   public int compareTo(Object o) {
     BaseObject	other;
+    Comparable  internal;
+    Comparable  otherInternal;
 
     if (o == null)
       return 1;
@@ -112,6 +113,7 @@ public abstract class BaseObject
 	other.setValue((String) o);
       }
       catch (Exception e) {
+        System.err.println("Failed to initialize instance of " + getClass().getName() + " with '" + o + "'!");
 	e.printStackTrace();
 	return 1;
       }
@@ -123,15 +125,21 @@ public abstract class BaseObject
       other = (BaseObject) o;
     }
 
+    internal      = getInternal();
+    otherInternal = other.getInternal();
+
     // handle nulls
-    if ((getInternal() == null) && (other.getInternal() == null))
+    if ((internal == null) && (otherInternal == null))
       return 0;
-    else if (getInternal() == null)
+    else if (internal == null)
       return -1;
-    else if (other.getInternal() == null)
+    else if (otherInternal == null)
       return 1;
 
-    return getInternal().compareTo(other.getInternal());
+    if (internal.getClass() != otherInternal.getClass())
+      return internal.getClass().getName().compareTo(otherInternal.getClass().getName());
+
+    return internal.compareTo(otherInternal);
   }
 
   /**
