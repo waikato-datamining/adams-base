@@ -15,7 +15,7 @@
 
 /*
  * VggXmlAnnotationReportReader.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -26,6 +26,7 @@ import adams.data.conversion.XMLToDOM;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,7 +64,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class VggXmlAnnotationReportReader
-  extends AbstractReportReader<Report> {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -4823768127617381877L;
 

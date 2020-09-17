@@ -25,6 +25,7 @@ import adams.core.io.FileUtils;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -71,7 +72,8 @@ import java.util.logging.Level;
   useInstead = {CocoAnnotationsReportReader.class}
 )
 public class DetectronAnnotationsReportReader
-  extends AbstractReportReader<Report> {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 5716807404370681434L;
 

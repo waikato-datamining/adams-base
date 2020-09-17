@@ -26,6 +26,7 @@ import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -77,7 +78,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class CocoAnnotationsReportReader
-  extends AbstractReportReader<Report> {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 5716807404370681434L;
 

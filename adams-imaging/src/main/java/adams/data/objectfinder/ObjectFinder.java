@@ -15,7 +15,7 @@
 
 /*
  * ObjectFinder.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -23,15 +23,15 @@ import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  * Interface for finders that locate objects in the report of an image.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10824 $
  */
 public interface ObjectFinder
-  extends OptionHandler, QuickInfoSupporter {
+  extends OptionHandler, QuickInfoSupporter, ObjectPrefixHandler {
 
   /**
    * Sets the field prefix used in the report.

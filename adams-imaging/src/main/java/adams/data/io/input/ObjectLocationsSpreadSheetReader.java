@@ -30,6 +30,7 @@ import adams.data.spreadsheet.rowfinder.AllFinder;
 import adams.data.spreadsheet.rowfinder.RowFinder;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.TIntSet;
@@ -166,7 +167,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsSpreadSheetReader
-  extends AbstractReportReader<Report> {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -45890668031870078L;
 
