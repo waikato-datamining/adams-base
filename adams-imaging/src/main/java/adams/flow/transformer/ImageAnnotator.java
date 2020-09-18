@@ -1232,7 +1232,7 @@ public class ImageAnnotator
    * @param report	the report to add to
    * @param events	the events to add, ignored if null
    */
-  protected void addInterationsToReport(Report report, List<InteractionEvent> events) {
+  protected void addInteractionsToReport(Report report, List<InteractionEvent> events) {
     Field	field;
     MapToJson	m2j;
     DateFormat	formatter;
@@ -1253,12 +1253,17 @@ public class ImageAnnotator
     // any old interactions?
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
-      try {
-        parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-        array  = (JSONArray) parser.parse(value);
+      if (value.isEmpty()) {
+        array = new JSONArray();
       }
-      catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+      else {
+        try {
+          parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+          array = (JSONArray) parser.parse(value);
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+        }
       }
     }
 
@@ -1324,7 +1329,7 @@ public class ImageAnnotator
       cont = ((AnnotatorPanel) m_Panel).getCurrentImage();
       cont.setReport(((AnnotatorPanel) m_Panel).getCurrentReport());
       if (!(m_InteractionLoggingFilter instanceof Null))
-        addInterationsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
+        addInteractionsToReport(cont.getReport(), ((AnnotatorPanel) m_Panel).getInteractionLog());
       m_OutputToken = new Token(cont);
     }
 
