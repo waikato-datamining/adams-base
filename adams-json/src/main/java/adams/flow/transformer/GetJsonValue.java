@@ -15,13 +15,14 @@
 
 /*
  * GetJsonValue.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.JsonDataType;
 import adams.core.QuickInfoHelper;
 import adams.core.base.JsonPathExpression;
+import adams.data.json.JsonHelper;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
@@ -42,49 +43,56 @@ import java.util.List;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONAware<br>
  * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: GetJsonValue
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the JSON values as array or one-by-one.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-path &lt;adams.core.base.JsonPathExpression&gt; (property: path)
  * &nbsp;&nbsp;&nbsp;The path (or key if not starting with '$') of the value(s) to retrieve.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;github.com&#47;json-path&#47;JsonPath
  * </pre>
  * 
  * <pre>-data-type &lt;BOOLEAN|NUMBER|STRING|OBJECT|ARRAY&gt; (property: dataType)
@@ -318,7 +326,7 @@ public class GetJsonValue
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{JSONAware.class, JSONObject.class};
+    return new Class[]{JSONAware.class, JSONObject.class, String.class};
   }
 
   /**
@@ -329,16 +337,25 @@ public class GetJsonValue
   @Override
   protected String doExecute() {
     String	result;
+    Object	obj;
     JSONObject	json;
     Object	val;
 
     result = null;
     
     json = null;
-    if (!(m_InputToken.getPayload() instanceof JSONObject))
+    if (m_InputToken.hasPayload(String.class)) {
+      obj = JsonHelper.parse(m_InputToken.getPayload(String.class), this);
+      if (obj == null)
+        result = "Failed to parse JSON string: " + m_InputToken.getPayload(String.class);
+    }
+    else {
+      obj = m_InputToken.getPayload();
+    }
+    if (!(obj instanceof JSONObject))
       result = "Input is not of type " + JSONObject.class.getName() + "!";
     else
-      json = (JSONObject) m_InputToken.getPayload();
+      json = (JSONObject) obj;
     
     if (result == null) {
       if (!m_PathCompiled) {

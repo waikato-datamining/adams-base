@@ -15,15 +15,17 @@
 
 /*
  * SetJsonValue.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.base.JsonPathExpression;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.ObjectToObject;
+import adams.data.json.JsonHelper;
 import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.Actor;
@@ -46,6 +48,7 @@ import net.minidev.json.JSONObject;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;net.minidev.json.JSONObject<br>
  * <br><br>
@@ -89,7 +92,7 @@ import net.minidev.json.JSONObject;
  * <pre>-path &lt;adams.core.base.JsonPathExpression&gt; (property: path)
  * &nbsp;&nbsp;&nbsp;The path (or key if not starting with '$') of the value(s) to retrieve.
  * &nbsp;&nbsp;&nbsp;default:
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;code.google.com&#47;p&#47;json-path&#47;
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;github.com&#47;json-path&#47;JsonPath
  * </pre>
  *
  * <pre>-value &lt;java.lang.String&gt; (property: value)
@@ -409,10 +412,10 @@ public class SetJsonValue
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->net.minidev.json.JSONObject.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->net.minidev.json.JSONObject.class, java.lang.String.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
-    return new Class[]{JSONObject.class};
+    return new Class[]{JSONObject.class, String.class};
   }
 
   /**
@@ -511,17 +514,33 @@ public class SetJsonValue
   protected String doExecute() {
     String	result;
     Object	value;
+    Object	obj;
     JSONObject  json;
     Token	token;
 
     result = null;
+    json   = null;
+    value  = null;
 
-    json   = (JSONObject) m_InputToken.getPayload();
-    value = null;
-    if (json == null) {
-      result = "Null token instead of map received at input!";
+    if (m_InputToken.isNull()) {
+      result = "Null token instead of JSON received at input!";
+      return result;
+    }
+
+    if (m_InputToken.hasPayload(String.class)) {
+      obj = JsonHelper.parse(m_InputToken.getPayload(String.class), this);
+      if (obj == null)
+        result = "Failed to parse JSON string: " + m_InputToken.getPayload(String.class);
     }
     else {
+      obj = m_InputToken.getPayload();
+    }
+    if (!(obj instanceof JSONObject))
+      result = "Input is not a " + Utils.classToString(JSONObject.class) + " instance!";
+    else
+      json = (JSONObject) obj;
+
+    if (result == null) {
       if (!m_PathCompiled) {
 	m_ActualPath   = m_Path.toJsonPath();
 	m_PathCompiled = true;
