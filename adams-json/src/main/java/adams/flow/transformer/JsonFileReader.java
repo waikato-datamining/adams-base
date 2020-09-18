@@ -21,17 +21,15 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.json.JsonHelper;
+import adams.data.json.JsonObjectType;
 import adams.flow.core.Token;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 /**
  <!-- globalinfo-start -->
@@ -100,15 +98,8 @@ public class JsonFileReader
   /** for serialization. */
   private static final long serialVersionUID = -184602726110144511L;
 
-  /** the type of output it will generate. */
-  public enum OutputType {
-    ANY,
-    OBJECT,
-    ARRAY,
-  }
-
   /** the type of output to generate. */
-  protected OutputType m_Type;
+  protected JsonObjectType m_Type;
 
   /**
    * Returns a string describing the object.
@@ -132,7 +123,7 @@ public class JsonFileReader
 
     m_OptionManager.add(
       "type", "type",
-      OutputType.ANY);
+      JsonObjectType.ANY);
   }
 
   /**
@@ -140,7 +131,7 @@ public class JsonFileReader
    *
    * @param value	the type
    */
-  public void setType(OutputType value) {
+  public void setType(JsonObjectType value) {
     m_Type = value;
     reset();
   }
@@ -150,7 +141,7 @@ public class JsonFileReader
    *
    * @return		the type
    */
-  public OutputType getType() {
+  public JsonObjectType getType() {
     return m_Type;
   }
 
@@ -210,13 +201,10 @@ public class JsonFileReader
    */
   @Override
   protected String doExecute() {
-    String		result;
-    Object		fileObj;
-    File		file;
-    JSONParser		parser;
-    FileReader		freader;
-    BufferedReader 	breader;
-    Object		obj;
+    String	result;
+    Object	fileObj;
+    File	file;
+    Object	obj;
 
     result = null;
 
@@ -226,34 +214,27 @@ public class JsonFileReader
     else
       file = new PlaceholderFile((String) fileObj);
 
-    freader = null;
-    breader = null;
     try {
-      freader = new FileReader(file.getAbsolutePath());
-      breader = new BufferedReader(freader);
-      parser  = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-      obj     = parser.parse(breader);
-      // enforce type, if necessary
-      switch (m_Type) {
-	case ANY:
-	  m_OutputToken = new Token(obj);
-	  break;
-	case ARRAY:
-	  m_OutputToken = new Token((JSONArray) obj);
-	  break;
-	case OBJECT:
-	  m_OutputToken = new Token((JSONObject) obj);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled output type: " + m_Type);
+      obj = JsonHelper.parse(file.getAbsoluteFile(), this);
+      if (obj != null) {
+        // enforce type, if necessary
+        switch (m_Type) {
+          case ANY:
+            m_OutputToken = new Token(obj);
+            break;
+          case ARRAY:
+            m_OutputToken = new Token((JSONArray) obj);
+            break;
+          case OBJECT:
+            m_OutputToken = new Token((JSONObject) obj);
+            break;
+          default:
+            throw new IllegalStateException("Unhandled output type: " + m_Type);
+        }
       }
     }
     catch (Exception e) {
       result = handleException("Failed to read JSON file: " + file, e);
-    }
-    finally {
-      FileUtils.closeQuietly(breader);
-      FileUtils.closeQuietly(freader);
     }
 
     return result;

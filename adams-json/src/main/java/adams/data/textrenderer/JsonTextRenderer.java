@@ -15,15 +15,13 @@
 
 /*
  * JsonTextRenderer.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import adams.data.json.JsonHelper;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import net.minidev.json.JSONAware;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -77,16 +75,6 @@ public class JsonTextRenderer
    */
   @Override
   protected String doRender(Object obj) {
-    String	result;
-    Gson 	gson;
-    JsonParser 	jp;
-    JsonElement	je;
-
-    gson   = new GsonBuilder().setPrettyPrinting().create();
-    jp     = new JsonParser();
-    je     = jp.parse(obj.toString());
-    result =  gson.toJson(je);
-
-    return result;
+    return JsonHelper.prettyPrint(obj.toString());
   }
 }

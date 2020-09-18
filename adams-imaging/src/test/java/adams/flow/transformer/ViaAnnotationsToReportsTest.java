@@ -28,6 +28,7 @@ import adams.core.option.AbstractArgumentOption;
 import adams.data.conversion.StringToString;
 import adams.data.io.input.LineByLineTextReader;
 import adams.data.io.output.DefaultSimpleReportWriter;
+import adams.data.json.JsonObjectType;
 import adams.data.report.Field;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
@@ -43,7 +44,6 @@ import adams.flow.sink.ReportDisplay;
 import adams.flow.source.Start;
 import adams.flow.source.Variable;
 import adams.flow.standalone.SetVariable;
-import adams.flow.transformer.JsonFileReader.OutputType;
 import adams.flow.transformer.SetVariable.UpdateType;
 import adams.test.TmpFile;
 import junit.framework.Test;
@@ -216,7 +216,7 @@ public class ViaAnnotationsToReportsTest
       // Flow.Convert to reports.JsonFileReader
       JsonFileReader jsonfilereader = new JsonFileReader();
       argOption = (AbstractArgumentOption) jsonfilereader.getOptionManager().findByProperty("type");
-      jsonfilereader.setType((OutputType) argOption.valueOf("OBJECT"));
+      jsonfilereader.setType((JsonObjectType) argOption.valueOf("OBJECT"));
       actors3.add(jsonfilereader);
 
       // Flow.Convert to reports.ViaAnnotationsToReports

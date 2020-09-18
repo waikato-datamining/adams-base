@@ -15,15 +15,15 @@
 
 /*
  * StringToJson.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.flow.transformer.JsonFileReader.OutputType;
+import adams.data.json.JsonHelper;
+import adams.data.json.JsonObjectType;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 
 /**
  <!-- globalinfo-start -->
@@ -53,7 +53,7 @@ public class StringToJson
   private static final long serialVersionUID = 1484255065339335859L;
 
   /** the type of object to output. */
-  protected OutputType m_Type;
+  protected JsonObjectType m_Type;
 
   /**
    * Returns a string describing the object.
@@ -74,7 +74,7 @@ public class StringToJson
 
     m_OptionManager.add(
       "type", "type",
-      OutputType.ANY);
+      JsonObjectType.ANY);
   }
 
   /**
@@ -82,7 +82,7 @@ public class StringToJson
    *
    * @param value 	the type
    */
-  public void setType(OutputType value) {
+  public void setType(JsonObjectType value) {
     m_Type = value;
     reset();
   }
@@ -92,7 +92,7 @@ public class StringToJson
    *
    * @return 		the type
    */
-  public OutputType getType() {
+  public JsonObjectType getType() {
     return m_Type;
   }
 
@@ -136,7 +136,7 @@ public class StringToJson
     Object	result;
 
     try {
-      result = new JSONParser(JSONParser.MODE_JSON_SIMPLE).parse((String) m_Input);
+      result = JsonHelper.parse((String) m_Input, this);
       switch (m_Type) {
 	case ANY:
 	  return result;

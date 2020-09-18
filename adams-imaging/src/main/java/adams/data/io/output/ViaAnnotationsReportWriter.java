@@ -15,7 +15,7 @@
 
 /*
  * ViaAnnotationsReportWriter.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -23,15 +23,12 @@ package adams.data.io.output;
 import adams.core.io.FileUtils;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.data.io.input.ViaAnnotationsReportReader;
+import adams.data.json.JsonHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -254,9 +251,6 @@ public class ViaAnnotationsReportWriter
     int[]		y;
     int			i;
     String		content;
-    Gson 		gson;
-    JsonParser 		jp;
-    JsonElement 	je;
 
     all = new JSONObject();
     jrep = new JSONObject();
@@ -322,15 +316,10 @@ public class ViaAnnotationsReportWriter
       }
     }
 
-    if (m_PrettyPrinting) {
-      gson    = new GsonBuilder().setPrettyPrinting().create();
-      jp      = new JsonParser();
-      je      = jp.parse(all.toString());
-      content = gson.toJson(je);
-    }
-    else {
+    if (m_PrettyPrinting)
+      content = JsonHelper.prettyPrint(all.toString());
+    else
       content = all.toString();
-    }
 
     return FileUtils.writeToFile(m_Output.getAbsolutePath(), content, false);
   }

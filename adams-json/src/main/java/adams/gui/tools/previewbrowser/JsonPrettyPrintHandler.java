@@ -13,23 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonPrettyPrintHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
-import adams.core.io.FileUtils;
+import adams.data.json.JsonHelper;
 import adams.gui.core.TextEditorPanel;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 
 /**
  <!-- globalinfo-start -->
@@ -85,22 +79,14 @@ public class JsonPrettyPrintHandler
   protected PreviewPanel createPreview(File file) {
     PreviewPanel	result;
     TextEditorPanel	textPanel;
-    FileReader		freader;
-    BufferedReader 	breader;
-    Gson 		gson;
-    JsonParser 		jp;
-    JsonElement 	je;
+    Object		obj;
     String		content;
 
-    freader = null;
-    breader = null;
     try {
-      freader = new FileReader(file.getAbsolutePath());
-      breader = new BufferedReader(freader);
-      gson    = new GsonBuilder().setPrettyPrinting().create();
-      jp      = new JsonParser();
-      je      = jp.parse(breader);
-      content = gson.toJson(je);
+      obj = JsonHelper.parse(file.getAbsoluteFile(), this);
+      if (obj == null)
+        throw new IllegalStateException("Failed to parse file as JSON: " + file);
+      content = JsonHelper.prettyPrint(obj.toString());
       textPanel = new TextEditorPanel();
       textPanel.setContent(content);
       textPanel.setEditable(false);
@@ -112,11 +98,7 @@ public class JsonPrettyPrintHandler
       textPanel.setEditable(false);
       result = new PreviewPanel(textPanel, textPanel.getTextArea());
     }
-    finally {
-      FileUtils.closeQuietly(breader);
-      FileUtils.closeQuietly(freader);
-    }
-    
+
     return result;
   }
 }

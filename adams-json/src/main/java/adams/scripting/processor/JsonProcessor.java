@@ -15,7 +15,7 @@
 
 /*
  * JsonProcessor.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.processor;
@@ -27,10 +27,9 @@ import adams.core.io.FileUtils;
 import adams.core.io.GzipUtils;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.core.option.OptionUtils;
+import adams.data.json.JsonHelper;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.RemoteCommandWithResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -191,7 +190,6 @@ public class JsonProcessor
     JsonObject 		result;
     String		data;
     JsonObject		objHeader;
-    Gson 		gson;
 
     if (payload.length == 0)
       data = "";
@@ -206,13 +204,10 @@ public class JsonProcessor
     result.add("header",  objHeader);
     result.addProperty("payload", data);
 
-    if (m_PrettyPrinting) {
-      gson = new GsonBuilder().setPrettyPrinting().create();
-      return gson.toJson(result);
-    }
-    else {
+    if (m_PrettyPrinting)
+      return JsonHelper.prettyPrint(result);
+    else
       return result.toString();
-    }
   }
 
   /**

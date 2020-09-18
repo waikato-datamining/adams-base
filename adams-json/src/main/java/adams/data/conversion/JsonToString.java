@@ -13,17 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonToString.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.io.PrettyPrintingSupporter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import adams.data.json.JsonHelper;
 import net.minidev.json.JSONAware;
 
 /**
@@ -45,7 +42,6 @@ import net.minidev.json.JSONAware;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonToString
   extends AbstractConversionToString
@@ -126,18 +122,11 @@ public class JsonToString
   @Override
   protected Object doConvert() throws Exception {
     String	result;
-    Gson 	gson;
-    JsonParser 	jp;
-    JsonElement	je;
 
     result = ((JSONAware) m_Input).toJSONString();
 
-    if (m_PrettyPrinting) {
-      gson   = new GsonBuilder().setPrettyPrinting().create();
-      jp     = new JsonParser();
-      je     = jp.parse(result);
-      result = gson.toJson(je);
-    }
+    if (m_PrettyPrinting)
+      result = JsonHelper.prettyPrint(result);
 
     return result;
   }
