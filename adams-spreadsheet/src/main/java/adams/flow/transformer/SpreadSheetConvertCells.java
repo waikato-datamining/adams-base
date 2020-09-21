@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetConvertCells.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -445,7 +445,7 @@ public class SpreadSheetConvertCells
       if (m_SkipMissing)
 	return null;
       else
-	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
+	input = cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
 
     classIn  = m_Conversion.accepts();

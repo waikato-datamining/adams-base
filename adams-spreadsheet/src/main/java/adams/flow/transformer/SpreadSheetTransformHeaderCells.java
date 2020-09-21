@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetTransformHeaderCells.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -127,7 +127,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetTransformHeaderCells
   extends AbstractInPlaceSpreadSheetTransformer
@@ -162,9 +161,6 @@ public class SpreadSheetTransformHeaderCells
 
   /** the callable actor. */
   protected Actor m_CallableActor;
-
-  /** used for parsing missing value replacement strings. */
-  protected Cell m_Cell;
 
   /** for compatibility comparisons. */
   protected Compatibility m_Compatibility;
@@ -224,7 +220,6 @@ public class SpreadSheetTransformHeaderCells
     super.initialize();
 
     m_Helper        = new CallableActorHelper();
-    m_Cell          = null;
     m_Compatibility = null;
   }
 
@@ -572,8 +567,6 @@ public class SpreadSheetTransformHeaderCells
     input  = null;
     output = null;
 
-    if (m_Cell == null)
-      m_Cell = sheet.newCell();
     if (m_Compatibility == null)
       m_Compatibility = new Compatibility();
 
@@ -582,7 +575,7 @@ public class SpreadSheetTransformHeaderCells
       if (m_SkipMissing)
 	return null;
       else
-	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
+	input = cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
 
     if (m_ForceInputType) {

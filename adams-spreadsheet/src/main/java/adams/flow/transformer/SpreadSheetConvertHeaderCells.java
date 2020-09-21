@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetConvertHeaderCells.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -109,7 +109,6 @@ import java.util.Date;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetConvertHeaderCells
   extends AbstractInPlaceSpreadSheetTransformer {
@@ -128,9 +127,6 @@ public class SpreadSheetConvertHeaderCells
   
   /** the conversion to apply to the cells. */
   protected Conversion m_Conversion;
-  
-  /** used for parsing missing value replacement strings. */
-  protected Cell m_Cell;
   
   /**
    * Returns a string describing the object.
@@ -316,14 +312,11 @@ public class SpreadSheetConvertHeaderCells
     input  = null;
     output = null;
     
-    if (m_Cell == null)
-      m_Cell = sheet.newCell();
-
     if (cell.isMissing()) {
       if (m_SkipMissing)
 	return null;
       else
-	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
+	input = cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
     
     classIn  = m_Conversion.accepts();

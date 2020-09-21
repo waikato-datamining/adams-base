@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetTransformCells.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -139,7 +139,6 @@ import java.util.Iterator;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetTransformCells
   extends AbstractInPlaceSpreadSheetTransformer
@@ -694,7 +693,7 @@ public class SpreadSheetTransformCells
       if (m_SkipMissing)
 	return null;
       else
-	input = m_Cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
+	input = cell.parseContent(m_MissingReplacementValue, m_MissingReplacementType);
     }
 
     if (m_ForceInputType) {
