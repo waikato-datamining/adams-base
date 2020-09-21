@@ -15,10 +15,11 @@
 
 /*
  * AbstractConversion.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.AdditionalInformationHandler;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
@@ -33,11 +34,10 @@ import java.util.logging.Level;
  * Ancestor for all conversions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractConversion
   extends AbstractOptionHandler
-  implements Conversion, CleanUpHandler, ShallowCopySupporter<AbstractConversion> {
+  implements Conversion, CleanUpHandler, ShallowCopySupporter<AbstractConversion>, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1576117521811422376L;
@@ -53,7 +53,26 @@ public abstract class AbstractConversion
 
   /** whether the conversion was stopped. */
   protected boolean m_Stopped;
-  
+
+  /**
+   * Returns the additional information.
+   *
+   * @return		the additional information, null or 0-length string for no information
+   */
+  public String getAdditionalInformation() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    result.append("Conversion input/output:");
+    result.append("\n- input: ");
+    result.append(Utils.classToString(accepts()));
+    result.append("\n- output: ");
+    result.append(Utils.classToString(generates()));
+
+    return result.toString();
+  }
+
   /**
    * Resets the converter.
    */
