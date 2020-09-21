@@ -73,7 +73,7 @@ public class ReportJsonUtils {
 
     jp = new JsonParser();
     je = jp.parse(reader);
-    return fromJson(je.getAsJsonObject());
+    return fromJson(je.getAsJsonObject(), prefix);
   }
 
   /**
