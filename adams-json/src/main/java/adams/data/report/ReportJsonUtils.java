@@ -15,7 +15,7 @@
 
 /*
  * ReportJsonUtils.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.report;
@@ -56,6 +56,18 @@ public class ReportJsonUtils {
    * @throws Exception	if reading/parsing fails
    */
   public static Report fromJson(Reader reader) throws Exception {
+    return fromJson(reader, null);
+  }
+
+  /**
+   * Creates a report from the reader, reading in JSON.
+   *
+   * @param reader	the reader to obtain the JSON from
+   * @param prefix 	the prefix to use for the fields, ignored if null
+   * @return		the report, null if failed to create or find data
+   * @throws Exception	if reading/parsing fails
+   */
+  public static Report fromJson(Reader reader, String prefix) throws Exception {
     JsonParser  	jp;
     JsonElement 	je;
 
@@ -71,25 +83,38 @@ public class ReportJsonUtils {
    * @return		the report, null if failed to create or find data
    */
   public static Report fromJson(JsonObject jobj) {
+    return fromJson(jobj, null);
+  }
+
+  /**
+   * Creates a report from the JSON object.
+   *
+   * @param jobj	the object to get the data from
+   * @param prefix 	the prefix to use for the fields, ignored if null
+   * @return		the report, null if failed to create or find data
+   */
+  public static Report fromJson(JsonObject jobj, String prefix) {
     Report 		result;
     Field 		field;
     JsonPrimitive 	prim;
 
+    if (prefix == null)
+      prefix = "";
     result = new Report();
     for (Entry<String, JsonElement> entry: jobj.entrySet()) {
       prim = entry.getValue().getAsJsonPrimitive();
       if (prim.isBoolean()) {
-	field = new Field(entry.getKey(), DataType.BOOLEAN);
+	field = new Field(prefix + entry.getKey(), DataType.BOOLEAN);
 	result.addField(field);
 	result.setBooleanValue(field.getName(), prim.getAsBoolean());
       }
       else if (prim.isNumber()) {
-	field = new Field(entry.getKey(), DataType.NUMERIC);
+	field = new Field(prefix + entry.getKey(), DataType.NUMERIC);
 	result.addField(field);
 	result.setNumericValue(field.getName(), prim.getAsNumber().doubleValue());
       }
       else {
-	field = new Field(entry.getKey(), DataType.STRING);
+	field = new Field(prefix + entry.getKey(), DataType.STRING);
 	result.addField(field);
 	result.setStringValue(field.getName(), prim.getAsString());
       }

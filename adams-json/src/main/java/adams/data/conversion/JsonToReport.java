@@ -15,7 +15,7 @@
 
 /*
  * JsonToReport.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
@@ -44,6 +44,11 @@ import java.io.StringReader;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix string for the field names.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -52,6 +57,9 @@ public class JsonToReport
   extends AbstractConversion {
 
   private static final long serialVersionUID = 2957342595369694174L;
+
+  /** the prefix to use for the fields. */
+  protected String m_Prefix;
 
   /**
    * Returns a string describing the object.
@@ -63,6 +71,46 @@ public class JsonToReport
     return "Turns a JSON string into a report.\n"
       + "Input format:\n"
       + ReportJsonUtils.example();
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "prefix", "prefix",
+      "");
+  }
+
+  /**
+   * Sets the prefix string for the field names.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix string for the field names.
+   *
+   * @return		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The prefix string for the field names.";
   }
 
   /**
@@ -96,7 +144,7 @@ public class JsonToReport
     Report 		result;
 
     try {
-      result = ReportJsonUtils.fromJson(new BufferedReader(new StringReader((String) m_Input)));
+      result = ReportJsonUtils.fromJson(new BufferedReader(new StringReader((String) m_Input)), m_Prefix);
     }
     catch (Exception e) {
       result = null;
