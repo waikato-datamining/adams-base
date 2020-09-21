@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CellView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -39,7 +39,6 @@ import java.util.Date;
  * All dates are treated as {@link DateTimeMsec}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataCellView
   implements Cell {
@@ -538,6 +537,8 @@ public class DataCellView
       setContent((Short) value);
     else if (value instanceof Float)
       setContent((Float) value);
+    else if (value instanceof Number)
+      setContent(((Number) value).doubleValue());
     else
       setObject(value);
     return this;

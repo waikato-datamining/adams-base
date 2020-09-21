@@ -15,7 +15,7 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -38,7 +38,6 @@ import java.util.HashMap;
  * into a Double.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DoubleCell
   implements Cell {
@@ -789,6 +788,8 @@ public class DoubleCell
       setContent((Short) value);
     else if (value instanceof Float)
       setContent((Float) value);
+    else if (value instanceof Number)
+      setContent(((Number) value).doubleValue());
     else
       setObject(value);
     return this;
