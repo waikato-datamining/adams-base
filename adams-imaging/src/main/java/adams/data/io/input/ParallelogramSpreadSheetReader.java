@@ -26,6 +26,8 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.Polygon;
 import java.util.ArrayList;
@@ -73,7 +75,8 @@ public class ParallelogramSpreadSheetReader
    */
   @Override
   public String globalInfo() {
-    return "Reads parallelograms as polygons from a CSV file (x0,y0,...,x3,y3).";
+    return "Reads parallelograms as polygons from a CSV file (x0,y0,...,x3,y3).\n"
+      + "Any additional columns are added as meta-data.";
   }
 
   /**
@@ -200,12 +203,14 @@ public class ParallelogramSpreadSheetReader
     int				y2;
     int				x3;
     int				y3;
+    TIntSet			meta;
+    int				i;
 
     result = new ArrayList<>();
     reader = new CsvSpreadSheetReader();
     sheet  = reader.read(m_Input);
 
-    objects = new LocatedObjects();
+    // locate columns
     x0 = getIndex(sheet, "x0");
     y0 = getIndex(sheet, "y0");
     x1 = getIndex(sheet, "x1");
@@ -216,12 +221,36 @@ public class ParallelogramSpreadSheetReader
     y3 = getIndex(sheet, "y3");
     if ((x0 == -1) || (y0 == -1) || (x1 == -1) || (y1 == -1) || (x2 == -1) || (y2 == -1) || (x3 == -1) || (y3 == -1))
       return result;
+
+    // meta-data columns
+    meta = new TIntHashSet();
+    for (i = 0; i < sheet.getColumnCount(); i++)
+      meta.add(i);
+    meta.remove(x0);
+    meta.remove(y0);
+    meta.remove(x1);
+    meta.remove(y1);
+    meta.remove(x2);
+    meta.remove(y2);
+    meta.remove(x3);
+    meta.remove(y3);
+
+    // read data
+    objects = new LocatedObjects();
     for (Row row: sheet.rows()) {
       poly = new Polygon(
         new int[]{row.getCell(x0).toDouble().intValue(), row.getCell(x1).toDouble().intValue(), row.getCell(x2).toDouble().intValue(), row.getCell(x3).toDouble().intValue()},
         new int[]{row.getCell(y0).toDouble().intValue(), row.getCell(y1).toDouble().intValue(), row.getCell(y2).toDouble().intValue(), row.getCell(y3).toDouble().intValue()},
 	4);
       object = new LocatedObject(poly);
+
+      // meta-data
+      for (int col: meta.toArray()) {
+        if (!row.hasCell(col) || row.getCell(col).isMissing())
+          continue;
+        object.getMetaData().put(sheet.getColumnName(col), row.getCell(col).getNative());
+      }
+
       objects.add(object);
     }
 
