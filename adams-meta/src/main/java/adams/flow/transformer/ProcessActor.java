@@ -15,7 +15,7 @@
 
 /*
  * ProcessActor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -38,7 +38,7 @@ import java.awt.Component;
 /**
  <!-- globalinfo-start -->
  * Applies the specified processor to the incoming actor and forwards the result.<br>
- * For processors implementing adams.flow.processor.ModifyingProcessor the modified actor is forwarded, all others just forward the incoming actor.<br>
+ * For processors implementing adams.flow.processor.ModifyingProcessor the modified actor is forwarded (or, if not modified, the original one), all others just forward the incoming actor.<br>
  * If the processor should implement adams.flow.processor.ListingProcessor then any generated list gets stored as string array in the outgoing container as well.<br>
  * Processors implementing adams.flow.processor.GraphicalOutputProducingProcessor can optionall display the graphical output as well (off by default).
  * <br><br>
@@ -165,7 +165,7 @@ public class ProcessActor
   public String globalInfo() {
     return "Applies the specified processor to the incoming actor and forwards the result.\n"
       + "For processors implementing " + Utils.classToString(ModifyingProcessor.class) + " "
-      + "the modified actor is forwarded, all others just forward the incoming actor.\n"
+      + "the modified actor is forwarded (or, if not modified, the original one), all others just forward the incoming actor.\n"
       + "If the processor should implement " + Utils.classToString(ListingProcessor.class) + " "
       + "then any generated list gets stored as string array in the outgoing container as well.\n"
       + "Processors implementing " + Utils.classToString(GraphicalOutputProducingProcessor.class) + " "
@@ -358,17 +358,36 @@ public class ProcessActor
     try {
       m_Processor.process(actor);
 
-      if (m_Processor instanceof ModifyingProcessor)
-        cont = new ProcessActorContainer(((ModifyingProcessor) m_Processor).getModifiedActor());
-      else
+      if (m_Processor instanceof ModifyingProcessor) {
+        if (((ModifyingProcessor) m_Processor).isModified()) {
+          cont = new ProcessActorContainer(((ModifyingProcessor) m_Processor).getModifiedActor());
+          if (isLoggingEnabled())
+            getLogger().info("Actor got modified, forwarding modified one");
+        }
+        else {
+          cont = new ProcessActorContainer(actor);
+          if (isLoggingEnabled())
+            getLogger().info("Actor didn't get modified, forwarding original one");
+        }
+      }
+      else {
         cont = new ProcessActorContainer(actor);
+        if (isLoggingEnabled())
+          getLogger().info("Forwarding original actor");
+      }
 
-      if (m_Processor instanceof ListingProcessor)
+      if (m_Processor instanceof ListingProcessor) {
         cont.setValue(ProcessActorContainer.VALUE_LIST, ((ListingProcessor) m_Processor).getList().toArray(new String[0]));
+        if (isLoggingEnabled())
+          getLogger().info("Added list");
+      }
 
       if (m_Processor instanceof GraphicalOutputProducingProcessor) {
-        if (((GraphicalOutputProducingProcessor) m_Processor).hasGraphicalOutput())
+        if (((GraphicalOutputProducingProcessor) m_Processor).hasGraphicalOutput()) {
           m_Component = ((GraphicalOutputProducingProcessor) m_Processor).getGraphicalOutput();
+          if (isLoggingEnabled())
+            getLogger().info("Generated graphical output");
+        }
       }
     }
     catch (Exception e) {
