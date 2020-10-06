@@ -15,7 +15,7 @@
 
 /*
  * AbstractDirector.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -35,7 +35,6 @@ import adams.event.FlowPauseStateListener;
  * Manages the execution of actors.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDirector
   extends LoggingObject
@@ -229,8 +228,10 @@ public abstract class AbstractDirector
 
     if (hasControlActor()) {
       for (i = m_ControlActor.size() - 1; i >= 0; i--) {
-	if (!m_ControlActor.get(i).getSkip())
+	if ((m_ControlActor.get(i) != null) && !m_ControlActor.get(i).getSkip())
 	  m_ControlActor.get(i).stopExecution();
+	if (!hasControlActor())
+	  break;
       }
     }
 
