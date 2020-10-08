@@ -26,6 +26,7 @@ import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
@@ -94,8 +95,7 @@ public class HelpFrame
             showHelp(ClassManager.getSingleton().forName(classname));
 	  }
 	  catch (Exception ex) {
-	    System.err.println("Failed to generate help for class: " + classname);
-	    ex.printStackTrace();
+            ConsolePanel.getSingleton().append("Failed to generate help for class: " + classname, ex);
 	  }
 	}
 	else {
@@ -103,8 +103,7 @@ public class HelpFrame
 	    BrowserHelper.openURL(url);
 	  }
 	  catch (Exception ex) {
-	    System.err.println("Failed to open URL: " + url);
-	    ex.printStackTrace();
+            ConsolePanel.getSingleton().append("Failed to open URL: " + url, ex);
 	  }
 	}
       }
