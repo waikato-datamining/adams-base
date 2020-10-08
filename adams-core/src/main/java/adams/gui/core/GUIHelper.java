@@ -40,6 +40,7 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -1412,10 +1413,24 @@ public class GUIHelper {
    * @param title	the title of the information message
    */
   public static void showInformationMessage(Component parent, String msg, String title) {
+    showInformationMessage(parent, msg, title, false, null);
+  }
+
+  /**
+   * Displays an information message.
+   *
+   * @param parent	the parent, to make the dialog modal; can be null
+   * @param msg		the information message to display
+   * @param title	the title of the information message
+   * @param html 	whether to display HTML or plain text
+   * @param size 	the size of the dialog, can be null
+   */
+  public static void showInformationMessage(Component parent, String msg, String title, boolean html, Dimension size) {
     final ApprovalDialog	dlg;
-    String[]				lines;
-    int					height;
-    TextPanel				editor;
+    String[]			lines;
+    int				height;
+    TextPanel 			textPanel;
+    JEditorPane 		htmlPanel;
     
     parent = GUIHelper.getParentComponent(parent);
 
@@ -1430,17 +1445,34 @@ public class GUIHelper {
     dlg.setTitle(title);
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
     dlg.setIconImage(GUIHelper.getIcon("information.png").getImage());
-    editor = new TextPanel();
-    editor.setTitle(title);
-    editor.setEditable(false);
-    editor.setLineWrap(true);
-    dlg.getContentPane().add(editor, BorderLayout.CENTER);
+    htmlPanel = null;
+    textPanel = null;
+    if (html) {
+      htmlPanel = new JEditorPane();
+      htmlPanel.setContentType("text/html");
+      htmlPanel.setEditable(false);
+      htmlPanel.addHyperlinkListener(new BaseHyperlinkListener());
+      dlg.getContentPane().add(new BaseScrollPane(htmlPanel), BorderLayout.CENTER);
+    }
+    else {
+      textPanel = new TextPanel();
+      textPanel.setTitle(title);
+      textPanel.setEditable(false);
+      textPanel.setLineWrap(true);
+      dlg.getContentPane().add(textPanel, BorderLayout.CENTER);
+    }
     dlg.pack();
-    dlg.setSize(
-      getInteger("DefaultSmallDialog.Width", 600),
-      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+    if (size == null)
+      dlg.setSize(
+	getInteger("DefaultSmallDialog.Width", 600),
+	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+    else
+      dlg.setSize(size);
     dlg.setLocationRelativeTo(parent);
-    editor.setContent(msg);
+    if (html)
+      htmlPanel.setText(msg);
+    else
+      textPanel.setContent(msg);
     dlg.getApproveButton().requestFocusInWindow();
     dlg.setVisible(true);
   }
