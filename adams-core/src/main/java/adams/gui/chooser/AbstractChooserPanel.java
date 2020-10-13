@@ -443,13 +443,13 @@ public abstract class AbstractChooserPanel<T>
   /**
    * Checks whether the string value is valid and can be parsed.
    * <br>
-   * Default implementation returns always true.
+   * Default implementation returns true as long as the string is not null.
    *
    * @param value	the value to check
    * @return		true if valid
    */
   protected boolean isValid(String value) {
-    return true;
+    return (value != null);
   }
 
   /**

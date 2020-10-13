@@ -118,6 +118,6 @@ public class ColorChooserPanel
    * @return		true if valid
    */
   protected boolean isValid(String value) {
-    return (ColorHelper.valueOf(value, null) != null);
+    return (value != null) && (ColorHelper.valueOf(value, null) != null);
   }
 }

@@ -115,6 +115,6 @@ public class SpreadSheetQueryChooserPanel
    * @return		true if valid
    */
   protected boolean isValid(String value) {
-    return new SpreadSheetQueryText().isValid(value);
+    return (value != null) && new SpreadSheetQueryText().isValid(value);
   }
 }

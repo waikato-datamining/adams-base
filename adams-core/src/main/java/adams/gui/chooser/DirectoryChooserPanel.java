@@ -176,7 +176,7 @@ public class DirectoryChooserPanel
    */
   @Override
   protected boolean isValid(String value) {
-    return PlaceholderFile.isValid(value.trim());
+    return (value != null) && PlaceholderFile.isValid(value.trim());
   }
 
   /**
