@@ -13,11 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SearchableBaseList.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
+
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
@@ -28,7 +31,6 @@ import java.util.Vector;
  * Extended BaseList class that allows searching in its elements.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SearchableBaseList
   extends BaseList
@@ -243,7 +245,20 @@ public class SearchableBaseList
    * 				or just plain string comparison
    */
   public void search(String searchString, boolean regexp) {
+    int[]	selected;
+    TIntList	selectedAfterSearch;
+    int		i;
+
+    selected = getSelectedIndices();
+    for (i = 0; i < selected.length; i++)
+      selected[i] = m_Model.getActualIndex(selected[i]);
     m_Model.search(searchString, regexp);
+    selectedAfterSearch = new TIntArrayList();
+    for (int index: selected) {
+      if (m_Model.isVisible(index))
+        selectedAfterSearch.add(m_Model.getVisibleIndex(index));
+    }
+    setSelectedIndices(selectedAfterSearch.toArray());
   }
 
   /**

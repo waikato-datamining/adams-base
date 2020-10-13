@@ -15,12 +15,17 @@
 
 /*
  * SearchableWrapperListModel.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ListModel;
@@ -29,7 +34,6 @@ import javax.swing.ListModel;
  * Wraps around any list model and makes them automatically searchable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SearchableWrapperListModel
   extends AbstractListModel
@@ -48,7 +52,13 @@ public class SearchableWrapperListModel
   protected boolean m_RegExpSearch;
 
   /** the indices of the indices to display that match a search string. */
-  protected TIntArrayList m_DisplayIndices;
+  protected TIntList m_DisplayIndices;
+
+  /** the indices of the indices to display that match a search string. */
+  protected TIntSet m_DisplayIndicesSet;
+
+  /** the relation between actual and display index. */
+  protected TIntIntMap m_ActualToDisplayIndex;
 
   /**
    * initializes with no model.
@@ -65,7 +75,9 @@ public class SearchableWrapperListModel
   public SearchableWrapperListModel(ListModel model) {
     super();
 
-    m_DisplayIndices  = null;
+    m_DisplayIndices       = null;
+    m_DisplayIndicesSet    = null;
+    m_ActualToDisplayIndex = null;
 
     setActualModel(model);
   }
@@ -95,10 +107,14 @@ public class SearchableWrapperListModel
    */
   protected void initialize() {
     if (getActualModel() == null) {
-      m_DisplayIndices  = null;
+      m_DisplayIndices       = null;
+      m_DisplayIndicesSet    = null;
+      m_ActualToDisplayIndex = null;
     }
     else {
-      m_DisplayIndices = null;
+      m_DisplayIndices       = null;
+      m_DisplayIndicesSet    = null;
+      m_ActualToDisplayIndex = null;
       if (m_SearchString != null)
 	search(m_SearchString, m_RegExpSearch);
     }
@@ -130,6 +146,46 @@ public class SearchableWrapperListModel
 	result = m_DisplayIndices.get(visibleIndex);
       else
 	result = visibleIndex;
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the index from the actual underlying model is visible.
+   *
+   * @param actualIndex		the actual index to check for visibility
+   * @return			true if visible
+   */
+  public boolean isVisible(int actualIndex) {
+    boolean	result;
+
+    result = false;
+
+    if (isInitialized()) {
+      if (m_DisplayIndicesSet != null)
+	result = m_DisplayIndicesSet.contains(actualIndex);
+      else
+        result = true;
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the visible index for an actual index in the model.
+   *
+   * @param actualIndex		the actual index to get the visible index for
+   * @return			the index, -1 if failed to locate
+   */
+  public int getVisibleIndex(int actualIndex) {
+    int		result;
+
+    result = -1;
+
+    if (isInitialized()) {
+      if (m_ActualToDisplayIndex != null)
+	result = m_ActualToDisplayIndex.get(actualIndex);
     }
 
     return result;
@@ -208,7 +264,9 @@ public class SearchableWrapperListModel
 
     // no search -> display everything
     if (m_SearchString == null) {
-      m_DisplayIndices = null;
+      m_DisplayIndices       = null;
+      m_DisplayIndicesSet    = null;
+      m_ActualToDisplayIndex = null;
     }
     // perform search
     else {
@@ -223,6 +281,10 @@ public class SearchableWrapperListModel
 	    m_DisplayIndices.add(i);
 	}
       }
+      m_DisplayIndicesSet = new TIntHashSet(m_DisplayIndices);
+      m_ActualToDisplayIndex = new TIntIntHashMap();
+      for (i = 0; i < m_DisplayIndices.size(); i++)
+        m_ActualToDisplayIndex.put(m_DisplayIndices.get(i), i);
     }
 
     fireContentsChanged(this, 0, getSize());
