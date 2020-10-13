@@ -25,18 +25,22 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.TableRowRange;
+import adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview;
+import adams.gui.core.spreadsheetpreview.AbstractSpreadSheetPreview.AbstractSpreadSheetPreviewPanel;
+import adams.gui.core.spreadsheetpreview.NullPreview;
 import adams.gui.event.SearchEvent;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -181,6 +185,9 @@ public class SpreadSheetSelectSubset
   /** whether to allow multiple rows to be selected. */
   protected boolean m_MultiSelection;
 
+  /** the preview to use. */
+  protected AbstractSpreadSheetPreview m_Preview;
+
   /** whether the data was accepted. */
   protected boolean m_Accepted;
 
@@ -214,6 +221,10 @@ public class SpreadSheetSelectSubset
     m_OptionManager.add(
       "multi-selection", "multiSelection",
       true);
+
+    m_OptionManager.add(
+      "preview", "preview",
+      new NullPreview());
   }
 
   /**
@@ -364,6 +375,35 @@ public class SpreadSheetSelectSubset
   }
 
   /**
+   * Sets the preview to use for selected rows.
+   *
+   * @param value 	the preview
+   */
+  public void setPreview(AbstractSpreadSheetPreview value) {
+    m_Preview = value;
+    reset();
+  }
+
+  /**
+   * Returns the preview to use for selected rows.
+   *
+   * @return 		the preview
+   */
+  public AbstractSpreadSheetPreview getPreview() {
+    return m_Preview;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String previewTipText() {
+    return "The preview to use for selected rows.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -398,13 +438,15 @@ public class SpreadSheetSelectSubset
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel		result;
-    JPanel		panelCenter;
-    JPanel		panelMessage;
-    JPanel 		panelButtons;
-    final BaseButton 	buttonOK;
-    final BaseButton	buttonCancel;
-    SearchPanel		panelSearch;
+    BasePanel					result;
+    JPanel					panelCenter;
+    JPanel					panelMessage;
+    JPanel 					panelButtons;
+    final BaseButton 				buttonOK;
+    final BaseButton				buttonCancel;
+    SearchPanel					panelSearch;
+    BaseSplitPane 				splitPane;
+    final AbstractSpreadSheetPreviewPanel 	previewPanel;
 
     result = new BasePanel(new BorderLayout());
 
@@ -416,7 +458,27 @@ public class SpreadSheetSelectSubset
       m_Table.getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     else
       m_Table.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    panelCenter.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+    previewPanel = m_Preview.generate();
+    if (previewPanel == null) {
+      panelCenter.add(new adams.gui.core.BaseScrollPane(m_Table), BorderLayout.CENTER);
+    }
+    else {
+      splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+      splitPane.setOneTouchExpandable(true);
+      splitPane.setResizeWeight(1.0);
+      splitPane.setTopComponent(new adams.gui.core.BaseScrollPane(m_Table));
+      splitPane.setBottomComponent(previewPanel);
+      splitPane.setDividerLocation((int) (m_Height * 0.5));
+      splitPane.setUISettingsParameters(SpreadSheetSelectSubset.class, "previewDividerLocation");
+      panelCenter.add(splitPane, BorderLayout.CENTER);
+      m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+	int[] sel = m_Table.getSelectedRows();
+	int[] rows = new int[sel.length];
+	for (int i = 0; i < rows.length; i++)
+	  rows[i] = m_Table.getActualRow(sel[i]);
+	previewPanel.preview(m_Table.toSpreadSheet(), rows);
+      });
+    }
 
     m_LabelMessage = new JLabel();
     panelMessage = new JPanel(new FlowLayout(FlowLayout.LEFT));
