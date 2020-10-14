@@ -155,6 +155,7 @@ public class GrayOrIndexedImageHandler
       return new NoPreviewAvailablePanel();
 
     colorizer = new GrayOrIndexedColorizer();
+    colorizer.setLoggingLevel(m_LoggingLevel);
     colorizer.setColorProvider(m_ColorProvider.shallowCopy());
     cont      = colorizer.transform(cont)[0];
 
