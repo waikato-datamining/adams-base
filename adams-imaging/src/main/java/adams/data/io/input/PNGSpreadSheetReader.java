@@ -131,6 +131,8 @@ public class PNGSpreadSheetReader
     IImageLine 		line;
     ImageLineByte 	lineByte;
     ImageLineInt 	lineInt;
+    int			channels;
+    int			color;
 
     try {
       reader = new PngReader(in);
@@ -139,6 +141,7 @@ public class PNGSpreadSheetReader
 
       result = new DefaultSpreadSheet();
       // header
+      channels = reader.imgInfo.channels;
       row = result.getHeaderRow();
       for (i = 0; i < reader.imgInfo.cols; i++)
         row.addCell("" + i).setContentAsString("" + (i+1));
@@ -148,14 +151,60 @@ public class PNGSpreadSheetReader
         row  = result.addRow();
         line = reader.readRow();
 	if (line instanceof ImageLineByte) {
-	  lineByte = (ImageLineByte) reader.readRow();
-	  for (i = 0; i < reader.imgInfo.cols; i++)
-	    row.addCell("" + i).setContent(lineByte.getElem(i));
+	  lineByte = (ImageLineByte) reader.readRow(n);
+	  for (i = 0; i < reader.imgInfo.cols; i++) {
+	    if (channels == 4) {
+	      color = lineByte.getElem(i * channels + 3) << 24  // A
+		| lineByte.getElem(i * channels) << 16          // R
+		| lineByte.getElem(i * channels + 1) << 8       // G
+		| lineByte.getElem(i * channels + 2);           // B
+	    }
+	    else if (channels == 3) {
+	      color = lineByte.getElem(i * channels) << 16      // R
+		| lineByte.getElem(i * channels + 1) << 8       // G
+		| lineByte.getElem(i * channels + 2);           // B
+	    }
+	    else if (channels == 2) {
+	      color = lineByte.getElem(i * channels + 1) << 24  // A
+		| lineByte.getElem(i * channels) << 16          // gray
+		| lineByte.getElem(i * channels) << 8           // gray
+		| lineByte.getElem(i * channels);               // gray
+	    }
+	    else {
+	      color = lineByte.getElem(i) << 16      // gray
+		| lineByte.getElem(i) << 8           // gray
+		| lineByte.getElem(i);               // gray
+	    }
+	    row.addCell("" + i).setContent(color);
+	  }
 	}
 	else {
-	  lineInt = (ImageLineInt) reader.readRow();
-	  for (i = 0; i < reader.imgInfo.cols; i++)
-	    row.addCell("" + i).setContent(lineInt.getElem(i));
+	  lineInt = (ImageLineInt) reader.readRow(n);
+	  for (i = 0; i < reader.imgInfo.cols; i++) {
+	    if (channels == 4) {
+	      color = lineInt.getElem(i * channels + 3) << 24  // A
+		| lineInt.getElem(i * channels) << 16          // R
+		| lineInt.getElem(i * channels + 1) << 8       // G
+		| lineInt.getElem(i * channels + 2);           // B
+	    }
+	    else if (channels == 3) {
+	      color = lineInt.getElem(i * channels) << 16      // R
+		| lineInt.getElem(i * channels + 1) << 8       // G
+		| lineInt.getElem(i * channels + 2);           // B
+	    }
+	    else if (channels == 2) {
+	      color = lineInt.getElem(i * channels + 1) << 24  // A
+		| lineInt.getElem(i * channels) << 16          // gray
+		| lineInt.getElem(i * channels) << 8           // gray
+		| lineInt.getElem(i * channels);               // gray
+	    }
+	    else {
+	      color = lineInt.getElem(i) << 16      // gray
+		| lineInt.getElem(i) << 8           // gray
+		| lineInt.getElem(i);               // gray
+	    }
+	    row.addCell("" + i).setContent(color);
+	  }
 	}
       }
     }
