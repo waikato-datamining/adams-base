@@ -25,6 +25,18 @@ import adams.data.random.JavaRandomInt;
 import adams.data.random.RandomIntegerRangeGenerator;
 import adams.env.Environment;
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.TByteSet;
+import gnu.trove.set.TDoubleSet;
+import gnu.trove.set.TFloatSet;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.TLongSet;
+import gnu.trove.set.TShortSet;
+import gnu.trove.set.hash.TByteHashSet;
+import gnu.trove.set.hash.TDoubleHashSet;
+import gnu.trove.set.hash.TFloatHashSet;
+import gnu.trove.set.hash.TIntHashSet;
+import gnu.trove.set.hash.TLongHashSet;
+import gnu.trove.set.hash.TShortHashSet;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 import java.util.Arrays;
@@ -2257,6 +2269,84 @@ public class StatUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static byte[] uniqueValues(byte[] numbers) {
+    TByteSet result;
+
+    result = new TByteHashSet(numbers);
+    return result.toArray();
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static short[] uniqueValues(short[] numbers) {
+    TShortSet result;
+
+    result = new TShortHashSet(numbers);
+    return result.toArray();
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static int[] uniqueValues(int[] numbers) {
+    TIntSet	result;
+
+    result = new TIntHashSet(numbers);
+    return result.toArray();
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static long[] uniqueValues(long[] numbers) {
+    TLongSet result;
+
+    result = new TLongHashSet(numbers);
+    return result.toArray();
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static float[] uniqueValues(float[] numbers) {
+    TFloatSet result;
+
+    result = new TFloatHashSet(numbers);
+    return result.toArray();
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static double[] uniqueValues(double[] numbers) {
+    TDoubleSet result;
+
+    result = new TDoubleHashSet(numbers);
+    return result.toArray();
   }
 
   /**
