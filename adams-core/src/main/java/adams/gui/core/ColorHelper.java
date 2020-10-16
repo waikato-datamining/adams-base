@@ -15,7 +15,7 @@
 
 /*
  * ColorHelper.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -87,6 +87,7 @@ public class ColorHelper {
    * Formats:
    * <ul>
    *   <li>hex notation: #(AA)RRGGBB with AA/RR/GG/BB being hexadecimal strings</li>
+   *   <li>hex notation: #RGB with R/G/B being hexadecimal shorthand strings</li>
    *   <li>RGB notation: (A,)R,G,B with A/R/G/B from 0-255</li>
    *   </li>predefined names (case-insensitive) : black, blue, cyan, darkgray,
    *   darkgrey, gray, grey, green, lightgray, lightgrey, magenta, orange,
@@ -109,7 +110,13 @@ public class ColorHelper {
     switch (notation) {
       case HEX:
 	str    = str.replaceAll("#", "");
-	if (str.length() == 6) {
+	if (str.length() == 3) {
+	  result = new Color(
+	      Integer.parseInt(str.substring(0, 1) + str.substring(0, 1), 16),
+	      Integer.parseInt(str.substring(1, 2) + str.substring(1, 2), 16),
+	      Integer.parseInt(str.substring(2, 3) + str.substring(2, 3), 16));
+	}
+	else if (str.length() == 6) {
 	  result = new Color(
 	      Integer.parseInt(str.substring(0, 2), 16),
 	      Integer.parseInt(str.substring(2, 4), 16),
