@@ -251,26 +251,32 @@ public class Fonts {
    * Sets plain font for the component.
    *
    * @param comp	the component to update
+   * @return		the component
    */
-  public static void usePlain(Component comp) {
+  public static Component usePlain(Component comp) {
     comp.setFont(comp.getFont().deriveFont(Font.PLAIN));
+    return comp;
   }
 
   /**
    * Sets bold font for the component.
    *
    * @param comp	the component to update
+   * @return		the component
    */
-  public static void useBold(Component comp) {
+  public static Component useBold(Component comp) {
     comp.setFont(comp.getFont().deriveFont(Font.BOLD));
+    return comp;
   }
 
   /**
    * Sets italic font for the component.
    *
    * @param comp	the component to update
+   * @return		the component
    */
-  public static void useItalic(Component comp) {
+  public static Component useItalic(Component comp) {
     comp.setFont(comp.getFont().deriveFont(Font.ITALIC));
+    return comp;
   }
 }
