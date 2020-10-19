@@ -55,6 +55,17 @@ public class MouseUtils {
   }
 
   /**
+   * Checks whether the left mouse button is down.
+   * Ctrl/Alt/Shift are allowed.
+   *
+   * @param e		the event
+   * @return		true if left button down
+   */
+  public static boolean isLeftDown(MouseEvent e) {
+    return (e.getButton() == MouseEvent.BUTTON1);
+  }
+
+  /**
    * Checks whether the mouse event is a double-click event (with the left
    * mouse button).
    * Ctrl/Alt/Shift are allowed.
@@ -78,6 +89,17 @@ public class MouseUtils {
   }
 
   /**
+   * Checks whether the middle mouse button is down.
+   * Ctrl/Alt/Shift are allowed.
+   *
+   * @param e		the event
+   * @return		true if middle/wheel down
+   */
+  public static boolean isMiddleDown(MouseEvent e) {
+    return (e.getButton() == MouseEvent.BUTTON2);
+  }
+
+  /**
    * Checks whether the mouse event is a right-click event.
    * Alt+Left-Click is also interpreted as right-click.
    *
@@ -95,6 +117,16 @@ public class MouseUtils {
       result = true;
 
     return result;
+  }
+
+  /**
+   * Checks whether the right mouse button is down.
+   *
+   * @param e		the event
+   * @return		true if right button down
+   */
+  public static boolean isRightDown(MouseEvent e) {
+    return (e.getButton() == MouseEvent.BUTTON3);
   }
 
   /**
