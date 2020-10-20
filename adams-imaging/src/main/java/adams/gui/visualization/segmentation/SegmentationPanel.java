@@ -1,0 +1,286 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * SegmentationPanel.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ */
+
+package adams.gui.visualization.segmentation;
+
+import adams.core.ClassLister;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.data.image.BufferedImageHelper;
+import adams.data.io.input.PNGImageReader;
+import adams.env.Environment;
+import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseFrame;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseToggleButton;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
+import adams.gui.core.NumberTextField.Type;
+import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.segmentation.layer.LayerManager;
+import adams.gui.visualization.segmentation.layer.OverlayLayer;
+import adams.gui.visualization.segmentation.tool.AbstractTool;
+import adams.gui.visualization.segmentation.tool.Pointer;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.File;
+
+/**
+ * Panel for performing segmentation annotations.
+ *
+ * @author FracPete (fracpete at waikato dot ac dot nz)
+ */
+public class SegmentationPanel
+  extends BasePanel
+  implements ChangeListener {
+
+  private static final long serialVersionUID = -7354416525309860289L;
+
+  /** layer manager. */
+  protected LayerManager m_Manager;
+
+  /** the main split pane. */
+  protected BaseSplitPane m_SplitPaneLeft;
+
+  /** the left split pane. */
+  protected BaseSplitPane m_SplitPaneRight;
+
+  /** the left panel. */
+  protected BasePanel m_PanelLeft;
+
+  /** the text field for the zoom. */
+  protected NumberTextField m_TextZoom;
+
+  /** the button for applying the zoom. */
+  protected BaseFlatButton m_ButtonZoom;
+
+  /** the layers panel. */
+  protected BasePanel m_PanelLayers;
+
+  /** the tools panel. */
+  protected BasePanel m_PanelTools;
+
+  /** the split pane for the tools. */
+  protected BaseSplitPane m_SplitPaneTools;
+
+  /** the panel for displaying the tool options. */
+  protected BasePanel m_PanelToolOptions;
+
+  /** the center panel. */
+  protected BasePanel m_PanelCenter;
+
+  /** the panel for drawing. */
+  protected CanvasPanel m_PanelCanvas;
+
+  /** the last mouse listener in use. */
+  protected MouseListener m_LastMouseListener;
+
+  /** the last mouse motion listener in use. */
+  protected MouseMotionListener m_LastMouseMotionListener;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_LastMouseListener       = null;
+    m_LastMouseMotionListener = null;
+  }
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initGUI() {
+    JPanel		panel;
+    Class[]		tools;
+    BaseToggleButton	button;
+    ButtonGroup		group;
+
+    super.initGUI();
+
+    setLayout(new BorderLayout());
+
+    m_SplitPaneLeft = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPaneLeft.setResizeWeight(0.0);
+    add(m_SplitPaneLeft, BorderLayout.CENTER);
+
+    m_PanelLeft = new BasePanel(new BorderLayout());
+    m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
+
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.setBorder(BorderFactory.createTitledBorder("Zoom"));
+    m_PanelLeft.add(panel, BorderLayout.NORTH);
+
+    m_TextZoom = new NumberTextField(Type.DOUBLE, "100");
+    m_TextZoom.setColumns(5);
+    m_TextZoom.setToolTipText("100 = original image size");
+    m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
+    panel.add(m_TextZoom);
+    m_ButtonZoom = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setToolTipText("Apply zoom");
+    m_ButtonZoom.addActionListener((ActionEvent e) -> {
+      m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+      m_Manager.update();
+    });
+    panel.add(m_ButtonZoom);
+
+    m_PanelLayers = new BasePanel();
+    m_PanelLayers.setBorder(BorderFactory.createTitledBorder("Layers"));
+    m_PanelLeft.add(m_PanelLayers, BorderLayout.CENTER);
+
+    m_SplitPaneRight = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPaneRight.setResizeWeight(1.0);
+    m_SplitPaneLeft.setRightComponent(m_SplitPaneRight);
+
+    m_PanelTools = new BasePanel(new BorderLayout());
+    m_PanelTools.setBorder(BorderFactory.createTitledBorder("Tools"));
+    m_SplitPaneRight.setRightComponent(m_PanelTools);
+    m_SplitPaneTools = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_PanelTools.add(m_SplitPaneTools, BorderLayout.CENTER);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    m_SplitPaneTools.setTopComponent(panel);
+    m_PanelToolOptions = new BasePanel(new BorderLayout());
+    m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
+    tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
+    group = new ButtonGroup();
+    for (Class t: tools) {
+      try {
+        final AbstractTool tool = (AbstractTool) t.newInstance();
+        tool.setCanvas(m_PanelCanvas);
+        button = new BaseToggleButton(tool.getIcon());
+        button.setToolTipText(tool.getName());
+        button.addActionListener((ActionEvent e) -> {
+          if (m_LastMouseListener != null)
+            m_PanelCanvas.removeMouseListener(m_LastMouseListener);
+          if (m_LastMouseMotionListener != null)
+            m_PanelCanvas.removeMouseMotionListener(m_LastMouseMotionListener);
+          m_PanelToolOptions.removeAll();
+          tool.setCanvas(m_PanelCanvas);
+          m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
+          m_PanelCanvas.setCursor(tool.getCursor());
+          m_LastMouseListener = tool.getMouseListener();
+          if (m_LastMouseListener != null)
+	    m_PanelCanvas.addMouseListener(m_LastMouseListener);
+          m_LastMouseMotionListener = tool.getMouseMotionListener();
+          if (m_LastMouseMotionListener != null)
+	    m_PanelCanvas.addMouseMotionListener(m_LastMouseMotionListener);
+          m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
+	});
+        group.add(button);
+        if (t.equals(Pointer.class))
+          panel.add(button, 0);
+        else
+	  panel.add(button);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
+      }
+    }
+
+    m_PanelCenter = new BasePanel(new BorderLayout());
+    m_SplitPaneRight.setLeftComponent(m_PanelCenter);
+    m_PanelCanvas = new CanvasPanel();
+    m_PanelCanvas.setOwner(this);
+    m_PanelCenter.add(new BaseScrollPane(m_PanelCanvas));
+    m_Manager = new LayerManager(m_PanelCanvas);
+    m_Manager.addChangeListener(this);
+
+    m_SplitPaneLeft.setDividerLocation(250);
+    m_SplitPaneRight.setDividerLocation(680);
+  }
+
+  /**
+   * Returns the layer manager.
+   *
+   * @return		the manager
+   */
+  public LayerManager getManager() {
+    return m_Manager;
+  }
+
+  /**
+   * Gets called when the layers have changed somehow.
+   *
+   * @param e		the event
+   */
+  @Override
+  public void stateChanged(ChangeEvent e) {
+    int		location;
+    JPanel 	outer;
+    JPanel 	nested;
+
+    m_PanelLayers.removeAll();
+    outer = m_PanelLayers;
+    for (JComponent layer: m_Manager.getLayers()) {
+      outer.add(layer, BorderLayout.NORTH);
+      nested = new JPanel(new BorderLayout());
+      outer.add(nested, BorderLayout.CENTER);
+      outer = nested;
+    }
+    location = m_SplitPaneLeft.getDividerLocation();
+    m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
+    m_SplitPaneLeft.setDividerLocation(location);
+  }
+
+  /**
+   * For testing only.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    SegmentationPanel panel = new SegmentationPanel();
+    panel.getManager().clear();
+    File img = new File(args[0]);
+    panel.getManager().setImage(img.getName(), BufferedImageHelper.read(img).getImage());
+    DefaultColorProvider provider = new DefaultColorProvider();
+    for (int i = 1; i < args.length; i++) {
+      File ovl = new File(args[i]);
+      String label = FileUtils.replaceExtension(ovl.getName(), "").replaceAll(".*-", "");
+      OverlayLayer layer = panel.getManager().addOverlay(label, provider.next(), 0.5f, new PNGImageReader().read(new PlaceholderFile(ovl)).getImage());
+      layer.setRemovable(true);
+    }
+    panel.getManager().update();
+    BaseFrame frame = new BaseFrame("Segmentation");
+    frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
+    frame.setSize(GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
+    frame.setLocationRelativeTo(null);
+    frame.getContentPane().setLayout(new BorderLayout());
+    frame.getContentPane().add(panel, BorderLayout.CENTER);
+    frame.setVisible(true);
+  }
+}

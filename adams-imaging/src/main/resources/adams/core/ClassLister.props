@@ -133,3 +133,7 @@ adams.data.objectfilter.ObjectFilter=\
 # the object finders
 adams.data.objectfinder.ObjectFinder=\
   adams.data.objectfinder
+
+# the tools for the segmentation panel
+adams.gui.visualization.segmentation.tool.AbstractTool=\
+  adams.gui.visualization.segmentation.tool
