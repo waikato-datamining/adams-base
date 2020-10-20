@@ -20,9 +20,16 @@
 
 package adams.gui.visualization.segmentation.layer;
 
+import adams.gui.core.Undo;
+import adams.gui.core.UndoHandlerWithQuickAccess;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoListener;
 import adams.gui.visualization.segmentation.CanvasPanel;
+import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
+import adams.gui.visualization.segmentation.layer.BackgroundLayer.BackgroundLayerState;
+import adams.gui.visualization.segmentation.layer.ImageLayer.ImageLayerState;
+import adams.gui.visualization.segmentation.layer.OverlayLayer.OverlayLayerState;
 
-import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
@@ -41,7 +48,7 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LayerManager
-  implements Serializable {
+  implements Serializable, UndoHandlerWithQuickAccess, UndoListener {
 
   private static final long serialVersionUID = 4462920156618724031L;
 
@@ -63,6 +70,9 @@ public class LayerManager
   /** the zoom (1.0 = 100%). */
   protected double m_Zoom;
 
+  /** the undo manager. */
+  protected Undo m_Undo;
+
   /**
    * Initializes the layer manager.
    *
@@ -71,20 +81,146 @@ public class LayerManager
   public LayerManager(CanvasPanel canvasPanel) {
     m_BackgroundLayer = new BackgroundLayer();
     m_BackgroundLayer.setManager(this);
-    m_ImageLayer = new ImageLayer();
+    m_ImageLayer      = new ImageLayer();
     m_ImageLayer.setManager(this);
-    m_Overlays    = new ArrayList<>();
-    m_CanvasPanel = canvasPanel;
+    m_Overlays        = new ArrayList<>();
+    m_CanvasPanel     = canvasPanel;
     m_ChangeListeners = new HashSet<>();
-    m_Zoom = 1.0;
+    m_Zoom            = 1.0;
+    m_Undo            = new Undo(List.class, true);
+    m_Undo.addUndoListener(this);
   }
 
   /**
-   * Removes all layers, clears the underlying image.
+   * Removes all layers, clears the underlying image and the undo.
    */
   public void clear() {
     m_Overlays.clear();
     m_ImageLayer.setImage(null);
+    m_Undo.clear();
+    update();
+  }
+
+  /**
+   * Sets the undo manager to use, can be null if no undo-support wanted.
+   *
+   * @param value	the undo manager to use
+   */
+  @Override
+  public void setUndo(Undo value) {
+    if (m_Undo != null)
+      m_Undo.removeUndoListener(this);
+    m_Undo = value;
+    m_Undo.addUndoListener(this);
+  }
+
+  /**
+   * Returns the current undo manager, can be null.
+   *
+   * @return		the undo manager, if any
+   */
+  @Override
+  public Undo getUndo() {
+    return m_Undo;
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set
+   */
+  @Override
+  public boolean isUndoSupported() {
+    return (m_Undo != null);
+  }
+
+  /**
+   * performs an undo if possible.
+   */
+  public void undo() {
+    if (!getUndo().canUndo())
+      return;
+    getUndo().undo();
+  }
+
+  /**
+   * performs a redo if possible.
+   */
+  public void redo() {
+    if (!getUndo().canRedo())
+      return;
+    getUndo().redo();
+  }
+
+  /**
+   * Adds an undo point with the given comment.
+   *
+   * @param comment	the comment for the undo point
+   */
+  @Override
+  public void addUndoPoint(String comment) {
+    if (isUndoSupported() && getUndo().isEnabled())
+      getUndo().addUndo(getState(), comment);
+  }
+
+  /**
+   * An undo event, like add or remove, has occurred.
+   *
+   * @param e		the trigger event
+   */
+  public void undoOccurred(UndoEvent e) {
+    switch (e.getType()) {
+      case UNDO:
+	getUndo().addRedo(getState(), e.getUndoPoint().getComment());
+	setState((List<AbstractLayerState>) e.getUndoPoint().getData());
+	break;
+      case REDO:
+	getUndo().addUndo(getState(), e.getUndoPoint().getComment(), true);
+	setState((List<AbstractLayerState>) e.getUndoPoint().getData());
+      default:
+	break;
+    }
+  }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the state
+   */
+  protected List<AbstractLayerState> getState() {
+    List<AbstractLayerState>	result;
+
+    result = new ArrayList<>();
+    for (AbstractLayer l: getLayers())
+      result.add(l.getState());
+
+    return result;
+  }
+
+  /**
+   * Restores the state.
+   *
+   * @param states	the state to restore
+   */
+  protected void setState(List<AbstractLayerState> states) {
+    OverlayLayerState	ostate;
+
+    for (AbstractLayerState state : states) {
+      if (state instanceof BackgroundLayerState) {
+	getBackgroundLayer().setState(state);
+      }
+      else if (state instanceof ImageLayerState) {
+	getImageLayer().setState(state);
+      }
+      else if (state instanceof OverlayLayerState) {
+        ostate = (OverlayLayerState) state;
+        if (hasOverlay(ostate.name))
+          getOverlay(ostate.name).setState(ostate);
+        else
+          addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+      }
+    }
+
     update();
   }
 
@@ -163,13 +299,44 @@ public class LayerManager
    *
    * @return		all layers (background, image, overlays)
    */
-  public List<JComponent> getLayers() {
-    List<JComponent> 	result;
+  public List<AbstractLayer> getLayers() {
+    List<AbstractLayer> 	result;
 
     result = new ArrayList<>();
     result.add(getBackgroundLayer());
     result.add(getImageLayer());
     result.addAll(getOverlays());
+
+    return result;
+  }
+
+  /**
+   * Checks whether a layer with the specified name is present.
+   *
+   * @param name	the name of the layer
+   * @return		true if present
+   */
+  public boolean hasLayer(String name) {
+    return (getLayer(name) != null);
+  }
+
+  /**
+   * Returns the layer with the specified name.
+   *
+   * @param name	the name of the layer
+   * @return		the overlay, null if not found
+   */
+  public AbstractLayer getLayer(String name) {
+    AbstractLayer	result;
+
+    result = null;
+
+    for (OverlayLayer l: m_Overlays) {
+      if (l.getName().equals(name)) {
+        result = l;
+        break;
+      }
+    }
 
     return result;
   }
@@ -279,6 +446,37 @@ public class LayerManager
    */
   public List<OverlayLayer> getOverlays() {
     return m_Overlays;
+  }
+
+  /**
+   * Checks whether an overlay with the specified name is present.
+   *
+   * @param name	the name of the overlay
+   * @return		true if present
+   */
+  public boolean hasOverlay(String name) {
+    return (getOverlay(name) != null);
+  }
+
+  /**
+   * Returns the overlay with the specified name.
+   *
+   * @param name	the name of the overlay
+   * @return		the overlay, null if not found
+   */
+  public OverlayLayer getOverlay(String name) {
+    OverlayLayer	result;
+
+    result = null;
+
+    for (OverlayLayer l: m_Overlays) {
+      if (l.getName().equals(name)) {
+        result = l;
+        break;
+      }
+    }
+
+    return result;
   }
 
   /**

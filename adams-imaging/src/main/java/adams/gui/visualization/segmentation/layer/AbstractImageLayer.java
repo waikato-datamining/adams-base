@@ -37,6 +37,18 @@ public abstract class AbstractImageLayer
   protected BufferedImage m_Image;
 
   /**
+   * For storing the state of an image layer.
+   */
+  public static class AbstractImageLayerState
+    extends AbstractLayerState {
+
+    private static final long serialVersionUID = -5652014216527524598L;
+
+    /** the image. */
+    protected BufferedImage image;
+  }
+
+  /**
    * Initializes the members.
    */
   @Override

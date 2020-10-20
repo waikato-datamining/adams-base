@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.io.Serializable;
 
 /**
  * Ancestor for layers.
@@ -37,6 +38,21 @@ public abstract class AbstractLayer
   extends BasePanel {
 
   private static final long serialVersionUID = -3811495263799661072L;
+
+  /**
+   * For storing the state of a layer.
+   */
+  public static abstract class AbstractLayerState
+    implements Serializable {
+
+    private static final long serialVersionUID = -5652014216527524598L;
+
+    /** the name. */
+    protected String name;
+
+    /** whether enabled. */
+    protected boolean enabled;
+  }
 
   /** the layer manager. */
   protected LayerManager m_Manager;
@@ -133,4 +149,18 @@ public abstract class AbstractLayer
     if (isEnabled())
       doDraw(g2d);
   }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the state
+   */
+  public abstract AbstractLayerState getState();
+
+  /**
+   * Restores the state of the layer.
+   *
+   * @param state	the state
+   */
+  public abstract void setState(AbstractLayerState state);
 }

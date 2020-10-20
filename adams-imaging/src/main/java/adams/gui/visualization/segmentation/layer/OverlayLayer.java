@@ -21,6 +21,7 @@
 package adams.gui.visualization.segmentation.layer;
 
 import adams.core.base.BaseFloat;
+import adams.data.image.BufferedImageHelper;
 import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseObjectTextField;
@@ -48,6 +49,24 @@ public class OverlayLayer
   extends AbstractImageLayer {
 
   private static final long serialVersionUID = 7829707838665930430L;
+
+  /**
+   * For storing the state of an overlay layer.
+   */
+  public static class OverlayLayerState
+    extends AbstractImageLayerState {
+
+    private static final long serialVersionUID = -5652014216527524598L;
+
+    /** the color. */
+    public Color color;
+
+    /** the alpha value. */
+    public float alpha;
+
+    /** whether active. */
+    public boolean active;
+  }
 
   /** The alpha value in use. */
   protected BaseObjectTextField<BaseFloat> m_TextAlpha;
@@ -266,5 +285,44 @@ public class OverlayLayer
     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getAlpha()));
     g2d.drawImage(m_Image, null, 0, 0);
     g2d.setComposite(original);
+  }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the state
+   */
+  @Override
+  public AbstractLayerState getState() {
+    OverlayLayerState	result;
+
+    result        = new OverlayLayerState();
+    result.name   = getName();
+    result.image  = BufferedImageHelper.deepCopy(getImage());
+    result.color  = getColor();
+    result.alpha  = getAlpha();
+    result.active = isActive();
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the layer.
+   *
+   * @param state	the state
+   */
+  @Override
+  public void setState(AbstractLayerState state) {
+    setName(state.name);
+
+    if (state instanceof AbstractImageLayerState) {
+      setImage(((AbstractImageLayerState) state).image);
+    }
+
+    if (state instanceof OverlayLayerState) {
+      setColor(((OverlayLayerState) state).color);
+      setAlpha(((OverlayLayerState) state).alpha);
+      setActive(((OverlayLayerState) state).active);
+    }
   }
 }

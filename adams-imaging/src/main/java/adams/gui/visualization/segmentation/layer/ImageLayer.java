@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.segmentation.layer;
 
+import adams.data.image.BufferedImageHelper;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
@@ -45,6 +46,15 @@ public class ImageLayer
   extends AbstractImageLayer {
 
   private static final long serialVersionUID = 1680744036963757388L;
+
+  /**
+   * For storing the state of a background layer.
+   */
+  public static class ImageLayerState
+    extends AbstractImageLayerState {
+
+    private static final long serialVersionUID = -5652014216527524598L;
+  }
 
   /** the label for the layer name. */
   protected JLabel m_LabelName;
@@ -148,5 +158,33 @@ public class ImageLayer
       m_BrightImage = op.filter(m_Image, m_BrightImage);
     }
     g2d.drawImage(m_BrightImage, null, 0, 0);
+  }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the state
+   */
+  @Override
+  public AbstractLayerState getState() {
+    ImageLayerState	result;
+
+    result       = new ImageLayerState();
+    result.name  = getName();
+    result.image = BufferedImageHelper.deepCopy(getImage());
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the layer.
+   *
+   * @param state	the state
+   */
+  public void setState(AbstractLayerState state) {
+    setName(state.name);
+
+    if (state instanceof ImageLayerState)
+      setImage(((ImageLayerState) state).image);
   }
 }

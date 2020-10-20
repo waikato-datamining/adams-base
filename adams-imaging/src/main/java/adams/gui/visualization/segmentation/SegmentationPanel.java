@@ -33,10 +33,13 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseToggleButton;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoListener;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
@@ -46,6 +49,7 @@ import adams.gui.visualization.segmentation.tool.Pointer;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -55,6 +59,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.util.Date;
 
 /**
  * Panel for performing segmentation annotations.
@@ -63,12 +68,27 @@ import java.io.File;
  */
 public class SegmentationPanel
   extends BasePanel
-  implements ChangeListener {
+  implements ChangeListener, UndoListener {
 
   private static final long serialVersionUID = -7354416525309860289L;
 
   /** layer manager. */
   protected LayerManager m_Manager;
+
+  /** the text field for the zoom. */
+  protected NumberTextField m_TextZoom;
+
+  /** the button for applying the zoom. */
+  protected BaseFlatButton m_ButtonZoom;
+
+  /** the button for adding an undo. */
+  protected BaseFlatButton m_ButtonAddUndo;
+
+  /** the button for performing an undo. */
+  protected BaseFlatButton m_ButtonUndo;
+
+  /** the button for performing a redo. */
+  protected BaseFlatButton m_ButtonRedo;
 
   /** the main split pane. */
   protected BaseSplitPane m_SplitPaneLeft;
@@ -78,12 +98,6 @@ public class SegmentationPanel
 
   /** the left panel. */
   protected BasePanel m_PanelLeft;
-
-  /** the text field for the zoom. */
-  protected NumberTextField m_TextZoom;
-
-  /** the button for applying the zoom. */
-  protected BaseFlatButton m_ButtonZoom;
 
   /** the layers panel. */
   protected BasePanel m_PanelLayers;
@@ -127,6 +141,7 @@ public class SegmentationPanel
   protected void initGUI() {
     JPanel		panel;
     Class[]		tools;
+    JLabel		label;
     BaseToggleButton	button;
     ButtonGroup		group;
 
@@ -134,21 +149,18 @@ public class SegmentationPanel
 
     setLayout(new BorderLayout());
 
-    m_SplitPaneLeft = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPaneLeft.setResizeWeight(0.0);
-    add(m_SplitPaneLeft, BorderLayout.CENTER);
-
-    m_PanelLeft = new BasePanel(new BorderLayout());
-    m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
-
+    // top
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.setBorder(BorderFactory.createTitledBorder("Zoom"));
-    m_PanelLeft.add(panel, BorderLayout.NORTH);
+    add(panel, BorderLayout.NORTH);
 
     m_TextZoom = new NumberTextField(Type.DOUBLE, "100");
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original image size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
+    label = new JLabel("Zoom");
+    label.setDisplayedMnemonic('Z');
+    label.setLabelFor(m_TextZoom);
+    panel.add(Fonts.usePlain(label));
     panel.add(m_TextZoom);
     m_ButtonZoom = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonZoom.setToolTipText("Apply zoom");
@@ -157,11 +169,32 @@ public class SegmentationPanel
       m_Manager.update();
     });
     panel.add(m_ButtonZoom);
+    m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
+    m_ButtonAddUndo.setToolTipText("Add undo point");
+    m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndo());
+    panel.add(m_ButtonAddUndo);
+    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo.setToolTipText("Undo changes");
+    m_ButtonUndo.addActionListener((ActionEvent e) -> undo());
+    panel.add(m_ButtonUndo);
+    m_ButtonRedo = new BaseFlatButton(GUIHelper.getIcon("redo.gif"));
+    m_ButtonRedo.setToolTipText("Redo changes");
+    m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
+    panel.add(m_ButtonRedo);
+
+    // left
+    m_SplitPaneLeft = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPaneLeft.setResizeWeight(0.0);
+    add(m_SplitPaneLeft, BorderLayout.CENTER);
+
+    m_PanelLeft = new BasePanel(new BorderLayout());
+    m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
 
     m_PanelLayers = new BasePanel();
     m_PanelLayers.setBorder(BorderFactory.createTitledBorder("Layers"));
     m_PanelLeft.add(m_PanelLayers, BorderLayout.CENTER);
 
+    // right
     m_SplitPaneRight = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPaneRight.setResizeWeight(1.0);
     m_SplitPaneLeft.setRightComponent(m_SplitPaneRight);
@@ -211,6 +244,7 @@ public class SegmentationPanel
       }
     }
 
+    // center
     m_PanelCenter = new BasePanel(new BorderLayout());
     m_SplitPaneRight.setLeftComponent(m_PanelCenter);
     m_PanelCanvas = new CanvasPanel();
@@ -218,9 +252,19 @@ public class SegmentationPanel
     m_PanelCenter.add(new BaseScrollPane(m_PanelCanvas));
     m_Manager = new LayerManager(m_PanelCanvas);
     m_Manager.addChangeListener(this);
+    m_Manager.getUndo().addUndoListener(this);
 
     m_SplitPaneLeft.setDividerLocation(250);
     m_SplitPaneRight.setDividerLocation(680);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
   }
 
   /**
@@ -257,6 +301,55 @@ public class SegmentationPanel
   }
 
   /**
+   * Updates the state of the buttons.
+   */
+  protected void updateButtons() {
+    m_ButtonZoom.setEnabled(getManager().getImageLayer().getImage() != null);
+    m_ButtonAddUndo.setEnabled(getManager().isUndoSupported());
+    m_ButtonUndo.setEnabled(getManager().getUndo().canUndo());
+    m_ButtonRedo.setEnabled(getManager().getUndo().canRedo());
+  }
+
+  /**
+   * Adds an undo point.
+   */
+  public void addUndo() {
+    getManager().addUndoPoint(new Date().toString());
+    updateButtons();
+  }
+
+  /**
+   * Performs an undo.
+   */
+  public void undo() {
+    getManager().undo();
+  }
+
+  /**
+   * Performs a redo.
+   */
+  public void redo() {
+    getManager().redo();
+  }
+
+  /**
+   * An undo event, like add or remove, has occurred.
+   *
+   * @param e		the trigger event
+   */
+  public void undoOccurred(UndoEvent e) {
+    updateButtons();
+  }
+
+  /**
+   * Updates buttons and manager.
+   */
+  public void update() {
+    updateButtons();
+    getManager().update();
+  }
+
+  /**
    * For testing only.
    *
    * @param args	ignored
@@ -274,7 +367,7 @@ public class SegmentationPanel
       OverlayLayer layer = panel.getManager().addOverlay(label, provider.next(), 0.5f, new PNGImageReader().read(new PlaceholderFile(ovl)).getImage());
       layer.setRemovable(true);
     }
-    panel.getManager().update();
+    panel.update();
     BaseFrame frame = new BaseFrame("Segmentation");
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.setSize(GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));

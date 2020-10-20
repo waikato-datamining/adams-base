@@ -44,6 +44,18 @@ public class BackgroundLayer
 
   private static final long serialVersionUID = 1680744036963757388L;
 
+  /**
+   * For storing the state of a background layer.
+   */
+  public static class BackgroundLayerState
+    extends AbstractLayerState {
+
+    private static final long serialVersionUID = -5652014216527524598L;
+
+    /** the color. */
+    protected Color color;
+  }
+
   /** the label with the name. */
   protected JLabel m_LabelName;
 
@@ -128,5 +140,33 @@ public class BackgroundLayer
   protected void doDraw(Graphics2D g2d) {
     g2d.setColor(getColor());
     g2d.fillRect(0, 0, getManager().getWidth(), getManager().getHeight());
+  }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the state
+   */
+  @Override
+  public AbstractLayerState getState() {
+    BackgroundLayerState	result;
+
+    result       = new BackgroundLayerState();
+    result.name  = getName();
+    result.color = getColor();
+
+    return result;
+  }
+
+  /**
+   * Restores the state of the layer.
+   *
+   * @param state	the state
+   */
+  public void setState(AbstractLayerState state) {
+    setName(state.name);
+
+    if (state instanceof BackgroundLayerState)
+      setColor(((BackgroundLayerState) state).color);
   }
 }
