@@ -500,13 +500,13 @@ public class LayerManager
   }
 
   /**
-   * Returns the active layer, if any.
+   * Returns the active layer, if any. Must be enabled, too.
    *
    * @return		the layer, null if none active
    */
   public OverlayLayer getActive() {
     for (OverlayLayer l: m_Overlays) {
-      if (l.isActive())
+      if (l.isActive() && l.isEnabled())
         return l;
     }
     return null;
