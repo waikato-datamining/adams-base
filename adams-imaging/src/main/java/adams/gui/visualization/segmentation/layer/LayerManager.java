@@ -393,7 +393,7 @@ public class LayerManager
     OverlayLayer 	result;
 
     if (image == null)
-      image = new BufferedImage(m_ImageLayer.getImage().getWidth(), m_ImageLayer.getImage().getHeight(), BufferedImage.TYPE_INT_ARGB);
+      image = OverlayLayer.newImage(m_ImageLayer.getImage().getWidth(), m_ImageLayer.getImage().getHeight());
 
     result = new OverlayLayer();
     result.setManager(this);
