@@ -2170,7 +2170,7 @@ public class ImagePanel
   }
 
   /**
-   * peforms an undo if possible.
+   * performs an undo if possible.
    */
   public void undo() {
     if (!getUndo().canUndo())
@@ -2179,7 +2179,7 @@ public class ImagePanel
   }
 
   /**
-   * peforms a redo if possible.
+   * performs a redo if possible.
    */
   public void redo() {
     if (!getUndo().canRedo())
