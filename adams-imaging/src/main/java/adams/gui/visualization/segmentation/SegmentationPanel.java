@@ -350,6 +350,25 @@ public class SegmentationPanel
   }
 
   /**
+   * Sets the zoom to use.
+   *
+   * @param value	the zoom (100 = original size)
+   */
+  public void setZoom(double value) {
+    m_TextZoom.setValue(value);
+    update();
+  }
+
+  /**
+   * Returns the current zoom in use.
+   *
+   * @return		the zoom (100 = original size)
+   */
+  public double getZoom() {
+    return m_TextZoom.getValue().doubleValue();
+  }
+
+  /**
    * For testing only.
    *
    * @param args	ignored
