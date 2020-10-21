@@ -511,7 +511,7 @@ public class ImageSegmentationAnnotator
     if (m_Accepted) {
       layers = new HashMap<>();
       for (OverlayLayer l: m_PanelSegmentation.getManager().getOverlays())
-        layers.put(l.getName(), l.getImage());
+        layers.put(l.getName(), l.getIndexedImage());
       segcont = new ImageSegmentationContainer();
       segcont.setValue(ImageSegmentationContainer.VALUE_BASE, m_PanelSegmentation.getManager().getImageLayer().getImage());
       segcont.setValue(ImageSegmentationContainer.VALUE_LAYERS, layers);

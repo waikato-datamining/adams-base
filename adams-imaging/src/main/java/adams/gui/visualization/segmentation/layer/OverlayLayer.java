@@ -273,6 +273,15 @@ public class OverlayLayer
   }
 
   /**
+   * Returns the image as image with indexed palette.
+   *
+   * @return		the converted image
+   */
+  public BufferedImage getIndexedImage() {
+    return BufferedImageHelper.convert(getImage(), BufferedImage.TYPE_BYTE_INDEXED);
+  }
+
+  /**
    * Performs the drawing.
    *
    * @param g2d		the graphics context
