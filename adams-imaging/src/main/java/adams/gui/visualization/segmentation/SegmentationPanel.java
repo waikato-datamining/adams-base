@@ -21,6 +21,7 @@
 package adams.gui.visualization.segmentation;
 
 import adams.core.ClassLister;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
@@ -77,6 +78,15 @@ public class SegmentationPanel
 
   /** the text field for the zoom. */
   protected NumberTextField m_TextZoom;
+
+  /** the button for clearing zoom. */
+  protected BaseFlatButton m_ButtonZoomClear;
+
+  /** the button for zooming in. */
+  protected BaseFlatButton m_ButtonZoomIn;
+
+  /** the button for zooming out. */
+  protected BaseFlatButton m_ButtonZoomOut;
 
   /** the button for applying the zoom. */
   protected BaseFlatButton m_ButtonZoom;
@@ -169,6 +179,31 @@ public class SegmentationPanel
       m_Manager.update();
     });
     panel.add(m_ButtonZoom);
+    m_ButtonZoomClear = new BaseFlatButton(GUIHelper.getIcon("zoom_clear.png"));
+    m_ButtonZoomClear.setToolTipText("Clear zoom");
+    m_ButtonZoomClear.addActionListener((ActionEvent e) -> {
+      m_TextZoom.setValue(100);
+      m_Manager.setZoom(1.0);
+      m_Manager.update();
+    });
+    panel.add(m_ButtonZoomClear);
+    m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
+    m_ButtonZoomIn.setToolTipText("Zoom in");
+    m_ButtonZoomIn.addActionListener((ActionEvent e) -> {
+      m_TextZoom.setValue(Utils.round(m_TextZoom.getValue().doubleValue() * 1.4, 1));
+      m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+      m_Manager.update();
+    });
+    panel.add(m_ButtonZoomIn);
+    m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
+    m_ButtonZoomOut.setToolTipText("Zoom in");
+    m_ButtonZoomOut.addActionListener((ActionEvent e) -> {
+      m_TextZoom.setValue(Utils.round(m_TextZoom.getValue().doubleValue() / 1.4, 1));
+      m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+      m_Manager.update();
+    });
+    panel.add(m_ButtonZoomOut);
+    panel.add(new JLabel(" "));
     m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
     m_ButtonAddUndo.setToolTipText("Add undo point");
     m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndo());
