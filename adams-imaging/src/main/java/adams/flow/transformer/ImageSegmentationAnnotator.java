@@ -56,7 +56,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.ImageSegmentationContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.ImageSegmentationContainer: base-image, layers
+ * - adams.flow.container.ImageSegmentationContainer: name, base, layers
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -103,27 +103,27 @@ import java.util.Map;
  *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
- * &nbsp;&nbsp;&nbsp;default: 800
+ * &nbsp;&nbsp;&nbsp;default: 1200
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
- * &nbsp;&nbsp;&nbsp;default: 600
+ * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
- * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;default: -2
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
- * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;default: -2
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  *
@@ -166,6 +166,11 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;minimum: 1.0
  * </pre>
  *
+ * <pre>-allow-layer-remove &lt;boolean&gt; (property: allowLayerRemoval)
+ * &nbsp;&nbsp;&nbsp;If enabled, the user can remove layers.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -189,6 +194,9 @@ public class ImageSegmentationAnnotator
 
   /** the zoom level. */
   protected double m_Zoom;
+
+  /** whether layers can be deleted. */
+  protected boolean m_AllowLayerRemoval;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -225,6 +233,10 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "zoom", "zoom",
       100.0, 1.0, null);
+
+    m_OptionManager.add(
+      "allow-layer-remove", "allowLayerRemoval",
+      false);
   }
 
   /**
@@ -386,6 +398,35 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets whether removal of layers is allowed.
+   *
+   * @param value 	true if allowed
+   */
+  public void setAllowLayerRemoval(boolean value) {
+    m_AllowLayerRemoval = value;
+    reset();
+  }
+
+  /**
+   * Returns whether removal of layers is allowed.
+   *
+   * @return 		true if allowed
+   */
+  public boolean getAllowLayerRemoval() {
+    return m_AllowLayerRemoval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String allowLayerRemovalTipText() {
+    return "If enabled, the user can remove layers.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -468,6 +509,7 @@ public class ImageSegmentationAnnotator
     AbstractImageContainer	imgcont;
     ImageSegmentationContainer	segcont;
     Map<String,BufferedImage> 	layers;
+    OverlayLayer		layer;
 
     m_Accepted = false;
 
@@ -493,16 +535,17 @@ public class ImageSegmentationAnnotator
     for (BaseString label: m_Labels) {
       if (layers != null) {
         if (layers.containsKey(label.getValue())) {
-	  m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
+	  layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
 	}
 	else {
           getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-	  m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
+	  layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
 	}
       }
       else {
-        m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
+        layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
       }
+      layer.setRemovable(m_AllowLayerRemoval);
     }
     m_PanelSegmentation.update();
     m_Dialog.setVisible(true);
