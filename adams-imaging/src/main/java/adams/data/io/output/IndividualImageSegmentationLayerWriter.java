@@ -40,6 +40,9 @@ public class IndividualImageSegmentationLayerWriter
 
   private static final long serialVersionUID = 8630734382383387883L;
 
+  /** whether to skip writing base image. */
+  protected boolean m_SkipBaseImage;
+
   /**
    * Returns a string describing the object.
    *
@@ -48,6 +51,18 @@ public class IndividualImageSegmentationLayerWriter
   @Override
   public String globalInfo() {
     return "Uses a JPG as base image and indexed PNG files for the individual layers (0 = background, 1 = annotation).";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "skip-base-image", "skipBaseImage",
+      false);
   }
 
   /**
@@ -92,6 +107,35 @@ public class IndividualImageSegmentationLayerWriter
   }
 
   /**
+   * Sets whether to skip writing the base image.
+   *
+   * @param value 	true if to skip
+   */
+  public void setSkipBaseImage(boolean value) {
+    m_SkipBaseImage = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip writing the base image.
+   *
+   * @return 		true if to skip
+   */
+  public boolean getSkipBaseImage() {
+    return m_SkipBaseImage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipBaseImageTipText() {
+    return "If enabled, the base image is not written to disk (eg when updating only the layers).";
+  }
+
+  /**
    * Writes the image segmentation annotations.
    *
    * @param file	the file to write to
@@ -105,13 +149,16 @@ public class IndividualImageSegmentationLayerWriter
     Map<String,BufferedImage> 	layers;
     PlaceholderFile		layerFile;
 
+    result = null;
     prefix = FileUtils.replaceExtension(file.getAbsolutePath(), "");
 
-    if (isLoggingEnabled())
-      getLogger().info("Writing base image to: " + file);
-    result = BufferedImageHelper.write(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file);
-    if (result != null)
-      result = "Failed to write base image: " + result;
+    if (!m_SkipBaseImage) {
+      if (isLoggingEnabled())
+        getLogger().info("Writing base image to: " + file);
+      result = BufferedImageHelper.write(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file);
+      if (result != null)
+        result = "Failed to write base image: " + result;
+    }
 
     if ((result == null) && (annotations.hasValue(ImageSegmentationContainer.VALUE_LAYERS))) {
       layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS, Map.class);
