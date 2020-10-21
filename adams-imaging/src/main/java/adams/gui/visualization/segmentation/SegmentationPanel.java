@@ -73,6 +73,9 @@ public class SegmentationPanel
 
   private static final long serialVersionUID = -7354416525309860289L;
 
+  /** the zoom factor to use. */
+  public final static double ZOOM_FACTOR = 1.4;
+
   /** layer manager. */
   protected LayerManager m_Manager;
 
@@ -181,27 +184,15 @@ public class SegmentationPanel
     panel.add(m_ButtonZoom);
     m_ButtonZoomClear = new BaseFlatButton(GUIHelper.getIcon("zoom_clear.png"));
     m_ButtonZoomClear.setToolTipText("Clear zoom");
-    m_ButtonZoomClear.addActionListener((ActionEvent e) -> {
-      m_TextZoom.setValue(100);
-      m_Manager.setZoom(1.0);
-      m_Manager.update();
-    });
+    m_ButtonZoomClear.addActionListener((ActionEvent e) -> clearZoom());
     panel.add(m_ButtonZoomClear);
     m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
     m_ButtonZoomIn.setToolTipText("Zoom in");
-    m_ButtonZoomIn.addActionListener((ActionEvent e) -> {
-      m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * 1.4, 1));
-      m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
-      m_Manager.update();
-    });
+    m_ButtonZoomIn.addActionListener((ActionEvent e) -> zoomIn());
     panel.add(m_ButtonZoomIn);
     m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
-    m_ButtonZoomOut.setToolTipText("Zoom in");
-    m_ButtonZoomOut.addActionListener((ActionEvent e) -> {
-      m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / 1.4, 1));
-      m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
-      m_Manager.update();
-    });
+    m_ButtonZoomOut.setToolTipText("Zoom out");
+    m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
     panel.add(m_ButtonZoomOut);
     panel.add(new JLabel(" "));
     m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
@@ -391,6 +382,7 @@ public class SegmentationPanel
    */
   public void setZoom(double value) {
     m_TextZoom.setValue(value);
+    m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
   }
 
@@ -401,6 +393,33 @@ public class SegmentationPanel
    */
   public double getZoom() {
     return m_TextZoom.getValue().doubleValue();
+  }
+
+  /**
+   * Clears the zoom.
+   */
+  public void clearZoom() {
+    m_TextZoom.setValue(100);
+    m_Manager.setZoom(1.0);
+    m_Manager.update();
+  }
+
+  /**
+   * Zooms in.
+   */
+  public void zoomIn() {
+    m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * ZOOM_FACTOR, 1));
+    m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+    m_Manager.update();
+  }
+
+  /**
+   * Zooms out.
+   */
+  public void zoomOut() {
+    m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / ZOOM_FACTOR, 1));
+    m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+    m_Manager.update();
   }
 
   /**

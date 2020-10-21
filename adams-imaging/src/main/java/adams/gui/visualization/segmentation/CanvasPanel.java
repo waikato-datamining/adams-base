@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.segmentation;
 
+import adams.data.RoundingUtils;
 import adams.gui.core.BasePanel;
 import adams.gui.core.MouseUtils;
 
@@ -27,6 +28,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 /**
  * Used for drawing on.
@@ -78,6 +81,21 @@ public class CanvasPanel
         m_LeftMouseDown  = false;
         m_RightMouseDown = false;
 	super.mouseReleased(e);
+      }
+    });
+
+    addMouseWheelListener(new MouseWheelListener() {
+      @Override
+      public void mouseWheelMoved(MouseWheelEvent e) {
+        double oldZoom = m_Owner.getZoom();
+        double newZoom;
+        int rotation = e.getWheelRotation();
+	if (rotation < 0)
+	  newZoom = oldZoom * Math.pow(SegmentationPanel.ZOOM_FACTOR, -rotation);
+	else
+	  newZoom = oldZoom / Math.pow(SegmentationPanel.ZOOM_FACTOR, rotation);
+	newZoom = RoundingUtils.round(newZoom, 1);
+	m_Owner.setZoom(newZoom);
       }
     });
   }
