@@ -15,13 +15,14 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 import adams.flow.core.Token;
 import adams.parser.GrammarSupplier;
 import adams.parser.MathematicalExpression;
@@ -238,6 +239,9 @@ public class MathExpression
   /** the rounding type to perform. */
   protected RoundingType m_RoundingType;
 
+  /** the number of decimals. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
@@ -280,6 +284,10 @@ public class MathExpression
     m_OptionManager.add(
       "rounding-type", "roundingType",
       RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -293,6 +301,7 @@ public class MathExpression
 
     result  = QuickInfoHelper.toString(this, "expression", m_Expression);
     result += QuickInfoHelper.toString(this, "roundingType", (m_RoundOutput ? "" + m_RoundingType : "no rounding"), ", ");
+    result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
 
     return result;
   }
@@ -385,12 +394,43 @@ public class MathExpression
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.Double.class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    if (getRoundOutput())
+    if (getRoundOutput() && (m_NumDecimals == 0))
       return new Class[]{Integer.class};
     else
       return new Class[]{Double.class};
@@ -425,17 +465,8 @@ public class MathExpression
   protected Double applyRounding(double value) {
     if (!getRoundOutput())
       return value;
-
-    switch (m_RoundingType) {
-      case ROUND:
-	return (double) Math.round(value);
-      case CEILING:
-	return Math.ceil(value);
-      case FLOOR:
-	return Math.floor(value);
-      default:
-	throw new IllegalStateException("Unhandled action: " + m_RoundingType);
-    }
+    else
+      return RoundingUtils.apply(m_RoundingType, value, m_NumDecimals);
   }
 
   /**
@@ -465,7 +496,7 @@ public class MathExpression
 
       if (res != null) {
         res = applyRounding(res);
-        if (getRoundOutput())
+        if (getRoundOutput() && (m_NumDecimals == 0))
           m_OutputToken = new Token(res.intValue());
         else
           m_OutputToken = new Token(res);

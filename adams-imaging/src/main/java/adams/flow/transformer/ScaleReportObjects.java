@@ -15,7 +15,7 @@
 
 /*
  * ScaleReportObjects.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 import adams.data.objectfilter.Scale;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -121,7 +122,6 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @DeprecatedClass(useInstead = {ImageObjectFilter.class, Scale.class})
 public class ScaleReportObjects
@@ -143,6 +143,9 @@ public class ScaleReportObjects
 
   /** the rounding type. */
   protected RoundingType m_RoundingType;
+
+  /** the number of decimals. */
+  protected int m_NumDecimals;
 
   /**
    * Returns a string describing the object.
@@ -187,6 +190,10 @@ public class ScaleReportObjects
     m_OptionManager.add(
       "rounding-type", "roundingType",
       RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -339,6 +346,37 @@ public class ScaleReportObjects
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -349,8 +387,10 @@ public class ScaleReportObjects
 
     result  = QuickInfoHelper.toString(this, "scaleX", m_ScaleX, "x: ");
     result += QuickInfoHelper.toString(this, "scaleY", m_ScaleY, ", y: ");
-    if (m_Round)
+    if (m_Round) {
       result += QuickInfoHelper.toString(this, "roundingType", m_RoundingType, ", rounding: ");
+      result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
+    }
 
     return result;
   }
@@ -386,17 +426,8 @@ public class ScaleReportObjects
   protected double round(double value) {
     if (!m_Round)
       return value;
-
-    switch (m_RoundingType) {
-      case ROUND:
-	return Math.round(value);
-      case FLOOR:
-	return Math.floor(value);
-      case CEILING:
-	return Math.ceil(value);
-      default:
-	throw new IllegalStateException("Unhandled rounding type: " + m_RoundingType);
-    }
+    else
+      return RoundingUtils.apply(m_RoundingType, value, m_NumDecimals);
   }
 
   /**

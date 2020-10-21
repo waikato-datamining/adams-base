@@ -15,13 +15,14 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
 import adams.core.QuickInfoHelper;
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 import adams.parser.GrammarSupplier;
 import adams.parser.MathematicalExpression;
 import adams.parser.MathematicalExpressionText;
@@ -209,6 +210,14 @@ public class MathExpression
   /** the rounding type to perform. */
   protected RoundingType m_RoundingType;
 
+  /** the number of decimals. */
+  protected int m_NumDecimals;
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
   @Override
   public String globalInfo() {
     return
@@ -247,6 +256,10 @@ public class MathExpression
     m_OptionManager.add(
       "rounding-type", "roundingType",
       RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -260,6 +273,7 @@ public class MathExpression
 
     result = QuickInfoHelper.toString(this, "expression", m_Expression);
     result += QuickInfoHelper.toString(this, "roundingType", (m_RoundOutput ? "" + m_RoundingType : "no rounding"), ", ");
+    result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
 
     return result;
   }
@@ -354,6 +368,37 @@ public class MathExpression
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return the class
@@ -370,7 +415,7 @@ public class MathExpression
    */
   @Override
   public Class generates() {
-    if (m_RoundOutput)
+    if (m_RoundOutput && (m_NumDecimals == 0))
       return Integer.class;
     else
       return Double.class;
@@ -386,17 +431,8 @@ public class MathExpression
   protected Double applyRounding(double value) {
     if (!getRoundOutput())
       return value;
-
-    switch (m_RoundingType) {
-      case ROUND:
-	return (double) Math.round(value);
-      case CEILING:
-	return Math.ceil(value);
-      case FLOOR:
-	return Math.floor(value);
-      default:
-	throw new IllegalStateException("Unhandled action: " + m_RoundingType);
-    }
+    else
+      return RoundingUtils.apply(m_RoundingType, value, m_NumDecimals);
   }
 
   /**
@@ -426,7 +462,7 @@ public class MathExpression
 
     if (!Double.isNaN(y)) {
       y = applyRounding(y);
-      if (getRoundOutput())
+      if (getRoundOutput() && (m_NumDecimals == 0))
 	result = y.intValue();
       else
 	result = y;

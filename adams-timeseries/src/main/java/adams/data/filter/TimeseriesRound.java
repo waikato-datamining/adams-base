@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimeseriesRound.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 
@@ -50,7 +51,6 @@ import adams.data.timeseries.TimeseriesPoint;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesRound
   extends AbstractFilter<Timeseries> {
@@ -60,7 +60,10 @@ public class TimeseriesRound
   
   /** the rounding type. */
   protected RoundingType m_Type;
-  
+
+  /** the number of decimals. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
@@ -79,8 +82,12 @@ public class TimeseriesRound
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    RoundingType.ROUND);
+      "type", "type",
+      RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -113,6 +120,37 @@ public class TimeseriesRound
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Performs the actual filtering.
    *
    * @param data	the data to filter
@@ -128,20 +166,7 @@ public class TimeseriesRound
     result = data.getHeader();
     for (i = 0; i < data.size(); i++) {
       point = (TimeseriesPoint) data.toList().get(i);
-      value = point.getValue();
-      switch (m_Type) {
-	case ROUND:
-	  value = Math.round(value);
-	  break;
-	case CEILING:
-	  value = Math.ceil(value);
-	  break;
-	case FLOOR:
-	  value = Math.floor(value);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled rounding type: " + m_Type);
-      }
+      value = RoundingUtils.apply(m_Type, point.getValue(), m_NumDecimals);
       result.add(new TimeseriesPoint(point.getTimestamp(), value));
     }
     

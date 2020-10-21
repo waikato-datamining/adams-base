@@ -15,7 +15,7 @@
 
 /*
  * MathExpressionTest.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -70,7 +70,7 @@ public class MathExpressionTest
   protected Conversion[] getRegressionSetups() {
     MathExpression[]	result;
 
-    result = new MathExpression[3];
+    result = new MathExpression[4];
     result[0] = new MathExpression();
     result[1] = new MathExpression();
     result[1].setExpression(new MathematicalExpressionText("pow(X + 1, 2)"));
@@ -78,6 +78,11 @@ public class MathExpressionTest
     result[2].setExpression(new MathematicalExpressionText("pow(X + 1, 2)"));
     result[2].setRoundOutput(true);
     result[2].setRoundingType(RoundingType.ROUND);
+    result[3] = new MathExpression();
+    result[3].setExpression(new MathematicalExpressionText("pow(X + 1, 2)"));
+    result[3].setRoundOutput(true);
+    result[3].setRoundingType(RoundingType.RINT);
+    result[3].setNumDecimals(1);
 
     return result;
   }

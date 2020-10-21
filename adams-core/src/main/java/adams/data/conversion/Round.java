@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Round.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
 import adams.core.QuickInfoHelper;
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -46,7 +47,6 @@ import adams.data.RoundingType;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Round
   extends AbstractConversion {
@@ -57,6 +57,9 @@ public class Round
   /** the action to perform. */
   protected RoundingType m_Action;
 
+  /** the number of decimals. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
@@ -64,7 +67,10 @@ public class Round
    */
   @Override
   public String globalInfo() {
-    return "Rounds double values and turns them into integers..";
+    return "Rounds double values and turns them into integers.\n"
+      + "When specifying a value larger than zero for 'numDecimals', the "
+      + "rounding will happen at that decimal. In other words:\n"
+      + "  rounding(value * 10^numDecimals) / 10^numDecimals";
   }
 
   /**
@@ -75,8 +81,12 @@ public class Round
     super.defineOptions();
 
     m_OptionManager.add(
-	    "action", "action",
-	    RoundingType.ROUND);
+      "action", "action",
+      RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -86,7 +96,12 @@ public class Round
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "action", m_Action);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "action", m_Action);
+    result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
+
+    return result;
   }
 
   /**
@@ -119,6 +134,37 @@ public class Round
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -135,7 +181,10 @@ public class Round
    */
   @Override
   public Class generates() {
-    return Integer.class;
+    if (m_NumDecimals == 0)
+      return Integer.class;
+    else
+      return Double.class;
   }
 
   /**
@@ -146,19 +195,12 @@ public class Round
    */
   @Override
   protected Object doConvert() throws Exception {
-    Double	input;
-    
-    input = (Double) m_Input;
-    
-    switch (m_Action) {
-      case ROUND:
-	return (int) Math.round(input);
-      case CEILING:
-	return (int) Math.ceil(input);
-      case FLOOR:
-	return (int) Math.floor(input);
-      default:
-	throw new IllegalStateException("Unhandled action: " + m_Action);
-    }
+    double	rounded;
+
+    rounded = RoundingUtils.apply(m_Action, (Double) m_Input, m_NumDecimals);
+    if (m_NumDecimals == 0)
+      return (int) rounded;
+    else
+      return rounded;
   }
 }

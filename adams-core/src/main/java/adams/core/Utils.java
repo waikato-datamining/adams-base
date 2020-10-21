@@ -2219,31 +2219,4 @@ public class Utils {
     return result.toArray();
   }
 
-  /**
-   * Round to specific number of digits after decimal point.
-   *
-   * @param value	the value to round
-   * @param decimals	the decimals after the decimal point to use
-   * @return		the rounded value
-   */
-  public static double round(double value, int decimals) {
-    double	factor;
-
-    factor = Math.pow(10, decimals);
-    return Math.round(value * factor) / factor;
-  }
-
-  /**
-   * Round to specific number of digits after decimal point.
-   *
-   * @param value	the value to round
-   * @param decimals	the decimals after the decimal point to use
-   * @return		the rounded value
-   */
-  public static float round(float value, int decimals) {
-    float	factor;
-
-    factor = (float) Math.pow(10, decimals);
-    return Math.round(value * factor) / factor;
-  }
 }

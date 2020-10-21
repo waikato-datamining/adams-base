@@ -20,9 +20,9 @@
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
+import adams.data.RoundingType;
+import adams.data.conversion.StringToDouble;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -30,9 +30,8 @@ import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.sink.Null;
 import adams.flow.source.StringConstants;
-import adams.flow.transformer.Convert;
-import adams.data.RoundingType;
-import adams.data.conversion.StringToDouble;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the Round actor.
@@ -121,6 +120,9 @@ public class RoundTest
 	    break;
 	  case CEILING:
 	    intOut[i] = (int) Math.ceil(dblIn[i]);
+	    break;
+	  case RINT:
+	    intOut[i] = (int) Math.rint(dblIn[i]);
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled action: " + action);

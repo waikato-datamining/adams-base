@@ -15,7 +15,7 @@
 
 /*
  * Round.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.RoundingType;
+import adams.data.RoundingUtils;
 import adams.flow.core.Token;
 
 /**
@@ -72,7 +73,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Round
   extends AbstractTransformer {
@@ -83,6 +83,9 @@ public class Round
   /** the action to perform. */
   protected RoundingType m_Action;
 
+  /** the number of decimals. */
+  protected int m_NumDecimals;
+
   /**
    * Returns a string describing the object.
    *
@@ -90,7 +93,8 @@ public class Round
    */
   @Override
   public String globalInfo() {
-    return "Performs 'round', 'ceiling' or 'floor' on double tokens and generates integers.";
+    return "Performs the specified rounding operation on double tokens.\n"
+      + "If 'numDecimals' is zero, it will generate integers otherwise doubles.";
   }
 
   /**
@@ -101,8 +105,12 @@ public class Round
     super.defineOptions();
 
     m_OptionManager.add(
-	    "action", "action",
-	    RoundingType.ROUND);
+      "action", "action",
+      RoundingType.ROUND);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      0, 0, null);
   }
 
   /**
@@ -112,7 +120,12 @@ public class Round
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "action", m_Action);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "action", m_Action);
+    result += QuickInfoHelper.toString(this, "numDecimals", m_NumDecimals, ", decimals: ");
+
+    return result;
   }
 
   /**
@@ -145,6 +158,37 @@ public class Round
   }
 
   /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.Double.class, java.lang.Double[].class<!-- flow-accepts-end -->
@@ -159,7 +203,10 @@ public class Round
    * @return		<!-- flow-generates-start -->java.lang.Integer.class, java.lang.Integer[].class<!-- flow-generates-end -->
    */
   public Class[] generates() {
-    return new Class[]{Integer.class, Integer[].class};
+    if (m_NumDecimals == 0)
+      return new Class[]{Integer.class, Integer[].class};
+    else
+      return new Class[]{Double.class, Double[].class};
   }
 
   /**
@@ -171,7 +218,7 @@ public class Round
   protected String doExecute() {
     String	result;
     Double[]	doubles;
-    Integer[]	integers;
+    Number[] 	rounded;
     int		i;
     boolean	isArray;
 
@@ -185,31 +232,25 @@ public class Round
       else
 	doubles = (Double[]) m_InputToken.getPayload();
 
-      integers = new Integer[doubles.length];
-      for (i = 0; i < doubles.length; i++) {
-	switch (m_Action) {
-	  case ROUND:
-	    integers[i] = (int) Math.round(doubles[i]);
-	    break;
-	  case CEILING:
-	    integers[i] = (int) Math.ceil(doubles[i]);
-	    break;
-	  case FLOOR:
-	    integers[i] = (int) Math.floor(doubles[i]);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled action: " + m_Action);
-	}
+      if (m_NumDecimals == 0) {
+	rounded = new Integer[doubles.length];
+	for (i = 0; i < doubles.length; i++)
+	  rounded[i] = (int) RoundingUtils.apply(m_Action, doubles[i], 0);
+      }
+      else {
+	rounded = new Double[doubles.length];
+	for (i = 0; i < doubles.length; i++)
+	  rounded[i] = RoundingUtils.apply(m_Action, doubles[i], m_NumDecimals);
       }
 
       if (!isArray)
-	m_OutputToken = new Token(new Integer(integers[0]));
+	m_OutputToken = new Token(rounded[0]);
       else
-	m_OutputToken = new Token(integers);
+	m_OutputToken = new Token(rounded);
     }
     catch (Exception e) {
       m_OutputToken = null;
-      result = handleException("Failed to round" + Utils.arrayToString(doubles), e);
+      result = handleException("Failed to round " + Utils.arrayToString(doubles), e);
     }
 
     return result;

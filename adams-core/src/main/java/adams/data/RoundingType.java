@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Round.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+/*
+ * RoundingType.java
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -23,7 +23,6 @@ package adams.data;
  * The type of rounding to perform.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum RoundingType {
   /** performs a Math.round(double). */
@@ -31,5 +30,7 @@ public enum RoundingType {
   /** performs a Math.ceil(double). */
   CEILING,
   /** performs a Math.floor(double). */
-  FLOOR
+  FLOOR,
+  /** performs a Math.rint(double). */
+  RINT,
 }

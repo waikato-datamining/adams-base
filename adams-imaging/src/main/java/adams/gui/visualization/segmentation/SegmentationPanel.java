@@ -21,9 +21,9 @@
 package adams.gui.visualization.segmentation;
 
 import adams.core.ClassLister;
-import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.PNGImageReader;
 import adams.env.Environment;
@@ -190,7 +190,7 @@ public class SegmentationPanel
     m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
     m_ButtonZoomIn.setToolTipText("Zoom in");
     m_ButtonZoomIn.addActionListener((ActionEvent e) -> {
-      m_TextZoom.setValue(Utils.round(m_TextZoom.getValue().doubleValue() * 1.4, 1));
+      m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * 1.4, 1));
       m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
       m_Manager.update();
     });
@@ -198,7 +198,7 @@ public class SegmentationPanel
     m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
     m_ButtonZoomOut.setToolTipText("Zoom in");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> {
-      m_TextZoom.setValue(Utils.round(m_TextZoom.getValue().doubleValue() / 1.4, 1));
+      m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / 1.4, 1));
       m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
       m_Manager.update();
     });
