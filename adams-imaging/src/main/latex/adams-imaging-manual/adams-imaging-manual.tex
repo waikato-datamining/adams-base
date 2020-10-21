@@ -331,8 +331,6 @@ The imaging module offers some more actors that have not been introduced yet.
    annotate objects (i.e., attach labels) that were located in an image.
   \item \textit{ImageInfo} -- Allows you to obtain \textit{width} and
   \textit{height} information from an image.
-  \item \textit{ImageHistogram} -- sink that displays the histogram of an image
-  (gray of color).
   \item \texttt{ImageLabeler} -- allows the user to interactively label/classify
   images, attaching the label to the report.
    annotate objects (i.e., attach labels) that were located in an image.
@@ -348,6 +346,7 @@ The imaging module offers some more actors that have not been introduced yet.
   \item \texttt{ImageObjectOverlap} -- superceded by \textit{DetermineOverlappingObjects}.
   \item \texttt{ImageSegmentationAnnotator} -- allows the user to interactively
   annotate images for image segmentation.
+  \item \texttt{ImageSegmentationFileReader} -- for reading image segmentation file formats
   \item \textit{ImageSharpness} -- determines whether image is in focus or not.
   \item \texttt{IntersectOverUnion} -- superceded by \textit{DetermineOverlappingObjects}.
   \item \textit{LocateObjects} -- provides a framework for algorithms that
@@ -370,6 +369,11 @@ The imaging module offers some more actors that have not been introduced yet.
   separate reports, one per annotated image.
 \end{tight_itemize}
 
+\noindent Available sinks:
+\begin{tight_itemize}
+  \item \textit{ImageHistogram} -- displays the histogram of an image (gray or color).
+  \item \texttt{ImageSegmentationFileWriter} -- for reading image segmentation file formats
+\end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
