@@ -1,0 +1,33 @@
+# Project: adams
+# Date: 2020-10-22 10:43:52
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images for image segmentation.\\nThe annotated layers get stored as separate PNG images (with \\nan indexed palette) alongside the JPG, with the label of the layer\\npart of the filename. " -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.source.SequenceSource -name "load report"
+   adams.flow.source.Variable -var-name reportfile -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.standalone.SetVariable -name "restoration file" -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name image_dir -display \"Image directory\" -help \"Directory with images to annotate\" -type DIRECTORY_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display Labels -help \"blank-separated list of labels\" -default-value object" -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "process images"
+  adams.flow.standalone.SetVariable -name "reset count" -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{image_dir} -regexp .*\\\\.([jJ][pP][eE]?[gG]|[pP][nN][gG]) -sorting SORT_BY_NAME"
+  adams.flow.transformer.SelectArraySubset -allow-search true
+  adams.flow.control.Tee -name "# images"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.SetVariable -var-name file
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.transformer.ImageSegmentationFileReader -reader adams.data.io.input.IndividualImageSegmentationLayerReader
+  adams.flow.transformer.ImageSegmentationAnnotator -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -allow-layer-remove true
+  adams.flow.sink.ImageSegmentationFileWriter -output @{file} -writer "adams.data.io.output.IndividualImageSegmentationLayerWriter -skip-base-image true"
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
