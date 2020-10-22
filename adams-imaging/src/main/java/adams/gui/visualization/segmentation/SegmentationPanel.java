@@ -260,10 +260,13 @@ public class SegmentationPanel
           m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
 	});
         group.add(button);
-        if (t.equals(Pointer.class))
-          panel.add(button, 0);
-        else
+        if (t.equals(Pointer.class)) {
+	  panel.add(button, 0);
+	  button.doClick();
+	}
+        else {
 	  panel.add(button);
+	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
