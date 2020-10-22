@@ -13,13 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTextPaneWithButtons.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.event.AnyChangeListenerSupporter;
+
+import javax.swing.event.ChangeListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import java.awt.Font;
@@ -28,11 +31,10 @@ import java.awt.Font;
  * {@link BaseTextPaneWithButtons} with additional support for buttons.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTextPaneWithButtons
   extends AbstractComponentWithButtons<BaseTextPaneWithWordWrap>
-  implements TextPaneComponent {
+  implements TextPaneComponent, AnyChangeListenerSupporter {
 
   private static final long serialVersionUID = -8562372761976614736L;
 
@@ -194,5 +196,25 @@ public class BaseTextPaneWithButtons
    */
   public synchronized void append(String text, AttributeSet a) {
     m_Component.append(text, a);
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    getComponent().addAnyChangeListener(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    getComponent().removeAnyChangeListener(l);
   }
 }

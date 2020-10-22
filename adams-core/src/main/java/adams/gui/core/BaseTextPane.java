@@ -13,19 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTextPane.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2003-2007 Philip Isenhour (setting font)
  */
 package adams.gui.core;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.event.AnyChangeListenerSupporter;
 import adams.gui.chooser.FontChooser;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTextPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
@@ -35,20 +40,24 @@ import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.Font;
 import java.awt.Frame;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A customized JTextPane. Adds functionality for wordwrap, printing and
  * selecting fonts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTextPane
   extends JTextPane
-  implements TextPaneComponent {
+  implements TextPaneComponent, AnyChangeListenerSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 5053144101104728014L;
+
+  /** the listeners for any changes to the text. */
+  protected Set<ChangeListener> m_AnyChangeListeners;
 
   /**
    * Creates a new <code>BaseTextPane</code>.  A new instance of
@@ -76,6 +85,21 @@ public class BaseTextPane
    * Initializes the member variables.
    */
   protected void initialize() {
+    m_AnyChangeListeners = new HashSet<>();
+    getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+    });
   }
 
   /**
@@ -287,5 +311,36 @@ public class BaseTextPane
    */
   public void setCaretPositionLast() {
     setCaretPosition(getDocument().getLength());
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that some change to the text occurred.
+   */
+  protected void notifyAnyChangeListeners() {
+    ChangeEvent e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
   }
 }

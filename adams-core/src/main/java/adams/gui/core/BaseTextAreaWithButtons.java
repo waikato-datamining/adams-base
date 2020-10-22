@@ -15,11 +15,14 @@
 
 /*
  * BaseTextAreaWithButtons.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.event.AnyChangeListenerSupporter;
+
+import javax.swing.event.ChangeListener;
 import javax.swing.text.Document;
 import java.awt.Font;
 
@@ -31,7 +34,7 @@ import java.awt.Font;
  */
 public class BaseTextAreaWithButtons
   extends AbstractComponentWithButtons<BaseTextArea>
-  implements AppendableTextAreaComponent {
+  implements AppendableTextAreaComponent, AnyChangeListenerSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1935542795448084154L;
@@ -285,5 +288,25 @@ public class BaseTextAreaWithButtons
    */
   public void append(String text) {
     m_Component.append(text);
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    getComponent().addAnyChangeListener(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    getComponent().removeAnyChangeListener(l);
   }
 }

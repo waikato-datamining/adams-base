@@ -15,20 +15,27 @@
 
 /*
  * BaseTextArea.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.event.AnyChangeListenerSupporter;
 import adams.gui.chooser.FontChooser;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.Font;
 import java.awt.Frame;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A customized JTextArea. Adds functionality for printing and selecting fonts.
@@ -37,10 +44,13 @@ import java.awt.Frame;
  */
 public class BaseTextArea
   extends JTextArea
-  implements AppendableTextAreaComponent {
+  implements AppendableTextAreaComponent, AnyChangeListenerSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7970608693979989912L;
+
+  /** the listeners for any changes to the text. */
+  protected Set<ChangeListener> m_AnyChangeListeners;
 
   /**
    * Constructs a new TextArea.  A default model is set, the initial string
@@ -48,6 +58,7 @@ public class BaseTextArea
    */
   public BaseTextArea() {
     super();
+    initialize();
   }
 
   /**
@@ -58,6 +69,7 @@ public class BaseTextArea
    */
   public BaseTextArea(String text) {
     super(text);
+    initialize();
   }
 
   /**
@@ -70,6 +82,7 @@ public class BaseTextArea
    */
   public BaseTextArea(int rows, int columns) {
     super(rows, columns);
+    initialize();
   }
 
   /**
@@ -82,6 +95,7 @@ public class BaseTextArea
    */
   public BaseTextArea(String text, int rows, int columns) {
     super(text, rows, columns);
+    initialize();
   }
 
   /**
@@ -92,6 +106,7 @@ public class BaseTextArea
    */
   public BaseTextArea(Document doc) {
     super(doc);
+    initialize();
   }
 
   /**
@@ -106,6 +121,28 @@ public class BaseTextArea
    */
   public BaseTextArea(Document doc, String text, int rows, int columns) {
     super(doc, text, rows, columns);
+    initialize();
+  }
+
+  /**
+   * Initializes the text area.
+   */
+  protected void initialize() {
+    m_AnyChangeListeners = new HashSet<>();
+    getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+    });
   }
 
   /**
@@ -280,5 +317,36 @@ public class BaseTextArea
         e.printStackTrace();
       }
     }
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that some change to the text occurred.
+   */
+  protected void notifyAnyChangeListeners() {
+    ChangeEvent e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
   }
 }

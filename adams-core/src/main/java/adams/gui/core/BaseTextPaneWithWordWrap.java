@@ -13,13 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseTextPaneWithWordWrap.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.event.AnyChangeListenerSupporter;
+
 import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
@@ -28,11 +31,10 @@ import java.awt.BorderLayout;
  * A panel containing a {@link BaseTextPane}, to allow wordwrap functionality.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTextPaneWithWordWrap
   extends BasePanel
-  implements TextPaneComponent {
+  implements TextPaneComponent, AnyChangeListenerSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1382187615423454310L;
@@ -210,5 +212,25 @@ public class BaseTextPaneWithWordWrap
    */
   public void setCaretPositionLast() {
     m_TextPane.setCaretPositionLast();
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    m_TextPane.addAnyChangeListener(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    m_TextPane.removeAnyChangeListener(l);
   }
 }

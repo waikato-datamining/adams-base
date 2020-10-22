@@ -15,13 +15,21 @@
 
 /*
  * BaseTextField.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.event.AnyChangeListenerSupporter;
+
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Custom BaseTextField component.
@@ -29,9 +37,13 @@ import javax.swing.text.Document;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BaseTextField
-  extends JTextField {
+  extends JTextField
+  implements AnyChangeListenerSupporter {
 
   private static final long serialVersionUID = 1849599255714467739L;
+
+  /** the listeners for any changes to the text. */
+  protected Set<ChangeListener> m_AnyChangeListeners;
 
   /**
    * Constructs a new <code>TextField</code>.  A default model is created,
@@ -111,5 +123,51 @@ public class BaseTextField
    * Initializes members.
    */
   protected void initTextField() {
+    m_AnyChangeListeners = new HashSet<>();
+    getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	notifyAnyChangeListeners();
+      }
+    });
+  }
+
+  /**
+   * Adds the listener for listening to any text changes.
+   *
+   * @param l		the listener to add
+   */
+  @Override
+  public void addAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from listening to any text changes.
+   *
+   * @param l		the listener to remove
+   */
+  @Override
+  public void removeAnyChangeListener(ChangeListener l) {
+    m_AnyChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that some change to the text occurred.
+   */
+  protected void notifyAnyChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
   }
 }
