@@ -163,6 +163,7 @@ public class SegmentationPanel
     JLabel		label;
     BaseToggleButton	button;
     ButtonGroup		group;
+    BaseToggleButton	buttonPointer;
 
     super.initGUI();
 
@@ -242,6 +243,7 @@ public class SegmentationPanel
     m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
     tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
     group = new ButtonGroup();
+    buttonPointer = null;
     for (Class t: tools) {
       try {
         final AbstractTool tool = (AbstractTool) t.newInstance();
@@ -269,7 +271,7 @@ public class SegmentationPanel
         group.add(button);
         if (t.equals(Pointer.class)) {
 	  panel.add(button, 0);
-	  button.doClick();
+	  buttonPointer = button;
 	}
         else {
 	  panel.add(button);
@@ -292,6 +294,10 @@ public class SegmentationPanel
 
     m_SplitPaneLeft.setDividerLocation(250);
     m_SplitPaneRight.setDividerLocation(680);
+
+    // select pointer button
+    if (buttonPointer != null)
+      buttonPointer.doClick();
   }
 
   /**
