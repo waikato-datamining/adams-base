@@ -207,7 +207,8 @@ public abstract class AbstractTool
    *
    * @see		#doApply()
    */
-  public void apply() {
+  public void apply(BaseFlatButton button) {
+    button.setIcon(GUIHelper.getIcon("validate.png"));
     doApply();
     getCanvas().setCursor(getCursor());
   }
@@ -222,7 +223,7 @@ public abstract class AbstractTool
 
     result = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     result.setToolTipText("Apply current values");
-    result.addActionListener((ActionEvent e) -> apply());
+    result.addActionListener((ActionEvent e) -> apply((BaseFlatButton) e.getSource()));
 
     return result;
   }

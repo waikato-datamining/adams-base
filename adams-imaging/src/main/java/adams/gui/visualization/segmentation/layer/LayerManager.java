@@ -405,6 +405,8 @@ public class LayerManager
     if (m_Overlays.size() == 1)
       result.setActive(true);
 
+    result.update();
+
     return result;
   }
 

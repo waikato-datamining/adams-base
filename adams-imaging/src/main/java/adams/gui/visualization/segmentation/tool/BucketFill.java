@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.segmentation.tool;
 
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
@@ -35,12 +36,14 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -66,6 +69,9 @@ public class BucketFill
 
   /** the text field for the size. */
   protected NumberTextField m_TextZoom;
+
+  /** the apply button. */
+  protected BaseFlatButton m_ButtonApply;
 
   /** whether to fill in foreground. */
   protected boolean m_Foreground;
@@ -255,16 +261,20 @@ public class BucketFill
     result = new BasePanel();
     result.setBorder(BorderFactory.createTitledBorder(getName()));
 
+    m_ButtonApply = createApplyButton();
+
     panel = new JPanel(new GridLayout(0, 1));
     result.add(panel, BorderLayout.NORTH);
 
     group = new ButtonGroup();
     m_RadioBackground = new JRadioButton("Background");
     m_RadioBackground.setSelected(!m_Foreground);
+    m_RadioBackground.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     group.add(m_RadioBackground);
     panel.add(Fonts.usePlain(m_RadioBackground));
     m_RadioForeground = new JRadioButton("Foreground");
     m_RadioForeground.setSelected(m_Foreground);
+    m_RadioForeground.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     group.add(m_RadioForeground);
     panel.add(Fonts.usePlain(m_RadioForeground));
 
@@ -275,11 +285,12 @@ public class BucketFill
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original cursor size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
+    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     panel2.add(m_TextZoom);
 
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(panel2);
-    panel2.add(createApplyButton());
+    panel2.add(m_ButtonApply);
 
     return result;
   }

@@ -30,6 +30,7 @@ import adams.gui.core.NumberTextField.Type;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -105,6 +106,7 @@ public class ImageLayer
     m_TextBrightness.setColumns(5);
     m_TextBrightness.setToolTipText("100 = original brightness");
     m_TextBrightness.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
+    m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     panelRow.add(m_TextBrightness);
     m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonApply.setToolTipText("Apply current values");
@@ -196,5 +198,13 @@ public class ImageLayer
 
     if (state instanceof ImageLayerState)
       setImage(((ImageLayerState) state).image);
+  }
+
+  /**
+   * Notifies the change listeners.
+   */
+  protected void update() {
+    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    super.update();
   }
 }

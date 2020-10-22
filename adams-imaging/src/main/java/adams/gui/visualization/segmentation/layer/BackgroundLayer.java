@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -87,6 +88,7 @@ public class BackgroundLayer
     m_TextColor = new BaseColorTextField(Color.BLACK);
     m_TextColor.setColumns(7);
     m_TextColor.setToolTipText("The color to use for the background");
+    m_TextColor.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     panelRow.add(m_TextColor);
     m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonApply.setToolTipText("Apply current values");
@@ -178,5 +180,13 @@ public class BackgroundLayer
 
     if (state instanceof BackgroundLayerState)
       setColor(((BackgroundLayerState) state).color);
+  }
+
+  /**
+   * Notifies the change listeners.
+   */
+  protected void update() {
+    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    super.update();
   }
 }

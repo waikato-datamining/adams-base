@@ -38,6 +38,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -156,10 +157,12 @@ public class OverlayLayer
     m_TextAlpha = new BaseObjectTextField<>(new BaseFloat(0.5f));
     m_TextAlpha.setColumns(4);
     m_TextAlpha.setToolTipText("fully transparent=0.0, fully opaque=1.0");
+    m_TextAlpha.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     panelRow.add(m_TextAlpha);
     m_TextColor = new BaseColorTextField(Color.RED);
     m_TextColor.setColumns(7);
     m_TextColor.setToolTipText("The color to use for the overlay");
+    m_TextColor.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
     panelRow.add(m_TextColor);
     m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonApply.setToolTipText("Apply current values");
@@ -400,5 +403,13 @@ public class OverlayLayer
     g2d.dispose();
 
     return result;
+  }
+
+  /**
+   * Notifies the change listeners.
+   */
+  protected void update() {
+    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    super.update();
   }
 }

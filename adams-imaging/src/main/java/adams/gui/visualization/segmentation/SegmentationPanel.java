@@ -177,6 +177,7 @@ public class SegmentationPanel
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original image size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
+    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonZoom.setIcon(GUIHelper.getIcon("validate_blue.png")));
     label = new JLabel("Zoom");
     label.setDisplayedMnemonic('Z');
     label.setLabelFor(m_TextZoom);
@@ -186,6 +187,7 @@ public class SegmentationPanel
     m_ButtonZoom.setToolTipText("Apply zoom");
     m_ButtonZoom.addActionListener((ActionEvent e) -> {
       m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
+      m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
       m_Manager.update();
     });
     panel.add(m_ButtonZoom);
@@ -404,6 +406,7 @@ public class SegmentationPanel
    */
   public void setZoom(double value) {
     m_TextZoom.setValue(value);
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
   }
@@ -422,6 +425,7 @@ public class SegmentationPanel
    */
   public void clearZoom() {
     m_TextZoom.setValue(100);
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_Manager.setZoom(1.0);
     m_Manager.update();
   }
@@ -431,6 +435,7 @@ public class SegmentationPanel
    */
   public void zoomIn() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * ZOOM_FACTOR, 1));
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     m_Manager.update();
   }
@@ -440,6 +445,7 @@ public class SegmentationPanel
    */
   public void zoomOut() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / ZOOM_FACTOR, 1));
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     m_Manager.update();
   }
