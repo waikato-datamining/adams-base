@@ -165,6 +165,15 @@ public class Cursors {
   }
 
   /**
+   * Creates a disabled pointer cursor.
+   *
+   * @return		the cursor
+   */
+  public static synchronized Cursor disabled() {
+    return fromIcon("cursor_disabled.png", 6, 1);
+  }
+
+  /**
    * Creates a square cursor with the specified width.
    *
    * @param width	the width of the square
