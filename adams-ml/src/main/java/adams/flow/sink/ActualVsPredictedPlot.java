@@ -15,7 +15,7 @@
 
 /*
  * ActualVsPredictedPlot.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -244,7 +244,6 @@ import java.util.HashMap;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActualVsPredictedPlot
   extends AbstractGraphicalDisplay
@@ -269,6 +268,9 @@ public class ActualVsPredictedPlot
 
   /** the column with the predicted values. */
   protected SpreadSheetColumnIndex m_Predicted;
+
+  /** whether to swap the axes. */
+  protected boolean m_SwapAxes;
 
   /** the column with the error values (optional). */
   protected SpreadSheetColumnIndex m_Error;
@@ -360,6 +362,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "additional", "additional",
       new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "swap-axes", "swapAxes",
+      false);
 
     m_OptionManager.add(
       "title", "title",
@@ -642,6 +648,35 @@ public class ActualVsPredictedPlot
    */
   public String additionalTipText() {
     return "The additional columns to add to the plot containers.";
+  }
+
+  /**
+   * Sets whether to swap the axes.
+   *
+   * @param value	true if to swap
+   */
+  public void setSwapAxes(boolean value) {
+    m_SwapAxes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to swap the axes.
+   *
+   * @return		true if to swap
+   */
+  public boolean getSwapAxes() {
+    return m_SwapAxes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String swapAxesTipText() {
+    return "If enabled, the axes get swapped.";
   }
 
   /**
@@ -928,7 +963,7 @@ public class ActualVsPredictedPlot
 
     result = new AxisPanelOptions();
     result.setType(Type.DEFAULT);
-    result.setLabel("Actual");
+    result.setLabel(m_SwapAxes ? "Predicted" : "Actual");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
     result.setNthValueToShow(2);
@@ -954,7 +989,7 @@ public class ActualVsPredictedPlot
 
     result = new AxisPanelOptions();
     result.setType(Type.DEFAULT);
-    result.setLabel("Predicted");
+    result.setLabel(m_SwapAxes ? "Actual" : "Predicted");
     result.setShowGridLines(true);
     result.setLengthTicks(4);
     result.setNthValueToShow(2);
@@ -981,7 +1016,7 @@ public class ActualVsPredictedPlot
     PaintletWithFixedXYRange 	fixedPaintlet;
     MultiPaintlet 		overlays;
 
-    result = new SequencePlotterPanel("act vs pred");
+    result = new SequencePlotterPanel(m_SwapAxes ? "pred vs act" : "act vs pred");
     if (m_Error.isEmpty()) {
       paintlet = new CrossPaintlet();
       ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
@@ -1076,7 +1111,7 @@ public class ActualVsPredictedPlot
     else if (sheet.hasName())
       id = sheet.getName();
     else
-      id = "act vs pred";
+      id = m_SwapAxes ? "pred vs act" : "act vs pred";
     act     = SpreadSheetHelper.getNumericColumn(sheet, m_Actual.getIntIndex());
     pred    = SpreadSheetHelper.getNumericColumn(sheet, m_Predicted.getIntIndex());
     if (!m_Error.isEmpty())
@@ -1097,9 +1132,9 @@ public class ActualVsPredictedPlot
       predMin = Math.min(predMin, pred[i]);
       predMax = Math.max(predMax, pred[i]);
       if (error == null)
-	point = new SequencePlotPoint(id, act[i], pred[i]);
+	point = new SequencePlotPoint(id, m_SwapAxes ? pred[i] : act[i], m_SwapAxes ? act[i] : pred[i]);
       else
-	point = new SequencePlotPoint(id, act[i], pred[i], null, new Double[]{error[i]});
+	point = new SequencePlotPoint(id, m_SwapAxes ? pred[i] : act[i], m_SwapAxes ? act[i] : pred[i], null, new Double[]{error[i]});
       // meta-data
       if (additional.length > 0) {
 	meta = new HashMap<>();
@@ -1117,30 +1152,59 @@ public class ActualVsPredictedPlot
     }
 
     // actual min/max
-    switch (m_Limit) {
-      case NONE:
-	paintlet.setMinX(actMin);
-	paintlet.setMaxX(actMax);
-	paintlet.setMinY(predMin);
-	paintlet.setMaxY(predMax);
-	break;
+    if (m_SwapAxes) {
+      switch (m_Limit) {
+	case NONE:
+	  paintlet.setMinX(predMin);
+	  paintlet.setMaxX(predMax);
+	  paintlet.setMinY(actMin);
+	  paintlet.setMaxY(actMax);
+	  break;
 
-      case ACTUAL:
-	paintlet.setMinX(actMin);
-	paintlet.setMaxX(actMax);
-	paintlet.setMinY(actMin);
-	paintlet.setMaxY(actMax);
-	break;
+	case ACTUAL:
+	  paintlet.setMinX(predMin);
+	  paintlet.setMaxX(predMax);
+	  paintlet.setMinY(actMin);
+	  paintlet.setMaxY(actMax);
+	  break;
 
-      case SPECIFIED:
-	paintlet.setMinX(Double.isInfinite(m_ActualMin)    ? actMin  : m_ActualMin);
-	paintlet.setMaxX(Double.isInfinite(m_ActualMax)    ? actMax  : m_ActualMax);
-	paintlet.setMinY(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
-	paintlet.setMaxY(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
-	break;
+	case SPECIFIED:
+	  paintlet.setMinX(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
+	  paintlet.setMaxX(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
+	  paintlet.setMinY(Double.isInfinite(m_ActualMin) ? actMin : m_ActualMin);
+	  paintlet.setMaxY(Double.isInfinite(m_ActualMax) ? actMax : m_ActualMax);
+	  break;
 
-      default:
-	throw new IllegalStateException("Unhandled limit type: " + m_Limit);
+	default:
+	  throw new IllegalStateException("Unhandled limit type: " + m_Limit);
+      }
+    }
+    else {
+      switch (m_Limit) {
+	case NONE:
+	  paintlet.setMinX(actMin);
+	  paintlet.setMaxX(actMax);
+	  paintlet.setMinY(predMin);
+	  paintlet.setMaxY(predMax);
+	  break;
+
+	case ACTUAL:
+	  paintlet.setMinX(actMin);
+	  paintlet.setMaxX(actMax);
+	  paintlet.setMinY(actMin);
+	  paintlet.setMaxY(actMax);
+	  break;
+
+	case SPECIFIED:
+	  paintlet.setMinX(Double.isInfinite(m_ActualMin) ? actMin : m_ActualMin);
+	  paintlet.setMaxX(Double.isInfinite(m_ActualMax) ? actMax : m_ActualMax);
+	  paintlet.setMinY(Double.isInfinite(m_PredictedMin) ? predMin : m_PredictedMin);
+	  paintlet.setMaxY(Double.isInfinite(m_PredictedMax) ? predMax : m_PredictedMax);
+	  break;
+
+	default:
+	  throw new IllegalStateException("Unhandled limit type: " + m_Limit);
+      }
     }
 
     // add sequence
@@ -1180,7 +1244,7 @@ public class ActualVsPredictedPlot
       @Override
       protected void initGUI() {
 	super.initGUI();
-	m_Panel = new SequencePlotterPanel("act vs pred");
+	m_Panel = new SequencePlotterPanel(m_SwapAxes ? "pred vs act" : "act vs pred");
 	XYSequencePaintlet paintlet;
 	PaintletWithFixedXYRange fixedPaintlet;
 	if (m_Error.isEmpty()) {

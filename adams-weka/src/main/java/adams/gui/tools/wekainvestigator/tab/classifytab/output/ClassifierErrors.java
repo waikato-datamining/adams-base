@@ -15,7 +15,7 @@
 
 /*
  * ClassifierErrors.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -77,6 +77,9 @@ public class ClassifierErrors
   /** the maximum to use for the predicted values (pos inf = no restriction). */
   protected double m_PredictedMax;
 
+  /** whether to swap the axes. */
+  protected boolean m_SwapAxes;
+
   /** the diameter of the cross. */
   protected int m_Diameter;
 
@@ -124,6 +127,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "predicted-max", "predictedMax",
       Double.POSITIVE_INFINITY);
+
+    m_OptionManager.add(
+      "swap-axes", "swapAxes",
+      false);
 
     m_OptionManager.add(
       "limit", "limit",
@@ -264,6 +271,35 @@ public class ClassifierErrors
    */
   public String predictedMaxTipText() {
     return "The maximum to use for the display of the predicted axis; use " + Double.NaN + " for unlimited.";
+  }
+
+  /**
+   * Sets whether to swap the axes.
+   *
+   * @param value	true if to swap
+   */
+  public void setSwapAxes(boolean value) {
+    m_SwapAxes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to swap the axes.
+   *
+   * @return		true if to swap
+   */
+  public boolean getSwapAxes() {
+    return m_SwapAxes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String swapAxesTipText() {
+    return "If enabled, the axes get swapped.";
   }
 
   /**
@@ -501,6 +537,7 @@ public class ClassifierErrors
     sink.setActualMax(m_ActualMax);
     sink.setPredictedMin(m_PredictedMin);
     sink.setPredictedMax(m_PredictedMax);
+    sink.setSwapAxes(m_SwapAxes);
     sink.setLimit(m_Limit);
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);

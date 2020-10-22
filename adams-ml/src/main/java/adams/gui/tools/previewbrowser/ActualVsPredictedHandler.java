@@ -15,7 +15,7 @@
 
 /*
  * ActualVsPredictedHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -57,6 +57,9 @@ public class ActualVsPredictedHandler
   /** the additional columns in the spreadsheet to add to the plot containers. */
   protected SpreadSheetColumnRange m_Additional;
 
+  /** whether to swap the axes. */
+  protected boolean m_SwapAxes;
+
   /**
    * Returns a string describing the object.
    *
@@ -90,6 +93,10 @@ public class ActualVsPredictedHandler
     m_OptionManager.add(
       "additional", "additional",
       new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "swap-axes", "swapAxes",
+      false);
   }
 
   /**
@@ -209,6 +216,35 @@ public class ActualVsPredictedHandler
   }
 
   /**
+   * Sets whether to swap the axes.
+   *
+   * @param value	true if to swap
+   */
+  public void setSwapAxes(boolean value) {
+    m_SwapAxes = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to swap the axes.
+   *
+   * @return		true if to swap
+   */
+  public boolean getSwapAxes() {
+    return m_SwapAxes;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String swapAxesTipText() {
+    return "If enabled, the axes get swapped.";
+  }
+
+  /**
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
@@ -243,6 +279,7 @@ public class ActualVsPredictedHandler
     plot.setPredicted(ObjectCopyHelper.copyObject(m_Predicted));
     plot.setError(ObjectCopyHelper.copyObject(m_Error));
     plot.setAdditional(ObjectCopyHelper.copyObject(m_Additional));
+    plot.setSwapAxes(m_SwapAxes);
     panel = plot.createDisplayPanel(new Token(sheet));
     if (plot.displayPanelRequiresScrollPane())
       result.add(new BaseScrollPane(panel), BorderLayout.CENTER);
