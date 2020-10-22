@@ -22,6 +22,7 @@ package adams.gui.visualization.segmentation.tool;
 
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
@@ -142,11 +143,23 @@ public abstract class AbstractTool
   public abstract Icon getIcon();
 
   /**
+   * Creates the mouse cursor to use.
+   *
+   * @return		the cursor
+   */
+  protected abstract Cursor createCursor();
+
+  /**
    * Returns the mouse cursor to use.
    *
    * @return		the cursor
    */
-  public abstract Cursor getCursor();
+  public Cursor getCursor() {
+    if (!hasActiveLayer())
+      return Cursors.disabled();
+    else
+      return createCursor();
+  }
 
   /**
    * Creates the mouse listener to use.

@@ -112,7 +112,7 @@ public class BucketFill
    * @return		the cursor
    */
   @Override
-  public Cursor getCursor() {
+  protected Cursor createCursor() {
     return Cursors.crosshair(m_Size, m_Zoom / 100.0);
   }
 

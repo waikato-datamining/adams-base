@@ -67,7 +67,7 @@ public class Pointer
    * @return		the cursor
    */
   @Override
-  public Cursor getCursor() {
+  protected Cursor createCursor() {
     return Cursor.getDefaultCursor();
   }
 

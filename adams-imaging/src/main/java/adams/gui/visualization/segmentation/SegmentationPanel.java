@@ -34,6 +34,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseToggleButton;
 import adams.gui.core.ConsolePanel;
+import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
@@ -55,6 +56,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
@@ -136,6 +138,9 @@ public class SegmentationPanel
   /** the last mouse motion listener in use. */
   protected MouseMotionListener m_LastMouseMotionListener;
 
+  /** the active tool. */
+  protected AbstractTool m_ActiveTool;
+
   /**
    * Initializes the members.
    */
@@ -145,6 +150,7 @@ public class SegmentationPanel
 
     m_LastMouseListener       = null;
     m_LastMouseMotionListener = null;
+    m_ActiveTool              = null;
   }
 
   /**
@@ -258,6 +264,7 @@ public class SegmentationPanel
           if (m_LastMouseMotionListener != null)
 	    m_PanelCanvas.addMouseMotionListener(m_LastMouseMotionListener);
           m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
+          m_ActiveTool = tool;
 	});
         group.add(button);
         if (t.equals(Pointer.class)) {
@@ -327,6 +334,12 @@ public class SegmentationPanel
     location = m_SplitPaneLeft.getDividerLocation();
     m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
     m_SplitPaneLeft.setDividerLocation(location);
+    if (!getManager().hasActive())
+      m_PanelCanvas.setCursor(Cursors.disabled());
+    else if (m_ActiveTool != null)
+      m_PanelCanvas.setCursor(m_ActiveTool.getCursor());
+    else
+      m_PanelCanvas.setCursor(Cursor.getDefaultCursor());
   }
 
   /**

@@ -106,7 +106,7 @@ public class Pencil
    * @return		the cursor
    */
   @Override
-  public Cursor getCursor() {
+  protected Cursor createCursor() {
     if (m_Round)
       return Cursors.circle(m_Size);
     else
