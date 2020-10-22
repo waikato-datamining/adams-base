@@ -214,7 +214,8 @@ public class BucketFill
       @Override
       public void mouseClicked(MouseEvent e) {
 	if (MouseUtils.isLeftClick(e)) {
-	  fill(e.getPoint());
+	  Point scaled = new Point((int) (e.getX() / getZoom()), (int) (e.getY() / getZoom()));
+	  fill(scaled);
 	  e.consume();
 	}
 	else {
