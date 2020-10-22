@@ -67,6 +67,10 @@ public class Copy
       origin.getManager().suggestName(origin.getName()));
     if (newName == null)
       return;
+    if (origin.getManager().hasLayer(newName)) {
+      GUIHelper.showErrorMessage(origin.getRootPane(), "A layer with the name '" + newName + "' already exists!");
+      return;
+    }
 
     newLayer = origin.getManager().addOverlay(newName, origin.getColor().darker().darker(), origin.getAlpha(), origin.getIndexedImage());
     newLayer.setRemovable(origin.isRemovable());
