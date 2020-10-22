@@ -439,6 +439,7 @@ public class SegmentationPanel
       String label = FileUtils.replaceExtension(ovl.getName(), "").replaceAll(".*-", "");
       OverlayLayer layer = panel.getManager().addOverlay(label, provider.next(), 0.5f, new PNGImageReader().read(new PlaceholderFile(ovl)).getImage());
       layer.setRemovable(true);
+      layer.setActionsAvailable(true);
     }
     panel.update();
     BaseFrame frame = new BaseFrame("Segmentation");

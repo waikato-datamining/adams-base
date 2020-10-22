@@ -138,6 +138,10 @@ adams.data.objectfinder.ObjectFinder=\
 adams.gui.visualization.segmentation.tool.AbstractTool=\
   adams.gui.visualization.segmentation.tool
 
+# the overlay layer actions
+adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction=\
+  adams.gui.visualization.segmentation.layer.overlaylayeraction
+
 # the image segmentation file readers
 adams.data.io.input.AbstractImageSegmentationAnnotationReader=\
   adams.data.io.input

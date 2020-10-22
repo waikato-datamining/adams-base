@@ -142,6 +142,16 @@ public class ImageLayer
   }
 
   /**
+   * Returns whether actions are available.
+   *
+   * @return		true if available
+   */
+  @Override
+  public boolean hasActionsAvailable() {
+    return false;
+  }
+
+  /**
    * Performs the drawing.
    *
    * @param g2d		the graphics context

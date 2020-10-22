@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-10-22 10:43:52
+# Date: 2020-10-22 13:49:44
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -28,6 +28,6 @@ adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images 
    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
    adams.flow.sink.CallableSink -callable ProgressBar
   adams.flow.transformer.ImageSegmentationFileReader -reader adams.data.io.input.IndividualImageSegmentationLayerReader
-  adams.flow.transformer.ImageSegmentationAnnotator -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -allow-layer-remove true
+  adams.flow.transformer.ImageSegmentationAnnotator -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -allow-layer-remove true -allow-layer-actions true
   adams.flow.sink.ImageSegmentationFileWriter -output @{file} -writer "adams.data.io.output.IndividualImageSegmentationLayerWriter -skip-base-image true"
  adams.flow.control.CloseCallableDisplay -callable ProgressBar

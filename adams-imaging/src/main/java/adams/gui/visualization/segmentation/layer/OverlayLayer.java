@@ -20,15 +20,22 @@
 
 package adams.gui.visualization.segmentation.layer;
 
+import adams.core.ClassLister;
+import adams.core.Utils;
 import adams.core.base.BaseFloat;
 import adams.data.image.BufferedImageHelper;
 import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseFlatButtonWithDropDownMenu;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.ColorHelper;
+import adams.gui.core.ConsolePanel;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
 
 import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import java.awt.AlphaComposite;
@@ -77,6 +84,9 @@ public class OverlayLayer
   /** the button for applying the values. */
   protected BaseFlatButton m_ButtonApply;
 
+  /** the button for the action drop. */
+  protected BaseFlatButtonWithDropDownMenu m_ButtonActions;
+
   /** the button for removing the layer. */
   protected BaseFlatButton m_ButtonRemove;
 
@@ -102,6 +112,7 @@ public class OverlayLayer
   @Override
   protected void initGUI() {
     JPanel	panelRow;
+    JMenuItem	menuitem;
 
     super.initGUI();
 
@@ -122,6 +133,23 @@ public class OverlayLayer
       update();
     });
     panelRow.add(m_ButtonRemove);
+    m_ButtonActions = new BaseFlatButtonWithDropDownMenu();
+    m_ButtonActions.setVisible(false);
+    for (Class cls: ClassLister.getSingleton().getClasses(AbstractOverlayLayerAction.class)) {
+      try {
+        final AbstractOverlayLayerAction action = (AbstractOverlayLayerAction) cls.newInstance();
+        menuitem = new JMenuItem(action.getName());
+        menuitem.setIcon(action.getIcon());
+        menuitem.addActionListener((ActionEvent e) -> action.performAction(OverlayLayer.this));
+	Fonts.usePlain(menuitem);
+        m_ButtonActions.addToMenu(menuitem);
+      }
+      catch (Exception e) {
+        ConsolePanel.getSingleton().append("Failed to instantiate overlay layer action: " + Utils.classToString(cls), e);
+      }
+    }
+    m_ButtonActions.setToolTipText("Click to select action");
+    panelRow.add(m_ButtonActions);
 
     panelRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panelRow);
@@ -248,6 +276,25 @@ public class OverlayLayer
    */
   public void setRemovable(boolean value) {
     m_ButtonRemove.setVisible(value);
+  }
+
+  /**
+   * Returns whether actions are available.
+   *
+   * @return		true if available
+   */
+  @Override
+  public boolean hasActionsAvailable() {
+    return m_ButtonActions.isVisible();
+  }
+
+  /**
+   * Sets whether the layer actions are available.
+   *
+   * @param value	true if available
+   */
+  public void setActionsAvailable(boolean value) {
+    m_ButtonActions.setVisible(value);
   }
 
   /**

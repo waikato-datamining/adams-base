@@ -572,4 +572,25 @@ public class LayerManager
     notifyChangeListeners();
     repaint();
   }
+
+  /**
+   * Suggests a new name.
+   *
+   * @param name	the old name
+   * @return		the suggested name
+   */
+  public String suggestName(String name) {
+    String	result;
+    int		count;
+
+    count = 0;
+
+    do {
+      count++;
+      result = name + count;
+    }
+    while (hasLayer(result));
+
+    return result;
+  }
 }

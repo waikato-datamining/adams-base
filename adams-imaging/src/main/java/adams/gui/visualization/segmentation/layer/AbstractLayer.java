@@ -126,6 +126,13 @@ public abstract class AbstractLayer
   public abstract boolean isRemovable();
 
   /**
+   * Returns whether actions are available.
+   *
+   * @return		true if available
+   */
+  public abstract boolean hasActionsAvailable();
+
+  /**
    * Notifies the change listeners.
    */
   protected void update() {

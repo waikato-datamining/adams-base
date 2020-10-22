@@ -198,6 +198,9 @@ public class ImageSegmentationAnnotator
   /** whether layers can be deleted. */
   protected boolean m_AllowLayerRemoval;
 
+  /** whether layer actions are available. */
+  protected boolean m_AllowLayerActions;
+  
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
@@ -236,6 +239,10 @@ public class ImageSegmentationAnnotator
 
     m_OptionManager.add(
       "allow-layer-remove", "allowLayerRemoval",
+      false);
+
+    m_OptionManager.add(
+      "allow-layer-actions", "allowLayerActions",
       false);
   }
 
@@ -427,6 +434,35 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets whether layer actions are available.
+   *
+   * @param value 	true if allowed
+   */
+  public void setAllowLayerActions(boolean value) {
+    m_AllowLayerActions = value;
+    reset();
+  }
+
+  /**
+   * Returns whether layer actions are available.
+   *
+   * @return 		true if allowed
+   */
+  public boolean getAllowLayerActions() {
+    return m_AllowLayerActions;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String allowLayerActionsTipText() {
+    return "If enabled, the user has access to layer actions.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -546,6 +582,7 @@ public class ImageSegmentationAnnotator
         layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
       }
       layer.setRemovable(m_AllowLayerRemoval);
+      layer.setActionsAvailable(m_AllowLayerActions);
     }
     m_PanelSegmentation.update();
     m_Dialog.setVisible(true);
