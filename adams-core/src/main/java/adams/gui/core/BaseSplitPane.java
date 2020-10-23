@@ -209,7 +209,8 @@ public class BaseSplitPane
     else {
       if (m_HiddenTopComponent != null) {
 	setTopComponent(m_HiddenTopComponent);
-	setDividerLocation(m_DividerLocationBeforeHiding);
+	if (m_DividerLocationBeforeHiding != null)
+          setDividerLocation(m_DividerLocationBeforeHiding);
 	m_HiddenTopComponent          = null;
 	m_DividerLocationBeforeHiding = null;
 	if (!isBottomComponentHidden())
@@ -268,7 +269,8 @@ public class BaseSplitPane
     else {
       if (m_HiddenBottomComponent != null) {
 	setBottomComponent(m_HiddenBottomComponent);
-	setDividerLocation(m_DividerLocationBeforeHiding);
+	if (m_DividerLocationBeforeHiding != null)
+          setDividerLocation(m_DividerLocationBeforeHiding);
 	m_HiddenBottomComponent       = null;
 	m_DividerLocationBeforeHiding = null;
 	if (!isTopComponentHidden())

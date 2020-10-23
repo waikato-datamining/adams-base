@@ -15,7 +15,7 @@
 
 /*
  * RunPauseResume.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -49,8 +49,8 @@ public class RunPauseResume
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getDebugOrCurrentPanel().closeStorage();
-    m_State.getDebugOrCurrentPanel().pauseAndResume();
+    m_State.getCurrentPanel().closeStorage();
+    m_State.getCurrentPanel().pauseAndResume();
     m_State.updateActions();
   }
 
@@ -59,7 +59,7 @@ public class RunPauseResume
    */
   @Override
   protected void doUpdate() {
-    if (m_State.hasDebugOrCurrentPanel() && m_State.getDebugOrCurrentPanel().isPaused()) {
+    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().isPaused()) {
       setIcon(GUIHelper.getIcon("resume.gif"));
       setName("Resume");
     }
@@ -69,7 +69,7 @@ public class RunPauseResume
     }
     
     setEnabled(
-      m_State.hasDebugOrCurrentPanel()
-      && m_State.getDebugOrCurrentPanel().isRunning());
+      m_State.hasCurrentPanel()
+      && m_State.getCurrentPanel().isRunning());
   }
 }

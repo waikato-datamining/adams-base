@@ -82,13 +82,16 @@ import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -137,12 +140,21 @@ public class FlowPanel
   
   /** whether a swingworker is currently running. */
   protected boolean m_RunningSwingWorker;
-  
+
+  /** the split pane for the trees (edit/debug). */
+  protected BaseSplitPane m_SplitPaneTrees;
+
   /** the split pane to use for tree and notification area. */
-  protected BaseSplitPane m_SplitPane;
-  
+  protected BaseSplitPane m_SplitPaneEditor;
+
   /** the tree displaying the flow structure. */
   protected Tree m_Tree;
+
+  /** the tree displaying the debug flow structure. */
+  protected Tree m_DebugTree;
+
+  /** the panel with the debug tree. */
+  protected JPanel m_PanelDebugTree;
 
   /** the recent files handler. */
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
@@ -188,12 +200,6 @@ public class FlowPanel
 
   /** the last flow writer used. */
   protected FlowWriter m_LastWriter;
-
-  /** the generated debug panel. */
-  protected FlowPanel m_DebugTargetPanel;
-
-  /** the source panel for the debug panel. */
-  protected FlowPanel m_DebugSourcePanel;
 
   /** for monitoring file changes. */
   protected MultiMonitor m_FlowFileMonitor;
@@ -242,7 +248,6 @@ public class FlowPanel
     m_CheckLargeFlowsOnSave = null;
     m_LastReader            = null;
     m_LastWriter            = null;
-    m_DebugSourcePanel      = null;
     m_FlowFileMonitor       = new MultiMonitor();
     m_FlowFileMonitor.setCombinationType(CombinationType.AND);
     m_FlowFileMonitor.setMonitors(new FileChangeMonitor[]{
@@ -269,6 +274,7 @@ public class FlowPanel
     String[]				keyboardShortcuts;
     AbstractKeyboardAction		keyboardAction;
     List<AbstractKeyboardAction>	keyboardActions;
+    JPanel				panel;
 
     super.initGUI();
 
@@ -276,34 +282,38 @@ public class FlowPanel
 
     setLayout(new BorderLayout());
 
-    m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-    m_SplitPane.setResizeWeight(1.0);
-    m_SplitPane.setOneTouchExpandable(true);
-    m_SplitPane.setUISettingsParameters(getClass(), "NotificationsDivider");
+    m_SplitPaneTrees = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPaneTrees.setResizeWeight(1.0);
+    m_SplitPaneTrees.setOneTouchExpandable(true);
+    m_SplitPaneTrees.setUISettingsParameters(getClass(), "DebugDivider");
+    if (UISettings.has(getClass(), "DebugDivider"))
+      m_SplitPaneTrees.setDividerLocation(UISettings.get(getClass(), "DebugDivider", 250));
+    add(m_SplitPaneTrees, BorderLayout.CENTER);
+
+    // debug tree
+    m_PanelDebugTree = new JPanel(new BorderLayout());
+    m_SplitPaneTrees.setTopComponent(m_PanelDebugTree);
+    m_SplitPaneTrees.setTopComponentHidden(true);
+    panel = new JPanel(new FlowLayout());
+    m_PanelDebugTree.add(panel, BorderLayout.NORTH);
+    panel.add(new JLabel("Debug view"));
+    m_DebugTree = new Tree(this);
+    m_DebugTree.setDebug(true);
+    configureUI(m_DebugTree);
+    m_PanelDebugTree.add(new BaseScrollPane(m_DebugTree), BorderLayout.CENTER);
+
+    // editor
+    m_SplitPaneEditor = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPaneEditor.setResizeWeight(1.0);
+    m_SplitPaneEditor.setOneTouchExpandable(true);
+    m_SplitPaneEditor.setUISettingsParameters(getClass(), "NotificationsDivider");
     if (UISettings.has(getClass(), "NotificationsDivider"))
-      m_SplitPane.setDividerLocation(UISettings.get(getClass(), "NotificationsDivider", 500));
-    add(m_SplitPane, BorderLayout.CENTER);
-    
-    // the tree
+      m_SplitPaneEditor.setDividerLocation(UISettings.get(getClass(), "NotificationsDivider", 500));
+    m_SplitPaneTrees.setBottomComponent(m_SplitPaneEditor);
+
+    // editor tree
     m_Tree = new Tree(this);
-    m_Tree.setActorNameColor(props.getProperty("Tree.ActorName.Color", "black"));
-    m_Tree.setActorNameSize(props.getProperty("Tree.ActorName.Size", "3"));
-    m_Tree.setQuickInfoColor(props.getProperty("Tree.QuickInfo.Color", "#008800"));
-    m_Tree.setQuickInfoSize(props.getProperty("Tree.QuickInfo.Size", "-2"));
-    m_Tree.setAnnotationsColor(props.getProperty("Tree.Annotations.Color", "blue"));
-    m_Tree.setAnnotationsSize(props.getProperty("Tree.Annotations.Size", "-2"));
-    m_Tree.setInputOutputColor(props.getProperty("Tree.InputOutput.Color", "blue"));
-    m_Tree.setInputOutputSize(props.getProperty("Tree.InputOutput.Size", "-2"));
-    m_Tree.setPlaceholdersColor(props.getProperty("Tree.Placeholders.Color", "navy"));
-    m_Tree.setPlaceholdersSize(props.getProperty("Tree.Placeholders.Size", "-2"));
-    m_Tree.setIgnoreNameChanges(props.getBoolean("Tree.IgnoreNameChanges", false));
-    m_Tree.setScaleFactor(props.getDouble("Tree.ScaleFactor", 1.0));
-    m_Tree.setRecordAdd(props.getBoolean("Tree.RecordAdd", false));
-    m_Tree.setVariableHighlightBackground(props.getProperty("VariableHighlight.Background", "#FFDD88"));
-    m_Tree.setShowQuickInfo(props.getBoolean("ShowQuickInfo", true));
-    m_Tree.setShowAnnotations(props.getBoolean("ShowAnnotations", true));
-    m_Tree.setShowInputOutput(props.getBoolean("ShowInputOutput", false));
-    m_Tree.setInputOutputPrefixes(props.getProperty("Tree.InputOutput.Prefixes", "java.lang.,java.io.,adams.core.io.,adams.flow.core.,adams.flow.container.").replace(" ", "").split(","));
+    configureUI(m_Tree);
 
     // keyboard actions
     try {
@@ -331,7 +341,7 @@ public class FlowPanel
 	showStatus(false, m_Tree.getSelectedFullName());
     });
 
-    m_SplitPane.setTopComponent(new BaseScrollPane(m_Tree));
+    m_SplitPaneEditor.setTopComponent(new BaseScrollPane(m_Tree));
 
     // the tabs
     m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
@@ -342,8 +352,8 @@ public class FlowPanel
     m_PanelNotification = new FlowPanelNotificationArea();
     m_PanelNotification.setOwner(this);
     m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
-    m_SplitPane.setBottomComponent(m_PanelNotification);
-    m_SplitPane.setBottomComponentHidden(true);
+    m_SplitPaneEditor.setBottomComponent(m_PanelNotification);
+    m_SplitPaneEditor.setBottomComponentHidden(true);
   }
 
   /**
@@ -881,11 +891,8 @@ public class FlowPanel
    * Sets whether the flow is modified or not.
    *
    * @param value	true if the flow is to be flagged as modified
-   * @see		#isDebug()
    */
   public void setModified(boolean value) {
-    if (isDebug())
-      return;
     getTree().setModified(value);
     update();
   }
@@ -1241,9 +1248,11 @@ public class FlowPanel
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
-    m_DebugTargetPanel = null;
-    m_DebugSourcePanel = null;
     if (m_LastFlow != null) {
+      if (isDebugTreeVisible()) {
+        setDebugTreeVisible(false);
+        getDebugTree().setActor(new Flow());
+      }
       showStatus("Cleaning up");
       try {
         for (AbstractTabHandler handler: getTabHandlers())
@@ -1617,7 +1626,7 @@ public class FlowPanel
    * @return		the split pane
    */
   public BaseSplitPane getSplitPane() {
-    return m_SplitPane;
+    return m_SplitPaneEditor;
   }
   
   /**
@@ -1627,6 +1636,33 @@ public class FlowPanel
    */
   public Tree getTree() {
     return m_Tree;
+  }
+
+  /**
+   * Returns the debug tree.
+   *
+   * @return		the debug tree
+   */
+  public Tree getDebugTree() {
+    return m_DebugTree;
+  }
+
+  /**
+   * Returns whether the debug tree is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isDebugTreeVisible() {
+    return !m_SplitPaneTrees.isTopComponentHidden();
+  }
+
+  /**
+   * Sets whether the debug tree is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setDebugTreeVisible(boolean value) {
+    m_SplitPaneTrees.setTopComponentHidden(!value);
   }
 
   /**
@@ -1746,6 +1782,14 @@ public class FlowPanel
   @Override
   public void showNotification(String msg, NotificationType type) {
     m_PanelNotification.showNotification(msg, type);
+    SwingUtilities.invokeLater(() -> {
+      if (isDebugTreeVisible()) {
+	int div = m_SplitPaneEditor.getDividerLocation();
+	int max = (int) (m_SplitPaneEditor.getHeight() - m_PanelNotification.getPreferredSize().getHeight() - m_SplitPaneEditor.getDividerSize() - 20);
+	if (div > max)
+	  m_SplitPaneEditor.setDividerLocation(max);
+      }
+    });
   }
   
   /**
@@ -1754,73 +1798,6 @@ public class FlowPanel
   @Override
   public void clearNotification() {
     m_PanelNotification.clearNotification();
-  }
-
-  /**
-   * Sets the debug flag.
-   *
-   * @param value	true if it is a debug flow, ie copy
-   */
-  public void setDebug(boolean value) {
-    m_Tree.setDebug(value);
-    if (isDebug())
-      setPageIcon("run_debug.png");
-    else
-      setPageIcon(null);
-  }
-
-  /**
-   * Returns the debug flag.
-   *
-   * @return		true if it is a debug flow, ie copy
-   */
-  public boolean isDebug() {
-    return m_Tree.isDebug();
-  }
-
-  /**
-   * Sets the source for this debug panel.
-   *
-   * @param value	the actual panel
-   */
-  public void setDebugSourcePanel(FlowPanel value) {
-    m_DebugSourcePanel = value;
-  }
-
-  /**
-   * Returns the source for this debug panel.
-   *
-   * @return		the actual panel, null if not available
-   */
-  public FlowPanel getDebugSourcePanel() {
-    return m_DebugSourcePanel;
-  }
-
-  /**
-   * Sets the debug panel.
-   *
-   * @param value	the debug panel
-   */
-  public void setDebugTargetPanel(FlowPanel value) {
-    m_DebugTargetPanel = value;
-  }
-
-  /**
-   * Returns the debug panel.
-   *
-   * @return		the debug panel, null if not available
-   */
-  public FlowPanel getDebugTargetPanel() {
-    return m_DebugTargetPanel;
-  }
-
-  /**
-   * Returns whether an Undo manager is currently available.
-   *
-   * @return		true if an undo manager is set and not debugged
-   */
-  public boolean isUndoSupported() {
-    return super.isUndoSupported() && !isDebug();
   }
 
   /**
@@ -1890,5 +1867,35 @@ public class FlowPanel
       m_Properties = Environment.getInstance().read(FlowEditorPanelDefinition.KEY);
 
     return m_Properties;
+  }
+
+  /**
+   * Configures the UI of the tree with parameters from the properties.
+   *
+   * @param tree	the tree to configure
+   * @see		#getProperties()
+   */
+  public static void configureUI(Tree tree) {
+    Properties    props;
+
+    props = getProperties();
+    tree.setActorNameColor(props.getProperty("Tree.ActorName.Color", "black"));
+    tree.setActorNameSize(props.getProperty("Tree.ActorName.Size", "3"));
+    tree.setQuickInfoColor(props.getProperty("Tree.QuickInfo.Color", "#008800"));
+    tree.setQuickInfoSize(props.getProperty("Tree.QuickInfo.Size", "-2"));
+    tree.setAnnotationsColor(props.getProperty("Tree.Annotations.Color", "blue"));
+    tree.setAnnotationsSize(props.getProperty("Tree.Annotations.Size", "-2"));
+    tree.setInputOutputColor(props.getProperty("Tree.InputOutput.Color", "blue"));
+    tree.setInputOutputSize(props.getProperty("Tree.InputOutput.Size", "-2"));
+    tree.setPlaceholdersColor(props.getProperty("Tree.Placeholders.Color", "navy"));
+    tree.setPlaceholdersSize(props.getProperty("Tree.Placeholders.Size", "-2"));
+    tree.setIgnoreNameChanges(props.getBoolean("Tree.IgnoreNameChanges", false));
+    tree.setScaleFactor(props.getDouble("Tree.ScaleFactor", 1.0));
+    tree.setRecordAdd(props.getBoolean("Tree.RecordAdd", false));
+    tree.setVariableHighlightBackground(props.getProperty("VariableHighlight.Background", "#FFDD88"));
+    tree.setShowQuickInfo(props.getBoolean("ShowQuickInfo", true));
+    tree.setShowAnnotations(props.getBoolean("ShowAnnotations", true));
+    tree.setShowInputOutput(props.getBoolean("ShowInputOutput", false));
+    tree.setInputOutputPrefixes(props.getProperty("Tree.InputOutput.Prefixes", "java.lang.,java.io.,adams.core.io.,adams.flow.core.,adams.flow.container.").replace(" ", "").split(","));
   }
 }

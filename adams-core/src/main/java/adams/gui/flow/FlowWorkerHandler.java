@@ -115,18 +115,4 @@ public interface FlowWorkerHandler
    * @return		the panel, null if not available
    */
   public StoragePanel getStoragePanel();
-
-  /**
-   * Returns the source for this debug panel.
-   *
-   * @return		the actual panel, null if not available
-   */
-  public FlowPanel getDebugSourcePanel();
-
-  /**
-   * Returns the debug panel.
-   *
-   * @return		the debug panel, null if not available
-   */
-  public FlowPanel getDebugTargetPanel();
 }

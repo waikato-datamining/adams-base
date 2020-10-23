@@ -262,9 +262,11 @@ public abstract class AbstractActor
    */
   protected void updatePrefix() {
     String	prefix;
+    Actor	root;
 
-    if (getRoot() instanceof Flow)
-      prefix = getFullName() + "-" + ((Flow) getRoot()).getFlowID();
+    root = getRoot();
+    if (root instanceof Flow)
+      prefix = getFullName() + "-" + ((Flow) root).getFlowID();
     else
       prefix = getFullName();
     if (prefix.isEmpty())

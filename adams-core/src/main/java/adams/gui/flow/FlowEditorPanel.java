@@ -1514,30 +1514,6 @@ public class FlowEditorPanel
   }
 
   /**
-   * Returns whether a debug or current flow panel is available.
-   *
-   * @return		true if either debug or current panel available
-   */
-  public boolean hasDebugOrCurrentPanel() {
-    if (hasCurrentPanel() && getCurrentPanel().isDebug() && (getCurrentPanel().getDebugSourcePanel() != null))
-      return true;
-    else
-      return hasCurrentPanel();
-  }
-
-  /**
-   * Returns the debug or current flow panel.
-   *
-   * @return		the debug panel or, if not present, the current flow panel, null if none available
-   */
-  public FlowPanel getDebugOrCurrentPanel() {
-    if (hasCurrentPanel() && getCurrentPanel().isDebug() && (getCurrentPanel().getDebugSourcePanel() != null))
-      return getCurrentPanel().getDebugSourcePanel();
-    else
-      return getCurrentPanel();
-  }
-
-  /**
    * Returns whether an active panel is set.
    *
    * @return		true if active panel set
@@ -1553,30 +1529,6 @@ public class FlowEditorPanel
    */
   public FlowPanel getActivePanel() {
     return m_FlowPanels.getActiveFlow();
-  }
-
-  /**
-   * Returns whether a debug or active flow panel is available.
-   *
-   * @return		true if either debug or active panel available
-   */
-  public boolean hasDebugOrActivePanel() {
-    if (hasActivePanel() && getActivePanel().isDebug() && (getActivePanel().getDebugSourcePanel() != null))
-      return true;
-    else
-      return hasActivePanel();
-  }
-
-  /**
-   * Returns the debug or active flow panel.
-   *
-   * @return		the debug panel or, if not present, the active flow panel, null if none available
-   */
-  public FlowPanel getDebugOrActivePanel() {
-    if (hasActivePanel() && getActivePanel().isDebug() && (getActivePanel().getDebugSourcePanel() != null))
-      return getActivePanel().getDebugSourcePanel();
-    else
-      return getActivePanel();
   }
 
   /**

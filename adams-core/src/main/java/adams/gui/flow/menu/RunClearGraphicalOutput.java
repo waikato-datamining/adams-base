@@ -15,7 +15,7 @@
 
 /*
  * RunClearGraphicalOutput.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -73,8 +73,6 @@ public class RunClearGraphicalOutput
 
     for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter())) {
       current = m_State.getFlowPanels().getPanelAt(index);
-      if (current.getDebugTargetPanel() != null)
-        current.getDebugTargetPanel().close();
       current.cleanUp();
       current.clearNotification();
     }

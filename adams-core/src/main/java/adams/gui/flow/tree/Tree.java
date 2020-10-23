@@ -22,6 +22,7 @@ package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.Properties;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
@@ -239,8 +240,11 @@ public class Tree
   protected void initialize() {
     Class[]		classes;
     TreePopupAction	action;
+    Properties 		props;
 
     super.initialize();
+
+    props = FlowPanel.getProperties();
 
     m_Self                        = this;
     m_Operations                  = new TreeOperations(this);
@@ -585,6 +589,15 @@ public class Tree
     }
 
     return result;
+  }
+
+  /**
+   * Sets the owning panel.
+   *
+   * @param value	the owner, null if not available
+   */
+  public void setOwner(FlowPanel value) {
+    m_Owner = value;
   }
 
   /**
@@ -1031,13 +1044,8 @@ public class Tree
     // currently running flow
     result.runningFlow = null;
     if (getOwner() != null) {
-      if (getOwner().getRunningFlow() instanceof Flow) {
+      if (getOwner().getRunningFlow() instanceof Flow)
         result.runningFlow = (Flow) getOwner().getRunningFlow();
-      }
-      else if (getOwner().isDebug() && (getOwner().getDebugSourcePanel() != null)) {
-        if (getOwner().getDebugSourcePanel().getRunningFlow() instanceof Flow)
-          result.runningFlow = (Flow) getOwner().getDebugSourcePanel().getRunningFlow();
-      }
     }
 
     return result;

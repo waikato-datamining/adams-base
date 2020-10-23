@@ -15,7 +15,7 @@
 
 /*
  * CloseAndCleanUp.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.notificationareaaction;
@@ -50,11 +50,8 @@ public class CloseAndCleanUp
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    if (m_Owner.getOwner() != null) {
-      if (m_Owner.getOwner().getDebugTargetPanel() != null)
-	m_Owner.getOwner().getDebugTargetPanel().close();
+    if (m_Owner.getOwner() != null)
       m_Owner.getOwner().cleanUp();
-    }
     m_Owner.clearNotification();
     m_Owner.notifyCloseListeners();
   }

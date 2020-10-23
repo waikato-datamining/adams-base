@@ -568,8 +568,12 @@ public class ControlPanel
       if (flow.isHeadless())
 	return null;
       if (flow.getParentComponent() != null) {
-	if (flow.getParentComponent() instanceof FlowPanel)
-	  result = ((FlowPanel) flow.getParentComponent()).getTree();
+	if (flow.getParentComponent() instanceof FlowPanel) {
+	  if (((FlowPanel) flow.getParentComponent()).isDebugTreeVisible())
+	    result = ((FlowPanel) flow.getParentComponent()).getDebugTree();
+	  else
+            result = ((FlowPanel) flow.getParentComponent()).getTree();
+        }
 	else if (flow.getParentComponent() instanceof Container)
 	  result = FlowHelper.getTree((Container) flow.getParentComponent());
 	else if (flow.getParentComponent() instanceof FlowTreeHandler)
@@ -833,9 +837,8 @@ public class ControlPanel
    * Highlights the actor.
    */
   protected void highlightActor() {
-    Component comp;
+    Component 	comp;
     final Tree	tree;
-    Runnable	run;
 
     if (getFlow().getParentComponent() == null)
       return;
@@ -843,15 +846,14 @@ public class ControlPanel
     if (!(comp instanceof FlowPanel))
       return;
 
-    tree = ((FlowPanel) comp).getTree();
-    run = new Runnable() {
-      @Override
-      public void run() {
-	String full = m_CurrentActor.getFullName();
-	tree.locateAndDisplay(full);
-      }
-    };
-    SwingUtilities.invokeLater(run);
+    if (((FlowPanel) comp).isDebugTreeVisible())
+      tree = ((FlowPanel) comp).getDebugTree();
+    else
+      tree = ((FlowPanel) comp).getTree();
+    SwingUtilities.invokeLater(() -> {
+      String full = m_CurrentActor.getFullName();
+      tree.locateAndDisplay(full);
+    });
   }
 
   /**

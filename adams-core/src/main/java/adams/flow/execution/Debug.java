@@ -513,14 +513,11 @@ public class Debug
   public BasePanel newListenerPanel() {
     int					i;
     FlowPanel				panel;
-    FlowPanel				panelCopy;
     Actor				expanded;
     DebugNestedProducer			producer;
     NestedConsumer			consumer;
     ListStructureModifyingActors	proc;
     Actor				flow;
-    String				title;
-    int					index;
 
     if (m_Owner == null)
       return null;
@@ -534,7 +531,7 @@ public class Debug
     // display copy of flow for debugging purposes
     if ((m_Owner.getParentComponent() != null) && (m_Owner.getParentComponent() instanceof Container)) {
       panel = (FlowPanel) GUIHelper.getParent((Container) m_Owner.getParentComponent(), FlowPanel.class);
-      if ((panel != null) && (panel.getOwner() != null) && !panel.isDebug()) {
+      if ((panel != null) && (panel.getOwner() != null)) {
 	flow = panel.getCurrentFlow();
 	if (flow != null) {
 	  proc = new ListStructureModifyingActors();
@@ -545,22 +542,8 @@ public class Debug
 	    producer.setOutputVariableValues(false);
 	    consumer.setInput(producer.produce(getOwner()));
 	    expanded = (Actor) consumer.consume();
-	    title = PREFIX_DEBUG + panel.getTitle().replace(PREFIX_DEBUG, "");
-	    if (!panel.getOwner().hasPanel(title)) {
-	      panelCopy = panel.getOwner().newPanel();
-	    }
-	    else {
-	      index = panel.getOwner().indexOfPanel(title);
-	      panelCopy = panel.getOwner().getPanelAt(index);
-	      panel.getOwner().setSelectedIndex(index);
-	    }
-	    panelCopy.setCurrentFlow(expanded);
-	    panelCopy.setTitle(title);
-	    panelCopy.setDebug(true);
-	    panelCopy.updateTitle();
-	    panelCopy.setDebugSourcePanel(panel);
-	    m_Owner.setParentComponent(panelCopy);
-	    panel.setDebugTargetPanel(panelCopy);
+	    panel.setDebugTreeVisible(true);
+	    panel.getDebugTree().setActor(expanded);
 	  }
 	}
       }

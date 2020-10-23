@@ -15,7 +15,7 @@
 
 /*
  * ActiveStop.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -47,7 +47,7 @@ public class ActiveStop
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getDebugOrActivePanel().stop();
+    m_State.getActivePanel().stop();
   }
 
   /**
@@ -56,7 +56,7 @@ public class ActiveStop
   @Override
   protected void doUpdate() {
     setEnabled(
-      m_State.hasDebugOrActivePanel()
-      && m_State.getDebugOrActivePanel().isRunning());
+      m_State.hasActivePanel()
+      && m_State.getActivePanel().isRunning());
   }
 }

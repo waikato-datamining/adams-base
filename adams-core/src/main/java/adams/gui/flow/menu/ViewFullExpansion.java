@@ -15,7 +15,7 @@
 
 /*
  * ViewFullExpansion.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -76,7 +76,6 @@ public class ViewFullExpansion
       panelCopy.setTitle(title);
       panelCopy.setPageIcon("hourglass.png");
       panelCopy.setCurrentFlow(expanded);
-      panelCopy.setDebugSourcePanel(panel);
       panelCopy.setPageIcon(null);
       if (expanded instanceof Flow)
 	((Flow) expanded).setParentComponent(panelCopy);
