@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2020 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -65,8 +65,17 @@ set HEADLESS=
 
 :AssembleCmd
 set JCMD=java
+
+if not "%JAVA_HOME%"=="" if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
 if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
+
+if not "%JAVACMD%"=="" if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
 if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
+
+where /q "java"
+if %ERRORLEVEL% NEQ 0 echo "No Java installed?" & goto javaerror
+
+echo Using: %JCMD%
 
 set BASEDIR=%~dp0\..
 set REPO=%BASEDIR%\lib
@@ -81,9 +90,19 @@ goto endInit
 if ERRORLEVEL 1 goto error
 goto end
 
+:javaerror
+echo You can download Java from:
+echo   https://adoptopenjdk.net/
+echo And configure the JAVA_HOME environment variable to point to your Java installation
+echo (use the directory above the "bin" directory for the environment variable):
+echo   https://www.techjunkie.com/environment-variables-windows-10/
+pause
+goto end
+
 :error
 if "%OS%"=="Windows_NT" @endlocal
 set ERROR_CODE=1
+goto end
 
 :end
 @REM set local scope for the variables with windows NT shell
