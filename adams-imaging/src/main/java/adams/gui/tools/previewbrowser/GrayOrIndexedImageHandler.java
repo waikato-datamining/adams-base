@@ -158,6 +158,7 @@ public class GrayOrIndexedImageHandler
     colorizer.setLoggingLevel(m_LoggingLevel);
     colorizer.setColorProvider(m_ColorProvider.shallowCopy());
     cont      = colorizer.transform(cont)[0];
+    colorizer.cleanUp();
 
     panel = new ImagePanel();
     panel.setCurrentImage(cont);
