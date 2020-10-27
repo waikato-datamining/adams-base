@@ -59,6 +59,16 @@ public class SimpleText
     protected String m_MissingValue;
 
     /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_Columns = new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL);
+    }
+
+    /**
      * Initializes the widgets.
      */
     @Override
