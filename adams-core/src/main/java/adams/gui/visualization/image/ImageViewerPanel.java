@@ -15,7 +15,7 @@
 
 /*
  * ImageViewerPanel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -839,7 +839,7 @@ public class ImageViewerPanel
     }
     else {
       m_MultiPagePane.setTitleAt(index, file.getName());
-      if (m_RecentFilesHandler != null)
+      if ((m_RecentFilesHandler != null) && (m_FileChooser.getImageWriter().getCorrespondingReader() != null))
 	m_RecentFilesHandler.addRecentItem(
 	    new Setup(file, m_FileChooser.getImageWriter().getCorrespondingReader()));
     }
