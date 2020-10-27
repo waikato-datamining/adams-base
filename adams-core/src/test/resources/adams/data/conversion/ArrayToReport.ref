@@ -1,0 +1,22 @@
+--> out-0.txt
+Object.1.value[S]: 1.0
+Object.2.value[S]: -1.0
+Object.3.value[S]: 3.1415926535
+Object.4.value[S]: -3.1415926535
+Object.5.value[S]: 1000000.0
+Object.6.value[S]: -100.0
+Object.7.value[S]: 134.0
+Object.8.value[S]: -4670.0
+
+
+--> out-1.txt
+Object.0.value[N]: 1.0
+Object.1.value[N]: -1.0
+Object.2.value[N]: 3.1415926535
+Object.3.value[N]: -3.1415926535
+Object.4.value[N]: 1000000.0
+Object.5.value[N]: -100.0
+Object.6.value[N]: 134.0
+Object.7.value[N]: -4670.0
+
+
