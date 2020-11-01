@@ -114,9 +114,9 @@ public class Eraser
   @Override
   protected Cursor createCursor() {
     if (m_Round)
-      return Cursors.circle(m_Size);
+      return Cursors.circleWithPointer(m_Size);
     else
-      return Cursors.square(m_Size);
+      return Cursors.squareWithPointer(m_Size);
   }
 
   /**
@@ -140,9 +140,9 @@ public class Eraser
     g2d.scale(1/zoom, 1/zoom);
     g2d.setColor(Color.BLACK);
     if (m_RadioRound.isSelected())
-      g2d.fillOval(x, y, m_Size, m_Size);
+      g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
     else
-      g2d.fillRect(x, y, m_Size, m_Size);
+      g2d.fillRect(x, y, m_Size - 1, m_Size - 1);
     g2d.dispose();
   }
 
