@@ -47,6 +47,30 @@ public class Cursors {
     m_Cache = new HashMap<>();
   }
 
+  /** the pointer image. */
+  protected static BufferedImage m_Pointer;
+
+  /**
+   * Returns the pointer image (loads it on demand).
+   *
+   * @return		the image
+   */
+  protected static synchronized BufferedImage getPointerImage() {
+    if (m_Pointer == null)
+      m_Pointer = GUIHelper.getImage("cursor.png");
+    return m_Pointer;
+  }
+
+  /**
+   * Returns the hotspot for the pointer.
+   *
+   * @return		the hotspot (0-based coordinates)
+   * @see		#getPointerImage()
+   */
+  protected static Point getPointerHotspot() {
+    return new Point(5, 1);
+  }
+
   /**
    * Scales the image according to the scale factor.
    *
@@ -223,6 +247,67 @@ public class Cursors {
   }
 
   /**
+   * Creates a square with the specified width overlayed with the cursor.
+   *
+   * @param width	the width of the square
+   * @return		the cursor
+   */
+  public static Cursor squareWithPointer(int width) {
+    String		name;
+    BufferedImage	img;
+    Graphics2D 		g2d;
+    int			size;
+    Point 		imgOffset;
+    int 		dx;
+    int 		dy;
+    int 		pSize;
+    int			cx;
+    int			cy;
+
+    name = "width_w_pointer-" + width;
+    if (!m_Cache.containsKey(name)) {
+      pSize     = getPointerImage().getWidth() * 2;
+      size      = Math.max(pSize, width);
+      imgOffset = getPointerHotspot();
+      cx        = pSize / 2 - 1;
+      cy        = pSize / 2 - 1;
+      imgOffset = new Point(cx - imgOffset.x, cy - imgOffset.y);
+      if (size > pSize) {
+        dx = (size - pSize) / 2;
+        dy = (size - pSize) / 2;
+        imgOffset = new Point(imgOffset.x + dx, imgOffset.y + dy);
+      }
+
+      img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+      g2d = img.createGraphics();
+
+      // clear
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+      g2d.fillRect(0, 0, size, size);
+
+      // reset composite
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+
+      // draw
+      if (width > 4) {
+        dx = (size - width) / 2;
+        dy = (size - width) / 2;
+	g2d.setPaint(Color.BLACK);
+	g2d.drawRect(dx, dy, width - 1, width - 1);
+	g2d.setColor(Color.WHITE);
+	g2d.drawRect(dx + 1, dy + 1, width - 3, width - 3);
+      }
+
+      g2d.drawImage(getPointerImage(), imgOffset.x, imgOffset.y, null);
+
+      cx = size / 2 - 1;
+      cy = size / 2 - 1;
+      cache(name, img, new Point(cx, cy), 1.0);
+    }
+    return m_Cache.get(name);
+  }
+
+  /**
    * Creates a circle cursor with the specified diameter.
    *
    * @param diameter	the diameter of the circle
@@ -267,6 +352,67 @@ public class Cursors {
       g2d.drawOval(1, 1, diameter - 3, diameter - 3);
 
       cache(name, img, p, scale);
+    }
+    return m_Cache.get(name);
+  }
+
+  /**
+   * Creates a circle with the specified diameter overlayed with the cursor.
+   *
+   * @param diameter	the diameter of the circle
+   * @return		the cursor
+   */
+  public static Cursor circleWithPointer(int diameter) {
+    String		name;
+    BufferedImage	img;
+    Graphics2D 		g2d;
+    int			size;
+    Point 		imgOffset;
+    int 		dx;
+    int 		dy;
+    int 		pSize;
+    int			cx;
+    int			cy;
+
+    name = "circle_w_pointer-" + diameter;
+    if (!m_Cache.containsKey(name)) {
+      pSize     = getPointerImage().getWidth() * 2;
+      size      = Math.max(pSize, diameter);
+      imgOffset = getPointerHotspot();
+      cx        = pSize / 2 - 1;
+      cy        = pSize / 2 - 1;
+      imgOffset = new Point(cx - imgOffset.x, cy - imgOffset.y);
+      if (size > pSize) {
+        dx = (size - pSize) / 2;
+        dy = (size - pSize) / 2;
+        imgOffset = new Point(imgOffset.x + dx, imgOffset.y + dy);
+      }
+
+      img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+      g2d = img.createGraphics();
+
+      // clear
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
+      g2d.fillRect(0, 0, size, size);
+
+      // reset composite
+      g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+
+      // draw
+      if (diameter > 4) {
+        dx = (size - diameter) / 2;
+        dy = (size - diameter) / 2;
+	g2d.setPaint(Color.BLACK);
+	g2d.drawOval(dx, dy, diameter - 1, diameter - 1);
+	g2d.setColor(Color.WHITE);
+	g2d.drawOval(dx + 1, dy + 1, diameter - 3, diameter - 3);
+      }
+
+      g2d.drawImage(getPointerImage(), imgOffset.x, imgOffset.y, null);
+
+      cx = size / 2 - 1;
+      cy = size / 2 - 1;
+      cache(name, img, new Point(cx, cy), 1.0);
     }
     return m_Cache.get(name);
   }
