@@ -37,6 +37,7 @@ import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -315,6 +316,47 @@ public class GUIHelper {
    */
   public static ImageIcon getEmptyIcon() {
     return getIcon(EMPTY_ICON);
+  }
+
+  /**
+   * Returns a BufferedImage from the given name.
+   *
+   * @param name	the filename without path
+   * @return		the BufferedImage or null if not available/failed to load
+   */
+  public static BufferedImage getImage(String name) {
+    String	filename;
+
+    filename = getImageFilename(name);
+    if (filename != null) {
+      try {
+        return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+      }
+      catch (Exception e) {
+        System.err.println("Failed to load image: " + filename);
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Returns a BufferedImage from the given filename.
+   *
+   * @param filename	the full filename
+   * @return		the BufferedImage or null if not available/failed to load
+   */
+  public static BufferedImage getExternalImage(String filename) {
+    if (filename != null) {
+      try {
+        return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+      }
+      catch (Exception e) {
+        System.err.println("Failed to load image: " + filename);
+        e.printStackTrace();
+      }
+    }
+    return null;
   }
 
   /**
