@@ -17,5 +17,8 @@
 adams.data.spreadsheet.SpreadSheetColumnIndex=adams.gui.goe.SpreadSheetColumnIndexEditor
 adams.data.spreadsheet.SpreadSheetColumnRange=adams.gui.goe.SpreadSheetColumnRangeEditor
 adams.data.spreadsheet.SpreadSheetUnorderedColumnRange=adams.gui.goe.SpreadSheetUnorderedColumnRangeEditor
+adams.data.spreadsheet.SpreadSheetRowIndex=adams.gui.goe.SpreadSheetRowIndexEditor
+adams.data.spreadsheet.SpreadSheetRowRange=adams.gui.goe.SpreadSheetRowRangeEditor
+adams.data.spreadsheet.SpreadSheetUnorderedRowRange=adams.gui.goe.SpreadSheetUnorderedRowRangeEditor
 adams.parser.SpreadSheetQueryText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.LookUpUpdateText=adams.gui.goe.AbstractSimpleScriptEditor

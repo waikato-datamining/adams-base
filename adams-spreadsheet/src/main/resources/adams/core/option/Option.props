@@ -31,6 +31,21 @@ adams.data.spreadsheet.SpreadSheetUnorderedColumnRange=true
 adams.data.spreadsheet.SpreadSheetUnorderedColumnRange#toString=adams.core.option.parsing.SpreadSheetUnorderedColumnRangeParsing#toString
 adams.data.spreadsheet.SpreadSheetUnorderedColumnRange#valueOf=adams.core.option.parsing.SpreadSheetUnorderedColumnRangeParsing#valueOf
 
+# SpreadSheetRowIndex objects
+adams.data.spreadsheet.SpreadSheetRowIndex=true
+adams.data.spreadsheet.SpreadSheetRowIndex#toString=adams.core.option.parsing.SpreadSheetRowIndexParsing#toString
+adams.data.spreadsheet.SpreadSheetRowIndex#valueOf=adams.core.option.parsing.SpreadSheetRowIndexParsing#valueOf
+
+# SpreadSheetRowRange objects
+adams.data.spreadsheet.SpreadSheetRowRange=true
+adams.data.spreadsheet.SpreadSheetRowRange#toString=adams.core.option.parsing.SpreadSheetRowRangeParsing#toString
+adams.data.spreadsheet.SpreadSheetRowRange#valueOf=adams.core.option.parsing.SpreadSheetRowRangeParsing#valueOf
+
+# SpreadSheetUnorderedRowRange objects
+adams.data.spreadsheet.SpreadSheetUnorderedRowRange=true
+adams.data.spreadsheet.SpreadSheetUnorderedRowRange#toString=adams.core.option.parsing.SpreadSheetUnorderedRowRangeParsing#toString
+adams.data.spreadsheet.SpreadSheetUnorderedRowRange#valueOf=adams.core.option.parsing.SpreadSheetUnorderedRowRangeParsing#valueOf
+
 # SpreadSheetQueryText objects
 adams.parser.SpreadSheetQueryText=true
 adams.parser.SpreadSheetQueryText#toString=adams.core.option.parsing.SimpleScriptParsing#toString
