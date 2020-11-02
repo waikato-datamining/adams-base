@@ -45,6 +45,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  * Pencil.
@@ -120,12 +121,12 @@ public class Pencil
   }
 
   /**
-   * Draws the currently selected shape at the specified location.
+   * Draws the currently selected shape at the specified locations.
    *
-   * @param p		the location
+   * @param points	the locations
    */
   @Override
-  protected void doDrawShape(Point p) {
+  protected void doDrawShape(List<Point> points) {
     Color		color;
     Graphics2D		g2d;
     BufferedImage 	img;
@@ -136,15 +137,17 @@ public class Pencil
     color = getActiveLayer().getColor();
     zoom  = getZoom();
     img   = getActiveLayer().getImage();
-    x     = (int) (p.getX() - m_Size / 2);
-    y     = (int) (p.getY() - m_Size / 2);
     g2d   = img.createGraphics();
-    g2d.scale(1/zoom, 1/zoom);
+    g2d.scale(1 / zoom, 1 / zoom);
     g2d.setColor(color);
-    if (m_Round)
-      g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
-    else
-      g2d.fillRect(x, y, m_Size - 1, m_Size - 1);
+    for (Point p: points) {
+      x = (int) (p.getX() - m_Size / 2);
+      y = (int) (p.getY() - m_Size / 2);
+      if (m_Round)
+        g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
+      else
+        g2d.fillRect(x, y, m_Size - 1, m_Size - 1);
+    }
     g2d.dispose();
   }
 
