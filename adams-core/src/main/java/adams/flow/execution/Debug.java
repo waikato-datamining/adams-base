@@ -601,6 +601,9 @@ public class Debug
    * Blocks the flow execution.
    */
   public void blockExecution() {
+    int		count;
+
+    count     = 0;
     m_Blocked = true;
     m_ControlPanel.update();
     while (m_Blocked && !m_Stopped) {
@@ -608,7 +611,12 @@ public class Debug
         break;
       try {
 	synchronized(this) {
-	  wait(50);
+	  wait(100);
+	}
+        count++;
+	if (count == 10) {
+	  m_ControlPanel.update();
+	  count = 0;
 	}
       }
       catch (Exception e) {
