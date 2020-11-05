@@ -393,7 +393,8 @@ public class SelectObjects
       if (!m_Locations.contains(rect)) {
 	modified  = true;
 	lastIndex = findLastIndex(report);
-	current   = m_Prefix + (Utils.padLeft("" + (lastIndex + 1), '0', m_NumDigits));
+	rect.setIndex(lastIndex + 1);
+	current   = m_Prefix + (Utils.padLeft("" + rect.getIndex(), '0', m_NumDigits));
 	report.setNumericValue(current + KEY_X, x);
 	report.setNumericValue(current + KEY_Y, y);
 	report.setNumericValue(current + KEY_WIDTH, w);
