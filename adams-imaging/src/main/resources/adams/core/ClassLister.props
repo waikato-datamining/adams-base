@@ -149,3 +149,19 @@ adams.data.io.input.AbstractImageSegmentationAnnotationReader=\
 # the image segmentation file writers
 adams.data.io.output.AbstractImageSegmentationAnnotationWriter=\
   adams.data.io.output
+
+# the annotations panels
+adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGenerator=\
+  adams.gui.visualization.object.annotationsdisplay
+
+# the object annotators
+adams.gui.visualization.object.annotator.AbstractAnnotator=\
+  adams.gui.visualization.object.annotator
+
+# the object mouseclick processors
+adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor=\
+  adams.gui.visualization.object.mouseclick
+
+# the object overlays
+adams.gui.visualization.object.overlay.AbstractOverlay=\
+  adams.gui.visualization.object.overlay
