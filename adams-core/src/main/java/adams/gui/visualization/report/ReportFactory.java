@@ -15,7 +15,7 @@
 
 /*
  * ReportFactory.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.report;
@@ -83,6 +83,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.TableModel;
@@ -96,7 +98,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A factory for GUI components for reports.
@@ -325,7 +329,10 @@ public class ReportFactory {
 
     /** the structure of the popup menu. */
     protected String[] m_PopupActions;
-    
+
+    /** the change listeners. */
+    protected Set<ChangeListener> m_ReportChangeListeners;
+
     /**
      * Initializes the table.
      */
@@ -362,6 +369,7 @@ public class ReportFactory {
       m_FileChooser        = newReportFileChooser();
       m_DatabaseConnection = DatabaseConnection.getSingleton();
       m_PopupActions       = getDefaultPopupActions();
+      m_ReportChangeListeners = new HashSet<>();
 
       setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -615,6 +623,35 @@ public class ReportFactory {
 	return ((Model) getUnsortedModel()).getNumDecimals();
       else
 	return -1;
+    }
+
+    /**
+     * Adds the listener to listen for changes to the report.
+     *
+     * @param l		the listener
+     */
+    public void addReportChangeListener(ChangeListener l) {
+      m_ReportChangeListeners.add(l);
+    }
+
+    /**
+     * Removes the listener from listening for changes to the report.
+     *
+     * @param l		the listener
+     */
+    public void removeReportChangeListener(ChangeListener l) {
+      m_ReportChangeListeners.remove(l);
+    }
+
+    /**
+     * Notifies all the change listeners.
+     */
+    public void notifyReportChangeListeners() {
+      ChangeEvent	e;
+
+      e = new ChangeEvent(this);
+      for (ChangeListener l: m_ReportChangeListeners.toArray(new ChangeListener[0]))
+        l.stateChanged(e);
     }
   }
 

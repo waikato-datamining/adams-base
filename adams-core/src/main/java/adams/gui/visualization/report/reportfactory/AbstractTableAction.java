@@ -195,6 +195,14 @@ public abstract class AbstractTableAction
   }
 
   /**
+   * Notifies the listeners that the report has changed.
+   */
+  protected void notifyReportChangeListeners() {
+    if (getTable() != null)
+      getTable().notifyReportChangeListeners();
+  }
+
+  /**
    * Returns the underlying report.
    * 
    * @return		the report, null if not available

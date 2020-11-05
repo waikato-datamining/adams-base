@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoveField.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
-
-import java.awt.event.ActionEvent;
 
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.report.ReportFactory.Table;
 
+import java.awt.event.ActionEvent;
+
 /**
  * Removes the field from the report.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoveField
   extends AbstractTableAction 
@@ -65,11 +64,19 @@ public class RemoveField
   @Override
   protected void doActionPerformed(ActionEvent e) {
     Report 	report;
+    boolean	modified;
+    Object	value;
     
-    report = getReport();
-    for (AbstractField field: getFields())
-      report.removeValue(field);
+    report   = getReport();
+    modified = false;
+    for (AbstractField field: getFields()) {
+      value = report.removeValue(field);
+      if (value != null)
+        modified = true;
+    }
     setReport(report);
+    if (modified)
+      notifyReportChangeListeners();
   }
 
   /**

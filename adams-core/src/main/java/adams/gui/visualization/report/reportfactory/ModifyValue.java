@@ -147,7 +147,9 @@ public class ModifyValue
       }
     }
     
-    if (modified)
+    if (modified) {
       setReport(report);
+      notifyReportChangeListeners();
+    }
   }
 }
