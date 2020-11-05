@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectionRectangle.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image;
@@ -26,7 +26,6 @@ import java.awt.Rectangle;
  * Stores the index in the report as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 364 $
  */
 public class SelectionRectangle
   extends Rectangle {
@@ -77,5 +76,14 @@ public class SelectionRectangle
    */
   public int getIndex() {
     return m_Index;
+  }
+
+  /**
+   * Sets the index.
+   *
+   * @param value	the index
+   */
+  public void setIndex(int value) {
+    m_Index = value;
   }
 }
