@@ -95,8 +95,11 @@ public class DeleteObjects
       if (rows.length == 0)
         return;
 
-      for (int row: rows)
+      for (int row: rows) {
+        if (isLoggingEnabled())
+          getLogger().info("deleting: " + hits.get(row));
 	objects.remove(hits.get(row));
+      }
       panel.addUndoPoint("Deleting " + rows.length + " objects");
       panel.setObjects(objects);
       panel.annotationsChanged(this);

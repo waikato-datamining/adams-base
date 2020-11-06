@@ -297,6 +297,9 @@ public abstract class AbstractMouseClickProcessor
 	result.add(object.getClone());
     }
 
+    if (isLoggingEnabled())
+      getLogger().info("hits: " + result);
+
     return result;
   }
 

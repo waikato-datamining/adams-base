@@ -84,6 +84,8 @@ public class SetLabel
       else
         hit.getMetaData().put(suffix, panel.getCurrentLabel());
       objects.add(hit);
+      if (isLoggingEnabled())
+        getLogger().info((unset ? "unset label: " : "set label: ") + hit);
     }
     panel.setObjects(objects);
     panel.annotationsChanged(this);
