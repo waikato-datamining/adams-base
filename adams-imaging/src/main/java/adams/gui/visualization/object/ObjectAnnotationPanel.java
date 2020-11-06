@@ -112,6 +112,9 @@ public class ObjectAnnotationPanel
   /** the button for zooming out. */
   protected BaseFlatButton m_ButtonZoomOut;
 
+  /** the button for best fit zoom. */
+  protected BaseFlatButton m_ButtonZoomBestFit;
+
   /** the button for applying the zoom. */
   protected BaseFlatButton m_ButtonZoom;
 
@@ -225,6 +228,10 @@ public class ObjectAnnotationPanel
     m_ButtonZoomOut.setToolTipText("Zoom out");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
     panel.add(m_ButtonZoomOut);
+    m_ButtonZoomBestFit = new BaseFlatButton(GUIHelper.getIcon("zoom_fit.png"));
+    m_ButtonZoomBestFit.setToolTipText("Best fit");
+    m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
+    panel.add(m_ButtonZoomBestFit);
     panel.add(new JLabel(" "));
     m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo changes");
@@ -368,6 +375,17 @@ public class ObjectAnnotationPanel
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
+  }
+
+  /**
+   * Zooms out.
+   */
+  public void bestFitZoom() {
+    setBestFit(true);
+    update();
+    m_TextZoom.setValue(RoundingUtils.round(getActualZoom() * 100.0, 1));
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    setBestFit(true);
   }
 
   /**
@@ -851,7 +869,7 @@ public class ObjectAnnotationPanel
     ObjectAnnotationPanel panel = new ObjectAnnotationPanel();
     File img = new File(args[0]);
     panel.setImage(BufferedImageHelper.read(img).getImage());
-    panel.setZoom(0.25);
+    panel.setBestFit(true);
     DefaultLabelSelectorGenerator labelGen = new DefaultLabelSelectorGenerator();
     labelGen.setLabels(new BaseString[]{new BaseString("Car"), new BaseString("Bike")});
     panel.setLabelSelectorPanel(labelGen.generate(panel));

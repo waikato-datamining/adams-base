@@ -605,7 +605,10 @@ public class ImageObjectAnnotator
     result += QuickInfoHelper.toString(this, "annotator", m_Annotator, ", annotator: ");
     result += QuickInfoHelper.toString(this, "overlay", m_Overlay, ", overlay: ");
     result += QuickInfoHelper.toString(this, "mouseClick", m_MouseClick, ", mouse: ");
-    result += QuickInfoHelper.toString(this, "zoom", m_Zoom, ", zoom: ");
+    if (m_BestFit)
+      result += QuickInfoHelper.toString(this, "bestFit", m_BestFit, "best fit", ", ");
+    else
+      result += QuickInfoHelper.toString(this, "zoom", m_Zoom, ", zoom: ");
 
     return result;
   }

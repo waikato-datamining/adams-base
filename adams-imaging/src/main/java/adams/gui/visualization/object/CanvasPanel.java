@@ -70,6 +70,9 @@ public class CanvasPanel
   /** whether a resize is required. */
   protected boolean m_ResizeRequired;
 
+  /** first display. */
+  protected boolean m_FirstDisplay;
+
   /**
    * Initializes the members.
    */
@@ -80,10 +83,11 @@ public class CanvasPanel
     m_Owner          = null;
     m_Image          = null;
     m_BestFit        = false;
-    m_Zoom = 1.0;
-    m_ActualZoom = 1.0;
+    m_Zoom           = 1.0;
+    m_ActualZoom     = 1.0;
     m_Brightness     = 100f;
     m_ResizeRequired = false;
+    m_FirstDisplay   = true;
   }
 
   /**
@@ -240,8 +244,9 @@ public class CanvasPanel
     double	zoomH;
 
     if (m_Image != null) {
+      m_ResizeRequired = m_FirstDisplay || (m_BestFit && (getOwner().getScrollPane().getWidth() == 0));
+
       // determine zoom
-      m_ResizeRequired = m_BestFit && (getOwner().getScrollPane().getWidth() == 0);
       if (m_BestFit && (getOwner().getScrollPane().getWidth() > 0)) {
 	width  = getOwner().getScrollPane().getWidth()  - 20;
 	height = getOwner().getScrollPane().getHeight() - 20;
@@ -338,7 +343,8 @@ public class CanvasPanel
 
     if (m_ResizeRequired) {
       m_ResizeRequired = false;
-      update();
+      m_FirstDisplay   = false;
+      getOwner().bestFitZoom();
       return;
     }
 
