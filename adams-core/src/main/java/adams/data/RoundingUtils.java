@@ -208,4 +208,56 @@ public class RoundingUtils {
 	throw new IllegalStateException("Unhandled type: " + type);
     }
   }
+
+  /**
+   * Fixes rounding issues, ensuring that only the specified number of
+   * decimals get returned.
+   *
+   * @param s		the string to process
+   * @param decimals	the number of decimals to ensure
+   * @return		the processed string
+   */
+  protected static String fixDecimals(String s, int decimals) {
+    int		pos;
+
+    pos = s.lastIndexOf('.');
+    if (s.length() > pos + decimals + 1)
+      s = s.substring(0, pos + decimals + 1);
+
+    return s;
+  }
+
+  /**
+   * Apply the specified rounding type and generates a string.
+   *
+   * @param type 	the rounding type
+   * @param value	the value to round
+   * @param decimals	the decimals after the decimal point to use
+   * @return		the rounded value as string
+   */
+  public static String toString(RoundingType type, double value, int decimals) {
+    String	result;
+    double	rounded;
+
+    rounded = apply(type, value, decimals);
+    result  = fixDecimals("" + rounded, decimals);
+    return result;
+  }
+
+  /**
+   * Apply the specified rounding type and generates a string.
+   *
+   * @param type 	the rounding type
+   * @param value	the value to round
+   * @param decimals	the decimals after the decimal point to use
+   * @return		the rounded value as string
+   */
+  public static String toString(RoundingType type, float value, int decimals) {
+    String	result;
+    float	rounded;
+
+    rounded = apply(type, value, decimals);
+    result  = fixDecimals("" + rounded, decimals);
+    return result;
+  }
 }
