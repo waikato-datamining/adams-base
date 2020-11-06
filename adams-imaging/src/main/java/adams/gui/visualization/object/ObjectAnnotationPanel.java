@@ -299,7 +299,7 @@ public class ObjectAnnotationPanel
    * @param value	the scale to use
    */
   public void setZoom(double value) {
-    m_TextZoom.setValue(value * 100);
+    m_TextZoom.setValue(RoundingUtils.round(value * 100, 1));
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_PanelCanvas.setScale(value);
   }
@@ -341,6 +341,15 @@ public class ObjectAnnotationPanel
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
+  }
+
+  /**
+   * Clears image and annotations.
+   */
+  public void clear() {
+    setImage(null);
+    setReport(new Report());
+    annotationsChanged(this);
   }
 
   /**
