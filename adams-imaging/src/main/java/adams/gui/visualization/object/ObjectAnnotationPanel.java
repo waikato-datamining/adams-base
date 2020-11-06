@@ -294,23 +294,50 @@ public class ObjectAnnotationPanel
   }
 
   /**
-   * Sets the zoom/scale.
+   * Sets whether to use best fit or specified scale.
    *
-   * @param value	the scale to use
+   * @param value	true if to use best fit
+   */
+  public void setBestFit(boolean value) {
+    m_PanelCanvas.setBestFit(value);
+  }
+
+  /**
+   * Sets whether to use best fit.
+   *
+   * @return		true if to use best fit
+   */
+  public boolean getBestFit() {
+    return m_PanelCanvas.getBestFit();
+  }
+
+  /**
+   * Sets the zoom.
+   *
+   * @param value	the zoom to use (1 = 100%)
    */
   public void setZoom(double value) {
     m_TextZoom.setValue(RoundingUtils.round(value * 100, 1));
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
-    m_PanelCanvas.setScale(value);
+    m_PanelCanvas.setZoom(value);
   }
 
   /**
-   * Returns the current zoom/scale.
+   * Returns the current zoom.
    *
-   * @return		the scale in use
+   * @return		the zoom (1 = 100%)
    */
   public double getZoom() {
-    return m_PanelCanvas.getScale();
+    return m_PanelCanvas.getZoom();
+  }
+
+  /**
+   * Returns the actual zoom (taking best fit into account if set).
+   *
+   * @return		the zoom in use (1 = 100%)
+   */
+  public double getActualZoom() {
+    return m_PanelCanvas.getActualZoom();
   }
 
   /**

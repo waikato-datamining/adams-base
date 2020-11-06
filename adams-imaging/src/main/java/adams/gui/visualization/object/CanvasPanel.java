@@ -49,8 +49,14 @@ public class CanvasPanel
   /** the image to display. */
   protected BufferedImage m_Image;
 
-  /** the scale (1.0 = 100%). */
-  protected double m_Scale;
+  /** whether to use best fit. */
+  protected boolean m_BestFit;
+
+  /** the zoom (1.0 = 100%). */
+  protected double m_Zoom;
+
+  /** the actual zoom to use. */
+  protected double m_ActualZoom;
 
   /** the brightness. */
   protected float m_Brightness;
@@ -61,6 +67,9 @@ public class CanvasPanel
   /** the brightened image. */
   protected BufferedImage m_BrightImage;
 
+  /** whether a resize is required. */
+  protected boolean m_ResizeRequired;
+
   /**
    * Initializes the members.
    */
@@ -68,10 +77,13 @@ public class CanvasPanel
   protected void initialize() {
     super.initialize();
 
-    m_Owner      = null;
-    m_Image      = null;
-    m_Scale      = 1.0;
-    m_Brightness = 100f;
+    m_Owner          = null;
+    m_Image          = null;
+    m_BestFit        = false;
+    m_Zoom = 1.0;
+    m_ActualZoom = 1.0;
+    m_Brightness     = 100f;
+    m_ResizeRequired = false;
   }
 
   /**
@@ -88,9 +100,9 @@ public class CanvasPanel
       double newZoom;
       int rotation = e.getWheelRotation();
       if (rotation < 0)
-        newZoom = oldZoom * Math.pow(ObjectAnnotationPanel.ZOOM_FACTOR, -rotation);
+	newZoom = oldZoom * Math.pow(ObjectAnnotationPanel.ZOOM_FACTOR, -rotation);
       else
-        newZoom = oldZoom / Math.pow(ObjectAnnotationPanel.ZOOM_FACTOR, rotation);
+	newZoom = oldZoom / Math.pow(ObjectAnnotationPanel.ZOOM_FACTOR, rotation);
       newZoom = RoundingUtils.round(newZoom, 3);
       getOwner().setZoom(newZoom);
       update();
@@ -99,7 +111,7 @@ public class CanvasPanel
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(MouseEvent e) {
-        getOwner().updateStatus(e.getPoint());
+	getOwner().updateStatus(e.getPoint());
       }
     });
   }
@@ -123,22 +135,52 @@ public class CanvasPanel
   }
 
   /**
-   * Sets the scale.
+   * Sets whether to use best fit or specified zoom.
    *
-   * @param value	the scale to use
+   * @param value	true if to use best fit
    */
-  public void setScale(double value) {
-    m_Scale = value;
+  public void setBestFit(boolean value) {
+    m_BestFit = value;
     getOwner().updateStatus();
   }
 
   /**
-   * Returns the current scale.
+   * Sets whether to use best fit.
    *
-   * @return		the scale in use
+   * @return		true if to use best fit
    */
-  public double getScale() {
-    return m_Scale;
+  public boolean getBestFit() {
+    return m_BestFit;
+  }
+
+  /**
+   * Sets the zoom.
+   *
+   * @param value	the zoom to use (1 = 100%)
+   */
+  public void setZoom(double value) {
+    m_Zoom       = value;
+    m_ActualZoom = value;
+    m_BestFit    = false;
+    getOwner().updateStatus();
+  }
+
+  /**
+   * Returns the current zoom.
+   *
+   * @return		the zoom (1 = 100%)
+   */
+  public double getZoom() {
+    return m_Zoom;
+  }
+
+  /**
+   * Returns the actual zoom in use (taking best fit into account if set).
+   *
+   * @return		the zoom in use (1 = 100%)
+   */
+  public double getActualZoom() {
+    return m_ActualZoom;
   }
 
   /**
@@ -194,10 +236,27 @@ public class CanvasPanel
     int		height;
     JScrollBar 	sbHor;
     JScrollBar	sbVer;
+    double	zoomW;
+    double	zoomH;
 
     if (m_Image != null) {
-      width  = (int) (m_Image.getWidth() * m_Scale);
-      height = (int) (m_Image.getHeight() * m_Scale);
+      // determine zoom
+      m_ResizeRequired = m_BestFit && (getOwner().getScrollPane().getWidth() == 0);
+      if (m_BestFit && (getOwner().getScrollPane().getWidth() > 0)) {
+	width  = getOwner().getScrollPane().getWidth()  - 20;
+	height = getOwner().getScrollPane().getHeight() - 20;
+	zoomW = (double) width / (double) m_Image.getWidth();
+	zoomH = (double) height / (double) m_Image.getHeight();
+	m_ActualZoom = Math.min(zoomW, zoomH);
+      }
+      else {
+	m_ActualZoom = m_Zoom;
+      }
+
+      // calculate dimensions
+      width = (int) (m_Image.getWidth() * m_ActualZoom);
+      height = (int) (m_Image.getHeight() * m_ActualZoom);
+
       if ((width != getWidth()) || (height != getHeight())) {
 	setSize(new Dimension(width, height));
 	setMinimumSize(new Dimension(width, height));
@@ -223,50 +282,50 @@ public class CanvasPanel
     m_Owner.repaint();
   }
 
-    /**
-     * Turns the mouse position into pixel location.
-     * Limits the pixel position to the size of the image, i.e., no negative
-     * pixel locations or ones that exceed the image size are generated.
-     *
-     * @param mousePos	the mouse position
-     * @return		the pixel location
-     */
-    public Point mouseToPixelLocation(Point mousePos) {
-      int	x;
-      int	y;
+  /**
+   * Turns the mouse position into pixel location.
+   * Limits the pixel position to the size of the image, i.e., no negative
+   * pixel locations or ones that exceed the image size are generated.
+   *
+   * @param mousePos	the mouse position
+   * @return		the pixel location
+   */
+  public Point mouseToPixelLocation(Point mousePos) {
+    int	x;
+    int	y;
 
-      x = (int) (mousePos.getX() / m_Scale);
-      if (x < 0)
-	x = 0;
-      y = (int) (mousePos.getY() / m_Scale);
-      if (y < 0)
-	y = 0;
+    x = (int) (mousePos.getX() / m_ActualZoom);
+    if (x < 0)
+      x = 0;
+    y = (int) (mousePos.getY() / m_ActualZoom);
+    if (y < 0)
+      y = 0;
 
-      if (m_Image != null) {
-	if (x > m_Image.getWidth())
-	  x = m_Image.getWidth();
-	if (y > m_Image.getHeight())
-	  y = m_Image.getHeight();
-      }
-
-      return new Point(x, y);
+    if (m_Image != null) {
+      if (x > m_Image.getWidth())
+	x = m_Image.getWidth();
+      if (y > m_Image.getHeight())
+	y = m_Image.getHeight();
     }
 
-    /**
-     * Converts the pixel position (at 100% scale) to a mouse location.
-     *
-     * @param pixelPos	the pixel position
-     * @return		the mouse position
-     */
-    public Point pixelToMouseLocation(Point pixelPos) {
-      int	x;
-      int	y;
+    return new Point(x, y);
+  }
 
-      x = (int) (pixelPos.x * m_Scale);
-      y = (int) (pixelPos.y * m_Scale);
+  /**
+   * Converts the pixel position (at 100% zoom) to a mouse location.
+   *
+   * @param pixelPos	the pixel position
+   * @return		the mouse position
+   */
+  public Point pixelToMouseLocation(Point pixelPos) {
+    int	x;
+    int	y;
 
-      return new Point(x, y);
-    }
+    x = (int) (pixelPos.x * m_ActualZoom);
+    y = (int) (pixelPos.y * m_ActualZoom);
+
+    return new Point(x, y);
+  }
 
   /**
    * Paints the image or just a white background.
@@ -277,12 +336,18 @@ public class CanvasPanel
   public void paint(Graphics g) {
     RescaleOp 	op;
 
+    if (m_ResizeRequired) {
+      m_ResizeRequired = false;
+      update();
+      return;
+    }
+
     ((Graphics2D) g).scale(1.0, 1.0);
     g.setColor(getOwner().getBackground());
     g.fillRect(0, 0, getWidth(), getHeight());
 
     if (m_Image != null) {
-      ((Graphics2D) g).scale(m_Scale, m_Scale);
+      ((Graphics2D) g).scale(m_ActualZoom, m_ActualZoom);
       if ((m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
 	op = new RescaleOp(m_Brightness / 100.0f, 0, null);
 	m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());

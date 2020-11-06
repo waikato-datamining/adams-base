@@ -222,6 +222,9 @@ public class ImageObjectAnnotator
   /** the zoom level. */
   protected double m_Zoom;
 
+  /** whether to use best fit. */
+  protected boolean m_BestFit;
+
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
 
@@ -276,6 +279,10 @@ public class ImageObjectAnnotator
     m_OptionManager.add(
       "zoom", "zoom",
       100.0, 1.0, 1600.0);
+
+    m_OptionManager.add(
+      "best-fit", "bestFit",
+      false);
   }
 
   /**
@@ -557,6 +564,35 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Sets whether to use best fit for the image or not.
+   *
+   * @param value 	true if to use
+   */
+  public void setBestFit(boolean value) {
+    m_BestFit = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use best fit for the image or not.
+   *
+   * @return 		true if to use
+   */
+  public boolean getBestFit() {
+    return m_BestFit;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bestFitTipText() {
+    return "If enabled, the image gets fitted into the viewport.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -619,6 +655,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setLeftDividerLocation(m_LeftDividerLocation);
     m_PanelObjectAnnotation.setRightDividerLocation(m_RightDividerLocation - m_LeftDividerLocation);
     m_PanelObjectAnnotation.setZoom(m_Zoom / 100.0);
+    m_PanelObjectAnnotation.setBestFit(m_BestFit);
     return m_PanelObjectAnnotation;
   }
 
