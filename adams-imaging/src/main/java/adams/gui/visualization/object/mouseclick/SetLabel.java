@@ -14,31 +14,30 @@
  */
 
 /*
- * ViewObjects.java
+ * SetLabel.java
  * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.mouseclick;
 
-import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.core.GUIHelper;
-import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
+import adams.gui.visualization.object.annotator.LabelSuffixHandler;
 
-import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseEvent;
 
 /**
- * Displays the annotated objects in a dialog that contain the click position.
+ * Sets/unsets the current label.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ViewObjects
+public class SetLabel
   extends AbstractMouseClickProcessor {
 
-  private static final long serialVersionUID = -5747047661002140048L;
+  private static final long serialVersionUID = 8422134104160247274L;
+
+  public static final String DEFAULT_SUFFIX = "type";
 
   /**
    * Returns a string describing the object.
@@ -47,7 +46,8 @@ public class ViewObjects
    */
   @Override
   public String globalInfo() {
-    return "Displays the annotated objects in a dialog that contain the click position.";
+    return "Sets the current label.\n"
+      + "If the current label string is empty or null, then it will unset the label.";
   }
 
   /**
@@ -58,33 +58,34 @@ public class ViewObjects
    */
   @Override
   protected void doProcess(ObjectAnnotationPanel panel, MouseEvent e) {
-    LocatedObjects	hits;
-    SpreadSheet		sheet;
-    SpreadSheet		sheetHit;
-    SpreadSheetDialog 	dialog;
+    LocatedObjects 	objects;
+    LocatedObjects 	hits;
+    boolean		unset;
+    String		suffix;
 
-    hits = determineHits(panel, e);
+    objects = new LocatedObjects(panel.getObjects());
+    hits    = determineHits(panel, e);
+    if (hits.size() == 0)
+      return;
 
-    if (hits.size() > 0) {
-      sheet = null;
-      for (LocatedObject hit: hits) {
-	sheetHit = hit.toSpreadSheet();
-	if (sheet == null)
-	  sheet = sheetHit;
-	else
-	  sheet.addRow().assign(sheetHit.getRow(0));
-      }
-      if (panel.getParentDialog() != null)
-	dialog = new SpreadSheetDialog(panel.getParentDialog(), ModalityType.MODELESS);
+    unset = (panel.getCurrentLabel() == null) || panel.getCurrentLabel().isEmpty();
+    if (panel.getAnnotator() instanceof LabelSuffixHandler)
+      suffix = ((LabelSuffixHandler) panel.getAnnotator()).getLabelSuffix();
+    else
+      suffix = DEFAULT_SUFFIX;
+    if (suffix.startsWith("."))
+      suffix = suffix.substring(1);
+
+    panel.addUndoPoint(unset ? "Removing label" : "Setting label '" + panel.getCurrentLabel() + "'");
+    for (LocatedObject hit: hits) {
+      objects.remove(hit);
+      if (unset)
+        hit.getMetaData().remove(suffix);
       else
-	dialog = new SpreadSheetDialog(panel.getParentFrame(), false);
-      dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
-      dialog.setTitle("Objects");
-      dialog.setSize(GUIHelper.getDefaultDialogDimension());
-      dialog.setLocationRelativeTo(panel);
-      dialog.setSpreadSheet(sheet);
-      dialog.setShowSearch(true);
-      dialog.setVisible(true);
+        hit.getMetaData().put(suffix, panel.getCurrentLabel());
+      objects.add(hit);
     }
+    panel.setObjects(objects);
+    panel.annotationsChanged(this);
   }
 }

@@ -21,7 +21,6 @@
 package adams.gui.visualization.object.mouseclick;
 
 import adams.core.Properties;
-import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -36,7 +35,6 @@ import adams.gui.visualization.object.ObjectAnnotationPanel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +48,6 @@ public class AddMetaData
   extends AbstractMouseClickProcessor {
 
   private static final long serialVersionUID = -5747047661002140048L;
-
-  /** the prefix for the objects. */
-  protected String m_Prefix;
 
   /** the last field name. */
   protected transient String m_LastField;
@@ -74,56 +69,6 @@ public class AddMetaData
   }
 
   /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "prefix", "prefix",
-      getDefaultPrefix());
-  }
-
-  /**
-   * Returns the default prefix to use for the objects.
-   *
-   * @return		the default
-   */
-  protected String getDefaultPrefix() {
-    return "Object.";
-  }
-
-  /**
-   * Sets the prefix to use for the objects.
-   *
-   * @param value 	the prefix
-   */
-  public void setPrefix(String value) {
-    m_Prefix = value;
-    reset();
-  }
-
-  /**
-   * Returns the prefix to use for the objects.
-   *
-   * @return 		the prefix
-   */
-  public String getPrefix() {
-    return m_Prefix;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String prefixTipText() {
-    return "The prefix to use for the fields in the report of the image.";
-  }
-
-  /**
    * Processes the mouse event.
    *
    * @param panel 	the owning panel
@@ -133,8 +78,6 @@ public class AddMetaData
   protected void doProcess(ObjectAnnotationPanel panel, MouseEvent e) {
     LocatedObjects		objects;
     LocatedObjects		hits;
-    Point			location;
-    boolean			add;
     SpreadSheet			sheet;
     SpreadSheet			sheetHit;
     ApprovalDialog 		dialog;
@@ -143,21 +86,10 @@ public class AddMetaData
     List<String> 		order;
     Properties 			props;
     JPanel			contentPanel;
-    Report			report;
-    Report			reportNew;
     Object			value;
 
-    objects  = LocatedObjects.fromReport(panel.getReport(), m_Prefix);
-    hits     = new LocatedObjects();
-    location = panel.mouseToPixelLocation(e.getPoint());
-    for (LocatedObject object: objects) {
-      if (object.hasPolygon())
-	add = object.getActualPolygon().contains(location);
-      else
-	add = object.getActualRectangle().contains(location);
-      if (add)
-	hits.add(object.getClone());
-    }
+    objects  = new LocatedObjects(panel.getObjects());
+    hits     = determineHits(panel, e);
 
     if (hits.size() > 0) {
       // hits
@@ -245,13 +177,8 @@ public class AddMetaData
       }
 
       // set new meta-data
-      objects.removeAll(hits);
-      objects.addAll(hits);
-      report    = panel.getReport().getClone();
-      report.removeValuesStartingWith(m_Prefix);
-      reportNew = objects.toReport(m_Prefix);
-      reportNew.mergeWith(report);
-      panel.setReport(reportNew);
+      panel.addUndoPoint("Adding meta-data: " + m_LastField + "=" + m_LastValue);
+      panel.setObjects(objects);
       panel.annotationsChanged(this);
     }
   }

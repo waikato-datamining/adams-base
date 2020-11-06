@@ -20,7 +20,6 @@
 
 package adams.gui.visualization.object.mouseclick;
 
-import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -29,7 +28,6 @@ import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 
 import java.awt.Dialog.ModalityType;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 /**
@@ -42,9 +40,6 @@ public class DeleteObjects
 
   private static final long serialVersionUID = -5747047661002140048L;
 
-  /** the prefix for the objects. */
-  protected String m_Prefix;
-
   /**
    * Returns a string describing the object.
    *
@@ -53,56 +48,6 @@ public class DeleteObjects
   @Override
   public String globalInfo() {
     return "Displays the objects at the click position and deletes the selected ones.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "prefix", "prefix",
-      getDefaultPrefix());
-  }
-
-  /**
-   * Returns the default prefix to use for the objects.
-   *
-   * @return		the default
-   */
-  protected String getDefaultPrefix() {
-    return "Object.";
-  }
-
-  /**
-   * Sets the prefix to use for the objects.
-   *
-   * @param value 	the prefix
-   */
-  public void setPrefix(String value) {
-    m_Prefix = value;
-    reset();
-  }
-
-  /**
-   * Returns the prefix to use for the objects.
-   *
-   * @return 		the prefix
-   */
-  public String getPrefix() {
-    return m_Prefix;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String prefixTipText() {
-    return "The prefix to use for the fields in the report of the image.";
   }
 
   /**
@@ -115,26 +60,13 @@ public class DeleteObjects
   protected void doProcess(ObjectAnnotationPanel panel, MouseEvent e) {
     LocatedObjects	objects;
     LocatedObjects	hits;
-    Point		location;
-    boolean		add;
-    Report 		report;
-    Report		reportNew;
     SpreadSheet 	sheet;
     SpreadSheet		sheetHit;
     SpreadSheetDialog 	dialog;
     int[]		rows;
 
-    objects  = LocatedObjects.fromReport(panel.getReport(), m_Prefix);
-    hits     = new LocatedObjects();
-    location = panel.mouseToPixelLocation(e.getPoint());
-    for (LocatedObject object: objects) {
-      if (object.hasPolygon())
-	add = object.getActualPolygon().contains(location);
-      else
-	add = object.getActualRectangle().contains(location);
-      if (add)
-	hits.add(object);
-    }
+    objects  = new LocatedObjects(panel.getObjects());
+    hits     = determineHits(panel, e);
 
     if (hits.size() > 0) {
       sheet = null;
@@ -165,11 +97,8 @@ public class DeleteObjects
 
       for (int row: rows)
 	objects.remove(hits.get(row));
-      report    = panel.getReport().getClone();
-      report.removeValuesStartingWith(m_Prefix);
-      reportNew = objects.toReport(m_Prefix);
-      reportNew.mergeWith(report);
-      panel.setReport(reportNew);
+      panel.addUndoPoint("Deleting " + rows.length + " objects");
+      panel.setObjects(objects);
       panel.annotationsChanged(this);
     }
   }

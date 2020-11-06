@@ -33,6 +33,7 @@ import adams.gui.visualization.report.ReportFactory.Model;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.util.Collections;
 
 /**
  * Displays the annotations as a report table.
@@ -111,7 +112,15 @@ public class DefaultAnnotationsDisplayPanel
    */
   @Override
   public void setObjects(LocatedObjects value) {
-    setReport(value.toReport(m_Prefix));
+    Report	report;
+    Report	reportNew;
+
+    Collections.sort(value);
+    report    = getReport().getClone();
+    report.removeValuesStartingWith(m_Prefix);
+    reportNew = value.toReport(m_Prefix);
+    reportNew.mergeWith(report);
+    setReport(reportNew);
   }
 
   /**

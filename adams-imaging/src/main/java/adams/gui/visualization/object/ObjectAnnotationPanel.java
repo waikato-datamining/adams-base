@@ -22,6 +22,7 @@ package adams.gui.visualization.object;
 
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
+import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
@@ -46,12 +47,15 @@ import adams.gui.event.UndoListener;
 import adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayPanel;
 import adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDisplayGenerator;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
+import adams.gui.visualization.object.annotator.BoundingBoxAnnotator;
 import adams.gui.visualization.object.annotator.NullAnnotator;
-import adams.gui.visualization.object.annotator.PolygonAnnotator;
+import adams.gui.visualization.object.labelselector.AbstractLabelSelectorPanel;
+import adams.gui.visualization.object.labelselector.DefaultLabelSelectorGenerator;
 import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.AddMetaData;
 import adams.gui.visualization.object.mouseclick.MultiProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
+import adams.gui.visualization.object.mouseclick.SetLabel;
 import adams.gui.visualization.object.mouseclick.ViewObjects;
 import adams.gui.visualization.object.overlay.AbstractOverlay;
 import adams.gui.visualization.object.overlay.NullOverlay;
@@ -123,8 +127,14 @@ public class ObjectAnnotationPanel
   /** the button for applying the values. */
   protected BaseFlatButton m_ButtonBrightness;
 
-  /** the split pane. */
-  protected BaseSplitPane m_SplitPane;
+  /** the left split panel (label selector | rest). */
+  protected BaseSplitPane m_SplitPaneLeft;
+
+  /** the right split pane (image | annotations). */
+  protected BaseSplitPane m_SplitPaneRight;
+
+  /** the label selector panel. */
+  protected AbstractLabelSelectorPanel m_PanelLabelSelector;
 
   /** the canvas in use. */
   protected CanvasPanel m_PanelCanvas;
@@ -150,6 +160,9 @@ public class ObjectAnnotationPanel
   /** the undo manager. */
   protected Undo m_Undo;
 
+  /** the current label. */
+  protected String m_CurrentLabel;
+
   /**
    * Initializes the members.
    */
@@ -159,6 +172,8 @@ public class ObjectAnnotationPanel
 
     m_Overlay             = new NullOverlay();
     m_MouseClickProcessor = new NullProcessor();
+    m_PanelLabelSelector  = null;
+    m_CurrentLabel        = null;
     m_Undo                = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
     setAnnotator(new NullAnnotator());
@@ -233,13 +248,20 @@ public class ObjectAnnotationPanel
       m_PanelCanvas.setBrightness(m_TextBrightness.getValue().floatValue());
       update();
     });
+    panel.add(new JLabel(" "));
     panel.add(m_ButtonBrightness);
 
-    // split pane
-    m_SplitPane = new BaseSplitPane();
-    m_SplitPane.setOneTouchExpandable(true);
-    m_SplitPane.setResizeWeight(1.0);
-    add(m_SplitPane, BorderLayout.CENTER);
+    // left split pane
+    m_SplitPaneLeft = new BaseSplitPane();
+    m_SplitPaneLeft.setOneTouchExpandable(true);
+    m_SplitPaneLeft.setResizeWeight(0.0);
+    add(m_SplitPaneLeft, BorderLayout.CENTER);
+
+    // right split pane
+    m_SplitPaneRight = new BaseSplitPane();
+    m_SplitPaneRight.setOneTouchExpandable(true);
+    m_SplitPaneRight.setResizeWeight(1.0);
+    m_SplitPaneLeft.setRightComponent(m_SplitPaneRight);
 
     m_PanelCanvas = new CanvasPanel();
     m_PanelCanvas.setOwner(this);
@@ -250,14 +272,25 @@ public class ObjectAnnotationPanel
       }
     });
     m_ScrollPane = new BaseScrollPane(m_PanelCanvas);
-    m_SplitPane.setLeftComponent(m_ScrollPane);
+    m_SplitPaneRight.setLeftComponent(m_ScrollPane);
 
     m_PanelAnnotations = new DefaultAnnotationsDisplayGenerator().generate();
     m_PanelAnnotations.setOwner(this);
-    m_SplitPane.setRightComponent(m_PanelAnnotations);
+    m_SplitPaneRight.setRightComponent(m_PanelAnnotations);
 
+    // bottom
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    setLeftDividerLocation(0.2);
+    setRightDividerLocation(0.75);
   }
 
   /**
@@ -472,6 +505,50 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Sets the current label to use.
+   *
+   * @param value	the label, null to unset
+   */
+  public void setCurrentLabel(String value) {
+    m_CurrentLabel = value;
+  }
+
+  /**
+   * Returns the current label in use.
+   *
+   * @return		the label, null if not set
+   */
+  public String getCurrentLabel() {
+    return m_CurrentLabel;
+  }
+
+  /**
+   * Sets the label selector panel.
+   *
+   * @param value	the panel, null to hide
+   */
+  public void setLabelSelectorPanel(AbstractLabelSelectorPanel value) {
+    if (m_SplitPaneLeft.getLeftComponent() != null)
+      m_SplitPaneLeft.remove(m_SplitPaneLeft.getLeftComponent());
+    if (value == null) {
+      m_SplitPaneLeft.setLeftComponentHidden(true);
+    }
+    else {
+      value.setOwner(this);
+      m_SplitPaneLeft.setLeftComponent(value);
+    }
+  }
+
+  /**
+   * Returns the label selector panel.
+   *
+   * @return		the panel, null if none available
+   */
+  public AbstractLabelSelectorPanel getLabelSelectorPanel() {
+    return (AbstractLabelSelectorPanel) m_SplitPaneLeft.getLeftComponent();
+  }
+
+  /**
    * Sets the annotations panel.
    *
    * @param value	the panel to use
@@ -479,7 +556,7 @@ public class ObjectAnnotationPanel
   public void setAnnotationsPanel(AbstractAnnotationsDisplayPanel value) {
     m_PanelAnnotations.cleanUp();
     m_PanelAnnotations = value;
-    m_SplitPane.setRightComponent(m_PanelAnnotations);
+    m_SplitPaneRight.setRightComponent(m_PanelAnnotations);
   }
 
   /**
@@ -510,30 +587,57 @@ public class ObjectAnnotationPanel
   }
 
   /**
-   * Sets the location of the divider.
+   * Sets the location of the left divider.
    *
    * @param value	the position in pixels
    */
-  public void setDividerLocation(int value) {
-    m_SplitPane.setDividerLocation(value);
+  public void setLeftDividerLocation(int value) {
+    m_SplitPaneLeft.setDividerLocation(value);
   }
 
   /**
-   * Returns the divider location.
-   *
-   * @return		the position in pixels
-   */
-  public int getDividerLocation() {
-    return m_SplitPane.getDividerLocation();
-  }
-
-  /**
-   * Sets the proportional location.
+   * Sets the proportional location for the left divider.
    *
    * @param value	the location (0-1)
    */
-  public void setDividerLocation(double value) {
-    m_SplitPane.setDividerLocation(value);
+  public void setLeftDividerLocation(double value) {
+    m_SplitPaneLeft.setDividerLocation(value);
+  }
+
+  /**
+   * Returns the left divider location.
+   *
+   * @return		the position in pixels
+   */
+  public int getLeftDividerLocation() {
+    return m_SplitPaneLeft.getDividerLocation();
+  }
+
+  /**
+   * Sets the location of the right divider.
+   *
+   * @param value	the position in pixels
+   */
+  public void setRightDividerLocation(int value) {
+    m_SplitPaneRight.setDividerLocation(value);
+  }
+
+  /**
+   * Sets the proportional location for the right divider.
+   *
+   * @param value	the location (0-1)
+   */
+  public void setRightDividerLocation(double value) {
+    m_SplitPaneRight.setDividerLocation(value);
+  }
+
+  /**
+   * Returns the right divider location.
+   *
+   * @return		the position in pixels
+   */
+  public int getRightDividerLocation() {
+    return m_SplitPaneRight.getDividerLocation();
   }
 
   /**
@@ -712,13 +816,19 @@ public class ObjectAnnotationPanel
     File img = new File(args[0]);
     panel.setImage(BufferedImageHelper.read(img).getImage());
     panel.setZoom(0.25);
-    //panel.setAnnotator(new BoundingBoxAnnotator());
-    panel.setAnnotator(new PolygonAnnotator());
+    DefaultLabelSelectorGenerator labelGen = new DefaultLabelSelectorGenerator();
+    labelGen.setLabels(new BaseString[]{new BaseString("Car"), new BaseString("Bike")});
+    panel.setLabelSelectorPanel(labelGen.generate(panel));
+    panel.setAnnotator(new BoundingBoxAnnotator());
     panel.setOverlay(new ObjectLocationsOverlayFromReport());
     MultiProcessor multiproc = new MultiProcessor();
-    multiproc.addProcessor(new ViewObjects());
+    multiproc.addProcessor(new SetLabel());
+    ViewObjects view = new ViewObjects();
+    view.setShiftDown(true);
+    multiproc.addProcessor(view);
     AddMetaData add = new AddMetaData();
     add.setShiftDown(true);
+    add.setCtrlDown(true);
     multiproc.addProcessor(add);
     panel.setMouseClickProcessor(multiproc);
     DefaultSimpleReportReader reader = new DefaultSimpleReportReader();
@@ -732,7 +842,8 @@ public class ObjectAnnotationPanel
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(panel, BorderLayout.CENTER);
     frame.setVisible(true);
-    panel.setDividerLocation(0.75);
+    panel.setLeftDividerLocation(0.1);
+    panel.setRightDividerLocation(0.75);
     panel.update();
   }
 }

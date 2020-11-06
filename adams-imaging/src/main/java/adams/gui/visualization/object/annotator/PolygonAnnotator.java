@@ -44,7 +44,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PolygonAnnotator
-  extends AbstractRectangleBasedAnnotator {
+  extends AbstractRectangleBasedAnnotator
+  implements LabelSuffixHandler {
 
   private static final long serialVersionUID = 1122040195846360397L;
 
@@ -56,9 +57,6 @@ public class PolygonAnnotator
 
   /** the minimum distance in pixels that the trace pixels must be apart. */
   protected int m_MinDistance;
-
-  /** the label to use. */
-  protected String m_Label;
 
   /** the label suffix to use. */
   protected String m_LabelSuffix;
@@ -109,10 +107,6 @@ public class PolygonAnnotator
     m_OptionManager.add(
       "min-distance", "minDistance",
       10, 1, null);
-
-    m_OptionManager.add(
-      "label", "label",
-      getDefaultLabel());
 
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
@@ -209,44 +203,6 @@ public class PolygonAnnotator
   }
 
   /**
-   * Returns the default label to use for the objects.
-   *
-   * @return		the default
-   */
-  protected String getDefaultLabel() {
-    return "";
-  }
-
-  /**
-   * Sets the label to use for the objects.
-   *
-   * @param value 	the prefix
-   */
-  public void setLabel(String value) {
-    m_Label = value;
-    reset();
-  }
-
-  /**
-   * Returns the label to use for the objects.
-   *
-   * @return 		the label
-   */
-  public String getLabel() {
-    return m_Label;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String labelTipText() {
-    return "The label to use for the objects, not set if empty.";
-  }
-
-  /**
    * Returns the default suffix to use for the label.
    *
    * @return		the default
@@ -260,6 +216,7 @@ public class PolygonAnnotator
    *
    * @param value 	the suffix
    */
+  @Override
   public void setLabelSuffix(String value) {
     m_LabelSuffix = value;
     reset();
@@ -270,6 +227,7 @@ public class PolygonAnnotator
    *
    * @return 		the suffix
    */
+  @Override
   public String getLabelSuffix() {
     return m_LabelSuffix;
   }
@@ -508,8 +466,8 @@ public class PolygonAnnotator
 	}
 	report.setStringValue(current + KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(poly_x), ","));
 	report.setStringValue(current + KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(poly_y), ","));
-	if (!m_Label.isEmpty())
-	  report.setStringValue(current + m_LabelSuffix, m_Label);
+	if (hasCurrentLabel())
+	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(rect);
 	comment = "Adding polygon: " + rect;
       }
@@ -549,6 +507,9 @@ public class PolygonAnnotator
   protected void doPaintSelection(Graphics g) {
     Polygon	poly;
     float	width;
+
+    if (m_SelectionTrace.size() == 0)
+      return;
 
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);

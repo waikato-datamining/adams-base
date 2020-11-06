@@ -43,7 +43,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BoundingBoxAnnotator
-  extends AbstractRectangleBasedAnnotator {
+  extends AbstractRectangleBasedAnnotator
+  implements LabelSuffixHandler {
 
   private static final long serialVersionUID = 1122040195846360397L;
 
@@ -52,9 +53,6 @@ public class BoundingBoxAnnotator
 
   /** the thickness of the stroke. */
   protected float m_StrokeThickness;
-
-  /** the label to use. */
-  protected String m_Label;
 
   /** the label suffix to use. */
   protected String m_LabelSuffix;
@@ -98,10 +96,6 @@ public class BoundingBoxAnnotator
     m_OptionManager.add(
       "stroke-thickness", "strokeThickness",
       1.0f, 0.01f, null);
-
-    m_OptionManager.add(
-      "label", "label",
-      getDefaultLabel());
 
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
@@ -176,35 +170,6 @@ public class BoundingBoxAnnotator
   }
 
   /**
-   * Sets the label to use for the objects.
-   *
-   * @param value 	the prefix
-   */
-  public void setLabel(String value) {
-    m_Label = value;
-    reset();
-  }
-
-  /**
-   * Returns the label to use for the objects.
-   *
-   * @return 		the label
-   */
-  public String getLabel() {
-    return m_Label;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String labelTipText() {
-    return "The label to use for the objects, not set if empty.";
-  }
-
-  /**
    * Returns the default suffix to use for the label.
    *
    * @return		the default
@@ -218,6 +183,7 @@ public class BoundingBoxAnnotator
    *
    * @param value 	the suffix
    */
+  @Override
   public void setLabelSuffix(String value) {
     m_LabelSuffix = value;
     reset();
@@ -228,6 +194,7 @@ public class BoundingBoxAnnotator
    *
    * @return 		the suffix
    */
+  @Override
   public String getLabelSuffix() {
     return m_LabelSuffix;
   }
@@ -356,6 +323,9 @@ public class BoundingBoxAnnotator
     List<SelectionRectangle>	queue;
     String			comment;
 
+    if ((m_SelectionFrom == null) || (m_SelectionTo == null))
+      return;
+
     topLeft     = RectangleUtils.rectangleCorner(m_SelectionFrom, m_SelectionTo, RectangleCorner.TOP_LEFT);
     bottomRight = RectangleUtils.rectangleCorner(m_SelectionFrom, m_SelectionTo, RectangleCorner.BOTTOM_RIGHT);
     comment     = "";
@@ -399,8 +369,8 @@ public class BoundingBoxAnnotator
 	report.setNumericValue(current + KEY_Y, y);
 	report.setNumericValue(current + KEY_WIDTH, w);
 	report.setNumericValue(current + KEY_HEIGHT, h);
-	if (!m_Label.isEmpty())
-	  report.setStringValue(current + m_LabelSuffix, m_Label);
+	if (!hasCurrentLabel())
+	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(rect);
 	comment = "Adding box: " + rect;
       }
@@ -446,6 +416,9 @@ public class BoundingBoxAnnotator
     int		bottomY;
     int		tmp;
     float	width;
+
+    if ((m_SelectionFrom == null) || (m_SelectionTo == null))
+      return;
 
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);

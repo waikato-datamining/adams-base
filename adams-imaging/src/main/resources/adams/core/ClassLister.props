@@ -158,6 +158,10 @@ adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGene
 adams.gui.visualization.object.annotator.AbstractAnnotator=\
   adams.gui.visualization.object.annotator
 
+# the generators for label selectors
+adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator=\
+  adams.gui.visualization.object.labelselector
+
 # the object mouseclick processors
 adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor=\
   adams.gui.visualization.object.mouseclick

@@ -21,9 +21,12 @@
 package adams.gui.visualization.object.mouseclick;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.flow.transformer.locateobjects.LocatedObject;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.KeyUtils;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 /**
@@ -267,6 +270,34 @@ public abstract class AbstractMouseClickProcessor
    */
   public String metaDownTipText() {
     return "If enabled, the META key must be down to trigger.";
+  }
+
+  /**
+   * Determines the object hits for the mouse location.
+   *
+   * @param panel	the owning panel
+   * @param e		the mouse event/location
+   * @return		the hits
+   */
+  protected LocatedObjects determineHits(ObjectAnnotationPanel panel, MouseEvent e) {
+    LocatedObjects 	result;
+    LocatedObjects	objects;
+    Point 		location;
+    boolean		add;
+
+    objects  = panel.getObjects();
+    result = new LocatedObjects();
+    location = panel.mouseToPixelLocation(e.getPoint());
+    for (LocatedObject object: objects) {
+      if (object.hasPolygon())
+	add = object.getActualPolygon().contains(location);
+      else
+	add = object.getActualRectangle().contains(location);
+      if (add)
+	result.add(object.getClone());
+    }
+
+    return result;
   }
 
   /**

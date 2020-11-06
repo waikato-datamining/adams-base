@@ -103,6 +103,24 @@ public abstract class AbstractAnnotator
   }
 
   /**
+   * Checks whether an actual label is set.
+   *
+   * @return		true if actual label set
+   */
+  public boolean hasCurrentLabel() {
+    return (getCurrentLabel() != null) && !getCurrentLabel().isEmpty();
+  }
+
+  /**
+   * Returns the currently set label.
+   *
+   * @return		the label, can be null
+   */
+  public String getCurrentLabel() {
+    return getOwner().getCurrentLabel();
+  }
+
+  /**
    * Returns the thickness of the stroke.
    *
    * @param g		graphics context to get the thickness from
