@@ -66,6 +66,7 @@ import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.print.PrintMouseListener;
 import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLogManager;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
 import adams.gui.visualization.image.interactionlogging.Null;
 import adams.gui.visualization.image.paintlet.Paintlet;
@@ -123,7 +124,7 @@ import java.util.Vector;
 public class ImagePanel
   extends UndoPanel
   implements StatusMessageHandler, TableModelListener, CleanUpHandler,
-  UndoHandlerWithQuickAccess {
+  UndoHandlerWithQuickAccess, InteractionLogManager {
 
   /** for serialization. */
   private static final long serialVersionUID = -3102446345758890249L;

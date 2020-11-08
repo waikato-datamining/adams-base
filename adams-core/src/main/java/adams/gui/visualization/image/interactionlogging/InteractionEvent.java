@@ -15,13 +15,12 @@
 
 /*
  * InteractionEvent.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.interactionlogging;
 
 import adams.core.DateUtils;
-import adams.gui.visualization.image.ImagePanel;
 
 import java.util.Date;
 import java.util.EventObject;
@@ -49,25 +48,25 @@ public class InteractionEvent
   /**
    * Constructs the event.
    *
-   * @param source 	the ImagePanel that generated the event
+   * @param source 	the log manager that generated the event
    * @param timestamp 	the timestamp of the event
    * @param id 		the ID/type of the event
    * @throws IllegalArgumentException if source is null
    */
-  public InteractionEvent(ImagePanel source, Date timestamp, String id) {
+  public InteractionEvent(InteractionLogManager source, Date timestamp, String id) {
     this(source, timestamp, id, null);
   }
 
   /**
    * Constructs the event.
    *
-   * @param source 	the ImagePanel that generated the event
+   * @param source 	the log manager that generated the event
    * @param timestamp 	the timestamp of the event
    * @param id 		the ID/type of the event
    * @param data 	optional data associated with the event, can be null
    * @throws IllegalArgumentException if source is null
    */
-  public InteractionEvent(ImagePanel source, Date timestamp, String id, Map<String,Object> data) {
+  public InteractionEvent(InteractionLogManager source, Date timestamp, String id, Map<String,Object> data) {
     super(source);
     m_Timestamp = timestamp;
     m_ID        = id;
@@ -75,12 +74,12 @@ public class InteractionEvent
   }
 
   /**
-   * Returns the ImagePanel that generated the source.
+   * Returns the log manager that generated the source.
    *
    * @return		the panel
    */
-  public ImagePanel getImagePanel() {
-    return (ImagePanel) getSource();
+  public InteractionLogManager getImagePanel() {
+    return (InteractionLogManager) getSource();
   }
 
   /**
