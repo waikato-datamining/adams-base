@@ -78,7 +78,7 @@ public class InteractionEvent
    *
    * @return		the panel
    */
-  public InteractionLogManager getImagePanel() {
+  public InteractionLogManager getLogManager() {
     return (InteractionLogManager) getSource();
   }
 

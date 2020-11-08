@@ -47,6 +47,6 @@ public class All
    */
   @Override
   protected void doFilterInteractionLog(InteractionEvent e) {
-    e.getImagePanel().addInteractionLog(e);
+    e.getLogManager().addInteractionLog(e);
   }
 }

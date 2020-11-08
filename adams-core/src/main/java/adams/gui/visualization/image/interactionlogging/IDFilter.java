@@ -135,6 +135,6 @@ public class IDFilter
     if (m_Invert)
       match = !match;
     if (match)
-      e.getImagePanel().addInteractionLog(e);
+      e.getLogManager().addInteractionLog(e);
   }
 }
