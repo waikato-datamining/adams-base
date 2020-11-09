@@ -14,7 +14,7 @@
  */
 
 /*
- * DefaultLabelSelectorPanel.java
+ * ButtonSelectorPanel.java
  * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class DefaultLabelSelectorPanel
+public class ButtonSelectorPanel
   extends AbstractLabelSelectorPanel {
 
   private static final long serialVersionUID = -5878687744017979355L;
@@ -64,7 +64,7 @@ public class DefaultLabelSelectorPanel
    * @param owner 	the owning panel
    * @param labels	the labels to use
    */
-  public DefaultLabelSelectorPanel(ObjectAnnotationPanel owner, BaseString[] labels) {
+  public ButtonSelectorPanel(ObjectAnnotationPanel owner, BaseString[] labels) {
     super(owner);
 
     m_Labels = labels;

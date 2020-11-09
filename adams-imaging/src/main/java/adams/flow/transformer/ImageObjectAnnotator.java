@@ -43,7 +43,7 @@ import adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDispl
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
 import adams.gui.visualization.object.annotator.BoundingBoxAnnotator;
 import adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator;
-import adams.gui.visualization.object.labelselector.DefaultLabelSelectorGenerator;
+import adams.gui.visualization.object.labelselector.ButtonSelectorGenerator;
 import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
 import adams.gui.visualization.object.overlay.AbstractOverlay;
@@ -172,7 +172,7 @@ import java.util.logging.Level;
  *
  * <pre>-label-selector &lt;adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator&gt; (property: labelSelector)
  * &nbsp;&nbsp;&nbsp;The generator for creating the panel with the labels.
- * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.labelselector.DefaultLabelSelectorGenerator
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.labelselector.ButtonSelectorGenerator
  * </pre>
  *
  * <pre>-mouse-click &lt;adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor&gt; (property: mouseClick)
@@ -291,7 +291,7 @@ public class ImageObjectAnnotator
 
     m_OptionManager.add(
       "label-selector", "labelSelector",
-      new DefaultLabelSelectorGenerator());
+      new ButtonSelectorGenerator());
 
     m_OptionManager.add(
       "mouse-click", "mouseClick",

@@ -53,7 +53,7 @@ import adams.gui.visualization.object.annotator.AbstractAnnotator;
 import adams.gui.visualization.object.annotator.BoundingBoxAnnotator;
 import adams.gui.visualization.object.annotator.NullAnnotator;
 import adams.gui.visualization.object.labelselector.AbstractLabelSelectorPanel;
-import adams.gui.visualization.object.labelselector.DefaultLabelSelectorGenerator;
+import adams.gui.visualization.object.labelselector.ButtonSelectorGenerator;
 import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.AddMetaData;
 import adams.gui.visualization.object.mouseclick.MultiProcessor;
@@ -949,7 +949,7 @@ public class ObjectAnnotationPanel
     File img = new File(args[0]);
     panel.setImage(BufferedImageHelper.read(img).getImage());
     panel.setBestFit(true);
-    DefaultLabelSelectorGenerator labelGen = new DefaultLabelSelectorGenerator();
+    ButtonSelectorGenerator labelGen = new ButtonSelectorGenerator();
     labelGen.setLabels(new BaseString[]{new BaseString("Car"), new BaseString("Bike")});
     panel.setLabelSelectorPanel(labelGen.generate(panel));
     panel.setAnnotator(new BoundingBoxAnnotator());

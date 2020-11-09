@@ -14,7 +14,7 @@
  */
 
 /*
- * DefaultLabelSelectorGenerator.java
+ * ButtonSelectorGenerator.java
  * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
@@ -28,7 +28,7 @@ import adams.gui.visualization.object.ObjectAnnotationPanel;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class DefaultLabelSelectorGenerator
+public class ButtonSelectorGenerator
   extends AbstractLabelSelectorGenerator {
 
   private static final long serialVersionUID = -5510358816315202316L;
@@ -95,9 +95,9 @@ public class DefaultLabelSelectorGenerator
    */
   @Override
   public AbstractLabelSelectorPanel generate(ObjectAnnotationPanel owner) {
-    DefaultLabelSelectorPanel	result;
+    ButtonSelectorPanel result;
 
-    result = new DefaultLabelSelectorPanel(owner, m_Labels);
+    result = new ButtonSelectorPanel(owner, m_Labels);
 
     return result;
   }
