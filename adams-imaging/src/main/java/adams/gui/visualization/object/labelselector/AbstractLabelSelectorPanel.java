@@ -71,9 +71,12 @@ public class AbstractLabelSelectorPanel
    * @param value	the label, null to unset
    */
   public void setCurrentLabel(String value) {
-    if (getOwner() != null)
+    if (getOwner() != null) {
       getOwner().setCurrentLabel(value);
-    else
+      getOwner().labelChanged(this);
+    }
+    else {
       throw new IllegalStateException("No owning panel set!");
+    }
   }
 }

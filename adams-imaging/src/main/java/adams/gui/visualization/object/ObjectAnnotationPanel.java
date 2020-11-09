@@ -750,6 +750,19 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * For notifying everyone that the label have changed
+   *
+   * @param source 	the source triggering the change
+   */
+  public void labelChanged(Object source) {
+    if ((m_PanelLabelSelector != null) && (source != m_PanelLabelSelector))
+      m_PanelLabelSelector.setCurrentLabel(m_CurrentLabel);
+    if ((m_Annotator != null) && (source != m_Annotator))
+      m_Annotator.labelChanged();
+    update();
+  }
+
+  /**
    * Sets and installs the annotator.
    *
    * @param value	the annotator

@@ -121,6 +121,16 @@ public abstract class AbstractAnnotator
   }
 
   /**
+   * Gets called when the label changes.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void labelChanged() {
+    if (isLoggingEnabled())
+      getLogger().info("Label changed: " + (hasCurrentLabel() ? getCurrentLabel() : "[not set]"));
+  }
+
+  /**
    * Returns the thickness of the stroke.
    *
    * @param g		graphics context to get the thickness from
