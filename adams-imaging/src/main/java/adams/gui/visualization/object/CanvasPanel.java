@@ -22,6 +22,10 @@ package adams.gui.visualization.object;
 
 import adams.data.RoundingUtils;
 import adams.gui.core.BasePanel;
+import adams.gui.core.MouseUtils;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
+import adams.gui.visualization.image.interactionlogging.Null;
 
 import javax.swing.JScrollBar;
 import java.awt.BorderLayout;
@@ -34,6 +38,9 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * For drawing the image and overlays.
@@ -73,6 +80,9 @@ public class CanvasPanel
   /** first display. */
   protected boolean m_FirstDisplay;
 
+  /** the interaction logger in use. */
+  protected InteractionLoggingFilter m_InteractionLoggingFilter;
+
   /**
    * Initializes the members.
    */
@@ -88,6 +98,7 @@ public class CanvasPanel
     m_Brightness     = 100f;
     m_ResizeRequired = false;
     m_FirstDisplay   = true;
+    m_InteractionLoggingFilter = new Null();
   }
 
   /**
@@ -108,6 +119,7 @@ public class CanvasPanel
       else
 	newZoom = oldZoom / Math.pow(ObjectAnnotationPanel.ZOOM_FACTOR, rotation);
       newZoom = RoundingUtils.round(newZoom, 3);
+      logMouseWheel(e, oldZoom, newZoom);
       getOwner().setZoom(newZoom);
       update();
     });
@@ -166,6 +178,7 @@ public class CanvasPanel
     m_Zoom       = value;
     m_ActualZoom = value;
     m_BestFit    = false;
+    logScale(value);
     getOwner().updateStatus();
   }
 
@@ -221,6 +234,24 @@ public class CanvasPanel
    */
   public BufferedImage getImage() {
     return m_Image;
+  }
+
+  /**
+   * Sets the interaction log filter to use.
+   *
+   * @param value	the filter
+   */
+  public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+    m_InteractionLoggingFilter = value;
+  }
+
+  /**
+   * Returns the interaction log filter in use.
+   *
+   * @return		the filter
+   */
+  public InteractionLoggingFilter getInteractionLoggingFilter() {
+    return m_InteractionLoggingFilter;
   }
 
   /**
@@ -330,6 +361,128 @@ public class CanvasPanel
     y = (int) (pixelPos.y * m_ActualZoom);
 
     return new Point(x, y);
+  }
+
+  /**
+   * Logs a mouse button pressed.
+   *
+   * @param e		the mouse event to record
+   */
+  public void logMouseButtonPressed(MouseEvent e) {
+    Map<String,Object> 	data;
+
+    if (getOwner() == null)
+      return;
+
+    data = new HashMap<>();
+    data.put("x", e.getX());
+    data.put("y", e.getY());
+    data.put("modifiers", MouseUtils.modifiersToStr(e));
+
+    if (MouseUtils.isLeftClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-pressed", data));
+    }
+    else if (MouseUtils.isMiddleClick(e)) {
+      data.put("scale", 1.0);
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-pressed", data));
+    }
+    else if (MouseUtils.isRightClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-pressed", data));
+    }
+  }
+
+  /**
+   * Logs a mouse click.
+   *
+   * @param e		the mouse event to record
+   */
+  public void logMouseButtonClick(MouseEvent e) {
+    Map<String,Object> 	data;
+
+    if (getOwner() == null)
+      return;
+
+    data = new HashMap<>();
+    data.put("x", e.getX());
+    data.put("y", e.getY());
+    data.put("modifiers", MouseUtils.modifiersToStr(e));
+
+    if (MouseUtils.isLeftClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-click", data));
+    }
+    else if (MouseUtils.isMiddleClick(e)) {
+      data.put("scale", 1.0);
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-click", data));
+    }
+    else if (MouseUtils.isRightClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-click", data));
+    }
+  }
+
+  /**
+   * Logs a mouse button released.
+   *
+   * @param e		the mouse event to record
+   */
+  public void logMouseButtonReleased(MouseEvent e) {
+    Map<String,Object> 	data;
+
+    if (getOwner() == null)
+      return;
+
+    data = new HashMap<>();
+    data.put("x", e.getX());
+    data.put("y", e.getY());
+    data.put("modifiers", MouseUtils.modifiersToStr(e));
+
+    if (MouseUtils.isLeftClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "left-released", data));
+    }
+    else if (MouseUtils.isMiddleClick(e)) {
+      data.put("scale", 1.0);
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "middle-released", data));
+    }
+    else if (MouseUtils.isRightClick(e)) {
+      m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "right-released", data));
+    }
+  }
+
+  /**
+   * Logs a mouse wheel event (zoom).
+   *
+   * @param e		the mouse wheel event to record
+   * @param oldZoom 	the old zoom
+   * @param newZoom 	the new zoom
+   */
+  public void logMouseWheel(MouseWheelEvent e, double oldZoom, double newZoom) {
+    Map<String,Object> data;
+
+    if (getOwner() == null)
+      return;
+
+    data = new HashMap<>();
+    data.put("x", e.getX());
+    data.put("y", e.getY());
+    data.put("rotation", e.getWheelRotation());
+    data.put("oldScale", oldZoom);
+    data.put("newScale", newZoom);
+    m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "mouse-wheel", data));
+  }
+
+  /**
+   * Logs a scale change from the menu.
+   *
+   * @param newScale 	the new scale
+   */
+  public void logScale(double newScale) {
+    Map<String,Object> 	data;
+
+    if (getOwner() == null)
+      return;
+
+    data = new HashMap<>();
+    data.put("newScale", newScale);
+    m_InteractionLoggingFilter.filterInteractionLog(new InteractionEvent(getOwner(), new Date(), "zoom", data));
   }
 
   /**

@@ -44,6 +44,9 @@ import adams.gui.core.Undo;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLogManager;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
 import adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayPanel;
 import adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDisplayGenerator;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
@@ -73,6 +76,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,7 +86,7 @@ import java.util.List;
  */
 public class ObjectAnnotationPanel
   extends BasePanel
-  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener {
+  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager {
 
   private static final long serialVersionUID = 2804494506168717754L;
 
@@ -166,6 +170,9 @@ public class ObjectAnnotationPanel
   /** the current label. */
   protected String m_CurrentLabel;
 
+  /** the interaction log. */
+  protected List<InteractionEvent> m_InteractionLog;
+
   /**
    * Initializes the members.
    */
@@ -177,6 +184,7 @@ public class ObjectAnnotationPanel
     m_MouseClickProcessor = new NullProcessor();
     m_PanelLabelSelector  = null;
     m_CurrentLabel        = null;
+    m_InteractionLog      = null;
     m_Undo                = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
     setAnnotator(new NullAnnotator());
@@ -846,6 +854,64 @@ public class ObjectAnnotationPanel
    */
   public Point pixelToMouseLocation(Point pixelPos) {
     return m_PanelCanvas.pixelToMouseLocation(pixelPos);
+  }
+
+  /**
+   * Sets the interaction log filter to use.
+   *
+   * @param value	the filter
+   */
+  public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+    m_PanelCanvas.setInteractionLoggingFilter(value);
+  }
+
+  /**
+   * Returns the interaction log filter in use.
+   *
+   * @return		the filter
+   */
+  public InteractionLoggingFilter getInteractionLoggingFilter() {
+    return m_PanelCanvas.getInteractionLoggingFilter();
+  }
+
+  /**
+   * Clears the interaction log.
+   */
+  @Override
+  public void clearInteractionLog() {
+    m_InteractionLog = null;
+  }
+
+  /**
+   * Adds the interaction event to the log.
+   *
+   * @param e		the event to add
+   */
+  @Override
+  public void addInteractionLog(InteractionEvent e) {
+    if (m_InteractionLog == null)
+      m_InteractionLog = new ArrayList<>();
+    m_InteractionLog.add(e);
+  }
+
+  /**
+   * Checks whether there have been any interactions recorded.
+   *
+   * @return		true if interactions are available
+   */
+  @Override
+  public boolean hasInteractionLog() {
+    return (m_InteractionLog != null);
+  }
+
+  /**
+   * Returns the interaction log.
+   *
+   * @return		the log, null if nothing recorded
+   */
+  @Override
+  public List<InteractionEvent> getInteractionLog() {
+    return m_InteractionLog;
   }
 
   /**

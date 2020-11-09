@@ -267,6 +267,7 @@ public class PolygonAnnotator
       // start selection
       @Override
       public void mousePressed(MouseEvent e) {
+	getOwner().getCanvas().logMouseButtonPressed(e);
         if (e.getButton() == MouseEvent.BUTTON1) {
           // get top/left coordinates for selection
           if (!e.isShiftDown()) {
@@ -296,6 +297,7 @@ public class PolygonAnnotator
       // perform selection
       @Override
       public void mouseReleased(MouseEvent e) {
+	getOwner().getCanvas().logMouseButtonReleased(e);
         if (e.getButton() == MouseEvent.BUTTON1) {
           // get bottom/right coordinates for selection
           if (m_Selecting && m_Dragged) {
@@ -305,6 +307,11 @@ public class PolygonAnnotator
             processSelection(e.getModifiersEx());
           }
         }
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	getOwner().getCanvas().logMouseButtonClick(e);
       }
     };
   }

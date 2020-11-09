@@ -20,14 +20,23 @@
 
 package adams.flow.transformer;
 
+import adams.core.DateFormat;
+import adams.core.DateUtils;
 import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.MapToJson;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
+import adams.data.report.DataType;
+import adams.data.report.Field;
+import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.visualization.image.interactionlogging.InteractionEvent;
+import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
+import adams.gui.visualization.image.interactionlogging.Null;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 import adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGenerator;
 import adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDisplayGenerator;
@@ -39,12 +48,18 @@ import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
 import adams.gui.visualization.object.overlay.AbstractOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -189,6 +204,16 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;maximum: 1600.0
  * </pre>
  *
+ * <pre>-best-fit &lt;boolean&gt; (property: bestFit)
+ * &nbsp;&nbsp;&nbsp;If enabled, the image gets fitted into the viewport.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-interaction-logging-filter &lt;adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter&gt; (property: interactionLoggingFilter)
+ * &nbsp;&nbsp;&nbsp;The interaction logger to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.interactionlogging.Null
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -197,6 +222,8 @@ public class ImageObjectAnnotator
   extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -761517109077084448L;
+
+  public static final String FIELD_INTERACTIONLOG = "interaction-log";
 
   /** the annotations display to use. */
   protected AbstractAnnotationsDisplayGenerator m_AnnotationsDisplay;
@@ -225,11 +252,17 @@ public class ImageObjectAnnotator
   /** whether to use best fit. */
   protected boolean m_BestFit;
 
+  /** the interaction logger to use. */
+  protected InteractionLoggingFilter m_InteractionLoggingFilter;
+
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
+
+  /** the start timestamp. */
+  protected transient Date m_StartTimestamp;
 
   /**
    * Returns a string describing the object.
@@ -283,6 +316,10 @@ public class ImageObjectAnnotator
     m_OptionManager.add(
       "best-fit", "bestFit",
       false);
+
+    m_OptionManager.add(
+      "interaction-logging-filter", "interactionLoggingFilter",
+      new Null());
   }
 
   /**
@@ -593,6 +630,35 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Sets the interaction logger to use.
+   *
+   * @param value 	the logger
+   */
+  public void setInteractionLoggingFilter(InteractionLoggingFilter value) {
+    m_InteractionLoggingFilter = value;
+    reset();
+  }
+
+  /**
+   * Returns the interaction logger in use.
+   *
+   * @return 		the logger
+   */
+  public InteractionLoggingFilter getInteractionLoggingFilter() {
+    return m_InteractionLoggingFilter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String interactionLoggingFilterTipText() {
+    return "The interaction logger to use.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -659,6 +725,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setRightDividerLocation(m_RightDividerLocation - m_LeftDividerLocation);
     m_PanelObjectAnnotation.setZoom(m_Zoom / 100.0);
     m_PanelObjectAnnotation.setBestFit(m_BestFit);
+    m_PanelObjectAnnotation.setInteractionLoggingFilter(ObjectCopyHelper.copyObject(m_InteractionLoggingFilter));
     return m_PanelObjectAnnotation;
   }
 
@@ -692,6 +759,77 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Adds the interactions to the report.
+   *
+   * @param report	the report to add to
+   * @param events	the events to add, ignored if null
+   */
+  protected void addInteractionsToReport(Report report, List<InteractionEvent> events) {
+    Field field;
+    MapToJson m2j;
+    DateFormat formatter;
+    JSONArray array;
+    JSONObject	interaction;
+    String 	value;
+    JSONParser parser;
+    String	msg;
+
+    if (events == null)
+      return;
+
+    array     = new JSONArray();
+    m2j       = new MapToJson();
+    formatter = DateUtils.getTimestampFormatterMsecs();
+    field     = new Field(FIELD_INTERACTIONLOG, DataType.STRING);
+
+    // any old interactions?
+    if (report.hasValue(field)) {
+      value = "" + report.getValue(field);
+      if (value.isEmpty()) {
+        array = new JSONArray();
+      }
+      else {
+        try {
+          parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+          array = (JSONArray) parser.parse(value);
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+        }
+      }
+    }
+
+    // separator
+    if (array.size() > 0) {
+      interaction = new JSONObject();
+      interaction.put("timestamp", formatter.format(m_StartTimestamp));
+      interaction.put("id", "---");
+      array.add(interaction);
+    }
+
+    // new interactions
+    for (InteractionEvent event: events) {
+      interaction = new JSONObject();
+      interaction.put("timestamp", formatter.format(event.getTimestamp()));
+      interaction.put("id", event.getID());
+      if (event.getData() != null) {
+	m2j.setInput(event.getData());
+	msg = m2j.convert();
+	if (msg == null) {
+	  interaction.put("data", m2j.getOutput());
+	}
+	else {
+	  getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
+	}
+      }
+      array.add(interaction);
+    }
+
+    report.addField(field);
+    report.setValue(field, array.toString());
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		true if successfully interacted
@@ -701,7 +839,8 @@ public class ImageObjectAnnotator
     BufferedImage		img;
     AbstractImageContainer	imgcont;
 
-    m_Accepted = false;
+    m_Accepted       = false;
+    m_StartTimestamp = new Date();
 
     if (m_InputToken.hasPayload(BufferedImage.class)) {
       img     = m_InputToken.getPayload(BufferedImage.class);
@@ -725,6 +864,8 @@ public class ImageObjectAnnotator
       imgcont = new BufferedImageContainer();
       imgcont.setImage(m_PanelObjectAnnotation.getImage());
       imgcont.setReport(m_PanelObjectAnnotation.getReport().getClone());
+      if (!(m_InteractionLoggingFilter instanceof Null))
+        addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
       m_OutputToken = new Token(imgcont);
     }
 
