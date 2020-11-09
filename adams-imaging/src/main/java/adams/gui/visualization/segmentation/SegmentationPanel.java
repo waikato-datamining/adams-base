@@ -93,6 +93,9 @@ public class SegmentationPanel
   /** the button for zooming out. */
   protected BaseFlatButton m_ButtonZoomOut;
 
+  /** the button for best fit zoom. */
+  protected BaseFlatButton m_ButtonZoomBestFit;
+
   /** the button for applying the zoom. */
   protected BaseFlatButton m_ButtonZoom;
 
@@ -128,6 +131,9 @@ public class SegmentationPanel
 
   /** the center panel. */
   protected BasePanel m_PanelCenter;
+
+  /** the JScrollPane that embeds the canvas panel. */
+  protected BaseScrollPane m_ScrollPane;
 
   /** the panel for drawing. */
   protected CanvasPanel m_PanelCanvas;
@@ -203,6 +209,10 @@ public class SegmentationPanel
     m_ButtonZoomOut.setToolTipText("Zoom out");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
     panel.add(m_ButtonZoomOut);
+    m_ButtonZoomBestFit = new BaseFlatButton(GUIHelper.getIcon("zoom_fit.png"));
+    m_ButtonZoomBestFit.setToolTipText("Best fit");
+    m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
+    panel.add(m_ButtonZoomBestFit);
     panel.add(new JLabel(" "));
     m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
     m_ButtonAddUndo.setToolTipText("Add undo point");
@@ -289,7 +299,8 @@ public class SegmentationPanel
     m_SplitPaneRight.setLeftComponent(m_PanelCenter);
     m_PanelCanvas = new CanvasPanel();
     m_PanelCanvas.setOwner(this);
-    m_PanelCenter.add(new BaseScrollPane(m_PanelCanvas));
+    m_ScrollPane = new BaseScrollPane(m_PanelCanvas);
+    m_PanelCenter.add(m_ScrollPane);
     m_Manager = new LayerManager(m_PanelCanvas);
     m_Manager.addChangeListener(this);
     m_Manager.getUndo().addUndoListener(this);
@@ -318,6 +329,15 @@ public class SegmentationPanel
    */
   public LayerManager getManager() {
     return m_Manager;
+  }
+
+  /**
+   * Returns the scrollpane.
+   *
+   * @return		the scroll pane
+   */
+  public BaseScrollPane getScrollPane() {
+    return m_ScrollPane;
   }
 
   /**
@@ -448,6 +468,15 @@ public class SegmentationPanel
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     m_Manager.update();
+  }
+
+  /**
+   * Fits the image.
+   */
+  public void bestFitZoom() {
+    m_Manager.bestFitZoom();
+    m_TextZoom.setValue(RoundingUtils.round(m_Manager.getZoom() * 100, 1));
+    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
   }
 
   /**

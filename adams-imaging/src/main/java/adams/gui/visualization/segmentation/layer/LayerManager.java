@@ -244,6 +244,22 @@ public class LayerManager
   }
 
   /**
+   * Fits the image into the view port.
+   */
+  public void bestFitZoom() {
+    int		width;
+    int		height;
+    double	zoomW;
+    double	zoomH;
+
+    width  = getCanvasPanel().getOwner().getScrollPane().getWidth()  - 20;
+    height = getCanvasPanel().getOwner().getScrollPane().getHeight() - 20;
+    zoomW = (double) width / (double) getImageLayer().getImage().getWidth();
+    zoomH = (double) height / (double) getImageLayer().getImage().getHeight();
+    setZoom(Math.min(zoomW, zoomH));
+  }
+
+  /**
    * Returns the width.
    *
    * @return	the width
