@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatasetView.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -177,7 +177,19 @@ public class DatasetView
    */
   @Override
   public Dataset getHeader() {
-    return new DatasetView(m_Dataset.getHeader(), null, m_ColumnArray);
+    DefaultDataset 	result;
+    Row			row;
+    int			i;
+
+    result = new DefaultDataset();
+    row    = result.getHeaderRow();
+    for (i = 0; i < getColumnCount(); i++)
+      row.addCell(getHeaderRow().getCellKey(i)).setNative(getHeaderRow().getCell(i).getNative());
+    result.addComment(getComments());
+    for (int index: getClassAttributeIndices())
+      result.setClassAttribute(index, true);
+
+    return result;
   }
 
   /**
