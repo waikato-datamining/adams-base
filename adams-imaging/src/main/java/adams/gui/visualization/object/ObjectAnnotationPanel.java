@@ -386,7 +386,7 @@ public class ObjectAnnotationPanel
   }
 
   /**
-   * Zooms out.
+   * Fits the image.
    */
   public void bestFitZoom() {
     setBestFit(true);
