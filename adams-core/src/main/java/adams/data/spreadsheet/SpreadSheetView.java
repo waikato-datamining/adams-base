@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetView.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet;
@@ -177,7 +177,17 @@ public class SpreadSheetView
    */
   @Override
   public SpreadSheet getHeader() {
-    return new SpreadSheetView(m_Sheet.getHeader(), null, m_ColumnArray);
+    DefaultSpreadSheet  result;
+    Row			row;
+    int			i;
+
+    result = new DefaultSpreadSheet();
+    row    = result.getHeaderRow();
+    for (i = 0; i < getColumnCount(); i++)
+      row.addCell(getHeaderRow().getCellKey(i)).setNative(getHeaderRow().getCell(i).getNative());
+    result.addComment(getComments());
+
+    return result;
   }
 
   /**
