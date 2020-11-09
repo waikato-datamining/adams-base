@@ -119,14 +119,20 @@ public class ClassificationLabelAnnotator
   @Override
   public void labelChanged() {
     Report	report;
+    String	comment;
 
     super.labelChanged();
 
     report = getOwner().getReport().getClone();
-    if (hasCurrentLabel())
+    if (hasCurrentLabel()) {
+      comment = "Setting label: " + getCurrentLabel();
       report.setValue(m_Field, getCurrentLabel());
-    else
+    }
+    else {
+      comment = "Removing label";
       report.removeValue(m_Field);
+    }
+    getOwner().addUndoPoint(comment);
     getOwner().setReport(report);
   }
 }
