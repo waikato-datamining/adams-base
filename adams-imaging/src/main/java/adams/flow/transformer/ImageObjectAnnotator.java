@@ -160,7 +160,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
- * <pre>-anbnotations-display &lt;adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGenerator&gt; (property: annotationsDisplay)
+ * <pre>-annotations-display &lt;adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGenerator&gt; (property: annotationsDisplay)
  * &nbsp;&nbsp;&nbsp;The generator to use for instantiating the annotations display.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDisplayGenerator
  * </pre>
@@ -282,7 +282,7 @@ public class ImageObjectAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-      "anbnotations-display", "annotationsDisplay",
+      "annotations-display", "annotationsDisplay",
       new DefaultAnnotationsDisplayGenerator());
 
     m_OptionManager.add(
