@@ -56,6 +56,8 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
@@ -1176,6 +1178,7 @@ public class ActualVsPredictedPlot
     SequencePlotPoint			point;
     int					i;
     String				id;
+    TIntList				indices;
     int[] 				additional;
     Cell 				cell;
     HashMap<String,Object>		meta;
@@ -1200,7 +1203,11 @@ public class ActualVsPredictedPlot
     additional = new int[0];
     if (!m_Additional.isEmpty()) {
       m_Additional.setData(sheet);
-      additional = m_Additional.getIntIndices();
+      indices = new TIntArrayList(m_Additional.getIntIndices());
+      indices.remove(m_Actual.getIntIndex());
+      indices.remove(m_Predicted.getIntIndex());
+      indices.remove(m_Error.getIntIndex());
+      additional = indices.toArray();
     }
 
     // create plot data
