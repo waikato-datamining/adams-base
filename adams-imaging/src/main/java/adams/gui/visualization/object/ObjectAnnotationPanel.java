@@ -397,12 +397,14 @@ public class ObjectAnnotationPanel
   }
 
   /**
-   * Clears image and annotations.
+   * Clears label, image, annotations and interaction log.
    */
   public void clear() {
+    m_CurrentLabel = null;
     setImage(null);
     setReport(new Report());
     annotationsChanged(this);
+    clearInteractionLog();
   }
 
   /**
@@ -567,6 +569,16 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Pre-selects the label.
+   *
+   * @param label	the label to use
+   */
+  public void preselectCurrentLabel(String label) {
+    if (m_PanelLabelSelector != null)
+      m_PanelLabelSelector.preselectCurrentLabel(label);
+  }
+
+  /**
    * Sets the current label to use.
    *
    * @param value	the label, null to unset
@@ -590,6 +602,7 @@ public class ObjectAnnotationPanel
    * @param value	the panel, null to hide
    */
   public void setLabelSelectorPanel(AbstractLabelSelectorPanel value) {
+    m_PanelLabelSelector = value;
     if (m_SplitPaneLeft.getLeftComponent() != null)
       m_SplitPaneLeft.remove(m_SplitPaneLeft.getLeftComponent());
     if (value == null) {
