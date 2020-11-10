@@ -28,13 +28,16 @@ import adams.gui.visualization.object.ObjectAnnotationPanel;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class AbstractLabelSelectorPanel
+public abstract class AbstractLabelSelectorPanel
   extends BasePanel {
 
   private static final long serialVersionUID = -4366283634060701920L;
 
   /** the owner. */
   protected ObjectAnnotationPanel m_Owner;
+
+  /** whether to ignore changes to the label. */
+  protected boolean m_IgnoreChanges;
 
   /**
    * Initializes the panel.
@@ -45,6 +48,16 @@ public class AbstractLabelSelectorPanel
     super();
 
     setOwner(owner);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_IgnoreChanges = false;
   }
 
   /**
@@ -66,6 +79,24 @@ public class AbstractLabelSelectorPanel
   }
 
   /**
+   * Pre-selects the label.
+   *
+   * @param label	the label to use
+   */
+  protected abstract void doPreselectCurrentLabel(String label);
+
+  /**
+   * Pre-selects the label.
+   *
+   * @param label	the label to use
+   */
+  public void preselectCurrentLabel(String label) {
+    m_IgnoreChanges = true;
+    doPreselectCurrentLabel(label);
+    m_IgnoreChanges = false;
+  }
+
+  /**
    * Sets the current label to use.
    *
    * @param value	the label, null to unset
@@ -73,7 +104,8 @@ public class AbstractLabelSelectorPanel
   public void setCurrentLabel(String value) {
     if (getOwner() != null) {
       getOwner().setCurrentLabel(value);
-      getOwner().labelChanged(this);
+      if (!m_IgnoreChanges)
+	getOwner().labelChanged(this);
     }
     else {
       throw new IllegalStateException("No owning panel set!");

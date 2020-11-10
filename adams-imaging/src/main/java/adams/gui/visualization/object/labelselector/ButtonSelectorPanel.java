@@ -169,4 +169,25 @@ public class ButtonSelectorPanel
     if (m_ButtonLabels.length > 0)
       m_ButtonLabels[0].doClick();
   }
+
+  /**
+   * Pre-selects the label.
+   *
+   * @param label	the label to use
+   */
+  protected void doPreselectCurrentLabel(String label) {
+    int   	i;
+
+    m_ButtonGroup.clearSelection();
+
+    if (label == null)
+      return;
+
+    for (i = 0; i < m_ButtonLabels.length; i++) {
+      if (m_ButtonLabels[i].getText().equals(label)) {
+        m_ButtonLabels[i].doClick();
+        break;
+      }
+    }
+  }
 }

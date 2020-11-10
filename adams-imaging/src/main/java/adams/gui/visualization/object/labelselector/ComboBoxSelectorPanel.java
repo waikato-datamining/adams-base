@@ -178,4 +178,16 @@ public class ComboBoxSelectorPanel
     else
       m_ComboBoxLabels.setSelectedIndex(0);
   }
+
+  /**
+   * Pre-selects the label.
+   *
+   * @param label	the label to use
+   */
+  protected void doPreselectCurrentLabel(String label) {
+    if (label == null)
+      m_ComboBoxLabels.setSelectedIndex(0);
+    else
+      m_ComboBoxLabels.setSelectedItem(label);
+  }
 }
