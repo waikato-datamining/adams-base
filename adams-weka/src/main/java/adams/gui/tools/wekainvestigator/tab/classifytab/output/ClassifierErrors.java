@@ -614,6 +614,7 @@ public class ClassifierErrors
     sink.setLimit(m_Limit);
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
+    sink.setAdditional(new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
     sink.setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
     sink.setUseCustomPaintlet(m_UseCustomPaintlet);
     sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
