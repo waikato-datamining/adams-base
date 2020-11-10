@@ -15,7 +15,7 @@
 
 /*
  * PrincipalComponentsTab.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -457,7 +457,7 @@ public class PrincipalComponentsTab
       @Override
       protected void doRun() {
         DataContainer cont = getData().get(m_ComboBoxDatasets.getSelectedIndex());
-        Instances data = cont.getData();
+        Instances data = new Instances(cont.getData());
         PCA pca = new PCA();
         pca.setAttributeRange(new WekaAttributeRange(m_TextAttributeRange.getText()));
         pca.setVariance(m_TextVariance.getValue().doubleValue());
