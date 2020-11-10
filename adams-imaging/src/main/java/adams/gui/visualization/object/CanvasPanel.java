@@ -21,18 +21,28 @@
 package adams.gui.visualization.object;
 
 import adams.data.RoundingUtils;
+import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageHelper;
+import adams.data.io.output.AbstractImageWriter;
+import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
 import adams.gui.visualization.image.interactionlogging.Null;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
@@ -83,6 +93,12 @@ public class CanvasPanel
   /** the interaction logger in use. */
   protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
+  /** the popup menu customizer to use. */
+  protected PopupMenuCustomizer m_PopupMenuCustomizer;
+
+  /** the file dialog for saving the image. */
+  protected ImageFileChooser m_FileChooser;
+
   /**
    * Initializes the members.
    */
@@ -98,7 +114,9 @@ public class CanvasPanel
     m_Brightness     = 100f;
     m_ResizeRequired = false;
     m_FirstDisplay   = true;
+    m_FileChooser    = null;
     m_InteractionLoggingFilter = new Null();
+    m_PopupMenuCustomizer      = null;
   }
 
   /**
@@ -128,6 +146,16 @@ public class CanvasPanel
       @Override
       public void mouseMoved(MouseEvent e) {
 	getOwner().updateStatus(e.getPoint());
+      }
+    });
+
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (MouseUtils.isRightClick(e)) {
+          JPopupMenu menu = createPopupMenu();
+          menu.show(CanvasPanel.this, e.getX(), e.getY());
+	}
       }
     });
   }
@@ -252,6 +280,91 @@ public class CanvasPanel
    */
   public InteractionLoggingFilter getInteractionLoggingFilter() {
     return m_InteractionLoggingFilter;
+  }
+
+  /**
+   * Sets the popup menu customizer to use.
+   *
+   * @param value	the customizer, null to unset
+   */
+  public void setPopupMenuCustomizer(PopupMenuCustomizer value) {
+    m_PopupMenuCustomizer = value;
+  }
+
+  /**
+   * Returns the popup menu customizer in use.
+   *
+   * @return		the customizer, null if none used
+   */
+  public PopupMenuCustomizer getPopupMenuCustomizer() {
+    return m_PopupMenuCustomizer;
+  }
+
+  /**
+   * Creates the popup.
+   *
+   * @return		the popup menu
+   */
+  protected JPopupMenu createPopupMenu() {
+    JPopupMenu		result;
+    JMenuItem		menuitem;
+
+    result = new JPopupMenu();
+
+    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem.setEnabled(m_Image != null);
+    menuitem.addActionListener((ActionEvent e) -> copyToClipboard());
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    menuitem.setEnabled(m_Image != null);
+    menuitem.addActionListener((ActionEvent e) -> saveAs());
+    result.add(menuitem);
+
+    if (m_PopupMenuCustomizer != null)
+      m_PopupMenuCustomizer.customizePopupMenu(this, result);
+
+    return result;
+  }
+
+  /**
+   * Copies the image to the clipboard.
+   */
+  public void copyToClipboard() {
+    if (m_Image == null)
+      return;
+    ClipboardHelper.copyToClipboard(this);
+  }
+
+  /**
+   * Saves the image to disk.
+   */
+  public void saveAs() {
+    int				retVal;
+    AbstractImageWriter		writer;
+    BufferedImageContainer	cont;
+    String			msg;
+    int				width;
+    int				height;
+
+    if (m_Image == null)
+      return;
+
+    if (m_FileChooser == null)
+      m_FileChooser = new ImageFileChooser();
+
+    retVal = m_FileChooser.showSaveDialog(getParent());
+    if (retVal != ImageFileChooser.APPROVE_OPTION)
+      return;
+
+    width  = (int) (m_Image.getWidth() * getActualZoom());
+    height = (int) (m_Image.getHeight() * getActualZoom());
+    cont   = new BufferedImageContainer();
+    cont.setImage(BufferedImageHelper.toBufferedImage(this, getBackground(), width, height));
+    writer = m_FileChooser.getImageWriter();
+    msg = writer.write(m_FileChooser.getSelectedPlaceholderFile(), cont);
+    if (msg != null)
+      GUIHelper.showErrorMessage(getParent(), msg);
   }
 
   /**
