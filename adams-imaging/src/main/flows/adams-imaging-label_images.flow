@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-06-22 14:50:13
+# Date: 2020-11-10 13:14:55
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -10,7 +10,7 @@ adams.flow.control.Flow -annotation "Allows the user to attach classification la
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
   adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Directory with images\" -help \"the dir with images to label\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name recursive -display Recursive? -help \"whether to look for images recursively\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display \"Labels (blank-separated)\" -help \"the  labels/categories for the images\" -default-value \"category1 category2 category3\"" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name input_dir -display \"Directory with images\" -help \"the dir with images to label\" -type DIRECTORY_ABSOLUTE -default-value . -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name recursive -display Recursive? -help \"whether to look for images recursively\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display \"Labels (blank-separated)\" -help \"the  labels/categories for the images\" -default-value \"category1 category2 category3\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name use_buttons -display \"Use buttons for labels?\" -help \"Use buttons only for small number of labels\" -type BOOLEAN -default-value true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name process
   adams.flow.standalone.SetVariable -var-name count -var-value 0
@@ -27,6 +27,6 @@ adams.flow.control.Flow -annotation "Allows the user to attach classification la
    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
    adams.flow.sink.CallableSink -callable ProgressBar
   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
-  adams.flow.transformer.ImageLabeler -label @{labels} -use-buttons false -zoom -1.0 -interaction-logging-filter adams.gui.visualization.image.interactionlogging.Null
+  adams.flow.transformer.ImageLabeler -label @{labels} -use-buttons @{use_buttons} -overlay "adams.gui.visualization.object.overlay.ClassificationLabelTextOverlay -label-font Dialog-PLAIN-40 -label-offset-y 40" -best-fit true -interaction-logging-filter adams.gui.visualization.image.interactionlogging.Null
   adams.flow.transformer.ReportFileWriter -writer adams.data.io.output.DefaultSimpleReportWriter -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outreport}"
  adams.flow.control.CloseCallableDisplay -callable ProgressBar
