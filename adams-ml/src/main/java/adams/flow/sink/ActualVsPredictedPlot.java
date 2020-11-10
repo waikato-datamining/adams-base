@@ -49,6 +49,7 @@ import adams.gui.visualization.core.axis.Type;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.CrossPaintlet;
 import adams.gui.visualization.sequence.MetaDataColorPaintlet;
+import adams.gui.visualization.sequence.MetaDataValuePaintlet;
 import adams.gui.visualization.sequence.MultiPaintlet;
 import adams.gui.visualization.sequence.PaintletWithFixedXYRange;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
@@ -195,6 +196,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
+ * <pre>-swap-axes &lt;boolean&gt; (property: swapAxes)
+ * &nbsp;&nbsp;&nbsp;If enabled, the axes get swapped.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-title &lt;java.lang.String&gt; (property: title)
  * &nbsp;&nbsp;&nbsp;The (optional) title of the plot.
  * &nbsp;&nbsp;&nbsp;default:
@@ -234,6 +240,18 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The scheme to use for extracting the color from the meta-data; ignored if
  * &nbsp;&nbsp;&nbsp;adams.gui.visualization.sequence.metadatacolor.Dummy.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.metadatacolor.Dummy
+ * </pre>
+ *
+ * <pre>-use-custom-paintlet &lt;boolean&gt; (property: useCustomPaintlet)
+ * &nbsp;&nbsp;&nbsp;If enabled, the custom paintlet is used instead of cross&#47;error paintlet,
+ * &nbsp;&nbsp;&nbsp;anti-aliasing and meta-data color scheme.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-custom-paintlet &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; (property: customPaintlet)
+ * &nbsp;&nbsp;&nbsp;The custom paintlet to use instead of cross&#47;error paintlet, anti-aliasing
+ * &nbsp;&nbsp;&nbsp;and meta-data color scheme.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.sequence.MetaDataValuePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy
  * </pre>
  *
  * <pre>-overlay &lt;adams.gui.visualization.sequence.XYSequencePaintlet&gt; [-overlay ...] (property: overlays)
@@ -310,6 +328,12 @@ public class ActualVsPredictedPlot
 
   /** for obtaining the color from the meta-data. */
   protected AbstractMetaDataColor m_MetaDataColor;
+
+  /** whether to use a custom paintlet. */
+  protected boolean m_UseCustomPaintlet;
+
+  /** the custom paintlet. */
+  protected XYSequencePaintlet m_CustomPaintlet;
 
   /** the overlays to use. */
   protected XYSequencePaintlet[] m_Overlays;
@@ -394,6 +418,14 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "meta-data-color", "metaDataColor",
       new Dummy());
+
+    m_OptionManager.add(
+      "use-custom-paintlet", "useCustomPaintlet",
+      false);
+
+    m_OptionManager.add(
+      "custom-paintlet", "customPaintlet",
+      new MetaDataValuePaintlet());
 
     m_OptionManager.add(
       "overlay", "overlays",
@@ -892,6 +924,64 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets whether to use the custom paintlet.
+   *
+   * @param value	true if custom
+   */
+  public void setUseCustomPaintlet(boolean value) {
+    m_UseCustomPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the custom paintlet.
+   *
+   * @return		true if custom
+   */
+  public boolean getUseCustomPaintlet() {
+    return m_UseCustomPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useCustomPaintletTipText() {
+    return "If enabled, the custom paintlet is used instead of cross/error paintlet, anti-aliasing and meta-data color scheme.";
+  }
+
+  /**
+   * Sets the custom paintlet.
+   *
+   * @param value	the paintlet
+   */
+  public void setCustomPaintlet(XYSequencePaintlet value) {
+    m_CustomPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the custom paintlet.
+   *
+   * @return		the paintlet
+   */
+  public XYSequencePaintlet getCustomPaintlet() {
+    return m_CustomPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String customPaintletTipText() {
+    return "The custom paintlet to use instead of cross/error paintlet, anti-aliasing and meta-data color scheme.";
+  }
+
+  /**
    * Sets the overlays to use in the plot.
    *
    * @param value	the overlays
@@ -937,7 +1027,10 @@ public class ActualVsPredictedPlot
     result += QuickInfoHelper.toString(this, "plotName", (m_PlotName.isEmpty() ? "-default-" : m_PlotName), ", name: ");
     result += QuickInfoHelper.toString(this, "limit", m_Limit, ", limit: ");
     result += QuickInfoHelper.toString(this, "diameter", m_Diameter, ", diameter: ");
-    result += QuickInfoHelper.toString(this, "metaDataColor", m_MetaDataColor, ", meta-color: ");
+    if (m_UseCustomPaintlet)
+      result += QuickInfoHelper.toString(this, "customPaintlet", m_CustomPaintlet, ", paintlet: ");
+    else
+      result += QuickInfoHelper.toString(this, "metaDataColor", m_MetaDataColor, ", meta-color: ");
 
     return result;
   }
@@ -1017,18 +1110,23 @@ public class ActualVsPredictedPlot
     MultiPaintlet 		overlays;
 
     result = new SequencePlotterPanel(m_SwapAxes ? "pred vs act" : "act vs pred");
-    if (m_Error.isEmpty()) {
-      paintlet = new CrossPaintlet();
-      ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+    if (m_UseCustomPaintlet) {
+      paintlet = ObjectCopyHelper.copyObject(m_CustomPaintlet);
     }
     else {
-      paintlet = new ErrorCrossPaintlet();
-      ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+      if (m_Error.isEmpty()) {
+	paintlet = new CrossPaintlet();
+	((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+      }
+      else {
+	paintlet = new ErrorCrossPaintlet();
+	((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+      }
+      if (paintlet instanceof AntiAliasingSupporter)
+	((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
+      if (paintlet instanceof MetaDataColorPaintlet)
+	((MetaDataColorPaintlet) paintlet).setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
     }
-    if (paintlet instanceof AntiAliasingSupporter)
-      ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
-    if (paintlet instanceof MetaDataColorPaintlet)
-      ((MetaDataColorPaintlet) paintlet).setMetaDataColor((AbstractMetaDataColor) OptionUtils.shallowCopy(m_MetaDataColor));
     fixedPaintlet = new PaintletWithFixedXYRange();
     fixedPaintlet.setPaintlet(paintlet);
     result.setDataPaintlet(fixedPaintlet);
@@ -1247,18 +1345,23 @@ public class ActualVsPredictedPlot
 	m_Panel = new SequencePlotterPanel(m_SwapAxes ? "pred vs act" : "act vs pred");
 	XYSequencePaintlet paintlet;
 	PaintletWithFixedXYRange fixedPaintlet;
-	if (m_Error.isEmpty()) {
-	  paintlet = new CrossPaintlet();
-	  ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+	if (m_UseCustomPaintlet) {
+	  paintlet = ObjectCopyHelper.copyObject(m_CustomPaintlet);
 	}
 	else {
-	  paintlet = new ErrorCrossPaintlet();
-	  ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+	  if (m_Error.isEmpty()) {
+	    paintlet = new CrossPaintlet();
+	    ((CrossPaintlet) paintlet).setDiameter(m_Diameter);
+	  }
+	  else {
+	    paintlet = new ErrorCrossPaintlet();
+	    ((ErrorCrossPaintlet) paintlet).setDiameter(m_Diameter);
+	  }
+	  if (paintlet instanceof AntiAliasingSupporter)
+	    ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
+	  if (paintlet instanceof MetaDataColorPaintlet)
+	    ((MetaDataColorPaintlet) paintlet).setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
 	}
-	if (paintlet instanceof AntiAliasingSupporter)
-	  ((AntiAliasingSupporter) paintlet).setAntiAliasingEnabled(m_AntiAliasingEnabled);
-        if (paintlet instanceof MetaDataColorPaintlet)
-          ((MetaDataColorPaintlet) paintlet).setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
 	fixedPaintlet = new PaintletWithFixedXYRange();
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setDataPaintlet(fixedPaintlet);

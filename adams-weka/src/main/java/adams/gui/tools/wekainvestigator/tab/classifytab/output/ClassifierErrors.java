@@ -35,6 +35,7 @@ import adams.gui.core.MultiPagePane;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.visualization.sequence.MetaDataValuePaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
@@ -91,6 +92,12 @@ public class ClassifierErrors
 
   /** for obtaining the color from the meta-data. */
   protected AbstractMetaDataColor m_MetaDataColor;
+
+  /** whether to use a custom paintlet. */
+  protected boolean m_UseCustomPaintlet;
+
+  /** the custom paintlet. */
+  protected XYSequencePaintlet m_CustomPaintlet;
 
   /** the overlays to use. */
   protected XYSequencePaintlet[] m_Overlays;
@@ -151,6 +158,14 @@ public class ClassifierErrors
     m_OptionManager.add(
       "meta-data-color", "metaDataColor",
       new Dummy());
+
+    m_OptionManager.add(
+      "use-custom-paintlet", "useCustomPaintlet",
+      false);
+
+    m_OptionManager.add(
+      "custom-paintlet", "customPaintlet",
+      new MetaDataValuePaintlet());
 
     m_OptionManager.add(
       "overlay", "overlays",
@@ -464,6 +479,64 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets whether to use the custom paintlet.
+   *
+   * @param value	true if custom
+   */
+  public void setUseCustomPaintlet(boolean value) {
+    m_UseCustomPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the custom paintlet.
+   *
+   * @return		true if custom
+   */
+  public boolean getUseCustomPaintlet() {
+    return m_UseCustomPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useCustomPaintletTipText() {
+    return "If enabled, the custom paintlet is used instead of cross/error paintlet, anti-aliasing and meta-data color scheme.";
+  }
+
+  /**
+   * Sets the custom paintlet.
+   *
+   * @param value	the paintlet
+   */
+  public void setCustomPaintlet(XYSequencePaintlet value) {
+    m_CustomPaintlet = value;
+    reset();
+  }
+
+  /**
+   * Returns the custom paintlet.
+   *
+   * @return		the paintlet
+   */
+  public XYSequencePaintlet getCustomPaintlet() {
+    return m_CustomPaintlet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String customPaintletTipText() {
+    return "The custom paintlet to use instead of cross/error paintlet, anti-aliasing and meta-data color scheme.";
+  }
+
+  /**
    * Sets the overlays to use in the plot.
    *
    * @param value	the overlays
@@ -542,6 +615,8 @@ public class ClassifierErrors
     sink.setDiameter(m_Diameter);
     sink.setShowSidePanel(false);
     sink.setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
+    sink.setUseCustomPaintlet(m_UseCustomPaintlet);
+    sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
     sink.setOverlays(ObjectCopyHelper.copyObjects(m_Overlays));
     switch (m_AntiAliasingEnabled) {
       case AUTO:

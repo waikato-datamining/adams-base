@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2020-11-10 14:50:10
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Plots actual vs predicted, but plots the meta-data value \\\"SPEED1\\\" instead of Xs." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.GridView -width 1200 -num-cols 3 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Predictions -writer adams.data.io.output.NullWriter
+  adams.flow.sink.ActualVsPredictedPlot -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -additional SPEED1 -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy -use-custom-paintlet true -custom-paintlet "adams.gui.visualization.sequence.MetaDataValuePaintlet -meta-data-color \"adams.gui.visualization.sequence.metadatacolor.ColorPerLabel -color-provider adams.gui.visualization.core.DefaultColorProvider -meta-data-key SPEED1\" -meta-data-key SPEED1" -overlay adams.gui.visualization.sequence.StraightLineOverlayPaintlet
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Tee -name predictions
+  adams.flow.sink.CallableSink -callable Predictions
+ adams.flow.control.Tee -name plot
+  adams.flow.sink.CallableSink -callable ActualVsPredictedPlot
