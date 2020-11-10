@@ -857,6 +857,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setImage(imgcont.toBufferedImage());
     m_PanelObjectAnnotation.setReport(imgcont.getReport());
     m_PanelObjectAnnotation.annotationsChanged(this);
+    m_PanelObjectAnnotation.labelChanged(this);
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
 
