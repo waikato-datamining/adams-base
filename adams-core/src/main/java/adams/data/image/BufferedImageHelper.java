@@ -31,6 +31,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
+import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -669,6 +670,44 @@ public class BufferedImageHelper {
       result.setReport(report);
       result.setNotes(notes);
     }
+    return result;
+  }
+
+  /**
+   * Creates a BufferedImage from the component.
+   *
+   * @param comp	the component to turn into an image
+   * @param background 	the background
+   * @return		the generated image
+   */
+  public static BufferedImage toBufferedImage(JComponent comp, Color background) {
+    return toBufferedImage(comp, background, -1, -1);
+  }
+
+  /**
+   * Creates a BufferedImage from the component.
+   *
+   * @param comp	the component to turn into an image
+   * @param background 	the background
+   * @param width 	the width to use, -1 to use component width
+   * @param height 	the height to use, -1 to use component height
+   * @return		the generated image
+   */
+  public static BufferedImage toBufferedImage(JComponent comp, Color background, int width, int height) {
+    BufferedImage	result;
+    Graphics2D		g;
+
+    if (width == -1)
+      width = comp.getWidth();
+    if (height == -1)
+      height = comp.getHeight();
+    result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    g      = result.createGraphics();
+    g.setPaintMode();
+    g.setColor(background);
+    g.fillRect(0, 0, width, height);
+    comp.printAll(g);
+    g.dispose();
     return result;
   }
 }
