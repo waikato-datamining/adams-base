@@ -15,7 +15,7 @@
 
 /*
  * ScatterPaintletErrors.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -54,7 +54,6 @@ import java.awt.Graphics2D;
  <!-- options-end -->
  *
  * @author msf8
- * @version $Revision$
  */
 public class ScatterPaintletErrors
 extends AbstractScatterPlotPaintlet {
@@ -70,29 +69,33 @@ extends AbstractScatterPlotPaintlet {
   }
 
   protected void drawData(Graphics g) {
+    int 	size;
+    Graphics2D 	g2d;
+    int 	i;
+    int 	posX;
+    int 	posY;
+
     super.drawData(g);
 
     if ((m_XData == null) || (m_YData == null))
       return;
 
-    int size = m_Size;
-    //need to convert value to pos using axis class
-    for(int i = 0; i< m_XData.length; i++)
-    {
+    // need to convert value to pos using axis class
+    g2d  = (Graphics2D) g;
+    for (i = 0; i< m_XData.length; i++) {
       //calculate size
       size = (int)((10*(m_XData[i] - m_YData[i]))/(m_XData[i]));
-      if(size >10)
+      if (size > 10)
 	size = 10;
-      if(size <2)
+      if (size <2)
 	size = 2;
 
-      int posX = m_AxisBottom.valueToPos(m_XData[i]);
-      int posY = m_AxisLeft.valueToPos(m_YData[i]);
+      posX = m_AxisBottom.valueToPos(m_XData[i]);
+      posY = m_AxisLeft.valueToPos(m_YData[i]);
       //plot the points
-      Graphics2D g2d = (Graphics2D)g;
       g2d.setColor(getActualColor(i, m_Color));
       g2d.setStroke(new BasicStroke(m_StrokeThickness));
-      g2d.drawLine(posX-size, posY-size, posX+size, posY+size);
+      g2d.drawLine(posX - size, posY - size, posX + size, posY + size);
       g2d.drawLine(posX - size, posY + size, posX + size, posY - size);
     }
   }

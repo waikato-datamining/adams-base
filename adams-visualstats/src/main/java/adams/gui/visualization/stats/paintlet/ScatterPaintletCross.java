@@ -15,7 +15,7 @@
 
 /*
  * ScatterPaintletCross.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -60,7 +60,6 @@ import java.awt.Graphics2D;
  <!-- options-end -->
  *
  * @author msf8
- * @version $Revision$
  */
 public class ScatterPaintletCross
 extends AbstractScatterPlotPaintlet {
@@ -108,22 +107,24 @@ extends AbstractScatterPlotPaintlet {
   }
 
   protected void drawData(Graphics g) {
-    int posX;
-    int posY;
+    int 	posX;
+    int 	posY;
+    Graphics2D 	g2d;
+    int 	i;
 
     super.drawData(g);
 
     if ((m_XData == null) || (m_YData == null))
       return;
 
-    for(int i = 0; i< m_XData.length; i++) {
+    g2d = (Graphics2D)g;
+    for (i = 0; i< m_XData.length; i++) {
       posX = m_AxisBottom.valueToPos(m_XData[i]);
       posY = m_AxisLeft.valueToPos(m_YData[i]);
-      //plot the points
-      Graphics2D g2d = (Graphics2D)g;
+      // plot the points
       g2d.setColor(getActualColor(i, m_Color));
       g2d.setStroke(new BasicStroke(m_StrokeThickness));
-      g2d.drawLine(posX-m_Size, posY-m_Size, posX+m_Size, posY+m_Size);
+      g2d.drawLine(posX - m_Size, posY - m_Size, posX + m_Size, posY + m_Size);
       g2d.drawLine(posX - m_Size, posY + m_Size, posX + m_Size, posY - m_Size);
     }
   }
