@@ -104,6 +104,9 @@ public class ObjectAnnotationPanel
   /** the zoom factor to use. */
   public final static double ZOOM_FACTOR = 1.4;
 
+  /** the panel for the zoom controls. */
+  protected JPanel m_PanelZoom;
+
   /** the text field for the zoom. */
   protected NumberTextField m_TextZoom;
 
@@ -122,11 +125,17 @@ public class ObjectAnnotationPanel
   /** the button for applying the zoom. */
   protected BaseFlatButton m_ButtonZoom;
 
+  /** the panel for the undo/redo controls. */
+  protected JPanel m_PanelUndo;
+
   /** the button for performing an undo. */
   protected BaseFlatButton m_ButtonUndo;
 
   /** the button for performing a redo. */
   protected BaseFlatButton m_ButtonRedo;
+
+  /** the panel for the brightness controls. */
+  protected JPanel m_PanelBrightness;
 
   /** the brightness to use. */
   protected NumberTextField m_TextBrightness;
@@ -173,6 +182,9 @@ public class ObjectAnnotationPanel
   /** the interaction log. */
   protected List<InteractionEvent> m_InteractionLog;
 
+  /** the report from the previous session. */
+  protected Report m_PreviousReport;
+
   /**
    * Initializes the members.
    */
@@ -185,6 +197,7 @@ public class ObjectAnnotationPanel
     m_PanelLabelSelector  = null;
     m_CurrentLabel        = null;
     m_InteractionLog      = null;
+    m_PreviousReport      = null;
     m_Undo                = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
     setAnnotator(new NullAnnotator());
@@ -203,9 +216,11 @@ public class ObjectAnnotationPanel
     setLayout(new BorderLayout());
 
     // top
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel = new JPanel(new FlowLayout(0, 0, FlowLayout.LEFT));
     add(panel, BorderLayout.NORTH);
 
+    m_PanelZoom = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(m_PanelZoom);
     m_TextZoom = new NumberTextField(Type.DOUBLE, "100");
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original image size");
@@ -214,8 +229,8 @@ public class ObjectAnnotationPanel
     label = new JLabel("Zoom");
     label.setDisplayedMnemonic('Z');
     label.setLabelFor(m_TextZoom);
-    panel.add(label);
-    panel.add(m_TextZoom);
+    m_PanelZoom.add(label);
+    m_PanelZoom.add(m_TextZoom);
     m_ButtonZoom = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonZoom.setToolTipText("Apply zoom");
     m_ButtonZoom.addActionListener((ActionEvent e) -> {
@@ -223,48 +238,56 @@ public class ObjectAnnotationPanel
       m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
       update();
     });
-    panel.add(m_ButtonZoom);
+    m_PanelZoom.add(m_ButtonZoom);
+
+    m_PanelZoom.add(new JLabel(" "));
+
     m_ButtonZoomClear = new BaseFlatButton(GUIHelper.getIcon("zoom_clear.png"));
     m_ButtonZoomClear.setToolTipText("Clear zoom");
     m_ButtonZoomClear.addActionListener((ActionEvent e) -> clearZoom());
-    panel.add(m_ButtonZoomClear);
+    m_PanelZoom.add(m_ButtonZoomClear);
     m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
     m_ButtonZoomIn.setToolTipText("Zoom in");
     m_ButtonZoomIn.addActionListener((ActionEvent e) -> zoomIn());
-    panel.add(m_ButtonZoomIn);
+    m_PanelZoom.add(m_ButtonZoomIn);
     m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
     m_ButtonZoomOut.setToolTipText("Zoom out");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
-    panel.add(m_ButtonZoomOut);
+    m_PanelZoom.add(m_ButtonZoomOut);
     m_ButtonZoomBestFit = new BaseFlatButton(GUIHelper.getIcon("zoom_fit.png"));
     m_ButtonZoomBestFit.setToolTipText("Best fit");
     m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
-    panel.add(m_ButtonZoomBestFit);
-    panel.add(new JLabel(" "));
+    m_PanelZoom.add(m_ButtonZoomBestFit);
+
+    m_PanelUndo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(m_PanelUndo);
+    m_PanelUndo.add(new JLabel(" "));
     m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo changes");
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo());
-    panel.add(m_ButtonUndo);
+    m_PanelUndo.add(m_ButtonUndo);
     m_ButtonRedo = new BaseFlatButton(GUIHelper.getIcon("redo.gif"));
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
-    panel.add(m_ButtonRedo);
+    m_PanelUndo.add(m_ButtonRedo);
 
-    panel.add(new JLabel("Brightness"));
+    m_PanelBrightness = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(m_PanelBrightness);
+    m_PanelBrightness.add(new JLabel(" "));
+    m_PanelBrightness.add(new JLabel("Brightness"));
     m_TextBrightness = new NumberTextField(Type.DOUBLE, "100");
     m_TextBrightness.setColumns(5);
     m_TextBrightness.setToolTipText("100 = original brightness");
     m_TextBrightness.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
     m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> m_ButtonBrightness.setIcon(GUIHelper.getIcon("validate_blue.png")));
-    panel.add(m_TextBrightness);
+    m_PanelBrightness.add(m_TextBrightness);
     m_ButtonBrightness = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
     m_ButtonBrightness.setToolTipText("Apply current values");
     m_ButtonBrightness.addActionListener((ActionEvent e) -> {
       m_PanelCanvas.setBrightness(m_TextBrightness.getValue().floatValue());
       update();
     });
-    panel.add(new JLabel(" "));
-    panel.add(m_ButtonBrightness);
+    m_PanelBrightness.add(m_ButtonBrightness);
 
     // left split pane
     m_SplitPaneLeft = new BaseSplitPane();
@@ -308,6 +331,60 @@ public class ObjectAnnotationPanel
     setRightDividerLocation(0.75);
   }
 
+  /**
+   * Sets whether the zoom controls are visible or not.
+   * 
+   * @param value	true if visible
+   */
+  public void setZoomVisible(boolean value) {
+    m_PanelZoom.setVisible(value);
+  }
+
+  /**
+   * Returns whether the zoom controls are visible or not.
+   * 
+   * @return		true if visible
+   */
+  public boolean isZoomVisible() {
+    return m_PanelZoom.isVisible();
+  }
+
+  /**
+   * Sets whether the undo controls are visible or not.
+   * 
+   * @param value	true if visible
+   */
+  public void setUndoVisible(boolean value) {
+    m_PanelUndo.setVisible(value);
+  }
+
+  /**
+   * Returns whether the undo controls are visible or not.
+   * 
+   * @return		true if visible
+   */
+  public boolean isUndoVisible() {
+    return m_PanelUndo.isVisible();
+  }
+
+  /**
+   * Sets whether the brightness controls are visible or not.
+   * 
+   * @param value	true if visible
+   */
+  public void setBrightnessVisible(boolean value) {
+    m_PanelBrightness.setVisible(value);
+  }
+
+  /**
+   * Returns whether the brightness controls are visible or not.
+   * 
+   * @return		true if visible
+   */
+  public boolean isBrightnessVisible() {
+    return m_PanelBrightness.isVisible();
+  }
+  
   /**
    * Sets whether to use best fit or specified scale.
    *
