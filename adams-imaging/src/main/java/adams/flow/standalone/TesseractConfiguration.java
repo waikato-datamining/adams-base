@@ -15,7 +15,7 @@
 
 /*
  * TesseractConfiguration.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -31,7 +31,7 @@ import adams.flow.core.TesseractPageSegmentation;
  <!-- globalinfo-start -->
  * Setup parameters for tesseract.<br>
  * For more information see:<br>
- * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;
+ * https://github.com/tesseract-ocr/tesseract
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -81,7 +81,6 @@ import adams.flow.core.TesseractPageSegmentation;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TesseractConfiguration
   extends AbstractStandalone {
@@ -105,7 +104,7 @@ public class TesseractConfiguration
     return 
 	"Setup parameters for tesseract.\n"
 	+ "For more information see:\n"
-	+ "http://code.google.com/p/tesseract-ocr/";
+	+ "https://github.com/tesseract-ocr/tesseract";
   }
 
   /**

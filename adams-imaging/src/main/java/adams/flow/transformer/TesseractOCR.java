@@ -15,7 +15,7 @@
 
 /*
  * TesseractOCR.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -48,7 +48,7 @@ import java.io.File;
  * NB: The actor deletes all files that have the same prefix as the specified output base. Something you need to be aware of when doing OCR in parallel or generate other files with the same prefix.<br>
  * <br>
  * For more information on tesseract see:<br>
- * http:&#47;&#47;code.google.com&#47;p&#47;tesseract-ocr&#47;<br>
+ * https://github.com/tesseract-ocr/tesseract<br>
  * <br>
  * <br>
  * For more information on hOCR see:<br>
@@ -132,7 +132,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TesseractOCR
   extends AbstractTransformer {
@@ -180,7 +179,7 @@ public class TesseractOCR
 	+ "doing OCR in parallel or generate other files with the same prefix.\n"
 	+ "\n"
 	+ "For more information on tesseract see:\n"
-	+ "http://code.google.com/p/tesseract-ocr/\n\n"
+	+ "https://github.com/tesseract-ocr/tesseract\n\n"
 	+ "\n"
 	+ "For more information on hOCR see:\n"
 	+ "https://en.wikipedia.org/wiki/HOCR";
