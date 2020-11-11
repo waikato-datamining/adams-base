@@ -270,6 +270,9 @@ public class ImageObjectAnnotator
   /** the previous report. */
   protected Report m_PreviousReport;
 
+  /** the previous label used. */
+  protected String m_PreviousLabel;
+
   /**
    * Returns a string describing the object.
    *
@@ -340,6 +343,7 @@ public class ImageObjectAnnotator
     super.reset();
 
     m_PreviousReport = null;
+    m_PreviousLabel  = null;
   }
 
   /**
@@ -915,6 +919,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setPreviousReport(m_PreviousReport);
     m_PanelObjectAnnotation.annotationsChanged(this);
     m_PanelObjectAnnotation.labelChanged(this);
+    m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
 
@@ -926,6 +931,8 @@ public class ImageObjectAnnotator
         addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
       m_OutputToken = new Token(imgcont);
     }
+
+    m_PreviousLabel = m_PanelObjectAnnotation.getCurrentLabel();
 
     return m_Accepted;
   }
