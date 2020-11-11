@@ -204,7 +204,7 @@ public class ObjectAnnotationPanel
     m_CurrentLabel        = null;
     m_InteractionLog      = null;
     m_PreviousReport      = null;
-    m_Undo                = new Undo(List.class, true);
+    m_Undo                = new Undo(List.class, false);
     m_Undo.addUndoListener(this);
     setAnnotator(new NullAnnotator());
   }
