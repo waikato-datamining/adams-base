@@ -22,7 +22,7 @@ package adams.data.io.output;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.data.image.BufferedImageHelper;
+import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
 import adams.data.io.input.IndividualImageSegmentationLayerReader;
 import adams.flow.container.ImageSegmentationContainer;
@@ -136,6 +136,23 @@ public class IndividualImageSegmentationLayerWriter
   }
 
   /**
+   * Writes the file to disk.
+   *
+   * @param image	the image to write
+   * @param file	the file to write to
+   * @return		null if successful, otherwise error message
+   */
+  protected String writeFile(BufferedImage image, PlaceholderFile file) {
+    ApacheCommonsImageWriter	writer;
+    BufferedImageContainer	cont;
+
+    cont   = new BufferedImageContainer();
+    cont.setImage(image);
+    writer = new ApacheCommonsImageWriter();
+    return writer.write(file, cont);
+  }
+
+  /**
    * Writes the image segmentation annotations.
    *
    * @param file	the file to write to
@@ -155,7 +172,7 @@ public class IndividualImageSegmentationLayerWriter
     if (!m_SkipBaseImage) {
       if (isLoggingEnabled())
         getLogger().info("Writing base image to: " + file);
-      result = BufferedImageHelper.write(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file);
+      result = writeFile(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file);
       if (result != null)
         result = "Failed to write base image: " + result;
     }
@@ -166,7 +183,7 @@ public class IndividualImageSegmentationLayerWriter
         layerFile = new PlaceholderFile(prefix + "-" + label + ".png");
 	if (isLoggingEnabled())
 	  getLogger().info("Writing layer '" + label + "' to: " + layerFile);
-	result = BufferedImageHelper.write(layers.get(label), layerFile);
+	result = writeFile(layers.get(label), layerFile);
 	if (result != null) {
 	  result = "Failed to write layer '" + label + "': " + result;
 	  break;
