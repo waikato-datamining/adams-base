@@ -252,7 +252,8 @@ public class CanvasPanel
    * @param value	the image, null for none
    */
   public void setImage(BufferedImage value) {
-    m_Image = value;
+    m_Image       = value;
+    m_BrightImage = null;
   }
 
   /**
@@ -620,10 +621,11 @@ public class CanvasPanel
 
     if (m_Image != null) {
       ((Graphics2D) g).scale(m_ActualZoom, m_ActualZoom);
-      if ((m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
+      if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
 	op = new RescaleOp(m_Brightness / 100.0f, 0, null);
 	m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());
 	m_BrightImage = op.filter(m_Image, m_BrightImage);
+	m_LastBrightness = m_Brightness;
       }
       g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
     }
