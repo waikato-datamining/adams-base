@@ -511,7 +511,7 @@ public class ObjectAnnotationPanel
   }
 
   /**
-   * Clears label, image, annotations and interaction log.
+   * Clears: label, image, annotations, interaction log, undo.
    */
   public void clear() {
     m_CurrentLabel = null;
@@ -519,6 +519,7 @@ public class ObjectAnnotationPanel
     setReport(new Report());
     annotationsChanged(this);
     clearInteractionLog();
+    m_Undo.clear();
   }
 
   /**
