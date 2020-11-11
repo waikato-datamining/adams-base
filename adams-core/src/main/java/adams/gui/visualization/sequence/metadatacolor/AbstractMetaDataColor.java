@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMetaDataColor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.metadatacolor;
@@ -24,17 +24,24 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.sequence.XYSequencePoint;
 
 import java.awt.Color;
+import java.util.List;
 
 /**
  * Ancestor for schemes extracting the color from a sequence point's meta-data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMetaDataColor<T extends XYSequencePoint>
   extends AbstractOptionHandler {
 
   private static final long serialVersionUID = -3184029850003382239L;
+
+  /**
+   * Initializes the meta-data color scheme.
+   *
+   * @param points	the points to initialize with
+   */
+  public abstract void initialize(List<T> points);
 
   /**
    * Extracts the color from the meta-data.

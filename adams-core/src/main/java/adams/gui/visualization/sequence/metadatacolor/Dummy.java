@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Dummy.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.metadatacolor;
@@ -23,6 +23,7 @@ package adams.gui.visualization.sequence.metadatacolor;
 import adams.data.sequence.XYSequencePoint;
 
 import java.awt.Color;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -39,7 +40,6 @@ import java.awt.Color;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Dummy
   extends AbstractMetaDataColor<XYSequencePoint>{
@@ -54,6 +54,15 @@ public class Dummy
   @Override
   public String globalInfo() {
     return "Just outputs the default color.";
+  }
+
+  /**
+   * Initializes the meta-data color scheme.
+   *
+   * @param points	the points to initialize with
+   */
+  @Override
+  public void initialize(List<XYSequencePoint> points) {
   }
 
   /**

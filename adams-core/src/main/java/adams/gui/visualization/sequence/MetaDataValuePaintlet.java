@@ -312,6 +312,9 @@ public class MetaDataValuePaintlet
     else
       metaColor = m_MetaDataColor;
 
+    if (metaColor != null)
+      metaColor.initialize(points);
+
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 

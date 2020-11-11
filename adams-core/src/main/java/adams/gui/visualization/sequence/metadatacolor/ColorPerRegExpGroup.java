@@ -15,7 +15,7 @@
 
 /*
  * ColorPerRegExpGroup.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.metadatacolor;
@@ -27,8 +27,13 @@ import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -264,6 +269,68 @@ public class ColorPerRegExpGroup
   }
 
   /**
+   * Returns the next color for the group.
+   *
+   * @param group	the group to get the next color for
+   * @return		the color
+   */
+  protected Color getNextColor(String group) {
+    if (m_ColorProvider instanceof ColorProviderWithNameSupport)
+      return ((ColorProviderWithNameSupport) m_ColorProvider).next(group);
+    else
+      return m_ColorProvider.next();
+  }
+
+  /**
+   * Determines the group for the point.
+   *
+   * @param point	the point to process
+   * @return		the group, null if failed to determine
+   */
+  protected String determineGroup(XYSequencePoint point) {
+    String 	result;
+    String	label;
+
+    if (!point.getMetaData().containsKey(m_MetaDataKey))
+      return null;
+
+    label  = point.getMetaData().get(m_MetaDataKey).toString();
+    result = label.replaceAll(m_RegExp.getValue(), m_Group);
+
+    if (isLoggingEnabled())
+      getLogger().info(label + " -> " + result);
+
+    return result;
+  }
+
+  /**
+   * Initializes the meta-data color scheme.
+   *
+   * @param points	the points to initialize with
+   */
+  @Override
+  public void initialize(List<XYSequencePoint> points) {
+    Set<String> 	unique;
+    List<String> 	groups;
+    String		group;
+
+    m_ColorMap.clear();
+    m_ColorProvider.resetColors();
+
+    unique = new HashSet<>();
+    for (XYSequencePoint point: points) {
+      group = determineGroup(point);
+      if (group != null)
+	unique.add(group);
+    }
+
+    groups = new ArrayList<>(unique);
+    Collections.sort(groups);
+    for (String g : groups)
+      m_ColorMap.put(g, getNextColor(g));
+  }
+
+  /**
    * Extracts the color from the meta-data.
    *
    * @param point	the point to get the color from
@@ -272,7 +339,6 @@ public class ColorPerRegExpGroup
    */
   @Override
   public Color getColor(XYSequencePoint point, Color defColor) {
-    String	label;
     String	group;
 
     if (m_MetaDataKey.isEmpty())
@@ -284,16 +350,9 @@ public class ColorPerRegExpGroup
     if (!point.getMetaData().containsKey(m_MetaDataKey))
       return defColor;
 
-    label = point.getMetaData().get(m_MetaDataKey).toString();
-    group = label.replaceAll(m_RegExp.getValue(), m_Group);
-    if (isLoggingEnabled())
-      getLogger().info(label + " -> " + group);
-    if (!m_ColorMap.containsKey(group)) {
-      if (m_ColorProvider instanceof ColorProviderWithNameSupport)
-	m_ColorMap.put(group, ((ColorProviderWithNameSupport) m_ColorProvider).next(group));
-      else
-	m_ColorMap.put(group, m_ColorProvider.next());
-    }
+    group = determineGroup(point);
+    if (!m_ColorMap.containsKey(group))
+      m_ColorMap.put(group, getNextColor(group));
 
     return m_ColorMap.get(group);
   }

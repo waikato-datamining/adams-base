@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ColorPerLabel.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.metadatacolor;
@@ -26,8 +26,13 @@ import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -55,7 +60,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ColorPerLabel
   extends AbstractMetaDataColor<XYSequencePoint> {
@@ -180,6 +184,59 @@ public class ColorPerLabel
   }
 
   /**
+   * Returns the next color for the label.
+   *
+   * @param label	the label to get the next color for
+   * @return		the color
+   */
+  protected Color getNextColor(String label) {
+    if (m_ColorProvider instanceof ColorProviderWithNameSupport)
+      return ((ColorProviderWithNameSupport) m_ColorProvider).next(label);
+    else
+      return m_ColorProvider.next();
+  }
+
+  /**
+   * Determines the label for the point.
+   *
+   * @param point	the point to get the label for
+   * @return		the label, null if not available
+   */
+  protected String determineLabel(XYSequencePoint point) {
+    if (point.getMetaData().containsKey(m_MetaDataKey))
+      return point.getMetaData().get(m_MetaDataKey).toString();
+    else
+      return null;
+  }
+
+  /**
+   * Initializes the meta-data color scheme.
+   *
+   * @param points	the points to initialize with
+   */
+  @Override
+  public void initialize(List<XYSequencePoint> points) {
+    Set<String> 	unique;
+    List<String>	labels;
+    String		label;
+
+    m_ColorMap.clear();
+    m_ColorProvider.resetColors();
+
+    unique = new HashSet<>();
+    for (XYSequencePoint point: points) {
+      label = determineLabel(point);
+      if (label != null)
+	unique.add(label);
+    }
+
+    labels = new ArrayList<>(unique);
+    Collections.sort(labels);
+    for (String l : labels)
+      m_ColorMap.put(l, getNextColor(l));
+  }
+
+  /**
    * Extracts the color from the meta-data.
    *
    * @param point	the point to get the color from
@@ -199,13 +256,9 @@ public class ColorPerLabel
     if (!point.getMetaData().containsKey(m_MetaDataKey))
       return defColor;
 
-    label = point.getMetaData().get(m_MetaDataKey).toString();
-    if (!m_ColorMap.containsKey(label)) {
-      if (m_ColorProvider instanceof ColorProviderWithNameSupport)
-	m_ColorMap.put(label, ((ColorProviderWithNameSupport) m_ColorProvider).next(label));
-      else
-	m_ColorMap.put(label, m_ColorProvider.next());
-    }
+    label = determineLabel(point);
+    if (!m_ColorMap.containsKey(label))
+      m_ColorMap.put(label, getNextColor(label));
 
     return m_ColorMap.get(label);
   }

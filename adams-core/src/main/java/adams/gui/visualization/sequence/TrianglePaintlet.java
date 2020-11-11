@@ -15,7 +15,7 @@
 
 /*
  * TrianglePaintlet.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -208,6 +208,9 @@ public class TrianglePaintlet
       metaColor = null;
     else
       metaColor = m_MetaDataColor;
+
+    if (metaColor != null)
+      metaColor.initialize(points);
 
     // paint all points
     g.setColor(color);
