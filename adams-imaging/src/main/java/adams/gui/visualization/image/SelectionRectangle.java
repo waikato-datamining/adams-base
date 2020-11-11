@@ -70,6 +70,26 @@ public class SelectionRectangle
   }
 
   /**
+   * Constructs a new <code>SelectionRectangle</code> using the specified rectangle.
+   *
+   * @param r		the rectangle
+   */
+  public SelectionRectangle(Rectangle r) {
+    this(r, -1);
+  }
+
+  /**
+   * Constructs a new <code>SelectionRectangle</code> using the specified rectangle.
+   *
+   * @param r		the rectangle
+   * @param index	the associated index
+   */
+  public SelectionRectangle(Rectangle r, int index) {
+    super(r.x, r.y, r.width, r.height);
+    m_Index = index;
+  }
+
+  /**
    * Returns the stored index.
    *
    * @return		the index
