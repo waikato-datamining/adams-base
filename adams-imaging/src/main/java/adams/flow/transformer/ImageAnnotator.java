@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.base.BaseString;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.MapToJson;
@@ -215,6 +216,9 @@ import java.util.logging.Level;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead = ImageObjectAnnotator.class
+)
 public class ImageAnnotator
   extends AbstractInteractiveTransformerDialog {
 
