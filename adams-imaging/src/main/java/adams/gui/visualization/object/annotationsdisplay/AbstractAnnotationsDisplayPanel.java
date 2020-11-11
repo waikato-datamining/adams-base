@@ -82,6 +82,15 @@ public abstract class AbstractAnnotationsDisplayPanel
   }
 
   /**
+   * Returns the prefix in use.
+   *
+   * @return		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
    * Sets the report to get the annotations from.
    *
    * @param value	the report

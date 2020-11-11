@@ -255,6 +255,9 @@ public class ImageObjectAnnotator
   /** the interaction logger to use. */
   protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
+  /** whether to allow using the previous report. */
+  protected boolean m_AllowUsingPreviousReport;
+
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
 
@@ -263,6 +266,9 @@ public class ImageObjectAnnotator
 
   /** the start timestamp. */
   protected transient Date m_StartTimestamp;
+
+  /** the previous report. */
+  protected Report m_PreviousReport;
 
   /**
    * Returns a string describing the object.
@@ -320,6 +326,20 @@ public class ImageObjectAnnotator
     m_OptionManager.add(
       "interaction-logging-filter", "interactionLoggingFilter",
       new Null());
+
+    m_OptionManager.add(
+      "allow-using-previous-report", "allowUsingPreviousReport",
+      false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_PreviousReport = null;
   }
 
   /**
@@ -659,6 +679,36 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Sets whether to allow using the previous report.
+   *
+   * @param value 	true if allowed
+   */
+  public void setAllowUsingPreviousReport(boolean value) {
+    m_AllowUsingPreviousReport = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to allow using the previous report.
+   *
+   * @return 		true if allowed
+   */
+  public boolean getAllowUsingPreviousReport() {
+    return m_AllowUsingPreviousReport;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String allowUsingPreviousReportTipText() {
+    return "If enabled, allows the user to make use of the previous report "
+      + "(ie annotations); useful when annotations do not change much between images.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -675,6 +725,7 @@ public class ImageObjectAnnotator
       result += QuickInfoHelper.toString(this, "bestFit", m_BestFit, "best fit", ", ");
     else
       result += QuickInfoHelper.toString(this, "zoom", m_Zoom, ", zoom: ");
+    result += QuickInfoHelper.toString(this, "allowUsingPreviousReport", m_AllowUsingPreviousReport, "can use previous report", ", ");
 
     return result;
   }
@@ -726,6 +777,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setZoom(m_Zoom / 100.0);
     m_PanelObjectAnnotation.setBestFit(m_BestFit);
     m_PanelObjectAnnotation.setInteractionLoggingFilter(ObjectCopyHelper.copyObject(m_InteractionLoggingFilter));
+    m_PanelObjectAnnotation.setUsePreviousReportVisible(m_AllowUsingPreviousReport);
     return m_PanelObjectAnnotation;
   }
 
@@ -841,6 +893,10 @@ public class ImageObjectAnnotator
 
     m_Accepted       = false;
     m_StartTimestamp = new Date();
+    if (m_AllowUsingPreviousReport)
+      m_PreviousReport = m_PanelObjectAnnotation.getReport();
+    else
+      m_PreviousReport = null;
 
     if (m_InputToken.hasPayload(BufferedImage.class)) {
       img     = m_InputToken.getPayload(BufferedImage.class);
@@ -856,6 +912,7 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.clear();
     m_PanelObjectAnnotation.setImage(imgcont.toBufferedImage());
     m_PanelObjectAnnotation.setReport(imgcont.getReport());
+    m_PanelObjectAnnotation.setPreviousReport(m_PreviousReport);
     m_PanelObjectAnnotation.annotationsChanged(this);
     m_PanelObjectAnnotation.labelChanged(this);
     m_Dialog.setVisible(true);

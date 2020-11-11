@@ -143,6 +143,12 @@ public class ObjectAnnotationPanel
   /** the button for applying the values. */
   protected BaseFlatButton m_ButtonBrightness;
 
+  /** the panel for the last button controls. */
+  protected JPanel m_PanelUsePreviousReport;
+  
+  /** the button for using the last report. */
+  protected BaseFlatButton m_ButtonUsePreviousReport;
+
   /** the left split panel (label selector | rest). */
   protected BaseSplitPane m_SplitPaneLeft;
 
@@ -285,10 +291,23 @@ public class ObjectAnnotationPanel
     m_ButtonBrightness.setToolTipText("Apply current values");
     m_ButtonBrightness.addActionListener((ActionEvent e) -> {
       m_PanelCanvas.setBrightness(m_TextBrightness.getValue().floatValue());
+      m_ButtonBrightness.setIcon(GUIHelper.getIcon("validate.png"));
       update();
     });
     m_PanelBrightness.add(m_ButtonBrightness);
 
+    m_PanelUsePreviousReport = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(m_PanelUsePreviousReport);
+    m_PanelUsePreviousReport.add(new JLabel(" "));
+    m_ButtonUsePreviousReport = new BaseFlatButton("Apply previous report");
+    m_ButtonUsePreviousReport.setToolTipText("Apply previous report");
+    m_ButtonUsePreviousReport.addActionListener((ActionEvent e) -> {
+      applyPreviousReport();
+      update();
+    });
+    m_PanelUsePreviousReport.add(m_ButtonUsePreviousReport);
+    m_PanelUsePreviousReport.setVisible(false);
+    
     // left split pane
     m_SplitPaneLeft = new BaseSplitPane();
     m_SplitPaneLeft.setOneTouchExpandable(true);
@@ -383,6 +402,24 @@ public class ObjectAnnotationPanel
    */
   public boolean isBrightnessVisible() {
     return m_PanelBrightness.isVisible();
+  }
+
+  /**
+   * Sets whether the controls for using the previous report are visible or not.
+   * 
+   * @param value	true if visible
+   */
+  public void setUsePreviousReportVisible(boolean value) {
+    m_PanelUsePreviousReport.setVisible(value);
+  }
+
+  /**
+   * Returns whether the controls for using the previous report are visible or not.
+   * 
+   * @return		true if visible
+   */
+  public boolean isUsePreviousReportVisible() {
+    return m_PanelUsePreviousReport.isVisible();
   }
   
   /**
@@ -521,6 +558,41 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Sets the previous report.
+   *
+   * @param value	the report, null to unset
+   */
+  public void setPreviousReport(Report value) {
+    m_PreviousReport = value;
+  }
+
+  /**
+   * Returns the previous report.
+   *
+   * @return		the report, null if not set
+   */
+  public Report getPreviousReport() {
+    return m_PreviousReport;
+  }
+
+  /**
+   * Applies the previous report, if possible.
+   */
+  protected void applyPreviousReport() {
+    Report	report;
+
+    if (m_PreviousReport == null)
+      return;
+
+    addUndoPoint("Applying previous report");
+    report = getReport().getClone();
+    report.removeValuesStartingWith(m_PanelAnnotations.getPrefix());
+    report.mergeWith(m_PreviousReport);
+    setReport(report);
+    annotationsChanged(this);
+  }
+
+  /**
    * Sets the located objects to use.
    *
    * @param value	the report
@@ -536,6 +608,25 @@ public class ObjectAnnotationPanel
    */
   public LocatedObjects getObjects() {
     return m_PanelAnnotations.getObjects();
+  }
+
+  /**
+   * Sets the brightness to use.
+   *
+   * @param value	the brightness (100 = default)
+   */
+  public void setBrightness(float value) {
+    m_TextBrightness.setValue(value);
+    m_ButtonBrightness.doClick();
+  }
+
+  /**
+   * Returns the brightness in use.
+   *
+   * @return		the brightness (100 = default)
+   */
+  public float getBrightness() {
+    return m_TextBrightness.getValue().floatValue();
   }
 
   /**
@@ -917,6 +1008,7 @@ public class ObjectAnnotationPanel
   public void updateButtons() {
     m_ButtonUndo.setEnabled(getUndo().canUndo());
     m_ButtonRedo.setEnabled(getUndo().canRedo());
+    m_ButtonUsePreviousReport.setEnabled(m_PreviousReport != null);
   }
 
   /**
