@@ -585,6 +585,15 @@ public class ControlPanel
   }
 
   /**
+   * Returns whether the control panel is enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isControlPanelEnabled() {
+    return m_ButtonStop.isEnabled();
+  }
+
+  /**
    * Continues the flow execution.
    */
   protected void continueFlowExecution() {
