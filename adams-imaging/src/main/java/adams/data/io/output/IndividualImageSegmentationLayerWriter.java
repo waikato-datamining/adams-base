@@ -23,9 +23,12 @@ package adams.data.io.output;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
+import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
 import adams.data.io.input.IndividualImageSegmentationLayerReader;
 import adams.flow.container.ImageSegmentationContainer;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.image.BufferedImage;
 import java.util.Map;
@@ -42,6 +45,9 @@ public class IndividualImageSegmentationLayerWriter
 
   /** whether to skip writing base image. */
   protected boolean m_SkipBaseImage;
+
+  /** whether to skip images with only background. */
+  protected boolean m_SkipEmptyLayers;
 
   /**
    * Returns a string describing the object.
@@ -62,6 +68,10 @@ public class IndividualImageSegmentationLayerWriter
 
     m_OptionManager.add(
       "skip-base-image", "skipBaseImage",
+      false);
+
+    m_OptionManager.add(
+      "skip-empty-layers", "skipEmptyLayers",
       false);
   }
 
@@ -136,6 +146,35 @@ public class IndividualImageSegmentationLayerWriter
   }
 
   /**
+   * Sets whether to skip writing empty layers (ie only background).
+   *
+   * @param value 	true if to skip
+   */
+  public void setSkipEmptyLayers(boolean value) {
+    m_SkipEmptyLayers = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip writing empty layers (ie only background).
+   *
+   * @return 		true if to skip
+   */
+  public boolean getSkipEmptyLayers() {
+    return m_SkipEmptyLayers;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipEmptyLayersTipText() {
+    return "If enabled, layers that consist only of background are not included in the output.";
+  }
+
+  /**
    * Writes the file to disk.
    *
    * @param image	the image to write
@@ -150,6 +189,25 @@ public class IndividualImageSegmentationLayerWriter
     cont.setImage(image);
     writer = new ApacheCommonsImageWriter();
     return writer.write(file, cont);
+  }
+
+  /**
+   * Counts the distinct colors in the image.
+   *
+   * @param image	the image to process
+   * @return		the count
+   */
+  protected int countColors(BufferedImage image) {
+    TIntSet	colors;
+    int[]	pixels;
+    int		i;
+
+    colors = new TIntHashSet();
+    pixels    = BufferedImageHelper.getPixels(image);
+    for (i = 0; i < pixels.length; i++)
+      colors.add(pixels[i]);
+
+    return colors.size();
   }
 
   /**
@@ -180,6 +238,13 @@ public class IndividualImageSegmentationLayerWriter
     if ((result == null) && (annotations.hasValue(ImageSegmentationContainer.VALUE_LAYERS))) {
       layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS, Map.class);
       for (String label: layers.keySet()) {
+	if (m_SkipEmptyLayers) {
+	  if (countColors(layers.get(label)) == 1) {
+	    if (isLoggingEnabled())
+	      getLogger().info("Layer '" + label + "' is empty, skipping!");
+	    continue;
+	  }
+	}
         layerFile = new PlaceholderFile(prefix + "-" + label + ".png");
 	if (isLoggingEnabled())
 	  getLogger().info("Writing layer '" + label + "' to: " + layerFile);
