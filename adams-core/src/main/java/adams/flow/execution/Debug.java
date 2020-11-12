@@ -602,8 +602,10 @@ public class Debug
    */
   public void blockExecution() {
     int		count;
+    boolean 	updated;
 
     count     = 0;
+    updated   = false;
     m_Blocked = true;
     m_ControlPanel.update();
     while (m_Blocked && !m_Stopped) {
@@ -613,10 +615,12 @@ public class Debug
 	synchronized(this) {
 	  wait(100);
 	}
-        count++;
-	if (count == 10) {
-	  m_ControlPanel.update();
-	  count = 0;
+	if (!updated)
+	  count++;
+	if (!updated && (count == 10)) {
+	  if (!m_ControlPanel.isControlPanelEnabled())
+	    m_ControlPanel.queueUpdate();
+	  updated = true;
 	}
       }
       catch (Exception e) {
