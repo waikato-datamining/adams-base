@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-11-13 11:27:51
+# Date: 2020-11-13 11:52:56
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
@@ -28,6 +28,6 @@ adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images 
    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
    adams.flow.sink.CallableSink -callable ProgressBar
   adams.flow.transformer.ImageSegmentationFileReader -reader adams.data.io.input.IndividualImageSegmentationLayerReader
-  adams.flow.transformer.ImageSegmentationAnnotator -name "Image segmentation" -short-title true -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -allow-layer-remove true -allow-layer-actions true
+  adams.flow.transformer.ImageSegmentationAnnotator -name "Image segmentation" -short-title true -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -best-fit true -layer-visibility PREVIOUSLY_VISIBLE -allow-layer-remove true -allow-layer-actions true
   adams.flow.sink.ImageSegmentationFileWriter -output @{file} -writer "adams.data.io.output.IndividualImageSegmentationLayerWriter -skip-base-image true -skip-empty-layers true"
  adams.flow.control.CloseCallableDisplay -callable ProgressBar

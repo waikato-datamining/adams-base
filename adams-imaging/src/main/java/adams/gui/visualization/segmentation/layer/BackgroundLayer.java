@@ -45,6 +45,8 @@ public class BackgroundLayer
 
   private static final long serialVersionUID = 1680744036963757388L;
 
+  public static final String LAYER_NAME = "Background";
+
   /**
    * For storing the state of a background layer.
    */
@@ -102,7 +104,7 @@ public class BackgroundLayer
    * @return		the layer
    */
   public String getName() {
-    return "Background";
+    return LAYER_NAME;
   }
 
   /**

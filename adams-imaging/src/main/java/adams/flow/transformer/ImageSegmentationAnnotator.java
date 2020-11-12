@@ -30,6 +30,9 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
+import adams.gui.visualization.segmentation.layer.AbstractLayer;
+import adams.gui.visualization.segmentation.layer.BackgroundLayer;
+import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.JPanel;
@@ -38,7 +41,9 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -166,8 +171,23 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;minimum: 1.0
  * </pre>
  *
+ * <pre>-best-fit &lt;boolean&gt; (property: bestFit)
+ * &nbsp;&nbsp;&nbsp;If enabled, the image gets fitted into the viewport.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-layer-visibility &lt;ALL|NONE|PREVIOUSLY_VISIBLE&gt; (property: layerVisibility)
+ * &nbsp;&nbsp;&nbsp;What layers will be visible when annotating the next image.
+ * &nbsp;&nbsp;&nbsp;default: ALL
+ * </pre>
+ *
  * <pre>-allow-layer-remove &lt;boolean&gt; (property: allowLayerRemoval)
  * &nbsp;&nbsp;&nbsp;If enabled, the user can remove layers.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-allow-layer-actions &lt;boolean&gt; (property: allowLayerActions)
+ * &nbsp;&nbsp;&nbsp;If enabled, the user has access to layer actions.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -179,6 +199,15 @@ public class ImageSegmentationAnnotator
   extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -761517109077084448L;
+
+  /**
+   * What layers should be selected.
+   */
+  public enum LayerVisibility {
+    ALL,
+    NONE,
+    PREVIOUSLY_VISIBLE,
+  }
 
   /** the labels to use. */
   protected BaseString[] m_Labels;
@@ -195,6 +224,12 @@ public class ImageSegmentationAnnotator
   /** the zoom level. */
   protected double m_Zoom;
 
+  /** whether to use best fit. */
+  protected boolean m_BestFit;
+
+  /** what layers to have visible. */
+  protected LayerVisibility m_LayerVisibility;
+
   /** whether layers can be deleted. */
   protected boolean m_AllowLayerRemoval;
 
@@ -203,6 +238,12 @@ public class ImageSegmentationAnnotator
   
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
+
+  /** the last layers visible. */
+  protected Set<String> m_LastVisible;
+
+  /** whether best fit has been applied. */
+  protected boolean m_BestFitApplied;
 
   /**
    * Returns a string describing the object.
@@ -238,12 +279,31 @@ public class ImageSegmentationAnnotator
       100.0, 1.0, null);
 
     m_OptionManager.add(
+      "best-fit", "bestFit",
+      false);
+
+    m_OptionManager.add(
+      "layer-visibility", "layerVisibility",
+      LayerVisibility.ALL);
+
+    m_OptionManager.add(
       "allow-layer-remove", "allowLayerRemoval",
       false);
 
     m_OptionManager.add(
       "allow-layer-actions", "allowLayerActions",
       false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_LastVisible    = new HashSet<>();
+    m_BestFitApplied = false;
   }
 
   /**
@@ -402,6 +462,64 @@ public class ImageSegmentationAnnotator
    */
   public String zoomTipText() {
     return "The zoom level in percent.";
+  }
+
+  /**
+   * Sets whether to use best fit for the image or not.
+   *
+   * @param value 	true if to use
+   */
+  public void setBestFit(boolean value) {
+    m_BestFit = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use best fit for the image or not.
+   *
+   * @return 		true if to use
+   */
+  public boolean getBestFit() {
+    return m_BestFit;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bestFitTipText() {
+    return "If enabled, the image gets fitted into the viewport.";
+  }
+
+  /**
+   * Sets the type of visibility to use when annotating the next image.
+   *
+   * @param value 	the visibility
+   */
+  public void setLayerVisibility(LayerVisibility value) {
+    m_LayerVisibility = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of visibility to use when annotating the next image.
+   *
+   * @return 		the visibility
+   */
+  public LayerVisibility getLayerVisibility() {
+    return m_LayerVisibility;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String layerVisibilityTipText() {
+    return "What layers will be visible when annotating the next image.";
   }
 
   /**
@@ -584,10 +702,43 @@ public class ImageSegmentationAnnotator
       }
       layer.setRemovable(m_AllowLayerRemoval);
       layer.setActionsAvailable(m_AllowLayerActions);
+      switch (m_LayerVisibility) {
+	case ALL:
+	  layer.setEnabled(true);
+	  break;
+	case NONE:
+	  layer.setEnabled(false);
+	  break;
+	case PREVIOUSLY_VISIBLE:
+	  layer.setEnabled(m_LastVisible.contains(layer.getName()));
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled layer visibility type: " + m_LayerVisibility);
+      }
+    }
+    if (m_LayerVisibility == LayerVisibility.PREVIOUSLY_VISIBLE) {
+      if (m_LastVisible.contains(ImageLayer.LAYER_NAME))
+        m_PanelSegmentation.getManager().getImageLayer().setEnabled(true);
+      if (m_LastVisible.contains(BackgroundLayer.LAYER_NAME))
+        m_PanelSegmentation.getManager().getBackgroundLayer().setEnabled(true);
     }
     m_PanelSegmentation.update();
+    if (m_BestFit && !m_BestFitApplied) {
+      m_PanelSegmentation.bestFitZoom();
+      m_BestFitApplied = true;
+    }
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
+
+    m_LastVisible.clear();
+    for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
+      if (l.isEnabled()) {
+	if (l instanceof ImageLayer)
+	  m_LastVisible.add(ImageLayer.LAYER_NAME);
+	else
+	  m_LastVisible.add(l.getName());
+      }
+    }
 
     if (m_Accepted) {
       layers = new HashMap<>();

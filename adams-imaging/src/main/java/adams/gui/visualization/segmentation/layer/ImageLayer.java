@@ -57,6 +57,8 @@ public class ImageLayer
     private static final long serialVersionUID = -5652014216527524598L;
   }
 
+  public final static String LAYER_NAME = "Image";
+
   /** the label for the layer name. */
   protected JLabel m_LabelName;
 
@@ -134,6 +136,16 @@ public class ImageLayer
   }
 
   /**
+   * Sets the image to display.
+   *
+   * @param value	the image, null to clear
+   */
+  public void setImage(BufferedImage value) {
+    super.setImage(value);
+    m_BrightImage = null;
+  }
+
+  /**
    * Returns whether the layer can be removed.
    *
    * @return		true if can be removed
@@ -164,10 +176,11 @@ public class ImageLayer
     RescaleOp 	op;
 
     brightness = m_TextBrightness.getValue().floatValue();
-    if ((m_LastBrightness == null) || (m_LastBrightness != brightness)) {
+    if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != brightness)) {
       op = new RescaleOp(brightness / 100.0f, 0, null);
       m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());
       m_BrightImage = op.filter(m_Image, m_BrightImage);
+      m_LastBrightness = brightness;
     }
     g2d.drawImage(m_BrightImage, null, 0, 0);
   }

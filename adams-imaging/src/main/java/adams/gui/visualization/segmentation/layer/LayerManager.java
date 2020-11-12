@@ -73,6 +73,9 @@ public class LayerManager
   /** the undo manager. */
   protected Undo m_Undo;
 
+  /** whether bestfit zoom needs to be redone. */
+  protected boolean m_RedoBestFit;
+
   /**
    * Initializes the layer manager.
    *
@@ -87,6 +90,7 @@ public class LayerManager
     m_CanvasPanel     = canvasPanel;
     m_ChangeListeners = new HashSet<>();
     m_Zoom            = 1.0;
+    m_RedoBestFit     = false;
     m_Undo            = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
   }
@@ -252,11 +256,18 @@ public class LayerManager
     double	zoomW;
     double	zoomH;
 
+    if (getCanvasPanel().getOwner().getScrollPane().getWidth() == 0) {
+      m_RedoBestFit = true;
+      return;
+    }
+
     width  = getCanvasPanel().getOwner().getScrollPane().getWidth()  - 20;
     height = getCanvasPanel().getOwner().getScrollPane().getHeight() - 20;
     zoomW = (double) width / (double) getImageLayer().getImage().getWidth();
     zoomH = (double) height / (double) getImageLayer().getImage().getHeight();
     setZoom(Math.min(zoomW, zoomH));
+
+    m_RedoBestFit = false;
   }
 
   /**
@@ -547,6 +558,11 @@ public class LayerManager
    * @param g2d		the context to use
    */
   public void draw(Graphics2D g2d) {
+    if (m_RedoBestFit) {
+      bestFitZoom();
+      return;
+    }
+
     g2d.scale(getZoom(), getZoom());
     getBackgroundLayer().draw(g2d);
     getImageLayer().draw(g2d);
