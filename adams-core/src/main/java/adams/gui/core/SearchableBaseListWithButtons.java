@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SearchableBaseListWithButtons.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -29,10 +29,9 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 
 /**
- * TODO: What class does.
+ * Searchable list widget with buttons on the right.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SearchableBaseListWithButtons
   extends BaseListWithButtons {
