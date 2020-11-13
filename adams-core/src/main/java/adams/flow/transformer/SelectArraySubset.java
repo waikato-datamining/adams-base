@@ -15,7 +15,7 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -26,7 +26,6 @@ import adams.flow.core.Unknown;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.SearchableBaseListWithButtons;
-import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -350,7 +349,7 @@ public class SelectArraySubset
     m_ListModel = new DefaultListModel<>();
     m_List      = new SearchableBaseListWithButtons(m_ListModel);
     m_List.setAllowSearch(m_AllowSearch);
-    result.add(new BaseScrollPane(m_List), BorderLayout.CENTER);
+    result.add(m_List, BorderLayout.CENTER);
 
     m_LabelMessage = new JLabel();
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
