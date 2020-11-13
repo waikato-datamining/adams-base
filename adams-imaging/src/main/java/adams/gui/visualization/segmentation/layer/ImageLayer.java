@@ -27,6 +27,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,6 +62,9 @@ public class ImageLayer
 
   /** the label for the layer name. */
   protected JLabel m_LabelName;
+
+  /** the button for copying the label name. */
+  protected BaseFlatButton m_ButtonName;
 
   /** the brightness to use. */
   protected NumberTextField m_TextBrightness;
@@ -100,6 +104,10 @@ public class ImageLayer
     panelRow.add(m_CheckboxEnabled);
     m_LabelName = new JLabel("");
     panelRow.add(Fonts.usePlain(m_LabelName));
+    m_ButtonName = new BaseFlatButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonName.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_LabelName.getText()));
+    m_ButtonName.setToolTipText("Copy name to clipboard");
+    panelRow.add(m_ButtonName);
 
     panelRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panelRow);
