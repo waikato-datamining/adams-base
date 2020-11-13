@@ -106,6 +106,7 @@ public class IndividualImageSegmentationLayerReader
     ImageSegmentationContainer	result;
     BufferedImage 		base;
     String			name;
+    String			layer;
     Map<String,BufferedImage>	layers;
     LocalDirectoryLister	lister;
     String[]			files;
@@ -137,10 +138,10 @@ public class IndividualImageSegmentationLayerReader
 	  getLogger().severe("Failed to read: " + f);
 	  continue;
 	}
+	layer = FileUtils.replaceExtension(phFile.getName(), "").replaceAll(".*-", "");
         if (isLoggingEnabled())
-          getLogger().info("Layer name: " + name);
-	name = FileUtils.replaceExtension(phFile.getName(), "").replaceAll(".*-", "");
-	layers.put(name, cont.toBufferedImage());
+          getLogger().info("Layer name: " + layer);
+	layers.put(layer, cont.toBufferedImage());
       }
     }
 
