@@ -221,6 +221,12 @@ public class ImageSegmentationAnnotator
   /** the alpha value. */
   protected float m_Alpha;
 
+  /** the position for the left divider. */
+  protected int m_LeftDividerLocation;
+
+  /** the position for the right divider. */
+  protected int m_RightDividerLocation;
+
   /** the zoom level. */
   protected double m_Zoom;
 
@@ -273,6 +279,14 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "alpha", "alpha",
       0.5f, 0.0f, 1.0f);
+
+    m_OptionManager.add(
+      "left-divider-location", "leftDividerLocation",
+      280, 1, null);
+
+    m_OptionManager.add(
+      "right-divider-location", "rightDividerLocation",
+      680, 1, null);
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -431,6 +445,68 @@ public class ImageSegmentationAnnotator
    */
   public String alphaTipText() {
     return "The alpha value to use (fully transparent=0.0, fully opaque=1.0).";
+  }
+
+  /**
+   * Sets the position for the left divider in pixels.
+   *
+   * @param value 	the position
+   */
+  public void setLeftDividerLocation(int value) {
+    if (getOptionManager().isValid("leftDividerLocation", value)) {
+      m_LeftDividerLocation = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the position for the left divider in pixels.
+   *
+   * @return 		the position
+   */
+  public int getLeftDividerLocation() {
+    return m_LeftDividerLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String leftDividerLocationTipText() {
+    return "The position for the left divider in pixels.";
+  }
+
+  /**
+   * Sets the position for the right divider in pixels.
+   *
+   * @param value 	the position
+   */
+  public void setRightDividerLocation(int value) {
+    if (getOptionManager().isValid("rightDividerLocation", value)) {
+      m_RightDividerLocation = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the position for the right divider in pixels.
+   *
+   * @return 		the position
+   */
+  public int getRightDividerLocation() {
+    return m_RightDividerLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String rightDividerLocationTipText() {
+    return "The position for the right divider in pixels.";
   }
 
   /**
@@ -620,6 +696,8 @@ public class ImageSegmentationAnnotator
   protected BasePanel newPanel() {
     m_PanelSegmentation = new SegmentationPanel();
     m_PanelSegmentation.setZoom(m_Zoom);
+    m_PanelSegmentation.setLeftDividerLocation(m_LeftDividerLocation);
+    m_PanelSegmentation.setRightDividerLocation(m_RightDividerLocation);
     return m_PanelSegmentation;
   }
 

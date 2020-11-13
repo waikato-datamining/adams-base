@@ -230,6 +230,7 @@ public class SegmentationPanel
     // left
     m_SplitPaneLeft = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPaneLeft.setResizeWeight(0.0);
+    m_SplitPaneLeft.setOneTouchExpandable(true);
     add(m_SplitPaneLeft, BorderLayout.CENTER);
 
     m_PanelLeft = new BasePanel(new BorderLayout());
@@ -242,6 +243,7 @@ public class SegmentationPanel
     // right
     m_SplitPaneRight = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPaneRight.setResizeWeight(1.0);
+    m_SplitPaneRight.setOneTouchExpandable(true);
     m_SplitPaneLeft.setRightComponent(m_SplitPaneRight);
 
     m_PanelTools = new BasePanel(new BorderLayout());
@@ -305,7 +307,7 @@ public class SegmentationPanel
     m_Manager.addChangeListener(this);
     m_Manager.getUndo().addUndoListener(this);
 
-    m_SplitPaneLeft.setDividerLocation(250);
+    m_SplitPaneLeft.setDividerLocation(280);
     m_SplitPaneRight.setDividerLocation(680);
 
     // select pointer button
@@ -477,6 +479,60 @@ public class SegmentationPanel
     m_Manager.bestFitZoom();
     m_TextZoom.setValue(RoundingUtils.round(m_Manager.getZoom() * 100, 1));
     m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+  }
+
+  /**
+   * Sets the location of the left divider.
+   *
+   * @param value	the position in pixels
+   */
+  public void setLeftDividerLocation(int value) {
+    m_SplitPaneLeft.setDividerLocation(value);
+  }
+
+  /**
+   * Sets the proportional location for the left divider.
+   *
+   * @param value	the location (0-1)
+   */
+  public void setLeftDividerLocation(double value) {
+    m_SplitPaneLeft.setDividerLocation(value);
+  }
+
+  /**
+   * Returns the left divider location.
+   *
+   * @return		the position in pixels
+   */
+  public int getLeftDividerLocation() {
+    return m_SplitPaneLeft.getDividerLocation();
+  }
+
+  /**
+   * Sets the location of the right divider.
+   *
+   * @param value	the position in pixels
+   */
+  public void setRightDividerLocation(int value) {
+    m_SplitPaneRight.setDividerLocation(value);
+  }
+
+  /**
+   * Sets the proportional location for the right divider.
+   *
+   * @param value	the location (0-1)
+   */
+  public void setRightDividerLocation(double value) {
+    m_SplitPaneRight.setDividerLocation(value);
+  }
+
+  /**
+   * Returns the right divider location.
+   *
+   * @return		the position in pixels
+   */
+  public int getRightDividerLocation() {
+    return m_SplitPaneRight.getDividerLocation();
   }
 
   /**
