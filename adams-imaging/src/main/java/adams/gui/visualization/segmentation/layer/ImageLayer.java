@@ -180,14 +180,18 @@ public class ImageLayer
    */
   @Override
   protected void doDraw(Graphics2D g2d) {
-    float	brightness;
-    RescaleOp 	op;
+    float		brightness;
+    RescaleOp 		op;
+    BufferedImage	image;
 
     brightness = m_TextBrightness.getValue().floatValue();
     if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != brightness)) {
       op = new RescaleOp(brightness / 100.0f, 0, null);
       m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());
-      m_BrightImage = op.filter(m_Image, m_BrightImage);
+      image         = m_Image;
+      if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
+        image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
+      m_BrightImage = op.filter(image, m_BrightImage);
       m_LastBrightness = brightness;
     }
     g2d.drawImage(m_BrightImage, null, 0, 0);

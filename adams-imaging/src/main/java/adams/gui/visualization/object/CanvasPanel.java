@@ -606,7 +606,8 @@ public class CanvasPanel
    */
   @Override
   public void paint(Graphics g) {
-    RescaleOp 	op;
+    RescaleOp 		op;
+    BufferedImage	image;
 
     if (m_ResizeRequired) {
       m_ResizeRequired = false;
@@ -624,7 +625,10 @@ public class CanvasPanel
       if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
 	op = new RescaleOp(m_Brightness / 100.0f, 0, null);
 	m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());
-	m_BrightImage = op.filter(m_Image, m_BrightImage);
+	image         = m_Image;
+	if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
+	  image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
+	m_BrightImage = op.filter(image, m_BrightImage);
 	m_LastBrightness = m_Brightness;
       }
       g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
