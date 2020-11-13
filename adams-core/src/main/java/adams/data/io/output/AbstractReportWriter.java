@@ -15,7 +15,7 @@
 
 /*
  * AbstractQuantitationWriter.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
@@ -37,12 +37,11 @@ import adams.data.report.Report;
  * various formats.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to handle
  */
 public abstract class AbstractReportWriter<T extends Report>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractReportWriter>, FileFormatHandler {
+  implements Comparable, CleanUpHandler, ReportWriter<T>, ShallowCopySupporter<AbstractReportWriter>, FileFormatHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 7030901991439712686L;

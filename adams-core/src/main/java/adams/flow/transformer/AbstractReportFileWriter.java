@@ -20,9 +20,8 @@
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.io.AbstractFilenameGenerator;
 import adams.core.io.AbstractFilenameGeneratorWithDirectory;
 import adams.core.io.AbstractFilenameGeneratorWithExtension;
@@ -30,9 +29,13 @@ import adams.core.io.DefaultFilenameGenerator;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.AbstractReportWriter;
+import adams.data.io.output.MultiReportWriter;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.Token;
+
+import java.io.File;
+import java.lang.reflect.Array;
 
 /**
  * Abstract ancestor for actors that write reports to disk.
@@ -221,6 +224,48 @@ public abstract class AbstractReportFileWriter<T extends Report>
   }
 
   /**
+   * Extracts the reports from the token.
+   *
+   * @param token	the token to get the reports from
+   * @return		the reports
+   */
+  protected T[] extractReports(Token token) {
+    Object	result;
+    Object	array;
+    Object	element;
+    Class	cls;
+    int		i;
+    int		len;
+
+    cls = ((MultiReportWriter) m_Writer).getReportClass();
+    if (token.getPayload().getClass().isArray()) {
+      array  = token.getPayload();
+      len    = Array.getLength(array);
+      result = Array.newInstance(cls, len);
+      for (i = 0; i < len; i++) {
+        element = Array.get(array, i);
+        if (element instanceof ReportHandler)
+          Array.set(result, i, ((ReportHandler) element).getReport());
+        else if (element instanceof Report)
+          Array.set(result, i, element);
+        else
+          getLogger().warning("Unsupported array element: " + Utils.classToString(element));
+      }
+    }
+    else {
+      result = Array.newInstance(cls, 1);
+      if (token.getPayload() instanceof ReportHandler)
+	Array.set(result, 0, ((ReportHandler) m_InputToken.getPayload()).getReport());
+      else if (m_InputToken.getPayload() instanceof Report)
+	Array.set(result, 0, m_InputToken.getPayload());
+      else
+	getLogger().warning("Unsupported type: " + Utils.classToString(token.getPayload()));
+    }
+
+    return (T[]) result;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -230,16 +275,33 @@ public abstract class AbstractReportFileWriter<T extends Report>
     String	result;
     File	file;
     T		report;
+    T[]		reports;
+    int		i;
     boolean	success;
     String	filename;
 
     result = null;
 
-    report = extractReport(m_InputToken);
-    if (report == null) {
-      result = "No report available: " + m_InputToken.getPayload();
+    report  = null;
+    reports = null;
+    if (m_Writer instanceof MultiReportWriter)
+      reports = extractReports(m_InputToken);
+    else
+      report = extractReport(m_InputToken);
+
+    if (reports != null) {
+      for (i = 0; i < reports.length; i++) {
+        if (reports[i] == null) {
+          result = "Report #" + (i+1) + " is null!";
+          break;
+	}
+      }
     }
-    else {
+    else if (report == null) {
+      result = "No report(s) available: " + m_InputToken.getPayload();
+    }
+
+    if (result == null) {
       if (m_Generator instanceof AbstractFilenameGeneratorWithDirectory)
 	((AbstractFilenameGeneratorWithDirectory) m_Generator).setDirectory(m_OutputDir);
       if (m_Generator instanceof AbstractFilenameGeneratorWithExtension)
@@ -255,7 +317,10 @@ public abstract class AbstractReportFileWriter<T extends Report>
 
 	// write data
 	try {
-	  success = m_Writer.write(report);
+	  if (reports != null)
+	    success = ((MultiReportWriter) m_Writer).write(reports);
+	  else
+	    success = m_Writer.write(report);
 	  if (!success)
 	    result = "Failed to write data to '" + file + "'!";
 	  if (isLoggingEnabled())

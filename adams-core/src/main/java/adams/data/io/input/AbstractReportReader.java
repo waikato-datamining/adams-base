@@ -15,7 +15,7 @@
 
 /*
  * AbstractQuantitationReader.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public abstract class AbstractReportReader<T extends Report>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractReportReader>,
+  implements Comparable, CleanUpHandler, ReportReader<T>, ShallowCopySupporter<AbstractReportReader>,
              StoppableWithFeedback, FileFormatHandler {
 
   /** for serialization. */

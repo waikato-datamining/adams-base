@@ -15,13 +15,14 @@
 
 /*
  * ReportFileWriter.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.io.output.DefaultSimpleReportWriter;
+import adams.data.io.output.MultiReportWriter;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 
@@ -90,7 +91,6 @@ import adams.data.report.ReportHandler;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportFileWriter
   extends AbstractReportFileWriter<Report> {
@@ -127,6 +127,9 @@ public class ReportFileWriter
    * @return		the type of report
    */
   public Class[] accepts() {
-    return new Class[]{Report.class, ReportHandler.class};
+    if (getWriter() instanceof MultiReportWriter)
+      return new Class[]{Report.class, Report[].class, ReportHandler.class, ReportHandler[].class};
+    else
+      return new Class[]{Report.class, ReportHandler.class};
   }
 }
