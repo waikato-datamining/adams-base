@@ -198,6 +198,11 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
+ * <pre>-use-column-names-as-titles &lt;boolean&gt; (property: useColumnNamesAsTitles)
+ * &nbsp;&nbsp;&nbsp;If enabled, the column titles in the spreadsheet are used as axes titles.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-swap-axes &lt;boolean&gt; (property: swapAxes)
  * &nbsp;&nbsp;&nbsp;If enabled, the axes get swapped.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -288,6 +293,9 @@ public class ActualVsPredictedPlot
 
   /** the column with the predicted values. */
   protected SpreadSheetColumnIndex m_Predicted;
+
+  /** whether to use the column names as axes titles. */
+  protected boolean m_UseColumnNamesAsTitles;
 
   /** whether to swap the axes. */
   protected boolean m_SwapAxes;
@@ -388,6 +396,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "additional", "additional",
       new SpreadSheetColumnRange(""));
+
+    m_OptionManager.add(
+      "use-column-names-as-titles", "useColumnNamesAsTitles",
+      false);
 
     m_OptionManager.add(
       "swap-axes", "swapAxes",
@@ -682,6 +694,35 @@ public class ActualVsPredictedPlot
    */
   public String additionalTipText() {
     return "The additional columns to add to the plot containers.";
+  }
+
+  /**
+   * Sets whether to use the column names as titles for the axes.
+   *
+   * @param value	true if to use
+   */
+  public void setUseColumnNamesAsTitles(boolean value) {
+    m_UseColumnNamesAsTitles = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use the column names as titles for the axes.
+   *
+   * @return		true if to use
+   */
+  public boolean getUseColumnNamesAsTitles() {
+    return m_UseColumnNamesAsTitles;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useColumnNamesAsTitlesTipText() {
+    return "If enabled, the column titles in the spreadsheet are used as axes titles.";
   }
 
   /**
@@ -1197,6 +1238,17 @@ public class ActualVsPredictedPlot
       m_Error.setData(sheet);
       if (m_Error.getIntIndex() == -1)
 	throw new IllegalStateException("'Error' column not found: " + m_Error);
+    }
+
+    if (m_UseColumnNamesAsTitles) {
+      if (m_SwapAxes) {
+        panel.getPlot().getAxis(Axis.BOTTOM).setAxisName(sheet.getColumnName(m_Predicted.getIntIndex()));
+        panel.getPlot().getAxis(Axis.LEFT).setAxisName(sheet.getColumnName(m_Actual.getIntIndex()));
+      }
+      else {
+        panel.getPlot().getAxis(Axis.BOTTOM).setAxisName(sheet.getColumnName(m_Actual.getIntIndex()));
+        panel.getPlot().getAxis(Axis.LEFT).setAxisName(sheet.getColumnName(m_Predicted.getIntIndex()));
+      }
     }
 
     // additional columns
