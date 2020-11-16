@@ -38,7 +38,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.logging.Level;
 
 /**
@@ -121,21 +120,11 @@ public abstract class AbstractWizardPage
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
     m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	loadProperties();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
     m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveProperties();
-      }
-    });
+    m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
   }
 
@@ -182,7 +171,7 @@ public abstract class AbstractWizardPage
    * @param value	the description (plain-text or html)
    */
   public void setDescription(String value) {
-    setDescription(value, (value.toLowerCase().indexOf("<html>") > -1));
+    setDescription(value, value.toLowerCase().contains("<html>"));
   }
   
   /**
