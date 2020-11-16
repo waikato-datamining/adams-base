@@ -54,6 +54,9 @@ public abstract class AbstractMouseClickProcessor
   /** the mouse button to react to. */
   protected MouseButton m_Button;
 
+  /** the required click count (< 1 if irrelevant). */
+  protected int m_ClickCount;
+
   /** whether shift needs to be down. */
   protected boolean m_ShiftDown;
 
@@ -80,6 +83,10 @@ public abstract class AbstractMouseClickProcessor
     m_OptionManager.add(
       "button", "button",
       MouseButton.LEFT);
+
+    m_OptionManager.add(
+      "click-count", "clickCount",
+      1, 0, null);
 
     m_OptionManager.add(
       "shift-down", "shiftDown",
@@ -152,8 +159,37 @@ public abstract class AbstractMouseClickProcessor
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String buttonDownTipText() {
+  public String buttonTipText() {
     return "The mouse button to react to.";
+  }
+
+  /**
+   * Sets the number of mouse clicks; use 0 for turning check off; use 2 for double click.
+   *
+   * @param value 	the count
+   */
+  public void setClickCount(int value) {
+    m_ClickCount = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of mouse clicks; use 0 for turning check off; use 2 for double click.
+   *
+   * @return 		the count
+   */
+  public int getClickCount() {
+    return m_ClickCount;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String clickCountTipText() {
+    return "The number of mouse clicks; use 0 for turning check off; use 2 for double click.";
   }
 
   /**
@@ -328,6 +364,12 @@ public abstract class AbstractMouseClickProcessor
       return;
     if ((m_Button == MouseButton.RIGHT) && (e.getButton() != MouseEvent.BUTTON3))
       return;
+
+    // ensure correct number of clicks
+    if (m_ClickCount > 0) {
+      if (e.getClickCount() != m_ClickCount)
+        return;
+    }
 
     // ensure that correct keys are pressed
     if ((m_ShiftDown && !KeyUtils.isShiftDown(e.getModifiersEx())) || (!m_ShiftDown && KeyUtils.isShiftDown(e.getModifiersEx())))
