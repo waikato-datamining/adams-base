@@ -152,7 +152,7 @@ public class CanvasPanel
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isRightClick(e)) {
+        if (MouseUtils.isRightClick(e) && MouseUtils.hasNoModifierKey(e)) {
           JPopupMenu menu = createPopupMenu();
           menu.show(CanvasPanel.this, e.getX(), e.getY());
 	}
