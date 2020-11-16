@@ -15,7 +15,7 @@
 
 /*
  * WizardPane.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -99,7 +100,7 @@ public class WizardPane
   protected JPanel m_PageComponent;
   
   /** the pages lookup. */
-  protected HashMap<String, AbstractWizardPage> m_PageLookup;
+  protected Map<String, AbstractWizardPage> m_PageLookup;
   
   /** the page order. */
   protected List<String> m_PageOrder;
@@ -163,10 +164,10 @@ public class WizardPane
   protected void initialize() {
     super.initialize();
     
-    m_PageLookup       = new HashMap<String, AbstractWizardPage>();
-    m_PageOrder        = new ArrayList<String>();
+    m_PageLookup       = new HashMap<>();
+    m_PageOrder        = new ArrayList<>();
     m_SelectedPage     = -1;
-    m_ActionListeners  = new HashSet<ActionListener>();
+    m_ActionListeners  = new HashSet<>();
     m_CustomFinishText = null;
   }
   
@@ -210,24 +211,16 @@ public class WizardPane
     panel.add(m_PanelButtons, BorderLayout.EAST);
     
     m_ButtonBack = new BaseButton("Back");
-    m_ButtonBack.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	setSelectedPage(getSelectedIndex() - 1);
-      }
-    });
+    m_ButtonBack.addActionListener((ActionEvent e) -> setSelectedPage(getSelectedIndex() - 1));
     m_PanelButtons.add(m_ButtonBack);
     
     m_ButtonNext = new BaseButton("Next");
-    m_ButtonNext.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	AbstractWizardPage currPage = getPageAt(getSelectedIndex());
-	AbstractWizardPage nextPage = getPageAt(getSelectedIndex() + 1);
-	if (currPage.getProceedAction() != null)
-	  currPage.getProceedAction().onProceed(currPage, nextPage);
-	setSelectedPage(getSelectedIndex() + 1);
-      }
+    m_ButtonNext.addActionListener((ActionEvent e) -> {
+      AbstractWizardPage currPage = getPageAt(getSelectedIndex());
+      AbstractWizardPage nextPage = getPageAt(getSelectedIndex() + 1);
+      if (currPage.getProceedAction() != null)
+        currPage.getProceedAction().onProceed(currPage, nextPage);
+      setSelectedPage(getSelectedIndex() + 1);
     });
     m_PanelButtons.add(m_ButtonNext);
     
@@ -246,21 +239,11 @@ public class WizardPane
     m_PanelButtons.add(m_ButtonCancelFinish);
 
     m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
-    m_ButtonLoad.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	loadProperties();
-      }
-    });
+    m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     m_PanelButtonsProperties.add(m_ButtonLoad);
 
     m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	saveProperties();
-      }
-    });
+    m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     m_PanelButtonsProperties.add(m_ButtonSave);
   }
   
@@ -295,8 +278,7 @@ public class WizardPane
   /**
    * Removes all pages.
    */
-  @Override
-  public void removeAll() {
+  public void removeAllPages() {
     m_PageOrder.clear();
     m_PageLookup.clear();
     m_ModelNames.clear();
