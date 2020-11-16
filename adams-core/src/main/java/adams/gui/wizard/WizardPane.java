@@ -21,17 +21,11 @@ package adams.gui.wizard;
 
 import adams.core.Properties;
 import adams.core.base.BasePassword;
-import adams.core.logging.Logger;
-import adams.core.logging.LoggingHelper;
-import adams.core.logging.LoggingSupporter;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.env.Environment;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseList;
-import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
@@ -44,17 +38,11 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Similar to a {@link BaseTabbedPane}, but with the names of the pages
@@ -66,23 +54,10 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WizardPane
-  extends BasePanel
-  implements LoggingSupporter {
+  extends AbstractWizardPane {
 
   /** for serialization. */
   private static final long serialVersionUID = 887135856139374858L;
-
-  /** the action for cancelling the wizard. */
-  public final static String ACTION_CANCEL = "Cancel";
-
-  /** the action for finishing the wizard. */
-  public final static String ACTION_FINISH = "Finish";
-
-  /** the logger to use. */
-  protected Logger m_Logger;
-
-  /** the ID of the wizard. */
-  protected String m_ID;
 
   /** the model for displaying the page names. */
   protected DefaultListModel<String> m_ModelNames;
@@ -95,54 +70,21 @@ public class WizardPane
   
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
-  
+
   /** for displaying the page component. */
   protected JPanel m_PageComponent;
-  
-  /** the pages lookup. */
-  protected Map<String, AbstractWizardPage> m_PageLookup;
-  
+
   /** the page order. */
   protected List<String> m_PageOrder;
   
   /** the currently selected page. */
   protected int m_SelectedPage;
-  
-  /** the panel for the buttons. */
-  protected JPanel m_PanelButtons;
-  
-  /** the button for the previous page. */
-  protected BaseButton m_ButtonBack;
-  
-  /** the button for the next page. */
-  protected BaseButton m_ButtonNext;
-  
-  /** the button for the cancelling/finishing. */
-  protected BaseButton m_ButtonCancelFinish;
-  
-  /** the action listeners (ie hitting cancel/finish). */
-  protected HashSet<ActionListener> m_ActionListeners;
-  
-  /** the custom text for the "finish" button. */
-  protected String m_CustomFinishText;
-
-  /** the panel for the properties buttons. */
-  protected JPanel m_PanelButtonsProperties;
-
-  /** the load props button. */
-  protected BaseButton m_ButtonLoad;
-
-  /** the save props button. */
-  protected BaseButton m_ButtonSave;
-
-  /** the filechooser for loading/saving properties. */
-  protected BaseFileChooser m_FileChooser;
 
   /**
    * Initializes the wizard with no ID.
    */
   public WizardPane() {
-    this("");
+    super("");
   }
 
   /**
@@ -151,10 +93,7 @@ public class WizardPane
    * @param id		the ID of the wizard, used for logging purposes
    */
   public WizardPane(String id) {
-    super();
-
-    m_ID     = id;
-    m_Logger = null;
+    super(id);
   }
 
   /**
@@ -164,11 +103,8 @@ public class WizardPane
   protected void initialize() {
     super.initialize();
     
-    m_PageLookup       = new HashMap<>();
-    m_PageOrder        = new ArrayList<>();
-    m_SelectedPage     = -1;
-    m_ActionListeners  = new HashSet<>();
-    m_CustomFinishText = null;
+    m_PageOrder    = new ArrayList<>();
+    m_SelectedPage = -1;
   }
   
   /**
@@ -176,19 +112,15 @@ public class WizardPane
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
-
     super.initGUI();
-    
-    setLayout(new BorderLayout());
-    
+
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setResizeWeight(0);
     m_SplitPane.setDividerLocation(200);
     m_SplitPane.setOneTouchExpandable(false);
     add(m_SplitPane, BorderLayout.CENTER);
     
-    m_ModelNames = new DefaultListModel<String>();
+    m_ModelNames = new DefaultListModel<>();
     m_ListNames  = new BaseList(m_ModelNames);
     m_ListNames.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       @Override
@@ -201,69 +133,29 @@ public class WizardPane
     
     m_PageComponent = new JPanel(new BorderLayout());
     m_SplitPane.setRightComponent(m_PageComponent);
-
-    panel = new JPanel(new BorderLayout());
-    add(panel, BorderLayout.SOUTH);
-
-    m_PanelButtonsProperties = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panel.add(m_PanelButtonsProperties, BorderLayout.WEST);
-    m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    panel.add(m_PanelButtons, BorderLayout.EAST);
-    
-    m_ButtonBack = new BaseButton("Back");
-    m_ButtonBack.addActionListener((ActionEvent e) -> setSelectedPage(getSelectedIndex() - 1));
-    m_PanelButtons.add(m_ButtonBack);
-    
-    m_ButtonNext = new BaseButton("Next");
-    m_ButtonNext.addActionListener((ActionEvent e) -> {
-      AbstractWizardPage currPage = getPageAt(getSelectedIndex());
-      AbstractWizardPage nextPage = getPageAt(getSelectedIndex() + 1);
-      if (currPage.getProceedAction() != null)
-        currPage.getProceedAction().onProceed(currPage, nextPage);
-      setSelectedPage(getSelectedIndex() + 1);
-    });
-    m_PanelButtons.add(m_ButtonNext);
-    
-    m_ButtonCancelFinish = new BaseButton("");
-    m_ButtonCancelFinish.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	String action;
-	if (m_ButtonCancelFinish.getText().equals(ACTION_CANCEL))
-	  action = ACTION_CANCEL;
-	else
-	  action = ACTION_FINISH;
-	notifyActionListeners(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, action));
-      }
-    });
-    m_PanelButtons.add(m_ButtonCancelFinish);
-
-    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
-    m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
-    m_PanelButtonsProperties.add(m_ButtonLoad);
-
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
-    m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
-    m_PanelButtonsProperties.add(m_ButtonSave);
   }
-  
+
   /**
-   * Finishes the initialization.
+   * Goes to the previous page.
    */
   @Override
-  protected void finishInit() {
-    super.finishInit();
-    
-    updateButtons();
+  protected void previousPage() {
+    setSelectedPage(getSelectedIndex() - 1);
   }
 
   /**
-   * Returns the ID of the wizard, if any.
-   *
-   * @return		the ID
+   * Goes to the next page.
    */
-  public String getID() {
-    return m_ID;
+  @Override
+  protected void nextPage() {
+    AbstractWizardPage currPage;
+    AbstractWizardPage nextPage;
+
+    currPage = getPageAt(getSelectedIndex());
+    nextPage = getPageAt(getSelectedIndex() + 1);
+    if (currPage.getProceedAction() != null)
+      currPage.getProceedAction().onProceed(currPage, nextPage);
+    setSelectedPage(getSelectedIndex() + 1);
   }
 
   /**
@@ -279,8 +171,8 @@ public class WizardPane
    * Removes all pages.
    */
   public void removeAllPages() {
+    super.removeAllPages();
     m_PageOrder.clear();
-    m_PageLookup.clear();
     m_ModelNames.clear();
     m_SelectedPage = -1;
   }
@@ -396,56 +288,6 @@ public class WizardPane
   }
 
   /**
-   * Sets the properties of all the pages.
-   *
-   * @param props	the combined properties
-   * @param usePrefix	whether to use the page name as prefix
-   */
-  public void setProperties(Properties props, boolean usePrefix) {
-    Properties		sub;
-    AbstractWizardPage	page;
-
-    for (String name: m_PageOrder) {
-      page = m_PageLookup.get(name);
-      if (usePrefix) {
-	sub = props.subset(page.getPageName() + ".");
-	for (String key: sub.keySetAll()) {
-	  sub.setProperty(key.substring(page.getPageName().length() + 1), sub.getProperty(key));
-	  sub.removeKey(key);
-	}
-	page.setProperties(sub);
-      }
-      else {
-	page.setProperties(props.getClone());
-      }
-    }
-  }
-
-  /**
-   * Returns the properties from all the pages.
-   * 
-   * @param usePrefix	whether to use the page name as prefix
-   * @return		the combined properties
-   */
-  public Properties getProperties(boolean usePrefix) {
-    Properties		result;
-    Properties		sub;
-    AbstractWizardPage	page;
-    
-    result = new Properties();
-    for (String name: m_PageOrder) {
-      page = m_PageLookup.get(name);
-      sub  = page.getProperties();
-      if (usePrefix)
-	result.add(sub, page.getPageName() + ".");
-      else
-	result.add(sub);
-    }
-    
-    return result;
-  }
-  
-  /**
    * Updates the status of the buttons.
    */
   public void updateButtons() {
@@ -460,138 +302,6 @@ public class WizardPane
       m_ButtonCancelFinish.setText((m_CustomFinishText == null) ?  ACTION_FINISH : m_CustomFinishText);
     else
       m_ButtonCancelFinish.setText(ACTION_CANCEL);
-  }
-
-  /**
-   * Returns the file chooser to use for loading/saving of props files.
-   *
-   * @return		the file chooser
-   */
-  protected synchronized BaseFileChooser getFileChooser() {
-    FileFilter filter;
-
-    if (m_FileChooser == null) {
-      m_FileChooser = new BaseFileChooser();
-      m_FileChooser.setAutoAppendExtension(true);
-      filter        = ExtensionFileFilter.getPropertiesFileFilter();
-      m_FileChooser.addChoosableFileFilter(filter);
-      m_FileChooser.setFileFilter(filter);
-    }
-
-    return m_FileChooser;
-  }
-
-  /**
-   * Loads properties from a file, prompts the user to select props file.
-   */
-  protected void loadProperties() {
-    int		retVal;
-    Properties	props;
-
-    retVal = getFileChooser().showOpenDialog(this);
-    if (retVal != BaseFileChooser.APPROVE_OPTION)
-      return;
-
-    props = new Properties();
-    if (!props.load(getFileChooser().getSelectedFile().getAbsolutePath())) {
-      GUIHelper.showErrorMessage(this, "Failed to load properties from: " + getFileChooser().getSelectedFile());
-      return;
-    }
-
-    setProperties(props, true);
-  }
-
-  /**
-   * Saves properties to a file, prompts the user to select props file.
-   */
-  protected void saveProperties() {
-    int		retVal;
-    Properties	props;
-
-    retVal = getFileChooser().showSaveDialog(this);
-    if (retVal != BaseFileChooser.APPROVE_OPTION)
-      return;
-
-    props = getProperties(true);
-    if (!props.save(getFileChooser().getSelectedFile().getAbsolutePath()))
-      GUIHelper.showErrorMessage(this, "Failed to save properties to: " + getFileChooser().getSelectedFile());
-  }
-
-  /**
-   * Adds the specified listener.
-   * 
-   * @param l		the listener to add
-   */
-  public void addActionListener(ActionListener l) {
-    m_ActionListeners.add(l);
-  }
-  
-  /**
-   * Removes the specified listener.
-   * 
-   * @param l		the listener to remove
-   */
-  public void removeActionListener(ActionListener l) {
-    m_ActionListeners.remove(l);
-  }
-  
-  /**
-   * Notifies all change listeners with the specified event.
-   * 
-   * @param e		the event to send
-   */
-  protected void notifyActionListeners(ActionEvent e) {
-    ActionListener[]	listeners;
-    
-    listeners = m_ActionListeners.toArray(new ActionListener[m_ActionListeners.size()]);
-    for (ActionListener listener: listeners)
-      listener.actionPerformed(e);
-  }
-  
-  /**
-   * Sets custom text to use for the "finish" button.
-   * 
-   * @param value	the text, null or empty string to use default
-   */
-  public void setCustomFinishText(String value) {
-    if ((value != null) && (value.trim().length() == 0))
-	value = null;
-    m_CustomFinishText = value;
-  }
-  
-  /**
-   * Returns the custom text to use for the "finish" button, if any.
-   * 
-   * @return		the text, null if not used
-   */
-  public String getCustomFinishText() {
-    return m_CustomFinishText;
-  }
-
-  /**
-   * Returns the logger in use.
-   *
-   * @return		the logger
-   */
-  public synchronized Logger getLogger() {
-    if (m_Logger == null) {
-      m_Logger = LoggingHelper.getLogger(getID().isEmpty() ? getClass().getName() : (getClass().getName() + "/" + getID()));
-      m_Logger.setLevel(Level.INFO);
-      m_Logger.removeHandler(LoggingHelper.getDefaultHandler());
-      m_Logger.addHandler(LoggingHelper.getDefaultHandler());
-      m_Logger.setUseParentHandlers(false);
-    }
-
-    return m_Logger;
-  }
-
-  /**
-   * Returns whether logging is enabled.
-   *
-   * @return		always true
-   */
-  public boolean isLoggingEnabled() {
-    return true;
   }
 
   /**

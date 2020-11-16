@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWizardPage.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -45,7 +45,6 @@ import java.util.logging.Level;
  * Ancestor for wizard pages.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWizardPage
   extends BasePanel
@@ -55,7 +54,7 @@ public abstract class AbstractWizardPage
   private static final long serialVersionUID = 391442213775313771L;
   
   /** the wizard this page belongs to. */
-  protected WizardPane m_Owner;
+  protected AbstractWizardPane m_Owner;
   
   /** the name of the page. */
   protected String m_PageName;
@@ -145,7 +144,7 @@ public abstract class AbstractWizardPage
    * 
    * @param value	the owner
    */
-  public void setOwner(WizardPane value) {
+  public void setOwner(AbstractWizardPane value) {
     m_Owner = value;
   }
   
@@ -154,7 +153,7 @@ public abstract class AbstractWizardPage
    * 
    * @return		the owner, null if none set
    */
-  public WizardPane getOwner() {
+  public AbstractWizardPane getOwner() {
     return m_Owner;
   }
   
