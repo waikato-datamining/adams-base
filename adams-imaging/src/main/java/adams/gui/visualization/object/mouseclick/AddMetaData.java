@@ -172,8 +172,11 @@ public class AddMetaData
 	    value = props.getProperty("value");
 	    break;
 	}
-	if (value != null)
-	  hit.getMetaData().put(m_LastField, value);
+	if (value != null) {
+	  objects.remove(hit);
+          hit.getMetaData().put(m_LastField, value);
+          objects.add(hit);
+        }
       }
 
       // set new meta-data
