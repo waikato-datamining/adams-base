@@ -390,14 +390,11 @@ public class WizardPane
     wizard.addPage(textpage);
     wizard.addPage(new FinalPage());
     final BaseFrame frame = new BaseFrame("Example Wizard");
-    wizard.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	System.out.println(e.getActionCommand());
-	System.out.println(wizard.getProperties(true));
-	frame.setVisible(false);
-	frame.dispose();
-      }
+    wizard.addActionListener((ActionEvent e) -> {
+      System.out.println(e.getActionCommand());
+      System.out.println(wizard.getProperties(true));
+      frame.setVisible(false);
+      frame.dispose();
     });
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
