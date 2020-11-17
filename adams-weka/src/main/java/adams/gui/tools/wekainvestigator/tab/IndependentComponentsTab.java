@@ -15,7 +15,7 @@
 
 /*
  * IndependentComponentsTab.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -281,7 +281,7 @@ public class IndependentComponentsTab
    * @return		the icon name, null if not available
    */
   public String getTabIcon() {
-    return "scatterplot.gif";
+    return "ica.png";
   }
 
   /**
