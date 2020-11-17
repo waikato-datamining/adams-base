@@ -276,6 +276,8 @@ public abstract class AbstractWizardPane
     result = new Properties();
     for (String name: m_PageLookup.keySet()) {
       page = m_PageLookup.get(name);
+      if (!page.isValid())
+        continue;
       sub  = page.getProperties();
       if (usePrefix)
 	result.add(sub, page.getPageName() + ".");
@@ -421,5 +423,15 @@ public abstract class AbstractWizardPane
    */
   public boolean isLoggingEnabled() {
     return true;
+  }
+
+  /**
+   * Updates all the pages.
+   *
+   * @see		AbstractWizardPage#update()
+   */
+  public void update() {
+    for (String key: m_PageLookup.keySet())
+      m_PageLookup.get(key).update();
   }
 }

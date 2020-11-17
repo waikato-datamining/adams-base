@@ -82,6 +82,9 @@ public abstract class AbstractWizardPage
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
 
+  /** whether the page has valid input or not. */
+  protected boolean m_Valid;
+
   /**
    * Initializes the members.
    */
@@ -93,6 +96,7 @@ public abstract class AbstractWizardPage
     m_PageCheck     = new DummyPageCheck();
     m_ProceedAction = new DummyProceedAction();
     m_Owner         = null;
+    m_Valid         = false;
   }
 
   /**
@@ -372,5 +376,44 @@ public abstract class AbstractWizardPage
    */
   public boolean isLoggingEnabled() {
     return m_Owner.isLoggingEnabled();
+  }
+
+  /**
+   * Updates the page.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void update() {
+  }
+
+  /**
+   * Invalidates the input on the page.
+   *
+   * @see		#isValid()
+   * @see		#validate()
+   */
+  public void invalidate() {
+    m_Valid = false;
+  }
+
+  /**
+   * Returns whether the input on the page is valid.
+   *
+   * @return		true if valid
+   * @see		#invalidate()
+   * @see		#validate()
+   */
+  public boolean isValid() {
+    return m_Valid;
+  }
+
+  /**
+   * Marks the input on the page as valid.
+   *
+   * @see		#isValid()
+   * @see		#invalidate()
+   */
+  public void validate() {
+    m_Valid = true;
   }
 }

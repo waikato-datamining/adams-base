@@ -156,6 +156,7 @@ public class WizardPane
     if (currPage.getProceedAction() != null)
       currPage.getProceedAction().onProceed(currPage, nextPage);
     setSelectedPage(getSelectedIndex() + 1);
+    currPage.validate();
   }
 
   /**
@@ -396,6 +397,7 @@ public class WizardPane
       frame.setVisible(false);
       frame.dispose();
     });
+    wizard.update();
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(wizard, BorderLayout.CENTER);
