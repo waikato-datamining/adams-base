@@ -58,6 +58,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -146,6 +147,9 @@ public class SegmentationPanel
 
   /** the active tool. */
   protected AbstractTool m_ActiveTool;
+
+  /** the panel with the buttons. */
+  protected JPanel m_PanelToolButtons;
 
   /**
    * Initializes the members.
@@ -251,8 +255,8 @@ public class SegmentationPanel
     m_SplitPaneRight.setRightComponent(m_PanelTools);
     m_SplitPaneTools = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_PanelTools.add(m_SplitPaneTools, BorderLayout.CENTER);
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    m_SplitPaneTools.setTopComponent(panel);
+    m_PanelToolButtons = new JPanel(new GridLayout(0, 4, 5, 5));
+    m_SplitPaneTools.setTopComponent(m_PanelToolButtons);
     m_PanelToolOptions = new BasePanel(new BorderLayout());
     m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
     tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
@@ -284,11 +288,11 @@ public class SegmentationPanel
 	});
         group.add(button);
         if (t.equals(Pointer.class)) {
-	  panel.add(button, 0);
+	  m_PanelToolButtons.add(button, 0);
 	  buttonPointer = button;
 	}
         else {
-	  panel.add(button);
+	  m_PanelToolButtons.add(button);
 	}
       }
       catch (Exception e) {
@@ -536,6 +540,24 @@ public class SegmentationPanel
   }
 
   /**
+   * Sets the number of columns used for the tool buttons.
+   *
+   * @param columns	the columns
+   */
+  public void setToolButtonColumns(int columns) {
+    ((GridLayout) m_PanelToolButtons.getLayout()).setColumns(columns);
+  }
+
+  /**
+   * Returns the number of columns used for the tool buttons.
+   *
+   * @return		the columns
+   */
+  public int getToolButtonColumns() {
+    return ((GridLayout) m_PanelToolButtons.getLayout()).getColumns();
+  }
+
+  /**
    * For testing only.
    *
    * @param args	ignored
@@ -554,6 +576,7 @@ public class SegmentationPanel
       layer.setRemovable(true);
       layer.setActionsAvailable(true);
     }
+    panel.setToolButtonColumns(2);
     panel.update();
     BaseFrame frame = new BaseFrame("Segmentation");
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);

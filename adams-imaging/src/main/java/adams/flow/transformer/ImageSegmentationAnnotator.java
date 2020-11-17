@@ -165,6 +165,24 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  *
+ * <pre>-left-divider-location &lt;int&gt; (property: leftDividerLocation)
+ * &nbsp;&nbsp;&nbsp;The position for the left divider in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 280
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-right-divider-location &lt;int&gt; (property: rightDividerLocation)
+ * &nbsp;&nbsp;&nbsp;The position for the right divider in pixels.
+ * &nbsp;&nbsp;&nbsp;default: 650
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-tool-button-columns &lt;int&gt; (property: toolButtonColumns)
+ * &nbsp;&nbsp;&nbsp;The number of columns to use for the tool buttons.
+ * &nbsp;&nbsp;&nbsp;default: 4
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  * <pre>-zoom &lt;double&gt; (property: zoom)
  * &nbsp;&nbsp;&nbsp;The zoom level in percent.
  * &nbsp;&nbsp;&nbsp;default: 100.0
@@ -227,6 +245,9 @@ public class ImageSegmentationAnnotator
   /** the position for the right divider. */
   protected int m_RightDividerLocation;
 
+  /** the number of columns to use for the tool buttons. */
+  protected int m_ToolButtonColumns;
+
   /** the zoom level. */
   protected double m_Zoom;
 
@@ -287,6 +308,10 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "right-divider-location", "rightDividerLocation",
       650, 1, null);
+
+    m_OptionManager.add(
+      "tool-button-columns", "toolButtonColumns",
+      4, 1, null);
 
     m_OptionManager.add(
       "zoom", "zoom",
@@ -510,6 +535,37 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets the number of columns to use for the tool buttons.
+   *
+   * @param value 	the columns
+   */
+  public void setToolButtonColumns(int value) {
+    if (getOptionManager().isValid("toolButtonColumns", value)) {
+      m_ToolButtonColumns = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of columns to use for the tool buttons.
+   *
+   * @return 		the columns
+   */
+  public int getToolButtonColumns() {
+    return m_ToolButtonColumns;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String toolButtonColumnsTipText() {
+    return "The number of columns to use for the tool buttons.";
+  }
+
+  /**
    * Sets the zoom level in percent (1-inf).
    *
    * @param value 	the zoom
@@ -698,6 +754,7 @@ public class ImageSegmentationAnnotator
     m_PanelSegmentation.setZoom(m_Zoom);
     m_PanelSegmentation.setLeftDividerLocation(m_LeftDividerLocation);
     m_PanelSegmentation.setRightDividerLocation(m_RightDividerLocation);
+    m_PanelSegmentation.setToolButtonColumns(m_ToolButtonColumns);
     return m_PanelSegmentation;
   }
 
