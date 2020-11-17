@@ -15,7 +15,7 @@
 
 /*
  * AppendDatasetsPanel.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.weka;
@@ -135,6 +135,7 @@ public class AppendDatasetsPanel
       }
       doAppend(input, output);
     });
+    m_Wizard.update();
   }
 
   /**

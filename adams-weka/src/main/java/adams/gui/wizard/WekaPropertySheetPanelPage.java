@@ -366,6 +366,7 @@ public class WekaPropertySheetPanelPage
 	frame.dispose();
       }
     });
+    wizard.update();
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);
     frame.getContentPane().setLayout(new BorderLayout());
     frame.getContentPane().add(wizard, BorderLayout.CENTER);

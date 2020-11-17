@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimeseriesImportDatabaseDialog.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.timeseries;
 
@@ -319,6 +319,8 @@ public class TimeseriesImportDatabaseDialog
 	setVisible(false);
       }
     });
+
+    m_PaneWizard.update();
   }
 
   /**

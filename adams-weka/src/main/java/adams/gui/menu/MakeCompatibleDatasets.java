@@ -15,7 +15,7 @@
 
 /*
  * MakeCompatibleDatasets.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -106,7 +106,6 @@ import java.util.logging.Level;
  * For making compatible ARFF datasets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MakeCompatibleDatasets
   extends AbstractBasicMenuItemDefinition {
@@ -231,6 +230,7 @@ public class MakeCompatibleDatasets
         doGenerate(frame, props);
       }
     });
+    wizard.update();
   }
 
   /**

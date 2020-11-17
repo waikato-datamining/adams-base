@@ -15,7 +15,7 @@
 
 /*
  * MergeDatasets.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -167,6 +167,7 @@ public class MergeDatasets
         doMerge(frame, input, merge, output);
       }
     });
+    wizard.update();
   }
 
   /**

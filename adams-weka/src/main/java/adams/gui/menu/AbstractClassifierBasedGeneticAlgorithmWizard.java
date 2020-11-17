@@ -15,7 +15,7 @@
 
 /*
  * AbstractClassifierBasedGeneticAlgorithmWizard.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -74,7 +74,6 @@ import java.util.logging.Level;
  * Ancestor for optimizing datasets (attribute selection) using a genetic algorithm.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
   extends AbstractBasicMenuItemDefinition {
@@ -398,6 +397,8 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
 	doOptimize(frame, genetic, files);
       }
     });
+
+    wizard.update();
   }
 
   /**
