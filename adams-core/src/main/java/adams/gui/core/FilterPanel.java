@@ -15,7 +15,7 @@
 
 /*
  * FilterPanel.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -272,5 +272,25 @@ public class FilterPanel
     e = new ChangeEvent(this);
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Sets the enabled state.
+   *
+   * @param value	true if enabled
+   */
+  public void setEnabled(boolean value) {
+    m_TextFilter.setEnabled(value);
+    m_LabelFilter.setEnabled(value);
+    m_LabelFilterClear.setEnabled(value);
+  }
+
+  /**
+   * Returns the enabled state.
+   *
+   * @return		true if enabled
+   */
+  public boolean isEnabled() {
+    return m_TextFilter.isEnabled();
   }
 }
