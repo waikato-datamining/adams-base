@@ -286,7 +286,7 @@ public class ImageSegmentationAnnotator
 
     m_OptionManager.add(
       "right-divider-location", "rightDividerLocation",
-      680, 1, null);
+      650, 1, null);
 
     m_OptionManager.add(
       "zoom", "zoom",
