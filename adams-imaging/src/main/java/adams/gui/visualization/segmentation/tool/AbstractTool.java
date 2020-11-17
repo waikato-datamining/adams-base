@@ -20,14 +20,19 @@
 
 package adams.gui.visualization.segmentation.tool;
 
+import adams.core.GlobalInfoSupporter;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
@@ -38,7 +43,7 @@ import java.io.Serializable;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTool
-  implements Serializable {
+  implements Serializable, GlobalInfoSupporter {
 
   private static final long serialVersionUID = -6782161796343153566L;
 
@@ -54,12 +59,22 @@ public abstract class AbstractTool
   /** the options panel. */
   protected BasePanel m_PanelOptions;
 
+  /** the full option panel. */
+  protected BasePanel m_PanelFullOptions;
+
   /**
    * Initializes the tool.
    */
   protected AbstractTool() {
     initialize();
   }
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public abstract String globalInfo();
 
   /**
    * Initializes the members.
@@ -241,8 +256,26 @@ public abstract class AbstractTool
    * @return		the options panel
    */
   public BasePanel getOptionPanel() {
-    if (m_PanelOptions == null)
+    BaseTextArea	textArea;
+    String		info;
+
+    if (m_PanelOptions == null) {
       m_PanelOptions = createOptionPanel();
-    return m_PanelOptions;
+      m_PanelFullOptions = new BasePanel(new BorderLayout(5, 5));
+      info = globalInfo();
+      if (info != null) {
+	textArea = new BaseTextArea();
+	textArea.setEditable(false);
+	textArea.setLineWrap(true);
+	textArea.setWrapStyleWord(true);
+	textArea.setColumns(20);
+	textArea.setRows(4);
+	textArea.setText(globalInfo());
+	m_PanelFullOptions.add(new BaseScrollPane(textArea), BorderLayout.NORTH);
+	m_PanelFullOptions.setBorder(BorderFactory.createTitledBorder("Description"));
+      }
+      m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
+    }
+    return m_PanelFullOptions;
   }
 }

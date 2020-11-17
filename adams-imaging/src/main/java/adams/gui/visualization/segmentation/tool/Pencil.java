@@ -79,6 +79,16 @@ public class Pencil
   protected int m_Size;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "For coloring in pixels.";
+  }
+
+  /**
    * Initializes the members.
    */
   protected void initialize() {

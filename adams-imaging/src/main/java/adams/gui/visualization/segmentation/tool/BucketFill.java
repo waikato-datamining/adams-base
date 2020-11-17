@@ -83,6 +83,16 @@ public class BucketFill
   protected double m_Zoom;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Fills in pixels using either the background (= black) or the foreground (color of the active layer).";
+  }
+
+  /**
    * Initializes the members.
    */
   protected void initialize() {

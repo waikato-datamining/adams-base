@@ -42,6 +42,16 @@ public class Pointer
   private static final long serialVersionUID = 3995038607501291060L;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return null;
+  }
+
+  /**
    * The name of the tool.
    *
    * @return		the name

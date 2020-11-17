@@ -79,6 +79,16 @@ public class Eraser
   protected int m_Size;
 
   /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  @Override
+  public String globalInfo() {
+    return "Removes pixels using the background.";
+  }
+
+  /**
    * Initializes the members.
    */
   protected void initialize() {
