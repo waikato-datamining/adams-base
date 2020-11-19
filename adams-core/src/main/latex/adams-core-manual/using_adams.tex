@@ -1229,16 +1229,28 @@ module.
   \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
   \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
   \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
-  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{
-  For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
+  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
 \end{tight_itemize}
 
-\noindent \textbf{NB:} Later versions of MySQL automatically want to secure
-the connection with SSL. If that is not desired or necessary, you can use
-a JDBC URL like this to connect to database \textit{DATABASE} on host \textit{HOST}:
-\begin{verbatim}
-jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false
-\end{verbatim}
+\noindent \textbf{Notes}
+\begin{tight_itemize}
+  \item Later versions of MySQL automatically want to secure
+  the connection with SSL. If that is not desired or necessary, you can use
+  a JDBC URL like this to connect to database \textit{DATABASE} on host \textit{HOST}:
+  \begin{verbatim}
+  jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false
+  \end{verbatim}
+
+  \item Versions of the MySQL driver newer than 5.1.47 changed the default
+  behavior for obtaining the columns via \verb|getColumns(null, null, "thetable", null)|
+  (\verb|DatabaseMetaData| class) to no longer using the current database, but
+  all databases\footnote{See this bug report: \url{https://bugs.mysql.com/95717}{}}.
+  In order to switch back to the original behavior, use \verb|nullDatabaseMeansCurrent=true|
+  in your connection string:
+  \begin{verbatim}
+  jdbc:mysql://<HOST>:3306/<DATABASE>?nullDatabaseMeansCurrent=true
+  \end{verbatim}
+\end{tight_itemize}
 
 
 \newpage
