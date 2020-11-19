@@ -100,6 +100,7 @@ public class PNGImageReader
     ImageLineByte 		lineByte;
     ImageLineInt 		lineInt;
     int				color;
+    int[]			pixels;
 
     result = new BufferedImageContainer();
 
@@ -117,6 +118,7 @@ public class PNGImageReader
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
       else
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
+      pixels = new int[reader.imgInfo.cols * reader.imgInfo.rows];
       for (n = 0; n < reader.imgInfo.rows; n++) {
         line = reader.readRow();
 	if (line instanceof ImageLineByte) {
@@ -144,7 +146,7 @@ public class PNGImageReader
 		| lineByte.getElem(i) << 8           // gray
 		| lineByte.getElem(i);               // gray
 	    }
-	    image.getRaster().setDataElements(i, n, image.getColorModel().getDataElements(color, null));
+	    pixels[i + n * reader.imgInfo.cols] = color;
 	  }
 	}
 	else {
@@ -172,10 +174,11 @@ public class PNGImageReader
 		| lineInt.getElem(i) << 8           // gray
 		| lineInt.getElem(i);               // gray
 	    }
-	    image.getRaster().setDataElements(i, n, image.getColorModel().getDataElements(color, null));
+	    pixels[i + n * reader.imgInfo.cols] = color;
 	  }
 	}
       }
+      image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
       result.setImage(image);
     }
     catch (Exception e) {
