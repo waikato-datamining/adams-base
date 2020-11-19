@@ -26,6 +26,7 @@ import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ColorHelper;
 import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.BorderFactory;
@@ -74,11 +75,11 @@ public class CombinedLayer
     /** whether active. */
     public boolean active;
 
-    /** the old color. */
-    public Color colorOld;
+    /** the actual color. */
+    public Color actualColor;
 
-    /** the new color. */
-    public Color colorNew;
+    /** the old actual color. */
+    public Color actualColorOld;
   }
 
   /**
@@ -104,11 +105,11 @@ public class CombinedLayer
     /** the button for applying the values. */
     protected BaseFlatButton m_ButtonApply;
 
-    /** the old color (incl alpha). */
-    protected Color m_ColorOld;
+    /** the current actual color (incl alpha). */
+    protected Color m_ActualColor;
 
-    /** the new/current color (incl alpha). */
-    protected Color m_ColorNew;
+    /** the old actual color (incl alpha). */
+    protected Color m_ActualColorOld;
 
     /**
      * Initializes the members.
@@ -117,8 +118,8 @@ public class CombinedLayer
     protected void initialize() {
       super.initialize();
 
-      m_ColorOld = null;
-      m_ColorNew = null;
+      m_ActualColor    = null;
+      m_ActualColorOld = null;
     }
 
     /**
@@ -153,10 +154,10 @@ public class CombinedLayer
       panelRow.add(m_TextColor);
       m_ButtonApply = createApplyButton();
       m_ButtonApply.addActionListener((ActionEvent e) -> {
-	m_ColorOld = m_ColorNew;
+	m_ActualColorOld = m_ActualColor;
 	Color c = getColor();
-	m_ColorNew = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 * getAlpha()));
-	ImageUtils.replaceColor(getOwner().getImage(), m_ColorOld, m_ColorNew);
+	m_ActualColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 * getAlpha()));
+	ImageUtils.replaceColor(getOwner().getImage(), m_ActualColorOld, m_ActualColor);
 	setApplyButtonState(m_ButtonApply, false);
 	getOwner().getManager().update();
       });
@@ -205,9 +206,22 @@ public class CombinedLayer
      * @param value	the color
      */
     public void setColor(Color value) {
+      System.out.println(getName() + " - set color: " + value.getRGB() + ", " + ColorHelper.toHex(value));
       m_TextColor.setColor(value);
-      m_ColorOld = value;
-      m_ColorNew = value;
+    }
+
+    /**
+     * Sets the actual color.
+     *
+     * @param value	the color
+     */
+    public void setActualColor(Color value) {
+      if (m_ActualColor != null) {
+        if (m_ActualColor.getRGB() != value.getRGB()) {
+          ImageUtils.replaceColor(getOwner().getImage(), m_ActualColor, value);
+	}
+      }
+      m_ActualColor = value;
     }
 
     /**
@@ -263,7 +277,7 @@ public class CombinedLayer
 	return null;
 
       result    = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-      rgb       = m_ColorNew.getRGB();
+      rgb       = m_ActualColor.getRGB();
       black     = Color.BLACK.getRGB();
       pixelsOld = getOwner().getImage().getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
       pixelsNew = new int[pixelsOld.length];
@@ -306,8 +320,8 @@ public class CombinedLayer
       result.active   = (getOwner().getActiveSubLayer() == this);
       result.color    = getColor();
       result.alpha    = getAlpha();
-      result.colorOld = m_ColorOld;
-      result.colorNew = m_ColorNew;
+      result.actualColor    = m_ActualColor;
+      result.actualColorOld = m_ActualColorOld;
 
       return result;
     }
@@ -318,10 +332,11 @@ public class CombinedLayer
      * @param state	the state
      */
     public void setState(CombinedSubLayerState state) {
-      setColor(state.color);
-      setAlpha(state.alpha);
-      m_ColorOld = state.colorOld;
-      m_ColorNew = state.colorNew;
+      // TODO restore color/alpha?
+//      setColor(state.color);
+//      setAlpha(state.alpha);
+//      m_ActualColor    = state.actualColor;
+//      m_ActualColorOld = state.actualColorOld;
       if (state.active)
 	getOwner().activate(this);
       setApplyButtonState(m_ButtonApply, false);
@@ -490,7 +505,8 @@ public class CombinedLayer
    * @param image 	the image, can be null
    */
   public CombinedSubLayer add(String name, Color color, float alpha, BufferedImage image) {
-    CombinedSubLayer panel;
+    CombinedSubLayer 	panel;
+    Color		actColor;
 
     panel = new CombinedSubLayer();
     panel.setOwner(this);
@@ -499,9 +515,15 @@ public class CombinedLayer
     panel.setAlpha(alpha);
     m_SubLayers.add(panel);
 
+    actColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha));
+    panel.setActualColor(actColor);
+
     if (image != null) {
-      image = BufferedImageHelper.deepCopy(image);
-      ImageUtils.initImage(image, new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha)));
+      if (image.getType() != BufferedImage.TYPE_INT_ARGB)
+	image = BufferedImageHelper.convert(image, BufferedImage.TYPE_INT_ARGB);
+      else
+	image = BufferedImageHelper.deepCopy(image);
+      ImageUtils.initImage(image, actColor);
     }
     else {
       image = ImageUtils.newImage(getManager().getImageLayer().getImage().getWidth(), getManager().getImageLayer().getImage().getHeight());
@@ -532,6 +554,26 @@ public class CombinedLayer
    */
   public List<CombinedSubLayer> getSubLayers() {
     return m_SubLayers;
+  }
+
+  /**
+   * Returns the sub layer by name.
+   *
+   * @return		the sub layer, null if not found
+   */
+  public CombinedSubLayer getSubLayer(String name) {
+    CombinedSubLayer	result;
+
+    result = null;
+
+    for (CombinedSubLayer l: m_SubLayers) {
+      if (l.getName().equals(name)) {
+        result = l;
+        break;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -646,11 +688,11 @@ public class CombinedLayer
       setEnabled(true);
       setApplyButtonState(m_ButtonApply, false);
       m_Alpha = cstate.alphaApplied;
-      m_SubLayers.clear();
       for (String name: cstate.order) {
         sstate = cstate.subLayers.get(name);
-        panel  = add(name, sstate.color, sstate.alpha);
-        panel.setState(sstate);
+        panel  = getSubLayer(name);
+        if (panel != null)
+	  panel.setState(sstate);
       }
     }
   }
