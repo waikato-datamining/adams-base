@@ -25,8 +25,10 @@ import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
 import adams.gui.visualization.segmentation.CanvasPanel;
+import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 import adams.gui.visualization.segmentation.layer.BackgroundLayer.BackgroundLayerState;
+import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedLayerState;
 import adams.gui.visualization.segmentation.layer.ImageLayer.ImageLayerState;
 import adams.gui.visualization.segmentation.layer.OverlayLayer.OverlayLayerState;
 
@@ -52,11 +54,17 @@ public class LayerManager
 
   private static final long serialVersionUID = 4462920156618724031L;
 
+  /** whether to use separate overlay layers or a combined layer. */
+  protected boolean m_SplitLayers;
+
   /** the background layer. */
   protected BackgroundLayer m_BackgroundLayer;
 
   /** the image layer. */
   protected ImageLayer m_ImageLayer;
+
+  /** the combined layer. */
+  protected CombinedLayer m_CombinedLayer;
 
   /** the overlay layers. */
   protected List<OverlayLayer> m_Overlays;
@@ -76,23 +84,49 @@ public class LayerManager
   /** whether bestfit zoom needs to be redone. */
   protected boolean m_RedoBestFit;
 
+  /** the listeners if the best fit is being redone. */
+  protected Set<ChangeListener> m_BestFitRedone;
+
   /**
-   * Initializes the layer manager.
+   * Initializes the layer manager using split layers.
    *
    * @param canvasPanel 	the panel to draw on
    */
   public LayerManager(CanvasPanel canvasPanel) {
+    m_SplitLayers     = true;
     m_BackgroundLayer = new BackgroundLayer();
     m_BackgroundLayer.setManager(this);
     m_ImageLayer      = new ImageLayer();
     m_ImageLayer.setManager(this);
+    m_CombinedLayer   = null;
     m_Overlays        = new ArrayList<>();
     m_CanvasPanel     = canvasPanel;
     m_ChangeListeners = new HashSet<>();
     m_Zoom            = 1.0;
     m_RedoBestFit     = false;
+    m_BestFitRedone   = new HashSet<>();
     m_Undo            = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
+  }
+
+  /**
+   * Sets whether to use split layers. Also clears everything.
+   *
+   * @param value	true if split layers
+   * @see		#clear()
+   */
+  public void setSplitLayers(boolean value) {
+    m_SplitLayers = value;
+    clear();
+  }
+
+  /**
+   * Returns whether split layers are used (overlay) or not (combined).
+   *
+   * @return		true if split layers
+   */
+  public boolean getSplitLayers() {
+    return m_SplitLayers;
   }
 
   /**
@@ -100,7 +134,9 @@ public class LayerManager
    */
   public void clear() {
     m_Overlays.clear();
-    m_ImageLayer.setImage(null);
+    m_ImageLayer.clear();
+    if (m_CombinedLayer != null)
+      m_CombinedLayer.clear();
     m_Undo.clear();
     update();
   }
@@ -216,6 +252,9 @@ public class LayerManager
       else if (state instanceof ImageLayerState) {
 	getImageLayer().setState(state);
       }
+      else if (state instanceof CombinedLayerState) {
+	getCombinedLayer().setState(state);
+      }
       else if (state instanceof OverlayLayerState) {
         ostate = (OverlayLayerState) state;
         if (hasOverlay(ostate.name))
@@ -226,6 +265,35 @@ public class LayerManager
     }
 
     update();
+  }
+
+  /**
+   * Adds listener to get notified when the best fit has been redone.
+   *
+   * @param l		the listener to add
+   */
+  public void addBestFitRedoneListener(ChangeListener l) {
+    m_BestFitRedone.add(l);
+  }
+
+  /**
+   * Removes listener to get notified when the best fit has been redone.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeBestFitRedoneListener(ChangeListener l) {
+    m_BestFitRedone.remove(l);
+  }
+
+  /**
+   * Notifies all the listener that the best fit has been redone.
+   */
+  protected void notifyBestFitRedoneListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_BestFitRedone.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
   }
 
   /**
@@ -267,7 +335,10 @@ public class LayerManager
     zoomH = (double) height / (double) getImageLayer().getImage().getHeight();
     setZoom(Math.min(zoomW, zoomH));
 
-    m_RedoBestFit = false;
+    if (m_RedoBestFit) {
+      m_RedoBestFit = false;
+      notifyBestFitRedoneListeners();
+    }
   }
 
   /**
@@ -332,7 +403,10 @@ public class LayerManager
     result = new ArrayList<>();
     result.add(getBackgroundLayer());
     result.add(getImageLayer());
-    result.addAll(getOverlays());
+    if (m_CombinedLayer != null)
+      result.add(m_CombinedLayer);
+    else
+      result.addAll(getOverlays());
 
     return result;
   }
@@ -419,15 +493,18 @@ public class LayerManager
   public OverlayLayer addOverlay(String name, Color color, float alpha, BufferedImage image) {
     OverlayLayer 	result;
 
+    if (!m_SplitLayers)
+      throw new IllegalArgumentException("Cannot add overlay layers when not using split layers!");
+
     if (image == null)
-      image = OverlayLayer.newImage(m_ImageLayer.getImage().getWidth(), m_ImageLayer.getImage().getHeight());
+      image = ImageUtils.newImage(m_ImageLayer.getImage().getWidth(), m_ImageLayer.getImage().getHeight());
 
     result = new OverlayLayer();
     result.setManager(this);
+    result.setImage(image);
     result.setName(name);
     result.setColor(color);
     result.setAlpha(alpha);
-    result.setImage(image);
     m_Overlays.add(result);
     if (m_Overlays.size() == 1)
       result.setActive(true);
@@ -448,6 +525,9 @@ public class LayerManager
     int			index;
     int			i;
 
+    if (!m_SplitLayers)
+      throw new IllegalArgumentException("Cannot remove overlay layers when not using split layers!");
+
     index = -1;
     for (i = 0; i < m_Overlays.size(); i++) {
       if (m_Overlays.get(i).getName().equals(name)) {
@@ -462,7 +542,7 @@ public class LayerManager
     result = m_Overlays.remove(index);
 
     // no active one? -> activate first one
-    if (!hasActive() && (m_Overlays.size() > 0))
+    if (!hasActiveOverlay() && (m_Overlays.size() > 0))
       m_Overlays.get(0).setActive(true);
 
     return result;
@@ -514,26 +594,71 @@ public class LayerManager
    * @param layer	the layer to activate
    */
   public void activate(OverlayLayer layer) {
+    if (!m_SplitLayers)
+      throw new IllegalArgumentException("Cannot activate overlay layers when not using split layers!");
+
     for (OverlayLayer l: m_Overlays)
       l.setActive(l == layer);
     update();
   }
 
   /**
-   * Returns whether a layer is currently active.
+   * Adds an overlay layer with no image.
    *
-   * @return		true if active
+   * @param name	the name
+   * @param color 	the color
+   * @param alpha 	the alpha value
    */
-  public boolean hasActive() {
-    return (getActive() != null);
+  public CombinedLayer addCombined(String name, Color color, float alpha) {
+    return addCombined(name, color, alpha, null);
   }
 
   /**
-   * Returns the active layer, if any. Must be enabled, too.
+   * Adds an overlay layer with image.
+   *
+   * @param name	the name
+   * @param color 	the color
+   * @param alpha 	the alpha value
+   * @param image 	the image, can be null
+   */
+  public CombinedLayer addCombined(String name, Color color, float alpha, BufferedImage image) {
+    if (m_SplitLayers)
+      throw new IllegalArgumentException("Cannot add combined layer when using split layers!");
+
+    if (m_CombinedLayer == null) {
+      m_CombinedLayer = new CombinedLayer();
+      m_CombinedLayer.setManager(this);
+    }
+    m_CombinedLayer.add(name, color, alpha, image);
+    m_CombinedLayer.update();
+
+    return m_CombinedLayer;
+  }
+
+  /**
+   * Returns the image layer.
+   *
+   * @return		the layer
+   */
+  public CombinedLayer getCombinedLayer() {
+    return m_CombinedLayer;
+  }
+
+  /**
+   * Returns whether an overlay layer is currently active.
+   *
+   * @return		true if active
+   */
+  public boolean hasActiveOverlay() {
+    return (getActiveOverlay() != null);
+  }
+
+  /**
+   * Returns the active overlay layer, if any. Must be enabled, too.
    *
    * @return		the layer, null if none active
    */
-  public OverlayLayer getActive() {
+  public OverlayLayer getActiveOverlay() {
     for (OverlayLayer l: m_Overlays) {
       if (l.isActive() && l.isEnabled())
         return l;
@@ -566,8 +691,13 @@ public class LayerManager
     g2d.scale(getZoom(), getZoom());
     getBackgroundLayer().draw(g2d);
     getImageLayer().draw(g2d);
-    for (OverlayLayer l: getOverlays())
-      l.draw(g2d);
+    if (getSplitLayers()) {
+      for (OverlayLayer l : getOverlays())
+        l.draw(g2d);
+    }
+    else {
+      getCombinedLayer().draw(g2d);
+    }
   }
 
   /**

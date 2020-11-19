@@ -220,7 +220,7 @@ public class SegmentationPanel
     panel.add(new JLabel(" "));
     m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
     m_ButtonAddUndo.setToolTipText("Add undo point");
-    m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndo());
+    m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndoPoint());
     panel.add(m_ButtonAddUndo);
     m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo changes");
@@ -356,6 +356,7 @@ public class SegmentationPanel
     int		location;
     JPanel 	outer;
     JPanel 	nested;
+    boolean	hasActive;
 
     m_PanelLayers.removeAll();
     outer = m_PanelLayers;
@@ -368,7 +369,12 @@ public class SegmentationPanel
     location = m_SplitPaneLeft.getDividerLocation();
     m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
     m_SplitPaneLeft.setDividerLocation(location);
-    if (!getManager().hasActive())
+    hasActive = false;
+    if (getManager().hasActiveOverlay())
+      hasActive = true;
+    if ((getManager().getCombinedLayer() != null) && (getManager().getCombinedLayer().hasActiveSubLayer()))
+      hasActive = true;
+    if (!hasActive)
       m_PanelCanvas.setCursor(Cursors.disabled());
     else if (m_ActiveTool != null)
       m_PanelCanvas.setCursor(m_ActiveTool.getCursor());
@@ -389,7 +395,7 @@ public class SegmentationPanel
   /**
    * Adds an undo point.
    */
-  public void addUndo() {
+  public void addUndoPoint() {
     getManager().addUndoPoint(new Date().toString());
     updateButtons();
   }
@@ -421,6 +427,9 @@ public class SegmentationPanel
    * Updates buttons and manager.
    */
   public void update() {
+    invalidate();
+    doLayout();
+    repaint();
     updateButtons();
     getManager().update();
   }
@@ -558,13 +567,32 @@ public class SegmentationPanel
   }
 
   /**
-   * For testing only.
+   * Sets whether automatic undos are enabled.
    *
-   * @param args	ignored
+   * @param value	true if enabled
    */
-  public static void main(String[] args) {
-    Environment.setEnvironmentClass(Environment.class);
+  public void setAutomaticUndoEnabled(boolean value) {
+    m_ButtonAddUndo.setVisible(!value);
+  }
+
+  /**
+   * Returns whether automatic undos are enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isAutomaticUndoEnabled() {
+    return !m_ButtonAddUndo.isVisible();
+  }
+
+  /**
+   * Generates a panel with separate overlay layers.
+   *
+   * @param args	the files to load
+   * @return		the panel
+   */
+  protected static SegmentationPanel overlayTest(String[] args) {
     SegmentationPanel panel = new SegmentationPanel();
+    panel.getManager().setSplitLayers(true);
     panel.getManager().clear();
     File img = new File(args[0]);
     panel.getManager().setImage(img.getName(), BufferedImageHelper.read(img).getImage());
@@ -577,6 +605,41 @@ public class SegmentationPanel
       layer.setActionsAvailable(true);
     }
     panel.setToolButtonColumns(2);
+    return panel;
+  }
+
+  /**
+   * Generates a panel with a combined layer.
+   *
+   * @param args	the files to load
+   * @return		the panel
+   */
+  protected static SegmentationPanel combinedTest(String[] args) {
+    SegmentationPanel panel = new SegmentationPanel();
+    panel.getManager().setSplitLayers(false);
+    panel.getManager().clear();
+    File img = new File(args[0]);
+    panel.getManager().setImage(img.getName(), BufferedImageHelper.read(img).getImage());
+    DefaultColorProvider provider = new DefaultColorProvider();
+    for (int i = 1; i < args.length; i++) {
+      File ovl = new File(args[i]);
+      String label = FileUtils.replaceExtension(ovl.getName(), "").replaceAll(".*-", "");
+      panel.getManager().addCombined(label, provider.next(), 0.5f, new PNGImageReader().read(new PlaceholderFile(ovl)).getImage());
+    }
+    panel.setToolButtonColumns(2);
+    return panel;
+  }
+
+  /**
+   * For testing only.
+   *
+   * @param args	the files to load
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    SegmentationPanel panel;
+    //panel = overlayTest(args);
+    panel = combinedTest(args);
     panel.update();
     BaseFrame frame = new BaseFrame("Segmentation");
     frame.setDefaultCloseOperation(BaseFrame.EXIT_ON_CLOSE);

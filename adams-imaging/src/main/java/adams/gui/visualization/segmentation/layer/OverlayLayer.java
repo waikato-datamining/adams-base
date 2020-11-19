@@ -32,6 +32,7 @@ import adams.gui.core.ColorHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
 
 import javax.swing.BorderFactory;
@@ -157,15 +158,14 @@ public class OverlayLayer
     m_TextAlpha = new BaseObjectTextField<>(new BaseFloat(0.5f));
     m_TextAlpha.setColumns(4);
     m_TextAlpha.setToolTipText("fully transparent=0.0, fully opaque=1.0");
-    m_TextAlpha.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextAlpha.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panelRow.add(m_TextAlpha);
     m_TextColor = new BaseColorTextField(Color.RED);
     m_TextColor.setColumns(7);
     m_TextColor.setToolTipText("The color to use for the overlay");
-    m_TextColor.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextColor.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panelRow.add(m_TextColor);
-    m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
-    m_ButtonApply.setToolTipText("Apply current values");
+    m_ButtonApply = createApplyButton();
     m_ButtonApply.addActionListener((ActionEvent e) -> {
       updateImage();
       update();
@@ -304,22 +304,9 @@ public class OverlayLayer
    * Updates the image using the current color.
    */
   protected void updateImage() {
-    int		black;
-    int		newColor;
-    int[]	pixels;
-    int		i;
-
     if (m_Image == null)
       return;
-
-    black    = Color.BLACK.getRGB();
-    newColor = getColor().getRGB();
-    pixels   = m_Image.getRGB(0, 0, m_Image.getWidth(), m_Image.getHeight(), null, 0, m_Image.getWidth());
-    for (i = 0; i < pixels.length; i++) {
-      if (pixels[i] != black)
-	pixels[i] = newColor;
-    }
-    m_Image.setRGB(0, 0, m_Image.getWidth(), m_Image.getHeight(), pixels, 0, m_Image.getWidth());
+    ImageUtils.initImage(m_Image, getColor());
   }
 
   /**
@@ -409,7 +396,7 @@ public class OverlayLayer
    * Notifies the change listeners.
    */
   protected void update() {
-    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    setApplyButtonState(m_ButtonApply, false);
     super.update();
   }
 }

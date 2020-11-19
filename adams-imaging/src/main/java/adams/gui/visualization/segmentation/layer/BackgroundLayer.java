@@ -24,7 +24,6 @@ import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -90,10 +89,9 @@ public class BackgroundLayer
     m_TextColor = new BaseColorTextField(Color.BLACK);
     m_TextColor.setColumns(7);
     m_TextColor.setToolTipText("The color to use for the background");
-    m_TextColor.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextColor.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panelRow.add(m_TextColor);
-    m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
-    m_ButtonApply.setToolTipText("Apply current values");
+    m_ButtonApply = createApplyButton();
     m_ButtonApply.addActionListener((ActionEvent e) -> update());
     panelRow.add(m_ButtonApply);
   }
@@ -182,13 +180,14 @@ public class BackgroundLayer
 
     if (state instanceof BackgroundLayerState)
       setColor(((BackgroundLayerState) state).color);
+    setApplyButtonState(m_ButtonApply, false);
   }
 
   /**
    * Notifies the change listeners.
    */
   protected void update() {
-    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    setApplyButtonState(m_ButtonApply, false);
     super.update();
   }
 }

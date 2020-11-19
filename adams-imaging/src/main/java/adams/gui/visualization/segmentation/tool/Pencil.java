@@ -144,9 +144,9 @@ public class Pencil
     int			x;
     int			y;
 
-    color = getActiveLayer().getColor();
+    color = getActiveColor();
     zoom  = getZoom();
-    img   = getActiveLayer().getImage();
+    img   = getActiveImage();
     g2d   = img.createGraphics();
     g2d.scale(1 / zoom, 1 / zoom);
     g2d.setColor(color);
@@ -193,12 +193,12 @@ public class Pencil
     group = new ButtonGroup();
     m_RadioSquare = new JRadioButton("Square");
     m_RadioSquare.setSelected(!m_Round);
-    m_RadioSquare.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_RadioSquare.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioSquare);
     panel.add(Fonts.usePlain(m_RadioSquare));
     m_RadioRound = new JRadioButton("Round");
     m_RadioRound.setSelected(m_Round);
-    m_RadioRound.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_RadioRound.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioRound);
     panel.add(Fonts.usePlain(m_RadioRound));
 
@@ -209,7 +209,7 @@ public class Pencil
     m_TextSize.setColumns(5);
     m_TextSize.setToolTipText("The size in on-screen pixels");
     m_TextSize.setCheckModel(new BoundedNumberCheckModel(Type.INTEGER, 1, null));
-    m_TextSize.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextSize.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panel2.add(m_TextSize);
 
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));

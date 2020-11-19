@@ -29,6 +29,7 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -45,8 +46,6 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 
 /**
  * Bucket fill.
@@ -133,80 +132,25 @@ public class BucketFill
   }
 
   /**
-   * Performs flood-fill on the provided image.
-   * Based on pseudo code from here:
-   * https://en.wikipedia.org/wiki/Flood_fill#Alternative_implementations
-   *
-   * @param image		the image to update
-   * @param n			the starting point
-   * @param targetColor		the color to replace
-   * @param replacementColor	the replacement color
-   */
-  protected void fill(BufferedImage image, Point n, Color targetColor, Color replacementColor) {
-    int 		target;
-    int			replacement;
-    LinkedList<Point>	queue;
-    int			x;
-    int			y;
-    int			w;
-    int			h;
-
-    target      = targetColor.getRGB();
-    replacement = replacementColor.getRGB();
-    if (target == replacement)
-      return;
-
-    x = (int) n.getX();
-    y = (int) n.getY();
-    if (image.getRGB(x, y) != target)
-      return;
-
-    image.setRGB(x, y, replacement);
-    w     = image.getWidth();
-    h     = image.getHeight();
-    queue = new LinkedList<>();
-    queue.add(n);
-
-    while (!queue.isEmpty()) {
-      n = queue.removeFirst();
-      x = (int) n.getX();
-      y = (int) n.getY();
-      // west
-      if ((x > 0) && (image.getRGB(x - 1, y) == target)) {
-	image.setRGB(x - 1, y, replacement);
-	queue.add(new Point(x - 1, y));
-      }
-      // east
-      if ((x < w - 1) && (image.getRGB(x + 1, y) == target)) {
-	image.setRGB(x + 1, y, replacement);
-	queue.add(new Point(x + 1, y));
-      }
-      // north
-      if ((y > 0) && (image.getRGB(x, y - 1) == target)) {
-	image.setRGB(x, y - 1, replacement);
-	queue.add(new Point(x, y - 1));
-      }
-      // south
-      if ((y < h - 1) && (image.getRGB(x, y + 1) == target)) {
-	image.setRGB(x, y + 1, replacement);
-	queue.add(new Point(x, y + 1));
-      }
-    }
-  }
-
-  /**
    * Performs flood fill at the position.
    *
    * @param p		the position to start
    */
   protected void fill(Point p) {
-    if (!hasActiveLayer())
+    Color	pColor;
+
+    if (!hasAnyActive())
       return;
 
+    if (isAutomaticUndoEnabled())
+      getCanvas().getOwner().addUndoPoint();
+
+    pColor = new Color(getActiveImage().getRGB(p.x, p.y));
+
     if (m_Foreground)
-      fill(getActiveLayer().getImage(), p, Color.BLACK, getActiveLayer().getColor());
+      ImageUtils.fill(getActiveImage(), p, pColor, getActiveColor());
     else
-      fill(getActiveLayer().getImage(), p, getActiveLayer().getColor(), Color.BLACK);
+      ImageUtils.fill(getActiveImage(), p, pColor, Color.BLACK);
 
     getCanvas().getOwner().getManager().update();
   }
@@ -280,12 +224,12 @@ public class BucketFill
     group = new ButtonGroup();
     m_RadioBackground = new JRadioButton("Background");
     m_RadioBackground.setSelected(!m_Foreground);
-    m_RadioBackground.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_RadioBackground.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioBackground);
     panel.add(Fonts.usePlain(m_RadioBackground));
     m_RadioForeground = new JRadioButton("Foreground");
     m_RadioForeground.setSelected(m_Foreground);
-    m_RadioForeground.addActionListener((ActionEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_RadioForeground.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioForeground);
     panel.add(Fonts.usePlain(m_RadioForeground));
 
@@ -296,7 +240,7 @@ public class BucketFill
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original cursor size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
-    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panel2.add(m_TextZoom);
 
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));

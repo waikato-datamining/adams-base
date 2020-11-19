@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.base.BaseString;
+import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
@@ -32,11 +33,16 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
 import adams.gui.visualization.segmentation.layer.BackgroundLayer;
+import adams.gui.visualization.segmentation.layer.CombinedLayer;
+import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -183,6 +189,12 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
+ * <pre>-automatic-undo &lt;boolean&gt; (property: automaticUndo)
+ * &nbsp;&nbsp;&nbsp;For either using automatic undo or manual one; for large images, automatic
+ * &nbsp;&nbsp;&nbsp;undo can slow things down.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  * <pre>-zoom &lt;double&gt; (property: zoom)
  * &nbsp;&nbsp;&nbsp;The zoom level in percent.
  * &nbsp;&nbsp;&nbsp;default: 100.0
@@ -194,18 +206,26 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-use-separate-layers &lt;boolean&gt; (property: useSeparateLayers)
+ * &nbsp;&nbsp;&nbsp;If enabled, support for multiple layers is enabled (eg for annotating objects
+ * &nbsp;&nbsp;&nbsp;that do not touch&#47;overlap).
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  * <pre>-layer-visibility &lt;ALL|NONE|PREVIOUSLY_VISIBLE&gt; (property: layerVisibility)
- * &nbsp;&nbsp;&nbsp;What layers will be visible when annotating the next image.
+ * &nbsp;&nbsp;&nbsp;What layers will be visible when annotating the next image (when using separate
+ * &nbsp;&nbsp;&nbsp;layers).
  * &nbsp;&nbsp;&nbsp;default: ALL
  * </pre>
  *
  * <pre>-allow-layer-remove &lt;boolean&gt; (property: allowLayerRemoval)
- * &nbsp;&nbsp;&nbsp;If enabled, the user can remove layers.
+ * &nbsp;&nbsp;&nbsp;If enabled, the user can remove layers (when using separate layers).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-allow-layer-actions &lt;boolean&gt; (property: allowLayerActions)
- * &nbsp;&nbsp;&nbsp;If enabled, the user has access to layer actions.
+ * &nbsp;&nbsp;&nbsp;If enabled, the user has access to layer actions (when using separate layers
+ * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -248,19 +268,25 @@ public class ImageSegmentationAnnotator
   /** the number of columns to use for the tool buttons. */
   protected int m_ToolButtonColumns;
 
+  /** whether to use automatic undo. */
+  protected boolean m_AutomaticUndo;
+
   /** the zoom level. */
   protected double m_Zoom;
 
   /** whether to use best fit. */
   protected boolean m_BestFit;
 
-  /** what layers to have visible. */
+  /** whether to use separate layers. */
+  protected boolean m_UseSeparateLayers;
+
+  /** what layers to have visible (when using separate layers). */
   protected LayerVisibility m_LayerVisibility;
 
-  /** whether layers can be deleted. */
+  /** whether layers can be deleted (when using separate layers). */
   protected boolean m_AllowLayerRemoval;
 
-  /** whether layer actions are available. */
+  /** whether layer actions are available (when using separate layers). */
   protected boolean m_AllowLayerActions;
   
   /** whether the dialog got accepted. */
@@ -269,8 +295,14 @@ public class ImageSegmentationAnnotator
   /** the last layers visible. */
   protected Set<String> m_LastVisible;
 
+  /** the last used colors. */
+  protected Map<String,Color> m_LastColors;
+
   /** whether best fit has been applied. */
   protected boolean m_BestFitApplied;
+
+  /** the change listener for when the best fit zoom got redone. */
+  protected ChangeListener m_BestFitRedoneListener;
 
   /**
    * Returns a string describing the object.
@@ -314,12 +346,20 @@ public class ImageSegmentationAnnotator
       4, 1, null);
 
     m_OptionManager.add(
+      "automatic-undo", "automaticUndo",
+      true);
+
+    m_OptionManager.add(
       "zoom", "zoom",
       100.0, 1.0, null);
 
     m_OptionManager.add(
       "best-fit", "bestFit",
       false);
+
+    m_OptionManager.add(
+      "use-separate-layers", "useSeparateLayers",
+      true);
 
     m_OptionManager.add(
       "layer-visibility", "layerVisibility",
@@ -342,7 +382,12 @@ public class ImageSegmentationAnnotator
     super.reset();
 
     m_LastVisible    = new HashSet<>();
+    m_LastColors     = new HashMap<>();
     m_BestFitApplied = false;
+    m_BestFitRedoneListener = (ChangeEvent e) -> {
+      m_PanelSegmentation.setZoom(RoundingUtils.round(m_PanelSegmentation.getManager().getZoom() * 100, 1));
+      m_PanelSegmentation.getManager().removeBestFitRedoneListener(m_BestFitRedoneListener);
+    };
   }
 
   /**
@@ -566,6 +611,35 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets whether to use automatic or manual undo.
+   *
+   * @param value 	true if to use
+   */
+  public void setAutomaticUndo(boolean value) {
+    m_AutomaticUndo = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use automatic or manual undo.
+   *
+   * @return 		true if to use
+   */
+  public boolean getAutomaticUndo() {
+    return m_AutomaticUndo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String automaticUndoTipText() {
+    return "For either using automatic undo or manual one; for large images, automatic undo can slow things down.";
+  }
+
+  /**
    * Sets the zoom level in percent (1-inf).
    *
    * @param value 	the zoom
@@ -626,7 +700,36 @@ public class ImageSegmentationAnnotator
   }
 
   /**
-   * Sets the type of visibility to use when annotating the next image.
+   * Sets whether to use separate layers or just one.
+   *
+   * @param value 	true if to use
+   */
+  public void setUseSeparateLayers(boolean value) {
+    m_UseSeparateLayers = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use separate layers or just one.
+   *
+   * @return 		true if to use
+   */
+  public boolean getUseSeparateLayers() {
+    return m_UseSeparateLayers;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useSeparateLayersTipText() {
+    return "If enabled, support for multiple layers is enabled (eg for annotating objects that do not touch/overlap).";
+  }
+
+  /**
+   * Sets the type of visibility to use when annotating the next image (when using separate layers).
    *
    * @param value 	the visibility
    */
@@ -636,7 +739,7 @@ public class ImageSegmentationAnnotator
   }
 
   /**
-   * Returns the type of visibility to use when annotating the next image.
+   * Returns the type of visibility to use when annotating the next image (when using separate layers).
    *
    * @return 		the visibility
    */
@@ -651,11 +754,11 @@ public class ImageSegmentationAnnotator
    * 			displaying in the GUI or for listing the options.
    */
   public String layerVisibilityTipText() {
-    return "What layers will be visible when annotating the next image.";
+    return "What layers will be visible when annotating the next image (when using separate layers).";
   }
 
   /**
-   * Sets whether removal of layers is allowed.
+   * Sets whether removal of layers is allowed (when using separate layers).
    *
    * @param value 	true if allowed
    */
@@ -665,7 +768,7 @@ public class ImageSegmentationAnnotator
   }
 
   /**
-   * Returns whether removal of layers is allowed.
+   * Returns whether removal of layers is allowed (when using separate layers).
    *
    * @return 		true if allowed
    */
@@ -680,11 +783,11 @@ public class ImageSegmentationAnnotator
    * 			displaying in the GUI or for listing the options.
    */
   public String allowLayerRemovalTipText() {
-    return "If enabled, the user can remove layers.";
+    return "If enabled, the user can remove layers (when using separate layers).";
   }
 
   /**
-   * Sets whether layer actions are available.
+   * Sets whether layer actions are available (when using separate layers).
    *
    * @param value 	true if allowed
    */
@@ -694,7 +797,7 @@ public class ImageSegmentationAnnotator
   }
 
   /**
-   * Returns whether layer actions are available.
+   * Returns whether layer actions are available (when using separate layers).
    *
    * @return 		true if allowed
    */
@@ -709,7 +812,7 @@ public class ImageSegmentationAnnotator
    * 			displaying in the GUI or for listing the options.
    */
   public String allowLayerActionsTipText() {
-    return "If enabled, the user has access to layer actions.";
+    return "If enabled, the user has access to layer actions (when using separate layers).";
   }
 
   /**
@@ -752,9 +855,11 @@ public class ImageSegmentationAnnotator
   protected BasePanel newPanel() {
     m_PanelSegmentation = new SegmentationPanel();
     m_PanelSegmentation.setZoom(m_Zoom);
+    m_PanelSegmentation.getManager().setSplitLayers(m_UseSeparateLayers);
     m_PanelSegmentation.setLeftDividerLocation(m_LeftDividerLocation);
     m_PanelSegmentation.setRightDividerLocation(m_RightDividerLocation);
     m_PanelSegmentation.setToolButtonColumns(m_ToolButtonColumns);
+    m_PanelSegmentation.setAutomaticUndoEnabled(m_AutomaticUndo);
     return m_PanelSegmentation;
   }
 
@@ -823,48 +928,84 @@ public class ImageSegmentationAnnotator
       segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
     layers = (Map<String,BufferedImage>) segcont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
     for (BaseString label: m_Labels) {
-      if (layers != null) {
-        if (layers.containsKey(label.getValue())) {
-	  layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
-	}
-	else {
-          getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-	  layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
-	}
+      // init colors
+      if (!m_LastColors.containsKey(label.getValue()))
+        m_LastColors.put(label.getValue(), m_ColorProvider.next());
+      if (m_LastColors.containsKey(m_PanelSegmentation.getManager().getBackgroundLayer().getName()))
+        m_PanelSegmentation.getManager().getBackgroundLayer().setColor(m_LastColors.get(m_PanelSegmentation.getManager().getBackgroundLayer().getName()));
+
+      // init layer
+      if (m_UseSeparateLayers) {
+        if (layers != null) {
+          if (layers.containsKey(label.getValue())) {
+            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha, layers.get(label.getValue()));
+          }
+          else {
+            getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
+            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+          }
+        }
+        else {
+          layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+        }
+        layer.setRemovable(m_AllowLayerRemoval);
+        layer.setActionsAvailable(m_AllowLayerActions);
+        switch (m_LayerVisibility) {
+          case ALL:
+            layer.setEnabled(true);
+            break;
+          case NONE:
+            layer.setEnabled(false);
+            break;
+          case PREVIOUSLY_VISIBLE:
+            layer.setEnabled(m_LastVisible.contains(layer.getName()));
+            break;
+          default:
+            throw new IllegalStateException("Unhandled layer visibility type: " + m_LayerVisibility);
+        }
       }
       else {
-        layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
-      }
-      layer.setRemovable(m_AllowLayerRemoval);
-      layer.setActionsAvailable(m_AllowLayerActions);
-      switch (m_LayerVisibility) {
-	case ALL:
-	  layer.setEnabled(true);
-	  break;
-	case NONE:
-	  layer.setEnabled(false);
-	  break;
-	case PREVIOUSLY_VISIBLE:
-	  layer.setEnabled(m_LastVisible.contains(layer.getName()));
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled layer visibility type: " + m_LayerVisibility);
+        if (layers != null) {
+          if (layers.containsKey(label.getValue())) {
+            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha, layers.get(label.getValue()));
+          }
+          else {
+            getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
+            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+          }
+        }
+        else {
+          m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+        }
       }
     }
+
+    // set visibility
     if (m_LayerVisibility == LayerVisibility.PREVIOUSLY_VISIBLE) {
       if (m_LastVisible.contains(ImageLayer.LAYER_NAME))
         m_PanelSegmentation.getManager().getImageLayer().setEnabled(true);
       if (m_LastVisible.contains(BackgroundLayer.LAYER_NAME))
         m_PanelSegmentation.getManager().getBackgroundLayer().setEnabled(true);
     }
+
     m_PanelSegmentation.update();
+
+    // best fit
     if (m_BestFit && !m_BestFitApplied) {
+      m_PanelSegmentation.getManager().addBestFitRedoneListener(m_BestFitRedoneListener);
       m_PanelSegmentation.bestFitZoom();
       m_BestFitApplied = true;
     }
+
+    // add undo point (if not automatic)
+    if (!m_PanelSegmentation.isAutomaticUndoEnabled())
+      m_PanelSegmentation.addUndoPoint();
+
+    // display
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
 
+    // get visibility
     m_LastVisible.clear();
     for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
       if (l.isEnabled()) {
@@ -875,10 +1016,38 @@ public class ImageSegmentationAnnotator
       }
     }
 
+    // get colors
+    if (m_UseSeparateLayers) {
+      for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
+        if (l instanceof BackgroundLayer)
+	  m_LastColors.put(l.getName(), ((BackgroundLayer) l).getColor());
+        else if (l instanceof OverlayLayer)
+	  m_LastColors.put(l.getName(), ((OverlayLayer) l).getColor());
+      }
+    }
+    else {
+      for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
+        if (l instanceof BackgroundLayer) {
+	  m_LastColors.put(l.getName(), ((BackgroundLayer) l).getColor());
+	}
+        else if (l instanceof CombinedLayer) {
+          for (CombinedSubLayer sl: ((CombinedLayer) l).getSubLayers())
+	    m_LastColors.put(sl.getName(), sl.getColor());
+	}
+      }
+    }
+
+    // output
     if (m_Accepted) {
       layers = new HashMap<>();
-      for (OverlayLayer l: m_PanelSegmentation.getManager().getOverlays())
-        layers.put(l.getName(), l.getIndexedImage());
+      if (m_UseSeparateLayers) {
+	for (OverlayLayer l : m_PanelSegmentation.getManager().getOverlays())
+	  layers.put(l.getName(), l.getIndexedImage());
+      }
+      else {
+        for (CombinedSubLayer l: m_PanelSegmentation.getManager().getCombinedLayer().getSubLayers())
+          layers.put(l.getName(), l.getIndexedImage());
+      }
       segcont = new ImageSegmentationContainer();
       segcont.setValue(ImageSegmentationContainer.VALUE_BASE, m_PanelSegmentation.getManager().getImageLayer().getImage());
       segcont.setValue(ImageSegmentationContainer.VALUE_LAYERS, layers);

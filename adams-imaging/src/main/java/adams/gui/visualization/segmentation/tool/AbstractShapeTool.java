@@ -65,7 +65,7 @@ public abstract class AbstractShapeTool
    * @param p		the location
    */
   protected void drawShape(Point p) {
-    if (!hasActiveLayer())
+    if (!hasAnyActive())
       return;
     doDrawShape(p);
     getCanvas().getOwner().getManager().update();
@@ -88,7 +88,7 @@ public abstract class AbstractShapeTool
     Point	prev;
     List<Point> points;
 
-    if (!hasActiveLayer())
+    if (!hasAnyActive())
       return;
 
     diffX  = to.x - from.x;
@@ -125,6 +125,8 @@ public abstract class AbstractShapeTool
 	@Override
 	public void mousePressed(MouseEvent e) {
 	  if (MouseUtils.isLeftClick(e)) {
+	    if (isAutomaticUndoEnabled())
+	      getCanvas().getOwner().addUndoPoint();
 	    drawShape(e.getPoint());
 	    m_LastPoint = e.getPoint();
 	    e.consume();

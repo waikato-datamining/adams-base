@@ -28,13 +28,16 @@ import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.segmentation.CanvasPanel;
+import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 /**
@@ -105,16 +108,27 @@ public abstract class AbstractTool
   }
 
   /**
+   * Returns whether any active layer is present.
+   *
+   * @return		true if an active layer present
+   * @see		#hasActiveOverlay()
+   * @see		#hasActiveCombinedSubLayer()
+   */
+  public boolean hasAnyActive() {
+    return hasActiveOverlay() || hasActiveCombinedSubLayer();
+  }
+
+  /**
    * Returns whether an active overlay layer is present.
    *
    * @return		true if available
    */
-  public boolean hasActiveLayer() {
+  public boolean hasActiveOverlay() {
     if (m_PanelCanvas == null)
       return false;
     if (m_PanelCanvas.getOwner() == null)
       return false;
-    return m_PanelCanvas.getOwner().getManager().hasActive();
+    return m_PanelCanvas.getOwner().getManager().hasActiveOverlay();
   }
 
   /**
@@ -122,12 +136,70 @@ public abstract class AbstractTool
    *
    * @return		the layer, null if none available
    */
-  public OverlayLayer getActiveLayer() {
+  public OverlayLayer getActiveOverlay() {
     if (m_PanelCanvas == null)
       return null;
     if (m_PanelCanvas.getOwner() == null)
       return null;
-    return m_PanelCanvas.getOwner().getManager().getActive();
+    return m_PanelCanvas.getOwner().getManager().getActiveOverlay();
+  }
+
+  /**
+   * Returns whether an active combined sub layer is present.
+   *
+   * @return		true if available
+   */
+  public boolean hasActiveCombinedSubLayer() {
+    if (m_PanelCanvas == null)
+      return false;
+    if (m_PanelCanvas.getOwner() == null)
+      return false;
+    if (m_PanelCanvas.getOwner().getManager().getCombinedLayer() == null)
+      return false;
+    return m_PanelCanvas.getOwner().getManager().getCombinedLayer().hasActiveSubLayer();
+  }
+
+  /**
+   * Returns the active combined sub layer.
+   *
+   * @return		the layer, null if none available
+   */
+  public CombinedSubLayer getActiveCombinedSubLayer() {
+    if (m_PanelCanvas == null)
+      return null;
+    if (m_PanelCanvas.getOwner() == null)
+      return null;
+    if (m_PanelCanvas.getOwner().getManager().getCombinedLayer() == null)
+      return null;
+    return m_PanelCanvas.getOwner().getManager().getCombinedLayer().getActiveSubLayer();
+  }
+
+  /**
+   * Returns the active image.
+   *
+   * @return		the image or null if none active
+   */
+  public BufferedImage getActiveImage() {
+    if (hasActiveOverlay())
+      return getActiveOverlay().getImage();
+    else if (hasActiveCombinedSubLayer())
+      return getActiveCombinedSubLayer().getOwner().getImage();
+    else
+      return null;
+  }
+
+  /**
+   * Returns the active color.
+   *
+   * @return		the color or null if none active
+   */
+  public Color getActiveColor() {
+    if (hasActiveOverlay())
+      return getActiveOverlay().getColor();
+    else if (hasActiveCombinedSubLayer())
+      return getActiveCombinedSubLayer().getColor();
+    else
+      return null;
   }
 
   /**
@@ -141,6 +213,19 @@ public abstract class AbstractTool
     if (m_PanelCanvas.getOwner() == null)
       return 1.0;
     return m_PanelCanvas.getOwner().getManager().getZoom();
+  }
+
+  /**
+   * Returns whether automatic undo is enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isAutomaticUndoEnabled() {
+    if (getCanvas() == null)
+      return false;
+    if (getCanvas().getOwner() == null)
+      return false;
+    return getCanvas().getOwner().isAutomaticUndoEnabled();
   }
 
   /**
@@ -170,7 +255,7 @@ public abstract class AbstractTool
    * @return		the cursor
    */
   public Cursor getCursor() {
-    if (!hasActiveLayer())
+    if (!hasAnyActive())
       return Cursors.disabled();
     else
       return createCursor();
@@ -223,7 +308,7 @@ public abstract class AbstractTool
    * @see		#doApply()
    */
   public void apply(BaseFlatButton button) {
-    button.setIcon(GUIHelper.getIcon("validate.png"));
+    setApplyButtonState(button, false);
     doApply();
     getCanvas().setCursor(getCursor());
   }
@@ -241,6 +326,19 @@ public abstract class AbstractTool
     result.addActionListener((ActionEvent e) -> apply((BaseFlatButton) e.getSource()));
 
     return result;
+  }
+
+  /**
+   * Sets the state of the "Apply" button according to the modified flag.
+   *
+   * @param button	the button to update
+   * @param modified	whether applying needs doing or not
+   */
+  protected void setApplyButtonState(BaseFlatButton button, boolean modified) {
+    if (modified)
+      button.setIcon(GUIHelper.getIcon("validate_blue.png"));
+    else
+      button.setIcon(GUIHelper.getIcon("validate.png"));
   }
 
   /**

@@ -21,7 +21,9 @@
 package adams.gui.visualization.segmentation.layer;
 
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
@@ -170,4 +172,30 @@ public abstract class AbstractLayer
    * @param state	the state
    */
   public abstract void setState(AbstractLayerState state);
+
+  /**
+   * Creates an apply button (icon/tooltip), but without action.
+   *
+   * @return		the button
+   */
+  public static BaseFlatButton createApplyButton() {
+    BaseFlatButton	result;
+
+    result = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    result.setToolTipText("Apply current values");
+    return result;
+  }
+
+  /**
+   * Sets the state of the "Apply" button according to the modified flag.
+   *
+   * @param button	the button to update
+   * @param modified	whether applying needs doing or not
+   */
+  public static void setApplyButtonState(BaseFlatButton button, boolean modified) {
+    if (modified)
+      button.setIcon(GUIHelper.getIcon("validate_blue.png"));
+    else
+      button.setIcon(GUIHelper.getIcon("validate.png"));
+  }
 }

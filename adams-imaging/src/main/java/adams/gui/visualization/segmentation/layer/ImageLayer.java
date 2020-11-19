@@ -116,10 +116,9 @@ public class ImageLayer
     m_TextBrightness.setColumns(5);
     m_TextBrightness.setToolTipText("100 = original brightness");
     m_TextBrightness.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
-    m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> m_ButtonApply.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     panelRow.add(m_TextBrightness);
-    m_ButtonApply = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
-    m_ButtonApply.setToolTipText("Apply current values");
+    m_ButtonApply = createApplyButton();
     m_ButtonApply.addActionListener((ActionEvent e) -> update());
     panelRow.add(m_ButtonApply);
   }
@@ -171,6 +170,13 @@ public class ImageLayer
   @Override
   public boolean hasActionsAvailable() {
     return false;
+  }
+
+  /**
+   * Clears the image.
+   */
+  public void clear() {
+    setImage(null);
   }
 
   /**
@@ -229,7 +235,7 @@ public class ImageLayer
    * Notifies the change listeners.
    */
   protected void update() {
-    m_ButtonApply.setIcon(GUIHelper.getIcon("validate.png"));
+    setApplyButtonState(m_ButtonApply, false);
     super.update();
   }
 }
