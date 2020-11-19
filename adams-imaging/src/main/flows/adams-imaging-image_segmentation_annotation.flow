@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-11-13 11:52:56
+# Date: 2020-11-19 16:22:36
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
@@ -13,7 +13,7 @@ adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images 
  adams.flow.standalone.SetVariable -name "restoration file" -var-name restore_file -var-value @{flow_filename_long}.props -expand-value true
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
-  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name image_dir -display \"Image directory\" -help \"Directory with images to annotate\" -type DIRECTORY_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display Labels -help \"blank-separated list of labels\" -default-value object" -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name image_dir -display \"Image directory\" -help \"Directory with images to annotate\" -type DIRECTORY_ABSOLUTE -default-value ${CWD}" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name replace_predominant -display \"Replace predominant color?\" -help \"Whether to replace the predominant color (ie background) in layer images with black\" -type BOOLEAN -default-value false" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display Labels -help \"blank-separated list of labels\" -default-value object" -output-type MAP -restoration-enabled true -restoration-file @{restore_file}
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name "process images"
   adams.flow.standalone.SetVariable -name "reset count" -var-name count -var-value 0
@@ -27,7 +27,9 @@ adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images 
   adams.flow.control.Tee -name progress
    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
    adams.flow.sink.CallableSink -callable ProgressBar
-  adams.flow.transformer.ImageSegmentationFileReader -reader adams.data.io.input.IndividualImageSegmentationLayerReader
+  adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"@{replace_predominant} = true\"" -condition adams.flow.condition.bool.True
+   adams.flow.transformer.ImageSegmentationFileReader -name "replace predominant" -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.ReplacePredominantColor"
+   adams.flow.transformer.ImageSegmentationFileReader -name "read as is" -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.PassThrough"
   adams.flow.transformer.ImageSegmentationAnnotator -name "Image segmentation" -short-title true -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -best-fit true -layer-visibility PREVIOUSLY_VISIBLE -allow-layer-remove true -allow-layer-actions true
   adams.flow.sink.ImageSegmentationFileWriter -output @{file} -writer "adams.data.io.output.IndividualImageSegmentationLayerWriter -skip-base-image true -skip-empty-layers true"
  adams.flow.control.CloseCallableDisplay -callable ProgressBar
