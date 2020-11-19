@@ -15,11 +15,12 @@
 
 /*
  * DefaultHelpGenerator.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
+import adams.core.net.HtmlUtils;
 import adams.gui.core.ConsolePanel;
 
 import java.lang.reflect.Constructor;
@@ -84,6 +85,8 @@ public class DefaultHelpGenerator
         meth = cls.getMethod("globalInfo");
         info = (String) meth.invoke(obj);
 	result.append("<h3>DESCRIPTION</h3>\n");
+	info = HtmlUtils.markUpURLs(info, true);
+	info = HtmlUtils.convertLines(info, true);
 	result.append(info);
 	result.append("\n");
       }
