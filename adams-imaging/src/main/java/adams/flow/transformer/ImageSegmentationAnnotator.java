@@ -32,8 +32,8 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
+import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 import adams.gui.visualization.segmentation.layer.BackgroundLayer;
-import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
@@ -42,14 +42,13 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -292,11 +291,8 @@ public class ImageSegmentationAnnotator
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
-  /** the last layers visible. */
-  protected Set<String> m_LastVisible;
-
-  /** the last used colors. */
-  protected Map<String,Color> m_LastColors;
+  /** the last state. */
+  protected List<AbstractLayerState> m_LastSettings;
 
   /** whether best fit has been applied. */
   protected boolean m_BestFitApplied;
@@ -381,8 +377,7 @@ public class ImageSegmentationAnnotator
   protected void reset() {
     super.reset();
 
-    m_LastVisible    = new HashSet<>();
-    m_LastColors     = new HashMap<>();
+    m_LastSettings = new ArrayList<>();
     m_BestFitApplied = false;
     m_BestFitRedoneListener = (ChangeEvent e) -> {
       m_PanelSegmentation.setZoom(RoundingUtils.round(m_PanelSegmentation.getManager().getZoom() * 100, 1));
@@ -928,25 +923,19 @@ public class ImageSegmentationAnnotator
       segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
     layers = (Map<String,BufferedImage>) segcont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
     for (BaseString label: m_Labels) {
-      // init colors
-      if (!m_LastColors.containsKey(label.getValue()))
-        m_LastColors.put(label.getValue(), m_ColorProvider.next());
-      if (m_LastColors.containsKey(m_PanelSegmentation.getManager().getBackgroundLayer().getName()))
-        m_PanelSegmentation.getManager().getBackgroundLayer().setColor(m_LastColors.get(m_PanelSegmentation.getManager().getBackgroundLayer().getName()));
-
       // init layer
       if (m_UseSeparateLayers) {
         if (layers != null) {
           if (layers.containsKey(label.getValue())) {
-            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha, layers.get(label.getValue()));
+            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
           }
           else {
             getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
           }
         }
         else {
-          layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+          layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
         }
         layer.setRemovable(m_AllowLayerRemoval);
         layer.setActionsAvailable(m_AllowLayerActions);
@@ -958,7 +947,7 @@ public class ImageSegmentationAnnotator
             layer.setEnabled(false);
             break;
           case PREVIOUSLY_VISIBLE:
-            layer.setEnabled(m_LastVisible.contains(layer.getName()));
+            // done through settings;
             break;
           default:
             throw new IllegalStateException("Unhandled layer visibility type: " + m_LayerVisibility);
@@ -967,25 +956,36 @@ public class ImageSegmentationAnnotator
       else {
         if (layers != null) {
           if (layers.containsKey(label.getValue())) {
-            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha, layers.get(label.getValue()));
+            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
           }
           else {
             getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha);
           }
         }
         else {
-          m_PanelSegmentation.getManager().addCombined(label.getValue(), m_LastColors.get(label.getValue()), m_Alpha);
+          m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha);
         }
       }
     }
 
-    // set visibility
-    if (m_LayerVisibility == LayerVisibility.PREVIOUSLY_VISIBLE) {
-      if (m_LastVisible.contains(ImageLayer.LAYER_NAME))
-        m_PanelSegmentation.getManager().getImageLayer().setEnabled(true);
-      if (m_LastVisible.contains(BackgroundLayer.LAYER_NAME))
-        m_PanelSegmentation.getManager().getBackgroundLayer().setEnabled(true);
+    if (!m_LastSettings.isEmpty())
+      m_PanelSegmentation.getManager().setSettings(m_LastSettings);
+
+    // overriding visibility settings
+    for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
+      if (l instanceof ImageLayer)
+	continue;
+      if (l instanceof BackgroundLayer)
+	continue;
+      switch (m_LayerVisibility) {
+	case ALL:
+	  l.setEnabled(true);
+	  break;
+	case NONE:
+	  l.setEnabled(false);
+	  break;
+      }
     }
 
     m_PanelSegmentation.update();
@@ -1005,37 +1005,7 @@ public class ImageSegmentationAnnotator
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
 
-    // get visibility
-    m_LastVisible.clear();
-    for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
-      if (l.isEnabled()) {
-	if (l instanceof ImageLayer)
-	  m_LastVisible.add(ImageLayer.LAYER_NAME);
-	else
-	  m_LastVisible.add(l.getName());
-      }
-    }
-
-    // get colors
-    if (m_UseSeparateLayers) {
-      for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
-        if (l instanceof BackgroundLayer)
-	  m_LastColors.put(l.getName(), ((BackgroundLayer) l).getColor());
-        else if (l instanceof OverlayLayer)
-	  m_LastColors.put(l.getName(), ((OverlayLayer) l).getColor());
-      }
-    }
-    else {
-      for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
-        if (l instanceof BackgroundLayer) {
-	  m_LastColors.put(l.getName(), ((BackgroundLayer) l).getColor());
-	}
-        else if (l instanceof CombinedLayer) {
-          for (CombinedSubLayer sl: ((CombinedLayer) l).getSubLayers())
-	    m_LastColors.put(sl.getName(), sl.getColor());
-	}
-      }
-    }
+    m_LastSettings = m_PanelSegmentation.getManager().getSettings();
 
     // output
     if (m_Accepted) {

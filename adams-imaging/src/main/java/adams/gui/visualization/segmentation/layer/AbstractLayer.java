@@ -174,6 +174,20 @@ public abstract class AbstractLayer
   public abstract void setState(AbstractLayerState state);
 
   /**
+   * Returns the current settings.
+   *
+   * @return		the settings
+   */
+  public abstract AbstractLayerState getSettings();
+
+  /**
+   * Restores the settings of the layer.
+   *
+   * @param settings	the settings
+   */
+  public abstract void setSettings(AbstractLayerState settings);
+
+  /**
    * Creates an apply button (icon/tooltip), but without action.
    *
    * @return		the button

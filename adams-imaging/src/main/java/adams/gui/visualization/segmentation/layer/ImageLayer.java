@@ -212,8 +212,7 @@ public class ImageLayer
   public AbstractLayerState getState() {
     ImageLayerState	result;
 
-    result       = new ImageLayerState();
-    result.name  = getName();
+    result       = (ImageLayerState) getSettings();
     result.image = BufferedImageHelper.deepCopy(getImage());
 
     return result;
@@ -225,10 +224,35 @@ public class ImageLayer
    * @param state	the state
    */
   public void setState(AbstractLayerState state) {
-    setName(state.name);
+    setSettings(state);
 
     if (state instanceof ImageLayerState)
       setImage(((ImageLayerState) state).image);
+  }
+
+  /**
+   * Returns the current settings.
+   *
+   * @return		the settings
+   */
+  public AbstractLayerState getSettings() {
+    ImageLayerState	result;
+
+    result         = new ImageLayerState();
+    result.name    = getName();
+    result.enabled = isEnabled();
+
+    return result;
+  }
+
+  /**
+   * Restores the settings of the layer.
+   *
+   * @param settings	the settings
+   */
+  public void setSettings(AbstractLayerState settings) {
+    setName(settings.name);
+    setEnabled(settings.enabled);
   }
 
   /**

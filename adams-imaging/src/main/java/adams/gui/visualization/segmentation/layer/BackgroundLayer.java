@@ -161,13 +161,7 @@ public class BackgroundLayer
    */
   @Override
   public AbstractLayerState getState() {
-    BackgroundLayerState	result;
-
-    result       = new BackgroundLayerState();
-    result.name  = getName();
-    result.color = getColor();
-
-    return result;
+    return getSettings();
   }
 
   /**
@@ -176,10 +170,34 @@ public class BackgroundLayer
    * @param state	the state
    */
   public void setState(AbstractLayerState state) {
-    setName(state.name);
+    setSettings(state);
+  }
 
-    if (state instanceof BackgroundLayerState)
-      setColor(((BackgroundLayerState) state).color);
+  /**
+   * Returns the current settings.
+   *
+   * @return		the settings
+   */
+  public AbstractLayerState getSettings() {
+    BackgroundLayerState	result;
+
+    result         = new BackgroundLayerState();
+    result.name    = getName();
+    result.enabled = isEnabled();
+    result.color   = getColor();
+
+    return result;
+  }
+
+  /**
+   * Restores the settings of the layer.
+   *
+   * @param settings	the settings
+   */
+  public void setSettings(AbstractLayerState settings) {
+    setEnabled(settings.enabled);
+    if (settings instanceof BackgroundLayerState)
+      setColor(((BackgroundLayerState) settings).color);
     setApplyButtonState(m_ButtonApply, false);
   }
 

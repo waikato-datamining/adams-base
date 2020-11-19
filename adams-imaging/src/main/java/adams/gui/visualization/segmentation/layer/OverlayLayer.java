@@ -342,12 +342,8 @@ public class OverlayLayer
   public AbstractLayerState getState() {
     OverlayLayerState	result;
 
-    result        = new OverlayLayerState();
-    result.name   = getName();
-    result.image  = BufferedImageHelper.deepCopy(getImage());
-    result.color  = getColor();
-    result.alpha  = getAlpha();
-    result.active = isActive();
+    result       = (OverlayLayerState) getSettings();
+    result.image = BufferedImageHelper.deepCopy(getImage());
 
     return result;
   }
@@ -359,16 +355,42 @@ public class OverlayLayer
    */
   @Override
   public void setState(AbstractLayerState state) {
-    setName(state.name);
-
-    if (state instanceof AbstractImageLayerState) {
+    if (state instanceof AbstractImageLayerState)
       setImage(((AbstractImageLayerState) state).image);
-    }
+    setSettings(state);
+  }
 
-    if (state instanceof OverlayLayerState) {
-      setColor(((OverlayLayerState) state).color);
-      setAlpha(((OverlayLayerState) state).alpha);
-      setActive(((OverlayLayerState) state).active);
+  /**
+   * Returns the current settings.
+   *
+   * @return		the settings
+   */
+  public AbstractLayerState getSettings() {
+    OverlayLayerState	result;
+
+    result         = new OverlayLayerState();
+    result.name    = getName();
+    result.enabled = isEnabled();
+    result.color   = getColor();
+    result.alpha   = getAlpha();
+    result.active  = isActive();
+
+    return result;
+  }
+
+  /**
+   * Restores the settings of the layer.
+   *
+   * @param settings	the settings
+   */
+  public void setSettings(AbstractLayerState settings) {
+    setName(settings.name);
+    setEnabled(settings.enabled);
+
+    if (settings instanceof OverlayLayerState) {
+      setColor(((OverlayLayerState) settings).color);
+      setAlpha(((OverlayLayerState) settings).alpha);
+      setActive(((OverlayLayerState) settings).active);
     }
   }
 

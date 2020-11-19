@@ -227,7 +227,7 @@ public class LayerManager
    *
    * @return		the state
    */
-  protected List<AbstractLayerState> getState() {
+  public List<AbstractLayerState> getState() {
     List<AbstractLayerState>	result;
 
     result = new ArrayList<>();
@@ -242,7 +242,7 @@ public class LayerManager
    *
    * @param states	the state to restore
    */
-  protected void setState(List<AbstractLayerState> states) {
+  public void setState(List<AbstractLayerState> states) {
     OverlayLayerState	ostate;
 
     for (AbstractLayerState state : states) {
@@ -259,6 +259,51 @@ public class LayerManager
         ostate = (OverlayLayerState) state;
         if (hasOverlay(ostate.name))
           getOverlay(ostate.name).setState(ostate);
+        else
+          addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+      }
+    }
+
+    update();
+  }
+
+  /**
+   * Returns the current state.
+   *
+   * @return		the settings
+   */
+  public List<AbstractLayerState> getSettings() {
+    List<AbstractLayerState>	result;
+
+    result = new ArrayList<>();
+    for (AbstractLayer l: getLayers())
+      result.add(l.getSettings());
+
+    return result;
+  }
+
+  /**
+   * Restores the settings.
+   *
+   * @param settings	the settings to restore
+   */
+  public void setSettings(List<AbstractLayerState> settings) {
+    OverlayLayerState	ostate;
+
+    for (AbstractLayerState state : settings) {
+      if (state instanceof BackgroundLayerState) {
+	getBackgroundLayer().setSettings(state);
+      }
+      else if (state instanceof ImageLayerState) {
+	getImageLayer().setSettings(state);
+      }
+      else if (state instanceof CombinedLayerState) {
+	getCombinedLayer().setSettings(state);
+      }
+      else if (state instanceof OverlayLayerState) {
+        ostate = (OverlayLayerState) state;
+        if (hasOverlay(ostate.name))
+          getOverlay(ostate.name).setSettings(ostate);
         else
           addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
       }

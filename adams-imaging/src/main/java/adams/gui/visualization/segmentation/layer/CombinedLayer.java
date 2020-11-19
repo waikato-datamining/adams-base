@@ -591,16 +591,8 @@ public class CombinedLayer
   public AbstractLayerState getState() {
     CombinedLayerState	result;
 
-    result              = new CombinedLayerState();
-    result.enabled      = true;
-    result.name         = getName();
-    result.image        = BufferedImageHelper.deepCopy(getImage());
-    result.alpha        = getAlpha();
-    result.alphaApplied = m_Alpha;
-    for (CombinedSubLayer l: m_SubLayers) {
-      result.subLayers.put(l.getName(), l.getState());
-      result.order.add(l.getName());
-    }
+    result       = (CombinedLayerState) getSettings();
+    result.image = BufferedImageHelper.deepCopy(getImage());
 
     return result;
   }
@@ -612,13 +604,46 @@ public class CombinedLayer
    */
   @Override
   public void setState(AbstractLayerState state) {
+    if (state instanceof CombinedLayerState)
+      setImage(((CombinedLayerState) state).image);
+    setSettings(state);
+  }
+
+  /**
+   * Returns the current settings.
+   *
+   * @return		the settings
+   */
+  public AbstractLayerState getSettings() {
+    CombinedLayerState	result;
+
+    result              = new CombinedLayerState();
+    result.enabled      = true;
+    result.name         = getName();
+    result.alpha        = getAlpha();
+    result.alphaApplied = m_Alpha;
+    for (CombinedSubLayer l: m_SubLayers) {
+      result.subLayers.put(l.getName(), l.getState());
+      result.order.add(l.getName());
+    }
+
+    return result;
+  }
+
+  /**
+   * Restores the settings of the layer.
+   *
+   * @param settings	the settings
+   */
+  public void setSettings(AbstractLayerState settings) {
     CombinedLayerState		cstate;
     CombinedSubLayerState	sstate;
     CombinedSubLayer		panel;
 
-    if (state instanceof CombinedLayerState) {
-      cstate = (CombinedLayerState) state;
+    if (settings instanceof CombinedLayerState) {
+      cstate = (CombinedLayerState) settings;
       setAlpha(cstate.alpha);
+      setEnabled(true);
       setApplyButtonState(m_ButtonApply, false);
       m_Alpha = cstate.alphaApplied;
       m_SubLayers.clear();
@@ -627,7 +652,6 @@ public class CombinedLayer
         panel  = add(name, sstate.color, sstate.alpha);
         panel.setState(sstate);
       }
-      setImage(cstate.image);
     }
   }
 
