@@ -25,6 +25,18 @@ import adams.data.random.JavaRandomInt;
 import adams.data.random.RandomIntegerRangeGenerator;
 import adams.env.Environment;
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.map.TByteIntMap;
+import gnu.trove.map.TDoubleIntMap;
+import gnu.trove.map.TFloatIntMap;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TLongIntMap;
+import gnu.trove.map.TShortIntMap;
+import gnu.trove.map.hash.TByteIntHashMap;
+import gnu.trove.map.hash.TDoubleIntHashMap;
+import gnu.trove.map.hash.TFloatIntHashMap;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.map.hash.TLongIntHashMap;
+import gnu.trove.map.hash.TShortIntHashMap;
 import gnu.trove.set.TByteSet;
 import gnu.trove.set.TDoubleSet;
 import gnu.trove.set.TFloatSet;
@@ -2350,6 +2362,114 @@ public class StatUtils {
   }
 
   /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static TByteIntMap uniqueCounts(byte[] numbers) {
+    TByteIntMap result;
+
+    result = new TByteIntHashMap();
+    for (byte number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static TShortIntMap uniqueCounts(short[] numbers) {
+    TShortIntMap result;
+
+    result = new TShortIntHashMap();
+    for (short number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static TIntIntMap uniqueCounts(int[] numbers) {
+    TIntIntMap result;
+
+    result = new TIntIntHashMap();
+    for (int number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static TLongIntMap uniqueCounts(long[] numbers) {
+    TLongIntMap result;
+
+    result = new TLongIntHashMap();
+    for (long number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
+   * Returns all the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique numbers
+   */
+  public static TFloatIntMap uniqueCounts(float[] numbers) {
+    TFloatIntMap result;
+
+    result = new TFloatIntHashMap();
+    for (float number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
+   * Returns all the counts for the unique numbers in the array.
+   *
+   * @param numbers	the numbers to use
+   * @return		the unique number counts (number -> count)
+   */
+  public static TDoubleIntMap uniqueCounts(double[] numbers) {
+    TDoubleIntMap result;
+
+    result = new TDoubleIntHashMap();
+    for (double number: numbers) {
+      if (!result.containsKey(number))
+        result.put(number, 0);
+      result.put(number, result.get(number) + 1);
+    }
+    return result;
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
@@ -2367,5 +2487,8 @@ public class StatUtils {
     System.out.println("stddev (pop.): " + stddev(array, false));
     System.out.println("normalized array: " + Utils.arrayToString(normalize(array)));
     System.out.println("standardized array (pop.): " + Utils.arrayToString(standardize(array, false)));
+    double[] arrayD = new double[]{12.0, 3.2, 2.0, 6.0, -1.0, 99.0, 99.0, 99.0, 3.2};
+    System.out.println("unique counts: " + uniqueCounts(arrayD));
+    System.out.println("unique values: " + Utils.arrayToString(uniqueValues(arrayD)));
   }
 }
