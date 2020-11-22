@@ -279,7 +279,7 @@ public class ObjectLocationsFromReport
 
     m_OptionManager.add(
       "reader", "reader",
-      new DefaultSimpleReportReader());
+      getDefaultReader());
 
     m_OptionManager.add(
       "prefix", "prefix",
@@ -344,6 +344,15 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "alternative-location", "alternativeLocation",
       new PlaceholderDirectory());
+  }
+
+  /**
+   * Returns the default reader.
+   *
+   * @return		the reader
+   */
+  protected AbstractReportReader getDefaultReader() {
+    return new DefaultSimpleReportReader();
   }
 
   /**
