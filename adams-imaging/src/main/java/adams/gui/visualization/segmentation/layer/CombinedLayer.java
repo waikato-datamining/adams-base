@@ -26,7 +26,6 @@ import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BasePanel;
-import adams.gui.core.ColorHelper;
 import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.BorderFactory;
@@ -206,7 +205,6 @@ public class CombinedLayer
      * @param value	the color
      */
     public void setColor(Color value) {
-      System.out.println(getName() + " - set color: " + value.getRGB() + ", " + ColorHelper.toHex(value));
       m_TextColor.setColor(value);
     }
 
