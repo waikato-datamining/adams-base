@@ -291,7 +291,7 @@ public class ObjectLocationsFromReport
 
     m_OptionManager.add(
       "use-colors-per-type", "useColorsPerType",
-      true);
+      getDefaultUseColorsPerType());
 
     m_OptionManager.add(
       "type-color-provider", "typeColorProvider",
@@ -307,7 +307,7 @@ public class ObjectLocationsFromReport
 
     m_OptionManager.add(
       "label-format", "labelFormat",
-      "#. $");
+      getDefaultLabelFormat());
 
     m_OptionManager.add(
       "label-font", "labelFont",
@@ -443,6 +443,15 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Returns the default for using colors per type.
+   *
+   * @return		the default
+   */
+  protected boolean getDefaultUseColorsPerType() {
+    return true;
+  }
+
+  /**
    * Sets whether to use colors per type.
    *
    * @param value 	true if to use colors per type
@@ -558,6 +567,15 @@ public class ObjectLocationsFromReport
    */
   public String typeRegExpTipText() {
     return "The regular expression that the types must match in order to get drawn (eg only plotting a subset).";
+  }
+
+  /**
+   * Returns the default label format.
+   *
+   * @return		the default
+   */
+  protected String getDefaultLabelFormat() {
+    return "#. $";
   }
 
   /**
