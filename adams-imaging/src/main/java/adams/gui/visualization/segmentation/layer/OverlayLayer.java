@@ -310,12 +310,17 @@ public class OverlayLayer
   }
 
   /**
-   * Returns the image as image with indexed palette.
+   * Returns the image as binary image.
    *
    * @return		the converted image
    */
-  public BufferedImage getIndexedImage() {
-    return BufferedImageHelper.convert(getImage(), BufferedImage.TYPE_BYTE_INDEXED);
+  public BufferedImage getBinaryImage() {
+    BufferedImage result;
+
+    result = BufferedImageHelper.deepCopy(getImage());
+    ImageUtils.initImage(result, Color.WHITE);
+
+    return result;
   }
 
   /**

@@ -1012,11 +1012,11 @@ public class ImageSegmentationAnnotator
       layers = new HashMap<>();
       if (m_UseSeparateLayers) {
 	for (OverlayLayer l : m_PanelSegmentation.getManager().getOverlays())
-	  layers.put(l.getName(), l.getIndexedImage());
+	  layers.put(l.getName(), l.getBinaryImage());
       }
       else {
         for (CombinedSubLayer l: m_PanelSegmentation.getManager().getCombinedLayer().getSubLayers())
-          layers.put(l.getName(), l.getIndexedImage());
+          layers.put(l.getName(), l.getBinaryImage());
       }
       segcont = new ImageSegmentationContainer();
       segcont.setValue(ImageSegmentationContainer.VALUE_BASE, m_PanelSegmentation.getManager().getImageLayer().getImage());

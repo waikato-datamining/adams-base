@@ -72,7 +72,7 @@ public class Copy
       return;
     }
 
-    newLayer = origin.getManager().addOverlay(newName, origin.getColor().darker().darker(), origin.getAlpha(), origin.getIndexedImage());
+    newLayer = origin.getManager().addOverlay(newName, origin.getColor().darker().darker(), origin.getAlpha(), origin.getBinaryImage());
     newLayer.setRemovable(origin.isRemovable());
     newLayer.setActionsAvailable(origin.hasActionsAvailable());
     origin.getManager().update();

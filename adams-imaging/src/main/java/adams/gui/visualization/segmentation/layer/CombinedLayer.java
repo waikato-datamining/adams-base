@@ -145,11 +145,14 @@ public class CombinedLayer
       m_TextAlpha.setColumns(4);
       m_TextAlpha.setToolTipText("fully transparent=0.0, fully opaque=1.0");
       m_TextAlpha.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
-      panelRow.add(m_TextAlpha);
+      m_TextAlpha.setEditable(false);
+      // TODO
+      //panelRow.add(m_TextAlpha);
       m_TextColor = new BaseColorTextField(Color.RED);
       m_TextColor.setColumns(7);
       m_TextColor.setToolTipText("The color to use for this layer");
       m_TextColor.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
+      m_TextColor.setEnabledCascade(false);
       panelRow.add(m_TextColor);
       m_ButtonApply = createApplyButton();
       m_ButtonApply.addActionListener((ActionEvent e) -> {
@@ -160,7 +163,8 @@ public class CombinedLayer
 	setApplyButtonState(m_ButtonApply, false);
 	getOwner().getManager().update();
       });
-      panelRow.add(m_ButtonApply);
+      // TODO
+      //panelRow.add(m_ButtonApply);
     }
 
     /**
@@ -275,7 +279,7 @@ public class CombinedLayer
 	return null;
 
       result    = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-      rgb       = m_ActualColor.getRGB();
+      rgb       = getColor().getRGB();
       black     = Color.BLACK.getRGB();
       pixelsOld = getOwner().getImage().getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
       pixelsNew = new int[pixelsOld.length];
@@ -291,17 +295,18 @@ public class CombinedLayer
     }
 
     /**
-     * Returns the subset image as image with indexed palette.
+     * Returns the subset image as binary image.
      *
      * @return		the converted image
      */
-    public BufferedImage getIndexedImage() {
+    public BufferedImage getBinaryImage() {
       BufferedImage	image;
 
       image = getImage();
       if (image == null)
 	return null;
-      return BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_INDEXED);
+      ImageUtils.initImage(image, Color.WHITE);
+      return BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_BINARY);
     }
 
     /**
@@ -513,7 +518,9 @@ public class CombinedLayer
     panel.setAlpha(alpha);
     m_SubLayers.add(panel);
 
-    actColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha));
+    // TODO
+    //actColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * alpha));
+    actColor = new Color(color.getRed(), color.getGreen(), color.getBlue());
     panel.setActualColor(actColor);
 
     if (image != null) {
