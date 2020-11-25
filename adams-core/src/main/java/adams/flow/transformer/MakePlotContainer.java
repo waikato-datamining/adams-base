@@ -20,14 +20,14 @@
 
 package adams.flow.transformer;
 
-import java.lang.reflect.Array;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.container.SequencePlotterContainer.ContentType;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.flow.source.Start;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -256,7 +256,7 @@ public class MakePlotContainer
       cont = new SequencePlotterContainer(m_PlotName, null, m_Type);
     }
     else {
-      if (m_InputToken.getPayload().getClass().isArray()) {
+      if (m_InputToken.isArray()) {
 	array = m_InputToken.getPayload();
 	len   = Array.getLength(array);
 	if (len == 2) {

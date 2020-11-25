@@ -325,7 +325,7 @@ public class Sort
 
     result = null;
 
-    if (!m_InputToken.getPayload().getClass().isArray()) {
+    if (!m_InputToken.isArray()) {
       getLogger().severe("Input is not an array - ignored!");
       m_OutputToken = new Token(m_InputToken.getPayload());
     }

@@ -238,7 +238,7 @@ public abstract class AbstractReportFileWriter<T extends Report>
     int		len;
 
     cls = ((MultiReportWriter) m_Writer).getReportClass();
-    if (token.getPayload().getClass().isArray()) {
+    if (token.isArray()) {
       array  = token.getPayload();
       len    = Array.getLength(array);
       result = Array.newInstance(cls, len);

@@ -253,7 +253,7 @@ public class ArrayToChunks
     m_CurrentIndex = 0;
     m_CurrentArray = null;
 
-    if (m_InputToken.getPayload().getClass().isArray())
+    if (m_InputToken.isArray())
       m_CurrentArray = m_InputToken.getPayload();
     else
       result = "Input is not an array!";

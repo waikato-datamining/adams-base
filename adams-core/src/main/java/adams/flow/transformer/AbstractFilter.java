@@ -372,7 +372,7 @@ public abstract class AbstractFilter
       else
         m_OutputToken = createToken(cont);
     }
-    else if ((m_Filter instanceof BatchFilter) && (m_InputToken.getPayload().getClass().isArray())) {
+    else if ((m_Filter instanceof BatchFilter) && (m_InputToken.isArray())) {
       bfilter = (BatchFilter) m_Filter;
       if (bfilter instanceof TrainableBatchFilter) {
 	tfilter = (TrainableBatchFilter) bfilter;

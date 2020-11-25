@@ -254,7 +254,7 @@ public class Expression
     if ((token != null) && (token.getPayload() != null)) {
       if (token.getPayload() instanceof Number)
 	symbols.put("X", ((Number) token.getPayload()).doubleValue());
-      else if (token.getPayload().getClass().isArray())
+      else if (token.isArray())
 	symbols.put("X", token.getPayload());
       else if ((token.getPayload() instanceof String) && hasString)
 	exp = exp.replace("\"X\"", "\"" + token.getPayload() + "\"");

@@ -393,7 +393,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     T			cont;
     T[]			conts;
 
-    if (m_InputToken.getPayload().getClass().isArray()) {
+    if (m_InputToken.isArray()) {
       conts = (T[]) m_InputToken.getPayload();
       cont  = conts[0];
     }
