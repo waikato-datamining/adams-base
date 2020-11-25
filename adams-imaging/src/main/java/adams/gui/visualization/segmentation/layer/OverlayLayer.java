@@ -400,26 +400,6 @@ public class OverlayLayer
   }
 
   /**
-   * Creates a new and empty image.
-   *
-   * @param width	the width to use
-   * @param height	the height to use
-   * @return		the image
-   */
-  public static BufferedImage newImage(int width, int height) {
-    BufferedImage 	result;
-    Graphics2D		g2d;
-
-    result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    g2d   = result.createGraphics();
-    g2d.setColor(Color.BLACK);
-    g2d.fillRect(0, 0, width, height);
-    g2d.dispose();
-
-    return result;
-  }
-
-  /**
    * Notifies the change listeners.
    */
   protected void update() {
