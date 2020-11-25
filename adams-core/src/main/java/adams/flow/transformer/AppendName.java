@@ -15,7 +15,7 @@
 
 /*
  * AppendName.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -41,6 +41,7 @@ import java.util.List;
  * adams.flow.transformer.PrependDir<br>
  * adams.flow.transformer.BaseName<br>
  * adams.flow.transformer.DirName<br>
+ * adams.flow.transformer.RelativeDir<br>
  * adams.flow.transformer.FileExtension
  * <br><br>
  <!-- globalinfo-end -->
@@ -115,7 +116,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AppendName
   extends AbstractTransformer
@@ -153,7 +153,7 @@ public class AppendName
    * @return		the classes
    */
   public Class[] getClassCrossReferences() {
-    return new Class[]{PrependDir.class, BaseName.class, DirName.class, FileExtension.class};
+    return new Class[]{PrependDir.class, BaseName.class, DirName.class, RelativeDir.class, FileExtension.class};
   }
 
   /**
@@ -321,8 +321,8 @@ public class AppendName
 
     result = null;
 
-    array  = m_InputToken.getPayload().getClass().isArray();
-    string = (m_InputToken.getPayload() instanceof String) || (m_InputToken.getPayload() instanceof String[]);
+    array  = m_InputToken.isArray();
+    string = m_InputToken.hasPayload(String.class) || m_InputToken.hasPayload(String[].class);
     files  = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
 
     strings = new String[files.length];

@@ -14,8 +14,8 @@
  */
 
 /*
- * DirName.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * RelativeDir.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,19 +24,22 @@ import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Extracts the directory part of the file&#47;directory passing through, i.e., any trailing name part gets stripped.<br>
+ * Removes the prefix from the file&#47;directory being passed through to turn them into relative ones.<br>
  * <br>
  * See also:<br>
+ * adams.flow.transformer.BaseName<br>
+ * adams.flow.transformer.DirName<br>
  * adams.flow.transformer.AppendName<br>
  * adams.flow.transformer.PrependDir<br>
- * adams.flow.transformer.RelativeDir<br>
- * adams.flow.transformer.BaseName<br>
  * adams.flow.transformer.FileExtension
  * <br><br>
  <!-- globalinfo-end -->
@@ -61,52 +64,60 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: DirName
+ * &nbsp;&nbsp;&nbsp;default: RelativeDir
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix to remove from the file&#47;directory.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
- * &nbsp;&nbsp;&nbsp;If enabled and receiving string(s) as input, forward slashes are used in 
+ * &nbsp;&nbsp;&nbsp;If enabled and receiving string(s) as input, forward slashes are used in
  * &nbsp;&nbsp;&nbsp;the output (but the '\\' prefix of UNC paths is not converted).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class DirName
+public class RelativeDir
   extends AbstractTransformer
   implements ClassCrossReference, ForwardSlashSupporter {
 
   /** for serialization. */
-  private static final long serialVersionUID = 4670761846363281951L;
+  private static final long serialVersionUID = 1960630826702728371L;
+
+  /** the prefix to remove from the file/directory. */
+  protected String m_Prefix;
 
   /** whether to output forward slashes. */
   protected boolean m_UseForwardSlashes;
@@ -119,8 +130,17 @@ public class DirName
   @Override
   public String globalInfo() {
     return
-        "Extracts the directory part of the file/directory passing through, i.e., any "
-      + "trailing name part gets stripped.";
+      "Removes the prefix from the file/directory being passed through to "
+	+ "turn them into relative ones.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{BaseName.class, DirName.class, AppendName.class, PrependDir.class, FileExtension.class};
   }
 
   /**
@@ -131,8 +151,60 @@ public class DirName
     super.defineOptions();
 
     m_OptionManager.add(
-	    "use-forward-slashes", "useForwardSlashes",
-	    false);
+      "prefix", "prefix",
+      "");
+
+    m_OptionManager.add(
+      "use-forward-slashes", "useForwardSlashes",
+      false);
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String		result;
+    List<String> 	options;
+
+    result = QuickInfoHelper.toString(this, "prefix", (m_Prefix.isEmpty() ? "-none-" : m_Prefix), "prefix: ");
+
+    options = new ArrayList<>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward slashes"));
+    result += QuickInfoHelper.flatten(options);
+
+    return result;
+  }
+
+  /**
+   * Sets the prefix to remove.
+   *
+   * @param value	the prefix
+   */
+  public void setPrefix(String value) {
+    m_Prefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix to remove.
+   *
+   * @return 		the prefix
+   */
+  public String getPrefix() {
+    return m_Prefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return         tip text for this property suitable for
+   *             displaying in the GUI or for listing the options.
+   */
+  public String prefixTipText() {
+    return "The prefix to remove from the file/directory.";
   }
 
   /**
@@ -167,25 +239,6 @@ public class DirName
   }
 
   /**
-   * Returns a quick info about the actor, which will be displayed in the GUI.
-   *
-   * @return		null if no info available, otherwise short string
-   */
-  @Override
-  public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "useForwardSlashes", (m_UseForwardSlashes ? "forward slashes" : "platform-specific slashes"));
-  }
-
-  /**
-   * Returns the cross-referenced classes.
-   *
-   * @return		the classes
-   */
-  public Class[] getClassCrossReferences() {
-    return new Class[]{AppendName.class, PrependDir.class, RelativeDir.class, BaseName.class, FileExtension.class};
-  }
-
-  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.lang.String[].class, java.io.File.class, java.io.File[].class<!-- flow-accepts-end -->
@@ -210,25 +263,32 @@ public class DirName
    */
   @Override
   protected String doExecute() {
-    String	result;
-    String[]	strings;
-    File[]	files;
-    int		i;
-    boolean	array;
-    boolean	string;
+    String		result;
+    String[]		strings;
+    File[]		files;
+    int			i;
+    boolean		array;
+    boolean		string;
+    PlaceholderFile	prefix;
+    String		prefixAbs;
 
     result = null;
 
-    array  = m_InputToken.isArray();
-    string = m_InputToken.hasPayload(String.class) || m_InputToken.hasPayload(String[].class);
-    files  = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
+    array   = m_InputToken.isArray();
+    string  = m_InputToken.hasPayload(String.class) || m_InputToken.hasPayload(String[].class);
+    strings = FileUtils.toStringArray(m_InputToken.getPayload());
 
-    strings = new String[files.length];
-    for (i = 0; i < files.length; i++) {
+    prefix    = new PlaceholderFile(m_Prefix);
+    prefixAbs = prefix.getAbsolutePath();
+    files     = new File[strings.length];
+    for (i = 0; i < strings.length; i++) {
+      files[i] = new PlaceholderFile(strings[i]);
+      if (files[i].getAbsolutePath().startsWith(prefixAbs + File.separator))
+        files[i] = new File(files[i].getAbsolutePath().substring(prefixAbs.length() + 1));
+      else if (files[i].getAbsolutePath().startsWith(prefixAbs))
+        files[i] = new File(files[i].getAbsolutePath().substring(prefixAbs.length()));
       if (string)
-	strings[i] = files[i].getAbsoluteFile().getParent();
-      else
-	files[i] = files[i].getAbsoluteFile().getParentFile();
+	strings[i] = files[i].toString();
     }
 
     if (string) {

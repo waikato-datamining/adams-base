@@ -15,7 +15,7 @@
 
 /*
  * PrependDir.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -40,6 +40,8 @@ import java.util.List;
  * See also:<br>
  * adams.flow.transformer.BaseName<br>
  * adams.flow.transformer.DirName<br>
+ * adams.flow.transformer.RelativeDir<br>
+ * adams.flow.transformer.AppendName<br>
  * adams.flow.transformer.FileExtension
  * <br><br>
  <!-- globalinfo-end -->
@@ -114,7 +116,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PrependDir
   extends AbstractTransformer
@@ -152,7 +153,7 @@ public class PrependDir
    * @return		the classes
    */
   public Class[] getClassCrossReferences() {
-    return new Class[]{BaseName.class, DirName.class, FileExtension.class};
+    return new Class[]{BaseName.class, DirName.class, RelativeDir.class, AppendName.class, FileExtension.class};
   }
 
   /**
@@ -320,7 +321,7 @@ public class PrependDir
 
     result = null;
 
-    array   = m_InputToken.getPayload().getClass().isArray();
+    array   = m_InputToken.isArray();
     string  = m_InputToken.hasPayload(String.class) || m_InputToken.hasPayload(String[].class);
     strings = FileUtils.toStringArray(m_InputToken.getPayload());
 
