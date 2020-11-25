@@ -376,7 +376,7 @@ public class BoundingBoxAnnotator
 	report.setNumericValue(current + KEY_Y, y);
 	report.setNumericValue(current + KEY_WIDTH, w);
 	report.setNumericValue(current + KEY_HEIGHT, h);
-	if (!hasCurrentLabel())
+	if (hasCurrentLabel())
 	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(rect);
 	comment = "Adding box: " + rect;
