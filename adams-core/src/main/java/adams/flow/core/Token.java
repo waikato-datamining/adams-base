@@ -77,7 +77,7 @@ public class Token
    *
    * @return		true if an array
    */
-  public boolean hasArray() {
+  public boolean isArray() {
     return !isNull() && m_Payload.getClass().isArray();
   }
 
