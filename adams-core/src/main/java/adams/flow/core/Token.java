@@ -15,7 +15,7 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -70,6 +70,15 @@ public class Token
    */
   public void setPayload(Object value) {
     m_Payload = value;
+  }
+
+  /**
+   * Checks whether the payload is not null and an array.
+   *
+   * @return		true if an array
+   */
+  public boolean hasArray() {
+    return !isNull() && m_Payload.getClass().isArray();
   }
 
   /**
