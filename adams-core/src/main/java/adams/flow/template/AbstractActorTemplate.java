@@ -15,7 +15,7 @@
 
 /*
  * AbstractActorTemplate.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -52,7 +52,16 @@ public abstract class AbstractActorTemplate
 
     m_OptionManager.add(
 	"name", "name",
-        "");
+        getDefaultName());
+  }
+
+  /**
+   * Returns the default name.
+   *
+   * @return		the default
+   */
+  protected String getDefaultName() {
+    return "";
   }
 
   /**
