@@ -139,7 +139,7 @@ public class FromPredictions
     m_PanelParameters.addParameter("Predicted", m_TextPredicted);
 
     // weight column
-    m_TextWeight = new IndexTextField();
+    m_TextWeight = new IndexTextField("");
     m_PanelParameters.addParameter("Weight", m_TextWeight);
 
     // additional attributes
