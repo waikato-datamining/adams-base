@@ -19,10 +19,12 @@
  */
 package adams.flow.template;
 
+import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
+import adams.flow.control.ArrayProcess;
 import adams.flow.control.CloseCallableDisplay;
 import adams.flow.control.Tee;
 import adams.flow.control.Trigger;
@@ -54,7 +56,7 @@ import adams.flow.transformer.PassThrough;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The new name for the actor; leave empty to use current.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: process
  * </pre>
  *
  * <pre>-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: dir)
@@ -84,6 +86,13 @@ import adams.flow.transformer.PassThrough;
  * &nbsp;&nbsp;&nbsp;default: file_counter
  * </pre>
  *
+ * <pre>-unfold-file-array &lt;boolean&gt; (property: unfoldFileArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, the file array gets flattened using the adams.flow.transformer.ArrayToSequence
+ * &nbsp;&nbsp;&nbsp;transformer instead of processing files within the adams.flow.control.ArrayProcess
+ * &nbsp;&nbsp;&nbsp;control actor.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -108,6 +117,9 @@ public class IterateFilesWithProgressBar
 
   /** the counter variable. */
   protected VariableName m_FileCounter;
+
+  /** whether to unfold the array (ArrayToSequence) or not (ArrayProcess). */
+  protected boolean m_UnfoldFileArray;
 
   /**
    * Returns a string describing the object.
@@ -147,6 +159,20 @@ public class IterateFilesWithProgressBar
     m_OptionManager.add(
       "file-counter", "fileCounter",
       new VariableName("file_counter"));
+
+    m_OptionManager.add(
+      "unfold-file-array", "unfoldFileArray",
+      true);
+  }
+
+  /**
+   * Returns the default name.
+   *
+   * @return		the default
+   */
+  @Override
+  protected String getDefaultName() {
+    return "process";
   }
 
   /**
@@ -295,6 +321,38 @@ public class IterateFilesWithProgressBar
   }
 
   /**
+   * Sets whether to flatten the file array.
+   *
+   * @param value	true if to unfold
+   */
+  public void setUnfoldFileArray(boolean value) {
+    m_UnfoldFileArray = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to flatten the file array.
+   *
+   * @return 		true if to unfold
+   */
+  public boolean getUnfoldFileArray() {
+    return m_UnfoldFileArray;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String unfoldFileArrayTipText() {
+    return "If enabled, the file array gets flattened using the "
+      + Utils.classToString(ArrayToSequence.class) + " transformer instead of "
+      + "processing files within the " + Utils.classToString(ArrayProcess.class)
+      + " control actor.";
+  }
+
+  /**
    * Whether the flow generated is an interactive one.
    *
    * @return		true if interactive
@@ -358,25 +416,51 @@ public class IterateFilesWithProgressBar
 	  teeNumFiles.add(set);
 	}
 
-	iterate.add(new ArrayToSequence());
+	if (m_UnfoldFileArray) {
+	  iterate.add(new ArrayToSequence());
 
-        Tee teeProgress = new Tee();
-        teeProgress.setName("progress");
-        iterate.add(teeProgress);
-	{
-	  IncVariable inc = new IncVariable();
-	  inc.setVariableName(new VariableName(m_FileCounter.getValue()));
-	  inc.setOutputVariableValue(true);
-	  teeProgress.add(inc);
+	  Tee teeProgress = new Tee();
+	  teeProgress.setName("progress");
+	  iterate.add(teeProgress);
+	  {
+	    IncVariable inc = new IncVariable();
+	    inc.setVariableName(new VariableName(m_FileCounter.getValue()));
+	    inc.setOutputVariableValue(true);
+	    teeProgress.add(inc);
 
-	  CallableSink sink = new CallableSink();
-	  sink.setCallableName(new CallableActorReference("Progress"));
-	  teeProgress.add(sink);
+	    CallableSink sink = new CallableSink();
+	    sink.setCallableName(new CallableActorReference("Progress"));
+	    teeProgress.add(sink);
+	  }
+
+	  PassThrough pass = new PassThrough();
+	  pass.setName("TODO process file");
+	  iterate.add(pass);
 	}
+	else {
+	  ArrayProcess process = new ArrayProcess();
+	  process.setName("process files");
+	  iterate.add(process);
+	  {
+	    Tee teeProgress = new Tee();
+	    teeProgress.setName("progress");
+	    process.add(teeProgress);
+	    {
+	      IncVariable inc = new IncVariable();
+	      inc.setVariableName(new VariableName(m_FileCounter.getValue()));
+	      inc.setOutputVariableValue(true);
+	      teeProgress.add(inc);
 
-	PassThrough pass = new PassThrough();
-        pass.setName("TODO process file");
-        iterate.add(pass);
+	      CallableSink sink = new CallableSink();
+	      sink.setCallableName(new CallableActorReference("Progress"));
+	      teeProgress.add(sink);
+	    }
+
+	    PassThrough pass = new PassThrough();
+	    pass.setName("TODO process file");
+	    process.add(pass);
+	  }
+	}
       }
 
       CloseCallableDisplay close = new CloseCallableDisplay();
