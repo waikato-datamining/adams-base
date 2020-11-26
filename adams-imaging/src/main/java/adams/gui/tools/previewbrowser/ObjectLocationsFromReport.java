@@ -941,6 +941,18 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * For post-processing the panel after creating or re-using it, before displaying it.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param panel	the panel to update
+   * @param report	the current report
+   * @param isCreate 	whether this is when creating the panel (true) or when reusing (false)
+   */
+  protected void postProcessPanel(CombinedPanel panel, Report report, boolean isCreate) {
+  }
+
+  /**
    * Creates the actual view.
    *
    * @param file	the file to create the view for
@@ -957,6 +969,8 @@ public class ObjectLocationsFromReport
     report = loadReport(panel, file);
     panel.getImagePanel().load(file, new JAIImageReader(), -1.0);
     panel.getImagePanel().setAdditionalProperties(report);
+
+    postProcessPanel(panel, report, true);
 
     return new PreviewPanel(panel, panel.getImagePanel().getPaintPanel());
   }
@@ -976,6 +990,8 @@ public class ObjectLocationsFromReport
     report = loadReport(panel, file);
     panel.getImagePanel().load(file, new JAIImageReader(), panel.getImagePanel().getScale());
     panel.getImagePanel().setAdditionalProperties(report);
+
+    postProcessPanel(panel, report, false);
 
     return previewPanel;
   }
