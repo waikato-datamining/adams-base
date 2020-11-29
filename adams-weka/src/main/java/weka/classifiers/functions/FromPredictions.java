@@ -369,6 +369,12 @@ public class FromPredictions
 	throw new IllegalStateException("Failed to locate weight column: " + m_Weight.getIndex());
     }
 
+    m_PredictedIndex = m_Predicted.getIntIndex();
+    m_ActualIndex    = m_Actual.getIntIndex();
+    m_WeightIndex    = m_Weight.getIntIndex();
+    if ((m_WeightIndex == m_PredictedIndex) || (m_WeightIndex == m_ActualIndex))
+      m_WeightIndex = -1;
+
     if (!m_Additional.isEmpty()) {
       m_Additional.setData(m_Predictions);
       additional = new TIntArrayList(m_Additional.getIntIndices());

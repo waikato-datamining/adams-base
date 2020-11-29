@@ -280,8 +280,20 @@ public class AggregateEvaluations
       }
     }
 
+    // disable weight column if one of the others
+    if ((colWeight == colAct) || (colWeight == colPred))
+      colWeight = -1;
+    if (colsDist != null) {
+      for (int col : colsDist) {
+	if (colWeight == col) {
+	  colWeight = -1;
+	  break;
+	}
+      }
+    }
+
     // class labels
-    if ((colsDist != null)) {
+    if (colsDist != null) {
       classification = true;
       labels = new ArrayList<>();
       for (i = 0; i < dist.length; i++) {

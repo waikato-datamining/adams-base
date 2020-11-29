@@ -207,11 +207,10 @@ public class FromPredictions
     if (!file.exists())
       return "File does not exist: " + file;
 
-    if (m_Model == null) {
-      msg = createFakeModel();
-      if (msg != null)
-	return msg;
-    }
+    msg = createFakeModel();
+    if (msg != null)
+      return msg;
+
     if (m_Model == null)
       return "Failed to load predictions: " + file;
 
