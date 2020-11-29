@@ -22,6 +22,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
+import adams.core.Range;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
@@ -30,6 +31,7 @@ import adams.data.spreadsheet.MetaData;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import adams.data.spreadsheet.SpreadSheetView;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaSpreadSheetToPredictions;
@@ -70,6 +72,8 @@ public class FromPredictions
 
   public static final String KEY_WEIGHT = "weight";
 
+  public static final String KEY_CLASSDISTRIBUTION = "class distribution";
+
   public static final String KEY_ADDITIONAL = "additional";
 
   /** the panel with the parameters. */
@@ -86,6 +90,9 @@ public class FromPredictions
 
   /** the text with the weight column index. */
   protected IndexTextField m_TextWeight;
+
+  /** the columns with the class distribution columns range. */
+  protected RangeTextField m_TextClassDistribution;
 
   /** the columns with the additional data to store. */
   protected RangeTextField m_TextAdditional;
@@ -142,8 +149,12 @@ public class FromPredictions
     m_TextWeight = new IndexTextField("");
     m_PanelParameters.addParameter("Weight", m_TextWeight);
 
+    // class distribution
+    m_TextClassDistribution = new RangeTextField("");
+    m_PanelParameters.addParameter("Class distribution", m_TextClassDistribution);
+
     // additional attributes
-    m_TextAdditional = new RangeTextField();
+    m_TextAdditional = new RangeTextField(Range.ALL);
     m_PanelParameters.addParameter("Additional", m_TextAdditional);
   }
 
@@ -180,6 +191,7 @@ public class FromPredictions
     model.setActual(new SpreadSheetColumnIndex(m_TextActual.getText()));
     model.setPredicted(new SpreadSheetColumnIndex(m_TextPredicted.getText()));
     model.setWeight(new SpreadSheetColumnIndex(m_TextWeight.getText()));
+    model.setClassDistribution(new SpreadSheetUnorderedColumnRange(m_TextClassDistribution.getText()));
     model.setAdditional(new SpreadSheetColumnRange(m_TextAdditional.getText()));
     try {
       model.buildClassifier(null);
@@ -259,12 +271,15 @@ public class FromPredictions
     runInfo.add("Actual", m_TextActual.getText());
     runInfo.add("Predicted", m_TextPredicted.getText());
     runInfo.add("Weight", m_TextWeight.getText());
+    runInfo.add("Class distribution", m_TextClassDistribution.getText());
     runInfo.add("Additional", m_TextAdditional.getText());
 
     topred = new WekaSpreadSheetToPredictions();
     topred.setActual(new SpreadSheetColumnIndex(m_TextActual.getText()));
     topred.setPredicted(new SpreadSheetColumnIndex(m_TextPredicted.getText()));
     topred.setWeight(new SpreadSheetColumnIndex(m_TextWeight.getText()));
+    topred.setClassDistribution(new SpreadSheetUnorderedColumnRange(m_TextClassDistribution.getText()));
+    topred.setUseColumnNamesAsClassLabels(true);
     topred.input(new Token(m_Model.getPredictions()));
     if ((msg = topred.execute()) != null)
       throw new IllegalArgumentException("Failed to generated Evaluations object from predictions:\n" + msg);
@@ -320,6 +335,7 @@ public class FromPredictions
       result.put(KEY_ACTUAL, m_TextActual.getText());
       result.put(KEY_PREDICTED, m_TextPredicted.getText());
       result.put(KEY_WEIGHT, m_TextWeight.getText());
+      result.put(KEY_CLASSDISTRIBUTION, m_TextClassDistribution.getText());
       result.put(KEY_ADDITIONAL, m_TextAdditional.getText());
     }
 
@@ -350,6 +366,8 @@ public class FromPredictions
       m_TextPredicted.setText((String) data.get(KEY_PREDICTED));
     if (data.containsKey(KEY_WEIGHT))
       m_TextWeight.setText((String) data.get(KEY_WEIGHT));
+    if (data.containsKey(KEY_CLASSDISTRIBUTION))
+      m_TextClassDistribution.setText((String) data.get(KEY_CLASSDISTRIBUTION));
     if (data.containsKey(KEY_ADDITIONAL))
       m_TextAdditional.setText((String) data.get(KEY_ADDITIONAL));
   }

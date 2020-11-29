@@ -26,6 +26,7 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.simple.AbstractSimpleClassifier;
@@ -65,6 +66,12 @@ public class FromPredictions
 
   /** the weight column index. */
   protected int m_WeightIndex;
+
+  /** the class distribution columns (if any). */
+  protected SpreadSheetUnorderedColumnRange m_ClassDistribution;
+
+  /** the class distribution column indices. */
+  protected int[] m_ClassDistributionIndices;
 
   /** the additional columns in the spreadsheet to add to the plot containers. */
   protected SpreadSheetColumnRange m_Additional;
@@ -111,6 +118,10 @@ public class FromPredictions
     m_OptionManager.add(
       "weight", "weight",
       new SpreadSheetColumnIndex(""));
+
+    m_OptionManager.add(
+      "class-distribution", "classDistribution",
+      new SpreadSheetUnorderedColumnRange(""));
 
     m_OptionManager.add(
       "additional", "additional",
@@ -263,6 +274,35 @@ public class FromPredictions
   }
 
   /**
+   * Sets the class distribution columns.
+   *
+   * @param value	the columns
+   */
+  public void setClassDistribution(SpreadSheetUnorderedColumnRange value) {
+    m_ClassDistribution = value;
+    reset();
+  }
+
+  /**
+   * Returns the class distribution columns.
+   *
+   * @return		the columns
+   */
+  public SpreadSheetUnorderedColumnRange getClassDistribution() {
+    return m_ClassDistribution;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String classDistributionTipText() {
+    return "The columns containing the class distribution.";
+  }
+
+  /**
    * Sets the additional columns to add to the plot containers.
    *
    * @param value	the columns
@@ -328,6 +368,15 @@ public class FromPredictions
   }
 
   /**
+   * Returns the 0-based indices of the class distribution columns.
+   *
+   * @return		the indices, 0-length array if not initialized or not used
+   */
+  public int[] getClassDistributionIndices() {
+    return m_ClassDistributionIndices;
+  }
+
+  /**
    * Returns the 0-based indices of the additional columns.
    *
    * @return		the indices, 0-length array if not initialized or not used
@@ -346,10 +395,11 @@ public class FromPredictions
   public void buildClassifier(Instances data) throws Exception {
     TIntList		additional;
 
-    m_ActualIndex       = -1;
-    m_PredictedIndex    = -1;
-    m_WeightIndex       = -1;
-    m_AdditionalIndices = new int[0];
+    m_ActualIndex              = -1;
+    m_PredictedIndex           = -1;
+    m_WeightIndex              = -1;
+    m_ClassDistributionIndices = new int[0];
+    m_AdditionalIndices        = new int[0];
 
     m_Predictions = m_Reader.read(m_PredictionsFile);
     if (m_Predictions == null)
@@ -375,12 +425,25 @@ public class FromPredictions
     if ((m_WeightIndex == m_PredictedIndex) || (m_WeightIndex == m_ActualIndex))
       m_WeightIndex = -1;
 
+    if (!m_ClassDistribution.isEmpty()) {
+      m_ClassDistribution.setData(m_Predictions);
+      m_ClassDistributionIndices = m_ClassDistribution.getIntIndices();
+      for (int index: m_ClassDistributionIndices) {
+        if (index == m_WeightIndex) {
+	  m_WeightIndex = -1;
+	  break;
+	}
+      }
+    }
+
     if (!m_Additional.isEmpty()) {
       m_Additional.setData(m_Predictions);
       additional = new TIntArrayList(m_Additional.getIntIndices());
       additional.remove(m_ActualIndex);
       additional.remove(m_PredictedIndex);
       additional.remove(m_WeightIndex);
+      for (int index: m_ClassDistributionIndices)
+        additional.remove(index);
       m_AdditionalIndices = additional.toArray();
     }
   }
