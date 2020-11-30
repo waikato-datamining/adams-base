@@ -20,7 +20,6 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
-import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Instances;
@@ -90,7 +89,7 @@ public class RemoveChecked
 	});
       }
       catch (Throwable ex) {
-	GUIHelper.showErrorMessage(m_Owner, "Failed to remove checked attributes!", ex);
+	logError("Failed to remove checked attributes!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");

@@ -21,7 +21,6 @@
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
 import adams.data.weka.WekaAttributeRange;
-import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Instances;
@@ -103,7 +102,7 @@ public class CheckedToNominal
 	});
       }
       catch (Throwable ex) {
-	GUIHelper.showErrorMessage(m_Owner, "Failed to convert checked attributes to nominal!", ex);
+	logError("Failed to convert checked attributes to nominal!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");
