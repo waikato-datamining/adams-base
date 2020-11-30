@@ -127,9 +127,9 @@ public class AnyToString
   }
 
   /**
-   * Sets the first attribute range to use (regular expression on attribute names).
+   * Sets the attribute range to use.
    *
-   * @param value 	the expression
+   * @param value 	the range
    */
   public void setRange(WekaAttributeRange value) {
     m_Range = value;
@@ -137,9 +137,9 @@ public class AnyToString
   }
 
   /**
-   * Returns the first attribute range to use (regular expression on attribute names).
+   * Returns the attribute range to use.
    *
-   * @return 		the expression
+   * @return 		the range
    */
   public WekaAttributeRange getRange() {
     return m_Range;
