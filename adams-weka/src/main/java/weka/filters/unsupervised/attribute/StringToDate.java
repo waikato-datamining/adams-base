@@ -59,7 +59,7 @@ public class StringToDate
   protected TIntSet m_Indices;
 
   /** the parse format. */
-  protected String m_Format = "";
+  protected String m_Format = DEFAULT_FORMAT;
 
   /**
    * Returns a string describing this filter.
