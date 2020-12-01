@@ -14,8 +14,8 @@
  */
 
 /*
- * RegisterSlave.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * RegisterWorker.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.distributed;
@@ -24,18 +24,17 @@ import adams.core.option.OptionUtils;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.connection.Connection;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.engine.SlaveScriptingEngine;
+import adams.scripting.engine.WorkerScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.util.logging.Level;
 
 /**
- * Registers a {@link adams.scripting.engine.SlaveScriptingEngine} with a master.
+ * Registers a {@link WorkerScriptingEngine} with a main engine.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class RegisterSlave
+public class RegisterWorker
   extends AbstractCommand {
 
   private static final long serialVersionUID = -1657908444959620122L;
@@ -51,7 +50,7 @@ public class RegisterSlave
   @Override
   public String globalInfo() {
     return
-      "Registers the owning " + SlaveScriptingEngine.class.getName() + " with a master.";
+      "Registers the owning " + WorkerScriptingEngine.class.getName() + " with a main engine.";
   }
 
   /**

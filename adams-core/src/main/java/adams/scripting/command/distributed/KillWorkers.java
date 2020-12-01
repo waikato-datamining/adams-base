@@ -14,25 +14,24 @@
  */
 
 /*
- * KillSlaves.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * KillWorkers.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.distributed;
 
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.engine.SlaveScriptingEngine;
+import adams.scripting.engine.WorkerScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
- * Kills all {@link SlaveScriptingEngine} that are registered with the master
+ * Kills all {@link WorkerScriptingEngine} that are registered with the main engine
  * receiving this message.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class KillSlaves
+public class KillWorkers
   extends AbstractCommand {
 
   private static final long serialVersionUID = -1657908444959620122L;
@@ -45,8 +44,8 @@ public class KillSlaves
   @Override
   public String globalInfo() {
     return
-      "Kills all the " + SlaveScriptingEngine.class.getName() + " registered "
-	+ "with the master receiving this message.";
+      "Kills all the " + WorkerScriptingEngine.class.getName() + " registered "
+	+ "with the main engine receiving this message.";
   }
 
   /**

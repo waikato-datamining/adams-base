@@ -14,34 +14,33 @@
  */
 
 /*
- * DefaultSlaveScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * DefaultWorkerScriptingEngine.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
 
-import adams.scripting.command.distributed.DeregisterSlave;
-import adams.scripting.command.distributed.RegisterSlave;
+import adams.scripting.command.distributed.DeregisterWorker;
+import adams.scripting.command.distributed.RegisterWorker;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 
 /**
- * Registers itself with a master for executing jobs.
+ * Registers itself with a main engine for executing jobs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class DefaultSlaveScriptingEngine
+public class DefaultWorkerScriptingEngine
   extends AbstractScriptingEngineEnhancer
-  implements SlaveScriptingEngine {
+  implements WorkerScriptingEngine {
 
   private static final long serialVersionUID = 2201421147846496892L;
 
-  /** the connection to the master node. */
-  protected Connection m_Master;
+  /** the connection to the main engine node. */
+  protected Connection m_Main;
 
-  /** the connection for communicating with the slave. */
-  protected Connection m_Slave;
+  /** the connection for communicating with the worker. */
+  protected Connection m_Worker;
 
   /**
    * Returns a string describing the object.
@@ -50,7 +49,7 @@ public class DefaultSlaveScriptingEngine
    */
   @Override
   public String globalInfo() {
-    return "Registers itself with a master for executing jobs.";
+    return "Registers itself with a main engine for executing jobs.";
   }
 
   /**
@@ -61,12 +60,12 @@ public class DefaultSlaveScriptingEngine
     super.defineOptions();
 
     m_OptionManager.add(
-      "master", "master",
-      getDefaultMaster());
+      "main", "main",
+      getDefaultMain());
 
     m_OptionManager.add(
-      "slave", "slave",
-      getDefaultSlave());
+      "worker", "worker",
+      getDefaultWorker());
   }
 
   /**
@@ -84,31 +83,31 @@ public class DefaultSlaveScriptingEngine
   }
 
   /**
-   * Returns the default connection for the master.
+   * Returns the default connection for the main.
    *
    * @return		the default
    */
-  protected Connection getDefaultMaster() {
+  protected Connection getDefaultMain() {
     return new DefaultConnection();
   }
 
   /**
-   * Sets the connection for communicating with the master.
+   * Sets the connection for communicating with the main engine.
    *
    * @param value	the connection
    */
-  public void setMaster(Connection value) {
-    m_Master = value;
+  public void setMain(Connection value) {
+    m_Main = value;
     reset();
   }
 
   /**
-   * Returns the connection for communicating with the master.
+   * Returns the connection for communicating with the main engine.
    *
    * @return		the connection
    */
-  public Connection getMaster() {
-    return m_Master;
+  public Connection getMain() {
+    return m_Main;
   }
 
   /**
@@ -117,16 +116,16 @@ public class DefaultSlaveScriptingEngine
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String masterTipText() {
-    return "The connection for communicating with the master.";
+  public String mainTipText() {
+    return "The connection for communicating with the main engine.";
   }
 
   /**
-   * Returns the default connection for the slave.
+   * Returns the default connection for the worker.
    *
    * @return		the default
    */
-  protected Connection getDefaultSlave() {
+  protected Connection getDefaultWorker() {
     DefaultConnection	result;
 
     result = new DefaultConnection();
@@ -136,22 +135,22 @@ public class DefaultSlaveScriptingEngine
   }
 
   /**
-   * Sets the connection that the master uses for communicating with the slave.
+   * Sets the connection that the main uses for communicating with the worker.
    *
    * @param value	the connection
    */
-  public void setSlave(Connection value) {
-    m_Slave = value;
+  public void setWorker(Connection value) {
+    m_Worker = value;
     reset();
   }
 
   /**
-   * Returns the connection that the master uses for communicating with the slave.
+   * Returns the connection that the main uses for communicating with the worker.
    *
    * @return		the connection
    */
-  public Connection getSlave() {
-    return m_Slave;
+  public Connection getWorker() {
+    return m_Worker;
   }
 
   /**
@@ -160,28 +159,28 @@ public class DefaultSlaveScriptingEngine
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String slaveTipText() {
-    return "The connection that the master uses for communicating with the slave";
+  public String workerTipText() {
+    return "The connection that the main engine uses for communicating with the worker";
   }
 
   /**
    * Hook method which gets called just before the base engine is executed.
    * <br>
-   * Registers with the master.
+   * Registers with the main.
    *
    * @return		null if successful, otherwise error message
    */
   @Override
   protected String preExecute() {
     String		result;
-    RegisterSlave	register;
+    RegisterWorker register;
 
     result = super.preExecute();
 
     if (result == null) {
-      register = new RegisterSlave();
-      register.setConnection(m_Slave);
-      result = m_Master.sendRequest(register, m_CommandProcessor);
+      register = new RegisterWorker();
+      register.setConnection(m_Worker);
+      result = m_Main.sendRequest(register, m_CommandProcessor);
     }
 
     return result;
@@ -192,12 +191,12 @@ public class DefaultSlaveScriptingEngine
    */
   @Override
   public void stopExecution() {
-    DeregisterSlave 	deregister;
+    DeregisterWorker deregister;
     String 		msg;
 
-    deregister = new DeregisterSlave();
-    deregister.setConnection(m_Slave);
-    msg = m_Master.sendRequest(deregister, m_CommandProcessor);
+    deregister = new DeregisterWorker();
+    deregister.setConnection(m_Worker);
+    msg = m_Main.sendRequest(deregister, m_CommandProcessor);
     if (msg != null)
       getLogger().severe("Failed to deregister: " + msg);
 

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SlaveScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * WorkerScriptingEngine.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -23,27 +23,26 @@ package adams.scripting.engine;
 import adams.scripting.connection.Connection;
 
 /**
- * Interface for scripting engines that register themselves with a master
+ * Interface for scripting engines that register themselves with a main engine
  * for executing jobs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface SlaveScriptingEngine {
+public interface WorkerScriptingEngine {
 
   /**
-   * Sets the connection for communicating with the master.
+   * Sets the connection for communicating with the main engine.
    *
    * @param value	the connection
    */
-  public void setMaster(Connection value);
+  public void setMain(Connection value);
 
   /**
-   * Returns the connection for communicating with the master.
+   * Returns the connection for communicating with the main engine.
    *
    * @return		the connection
    */
-  public Connection getMaster();
+  public Connection getMain();
 
   /**
    * Returns the tip text for this property.
@@ -51,21 +50,21 @@ public interface SlaveScriptingEngine {
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String masterTipText();
+  public String mainTipText();
 
   /**
-   * Sets the connection that the master uses for communicating with the slave.
+   * Sets the connection that the main uses for communicating with the worker.
    *
    * @param value	the connection
    */
-  public void setSlave(Connection value);
+  public void setWorker(Connection value);
 
   /**
-   * Returns the connection that the master uses for communicating with the slave.
+   * Returns the connection that the main uses for communicating with the worker.
    *
    * @return		the connection
    */
-  public Connection getSlave();
+  public Connection getWorker();
 
   /**
    * Returns the tip text for this property.
@@ -73,5 +72,5 @@ public interface SlaveScriptingEngine {
    * @return 		tip text for this property suitable for
    * 			displaying in the gui
    */
-  public String slaveTipText();
+  public String workerTipText();
 }

@@ -26,7 +26,7 @@ import adams.scripting.connection.Connection;
 import adams.scripting.connection.DefaultConnection;
 import adams.scripting.engine.AbstractRemoteCommandHandler;
 import adams.scripting.engine.DefaultScriptingEngine;
-import adams.scripting.engine.MasterScriptingEngine;
+import adams.scripting.engine.MainScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
 
@@ -50,8 +50,8 @@ public class RemoteCommandJobRunner
 
     private static final long serialVersionUID = 3426984517327055710L;
 
-    /** the master. */
-    protected RemoteCommandJobRunner m_Master;
+    /** the main. */
+    protected RemoteCommandJobRunner m_Main;
 
     /**
      * Returns a string describing the object.
@@ -64,21 +64,21 @@ public class RemoteCommandJobRunner
     }
 
     /**
-     * Sets the master scripting engine this command handler belongs to.
+     * Sets the main scripting engine this command handler belongs to.
      *
      * @param value	the owner
      */
-    public void setMaster(RemoteCommandJobRunner value) {
-      m_Master = value;
+    public void setMain(RemoteCommandJobRunner value) {
+      m_Main = value;
     }
 
     /**
-     * Returns the master scripting engine this command handler belongs to.
+     * Returns the main scripting engine this command handler belongs to.
      *
      * @return		the owner
      */
-    public RemoteCommandJobRunner getMaster() {
-      return m_Master;
+    public RemoteCommandJobRunner getMain() {
+      return m_Main;
     }
 
     /**
@@ -94,8 +94,8 @@ public class RemoteCommandJobRunner
       result = super.check(cmd);
 
       if (result == null) {
-	if (m_Master == null)
-	  result = "No " + MasterScriptingEngine.class.getName() + " set!";
+	if (m_Main == null)
+	  result = "No " + MainScriptingEngine.class.getName() + " set!";
       }
 
       return result;
@@ -344,7 +344,7 @@ public class RemoteCommandJobRunner
     new Thread(() -> {
       RemoteCommandGrabber handler = new RemoteCommandGrabber();
       handler.setOwner(m_ResponseScriptingEngine);
-      handler.setMaster(this);
+      handler.setMain(this);
       m_ResponseScriptingEngine.setCommandHandler(handler);
       String msg = m_ResponseScriptingEngine.execute();
       if (msg != null)

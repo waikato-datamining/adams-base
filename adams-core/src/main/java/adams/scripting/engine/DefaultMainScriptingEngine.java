@@ -14,8 +14,8 @@
  */
 
 /*
- * MasterScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * DefaultMainScriptingEngine.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -23,38 +23,36 @@ package adams.scripting.engine;
 import adams.core.logging.LoggingLevel;
 import adams.scripting.command.RemoteCommand;
 import adams.scripting.command.basic.Kill;
-import adams.scripting.command.distributed.DeregisterSlave;
-import adams.scripting.command.distributed.KillSlaves;
-import adams.scripting.command.distributed.RegisterSlave;
+import adams.scripting.command.distributed.DeregisterWorker;
+import adams.scripting.command.distributed.KillWorkers;
+import adams.scripting.command.distributed.RegisterWorker;
 import adams.scripting.connection.Connection;
 import adams.scripting.connection.LoadBalancer;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 /**
- * Manages slave scripting engines and sends them jobs for execution.
+ * Manages worker scripting engines and sends them jobs for execution.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class DefaultMasterScriptingEngine
+public class DefaultMainScriptingEngine
   extends AbstractScriptingEngineEnhancer
-  implements MasterScriptingEngine {
+  implements MainScriptingEngine {
 
   private static final long serialVersionUID = 8181130583432049922L;
 
   /**
-   * Handles the registering/deregistering of slaves.
+   * Handles the registering/deregistering of workers.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class RemoteCommandGrabber
     extends AbstractRemoteCommandHandler {
 
     private static final long serialVersionUID = 3426984517327055710L;
 
-    /** the master. */
-    protected MasterScriptingEngine m_Master;
+    /** the main. */
+    protected MainScriptingEngine m_Main;
 
     /**
      * Returns a string describing the object.
@@ -63,25 +61,25 @@ public class DefaultMasterScriptingEngine
      */
     @Override
     public String globalInfo() {
-      return "Handles the register/deregister of slaves.";
+      return "Handles the register/deregister of workers.";
     }
 
     /**
-     * Sets the master scripting engine this command handler belongs to.
+     * Sets the main scripting engine this command handler belongs to.
      *
      * @param value	the owner
      */
-    public void setMaster(MasterScriptingEngine value) {
-      m_Master = value;
+    public void setMain(MainScriptingEngine value) {
+      m_Main = value;
     }
 
     /**
-     * Returns the master scripting engine this command handler belongs to.
+     * Returns the main scripting engine this command handler belongs to.
      *
      * @return		the owner
      */
-    public MasterScriptingEngine getMaster() {
-      return m_Master;
+    public MainScriptingEngine getMain() {
+      return m_Main;
     }
 
     /**
@@ -97,8 +95,8 @@ public class DefaultMasterScriptingEngine
       result = super.check(cmd);
 
       if (result == null) {
-	if (m_Master == null)
-	  result = "No " + MasterScriptingEngine.class.getName() + " set!";
+	if (m_Main == null)
+	  result = "No " + MainScriptingEngine.class.getName() + " set!";
       }
 
       return result;
@@ -117,21 +115,21 @@ public class DefaultMasterScriptingEngine
 
       result = null;
 
-      if (cmd instanceof RegisterSlave)
-	m_Master.registerSlave(((RegisterSlave) cmd).getConnection());
-      else if (cmd instanceof DeregisterSlave)
-	m_Master.deregisterSlave(((DeregisterSlave) cmd).getConnection());
-      else if (cmd instanceof KillSlaves)
-	m_Master.killSlaves();
+      if (cmd instanceof RegisterWorker)
+	m_Main.registerWorker(((RegisterWorker) cmd).getConnection());
+      else if (cmd instanceof DeregisterWorker)
+	m_Main.deregisterWorker(((DeregisterWorker) cmd).getConnection());
+      else if (cmd instanceof KillWorkers)
+	m_Main.killWorkers();
       else
-	result = m_Master.sendCommand(cmd);
+	result = m_Main.sendCommand(cmd);
 
       return result;
     }
   }
 
-  /** for keeping track of slaves. */
-  protected LoadBalancer m_Slaves;
+  /** for keeping track of workers. */
+  protected LoadBalancer m_Workers;
 
   /**
    * Returns a string describing the object.
@@ -140,7 +138,7 @@ public class DefaultMasterScriptingEngine
    */
   @Override
   public String globalInfo() {
-    return "Manages slave scripting engines and sends them jobs for execution.";
+    return "Manages worker scripting engines and sends them jobs for execution.";
   }
 
   /**
@@ -150,7 +148,7 @@ public class DefaultMasterScriptingEngine
   protected void initialize() {
     super.initialize();
 
-    m_Slaves = new LoadBalancer();
+    m_Workers = new LoadBalancer();
   }
 
   /**
@@ -160,7 +158,7 @@ public class DefaultMasterScriptingEngine
   protected void reset() {
     super.reset();
 
-    m_Slaves.setConnections(new Connection[0]);
+    m_Workers.setConnections(new Connection[0]);
   }
 
   /**
@@ -171,44 +169,44 @@ public class DefaultMasterScriptingEngine
   @Override
   public synchronized void setLoggingLevel(LoggingLevel value) {
     super.setLoggingLevel(value);
-    m_Slaves.setLoggingLevel(value);
+    m_Workers.setLoggingLevel(value);
   }
 
   /**
-   * Registers a slave with the given connection.
+   * Registers a worker with the given connection.
    *
-   * @param conn	the connection of the slave
+   * @param conn	the connection of the worker
    */
-  public void registerSlave(Connection conn) {
+  public void registerWorker(Connection conn) {
     if (isLoggingEnabled())
       getLogger().info("Registering: " + conn);
-    m_Slaves.addConnection(conn);
+    m_Workers.addConnection(conn);
   }
 
   /**
-   * Deregisters a slave with the given connection.
+   * Deregisters a worker with the given connection.
    *
-   * @param conn	the connection of the slave
+   * @param conn	the connection of the worker
    */
-  public void deregisterSlave(Connection conn) {
+  public void deregisterWorker(Connection conn) {
     if (isLoggingEnabled())
       getLogger().info("Deregistering: " + conn);
-    m_Slaves.removeConnection(conn);
+    m_Workers.removeConnection(conn);
   }
 
   /**
-   * Kills all slaves registered.
+   * Kills all workers registered.
    */
-  public void killSlaves() {
+  public void killWorkers() {
     Connection[]	conns;
     Kill		kill;
     String		msg;
 
-    conns = m_Slaves.getConnections().clone();
+    conns = m_Workers.getConnections().clone();
     for (Connection conn: conns) {
       if (isLoggingEnabled())
 	getLogger().info("Sending kill to " + conn);
-      m_Slaves.removeConnection(conn);
+      m_Workers.removeConnection(conn);
       kill = new Kill();
       msg  = conn.sendRequest(kill, m_CommandProcessor);
       if (msg != null)
@@ -217,7 +215,7 @@ public class DefaultMasterScriptingEngine
   }
 
   /**
-   * Sends the command to a slave.
+   * Sends the command to a worker.
    *
    * @param cmd		the command to send
    * @return		null if successful, otherwise error message
@@ -227,13 +225,13 @@ public class DefaultMasterScriptingEngine
 
     if (cmd.isRequest()) {
       if (isLoggingEnabled())
-	getLogger().info("Sending request to slave: " + cmd.getClass().getName());
-      result = m_Slaves.sendRequest(cmd, m_CommandProcessor);
+	getLogger().info("Sending request to worker: " + cmd.getClass().getName());
+      result = m_Workers.sendRequest(cmd, m_CommandProcessor);
     }
     else {
       if (isLoggingEnabled())
-	getLogger().info("Sending response to slave: " + cmd.getClass().getName());
-      result = m_Slaves.sendResponse(cmd, m_CommandProcessor);
+	getLogger().info("Sending response to worker: " + cmd.getClass().getName());
+      result = m_Workers.sendResponse(cmd, m_CommandProcessor);
     }
 
     return result;
@@ -248,7 +246,7 @@ public class DefaultMasterScriptingEngine
 
     if (result == null) {
       handler = new RemoteCommandGrabber();
-      handler.setMaster(this);
+      handler.setMain(this);
       handler.setLoggingLevel(getLoggingLevel());
       m_ScriptingEngine.setCommandHandler(handler);
     }

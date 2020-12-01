@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * MasterScriptingEngine.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * MainScriptingEngine.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -24,36 +24,35 @@ import adams.scripting.command.RemoteCommand;
 import adams.scripting.connection.Connection;
 
 /**
- * Interface for scripting engines that manage slave scripting engines
+ * Interface for scripting engines that manage worker scripting engines
  * and sending them jobs for execution.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface MasterScriptingEngine
+public interface MainScriptingEngine
   extends RemoteScriptingEngine {
 
   /**
-   * Registers a slave with the given connection.
+   * Registers a worker with the given connection.
    *
-   * @param conn	the connection of the slave
+   * @param conn	the connection of the worker
    */
-  public void registerSlave(Connection conn);
+  public void registerWorker(Connection conn);
 
   /**
-   * Deregisters a slave with the given connection.
+   * Deregisters a worker with the given connection.
    *
-   * @param conn	the connection of the slave
+   * @param conn	the connection of the worker
    */
-  public void deregisterSlave(Connection conn);
+  public void deregisterWorker(Connection conn);
 
   /**
-   * Kills all slaves registered.
+   * Kills all workers registered.
    */
-  public void killSlaves();
+  public void killWorkers();
 
   /**
-   * Sends the command to a slave.
+   * Sends the command to a worker.
    *
    * @param cmd		the command to send
    * @return		null if successful, otherwise error message

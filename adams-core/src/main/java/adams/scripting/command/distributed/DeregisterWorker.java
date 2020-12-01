@@ -14,8 +14,8 @@
  */
 
 /*
- * DeregisterSlave.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * DeregisterWorker.java
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.distributed;
@@ -24,23 +24,22 @@ import adams.core.option.OptionUtils;
 import adams.scripting.command.AbstractCommand;
 import adams.scripting.connection.Connection;
 import adams.scripting.engine.RemoteScriptingEngine;
-import adams.scripting.engine.SlaveScriptingEngine;
+import adams.scripting.engine.WorkerScriptingEngine;
 import adams.scripting.processor.RemoteCommandProcessor;
 
 import java.util.logging.Level;
 
 /**
- * Deregisters a {@link SlaveScriptingEngine} from a master.
+ * Deregisters a {@link WorkerScriptingEngine} from a main.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class DeregisterSlave
+public class DeregisterWorker
   extends AbstractCommand {
 
   private static final long serialVersionUID = -1657908444959620122L;
 
-  /** the connection to use for the slave. */
+  /** the connection to use for the worker. */
   protected Connection m_Connection;
 
   /**
@@ -51,7 +50,7 @@ public class DeregisterSlave
   @Override
   public String globalInfo() {
     return
-      "Deregisters the owning " + SlaveScriptingEngine.class.getName() + " from a master.";
+      "Deregisters the owning " + WorkerScriptingEngine.class.getName() + " from a main.";
   }
 
   /**
