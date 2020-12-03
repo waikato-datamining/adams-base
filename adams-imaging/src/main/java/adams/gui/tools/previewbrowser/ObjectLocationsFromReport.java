@@ -26,6 +26,7 @@ import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.ImageAnchor;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
@@ -120,6 +121,7 @@ public class ObjectLocationsFromReport
       overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
       overlay.setLabelFormat(m_LabelFormat);
       overlay.setLabelFont(m_LabelFont);
+      overlay.setLabelAnchor(m_LabelAnchor);
       overlay.setLabelOffsetX(m_LabelOffsetX);
       overlay.setLabelOffsetY(m_LabelOffsetY);
       overlay.setPredefinedLabels(m_PredefinedLabels);
@@ -233,6 +235,9 @@ public class ObjectLocationsFromReport
   /** the label font. */
   protected Font m_LabelFont;
 
+  /** the label anchor. */
+  protected ImageAnchor m_LabelAnchor;
+
   /** the x offset for the label. */
   protected int m_LabelOffsetX;
 
@@ -314,16 +319,20 @@ public class ObjectLocationsFromReport
       Fonts.getSansFont(14));
 
     m_OptionManager.add(
-	"label-offset-x", "labelOffsetX",
-	0);
+      "label-anchor", "labelAnchor",
+      getDefaultLabelAnchor());
 
     m_OptionManager.add(
-	"label-offset-y", "labelOffsetY",
-	0);
+      "label-offset-x", "labelOffsetX",
+      getDefaultLabelOffsetX());
 
     m_OptionManager.add(
-	"predefined-labels", "predefinedLabels",
-	new BaseString[0]);
+      "label-offset-y", "labelOffsetY",
+      getDefaultLabelOffsetY());
+
+    m_OptionManager.add(
+      "predefined-labels", "predefinedLabels",
+      new BaseString[0]);
 
     m_OptionManager.add(
       "finder", "finder",
@@ -637,6 +646,53 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Returns the default label anchor.
+   *
+   * @return		the default
+   */
+  protected ImageAnchor getDefaultLabelAnchor() {
+    return ImageAnchor.TOP_RIGHT;
+  }
+
+  /**
+   * Sets the anchor for the label.
+   *
+   * @param value 	the anchor
+   */
+  public void setLabelAnchor(ImageAnchor value) {
+    m_LabelAnchor = value;
+    reset();
+  }
+
+  /**
+   * Returns the anchor for the label.
+   *
+   * @return 		the anchor
+   */
+  public ImageAnchor getLabelAnchor() {
+    return m_LabelAnchor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAnchorTipText() {
+    return "The anchor for the label.";
+  }
+
+  /**
+   * Returns the default label offset for X.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetX() {
+    return 0;
+  }
+
+  /**
    * Sets the X offset for the label.
    *
    * @param value 	the X offset
@@ -662,7 +718,16 @@ public class ObjectLocationsFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String labelOffsetXTipText() {
-    return "The X offset for the label.";
+    return "The X offset for the label; values of 0 or greater are interpreted as absolute pixels, -1 uses left as anchor, -2 the center and -3 the right.";
+  }
+
+  /**
+   * Returns the default label offset for Y.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetY() {
+    return 0;
   }
 
   /**
@@ -691,7 +756,7 @@ public class ObjectLocationsFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String labelOffsetYTipText() {
-    return "The Y offset for the label.";
+    return "The Y offset for the label values of 0 or greater are interpreted as absolute pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.";
   }
 
   /**

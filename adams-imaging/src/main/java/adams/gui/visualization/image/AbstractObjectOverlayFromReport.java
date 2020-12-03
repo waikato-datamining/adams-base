@@ -21,6 +21,7 @@ package adams.gui.visualization.image;
 
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
+import adams.data.image.ImageAnchor;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PopupMenuCustomizer;
@@ -105,12 +106,16 @@ public abstract class AbstractObjectOverlayFromReport
 	Fonts.getSansFont(14));
 
     m_OptionManager.add(
+	"label-anchor", "labelAnchor",
+	getDefaultLabelAnchor());
+
+    m_OptionManager.add(
 	"label-offset-x", "labelOffsetX",
-	0);
+	getDefaultLabelOffsetX());
 
     m_OptionManager.add(
 	"label-offset-y", "labelOffsetY",
-	0);
+	getDefaultLabelOffsetY());
 
     m_OptionManager.add(
 	"predefined-labels", "predefinedLabels",
@@ -363,6 +368,53 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Sets the anchor for the label.
+   *
+   * @param value 	the anchor
+   */
+  public void setLabelAnchor(ImageAnchor value) {
+    m_Overlays.setLabelAnchor(value);
+    reset();
+  }
+
+  /**
+   * Returns the default label anchor.
+   *
+   * @return		the anchor
+   */
+  protected ImageAnchor getDefaultLabelAnchor() {
+    return ImageAnchor.TOP_RIGHT;
+  }
+
+  /**
+   * Returns the anchor for the label.
+   *
+   * @return 		the anchor
+   */
+  public ImageAnchor getLabelAnchor() {
+    return m_Overlays.getLabelAnchor();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAnchorTipText() {
+    return m_Overlays.labelAnchorTipText();
+  }
+
+  /**
+   * Returns the default label offset for X.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetX() {
+    return 0;
+  }
+
+  /**
    * Sets the X offset for the label.
    *
    * @param value 	the X offset
@@ -389,6 +441,15 @@ public abstract class AbstractObjectOverlayFromReport
    */
   public String labelOffsetXTipText() {
     return m_Overlays.labelOffsetXTipText();
+  }
+
+  /**
+   * Returns the default label offset for Y.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetY() {
+    return 0;
   }
 
   /**
@@ -535,10 +596,103 @@ public abstract class AbstractObjectOverlayFromReport
   protected void drawString(Graphics g, Rectangle rect, String label) {
     int		offsetX;
     int		offsetY;
+    Dimension	dims;
+
+    if (label.isEmpty())
+      return;
 
     offsetX = getLabelOffsetX();
     offsetY = getLabelOffsetY();
-    g.drawString(label, (int) (rect.getX() + rect.getWidth() + offsetX), (int) (rect.getY() + offsetY));
+    dims    = calcStringDimenions(g, getLabelFont(), label);
+
+    switch (offsetX) {
+      case -1:
+        offsetX = 0;
+        break;
+      case -2:
+        offsetX = -dims.width / 2;
+        break;
+      case -3:
+        offsetX = -dims.width;
+        break;
+      default:
+	if (offsetX < 0)
+	  offsetX = 0;
+    }
+
+    switch (offsetY) {
+      case -1:
+        offsetY = 0;
+        break;
+      case -2:
+        offsetY = dims.height / 2;
+        break;
+      case -3:
+        offsetY = dims.height;
+        break;
+      default:
+	if (offsetY < 0)
+	  offsetY = 0;
+    }
+
+    switch (getLabelAnchor()) {
+      case TOP_LEFT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + offsetX),
+	  (int) (rect.getY() + offsetY));
+	break;
+      case TOP_CENTER:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
+	  (int) (rect.getY() + offsetY));
+	break;
+      case TOP_RIGHT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width + offsetX),
+	  (int) (rect.getY() + offsetY));
+	break;
+      case MIDDLE_LEFT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + offsetX),
+	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
+	break;
+      case MIDDLE_CENTER:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
+	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
+	break;
+      case MIDDLE_RIGHT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width + offsetX),
+	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
+	break;
+      case BOTTOM_LEFT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + offsetX),
+	  (int) (rect.getY() + rect.height + offsetY));
+	break;
+      case BOTTOM_CENTER:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
+	  (int) (rect.getY() + rect.height + offsetY));
+	break;
+      case BOTTOM_RIGHT:
+	g.drawString(
+	  label,
+	  (int) (rect.getX() + rect.width + offsetX),
+	  (int) (rect.getY() + rect.height + offsetY));
+	break;
+      default:
+        throw new IllegalStateException("Unhandled label anchor: " + getLabelAnchor());
+    }
   }
 
   /**

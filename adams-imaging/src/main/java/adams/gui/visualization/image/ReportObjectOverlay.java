@@ -22,6 +22,7 @@ package adams.gui.visualization.image;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
+import adams.data.image.ImageAnchor;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -75,6 +76,9 @@ public class ReportObjectOverlay
 
   /** the label font. */
   protected Font m_LabelFont;
+
+  /** the label anchor. */
+  protected ImageAnchor m_LabelAnchor;
 
   /** the x offset for the label. */
   protected int m_LabelOffsetX;
@@ -145,6 +149,10 @@ public class ReportObjectOverlay
     m_OptionManager.add(
 	"label-font", "labelFont",
 	Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+	"label-anchor", "labelAnchor",
+	ImageAnchor.TOP_RIGHT);
 
     m_OptionManager.add(
 	"label-offset-x", "labelOffsetX",
@@ -411,6 +419,35 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Sets the anchor for the label.
+   *
+   * @param value 	the anchor
+   */
+  public void setLabelAnchor(ImageAnchor value) {
+    m_LabelAnchor = value;
+    reset();
+  }
+
+  /**
+   * Returns the anchor for the label.
+   *
+   * @return 		the anchor
+   */
+  public ImageAnchor getLabelAnchor() {
+    return m_LabelAnchor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAnchorTipText() {
+    return "The anchor for the label.";
+  }
+
+  /**
    * Sets the X offset for the label.
    *
    * @param value 	the X offset
@@ -436,7 +473,7 @@ public class ReportObjectOverlay
    * 			displaying in the GUI or for listing the options.
    */
   public String labelOffsetXTipText() {
-    return "The X offset for the label.";
+    return "The X offset for the label; values of 0 or greater are interpreted as absolute pixels, -1 uses left as anchor, -2 the center and -3 the right.";
   }
 
   /**
@@ -465,7 +502,7 @@ public class ReportObjectOverlay
    * 			displaying in the GUI or for listing the options.
    */
   public String labelOffsetYTipText() {
-    return "The Y offset for the label.";
+    return "The Y offset for the label values of 0 or greater are interpreted as absolute pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.";
   }
 
   /**
