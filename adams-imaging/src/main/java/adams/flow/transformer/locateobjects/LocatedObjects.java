@@ -19,6 +19,7 @@
  */
 package adams.flow.transformer.locateobjects;
 
+import adams.core.CloneHandler;
 import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -42,7 +43,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LocatedObjects
-  extends ArrayList<LocatedObject> {
+  extends ArrayList<LocatedObject>
+  implements CloneHandler<LocatedObjects> {
 
   /** for serialization. */
   private static final long serialVersionUID = 7784285445489902957L;
@@ -340,6 +342,21 @@ public class LocatedObjects
 
     for (i = 0; i < size(); i++)
       get(i).getMetaData().put(LocatedObjects.KEY_INDEX, (i+1+offset));
+  }
+
+  /**
+   * Returns a clone of the object.
+   *
+   * @return		the clone
+   */
+  public LocatedObjects getClone() {
+    LocatedObjects	result;
+
+    result = new LocatedObjects();
+    for (LocatedObject obj: this)
+      result.add(obj.getClone());
+
+    return result;
   }
 
   /**
