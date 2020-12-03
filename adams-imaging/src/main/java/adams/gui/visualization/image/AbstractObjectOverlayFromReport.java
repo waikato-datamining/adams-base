@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -33,9 +33,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.List;
@@ -505,6 +508,37 @@ public abstract class AbstractObjectOverlayFromReport
   @Override
   protected synchronized void doImageChanged(PaintPanel panel) {
     m_Overlays.reset();
+  }
+
+  /**
+   * Calculates the string dimensions in pixels.
+   *
+   * @param g		the graphics context
+   * @param f		the font to use
+   * @param s		the string to measure
+   * @return		the dimensions in pixels
+   */
+  protected Dimension calcStringDimenions(Graphics g, Font f, String s) {
+    FontMetrics metrics;
+
+    metrics = g.getFontMetrics(f);
+    return new Dimension(metrics.stringWidth(s), metrics.getHeight());
+  }
+
+  /**
+   * Draws the string at the specified position.
+   *
+   * @param g		the graphics context
+   * @param rect	the bounding box
+   * @param label	the label to draw
+   */
+  protected void drawString(Graphics g, Rectangle rect, String label) {
+    int		offsetX;
+    int		offsetY;
+
+    offsetX = getLabelOffsetX();
+    offsetY = getLabelOffsetY();
+    g.drawString(label, (int) (rect.getX() + rect.getWidth() + offsetX), (int) (rect.getY() + offsetY));
   }
 
   /**
