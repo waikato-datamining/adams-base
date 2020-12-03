@@ -368,6 +368,15 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Returns the default label anchor.
+   *
+   * @return		the anchor
+   */
+  protected ImageAnchor getDefaultLabelAnchor() {
+    return ImageAnchor.TOP_RIGHT;
+  }
+
+  /**
    * Sets the anchor for the label.
    *
    * @param value 	the anchor
@@ -375,15 +384,6 @@ public abstract class AbstractObjectOverlayFromReport
   public void setLabelAnchor(ImageAnchor value) {
     m_Overlays.setLabelAnchor(value);
     reset();
-  }
-
-  /**
-   * Returns the default label anchor.
-   *
-   * @return		the anchor
-   */
-  protected ImageAnchor getDefaultLabelAnchor() {
-    return ImageAnchor.TOP_RIGHT;
   }
 
   /**
