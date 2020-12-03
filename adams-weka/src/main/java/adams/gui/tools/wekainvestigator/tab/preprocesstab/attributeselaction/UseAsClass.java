@@ -13,29 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * RenameSelected.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * UseAsClass.java
+ * Copyright (C) 2019 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
-import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Instances;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.RenameAttribute;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Renames the selected attribute.
+ * Uses the selected attribute as class attribute.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class RenameSelected
+public class UseAsClass
   extends AbstractSelectedAttributesAction {
 
   private static final long serialVersionUID = -217537095007987947L;
@@ -43,10 +39,10 @@ public class RenameSelected
   /**
    * Instantiates the action.
    */
-  public RenameSelected() {
+  public UseAsClass() {
     super();
-    setName("Rename selected");
-    setIcon("rename.png");
+    setName("Use as class");
+    setIcon("class_attribute.png");
     setAsynchronous(true);
   }
 
@@ -59,41 +55,23 @@ public class RenameSelected
   protected void doActionPerformed(ActionEvent e) {
     DataContainer 		cont;
     int				attIndex;
-    String			nameOld;
-    String			nameNew;
-    RenameAttribute		rename;
+    String 			attName;
     Instances			data;
-    Instances			filtered;
     WekaInvestigatorDataEvent	event;
 
     cont     = getSelectedData()[0];
     data     = cont.getData();
-    attIndex = getOwner().getAttributeSelectionPanel().getSelectedRows()[0];
-    nameOld  = data.attribute(attIndex).name();
-    nameNew  = GUIHelper.showInputDialog(getOwner(), "Please enter new attribute name", nameOld);
-    if ((nameNew == null) || (nameNew.equals(nameOld)))
-      return;
+    attIndex = getOwner().getAttributeSelectionPanel().getSelectedAttributes()[0];
+    attName  = data.attribute(attIndex).name();
 
-    cont.addUndoPoint("Renaming attribute #" + (attIndex+1) + " '" + nameOld + "' to '" + nameNew + "'");
-    rename = new RenameAttribute();
-    rename.setAttributeIndices("" + (attIndex + 1));
-    rename.setFind("([\\s\\S]+)");
-    rename.setReplace(nameNew);
-    try {
-      rename.setInputFormat(data);
-      filtered = Filter.useFilter(data, rename);
-      cont.setData(filtered);
-      event = new WekaInvestigatorDataEvent(
-	getOwner().getOwner(),
-	WekaInvestigatorDataEvent.ROWS_MODIFIED,
-	new int[]{getSelectedRows()[0]});
-      getOwner().fireDataChange(event);
-    }
-    catch (Exception ex) {
-      logError(
-	"Failed to rename attribute #" + (attIndex+1) + " '" + nameOld + "' to '" + nameNew + "'",
-	ex, "Rename failed");
-    }
+    cont.addUndoPoint("Using attribute #" + (attIndex+1) + " '" + attName + "' as class attribute");
+    data.setClassIndex(attIndex);
+    cont.setData(data);
+    event = new WekaInvestigatorDataEvent(
+      getOwner().getOwner(),
+      WekaInvestigatorDataEvent.ROWS_MODIFIED,
+      new int[]{getSelectedRows()[0]});
+    getOwner().fireDataChange(event);
   }
 
   /**

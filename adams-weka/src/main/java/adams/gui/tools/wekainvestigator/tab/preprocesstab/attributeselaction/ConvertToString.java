@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * RemoveChecked.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * ConvertToString.java
+ * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
+import adams.data.weka.WekaAttributeRange;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import weka.core.Instances;
@@ -29,12 +30,11 @@ import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 /**
- * Removes the checked attributes.
+ * Converts the selected attributes to string ones.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class RemoveChecked
+public class ConvertToString
   extends AbstractSelectedAttributesAction {
 
   private static final long serialVersionUID = -217537095007987947L;
@@ -42,10 +42,10 @@ public class RemoveChecked
   /**
    * Instantiates the action.
    */
-  public RemoveChecked() {
+  public ConvertToString() {
     super();
-    setName("Remove checked");
-    setIcon("delete.gif");
+    setName("Convert to string");
+    setIcon("to_string.png");
     setAsynchronous(true);
   }
 
@@ -57,8 +57,10 @@ public class RemoveChecked
   @Override
   protected void doActionPerformed(ActionEvent e) {
     int[]		indices;
+    StringBuilder	indicesStr;
+    int			i;
     int			index;
-    DataContainer cont;
+    DataContainer 	cont;
     Runnable		run;
 
     if (getSelectedRows().length != 1)
@@ -69,16 +71,22 @@ public class RemoveChecked
     indices = getOwner().getAttributeSelectionPanel().getSelectedAttributes();
     if (indices.length == 0)
       return;
+    indicesStr = new StringBuilder();
+    for (i = 0; i < indices.length; i++) {
+      if (i > 0)
+        indicesStr.append(",");
+      indicesStr.append("" + (indices[i] + 1));
+    }
 
     run = () -> {
-      showStatus("Removing checked attributes...");
+      showStatus("Converting checked attributes to string...");
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
-      weka.filters.unsupervised.attribute.Remove remove = new weka.filters.unsupervised.attribute.Remove();
-      remove.setAttributeIndicesArray(indices);
+      weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();
+      anytostring.setRange(new WekaAttributeRange(indicesStr.toString()));
       try {
-	remove.setInputFormat(cont.getData());
-	Instances filtered = Filter.useFilter(cont.getData(), remove);
+	anytostring.setInputFormat(cont.getData());
+	Instances filtered = Filter.useFilter(cont.getData(), anytostring);
 	if (keep)
 	  filtered.setRelationName(oldName);
 	cont.setData(filtered);
@@ -89,7 +97,7 @@ public class RemoveChecked
 	});
       }
       catch (Throwable ex) {
-	logError("Failed to remove checked attributes!", ex, getName());
+	logError("Failed to convert checked attributes to string!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");

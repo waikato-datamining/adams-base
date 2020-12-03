@@ -34,18 +34,14 @@ import weka.core.Instances;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -71,7 +67,7 @@ import java.util.regex.Pattern;
  */
 public class AttributeSelectionPanel
   extends BasePanel
-  implements TableModelListener, ListSelectionListener {
+  implements ListSelectionListener {
 
   /** for serialization */
   private static final long serialVersionUID = 627131485290359194L;
@@ -89,9 +85,6 @@ public class AttributeSelectionPanel
     /** The instances who's attribute structure we are reporting */
     protected Instances m_Instances;
 
-    /** The flag for whether the instance will be included */
-    protected HashMap<String,Boolean> m_Selected;
-
     /**
      * Creates the tablemodel with the given set of instances.
      *
@@ -108,7 +101,6 @@ public class AttributeSelectionPanel
      */
     public void setInstances(Instances instances) {
       m_Instances = instances;
-      m_Selected  = new HashMap<>();
       fireTableStructureChanged();
     }
 
@@ -135,13 +127,13 @@ public class AttributeSelectionPanel
     }
 
     /**
-     * Gets the number of columns: 4
+     * Gets the number of columns: 3
      *
-     * @return 4
+     * @return 3
      */
     @Override
     public int getColumnCount() {
-      return 4;
+      return 3;
     }
 
     /**
@@ -161,10 +153,8 @@ public class AttributeSelectionPanel
 	case 0:
 	  return (row + 1);
 	case 1:
-	  return m_Selected.containsKey(m_Instances.attribute(row).name()) && m_Selected.get(m_Instances.attribute(row).name());
-	case 2:
 	  return m_Instances.attribute(row).name();
-	case 3:
+	case 2:
 	  return Attribute.typeToString(m_Instances.attribute(row).type());
 	default:
 	  return null;
@@ -183,30 +173,11 @@ public class AttributeSelectionPanel
 	case 0:
 	  return "No.";
 	case 1:
-	  return "";
-	case 2:
 	  return "Name";
-	case 3:
+	case 2:
 	  return "Type";
 	default:
 	  return null;
-      }
-    }
-
-    /**
-     * Sets the value at a cell.
-     *
-     * @param value the new value.
-     * @param row the row index.
-     * @param col the column index.
-     */
-    @Override
-    public void setValueAt(Object value, int row, int col) {
-      if (m_Instances == null)
-        return;
-      if (col == 1) {
-	m_Selected.put(m_Instances.attribute(row).name(), (Boolean) value);
-	fireTableRowsUpdated(0, getRowCount());
       }
     }
 
@@ -222,114 +193,6 @@ public class AttributeSelectionPanel
         return Object.class;
       else
 	return getValueAt(0, col).getClass();
-    }
-
-    /**
-     * Returns true if the column is the "selected" column.
-     *
-     * @param row ignored
-     * @param col the column index.
-     * @return true if col == 1.
-     */
-    @Override
-    public boolean isCellEditable(int row, int col) {
-      return (col == 1);
-    }
-
-    /**
-     * Gets an array containing the indices of all selected attributes.
-     *
-     * @return the array of selected indices.
-     */
-    public int[] getSelectedAttributes() {
-      TIntList		result;
-      int		i;
-      String		name;
-
-      result = new TIntArrayList();
-      if (m_Instances != null) {
-	for (i = 0; i < m_Instances.numAttributes(); i++) {
-	  name = m_Instances.attribute(i).name();
-	  if (m_Selected.containsKey(name) && m_Selected.get(name))
-	    result.add(i);
-	}
-      }
-
-      return result.toArray();
-    }
-
-    /**
-     * Sets the state of all attributes to selected.
-     */
-    public void selectAll() {
-      if (m_Instances == null)
-	return;
-      for (int i = 0; i < m_Instances.numAttributes(); i++)
-	m_Selected.put(m_Instances.attribute(i).name(), true);
-      fireTableRowsUpdated(0, getRowCount());
-    }
-
-    /**
-     * Deselects all attributes.
-     */
-    public void selectNone() {
-      if (m_Instances == null)
-	return;
-      for (int i = 0; i < m_Instances.numAttributes(); i++)
-	m_Selected.put(m_Instances.attribute(i).name(), false);
-      fireTableRowsUpdated(0, getRowCount());
-    }
-
-    /**
-     * Inverts the selected status of each attribute.
-     */
-    public void invert() {
-      boolean	current;
-      String	name;
-
-      if (m_Instances == null)
-	return;
-      for (int i = 0; i < m_Instances.numAttributes(); i++) {
-	name    = m_Instances.attribute(i).name();
-	current = m_Selected.containsKey(name) && m_Selected.get(name);
-	m_Selected.put(name, !current);
-      }
-      fireTableRowsUpdated(0, getRowCount());
-    }
-
-    /**
-     * applies the regular expression pattern to select the attribute names
-     * (expects a valid reg expression!)
-     *
-     * @param pattern a perl reg. expression
-     */
-    public void applyPattern(String pattern) {
-      String	name;
-
-      if (m_Instances == null)
-	return;
-      for (int i = 0; i < getRowCount(); i++) {
-	name = m_Instances.attribute(i).name();
-	m_Selected.put(name, Pattern.matches(pattern, name));
-      }
-      fireTableRowsUpdated(0, getRowCount());
-    }
-
-    /**
-     * Applies the selected state of the array to the model.
-     *
-     * @param selected	the selected stat
-     * @throws Exception	if array length does not match number of attributes
-     */
-    public void setSelectedAttributes(boolean[] selected) throws Exception {
-      if (m_Instances == null)
-	return;
-      if (selected.length != getRowCount())
-	throw new Exception(
-	  "Supplied array does not have the same number of elements as there are attributes!");
-      for (int i = 0; i < selected.length; i++)
-	m_Selected.put(m_Instances.attribute(i).name(), selected[i]);
-      fireTableRowsUpdated(0, getRowCount());
     }
   }
 
@@ -357,9 +220,6 @@ public class AttributeSelectionPanel
   /** The current regular expression. */
   protected String m_PatternRegEx;
 
-  /** the listeners for changes in the checked attributes. */
-  protected Set<ChangeListener> m_ChangeListeners;
-
   /** the listeners for changes in the selection. */
   protected Set<ListSelectionListener> m_SelectionListeners;
 
@@ -371,7 +231,6 @@ public class AttributeSelectionPanel
     super.initialize();
 
     m_PatternRegEx       = "";
-    m_ChangeListeners    = new HashSet<>();
     m_SelectionListeners = new HashSet<>();
   }
 
@@ -386,23 +245,23 @@ public class AttributeSelectionPanel
 
     m_Table = new SortableAndSearchableTableWithButtons();
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
-    m_Table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    m_Table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_Table.getSelectionModel().addListSelectionListener(this);
     add(m_Table, BorderLayout.CENTER);
 
     m_ButtonAll = new BaseButton("All");
     m_ButtonAll.setToolTipText("Selects all attributes");
-    m_ButtonAll.addActionListener((ActionEvent e) -> m_Model.selectAll());
+    m_ButtonAll.addActionListener((ActionEvent e) -> m_Table.selectAll());
     m_Table.addToButtonsPanel(m_ButtonAll);
 
     m_ButtonNone = new BaseButton("None");
     m_ButtonNone.setToolTipText("Unselects all attributes");
-    m_ButtonNone.addActionListener((ActionEvent e) -> m_Model.selectNone());
+    m_ButtonNone.addActionListener((ActionEvent e) -> m_Table.selectNone());
     m_Table.addToButtonsPanel(m_ButtonNone);
 
     m_ButtonInvert = new BaseButton("Invert");
     m_ButtonInvert.setToolTipText("Inverts the current attribute selection");
-    m_ButtonInvert.addActionListener((ActionEvent e) -> m_Model.invert());
+    m_ButtonInvert.addActionListener((ActionEvent e) -> m_Table.invertSelection());
     m_Table.addToButtonsPanel(m_ButtonInvert);
 
     m_ButtonPattern = new BaseButton("Pattern");
@@ -414,7 +273,13 @@ public class AttributeSelectionPanel
 	try {
 	  Pattern.compile(patternStr);
 	  m_PatternRegEx = patternStr;
-	  m_Model.applyPattern(patternStr);
+	  Pattern pattern = Pattern.compile(patternStr);
+	  TIntList rows = new TIntArrayList();
+	  for (int i = 0; i < m_Model.getInstances().numAttributes(); i++) {
+	    if (pattern.matcher(m_Model.getInstances().attribute(i).name()).matches())
+	      rows.add(m_Table.getDisplayRow(i));
+	  }
+	  m_Table.setSelectedRows(rows.toArray());
 	}
 	catch (Exception ex) {
 	  GUIHelper.showErrorMessage(m_ButtonPattern.getParent(), "'" + patternStr
@@ -464,17 +329,12 @@ public class AttributeSelectionPanel
   public void setInstances(Instances data) {
     TableColumnModel 	colModel;
 
-    if (m_Model != null)
-      m_Model.removeTableModelListener(this);
-
     m_Model = new AttributeTableModel(data);
-    m_Model.addTableModelListener(this);
     m_Table.setModel(m_Model);
 
     colModel = m_Table.getColumnModel();
-    colModel.getColumn(0).setMaxWidth(60);
-    colModel.getColumn(1).setMaxWidth(colModel.getColumn(1).getMinWidth());
-    colModel.getColumn(2).setMinWidth(100);
+    colModel.getColumn(0).setMinWidth(30);
+    colModel.getColumn(1).setMinWidth(100);
 
     updateWidgets();
     if (!m_PanelFilter.getFilter().isEmpty())
@@ -513,26 +373,22 @@ public class AttributeSelectionPanel
   }
 
   /**
-   * Set the selected (ie checked) attributes in the widget. Note that setInstances() must
-   * have been called first.
-   *
-   * @param selected an array of boolean indicating which attributes are to have
-   *          their check boxes selected.
-   * @throws Exception if the supplied array of booleans does not have the same
-   *           number of elements as there are attributes.
-   */
-  public void setSelectedAttributes(boolean[] selected) throws Exception {
-    if (m_Model != null)
-      m_Model.setSelectedAttributes(selected);
-  }
-
-  /**
    * Gets an array containing the indices of all selected (ie checked) attributes.
    *
    * @return the array of selected indices, null if no model present.
    */
   public int[] getSelectedAttributes() {
-    return (m_Model == null) ? null : m_Model.getSelectedAttributes();
+    int[]	rows;
+    int		i;
+
+    if (m_Model == null)
+      return null;
+
+    rows = m_Table.getSelectedRows();
+    for (i = 0; i < rows.length; i++)
+      rows[i] = m_Table.getActualRow(rows[i]);
+
+    return rows;
   }
 
   /**
@@ -560,46 +416,6 @@ public class AttributeSelectionPanel
    */
   public ListSelectionModel getSelectionModel() {
     return m_Table.getSelectionModel();
-  }
-
-  /**
-   * Adds the listener to the list of checked attributes listeners.
-   *
-   * @param l		the listener to add
-   */
-  public void addChangeListener(ChangeListener l) {
-    m_ChangeListeners.add(l);
-  }
-
-  /**
-   * Removes the listener from the list of checked attributes listeners.
-   *
-   * @param l		the listener to remove
-   */
-  public void removeChangeListener(ChangeListener l) {
-    m_ChangeListeners.remove(l);
-  }
-
-  /**
-   * Notifies all listeners that the checked attributes have changed.
-   */
-  protected void notifyChangeListeners() {
-    ChangeEvent 	e;
-
-    e = new ChangeEvent(this);
-    for (ChangeListener l: m_ChangeListeners)
-      l.stateChanged(e);
-  }
-
-  /**
-   * Gets called when the table model changes.
-   *
-   * @param e		the event
-   * @see 		#notifyChangeListeners()
-   */
-  @Override
-  public void tableChanged(TableModelEvent e) {
-    notifyChangeListeners();
   }
 
   /**

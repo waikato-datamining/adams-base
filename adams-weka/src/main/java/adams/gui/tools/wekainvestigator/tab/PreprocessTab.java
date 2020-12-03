@@ -47,7 +47,7 @@ import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSummaryPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.InstancesSummaryPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction;
-import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.RemoveChecked;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.Remove;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import weka.core.Instances;
 import weka.filters.AllFilter;
@@ -273,10 +273,15 @@ public class PreprocessTab
 
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_ButtonSelectedAttributesAction = new BaseSplitButton();
+    m_ButtonSelectedAttributesAction.setText("Attribute action");
     m_ButtonSelectedAttributesAction.setAlwaysDropdown(false);
     m_ButtonSelectedAttributesAction.setButtonEnabled(true);
+    m_ButtonSelectedAttributesAction.addChangeListener((ChangeEvent e) -> {
+      for (AbstractSelectedAttributesAction action: m_Actions)
+	action.update();
+    });
     for (AbstractSelectedAttributesAction action: m_Actions) {
-      if (action instanceof RemoveChecked)
+      if (action instanceof Remove)
 	m_ButtonSelectedAttributesAction.setAction(action);
       else
 	m_ButtonSelectedAttributesAction.add(action);
@@ -286,8 +291,12 @@ public class PreprocessTab
 
     m_PanelAttSelection = new AttributeSelectionPanel();
     m_PanelAttSelection.setBorder(BorderFactory.createTitledBorder("Attributes"));
-    m_PanelAttSelection.addChangeListener((ChangeEvent e) -> updateAttributeSelection());
     m_PanelAttSelection.addSelectionListener((ListSelectionEvent e) -> {
+      // update the text field with the indices
+      updateAttributeSelection();
+      // update actions
+      for (AbstractSelectedAttributesAction action: m_Actions)
+	action.update();
       // update other panels
       int[] indices = m_PanelAttSelection.getSelectedRows();
       if (indices.length == 1) {

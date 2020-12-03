@@ -14,7 +14,7 @@
  */
 
 /*
- * CheckedToNominal.java
+ * ConvertToNominal.java
  * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
@@ -31,11 +31,11 @@ import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 /**
- * Converts the checked attributes to nominal ones.
+ * Converts the selected attributes to nominal ones.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CheckedToNominal
+public class ConvertToNominal
   extends AbstractSelectedAttributesAction {
 
   private static final long serialVersionUID = -217537095007987947L;
@@ -43,9 +43,9 @@ public class CheckedToNominal
   /**
    * Instantiates the action.
    */
-  public CheckedToNominal() {
+  public ConvertToNominal() {
     super();
-    setName("Checked to nominal");
+    setName("Convert to nominal");
     setIcon("to_nominal.png");
     setAsynchronous(true);
   }

@@ -14,7 +14,7 @@
  */
 
 /*
- * CheckedToDate.java
+ * ConvertToDate.java
  * Copyright (C) 2020 University of Waikato, Hamilton, NZ
  */
 
@@ -32,11 +32,11 @@ import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 /**
- * Converts the checked string attributes to date ones.
+ * Converts the selected string attributes to date ones.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CheckedToDate
+public class ConvertToDate
   extends AbstractSelectedAttributesAction {
 
   private static final long serialVersionUID = -217537095007987947L;
@@ -44,9 +44,9 @@ public class CheckedToDate
   /**
    * Instantiates the action.
    */
-  public CheckedToDate() {
+  public ConvertToDate() {
     super();
-    setName("Checked to date");
+    setName("Convert to date");
     setIcon("to_date.png");
     setAsynchronous(true);
   }
