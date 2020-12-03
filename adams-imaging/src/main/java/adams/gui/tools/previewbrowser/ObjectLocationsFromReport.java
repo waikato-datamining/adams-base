@@ -977,6 +977,18 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Hook method for loading additional reports.
+   * <br>
+   * The default implementation does nothing.
+   *
+   * @param panel 	the context panel
+   * @param file	the image file
+   * @param report 	the current report
+   */
+  protected void loadAdditionalReports(CombinedPanel panel, File file, Report report) {
+  }
+
+  /**
    * Loads the report associated with the image file.
    *
    * @param panel 	the context panel
@@ -998,8 +1010,10 @@ public class ObjectLocationsFromReport
     if (reportFile.exists() && reportFile.isFile()) {
       m_Reader.setInput(new PlaceholderFile(reportFile));
       reports = m_Reader.read();
-      if (reports.size() > 0)
-        result = filterReport(reports.get(0));
+      if (reports.size() > 0) {
+        result = reports.get(0);
+	loadAdditionalReports(panel, file, result);
+      }
     }
 
     return result;

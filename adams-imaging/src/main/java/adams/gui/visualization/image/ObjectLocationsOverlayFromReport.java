@@ -351,7 +351,7 @@ public class ObjectLocationsOverlayFromReport
         if ((label != null) && !label.isEmpty()) {
           if (rect == null)
 	    rect = poly.getBounds();
-          drawString(g, rect, label);
+          m_Overlays.drawString(g, rect, label);
 	}
       }
     }

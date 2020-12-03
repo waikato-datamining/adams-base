@@ -21,6 +21,7 @@ package adams.gui.visualization.object.overlay;
 
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
+import adams.data.image.ImageAnchor;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -95,6 +96,10 @@ public abstract class AbstractObjectOverlayFromReport
     m_OptionManager.add(
 	"label-font", "labelFont",
 	Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+	"label-anchor", "labelAnchor",
+        ImageAnchor.TOP_RIGHT);
 
     m_OptionManager.add(
 	"label-offset-x", "labelOffsetX",
@@ -352,6 +357,35 @@ public abstract class AbstractObjectOverlayFromReport
    */
   public String labelFontTipText() {
     return m_Overlays.labelFontTipText();
+  }
+
+  /**
+   * Sets the anchor for the label.
+   *
+   * @param value 	the anchor
+   */
+  public void setLabelAnchor(ImageAnchor value) {
+    m_Overlays.setLabelAnchor(value);
+    reset();
+  }
+
+  /**
+   * Returns the anchor for the label.
+   *
+   * @return 		the anchor
+   */
+  public ImageAnchor getLabelAnchor() {
+    return m_Overlays.getLabelAnchor();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAnchorTipText() {
+    return m_Overlays.labelAnchorTipText();
   }
 
   /**

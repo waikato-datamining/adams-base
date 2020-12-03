@@ -34,12 +34,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.List;
@@ -569,130 +566,6 @@ public abstract class AbstractObjectOverlayFromReport
   @Override
   protected synchronized void doImageChanged(PaintPanel panel) {
     m_Overlays.reset();
-  }
-
-  /**
-   * Calculates the string dimensions in pixels.
-   *
-   * @param g		the graphics context
-   * @param f		the font to use
-   * @param s		the string to measure
-   * @return		the dimensions in pixels
-   */
-  protected Dimension calcStringDimenions(Graphics g, Font f, String s) {
-    FontMetrics metrics;
-
-    metrics = g.getFontMetrics(f);
-    return new Dimension(metrics.stringWidth(s), metrics.getHeight());
-  }
-
-  /**
-   * Draws the string at the specified position.
-   *
-   * @param g		the graphics context
-   * @param rect	the bounding box
-   * @param label	the label to draw
-   */
-  protected void drawString(Graphics g, Rectangle rect, String label) {
-    int		offsetX;
-    int		offsetY;
-    Dimension	dims;
-
-    if (label.isEmpty())
-      return;
-
-    offsetX = getLabelOffsetX();
-    offsetY = getLabelOffsetY();
-    dims    = calcStringDimenions(g, getLabelFont(), label);
-
-    switch (offsetX) {
-      case -1:
-        offsetX = 0;
-        break;
-      case -2:
-        offsetX = -dims.width / 2;
-        break;
-      case -3:
-        offsetX = -dims.width;
-        break;
-      default:
-	if (offsetX < 0)
-	  offsetX = 0;
-    }
-
-    switch (offsetY) {
-      case -1:
-        offsetY = 0;
-        break;
-      case -2:
-        offsetY = dims.height / 2;
-        break;
-      case -3:
-        offsetY = dims.height;
-        break;
-      default:
-	if (offsetY < 0)
-	  offsetY = 0;
-    }
-
-    switch (getLabelAnchor()) {
-      case TOP_LEFT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + offsetX),
-	  (int) (rect.getY() + offsetY));
-	break;
-      case TOP_CENTER:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
-	  (int) (rect.getY() + offsetY));
-	break;
-      case TOP_RIGHT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width + offsetX),
-	  (int) (rect.getY() + offsetY));
-	break;
-      case MIDDLE_LEFT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + offsetX),
-	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
-	break;
-      case MIDDLE_CENTER:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
-	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
-	break;
-      case MIDDLE_RIGHT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width + offsetX),
-	  (int) (rect.getY() + rect.height / 2 - dims.height / 2 + offsetY));
-	break;
-      case BOTTOM_LEFT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + offsetX),
-	  (int) (rect.getY() + rect.height + offsetY));
-	break;
-      case BOTTOM_CENTER:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width / 2 - dims.width / 2 + offsetX),
-	  (int) (rect.getY() + rect.height + offsetY));
-	break;
-      case BOTTOM_RIGHT:
-	g.drawString(
-	  label,
-	  (int) (rect.getX() + rect.width + offsetX),
-	  (int) (rect.getY() + rect.height + offsetY));
-	break;
-      default:
-        throw new IllegalStateException("Unhandled label anchor: " + getLabelAnchor());
-    }
   }
 
   /**
