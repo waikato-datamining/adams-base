@@ -392,6 +392,27 @@ public class SortableAndSearchableTableWithButtons<T extends SortableAndSearchab
   }
 
   /**
+   * Selects all rows.
+   */
+  public void selectAll() {
+    m_Component.selectAll();
+  }
+
+  /**
+   * Deselects all rows.
+   */
+  public void selectNone() {
+    m_Component.selectNone();
+  }
+
+  /**
+   * Inverts the selection.
+   */
+  public void invertSelection() {
+    m_Component.invertSelection();
+  }
+
+  /**
    * Returns the index of the first selected row, -1 if no row is selected.
    * @return the index of the first selected row
    */

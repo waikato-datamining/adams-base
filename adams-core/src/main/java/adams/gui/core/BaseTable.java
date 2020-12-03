@@ -35,6 +35,8 @@ import adams.gui.event.RemoveItemsListener;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 import javax.swing.Action;
 import javax.swing.JMenu;
@@ -369,6 +371,45 @@ public class BaseTable
    */
   public ColumnWidthApproach getColumnWidthApproach() {
     return m_ColumnWidthApproach;
+  }
+
+  /**
+   * Selects all rows.
+   */
+  public void selectAll() {
+    int[]	rows;
+    int		i;
+
+    rows = new int[getRowCount()];
+    for (i = 0; i < rows.length; i++)
+      rows[i] = i;
+
+    setSelectedRows(rows);
+  }
+
+  /**
+   * Deselects all rows.
+   */
+  public void selectNone() {
+    setSelectedRows(new int[0]);
+  }
+
+  /**
+   * Inverts the selection.
+   */
+  public void invertSelection() {
+    TIntSet	selected;
+    TIntList	rows;
+    int		i;
+
+    selected = new TIntHashSet(getSelectedRows());
+    rows     = new TIntArrayList();
+    for (i = 0; i < getRowCount(); i++) {
+      if (!selected.contains(i))
+        rows.add(i);
+    }
+
+    setSelectedRows(rows.toArray());
   }
 
   /**
