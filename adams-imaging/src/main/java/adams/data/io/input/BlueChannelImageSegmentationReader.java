@@ -26,6 +26,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.output.AbstractImageSegmentationAnnotationWriter;
+import adams.data.io.output.BlueChannelImageSegmentationWriter;
 import adams.data.statistics.StatUtils;
 import adams.flow.container.ImageSegmentationContainer;
 import gnu.trove.set.TIntSet;
@@ -108,7 +109,7 @@ public class BlueChannelImageSegmentationReader
    */
   @Override
   public AbstractImageSegmentationAnnotationWriter getCorrespondingWriter() {
-    return null;
+    return new BlueChannelImageSegmentationWriter();
   }
 
   /**
