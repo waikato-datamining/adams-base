@@ -48,9 +48,10 @@ public abstract class AbstractImageSegmentationAnnotationWriter
    * Hook method for performing checks before writing the data.
    *
    * @param file	the file to check
+   * @param annotations the annotations to write
    * @return		null if no errors, otherwise error message
    */
-  protected String check(PlaceholderFile file) {
+  protected String check(PlaceholderFile file, ImageSegmentationContainer annotations) {
     if (file == null)
       return "No file provided!";
     return null;
@@ -75,7 +76,7 @@ public abstract class AbstractImageSegmentationAnnotationWriter
   public String write(PlaceholderFile file, ImageSegmentationContainer annotations) {
     String	result;
 
-    result = check(file);
+    result = check(file, annotations);
     if (result == null)
       result = doWrite(file, annotations);
 
