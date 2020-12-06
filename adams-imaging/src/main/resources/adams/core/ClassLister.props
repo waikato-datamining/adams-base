@@ -24,6 +24,10 @@ adams.data.image.features.AbstractBufferedImageFeatureGenerator=\
   adams.data.jai.features,\
   adams.data.lire.features
 
+# the image segmentation container operations
+adams.data.image.imagesegmentationcontainer.AbstractImageSegmentationContainerOperation=\
+  adams.data.image.imagesegmentationcontainer
+
 # the buffered image transformers
 adams.data.image.transformer.AbstractBufferedImageTransformer=\
   adams.data.image.transformer,\

@@ -115,4 +115,13 @@ public class ImageSegmentationContainer
   public boolean isValid() {
     return hasValue(VALUE_NAME) && hasValue(VALUE_BASE);
   }
+
+  /**
+   * Returns the base image.
+   *
+   * @return		the base image
+   */
+  public BufferedImage getBaseImage() {
+    return (BufferedImage) getValue(VALUE_BASE);
+  }
 }
