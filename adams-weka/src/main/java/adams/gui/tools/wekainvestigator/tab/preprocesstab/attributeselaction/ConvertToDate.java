@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
+import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -90,12 +91,13 @@ public class ConvertToDate
       return;
 
     run = () -> {
-      showStatus("Converting checked attributes to date...");
+      showStatus("Converting selected attributes to date...");
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.StringToDate stringtodate = new weka.filters.unsupervised.attribute.StringToDate();
       stringtodate.setRange(new WekaAttributeRange(indicesStr.toString()));
       stringtodate.setFormat(format);
+      logMessage("Filter: " + OptionUtils.getCommandLine(stringtodate));
       try {
 	stringtodate.setInputFormat(cont.getData());
 	Instances filtered = Filter.useFilter(cont.getData(), stringtodate);
@@ -107,9 +109,10 @@ public class ConvertToDate
 	  if (getOwner().getAttributeSelectionPanel().getTable().getRowCount() > 0)
 	    getOwner().getAttributeSelectionPanel().getTable().setSelectedRow(0);
 	});
+        showStatus("Finished converting selected attributes to date...");
       }
       catch (Throwable ex) {
-	logError("Failed to convert checked attributes to date!", ex, getName());
+	logError("Failed to convert selected attributes to date!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");

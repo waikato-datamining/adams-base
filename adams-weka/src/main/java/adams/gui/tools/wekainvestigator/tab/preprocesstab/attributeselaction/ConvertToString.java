@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
+import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -84,6 +85,7 @@ public class ConvertToString
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();
       anytostring.setRange(new WekaAttributeRange(indicesStr.toString()));
+      logMessage("Filter: " + OptionUtils.getCommandLine(anytostring));
       try {
 	anytostring.setInputFormat(cont.getData());
 	Instances filtered = Filter.useFilter(cont.getData(), anytostring);
@@ -95,9 +97,10 @@ public class ConvertToString
 	  if (getOwner().getAttributeSelectionPanel().getTable().getRowCount() > 0)
 	    getOwner().getAttributeSelectionPanel().getTable().setSelectedRow(0);
 	});
+        showStatus("Finished converting selected attributes to string...");
       }
       catch (Throwable ex) {
-	logError("Failed to convert checked attributes to string!", ex, getName());
+	logError("Failed to convert selected attributes to string!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");

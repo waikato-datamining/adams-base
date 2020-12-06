@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 
+import adams.core.option.OptionUtils;
 import adams.data.weka.WekaAttributeRange;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -80,7 +81,7 @@ public class ConvertToNominal
     }
 
     run = () -> {
-      showStatus("Converting checked attributes to nominal...");
+      showStatus("Converting selected attributes to nominal...");
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();
@@ -89,6 +90,7 @@ public class ConvertToNominal
       stringtonominal.setAttributeRange(indicesStr.toString());
       MultiFilter multi = new MultiFilter();
       multi.setFilters(new Filter[]{anytostring, stringtonominal});
+      logMessage("Filter: " + OptionUtils.getCommandLine(multi));
       try {
 	multi.setInputFormat(cont.getData());
 	Instances filtered = Filter.useFilter(cont.getData(), multi);
@@ -100,9 +102,10 @@ public class ConvertToNominal
 	  if (getOwner().getAttributeSelectionPanel().getTable().getRowCount() > 0)
 	    getOwner().getAttributeSelectionPanel().getTable().setSelectedRow(0);
 	});
+        showStatus("Finished converting selected attributes to nominal...");
       }
       catch (Throwable ex) {
-	logError("Failed to convert checked attributes to nominal!", ex, getName());
+	logError("Failed to convert selected attributes to nominal!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");
