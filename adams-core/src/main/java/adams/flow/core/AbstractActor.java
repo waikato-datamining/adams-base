@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -161,6 +161,8 @@ public abstract class AbstractActor
       for (i = 0; i < cls.length; i++) {
 	if (ClassLocator.isSubclass(AbstractContainer.class, cls[i]) && !cls[i].equals(AbstractContainer.class))
 	  containers.add(cls[i]);
+	if (cls[i].isArray() && ClassLocator.isSubclass(AbstractContainer.class, cls[i].getComponentType()) && !cls[i].getComponentType().equals(AbstractContainer.class))
+	  containers.add(cls[i].getComponentType());
       }
     }
 
@@ -175,6 +177,10 @@ public abstract class AbstractActor
 	if (ClassLocator.isSubclass(AbstractContainer.class, cls[i]) && !cls[i].equals(AbstractContainer.class)) {
 	  if (!containers.contains(cls[i]))
             containers.add(cls[i]);
+        }
+	if (cls[i].isArray() && ClassLocator.isSubclass(AbstractContainer.class, cls[i].getComponentType()) && !cls[i].getComponentType().equals(AbstractContainer.class)) {
+	  if (!containers.contains(cls[i].getComponentType()))
+            containers.add(cls[i].getComponentType());
         }
       }
     }
