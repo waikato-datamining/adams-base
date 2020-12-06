@@ -143,6 +143,12 @@ public class BlueChannelImageSegmentationReader
     return "jpg";
   }
 
+  /**
+   * Hook method for performing checks before reading the data.
+   *
+   * @param file	the file to check
+   * @return		null if no errors, otherwise error message
+   */
   @Override
   protected String check(PlaceholderFile file) {
     String	result;
