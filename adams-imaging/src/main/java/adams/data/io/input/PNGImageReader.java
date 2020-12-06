@@ -23,12 +23,16 @@ package adams.data.io.input;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.DefaultColorProvider;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.ImageLineByte;
 import ar.com.hjg.pngj.ImageLineInt;
 import ar.com.hjg.pngj.PngReader;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -39,6 +43,17 @@ import java.util.logging.Level;
 public class PNGImageReader
   extends AbstractImageReader<BufferedImageContainer> {
 
+  private static final long serialVersionUID = -4360936418761836176L;
+
+  /** for supplying the palette colors. */
+  protected ColorProvider m_ColorProvider;
+
+  /** the last color index used (when reading PNGs with palette). */
+  protected transient int m_LastColor;
+
+  /** the color mapping (palette index - Color RGB). */
+  protected transient Map<Integer,Integer> m_Colors;
+
   /**
    * Returns a string describing the object.
    *
@@ -46,10 +61,52 @@ public class PNGImageReader
    */
   @Override
   public String globalInfo() {
-    return "Reads images in PNG format.";
+    return "Reads images in PNG format.\n"
+      + "In case of images with a palette (= indexed), the color provider is "
+      + "used for generating the colors (the palette itself cannot be read with "
+      + "this reader, unfortunately).";
   }
 
-  private static final long serialVersionUID = -4360936418761836176L;
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
+  }
+
+  /**
+   * Sets the color provider to use for images with a palette.
+   *
+   * @param value	the provider
+   */
+  public void setColorProvider(ColorProvider value) {
+    m_ColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use for images with a palette.
+   *
+   * @return		the provider
+   */
+  public ColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorProviderTipText() {
+    return "The color provider to use for images with a palette.";
+  }
 
   /**
    * Returns a string describing the format (used in the file chooser).
@@ -83,6 +140,24 @@ public class PNGImageReader
   }
 
   /**
+   * Returns the RGB value corresponding to the palette index.
+   *
+   * @param index	the palette index to get the color for
+   * @return		the RGB value
+   */
+  protected int paletteToColor(int index) {
+    int		i;
+
+    if (!m_Colors.containsKey(index)) {
+      for (i = m_LastColor + 1; i <= index; i++)
+        m_Colors.put(i, m_ColorProvider.next().getRGB());
+      m_LastColor = index;
+    }
+
+    return m_Colors.get(index);
+  }
+
+  /**
    * Performs the actual reading of the image file.
    *
    * @param file	the file to read
@@ -105,6 +180,10 @@ public class PNGImageReader
     result = new BufferedImageContainer();
 
     try {
+      m_ColorProvider.resetColors();
+      m_LastColor = -1;
+      m_Colors    = new HashMap<>();
+
       reader = new PngReader(file.getAbsoluteFile());
       if (isLoggingEnabled())
 	getLogger().info(reader.imgInfo.toString());
@@ -116,6 +195,8 @@ public class PNGImageReader
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
       else if (channels == 2)  // GrayA
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
+      else if (reader.imgInfo.indexed)
+	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_BYTE_INDEXED);
       else
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
       pixels = new int[reader.imgInfo.cols * reader.imgInfo.rows];
@@ -140,6 +221,9 @@ public class PNGImageReader
 		| lineByte.getElem(i * channels) << 16          // gray
 		| lineByte.getElem(i * channels) << 8           // gray
 		| lineByte.getElem(i * channels);               // gray
+	    }
+	    else if (reader.imgInfo.indexed && (channels == 1)) {
+	      color = paletteToColor(lineByte.getElem(i));
 	    }
 	    else {
 	      color = lineByte.getElem(i) << 16      // gray
@@ -168,6 +252,9 @@ public class PNGImageReader
 		| lineInt.getElem(i * channels) << 16          // gray
 		| lineInt.getElem(i * channels) << 8           // gray
 		| lineInt.getElem(i * channels);               // gray
+	    }
+	    else if (reader.imgInfo.indexed && (channels == 1)) {
+	      color = paletteToColor(lineInt.getElem(i));
 	    }
 	    else {
 	      color = lineInt.getElem(i) << 16      // gray
