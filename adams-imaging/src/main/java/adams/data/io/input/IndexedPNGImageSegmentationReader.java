@@ -49,6 +49,9 @@ public class IndexedPNGImageSegmentationReader
 
   private static final long serialVersionUID = -5567473437385041915L;
 
+  /** whether to skip the first layer (usually background). */
+  protected boolean m_SkipFirstLayer;
+
   /** the layer names. */
   protected BaseString[] m_LayerNames;
 
@@ -70,8 +73,41 @@ public class IndexedPNGImageSegmentationReader
     super.defineOptions();
 
     m_OptionManager.add(
+      "skip-first-layer", "skipFirstLayer",
+      true);
+
+    m_OptionManager.add(
       "layer-name", "layerNames",
       new BaseString[0]);
+  }
+
+  /**
+   * Sets whether to skip the first layer.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipFirstLayer(boolean value) {
+    m_SkipFirstLayer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip the first layer.
+   *
+   * @return		true if to skip
+   */
+  public boolean getSkipFirstLayer() {
+    return m_SkipFirstLayer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipFirstLayerTipText() {
+    return "If enabled, the first layer gets skipped (usually the background).";
   }
 
   /**
@@ -180,11 +216,12 @@ public class IndexedPNGImageSegmentationReader
     PngReader 			reader;
     int				i;
     int				n;
+    int				idx;
     IImageLine 			line;
     ImageLineByte 		lineByte;
     ImageLineInt 		lineInt;
     int				color;
-    int				maxLayer;
+    int 			maxIndex;
     int				black;
     int				white;
 
@@ -207,7 +244,7 @@ public class IndexedPNGImageSegmentationReader
 
       // read indexed pixels
       pixels   = new int[reader.imgInfo.cols * reader.imgInfo.rows];
-      maxLayer = 0;
+      maxIndex = 0;
       for (n = 0; n < reader.imgInfo.rows; n++) {
         line = reader.readRow();
 	if (line instanceof ImageLineByte) {
@@ -215,7 +252,7 @@ public class IndexedPNGImageSegmentationReader
 	  for (i = 0; i < reader.imgInfo.cols; i++) {
 	    color = lineByte.getElem(i);
 	    pixels[i + n * reader.imgInfo.cols] = color;
-	    maxLayer = Math.max(maxLayer, color);
+	    maxIndex = Math.max(maxIndex, color);
 	  }
 	}
 	else {
@@ -223,7 +260,7 @@ public class IndexedPNGImageSegmentationReader
 	  for (i = 0; i < reader.imgInfo.cols; i++) {
 	    color = lineInt.getElem(i);
 	    pixels[i + n * reader.imgInfo.cols] = color;
-	    maxLayer = Math.max(maxLayer, color);
+	    maxIndex = Math.max(maxIndex, color);
 	  }
 	}
       }
@@ -231,7 +268,10 @@ public class IndexedPNGImageSegmentationReader
       // create layers
       black = Color.BLACK.getRGB();
       white = Color.WHITE.getRGB();
-      for (n = 0; n < maxLayer + 1; n++) {
+      idx   = 0;
+      for (n = 0; n <= maxIndex; n++) {
+        if (m_SkipFirstLayer && (n == 0))
+          continue;
 	layerPixels = new int[pixels.length];
 	for (i = 0; i < layerPixels.length; i++) {
 	  if (pixels[i] == n)
@@ -241,10 +281,11 @@ public class IndexedPNGImageSegmentationReader
 	}
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
 	image.setRGB(0, 0, image.getWidth(), image.getHeight(), layerPixels, 0, image.getWidth());
-	if (n >= m_LayerNames.length)
-	  result.put("layer-" + (n+1), image);
+	if (idx >= m_LayerNames.length)
+	  result.put("layer-" + (idx+1), image);
 	else
-	  result.put(m_LayerNames[n].getValue(), image);
+	  result.put(m_LayerNames[idx].getValue(), image);
+	idx++;
       }
     }
     catch (Exception e) {

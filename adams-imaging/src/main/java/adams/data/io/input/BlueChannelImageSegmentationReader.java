@@ -35,6 +35,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +48,9 @@ public class BlueChannelImageSegmentationReader
   extends AbstractImageSegmentationAnnotationReader {
 
   private static final long serialVersionUID = -5567473437385041915L;
+
+  /** whether to skip the first layer (usually background). */
+  protected boolean m_SkipFirstLayer;
 
   /** the layer names. */
   protected BaseString[] m_LayerNames;
@@ -69,8 +73,41 @@ public class BlueChannelImageSegmentationReader
     super.defineOptions();
 
     m_OptionManager.add(
+      "skip-first-layer", "skipFirstLayer",
+      true);
+
+    m_OptionManager.add(
       "layer-name", "layerNames",
       new BaseString[0]);
+  }
+
+  /**
+   * Sets whether to skip the first layer.
+   *
+   * @param value	true if to skip
+   */
+  public void setSkipFirstLayer(boolean value) {
+    m_SkipFirstLayer = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip the first layer.
+   *
+   * @return		true if to skip
+   */
+  public boolean getSkipFirstLayer() {
+    return m_SkipFirstLayer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String skipFirstLayerTipText() {
+    return "If enabled, the first layer gets skipped (usually the background).";
   }
 
   /**
@@ -177,47 +214,59 @@ public class BlueChannelImageSegmentationReader
     File			png;
     BufferedImage 		baseImage;
     BufferedImage 		pngImage;
-    int[] pngPixels;
+    int[] 			pngPixels;
     int[]			unique;
-    TIntSet			uniqueNoBlack;
+    int[]			uniqueBlue;
+    TIntSet			uniqueBlueSet;
     Map<String,BufferedImage> 	layerImages;
-    Map<Integer,String> 	layerNames;
     int[][]			layerPixels;
     int				i;
-    int				blue;
+    int				n;
+    int				white;
+    int				maxLayer;
+    String			layerName;
 
     baseImage     = BufferedImageHelper.read(file).toBufferedImage();
     png           = FileUtils.replaceExtension(file, ".png");
     pngImage      = BufferedImageHelper.read(png).toBufferedImage();
     pngPixels     = BufferedImageHelper.getPixels(pngImage);
     unique        = StatUtils.uniqueValues(pngPixels);
-    uniqueNoBlack = new TIntHashSet(unique);
-    uniqueNoBlack.remove(Color.BLACK.getRGB());
-    unique        = uniqueNoBlack.toArray();
-    if (isLoggingEnabled())
-      getLogger().info("Unique colors: #=" + unique.length + ", values=" + Utils.arrayToString(unique));
-
-    layerImages   = new HashMap<>();
-    layerNames    = new HashMap<>();
-    layerPixels   = new int[unique.length][pngPixels.length];
+    Arrays.sort(unique);
+    uniqueBlue    = new int[unique.length];
+    maxLayer      = 0;
     for (i = 0; i < unique.length; i++) {
-      if (i < m_LayerNames.length)
-	layerNames.put(i, m_LayerNames[i].getValue());
+      uniqueBlue[i] = unique[i] & 0xFF;
+      maxLayer      = Math.max(maxLayer, uniqueBlue[i]);
+    }
+    uniqueBlueSet = new TIntHashSet(uniqueBlue);
+    if (isLoggingEnabled())
+      getLogger().info("Unique colors: #=" + unique.length + ", values=" + Utils.arrayToString(unique) + ", blue=" + Utils.arrayToString(uniqueBlue));
+
+    // separate pixels
+    white       = Color.WHITE.getRGB();
+    layerPixels = new int[maxLayer + 1][pngPixels.length];
+    for (n = 0; n <= maxLayer; n++) {
+      for (i = 0; i < pngPixels.length; i++) {
+	if ((pngPixels[i] & 0xFF) == n)
+	  layerPixels[n][i] = white;
+      }
+    }
+
+    // create images
+    layerImages = new HashMap<>();
+    n           = 0;
+    for (i = 0; i <= maxLayer; i++) {
+      if (m_SkipFirstLayer && (i == 0))
+        continue;
+      if (n < m_LayerNames.length)
+        layerName = m_LayerNames[n].getValue();
       else
-        layerNames.put(i, "layer-" + (i+1));
-    }
-    if (isLoggingEnabled())
-      getLogger().info("Layer names: " + layerNames);
-
-    for (i = 0; i < pngPixels.length; i++) {
-      blue = pngPixels[i] & 0xFF;
-      if (blue > 0)
-	layerPixels[blue - 1][i] = 0xFFFFFFFF;
-    }
-
-    for (i = 0; i < unique.length; i++) {
-      layerImages.put(layerNames.get(i), new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_RGB));
-      layerImages.get(layerNames.get(i)).setRGB(0, 0, baseImage.getWidth(), baseImage.getHeight(), layerPixels[i], 0, baseImage.getWidth());;
+        layerName = "layer-" + (n+1);
+      if (uniqueBlueSet.contains(i)) {
+	layerImages.put(layerName, new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_RGB));
+	layerImages.get(layerName).setRGB(0, 0, baseImage.getWidth(), baseImage.getHeight(), layerPixels[i], 0, baseImage.getWidth());
+      }
+      n++;
     }
 
     result = new ImageSegmentationContainer(file.getName(), baseImage, layerImages);
