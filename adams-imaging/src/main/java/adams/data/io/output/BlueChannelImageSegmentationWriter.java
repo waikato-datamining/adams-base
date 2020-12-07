@@ -20,6 +20,7 @@
 
 package adams.data.io.output;
 
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
@@ -28,10 +29,11 @@ import adams.data.io.input.BlueChannelImageSegmentationReader;
 import adams.flow.container.ImageSegmentationContainer;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
- * TODO: What class does.
+ * The layers get stored in the blue channel, with 0 being the background.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -66,7 +68,7 @@ public class BlueChannelImageSegmentationWriter
   }
 
   /**
-   * Sets the names for the layers to use.
+   * Sets the names for the layers to use; outputs all if none specified.
    *
    * @param value	the names
    */
@@ -76,7 +78,7 @@ public class BlueChannelImageSegmentationWriter
   }
 
   /**
-   * Returns the names for the layers to use.
+   * Returns the names for the layers to use; outputs all if none specified.
    *
    * @return		the names
    */
@@ -91,7 +93,7 @@ public class BlueChannelImageSegmentationWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String layerNamesTipText() {
-    return "The names to of the layers to output.";
+    return "The names to of the layers to output; outputs all if none specified.";
   }
 
   /**
@@ -150,14 +152,9 @@ public class BlueChannelImageSegmentationWriter
     result = super.check(file, annotations);
 
     if (result == null) {
-      if (m_LayerNames.length == 0) {
-	result = "No layers specified!";
-      }
-      else {
-        layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
-        if ((layers == null) || (layers.size() == 0))
-          result = "No layers in container!";
-      }
+      layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+      if ((layers == null) || (layers.size() == 0))
+        result = "No layers in container!";
     }
 
     return result;
@@ -173,6 +170,7 @@ public class BlueChannelImageSegmentationWriter
   @Override
   protected String doWrite(PlaceholderFile file, ImageSegmentationContainer annotations) {
     BufferedImage		baseImage;
+    String[]			layerNames;
     Map<String,BufferedImage> 	layers;
     int[]			combPixels;
     int[]			currPixels;
@@ -182,11 +180,18 @@ public class BlueChannelImageSegmentationWriter
 
     baseImage  = (BufferedImage) annotations.getValue(ImageSegmentationContainer.VALUE_BASE);
     layers     = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+    if (m_LayerNames.length == 0) {
+      layerNames = layers.keySet().toArray(new String[0]);
+      Arrays.sort(layerNames);
+    }
+    else {
+      layerNames = BaseObject.toStringArray(m_LayerNames);
+    }
     combPixels = new int[baseImage.getWidth() * baseImage.getHeight()];
-    for (i = 0; i < m_LayerNames.length; i++) {
-      if (!layers.containsKey(m_LayerNames[i].getValue()))
+    for (i = 0; i < layerNames.length; i++) {
+      if (!layers.containsKey(layerNames[i]))
         continue;
-      currPixels = BufferedImageHelper.getPixels(layers.get(m_LayerNames[i].getValue()));
+      currPixels = BufferedImageHelper.getPixels(layers.get(layerNames[i]));
       for (n = 0; n < currPixels.length; n++) {
         if ((currPixels[n] & 0x00FFFFFF) > 0)
           combPixels[n] = 0xFF000000 | (i+1);
