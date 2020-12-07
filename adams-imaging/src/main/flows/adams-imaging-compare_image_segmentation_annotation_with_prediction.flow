@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2020-12-08 11:38:04
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Allows the comparison of imag segmentation predictions with their corresponding annotations." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name annotation_dir -display \"Directory with annotations\" -file-chooser-title Annotations -use-forward-slashes true" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name annotation_reader -display \"Reader for annotations\" -super-class adams.data.io.input.AbstractImageSegmentationAnnotationReader -default-class adams.data.io.input.BlueChannelImageSegmentationReader" -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name prediction_dir -display \"Directory with predictions\" -file-chooser-title Predictions -use-forward-slashes true" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name prediction_reader -display \"Reader for predictions\" -super-class adams.data.io.input.AbstractImageSegmentationAnnotationReader -default-class adams.data.io.input.IndexedPNGImageSegmentationReader" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display Labels -help \"blank-separated list\" -default-value \"label1 label2\"" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name skip_first -display \"Skip first layer?\" -help \"first layer is usually the background\" -type BOOLEAN -default-value true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name iterate
+  adams.flow.standalone.SetVariable -name reset -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{annotation_dir} -regexp .*\\\\.png -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name "# files"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.control.Tee -name filename
+   adams.flow.transformer.BaseName
+   adams.flow.transformer.SetVariable -var-name file
+   adams.flow.transformer.Convert -conversion adams.data.conversion.ReplaceFileExtension
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name entry
+  adams.flow.control.Trigger -name annotation
+   adams.flow.source.CombineVariables -expression @{annotation_dir}/@{file} -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.ImageSegmentationFileReader -reader "adams.data.io.input.BlueChannelImageSegmentationReader -skip-first-layer @{skip_first} -layer-name @{labels}"
+   adams.flow.transformer.SetStorageValue -storage-name annotation
+  adams.flow.control.Trigger -name prediction
+   adams.flow.source.CombineVariables -expression @{prediction_dir}/@{file} -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.ImageSegmentationFileReader -reader "adams.data.io.input.IndexedPNGImageSegmentationReader -skip-first-layer @{skip_first} -layer-name @{labels}"
+   adams.flow.transformer.SetStorageValue -storage-name prediction
+  adams.flow.control.Trigger -name compare
+   adams.flow.source.StorageValuesArray -storage-name prediction -storage-name annotation -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.ImageSegmentationContainerOperation -operation adams.data.image.imagesegmentationcontainer.EvaluatePrediction
+   adams.flow.transformer.SpreadSheetInsertColumn -no-copy true -position first -header File -value @{entry}
+   adams.flow.transformer.SpreadSheetAppend -storage-name sheet
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
+ adams.flow.control.Trigger -name display
+  adams.flow.source.StorageValue -storage-name sheet -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -width 800 -height 600 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
