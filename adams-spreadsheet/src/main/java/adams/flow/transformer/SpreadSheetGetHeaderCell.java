@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetGetHeaderCell.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -86,7 +86,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetGetHeaderCell
   extends AbstractTransformer {
@@ -146,7 +145,7 @@ public class SpreadSheetGetHeaderCell
     String	result;
     String	value;
 
-    result = QuickInfoHelper.toString(this, "col", m_Column, "col: ");
+    result = QuickInfoHelper.toString(this, "column", m_Column, "col: ");
     value = QuickInfoHelper.toString(this, "empty", (m_Empty.length() > 0 ? m_Empty : null), ", empty: ");
     if (value != null)
       result += null;
