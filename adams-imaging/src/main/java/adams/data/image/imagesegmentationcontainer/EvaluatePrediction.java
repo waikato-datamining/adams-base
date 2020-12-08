@@ -183,7 +183,7 @@ public class EvaluatePrediction
 
     // header
     row    = result.getHeaderRow();
-    row.addCell("L").setContentAsString("Label");
+    row.addCell("L").setContentAsString("Layer");
     row.addCell("O").setContentAsString("Overlap");
     row.addCell("OP").setContentAsString("Overlap (perc)");
     row.addCell("M").setContentAsString("Missed");
