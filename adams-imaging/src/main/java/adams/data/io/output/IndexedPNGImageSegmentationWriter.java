@@ -233,9 +233,9 @@ public class IndexedPNGImageSegmentationWriter
     Arrays.fill(combPixels, black);
     m_ColorProvider.resetColors();
     for (i = 0; i < layerNames.length; i++) {
+      color = m_ColorProvider.next().getRGB();
       if (!layers.containsKey(layerNames[i]))
         continue;
-      color      = m_ColorProvider.next().getRGB();
       currPixels = BufferedImageHelper.getPixels(layers.get(layerNames[i]));
       for (n = 0; n < currPixels.length; n++) {
         if ((currPixels[n] & 0x00FFFFFF) > 0)
