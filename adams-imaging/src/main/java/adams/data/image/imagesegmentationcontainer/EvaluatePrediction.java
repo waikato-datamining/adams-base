@@ -284,8 +284,8 @@ public class EvaluatePrediction
 
     if (m_AddMisclassification) {
       for (String label : labels) {
-	row.addCell("MIS-" + label).setContentAsString("Misclassified as " + label);
-	row.addCell("MISP-" + label).setContentAsString("Misclassified as " + label + " (perc)");
+	row.addCell("ACT-" + label).setContentAsString("Actual layer " + label);
+	row.addCell("ACTP-" + label).setContentAsString("Actual layer " + label + " (perc)");
       }
     }
 
@@ -309,8 +309,8 @@ public class EvaluatePrediction
 	  if (other.equals(label))
 	    continue;
 	  miscl = calcMisclassified(predPixels.get(label), annoPixels.get(other));
-	  row.getCell("MIS-" + other).setContent(miscl.value1);
-	  row.getCell("MISP-" + other).setContent(miscl.value2);
+	  row.getCell("ACT-" + other).setContent(miscl.value1);
+	  row.getCell("ACTP-" + other).setContent(miscl.value2);
 	}
       }
     }
