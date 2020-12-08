@@ -1,6 +1,6 @@
-/**
+/*
  * AbstractFileBasedHistory.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -14,19 +14,23 @@ import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * History for PlaceholderDirectory objects.
+ * History for file objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 6358 $
  */
 public abstract class AbstractFileBasedHistory<T extends File>
   extends AbstractPersistentHistory<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5716154035144840331L;
+
+  /** the minimum number of parent directories to use. */
+  protected int m_MinNumParentDirs;
 
   /**
    * Creates a new file object from the string.
@@ -91,13 +95,48 @@ public abstract class AbstractFileBasedHistory<T extends File>
   }
 
   /**
+   * Determines the minimum number of parent directories that need to be
+   * included in the filename to make the filenames in the menu distinguishable.
+   *
+   * @return		the minimum number of parent directories, -1 means
+   * 			full path
+   */
+  protected synchronized int determineMinimumNumberOfParentDirs() {
+    int		result;
+    Set<String> files;
+    int		num;
+    int		i;
+    int		max;
+
+    result = -1;
+
+    max = 0;
+    for (i = 0; i < m_History.size(); i++)
+      max = Math.max(max, FileUtils.getDirectoryDepth(m_History.get(i)));
+
+    num = 0;
+    do {
+      files = new HashSet<>();
+      for (i = 0; i < m_History.size(); i++)
+	files.add(FileUtils.createPartialFilename(m_History.get(i), num));
+      if (files.size() == m_History.size())
+	result = num;
+      else
+	num++;
+    }
+    while ((files.size() < m_History.size()) && (num <= max));
+
+    return result;
+  }
+
+  /**
    * Generates an HTML caption for the an entry in the history menu.
    *
    * @param obj		the object to create the caption for
    * @return		the generated HTML captiopn
    */
   protected String generateMenuItemCaption(T obj) {
-    return "<html>" + obj.getName() + "</html>";
+    return "<html>" + FileUtils.createPartialFilename(obj, m_MinNumParentDirs) + "</html>";
   }
 
   /**
@@ -108,8 +147,8 @@ public abstract class AbstractFileBasedHistory<T extends File>
    * @param listener	the listener to attach to the menu items' ActionListener
    */
   public void customizePopupMenu(JPopupMenu menu, Object current, final HistorySelectionListener listener) {
-    JMenu submenu;
-    JMenuItem item;
+    JMenu 		submenu;
+    JMenuItem 		item;
     int			i;
 
     submenu = new JMenu("History");
@@ -119,6 +158,8 @@ public abstract class AbstractFileBasedHistory<T extends File>
     item = new JMenuItem("Clear history");
     item.addActionListener((ActionEvent e) -> m_History.clear());
     submenu.add(item);
+
+    m_MinNumParentDirs = determineMinimumNumberOfParentDirs();
 
     // current history
     for (i = 0; i < m_History.size(); i++) {
