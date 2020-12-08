@@ -25,10 +25,12 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.ImageSegmentationContainer;
+import com.github.fracpete.javautils.struct.Struct2;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +59,9 @@ public class EvaluatePrediction
   /** the key for additional count. */
   public final static String KEY_ADDITIONAL = "additional";
 
+  /** whether to add misclassification information. */
+  protected boolean m_AddMisclassification;
+
   /**
    * Returns a string describing the object.
    *
@@ -65,7 +70,49 @@ public class EvaluatePrediction
   @Override
   public String globalInfo() {
     return "Evaluates a prediction (first container) against the annotation "
-      + "(second container) and outputs a spreadsheet with the results.";
+      + "(second container) and outputs a spreadsheet with the results.\n"
+      + "For calculating the misclassified percentage, the total pixel count "
+      + "of the other label is used as denominator.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "add-misclassification", "addMisclassification",
+      false);
+  }
+
+  /**
+   * Sets whether to add the misclassification information.
+   *
+   * @param value 	true if to add
+   */
+  public void setAddMisclassification(boolean value) {
+    m_AddMisclassification = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the misclassification information.
+   *
+   * @return 		true if to add
+   */
+  public boolean getAddMisclassification() {
+    return m_AddMisclassification;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for displaying in the GUI or for listing the options.
+   */
+  public String addMisclassificationTipText() {
+    return "If enabled, additional columns with misclassification information are added.";
   }
 
   /**
@@ -99,16 +146,14 @@ public class EvaluatePrediction
   }
 
   /**
-   * Compares the two images.
+   * Compares the two pixel arrays.
    *
-   * @param prediction	the prediction image
-   * @param annotation	the annotation image
+   * @param predPixels	the prediction pixels
+   * @param annoPixels	the annotation pixels
    * @return		the statistics
    */
-  protected Map<String,Integer> compare(BufferedImage prediction, BufferedImage annotation) {
+  protected Map<String,Integer> compare(int[] predPixels, int[] annoPixels) {
     Map<String,Integer>	result;
-    int[]		predP;
-    int[]		annoP;
     int			i;
     int			black;
     int 		annotationCount;
@@ -116,27 +161,28 @@ public class EvaluatePrediction
     int 		additionalCount;
     int 		overlapCount;
 
-    if (prediction == null)
-      prediction = new BufferedImage(annotation.getWidth(), annotation.getHeight(), annotation.getType());
+    black = Color.BLACK.getRGB();
 
-    predP           = BufferedImageHelper.getPixels(prediction);
-    annoP           = BufferedImageHelper.getPixels(annotation);
-    black           = Color.BLACK.getRGB();
+    if (predPixels == null) {
+      predPixels = new int[annoPixels.length];
+      Arrays.fill(predPixels, black);
+    }
+
     annotationCount = 0;
     additionalCount = 0;
     missedCount     = 0;
     overlapCount    = 0;
-    for (i = 0; i < predP.length; i++) {
-      if (annoP[i] != black)
+    for (i = 0; i < predPixels.length; i++) {
+      if (annoPixels[i] != black)
         annotationCount++;
-      if (predP[i] == annoP[i]) {
-	if (predP[i] != black)
+      if (predPixels[i] == annoPixels[i]) {
+	if (predPixels[i] != black)
 	  overlapCount++;
       }
       else {
-	if (predP[i] != black)
+	if (predPixels[i] != black)
 	  additionalCount++;
-	else if (predP[i] == black)
+	else if (predPixels[i] == black)
 	  missedCount++;
       }
     }
@@ -151,6 +197,41 @@ public class EvaluatePrediction
   }
 
   /**
+   * Calculates the misclassification count/percentage.
+   * Percentage is calculated as: miscl_pixel_count / total_pixel_count_other_label
+   *
+   * @param predPixels	the prediction pixels
+   * @param annoOtherPixels	the annotation pixels from another layer
+   * @return		the misclassified pixel count and percentage
+   */
+  protected Struct2<Integer,Double> calcMisclassified(int[] predPixels, int[] annoOtherPixels) {
+    Struct2<Integer,Double>	result;
+    int				i;
+    int				black;
+    int				annoTotal;
+
+    result = new Struct2<>(0, 0.0);
+
+    black = Color.BLACK.getRGB();
+
+    if (predPixels == null) {
+      predPixels = new int[annoOtherPixels.length];
+      Arrays.fill(predPixels, black);
+    }
+
+    annoTotal = 0;
+    for (i = 0; i < predPixels.length; i++) {
+      if ((annoOtherPixels[i] != black) && (predPixels[i] != black))
+        result.value1++;
+      if (annoOtherPixels[i] != black)
+        annoTotal++;
+    }
+    result.value2 = (double) result.value1 / annoTotal;
+
+    return result;
+  }
+
+  /**
    * Performs the actual processing of the containers.
    *
    * @param containers the containers to process
@@ -160,26 +241,36 @@ public class EvaluatePrediction
   protected Object doProcess(ImageSegmentationContainer[] containers) {
     SpreadSheet			result;
     Row				row;
-    ImageSegmentationContainer	pred;
-    ImageSegmentationContainer	anno;
-    Map<String,BufferedImage>	predL;
-    Map<String,BufferedImage>	annoL;
+    ImageSegmentationContainer 	predCont;
+    ImageSegmentationContainer 	annoCont;
+    Map<String,BufferedImage> 	predLayers;
+    Map<String,BufferedImage> 	annoLayers;
+    Map<String,int[]> 		predPixels;
+    Map<String,int[]> 		annoPixels;
     List<String> 		labels;
     Map<String,Integer>		stats;
     int				total;
-    BufferedImage		predI;
-    BufferedImage		annoI;
+    Struct2<Integer,Double>	miscl;
 
-    pred  = containers[0];
-    predL = (Map<String,BufferedImage>) pred.getValue(ImageSegmentationContainer.VALUE_LAYERS);
-    anno  = containers[1];
-    annoL = (Map<String,BufferedImage>) anno.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+    predCont   = containers[0];
+    predLayers = (Map<String,BufferedImage>) predCont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+    annoCont   = containers[1];
+    annoLayers = (Map<String,BufferedImage>) annoCont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
 
-    labels = new ArrayList<>(annoL.keySet());
+    labels = new ArrayList<>(annoLayers.keySet());
     Collections.sort(labels);
 
+    predPixels = new HashMap<>();
+    annoPixels = new HashMap<>();
+    for (String label: labels) {
+      if (predLayers.containsKey(label))
+        predPixels.put(label, BufferedImageHelper.getPixels(predLayers.get(label)));
+      if (annoLayers.containsKey(label))
+        annoPixels.put(label, BufferedImageHelper.getPixels(annoLayers.get(label)));
+    }
+
     result = new DefaultSpreadSheet();
-    result.addComment("Name: " + pred.getValue(ImageSegmentationContainer.VALUE_NAME));
+    result.addComment("Name: " + predCont.getValue(ImageSegmentationContainer.VALUE_NAME));
 
     // header
     row    = result.getHeaderRow();
@@ -191,14 +282,19 @@ public class EvaluatePrediction
     row.addCell("A").setContentAsString("Additional");
     row.addCell("AP").setContentAsString("Additional (perc)");
 
+    if (m_AddMisclassification) {
+      for (String label : labels) {
+	row.addCell("MIS-" + label).setContentAsString("Misclassified as " + label);
+	row.addCell("MISP-" + label).setContentAsString("Misclassified as " + label + " (perc)");
+      }
+    }
+
     // data
     for (String label: labels) {
       row = result.addRow();
       row.getCell("L").setContentAsString(label);
 
-      predI = predL.get(label);
-      annoI = annoL.get(label);
-      stats = compare(predI, annoI);
+      stats = compare(predPixels.get(label), annoPixels.get(label));
       total = stats.get(KEY_ANNOTATION);
 
       row.getCell("O").setContent(stats.get(KEY_OVERLAP));
@@ -207,6 +303,16 @@ public class EvaluatePrediction
       row.getCell("MP").setContent((double) stats.get(KEY_MISSED) / total);
       row.getCell("A").setContent(stats.get(KEY_ADDITIONAL));
       row.getCell("AP").setContent((double) stats.get(KEY_ADDITIONAL) / total);
+
+      if (m_AddMisclassification) {
+	for (String other : labels) {
+	  if (other.equals(label))
+	    continue;
+	  miscl = calcMisclassified(predPixels.get(label), annoPixels.get(other));
+	  row.getCell("MIS-" + other).setContent(miscl.value1);
+	  row.getCell("MISP-" + other).setContent(miscl.value2);
+	}
+      }
     }
 
     return result;
