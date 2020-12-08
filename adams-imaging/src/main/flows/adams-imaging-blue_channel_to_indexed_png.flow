@@ -1,0 +1,32 @@
+# Project: adams
+# Date: 2020-12-09 10:21:15
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Turns image segmentation PNGs from blue channel ones to indexed ones." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input directory\" -help \"directory with blue channel PNGs\" -file-chooser-title \"Input dir\" -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name skip_first -display \"Skip first layer?\" -help \"First layer is usually the background and can be safely skipped\" -type BOOLEAN -default-value true" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name color_provider -display \"Color provider\" -help \"the provider that generates the colors for the layers\" -super-class adams.gui.visualization.core.ColorProvider -default-class adams.gui.visualization.core.CustomColorProvider" -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name output_dir -display \"Output directory\" -help \"directory for the indexed PNGs\" -file-chooser-title \"Output dir\" -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.CallableActors
+   adams.flow.sink.ProgressBar -name Progress -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.standalone.SetVariable -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.(png|PNG) -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name "# files"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.control.Tee -name iterate
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.control.Tee -name progress
+    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+    adams.flow.sink.CallableSink -callable Progress
+   adams.flow.control.Tee -name "output file"
+    adams.flow.transformer.BaseName
+    adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
+    adams.flow.transformer.SetVariable -var-name output_file
+   adams.flow.transformer.ImageSegmentationFileReader -reader "adams.data.io.input.BlueChannelImageSegmentationReader -skip-first-layer @{skip_first}"
+   adams.flow.sink.ImageSegmentationFileWriter -output @{output_file} -writer "adams.data.io.output.IndexedPNGImageSegmentationWriter -color-provider @{color_provider}"
+  adams.flow.control.CloseCallableDisplay -callable Progress
