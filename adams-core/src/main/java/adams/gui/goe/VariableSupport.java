@@ -477,6 +477,17 @@ public class VariableSupport {
 	});
 	result.add(item);
       }
+
+      JMenuItem menuitem = new JMenuItem("Use default", GUIHelper.getIcon("undo.gif"));
+      menuitem.addActionListener(new ActionListener() {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+	  editor.setValue(option.getDefaultValue());
+	  parent.setTarget(parent.getTarget());
+	}
+      });
+      menu.addSeparator();
+      menu.add(menuitem);
     }
 
     return result;

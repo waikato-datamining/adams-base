@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2018 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2020 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -45,7 +45,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SwingConstants;
@@ -532,19 +531,6 @@ public class PropertySheetPanel extends BasePanel
 	    evt.consume();
 	    BasePopupMenu menu = new BasePopupMenu();
 	    VariableSupport.updatePopup(PropertySheetPanel.this, editor, menu);
-	    // revert to default menu item
-	    if (option != null) {
-	      JMenuItem menuitem = new JMenuItem("Use default", GUIHelper.getIcon("undo.gif"));
-	      menuitem.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		  editor.setValue(option.getDefaultValue());
-		  setTarget(m_Target);
-		}
-	      });
-	      menu.addSeparator();
-	      menu.add(menuitem);
-	    }
 	    menu.showAbsolute(label, evt);
 	  }
 	  else {
