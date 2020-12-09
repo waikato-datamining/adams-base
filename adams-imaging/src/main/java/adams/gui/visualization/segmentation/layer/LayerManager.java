@@ -107,6 +107,7 @@ public class LayerManager
     m_BestFitRedone   = new HashSet<>();
     m_Undo            = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
+    m_Undo.setMaxUndo(20);
   }
 
   /**
