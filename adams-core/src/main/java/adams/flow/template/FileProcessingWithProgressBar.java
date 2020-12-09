@@ -34,6 +34,7 @@ import adams.flow.transformer.ArrayLength;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.IncVariable;
 import adams.flow.transformer.PassThrough;
+import adams.flow.transformer.SelectArraySubset;
 import adams.flow.transformer.SetVariable;
 
 /**
@@ -51,6 +52,11 @@ import adams.flow.transformer.SetVariable;
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The new name for the actor; leave empty to use current.
  * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-select-subset &lt;boolean&gt; (property: selectSubset)
+ * &nbsp;&nbsp;&nbsp;If enabled, the user can select a subset of the files.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-max-variable &lt;adams.core.VariableName&gt; (property: maxVariable)
@@ -75,6 +81,9 @@ public class FileProcessingWithProgressBar
   private static final long serialVersionUID = -8975800423604842422L;
 
   public static final String PROGRESSBAR_NAME = "Progress";
+
+  /** whether to let the user select a subset. */
+  protected boolean m_SelectSubset;
 
   /** the variable to store the # of files. */
   protected VariableName m_MaxVariable;
@@ -101,12 +110,45 @@ public class FileProcessingWithProgressBar
     super.defineOptions();
 
     m_OptionManager.add(
+      "select-subset", "selectSubset",
+      false);
+
+    m_OptionManager.add(
       "max-variable", "maxVariable",
       new VariableName("max"));
 
     m_OptionManager.add(
       "count-variable", "countVariable",
       new VariableName("count"));
+  }
+
+  /**
+   * Sets whether to let the user select a subset.
+   *
+   * @param value	true if user can select
+   */
+  public void setSelectSubset(boolean value) {
+    m_SelectSubset = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to let the user select a subset.
+   *
+   * @return 		true if user can select
+   */
+  public boolean getSelectSubset() {
+    return m_SelectSubset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String selectSubsetTipText() {
+    return "If enabled, the user can select a subset of the files.";
   }
 
   /**
@@ -207,6 +249,12 @@ public class FileProcessingWithProgressBar
       FileSystemSearch search = new FileSystemSearch();
       search.setOutputArray(true);
       result.add(search);
+
+      if (m_SelectSubset) {
+        SelectArraySubset select = new SelectArraySubset();
+        select.setAllowSearch(true);
+        result.add(select);
+      }
 
       Tee numFiles = new Tee();
       numFiles.setName("# files");

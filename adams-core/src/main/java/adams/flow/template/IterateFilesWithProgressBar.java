@@ -41,6 +41,7 @@ import adams.flow.transformer.ArrayLength;
 import adams.flow.transformer.ArrayToSequence;
 import adams.flow.transformer.IncVariable;
 import adams.flow.transformer.PassThrough;
+import adams.flow.transformer.SelectArraySubset;
 
 /**
  <!-- globalinfo-start -->
@@ -73,6 +74,11 @@ import adams.flow.transformer.PassThrough;
  *
  * <pre>-recursive &lt;boolean&gt; (property: recursive)
  * &nbsp;&nbsp;&nbsp;If enabled, the file search is performed recursively.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-select-subset &lt;boolean&gt; (property: selectSubset)
+ * &nbsp;&nbsp;&nbsp;If enabled, the user can select a subset of the files.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -112,6 +118,9 @@ public class IterateFilesWithProgressBar
   /** whether to search recursively. */
   protected boolean m_Recursive;
 
+  /** whether to let the user select a subset. */
+  protected boolean m_SelectSubset;
+
   /** the number of files variable. */
   protected VariableName m_NumFiles;
 
@@ -150,6 +159,10 @@ public class IterateFilesWithProgressBar
 
     m_OptionManager.add(
       "recursive", "recursive",
+      false);
+
+    m_OptionManager.add(
+      "select-subset", "selectSubset",
       false);
 
     m_OptionManager.add(
@@ -231,6 +244,35 @@ public class IterateFilesWithProgressBar
    */
   public String regExpTipText() {
     return "The regular expression that the files must match.";
+  }
+
+  /**
+   * Sets whether to let the user select a subset.
+   *
+   * @param value	true if user can select
+   */
+  public void setSelectSubset(boolean value) {
+    m_SelectSubset = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to let the user select a subset.
+   *
+   * @return 		true if user can select
+   */
+  public boolean getSelectSubset() {
+    return m_SelectSubset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String selectSubsetTipText() {
+    return "If enabled, the user can select a subset of the files.";
   }
 
   /**
@@ -404,6 +446,12 @@ public class IterateFilesWithProgressBar
 	search.setOutputArray(true);
 	search.setUseForwardSlashes(true);
 	iterate.add(search);
+
+	if (m_SelectSubset) {
+	  SelectArraySubset select = new SelectArraySubset();
+	  select.setAllowSearch(true);
+	  iterate.add(select);
+	}
 
 	Tee teeNumFiles = new Tee();
 	teeNumFiles.setName("# files");
