@@ -1,0 +1,35 @@
+# Project: adams
+# Date: 2020-12-15 10:17:53
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
+#
+adams.flow.control.Flow -annotation "Turns shape annotations into image segmentation layers." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input directory\" -help \"Directory with the ADAMS shape annotations\" -file-chooser-title Input -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name output_dir -display \"Output directory\" -help \"Directory for the image segmentation layers\" -file-chooser-title Output -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.CallableActors
+   adams.flow.sink.ProgressBar -name Progress -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.standalone.SetVariable -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.jpg -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name "# files"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.control.Tee -name iterate
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.control.Tee -name progress
+    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+    adams.flow.sink.CallableSink -callable Progress
+   adams.flow.control.Tee -name "output file"
+    adams.flow.transformer.BaseName
+    adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
+    adams.flow.transformer.SetVariable -var-name output_file
+   adams.flow.control.Tee -name "copy base image"
+    adams.flow.transformer.CopyFile -target-dir @{output_dir}
+   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.ObjectAnnotationsToImageSegmentationLayers -finder adams.data.objectfinder.AllFinder"
+   adams.flow.sink.ImageSegmentationFileWriter -output @{output_file} -writer "adams.data.io.output.IndividualImageSegmentationLayerWriter -skip-base-image true -skip-empty-layers true"
+  adams.flow.control.CloseCallableDisplay -callable Progress
