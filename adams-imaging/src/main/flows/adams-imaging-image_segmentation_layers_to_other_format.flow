@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2020-12-15 12:03:23
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
+#
+adams.flow.control.Flow -annotation "Turns image segmentation layers into indexed PNGs or blue-channel JPGs." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input directory\" -help \"directory with image segmentation layer files\" -file-chooser-title \"Input dir\" -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name labels -display \"Layer names\" -help \"blank-separated list\" -default-value \"layer1 layer2\"" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name color_provider -display \"Color provider\" -help \"the provider that generates the colors for the layers\" -super-class adams.gui.visualization.core.ColorProvider -default-class adams.gui.visualization.core.CustomColorProvider" -value "adams.flow.source.valuedefinition.ListSelectionValueDefinition -name output_format -display \"Output format\" -value \"Indexed PNG\" -value \"Blue channel JPG\" -default-value \"Indexed PNG\"" -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name output_dir -display \"Output directory\" -help \"directory for the indexed PNGs\" -file-chooser-title \"Output dir\" -use-forward-slashes true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.standalone.CallableActors
+   adams.flow.sink.ProgressBar -name Progress -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.standalone.SetVariable -var-name count -var-value 0
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -regexp .*\\\\.(jpg|JPG|jpeg|JPEG) -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.control.Tee -name "# files"
+   adams.flow.transformer.ArrayLength
+   adams.flow.transformer.SetVariable -var-name max
+  adams.flow.control.Tee -name iterate
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.control.Tee -name progress
+    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
+    adams.flow.sink.CallableSink -callable Progress
+   adams.flow.control.Tee -name "output file"
+    adams.flow.transformer.BaseName
+    adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
+    adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .png -use-forward-slashes true"
+    adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Indexed PNG\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Blue channel JPG\\\\\\\"\"" -condition adams.flow.condition.bool.True
+     adams.flow.transformer.Convert -name indexed -conversion "adams.data.conversion.ReplaceFileExtension -extension .png -use-forward-slashes true"
+     adams.flow.transformer.Convert -name "blue channel" -conversion "adams.data.conversion.ReplaceFileExtension -extension .jpg -use-forward-slashes true"
+     adams.flow.control.Stop -stop-msg "Unhandled output format: @{output_format}"
+    adams.flow.transformer.SetVariable -var-name output_file
+   adams.flow.transformer.ImageSegmentationFileReader -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.PassThrough"
+   adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Indexed PNG\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Blue channel JPG\\\\\\\"\"" -condition adams.flow.condition.bool.True
+    adams.flow.sink.ImageSegmentationFileWriter -name indexed -output @{output_file} -writer "adams.data.io.output.IndexedPNGImageSegmentationWriter -layer-name @{labels} -color-provider @{color_provider}"
+    adams.flow.sink.ImageSegmentationFileWriter -name "blue channel" -output @{output_file} -writer "adams.data.io.output.BlueChannelImageSegmentationWriter -layer-name @{labels}"
+    adams.flow.control.Stop -stop-msg "Unhandled output format: @{output_format}"
+  adams.flow.control.CloseCallableDisplay -callable Progress
