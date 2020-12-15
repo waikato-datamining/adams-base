@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2020-12-15 12:03:23
+# Date: 2020-12-15 16:45:28
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
@@ -27,10 +27,6 @@ adams.flow.control.Flow -annotation "Turns image segmentation layers into indexe
     adams.flow.transformer.BaseName
     adams.flow.transformer.PrependDir -prefix @{output_dir} -use-forward-slashes true
     adams.flow.transformer.Convert -conversion "adams.data.conversion.ReplaceFileExtension -extension .png -use-forward-slashes true"
-    adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Indexed PNG\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Blue channel JPG\\\\\\\"\"" -condition adams.flow.condition.bool.True
-     adams.flow.transformer.Convert -name indexed -conversion "adams.data.conversion.ReplaceFileExtension -extension .png -use-forward-slashes true"
-     adams.flow.transformer.Convert -name "blue channel" -conversion "adams.data.conversion.ReplaceFileExtension -extension .jpg -use-forward-slashes true"
-     adams.flow.control.Stop -stop-msg "Unhandled output format: @{output_format}"
     adams.flow.transformer.SetVariable -var-name output_file
    adams.flow.transformer.ImageSegmentationFileReader -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.PassThrough"
    adams.flow.control.Switch -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Indexed PNG\\\\\\\"\"" -condition "adams.flow.condition.bool.Expression -expression \"\\\\\\\"@{output_format}\\\\\\\" = \\\\\\\"Blue channel JPG\\\\\\\"\"" -condition adams.flow.condition.bool.True
