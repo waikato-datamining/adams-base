@@ -15,7 +15,7 @@
 
 /*
  * StoragePanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -54,6 +54,8 @@ import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyEditorManager;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -539,6 +541,13 @@ public class StoragePanel
 	  m_DialogInspect = new BaseDialog(getParentDialog());
 	else
 	  m_DialogInspect = new BaseDialog(getParentFrame());
+	m_DialogInspect.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
+	m_DialogInspect.addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosed(WindowEvent e) {
+            m_DialogInspect = null;
+          }
+        });
 	m_DialogInspect.getContentPane().setLayout(new BorderLayout());
 	m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
 	m_DialogInspect.setLocationRelativeTo(this);
