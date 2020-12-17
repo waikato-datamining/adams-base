@@ -19,6 +19,7 @@
  */
 package adams.gui.visualization.image;
 
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.core.option.AbstractOptionHandler;
@@ -390,7 +391,9 @@ public class ReportObjectOverlay
       + "'#' for index, '@' for type and '$' for short type (type suffix "
       + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
       + "value associated with the meta-data key 'BLAH'; "
-      + "for instance: '# @' or '# {BLAH}'.";
+      + "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
+      + "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
+      + "after the decimal point.";
   }
 
   /**
@@ -548,6 +551,35 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Applies further format options. Does nothing if format or value are empty.
+   *
+   * @param value	the value to format
+   * @param format	the format to apply
+   * @return		the processed value
+   */
+  protected String applyFormatOptions(String value, String format) {
+    int		decimals;
+    boolean	isDouble;
+    String	tmp;
+
+    if (format.isEmpty() || value.isEmpty())
+      return value;
+
+    isDouble = Utils.isDouble(value);
+
+    // max # of decimals?
+    if (format.startsWith(".") && isDouble) {
+      tmp = format.substring(1);
+      if (Utils.isInteger(tmp)) {
+        decimals = Integer.parseInt(tmp);
+	value    = Utils.doubleToString(Double.parseDouble(value), decimals);
+      }
+    }
+
+    return value;
+  }
+
+  /**
    * Applies the label format to the object to generate a display string.
    *
    * @param object 	the object to use as basis
@@ -560,6 +592,7 @@ public class ReportObjectOverlay
     String	value;
     int		start;
     int		end;
+    String	format;
 
     result = m_LabelFormat
       .replace("#", "" + object.getMetaData().get(LocatedObjects.KEY_INDEX))
@@ -568,12 +601,18 @@ public class ReportObjectOverlay
 
     // other meta-data keys?
     while (((start = result.indexOf("{")) > -1) && ((end = result.indexOf("}", start)) > -1)) {
-      key = result.substring(start + 1, end);
+      key    = result.substring(start + 1, end);
+      format = "";
+      if (key.contains("|")) {
+	format = key.substring(key.indexOf("|") + 1);
+	key    = key.substring(0, key.indexOf("|"));
+      }
       if (object.getMetaData().containsKey(key))
         value = "" + object.getMetaData().get(key);
       else
         value = "";
-      result = result.replace("{" + key + "}", value);
+      value = applyFormatOptions(value, format);
+      result = result.substring(0, start) + value + result.substring(end + 1);
     }
 
     return result;
