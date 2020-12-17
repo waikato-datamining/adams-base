@@ -19,6 +19,7 @@
  */
 package adams.gui.tools;
 
+import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
 import adams.core.Utils;
@@ -62,6 +63,7 @@ import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 import adams.gui.tools.previewbrowser.PropertiesManager;
+import adams.gui.tools.previewbrowser.localfiles.AbstractLocalFilesAction;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
@@ -241,6 +243,9 @@ public class PreviewBrowserPanel
   /** the dialog for saving notes. */
   protected TextFileChooser m_FileChooserNotes;
 
+  /** the actions for local files. */
+  protected List<AbstractLocalFilesAction> m_LocalFilesActions;
+
   /**
    * Initializes the members.
    */
@@ -257,6 +262,7 @@ public class PreviewBrowserPanel
     m_ChangeMonitor               = new LastModified();
     m_Notes                       = new StringBuilder();
     m_FileChooserNotes            = null;
+    m_LocalFilesActions           = null;
   }
 
   /**
@@ -877,8 +883,10 @@ public class PreviewBrowserPanel
    * @return		the menu
    */
   protected JPopupMenu getLocalFilesPopupMenu(MouseEvent e) {
-    JPopupMenu	result;
-    JMenuItem	menuitem;
+    JPopupMenu			result;
+    JMenuItem			menuitem;
+    Class[]			classes;
+    AbstractLocalFilesAction	local;
 
     result = new JPopupMenu();
 
@@ -922,6 +930,31 @@ public class PreviewBrowserPanel
       addToNotes(comment + "\n" + m_PanelDir.getCurrent() + File.separator + obj.toString());
     });
     result.add(menuitem);
+
+    // initialize actions
+    if (m_LocalFilesActions == null) {
+      m_LocalFilesActions = new ArrayList<>();
+      classes             = ClassLister.getSingleton().getClasses(AbstractLocalFilesAction.class);
+      for (Class cls: classes) {
+        try {
+          local = (AbstractLocalFilesAction) cls.newInstance();
+          local.setOwner(this);
+          m_LocalFilesActions.add(local);
+	}
+	catch (Exception ex) {
+	  ConsolePanel.getSingleton().append("Failed to instantiate local files action: " + Utils.classToString(cls), ex);
+	}
+      }
+      Collections.sort(m_LocalFilesActions, (AbstractLocalFilesAction o1, AbstractLocalFilesAction o2) -> {
+	return o1.getName().compareToIgnoreCase(o2.getName());
+      });
+    }
+
+    result.addSeparator();
+    for (AbstractLocalFilesAction action: m_LocalFilesActions) {
+      action.update();
+      result.add(action);
+    }
 
     return result;
   }
@@ -1012,6 +1045,51 @@ public class PreviewBrowserPanel
     }
 
     return result;
+  }
+
+  /**
+   * Returns the currently selected files.
+   *
+   * @return		the files, can be null
+   */
+  public File[] getCurrentFiles() {
+    return m_CurrentFiles;
+  }
+
+  /**
+   * Returns the directory panel.
+   *
+   * @return		the panel
+   */
+  public DirectoryChooserPanel getDirPanel() {
+    return m_PanelDir;
+  }
+
+  /**
+   * Returns the list component for files in the archive.
+   *
+   * @return		the list component
+   */
+  public SearchableBaseList getLocalFilesList() {
+    return m_ListLocalFiles;
+  }
+
+  /**
+   * Returns whether the archive files are visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isArchiveFilesListVisible() {
+    return !m_PaneBrowsing.isBottomComponentHidden();
+  }
+
+  /**
+   * Returns the list component for files in the archive.
+   *
+   * @return		the list component
+   */
+  public SearchableBaseList getArchiveFilesList() {
+    return m_ListArchiveFiles;
   }
 
   /**
