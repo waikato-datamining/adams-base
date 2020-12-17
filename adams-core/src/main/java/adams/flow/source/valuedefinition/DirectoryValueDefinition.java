@@ -226,6 +226,7 @@ public class DirectoryValueDefinition
     chooserPanel = new DirectoryChooserPanel();
     chooserPanel.setPrefix("");
     chooserPanel.setCurrent(m_DefaultValue);
+    chooserPanel.setDirectoryChooserTitle(m_FileChooserTitle);
 
     panel.addPropertyType(getName(), PropertyType.CUSTOM_COMPONENT);
     panel.addProperty(getName(), getDisplay(), chooserPanel);

@@ -56,6 +56,12 @@ public class FileChooserPanel
   /** the history of files. */
   protected static Map<Class,PlaceholderFileHistory> m_History;
 
+  /** the title to use for the filechooser. */
+  protected String m_FileChooserTitle;
+
+  /** the default filechooser title. */
+  protected String m_FileChooserTitleDefault;
+
   /**
    * Initializes the panel with no file.
    */
@@ -90,8 +96,10 @@ public class FileChooserPanel
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser   = new BaseFileChooser();
-    m_UseSaveDialog = false;
+    m_FileChooser             = new BaseFileChooser();
+    m_FileChooserTitleDefault = m_FileChooser.getDialogTitle();
+    m_FileChooserTitle        = "";
+    m_UseSaveDialog           = false;
 
     if (m_History == null)
       m_History = new HashMap<>();
@@ -104,12 +112,36 @@ public class FileChooserPanel
   }
 
   /**
+   * Sets the title for the filechooser.
+   *
+   * @param value	the title, null or empty string for default
+   */
+  public void setFileChooserTitle(String value) {
+    if (value == null)
+      value = "";
+    m_FileChooserTitle = value;
+  }
+
+  /**
+   * Returns the tile for the filechooser.
+   *
+   * @return		the title, empty string for default
+   */
+  public String getFileChooserTitle() {
+    return m_FileChooserTitle;
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
    */
   @Override
   protected File doChoose() {
+    if (!m_FileChooserTitle.isEmpty())
+      m_FileChooser.setDialogTitle(m_FileChooserTitle);
+    else
+      m_FileChooser.setDialogTitle(m_FileChooserTitleDefault);
     m_FileChooser.setSelectedFile(getCurrent());
 
     if (m_UseSaveDialog) {

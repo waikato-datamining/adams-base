@@ -56,6 +56,12 @@ public class DirectoryChooserPanel
   /** the history of dirs. */
   protected Map<Class,PlaceholderDirectoryHistory> m_History;
 
+  /** the title to use for the dirchooser. */
+  protected String m_DirectoryChooserTitle;
+
+  /** the default dirchooser title. */
+  protected String m_DirectoryChooserTitleDefault;
+
   /**
    * Initializes the panel with no file.
    */
@@ -89,7 +95,9 @@ public class DirectoryChooserPanel
   protected void initialize() {
     super.initialize();
 
-    m_DirectoryChooser = new BaseDirectoryChooser();
+    m_DirectoryChooser             = new BaseDirectoryChooser();
+    m_DirectoryChooserTitleDefault = m_DirectoryChooser.getDialogTitle();
+    m_DirectoryChooserTitle        = "";
 
     if (m_History == null)
       m_History = new HashMap<>();
@@ -102,11 +110,35 @@ public class DirectoryChooserPanel
   }
 
   /**
+   * Sets the title for the dirchooser.
+   *
+   * @param value	the title, null or empty string for default
+   */
+  public void setDirectoryChooserTitle(String value) {
+    if (value == null)
+      value = "";
+    m_DirectoryChooserTitle = value;
+  }
+
+  /**
+   * Returns the tile for the dirchooser.
+   *
+   * @return		the title, empty string for default
+   */
+  public String getDirectoryChooserTitle() {
+    return m_DirectoryChooserTitle;
+  }
+
+  /**
    * Performs the actual choosing of an object.
    *
    * @return		the chosen object or null if none chosen
    */
   protected File doChoose() {
+    if (!m_DirectoryChooserTitle.isEmpty())
+      m_DirectoryChooser.setDialogTitle(m_DirectoryChooserTitle);
+    else
+      m_DirectoryChooser.setDialogTitle(m_DirectoryChooserTitleDefault);
     m_DirectoryChooser.setSelectedFile(getCurrent());
     if (m_DirectoryChooser.showOpenDialog(m_Self) == BaseDirectoryChooser.APPROVE_OPTION) {
       m_History.get(getClass()).add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));

@@ -340,6 +340,7 @@ public class FileValueDefinition
       chooserPanel.addChoosableFileFilter(new ExtensionFileFilter(ext.getValue().toUpperCase() + " file", ext.getValue()));
     chooserPanel.setCurrentDirectory(m_InitialDirectory);
     chooserPanel.setAcceptAllFileFilterUsed(m_AcceptAllFileFilter);
+    chooserPanel.setFileChooserTitle(m_FileChooserTitle);
 
     panel.addPropertyType(getName(), PropertyType.CUSTOM_COMPONENT);
     panel.addProperty(getName(), getDisplay(), chooserPanel);
