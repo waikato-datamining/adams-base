@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportFileReader.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,10 +29,7 @@ import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.db.DatabaseConnectionUser;
 import adams.flow.core.ActorUtils;
-import adams.flow.core.Token;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -42,20 +39,14 @@ import java.util.List;
  * @param <T> the type of report to handle
  */
 public abstract class AbstractReportFileReader<T extends Report>
-  extends AbstractTransformer
+  extends AbstractArrayProvider
   implements DatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -207124154855872209L;
 
-  /** the key for storing the current containers in the backup. */
-  public final static String BACKUP_REPORTS = "reports";
-
   /** the reader to use. */
   protected AbstractReportReader<T> m_Reader;
-
-  /** the reports that were read. */
-  protected List<T> m_Reports;
 
   /** whether the database connection has been updated. */
   protected boolean m_DatabaseConnectionUpdated;
@@ -128,61 +119,12 @@ public abstract class AbstractReportFileReader<T extends Report>
   }
 
   /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		the report class
-   */
-  public abstract Class[] generates();
-
-  /**
-   * Removes entries from the backup.
-   */
-  @Override
-  protected void pruneBackup() {
-    super.pruneBackup();
-
-    pruneBackup(BACKUP_REPORTS);
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
-   */
-  @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_REPORTS, m_Reports);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_REPORTS)) {
-      m_Reports = (List<T>) state.get(BACKUP_REPORTS);
-      state.remove(BACKUP_REPORTS);
-    }
-
-    super.restoreState(state);
-  }
-
-  /**
    * Resets the scheme.
    */
   @Override
   protected void reset() {
     super.reset();
 
-    m_Reports                   = new ArrayList<>();
     m_DatabaseConnectionUpdated = false;
   }
   
@@ -216,6 +158,7 @@ public abstract class AbstractReportFileReader<T extends Report>
   protected String doExecute() {
     String		result;
     PlaceholderFile	file;
+    List<T>		reports;
 
     result = null;
 
@@ -234,40 +177,16 @@ public abstract class AbstractReportFileReader<T extends Report>
 
     // read data
     try {
-      m_Reports = m_Reader.read();
+      reports = m_Reader.read();
       m_Reader.cleanUp();
+      m_Queue.clear();
+      m_Queue.addAll(reports);
     }
     catch (Exception e) {
       result = handleException("Error reading '" + file + "': ", e);
     }
 
     return result;
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    result = new Token(m_Reports.get(0));
-    m_Reports.remove(0);
-
-    return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_Reports.size() > 0);
   }
 
   /**
