@@ -1016,7 +1016,7 @@ public class ObjectLocationsFromReport
       }
     }
 
-    return result;
+    return filterReport(result);
   }
 
   /**
