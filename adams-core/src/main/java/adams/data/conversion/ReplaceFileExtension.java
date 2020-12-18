@@ -15,7 +15,7 @@
 
 /*
  * ReplaceFileExtension.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -37,7 +37,7 @@ import adams.core.io.ForwardSlashSupporter;
  * 
  * <pre>-extension &lt;java.lang.String&gt; (property: extension)
  * &nbsp;&nbsp;&nbsp;The new extension to replace the old one with (incl dot); use empty string 
- * &nbsp;&nbsp;&nbsp;to remove the extension.
+ * &nbsp;&nbsp;&nbsp;to remove the extension; variables get expanded automatically.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  * 
@@ -118,7 +118,7 @@ public class ReplaceFileExtension
    * 			displaying in the GUI or for listing the options.
    */
   public String extensionTipText() {
-    return "The new extension to replace the old one with (incl dot); use empty string to remove the extension.";
+    return "The new extension to replace the old one with (incl dot); use empty string to remove the extension; variables get expanded automatically.";
   }
 
   /**
@@ -172,7 +172,7 @@ public class ReplaceFileExtension
   protected Object doConvert() throws Exception {
     String	result;
 
-    result = FileUtils.replaceExtension((String) m_Input, m_Extension);
+    result = FileUtils.replaceExtension((String) m_Input, getOptionManager().getVariables().expand(m_Extension));
     if (m_UseForwardSlashes)
       result = FileUtils.useForwardSlashes(result);
 
