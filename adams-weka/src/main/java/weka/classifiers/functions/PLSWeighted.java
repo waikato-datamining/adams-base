@@ -21,6 +21,9 @@
 package weka.classifiers.functions;
 
 import adams.core.option.OptionUtils;
+import adams.data.instancesanalysis.pls.AbstractPLS;
+import adams.data.instancesanalysis.pls.PLS1;
+import adams.data.instancesanalysis.pls.PredictionType;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -33,9 +36,6 @@ import weka.core.Utils;
 import weka.core.WeightedInstancesHandler;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import adams.data.instancesanalysis.pls.AbstractPLS;
-import adams.data.instancesanalysis.pls.PredictionType;
-import adams.data.instancesanalysis.pls.PLS1;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -176,8 +176,6 @@ public class PLSWeighted
     String	tmpStr;
     String[]	tmpOptions;
 
-    super.setOptions(options);
-
     tmpStr     = Utils.getOption("algorithm", options);
     tmpOptions = Utils.splitOptions(tmpStr);
     if (tmpOptions.length != 0) {
@@ -188,6 +186,8 @@ public class PLSWeighted
     else {
       setAlgorithm(getDefaultAlgorithm());
     }
+
+    super.setOptions(options);
   }
 
   /**
