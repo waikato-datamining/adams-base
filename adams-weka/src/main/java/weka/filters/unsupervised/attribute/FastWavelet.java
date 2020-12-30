@@ -21,10 +21,12 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-
+import JSci.maths.wavelet.FWT;
+import JSci.maths.wavelet.cdf2_4.FastCDF2_4;
+import JSci.maths.wavelet.daubechies2.FastDaubechies2;
+import JSci.maths.wavelet.haar.FastHaar;
+import JSci.maths.wavelet.symmlet8.FastSymmlet8;
+import adams.core.option.OptionUtils;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -44,12 +46,10 @@ import weka.filters.Filter;
 import weka.filters.MultiFilter;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
-import JSci.maths.wavelet.FWT;
-import JSci.maths.wavelet.cdf2_4.FastCDF2_4;
-import JSci.maths.wavelet.daubechies2.FastDaubechies2;
-import JSci.maths.wavelet.haar.FastHaar;
-import JSci.maths.wavelet.symmlet8.FastSymmlet8;
-import adams.core.option.OptionUtils;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -348,8 +348,6 @@ public class FastWavelet
     String[]	tmpOptions;
     Filter	filter;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("A", options);
     if (tmpStr.length() != 0)
       setAlgorithm(new SelectedTag(tmpStr, TAGS_ALGORITHM));
@@ -379,6 +377,8 @@ public class FastWavelet
     }
 
     setInverseTransform(Utils.getFlag("inverse", options));
+
+    super.setOptions(options);
   }
 
   /**
