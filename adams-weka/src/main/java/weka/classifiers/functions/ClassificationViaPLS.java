@@ -19,9 +19,7 @@
  */
 package weka.classifiers.functions;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
+import adams.core.option.OptionUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.meta.ClassificationViaRegression;
 import weka.classifiers.meta.ClassificationViaRegressionD;
@@ -35,7 +33,9 @@ import weka.core.SingleIndex;
 import weka.core.Utils;
 import weka.core.matrix.Matrix;
 import weka.filters.Filter;
-import adams.core.option.OptionUtils;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -285,8 +285,6 @@ public class ClassificationViaPLS
     String	tmpStr;
     String[]	tmpOptions;
 
-    super.setOptions(options);
-
     tmpStr     = Utils.getOption("filter", options);
     tmpOptions = Utils.splitOptions(tmpStr);
     if (tmpOptions.length != 0) {
@@ -309,6 +307,8 @@ public class ClassificationViaPLS
       setLabelString(tmpStr);
     else
       setLabelString("");
+
+    super.setOptions(options);
   }
 
   /**
