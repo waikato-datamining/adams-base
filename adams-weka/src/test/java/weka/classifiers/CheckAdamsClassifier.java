@@ -102,9 +102,8 @@ public class CheckAdamsClassifier extends CheckClassifier {
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    super.setOptions(options);
-
     m_IgnoreTestWRTZeroR = (Utils.getOptionPos("ignore-zeror", options) > -1);
+    super.setOptions(options);
   }
 
   /**
