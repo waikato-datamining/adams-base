@@ -20,12 +20,6 @@
 
 package weka.filters.unsupervised.instance;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
@@ -36,6 +30,12 @@ import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -140,9 +140,8 @@ public class RemoveInstancesWithMissingValue
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    super.setOptions(options);
-
     setIgnoreClass(Utils.getFlag("ignore-class", options));
+    super.setOptions(options);
   }
 
   /**
