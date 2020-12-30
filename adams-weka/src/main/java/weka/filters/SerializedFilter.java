@@ -140,13 +140,13 @@ public class SerializedFilter
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("serialized", options);
     if (tmpStr.length() != 0)
       setSerialized(new PlaceholderFile(tmpStr));
     else
       setSerialized(new PlaceholderFile());
+
+    super.setOptions(options);
   }
 
   /**
