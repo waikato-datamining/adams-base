@@ -21,13 +21,6 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -43,6 +36,13 @@ import weka.core.Utils;
 import weka.core.WekaException;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -326,8 +326,6 @@ public class MergeTwoAttributes
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("first", options);
     if (tmpStr.length() != 0)
       setFirstAttribute(tmpStr);
@@ -360,6 +358,8 @@ public class MergeTwoAttributes
       setOneMissing(new SelectedTag(tmpStr, TAGS_ONEMISSING));
     else
       setOneMissing(new SelectedTag(ONEMISSING_MISSING, TAGS_ONEMISSING));
+
+    super.setOptions(options);
   }
 
   /**
