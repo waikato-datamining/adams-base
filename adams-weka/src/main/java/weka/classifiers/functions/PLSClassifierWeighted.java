@@ -236,8 +236,6 @@ public class PLSClassifierWeighted
     String	tmpStr;
     String[]	tmpOptions;
 
-    super.setOptions(options);
-
     tmpStr     = Utils.getOption("filter", options);
     tmpOptions = Utils.splitOptions(tmpStr);
     if (tmpOptions.length != 0) {
@@ -248,6 +246,8 @@ public class PLSClassifierWeighted
     else {
       setFilter(getDefaultFilter());
     }
+
+    super.setOptions(options);
   }
 
   /**
