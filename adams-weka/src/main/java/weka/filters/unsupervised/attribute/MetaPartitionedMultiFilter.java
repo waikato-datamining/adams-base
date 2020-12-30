@@ -181,8 +181,6 @@ public class MetaPartitionedMultiFilter
     BaseRegExp	regexp;
     List<BaseString>	prefixes;
 
-    super.setOptions(options);
-
     setRemoveUnused(Utils.getFlag("U", options));
 
     filters = new Vector();
@@ -224,6 +222,8 @@ public class MetaPartitionedMultiFilter
     }
 
     setPrefixes(prefixes.toArray(new BaseString[prefixes.size()]));
+
+    super.setOptions(options);
 
     // is number of filters the same as ranges?
     checkDimensions();
