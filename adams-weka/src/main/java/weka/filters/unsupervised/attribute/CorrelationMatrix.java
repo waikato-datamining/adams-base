@@ -21,11 +21,7 @@
 
 package weka.filters.unsupervised.attribute;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
+import adams.data.statistics.StatUtils;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -37,7 +33,11 @@ import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
-import adams.data.statistics.StatUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -165,8 +165,6 @@ public class CorrelationMatrix
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("R", options);
     if (tmpStr.length() != 0)
       setAttributeRange(tmpStr);
@@ -174,6 +172,8 @@ public class CorrelationMatrix
       setAttributeRange("first-last");
 
     setAbsolute(Utils.getFlag("absolute", options));
+
+    super.setOptions(options);
   }
 
   /**
