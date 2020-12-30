@@ -20,17 +20,17 @@
 
 package weka.core.neighboursearch;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
-
+import adams.data.SortedList;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
-import adams.data.SortedList;
+
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -146,9 +146,8 @@ public class NewNNSearch
    */
   @Override
   public void setOptions(String[] options) throws Exception {
-    super.setOptions(options);
-
     setSkipIdentical(Utils.getFlag('S', options));
+    super.setOptions(options);
   }
 
   /**
