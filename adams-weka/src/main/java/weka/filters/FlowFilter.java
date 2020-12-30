@@ -19,18 +19,18 @@
  */
 package weka.filters;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import weka.core.Capabilities;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.Utils;
 import adams.core.io.FlowFile;
 import adams.flow.control.SubProcess;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
+import weka.core.Capabilities;
+import weka.core.Instances;
+import weka.core.Option;
+import weka.core.Utils;
+
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -151,13 +151,13 @@ public class FlowFilter
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("flow-file", options);
     if (tmpStr.length() != 0)
       setFlowFile(new FlowFile(tmpStr));
     else
       setFlowFile(new FlowFile("."));
+
+    super.setOptions(options);
   }
 
   /**
