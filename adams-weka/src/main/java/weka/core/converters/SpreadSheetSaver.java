@@ -175,13 +175,13 @@ public class SpreadSheetSaver
   public void setOptions(String[] options) throws Exception {
     String	tmpStr;
 
-    super.setOptions(options);
-
     tmpStr = Utils.getOption("writer", options);
     if (tmpStr.length() != 0)
       setSpreadSheetWriter((SpreadSheetWriter) OptionUtils.forAnyCommandLine(SpreadSheetWriter.class, tmpStr));
     else
       setSpreadSheetWriter(new CsvSpreadSheetWriter());
+
+    super.setOptions(options);
   }
   
   /**
