@@ -81,7 +81,7 @@
     <javaws.version>2.2.11</javaws.version>
     <moa.version>2020.03.22</moa.version>
     <weka.version>3.9.5</weka.version>
-    <weka-lts.version>3.9.0-fork-0.0.11</weka-lts.version>
+    <weka-lts.version>3.9.0-fork-0.0.12</weka-lts.version>
     <postgresql.version>42.0.0</postgresql.version>
     <postgis.version>2.2.1</postgis.version>
     <jodd.version>3.5.2</jodd.version>
