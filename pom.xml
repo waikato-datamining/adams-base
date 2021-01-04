@@ -80,7 +80,7 @@
     <javax.activation.version>1.1.1</javax.activation.version>
     <javaws.version>2.2.11</javaws.version>
     <moa.version>2020.03.22</moa.version>
-    <weka.version>3.9.5</weka.version>
+    <weka.version>3.9.5-fork-0.0.2</weka.version>
     <weka-lts.version>3.9.0-fork-0.0.12</weka-lts.version>
     <postgresql.version>42.0.0</postgresql.version>
     <postgis.version>2.2.1</postgis.version>
