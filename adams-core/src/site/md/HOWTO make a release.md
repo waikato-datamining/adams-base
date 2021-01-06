@@ -36,6 +36,7 @@ Commands
 * adams-base
 
   * `mvn --batch-mode release:prepare release:perform`
+  * push all changes
 
 * adams-addons
   
