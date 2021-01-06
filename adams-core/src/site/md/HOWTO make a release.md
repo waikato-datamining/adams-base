@@ -114,6 +114,10 @@ Commands
   * adams-deeplearning-spectral-app
   * adams-ml-app
   * adams-spectral-app
+  
+  ```
+  OUTDIR="../adams.release/"; for i in `find -type d -maxdepth 1 -name "adams-*"`; do echo $i; cp $i/target/*.deb $OUTDIR; cp $i/target/*.rpm $OUTDIR; cp $i/target/*-bin.zip $OUTDIR; done;
+  ```
 
 
 Deployment failures
