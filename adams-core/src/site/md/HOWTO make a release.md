@@ -116,7 +116,11 @@ Commands
   * adams-spectral-app
   
   ```
-  OUTDIR="../adams.release/"; for i in `find -type d -maxdepth 1 -name "adams-*"`; do echo $i; cp $i/target/*.deb $OUTDIR; cp $i/target/*.rpm $OUTDIR; cp $i/target/*-bin.zip $OUTDIR; done;
+  OUTDIR="../adams.release/"
+  for i in `find -type d -maxdepth 1 -name "adams-*"`; do echo $i; cp $i/target/*.deb $OUTDIR; cp $i/target/*.rpm $OUTDIR; cp $i/target/*-bin.zip $OUTDIR; done;
+  cd $OUTDIR
+  for i in *.zip; do echo $i; unzip -q $i; done;
+  sudo dpkg -i *.deb
   ```
 
 
