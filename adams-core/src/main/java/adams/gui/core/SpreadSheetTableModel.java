@@ -15,11 +15,12 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.CleanUpHandler;
 import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.Time;
@@ -41,11 +42,10 @@ import java.util.Date;
  * The table model for displaying a SpreadSheet object.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetTableModel
   extends AbstractBaseTableModel
-  implements ComparableTableModel {
+  implements ComparableTableModel, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 8062515320279133441L;
@@ -217,6 +217,8 @@ public class SpreadSheetTableModel
    * @return		the number of rows
    */
   public int getRowCount() {
+    if (m_Sheet == null)
+      return 0;
     return m_Sheet.getRowCount();
   }
 
@@ -226,6 +228,8 @@ public class SpreadSheetTableModel
    * @return		the number of columns
    */
   public int getColumnCount() {
+    if (m_Sheet == null)
+      return 0;
     if (m_ShowRowColumn)
       return m_Sheet.getColumnCount() + 1;
     else
@@ -598,5 +602,21 @@ public class SpreadSheetTableModel
     result.setUseSimpleHeader(getUseSimpleHeader());
     
     return result;
+  }
+
+  /**
+   * Returns the underlying spreadsheet.
+   *
+   * @return		the spreadsheet
+   */
+  public SpreadSheet getSheet() {
+    return m_Sheet;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_Sheet = null;
   }
 }
