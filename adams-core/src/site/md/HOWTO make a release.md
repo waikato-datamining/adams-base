@@ -115,13 +115,28 @@ Commands
   * adams-ml-app
   * adams-spectral-app
   
+* copy commands:
+ 
   ```
   OUTDIR="../adams.release/"
   for i in `find -type d -maxdepth 1 -name "adams-*"`; do echo $i; cp $i/target/*.deb $OUTDIR; cp $i/target/*.rpm $OUTDIR; cp $i/target/*-bin.zip $OUTDIR; done;
+  ```
+
+* installation commands
+
+  ```
+  OUTDIR="../adams.release/"
   cd $OUTDIR
   for i in *.zip; do echo $i; unzip -q $i; done;
   sudo dpkg -i *.deb
+  ``` 
+  
+* removal commands
+
   ```
+  sudo apt-get remove -y adams-base-all adams-ml-app adams-basic-app adams-addons-all adams-annotator adams-dex-app adams-spectral-app adams-deeplearning-spectral-app
+  ```
+
 
 
 Deployment failures
