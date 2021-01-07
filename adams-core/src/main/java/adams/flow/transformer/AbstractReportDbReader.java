@@ -15,11 +15,12 @@
 
 /*
  * AbstractReportDbReader.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.report.Report;
 import adams.db.ReportProvider;
 import adams.flow.core.Token;
@@ -82,6 +83,16 @@ public abstract class AbstractReportDbReader<T extends Report, I>
    */
   public String postProcessorTipText() {
     return "The post-processor to apply to the data.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "postProcessor", m_PostProcessor, "post-processor: ");
   }
 
   /**
