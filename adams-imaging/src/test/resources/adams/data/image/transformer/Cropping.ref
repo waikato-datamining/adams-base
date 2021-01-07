@@ -5662,7 +5662,6 @@ Crop.Left[N]: 0.0
 Crop.Right[N]: 342.0
 Crop.Top[N]: 0.0
 Name[S]: adams_logo.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
@@ -6128,7 +6127,6 @@ Crop.Left[N]: 10.0
 Crop.Right[N]: 100.0
 Crop.Top[N]: 5.0
 Name[S]: adams_logo.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:

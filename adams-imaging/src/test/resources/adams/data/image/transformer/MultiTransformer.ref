@@ -5658,7 +5658,6 @@ Image:
 -16777216,-16777216,-16777216,-1,-1,-1,-16777216,-16777216,-1,-1]
 Report:
 Name[S]: adams_logo.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
@@ -15753,7 +15752,6 @@ Image:
 -16777216,-16777216,-1,-1,-16777216,-16777216]
 Report:
 Name[S]: adams_logo.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:

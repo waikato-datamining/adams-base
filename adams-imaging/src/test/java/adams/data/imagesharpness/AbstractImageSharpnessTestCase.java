@@ -76,8 +76,10 @@ public abstract class AbstractImageSharpnessTestCase
     m_TestHelper.copyResourceToTmp(filename);
     reader   = new ApacheCommonsImageReader();
     result   = reader.read(new TmpFile(filename));
-    if (result != null)
+    if (result != null) {
       result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, new PlaceholderFile(filename).getName());
+      result.getReport().removeValuesStartingWith(BufferedImageContainer.FIELD_PATH);
+    }
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

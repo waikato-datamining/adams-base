@@ -27,7 +27,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.jai.JAIHelper;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -36,8 +36,6 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
-import javax.media.jai.RenderedOp;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,19 +74,16 @@ public abstract class AbstractSubImagesGeneratorTestCase
    * @return		the image, null in case of an error
    */
   protected BufferedImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader 	reader;
     BufferedImageContainer	result;
 
-    result = null;
-
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
-      result = new BufferedImageContainer();
-      result.setImage(op.getAsBufferedImage());
+    reader = new ApacheCommonsImageReader();
+    result = reader.read(new TmpFile(filename));
+    if (result != null) {
       result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, new PlaceholderFile(filename).getName());
+      result.getReport().removeValuesStartingWith(BufferedImageContainer.FIELD_PATH);
+      result.getReport().removeValuesStartingWith(BufferedImageContainer.FIELD_NAME);
     }
     m_TestHelper.deleteFileFromTmp(filename);
 

@@ -31,7 +31,6 @@ Image:
 ]
 Report:
 Name[S]: adams_icon.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
@@ -75,7 +74,6 @@ Image:
 -11315861,-11315861,-11315861,-11315861,0]
 Report:
 Name[S]: adams_icon.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
@@ -114,7 +112,6 @@ Image:
 -327681,-327681,0]
 Report:
 Name[S]: adams_icon.png
-Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
