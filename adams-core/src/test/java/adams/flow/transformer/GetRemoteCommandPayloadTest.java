@@ -15,7 +15,7 @@
 
 /*
  * GetRemoteCommandPayloadTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -30,7 +30,6 @@ import adams.flow.core.Actor;
 import adams.flow.execution.NullListener;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
-import adams.test.TmpFile;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -42,7 +41,6 @@ import java.util.List;
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class GetRemoteCommandPayloadTest
   extends AbstractFlowTest {
@@ -78,16 +76,6 @@ public class GetRemoteCommandPayloadTest
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
 
     super.tearDown();
-  }
-
-  /**
-   * Performs a regression test, comparing against previously generated output.
-   */
-  public void testRegression() {
-    performRegressionTest(
-        new TmpFile[]{
-          new TmpFile("dumpfile.txt")
-        });
   }
 
   /**
