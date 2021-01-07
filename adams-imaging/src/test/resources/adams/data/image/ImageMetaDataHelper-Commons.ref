@@ -32,7 +32,7 @@ Compression,6
 "Compression Algorithm",JPEG
 Contrast,0
 CustomRendered,0
-DateTime,"2014-05-26 14:59:26"
+DateTime,"2021-01-07 15:28:46"
 DateTimeDigitized,"2010-04-23 15:51:35"
 DateTimeOriginal,"2010-04-23 15:51:35"
 DigitalZoomRatio,0
@@ -57,9 +57,9 @@ GainControl,0
 Gamma,"22/10 (2.2)"
 Height,73
 ImageDescription,"Photograph of X-Rite ColorChecker Color Rendition Chart"
-"Is Progressive",true
+"Is Progressive",false
 "Is Transparent",false
-JpgFromRawLength,1790
+JpgFromRawLength,1799
 JpgFromRawStart,1238
 LightSource,0
 Make,Panasonic
@@ -82,7 +82,7 @@ SceneCaptureType,0
 SceneType,1
 SensingMethod,2
 Sharpness,0
-Software,"GIMP 2.8.2"
+Software,"GIMP 2.8.22"
 "Uses Palette",false
 WhiteBalance,1
 WhitePoint,"313/1000 (0.313), 329/1000 (0.329)"

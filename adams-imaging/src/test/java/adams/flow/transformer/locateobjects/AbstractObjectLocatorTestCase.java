@@ -19,21 +19,19 @@
  */
 package adams.flow.transformer.locateobjects;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
+
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for object locator test cases.
@@ -68,17 +66,14 @@ public abstract class AbstractObjectLocatorTestCase
    *
    * @param filename		the filename to load (without path)
    * @return			the data, null if it could not be loaded
-   * @see			#getDataDirectory()
    */
   protected BufferedImage load(String filename) {
     BufferedImage		result;
-    RenderedOp			op;
+    ApacheCommonsImageReader 	reader;
 
-    result = null;
     m_TestHelper.copyResourceToTmp(filename);
-    op = JAI.create("fileload", new TmpFile(filename).getAbsolutePath());
-    if (op != null)
-      result = op.getAsBufferedImage();
+    reader = new ApacheCommonsImageReader();
+    result = reader.read(new TmpFile(filename)).toBufferedImage();
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

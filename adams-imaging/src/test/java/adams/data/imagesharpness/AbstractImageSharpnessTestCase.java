@@ -24,7 +24,7 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.image.BufferedImageContainer;
-import adams.data.jai.JAIHelper;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.test.AbstractTestHelper;
@@ -32,7 +32,6 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
-import javax.media.jai.RenderedOp;
 import java.io.File;
 
 /**
@@ -70,20 +69,14 @@ public abstract class AbstractImageSharpnessTestCase
    * @return		the image, null in case of an error
    */
   protected BufferedImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader	reader;
     BufferedImageContainer	result;
 
-    result = null;
-
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
-      result = new BufferedImageContainer();
-      result.setImage(op.getAsBufferedImage());
+    reader   = new ApacheCommonsImageReader();
+    result   = reader.read(new TmpFile(filename));
+    if (result != null)
       result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
-    }
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

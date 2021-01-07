@@ -13,17 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBufferedImageTransformerTestCase.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.media.jai.RenderedOp;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
@@ -32,7 +26,7 @@ import adams.core.io.FileUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.jai.JAIHelper;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -41,11 +35,13 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Ancestor for test cases tailored for adams transformers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7876 $
  */
 public abstract class AbstractBufferedImageTransformerTestCase
   extends AdamsTestCase {
@@ -76,20 +72,14 @@ public abstract class AbstractBufferedImageTransformerTestCase
    * @return		the image, null in case of an error
    */
   protected BufferedImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader 	reader;
     BufferedImageContainer	result;
 
-    result = null;
-
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
-      result = new BufferedImageContainer();
-      result.setImage(op.getAsBufferedImage());
+    reader   = new ApacheCommonsImageReader();
+    result   = reader.read(new TmpFile(filename));
+    if (result != null)
       result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
-    }
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

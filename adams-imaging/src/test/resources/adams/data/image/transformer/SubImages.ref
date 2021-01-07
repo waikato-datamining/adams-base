@@ -5657,6 +5657,8 @@ Image:
 -1,-1,-16777216,-16777216,-16777216,-16777216,-16777216,-1,-1,-16777216,-16777216,
 -16777216,-16777216,-16777216,-1,-1,-1,-16777216,-16777216,-1,-1]
 Report:
+Name[S]: adams_logo.png
+Path[S]: /tmp
 
 Notes:
 PROCESS INFORMATION:
@@ -7106,6 +7108,8 @@ Image:
 -16777216,-16777216,-16777216,-16777216,-16777216]
 Report:
 Column[N]: 0.0
+Name[S]: adams_logo.png
+Path[S]: /tmp
 Row[N]: 0.0
 
 Notes:
@@ -8503,6 +8507,8 @@ Image:
 -16777216,-1,-1,-1,-16777216,-16777216,-1,-1,-1,-1,-1,-16777216]
 Report:
 Column[N]: 0.0
+Name[S]: adams_logo.png
+Path[S]: /tmp
 Row[N]: 1.0
 
 Notes:
@@ -9973,6 +9979,8 @@ Image:
 -1,-1,-1,-1,-16777216,-1,-1,-1,-16777216,-1,-1,-1,-1,-16777216]
 Report:
 Column[N]: 1.0
+Name[S]: adams_logo.png
+Path[S]: /tmp
 Row[N]: 0.0
 
 Notes:
@@ -11363,6 +11371,8 @@ Image:
 -1,-1,-1,-16777216,-16777216,-1,-1]
 Report:
 Column[N]: 1.0
+Name[S]: adams_logo.png
+Path[S]: /tmp
 Row[N]: 1.0
 
 Notes:

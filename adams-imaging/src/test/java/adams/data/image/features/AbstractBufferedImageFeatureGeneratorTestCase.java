@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBufferedImageFeatureGeneratorTestCase.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.features;
 
@@ -24,7 +24,7 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.image.BufferedImageContainer;
-import adams.data.jai.JAIHelper;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.test.AbstractTestHelper;
@@ -32,14 +32,12 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
-import javax.media.jai.RenderedOp;
 import java.io.File;
 
 /**
  * Ancestor for test cases tailored for buffered image feature generators.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7706 $
  */
 public abstract class AbstractBufferedImageFeatureGeneratorTestCase
   extends AdamsTestCase {
@@ -70,20 +68,14 @@ public abstract class AbstractBufferedImageFeatureGeneratorTestCase
    * @return		the image, null in case of an error
    */
   protected BufferedImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader 	reader;
     BufferedImageContainer	result;
 
-    result = null;
-
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
-      result = new BufferedImageContainer();
-      result.setImage(op.getAsBufferedImage());
+    reader   = new ApacheCommonsImageReader();
+    result   = reader.read(new TmpFile(filename));
+    if (result != null)
       result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
-    }
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;
