@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
@@ -27,6 +28,9 @@ import adams.db.ReportProvider;
 import adams.flow.core.Token;
 import adams.flow.transformer.report.AbstractReportPreProcessor;
 import adams.flow.transformer.report.NoPreProcessing;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract ancestor for actors that write reports to the database.
@@ -240,6 +244,27 @@ public abstract class AbstractReportDbWriter<T extends Report, I>
    */
   public String preProcessorTipText() {
     return "The pre-processor to apply to the data.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String 	result;
+    List<String> options;
+
+    result = QuickInfoHelper.toString(this, "preProcessor", m_PreProcessor, "pre-processor: ");
+    result += QuickInfoHelper.toString(this, "overwriteFields", m_OverwriteFields, ", overwrite fields: ");
+    options = new ArrayList<>();
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "merge", m_Merge, "merge"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "removeExisting", m_RemoveExisting, "remove-existing"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "standaloneReports", m_StandaloneReports, "standalone-reports"));
+    result += QuickInfoHelper.flatten(options);
+
+    return result;
   }
 
   /**
