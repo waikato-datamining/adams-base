@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBoofCVFeatureGeneratorTestCase.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.features;
 
@@ -24,7 +24,8 @@ import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.jai.JAIHelper;
+import adams.data.image.BufferedImageContainer;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.test.AbstractTestHelper;
@@ -34,14 +35,12 @@ import adams.test.TmpFile;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageSInt16;
 
-import javax.media.jai.RenderedOp;
 import java.io.File;
 
 /**
  * Ancestor for test cases tailored for BoofCV flatteners.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10815 $
  */
 public abstract class AbstractBoofCVFeatureGeneratorTestCase
   extends AdamsTestCase {
@@ -72,18 +71,18 @@ public abstract class AbstractBoofCVFeatureGeneratorTestCase
    * @return		the image, null in case of an error
    */
   protected BoofCVImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader	reader;
     BoofCVImageContainer	result;
+    BufferedImageContainer	cont;
 
     result = null;
 
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
+    reader = new ApacheCommonsImageReader();
+    cont   = reader.read(new TmpFile(filename));
+    if (cont != null) {
       result = new BoofCVImageContainer();
-      result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, ImageSInt16.class));
+      result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageSInt16.class));
       result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);

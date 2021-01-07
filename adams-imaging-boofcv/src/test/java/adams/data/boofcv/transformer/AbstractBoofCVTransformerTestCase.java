@@ -25,8 +25,9 @@ import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.jai.JAIHelper;
+import adams.data.io.input.ApacheCommonsImageReader;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -37,8 +38,6 @@ import adams.test.TmpFile;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.struct.image.ImageSInt16;
 
-import javax.media.jai.RenderedOp;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,18 +76,18 @@ public abstract class AbstractBoofCVTransformerTestCase
    * @return		the image, null in case of an error
    */
   protected BoofCVImageContainer load(String filename) {
-    String			fullName;
-    RenderedOp			op;
+    ApacheCommonsImageReader 	reader;
     BoofCVImageContainer	result;
+    BufferedImageContainer 	cont;
 
     result = null;
 
     m_TestHelper.copyResourceToTmp(filename);
-    fullName = m_TestHelper.getTmpDirectory() + File.separator + filename;
-    op       = JAIHelper.read(fullName);
-    if (op != null) {
+    reader = new ApacheCommonsImageReader();
+    cont   = reader.read(new TmpFile(filename));
+    if (cont != null) {
       result = new BoofCVImageContainer();
-      result.setImage(ConvertBufferedImage.convertFromSingle(op.getAsBufferedImage(), null, ImageSInt16.class));
+      result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageSInt16.class));
       result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
     }
     m_TestHelper.deleteFileFromTmp(filename);
