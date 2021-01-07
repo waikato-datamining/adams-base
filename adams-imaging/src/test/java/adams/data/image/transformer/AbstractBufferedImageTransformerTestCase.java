@@ -23,6 +23,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -79,7 +80,7 @@ public abstract class AbstractBufferedImageTransformerTestCase
     reader   = new ApacheCommonsImageReader();
     result   = reader.read(new TmpFile(filename));
     if (result != null)
-      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, filename);
+      result.getReport().setStringValue(BufferedImageContainer.FIELD_FILENAME, new PlaceholderFile(filename).getName());
     m_TestHelper.deleteFileFromTmp(filename);
 
     return result;

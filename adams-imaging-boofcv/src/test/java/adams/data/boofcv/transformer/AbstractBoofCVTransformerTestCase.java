@@ -23,6 +23,7 @@ import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
@@ -88,7 +89,7 @@ public abstract class AbstractBoofCVTransformerTestCase
     if (cont != null) {
       result = new BoofCVImageContainer();
       result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageSInt16.class));
-      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, filename);
+      result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, new PlaceholderFile(filename).getName());
     }
     m_TestHelper.deleteFileFromTmp(filename);
 
