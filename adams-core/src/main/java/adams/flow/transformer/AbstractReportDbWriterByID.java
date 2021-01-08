@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractReportDbWriterByID.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -27,13 +27,22 @@ import adams.data.report.Report;
  * Uses string IDs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 12299 $
  * @param <T> the type of report to handle
  */
 public abstract class AbstractReportDbWriterByID<T extends Report>
   extends AbstractReportDbWriter<T, String> {
 
   private static final long serialVersionUID = 7715639177204568610L;
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		the type of generated data
+   */
+  @Override
+  public Class[] generates() {
+    return new Class[]{String.class};
+  }
 
   /**
    * Checks whether the ID is valid.

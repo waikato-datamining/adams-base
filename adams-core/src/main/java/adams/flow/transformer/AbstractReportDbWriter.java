@@ -276,16 +276,6 @@ public abstract class AbstractReportDbWriter<T extends Report, I>
   public abstract Class[] accepts();
 
   /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.Integer.class<!-- flow-generates-end -->
-   */
-  @Override
-  public Class[] generates() {
-    return new Class[]{Integer.class};
-  }
-
-  /**
    * Returns the report provider to use for writing the reports to the database.
    *
    * @return		the provider to use
