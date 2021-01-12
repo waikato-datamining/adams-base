@@ -37,6 +37,7 @@
     <module>adams-json</module>
     <module>adams-jython</module>
     <module>adams-math</module>
+    <module>adams-matlab</module>
     <module>adams-meta</module>
     <module>adams-ml</module>
     <module>adams-net</module>

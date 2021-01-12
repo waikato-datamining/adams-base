@@ -1,0 +1,93 @@
+% This work is made available under the terms of the
+% Creative Commons Attribution-ShareAlike 4.0 license,
+% http://creativecommons.org/licenses/by-sa/4.0/.
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+%\usepackage[firstpage]{draftwatermark}
+%\SetWatermarkLightness{0.9}
+%\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-matlab} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/matlab-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2021} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+The \textit{adams-matlab} module provides some basic input/output for binary
+Matlab .mat files (format 5). The heavy lifting under the hood is done
+by the Matlab File Library (MFL)\cite{mfl}.
+
+
+\chapter{Flow}
+The following sources are available:
+\begin{tight_itemize}
+  \item \textit{NewMat5File} -- creates an empty Mat5File object
+\end{tight_itemize}
+
+The following transformers are available:
+\begin{tight_itemize}
+  \item \textit{Mat5FileAddArray} -- adds an array (matrix or cell) to a mat file
+  \item \textit{Mat5FileInfo} -- outputs information on a .mat file
+  \item \textit{Mat5FileReader} -- loads a .mat file
+\end{tight_itemize}
+
+The following sinks are available:
+\begin{tight_itemize}
+  \item \textit{Mat5FileWriters} -- writes .mat files
+\end{tight_itemize}
+
+The following conversions are available:
+\begin{tight_itemize}
+  \item \textit{MatlabArrayToSpreadSheet} -- converts a (2-dimensional) Matlab array into a spreadsheet
+  \item \textit{SpreadSheetHeaderToMatlabArray} -- turns the spreadsheet header (ie the column names) into an array
+  \item \textit{SpreadSheetToMatlabArray} -- turns a spreadsheet into an array (matrix or cell)
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}

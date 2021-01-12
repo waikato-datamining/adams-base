@@ -1,0 +1,34 @@
+# Project: adams
+# Date: 2021-01-12 15:16:00
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Outputs some information about a .mat file." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/test.mat
+ adams.flow.transformer.Mat5FileReader
+ adams.flow.control.Tee -name description
+  adams.flow.transformer.Mat5FileInfo -type DESCRIPTION
+  adams.flow.transformer.StringInsert -position first -value "description: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name version
+  adams.flow.transformer.Mat5FileInfo -type VERSION
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "version: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name byteorder
+  adams.flow.transformer.Mat5FileInfo -type BYTE_ORDER
+  adams.flow.transformer.StringInsert -position first -value "byteorder: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "# entries"
+  adams.flow.transformer.Mat5FileInfo
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.transformer.StringInsert -position first -value "#entries: "
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name entries
+  adams.flow.transformer.Mat5FileInfo -output-array true -type ENTRY_NAMES
+  adams.flow.transformer.StringJoin -glue ", "
+  adams.flow.transformer.StringInsert -position first -value "entry names: "
+  adams.flow.sink.CallableSink -callable Display

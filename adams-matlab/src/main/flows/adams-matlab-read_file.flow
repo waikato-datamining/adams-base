@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2021-01-12 15:54:18
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Reads a .mat file." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -name Content -display-type adams.flow.core.displaytype.Default -provider "adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/test.mat
+ adams.flow.transformer.Mat5FileReader
+ adams.flow.transformer.SetStorageValue -storage-name mat
+ adams.flow.transformer.Mat5FileInfo -type ENTRY_NAMES
+ adams.flow.transformer.SetVariable -var-name entry
+ adams.flow.control.Trigger -name "load entry"
+  adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.Mat5FileGetArray -entry-name @{entry}
+  adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+  adams.flow.sink.CallableSink -callable Content

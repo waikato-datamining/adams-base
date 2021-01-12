@@ -1,0 +1,42 @@
+# Project: adams
+# Date: 2021-01-12 15:29:28
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Stores two spreadsheets in a .mat file." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "new file"
+  adams.flow.source.NewMat5File
+  adams.flow.transformer.SetStorageValue -storage-name mat
+ adams.flow.control.Trigger -name "1st spreadsheet"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.control.Tee -name data
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name data
+  adams.flow.control.Tee -name header
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name header
+  adams.flow.control.Trigger -name add
+   adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.Mat5FileAddArray -name header -retrieval-type STORAGE -object-storage header -entry-name bolts_header
+   adams.flow.transformer.Mat5FileAddArray -name data -retrieval-type STORAGE -object-storage data -entry-name bolts_data
+   adams.flow.transformer.SetStorageValue -storage-name mat
+ adams.flow.control.Trigger -name "2nd spreadsheet"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.control.Tee -name data
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name data
+  adams.flow.control.Tee -name header
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name header
+  adams.flow.control.Trigger -name add
+   adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.Mat5FileAddArray -name header -retrieval-type STORAGE -object-storage header -entry-name iris_header
+   adams.flow.transformer.Mat5FileAddArray -name data -retrieval-type STORAGE -object-storage data -entry-name iris_data
+   adams.flow.transformer.SetStorageValue -storage-name mat
+ adams.flow.control.Trigger -name "write file"
+  adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.sink.Mat5FileWriter -output ${EXAMPLE_FLOWS}/output/test.mat
