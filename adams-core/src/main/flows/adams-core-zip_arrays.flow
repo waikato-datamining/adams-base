@@ -1,0 +1,37 @@
+# Project: adams
+# Date: 2021-01-13 14:48:53
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Shows how to place two arrays side-by-side (\\\"zipping\\\" them)." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -name "Same type" -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name "Mixed types" -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Tee -name "same type"
+  adams.flow.control.Trigger -name "1st array"
+   adams.flow.source.ForLoop -output-array true
+   adams.flow.transformer.SetStorageValue -storage-name array1
+  adams.flow.control.Trigger -name "2nd array"
+   adams.flow.source.ForLoop -lower 11 -upper 20 -output-array true
+   adams.flow.transformer.SetStorageValue -storage-name array2
+  adams.flow.control.Trigger -name zip
+   adams.flow.source.ZipArrays -storage-name array1 -storage-name array2
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.sink.CallableSink -callable "Same type"
+ adams.flow.control.Tee -name "mixed types"
+  adams.flow.control.Trigger -name "1st array"
+   adams.flow.source.ForLoop -output-array true
+   adams.flow.transformer.SetStorageValue -storage-name array1
+  adams.flow.control.Trigger -name "2nd array"
+   adams.flow.source.ForLoop -lower 11 -upper 20 -output-array true
+   adams.flow.control.ArrayProcess
+    adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.transformer.SetStorageValue -storage-name array2
+  adams.flow.control.Trigger -name zip
+   adams.flow.source.ZipArrays -storage-name array1 -storage-name array2
+   adams.flow.transformer.ArrayToSequence
+   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+   adams.flow.sink.CallableSink -callable "Mixed types"
