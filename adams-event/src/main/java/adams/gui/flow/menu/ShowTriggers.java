@@ -83,15 +83,13 @@ public class ShowTriggers
     int				id;
     
     result = null;
-    groups = new ArrayList<>();
     list   = new ArrayList<>();
-    data   = null;
 
     for (n = 0; n < getOwner().getFlowPanels().getPanelCount(); n++) {
       panel = getOwner().getFlowPanels().getPanelAt(n);
       if (!panel.isRunning())
         continue;
-      id = ActorUtils.getFlowID(panel.getCurrentFlow());
+      id = ActorUtils.getFlowID(panel.getLastFlow());
       if (id == -1)
         continue;
 
@@ -113,14 +111,11 @@ public class ShowTriggers
 	  getLogger().log(Level.SEVERE, "Failed to get trigger names for group '" + group + "':", e);
 	}
       }
-
-      data = new String[list.size()][2];
-      for (i = 0; i < list.size(); i++)
-	data[i] = list.get(i).split("\t");
     }
 
-    if (data == null)
-      return null;
+    data = new String[list.size()][2];
+    for (i = 0; i < list.size(); i++)
+      data[i] = list.get(i).split("\t");
 
     return new KeyValuePairTableModel(data, new String[]{"Group", "Trigger"});
   }
