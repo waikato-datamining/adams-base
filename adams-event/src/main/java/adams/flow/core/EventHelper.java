@@ -28,7 +28,9 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for events.
@@ -45,7 +47,7 @@ public class EventHelper
   private static final long serialVersionUID = -763479272812116920L;
 
   /** the scheduler factory. */
-  protected static transient StdSchedulerFactory m_SchedulerFactory;
+  protected static transient Map<Integer,StdSchedulerFactory> m_SchedulerFactory;
 
   /**
    * Checks a control actor's children whether they contain the event
@@ -143,16 +145,20 @@ public class EventHelper
   /**
    * Synchronized access for the default scheduler.
    *
+   * @param flowID 		the flow ID is the ID of the scheduler
    * @return			the default scheduler
    * @throws SchedulerException	if scheduler cannot be initialized
    */
-  public static synchronized Scheduler getDefaultScheduler() throws SchedulerException {
+  public static synchronized Scheduler getDefaultScheduler(int flowID) throws SchedulerException {
     Properties		props;
     Properties		defaultProps;
     Properties		userProps1;
     Properties		userProps2;
 
-    if (m_SchedulerFactory == null) {
+    if (m_SchedulerFactory == null)
+      m_SchedulerFactory = new HashMap<>();
+
+    if (!m_SchedulerFactory.containsKey(flowID)) {
       defaultProps = new Properties();
       Properties.loadFromResource(defaultProps, "org/quartz/quartz.properties");
       userProps1 = new Properties(defaultProps);
@@ -163,10 +169,11 @@ public class EventHelper
 
       // disable update check
       props.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
+      props.setProperty("org.quartz.scheduler.instanceName", "QuartzScheduler-" + flowID);
 
-      m_SchedulerFactory = new StdSchedulerFactory(props);
+      m_SchedulerFactory.put(flowID, new StdSchedulerFactory(props));
     }
 
-    return m_SchedulerFactory.getScheduler();
+    return m_SchedulerFactory.get(flowID).getScheduler();
   }
 }

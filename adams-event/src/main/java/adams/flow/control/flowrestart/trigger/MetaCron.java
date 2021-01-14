@@ -15,7 +15,7 @@
 
 /*
  * MetaCron.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart.trigger;
@@ -25,12 +25,16 @@ import adams.core.base.CronSchedule;
 import adams.core.logging.LoggingHelper;
 import adams.flow.control.Flow;
 import adams.flow.core.EventHelper;
-import org.quartz.CronTrigger;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 import java.util.Date;
 
@@ -48,7 +52,6 @@ public class MetaCron
    * Encapsulates a job to run.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class CronJob
     implements Job {
@@ -209,25 +212,33 @@ public class MetaCron
    */
   @Override
   protected String doStart(Flow flow) {
-    String	result;
-    JobDetail	job;
-    CronTrigger	trigger;
-    Date 	first;
+    String		result;
+    JobDetail		job;
+    JobBuilder 		jBuilder;
+    TriggerBuilder 	tBuilder;
+    ScheduleBuilder 	sBuilder;
+    Trigger 		trigger;
+    Date 		first;
 
     result = null;
     m_Flow = flow;
 
     try {
       if (m_Scheduler == null)
-	m_Scheduler = EventHelper.getDefaultScheduler();
-      job         = new JobDetail(flow.getFlowID() + ".job", flow.getFlowID() + ".group", CronJob.class);
+	m_Scheduler = EventHelper.getDefaultScheduler(flow.getFlowID());
+      jBuilder = JobBuilder
+	.newJob(Cron.CronJob.class)
+	.storeDurably()
+	.withIdentity(flow.getFlowID() + ".job", flow.getFlowID() + ".group");
+      job = jBuilder.build();
       job.getJobDataMap().put(KEY_OWNER, this);
-      trigger     = new CronTrigger(
-	  flow.getFlowID() + ".trigger",
-	  flow.getFlowID() + ".group",
-	  flow.getFlowID() + ".job",
-	  flow.getFlowID() + ".group",
-	  m_Schedule.getValue());
+      sBuilder = CronScheduleBuilder.cronSchedule(m_Schedule.getValue());
+      tBuilder = TriggerBuilder
+	.newTrigger()
+	.withIdentity(flow.getFlowID() + ".trigger", flow.getFlowID() + ".group")
+	.forJob(flow.getFlowID() + ".job", flow.getFlowID() + ".group")
+	.withSchedule(sBuilder);
+      trigger = tBuilder.build();
       m_Scheduler.addJob(job, true);
       first = m_Scheduler.scheduleJob(trigger);
       if (isLoggingEnabled())

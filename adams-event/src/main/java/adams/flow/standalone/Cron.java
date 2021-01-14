@@ -15,7 +15,7 @@
 
 /*
  * Cron.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -28,16 +28,21 @@ import adams.flow.condition.bool.True;
 import adams.flow.control.Sequence;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.EventHelper;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.template.EndlessLoop;
-import org.quartz.CronTrigger;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 import java.util.Date;
 
@@ -115,7 +120,6 @@ public class Cron
    * Encapsulates a job to run.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class CronJob
     implements Job {
@@ -339,9 +343,14 @@ public class Cron
 
     if (m_ExecutingCronActors)
       return BUSY;
-    
+
     m_ExecutingCronActors = true;
-    result = m_CronActors.execute();
+    try {
+      result = m_CronActors.execute();
+    }
+    catch (Exception e) {
+      result = handleException("Failed to execute cron actors!", e);
+    }
     m_ExecutingCronActors = false;
     
     return result;
@@ -539,24 +548,34 @@ public class Cron
    */
   @Override
   protected String doExecute() {
-    String	result;
-    JobDetail	job;
-    CronTrigger	trigger;
-    Date	first;
+    String		result;
+    JobDetail		job;
+    JobBuilder 		jBuilder;
+    TriggerBuilder 	tBuilder;
+    ScheduleBuilder 	sBuilder;
+    Trigger 		trigger;
+    Date		first;
+    String		prefix;
 
     result = null;
 
     try {
       if (m_Scheduler == null)
-	m_Scheduler = EventHelper.getDefaultScheduler();
-      job         = new JobDetail(getFullName() + ".job", getFullName() + ".group", CronJob.class);
+	m_Scheduler = EventHelper.getDefaultScheduler(ActorUtils.getFlowID(this));
+      prefix = ActorUtils.getFlowID(this) + "." + getFullName();
+      jBuilder = JobBuilder
+	.newJob(CronJob.class)
+	.storeDurably()
+	.withIdentity(prefix + ".job", prefix + ".group");
+      job = jBuilder.build();
       job.getJobDataMap().put(KEY_OWNER, this);
-      trigger     = new CronTrigger(
-	  getFullName() + ".trigger",
-	  getFullName() + ".group",
-	  getFullName() + ".job",
-	  getFullName() + ".group",
-	  m_Schedule.getValue());
+      sBuilder = CronScheduleBuilder.cronSchedule(m_Schedule.getValue());
+      tBuilder = TriggerBuilder
+	.newTrigger()
+	.withIdentity(prefix + ".trigger", prefix + ".group")
+	.forJob(prefix + ".job", prefix + ".group")
+	.withSchedule(sBuilder);
+      trigger = tBuilder.build();
       m_Scheduler.addJob(job, true);
       first = m_Scheduler.scheduleJob(trigger);
       if (isLoggingEnabled())
@@ -576,6 +595,7 @@ public class Cron
   protected void stopScheduler() {
     if (m_Scheduler != null) {
       try {
+        getLogger().info("Shutting down scheduler for flow ID: " + ActorUtils.getFlowID(this));
 	m_Scheduler.shutdown(true);
       }
       catch (Exception e) {

@@ -2049,4 +2049,17 @@ public class ActorUtils {
     }
     return m_InvalidVariablesLenient;
   }
+
+  /**
+   * Returns the flow ID (if possible) for the given actor.
+   *
+   * @param source	the actor to get the flow ID for
+   * @return		the ID, -1 if unable to obtain
+   */
+  public static int getFlowID(Actor source) {
+    if (source.getRoot() instanceof Flow)
+      return ((Flow) source.getRoot()).getFlowID();
+    else
+      return -1;
+  }
 }

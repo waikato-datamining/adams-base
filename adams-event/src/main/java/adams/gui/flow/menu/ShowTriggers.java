@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ShowTriggers.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.flow.core.ActorUtils;
 import adams.flow.core.EventHelper;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseButton;
@@ -30,6 +31,9 @@ import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.flow.FlowEditorPanel;
+import adams.gui.flow.FlowPanel;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -38,13 +42,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
  * Shows a dialog that lists all currently active triggers.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ShowTriggers
   extends AbstractFlowEditorMenuItem {
@@ -69,39 +73,55 @@ public class ShowTriggers
    */
   protected KeyValuePairTableModel getTabelModel() {
     KeyValuePairTableModel	result;
-    String[]			groups;
-    String[]			triggers;
+    List<String>		groups;
+    Set<TriggerKey> 		triggers;
     List<String>		list;
     String[][]			data;
+    FlowPanel 			panel;
     int				i;
+    int				n;
+    int				id;
     
     result = null;
-    
-    groups = new String[0];
-    try {
-      groups = EventHelper.getDefaultScheduler().getTriggerGroupNames();
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to get trigger group names:", e);
-      return result;
-    }
-    
-    list = new ArrayList<String>();
-    for (String group: groups) {
+    groups = new ArrayList<>();
+    list   = new ArrayList<>();
+    data   = null;
+
+    for (n = 0; n < getOwner().getFlowPanels().getPanelCount(); n++) {
+      panel = getOwner().getFlowPanels().getPanelAt(n);
+      if (!panel.isRunning())
+        continue;
+      id = ActorUtils.getFlowID(panel.getCurrentFlow());
+      if (id == -1)
+        continue;
+
       try {
-	triggers = EventHelper.getDefaultScheduler().getTriggerNames(group);
-	for (String trigger: triggers)
-	  list.add(group + "\t" + trigger);
+	groups = EventHelper.getDefaultScheduler(id).getTriggerGroupNames();
       }
       catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to get trigger names for group '" + group + "':", e);
+	getLogger().log(Level.SEVERE, "Failed to get trigger group names:", e);
+	return result;
       }
+
+      for (String group: groups) {
+	try {
+	  triggers = EventHelper.getDefaultScheduler(id).getTriggerKeys(GroupMatcher.triggerGroupEquals(group));
+	  for (TriggerKey key: triggers)
+	    list.add(group + "\t" + key.getName());
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to get trigger names for group '" + group + "':", e);
+	}
+      }
+
+      data = new String[list.size()][2];
+      for (i = 0; i < list.size(); i++)
+	data[i] = list.get(i).split("\t");
     }
-    
-    data = new String[list.size()][2];
-    for (i = 0; i < list.size(); i++)
-      data[i] = list.get(i).split("\t");
-    
+
+    if (data == null)
+      return null;
+
     return new KeyValuePairTableModel(data, new String[]{"Group", "Trigger"});
   }
   
