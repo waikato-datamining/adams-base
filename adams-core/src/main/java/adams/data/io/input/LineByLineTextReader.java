@@ -15,10 +15,11 @@
 
 /*
  * LineByLineTextReader.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 
 import java.io.InputStream;
@@ -44,6 +45,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
  * 
+ * <pre>-max-lines &lt;int&gt; (property: maxLines)
+ * &nbsp;&nbsp;&nbsp;The maximum number of lines to read; using -1 will read all.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -53,6 +60,12 @@ public class LineByLineTextReader
 
   /** for serialization. */
   private static final long serialVersionUID = -2921085514028198744L;
+
+  /** the maximum number of lines to read. */
+  protected int m_MaxLines;
+
+  /** lines read so far. */
+  protected int m_LineCount;
 
   /** the scanner in use. */
   protected transient Scanner m_Scanner;
@@ -68,6 +81,59 @@ public class LineByLineTextReader
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "max-lines", "maxLines",
+      -1, -1, null);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  public void reset() {
+    super.reset();
+
+    m_LineCount = 0;
+  }
+
+  /**
+   * Sets the maximum lines to read.
+   *
+   * @param value	the maximum, &lt; 1 denotes infinity
+   */
+  public void setMaxLines(int value) {
+    if (value < 1)
+      value = -1;
+    m_MaxLines = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum lines to read.
+   *
+   * @return		the maximum, &lt; 1 denotes infinity
+   */
+  public int getMaxLines() {
+    return m_MaxLines;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String maxLinesTipText() {
+    return "The maximum number of lines to read; using -1 will read all.";
+  }
+
+  /**
    * Returns the class of the data that it returns.
    * 
    * @return		the generated data type
@@ -78,13 +144,29 @@ public class LineByLineTextReader
   }
 
   /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "maxLines", m_MaxLines, ", max: ");
+
+    return result;
+  }
+
+  /**
    * Initializes the input stream to read the content from.
    *
    * @param stream	the input stream to use
    */
   public void initialize(InputStream stream) {
     super.initialize(stream);
-    m_Scanner = new Scanner(m_Stream, m_Encoding.charsetValue().name());
+    m_Scanner   = new Scanner(m_Stream, m_Encoding.charsetValue().name());
+    m_LineCount = 0;
   }
 
   /**
@@ -97,9 +179,27 @@ public class LineByLineTextReader
     String		result;
     
     result = null;
-    
+
+    if ((m_MaxLines > -1) && (m_LineCount >= m_MaxLines)) {
+      if (isLoggingEnabled())
+        getLogger().info("Reached maximum number of lines: " + m_MaxLines);
+      if (m_Scanner != null) {
+	m_Scanner.close();
+	m_Scanner = null;
+	try {
+	  m_Stream.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+	m_Stream = null;
+      }
+      return null;
+    }
+
     try {
       result = FileUtils.removeAllByteOrderMarks(m_Scanner.nextLine());
+      m_LineCount++;
     }
     catch (NoSuchElementException e) {
       // nothing left in stream
