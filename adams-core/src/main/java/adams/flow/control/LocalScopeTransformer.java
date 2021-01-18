@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -192,6 +192,9 @@ public class LocalScopeTransformer
   /** the regular expression of the variables to propagate. */
   protected BaseRegExp m_StorageRegExp;
 
+  /** whether a restricted stop occurred. */
+  protected boolean m_RestrictedStop;
+
   /**
    * Returns a string describing the object.
    *
@@ -269,6 +272,7 @@ public class LocalScopeTransformer
     m_Actors.setAllowSource(false);
     m_Actors.setAllowStandalones(false);
     m_Actors.setAllowEmpty(true);
+    m_Actors.setRestrictingStops(true);
 
     m_CallableNames            = new CallableNamesRecorder();
     m_EnforceCallableNameCheck = true;
@@ -998,6 +1002,16 @@ public class LocalScopeTransformer
   }
 
   /**
+   * Returns whether stops are being restricted.
+   *
+   * @return		true if restricting stops
+   */
+  @Override
+  public boolean isRestrictingStops() {
+    return true;
+  }
+
+  /**
    * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
@@ -1008,7 +1022,11 @@ public class LocalScopeTransformer
     m_LocalVariables = null;
     m_Actors.setVariables(getVariables());
     m_Actors.getOptionManager().updateVariableValues(true);
-    
+    if (m_RestrictedStop) {
+      m_RestrictedStop = false;
+      m_Stopped        = false;
+    }
+
     return super.preExecute();
   }
 
@@ -1094,6 +1112,35 @@ public class LocalScopeTransformer
   public void stopExecution() {
     m_Actors.stopExecution();
     super.stopExecution();
+  }
+
+  /**
+   * Returns whether the stop was a restricted one (that can be resumed).
+   *
+   * @return		true if restricted stop occurred
+   */
+  public boolean isRestrictedStop() {
+    return m_RestrictedStop;
+  }
+
+  /**
+   * Stops the (restricted) execution. No message set.
+   */
+  @Override
+  public void restrictedStopExecution() {
+    m_RestrictedStop = true;
+    m_Actors.restrictedStopExecution();
+  }
+
+  /**
+   * Stops the (restricted) execution.
+   *
+   * @param msg		the message to set as reason for stopping, can be null
+   */
+  @Override
+  public void restrictedStopExecution(String msg) {
+    m_RestrictedStop = true;
+    m_Actors.restrictedStopExecution(msg);
   }
 
   /**

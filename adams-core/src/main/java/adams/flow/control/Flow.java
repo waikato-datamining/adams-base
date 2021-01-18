@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -1308,6 +1308,16 @@ public class Flow
   }
 
   /**
+   * Returns whether stops are being restricted.
+   *
+   * @return		true if restricting stops
+   */
+  @Override
+  public boolean isRestrictingStops() {
+    return true;
+  }
+
+  /**
    * Executes the actor.
    *
    * @return		null if everything is fine, otherwise error message
@@ -1409,6 +1419,33 @@ public class Flow
     RunningFlowsRegistry.getSingleton().removeFlow(this);
 
     super.wrapUp();
+  }
+
+  /**
+   * Stops the (restricted) execution. No message set.
+   */
+  @Override
+  public void restrictedStopExecution() {
+    stopExecution();
+  }
+
+  /**
+   * Stops the (restricted) execution.
+   *
+   * @param msg		the message to set as reason for stopping, can be null
+   */
+  @Override
+  public void restrictedStopExecution(String msg) {
+    stopExecution(msg);
+  }
+
+  /**
+   * Returns whether the stop was a restricted one (that can be resumed).
+   *
+   * @return		true if restricted stop occurred
+   */
+  public boolean isRestrictedStop() {
+    return false;
   }
 
   /**

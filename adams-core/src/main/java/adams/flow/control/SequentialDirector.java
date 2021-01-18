@@ -25,6 +25,7 @@ import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.OptionalStopRestrictor;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import gnu.trove.list.TIntList;
@@ -100,13 +101,21 @@ public class SequentialDirector
   protected String checkActorHasStopped(Actor actor) {
     String	result;
     Throwable	th;
+    boolean	reportStopped;
 
     result = null;
 
     if (actor.isStopped()) {
-      th = new Throwable();
-      th.fillInStackTrace();
-      result = th.getStackTrace()[1].getMethodName() + ": Actor '" + actor.getFullName() + "' is stopped!";
+      reportStopped = true;
+      if (actor instanceof OptionalStopRestrictor) {
+        if (((OptionalStopRestrictor) actor).isRestrictedStop())
+          reportStopped = false;
+      }
+      if (reportStopped) {
+	th = new Throwable();
+	th.fillInStackTrace();
+	result = th.getStackTrace()[1].getMethodName() + ": Actor '" + actor.getFullName() + "' is stopped!";
+      }
     }
 
     return result;

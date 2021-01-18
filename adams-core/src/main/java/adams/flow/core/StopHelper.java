@@ -40,7 +40,7 @@ public class StopHelper {
     result = null;
     parent = context.getParent();
     do {
-      if (parent instanceof StopRestrictor)
+      if ((parent instanceof StopRestrictor) && ((StopRestrictor) parent).isRestrictingStops())
 	result = parent;
       else if (parent != null)
         parent = parent.getParent();

@@ -15,7 +15,7 @@
 
 /*
  * Sequence.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,6 +24,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.OptionalStopRestrictor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -70,7 +71,7 @@ import java.util.Hashtable;
  */
 public class Sequence
   extends MutableConnectedControlActor
-  implements InputConsumer {
+  implements InputConsumer, OptionalStopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = -9211041097478667239L;
@@ -87,6 +88,12 @@ public class Sequence
   /** whether to allow a source or not. */
   protected boolean m_AllowSource;
 
+  /** whether stops get restricted or not. */
+  protected boolean m_RestrictingStops;
+
+  /** whether a restricted stop occurred. */
+  protected boolean m_RestrictedStop;
+
   /**
    * Returns a string describing the object.
    *
@@ -98,6 +105,16 @@ public class Sequence
   }
 
   /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_RestrictingStops = getDefaultRestrictingStops();
+  }
+
+  /**
    * Returns the tip text for this property.
    *
    * @return 		tip text for this property suitable for
@@ -106,6 +123,64 @@ public class Sequence
   @Override
   public String actorsTipText() {
     return "All the actors that define this sequence.";
+  }
+
+  /**
+   * Returns the default for restricting stops.
+   *
+   * @return		true if restricted
+   */
+  protected boolean getDefaultRestrictingStops() {
+    return false;
+  }
+
+  /**
+   * Sets whether to restrict stops or not.
+   *
+   * @param value	true if to restrict
+   */
+  @Override
+  public void setRestrictingStops(boolean value) {
+    m_RestrictingStops = value;
+  }
+
+  /**
+   * Returns whether stops are being restricted.
+   *
+   * @return		true if restricting stops
+   */
+  @Override
+  public boolean isRestrictingStops() {
+    return m_RestrictingStops;
+  }
+
+  /**
+   * Returns whether the stop was a restricted one (that can be resumed).
+   *
+   * @return		true if restricted stop occurred
+   */
+  public boolean isRestrictedStop() {
+    return m_RestrictedStop;
+  }
+
+  /**
+   * Stops the (restricted) execution. No message set.
+   */
+  @Override
+  public void restrictedStopExecution() {
+    m_RestrictedStop = true;
+    super.stopExecution();
+  }
+
+  /**
+   * Stops the (restricted) execution.
+   *
+   * @param msg		the message to set as reason for stopping, can be null
+   */
+  @Override
+  public void restrictedStopExecution(String msg) {
+    m_RestrictedStop = true;
+    super.stopExecution(msg);
   }
 
   /**
@@ -204,7 +279,7 @@ public class Sequence
     result = new Class[]{Unknown.class};
 
     first = firstActive();
-    if ((first != null) && (first instanceof InputConsumer))
+    if (first instanceof InputConsumer)
       result = ((InputConsumer) first).accepts();
 
     return result;
@@ -223,7 +298,7 @@ public class Sequence
     first = firstActive();
     if (isLoggingEnabled())
       getLogger().info("first active actor: " + ((first == null) ? "null" : first.getFullName()));
-    if ((first != null) && (first instanceof InputConsumer)) {
+    if (first instanceof InputConsumer) {
       ((InputConsumer) first).input(m_CurrentToken);
       if (isLoggingEnabled())
 	getLogger().fine("input token: " + m_CurrentToken);
@@ -246,6 +321,20 @@ public class Sequence
    */
   public Token currentInput() {
     return m_CurrentToken;
+  }
+
+  /**
+   * Pre-execute hook.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String preExecute() {
+    if (m_RestrictedStop) {
+      m_RestrictedStop = false;
+      m_Stopped        = false;
+    }
+    return super.preExecute();
   }
 
   /**

@@ -29,4 +29,30 @@ package adams.flow.core;
  */
 public interface StopRestrictor
   extends Actor {
+
+  /**
+   * Returns whether stops are being restricted.
+   *
+   * @return		true if restricting stops
+   */
+  public boolean isRestrictingStops();
+
+  /**
+   * Stops the (restricted) execution. No message set.
+   */
+  public void restrictedStopExecution();
+
+  /**
+   * Stops the (restricted) execution.
+   *
+   * @param msg		the message to set as reason for stopping, can be null
+   */
+  public void restrictedStopExecution(String msg);
+
+  /**
+   * Returns whether the stop was a restricted one (that can be resumed).
+   *
+   * @return		true if restricted stop occurred
+   */
+  public boolean isRestrictedStop();
 }
