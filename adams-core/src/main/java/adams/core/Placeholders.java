@@ -206,8 +206,11 @@ public class Placeholders {
   public String expand(String s) {
     String	result;
 
-    if (s.startsWith("${CWD}/${CWD}"))  // the GUI seems to generate these sometimes...
+    // the GUI seems to generate these sometimes...
+    if (s.startsWith("${CWD}/${CWD}"))
       s = s.substring("${CWD}/".length());
+    if (s.startsWith("${CWD}\\${CWD}"))
+      s = s.substring("${CWD}\\".length());
 
     result = doExpand(s);
     if (result.contains(PLACEHOLDER_START))
