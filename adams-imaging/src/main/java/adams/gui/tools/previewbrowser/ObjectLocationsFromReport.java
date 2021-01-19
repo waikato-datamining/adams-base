@@ -613,7 +613,13 @@ public class ObjectLocationsFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String labelFormatTipText() {
-    return "The label format string to use for the rectangles; '#' for index, '@' for type and '$' for short type (type suffix must be defined for '@' and '$'); for instance: '# @'.";
+    return "The label format string to use for the rectangles; "
+      + "'#' for index, '@' for type and '$' for short type (type suffix "
+      + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
+      + "value associated with the meta-data key 'BLAH'; "
+      + "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
+      + "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
+      + "after the decimal point.";
   }
 
   /**
