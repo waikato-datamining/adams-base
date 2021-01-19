@@ -22,9 +22,11 @@ package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.ImageAnchor;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.objectfinder.AllFinder;
@@ -186,6 +188,11 @@ public class ObjectLocationsFromSpreadSheet
       overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
       overlay.setLabelFormat(m_LabelFormat);
       overlay.setLabelFont(m_LabelFont);
+      overlay.setLabelFont(m_LabelFont);
+      overlay.setLabelAnchor(m_LabelAnchor);
+      overlay.setLabelOffsetX(m_LabelOffsetX);
+      overlay.setLabelOffsetY(m_LabelOffsetY);
+      overlay.setPredefinedLabels(m_PredefinedLabels);
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -296,6 +303,18 @@ public class ObjectLocationsFromSpreadSheet
   /** the label font. */
   protected Font m_LabelFont;
 
+  /** the label anchor. */
+  protected ImageAnchor m_LabelAnchor;
+
+  /** the x offset for the label. */
+  protected int m_LabelOffsetX;
+
+  /** the y offset for the label. */
+  protected int m_LabelOffsetY;
+
+  /** the predefined labels. */
+  protected BaseString[] m_PredefinedLabels;
+
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
@@ -368,6 +387,22 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "label-font", "labelFont",
       Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+      "label-anchor", "labelAnchor",
+      getDefaultLabelAnchor());
+
+    m_OptionManager.add(
+      "label-offset-x", "labelOffsetX",
+      getDefaultLabelOffsetX());
+
+    m_OptionManager.add(
+      "label-offset-y", "labelOffsetY",
+      getDefaultLabelOffsetY());
+
+    m_OptionManager.add(
+      "predefined-labels", "predefinedLabels",
+      new BaseString[0]);
 
     m_OptionManager.add(
       "finder", "finder",
@@ -639,7 +674,13 @@ public class ObjectLocationsFromSpreadSheet
    * 			displaying in the GUI or for listing the options.
    */
   public String labelFormatTipText() {
-    return "The label format string to use for the rectangles; '#' for index, '@' for type and '$' for short type (type suffix must be defined for '@' and '$'); for instance: '# @'.";
+    return "The label format string to use for the rectangles; "
+      + "'#' for index, '@' for type and '$' for short type (type suffix "
+      + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
+      + "value associated with the meta-data key 'BLAH'; "
+      + "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
+      + "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
+      + "after the decimal point.";
   }
 
   /**
@@ -669,6 +710,149 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String labelFontTipText() {
     return "The font to use for the labels.";
+  }
+
+  /**
+   * Returns the default label anchor.
+   *
+   * @return		the default
+   */
+  protected ImageAnchor getDefaultLabelAnchor() {
+    return ImageAnchor.TOP_RIGHT;
+  }
+
+  /**
+   * Sets the anchor for the label.
+   *
+   * @param value 	the anchor
+   */
+  public void setLabelAnchor(ImageAnchor value) {
+    m_LabelAnchor = value;
+    reset();
+  }
+
+  /**
+   * Returns the anchor for the label.
+   *
+   * @return 		the anchor
+   */
+  public ImageAnchor getLabelAnchor() {
+    return m_LabelAnchor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAnchorTipText() {
+    return "The anchor for the label.";
+  }
+
+  /**
+   * Returns the default label offset for X.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetX() {
+    return 0;
+  }
+
+  /**
+   * Sets the X offset for the label.
+   *
+   * @param value 	the X offset
+   */
+  public void setLabelOffsetX(int value) {
+    m_LabelOffsetX = value;
+    reset();
+  }
+
+  /**
+   * Returns the X offset for the label.
+   *
+   * @return 		the X offset
+   */
+  public int getLabelOffsetX() {
+    return m_LabelOffsetX;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetXTipText() {
+    return "The X offset for the label; values of 0 or greater are interpreted as absolute pixels, -1 uses left as anchor, -2 the center and -3 the right.";
+  }
+
+  /**
+   * Returns the default label offset for Y.
+   *
+   * @return		the default
+   */
+  protected int getDefaultLabelOffsetY() {
+    return 0;
+  }
+
+  /**
+   * Sets the Y offset for the label.
+   *
+   * @param value 	the Y offset
+   */
+  public void setLabelOffsetY(int value) {
+    m_LabelOffsetY = value;
+    reset();
+  }
+
+  /**
+   * Returns the Y offset for the label.
+   *
+   * @return 		the Y offset
+   */
+  public int getLabelOffsetY() {
+    return m_LabelOffsetY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelOffsetYTipText() {
+    return "The Y offset for the label values of 0 or greater are interpreted as absolute pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.";
+  }
+
+  /**
+   * Sets the predefined labels.
+   *
+   * @param value	the labels
+   */
+  public void setPredefinedLabels(BaseString[] value) {
+    m_PredefinedLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns the predefined labels.
+   *
+   * @return		the labels
+   */
+  public BaseString[] getPredefinedLabels() {
+    return m_PredefinedLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String predefinedLabelsTipText() {
+    return "The predefined labels to use for setting up the colors; avoids constants changing in color pallet.";
   }
 
   /**
