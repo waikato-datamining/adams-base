@@ -1,0 +1,27 @@
+# Project: adams
+# Date: 2021-01-21 10:54:50
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Shows how to apply an image mask to another image." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -width 900 -height 600 -provider "adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable entry
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name image
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741.jpg -use-forward-slashes true
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.SetStorageValue -storage-name image
+  adams.flow.transformer.SetVariable -var-name entry -var-value image
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Trigger -name mask
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3666455665_18795f0741-mask.png -use-forward-slashes true
+  adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+  adams.flow.transformer.SetStorageValue -storage-name mask
+  adams.flow.transformer.SetVariable -var-name entry -var-value mask
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Trigger -name "apply mask"
+  adams.flow.source.StorageValuesArray -storage-name image -storage-name mask -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.BufferedImageMultiImageOperation -operation adams.data.image.multiimageoperation.ApplyMask
+  adams.flow.transformer.SetVariable -var-name entry -var-value combined
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
