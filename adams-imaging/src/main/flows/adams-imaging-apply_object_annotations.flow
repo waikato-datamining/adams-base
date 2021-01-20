@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2021-01-21 11:39:33
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Shows how to apply object annotations to an image to mask out all other pixels." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -width 900 -height 600 -provider "adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay \"adams.gui.visualization.image.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider\"" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/two-girl-friends-871278530751FPYN.jpg
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.transformer.BufferedImageTransformer -transformer "adams.data.image.transformer.ObjectAnnotationsMask -finder adams.data.objectfinder.AllFinder"
+ adams.flow.control.Tee -name masked
+  adams.flow.transformer.ImageObjectFilter -annotation "remove the annotations" -finder adams.data.objectfinder.NullFinder -filter adams.data.objectfilter.PassThrough
+  adams.flow.transformer.SetVariable -var-name entry -var-value masked
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
