@@ -20,7 +20,7 @@
 
 package weka.classifiers.meta;
 
-import adams.core.option.OptionUtils;
+import adams.core.ObjectCopyHelper;
 import adams.data.statistics.StatUtils;
 import adams.env.Environment;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -28,8 +28,8 @@ import adams.flow.core.EvaluationHelper;
 import adams.flow.core.EvaluationStatistic;
 import adams.multiprocess.WekaCrossValidationExecution;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
 import weka.classifiers.DefaultRandomSplitGenerator;
+import weka.classifiers.Evaluation;
 import weka.classifiers.RandomizableMultipleClassifiersCombiner;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.evaluation.Prediction;
@@ -797,7 +797,7 @@ public class ClassifierCascade
 
 	// cross-validate classifier
 	cv = new WekaCrossValidationExecution();
-	cv.setClassifier((Classifier) OptionUtils.shallowCopy(m_Classifiers[i]));
+	cv.setClassifier(ObjectCopyHelper.copyObject(m_Classifiers[i]));
 	cv.setNumThreads(m_NumThreads);
 	cv.setDiscardPredictions(false);
 	cv.setFolds(m_NumFolds);
@@ -833,7 +833,7 @@ public class ClassifierCascade
       // build models
       current = new ArrayList<>();
       for (i = 0; i < m_Classifiers.length; i++) {
-	cls = (Classifier) OptionUtils.shallowCopy(m_Classifiers[i]);
+	cls = ObjectCopyHelper.copyObject(m_Classifiers[i]);
 	if (priorTrain == null) {
 	  cls.buildClassifier(train);
 	  current.add(cls);

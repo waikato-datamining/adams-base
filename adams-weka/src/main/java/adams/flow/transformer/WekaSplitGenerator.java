@@ -20,9 +20,9 @@
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Stoppable;
-import adams.core.option.OptionUtils;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.DefaultRandomSplitGenerator;
 import weka.classifiers.SplitGenerator;
@@ -172,7 +172,7 @@ public class WekaSplitGenerator
     m_Queue.clear();
 
     try {
-      m_ActualGenerator = (SplitGenerator) OptionUtils.shallowCopy(m_Generator);
+      m_ActualGenerator = ObjectCopyHelper.copyObject(m_Generator);
       m_ActualGenerator.setData(inst);
     }
     catch (Exception e) {

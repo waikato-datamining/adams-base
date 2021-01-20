@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
@@ -240,7 +241,7 @@ public class BuildModel
     String		msg;
     MetaData 		runInfo;
 
-    model = (Classifier) OptionUtils.shallowCopy(classifier);
+    model = ObjectCopyHelper.copyObject(classifier);
 
     if ((msg = canEvaluate(model)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);

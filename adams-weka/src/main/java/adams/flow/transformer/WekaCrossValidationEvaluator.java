@@ -535,7 +535,7 @@ public class WekaCrossValidationEvaluator
       m_CrossValidation.setDiscardPredictions(m_DiscardPredictions);
       m_CrossValidation.setNumThreads(m_NumThreads);
       m_CrossValidation.setOutput(m_Output);
-      m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator));
+      m_CrossValidation.setGenerator(ObjectCopyHelper.copyObject(m_Generator));
       m_CrossValidation.setFlowContext(this);
       result = m_CrossValidation.execute();
 

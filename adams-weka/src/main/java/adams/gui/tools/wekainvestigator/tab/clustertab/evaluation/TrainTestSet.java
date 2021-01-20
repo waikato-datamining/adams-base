@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseComboBox;
@@ -212,7 +213,7 @@ public class TrainTestSet
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
 
-    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model = ObjectCopyHelper.copyObject(clusterer);
     getOwner().logMessage("Using '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
     addObjectSize(runInfo, "Model size", model);

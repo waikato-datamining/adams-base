@@ -20,6 +20,7 @@
 
 package weka.classifiers.functions;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Capabilities;
@@ -315,7 +316,7 @@ public class PLSClassifierWeighted
     data.deleteWithMissingClass();
 
     // initialize filter
-    m_ActualFilter = (PLSFilter) OptionUtils.shallowCopy(m_Filter);
+    m_ActualFilter = ObjectCopyHelper.copyObject(m_Filter);
     m_ActualFilter.setPerformPrediction(false);
     m_ActualFilter.setInputFormat(data);
     Filter.useFilter(data, m_ActualFilter);

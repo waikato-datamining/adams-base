@@ -20,6 +20,7 @@
 
 package adams.opt.genetic;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.discovery.DefaultPropertyDiscovery;
 import adams.core.discovery.PropertyPath;
 import adams.core.discovery.PropertyPath.PropertyContainer;
@@ -420,7 +421,7 @@ public class Hermione
     for (int i = 0; i < m_Handlers.length; i++)
       handlers[i] = (AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
     DefaultPropertyDiscovery discovery = new DefaultPropertyDiscovery();
-    discovery.discover(handlers, OptionUtils.shallowCopy(m_Classifier));
+    discovery.discover(handlers, ObjectCopyHelper.copyObject(m_Classifier));
 
     m_numbits = getNumBitsForAll(handlers);
     m_start   = getStartPoints(handlers);
@@ -599,7 +600,7 @@ public class Hermione
       handlers[i]=(AbstractGeneticDiscoveryHandler) m_Handlers[i].shallowCopy();
 
     Classifier result;
-    result = (Classifier) OptionUtils.shallowCopy(getClassifier());
+    result = ObjectCopyHelper.copyObject(getClassifier());
     if (result == null) {
       getLogger().severe("Failed to copy classifier!");
       return null;

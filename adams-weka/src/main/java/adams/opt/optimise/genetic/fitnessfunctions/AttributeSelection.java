@@ -20,6 +20,7 @@
 
 package adams.opt.optimise.genetic.fitnessfunctions;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.opt.optimise.OptData;
 import adams.opt.optimise.OptVar;
@@ -95,7 +96,7 @@ public class AttributeSelection extends AbstractWEKAFitnessFunction {
     Classifier newClassifier = null;
 
     try {
-      newClassifier = (Classifier) OptionUtils.shallowCopy(getClassifier());
+      newClassifier = ObjectCopyHelper.copyObject(getClassifier());
       // evaluate classifier on data
       Evaluation evaluation = new Evaluation(newInstances);
       evaluation.crossValidateModel(

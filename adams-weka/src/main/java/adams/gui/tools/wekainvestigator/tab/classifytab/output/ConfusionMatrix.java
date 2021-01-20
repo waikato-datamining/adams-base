@@ -21,8 +21,8 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.base.BaseString;
-import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
@@ -280,7 +280,7 @@ public class ConfusionMatrix
     }
     sheet = matrix.output().getPayload(SpreadSheet.class);
     table = new SpreadSheetTable(sheet);
-    table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
+    table.setCellRenderingCustomizer(ObjectCopyHelper.copyObject(m_CellRenderingCustomizer));
     table.setNumDecimals(m_NumDecimals);
 
     return new TableContentPanel(table, true, true);

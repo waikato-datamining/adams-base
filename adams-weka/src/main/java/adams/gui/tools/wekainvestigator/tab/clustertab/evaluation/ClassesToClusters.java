@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseComboBox;
@@ -339,7 +340,7 @@ public class ClassesToClusters
     dataCont = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex());
     data     = dataCont.getData();
     train    = removeClassAttribute(data);
-    model    = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model    = ObjectCopyHelper.copyObject(clusterer);
     getOwner().logMessage("Building clusterer on '" + data.relationName() + "' without class attribute using " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
 

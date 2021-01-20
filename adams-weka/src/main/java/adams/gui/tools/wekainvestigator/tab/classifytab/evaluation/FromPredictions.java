@@ -258,7 +258,7 @@ public class FromPredictions
     int					i;
     SpreadSheet				additional;
 
-    classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
+    classifier = ObjectCopyHelper.copyObject(m_Model);
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Failed to process predictions!\n" + msg);

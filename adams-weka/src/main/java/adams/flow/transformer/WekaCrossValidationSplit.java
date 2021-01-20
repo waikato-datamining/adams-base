@@ -20,10 +20,10 @@
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
 import adams.core.Stoppable;
-import adams.core.option.OptionUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
@@ -446,7 +446,7 @@ public class WekaCrossValidationSplit
 
     result = null;
     try {
-      m_ActualGenerator = (CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator);
+      m_ActualGenerator = ObjectCopyHelper.copyObject(m_Generator);
       m_ActualGenerator.setData((Instances) m_InputToken.getPayload());
       m_ActualGenerator.setNumFolds(m_Folds);
       m_ActualGenerator.setSeed(m_Seed);

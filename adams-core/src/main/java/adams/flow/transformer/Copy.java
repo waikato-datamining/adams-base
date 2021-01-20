@@ -206,7 +206,7 @@ public class Copy
     try {
       switch (m_Type) {
 	case AUTO:
-	  m_OutputToken = m_InputToken.getClone();
+	  m_OutputToken = new Token(ObjectCopyHelper.copyObject(m_InputToken.getPayload()));
 	  break;
 	case CLONEHANDLER:
 	  m_OutputToken = new Token(ObjectCopyHelper.copyObject(ObjectCopyHelper.CopyType.CLONEHANDLER, m_InputToken.getPayload()));

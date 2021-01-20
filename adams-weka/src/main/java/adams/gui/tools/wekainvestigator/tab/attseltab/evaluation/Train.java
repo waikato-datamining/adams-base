@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseComboBox;
@@ -170,8 +171,8 @@ public class Train
 
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data     = dataCont.getData();
-    eval     = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
-    srch     = (ASSearch) OptionUtils.shallowCopy(search);
+    eval     = ObjectCopyHelper.copyObject(evaluator);
+    srch     = ObjectCopyHelper.copyObject(search);
     runInfo  = new MetaData();
     runInfo.add("Evaluator", OptionUtils.getCommandLine(evaluator));
     runInfo.add("Search", OptionUtils.getCommandLine(search));

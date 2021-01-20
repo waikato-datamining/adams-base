@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
@@ -239,7 +240,7 @@ public class BuildModel
     String		msg;
     MetaData 		runInfo;
 
-    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model = ObjectCopyHelper.copyObject(clusterer);
 
     if ((msg = canEvaluate(model)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);

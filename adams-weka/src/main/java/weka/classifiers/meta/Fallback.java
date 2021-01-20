@@ -20,6 +20,7 @@
 
 package weka.classifiers.meta;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
@@ -262,7 +263,7 @@ public class Fallback
     try {
       if (getDebug())
         System.out.println("Training base classifier");
-      m_ActualBase = (Classifier) OptionUtils.shallowCopy(m_Base);
+      m_ActualBase = ObjectCopyHelper.copyObject(m_Base);
       m_ActualBase.buildClassifier(data);
     }
     catch (Exception e) {
@@ -273,7 +274,7 @@ public class Fallback
 
     if (getDebug())
       System.out.println("Training fallback classifier");
-    m_ActualFallback = (Classifier) OptionUtils.shallowCopy(m_Fallback);
+    m_ActualFallback = ObjectCopyHelper.copyObject(m_Fallback);
     m_ActualFallback.buildClassifier(data);
   }
 

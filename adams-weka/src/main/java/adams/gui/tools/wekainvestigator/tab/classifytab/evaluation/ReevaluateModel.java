@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
@@ -300,7 +301,7 @@ public class ReevaluateModel
     TIntList 		original;
     int			i;
 
-    classifier = (Classifier) OptionUtils.shallowCopy(m_Model);
+    classifier = ObjectCopyHelper.copyObject(m_Model);
 
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);

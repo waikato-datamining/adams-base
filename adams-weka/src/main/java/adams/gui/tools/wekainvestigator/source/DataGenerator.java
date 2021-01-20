@@ -20,7 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.source;
 
-import adams.core.option.OptionUtils;
+import adams.core.ObjectCopyHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.data.DataGeneratorContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
@@ -87,7 +87,7 @@ public class DataGenerator
     job = new InvestigatorJob(getOwner(), "Generating data with " + dialog.getCurrent().getClass().getSimpleName()) {
       @Override
       protected void doRun() {
-	addData(new DataGeneratorContainer((weka.datagenerators.DataGenerator) OptionUtils.shallowCopy(m_Generator)));
+	addData(new DataGeneratorContainer(ObjectCopyHelper.copyObject(m_Generator)));
       }
     };
     getOwner().startExecution(job);

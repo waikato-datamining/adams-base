@@ -19,9 +19,9 @@
  */
 package weka.filters.unsupervised.attribute;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
-import adams.core.option.OptionUtils;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -560,7 +560,7 @@ public class MetaPartitionedMultiFilter
 	  aRange = new adams.core.Range();
 	  aRange.setIndices(range);
 	  ranges.add(new Range(aRange.getRange()));
-	  filters.add((Filter) OptionUtils.shallowCopy(m_Filters[i]));
+	  filters.add(ObjectCopyHelper.copyObject(m_Filters[i]));
 	  if (m_Prefixes != null)
             prefixes.add(new BaseString(m_Prefixes[i].getValue()));
 	  else

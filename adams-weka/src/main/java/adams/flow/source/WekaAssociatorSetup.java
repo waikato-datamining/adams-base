@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.option.OptionUtils;
@@ -192,7 +193,7 @@ public class WekaAssociatorSetup
     result = null;
 
     try {
-      cls    = (weka.associations.Associator) OptionUtils.shallowCopy(m_Associator);
+      cls    = ObjectCopyHelper.copyObject(m_Associator);
       result = setUpContainersIfNecessary(cls);
       if (result == null)
         result = updateObject(cls);

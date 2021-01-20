@@ -20,8 +20,8 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.logging.LoggingHelper;
-import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaTrainTestSetContainer;
@@ -73,7 +73,7 @@ public class TrainTestSplitExperiment
 
       m_Owner.log("Run " + m_Run + " [start]: " + m_Data.relationName() + " on " + shortenCommandLine(m_Classifier));
 
-      generator = (RandomSplitGenerator) OptionUtils.shallowCopy(m_Owner.getGenerator());
+      generator = ObjectCopyHelper.copyObject(m_Owner.getGenerator());
       generator.setData(m_Data);
       generator.setSeed(m_Run);
       generator.setPercentage(m_Owner.getPercentage() / 100.0);
@@ -82,7 +82,7 @@ public class TrainTestSplitExperiment
       train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
       test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
       try {
-	classifier = (Classifier) OptionUtils.shallowCopy(m_Classifier);
+	classifier = ObjectCopyHelper.copyObject(m_Classifier);
 	classifier.buildClassifier(train);
 	eval       = new Evaluation(train);
 	eval.evaluateModel(classifier, test);

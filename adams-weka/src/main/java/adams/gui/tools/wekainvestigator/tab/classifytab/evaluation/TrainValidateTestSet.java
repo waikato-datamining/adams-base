@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -294,7 +295,7 @@ public class TrainValidateTestSet
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
-    model = (Classifier) OptionUtils.shallowCopy(classifier);
+    model = ObjectCopyHelper.copyObject(classifier);
     getOwner().logMessage("Using '" + trainCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
     model.buildClassifier(train);
     addObjectSize(runInfo, "Model size", model);

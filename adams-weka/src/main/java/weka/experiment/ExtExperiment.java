@@ -20,9 +20,9 @@
 
 package weka.experiment;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
-import adams.core.option.OptionUtils;
 import adams.gui.tools.wekamultiexperimenter.experiment.ExperimentWithCustomizableRelationNames;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
@@ -73,8 +73,8 @@ public class ExtExperiment
   public void assign(Experiment exp) {
     int		i;
 
-    m_ResultListener = (ResultListener) OptionUtils.shallowCopy(exp.getResultListener());
-    m_ResultProducer = (ResultProducer) OptionUtils.shallowCopy(exp.getResultProducer());
+    m_ResultListener = ObjectCopyHelper.copyObject(exp.getResultListener());
+    m_ResultProducer = ObjectCopyHelper.copyObject(exp.getResultProducer());
     m_RunLower = exp.getRunLower();
     m_RunUpper = exp.getRunUpper();
     m_Datasets = new DefaultListModel();

@@ -20,6 +20,7 @@
 
 package weka.classifiers.functions;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.pls.AbstractPLS;
 import adams.data.instancesanalysis.pls.PLS1;
@@ -267,7 +268,7 @@ public class PLSWeighted
     data.deleteWithMissingClass();
 
     // initialize filter
-    pls      = (AbstractPLS) OptionUtils.shallowCopy(m_Algorithm);
+    pls      = ObjectCopyHelper.copyObject(m_Algorithm);
     pls.setPredictionType(PredictionType.EXCEPT_CLASS);
     m_Filter = new weka.filters.supervised.attribute.PLS();
     m_Filter.setAlgorithm(pls);

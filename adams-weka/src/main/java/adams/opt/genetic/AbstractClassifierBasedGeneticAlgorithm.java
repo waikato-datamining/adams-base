@@ -20,6 +20,7 @@
 
 package adams.opt.genetic;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.ThreadLimiter;
 import adams.core.io.PlaceholderDirectory;
@@ -220,7 +221,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithm
       evalExec.setData(data);
       evalExec.setClassifier(cls);
       evalExec.setNumThreads(1);
-      evalExec.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(getOwner().getGenerator()));
+      evalExec.setGenerator(ObjectCopyHelper.copyObject(getOwner().getGenerator()));
       evalExec.setFolds(folds);
       evalExec.setSeed(seed);
       msg = evalExec.execute();

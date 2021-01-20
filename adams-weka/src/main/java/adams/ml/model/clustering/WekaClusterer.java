@@ -20,6 +20,7 @@
 
 package adams.ml.model.clustering;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.ml.capabilities.Capabilities;
 import adams.ml.data.Dataset;
@@ -142,7 +143,7 @@ public class WekaClusterer
     weka.clusterers.Clusterer   clusterer;
 
     inst       = WekaConverter.toInstances(data);
-    clusterer = (weka.clusterers.Clusterer) OptionUtils.shallowCopy(m_Clusterer);
+    clusterer = ObjectCopyHelper.copyObject(m_Clusterer);
     if (clusterer == null)
       throw new Exception("Failed to create shallow copy of classifier: " + OptionUtils.getCommandLine(m_Clusterer));
 

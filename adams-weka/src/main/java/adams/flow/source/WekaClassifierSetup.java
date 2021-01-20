@@ -20,6 +20,7 @@
 
 package adams.flow.source;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.option.OptionUtils;
@@ -190,7 +191,7 @@ public class WekaClassifierSetup
     weka.classifiers.Classifier	cls;
 
     try {
-      cls    = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
+      cls    = ObjectCopyHelper.copyObject(m_Classifier);
       result = setUpContainersIfNecessary(cls);
       if (result == null)
         result = updateObject(cls);

@@ -437,8 +437,7 @@ public class WekaCrossValidationExecution
     m_OutputBuffer = new StringBuffer();
     if (m_Output != null) {
       try {
-	m_Output = (AbstractOutput) OptionUtils.forAnyCommandLine(
-	  AbstractOutput.class, OptionUtils.getCommandLine(m_Output));
+	m_Output = ObjectCopyHelper.copyObject(m_Output);
 	m_Output.setBuffer(m_OutputBuffer);
       }
       catch (Exception e) {
@@ -529,7 +528,7 @@ public class WekaCrossValidationExecution
 
       m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
 
-      generator = (CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Generator);
+      generator = ObjectCopyHelper.copyObject(m_Generator);
       generator.setData(m_Data);
       generator.setNumFolds(m_Folds);
       generator.setSeed(m_Seed);
@@ -554,7 +553,7 @@ public class WekaCrossValidationExecution
 	  cont  = generator.next();
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-	  cls   = (Classifier) OptionUtils.shallowCopy(m_Classifier);
+	  cls   = ObjectCopyHelper.copyObject(m_Classifier);
 	  if (cls instanceof FlowContextHandler)
 	    ((FlowContextHandler) cls).setFlowContext(m_FlowContext);
 	  cls.buildClassifier(train);
@@ -589,7 +588,7 @@ public class WekaCrossValidationExecution
 	while (generator.hasNext()) {
 	  cont = generator.next();
 	  job  = new WekaCrossValidationJob(
-	    (Classifier) OptionUtils.shallowCopy(m_Classifier),
+	    ObjectCopyHelper.copyObject(m_Classifier),
 	    (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN),
 	    (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST),
 	    (Integer) cont.getValue(WekaTrainTestSetContainer.VALUE_FOLD_NUMBER),

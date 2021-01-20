@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.associatetab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseComboBox;
@@ -159,7 +160,7 @@ public class Train
     String		msg;
     MetaData 		runInfo;
 
-    model = (Associator) OptionUtils.shallowCopy(associator);
+    model = ObjectCopyHelper.copyObject(associator);
 
     if ((msg = canEvaluate(model)) != null)
       throw new IllegalArgumentException("Cannot evaluate associator!\n" + msg);

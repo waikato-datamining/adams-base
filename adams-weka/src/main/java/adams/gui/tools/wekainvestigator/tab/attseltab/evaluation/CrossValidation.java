@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -234,8 +235,8 @@ public class CrossValidation
     data     = dataCont.getData();
     seed     = m_TextSeed.getValue().intValue();
     folds    = ((Number) m_SpinnerFolds.getValue()).intValue();
-    eval     = (ASEvaluation) OptionUtils.shallowCopy(evaluator);
-    srch     = (ASSearch) OptionUtils.shallowCopy(search);
+    eval     = ObjectCopyHelper.copyObject(evaluator);
+    srch     = ObjectCopyHelper.copyObject(search);
     runInfo    = new MetaData();
     runInfo.add("Evaluator", OptionUtils.getCommandLine(evaluator));
     runInfo.add("Search", OptionUtils.getCommandLine(search));

@@ -20,8 +20,8 @@
 
 package adams.data.spreadsheet.filter;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
-import adams.core.option.OptionUtils;
 import adams.data.conversion.SpreadSheetToWekaInstances;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
@@ -209,7 +209,7 @@ public class WekaFilter
     Instances		inst;
     Instances		filtered;
 
-    m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
+    m_ActualFilter = ObjectCopyHelper.copyObject(m_Filter);
     inst           = toInstances(data);
     m_ActualFilter.setInputFormat(inst);
     filtered = Filter.useFilter(inst, m_ActualFilter);

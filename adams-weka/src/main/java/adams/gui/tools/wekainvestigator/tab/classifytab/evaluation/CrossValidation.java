@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
@@ -392,7 +393,7 @@ public class CrossValidation
     m_CrossValidation.setSeed(seed);
     m_CrossValidation.setJobRunner(jobrunner);
     m_CrossValidation.setUseViews(views);
-    m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(generator));
+    m_CrossValidation.setGenerator(ObjectCopyHelper.copyObject(generator));
     m_CrossValidation.setDiscardPredictions(discard);
     m_CrossValidation.setStatusMessageHandler(this);
     msg = m_CrossValidation.execute();

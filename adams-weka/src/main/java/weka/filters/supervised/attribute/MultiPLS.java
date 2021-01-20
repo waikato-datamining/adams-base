@@ -21,8 +21,8 @@
 
 package weka.filters.supervised.attribute;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.base.BaseRegExp;
-import adams.core.option.OptionUtils;
 import adams.data.instancesanalysis.pls.AbstractPLS;
 import adams.data.instancesanalysis.pls.PLS1;
 import gnu.trove.list.TIntList;
@@ -403,7 +403,7 @@ public class MultiPLS
 
     // instantiate PLS
     for (i = 0; i < m_YIndices.size(); i++)
-      m_PLS.put(inputFormat.attribute(m_YIndices.get(i)).name(), (AbstractPLS) OptionUtils.shallowCopy(m_Algorithm));
+      m_PLS.put(inputFormat.attribute(m_YIndices.get(i)).name(), ObjectCopyHelper.copyObject(m_Algorithm));
 
     // matrix names
     names = new ArrayList<>();

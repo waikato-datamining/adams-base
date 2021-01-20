@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.EnumWithCustomDisplay;
+import adams.core.ObjectCopyHelper;
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
@@ -370,9 +371,9 @@ public class WekaClassifierRanker
       if (m_OutputBestSetup && (m_Folds < 2)) {
 	try {
 	  if (trained instanceof GridSearch)
-	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((GridSearch) trained).getBestClassifier());
+	    result = ObjectCopyHelper.copyObject(((GridSearch) trained).getBestClassifier());
 	  else if (trained instanceof MultiSearch)
-	    result = (weka.classifiers.Classifier) OptionUtils.shallowCopy(((MultiSearch) trained).getBestClassifier());
+	    result = ObjectCopyHelper.copyObject(((MultiSearch) trained).getBestClassifier());
 	  // TODO: further optimizers
 	}
 	catch (Exception e) {
@@ -400,7 +401,7 @@ public class WekaClassifierRanker
 	eval.crossValidateModel(m_Classifier, m_Train, m_Folds, new Random(m_Seed));
       }
       else {
-	cls = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
+	cls = ObjectCopyHelper.copyObject(m_Classifier);
 	cls.buildClassifier(m_Train);
 	eval.evaluateModel(cls, m_Test);
 	m_BestClassifier = getBestClassifier(m_Classifier, cls);

@@ -20,7 +20,7 @@
 
 package weka.classifiers.meta;
 
-import adams.core.option.OptionUtils;
+import adams.core.ObjectCopyHelper;
 import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.rules.ZeroR;
@@ -458,7 +458,7 @@ implements WeightedInstancesHandler{
 		getCapabilities().testWithFail(data);
 		
 		LogTargetRegressor ltr=new LogTargetRegressor();
-		Classifier c = (Classifier) OptionUtils.shallowCopy(getClassifier());
+		Classifier c = ObjectCopyHelper.copyObject(getClassifier());
 		ltr.setClassifier(c);
 		m_loClassifier=ltr;
 		

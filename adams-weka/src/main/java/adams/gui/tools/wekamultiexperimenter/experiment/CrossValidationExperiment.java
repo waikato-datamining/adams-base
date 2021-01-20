@@ -20,8 +20,8 @@
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.ThreadLimiter;
-import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.multiprocess.WekaCrossValidationExecution;
@@ -85,7 +85,7 @@ public class CrossValidationExperiment
       m_CrossValidation.setClassifier(m_Classifier);
       m_CrossValidation.setData(m_Data);
       m_CrossValidation.setFolds(m_Owner.getFolds());
-      m_CrossValidation.setGenerator((CrossValidationFoldGenerator) OptionUtils.shallowCopy(m_Owner.getGenerator()));
+      m_CrossValidation.setGenerator(ObjectCopyHelper.copyObject(m_Owner.getGenerator()));
       m_CrossValidation.setSeed(m_Run);
       m_CrossValidation.setDiscardPredictions(false);
       m_CrossValidation.setNumThreads(1);

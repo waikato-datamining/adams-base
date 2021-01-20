@@ -21,6 +21,7 @@
 package adams.gui.tools.wekamultiexperimenter.experiment;
 
 import adams.core.Index;
+import adams.core.ObjectCopyHelper;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.StatusMessageHandlerExt;
@@ -818,7 +819,7 @@ public abstract class AbstractExperiment
     m_Generated          = new ArrayList<>();
     if (m_Results == null)
       return "Failed to initialize results!";
-    m_ActualJobRunner = (JobRunner) OptionUtils.shallowCopy(m_JobRunner);
+    m_ActualJobRunner = ObjectCopyHelper.copyObject(m_JobRunner);
 
     return null;
   }

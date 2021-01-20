@@ -20,6 +20,7 @@
 
 package adams.opt.genetic;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import weka.classifiers.Classifier;
@@ -209,7 +210,7 @@ public class DarkLord
       remove.setAttributeIndices(range.toString());
       fc = new FilteredClassifier();
       fc.setFilter(remove);
-      fc.setClassifier((Classifier) OptionUtils.shallowCopy(getOwner().getClassifier()));
+      fc.setClassifier(ObjectCopyHelper.copyObject(getOwner().getClassifier()));
 
       result = super.assembleSetup(fitness, cls, chromosome, weights);
       result.put("Mask", getMaskAsString());
@@ -255,7 +256,7 @@ public class DarkLord
         }
 
 	// evaluate classifier
-	Classifier newClassifier = (Classifier) OptionUtils.shallowCopy(getOwner().getClassifier());
+	Classifier newClassifier = ObjectCopyHelper.copyObject(getOwner().getClassifier());
 	if (newTest == null)
 	  m_Fitness = evaluateClassifier(newClassifier, newInstances, getFolds(), getSeed());
 	else
@@ -267,7 +268,7 @@ public class DarkLord
 
 	  // second evaluation?
 	  if (getUseSecondEvaluation() && (newTest == null)) {
-	    Classifier newSecondClassifier = (Classifier) OptionUtils.shallowCopy(getOwner().getClassifier());
+	    Classifier newSecondClassifier = ObjectCopyHelper.copyObject(getOwner().getClassifier());
 	    m_SecondFitness = evaluateClassifier(newSecondClassifier , newInstances, getSecondFolds(), getSecondSeed());
 	    canAdd = getOwner().isSecondBetterFitness(m_SecondFitness);
 	    if (getOwner().setSecondNewFitness(m_SecondFitness, newSecondClassifier, m_Chromosome, m_Weights)) {

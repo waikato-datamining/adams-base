@@ -20,9 +20,9 @@
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
-import adams.core.option.OptionUtils;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.container.WekaNearestNeighborSearchContainer;
@@ -426,7 +426,7 @@ public class WekaNearestNeighborSearch
     // setup search
     if (m_ActualSearch == null) {
       try {
-	m_ActualSearch = (NearestNeighbourSearch) OptionUtils.shallowCopy(m_Search);
+	m_ActualSearch = ObjectCopyHelper.copyObject(m_Search);
       }
       catch (Exception e) {
 	result = handleException("Failed to create copy of search algorithm!", e);

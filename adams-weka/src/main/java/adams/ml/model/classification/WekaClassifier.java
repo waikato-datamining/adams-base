@@ -20,6 +20,7 @@
 
 package adams.ml.model.classification;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
 import adams.ml.capabilities.Capabilities;
 import adams.ml.data.Dataset;
@@ -142,7 +143,7 @@ public class WekaClassifier
     weka.classifiers.Classifier	classifier;
 
     inst       = WekaConverter.toInstances(data);
-    classifier = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Classifier);
+    classifier = ObjectCopyHelper.copyObject(m_Classifier);
     if (classifier == null)
       throw new Exception("Failed to create shallow copy of classifier: " + OptionUtils.getCommandLine(m_Classifier));
 

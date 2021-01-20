@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -244,7 +245,7 @@ public class CrossValidation
     finalModel = m_CheckBoxFinalModel.isSelected();
     seed       = m_TextSeed.getValue().intValue();
     folds      = ((Number) m_SpinnerFolds.getValue()).intValue();
-    cls        = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    cls        = ObjectCopyHelper.copyObject(clusterer);
     if (cls instanceof DensityBasedClusterer) {
       density = (DensityBasedClusterer) cls;
     }
@@ -268,7 +269,7 @@ public class CrossValidation
     model = null;
     if (finalModel) {
       getOwner().logMessage("Building final model on '" + data.relationName() + "' using " + OptionUtils.getCommandLine(clusterer));
-      model = (Clusterer) OptionUtils.shallowCopy(clusterer);
+      model = ObjectCopyHelper.copyObject(clusterer);
       model.buildClusterer(data);
       addObjectSize(runInfo, "Final model size", model);
     }

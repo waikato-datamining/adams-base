@@ -20,8 +20,8 @@
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
-import adams.core.option.OptionUtils;
 import adams.flow.container.WekaExperimentContainer;
 import adams.flow.core.Token;
 import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
@@ -241,7 +241,7 @@ public class WekaExperimentExecution
     // setup experiment
     m_Experiment = (AbstractExperiment) m_InputToken.getPayload();
     if (m_OverrideJobRunner) {
-      m_Experiment = (AbstractExperiment) OptionUtils.shallowCopy(m_Experiment);
+      m_Experiment = ObjectCopyHelper.copyObject(m_Experiment);
       m_Experiment.setJobRunner(m_JobRunner);
     }
 

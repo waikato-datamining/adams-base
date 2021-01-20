@@ -15,13 +15,14 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -638,7 +639,7 @@ public class OptionUtils {
 
     cls = null;
     try {
-      cls = Class.forName(className);
+      cls = ClassManager.getSingleton().forName(className);
     }
     catch (Exception ex) {
       throw new Exception("Can't find class called: " + className);

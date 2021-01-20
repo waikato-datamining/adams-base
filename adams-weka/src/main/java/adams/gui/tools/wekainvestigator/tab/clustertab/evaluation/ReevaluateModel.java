@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -257,7 +258,7 @@ public class ReevaluateModel
     String		msg;
     MetaData 		runInfo;
 
-    clusterer = (Clusterer) OptionUtils.shallowCopy(m_Model);
+    clusterer = ObjectCopyHelper.copyObject(m_Model);
 
     if ((msg = canEvaluate(clusterer)) != null)
       throw new IllegalArgumentException("Cannot evaluate clusterer!\n" + msg);

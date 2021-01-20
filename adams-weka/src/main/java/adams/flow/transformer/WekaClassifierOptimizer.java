@@ -20,7 +20,7 @@
 
 package adams.flow.transformer;
 
-import adams.core.option.OptionUtils;
+import adams.core.ObjectCopyHelper;
 import adams.flow.core.Token;
 import weka.classifiers.meta.GridSearch;
 import weka.classifiers.meta.MultiSearch;
@@ -194,7 +194,7 @@ public class WekaClassifierOptimizer
     try {
       // determine best classifier
       data = (Instances) m_InputToken.getPayload();
-      cls  = (weka.classifiers.Classifier) OptionUtils.shallowCopy(m_Optimizer);
+      cls  = ObjectCopyHelper.copyObject(m_Optimizer);
       cls.buildClassifier(data);
       if (cls instanceof GridSearch) {
 	best = ((GridSearch) cls).getBestClassifier();

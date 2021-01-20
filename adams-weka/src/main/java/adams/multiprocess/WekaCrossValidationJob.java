@@ -20,6 +20,7 @@
 
 package adams.multiprocess;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingHelper;
@@ -93,7 +94,7 @@ public class WekaCrossValidationJob
     super();
 
     try {
-      m_Classifier = (Classifier) OptionUtils.shallowCopy(classifier);
+      m_Classifier = ObjectCopyHelper.copyObject(classifier);
     }
     catch (Exception e) {
       m_Classifier = null;

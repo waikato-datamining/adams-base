@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.io.ModelFileHandler;
@@ -41,7 +42,6 @@ import adams.flow.core.WekaFilterModelLoader;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.AllFilter;
-import weka.filters.Filter;
 
 import java.util.Hashtable;
 
@@ -673,7 +673,7 @@ public class WekaFilter
     if (m_ActualFilter == null) {
       initFilter = true;
       if (getModelLoadingType() == ModelLoadingType.AUTO)
-	m_ActualFilter = (Filter) OptionUtils.shallowCopy(m_Filter);
+	m_ActualFilter = ObjectCopyHelper.copyObject(m_Filter);
       else
 	return errors.toString();
     }

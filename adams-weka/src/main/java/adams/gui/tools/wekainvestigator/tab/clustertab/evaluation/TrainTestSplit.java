@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -294,7 +295,7 @@ public class TrainTestSplit
     runInfo.add("# Instances (test)", test.numInstances());
     runInfo.add("Use views", views);
 
-    model = (Clusterer) OptionUtils.shallowCopy(clusterer);
+    model = ObjectCopyHelper.copyObject(clusterer);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + train.relationName() + "' to train " + OptionUtils.getCommandLine(clusterer));
     model.buildClusterer(train);
     addObjectSize(runInfo, "Model size", model);

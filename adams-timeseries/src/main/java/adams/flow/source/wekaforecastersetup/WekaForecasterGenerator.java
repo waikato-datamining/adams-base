@@ -19,9 +19,9 @@
  */
 package adams.flow.source.wekaforecastersetup;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.core.LagMakerOptions;
 import weka.classifiers.Classifier;
@@ -345,7 +345,7 @@ public class WekaForecasterGenerator
     WekaForecaster result;
 
     result = new WekaForecaster();
-    result.setBaseForecaster((Classifier) OptionUtils.shallowCopy(m_Classifier));
+    result.setBaseForecaster(ObjectCopyHelper.copyObject(m_Classifier));
     result.setFieldsToForecast(m_ForecastFields);
     if (m_OverlayFields.length() > 0)
       result.setOverlayFields(m_OverlayFields);
