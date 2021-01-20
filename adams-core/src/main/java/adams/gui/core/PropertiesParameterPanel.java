@@ -15,7 +15,7 @@
 
 /*
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -281,10 +281,12 @@ public class PropertiesParameterPanel
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
     m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad.setToolTipText("Load settings from file");
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
     m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave.setToolTipText("Save current settings to file");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
   }
@@ -1492,6 +1494,7 @@ public class PropertiesParameterPanel
     int		retVal;
     Properties	props;
 
+    getFileChooser().setDialogTitle("Load settings");
     retVal = getFileChooser().showOpenDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
@@ -1512,6 +1515,7 @@ public class PropertiesParameterPanel
     int		retVal;
     Properties	props;
 
+    getFileChooser().setDialogTitle("Save settings");
     retVal = getFileChooser().showSaveDialog(this);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
