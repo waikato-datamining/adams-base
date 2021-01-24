@@ -193,6 +193,7 @@ public class ObjectLocationsFromSpreadSheet
       overlay.setLabelOffsetX(m_LabelOffsetX);
       overlay.setLabelOffsetY(m_LabelOffsetY);
       overlay.setPredefinedLabels(m_PredefinedLabels);
+      overlay.setFilled(m_Filled);
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -297,6 +298,9 @@ public class ObjectLocationsFromSpreadSheet
   /** the regular expression for the types to draw. */
   protected BaseRegExp m_TypeRegExp;
 
+  /** whether to draw the shape filled. */
+  protected boolean m_Filled;
+
   /** the label for the rectangles. */
   protected String m_LabelFormat;
 
@@ -379,6 +383,10 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "type-regexp", "typeRegExp",
       new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "filled", "filled",
+      false);
 
     m_OptionManager.add(
       "label-format", "labelFormat",
@@ -646,6 +654,35 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String typeRegExpTipText() {
     return "The regular expression that the types must match in order to get drawn (eg only plotting a subset).";
+  }
+
+  /**
+   * Sets whether to draw the shape filled.
+   *
+   * @param value 	true if to fill
+   */
+  public void setFilled(boolean value) {
+    m_Filled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the shape filled.
+   *
+   * @return 		true if to fill
+   */
+  public boolean getFilled() {
+    return m_Filled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String filledTipText() {
+    return "If enabled, the shape is drawn filled.";
   }
 
   /**
