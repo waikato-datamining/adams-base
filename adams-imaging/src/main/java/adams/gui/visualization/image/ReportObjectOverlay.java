@@ -31,6 +31,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.TranslucentColorProvider;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -100,11 +101,20 @@ public class ReportObjectOverlay
   /** the cached colors. */
   protected HashMap<Polygon,Color> m_Colors;
 
+  /** the cached shape colors. */
+  protected HashMap<Polygon,Color> m_ShapeColors;
+
   /** the labels. */
   protected HashMap<Polygon,String> m_Labels;
 
   /** predefined labels. */
   protected BaseString[] m_PredefinedLabels;
+
+  /** whether to vary the shape color. */
+  protected boolean m_VaryShapeColor;
+
+  /** the color provider to use when varying the shape colors. */
+  protected ColorProvider m_ShapeColorProvider;
 
   /**
    * Returns a string describing the object.
@@ -170,6 +180,14 @@ public class ReportObjectOverlay
     m_OptionManager.add(
 	"predefined-labels", "predefinedLabels",
 	new BaseString[0]);
+
+    m_OptionManager.add(
+	"vary-shape-color", "varyShapeColor",
+	false);
+
+    m_OptionManager.add(
+	"shape-color-provider", "shapeColorProvider",
+	new TranslucentColorProvider());
   }
 
   /**
@@ -179,10 +197,11 @@ public class ReportObjectOverlay
   public void reset() {
     super.reset();
 
-    m_Locations  = null;
-    m_TypeColors = new HashMap<>();
-    m_Colors     = new HashMap<>();
-    m_Labels     = new HashMap<>();
+    m_Locations   = null;
+    m_TypeColors  = new HashMap<>();
+    m_Colors      = new HashMap<>();
+    m_ShapeColors = new HashMap<>();
+    m_Labels      = new HashMap<>();
   }
 
   /**
@@ -542,6 +561,64 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Sets whether to vary the colors of the shapes.
+   *
+   * @param value 	true if to vary
+   */
+  public void setVaryShapeColor(boolean value) {
+    m_VaryShapeColor = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to vary the colors of the shapes.
+   *
+   * @return 		true if to vary
+   */
+  public boolean getVaryShapeColor() {
+    return m_VaryShapeColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String varyShapeColorTipText() {
+    return "If enabled, the shape colors get varied.";
+  }
+
+  /**
+   * Sets the color provider to use when varying the shape colors.
+   *
+   * @param value 	the provider
+   */
+  public void setShapeColorProvider(ColorProvider value) {
+    m_ShapeColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use when varying the shape colors.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getShapeColorProvider() {
+    return m_ShapeColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeColorProviderTipText() {
+    return "The color provider to use when varying the shape colors.";
+  }
+
+  /**
    * Returns the type suffix without the leading dot.
    *
    * @return		the sufix
@@ -657,11 +734,12 @@ public class ReportObjectOverlay
       }
     }
 
-    m_Locations = new ArrayList<>();
-    m_Colors = new HashMap<>();
-    m_Labels    = new HashMap<>();
-    suffix      = determineTypeSuffix();
-    located     = LocatedObjects.fromReport(report, m_Prefix);
+    m_Locations   = new ArrayList<>();
+    m_Colors      = new HashMap<>();
+    m_ShapeColors = new HashMap<>();
+    m_Labels      = new HashMap<>();
+    suffix        = determineTypeSuffix();
+    located       = LocatedObjects.fromReport(report, m_Prefix);
     for (LocatedObject object: located) {
       if (object.hasPolygon()) {
         poly = object.getPolygon();
@@ -704,6 +782,7 @@ public class ReportObjectOverlay
       }
 
       m_Colors.put(poly, color);
+      m_ShapeColors.put(poly, m_ShapeColorProvider.next());
       m_Locations.add(poly);
     }
 
@@ -728,6 +807,26 @@ public class ReportObjectOverlay
    */
   public Color getColor(Polygon poly) {
     return m_Colors.get(poly);
+  }
+
+  /**
+   * Checks whether a shape color has been stored for the given object.
+   *
+   * @param poly	the object to check
+   * @return		true if custom color available
+   */
+  public boolean hasShapeColor(Polygon poly) {
+    return m_ShapeColors.containsKey(poly);
+  }
+
+  /**
+   * Returns the shape color for the object.
+   *
+   * @param poly	the object to get the color for
+   * @return		the shape color, null if none available
+   */
+  public Color getShapeColor(Polygon poly) {
+    return m_ShapeColors.get(poly);
   }
 
   /**

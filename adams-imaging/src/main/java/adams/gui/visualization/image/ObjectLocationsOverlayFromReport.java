@@ -23,6 +23,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -324,29 +325,45 @@ public class ObjectLocationsOverlayFromReport
     String	label;
     Rectangle 	rect;
     float	width;
+    Color	labelColor;
+    Color	shapeColor;
 
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);
 
-    g.setColor(getColor());
+    labelColor = getColor();
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
-          g.setColor(m_Overlays.getColor(poly));
+          labelColor = m_Overlays.getColor(poly);
       }
-      if (m_Filled)
-        g.fillPolygon(poly);
-      else
+      shapeColor = null;
+      if (getVaryShapeColor()) {
+        if (m_Overlays.hasShapeColor(poly))
+          shapeColor = m_Overlays.getShapeColor(poly);
+      }
+
+      g.setColor(shapeColor == null ? labelColor : shapeColor);
+      if (m_Filled) {
+	g.fillPolygon(poly);
+	g.setColor(labelColor);
 	g.drawPolygon(poly);
+      }
+      else {
+	g.drawPolygon(poly);
+      }
+
       rect = null;
       if (m_PolygonBounds) {
+	g.setColor(shapeColor == null ? labelColor : shapeColor);
 	rect = poly.getBounds();
 	g.drawRect(rect.x, rect.y, rect.width, rect.height);
       }
       if (m_Overlays.hasLabel(poly)) {
+	g.setColor(labelColor);
         label = m_Overlays.getLabel(poly);
         if ((label != null) && !label.isEmpty()) {
           if (rect == null)

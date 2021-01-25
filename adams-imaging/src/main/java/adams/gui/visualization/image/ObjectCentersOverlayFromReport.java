@@ -22,6 +22,7 @@ package adams.gui.visualization.image;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -97,7 +98,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 198 $
  */
 public class ObjectCentersOverlayFromReport
   extends AbstractObjectOverlayFromReport {
@@ -183,24 +183,34 @@ public class ObjectCentersOverlayFromReport
   protected void doPaintObjects(PaintPanel panel, Graphics g, List<Polygon> locations) {
     String	label;
     Rectangle	rect;
+    Color	labelColor;
+    Color	shapeColor;
 
-    g.setColor(getColor());
+    labelColor = getColor();
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
+	  labelColor = getColor();
           g.setColor(m_Overlays.getColor(poly));
+      }
+      shapeColor = null;
+      if (getVaryShapeColor()) {
+        if (m_Overlays.hasShapeColor(poly))
+          shapeColor = m_Overlays.getShapeColor(poly);
       }
 
       rect = poly.getBounds();
+      g.setColor(shapeColor == null ? labelColor : shapeColor);
       if (m_Diameter < 1)
 	g.fillOval((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
       else
         g.fillOval((int) (rect.getCenterX() - m_Diameter), (int) (rect.getCenterY() - m_Diameter), m_Diameter*2, m_Diameter*2);
 
       if (m_Overlays.hasLabel(poly)) {
+	g.setColor(labelColor);
         label = m_Overlays.getLabel(poly);
         if ((label != null) && !label.isEmpty())
           m_Overlays.drawString(g, rect, label);

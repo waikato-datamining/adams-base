@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersFromReport.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -37,6 +37,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectCentersOverlayFromReport;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
@@ -54,7 +55,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,bmp,gif,png,wbmp,jpeg
+ * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -62,6 +63,85 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The prefix of fields in the report to identify as object location, eg 'Object.
+ * &nbsp;&nbsp;&nbsp;'.
+ * &nbsp;&nbsp;&nbsp;default: Object.
+ * </pre>
+ *
+ * <pre>-diameter &lt;int&gt; (property: diameter)
+ * &nbsp;&nbsp;&nbsp;The diameter of the circle that is drawn; &lt; 1 to use the rectangle's dimensions
+ * &nbsp;&nbsp;&nbsp;to draw an ellipse.
+ * &nbsp;&nbsp;&nbsp;default: 10
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-color &lt;java.awt.Color&gt; (property: color)
+ * &nbsp;&nbsp;&nbsp;The color to use for the objects.
+ * &nbsp;&nbsp;&nbsp;default: #ff0000
+ * </pre>
+ *
+ * <pre>-use-colors-per-type &lt;boolean&gt; (property: useColorsPerType)
+ * &nbsp;&nbsp;&nbsp;If enabled, individual colors per type are used.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-type-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: typeColorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use for the various types.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
+ * <pre>-type-suffix &lt;java.lang.String&gt; (property: typeSuffix)
+ * &nbsp;&nbsp;&nbsp;The suffix of fields in the report to identify the type.
+ * &nbsp;&nbsp;&nbsp;default: .type
+ * </pre>
+ *
+ * <pre>-type-regexp &lt;adams.core.base.BaseRegExp&gt; (property: typeRegExp)
+ * &nbsp;&nbsp;&nbsp;The regular expression that the types must match in order to get drawn (
+ * &nbsp;&nbsp;&nbsp;eg only plotting a subset).
+ * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-label-format &lt;java.lang.String&gt; (property: labelFormat)
+ * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
+ * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
+ * &nbsp;&nbsp;&nbsp;); for instance: '# &#64;'.
+ * &nbsp;&nbsp;&nbsp;default: #. $
+ * </pre>
+ *
+ * <pre>-label-font &lt;java.awt.Font&gt; (property: labelFont)
+ * &nbsp;&nbsp;&nbsp;The font to use for the labels.
+ * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
+ * </pre>
+ *
+ * <pre>-vary-shape-color &lt;boolean&gt; (property: varyShapeColor)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape colors get varied.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-shape-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: shapeColorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use when varying the shape colors.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.TranslucentColorProvider -provider adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
+ * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
+ * &nbsp;&nbsp;&nbsp;The object finder to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
+ * </pre>
+ *
+ * <pre>-use-alternative-location &lt;boolean&gt; (property: useAlternativeLocation)
+ * &nbsp;&nbsp;&nbsp;If enabled, the alternative location is used to locate the associated report
+ * &nbsp;&nbsp;&nbsp;rather than the directory with the image.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-alternative-location &lt;adams.core.io.PlaceholderDirectory&gt; (property: alternativeLocation)
+ * &nbsp;&nbsp;&nbsp;The alternative location to use look for associated reports.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  <!-- options-end -->
@@ -113,6 +193,8 @@ public class ObjectCentersFromReport
       overlay.setTypeRegExp((BaseRegExp) m_TypeRegExp.getClone());
       overlay.setLabelFormat(m_LabelFormat);
       overlay.setLabelFont(m_LabelFont);
+      overlay.setVaryShapeColor(m_VaryShapeColor);
+      overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -223,6 +305,12 @@ public class ObjectCentersFromReport
   /** the label font. */
   protected Font m_LabelFont;
 
+  /** whether to vary the shape color. */
+  protected boolean m_VaryShapeColor;
+
+  /** the color provider to use when varying the shape colors. */
+  protected ColorProvider m_ShapeColorProvider;
+
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
@@ -287,6 +375,14 @@ public class ObjectCentersFromReport
     m_OptionManager.add(
       "label-font", "labelFont",
       Fonts.getSansFont(14));
+
+    m_OptionManager.add(
+      "vary-shape-color", "varyShapeColor",
+      false);
+
+    m_OptionManager.add(
+      "shape-color-provider", "shapeColorProvider",
+      new TranslucentColorProvider());
 
     m_OptionManager.add(
       "finder", "finder",
@@ -566,6 +662,64 @@ public class ObjectCentersFromReport
    */
   public String labelFontTipText() {
     return "The font to use for the labels.";
+  }
+
+  /**
+   * Sets whether to vary the colors of the shapes.
+   *
+   * @param value 	true if to vary
+   */
+  public void setVaryShapeColor(boolean value) {
+    m_VaryShapeColor = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to vary the colors of the shapes.
+   *
+   * @return 		true if to vary
+   */
+  public boolean getVaryShapeColor() {
+    return m_VaryShapeColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String varyShapeColorTipText() {
+    return "If enabled, the shape colors get varied.";
+  }
+
+  /**
+   * Sets the color provider to use when varying the shape colors.
+   *
+   * @param value 	the provider
+   */
+  public void setShapeColorProvider(ColorProvider value) {
+    m_ShapeColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use when varying the shape colors.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getShapeColorProvider() {
+    return m_ShapeColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeColorProviderTipText() {
+    return "The color provider to use when varying the shape colors.";
   }
 
   /**

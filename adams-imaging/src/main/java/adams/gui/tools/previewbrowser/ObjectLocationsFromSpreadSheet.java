@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromSpreadSheet.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -45,6 +45,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.image.leftclick.ViewObjects;
@@ -62,7 +63,7 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the spreadsheet with the same name (using the spreadsheet reader's default extension) or with the specified alternative file suffix to the name (eg '-rois'): tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
+ * Displays the following image types with an overlay for the objects stored in the spreadsheet with the same name (using the spreadsheet reader's default extension) or with the specified alternative file suffix to the name (eg '-rois'): tif,jpg,tiff,bmp,gif,png,jpeg,wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -111,10 +112,18 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
+ * <pre>-filled &lt;boolean&gt; (property: filled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape is drawn filled.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-label-format &lt;java.lang.String&gt; (property: labelFormat)
  * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
  * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
- * &nbsp;&nbsp;&nbsp;); for instance: '# &#64;'.
+ * &nbsp;&nbsp;&nbsp;), '{BLAH}' gets replaced with the value associated with the meta-data key
+ * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'; in case of numeric values, use
+ * &nbsp;&nbsp;&nbsp;'|.X' to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals
+ * &nbsp;&nbsp;&nbsp;after the decimal point.
  * &nbsp;&nbsp;&nbsp;default: #. $
  * </pre>
  *
@@ -123,9 +132,52 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
  * </pre>
  *
+ * <pre>-label-anchor &lt;TOP_LEFT|TOP_CENTER|TOP_RIGHT|MIDDLE_LEFT|MIDDLE_CENTER|MIDDLE_RIGHT|BOTTOM_LEFT|BOTTOM_CENTER|BOTTOM_RIGHT&gt; (property: labelAnchor)
+ * &nbsp;&nbsp;&nbsp;The anchor for the label.
+ * &nbsp;&nbsp;&nbsp;default: TOP_RIGHT
+ * </pre>
+ *
+ * <pre>-label-offset-x &lt;int&gt; (property: labelOffsetX)
+ * &nbsp;&nbsp;&nbsp;The X offset for the label; values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses left as anchor, -2 the center and -3 the right.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ *
+ * <pre>-label-offset-y &lt;int&gt; (property: labelOffsetY)
+ * &nbsp;&nbsp;&nbsp;The Y offset for the label values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ *
+ * <pre>-predefined-labels &lt;adams.core.base.BaseString&gt; [-predefined-labels ...] (property: predefinedLabels)
+ * &nbsp;&nbsp;&nbsp;The predefined labels to use for setting up the colors; avoids constants
+ * &nbsp;&nbsp;&nbsp;changing in color pallet.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-vary-shape-color &lt;boolean&gt; (property: varyShapeColor)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape colors get varied.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-shape-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: shapeColorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use when varying the shape colors.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.TranslucentColorProvider -provider adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
  * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
  * &nbsp;&nbsp;&nbsp;The object finder to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
+ * </pre>
+ *
+ * <pre>-overlap-detection &lt;adams.data.objectoverlap.ObjectOverlap&gt; (property: overlapDetection)
+ * &nbsp;&nbsp;&nbsp;The algorithm to use for determining the overlapping objects.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.objectoverlap.AreaRatio
+ * </pre>
+ *
+ * <pre>-overlap-removal &lt;adams.data.overlappingobjectremoval.OverlappingObjectRemoval&gt; (property: overlapRemoval)
+ * &nbsp;&nbsp;&nbsp;The algorithm to use for removing the overlapping objects.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.overlappingobjectremoval.PassThrough
  * </pre>
  *
  * <pre>-use-alternative-location &lt;boolean&gt; (property: useAlternativeLocation)
@@ -194,6 +246,8 @@ public class ObjectLocationsFromSpreadSheet
       overlay.setLabelOffsetY(m_LabelOffsetY);
       overlay.setPredefinedLabels(m_PredefinedLabels);
       overlay.setFilled(m_Filled);
+      overlay.setVaryShapeColor(m_VaryShapeColor);
+      overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -319,6 +373,12 @@ public class ObjectLocationsFromSpreadSheet
   /** the predefined labels. */
   protected BaseString[] m_PredefinedLabels;
 
+  /** whether to vary the shape color. */
+  protected boolean m_VaryShapeColor;
+
+  /** the color provider to use when varying the shape colors. */
+  protected ColorProvider m_ShapeColorProvider;
+
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
@@ -411,6 +471,14 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "predefined-labels", "predefinedLabels",
       new BaseString[0]);
+
+    m_OptionManager.add(
+      "vary-shape-color", "varyShapeColor",
+      false);
+
+    m_OptionManager.add(
+      "shape-color-provider", "shapeColorProvider",
+      new TranslucentColorProvider());
 
     m_OptionManager.add(
       "finder", "finder",
@@ -890,6 +958,64 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String predefinedLabelsTipText() {
     return "The predefined labels to use for setting up the colors; avoids constants changing in color pallet.";
+  }
+
+  /**
+   * Sets whether to vary the colors of the shapes.
+   *
+   * @param value 	true if to vary
+   */
+  public void setVaryShapeColor(boolean value) {
+    m_VaryShapeColor = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to vary the colors of the shapes.
+   *
+   * @return 		true if to vary
+   */
+  public boolean getVaryShapeColor() {
+    return m_VaryShapeColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String varyShapeColorTipText() {
+    return "If enabled, the shape colors get varied.";
+  }
+
+  /**
+   * Sets the color provider to use when varying the shape colors.
+   *
+   * @param value 	the provider
+   */
+  public void setShapeColorProvider(ColorProvider value) {
+    m_ShapeColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use when varying the shape colors.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getShapeColorProvider() {
+    return m_ShapeColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeColorProviderTipText() {
+    return "The color provider to use when varying the shape colors.";
   }
 
   /**

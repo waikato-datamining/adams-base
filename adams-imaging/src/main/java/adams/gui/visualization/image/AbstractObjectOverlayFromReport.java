@@ -27,6 +27,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import javax.swing.JMenuItem;
@@ -117,6 +118,14 @@ public abstract class AbstractObjectOverlayFromReport
     m_OptionManager.add(
 	"predefined-labels", "predefinedLabels",
 	new BaseString[0]);
+
+    m_OptionManager.add(
+	"vary-shape-color", "varyShapeColor",
+	false);
+
+    m_OptionManager.add(
+	"shape-color-provider", "shapeColorProvider",
+	new TranslucentColorProvider());
   }
 
   /**
@@ -505,6 +514,64 @@ public abstract class AbstractObjectOverlayFromReport
    */
   public String predefinedLabelsTipText() {
     return m_Overlays.predefinedLabelsTipText();
+  }
+
+  /**
+   * Sets whether to vary the colors of the shapes.
+   *
+   * @param value 	true if to vary
+   */
+  public void setVaryShapeColor(boolean value) {
+    m_Overlays.setVaryShapeColor(value);
+    reset();
+  }
+
+  /**
+   * Returns whether to vary the colors of the shapes.
+   *
+   * @return 		true if to vary
+   */
+  public boolean getVaryShapeColor() {
+    return m_Overlays.getVaryShapeColor();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String varyShapeColorTipText() {
+    return m_Overlays.varyShapeColorTipText();
+  }
+
+  /**
+   * Sets the color provider to use when varying the shape colors.
+   *
+   * @param value 	the provider
+   */
+  public void setShapeColorProvider(ColorProvider value) {
+    m_Overlays.setShapeColorProvider(value);
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use when varying the shape colors.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getShapeColorProvider() {
+    return m_Overlays.getShapeColorProvider();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeColorProviderTipText() {
+    return m_Overlays.shapeColorProviderTipText();
   }
 
   /**
