@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2020-12-15 16:45:28
+# Date: 2021-01-26 10:38:06
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-annotator,adams-core,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-openimaj,adams-json,adams-math,adams-meta,adams-ml,adams-odf,adams-pdf,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
 #
 adams.flow.control.Flow -annotation "Turns image segmentation layers into indexed PNGs or blue-channel JPGs." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.source.Start
