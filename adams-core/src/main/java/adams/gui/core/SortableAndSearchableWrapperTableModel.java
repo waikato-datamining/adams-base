@@ -318,8 +318,10 @@ public class SortableAndSearchableWrapperTableModel
   protected boolean isColumnNumeric(int colIndex) {
     if (m_ColumnIsNumeric == null)
       return false;
-    else
+    else if (colIndex < m_ColumnIsNumeric.length)
       return m_ColumnIsNumeric[colIndex];
+    else
+      return false;
   }
 
   /**
