@@ -15,7 +15,7 @@
 
 /*
  * LocatedObject.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -29,12 +29,18 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.statistics.StatUtils;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -462,6 +468,42 @@ public class LocatedObject
   public void setPolygon(Polygon value) {
     getMetaData().put(KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(value.xpoints), ","));
     getMetaData().put(KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(value.ypoints), ","));
+  }
+
+  /**
+   * Converts the polygon or rectangle into a JTS polygon (for proper intersects).
+   *
+   * @return		the polygon
+   */
+  public org.locationtech.jts.geom.Polygon toGeometry() {
+    org.locationtech.jts.geom.Polygon	result;
+    LinearRing 				ring;
+    List<Coordinate> 			coords;
+    GeometryFactory 			factory;
+    int[]				x;
+    int[]				y;
+    int					i;
+
+    factory = new GeometryFactory();
+    coords = new ArrayList<>();
+    if (hasPolygon()) {
+      x = getPolygonX();
+      y = getPolygonY();
+      for (i = 0; i < x.length; i++)
+        coords.add(new Coordinate(x[i], y[i]));
+      coords.add(new Coordinate(x[0], y[0]));
+    }
+    else {
+      coords.add(new Coordinate(getX(), getY()));
+      coords.add(new Coordinate(getX() + getWidth() - 1, getY()));
+      coords.add(new Coordinate(getX() + getWidth() - 1, getY() + getHeight() - 1));
+      coords.add(new Coordinate(getX(), getY() + getHeight() - 1));
+      coords.add(new Coordinate(getX(), getY()));
+    }
+    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
+    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
+
+    return result;
   }
 
   /**

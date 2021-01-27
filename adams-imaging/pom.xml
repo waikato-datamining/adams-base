@@ -194,6 +194,12 @@
       <artifactId>j3d-core</artifactId>
       <version>3.0.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.locationtech.jts</groupId>
+      <artifactId>jts-core</artifactId>
+      <version>1.18.0</version>
+    </dependency>
   </dependencies>
 
   <build>
