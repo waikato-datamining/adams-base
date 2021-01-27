@@ -717,6 +717,8 @@ public class ReportObjectOverlay
     if (report == null)
       return false;
 
+    m_ShapeColorProvider.resetColors();
+
     // initialize colors
     if (m_UseColorsPerType) {
       m_TypeColors.clear();
