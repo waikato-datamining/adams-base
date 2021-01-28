@@ -15,7 +15,7 @@
 
 /*
  * ReevaluateModel.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -249,7 +249,9 @@ public class ReevaluateModel
     }
 
     caps = m_Model.getCapabilities();
-    caps.enable(Capability.MISSING_CLASS_VALUES);  // necessary when just wanting to make predictions
+    // necessary when just wanting to make predictions
+    caps.enable(Capability.MISSING_CLASS_VALUES);
+    caps.setMinimumNumberInstances(0);
     try {
       if (!caps.test(data)) {
         if (caps.getFailReason() != null)
