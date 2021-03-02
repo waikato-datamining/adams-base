@@ -169,7 +169,7 @@ public class ProcessActor
       + "If the processor should implement " + Utils.classToString(ListingProcessor.class) + " "
       + "then any generated list gets stored as string array in the outgoing container as well.\n"
       + "Processors implementing " + Utils.classToString(GraphicalOutputProducingProcessor.class) + " "
-      + "can optionall display the graphical output as well (off by default).";
+      + "can optionally display the graphical output as well (off by default).";
   }
 
   /**
