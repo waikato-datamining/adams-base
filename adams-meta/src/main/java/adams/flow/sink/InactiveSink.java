@@ -15,11 +15,12 @@
 
 /*
  * InactiveSink.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.flow.control.Sequence;
 import adams.flow.core.Actor;
@@ -122,7 +123,7 @@ public class InactiveSink
   public InactiveSink(Actor actor) {
     this();
     setName(PREFIX_INACTIVE + actor.getName());
-    setActors(new Actor[]{actor});
+    setActors(new Actor[]{ObjectCopyHelper.copyObject(actor)});
   }
 
   /**
@@ -132,7 +133,7 @@ public class InactiveSink
    */
   public InactiveSink(Actor[] actors) {
     this();
-    setActors(actors);
+    setActors(ObjectCopyHelper.copyObject(actors));
   }
 
   /**

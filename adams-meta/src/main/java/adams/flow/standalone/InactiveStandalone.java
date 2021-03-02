@@ -15,11 +15,12 @@
 
 /*
  * InactiveStandalone.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
@@ -114,7 +115,7 @@ public class InactiveStandalone
   public InactiveStandalone(Actor actor) {
     this();
     setName(PREFIX_INACTIVE + actor.getName());
-    setActors(new Actor[]{actor});
+    setActors(new Actor[]{ObjectCopyHelper.copyObject(actor)});
   }
 
   /**
@@ -124,7 +125,7 @@ public class InactiveStandalone
    */
   public InactiveStandalone(Actor[] actors) {
     this();
-    setActors(actors);
+    setActors(ObjectCopyHelper.copyObject(actors));
   }
 
   /**
