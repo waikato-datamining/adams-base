@@ -15,7 +15,7 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -418,6 +418,7 @@ public class SelectArraySubset
     array = m_InputToken.getPayload();
     for (i = 0; i < Array.getLength(array); i++)
       m_ListModel.addElement(Array.get(array, i));
+    m_List.setModel(m_ListModel);
 
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Accepted = false;
