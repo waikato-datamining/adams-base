@@ -15,7 +15,7 @@
 
 /*
  * AbstractImageSegmentationContainerOperation.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.imagesegmentationcontainer;
@@ -116,7 +116,7 @@ public abstract class AbstractImageSegmentationContainerOperation
    * Performs the actual processing of the containers.
    *
    * @param containers	the containers to process
-   * @return		the generated image(s)
+   * @return		the generated data
    */
   protected abstract Object doProcess(ImageSegmentationContainer[] containers);
 
@@ -124,7 +124,7 @@ public abstract class AbstractImageSegmentationContainerOperation
    * Processes the containers.
    *
    * @param containers	the containers to process
-   * @return		the generated image(s)
+   * @return		the generated data
    */
   public Object process(ImageSegmentationContainer[] containers) {
     check(containers);

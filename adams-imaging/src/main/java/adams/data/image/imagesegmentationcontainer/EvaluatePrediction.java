@@ -15,7 +15,7 @@
 
 /*
  * EvaluatePrediction.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.image.imagesegmentationcontainer;
@@ -235,7 +235,7 @@ public class EvaluatePrediction
    * Performs the actual processing of the containers.
    *
    * @param containers the containers to process
-   * @return the generated image(s)
+   * @return the generated data
    */
   @Override
   protected Object doProcess(ImageSegmentationContainer[] containers) {
