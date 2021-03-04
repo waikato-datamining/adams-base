@@ -20,6 +20,7 @@
 
 package adams.data.image.imagesegmentationcontainer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.image.BufferedImageHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -113,6 +114,16 @@ public class EvaluatePrediction
    */
   public String addMisclassificationTipText() {
     return "If enabled, additional columns with misclassification information are added.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "addMisclassifiication", m_AddMisclassification, "add misclassification", "");
   }
 
   /**
