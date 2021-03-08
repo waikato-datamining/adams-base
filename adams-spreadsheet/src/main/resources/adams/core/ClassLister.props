@@ -79,6 +79,10 @@ adams.flow.transformer.SpreadSheetMergeActor=\
 adams.flow.transformer.AbstractSpreadSheetTransformer=\
   adams.flow.transformer
 
+# the multi-sheet operations
+adams.flow.transformer.multispreadsheetoperation.AbstractMultiSpreadSheetOperation=\
+  adams.flow.transformer.multispreadsheetoperation
+
 # plot generators
 adams.flow.transformer.plotgenerator.AbstractPlotGenerator=\
   adams.flow.transformer.plotgenerator

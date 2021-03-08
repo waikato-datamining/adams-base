@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetCommonIDs.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, New Zealand
  */
-package adams.flow.transformer;
+package adams.flow.transformer.multispreadsheetoperation;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.annotation.DeprecatedClass;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
-import adams.flow.core.Token;
-import adams.flow.transformer.multispreadsheetoperation.CommonIDs;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -37,52 +36,16 @@ import java.util.HashSet;
  * <br><br>
  <!-- globalinfo-end -->
  *
- <!-- flow-summary-start -->
- * Input&#47;output:<br>
- * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet[]<br>
- * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
- * <br><br>
- <!-- flow-summary-end -->
- *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
- * <pre>-name &lt;java.lang.String&gt; (property: name)
- * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: SpreadSheetCommonIDs
- * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
- * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
- * &nbsp;&nbsp;&nbsp;as it is.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
- * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- * 
+ *
  * <pre>-index &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: index)
  * &nbsp;&nbsp;&nbsp;The index of the column with the IDs in the spreadsheet.
  * &nbsp;&nbsp;&nbsp;default: first
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  * 
  * <pre>-invert &lt;boolean&gt; (property: invert)
@@ -94,11 +57,8 @@ import java.util.HashSet;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-@DeprecatedClass(
-  useInstead = CommonIDs.class
-)
-public class SpreadSheetCommonIDs
-  extends AbstractTransformer {
+public class CommonIDs
+  extends AbstractMultiSpreadSheetOperation<SpreadSheet> {
 
   /** for serialization. */
   private static final long serialVersionUID = 3363405805013155845L;
@@ -214,13 +174,23 @@ public class SpreadSheetCommonIDs
   }
 
   /**
-   * Returns the class that the consumer accepts.
-   * 
-   * @return		the Class of objects that can be processed
+   * Returns the minimum number of sheets that are required for the operation.
+   *
+   * @return the number of sheets that are required, <= 0 means no lower limit
    */
   @Override
-  public Class[] accepts() {
-    return new Class[]{SpreadSheet[].class};
+  public int minNumSheetsRequired() {
+    return 2;
+  }
+
+  /**
+   * Returns the maximum number of sheets that are required for the operation.
+   *
+   * @return the number of sheets that are required, <= 0 means no upper limit
+   */
+  @Override
+  public int maxNumSheetsRequired() {
+    return 2;
   }
 
   /**
@@ -229,66 +199,53 @@ public class SpreadSheetCommonIDs
    * @return		the Class of the generated tokens
    */
   @Override
-  public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+  public Class generates() {
+    return SpreadSheet.class;
   }
 
   /**
-   * Executes the flow item.
+   * Performs the actual processing of the sheets.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @param sheets  	the containers to process
+   * @param errors	for collecting errors
+   * @return 		the generated data
    */
   @Override
-  protected String doExecute() {
-    String		result;
+  protected SpreadSheet doProcess(SpreadSheet[] sheets, MessageCollection errors) {
+    SpreadSheet 	result;
     int			i;
-    SpreadSheet[] 	sheets;
-    HashSet<String>[]	ids;
-    HashSet<String>	subset;
-    SpreadSheet		output;
-    Row			row;
+    Set<String>[]	ids;
+    Set<String>		subset;
+    Row 		row;
 
     result = null;
 
-    // get filenames
-    if (m_InputToken.getPayload() instanceof SpreadSheet[]) {
-      sheets = (SpreadSheet[]) m_InputToken.getPayload();
-      if (sheets.length < 2)
-	result = "At least two spreadsheets required, provided: " + sheets.length;
-    }
-    else {
-      throw new IllegalStateException("Unhandled input type: " + m_InputToken.getPayload().getClass());
-    }
-
     // init IDs
-    if (result == null) {
-      ids = new HashSet[sheets.length];
-      for (i = 0; i < sheets.length; i++) {
-	m_Index.setData(sheets[i]);
-	if (m_Index.getIntIndex() == -1) {
-	  result = "Sheet #" + (i + 1) + " does not have column: " + m_Index;
-	}
-	ids[i] = new HashSet<>(sheets[i].getCellValues(m_Index.getIntIndex()));
+    ids = new Set[sheets.length];
+    for (i = 0; i < sheets.length; i++) {
+      m_Index.setData(sheets[i]);
+      if (m_Index.getIntIndex() == -1) {
+        errors.add("Sheet #" + (i + 1) + " does not have column: " + m_Index);
+      }
+      ids[i] = new HashSet<>(sheets[i].getCellValues(m_Index.getIntIndex()));
+    }
+
+    // create ID subset
+    if (errors.isEmpty()) {
+      subset = new HashSet<>(ids[0]);
+      for (i = 1; i < sheets.length; i++) {
+        if (m_Invert)
+          subset.removeAll(ids[i]);
+        else
+          subset.retainAll(ids[i]);
       }
 
-      // create ID subset
-      if (result == null) {
-	subset = new HashSet<>(ids[0]);
-	for (i = 1; i < sheets.length; i++) {
-	  if (m_Invert)
-	    subset.removeAll(ids[i]);
-	  else
-	    subset.retainAll(ids[i]);
-	}
-
-	// create output
-	output = new DefaultSpreadSheet();
-	row    = output.getHeaderRow();
-	row.addCell("I").setContent("ID");
-	for (String id: subset)
-	  output.addRow().addCell("I").setContentAsString(id);
-	m_OutputToken = new Token(output);
-      }
+      // create output
+      result = new DefaultSpreadSheet();
+      row    = result.getHeaderRow();
+      row.addCell("I").setContent("ID");
+      for (String id: subset)
+        result.addRow().addCell("I").setContentAsString(id);
     }
 
     return result;
