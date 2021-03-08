@@ -60,6 +60,12 @@ public class ConfusionMatrix
   /** the label to use instead of automatically determining. */
   protected BaseString[] m_Labels;
 
+  /** the optional prefix for the actual labels. */
+  protected String m_ActualPrefix;
+
+  /** the optional prefix for the predicted labels. */
+  protected String m_PredictedPrefix;
+
   /** what values to generate. */
   protected MatrixValues m_MatrixValues;
 
@@ -84,6 +90,14 @@ public class ConfusionMatrix
     m_OptionManager.add(
       "label", "labels",
       new BaseString[0]);
+
+    m_OptionManager.add(
+      "actual-prefix", "actualPrefix",
+      "a: ");
+
+    m_OptionManager.add(
+      "predicted-prefix", "predictedPrefix",
+      "p: ");
 
     m_OptionManager.add(
       "matrix-values", "matrixValues",
@@ -117,6 +131,64 @@ public class ConfusionMatrix
    */
   public String labelsTipText() {
     return "The labels to use for enforcing order other than alphabetical.";
+  }
+
+  /**
+   * Sets the prefix of the actual labels.
+   *
+   * @param value	the prefix
+   */
+  public void setActualPrefix(String value) {
+    m_ActualPrefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix of the actual labels.
+   *
+   * @return		the prefix
+   */
+  public String getActualPrefix() {
+    return m_ActualPrefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String actualPrefixTipText() {
+    return "The prefix for the actual labels.";
+  }
+
+  /**
+   * Sets the prefix of the predicted labels.
+   *
+   * @param value	the prefix
+   */
+  public void setPredictedPrefix(String value) {
+    m_PredictedPrefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix of the predicted labels.
+   *
+   * @return		the prefix
+   */
+  public String getPredictedPrefix() {
+    return m_PredictedPrefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String predictedPrefixTipText() {
+    return "The prefix for the predicted labels.";
   }
 
   /**
@@ -323,13 +395,13 @@ public class ConfusionMatrix
     // header
     row    = result.getHeaderRow();
     row.addCell("L").setContentAsString("x");
-    row.addCell("U").setContentAsString("Unlabeled");
+    row.addCell("U").setContentAsString(m_PredictedPrefix + "Unlabeled");
     for (i = 0; i < labels.size(); i++)
-      row.addCell("" + i).setContentAsString(labels.get(i));
+      row.addCell("" + i).setContentAsString(m_PredictedPrefix + labels.get(i));
 
     // unlabeled
     row = result.addRow();
-    row.addCell("L").setContentAsString("Unlabeled");
+    row.addCell("L").setContentAsString(m_ActualPrefix + "Unlabeled");
     row.addCell("U").setNative(convert(matrix[0][0]));
     for (i = 0; i < labels.size(); i++)
       row.addCell("" + i).setNative(convert(matrix[0][i+1]));
@@ -337,7 +409,7 @@ public class ConfusionMatrix
     // labels
     for (n = 0; n < labels.size(); n++) {
       row = result.addRow();
-      row.addCell("L").setContentAsString(labels.get(n));
+      row.addCell("L").setContentAsString(m_ActualPrefix + labels.get(n));
       row.addCell("U").setNative(convert(matrix[n + 1][0]));
       for (i = 0; i < labels.size(); i++)
 	row.addCell("" + i).setNative(convert(matrix[n + 1][i + 1]));
