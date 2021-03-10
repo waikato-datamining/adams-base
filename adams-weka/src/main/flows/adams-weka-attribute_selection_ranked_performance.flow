@@ -1,0 +1,75 @@
+# Project: adams
+# Date: 2021-03-10 21:21:05
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Using the specified attribute evaluator, the dataset is reordered using\\nthe determined ranking. Then the specified classifier is cross-validate\\non subsets of the reordered data, starting with the first attribute,\\nthen first two, etc. The selected statistic from the cross-validation is \\nthen recorded and a spreadsheet compiled and displayed.\\n\\nNB: The class must be the last attribute." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.GridView -short-title true -display-type adams.flow.core.displaytype.Default -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Statistics -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.Display -name "Ranked attributes" -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter -line-wrap true
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.ProgressBar -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -max @{max}
+  adams.flow.sink.SequencePlotter -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.gui.print.NullWriter -comparison X_AND_Y -paintlet "adams.gui.visualization.sequence.CirclePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy" -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label step -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label statistics -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -custom-format 0.00" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -stop-if-canceled true -value "adams.flow.source.valuedefinition.FileValueDefinition -name dataset -display Dataset -help \"The dataset to rank and then cross-validate\" -file-chooser-title Dataset -extension arff" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name evaluator -display Evaluator -help \"The evaluator to use to rank the attributes\" -super-class weka.attributeSelection.ASEvaluation -default-class weka.attributeSelection.InfoGainAttributeEval" -value "adams.flow.source.valuedefinition.GOEValueDefinition -name classifier -display Classifier -help \"The classifier to cross-validate on the subsets\" -super-class weka.classifiers.Classifier -default-class weka.classifiers.trees.J48" -value "adams.flow.source.valuedefinition.EnumValueDefinition -name statistic -display Statistic -enum-class adams.flow.core.EvaluationStatistic" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "load data"
+  adams.flow.source.Variable -var-name dataset -conversion adams.data.conversion.StringToString
+  adams.flow.transformer.WekaFileReader -loader weka.core.converters.SimpleArffLoader
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name dataset
+  adams.flow.transformer.WekaInstancesInfo -type NUM_ATTRIBUTES
+  adams.flow.transformer.MathExpression -expression X-1 -round-output true
+  adams.flow.transformer.SetVariable -var-name max
+ adams.flow.control.Trigger -name "rank attributes"
+  adams.flow.source.StorageValue -storage-name dataset -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.WekaAttributeSelection -evaluator @{evaluator} -search "weka.attributeSelection.Ranker -T -1.7976931348623157E308 -N -1" -folds 1
+  adams.flow.control.ContainerValuePicker -value "Selected attributes" -switch-outputs true
+  adams.flow.transformer.SetVariable -var-name reordered
+  adams.flow.sink.CallableSink -callable "Ranked attributes"
+ adams.flow.control.Trigger -name "reorder dataset"
+  adams.flow.source.StorageValue -storage-name dataset -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.control.UpdateProperties -property filter.attributeIndices -variable reordered
+   adams.flow.transformer.WekaFilter -filter "weka.filters.unsupervised.attribute.Reorder -R first-last"
+  adams.flow.transformer.SetStorageValue -storage-name reordered
+ adams.flow.control.Trigger -name "init sheet"
+  adams.flow.standalone.SetVariable -var-name header -var-value "Row,Attributes removed,@{statistic}" -expand-value true
+  adams.flow.source.NewSpreadSheet -columns @{header} -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
+  adams.flow.transformer.SetStorageValue -storage-name stats
+ adams.flow.control.Trigger -name iterate
+  adams.flow.standalone.SetVariable -var-name row -var-value 0
+  adams.flow.source.ForLoop -lower 2 -upper @{max} -step -1
+  adams.flow.control.Tee -name progress
+   adams.flow.transformer.IncVariable -var-name row -output-variable-value true
+   adams.flow.sink.CallableSink -callable ProgressBar
+  adams.flow.transformer.SetVariable -name lower -var-name lower
+  adams.flow.transformer.SetVariable -name range -var-name range -var-value @{lower}-@{max} -expand-value true
+  adams.flow.control.Trigger -name evaluate
+   adams.flow.standalone.CallableActors
+    adams.flow.source.WekaClassifierSetup -classifier @{classifier}
+   adams.flow.source.StorageValue -storage-name reordered -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.control.UpdateProperties -property filter.attributeIndices -variable range
+    adams.flow.transformer.WekaFilter -filter weka.filters.unsupervised.attribute.Remove
+   adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -generator weka.classifiers.DefaultCrossValidationFoldGenerator
+   adams.flow.transformer.WekaEvaluationValuePicker -statistic @{statistic}
+   adams.flow.transformer.SetVariable -var-name value
+   adams.flow.control.Trigger -name "add row"
+    adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.transformer.SpreadSheetInsertRow -no-copy true -after true
+    adams.flow.transformer.SpreadSheetSetCell -name row -no-copy true -row last -finder adams.data.spreadsheet.cellfinder.CellRange -value @{row}
+    adams.flow.transformer.SpreadSheetSetCell -name range -no-copy true -row last -col 2 -finder adams.data.spreadsheet.cellfinder.CellRange -value @{range} -force-string true
+    adams.flow.transformer.SpreadSheetSetCell -name accuracy -no-copy true -row last -col 3 -finder adams.data.spreadsheet.cellfinder.CellRange -value @{value}
+    adams.flow.transformer.SetStorageValue -storage-name stats
+ adams.flow.control.CloseCallableDisplay -callable ProgressBar
+ adams.flow.control.Trigger -name display
+  adams.flow.source.StorageValue -storage-name stats -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.SpreadSheetSort -sort-column 1 -sort-order false
+  adams.flow.transformer.SpreadSheetRemoveColumn -position first
+  adams.flow.control.Tee -name grid
+   adams.flow.sink.CallableSink -callable Statistics
+  adams.flow.control.Tee -name plot
+   adams.flow.transformer.SpreadSheetPlotGenerator -generator "adams.flow.transformer.plotgenerator.SimplePlotGenerator -columns 2"
+   adams.flow.sink.CallableSink -callable SequencePlotter
