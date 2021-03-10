@@ -15,17 +15,17 @@
 
 /*
  * WekaAttributeSelection.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
-import adams.core.Range;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.weka.WekaUnorderedAttributeRange;
 import adams.flow.container.WekaAttributeSelectionContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
@@ -35,7 +35,6 @@ import weka.attributeSelection.RankedOutputSearch;
 import weka.core.Instances;
 
 import java.util.Random;
-
 
 /**
  <!-- globalinfo-start -->
@@ -119,7 +118,6 @@ import java.util.Random;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaAttributeSelection
   extends AbstractTransformer 
@@ -369,7 +367,7 @@ public class WekaAttributeSelection
     Row					row;
     int[]				selected;
     double[][]				ranked;
-    Range 				range;
+    WekaUnorderedAttributeRange		range;
     String				rangeStr;
     boolean				useReduced;
 
@@ -481,7 +479,7 @@ public class WekaAttributeSelection
 	// selected attributes
 	rangeStr = null;
 	if (!crossValidate) {
-	  range = new Range();
+	  range = new WekaUnorderedAttributeRange();
 	  range.setIndices(eval.selectedAttributes());
 	  rangeStr = range.getRange();
 	}
