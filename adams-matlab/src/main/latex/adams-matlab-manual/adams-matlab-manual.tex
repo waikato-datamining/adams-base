@@ -72,6 +72,7 @@ The following transformers are available:
   \item \textit{Mat5FileAddArray} -- adds an array (matrix or cell) to a mat file
   \item \textit{Mat5FileInfo} -- outputs information on a .mat file
   \item \textit{Mat5FileReader} -- loads a .mat file
+  \item \textit{MatlabStructInfo} -- output information on a Matlab Struct object.
 \end{tight_itemize}
 
 The following sinks are available:
@@ -82,8 +83,14 @@ The following sinks are available:
 The following conversions are available:
 \begin{tight_itemize}
   \item \textit{MatlabArrayToSpreadSheet} -- converts a (2-dimensional) Matlab array into a spreadsheet
+  \item \textit{MatlabStructToMap} -- converts a Matlab struct object into a map
   \item \textit{SpreadSheetHeaderToMatlabArray} -- turns the spreadsheet header (ie the column names) into an array
   \item \textit{SpreadSheetToMatlabArray} -- turns a spreadsheet into an array (matrix or cell)
+\end{tight_itemize}
+
+The following boolean conditions are available:
+\begin{tight_itemize}
+  \item \textit{IsMatlabStruct} -- checks whether the token contains a Matlab Struct object.
 \end{tight_itemize}
 
 
