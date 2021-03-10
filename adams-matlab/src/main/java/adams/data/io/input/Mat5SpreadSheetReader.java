@@ -31,6 +31,7 @@ import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.format.Mat5File;
 import us.hebi.matlab.mat.types.Array;
 import us.hebi.matlab.mat.types.MatFile;
+import us.hebi.matlab.mat.types.Struct;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,6 +70,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-field-name &lt;java.lang.String&gt; (property: fieldName)
+ * &nbsp;&nbsp;&nbsp;The name of the field to retrieve from the struct.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -80,6 +86,9 @@ public class Mat5SpreadSheetReader
 
   /** the name of the entry to retrieve (the first one if empty). */
   protected String m_EntryName;
+
+  /** the name of the field to retrieve from the struct. */
+  protected String m_FieldName;
 
   /**
    * Returns a string describing the object.
@@ -100,6 +109,10 @@ public class Mat5SpreadSheetReader
 
     m_OptionManager.add(
       "entry-name", "entryName",
+      "");
+
+    m_OptionManager.add(
+      "field-name", "fieldName",
       "");
   }
 
@@ -130,6 +143,35 @@ public class Mat5SpreadSheetReader
    */
   public String entryNameTipText() {
     return "The name of the entry to retrieve, takes precedence over range.";
+  }
+
+  /**
+   * Sets the name of the field to retrieve to retrieve from the struct.
+   *
+   * @param value	the name
+   */
+  public void setFieldName(String value) {
+    m_FieldName = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the field to retrieve to retrieve from the struct.
+   *
+   * @return		the name
+   */
+  public String getFieldName() {
+    return m_FieldName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fieldNameTipText() {
+    return "The name of the field to retrieve from the struct.";
   }
 
   /**
@@ -233,10 +275,12 @@ public class Mat5SpreadSheetReader
 	getLogger().severe(m_LastError);
       }
       else {
-        sheet = convert(array);
-        if (sheet != null)
-          sheet.setName(entryName);
-        return sheet;
+        if (array instanceof Struct)
+          array = ((Struct) array).get(m_FieldName);
+	sheet = convert(array);
+	if (sheet != null)
+	  sheet.setName(entryName);
+	return sheet;
       }
     }
     catch (Exception e) {
