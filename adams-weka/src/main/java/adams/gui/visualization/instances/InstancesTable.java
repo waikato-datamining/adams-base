@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -400,12 +400,18 @@ public class InstancesTable
 
     if (getShowWeightsColumn()) {
       menuitem = new JMenuItem("Hide weights", GUIHelper.getEmptyIcon());
-      menuitem.addActionListener((ActionEvent ae) -> setShowWeightsColumn(false));
+      menuitem.addActionListener((ActionEvent ae) -> {
+        setShowWeightsColumn(false);
+        setShowAttributeWeights(false);
+      });
       menu.add(menuitem);
     }
     else {
       menuitem = new JMenuItem("Show weights", GUIHelper.getEmptyIcon());
-      menuitem.addActionListener((ActionEvent ae) -> setShowWeightsColumn(true));
+      menuitem.addActionListener((ActionEvent ae) -> {
+        setShowWeightsColumn(true);
+        setShowAttributeWeights(true);
+      });
       menu.add(menuitem);
     }
 
@@ -747,6 +753,25 @@ public class InstancesTable
    */
   public boolean getShowWeightsColumn() {
     return ((InstancesTableModel) getUnsortedModel()).getShowWeightsColumn();
+  }
+
+  /**
+   * Sets whether to display attribute weights.
+   *
+   * @param value if true then the attributes weights get shown in the header
+   */
+  public void setShowAttributeWeights(boolean value) {
+    ((InstancesTableModel) getUnsortedModel()).setShowAttributeWeights(value);
+    ((SortableAndSearchableWrapperTableModel) getModel()).fireTableStructureChanged();
+  }
+
+  /**
+   * Returns whether to display attribute weights.
+   *
+   * @return true if the attributes weights get shown in the header
+   */
+  public boolean getShowAttributeWeights() {
+    return ((InstancesTableModel) getUnsortedModel()).getShowAttributeWeights();
   }
 
   /**

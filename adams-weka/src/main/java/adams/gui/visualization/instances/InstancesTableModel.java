@@ -15,7 +15,7 @@
 
 /*
  * InstancesTableModel.java
- * Copyright (C) 2005-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -92,6 +92,9 @@ public class InstancesTableModel
   /** whether to show a weights column. */
   protected boolean m_ShowWeightsColumn;
 
+  /** whether to show attribute weights. */
+  protected boolean m_ShowAttributeWeights;
+
   /**
    * for caching long relational and string values that get processed for
    * display.
@@ -104,17 +107,18 @@ public class InstancesTableModel
   public InstancesTableModel() {
     super();
 
-    m_Listeners           = new HashSet<>();
-    m_Data                = null;
-    m_NotificationEnabled = true;
-    m_UndoHandler         = null;
-    m_UndoList            = new ArrayList<>();
-    m_IgnoreChanges       = false;
-    m_UndoEnabled         = true;
-    m_ReadOnly            = false;
-    m_ShowAttributeIndex  = false;
-    m_ShowWeightsColumn   = false;
-    m_Cache               = new Hashtable<>();
+    m_Listeners            = new HashSet<>();
+    m_Data                 = null;
+    m_NotificationEnabled  = true;
+    m_UndoHandler          = null;
+    m_UndoList             = new ArrayList<>();
+    m_IgnoreChanges        = false;
+    m_UndoEnabled          = true;
+    m_ReadOnly             = false;
+    m_ShowAttributeIndex   = false;
+    m_ShowWeightsColumn    = false;
+    m_ShowAttributeWeights = false;
+    m_Cache                = new Hashtable<>();
   }
 
   /**
@@ -655,11 +659,11 @@ public class InstancesTableModel
     if ((columnIndex >= 0) && (columnIndex < getColumnCount())) {
       if (columnIndex == 0) {
 	result =
-	  "<html><center>No.<br><font size=\"-2\">&nbsp;</font></center></html>";
+	  "<html><center>No.<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
       }
       else if ((columnIndex == 1) && m_ShowWeightsColumn) {
 	result =
-	  "<html><center>Weight<br><font size=\"-2\">&nbsp;</font></center></html>";
+	  "<html><center>Weight<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
       }
       else {
 	if (m_Data != null) {
@@ -696,6 +700,9 @@ public class InstancesTableModel
 	      default:
 		result += "<br><font size=\"-2\">???</font>";
 	    }
+
+	    if (m_ShowAttributeWeights)
+	      result += "<br><font size=\"-2\">" + Utils.doubleToString(m_Data.attribute(columnIndex - offset).weight(), 3) + "</font>";
 
 	    result += "</center></html>";
 	  }
@@ -1157,6 +1164,25 @@ public class InstancesTableModel
   }
 
   /**
+   * Sets whether to display attribute weights.
+   *
+   * @param value if true then the attributes weights get shown in the header
+   */
+  public void setShowAttributeWeights(boolean value) {
+    m_ShowAttributeWeights = value;
+    fireTableStructureChanged();
+  }
+
+  /**
+   * Returns whether to display attribute weights.
+   *
+   * @return true if the attributes weights get shown in the header
+   */
+  public boolean getShowAttributeWeights() {
+    return m_ShowAttributeWeights;
+  }
+
+  /**
    * Returns a new model with the same setup.
    *
    * @param data	the data to display
@@ -1168,6 +1194,7 @@ public class InstancesTableModel
     result = new InstancesTableModel(data);
     result.setShowAttributeIndex(getShowAttributeIndex());
     result.setShowWeightsColumn(getShowWeightsColumn());
+    result.setShowAttributeWeights(getShowAttributeWeights());
     result.setReadOnly(isReadOnly());
     result.setUndoEnabled(isUndoEnabled());
     result.setNotificationEnabled(isNotificationEnabled());

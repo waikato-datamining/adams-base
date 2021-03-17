@@ -15,7 +15,7 @@
 
 /*
  * InstancesTablePopupMenuItemHelper.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -95,6 +95,8 @@ public class InstancesTablePopupMenuItemHelper {
       result.actRows[i] = table.getActualRow(result.selRows[i]);
     result.selCol = table.columnAtPoint(e.getPoint());
     result.actCol = result.selCol - 1;
+    if (table.getShowAttributeWeights())
+      result.actCol--;
 
     return result;
   }

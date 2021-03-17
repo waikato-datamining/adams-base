@@ -15,7 +15,7 @@
 
 /*
  * ChangeAttributeWeight.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -25,6 +25,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.TableRowRange;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
 import weka.core.Attribute;
+
+import javax.swing.event.TableModelEvent;
 
 /**
  * Allows the user to change the weight of the selected attribute.
@@ -109,6 +111,7 @@ public class ChangeAttributeWeight
     if (weight != newWeight) {
       state.table.addUndoPoint();
       att.setWeight(newWeight);
+      state.table.tableChanged(new TableModelEvent(state.table.getUnsortedModel(), TableModelEvent.HEADER_ROW));
     }
 
     return true;
