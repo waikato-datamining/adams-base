@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiObjectExport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -24,6 +24,8 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
+import adams.gui.visualization.debug.objectexport.PlainTextExporter;
+import adams.gui.visualization.debug.objectexport.RenderedPlainTextExporter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +35,6 @@ import java.util.Set;
  * Ancestor for schemes that can export multiple objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiObjectExport
   extends AbstractOptionHandler {
@@ -89,6 +90,34 @@ public abstract class AbstractMultiObjectExport
   }
 
   /**
+   * Prunes the list of exporters to use.
+   * Removes PlainTextExporter in favor of RenderedPlainTextExporter.
+   *
+   * @param exporters	the exporters
+   * @return		the updated list
+   */
+  protected List<AbstractObjectExporter> pruneExporters(List<AbstractObjectExporter> exporters) {
+    int					plain;
+    int					rendered;
+    int					i;
+
+    if (exporters.size() > 1) {
+      plain    = -1;
+      rendered = -1;
+      for (i = 0; i < exporters.size(); i++) {
+        if (exporters.get(i) instanceof PlainTextExporter)
+          plain = i;
+        if (exporters.get(i) instanceof RenderedPlainTextExporter)
+          rendered = i;
+      }
+      if ((plain > -1) && (rendered > -1))
+        exporters.remove(plain);
+    }
+
+    return exporters;
+  }
+
+  /**
    * Determines the exporters to use for the object.
    *
    * @param name	the name of the object
@@ -105,7 +134,7 @@ public abstract class AbstractMultiObjectExport
       errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
       return null;
     }
-    result = exporters;
+    result = pruneExporters(exporters);
 
     return result;
   }

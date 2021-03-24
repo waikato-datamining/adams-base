@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiObjectExportWithPreferredExtensions.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -36,7 +36,6 @@ import java.util.Set;
  * locate an {@link adams.gui.visualization.debug.objectexport.AbstractObjectExporter}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiObjectExportWithPreferredExtensions
   extends AbstractMultiObjectExport {
@@ -115,9 +114,9 @@ public abstract class AbstractMultiObjectExportWithPreferredExtensions
     Set<String> 			preferred;
     String[]				extensions;
 
-    exporters = AbstractObjectExporter.getExporters(obj, new Class[]{SerializableObjectExporter.class});
+    exporters = pruneExporters(AbstractObjectExporter.getExporters(obj, new Class[]{SerializableObjectExporter.class}));
     if (exporters.size() == 0) {
-      exporters = AbstractObjectExporter.getExporters(obj);
+      exporters = pruneExporters(AbstractObjectExporter.getExporters(obj));
       if (exporters.size() == 0) {
         errors.add("Failed to find object exporter for '" + name + "'/" + Utils.classToString(obj));
         return null;
