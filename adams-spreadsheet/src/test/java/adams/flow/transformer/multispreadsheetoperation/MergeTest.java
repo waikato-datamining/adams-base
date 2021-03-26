@@ -14,7 +14,7 @@
  */
 
 /*
- * CommonIDsTest.java
+ * MergeTest.java
  * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.multispreadsheetoperation;
