@@ -14,7 +14,7 @@
  */
 
 /*
- * Difference.java
+ * Sum.java
  * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
  */
 
@@ -29,8 +29,8 @@ import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
- * Computes the difference of the numeric cells between two spreadsheets.<br>
- * The values of the second spreadsheet are subtracted from the first one.<br>
+ * Computes the sum of the numeric cells between two spreadsheets.<br>
+ * The values of the second spreadsheet are added to the first one.<br>
  * If no 'key' columns are defined, the current order of rows is used for comparison.
  * <br><br>
  <!-- globalinfo-end -->
@@ -57,7 +57,7 @@ import java.util.Set;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class Difference
+public class Sum
   extends AbstractIndentifiableRowOperation {
 
   /** for serialization. */
@@ -71,8 +71,8 @@ public class Difference
   @Override
   public String globalInfo() {
     return
-      "Computes the difference of the numeric cells between two spreadsheets.\n"
-        + "The values of the second spreadsheet are subtracted from the first one.\n"
+      "Computes the sum of the numeric cells between two spreadsheets.\n"
+        + "The values of the second spreadsheet are added to the first one.\n"
         + "If no 'key' columns are defined, the current order of rows is used "
         + "for comparison.";
   }
@@ -115,7 +115,7 @@ public class Difference
         result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
       }
       else if (cell1.isNumeric() && cell2.isNumeric()){
-        result.addCell(key).setContent(cell1.toDouble() - cell2.toDouble());
+        result.addCell(key).setContent(cell1.toDouble() + cell2.toDouble());
       }
       else {
         if (cell1.getContent().equals(cell2.getContent()))
