@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -323,6 +323,7 @@ public class PromptUser
     }
 
     enter = new EnterManyValues();
+    enter.setName("Parameters");
     enter.setMessage(m_Message);
     enter.setValues(m_Values);
     enter.setStopFlowIfCanceled(true);
