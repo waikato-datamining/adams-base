@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Revert.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MonitoringDataContainer;
 
 import java.awt.event.ActionEvent;
 
@@ -29,7 +30,6 @@ import java.awt.event.ActionEvent;
  * Reverts the selected dataset (if possible).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Revert
   extends AbstractEditableDataTableAction {
@@ -47,6 +47,43 @@ public class Revert
   }
 
   /**
+   * Checks whether the container got changed or the source has changed.
+   *
+   * @param cont	the container to check
+   * @return		true if changed
+   */
+  protected boolean hasChanged(DataContainer cont) {
+    boolean result;
+
+    result = cont.isModified();
+
+    if (!result && (cont instanceof MonitoringDataContainer))
+      result = ((MonitoringDataContainer) cont).hasSourceChanged();
+
+    return result;
+  }
+
+  /**
+   * Checks whether any selected container can be reverted.
+   *
+   * @return		true if any container can be reverted
+   */
+  protected boolean canRevert() {
+    boolean	result;
+
+    result = false;
+
+    for (DataContainer cont: getSelectedData()) {
+      if (hasChanged(cont) && cont.canReload()) {
+        result = true;
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Invoked when an action occurs.
    *
    * @param e		the event
@@ -54,7 +91,7 @@ public class Revert
   @Override
   protected void doActionPerformed(ActionEvent e) {
     for (DataContainer cont: getSelectedData()) {
-      if (cont.isModified() && cont.canReload()) {
+      if (hasChanged(cont) && cont.canReload()) {
         logMessage("Reverting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
         if (cont.reload()) {
 	  getOwner().getOwner().updateClassAttribute(cont.getData());
@@ -73,6 +110,6 @@ public class Revert
    */
   @Override
   public void update() {
-    setEnabled(!isBusy() && getTable().getSelectedRowCount() > 0);
+    setEnabled(!isBusy() && (getTable().getSelectedRowCount() > 0) && canRevert());
   }
 }

@@ -15,12 +15,14 @@
 
 /*
  * FileContainer.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.io.filechanged.FileChangeMonitor;
+import adams.core.io.filechanged.LastModified;
 import weka.core.Instances;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -33,10 +35,10 @@ import java.util.logging.Level;
  * File-based dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileContainer
-  extends AbstractDataContainer {
+  extends AbstractDataContainer
+  implements MonitoringDataContainer {
 
   private static final long serialVersionUID = 6267905940957451551L;
 
@@ -45,6 +47,9 @@ public class FileContainer
 
   /** the reader used to load the data. */
   protected AbstractFileLoader m_Loader;
+
+  /** the file monitor to use. */
+  protected FileChangeMonitor m_Monitor;
 
   /**
    * Loads the data using the specified loader.
@@ -74,6 +79,8 @@ public class FileContainer
     catch (Exception e) {
       throw new IllegalArgumentException("Failed to load dataset: " + source, e);
     }
+    m_Monitor = new LastModified();
+    m_Monitor.initialize(source);
   }
 
   /**
@@ -93,6 +100,8 @@ public class FileContainer
     catch (Exception e) {
       throw new IllegalArgumentException("Failed to load dataset: " + source, e);
     }
+    m_Monitor = new LastModified();
+    m_Monitor.initialize(source);
   }
 
   /**
@@ -137,6 +146,30 @@ public class FileContainer
       getLogger().log(Level.SEVERE, "Failed to reload: " + m_Source, e);
       return false;
     }
+  }
+
+  /**
+   * Sets whether the data has been modified.
+   *
+   * @param value	true if modified
+   */
+  @Override
+  public void setModified(boolean value) {
+    super.setModified(value);
+    if ((m_Source != null) && m_Source.exists() && m_Source.isFile())
+      m_Monitor.update(m_Source.getAbsoluteFile());
+  }
+
+  /**
+   * Returns true if the source has changed.
+   *
+   * @return		true if changed
+   */
+  public boolean hasSourceChanged() {
+    if ((m_Source != null) && m_Source.exists() && m_Source.isFile())
+      return m_Monitor.hasChanged(m_Source.getAbsoluteFile());
+    else
+      return false;
   }
 
   /**
