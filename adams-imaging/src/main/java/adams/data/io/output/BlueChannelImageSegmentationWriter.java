@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelImageSegmentationWriter.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -24,8 +24,8 @@ import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
 import adams.data.io.input.BlueChannelImageSegmentationReader;
+import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.flow.container.ImageSegmentationContainer;
 
 import java.awt.image.BufferedImage;
@@ -38,7 +38,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BlueChannelImageSegmentationWriter
-  extends AbstractImageSegmentationAnnotationWriter {
+  extends AbstractImageSegmentationAnnotationWriter
+  implements ImageSegmentationAnnotationWriterWithLayerNames {
 
   private static final long serialVersionUID = 3566330074754565825L;
 
@@ -102,7 +103,7 @@ public class BlueChannelImageSegmentationWriter
    * @return the reader, null if none available
    */
   @Override
-  public AbstractImageSegmentationAnnotationReader getCorrespondingReader() {
+  public ImageSegmentationAnnotationReader getCorrespondingReader() {
     return new BlueChannelImageSegmentationReader();
   }
 

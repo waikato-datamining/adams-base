@@ -28,7 +28,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.image.transformer.AbstractBufferedImageTransformer;
 import adams.data.image.transformer.PassThrough;
-import adams.data.io.output.AbstractImageSegmentationAnnotationWriter;
+import adams.data.io.output.ImageSegmentationAnnotationWriter;
 import adams.data.io.output.IndividualImageSegmentationLayerWriter;
 import adams.flow.container.ImageSegmentationContainer;
 
@@ -137,7 +137,7 @@ public class IndividualImageSegmentationLayerReader
    * @return		the writer, null if none available
    */
   @Override
-  public AbstractImageSegmentationAnnotationWriter getCorrespondingWriter() {
+  public ImageSegmentationAnnotationWriter getCorrespondingWriter() {
     return new IndividualImageSegmentationLayerWriter();
   }
 

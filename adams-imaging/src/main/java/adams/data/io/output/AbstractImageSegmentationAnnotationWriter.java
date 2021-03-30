@@ -20,10 +20,9 @@
 
 package adams.data.io.output;
 
-import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
-import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
+import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.flow.container.ImageSegmentationContainer;
 
 /**
@@ -33,7 +32,7 @@ import adams.flow.container.ImageSegmentationContainer;
  */
 public abstract class AbstractImageSegmentationAnnotationWriter
   extends AbstractOptionHandler 
-  implements FileFormatHandler {
+  implements ImageSegmentationAnnotationWriter {
 
   private static final long serialVersionUID = -2475426542124421777L;
 
@@ -42,7 +41,7 @@ public abstract class AbstractImageSegmentationAnnotationWriter
    *
    * @return		the reader, null if none available
    */
-  public abstract AbstractImageSegmentationAnnotationReader getCorrespondingReader();
+  public abstract ImageSegmentationAnnotationReader getCorrespondingReader();
 
   /**
    * Hook method for performing checks before writing the data.

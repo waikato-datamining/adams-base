@@ -22,7 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
+import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.data.io.input.IndividualImageSegmentationLayerReader;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
@@ -99,7 +99,7 @@ public class ImageSegmentationFileReader
   private static final long serialVersionUID = 7466006970025235243L;
 
   /** the image reader to use. */
-  protected AbstractImageSegmentationAnnotationReader m_Reader;
+  protected ImageSegmentationAnnotationReader m_Reader;
 
   /**
    * Returns a string describing the object.
@@ -129,7 +129,7 @@ public class ImageSegmentationFileReader
    *
    * @param value 	the reader
    */
-  public void setReader(AbstractImageSegmentationAnnotationReader value) {
+  public void setReader(ImageSegmentationAnnotationReader value) {
     m_Reader = value;
     reset();
   }
@@ -139,7 +139,7 @@ public class ImageSegmentationFileReader
    *
    * @return 		the reader
    */
-  public AbstractImageSegmentationAnnotationReader getReader() {
+  public ImageSegmentationAnnotationReader getReader() {
     return m_Reader;
   }
 

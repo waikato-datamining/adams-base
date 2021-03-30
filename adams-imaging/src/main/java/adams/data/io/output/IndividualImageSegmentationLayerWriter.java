@@ -24,7 +24,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.AbstractImageSegmentationAnnotationReader;
+import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.data.io.input.IndividualImageSegmentationLayerReader;
 import adams.flow.container.ImageSegmentationContainer;
 import gnu.trove.set.TIntSet;
@@ -112,7 +112,7 @@ public class IndividualImageSegmentationLayerWriter
    * @return		the reader, null if none available
    */
   @Override
-  public AbstractImageSegmentationAnnotationReader getCorrespondingReader() {
+  public ImageSegmentationAnnotationReader getCorrespondingReader() {
     return new IndividualImageSegmentationLayerReader();
   }
 

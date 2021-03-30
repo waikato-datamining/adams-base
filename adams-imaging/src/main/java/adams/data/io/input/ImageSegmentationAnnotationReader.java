@@ -14,27 +14,25 @@
  */
 
 /*
- * AbstractImageSegmentationAnnotationReader.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * ImageSegmentationAnnotationReader.java
+ * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
+import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
-import adams.core.option.AbstractOptionHandler;
+import adams.core.option.OptionHandler;
 import adams.data.io.output.ImageSegmentationAnnotationWriter;
 import adams.flow.container.ImageSegmentationContainer;
 
 /**
- * Ancestor for readers for image segmentation annotations.
+ * Interface for readers for image segmentation annotations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractImageSegmentationAnnotationReader
-  extends AbstractOptionHandler
-  implements ImageSegmentationAnnotationReader {
-
-  private static final long serialVersionUID = -2475426542124421777L;
+public interface ImageSegmentationAnnotationReader
+  extends OptionHandler, FileFormatHandler {
 
   /**
    * Returns, if available, the corresponding writer.
@@ -44,38 +42,10 @@ public abstract class AbstractImageSegmentationAnnotationReader
   public abstract ImageSegmentationAnnotationWriter getCorrespondingWriter();
 
   /**
-   * Hook method for performing checks before reading the data.
-   *
-   * @param file	the file to check
-   * @return		null if no errors, otherwise error message
-   */
-  protected String check(PlaceholderFile file) {
-    if (file == null)
-      return "No file provided!";
-    return null;
-  }
-
-  /**
    * Reads the image segmentation annotations.
    *
    * @param file	the file to read from
    * @return		the annotations
    */
-  protected abstract ImageSegmentationContainer doRead(PlaceholderFile file);
-
-  /**
-   * Reads the image segmentation annotations.
-   *
-   * @param file	the file to read from
-   * @return		the annotations
-   */
-  public ImageSegmentationContainer read(PlaceholderFile file) {
-    String	msg;
-
-    msg = check(file);
-    if (msg != null)
-      throw new IllegalStateException("Failed to read annotations from: " + file + "\n" + msg);
-
-    return doRead(file);
-  }
+  public ImageSegmentationContainer read(PlaceholderFile file);
 }

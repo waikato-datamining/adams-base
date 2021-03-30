@@ -21,7 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.data.io.output.AbstractImageSegmentationAnnotationWriter;
+import adams.data.io.output.ImageSegmentationAnnotationWriter;
 import adams.data.io.output.IndividualImageSegmentationLayerWriter;
 import adams.flow.container.ImageSegmentationContainer;
 
@@ -97,7 +97,7 @@ public class ImageSegmentationFileWriter
   private static final long serialVersionUID = 7466006970025235243L;
 
   /** the image writer to use. */
-  protected AbstractImageSegmentationAnnotationWriter m_Writer;
+  protected ImageSegmentationAnnotationWriter m_Writer;
 
   /**
    * Returns a string describing the object.
@@ -138,7 +138,7 @@ public class ImageSegmentationFileWriter
    *
    * @param value 	the writer
    */
-  public void setWriter(AbstractImageSegmentationAnnotationWriter value) {
+  public void setWriter(ImageSegmentationAnnotationWriter value) {
     m_Writer = value;
     reset();
   }
@@ -148,7 +148,7 @@ public class ImageSegmentationFileWriter
    *
    * @return 		the writer
    */
-  public AbstractImageSegmentationAnnotationWriter getWriter() {
+  public ImageSegmentationAnnotationWriter getWriter() {
     return m_Writer;
   }
 
