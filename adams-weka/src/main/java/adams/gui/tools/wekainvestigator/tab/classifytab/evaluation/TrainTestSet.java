@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSet.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -53,7 +53,6 @@ import java.util.Set;
  * Uses dedicated train/test sets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrainTestSet
   extends AbstractClassifierEvaluation {
@@ -249,7 +248,8 @@ public class TrainTestSet
     runInfo.add("Classifier", OptionUtils.getCommandLine(classifier));
     runInfo.add("Train ID", trainCont.getID());
     runInfo.add("Test ID", testCont.getID());
-    runInfo.add("Relation", train.relationName());
+    runInfo.add("Relation (train)", train.relationName());
+    runInfo.add("Relation (test)", test.relationName());
     runInfo.add("# Attributes", train.numAttributes());
     runInfo.add("# Instances (train)", train.numInstances());
     runInfo.add("# Instances (test)", test.numInstances());
