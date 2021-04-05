@@ -15,7 +15,7 @@
 
 /*
  * GrayOrIndexedImageHandler.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -24,7 +24,6 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.GrayOrIndexedColorizer;
 import adams.data.io.input.ApacheCommonsImageReader;
-import adams.data.io.input.JAIImageReader;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.image.ImagePanel;
@@ -133,7 +132,7 @@ public class GrayOrIndexedImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return new ApacheCommonsImageReader().getFormatExtensions();
   }
 
   /**
