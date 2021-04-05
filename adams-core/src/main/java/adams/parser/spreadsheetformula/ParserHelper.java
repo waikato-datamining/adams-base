@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ParserHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetformula;
 
@@ -36,7 +36,6 @@ import java.util.List;
  * Helper class for spreadsheet formulas.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ParserHelper
   extends adams.parser.ParserHelper {
@@ -97,6 +96,31 @@ public class ParserHelper
       }
     }
     
+    return result;
+  }
+
+  /**
+   * Returns the native value of the specified cell.
+   *
+   * @param loc 	the cell location
+   * @return 		the value, NaN if not found or missing
+   * @throws Exception 	if cell location cannot be parsed
+   */
+  public Object toNative(String loc) throws Exception {
+    Object 	result;
+    Cell 	cell;
+    int[] 	pos;
+
+    result = Double.NaN;
+    pos    = SpreadSheetUtils.getCellLocation(loc);
+    if (m_Sheet != null) {
+      if (m_Sheet.hasCell(pos[0], pos[1])) {
+        cell = m_Sheet.getCell(pos[0], pos[1]);
+        if (!cell.isMissing())
+          result = cell.getNative();
+      }
+    }
+
     return result;
   }
 
