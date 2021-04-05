@@ -22,11 +22,15 @@ package adams.data.image.transformer;
 
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
+import adams.data.report.DataType;
+import adams.data.report.Field;
+import adams.gui.core.ColorHelper;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 /**
@@ -136,6 +140,7 @@ public class BlueChannelColorizer
     TIntIntMap 			map;
     BufferedImage		oldImg;
     BufferedImage		newImg;
+    Field			field;
 
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
@@ -154,8 +159,12 @@ public class BlueChannelColorizer
     // create lookup
     m_ColorProvider.resetColors();
     map = new TIntIntHashMap();
-    for (i = 0; i <= max; i++)
+    for (i = 0; i <= max; i++) {
       map.put(i, m_ColorProvider.next().getRGB());
+      field = new Field("Color-" + i, DataType.STRING);
+      result[0].getReport().addField(field);
+      result[0].getReport().setValue(field, ColorHelper.toHex(new Color(map.get(i))));
+    }
     if (isLoggingEnabled())
       getLogger().info("color map: " + map);
 

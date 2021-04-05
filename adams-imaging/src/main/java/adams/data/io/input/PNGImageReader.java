@@ -23,6 +23,9 @@ package adams.data.io.input;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
+import adams.data.report.DataType;
+import adams.data.report.Field;
+import adams.gui.core.ColorHelper;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import ar.com.hjg.pngj.IImageLine;
@@ -30,6 +33,7 @@ import ar.com.hjg.pngj.ImageLineByte;
 import ar.com.hjg.pngj.ImageLineInt;
 import ar.com.hjg.pngj.PngReader;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
@@ -176,6 +180,7 @@ public class PNGImageReader
     ImageLineInt 		lineInt;
     int				color;
     int[]			pixels;
+    Field 			field;
 
     result = new BufferedImageContainer();
 
@@ -267,6 +272,14 @@ public class PNGImageReader
       }
       image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
       result.setImage(image);
+      if (m_LastColor > -1) {
+        for (i = 0; i <= m_LastColor; i++) {
+	  field = new Field("Color-" + i, DataType.STRING);
+	  result.getReport().addField(field);
+	  result.getReport().setValue(field, ColorHelper.toHex(new Color(m_Colors.get(i))));
+	}
+
+      }
     }
     catch (Exception e) {
       result = null;
