@@ -15,12 +15,14 @@
 
 /*
  * SimpleArffSaver.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.core.converters;
 
+import adams.core.base.BaseCharset;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -36,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
@@ -59,6 +62,9 @@ import java.util.zip.GZIPOutputStream;
  *  The maximum number of digits to print after the decimal
  *  place for numeric values (default: 6)</pre>
  * 
+ * <pre> -encoding &lt;charset&gt;
+ *  Character set to use for writing the file.</pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -66,7 +72,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class SimpleArffSaver
   extends AbstractFileSaver
-  implements BatchConverter, WeightedInstancesHandler {
+  implements BatchConverter, WeightedInstancesHandler, EncodingSupporter {
 
   /** for serialization */
   private static final long serialVersionUID = -6155802217430401683L;
@@ -79,6 +85,9 @@ public class SimpleArffSaver
 
   /** Max number of decimal places for numeric values */
   protected int m_MaxDecimalPlaces = DEFAULT_MAX_DECIMAL_PLACES;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding = new BaseCharset();
 
   /**
    * Constructor
@@ -118,6 +127,10 @@ public class SimpleArffSaver
 	+ "\tplace for numeric values (default: " + DEFAULT_MAX_DECIMAL_PLACES + ")",
       "decimal", 1, "-decimal <num>"));
 
+    result.add(new Option(
+      "\tCharacter set to use for writing the file.",
+      "encoding", 1, "-encoding <charset>"));
+
     return result.elements();
   }
 
@@ -127,6 +140,7 @@ public class SimpleArffSaver
 
     m_OutputFile       = null;
     m_MaxDecimalPlaces = DEFAULT_MAX_DECIMAL_PLACES;
+    m_Encoding         = new BaseCharset();
   }
 
   /**
@@ -144,6 +158,8 @@ public class SimpleArffSaver
 
     result.add("-decimal");
     result.add("" + getMaxDecimalPlaces());
+    result.add("-encoding");
+    result.add(getEncoding().stringValue());
 
     options = super.getOptions();
     for (i = 0; i < options.length; i++)
@@ -167,6 +183,16 @@ public class SimpleArffSaver
       setMaxDecimalPlaces(Integer.parseInt(tmpStr));
     else
       setMaxDecimalPlaces(DEFAULT_MAX_DECIMAL_PLACES);
+
+    tmpStr = weka.core.Utils.getOption("encoding", options);
+    if (tmpStr.isEmpty()) {
+      setEncoding(new BaseCharset());
+    }
+    else {
+      if (!new BaseCharset().isValid(tmpStr))
+        throw new IllegalArgumentException("Invalid file encoding: " + tmpStr);
+      setEncoding(new BaseCharset(tmpStr));
+    }
 
     super.setOptions(options);
   }
@@ -198,6 +224,34 @@ public class SimpleArffSaver
   public String maxDecimalPlacesTipText() {
     return "The maximum number of digits to print after the decimal "
       + "point for numeric values";
+  }
+
+  /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when reading the file, use empty string for default.";
   }
 
   /**
@@ -278,6 +332,7 @@ public class SimpleArffSaver
     BufferedWriter		bw;
     Instances			data;
     int				i;
+    Charset 			charset;
 
     if (getInstances() == null)
       throw new IOException("No instances to save!");
@@ -291,20 +346,21 @@ public class SimpleArffSaver
     setRetrieval(BATCH);
     setWriteMode(WRITE);
 
-    fos  = null;
-    gos  = null;
-    ow   = null;
-    bw   = null;
-    data = getInstances();
+    fos     = null;
+    gos     = null;
+    ow      = null;
+    bw      = null;
+    data    = getInstances();
+    charset = m_Encoding.charsetValue();
     try {
       fos = new FileOutputStream(m_OutputFile.getAbsoluteFile());
       if (m_OutputFile.getName().endsWith(".gz")) {
 	gos = new GZIPOutputStream(fos);
-	ow  = new OutputStreamWriter(gos);
+	ow  = new OutputStreamWriter(gos, charset.newEncoder());
 	bw  = new BufferedWriter(ow);
       }
       else {
-	ow  = new OutputStreamWriter(fos);
+	ow  = new OutputStreamWriter(fos, charset.newEncoder());
 	bw  = new BufferedWriter(ow);
       }
 

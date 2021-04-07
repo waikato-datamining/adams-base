@@ -15,12 +15,14 @@
 
 /*
  * SimpleArffLoader.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package weka.core.converters;
 
 import adams.core.Utils;
+import adams.core.base.BaseCharset;
+import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
 import adams.data.DateFormatString;
 import adams.data.spreadsheet.SpreadSheetUtils;
@@ -38,9 +40,9 @@ import weka.core.WeightedInstancesHandler;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -57,7 +59,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class SimpleArffLoader
   extends AbstractFileLoader
-  implements WeightedInstancesHandler, OptionHandler {
+  implements WeightedInstancesHandler, OptionHandler, EncodingSupporter {
 
   private static final long serialVersionUID = 8692708185900983930L;
 
@@ -72,6 +74,9 @@ public class SimpleArffLoader
 
   /** whether to force compression. */
   protected boolean m_ForceCompression;
+
+  /** the encoding to use. */
+  protected BaseCharset m_Encoding = new BaseCharset();
 
   /**
    * Initializes the loader.
@@ -118,6 +123,34 @@ public class SimpleArffLoader
   }
 
   /**
+   * Sets the encoding to use.
+   *
+   * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public void setEncoding(BaseCharset value) {
+    m_Encoding = value;
+  }
+
+  /**
+   * Returns the encoding to use.
+   *
+   * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
+   */
+  public BaseCharset getEncoding() {
+    return m_Encoding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String encodingTipText() {
+    return "The type of encoding to use when reading the file, use empty string for default.";
+  }
+
+  /**
    * Returns an enumeration of all the available options..
    *
    * @return an enumeration of all available options.
@@ -126,6 +159,7 @@ public class SimpleArffLoader
   public Enumeration<Option> listOptions() {
     Vector<Option> result = new Vector<>();
     result.add(new Option("\tTreat file as gzip-compressed.", "force-compression", 0, "-force-compression"));
+    result.add(new Option("\tCharacter set to use for reading the file.", "encoding", 1, "-encoding <charset>"));
     return result.elements();
   }
 
@@ -139,6 +173,8 @@ public class SimpleArffLoader
     List<String> result = new ArrayList<>();
     if (getForceCompression())
       result.add("-force-compression");
+    result.add("-encoding");
+    result.add(getEncoding().stringValue());
     return result.toArray(new String[result.size()]);
   }
 
@@ -152,7 +188,19 @@ public class SimpleArffLoader
    */
   @Override
   public void setOptions(String[] options) throws Exception {
+    String	tmpStr;
+
     setForceCompression(weka.core.Utils.getFlag("force-compression", options));
+
+    tmpStr = weka.core.Utils.getOption("encoding", options);
+    if (tmpStr.isEmpty()) {
+      setEncoding(new BaseCharset());
+    }
+    else {
+      if (!new BaseCharset().isValid(tmpStr))
+        throw new IllegalArgumentException("Invalid file encoding: " + tmpStr);
+      setEncoding(new BaseCharset(tmpStr));
+    }
   }
 
   /**
@@ -640,10 +688,11 @@ public class SimpleArffLoader
   @Override
   public Instances getDataSet() throws IOException {
     Instances		result;
-    FileReader		freader;
     BufferedReader	breader;
     FileInputStream	fis;
     GZIPInputStream	gis;
+    InputStreamReader	isr;
+    Charset		charset;
 
     if (m_Data != null)
       return m_Data;
@@ -653,19 +702,22 @@ public class SimpleArffLoader
     if (m_sourceFile.isDirectory())
       throw new IOException("File points to directory: " + m_sourceFile);
 
-    freader = null;
     breader = null;
+    isr     = null;
     gis     = null;
     fis     = null;
+    charset = m_Encoding.charsetValue();
     try {
       if (m_sourceFile.getName().endsWith(".gz") || m_ForceCompression) {
-	fis     = new FileInputStream(m_sourceFile);
+	fis     = new FileInputStream(m_sourceFile.getAbsolutePath());
 	gis     = new GZIPInputStream(fis);
-	breader = new BufferedReader(new InputStreamReader(gis));
+	isr     = new InputStreamReader(gis, charset.newDecoder());
+	breader = new BufferedReader(isr);
       }
       else {
-        freader = new FileReader(m_sourceFile.getAbsolutePath());
-        breader = new BufferedReader(freader);
+	fis     = new FileInputStream(m_sourceFile.getAbsolutePath());
+	isr     = new InputStreamReader(fis, charset.newDecoder());
+        breader = new BufferedReader(isr);
       }
       result  = read(breader);
     }
@@ -676,7 +728,7 @@ public class SimpleArffLoader
     }
     finally {
       FileUtils.closeQuietly(breader);
-      FileUtils.closeQuietly(freader);
+      FileUtils.closeQuietly(isr);
       FileUtils.closeQuietly(gis);
       FileUtils.closeQuietly(fis);
     }
