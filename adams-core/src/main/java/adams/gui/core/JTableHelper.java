@@ -15,7 +15,7 @@
 
 /*
  * JTableHelper.java
- * Copyright (C) 2005-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2021 University of Waikato, Hamilton, New Zealand
  * Copyright http://fopps.sourceforge.net/
  */
 
@@ -46,7 +46,6 @@ import java.util.logging.Level;
  * A helper class for JTable, e.g. calculating the optimal colwidth.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.gui.JTableHelper
  */
 @MixedCopyright(
@@ -62,6 +61,9 @@ public class JTableHelper {
 
   /** the maximum number of rows to use for calculation. */
   public final static int MAX_ROWS = 100;
+
+  /** the maximum number of characters before skipping optimal column width. */
+  public final static int MAX_CHARS = 1000;
 
   /** the table to work with. */
   protected JTable m_Table;
@@ -141,6 +143,8 @@ public class JTableHelper {
     int		row;
     int		dec;
     Component 	c;
+    Object	cell;
+    String	cellStr;
 
     result = calcHeaderWidthBounded(table, col, max);
     if (result == -1)
@@ -157,6 +161,13 @@ public class JTableHelper {
     dec      = (int) Math.ceil((double) rowCount / (double) MAX_ROWS);
     try {
       for (row = rowCount - 1; row >= 0; row -= dec) {
+        cell = table.getValueAt(row, col);
+        if (cell instanceof String)
+          cellStr = (String) cell;
+	else
+	  cellStr = "" + cell;
+        if (cellStr.length() > MAX_CHARS)
+          continue;
         c = table.prepareRenderer(
             table.getCellRenderer(row, col),
             row, col);
@@ -236,6 +247,9 @@ public class JTableHelper {
     TableCellRenderer h = column.getHeaderRenderer();
     if (h == null) h = defaultHeaderRenderer;
     if (h != null) {
+      String cellStr = "" + column.getHeaderValue();
+      if (cellStr.length() > MAX_CHARS)
+	return -1;
       // Not explicitly impossible
       Component c = h.getTableCellRendererComponent(
           table,
