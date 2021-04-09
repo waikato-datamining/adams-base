@@ -43,7 +43,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -96,12 +95,6 @@ public class InstancesTableModel
   protected boolean m_ShowAttributeWeights;
 
   /**
-   * for caching long relational and string values that get processed for
-   * display.
-   */
-  protected Hashtable<String, String> m_Cache;
-
-  /**
    * performs some initialization
    */
   public InstancesTableModel() {
@@ -118,7 +111,6 @@ public class InstancesTableModel
     m_ShowAttributeIndex   = false;
     m_ShowWeightsColumn    = false;
     m_ShowAttributeWeights = false;
-    m_Cache                = new Hashtable<>();
   }
 
   /**
@@ -226,7 +218,6 @@ public class InstancesTableModel
    */
   public void setInstances(Instances data) {
     m_Data = data;
-    m_Cache.clear();
     fireTableDataChanged();
   }
 
@@ -314,10 +305,10 @@ public class InstancesTableModel
 
     if ((columnIndex >= offset) && (columnIndex < getColumnCount())) {
       if (!m_IgnoreChanges)
-	addUndoPoint();
+        addUndoPoint();
       m_Data.deleteAttributeAt(columnIndex - offset);
       if (notify)
-	notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
+        notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
     }
   }
 
@@ -381,33 +372,33 @@ public class InstancesTableModel
       addUndoPoint();
 
       try {
-	// build order string (1-based!)
-	order = new StringBuilder();
-	for (i = 1; i < m_Data.numAttributes() + 1; i++) {
-	  // skip new class
-	  if (i + offset - 1 == columnIndex)
-	    continue;
+        // build order string (1-based!)
+        order = new StringBuilder();
+        for (i = 1; i < m_Data.numAttributes() + 1; i++) {
+          // skip new class
+          if (i + offset - 1 == columnIndex)
+            continue;
 
-	  if (order.length() != 0)
-	    order.append(",");
-	  order.append(Integer.toString(i));
-	}
-	if (order.length() != 0)
-	  order.append(",");
-	order.append(Integer.toString(columnIndex - offset + 1));
+          if (order.length() != 0)
+            order.append(",");
+          order.append(Integer.toString(i));
+        }
+        if (order.length() != 0)
+          order.append(",");
+        order.append(Integer.toString(columnIndex - offset + 1));
 
-	// process data
-	reorder = new Reorder();
-	reorder.setAttributeIndices(order.toString());
-	reorder.setInputFormat(m_Data);
-	m_Data = Filter.useFilter(m_Data, reorder);
+        // process data
+        reorder = new Reorder();
+        reorder.setAttributeIndices(order.toString());
+        reorder.setInputFormat(m_Data);
+        m_Data = Filter.useFilter(m_Data, reorder);
 
-	// set class index
-	m_Data.setClassIndex(m_Data.numAttributes() - 1);
+        // set class index
+        m_Data.setClassIndex(m_Data.numAttributes() - 1);
       }
       catch (Exception e) {
-	ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to apply reorder filter!", e);
-	undo();
+        ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to apply reorder filter!", e);
+        undo();
       }
 
       notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
@@ -432,10 +423,10 @@ public class InstancesTableModel
   public void deleteInstanceAt(int rowIndex, boolean notify) {
     if ((rowIndex >= 0) && (rowIndex < getRowCount())) {
       if (!m_IgnoreChanges)
-	addUndoPoint();
+        addUndoPoint();
       m_Data.delete(rowIndex);
       if (notify)
-	notifyListener(new TableModelEvent(this, rowIndex, rowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
+        notifyListener(new TableModelEvent(this, rowIndex, rowIndex, TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE));
     }
   }
 
@@ -453,8 +444,8 @@ public class InstancesTableModel
     // instance in the dataset.
     for (int i = 0; i < m_Data.numAttributes(); i++) {
       if (m_Data.attribute(i).isString()
-	|| m_Data.attribute(i).isRelationValued()) {
-	vals[i] = Utils.missingValue();
+        || m_Data.attribute(i).isRelationValued()) {
+        vals[i] = Utils.missingValue();
       }
     }
     Instance toAdd = new DenseInstance(1.0, vals);
@@ -464,8 +455,8 @@ public class InstancesTableModel
       m_Data.add(index, toAdd);
     if (notify) {
       notifyListener(new TableModelEvent(this, m_Data.numInstances() - 1,
-	m_Data.numInstances() - 1, TableModelEvent.ALL_COLUMNS,
-	TableModelEvent.INSERT));
+        m_Data.numInstances() - 1, TableModelEvent.ALL_COLUMNS,
+        TableModelEvent.INSERT));
     }
   }
 
@@ -527,23 +518,23 @@ public class InstancesTableModel
       addUndoPoint();
       m_Data.stableSort(columnIndex - offset);
       if (!ascending) {
-	Instances reversedData = new Instances(m_Data, m_Data.numInstances());
-	int i = m_Data.numInstances();
-	while (i > 0) {
-	  i--;
-	  int equalCount = 1;
-	  while ((i > 0)
-	    && (m_Data.instance(i).value(columnIndex - offset) == m_Data.instance(i - 1).value(columnIndex - offset))) {
-	    equalCount++;
-	    i--;
-	  }
-	  int j = 0;
-	  while (j < equalCount) {
-	    reversedData.add(m_Data.instance(i + j));
-	    j++;
-	  }
-	}
-	m_Data = reversedData;
+        Instances reversedData = new Instances(m_Data, m_Data.numInstances());
+        int i = m_Data.numInstances();
+        while (i > 0) {
+          i--;
+          int equalCount = 1;
+          while ((i > 0)
+            && (m_Data.instance(i).value(columnIndex - offset) == m_Data.instance(i - 1).value(columnIndex - offset))) {
+            equalCount++;
+            i--;
+          }
+          int j = 0;
+          while (j < equalCount) {
+            reversedData.add(m_Data.instance(i + j));
+            j++;
+          }
+        }
+        m_Data = reversedData;
       }
       notifyListener(new TableModelEvent(this));
     }
@@ -567,8 +558,8 @@ public class InstancesTableModel
 
     for (i = 0; i < m_Data.numAttributes(); i++) {
       if (m_Data.attribute(i).name().equals(name)) {
-	result = i + offset;
-	break;
+        result = i + offset;
+        break;
       }
     }
 
@@ -590,13 +581,13 @@ public class InstancesTableModel
 
     if ((columnIndex >= 0) && (columnIndex < getColumnCount())) {
       if (columnIndex == 0)
-	result = Integer.class;
+        result = Integer.class;
       else if ((m_ShowWeightsColumn) && (columnIndex == 1))
         result = Double.class;
       else if (getType(columnIndex) == Attribute.NUMERIC)
-	result = Double.class;
+        result = Double.class;
       else
-	result = String.class; // otherwise no input of "?"!!!
+        result = String.class; // otherwise no input of "?"!!!
     }
 
     return result;
@@ -658,55 +649,55 @@ public class InstancesTableModel
 
     if ((columnIndex >= 0) && (columnIndex < getColumnCount())) {
       if (columnIndex == 0) {
-	result =
-	  "<html><center>No.<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
+        result =
+          "<html><center>No.<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
       }
       else if ((columnIndex == 1) && m_ShowWeightsColumn) {
-	result =
-	  "<html><center>Weight<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
+        result =
+          "<html><center>Weight<br><font size=\"-2\">&nbsp;</font>" + (m_ShowAttributeWeights ? "<br>&nbsp;" : "") + "</center></html>";
       }
       else {
-	if (m_Data != null) {
-	  if ((columnIndex - offset < m_Data.numAttributes())) {
-	    result = "<html><center>";
+        if (m_Data != null) {
+          if ((columnIndex - offset < m_Data.numAttributes())) {
+            result = "<html><center>";
 
-	    // index
-	    if (m_ShowAttributeIndex)
-	      result += (columnIndex - offset + 1) + ":";
+            // index
+            if (m_ShowAttributeIndex)
+              result += (columnIndex - offset + 1) + ":";
 
-	    // name
-	    if (isClassIndex(columnIndex))
-	      result += "<b>" + m_Data.attribute(columnIndex - offset).name() + "</b>";
-	    else
-	      result += m_Data.attribute(columnIndex - offset).name();
+            // name
+            if (isClassIndex(columnIndex))
+              result += "<b>" + m_Data.attribute(columnIndex - offset).name() + "</b>";
+            else
+              result += m_Data.attribute(columnIndex - offset).name();
 
-	    // attribute type
-	    switch (getType(columnIndex)) {
-	      case Attribute.DATE:
-		result += "<br><font size=\"-2\">Date</font>";
-		break;
-	      case Attribute.NOMINAL:
-		result += "<br><font size=\"-2\">Nominal</font>";
-		break;
-	      case Attribute.STRING:
-		result += "<br><font size=\"-2\">String</font>";
-		break;
-	      case Attribute.NUMERIC:
-		result += "<br><font size=\"-2\">Numeric</font>";
-		break;
-	      case Attribute.RELATIONAL:
-		result += "<br><font size=\"-2\">Relational</font>";
-		break;
-	      default:
-		result += "<br><font size=\"-2\">???</font>";
-	    }
+            // attribute type
+            switch (getType(columnIndex)) {
+              case Attribute.DATE:
+                result += "<br><font size=\"-2\">Date</font>";
+                break;
+              case Attribute.NOMINAL:
+                result += "<br><font size=\"-2\">Nominal</font>";
+                break;
+              case Attribute.STRING:
+                result += "<br><font size=\"-2\">String</font>";
+                break;
+              case Attribute.NUMERIC:
+                result += "<br><font size=\"-2\">Numeric</font>";
+                break;
+              case Attribute.RELATIONAL:
+                result += "<br><font size=\"-2\">Relational</font>";
+                break;
+              default:
+                result += "<br><font size=\"-2\">???</font>";
+            }
 
-	    if (m_ShowAttributeWeights)
-	      result += "<br><font size=\"-2\">" + Utils.doubleToString(m_Data.attribute(columnIndex - offset).weight(), 3) + "</font>";
+            if (m_ShowAttributeWeights)
+              result += "<br><font size=\"-2\">" + Utils.doubleToString(m_Data.attribute(columnIndex - offset).weight(), 3) + "</font>";
 
-	    result += "</center></html>";
-	  }
-	}
+            result += "</center></html>";
+          }
+        }
       }
     }
 
@@ -785,13 +776,9 @@ public class InstancesTableModel
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
     Object 	result;
-    String 	tmp;
-    String 	key;
-    boolean 	modified;
     int		offset;
 
     result = null;
-    key    = rowIndex + "-" + columnIndex;
     offset = 1;
     if (m_ShowWeightsColumn)
       offset++;
@@ -799,66 +786,32 @@ public class InstancesTableModel
     if ((rowIndex >= 0) && (rowIndex < getRowCount()) && (columnIndex >= 0)
       && (columnIndex < getColumnCount())) {
       if (columnIndex == 0) {
-	result = rowIndex + 1;
+        result = rowIndex + 1;
       }
       else if (m_ShowWeightsColumn && (columnIndex == 1)) {
         result = m_Data.instance(rowIndex).weight();
       }
       else {
-	if (isMissingAt(rowIndex, columnIndex)) {
-	  result = null;
-	}
-	else {
-	  if (m_Cache.containsKey(key)) {
-	    result = m_Cache.get(key);
-	  }
-	  else {
-	    switch (getType(columnIndex)) {
-	      case Attribute.DATE:
-	      case Attribute.NOMINAL:
-	      case Attribute.STRING:
-	      case Attribute.RELATIONAL:
-		result = m_Data.instance(rowIndex).stringValue(columnIndex - offset);
-		break;
-	      case Attribute.NUMERIC:
-		result = m_Data.instance(rowIndex).value(columnIndex - offset);
-		break;
-	      default:
-		result = "-can't display-";
-	    }
+        if (!isMissingAt(rowIndex, columnIndex)) {
+          switch (getType(columnIndex)) {
+            case Attribute.DATE:
+            case Attribute.NOMINAL:
+            case Attribute.STRING:
+            case Attribute.RELATIONAL:
+              result = m_Data.instance(rowIndex).stringValue(columnIndex - offset);
+              break;
+            case Attribute.NUMERIC:
+              result = m_Data.instance(rowIndex).value(columnIndex - offset);
+              break;
+            default:
+              result = "-can't display-";
+          }
 
-	    if (getType(columnIndex) != Attribute.NUMERIC) {
-	      if (result != null) {
-		tmp = result.toString();
-		modified = false;
-		// fix html tags, otherwise Java parser hangs
-		if ((tmp.indexOf('<') > -1) || (tmp.indexOf('>') > -1)) {
-		  tmp = tmp.replace("<", "(");
-		  tmp = tmp.replace(">", ")");
-		  modified = true;
-		}
-		// does it contain "\n" or "\r"? -> replace with red html tag
-		if (tmp.contains("\n") || tmp.contains("\r")) {
-		  tmp =
-		    tmp.replaceAll("\\r\\n",
-		      "<font color=\"red\"><b>\\\\r\\\\n</b></font>");
-		  tmp =
-		    tmp.replaceAll("\\r",
-		      "<font color=\"red\"><b>\\\\r</b></font>");
-		  tmp =
-		    tmp.replaceAll("\\n",
-		      "<font color=\"red\"><b>\\\\n</b></font>");
-		  tmp = "<html>" + tmp + "</html>";
-		  modified = true;
-		}
-		result = tmp;
-		if (modified) {
-		  m_Cache.put(key, tmp);
-		}
-	      }
-	    }
-	  }
-	}
+          if (getType(columnIndex) != Attribute.NUMERIC) {
+            if (result != null)
+              result = result.toString();
+          }
+        }
       }
     }
 
@@ -941,45 +894,45 @@ public class InstancesTableModel
       tmp = aValue.toString();
 
       switch (type) {
-	case Attribute.DATE:
-	  try {
-	    att.parseDate(tmp);
-	    inst.setValue(index, att.parseDate(tmp));
-	  }
-	  catch (Exception e) {
-	    // ignore
-	  }
-	  break;
+        case Attribute.DATE:
+          try {
+            att.parseDate(tmp);
+            inst.setValue(index, att.parseDate(tmp));
+          }
+          catch (Exception e) {
+            // ignore
+          }
+          break;
 
-	case Attribute.NOMINAL:
-	  if (att.indexOfValue(tmp) > -1)
-	    inst.setValue(index, att.indexOfValue(tmp));
-	  break;
+        case Attribute.NOMINAL:
+          if (att.indexOfValue(tmp) > -1)
+            inst.setValue(index, att.indexOfValue(tmp));
+          break;
 
-	case Attribute.STRING:
-	  inst.setValue(index, tmp);
-	  break;
+        case Attribute.STRING:
+          inst.setValue(index, tmp);
+          break;
 
-	case Attribute.NUMERIC:
-	  try {
-	    inst.setValue(index, Double.parseDouble(tmp));
-	  }
-	  catch (Exception e) {
-	    // ignore
-	  }
-	  break;
+        case Attribute.NUMERIC:
+          try {
+            inst.setValue(index, Double.parseDouble(tmp));
+          }
+          catch (Exception e) {
+            // ignore
+          }
+          break;
 
-	case Attribute.RELATIONAL:
-	  try {
-	    inst.setValue(index, inst.attribute(index).addRelation((Instances) aValue));
-	  }
-	  catch (Exception e) {
-	    // ignore
-	  }
-	  break;
+        case Attribute.RELATIONAL:
+          try {
+            inst.setValue(index, inst.attribute(index).addRelation((Instances) aValue));
+          }
+          catch (Exception e) {
+            // ignore
+          }
+          break;
 
-	default:
-	  throw new IllegalArgumentException("Unsupported Attribute type: " + type + "!");
+        default:
+          throw new IllegalArgumentException("Unsupported Attribute type: " + type + "!");
       }
     }
 
@@ -1067,24 +1020,24 @@ public class InstancesTableModel
 
     if (canUndo()) {
       if (useUndoHandler()) {
-	m_UndoHandler.undo();
+        m_UndoHandler.undo();
       }
       else {
-	// load file
-	tempFile = m_UndoList.get(m_UndoList.size() - 1);
-	try {
-	  inst = (Instances) SerializationHelper.read(tempFile.getAbsolutePath());
-	  setInstances(inst);
-	  notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
-	  notifyListener(new TableModelEvent(this));
-	}
-	catch (Exception e) {
-	  ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to perform undo!", e);
-	}
-	tempFile.delete();
+        // load file
+        tempFile = m_UndoList.get(m_UndoList.size() - 1);
+        try {
+          inst = (Instances) SerializationHelper.read(tempFile.getAbsolutePath());
+          setInstances(inst);
+          notifyListener(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
+          notifyListener(new TableModelEvent(this));
+        }
+        catch (Exception e) {
+          ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to perform undo!", e);
+        }
+        tempFile.delete();
 
-	// remove from undo
-	m_UndoList.remove(m_UndoList.size() - 1);
+        // remove from undo
+        m_UndoList.remove(m_UndoList.size() - 1);
       }
     }
   }
