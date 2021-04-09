@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataGenerator.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.source;
@@ -33,7 +33,6 @@ import java.awt.event.ActionEvent;
  * For generating data using a data generator.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataGenerator
   extends AbstractSource {
@@ -70,7 +69,7 @@ public class DataGenerator
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Data generator");
-    dialog.setEditor(new weka.gui.GenericObjectEditor(true));
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(weka.datagenerators.DataGenerator.class);
     dialog.setCurrent(m_Generator);
     dialog.pack();
