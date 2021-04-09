@@ -197,6 +197,10 @@ weka.classifiers.SingleClassifierEnhancer=\
   weka.classifiers.rules,\
   weka.classifiers.trees
 
+# WEKA loaders
+weka.core.converters.Loader=\
+  weka.core.converters
+
 # WEKA file loaders
 weka.core.converters.AbstractFileLoader=\
   weka.core.converters
