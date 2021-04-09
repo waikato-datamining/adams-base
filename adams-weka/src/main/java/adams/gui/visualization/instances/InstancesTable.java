@@ -134,6 +134,13 @@ public class InstancesTable
   }
 
   /**
+   * Can be called after the layout changed.
+   */
+  protected void afterTableLayoutChanged() {
+    setOptimalColumnWidth();
+  }
+
+  /**
    * Sets the undo handler to use.
    *
    * @param value	the handler, null if to turn off
@@ -196,7 +203,7 @@ public class InstancesTable
   @Override
   public void undo() {
     ((InstancesTableModel) getUnsortedModel()).undo();
-    setOptimalColumnWidth();
+    afterTableLayoutChanged();
     notifyChangeListeners();
   }
 
@@ -379,7 +386,7 @@ public class InstancesTable
 	InstancesTable.this, "Please enter new name", getInstances().attribute(state.selCol).name());
       if (newName != null) {
 	instModel.renameAttributeAt(state.actCol, newName);
-	setOptimalColumnWidth();
+	afterTableLayoutChanged();
 	notifyChangeListeners();
       }
     });
@@ -390,7 +397,7 @@ public class InstancesTable
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(state.actCol).name() + "'?");
       if (retVal == ApprovalDialog.APPROVE_OPTION) {
 	instModel.deleteAttributeAt(state.actCol);
-	setOptimalColumnWidth();
+	afterTableLayoutChanged();
 	notifyChangeListeners();
       }
     });

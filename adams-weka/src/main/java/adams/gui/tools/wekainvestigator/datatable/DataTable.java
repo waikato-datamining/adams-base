@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataTable.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable;
@@ -41,7 +41,6 @@ import java.util.List;
  * Specialized table with custom cell editors for the class.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataTable
   extends BaseTable {
@@ -81,6 +80,13 @@ public class DataTable
       menu.add(menuitem);
       menu.show(getTableHeader(), e.getX(), e.getY());
     });
+  }
+
+  /**
+   * Can be called after the layout changed.
+   */
+  protected void afterTableLayoutChanged() {
+    setOptimalColumnWidthBounded(MAX_COLUMN_WIDTH);
   }
 
   /**
