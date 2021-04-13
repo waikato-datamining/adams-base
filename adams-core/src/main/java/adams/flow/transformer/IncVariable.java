@@ -15,7 +15,7 @@
 
 /*
  * IncVariable.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -228,7 +228,7 @@ public class IncVariable
 	  throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
       }
     }
-    result += QuickInfoHelper.toString(this, "outputVariableValue", m_OutputVariableValue, "output variable", ", ");
+    result += QuickInfoHelper.toString(this, "outputVariableValue", m_OutputVariableValue, "output value", ", ");
 
     return result;
   }
