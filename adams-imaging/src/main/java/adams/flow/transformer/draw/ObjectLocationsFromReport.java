@@ -15,14 +15,17 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
 import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.TranslucentColorProvider;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
@@ -86,7 +89,9 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
  * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
  * &nbsp;&nbsp;&nbsp;), '{BLAH}' gets replaced with the value associated with the meta-data key
- * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'.
+ * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'; in case of numeric values, use
+ * &nbsp;&nbsp;&nbsp;'|.X' to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals
+ * &nbsp;&nbsp;&nbsp;after the decimal point.
  * &nbsp;&nbsp;&nbsp;default: #
  * </pre>
  *
@@ -95,13 +100,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
  * </pre>
  *
+ * <pre>-label-anchor &lt;TOP_LEFT|TOP_CENTER|TOP_RIGHT|MIDDLE_LEFT|MIDDLE_CENTER|MIDDLE_RIGHT|BOTTOM_LEFT|BOTTOM_CENTER|BOTTOM_RIGHT&gt; (property: labelAnchor)
+ * &nbsp;&nbsp;&nbsp;The anchor for the label.
+ * &nbsp;&nbsp;&nbsp;default: TOP_RIGHT
+ * </pre>
+ *
  * <pre>-label-offset-x &lt;int&gt; (property: labelOffsetX)
- * &nbsp;&nbsp;&nbsp;The X offset for the label.
+ * &nbsp;&nbsp;&nbsp;The X offset for the label; values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses left as anchor, -2 the center and -3 the right.
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
  * <pre>-label-offset-y &lt;int&gt; (property: labelOffsetY)
- * &nbsp;&nbsp;&nbsp;The Y offset for the label.
+ * &nbsp;&nbsp;&nbsp;The Y offset for the label values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
@@ -127,6 +139,16 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-vary-shape-color &lt;boolean&gt; (property: varyShapeColor)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape colors get varied.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-shape-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: shapeColorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use when varying the shape colors.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.TranslucentColorProvider -provider adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -145,6 +167,12 @@ public class ObjectLocationsFromReport
 
   /** whether to draw the bounds of the polygon as well. */
   protected boolean m_PolygonBounds;
+
+  /** whether to vary the shape color. */
+  protected boolean m_VaryShapeColor;
+
+  /** the color provider to use when varying the shape colors. */
+  protected ColorProvider m_ShapeColorProvider;
 
   /**
    * Returns a string describing the object.
@@ -187,6 +215,14 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "polygon-bounds", "polygonBounds",
       false);
+
+    m_OptionManager.add(
+      "vary-shape-color", "varyShapeColor",
+      false);
+
+    m_OptionManager.add(
+      "shape-color-provider", "shapeColorProvider",
+      new TranslucentColorProvider());
   }
 
   /**
@@ -277,6 +313,64 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Sets whether to vary the colors of the shapes.
+   *
+   * @param value 	true if to vary
+   */
+  public void setVaryShapeColor(boolean value) {
+    m_Overlays.setVaryShapeColor(value);
+    reset();
+  }
+
+  /**
+   * Returns whether to vary the colors of the shapes.
+   *
+   * @return 		true if to vary
+   */
+  public boolean getVaryShapeColor() {
+    return m_Overlays.getVaryShapeColor();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String varyShapeColorTipText() {
+    return m_Overlays.varyShapeColorTipText();
+  }
+
+  /**
+   * Sets the color provider to use when varying the shape colors.
+   *
+   * @param value 	the provider
+   */
+  public void setShapeColorProvider(ColorProvider value) {
+    m_Overlays.setShapeColorProvider(value);
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use when varying the shape colors.
+   *
+   * @return 		the provider
+   */
+  public ColorProvider getShapeColorProvider() {
+    return m_Overlays.getShapeColorProvider();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shapeColorProviderTipText() {
+    return m_Overlays.shapeColorProviderTipText();
+  }
+
+  /**
    * Returns the thickness of the stroke.
    *
    * @param g		graphics context to get the thickness from
@@ -321,29 +415,46 @@ public class ObjectLocationsFromReport
     String	label;
     Rectangle	rect;
     float	width;
+    Color 	labelColor;
+    Color	shapeColor;
 
     g = image.getImage().getGraphics();
 
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);
 
-    g.setColor(getColor());
+    labelColor = getColor();
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
-          g.setColor(m_Overlays.getColor(poly));
+          labelColor = m_Overlays.getColor(poly);
       }
-      if (m_Filled)
-        g.fillPolygon(poly);
-      else
+
+      shapeColor = null;
+      if (getVaryShapeColor()) {
+        if (m_Overlays.hasShapeColor(poly))
+          shapeColor = m_Overlays.getShapeColor(poly);
+      }
+
+      g.setColor(shapeColor == null ? labelColor : shapeColor);
+      if (m_Filled) {
+	g.fillPolygon(poly);
+	g.setColor(labelColor);
 	g.drawPolygon(poly);
+      }
+      else {
+	g.drawPolygon(poly);
+      }
+
       rect = null;
       if (m_PolygonBounds) {
+	g.setColor(shapeColor == null ? labelColor : shapeColor);
 	rect = poly.getBounds();
 	g.drawRect(rect.x, rect.y, rect.width, rect.height);
       }
       if (m_Overlays.hasLabel(poly)) {
+	g.setColor(labelColor);
         label = m_Overlays.getLabel(poly);
         if (label != null) {
           if (rect == null)
