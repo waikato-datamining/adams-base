@@ -474,36 +474,14 @@ public class LocatedObject
    * Converts the polygon or rectangle into a JTS polygon (for proper intersects).
    *
    * @return		the polygon
+   * @see		#toGeometry(Polygon)
+   * @see		#toGeometry(Rectangle)
    */
   public org.locationtech.jts.geom.Polygon toGeometry() {
-    org.locationtech.jts.geom.Polygon	result;
-    LinearRing 				ring;
-    List<Coordinate> 			coords;
-    GeometryFactory 			factory;
-    int[]				x;
-    int[]				y;
-    int					i;
-
-    factory = new GeometryFactory();
-    coords = new ArrayList<>();
-    if (hasPolygon()) {
-      x = getPolygonX();
-      y = getPolygonY();
-      for (i = 0; i < x.length; i++)
-        coords.add(new Coordinate(x[i], y[i]));
-      coords.add(new Coordinate(x[0], y[0]));
-    }
-    else {
-      coords.add(new Coordinate(getX(), getY()));
-      coords.add(new Coordinate(getX() + getWidth() - 1, getY()));
-      coords.add(new Coordinate(getX() + getWidth() - 1, getY() + getHeight() - 1));
-      coords.add(new Coordinate(getX(), getY() + getHeight() - 1));
-      coords.add(new Coordinate(getX(), getY()));
-    }
-    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
-    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
-
-    return result;
+    if (hasPolygon())
+      return toGeometry(getPolygon());
+    else
+      return toGeometry(getRectangle());
   }
 
   /**
@@ -767,6 +745,60 @@ public class LocatedObject
     row.addCell("H").setContent(getHeight());
     row.addCell("P").setContent(hasPolygon());
     row.addCell("M").setContent(getMetaData().toString());
+
+    return result;
+  }
+
+  /**
+   * Converts the polygon into a JTS polygon (for proper intersects).
+   *
+   * @return		the polygon
+   */
+  public static org.locationtech.jts.geom.Polygon toGeometry(Polygon polygon) {
+    org.locationtech.jts.geom.Polygon	result;
+    LinearRing 				ring;
+    List<Coordinate> 			coords;
+    GeometryFactory 			factory;
+    int[]				x;
+    int[]				y;
+    int					i;
+
+    factory = new GeometryFactory();
+    coords = new ArrayList<>();
+    x = polygon.xpoints;
+    y = polygon.ypoints;
+    for (i = 0; i < x.length; i++)
+      coords.add(new Coordinate(x[i], y[i]));
+    coords.add(new Coordinate(x[0], y[0]));
+    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
+    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
+
+    return result;
+  }
+
+  /**
+   * Converts the rectangle into a JTS polygon (for proper intersects).
+   *
+   * @return		the polygon
+   */
+  public static org.locationtech.jts.geom.Polygon toGeometry(Rectangle rectangle) {
+    org.locationtech.jts.geom.Polygon	result;
+    LinearRing 				ring;
+    List<Coordinate> 			coords;
+    GeometryFactory 			factory;
+    int[]				x;
+    int[]				y;
+    int					i;
+
+    factory = new GeometryFactory();
+    coords = new ArrayList<>();
+      coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
+      coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY()));
+      coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY() + rectangle.getHeight() - 1));
+      coords.add(new Coordinate(rectangle.getX(), rectangle.getY() + rectangle.getHeight() - 1));
+      coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
+    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
+    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
 
     return result;
   }

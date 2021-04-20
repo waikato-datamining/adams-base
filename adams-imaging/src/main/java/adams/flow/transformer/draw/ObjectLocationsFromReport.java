@@ -139,6 +139,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-bounding-box-fallback-ratio &lt;double&gt; (property: boundingBoxFallbackRatio)
+ * &nbsp;&nbsp;&nbsp;The threshold for the ratio between the areas (shape &#47; bbox), below which
+ * &nbsp;&nbsp;&nbsp;the bounding box is used over the polygon (ie bad masks&#47;shapes).
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ *
  * <pre>-vary-shape-color &lt;boolean&gt; (property: varyShapeColor)
  * &nbsp;&nbsp;&nbsp;If enabled, the shape colors get varied.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -167,6 +175,9 @@ public class ObjectLocationsFromReport
 
   /** whether to draw the bounds of the polygon as well. */
   protected boolean m_PolygonBounds;
+
+  /** the ratio used for determining whether to fall back from polygon on bbox. */
+  protected double m_BoundingBoxFallbackRatio;
 
   /** whether to vary the shape color. */
   protected boolean m_VaryShapeColor;
@@ -215,6 +226,10 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "polygon-bounds", "polygonBounds",
       false);
+
+    m_OptionManager.add(
+      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+      0.0, 0.0, 1.0);
 
     m_OptionManager.add(
       "vary-shape-color", "varyShapeColor",
@@ -310,6 +325,37 @@ public class ObjectLocationsFromReport
    */
   public String polygonBoundsTipText() {
     return "If enabled, the polygon bounds are drawn as well.";
+  }
+
+  /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    m_Overlays.setBoundingBoxFallbackRatio(value);
+    reset();
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_Overlays.getBoundingBoxFallbackRatio();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return m_Overlays.boundingBoxFallbackRatioTipText();
   }
 
   /**

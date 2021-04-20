@@ -63,7 +63,7 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,wbmp,jpeg
+ * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -170,6 +170,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectfinder.AllFinder
  * </pre>
  *
+ * <pre>-bounding-box-fallback-ratio &lt;double&gt; (property: boundingBoxFallbackRatio)
+ * &nbsp;&nbsp;&nbsp;The threshold for the ratio between the areas (shape &#47; bbox), below which
+ * &nbsp;&nbsp;&nbsp;the bounding box is used over the polygon (ie bad masks&#47;shapes).
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
+ * </pre>
+ *
  * <pre>-overlap-detection &lt;adams.data.objectoverlap.ObjectOverlap&gt; (property: overlapDetection)
  * &nbsp;&nbsp;&nbsp;The algorithm to use for determining the overlapping objects.
  * &nbsp;&nbsp;&nbsp;default: adams.data.objectoverlap.AreaRatio
@@ -247,6 +255,7 @@ public class ObjectLocationsFromReport
       overlay.setFilled(m_Filled);
       overlay.setVaryShapeColor(m_VaryShapeColor);
       overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
+      overlay.setBoundingBoxFallbackRatio(m_BoundingBoxFallbackRatio);
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -381,6 +390,9 @@ public class ObjectLocationsFromReport
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
+  /** the ratio used for determining whether to fall back from polygon on bbox. */
+  protected double m_BoundingBoxFallbackRatio;
+
   /** the object overlap calculation to use. */
   protected ObjectOverlap m_OverlapDetection;
 
@@ -480,6 +492,10 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+      0.0, 0.0, 1.0);
 
     m_OptionManager.add(
       "overlap-detection", "overlapDetection",
@@ -1051,6 +1067,39 @@ public class ObjectLocationsFromReport
    */
   public String finderTipText() {
     return "The object finder to use.";
+  }
+
+  /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    if (getOptionManager().isValid("boundingBoxFallbackRatio", value)) {
+      m_BoundingBoxFallbackRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_BoundingBoxFallbackRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return "The threshold for the ratio between the areas (shape / bbox), below which the bounding box is used over the polygon (ie bad masks/shapes).";
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * ReportObjectOverlay.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -116,6 +116,9 @@ public class ReportObjectOverlay
   /** the color provider to use when varying the shape colors. */
   protected ColorProvider m_ShapeColorProvider;
 
+  /** the ratio used for determining whether to fall back from polygon on bbox. */
+  protected double m_BoundingBoxFallbackRatio;
+
   /**
    * Returns a string describing the object.
    *
@@ -188,6 +191,10 @@ public class ReportObjectOverlay
     m_OptionManager.add(
 	"shape-color-provider", "shapeColorProvider",
 	new TranslucentColorProvider());
+
+    m_OptionManager.add(
+	"bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+	0.0, 0.0, 1.0);
   }
 
   /**
@@ -619,6 +626,39 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    if (getOptionManager().isValid("boundingBoxFallbackRatio", value)) {
+      m_BoundingBoxFallbackRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_BoundingBoxFallbackRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return "The threshold for the ratio between the areas (shape / bbox), below which the bounding box is used over the polygon (ie bad masks/shapes).";
+  }
+
+  /**
    * Returns the type suffix without the leading dot.
    *
    * @return		the sufix
@@ -709,8 +749,12 @@ public class ReportObjectOverlay
     Color		color;
     String		label;
     Polygon		poly;
-    int[]		poly_x;
-    int[]		poly_y;
+    Polygon		bbox;
+    int[] 		bbox_x;
+    int[] 		bbox_y;
+    double		area_poly;
+    double		area_bbox;
+    double		ratio;
 
     if (m_Locations != null)
       return false;
@@ -743,14 +787,25 @@ public class ReportObjectOverlay
     suffix        = determineTypeSuffix();
     located       = LocatedObjects.fromReport(report, m_Prefix);
     for (LocatedObject object: located) {
-      if (object.hasPolygon()) {
-        poly = object.getPolygon();
+      poly = null;
+      if (object.hasPolygon())
+	poly = object.getPolygon();
+      bbox_x = new int[]{object.getX(), object.getX() + object.getWidth() - 1, object.getX() + object.getWidth() - 1, object.getX()};
+      bbox_y = new int[]{object.getY(), object.getY(), object.getY() + object.getHeight() - 1, object.getY() + object.getHeight() - 1};
+      bbox   = new Polygon(bbox_x, bbox_y, bbox_x.length);
+
+      // fall back on bbox?
+      if ((poly != null) && (m_BoundingBoxFallbackRatio > 0)) {
+        area_bbox = LocatedObject.toGeometry(bbox).getArea();
+        area_poly = LocatedObject.toGeometry(poly).getArea();
+        if (area_bbox > 0) {
+	  ratio = area_poly / area_bbox;
+	  if (ratio < m_BoundingBoxFallbackRatio)
+	    poly = null;
+	}
       }
-      else {
-	poly_x = new int[]{object.getX(), object.getX() + object.getWidth() - 1, object.getX() + object.getWidth() - 1, object.getX()};
-	poly_y = new int[]{object.getY(), object.getY(), object.getY() + object.getHeight() - 1, object.getY() + object.getHeight() - 1};
-	poly   = new Polygon(poly_x, poly_y, poly_x.length);
-      }
+      if (poly == null)
+	poly = bbox;
 
       color = m_Color;
 

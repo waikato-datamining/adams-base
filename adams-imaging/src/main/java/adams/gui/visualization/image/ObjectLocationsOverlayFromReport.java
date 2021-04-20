@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsOverlayFromReport.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -91,7 +91,10 @@ import java.util.List;
  * <pre>-label-format &lt;java.lang.String&gt; (property: labelFormat)
  * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
  * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
- * &nbsp;&nbsp;&nbsp;); for instance: '# &#64;'.
+ * &nbsp;&nbsp;&nbsp;), '{BLAH}' gets replaced with the value associated with the meta-data key
+ * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'; in case of numeric values, use
+ * &nbsp;&nbsp;&nbsp;'|.X' to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals
+ * &nbsp;&nbsp;&nbsp;after the decimal point.
  * &nbsp;&nbsp;&nbsp;default: #
  * </pre>
  *
@@ -100,13 +103,20 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: Display-PLAIN-14
  * </pre>
  *
+ * <pre>-label-anchor &lt;TOP_LEFT|TOP_CENTER|TOP_RIGHT|MIDDLE_LEFT|MIDDLE_CENTER|MIDDLE_RIGHT|BOTTOM_LEFT|BOTTOM_CENTER|BOTTOM_RIGHT&gt; (property: labelAnchor)
+ * &nbsp;&nbsp;&nbsp;The anchor for the label.
+ * &nbsp;&nbsp;&nbsp;default: TOP_RIGHT
+ * </pre>
+ *
  * <pre>-label-offset-x &lt;int&gt; (property: labelOffsetX)
- * &nbsp;&nbsp;&nbsp;The X offset for the label.
+ * &nbsp;&nbsp;&nbsp;The X offset for the label; values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses left as anchor, -2 the center and -3 the right.
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
  * <pre>-label-offset-y &lt;int&gt; (property: labelOffsetY)
- * &nbsp;&nbsp;&nbsp;The Y offset for the label.
+ * &nbsp;&nbsp;&nbsp;The Y offset for the label values of 0 or greater are interpreted as absolute
+ * &nbsp;&nbsp;&nbsp;pixels, -1 uses top as anchor, -2 the middle and -3 the bottom.
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
@@ -114,6 +124,16 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The predefined labels to use for setting up the colors; avoids constants
  * &nbsp;&nbsp;&nbsp;changing in color pallet.
  * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-vary-shape-color &lt;boolean&gt; (property: varyShapeColor)
+ * &nbsp;&nbsp;&nbsp;If enabled, the shape colors get varied.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-shape-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: shapeColorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use when varying the shape colors.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.TranslucentColorProvider -provider adams.gui.visualization.core.DefaultColorProvider
  * </pre>
  *
  * <pre>-filled &lt;boolean&gt; (property: filled)
@@ -124,6 +144,14 @@ import java.util.List;
  * <pre>-polygon-bounds &lt;boolean&gt; (property: polygonBounds)
  * &nbsp;&nbsp;&nbsp;If enabled, the polygon bounds are drawn as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-bounding-box-fallback-ratio &lt;double&gt; (property: boundingBoxFallbackRatio)
+ * &nbsp;&nbsp;&nbsp;The threshold for the ratio between the areas (shape &#47; bbox), below which
+ * &nbsp;&nbsp;&nbsp;the bounding box is used over the polygon (ie bad masks&#47;shapes).
+ * &nbsp;&nbsp;&nbsp;default: 0.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
  *
  * <pre>-stroke-thickness &lt;float&gt; (property: strokeThickness)
@@ -190,6 +218,10 @@ public class ObjectLocationsOverlayFromReport
       false);
 
     m_OptionManager.add(
+      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+      0.0, 0.0, 1.0);
+
+    m_OptionManager.add(
       "stroke-thickness", "strokeThickness",
       1.0f, 0.01f, null);
   }
@@ -250,6 +282,37 @@ public class ObjectLocationsOverlayFromReport
    */
   public String polygonBoundsTipText() {
     return "If enabled, the polygon bounds are drawn as well.";
+  }
+
+  /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    m_Overlays.setBoundingBoxFallbackRatio(value);
+    reset();
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_Overlays.getBoundingBoxFallbackRatio();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return m_Overlays.boundingBoxFallbackRatioTipText();
   }
 
   /**

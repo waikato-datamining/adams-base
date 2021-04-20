@@ -248,6 +248,7 @@ public class ObjectLocationsFromSpreadSheet
       overlay.setFilled(m_Filled);
       overlay.setVaryShapeColor(m_VaryShapeColor);
       overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
+      overlay.setBoundingBoxFallbackRatio(m_BoundingBoxFallbackRatio);
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -382,6 +383,9 @@ public class ObjectLocationsFromSpreadSheet
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
 
+  /** the ratio used for determining whether to fall back from polygon on bbox. */
+  protected double m_BoundingBoxFallbackRatio;
+
   /** the object overlap calculation to use. */
   protected ObjectOverlap m_OverlapDetection;
 
@@ -483,6 +487,10 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "finder", "finder",
       new AllFinder());
+
+    m_OptionManager.add(
+      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+      0.0, 0.0, 1.0);
 
     m_OptionManager.add(
       "overlap-detection", "overlapDetection",
@@ -1045,6 +1053,39 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String finderTipText() {
     return "The object finder to use.";
+  }
+
+  /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    if (getOptionManager().isValid("boundingBoxFallbackRatio", value)) {
+      m_BoundingBoxFallbackRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_BoundingBoxFallbackRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return "The threshold for the ratio between the areas (shape / bbox), below which the bounding box is used over the polygon (ie bad masks/shapes).";
   }
 
   /**
