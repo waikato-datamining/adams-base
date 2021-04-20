@@ -15,7 +15,7 @@
 
 /*
  * CsvSpreadSheetReader.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -266,12 +266,11 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CsvSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
   implements ChunkedSpreadSheetReader, OptionHandlingLocaleSupporter,
-  WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
+  WindowedSpreadSheetReader, NoHeaderSpreadSheetReader, InitialRowSkippingSpreadSheetReader {
 
   /** for serialization. */
   private static final long serialVersionUID = 4461796269354230002L;
@@ -578,6 +577,7 @@ public class CsvSpreadSheetReader
       HashSet<ContentType>	types;
       Object			autoObj;
       boolean			autoSuccess;
+      int			skipped;
 
       if (m_Header == null) {
         result = m_Owner.getSpreadSheetType().newInstance();
@@ -596,6 +596,7 @@ public class CsvSpreadSheetReader
 
       try {
         comments = (m_Header == null);
+        skipped  = 0;
 
         while (!m_Owner.isStopped()) {
           row   = null;
@@ -613,6 +614,12 @@ public class CsvSpreadSheetReader
               continue;
             }
           }
+
+          // are there rows to skip at the start?
+          if ((m_HeaderCells == null) && (skipped < m_Owner.getSkipNumRows())) {
+            skipped++;
+            continue;
+	  }
 
           // actual data
           isHeader = false;
@@ -900,6 +907,9 @@ public class CsvSpreadSheetReader
   /** the locale to use. */
   protected Locale m_Locale;
 
+  /** the number of initial rows to skip. */
+  protected int m_SkipNumRows;
+
   /** whether the file has a header or not. */
   protected boolean m_NoHeader;
 
@@ -1044,6 +1054,10 @@ public class CsvSpreadSheetReader
     m_OptionManager.add(
       "locale", "locale",
       LocaleHelper.getSingleton().getDefault());
+
+    m_OptionManager.add(
+      "skip-num-rows", "skipNumRows",
+      0, 0, null);
 
     m_OptionManager.add(
       "no-header", "noHeader",
@@ -1717,6 +1731,40 @@ public class CsvSpreadSheetReader
   @Override
   public String localeTipText() {
     return "The locale to use for parsing the numbers.";
+  }
+
+  /**
+   * Sets the number of initial rows to skip.
+   *
+   * @param value	the number of rows
+   */
+  @Override
+  public void setSkipNumRows(int value) {
+    if (getOptionManager().isValid("skipNumRows", value)) {
+      m_SkipNumRows = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of initial rows to skip.
+   *
+   * @return		the number of rows
+   */
+  @Override
+  public int getSkipNumRows() {
+    return m_SkipNumRows;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String skipNumRowsTipText() {
+    return "The number of initial rows to skip.";
   }
 
   /**
