@@ -15,7 +15,7 @@
 
 /*
  * SearchPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -31,6 +31,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -85,6 +87,9 @@ public class SearchPanel
   /** the label for the text field. */
   protected JLabel m_LabelPrefix;
 
+  /** the panel for the search text and clear button. */
+  protected JPanel m_PanelSearchText;
+
   /** the text field for entering the search text. */
   protected BaseTextField m_TextSearch;
 
@@ -92,8 +97,14 @@ public class SearchPanel
    * comparison. */
   protected BaseCheckBox m_CheckboxRegExp;
 
-  /** the button for searching the table. */
-  protected BaseButton m_ButtonSearch;
+  /** the button for clearing the search. */
+  protected JLabel m_ButtonClear;
+
+  /** the button for performing the search. */
+  protected JLabel m_ButtonSearch;
+
+  /** the button panel. */
+  protected JPanel m_PanelButtons;
 
   /** the panel with the buttons and search box. */
   protected JPanel m_PanelWidgets;
@@ -102,7 +113,7 @@ public class SearchPanel
   protected List<Component> m_Widgets;
 
   /** the listeners for a search being initiated. */
-  protected HashSet<SearchListener> m_SearchListeners;
+  protected Set<SearchListener> m_SearchListeners;
 
   /** the minimum number of characters before triggering search events. */
   protected int m_MinimumChars;
@@ -117,7 +128,7 @@ public class SearchPanel
    * @param regExp	whether to display regular expressions
    */
   public SearchPanel(LayoutType layout, boolean regExp) {
-    this(layout, regExp, null, "_Search");
+    this(layout, regExp, null, "");
   }
 
   /**
@@ -165,7 +176,7 @@ public class SearchPanel
     super.initialize();
 
     m_LayoutType      = null;
-    m_SearchListeners = new HashSet<SearchListener>();
+    m_SearchListeners = new HashSet<>();
     m_MinimumChars    = 1;
     m_LastSearch      = "";
     m_Widgets         = new ArrayList<>();
@@ -191,6 +202,8 @@ public class SearchPanel
     else
       size = 20;
 
+    m_PanelSearchText = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
     m_TextSearch = new BaseTextField(size);
     m_TextSearch.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -212,9 +225,9 @@ public class SearchPanel
         if (MouseUtils.isRightClick(e)) {
           BasePopupMenu menu = createPopup(e);
           menu.show(m_TextSearch, e.getX(), e.getY());
-	}
-	if (!e.isConsumed())
-	  super.mouseClicked(e);
+        }
+        if (!e.isConsumed())
+          super.mouseClicked(e);
       }
     });
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -248,13 +261,42 @@ public class SearchPanel
         m_LabelPrefix.setDisplayedMnemonicIndex(-1);
     }
 
-    m_CheckboxRegExp = new BaseCheckBox("Use reg. Exp");
+    m_CheckboxRegExp = new BaseCheckBox("Regex");
+    m_CheckboxRegExp.setToolTipText("Whether to perform regular expression matching or just look for occurrences of the entered search string");
 
-    if (m_ButtonCaption != null) {
-      m_ButtonSearch = new BaseButton();
-      setButtonCaption(m_ButtonCaption);
-      m_ButtonSearch.addActionListener((ActionEvent e) -> performSearch());
-    }
+    m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+    m_ButtonClear = new JLabel(GUIHelper.getIcon("clear_text.png"));
+    m_ButtonClear.setToolTipText("Clears the search text");
+    m_ButtonClear.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isLeftClick(e)) {
+	  e.consume();
+	  m_TextSearch.setText("");
+	  performSearch();
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
+
+    m_ButtonSearch = new JLabel(GUIHelper.getIcon("find.gif"));
+    m_ButtonSearch.setToolTipText("Performs the search");
+    setButtonCaption(m_ButtonCaption);
+    m_ButtonSearch.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isLeftClick(e)) {
+	  e.consume();
+	  performSearch();
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
 
     m_PanelWidgets = new JPanel();
     add(m_PanelWidgets, BorderLayout.CENTER);
@@ -268,16 +310,36 @@ public class SearchPanel
   protected void updateLayout() {
     removeFromWidgetsPanel(m_LabelPrefix);
     removeFromWidgetsPanel(m_TextSearch);
-    removeFromWidgetsPanel(m_CheckboxRegExp);
-    removeFromWidgetsPanel(m_ButtonSearch);
+    removeFromWidgetsPanel(m_PanelSearchText);
+    removeFromWidgetsPanel(m_PanelButtons);
+    removeFromWidgetsPanel(m_ButtonClear);
+
+    if (m_Incremental)
+      m_TextSearch.setToolTipText("Searches as soon as you type");
+    else
+      m_TextSearch.setToolTipText("Enter the search term and hit ENTER or click on the search button to perform the search");
 
     if (hasPrefix())
       addToWidgetsPanel(m_LabelPrefix);
-    addToWidgetsPanel(m_TextSearch);
+
+    if (m_LayoutType == LayoutType.HORIZONTAL) {
+      addToWidgetsPanel(m_TextSearch);
+      addToWidgetsPanel(m_PanelSearchText);
+      addToWidgetsPanel(m_ButtonClear);
+    }
+    else {
+      m_PanelSearchText.removeAll();
+      m_PanelSearchText.add(m_TextSearch);
+      m_PanelSearchText.add(m_ButtonClear);
+      addToWidgetsPanel(m_PanelSearchText);
+    }
+
+    m_PanelButtons.removeAll();
     if (isRegularExpressionEnabled())
-      addToWidgetsPanel(m_CheckboxRegExp);
-    if (m_ButtonSearch != null)
-      addToWidgetsPanel(m_ButtonSearch);
+      m_PanelButtons.add(m_CheckboxRegExp);
+    if (!m_Incremental)
+      m_PanelButtons.add(m_ButtonSearch);
+    addToWidgetsPanel(m_PanelButtons);
   }
 
   /**
@@ -411,6 +473,16 @@ public class SearchPanel
   }
 
   /**
+   * Sets whether to enabled incremental search.
+   *
+   * @param value	true if incremental search enabled
+   */
+  public void setIncremental(boolean value) {
+    m_Incremental = value;
+    updateLayout();
+  }
+
+  /**
    * Returns whether incremental search is enabled.
    *
    * @return		true if incremental search enabled
@@ -473,10 +545,6 @@ public class SearchPanel
 
     m_ButtonCaption = value;
     m_ButtonSearch.setText(GUIHelper.stripMnemonic(m_ButtonCaption));
-    if (GUIHelper.hasMnemonic(m_ButtonCaption))
-      m_ButtonSearch.setMnemonic(GUIHelper.getMnemonic(m_ButtonCaption));
-    else
-      m_ButtonSearch.setMnemonic(-1);
   }
 
   /**
@@ -551,27 +619,27 @@ public class SearchPanel
     for (i = 0; i < m_Widgets.size(); i++) {
       c = new GridBagConstraints();
       switch (m_LayoutType) {
-	case HORIZONTAL:
-	  c.gridx = i;
-	  c.gridy = 0;
-	  if (m_Widgets.get(i) == m_TextSearch) {
-	    c.fill = GridBagConstraints.BOTH;
-	    c.weightx = 1.0;
-	    c.weighty = 1.0;
-	  }
-	  if (i > 0)
-	    c.insets = new Insets(0, 5, 0, 0);
-	  break;
-	case VERTICAL:
-	  c.gridx = 0;
-	  c.gridy = i;
-	  c.fill  = GridBagConstraints.HORIZONTAL;
-	  c.weightx = 1.0;
-	  if (i > 0)
-	    c.insets = new Insets(5, 0, 0, 0);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled layout type: " + m_LayoutType);
+        case HORIZONTAL:
+          c.gridx = i;
+          c.gridy = 0;
+          if (m_Widgets.get(i) == m_TextSearch) {
+            c.fill = GridBagConstraints.BOTH;
+            c.weightx = 1.0;
+            c.weighty = 1.0;
+          }
+          if (i > 0)
+            c.insets = new Insets(0, 5, 0, 0);
+          break;
+        case VERTICAL:
+          c.gridx = 0;
+          c.gridy = i;
+          c.fill  = GridBagConstraints.HORIZONTAL;
+          c.weightx = 1.0;
+          if (i > 0)
+            c.insets = new Insets(5, 0, 0, 0);
+          break;
+        default:
+          throw new IllegalStateException("Unhandled layout type: " + m_LayoutType);
       }
       layout.setConstraints(m_Widgets.get(i), c);
       m_PanelWidgets.add(m_Widgets.get(i));

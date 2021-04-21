@@ -342,7 +342,8 @@ public class PreviewBrowserPanel
     });
     m_PanelLocalFiles.add(new BaseScrollPane(m_ListLocalFiles), BorderLayout.CENTER);
 
-    m_SearchLocalFiles = new SearchPanel(LayoutType.VERTICAL, false);
+    m_SearchLocalFiles = new SearchPanel(LayoutType.HORIZONTAL, false);
+    m_SearchLocalFiles.setIncremental(true);
     m_SearchLocalFiles.addSearchListener((SearchEvent e) -> m_ListLocalFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     m_PanelLocalFiles.add(m_SearchLocalFiles, BorderLayout.SOUTH);
 
@@ -369,7 +370,8 @@ public class PreviewBrowserPanel
     m_PanelArchiveFilesBottom = new BasePanel(new BorderLayout());
     m_PanelArchiveFiles.add(m_PanelArchiveFilesBottom, BorderLayout.SOUTH);
 
-    m_SearchArchiveFiles = new SearchPanel(LayoutType.VERTICAL, false);
+    m_SearchArchiveFiles = new SearchPanel(LayoutType.HORIZONTAL, false);
+    m_SearchArchiveFiles.setIncremental(true);
     m_SearchArchiveFiles.addSearchListener((SearchEvent e) -> m_ListArchiveFiles.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     m_PanelArchiveFilesBottom.add(m_SearchArchiveFiles, BorderLayout.CENTER);
 
