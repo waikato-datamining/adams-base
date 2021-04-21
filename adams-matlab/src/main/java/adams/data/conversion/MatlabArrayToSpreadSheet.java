@@ -82,6 +82,34 @@ public class MatlabArrayToSpreadSheet
   }
 
   /**
+   * Converts a character cell into a string. Rows are interpreted as lines.
+   *
+   * @param matChar	the cell to convert
+   * @return		the generated string
+   */
+  protected String charToString(Char matChar) {
+    StringBuilder 	result;
+    int			cols;
+    int			rows;
+    int			x;
+    int			y;
+
+    result = new StringBuilder();
+
+    rows = matChar.getNumRows();
+    cols = matChar.getNumCols();
+
+    for (y = 0; y < rows; y++) {
+      if (y > 0)
+        result.append("\n");
+      for (x = 0; x < cols; x++)
+        result.append(matChar.getChar(y, x));
+    }
+
+    return result.toString();
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -98,6 +126,7 @@ public class MatlabArrayToSpreadSheet
     adams.data.spreadsheet.Cell	cell;
     int				i;
     int				n;
+    String[]			lines;
 
     array = (Array) m_Input;
     if (array.getNumDimensions() > 2)
@@ -114,6 +143,16 @@ public class MatlabArrayToSpreadSheet
     if ((matrix == null) && (matCell == null) && (matChar == null))
       throw new IllegalStateException("Unhandled array type: " + Utils.classToString(array));
 
+    if (matChar != null) {
+      lines = charToString(matChar).split("\n");
+      result = new DefaultSpreadSheet();
+      row    = result.getHeaderRow();
+      row.addCell("0").setContentAsString("Line");
+      for (String line: lines)
+        result.addRow().addCell("0").setContentAsString(line);
+      return result;
+    }
+
     // header
     result = new DefaultSpreadSheet();
     row    = result.getHeaderRow();
@@ -124,17 +163,17 @@ public class MatlabArrayToSpreadSheet
     for (n = 0; n < array.getNumRows(); n++) {
       row = result.addRow();
       for (i = 0; i < array.getNumCols(); i++) {
-        cell = row.addCell(i);
-        if (matrix != null) {
+	cell = row.addCell(i);
+	if (matrix != null) {
 	  cell.setContent(matrix.getDouble(n, i));
 	}
-        else if (matCell != null) {
-          if (matCell.get(n, i) instanceof AbstractCharBase)
-	    cell.setContent(((AbstractCharBase) matCell.get(n, i)).asCharSequence().toString());
-          else
+	else if (matCell != null) {
+	  if (matCell.get(n, i) instanceof AbstractCharBase)
+	    cell.setContent(charToString((AbstractCharBase) matCell.get(n, i)));
+	  else
 	    cell.setContent(matCell.get(n, i).toString());
 	}
-        else if (matChar != null) {
+	else if (matChar != null) {
 	  cell.setContentAsString("" + matChar.getChar(n, i));
 	}
       }
