@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -1352,7 +1352,10 @@ public class GUIHelper {
    * @see		#MNEMONIC_INDICATOR
    */
   public static String stripMnemonic(String caption) {
-    return caption.replace("" + MNEMONIC_INDICATOR, "");
+    if (caption == null)
+      return null;
+    else
+      return caption.replace("" + MNEMONIC_INDICATOR, "");
   }
 
   /**
