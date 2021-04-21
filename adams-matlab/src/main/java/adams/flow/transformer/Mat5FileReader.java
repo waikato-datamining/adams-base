@@ -14,7 +14,7 @@
  */
 
 /*
- * Mat4FileReader.java
+ * Mat5FileReader.java
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 

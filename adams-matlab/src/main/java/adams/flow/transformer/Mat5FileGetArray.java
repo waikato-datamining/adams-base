@@ -14,8 +14,8 @@
  */
 
 /*
- * CollectionInsert.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Mat5FileGetArray.java
+ * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
