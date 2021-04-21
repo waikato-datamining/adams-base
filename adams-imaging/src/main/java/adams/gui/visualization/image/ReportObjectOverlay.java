@@ -26,7 +26,9 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.image.ImageAnchor;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.AcceptAllLocatedObjectsFilter;
 import adams.flow.transformer.locateobjects.LocatedObject;
+import adams.flow.transformer.locateobjects.LocatedObjectFilter;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.Fonts;
 import adams.gui.visualization.core.ColorProvider;
@@ -44,6 +46,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor for overlays that use object locations from a report.
@@ -91,6 +94,15 @@ public class ReportObjectOverlay
 
   /** the y offset for the label. */
   protected int m_LabelOffsetY;
+
+  /** all located objects. */
+  protected LocatedObjects m_AllObjects;
+
+  /** the filtered located objects. */
+  protected LocatedObjects m_FilteredObjects;
+
+  /** the cached object/location relation. */
+  protected Map<LocatedObject,Polygon> m_ObjectLocationMappings;
 
   /** the cached locations. */
   protected List<Polygon> m_Locations;
@@ -204,11 +216,14 @@ public class ReportObjectOverlay
   public void reset() {
     super.reset();
 
-    m_Locations   = null;
-    m_TypeColors  = new HashMap<>();
-    m_Colors      = new HashMap<>();
-    m_ShapeColors = new HashMap<>();
-    m_Labels      = new HashMap<>();
+    m_ObjectLocationMappings = null;
+    m_Locations       = null;
+    m_AllObjects      = null;
+    m_FilteredObjects = null;
+    m_TypeColors      = new HashMap<>();
+    m_Colors          = new HashMap<>();
+    m_ShapeColors     = new HashMap<>();
+    m_Labels          = new HashMap<>();
   }
 
   /**
@@ -737,12 +752,22 @@ public class ReportObjectOverlay
 
   /**
    * Determines the locations of the objects.
-   * 
+   *
    * @param report	the report to inspect
-   * @return 		true if locations were updated
+   * @return 		true if updated
    */
   public boolean determineLocations(Report report) {
-    LocatedObjects	located;
+    return determineLocations(report, new AcceptAllLocatedObjectsFilter());
+  }
+
+  /**
+   * Determines the locations of the objects.
+   * 
+   * @param report	the report to inspect
+   * @return 		true if updated
+   */
+  public boolean determineLocations(Report report, LocatedObjectFilter filter) {
+    LocatedObjects 	result;
     HashSet<String>	types;
     String		suffix;
     String		type;
@@ -780,13 +805,16 @@ public class ReportObjectOverlay
       }
     }
 
-    m_Locations   = new ArrayList<>();
-    m_Colors      = new HashMap<>();
-    m_ShapeColors = new HashMap<>();
-    m_Labels      = new HashMap<>();
-    suffix        = determineTypeSuffix();
-    located       = LocatedObjects.fromReport(report, m_Prefix);
-    for (LocatedObject object: located) {
+    m_ObjectLocationMappings = new HashMap<>();
+    m_Locations       = new ArrayList<>();
+    m_AllObjects      = new LocatedObjects();
+    m_FilteredObjects = new LocatedObjects();
+    m_Colors          = new HashMap<>();
+    m_ShapeColors     = new HashMap<>();
+    m_Labels          = new HashMap<>();
+    suffix            = determineTypeSuffix();
+    result            = LocatedObjects.fromReport(report, m_Prefix);
+    for (LocatedObject object: result) {
       poly = null;
       if (object.hasPolygon())
 	poly = object.getPolygon();
@@ -838,9 +866,15 @@ public class ReportObjectOverlay
 	}
       }
 
+      m_AllObjects.add(object);
+      if (!filter.accept(object))
+        continue;
+      m_FilteredObjects.add(object);
+
       m_Colors.put(poly, color);
       m_ShapeColors.put(poly, m_ShapeColorProvider.next());
       m_Locations.add(poly);
+      m_ObjectLocationMappings.put(object, poly);
     }
 
     return true;
@@ -927,6 +961,25 @@ public class ReportObjectOverlay
   }
 
   /**
+   * Checks whether any object/location mappings are available.
+   *
+   * @return		true if mappings available
+   */
+  public boolean hasObjectLocationMappings() {
+    return (m_ObjectLocationMappings != null) && (m_ObjectLocationMappings.size() > 0);
+  }
+
+  /**
+   * Returns the current object/location mappings.
+   *
+   * @return		the mappings, null if not initialized
+   * @see		#determineLocations(Report)
+   */
+  public Map<LocatedObject,Polygon> getObjectLocationMappings() {
+    return m_ObjectLocationMappings;
+  }
+
+  /**
    * Checks whether any locations are available.
    *
    * @return		true if locations available
@@ -943,6 +996,42 @@ public class ReportObjectOverlay
    */
   public List<Polygon> getLocations() {
     return m_Locations;
+  }
+
+  /**
+   * Returns whether the objects have been initialized.
+   *
+   * @return		true if initialized
+   */
+  public boolean hasAllObjects() {
+    return (m_AllObjects != null);
+  }
+
+  /**
+   * Returns all the objects.
+   *
+   * @return		the objects, null if not initialized yet
+   */
+  public LocatedObjects getAllObjects() {
+    return m_AllObjects;
+  }
+
+  /**
+   * Returns whether the objects have been initialized.
+   *
+   * @return		true if initialized
+   */
+  public boolean hasFilteredObjects() {
+    return (m_FilteredObjects != null);
+  }
+
+  /**
+   * Returns the filtered objects.
+   *
+   * @return		the objects, null if not initialized yet
+   */
+  public LocatedObjects getFilteredObjects() {
+    return m_FilteredObjects;
   }
 
   /**

@@ -22,6 +22,14 @@ package adams.gui.visualization.image;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
 import adams.data.image.ImageAnchor;
+import adams.flow.transformer.locateobjects.AcceptAllLocatedObjectsFilter;
+import adams.flow.transformer.locateobjects.LocatedObject;
+import adams.flow.transformer.locateobjects.LocatedObjectFilter;
+import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.BaseButton;
+import adams.gui.core.BaseList;
+import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.PopupMenuCustomizer;
@@ -29,16 +37,25 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.TranslucentColorProvider;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,11 +75,254 @@ public abstract class AbstractObjectOverlayFromReport
   /** the default prefix. */
   public final static String PREFIX_DEFAULT = ReportObjectOverlay.PREFIX_DEFAULT;
 
+  /**
+   * Filter for located objects that only accepts the currently selected ones.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public final static class SelectedObjectFilter
+    implements Serializable, LocatedObjectFilter {
+
+    private static final long serialVersionUID = -2342481415499910354L;
+
+    /** the selected objects. */
+    protected Set<LocatedObject> m_Selected;
+
+    /**
+     * Initializes the filter.
+     *
+     * @param selected	the only objects to object
+     */
+    public SelectedObjectFilter(Set<LocatedObject> selected) {
+      m_Selected = selected;
+    }
+
+    /**
+     * Whether to accept the located object.
+     *
+     * @param obj the object to check
+     * @return true if accepted
+     */
+    @Override
+    public boolean accept(LocatedObject obj) {
+      return m_Selected.contains(obj);
+    }
+  }
+
+  /**
+   * The panel for displaying the located objects.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public final static class LocatedObjectsPanel
+    extends BasePanel {
+
+    private static final long serialVersionUID = -2961421584086204608L;
+
+    /** the owner. */
+    protected AbstractObjectOverlayFromReport m_Owner;
+
+    /** the located objects. */
+    protected LocatedObjects m_LocatedObjects;
+
+    /** the list with the objects. */
+    protected BaseList m_ListObjects;
+
+    /** the list model with the objects. */
+    protected DefaultListModel<LocatedObject> m_ModelObjects;
+
+    /** the button for selecting all. */
+    protected BaseButton m_ButtonAll;
+
+    /** the button for selecting none. */
+    protected BaseButton m_ButtonNone;
+
+    /** the button for inverting the selection. */
+    protected BaseButton m_ButtonInvert;
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_Owner          = null;
+      m_LocatedObjects = new LocatedObjects();
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      JPanel	panel;
+
+      super.initGUI();
+
+      setLayout(new BorderLayout());
+
+      m_ModelObjects = new DefaultListModel<>();
+      m_ListObjects = new BaseList(m_ModelObjects);
+      m_ListObjects.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      m_ListObjects.addListSelectionListener((ListSelectionEvent e) -> {
+	if (m_Owner == null)
+	  return;
+	if (m_Owner.getOwner() == null)
+	  return;
+	if (m_Owner.getOwner().getOwner() == null)
+	  return;
+	m_Owner.getOwner().update();
+      });
+      add(new BaseScrollPane(m_ListObjects), BorderLayout.CENTER);
+
+      // buttons
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      add(panel, BorderLayout.SOUTH);
+
+      m_ButtonAll = new BaseButton("All");
+      m_ButtonAll.setToolTipText("Selects all objects");
+      m_ButtonAll.addActionListener((ActionEvent) -> m_ListObjects.selectAll());
+      panel.add(m_ButtonAll);
+
+      m_ButtonNone = new BaseButton("None");
+      m_ButtonNone.setToolTipText("Removes any selection");
+      m_ButtonNone.addActionListener((ActionEvent) -> m_ListObjects.selectNone());
+      panel.add(m_ButtonNone);
+
+      m_ButtonInvert = new BaseButton("Invert");
+      m_ButtonInvert.setToolTipText("Inverts the selection");
+      m_ButtonInvert.addActionListener((ActionEvent) -> m_ListObjects.invertSelection());
+      panel.add(m_ButtonInvert);
+    }
+
+    /**
+     * Sets the owner.
+     *
+     * @param value	the owner to use
+     */
+    public void setOwner(AbstractObjectOverlayFromReport value) {
+      m_Owner = value;
+      if (m_Owner != null)
+        update();
+    }
+
+    /**
+     * Returns the owner.
+     *
+     * @return		the owner, null if none set
+     */
+    public AbstractObjectOverlayFromReport getOwner() {
+      return m_Owner;
+    }
+
+    /**
+     * Sets the located objects to display. Automatically updates the view.
+     *
+     * @param value	the objects
+     */
+    public void setLocatedObjects(LocatedObjects value) {
+      Set<LocatedObject> 	currentObjs;
+      Set<LocatedObject> 	newObjs;
+
+      if (value == null)
+        return;
+
+      // update necessary?
+      currentObjs = new HashSet<>(m_LocatedObjects);
+      newObjs     = new HashSet<>(value);
+      if (currentObjs.containsAll(newObjs) && newObjs.containsAll(currentObjs))
+        return;
+
+      m_LocatedObjects = new LocatedObjects(value);
+      m_LocatedObjects.sort((LocatedObject o1, LocatedObject o2) -> {
+	int result = 0;
+	if (result == 0)
+	  result = Integer.compare(o1.getX(), o2.getX());
+	if (result == 0)
+	  result = Integer.compare(o1.getY(), o2.getY());
+	if (result == 0)
+	  result = Integer.compare(o1.getWidth(), o2.getWidth());
+	if (result == 0)
+	  result = Integer.compare(o1.getHeight(), o2.getHeight());
+	return result;
+      });
+      update();
+      m_ListObjects.selectAll();
+    }
+
+    /**
+     * Returns the located objects being displayed.
+     *
+     * @return		the objects
+     */
+    public LocatedObjects getLocatedObjects() {
+      return m_LocatedObjects;
+    }
+
+    /**
+     * Updates the display.
+     */
+    public void update() {
+      DefaultListModel<LocatedObject>	model;
+      List				selectedObjs;
+      TIntList				selected;
+      int				index;
+
+      if (m_Owner == null)
+        return;
+
+      selectedObjs = m_ListObjects.getSelectedValuesList();
+      model = new DefaultListModel<>();
+      for (LocatedObject obj: m_LocatedObjects)
+        model.addElement(obj);
+
+      m_ModelObjects = model;
+      m_ListObjects.setModel(m_ModelObjects);
+      selected = new TIntArrayList();
+      for (Object obj: selectedObjs) {
+        index = m_ModelObjects.indexOf(obj);
+        if (index > -1)
+          selected.add(index);
+      }
+      m_ListObjects.setSelectedIndices(selected.toArray());
+    }
+
+    /**
+     * Returns a filter that accepts only the selected objects.
+     *
+     * @return		the filter
+     */
+    public LocatedObjectFilter getFilter() {
+      Set<LocatedObject> 	selectedSet;
+      List			selectedObjs;
+
+      if (m_ModelObjects == null)
+        return new AcceptAllLocatedObjectsFilter();
+
+      selectedObjs = m_ListObjects.getSelectedValuesList();
+      selectedSet  = new HashSet<>();
+      for (Object obj: selectedObjs)
+        selectedSet.add((LocatedObject) obj);
+
+      return new SelectedObjectFilter(selectedSet);
+    }
+  }
+
   /** the overlay handler. */
   protected ReportObjectOverlay m_Overlays;
 
   /** the listeners for locations updates. */
   protected Set<ChangeListener> m_LocationsUpdatedListeners;
+
+  /** whether to show the located object panel. */
+  protected boolean m_ShowObjectPanel;
+
+  /** the panel with the located objects. */
+  protected LocatedObjectsPanel m_PanelObjects;
+
+  /** the owning panel. */
+  protected transient PaintPanel m_Owner;
 
   /**
    * Adds options to the internal list of options.
@@ -126,6 +386,10 @@ public abstract class AbstractObjectOverlayFromReport
     m_OptionManager.add(
 	"shape-color-provider", "shapeColorProvider",
 	new TranslucentColorProvider());
+
+    m_OptionManager.add(
+	"show-object-panel", "showObjectPanel",
+	false);
   }
 
   /**
@@ -135,8 +399,27 @@ public abstract class AbstractObjectOverlayFromReport
   protected void initialize() {
     super.initialize();
 
+    m_Owner                     = null;
     m_Overlays                  = new ReportObjectOverlay();
     m_LocationsUpdatedListeners = new HashSet<>();
+  }
+
+  /**
+   * Returns the owning panel.
+   *
+   * @return		the owner, null if none set
+   */
+  public PaintPanel getOwner() {
+    return m_Owner;
+  }
+
+  /**
+   * Returns the underlying report object overlay object.
+   *
+   * @return		the overlay
+   */
+  protected ReportObjectOverlay getOverlays() {
+    return m_Overlays;
   }
 
   /**
@@ -575,6 +858,35 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Sets whether to show the panel with the located panels.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowObjectPanel(boolean value) {
+    m_ShowObjectPanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the panel with the located objects.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowObjectPanel() {
+    return m_ShowObjectPanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showObjectPanelTipText() {
+    return "If enabled, the panel for selecting located objects is being displayed.";
+  }
+
+  /**
    * Checks whether a color has been stored for the given object type.
    *
    * @param type	the type to check
@@ -626,6 +938,58 @@ public abstract class AbstractObjectOverlayFromReport
   }
 
   /**
+   * Returns the objects panel, instantiates it if necessary.
+   *
+   * @return		the panel
+   */
+  protected LocatedObjectsPanel getLocatedObjectsPanel() {
+    if (m_PanelObjects == null) {
+      m_PanelObjects = new LocatedObjectsPanel();
+      m_PanelObjects.setOwner(this);
+    }
+    m_PanelObjects.setLocatedObjects(m_Overlays.getAllObjects());
+
+    return m_PanelObjects;
+  }
+
+  /**
+   * Gets called when the image overlay got added to a paintable panel.
+   *
+   * @param panel	the panel it got added to
+   */
+  @Override
+  public void overlayAdded(PaintPanel panel) {
+    super.overlayAdded(panel);
+
+    m_Owner = panel;
+
+    if (panel.getOwner() == null)
+      return;
+
+    if (m_ShowObjectPanel)
+      panel.getOwner().setLeftPanel(getLocatedObjectsPanel());
+    else
+      panel.getOwner().removeLeftPanel();
+  }
+
+  /**
+   * Gets called when the image overlay got removed from a paintable panel.
+   *
+   * @param panel	the panel it got removed from
+   */
+  @Override
+  public void overlayRemoved(PaintPanel panel) {
+    if (m_ShowObjectPanel) {
+      if (panel.getOwner() != null)
+	panel.getOwner().removeLeftPanel();
+    }
+
+    m_Owner = null;
+
+    super.overlayRemoved(panel);
+  }
+
+  /**
    * Notifies the overlay that the image has changed.
    *
    * @param panel	the panel this overlay belongs to
@@ -652,13 +1016,32 @@ public abstract class AbstractObjectOverlayFromReport
    */
   @Override
   protected synchronized void doPaintOverlay(PaintPanel panel, Graphics g) {
-    boolean	updated;
+    boolean			updated;
+    LocatedObjectFilter		filter;
+    JPanel			left;
+    JPanel			objects;
 
-    updated = m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties());
+    if (m_ShowObjectPanel) {
+      left = panel.getOwner().getLeftPanel();
+      objects = getLocatedObjectsPanel();
+      if (left != objects)
+	panel.getOwner().setLeftPanel(objects);
+    }
+
+    filter = null;
+    if (m_ShowObjectPanel)
+      filter = m_PanelObjects.getFilter();
+    if (filter == null)
+      filter = new AcceptAllLocatedObjectsFilter();
+
+    updated = m_Overlays.determineLocations(panel.getOwner().getAdditionalProperties(), filter);
     if (m_Overlays.hasLocations())
       doPaintObjects(panel, g, m_Overlays.getLocations());
-    if (updated)
+    if (updated) {
       notifyLocationsUpdatedListeners();
+      if (m_ShowObjectPanel)
+        m_PanelObjects.setLocatedObjects(m_Overlays.getAllObjects());
+    }
   }
 
   /**

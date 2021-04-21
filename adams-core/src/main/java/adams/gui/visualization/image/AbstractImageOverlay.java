@@ -15,7 +15,7 @@
 
 /*
  * AbstractImageOverlay.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -117,6 +117,26 @@ public abstract class AbstractImageOverlay
   public void paintOverlay(PaintPanel panel, Graphics g) {
     if (m_Enabled && (panel != null))
       doPaintOverlay(panel, g);
+  }
+
+  /**
+   * Gets called when the image overlay got added to a paintable panel.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param panel	the panel it got added to
+   */
+  public void overlayAdded(PaintPanel panel) {
+  }
+
+  /**
+   * Gets called when the image overlay got removed from a paintable panel.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param panel	the panel it got removed from
+   */
+  public void overlayRemoved(PaintPanel panel) {
   }
 
   /**

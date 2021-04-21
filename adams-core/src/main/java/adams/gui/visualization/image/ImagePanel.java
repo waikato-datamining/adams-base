@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -923,8 +923,10 @@ public class ImagePanel
      */
     public void clearImageOverlays() {
       synchronized (m_ImageOverlays) {
-	for (ImageOverlay overlay: m_ImageOverlays)
+	for (ImageOverlay overlay: m_ImageOverlays) {
+	  overlay.overlayRemoved(this);
 	  overlay.cleanUp();
+	}
 	m_ImageOverlays.clear();
       }
       update();
@@ -1029,6 +1031,7 @@ public class ImagePanel
     public void addImageOverlay(ImageOverlay io) {
       synchronized (m_ImageOverlays) {
 	m_ImageOverlays.add(io);
+	io.overlayAdded(this);
       }
       update();
     }
@@ -1041,6 +1044,7 @@ public class ImagePanel
     public void removeImageOverlay(ImageOverlay io) {
       synchronized (m_ImageOverlays) {
 	m_ImageOverlays.remove(io);
+	io.overlayRemoved(this);
       }
       update();
     }
@@ -1061,6 +1065,8 @@ public class ImagePanel
 	    remove.add(io);
 	}
 	m_ImageOverlays.removeAll(remove);
+	for (ImageOverlay io: remove)
+	  io.overlayRemoved(this);
       }
       update();
     }
@@ -1326,6 +1332,9 @@ public class ImagePanel
   /** for displaying image and properties. */
   protected BaseSplitPane m_MainSplitPane;
 
+  /** the left split pane for displaying other panels. */
+  protected BaseSplitPane m_LeftSplitPane;
+
   /** the background color. */
   protected Color m_BackgroundColor;
 
@@ -1393,15 +1402,24 @@ public class ImagePanel
     setLayout(new BorderLayout());
 
     m_MainSplitPane = new BaseSplitPane();
+    m_MainSplitPane.setOneTouchExpandable(true);
     m_MainSplitPane.setResizeWeight(1.0);
     add(m_MainSplitPane, BorderLayout.CENTER);
+
+    m_LeftSplitPane = new BaseSplitPane();
+    m_LeftSplitPane.setOneTouchExpandable(true);
+    m_LeftSplitPane.setDividerLocation(200);
+    m_LeftSplitPane.setUISettingsParameters(ImagePanel.class, "left-split-divider-location");
+    m_MainSplitPane.setLeftComponent(m_LeftSplitPane);
+    m_MainSplitPane.setLeftComponentHidden(false);
+    removeLeftPanel();
 
     m_PaintPanel = new PaintPanel(this);
     panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     panel.add(m_PaintPanel);
     m_ScrollPane = new BaseScrollPane(panel);
-    m_MainSplitPane.setLeftComponent(m_ScrollPane);
-    m_MainSplitPane.setLeftComponentHidden(false);
+    m_LeftSplitPane.setRightComponent(m_ScrollPane);
+    m_LeftSplitPane.setRightComponentHidden(false);
 
     m_SideSplitPane = new BaseTabbedPaneWithTabHiding();
     m_MainSplitPane.setRightComponent(m_SideSplitPane);
@@ -1990,6 +2008,69 @@ public class ImagePanel
    */
   public void setMainDividerLocation(int value) {
     m_MainSplitPane.setDividerLocation(value);
+  }
+
+  /**
+   * Returns the divider location between left panel and image.
+   *
+   * @return		the position
+   */
+  public int getLeftDividerLocation() {
+    return m_LeftSplitPane.getDividerLocation();
+  }
+
+  /**
+   * Sets the divider location between left panel and image.
+   *
+   * @param value	the position
+   */
+  public void setLeftDividerLocation(int value) {
+    m_LeftSplitPane.setDividerLocation(value);
+  }
+
+  /**
+   * Sets whether to display the left panel.
+   *
+   * @param value		true if visible
+   */
+  public void setLeftPanelVisible(boolean value) {
+    m_LeftSplitPane.setLeftComponentHidden(!value);
+  }
+
+  /**
+   * Returns whether the left panel is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isLeftPanelVisible() {
+    return !m_LeftSplitPane.isLeftComponentHidden();
+  }
+
+  /**
+   * Sets the left panel and displays it.
+   *
+   * @param panel	the panel to display
+   */
+  public void setLeftPanel(JPanel panel) {
+    m_LeftSplitPane.setLeftComponent(panel);
+    m_LeftSplitPane.setLeftComponentHidden(false);
+  }
+
+  /**
+   * Returns the currently set left panel.
+   *
+   * @return		the panel
+   */
+  public JPanel getLeftPanel() {
+    return (JPanel) m_LeftSplitPane.getLeftComponent();
+  }
+
+  /**
+   * Removes the left panel and hides that part.
+   */
+  public void removeLeftPanel() {
+    m_LeftSplitPane.setLeftComponent(new JPanel());
+    m_LeftSplitPane.setLeftComponentHidden(true);
   }
 
   /**

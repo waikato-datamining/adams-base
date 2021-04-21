@@ -13,13 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPixelSelectorOverlay.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
-
-import java.awt.Graphics;
 
 import adams.core.ShallowCopySupporter;
 import adams.core.option.AbstractOptionHandler;
@@ -28,12 +26,13 @@ import adams.data.image.AbstractImageContainer;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
+import java.awt.Graphics;
+
 /**
  * Ancestor for overlays in the pixel selector GUI, making use of the data
  * stored in the report.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPixelSelectorOverlay
   extends AbstractOptionHandler 
@@ -121,6 +120,26 @@ public abstract class AbstractPixelSelectorOverlay
     if (!m_Image.hasReport())
       return;
     doPaintOverlay(panel, g);
+  }
+
+  /**
+   * Gets called when the image overlay got added to a paintable panel.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param panel	the panel it got added to
+   */
+  public void overlayAdded(PaintPanel panel) {
+  }
+
+  /**
+   * Gets called when the image overlay got removed from a paintable panel.
+   * <br>
+   * Default implementation does nothing.
+   *
+   * @param panel	the panel it got removed from
+   */
+  public void overlayRemoved(PaintPanel panel) {
   }
 
   /**

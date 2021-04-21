@@ -15,7 +15,7 @@
 
 /*
  * ImageOverlay.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -47,4 +47,18 @@ public interface ImageOverlay
    * @param g		the graphics context
    */
   public void paintOverlay(PaintPanel panel, Graphics g);
+
+  /**
+   * Gets called when the image overlay got added to a paintable panel.
+   *
+   * @param panel	the panel it got added to
+   */
+  public void overlayAdded(PaintPanel panel);
+
+  /**
+   * Gets called when the image overlay got removed from a paintable panel.
+   *
+   * @param panel	the panel it got removed from
+   */
+  public void overlayRemoved(PaintPanel panel);
 }

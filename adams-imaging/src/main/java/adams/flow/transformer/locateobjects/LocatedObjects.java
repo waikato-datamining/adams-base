@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjects.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -501,7 +501,19 @@ public class LocatedObjects
    * @return		the objects found
    */
   public static LocatedObjects fromReport(Report report, String prefix) {
-    return fromReport(report, new String[]{prefix});
+    return fromReport(report, prefix, null);
+  }
+
+  /**
+   * Retrieves all objects from the report.
+   *
+   * @param report	the report to process
+   * @param prefix	the prefix to look for
+   * @param filter 	the filter to use for further filtering the objects, ignored if null
+   * @return		the objects found
+   */
+  public static LocatedObjects fromReport(Report report, String prefix, LocatedObjectFilter filter) {
+    return fromReport(report, new String[]{prefix}, filter);
   }
 
   /**
@@ -512,6 +524,18 @@ public class LocatedObjects
    * @return		the objects found
    */
   public static LocatedObjects fromReport(Report report, String[] prefixes) {
+    return fromReport(report, prefixes, null);
+  }
+
+  /**
+   * Retrieves all objects from the report.
+   *
+   * @param report	the report to process
+   * @param prefixes	the prefixes to look for
+   * @param filter 	the filter to use for further filtering the objects, ignored if null
+   * @return		the objects found
+   */
+  public static LocatedObjects fromReport(Report report, String[] prefixes, LocatedObjectFilter filter) {
     LocatedObjects  			result;
     LocatedObject			obj;
     String				current;
@@ -586,7 +610,9 @@ public class LocatedObjects
 	  width  = report.getDoubleValue(group + KEY_WIDTH).intValue();
 	  height = report.getDoubleValue(group + KEY_HEIGHT).intValue();
 	  obj    = new LocatedObject(null, x, y, width, height, (meta.size() > 0) ? meta : null);
-	  result.add(obj);
+	  // add
+	  if ((filter == null) || filter.accept(obj))
+	    result.add(obj);
 	  // polygon
 	  if ( report.hasValue(group + KEY_POLY_X)
 	    && report.hasValue(group + KEY_POLY_Y)) {

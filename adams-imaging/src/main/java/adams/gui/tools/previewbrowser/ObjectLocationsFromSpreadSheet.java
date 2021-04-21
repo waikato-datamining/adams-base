@@ -249,6 +249,7 @@ public class ObjectLocationsFromSpreadSheet
       overlay.setVaryShapeColor(m_VaryShapeColor);
       overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
       overlay.setBoundingBoxFallbackRatio(m_BoundingBoxFallbackRatio);
+      overlay.setShowObjectPanel(m_ShowObjectPanel);
       m_PanelImage.addImageOverlay(overlay);
       m_PanelImage.addLeftClickListener(new ViewObjects());
 
@@ -398,6 +399,9 @@ public class ObjectLocationsFromSpreadSheet
   /** the alternative location. */
   protected PlaceholderDirectory m_AlternativeLocation;
 
+  /** whether to show the located object panel. */
+  protected boolean m_ShowObjectPanel;
+
   /**
    * Returns a string describing the object.
    *
@@ -507,6 +511,10 @@ public class ObjectLocationsFromSpreadSheet
     m_OptionManager.add(
       "alternative-location", "alternativeLocation",
       new PlaceholderDirectory());
+
+    m_OptionManager.add(
+      "show-object-panel", "showObjectPanel",
+      false);
   }
 
   /**
@@ -1202,6 +1210,35 @@ public class ObjectLocationsFromSpreadSheet
    */
   public String alternativeLocationTipText() {
     return "The alternative location to use look for associated reports.";
+  }
+
+  /**
+   * Sets whether to show the panel with the located panels.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowObjectPanel(boolean value) {
+    m_ShowObjectPanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the panel with the located objects.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowObjectPanel() {
+    return m_ShowObjectPanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showObjectPanelTipText() {
+    return "If enabled, the panel for selecting located objects is being displayed.";
   }
 
   /**
