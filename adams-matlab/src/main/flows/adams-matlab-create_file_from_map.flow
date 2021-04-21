@@ -1,0 +1,36 @@
+# Project: adams
+# Date: 2021-04-22 11:20:16
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Stores a map with Matlab arrays in a .mat file.\\nThe Matlab arrays were loaded from spreadsheets." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.control.Trigger -name "add value to map" -annotation "uses the \\\'key\\\' variable storing the value in the map"
+   adams.flow.source.StorageValue -storage-name map -conversion adams.data.conversion.UnknownToUnknown
+   adams.flow.transformer.SetMapValue -key @{key} -type STORAGE -storage value -conversion adams.data.conversion.ObjectToObject
+   adams.flow.transformer.SetStorageValue -storage-name map
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "new map"
+  adams.flow.source.NewMap
+  adams.flow.transformer.SetStorageValue -storage-name map
+ adams.flow.control.Trigger -name "fill map"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv -file ${EXAMPLE_FLOWS}/data/iris.csv
+  adams.flow.control.Tee -name "get name"
+   adams.flow.transformer.BaseName -remove-extensions true
+   adams.flow.transformer.SetVariable -var-name name
+  adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+  adams.flow.control.Tee -name data
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name value
+   adams.flow.transformer.SetVariable -var-name key -var-value @{name}_data -expand-value true
+   adams.flow.transformer.CallableTransformer -name add -callable "add value to map"
+  adams.flow.control.Tee -name header
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.SetStorageValue -storage-name value
+   adams.flow.transformer.SetVariable -var-name key -var-value @{name}_header -expand-value true
+   adams.flow.transformer.CallableTransformer -name add -callable "add value to map"
+ adams.flow.control.Trigger -name "add map and save"
+  adams.flow.source.NewMat5File
+  adams.flow.transformer.Mat5FileAddMap -retrieval-type STORAGE -object-storage map
+  adams.flow.sink.Mat5FileWriter -output ${EXAMPLE_FLOWS}/output/test_map.mat
