@@ -15,14 +15,17 @@
 
 /*
  * AbstractSpreadSheetHandler.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
+import adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer;
 import adams.gui.dialog.SpreadSheetPanel;
 
 import java.awt.BorderLayout;
@@ -42,6 +45,9 @@ public abstract class AbstractSpreadSheetHandler
   /** the prefix for unnamed sheets. */
   public final static String UNNAMED_SHEET_PREFIX = "Sheet";
 
+  /** for customizing the cell rendering. */
+  protected CellRenderingCustomizer m_CellRenderingCustomizer;
+
   /**
    * Returns a string describing the object.
    *
@@ -50,6 +56,47 @@ public abstract class AbstractSpreadSheetHandler
   @Override
   public String globalInfo() {
     return "Displays the following spreadsheet types: " + Utils.arrayToString(getExtensions());
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "cell-rendering-customizer", "cellRenderingCustomizer",
+      new DefaultCellRenderingCustomizer());
+  }
+
+  /**
+   * Sets the renderer.
+   *
+   * @param value	the renderer
+   */
+  public void setCellRenderingCustomizer(CellRenderingCustomizer value) {
+    m_CellRenderingCustomizer = value;
+    reset();
+  }
+
+  /**
+   * Returns the renderer.
+   *
+   * @return		the renderer
+   */
+  public CellRenderingCustomizer getCellRenderingCustomizer() {
+    return m_CellRenderingCustomizer;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String cellRenderingCustomizerTipText() {
+    return "The renderer to use for the cells.";
   }
 
   /**
@@ -85,6 +132,7 @@ public abstract class AbstractSpreadSheetHandler
 	if (!sheets[i].hasName())
 	  sheets[i].setName(UNNAMED_SHEET_PREFIX + (i+1));
 	panel = new SpreadSheetPanel();
+	panel.setCellRenderingCustomizer(ObjectCopyHelper.copyObject(m_CellRenderingCustomizer));
 	panel.setSpreadSheet(sheets[i]);
 	panel.setShowSearch(true);
 	tabbedPane.addTab(sheets[i].getName(), panel);
@@ -94,6 +142,7 @@ public abstract class AbstractSpreadSheetHandler
     else if (sheets.length == 1) {
       result = new BasePanel(new BorderLayout());
       panel = new SpreadSheetPanel();
+      panel.setCellRenderingCustomizer(ObjectCopyHelper.copyObject(m_CellRenderingCustomizer));
       panel.setSpreadSheet(sheets[0]);
       panel.setShowSearch(true);
       result.add(panel, BorderLayout.CENTER);
