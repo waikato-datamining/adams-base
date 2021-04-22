@@ -41,6 +41,7 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -53,6 +54,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.io.Serializable;
@@ -131,6 +133,9 @@ public abstract class AbstractObjectOverlayFromReport
     /** the list model with the objects. */
     protected DefaultListModel<LocatedObject> m_ModelObjects;
 
+    /** the label for counts. */
+    protected JLabel m_LabelCounts;
+
     /** the button for selecting all. */
     protected BaseButton m_ButtonAll;
 
@@ -156,6 +161,7 @@ public abstract class AbstractObjectOverlayFromReport
      */
     @Override
     protected void initGUI() {
+      JPanel	panelBottom;
       JPanel	panel;
 
       super.initGUI();
@@ -166,6 +172,7 @@ public abstract class AbstractObjectOverlayFromReport
       m_ListObjects = new BaseList(m_ModelObjects);
       m_ListObjects.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       m_ListObjects.addListSelectionListener((ListSelectionEvent e) -> {
+        updateCounts();
 	if (m_Owner == null)
 	  return;
 	if (m_Owner.getOwner() == null)
@@ -176,9 +183,19 @@ public abstract class AbstractObjectOverlayFromReport
       });
       add(new BaseScrollPane(m_ListObjects), BorderLayout.CENTER);
 
+      // bottom panel
+      panelBottom = new JPanel(new GridLayout(2, 1, 0, 0));
+      add(panelBottom, BorderLayout.SOUTH);
+
+      // counts
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+      panelBottom.add(panel);
+      m_LabelCounts = new JLabel();
+      panel.add(m_LabelCounts);
+
       // buttons
-      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      add(panel, BorderLayout.SOUTH);
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+      panelBottom.add(panel);
 
       m_ButtonAll = new BaseButton("All");
       m_ButtonAll.setToolTipText("Selects all objects");
@@ -194,6 +211,15 @@ public abstract class AbstractObjectOverlayFromReport
       m_ButtonInvert.setToolTipText("Inverts the selection");
       m_ButtonInvert.addActionListener((ActionEvent) -> m_ListObjects.invertSelection());
       panel.add(m_ButtonInvert);
+    }
+
+    /**
+     * Finishes the initialization.
+     */
+    @Override
+    protected void finishInit() {
+      super.finishInit();
+      updateCounts();
     }
 
     /**
@@ -214,6 +240,13 @@ public abstract class AbstractObjectOverlayFromReport
      */
     public AbstractObjectOverlayFromReport getOwner() {
       return m_Owner;
+    }
+
+    /**
+     * Updates the labels with the counts.
+     */
+    protected void updateCounts() {
+      m_LabelCounts.setText("Total: " + m_ModelObjects.getSize() + ", Selected: " + m_ListObjects.getSelectedIndices().length);
     }
 
     /**
