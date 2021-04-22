@@ -21,7 +21,6 @@
 package adams.gui.core.spreadsheettable;
 
 import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.visualization.core.AbstractColorGradientGenerator;
 import adams.gui.visualization.core.ConfusionMatrixColorGenerator;
@@ -228,44 +227,6 @@ public class ConfusionMatrixCellRenderingCustomizer
   }
 
   /**
-   * Determines min/max values in the table.
-   *
-   * @param table	the table to analyze
-   * @return		the min and max
-   */
-  protected double[] getMinMax(SpreadSheetTable table) {
-    double[]	result;
-    SpreadSheet	sheet;
-    int		r;
-    int		c;
-    Cell	cell;
-    double	value;
-    boolean	any;
-
-    result  = new double[]{Double.MAX_VALUE, Double.MIN_VALUE};
-    sheet   = table.toSpreadSheet();
-    any     = false;
-    for (r = 0; r < sheet.getRowCount(); r++) {
-      for (c = 1; c < sheet.getColumnCount(); c++) {
-        cell = sheet.getCell(r, c);
-        if ((cell != null) && !cell.isMissing() && cell.isNumeric()) {
-	  value     = cell.toDouble();
-	  result[0] = Math.min(result[0], value);
-	  result[1] = Math.max(result[1], value);
-	  any       = true;
-	}
-      }
-    }
-
-    if (!any) {
-      result[0] = 0;
-      result[1] = 0;
-    }
-
-    return result;
-  }
-
-  /**
    * For customizing the background color of a cell.
    *
    * @param table	the table
@@ -317,7 +278,7 @@ public class ConfusionMatrixCellRenderingCustomizer
 	result = m_Highlight;
     }
     else if (m_ValueBasedBackground) {
-      minMax = getMinMax(table);
+      minMax = getMinMax(table, null, null);
       min    = minMax[0];
       max    = minMax[1];
       if (min < max) {
