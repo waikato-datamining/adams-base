@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ListVariableUsage.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.processor;
 
 import adams.core.VariableName;
+import adams.core.VariableNameValuePair;
 import adams.core.Variables;
 import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
@@ -47,7 +48,6 @@ import adams.core.option.OptionTraversalPath;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ListVariableUsage
   extends AbstractListNameUsage<VariableName> {
@@ -92,14 +92,36 @@ public class ListVariableUsage
    */
   @Override
   protected boolean isNameMatch(Object obj) {
+    VariableNameValuePair[]	pairs;
+    BaseObject[]		objs;
+
     if (obj instanceof VariableName) {
       return ((VariableName) obj).getValue().equals(m_Name);
     }
     else if (obj instanceof String) {
       return ((String) obj).contains(Variables.padName(m_Name));
     }
+    else if (obj instanceof VariableNameValuePair) {
+      return ((VariableNameValuePair) obj).varName().getValue().equals(m_Name);
+    }
+    else if (obj instanceof VariableNameValuePair[]) {
+      pairs = (VariableNameValuePair[]) obj;
+      for (VariableNameValuePair pair: pairs) {
+        if (pair.varName().getValue().equals(m_Name))
+          return true;
+      }
+      return false;
+    }
     else if (obj instanceof BaseObject) {
       return ((BaseObject) obj).getValue().contains(Variables.padName(m_Name));
+    }
+    else if (obj instanceof BaseObject[]) {
+      objs = ((BaseObject[]) obj);
+      for (BaseObject o: objs) {
+        if (o.getValue().contains(Variables.padName(m_Name)))
+          return true;
+      }
+      return false;
     }
     else {
       return false;
