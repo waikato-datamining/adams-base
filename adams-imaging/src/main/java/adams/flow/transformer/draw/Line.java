@@ -15,7 +15,7 @@
 
 /*
  * Line.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -333,7 +333,7 @@ public class Line
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
     if (g instanceof Graphics2D)
       ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
-    g.drawLine(m_X1, m_Y1, m_X2, m_Y2);
+    g.drawLine(m_X1 - 1, m_Y1 - 1, m_X2 - 1, m_Y2 - 1);
 
     return null;
   }

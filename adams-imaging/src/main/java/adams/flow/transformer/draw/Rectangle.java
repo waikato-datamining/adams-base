@@ -15,7 +15,7 @@
 
 /*
  * Rectangle.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -450,10 +450,10 @@ public class Rectangle
         result = "X is larger than image width: " + m_X + " > " + image.getWidth();
       else if (m_Y > image.getHeight())
         result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
-      else if (m_X + m_Width > image.getWidth())
-        result = "X+Width is larger than image width: " + (m_X+m_Width) + " > " + image.getWidth();
-      else if (m_Y + m_Height > image.getHeight())
-        result = "Y+Height is larger than image height: " + (m_Y+m_Height) + " > " + image.getHeight();
+      else if (m_X + m_Width - 1 > image.getWidth())
+        result = "X+Width-1 is larger than image width: " + (m_X+m_Width-1) + " > " + image.getWidth();
+      else if (m_Y + m_Height - 1 > image.getHeight())
+        result = "Y+Height-1 is larger than image height: " + (m_Y+m_Height-1) + " > " + image.getHeight();
     }
 
     return result;
@@ -474,15 +474,15 @@ public class Rectangle
     ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
     if ((m_ArcWidth > 0) && (m_ArcHeight > 0)) {
       if (m_Fill)
-        g.fillRoundRect(m_X, m_Y, m_Width, m_Height, m_ArcWidth, m_ArcHeight);
+        g.fillRoundRect(m_X - 1, m_Y - 1, m_Width, m_Height, m_ArcWidth, m_ArcHeight);
       else
-        g.drawRoundRect(m_X, m_Y, m_Width, m_Height, m_ArcWidth, m_ArcHeight);
+        g.drawRoundRect(m_X - 1, m_Y - 1, m_Width, m_Height, m_ArcWidth, m_ArcHeight);
     }
     else {
       if (m_Fill)
-        g.fillRect(m_X, m_Y, m_Width, m_Height);
+        g.fillRect(m_X - 1, m_Y - 1, m_Width, m_Height);
       else
-        g.drawRect(m_X, m_Y, m_Width, m_Height);
+        g.drawRect(m_X - 1, m_Y - 1, m_Width, m_Height);
     }
 
     return null;

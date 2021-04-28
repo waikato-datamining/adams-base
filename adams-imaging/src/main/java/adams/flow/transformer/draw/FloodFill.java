@@ -15,7 +15,7 @@
 
 /*
  * FloodFill.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -213,7 +213,7 @@ public class FloodFill
 
     g = image.getImage().getGraphics();
     g.setColor(m_Color);
-    BufferedImageHelper.floodFill(image.getImage(), m_X - 1, m_Y, new Color(image.getImage().getRGB(m_X, m_Y)), m_Color);
+    BufferedImageHelper.floodFill(image.getImage(), m_X - 1, m_Y - 1, new Color(image.getImage().getRGB(m_X - 1, m_Y - 1)), m_Color);
 
     return null;
   }

@@ -15,7 +15,7 @@
 
 /*
  * Oval.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -353,10 +353,10 @@ public class Oval
         result = "X is larger than image width: " + m_X + " > " + image.getWidth();
       else if (m_Y > image.getHeight())
         result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
-      else if (m_X + m_Width > image.getWidth())
-        result = "X+Width is larger than image width: " + (m_X+m_Width) + " > " + image.getWidth();
-      else if (m_Y + m_Height > image.getHeight())
-        result = "Y+Height is larger than image height: " + (m_Y+m_Height) + " > " + image.getHeight();
+      else if (m_X + m_Width - 1 > image.getWidth())
+        result = "X+Width-1 is larger than image width: " + (m_X+m_Width - 1) + " > " + image.getWidth();
+      else if (m_Y + m_Height - 1 > image.getHeight())
+        result = "Y+Height-1 is larger than image height: " + (m_Y+m_Height - 1) + " > " + image.getHeight();
     }
 
     return result;
@@ -376,9 +376,9 @@ public class Oval
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
     ((Graphics2D) g).setStroke(new BasicStroke(m_StrokeThickness));
     if (m_Fill)
-      g.fillOval(m_X, m_Y, m_Width, m_Height);
+      g.fillOval(m_X - 1, m_Y - 1, m_Width, m_Height);
     else
-      g.drawOval(m_X, m_Y, m_Width, m_Height);
+      g.drawOval(m_X - 1, m_Y - 1, m_Width, m_Height);
 
     return null;
   }

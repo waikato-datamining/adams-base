@@ -15,7 +15,7 @@
 
 /*
  * Text.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -389,7 +389,7 @@ public class Text
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
       g.setFont(m_Font);
       for (i = 0; i < lines.length; i++)
-	g.drawString(lines[i], m_X, m_Y + i * m_YIncrement);
+	g.drawString(lines[i], m_X - 1, m_Y - 1 + i * m_YIncrement);
     }
     
     return null;
