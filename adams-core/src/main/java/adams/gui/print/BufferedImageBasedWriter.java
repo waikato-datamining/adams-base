@@ -164,7 +164,7 @@ public abstract class BufferedImageBasedWriter
     if (getComponent() instanceof JTable)
       table = (JTable) getComponent();
     else if (getComponent() instanceof JTableSupporter)
-      ((JTableSupporter) getComponent()).getTable();
+      table = ((JTableSupporter) getComponent()).getTable();
 
     if (table != null) {
       headerHeight = (int) table.getTableHeader().getPreferredSize().getHeight();
