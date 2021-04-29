@@ -31,6 +31,8 @@ import adams.gui.core.SortableAndSearchableWrapperTableModel;
 import adams.gui.core.TableRowRange;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.sendto.SendToActionSupporter;
+import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper;
 import adams.gui.visualization.instances.instancestable.InstancesTablePopupMenuItemHelper.TableState;
@@ -42,6 +44,7 @@ import weka.core.Undoable;
 import weka.core.converters.AbstractFileSaver;
 
 import javax.swing.JMenuItem;
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellRenderer;
@@ -61,7 +64,7 @@ import java.util.HashSet;
  */
 public class InstancesTable
   extends SortableAndSearchableTable
-  implements Undoable {
+  implements Undoable, SendToActionSupporter {
 
   private static final long serialVersionUID = -1408763296714340976L;
 
@@ -568,6 +571,8 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(rowrange));
     menu.add(menuitem);
 
+    SendToActionUtils.addSendToSubmenu(this, menu);
+
     InstancesTablePopupMenuItemHelper.addToPopupMenu(state, menu, true);
 
     if (m_CellPopupMenuCustomizer != null)
@@ -789,5 +794,44 @@ public class InstancesTable
   public void sort(InstanceComparator comparator) {
     ((InstancesTableModel) getUnsortedModel()).getInstances().sort(comparator);
     ((SortableAndSearchableWrapperTableModel) getModel()).fireTableDataChanged();
+  }
+
+  /**
+   * Returns the classes that the supporter generates.
+   *
+   * @return		the classes
+   */
+  @Override
+  public Class[] getSendToClasses() {
+    return new Class[]{JTable.class};
+  }
+
+  /**
+   * Checks whether something to send is available.
+   *
+   * @param cls		the classes to retrieve the item for
+   * @return		true if an object is available for sending
+   */
+  @Override
+  public boolean hasSendToItem(Class[] cls) {
+    return (SendToActionUtils.isAvailable(new Class[]{JTable.class}, cls));
+  }
+
+  /**
+   * Returns the object to send.
+   *
+   * @param cls		the classes to retrieve the item for
+   * @return		the item to send
+   */
+  @Override
+  public Object getSendToItem(Class[] cls) {
+    Object	result;
+
+    result = null;
+
+    if (SendToActionUtils.isAvailable(JTable.class, cls))
+      result = this;
+
+    return result;
   }
 }

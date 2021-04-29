@@ -15,13 +15,14 @@
 
 /*
  * InstancesPanel.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
 
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.JTableSupporter;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
@@ -40,7 +41,8 @@ import java.awt.FlowLayout;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class InstancesPanel
-  extends BasePanel {
+  extends BasePanel
+  implements JTableSupporter<InstancesTable> {
 
   private static final long serialVersionUID = -6517998516164369299L;
 
