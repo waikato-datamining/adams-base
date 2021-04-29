@@ -13,12 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BufferedImageBasedWriter.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.print;
 
+import adams.gui.core.JTableSupporter;
+
+import javax.swing.JTable;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,7 +31,6 @@ import java.awt.image.BufferedImage;
  * Ancestor for writers that write a BufferedImage to disk.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class BufferedImageBasedWriter
   extends ScalableComponentWriter {
@@ -149,6 +151,12 @@ public abstract class BufferedImageBasedWriter
       ((Graphics2D) g).scale(getXScale(), getYScale());
     g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
     getComponent().printAll(g);
+
+    // special handling of tables
+    if (getComponent() instanceof JTable)
+      ((JTable) getComponent()).getTableHeader().paint(g);
+    else if (getComponent() instanceof JTableSupporter)
+      ((JTableSupporter) getComponent()).getTable().getTableHeader().paint(g);
 
     return result;
   }

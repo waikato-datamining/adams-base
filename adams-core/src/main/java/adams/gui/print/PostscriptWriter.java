@@ -15,14 +15,16 @@
 
  /*
   *    PostscriptWriter.java
-  *    Copyright (C) 2005,2009,2015 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2005-2021 University of Waikato, Hamilton, New Zealand
   *
   */
 
 package adams.gui.print;
 
 import adams.core.io.FileUtils;
+import adams.gui.core.JTableSupporter;
 
+import javax.swing.JTable;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
@@ -84,7 +86,6 @@ import java.io.FileOutputStream;
  * Based on weka.gui.visualize.PostscriptWriter
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see PostscriptGraphics
  */
 public class PostscriptWriter
@@ -140,6 +141,13 @@ public class PostscriptWriter
       psg.setFont(getComponent().getFont());
       psg.scale(getXScale(), getYScale());
       getComponent().printAll(psg);
+
+      // special handling of tables
+      if (getComponent() instanceof JTable)
+        ((JTable) getComponent()).getTableHeader().paint(psg);
+      else if (getComponent() instanceof JTableSupporter)
+        ((JTableSupporter) getComponent()).getTable().getTableHeader().paint(psg);
+
       psg.finished();
     }
     catch (Exception e) {
