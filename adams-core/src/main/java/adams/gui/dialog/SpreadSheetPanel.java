@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -28,6 +28,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -64,7 +65,7 @@ import java.io.File;
  */
 public class SpreadSheetPanel
   extends BasePanel 
-  implements MenuBarProvider, SendToActionSupporter {
+  implements MenuBarProvider, SendToActionSupporter, JTableSupporter<SpreadSheetTable> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8089541494489119743L;

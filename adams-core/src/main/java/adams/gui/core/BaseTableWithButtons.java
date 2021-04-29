@@ -15,7 +15,7 @@
 
 /*
  * BaseTableWithButtons.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -43,7 +43,7 @@ import java.awt.event.MouseEvent;
  */
 public class BaseTableWithButtons
   extends AbstractDoubleClickableComponentWithButtons<BaseTable>
-  implements SpreadSheetSupporter {
+  implements SpreadSheetSupporter, JTableSupporter<BaseTable> {
 
   /** for serialization. */
   private static final long serialVersionUID = 1935542795448084154L;
@@ -743,5 +743,15 @@ public class BaseTableWithButtons
    */
   public void setColumnWidths(int[] value) {
     m_Component.setColumnWidths(value);
+  }
+
+  /**
+   * Returns the underlying table.
+   *
+   * @return the table
+   */
+  @Override
+  public BaseTable getTable() {
+    return getComponent();
   }
 }

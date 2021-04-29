@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTable.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -26,11 +26,14 @@ import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
 import adams.gui.event.PopupMenuListener;
+import adams.gui.sendto.SendToActionSupporter;
+import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumnModel;
@@ -45,7 +48,8 @@ import java.util.HashMap;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetTable
-  extends SortableAndSearchableTable {
+  extends SortableAndSearchableTable
+  implements SendToActionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1333317577811620786L;
@@ -526,6 +530,8 @@ public class SpreadSheetTable
     menuitem.addActionListener((ActionEvent ae) -> saveAs(range));
     menu.add(menuitem);
 
+    SendToActionUtils.addSendToSubmenu(this, menu);
+
     SpreadSheetTablePopupMenuItemHelper.addToPopupMenu(state, menu, true);
 
     menu.addSeparator();
@@ -796,5 +802,44 @@ public class SpreadSheetTable
   @Override
   protected SpreadSheet modelToSpreadSheet() {
     return ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
+  }
+
+  /**
+   * Returns the classes that the supporter generates.
+   *
+   * @return		the classes
+   */
+  @Override
+  public Class[] getSendToClasses() {
+    return new Class[]{JTable.class};
+  }
+
+  /**
+   * Checks whether something to send is available.
+   *
+   * @param cls		the classes to retrieve the item for
+   * @return		true if an object is available for sending
+   */
+  @Override
+  public boolean hasSendToItem(Class[] cls) {
+    return (SendToActionUtils.isAvailable(new Class[]{JTable.class}, cls));
+  }
+
+  /**
+   * Returns the object to send.
+   *
+   * @param cls		the classes to retrieve the item for
+   * @return		the item to send
+   */
+  @Override
+  public Object getSendToItem(Class[] cls) {
+    Object	result;
+
+    result = null;
+
+    if (SendToActionUtils.isAvailable(JTable.class, cls))
+      result = this;
+
+    return result;
   }
 }
