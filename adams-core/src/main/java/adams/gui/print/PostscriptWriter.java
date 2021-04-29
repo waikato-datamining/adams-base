@@ -131,24 +131,42 @@ public class PostscriptWriter
     BufferedOutputStream	ostrm;
     FileOutputStream		fos;
     PostscriptGraphics		psg;
+    JTable			table;
+    int				height;
+    int				headerHeight;
+
+    // special handling of tables
+    table = null;
+    if (getComponent() instanceof JTable)
+      table = (JTable) getComponent();
+    else if (getComponent() instanceof JTableSupporter)
+      table = ((JTableSupporter) getComponent()).getTable();
 
     ostrm = null;
     fos = null;
     try {
-      fos = new FileOutputStream(getFile().getAbsoluteFile());
-      ostrm = new BufferedOutputStream(fos);
-      psg = new PostscriptGraphics(getComponent().getHeight(), getComponent().getWidth(), ostrm);
-      psg.setFont(getComponent().getFont());
-      psg.scale(getXScale(), getYScale());
-      getComponent().printAll(psg);
-
-      // special handling of tables
-      if (getComponent() instanceof JTable)
-        ((JTable) getComponent()).getTableHeader().paint(psg);
-      else if (getComponent() instanceof JTableSupporter)
-        ((JTableSupporter) getComponent()).getTable().getTableHeader().paint(psg);
-
-      psg.finished();
+      if (table != null) {
+	headerHeight = (int) table.getTableHeader().getPreferredSize().getHeight();
+	height       = getComponent().getHeight() + headerHeight;
+	fos          = new FileOutputStream(getFile().getAbsoluteFile());
+	ostrm        = new BufferedOutputStream(fos);
+	psg          = new PostscriptGraphics(getComponent().getWidth(), height, ostrm);
+	psg.setFont(getComponent().getFont());
+	psg.scale(getXScale(), getYScale());
+	table.getTableHeader().paint(psg);
+	psg.translate(0, headerHeight);
+	getComponent().printAll(psg);
+	psg.finished();
+      }
+      else {
+	fos = new FileOutputStream(getFile().getAbsoluteFile());
+	ostrm = new BufferedOutputStream(fos);
+	psg = new PostscriptGraphics(getComponent().getWidth(), getComponent().getHeight(), ostrm);
+	psg.setFont(getComponent().getFont());
+	psg.scale(getXScale(), getYScale());
+	getComponent().printAll(psg);
+	psg.finished();
+      }
     }
     catch (Exception e) {
       System.err.println(e);
