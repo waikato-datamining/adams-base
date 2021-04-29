@@ -154,14 +154,10 @@ public abstract class BufferedImageBasedWriter
    */
   protected BufferedImage createBufferedImage() {
     BufferedImage	result;
-    BufferedImage	full;
     Graphics2D		g;
-    Graphics2D		gf;
     JTable		table;
     int			height;
     int			headerHeight;
-
-    result = newImage(getComponent().getWidth(), getComponent().getHeight());
 
     // special handling of tables
     table = null;
@@ -173,29 +169,20 @@ public abstract class BufferedImageBasedWriter
     if (table != null) {
       headerHeight = (int) table.getTableHeader().getPreferredSize().getHeight();
       height       = getComponent().getHeight() + headerHeight;
-
-      full = newImage(getComponent().getWidth(), height);
-      gf = full.createGraphics();
-      gf.scale(getXScale(), getYScale());
-      gf.fillRect(0, 0, getComponent().getWidth(), height);
-      table.getTableHeader().paint(gf);
-
-      g = result.createGraphics();
+      result       = newImage(getComponent().getWidth(), height);
+      g            = result.createGraphics();
       g.setPaintMode();
       g.setColor(getBackground());
       g.scale(getXScale(), getYScale());
       g.fillRect(0, 0, getComponent().getWidth(), height);
+      table.getTableHeader().paint(g);
+      g.translate(0, headerHeight);
       getComponent().printAll(g);
-
-      gf.drawImage(result, 0, headerHeight, null);
-
       g.dispose();
-      gf.dispose();
-
-      result = full;
     }
     else {
-      g = result.createGraphics();
+      result = newImage(getComponent().getWidth(), getComponent().getHeight());
+      g      = result.createGraphics();
       g.setPaintMode();
       g.setColor(getBackground());
       g.scale(getXScale(), getYScale());
