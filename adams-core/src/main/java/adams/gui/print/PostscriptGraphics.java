@@ -15,7 +15,7 @@
 
 /*
  *    PostscriptGraphics.java
- *    Copyright (C) 2003,2009 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2003-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -78,7 +78,6 @@ import java.util.Map;
  * @see #m_PSFontReplacement
  * @author Dale Fletcher (dale@cs.waikato.ac.nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PostscriptGraphics
   extends Graphics2D {
@@ -237,7 +236,7 @@ public class PostscriptGraphics
    */
   public PostscriptGraphics(int width, int height, OutputStream os ) {
 
-    m_extent             = new Rectangle(0, 0, height, width);
+    m_extent             = new Rectangle(0, 0, width, height);
     m_printstream        = new PrintStream(os);
     m_localGraphicsState = new GraphicsState();
     m_psGraphicsState    = new GraphicsState();
