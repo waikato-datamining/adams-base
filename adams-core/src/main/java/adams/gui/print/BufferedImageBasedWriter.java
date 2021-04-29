@@ -23,7 +23,6 @@ import adams.gui.core.JTableSupporter;
 
 import javax.swing.JTable;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -129,34 +128,81 @@ public abstract class BufferedImageBasedWriter
   }
 
   /**
+   * Creates a new BufferedImage with the given dimensions.
+   *
+   * @param width	the width
+   * @param height	the height
+   * @return		the image
+   */
+  protected BufferedImage newImage(int width, int height) {
+    BufferedImage	result;
+
+    if (m_Type == Type.RGB)
+      result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+    else if (m_Type == Type.GRAY)
+      result = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+    else
+      throw new IllegalStateException("Unhandled type: " + m_Type);
+
+    return result;
+  }
+
+  /**
    * Generates the BufferedImage to write to disk.
    *
    * @return		the created image
    */
   protected BufferedImage createBufferedImage() {
     BufferedImage	result;
-    Graphics		g;
+    BufferedImage	full;
+    Graphics2D		g;
+    Graphics2D		gf;
+    JTable		table;
+    int			height;
+    int			headerHeight;
 
-    if (m_Type == Type.RGB)
-      result = new BufferedImage(getComponent().getWidth(), getComponent().getHeight(), BufferedImage.TYPE_INT_RGB);
-    else if (m_Type == Type.GRAY)
-      result = new BufferedImage(getComponent().getWidth(), getComponent().getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-    else
-      throw new IllegalStateException("Unhandled type: " + m_Type);
-
-    g = result.getGraphics();
-    g.setPaintMode();
-    g.setColor(getBackground());
-    if (g instanceof Graphics2D)
-      ((Graphics2D) g).scale(getXScale(), getYScale());
-    g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
-    getComponent().printAll(g);
+    result = newImage(getComponent().getWidth(), getComponent().getHeight());
 
     // special handling of tables
+    table = null;
     if (getComponent() instanceof JTable)
-      ((JTable) getComponent()).getTableHeader().paint(g);
+      table = (JTable) getComponent();
     else if (getComponent() instanceof JTableSupporter)
-      ((JTableSupporter) getComponent()).getTable().getTableHeader().paint(g);
+      ((JTableSupporter) getComponent()).getTable();
+
+    if (table != null) {
+      headerHeight = (int) table.getTableHeader().getPreferredSize().getHeight();
+      height       = getComponent().getHeight() + headerHeight;
+
+      full = newImage(getComponent().getWidth(), height);
+      gf = full.createGraphics();
+      gf.scale(getXScale(), getYScale());
+      gf.fillRect(0, 0, getComponent().getWidth(), height);
+      table.getTableHeader().paint(gf);
+
+      g = result.createGraphics();
+      g.setPaintMode();
+      g.setColor(getBackground());
+      g.scale(getXScale(), getYScale());
+      g.fillRect(0, 0, getComponent().getWidth(), height);
+      getComponent().printAll(g);
+
+      gf.drawImage(result, 0, headerHeight, null);
+
+      g.dispose();
+      gf.dispose();
+
+      result = full;
+    }
+    else {
+      g = result.createGraphics();
+      g.setPaintMode();
+      g.setColor(getBackground());
+      g.scale(getXScale(), getYScale());
+      g.fillRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
+      getComponent().printAll(g);
+      g.dispose();
+    }
 
     return result;
   }
