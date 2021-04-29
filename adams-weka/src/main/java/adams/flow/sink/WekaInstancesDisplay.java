@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesDisplay.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -34,6 +34,7 @@ import adams.gui.visualization.instances.InstancesTableModel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 import weka.core.Instances;
 
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -116,7 +117,7 @@ import java.util.List;
  */
 public class WekaInstancesDisplay
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider, TextSupplier {
+  implements DisplayPanelProvider, TextSupplier, ComponentSupplier {
 
   /** for serialization. */
   private static final long serialVersionUID = 6791882185628220997L;
@@ -270,6 +271,15 @@ public class WekaInstancesDisplay
       return m_Table.getInstances().toString();
     else
       return null;
+  }
+
+  /**
+   * Supplies the component. May get called even before actor has been executed.
+   *
+   * @return		the component, null if none available
+   */
+  public JComponent supplyComponent() {
+    return m_Table;
   }
 
   /**

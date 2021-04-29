@@ -52,6 +52,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
@@ -210,7 +211,7 @@ import java.util.List;
  */
 public class SpreadSheetDisplay
   extends AbstractTextualDisplay
-  implements DisplayPanelProvider, SpreadSheetSupporter {
+  implements DisplayPanelProvider, SpreadSheetSupporter, ComponentSupplier {
 
   /**
    * Custom {@link DisplayPanel}.
@@ -936,6 +937,15 @@ public class SpreadSheetDisplay
       result = m_TableModel.toSpreadSheet().toString();
 
     return result;
+  }
+
+  /**
+   * Supplies the component. May get called even before actor has been executed.
+   *
+   * @return		the component, null if none available
+   */
+  public JComponent supplyComponent() {
+    return m_Table;
   }
 
   /**
