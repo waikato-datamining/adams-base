@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -45,6 +45,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandler;
@@ -76,6 +77,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -1100,7 +1102,10 @@ public class PreviewBrowserPanel
    * @return		the classes
    */
   public Class[] getSendToClasses() {
-    return new Class[]{PlaceholderFile.class, JComponent.class};
+    if ((m_PanelContent.getComponent() instanceof JTable) || (m_PanelContent.getComponent() instanceof JTableSupporter))
+      return new Class[]{PlaceholderFile.class, JComponent.class, JTable.class};
+    else
+      return new Class[]{PlaceholderFile.class, JComponent.class};
   }
 
   /**
@@ -1122,6 +1127,7 @@ public class PreviewBrowserPanel
   public Object getSendToItem(Class[] cls) {
     Object	result;
     File	file;
+    JTable	table;
 
     result = null;
     file   = null;
@@ -1133,8 +1139,18 @@ public class PreviewBrowserPanel
 	result = new PlaceholderFile(file);
       }
     }
-    else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
-      result = m_PanelContent.getComponent();
+    else {
+      table = null;
+      if (m_PanelContent.getComponent() instanceof JTable)
+        table = (JTable) m_PanelContent.getComponent();
+      else if (m_PanelContent.getComponent() instanceof JTableSupporter)
+        table = ((JTableSupporter) m_PanelContent.getComponent()).getTable();
+      if ((table != null) && SendToActionUtils.isAvailable(JTable.class, cls)) {
+        result = m_PanelContent.getComponent();
+      }
+      else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
+        result = m_PanelContent.getComponent();
+      }
     }
 
     return result;
