@@ -15,7 +15,7 @@
 
 /*
  * HttpRequest.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -27,13 +27,15 @@ import adams.core.base.BaseURL;
 import adams.core.io.EncodingSupporter;
 import adams.flow.container.HttpRequestResult;
 import adams.flow.core.Token;
+import com.github.fracpete.requests4j.core.MediaTypeHelper;
 import com.github.fracpete.requests4j.request.Method;
 import com.github.fracpete.requests4j.request.Request;
 import com.github.fracpete.requests4j.response.BasicResponse;
+import okhttp3.MediaType;
 
 /**
  <!-- globalinfo-start -->
- * Sends the incoming text/bytes payload to the specified URL (with optional HTTP headers) and forwards the retrieved HTML as text.
+ * Sends the incoming text&#47;bytes payload to the specified URL (with optional HTTP headers) and forwards the retrieved HTML as text.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -90,9 +92,14 @@ import com.github.fracpete.requests4j.response.BasicResponse;
  * &nbsp;&nbsp;&nbsp;default: http:&#47;&#47;localhost
  * </pre>
  *
- * <pre>-method &lt;GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|TRACE&gt; (property: method)
+ * <pre>-method &lt;GET|POST|PUT|PATCH|HEAD|DELETE|OPTIONS&gt; (property: method)
  * &nbsp;&nbsp;&nbsp;The method to use for the request.
  * &nbsp;&nbsp;&nbsp;default: POST
+ * </pre>
+ *
+ * <pre>-mime-type &lt;java.lang.String&gt; (property: mimeType)
+ * &nbsp;&nbsp;&nbsp;The mime-type for the request, leave empty for application&#47;octet-stream.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-header &lt;adams.core.base.BaseKeyValuePair&gt; [-header ...] (property: headers)
@@ -120,6 +127,9 @@ public class HttpRequest
 
   /** the action method to use. */
   protected Method m_Method;
+
+  /** the mimetype. */
+  protected String m_MimeType;
 
   /** the (optional) request headers. */
   protected BaseKeyValuePair[] m_Headers;
@@ -155,6 +165,10 @@ public class HttpRequest
       Method.POST);
 
     m_OptionManager.add(
+      "mime-type", "mimeType",
+      "");
+
+    m_OptionManager.add(
       "header", "headers",
       new BaseKeyValuePair[0]);
 
@@ -174,6 +188,7 @@ public class HttpRequest
 
     result  = QuickInfoHelper.toString(this, "URL", m_URL, "URL: ");
     result += QuickInfoHelper.toString(this, "method", m_Method, ", method: ");
+    result += QuickInfoHelper.toString(this, "mimeType", (m_MimeType.isEmpty() ? MediaTypeHelper.OCTECT_STREAM : m_MimeType), ", mime-type: ");
 
     return result;
   }
@@ -234,6 +249,35 @@ public class HttpRequest
    */
   public String methodTipText() {
     return "The method to use for the request.";
+  }
+
+  /**
+   * Sets the mime-type, leave empty for application/octect-stream.
+   *
+   * @param value	the mime-type
+   */
+  public void setMimeType(String value) {
+    m_MimeType = value;
+    reset();
+  }
+
+  /**
+   * Returns the mime-type, application/octect-stream if empty.
+   *
+   * @return		the mime-type
+   */
+  public String getMimeType() {
+    return m_MimeType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String mimeTypeTipText() {
+    return "The mime-type for the request, leave empty for " + MediaTypeHelper.OCTECT_STREAM + ".";
   }
 
   /**
@@ -324,6 +368,7 @@ public class HttpRequest
     String		result;
     Request 		req;
     BasicResponse 	res;
+    byte[]		bytes;
 
     result = null;
 
@@ -334,9 +379,13 @@ public class HttpRequest
       if (!m_Method.hasBody())
         throw new IllegalStateException("Method " + m_Method + " does not support a body in the request!");
       if (m_InputToken.hasPayload(String.class))
-        req.body(((String) m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue()));
+        bytes = ((String) m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue());
       else
-        req.body((byte[]) m_InputToken.getPayload());
+        bytes = (byte[]) m_InputToken.getPayload();
+      if (m_MimeType.isEmpty())
+	req.body(bytes);
+      else
+        req.body(bytes, MediaType.parse(m_MimeType));
       res = req.execute();
       m_OutputToken = new Token(new HttpRequestResult(res.statusCode(), res.statusMessage(), res.text()));
     }
