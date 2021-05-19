@@ -75,6 +75,10 @@ public class DeepLabCutCSVReader
 
   public static final String KEY_FILE = "File";
 
+  public static final String KEY_INDIVIDUALS = "Individuals";
+
+  public static final String KEY_LABELS = "Labels";
+
   /** the prefix of the points in the report. */
   protected String m_Prefix;
 
@@ -217,19 +221,20 @@ public class DeepLabCutCSVReader
     List<Report>		result;
     CsvSpreadSheetReader	reader;
     SpreadSheet			sheet;
-    int				numLabels;
     String			label;
     Map<Integer,String>		labels;
+    List<String>		uniqueLabels;
     List<String>		files;
     int				i;
-    int				n;
     int				col;
     String			file;
     double			x;
     double			y;
     Map<String,Report>		reports;
     Report			report;
+    String			individual;
     Map<Integer,String>		individuals;
+    List<String>		uniqueIndividuals;
     Row				indRow;
     boolean			multi;
 
@@ -247,7 +252,8 @@ public class DeepLabCutCSVReader
     multi = ((sheet.getRowCount() > 0) && (sheet.getCell(0, 0).getContent().equals("individuals")));
 
     // determine labels
-    labels = new HashMap<>();
+    labels       = new HashMap<>();
+    uniqueLabels = new ArrayList<>();
     if (sheet.getRowCount() > 1) {
       for (i = 1; i < sheet.getColumnCount(); i++) {
         if (multi)
@@ -255,15 +261,22 @@ public class DeepLabCutCSVReader
         else
 	  label = sheet.getRow(0).getCell(i).getContent();
         labels.put(i, label);
+        if (!uniqueLabels.contains(label))
+          uniqueLabels.add(label);
       }
     }
 
     // multi-animal?
-    individuals = new HashMap<>();
+    individuals       = new HashMap<>();
+    uniqueIndividuals = new ArrayList<>();
     if (multi) {
       indRow = sheet.getRow(0);
-      for (i = 1; i < indRow.getCellCount(); i++)
-        individuals.put(i, indRow.getCell(i).getContent());
+      for (i = 1; i < indRow.getCellCount(); i++) {
+	individual = indRow.getCell(i).getContent();
+	individuals.put(i, individual);
+	if (!uniqueIndividuals.contains(individual))
+	  uniqueIndividuals.add(individual);
+      }
     }
 
     // remove unnecessary rows (individuals/bodyparts/coords)
@@ -281,6 +294,8 @@ public class DeepLabCutCSVReader
       if (!reports.containsKey(file)) {
         report = new Report();
         report.setStringValue(KEY_FILE, file);
+        report.setStringValue(KEY_INDIVIDUALS, Utils.flatten(uniqueIndividuals, ","));
+        report.setStringValue(KEY_LABELS, Utils.flatten(uniqueLabels, ","));
 	reports.put(file, report);
       }
       report = reports.get(file);
