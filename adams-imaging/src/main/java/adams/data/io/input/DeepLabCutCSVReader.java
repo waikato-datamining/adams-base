@@ -218,38 +218,62 @@ public class DeepLabCutCSVReader
     CsvSpreadSheetReader	reader;
     SpreadSheet			sheet;
     int				numLabels;
+    String			label;
     List<String>		labels;
     List<String>		files;
     int				i;
+    int				n;
     int				col;
     String			file;
     double			x;
     double			y;
     Map<String,Report>		reports;
     Report			report;
+    List<String>		individuals;
+    Row				indRow;
+    boolean			multi;
 
     result = new ArrayList<>();
     reader = new CsvSpreadSheetReader();
     reader.setParseFormulas(false);
     sheet = reader.read(m_Input);
 
-    // determine labels
-    numLabels = (sheet.getColumnCount() - 1) / 2;
-    labels    = new ArrayList<>();
-    if (sheet.getRowCount() > 0) {
-      for (i = 1; i < sheet.getColumnCount(); i += 2)
-	labels.add(sheet.getRow(0).getCell(i).getContent());
-    }
-    else {
-      for (i = 1; i < numLabels; i++)
-        labels.add("label-" + (i+1));
+    if (sheet.getRowCount() < 3) {
+      getLogger().warning("Not enough rows in spreadsheet?");
+      return result;
     }
 
-    // remove unnecessary rows (bodyparts/coords)
-    for (i = 1; i >= 0; i--) {
-      if (sheet.getRowCount() > i)
-        sheet.removeRow(i);
+    // multiple or single individual?
+    multi = ((sheet.getRowCount() > 0) && (sheet.getCell(0, 0).getContent().equals("individuals")));
+
+    // determine labels
+    labels = new ArrayList<>();
+    if (sheet.getRowCount() > 1) {
+      for (i = 1; i < sheet.getColumnCount(); i += 2) {
+        if (multi)
+	  label = sheet.getRow(1).getCell(i).getContent();
+        else
+	  label = sheet.getRow(0).getCell(i).getContent();
+        if (!labels.contains(label))
+	  labels.add(label);
+      }
     }
+
+    // multi-animal?
+    individuals = new ArrayList<>();
+    if (multi) {
+      indRow = sheet.getRow(0);
+      for (i = 1; i < indRow.getCellCount(); i += labels.size()*2)
+        individuals.add(indRow.getCell(i).getContent());
+    }
+    if (!multi)
+      individuals.add("dummy");
+
+    // remove unnecessary rows (individuals/bodyparts/coords)
+    if (multi)
+      sheet.removeRow(0);
+    sheet.removeRow(0);
+    sheet.removeRow(0);
 
     // iterate rows
     reports = new HashMap<>();
@@ -263,14 +287,18 @@ public class DeepLabCutCSVReader
 	reports.put(file, report);
       }
       report = reports.get(file);
-      for (i = 0; i < numLabels; i++) {
-        col = i*2 + 1;
-        if (row.hasCell(col) && !row.getCell(col).isMissing()) {
-          x = row.getCell(col).toDouble();
-          y = row.getCell(col+1).toDouble();
-          report.setNumericValue(m_Prefix + Utils.padLeft("" + (i+1), '0', 4) + ".x", x);
-          report.setNumericValue(m_Prefix + Utils.padLeft("" + (i+1), '0', 4) + ".y", y);
-          report.setStringValue(m_Prefix + Utils.padLeft("" + (i+1), '0', 4) + ".type", labels.get(i));
+      for (n = 0; n < individuals.size(); n++) {
+	for (i = 0; i < labels.size(); i++) {
+	  col = 1 + n * labels.size() + i * 2;
+	  if (row.hasCell(col) && !row.getCell(col).isMissing()) {
+	    x = row.getCell(col).toDouble();
+	    y = row.getCell(col + 1).toDouble();
+	    report.setNumericValue(m_Prefix + Utils.padLeft("" + (n * labels.size() + i + 1), '0', 4) + ".x", x);
+	    report.setNumericValue(m_Prefix + Utils.padLeft("" + (n * labels.size() + i + 1), '0', 4) + ".y", y);
+	    report.setStringValue(m_Prefix + Utils.padLeft("" + (n * labels.size() + i + 1), '0', 4) + ".type", labels.get(i));
+	    if (multi)
+	      report.setStringValue(m_Prefix + Utils.padLeft("" + (n * labels.size() + i + 1), '0', 4) + ".individual", individuals.get(n));
+	  }
 	}
       }
     }
