@@ -620,6 +620,15 @@ public class LocatedObjects
 	    obj.getMetaData().put(LocatedObject.KEY_POLY_Y, report.getStringValue(group + KEY_POLY_Y));
 	  }
 	}
+	else if ( report.hasValue(group + KEY_X)
+	  && report.hasValue(group + KEY_Y) ) {
+	  x      = report.getDoubleValue(group + KEY_X).intValue();
+	  y      = report.getDoubleValue(group + KEY_Y).intValue();
+	  obj    = new LocatedObject(null, x, y, 1, 1, (meta.size() > 0) ? meta : null);
+	  // add
+	  if ((filter == null) || filter.accept(obj))
+	    result.add(obj);
+	}
       }
       catch (Exception e) {
 	// ignored

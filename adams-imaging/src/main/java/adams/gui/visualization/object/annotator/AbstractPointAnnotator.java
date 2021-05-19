@@ -14,8 +14,8 @@
  */
 
 /*
- * AbstractRectangleBasedAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * AbstractPointAnnotator.java
+ * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -23,20 +23,20 @@ package adams.gui.visualization.object.annotator;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.visualization.image.SelectionRectangle;
+import adams.gui.visualization.image.SelectionPoint;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Annotators that use a rectangle based approach.
+ * Ancestor for point annotators.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractRectangleBasedAnnotator
+public abstract class AbstractPointAnnotator
   extends AbstractReportBasedAnnotator {
 
-  private static final long serialVersionUID = 3536654827455977474L;
+  private static final long serialVersionUID = 711225849711247916L;
 
   /** the key for the X location. */
   public final static String KEY_X = LocatedObjects.KEY_X;
@@ -44,23 +44,11 @@ public abstract class AbstractRectangleBasedAnnotator
   /** the key for the Y location. */
   public final static String KEY_Y = LocatedObjects.KEY_Y;
 
-  /** the key for the width. */
-  public final static String KEY_WIDTH = LocatedObjects.KEY_WIDTH;
-
-  /** the key for the height. */
-  public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
-
-  /** the key for the Xs of the polygon. */
-  public final static String KEY_POLY_X = LocatedObjects.KEY_POLY_X;
-
-  /** the key for the Ys of the polygon. */
-  public final static String KEY_POLY_Y = LocatedObjects.KEY_POLY_Y;
-
   /** the number of digits to use for left-padding the index. */
   protected int m_NumDigits;
 
   /** the current rectangles. */
-  protected List<SelectionRectangle> m_Locations;
+  protected List<SelectionPoint> m_Locations;
 
   /**
    * Adds options to the internal list of options.
@@ -75,6 +63,16 @@ public abstract class AbstractRectangleBasedAnnotator
   }
 
   /**
+   * Returns the default prefix to use for the objects.
+   *
+   * @return		the default
+   */
+  @Override
+  protected String getDefaultPrefix() {
+    return "Point.";
+  }
+
+  /**
    * Resets the scheme.
    */
   @Override
@@ -82,16 +80,6 @@ public abstract class AbstractRectangleBasedAnnotator
     super.reset();
 
     m_Locations = null;
-  }
-
-  /**
-   * Returns the default prefix to use for the objects.
-   *
-   * @return		the default
-   */
-  @Override
-  protected String getDefaultPrefix() {
-    return "Object.";
   }
 
   /**
@@ -138,11 +126,11 @@ public abstract class AbstractRectangleBasedAnnotator
    * @param report	the report to get the locations from
    * @return		the locations
    */
-  protected List<SelectionRectangle> getLocations(Report report) {
-    List<SelectionRectangle>	result;
+  protected List<SelectionPoint> getLocations(Report report) {
+    List<SelectionPoint>	result;
     List<AbstractField>		fields;
     String			name;
-    SelectionRectangle		rect;
+    SelectionPoint 		point;
 
     result = new ArrayList<>();
     fields = report.getFields();
@@ -153,14 +141,12 @@ public abstract class AbstractRectangleBasedAnnotator
         if (name.indexOf('.') > -1)
           name = name.substring(0, name.indexOf('.'));
         try {
-          rect = new SelectionRectangle(
+          point = new SelectionPoint(
             report.getDoubleValue(m_Prefix + name + KEY_X).intValue(),
             report.getDoubleValue(m_Prefix + name + KEY_Y).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_WIDTH).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_HEIGHT).intValue(),
             Integer.parseInt(name));
-          if (!result.contains(rect))
-            result.add(rect);
+          if (!result.contains(point))
+            result.add(point);
         }
         catch (Exception e) {
           // ignored
