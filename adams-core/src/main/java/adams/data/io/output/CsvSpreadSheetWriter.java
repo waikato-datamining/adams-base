@@ -15,7 +15,7 @@
 
 /*
  * CsvSpreadSheetWriter.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -652,7 +652,7 @@ public class CsvSpreadSheetWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String quoteCharacterTipText() {
-    return "The character to use for surrounding text cells; leave empty for not quote character.";
+    return "The character to use for surrounding text cells; leave empty for no quote character.";
   }
 
   /**

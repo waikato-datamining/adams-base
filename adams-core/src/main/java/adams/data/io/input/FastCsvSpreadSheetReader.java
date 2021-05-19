@@ -15,7 +15,7 @@
 
 /*
  * FastCsvSpreadSheetReader.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -132,19 +132,19 @@ public class FastCsvSpreadSheetReader
    * @param value	the quote character
    */
   public void setQuoteCharacter(String value) {
-    if (value.length() == 1) {
+    if (value.length() <= 1) {
       m_QuoteCharacter = value;
       reset();
     }
     else {
-      getLogger().severe("Only one character allowed for quote character, provided: " + value);
+      getLogger().severe("At most one character allowed for quote character, provided: " + value);
     }
   }
 
   /**
-   * Returns the string used as separator for the columns, '\t' for tab.
+   * Returns the string used for surrounding text.
    *
-   * @return		the separator
+   * @return		the quote character
    */
   public String getQuoteCharacter() {
     return m_QuoteCharacter;
@@ -157,7 +157,7 @@ public class FastCsvSpreadSheetReader
    * 			displaying in the GUI or for listing the options.
    */
   public String quoteCharacterTipText() {
-    return "The character to use for surrounding text cells.";
+    return "The character to use for surrounding text cells; can be empty.";
   }
 
   /**
@@ -456,7 +456,7 @@ public class FastCsvSpreadSheetReader
       reader = new BufferedReader(r);
 
     sep      = (m_Separator.length() == 1 ? m_Separator.charAt(0) : ',');
-    quote    = (m_QuoteCharacter.length() == 1 ? m_QuoteCharacter.charAt(0) : '"');
+    quote    = (m_QuoteCharacter.length() == 1 ? m_QuoteCharacter.charAt(0) : '\0');
     header   = true;
     numCells = -1;
     numeric  = new TIntHashSet();

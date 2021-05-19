@@ -479,7 +479,7 @@ public class CsvSpreadSheetReader
       boolean		inside;
       boolean		maybeNewLine;
 
-      result       = new ArrayList<String>();
+      result       = new ArrayList<>();
       current      = new StringBuilder();
       escaped      = false;
       escapeChr    = '\0';
@@ -798,7 +798,7 @@ public class CsvSpreadSheetReader
       m_HeaderCells         = null;
       m_ChunkSize           = m_Owner.getChunkSize();
       m_MissingValue        = m_Owner.getMissingValue();
-      m_QuoteChar           = m_Owner.getQuoteCharacter().charAt(0);
+      m_QuoteChar           = (m_Owner.getQuoteCharacter().length() == 1 ? m_Owner.getQuoteCharacter().charAt(0) : '\0');
       m_Separator           = Utils.unbackQuoteChars(m_Owner.getSeparator()).charAt(0);
       m_Comment             = m_Owner.getComment().trim();
       m_HasTextCols         = false;
@@ -1133,22 +1133,22 @@ public class CsvSpreadSheetReader
   /**
    * Sets the character used for surrounding text.
    *
-   * @param value	the quote character
+   * @param value	the quote character, can be empty
    */
   public void setQuoteCharacter(String value) {
-    if (value.length() == 1) {
+    if (value.length() <= 1) {
       m_QuoteCharacter = value;
       reset();
     }
     else {
-      getLogger().severe("Only one character allowed for quote character, provided: " + value);
+      getLogger().severe("At most one character allowed for quote character, provided: " + value);
     }
   }
 
   /**
-   * Returns the string used as separator for the columns, '\t' for tab.
+   * Returns the string used for surrounding text.
    *
-   * @return		the separator
+   * @return		the quote character, can be empty
    */
   public String getQuoteCharacter() {
     return m_QuoteCharacter;
@@ -1161,7 +1161,7 @@ public class CsvSpreadSheetReader
    * 			displaying in the GUI or for listing the options.
    */
   public String quoteCharacterTipText() {
-    return "The character to use for surrounding text cells.";
+    return "The character to use for surrounding text cells; can be empty.";
   }
 
   /**
