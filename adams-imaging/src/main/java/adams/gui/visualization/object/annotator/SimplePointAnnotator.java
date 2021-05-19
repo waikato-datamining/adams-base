@@ -74,6 +74,9 @@ public class SimplePointAnnotator
   /** the finishing corner of the selection box. */
   protected Point m_SelectionTo;
 
+  /** whether to automatically advance to the next label once one has been clicked. */
+  protected boolean m_AutoAdvanceLabels;
+
   /**
    * Returns a string describing the object.
    *
@@ -102,6 +105,10 @@ public class SimplePointAnnotator
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
       getDefaultLabelSuffix());
+
+    m_OptionManager.add(
+      "auto-advance-labels", "autoAdvanceLabels",
+      false);
   }
 
   /**
@@ -212,6 +219,35 @@ public class SimplePointAnnotator
   }
 
   /**
+   * Sets whether to auto advance labels once one has been applied.
+   *
+   * @param value 	true if to auto advance
+   */
+  public void setAutoAdvanceLabels(boolean value) {
+    m_AutoAdvanceLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to auto advance labels once one has been applied.
+   *
+   * @return 		true if auto advance
+   */
+  public boolean getAutoAdvanceLabels() {
+    return m_AutoAdvanceLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String autoAdvanceLabelsTipText() {
+    return "If enabled, the next label gets automatically selected once one has been applied.";
+  }
+
+  /**
    * Initializes the members.
    */
   @Override
@@ -283,6 +319,8 @@ public class SimplePointAnnotator
 	  m_Selecting = false;
 	  m_Dragged = false;
 	  processSelection(e.getModifiersEx());
+	  if (m_AutoAdvanceLabels)
+	    getOwner().getLabelSelectorPanel().selectNextLabel();
 	}
       }
     };
