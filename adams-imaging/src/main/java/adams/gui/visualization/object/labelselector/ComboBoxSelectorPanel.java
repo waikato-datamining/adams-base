@@ -210,4 +210,22 @@ public class ComboBoxSelectorPanel
   public boolean isUnsetButtonVisible() {
     return m_ButtonUnset.isVisible();
   }
+
+  /**
+   * Moves to the next label.
+   */
+  @Override
+  public void selectNextLabel() {
+    int		current;
+
+    // find current
+    current = m_ComboBoxLabels.getSelectedIndex();
+
+    // next
+    current++;
+    if (current > m_ComboBoxLabels.getItemCount())
+      current = 0;
+
+    m_ComboBoxLabels.setSelectedIndex(current);
+  }
 }

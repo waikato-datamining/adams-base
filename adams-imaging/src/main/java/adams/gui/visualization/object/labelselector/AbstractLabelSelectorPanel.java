@@ -125,4 +125,9 @@ public abstract class AbstractLabelSelectorPanel
    * @return		true if visible
    */
   public abstract boolean isUnsetButtonVisible();
+
+  /**
+   * Moves to the next label.
+   */
+  public abstract void selectNextLabel();
 }

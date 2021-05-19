@@ -210,4 +210,31 @@ public class ButtonSelectorPanel
   public boolean isUnsetButtonVisible() {
     return m_ButtonUnset.isVisible();
   }
+
+  /**
+   * Moves to the next label.
+   */
+  @Override
+  public void selectNextLabel() {
+    int		i;
+    int		current;
+
+    if (m_ButtonLabels.length == 0)
+      return;
+
+    // locate current
+    current = -1;
+    for (i = 0; i < m_ButtonLabels.length; i++) {
+      if (m_ButtonLabels[i].isSelected()) {
+	current = i;
+      }
+    }
+
+    // next button
+    current++;
+    if (current > m_ButtonLabels.length - 1)
+      current = 0;
+
+    m_ButtonLabels[current].doClick();
+  }
 }
