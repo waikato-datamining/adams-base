@@ -15,7 +15,7 @@
 
 /*
  * AbstractLabelSelectorPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.labelselector;
@@ -111,4 +111,18 @@ public abstract class AbstractLabelSelectorPanel
       throw new IllegalStateException("No owning panel set!");
     }
   }
+
+  /**
+   * Shows or hides the "Unset" button.
+   *
+   * @param value	true if to show, false to hide
+   */
+  public abstract void setUnsetButtonVisible(boolean value);
+
+  /**
+   * Returns whether the unset button is visible.
+   *
+   * @return		true if visible
+   */
+  public abstract boolean isUnsetButtonVisible();
 }
