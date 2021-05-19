@@ -58,7 +58,12 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-labels &lt;adams.core.base.BaseString&gt; [-labels ...] (property: labels)
+ * <pre>-individual &lt;adams.core.base.BaseString&gt; [-individual ...] (property: individuals)
+ * &nbsp;&nbsp;&nbsp;The individuals for multi-animal output, leave empty for single animal output.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-label &lt;adams.core.base.BaseString&gt; [-label ...] (property: labels)
  * &nbsp;&nbsp;&nbsp;The labels to output.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
@@ -80,6 +85,9 @@ public class DeepLabCutCSVWriter
 
   /** the file prefix to use. */
   protected String m_FilePrefix;
+
+  /** the number of individuals. */
+  protected BaseString[] m_Individuals;
 
   /** the labels to output. */
   protected BaseString[] m_Labels;
@@ -110,12 +118,17 @@ public class DeepLabCutCSVWriter
       "");
 
     m_OptionManager.add(
-      "labels", "labels",
+      "individual", "individuals",
+      new BaseString[0]);
+
+    m_OptionManager.add(
+      "label", "labels",
       new BaseString[0]);
 
     m_OptionManager.add(
       "prefix", "prefix",
       "Point.");
+
   }
 
   /**
@@ -145,6 +158,35 @@ public class DeepLabCutCSVWriter
    */
   public String filePrefixTipText() {
     return "The file prefix (ie path) used in the output.";
+  }
+
+  /**
+   * Sets the names of the number of individuals to output (leave empty for single-animal output).
+   *
+   * @param value 	the individuals
+   */
+  public void setIndividuals(BaseString[] value) {
+    m_Individuals = value;
+    reset();
+  }
+
+  /**
+   * Returns the names of the individuals to output (leave empty for single-animal output).
+   *
+   * @return 		the individuals
+   */
+  public BaseString[] getIndividuals() {
+    return m_Individuals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String individualsTipText() {
+    return "The individuals for multi-animal output, leave empty for single animal output.";
   }
 
   /**
@@ -251,36 +293,71 @@ public class DeepLabCutCSVWriter
     Row				row;
     CsvSpreadSheetWriter	writer;
     int				i;
+    int				n;
     String			file;
     String			filePrefix;
     LocatedObjects 		objs;
     Map<String,Integer>		pos;
+    int				col;
     String			label;
+    boolean			multi;
+    int				numIndividuals;
+    String			individual;
+    String			key;
 
     sheet = new DefaultSpreadSheet();
+
+    multi          = (m_Individuals.length > 0);
+    numIndividuals = (multi ? m_Individuals.length : 1);
 
     // header
     row = sheet.getHeaderRow();
     row.addCell("" + 0).setContentAsString("scorer");
-    for (i = 0; i < m_Labels.length*2; i++)
-      row.addCell("" + i+1).setContentAsString(System.getProperty("user.name"));
+    for (i = 0; i < numIndividuals * m_Labels.length * 2; i++)
+      row.addCell("" + (i+1)).setContentAsString(System.getProperty("user.name"));
 
     // data
+    // individuals
+    if (multi) {
+      row = sheet.addRow();
+      row.addCell(0).setContentAsString("individuals");
+      col = 1;
+      for (n = 0; n < numIndividuals; n++) {
+	for (i = 0; i < m_Labels.length*2; i++) {
+	  row.addCell(col).setContentAsString(m_Individuals[n].getValue());
+	  col++;
+	}
+      }
+    }
+
     // bodyparts
     row = sheet.addRow();
     row.addCell(0).setContentAsString("bodyparts");
-    for (i = 0; i < m_Labels.length; i++) {
-      row.addCell(i*2+1).setContentAsString(m_Labels[i].getValue());
-      row.addCell(i*2+2).setContentAsString(m_Labels[i].getValue());
+    col = 1;
+    for (n = 0; n < numIndividuals; n++) {
+      for (i = 0; i < m_Labels.length; i++) {
+	row.addCell(col).setContentAsString(m_Labels[i].getValue());
+	col++;
+	row.addCell(col).setContentAsString(m_Labels[i].getValue());
+	col++;
+      }
     }
     // coords
     pos = new HashMap<>();
     row = sheet.addRow();
     row.addCell(0).setContentAsString("coords");
-    for (i = 0; i < m_Labels.length; i++) {
-      pos.put(m_Labels[i].getValue(), i*2+1);
-      row.addCell(i*2+1).setContentAsString("x");
-      row.addCell(i*2+2).setContentAsString("y");
+    col = 1;
+    for (n = 0; n < numIndividuals; n++) {
+      for (i = 0; i < m_Labels.length; i++) {
+        key = m_Labels[i].getValue();
+        if (multi)
+	  key = m_Individuals[n].getValue() + "-" + key;
+        pos.put(key, col);
+	row.addCell(col).setContentAsString("x");
+	col++;
+	row.addCell(col).setContentAsString("y");
+	col++;
+      }
     }
 
     // add annotations
@@ -306,10 +383,12 @@ public class DeepLabCutCSVWriter
       // labels
       objs = LocatedObjects.fromReport(report, m_Prefix);
       for (LocatedObject obj: objs) {
-        label = "" + obj.getMetaData().getOrDefault("type", "");
-        if (pos.containsKey(label)) {
-          row.addCell(pos.get(label)).setContent(obj.getX());
-          row.addCell(pos.get(label) + 1).setContent(obj.getY());
+        key = "" + obj.getMetaData().getOrDefault("type", "");
+        if (multi)
+          key = obj.getMetaData().getOrDefault("individual", "") + "-" + key;
+        if (pos.containsKey(key)) {
+          row.addCell(pos.get(key)).setContent(obj.getX());
+          row.addCell(pos.get(key) + 1).setContent(obj.getY());
 	}
       }
     }
