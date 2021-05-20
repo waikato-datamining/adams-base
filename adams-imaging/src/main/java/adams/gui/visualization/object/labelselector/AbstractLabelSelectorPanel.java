@@ -24,12 +24,13 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 
 /**
- * Ancestor for panels that .
+ * Ancestor for panels that allow selection of label.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractLabelSelectorPanel
-  extends BasePanel {
+  extends BasePanel
+  implements LabelSelector {
 
   private static final long serialVersionUID = -4366283634060701920L;
 
@@ -65,6 +66,7 @@ public abstract class AbstractLabelSelectorPanel
    *
    * @param value	the panel
    */
+  @Override
   public void setOwner(ObjectAnnotationPanel value) {
     m_Owner = value;
   }
@@ -74,6 +76,7 @@ public abstract class AbstractLabelSelectorPanel
    *
    * @return		the panel, null if none set
    */
+  @Override
   public ObjectAnnotationPanel getOwner() {
     return m_Owner;
   }
@@ -90,6 +93,7 @@ public abstract class AbstractLabelSelectorPanel
    *
    * @param label	the label to use
    */
+  @Override
   public void preselectCurrentLabel(String label) {
     m_IgnoreChanges = true;
     doPreselectCurrentLabel(label);
@@ -101,6 +105,7 @@ public abstract class AbstractLabelSelectorPanel
    *
    * @param value	the label, null to unset
    */
+  @Override
   public void setCurrentLabel(String value) {
     if (getOwner() != null) {
       getOwner().setCurrentLabel(value);
@@ -111,23 +116,4 @@ public abstract class AbstractLabelSelectorPanel
       throw new IllegalStateException("No owning panel set!");
     }
   }
-
-  /**
-   * Shows or hides the "Unset" button.
-   *
-   * @param value	true if to show, false to hide
-   */
-  public abstract void setUnsetButtonVisible(boolean value);
-
-  /**
-   * Returns whether the unset button is visible.
-   *
-   * @return		true if visible
-   */
-  public abstract boolean isUnsetButtonVisible();
-
-  /**
-   * Moves to the next label.
-   */
-  public abstract void selectNextLabel();
 }
