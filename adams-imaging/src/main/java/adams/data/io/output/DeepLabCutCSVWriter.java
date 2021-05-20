@@ -103,7 +103,7 @@ public class DeepLabCutCSVWriter
   @Override
   public String globalInfo() {
     return "Writes point annotations from multiple reports in DeepLabCut's CSV format.\n"
-      + "Expects the filename to be stored in the '" + DeepLabCutCSVReader.KEY_FILE + "' report field.";
+      + "Expects the filename to be stored in the '" + DeepLabCutCSVReader.KEY_FILENAME + "' report field.";
   }
 
   /**
@@ -365,8 +365,8 @@ public class DeepLabCutCSVWriter
       row = sheet.addRow();
 
       // file
-      if (report.hasValue(DeepLabCutCSVReader.KEY_FILE))
-        file = report.getStringValue(DeepLabCutCSVReader.KEY_FILE);
+      if (report.hasValue(DeepLabCutCSVReader.KEY_FILENAME))
+        file = report.getStringValue(DeepLabCutCSVReader.KEY_FILENAME);
       else
         file = "";
       if (!m_FilePrefix.isEmpty()) {

@@ -73,7 +73,7 @@ public class DeepLabCutCSVReader
 
   private static final long serialVersionUID = 5868402740072822596L;
 
-  public static final String KEY_FILE = "File";
+  public static final String KEY_FILENAME = "Filename";
 
   public static final String KEY_INDIVIDUALS = "Individuals";
 
@@ -293,7 +293,7 @@ public class DeepLabCutCSVReader
         continue;
       if (!reports.containsKey(file)) {
         report = new Report();
-        report.setStringValue(KEY_FILE, file);
+        report.setStringValue(KEY_FILENAME, file);
         report.setStringValue(KEY_INDIVIDUALS, Utils.flatten(uniqueIndividuals, ","));
         report.setStringValue(KEY_LABELS, Utils.flatten(uniqueLabels, ","));
 	reports.put(file, report);
