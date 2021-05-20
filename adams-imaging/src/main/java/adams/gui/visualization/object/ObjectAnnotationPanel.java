@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotationPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -929,6 +929,8 @@ public class ObjectAnnotationPanel
   public void annotationsChanged(Object source) {
     if (source != m_Overlay)
       m_Overlay.annotationsChanged();
+    if (source != m_Annotator)
+      m_Annotator.annotationsChanged();
     update();
   }
 

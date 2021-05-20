@@ -15,7 +15,7 @@
 
 /*
  * AbstractAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -100,6 +100,12 @@ public abstract class AbstractAnnotator
     if (m_Owner == null)
       throw new IllegalStateException("No owner set, cannot uninstall!");
     doUninstall();
+  }
+
+  /**
+   * Hook method for when annotations change.
+   */
+  public void annotationsChanged() {
   }
 
   /**

@@ -133,6 +133,15 @@ public abstract class AbstractRectangleBasedAnnotator
   }
 
   /**
+   * Hook method for when annotations change.
+   */
+  @Override
+  public void annotationsChanged() {
+    super.annotationsChanged();
+    m_Locations = null;
+  }
+
+  /**
    * Retruns all currently stored locations.
    *
    * @param report	the report to get the locations from
