@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.object.labelselector;
 
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseToggleButton;
@@ -168,6 +169,16 @@ public class ButtonSelectorPanel
 
     if (m_ButtonLabels.length > 0)
       m_ButtonLabels[0].doClick();
+  }
+
+  /**
+   * Returns the labels to choose from.
+   *
+   * @return		the labels
+   */
+  @Override
+  public String[] getLabels() {
+    return BaseObject.toStringArray(m_Labels);
   }
 
   /**

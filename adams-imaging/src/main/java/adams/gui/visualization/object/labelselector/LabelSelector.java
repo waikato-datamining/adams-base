@@ -44,6 +44,13 @@ public interface LabelSelector {
   public ObjectAnnotationPanel getOwner();
 
   /**
+   * Returns the labels to choose from.
+   *
+   * @return		the labels
+   */
+  public String[] getLabels();
+
+  /**
    * Pre-selects the label.
    *
    * @param label	the label to use

@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class SimplePointAnnotator
   extends AbstractPointAnnotator
-  implements LabelSuffixHandler {
+  implements LabelSuffixHandler, AutoAdvanceAnnotator {
 
   private static final long serialVersionUID = -1849931714797487127L;
 

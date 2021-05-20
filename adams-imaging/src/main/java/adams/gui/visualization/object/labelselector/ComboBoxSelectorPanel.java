@@ -151,6 +151,16 @@ public class ComboBoxSelectorPanel
   }
 
   /**
+   * Returns the labels to choose from.
+   *
+   * @return		the labels
+   */
+  @Override
+  public String[] getLabels() {
+    return BaseObject.toStringArray(m_Labels);
+  }
+
+  /**
    * Sets the current label to use.
    *
    * @param value	the label, null to unset

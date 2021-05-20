@@ -41,6 +41,7 @@ import adams.gui.visualization.object.ObjectAnnotationPanel;
 import adams.gui.visualization.object.annotationsdisplay.AbstractAnnotationsDisplayGenerator;
 import adams.gui.visualization.object.annotationsdisplay.DefaultAnnotationsDisplayGenerator;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
+import adams.gui.visualization.object.annotator.AutoAdvanceAnnotator;
 import adams.gui.visualization.object.annotator.BoundingBoxAnnotator;
 import adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator;
 import adams.gui.visualization.object.labelselector.ButtonSelectorGenerator;
@@ -894,6 +895,7 @@ public class ImageObjectAnnotator
   public boolean doInteract() {
     BufferedImage		img;
     AbstractImageContainer	imgcont;
+    boolean			resetLabel;
 
     m_Accepted       = false;
     m_StartTimestamp = new Date();
@@ -919,7 +921,18 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setPreviousReport(m_PreviousReport);
     m_PanelObjectAnnotation.annotationsChanged(this);
     m_PanelObjectAnnotation.labelChanged(this);
-    m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
+    resetLabel = false;
+    if (m_Annotator instanceof AutoAdvanceAnnotator)
+      resetLabel = ((AutoAdvanceAnnotator) m_Annotator).getAutoAdvanceLabels();
+    if (resetLabel) {
+      if (m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels().length > 0)
+	m_PanelObjectAnnotation.preselectCurrentLabel(m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels()[0]);
+      else
+	m_PanelObjectAnnotation.preselectCurrentLabel(null);
+    }
+    else {
+      m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
+    }
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
 
