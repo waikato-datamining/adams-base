@@ -15,13 +15,15 @@
 
 /*
  * SpreadSheetInfo.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
+import adams.data.report.DataType;
+import adams.data.report.Field;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
@@ -90,7 +92,7 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES|SHEET_VALUES&gt; (property: type)
+ * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES|SHEET_VALUES|FIELD_SPEC|FIELD_SPECS|FIELD_TYPE|FIELD_TYPES&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: NUM_ROWS
  * </pre>
@@ -152,6 +154,14 @@ public class SpreadSheetInfo
     CELL_VALUES,
     /** all (unique) cell values. */
     SHEET_VALUES,
+    /** field (at specified index). */
+    FIELD_SPEC,
+    /** fields (all). */
+    FIELD_SPECS,
+    /** field type (at specified index). */
+    FIELD_TYPE,
+    /** field types (all). */
+    FIELD_TYPES,
   }
 
   /** the type of information to generate. */
@@ -213,32 +223,32 @@ public class SpreadSheetInfo
     String		result;
     HashSet<InfoType>	types;
 
-    result = null;
-
     result = QuickInfoHelper.toString(this, "type", m_Type);
 
-    types = new HashSet<InfoType>(
-	Arrays.asList(
-	    new InfoType[]{
-		InfoType.NAME,
-		InfoType.COMMENTS,
-		InfoType.TIMEZONE,
-		InfoType.LOCALE,
-		InfoType.NUM_COLUMNS,
-		InfoType.NUM_ROWS,
-	    }));
+    types = new HashSet<>(
+      Arrays.asList(
+	InfoType.NAME,
+	InfoType.COMMENTS,
+	InfoType.TIMEZONE,
+	InfoType.LOCALE,
+	InfoType.NUM_COLUMNS,
+	InfoType.NUM_ROWS,
+	InfoType.FIELD_SPEC,
+	InfoType.FIELD_TYPE
+      ));
     if (!types.contains(m_Type) || QuickInfoHelper.hasVariable(this, "type"))
       result += QuickInfoHelper.toString(this, "columnIndex", m_ColumnIndex, ", index: ");
 
-    types = new HashSet<InfoType>(
-	Arrays.asList(
-	    new InfoType[]{
-		InfoType.COLUMN_NAMES,
-		InfoType.CELL_VALUES,
-		InfoType.SHEET_VALUES,
-	    }));
+    types = new HashSet<>(
+      Arrays.asList(
+	InfoType.COLUMN_NAMES,
+	InfoType.CELL_VALUES,
+	InfoType.SHEET_VALUES
+      ));
     if (types.contains(m_Type) || QuickInfoHelper.hasVariable(this, "type"))
       result += QuickInfoHelper.toString(this, "sort", m_Sort, (m_Sort ? "sorted" : "unsorted"), ", ");
+
+    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", ", ");
 
     return result;
   }
@@ -359,6 +369,10 @@ public class SpreadSheetInfo
       case CELL_TYPES:
       case CELL_VALUES:
       case SHEET_VALUES:
+      case FIELD_SPEC:
+      case FIELD_SPECS:
+      case FIELD_TYPE:
+      case FIELD_TYPES:
 	return String.class;
 
       case NUM_COLUMNS:
@@ -377,6 +391,37 @@ public class SpreadSheetInfo
    */
   public Class[] accepts() {
     return new Class[]{SpreadSheet.class};
+  }
+
+  /**
+   * Turns the column into a field.
+   *
+   * @param sheet	the spreadsheet to use
+   * @param col	the column index
+   * @return		the field
+   */
+  protected Field toField(SpreadSheet sheet, int col) {
+    Field 			result;
+    Collection<ContentType>	types;
+
+    result = null;
+    types  = sheet.getContentTypes(col);
+    types.remove(ContentType.MISSING);
+    if (types.size() == 2) {
+      if (types.contains(ContentType.DOUBLE) && types.contains(ContentType.LONG))
+	result = new Field(sheet.getColumnName(col), DataType.NUMERIC);
+    }
+    else if (types.size() == 1) {
+      if (types.contains(ContentType.DOUBLE) || types.contains(ContentType.LONG))
+	result = new Field(sheet.getColumnName(col), DataType.NUMERIC);
+      else if (types.contains(ContentType.BOOLEAN))
+	result = new Field(sheet.getColumnName(col), DataType.BOOLEAN);
+    }
+
+    if (result == null)
+      result = new Field(sheet.getColumnName(col), DataType.STRING);
+
+    return result;
   }
 
   /**
@@ -399,6 +444,7 @@ public class SpreadSheetInfo
     m_Queue = new ArrayList();
     sheet   = (SpreadSheet) m_InputToken.getPayload();
     m_ColumnIndex.setSpreadSheet(sheet);
+    index   = m_ColumnIndex.getIntIndex();
 
     switch (m_Type) {
       case NAME:
@@ -418,7 +464,6 @@ public class SpreadSheetInfo
 	break;
       
       case COLUMN_NAME:
-	index = m_ColumnIndex.getIntIndex();
 	if (index != -1)
 	  m_Queue.add(sheet.getHeaderRow().getCell(index).getContent());
 	break;
@@ -439,7 +484,6 @@ public class SpreadSheetInfo
 	break;
 	
       case COLUMN_TYPE:
-	index = m_ColumnIndex.getIntIndex();
 	if (index != -1) {
 	  type = sheet.getContentType(index);
 	  if (type == null)
@@ -449,7 +493,6 @@ public class SpreadSheetInfo
 	break;
 	
       case CELL_TYPES:
-	index = m_ColumnIndex.getIntIndex();
 	if (index != -1) {
 	  types = sheet.getContentTypes(index);
 	  for (ContentType ct: types)
@@ -458,7 +501,6 @@ public class SpreadSheetInfo
 	break;
 	
       case CELL_VALUES:
-	index = m_ColumnIndex.getIntIndex();
 	if (index != -1)
           m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, true, m_Sort)));
 	break;
@@ -469,6 +511,26 @@ public class SpreadSheetInfo
           unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
         m_Queue.addAll(unique);
         Collections.sort(m_Queue);
+        break;
+
+      case FIELD_SPEC:
+	if (index != -1)
+	  m_Queue.add(toField(sheet, index).toParseableString());
+        break;
+
+      case FIELD_SPECS:
+        for (i = 0; i < sheet.getColumnCount(); i++)
+	  m_Queue.add(toField(sheet, i).toParseableString());
+        break;
+
+      case FIELD_TYPE:
+	if (index != -1)
+	  m_Queue.add(toField(sheet, index).getDataType().toDisplay());
+        break;
+
+      case FIELD_TYPES:
+        for (i = 0; i < sheet.getColumnCount(); i++)
+	  m_Queue.add(toField(sheet, i).getDataType().toDisplay());
         break;
 
       default:

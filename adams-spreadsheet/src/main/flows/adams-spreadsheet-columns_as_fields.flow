@@ -1,0 +1,35 @@
+# Project: adams
+# Date: 2021-05-26 15:41:30
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Outputs report field specifications for spreadsheet columns." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.control.Trigger -name separator
+  adams.flow.source.CombineVariables -expression "--> full fields" -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "full fields"
+  adams.flow.transformer.SpreadSheetInfo -type FIELD_SPECS
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name "separator (2)"
+  adams.flow.source.CombineVariables -expression "\\n--> field types" -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "field types"
+  adams.flow.transformer.SpreadSheetInfo -type FIELD_TYPES
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name "separator (3)"
+  adams.flow.source.CombineVariables -expression "\\n--> specific field" -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "specific field"
+  adams.flow.transformer.SpreadSheetInfo -type FIELD_SPEC -column-index 2
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Trigger -name "separator (4)"
+  adams.flow.source.CombineVariables -expression "\\n--> specific field type" -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name "specific field type"
+  adams.flow.transformer.SpreadSheetInfo -type FIELD_TYPE -column-index 2
+  adams.flow.sink.CallableSink -callable Display
