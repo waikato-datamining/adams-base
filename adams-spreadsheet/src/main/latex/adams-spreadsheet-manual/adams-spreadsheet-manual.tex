@@ -286,6 +286,8 @@ The following conversion schemes are available:
 	obtained from a cell finder into a position string (eg 'A2').
 	\item \textit{SpreadSheetColumnFinderToRange} -- outputs a range string
 	of the columns that the finder located (eg '1-6,8').
+	\item \textit{SpreadSheetColumnsToReport} -- converts columns in a spreadsheet
+	to Report objects.
 	\item \textit{SpreadSheetDoubleColumnToLong} -- converts any floating values
 	to integer (= long) values.
 	\item \textit{SpreadSheetDoubleColumnToString} -- converts any floating values
@@ -304,7 +306,9 @@ The following conversion schemes are available:
 	with the current value of the formula.
 	\item \textit{SpreadSheetRowFinderToRange} -- outputs a range string
 	of the rows that the finder located (eg '1-6,8').
-	\item \textit{SpreadSheetStringSplitColumn} -- splits the string representation 
+	\item \textit{SpreadSheetRowsToReport} -- converts rows in a spreadsheet
+	to Report objects.
+	\item \textit{SpreadSheetStringSplitColumn} -- splits the string representation
 	of a column into multiple columns using a regular expression.
 	\item \textit{SpreadSheetStringColumnToBoolean} -- converts strings values in a 
 	column to boolean objects.
