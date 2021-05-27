@@ -15,7 +15,7 @@
 
 /*
  * ReportJsonUtils.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.report;
@@ -26,6 +26,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 
 /**
@@ -130,27 +133,44 @@ public class ReportJsonUtils {
    * @return		the json data structure
    */
   public static JsonObject toJson(Report report) {
-    JsonObject 		result;
+    return toJson(report, null);
+  }
+
+  /**
+   * Turns the specified fields from the report into a json structure.
+   *
+   * @param report	the report to convert
+   * @param fields 	the fields to limit it to, leave empty to use all fields
+   * @return		the json data structure
+   */
+  public static JsonObject toJson(Report report, Field[] fields) {
+    JsonObject 			result;
+    List<AbstractField> 	list;
 
     result = new JsonObject();
 
     // report
-      for (AbstractField field : report.getFields()) {
-	switch (field.getDataType()) {
-	  case NUMERIC:
-	    result.addProperty(field.getName(), report.getDoubleValue(field));
-	    break;
-	  case BOOLEAN:
-	    result.addProperty(field.getName(), report.getBooleanValue(field));
-	    break;
-	  case STRING:
-	  case UNKNOWN:
-	    result.addProperty(field.getName(), report.getStringValue(field));
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled data type: " + field.getDataType());
-	}
+    if (fields == null)
+      list = report.getFields();
+    else
+      list = new ArrayList<>(Arrays.asList(fields));
+
+    for (AbstractField field : list) {
+      switch (field.getDataType()) {
+	case NUMERIC:
+	  result.addProperty(field.getName(), report.getDoubleValue(field));
+	  break;
+	case BOOLEAN:
+	  result.addProperty(field.getName(), report.getBooleanValue(field));
+	  break;
+	case STRING:
+	case UNKNOWN:
+	  result.addProperty(field.getName(), report.getStringValue(field));
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled data type: " + field.getDataType());
       }
+    }
 
     return result;
   }
