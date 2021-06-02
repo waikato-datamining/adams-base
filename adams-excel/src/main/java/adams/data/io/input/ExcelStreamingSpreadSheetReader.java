@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -38,6 +38,7 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.env.Environment;
 import gnu.trove.set.hash.TIntHashSet;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -156,7 +157,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright = "Apache Foundation",
@@ -952,5 +952,18 @@ public class ExcelStreamingSpreadSheetReader
     super.stopExecution();
     if (m_Handler != null)
       m_Handler.stopExecution();
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, ExcelStreamingSpreadSheetReader.class, args);
   }
 }

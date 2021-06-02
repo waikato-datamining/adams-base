@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GnumericSpreadSheetReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -25,6 +25,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.env.Environment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -103,7 +104,6 @@ import java.util.zip.GZIPInputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GnumericSpreadSheetReader
   extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
@@ -535,5 +535,18 @@ public class GnumericSpreadSheetReader
     }
     
     return result;
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, GnumericSpreadSheetReader.class, args);
   }
 }

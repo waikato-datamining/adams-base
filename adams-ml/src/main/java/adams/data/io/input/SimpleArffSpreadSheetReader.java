@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleArffSpreadSheetReader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -31,6 +31,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.env.Environment;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -64,7 +65,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleArffSpreadSheetReader
   extends AbstractSpreadSheetReader {
@@ -346,5 +346,18 @@ public class SimpleArffSpreadSheetReader
     }
 
     return result;
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, SimpleArffSpreadSheetReader.class, args);
   }
 }

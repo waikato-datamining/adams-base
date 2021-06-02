@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FixedTabularSpreadSheetReader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -23,6 +23,7 @@ package adams.data.io.input;
 import adams.core.BasicDateTimeType;
 import adams.core.Constants;
 import adams.core.Range;
+import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseInteger;
 import adams.core.base.BaseRegExp;
@@ -36,6 +37,7 @@ import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
+import adams.env.Environment;
 
 import java.io.BufferedReader;
 import java.io.Reader;
@@ -144,7 +146,6 @@ import java.util.TimeZone;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FixedTabularSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
@@ -191,6 +192,9 @@ public class FixedTabularSpreadSheetReader
 
   /** the number of rows to retrieve (less than 1 = unlimited). */
   protected int m_NumRows;
+
+  /** the internal buffer for the first row. */
+  protected transient String m_FirstLine;
 
   /**
    * Returns a string describing the object.
@@ -713,6 +717,26 @@ public class FixedTabularSpreadSheetReader
   }
 
   /**
+   * Reads the next line.
+   *
+   * @param r		the reader to use
+   * @return		the next line
+   */
+  protected String nextLine(BufferedReader r) throws Exception {
+    String	result;
+
+    if (m_FirstLine != null) {
+      result      = m_FirstLine;
+      m_FirstLine = null;
+    }
+    else {
+      result = r.readLine();
+    }
+
+    return result;
+  }
+
+  /**
    * Reads the spreadsheet content from the specified file.
    *
    * @param r		the reader to read from
@@ -734,6 +758,28 @@ public class FixedTabularSpreadSheetReader
     int			firstRow;
     int 		lastRow;
     int			count;
+    BaseInteger[]	columnWidth;
+
+    if (r instanceof BufferedReader)
+      reader = (BufferedReader) r;
+    else
+      reader = new BufferedReader(r);
+
+    // do we have to determine the number of columns first?
+    if (m_ColumnWidth.length == 1) {
+      try {
+	m_FirstLine = reader.readLine();
+        columnWidth = new BaseInteger[0];
+        columnWidth = (BaseInteger[]) Utils.adjustArray(columnWidth, m_FirstLine.length() / m_ColumnWidth[0].intValue(), m_ColumnWidth[0]);
+      }
+      catch (Exception e) {
+	m_LastError = LoggingHelper.handleException(this, "Failed to read data!", e);
+	return null;
+      }
+    }
+    else {
+      columnWidth = m_ColumnWidth;
+    }
 
     result = m_SpreadSheetType.newInstance();
     result.setDataRowClass(getDataRowType().getClass());
@@ -745,30 +791,30 @@ public class FixedTabularSpreadSheetReader
     if (m_NoHeader) {
       if (!m_CustomColumnHeaders.isEmpty()) {
 	custom = m_CustomColumnHeaders.split(",");
-	if (m_ColumnWidth.length != custom.length)
+	if (columnWidth.length != custom.length)
 	  throw new IllegalStateException(
 	    "Number of Column widths and custom headers differ: "
-	      + m_ColumnWidth.length + " != " + custom.length);
-	for (i = 0; i < m_ColumnWidth.length; i++)
+	      + columnWidth.length + " != " + custom.length);
+	for (i = 0; i < columnWidth.length; i++)
 	  row.addCell("" + i).setContentAsString(custom[i]);
       }
       else {
-	cells = SpreadSheetUtils.createHeader(m_ColumnWidth.length, "").toArray(new String[0]);
+	cells = SpreadSheetUtils.createHeader(columnWidth.length, "").toArray(new String[0]);
 	for (i = 0; i < cells.length; i++)
 	  row.addCell("" + i).setContentAsString(cells[i]);
       }
     }
     else {
       // actual headers will get filled in later
-      for (i = 0; i < m_ColumnWidth.length; i++)
+      for (i = 0; i < columnWidth.length; i++)
 	row.addCell("" + i);
     }
 
     // types
-    types = new ContentType[m_ColumnWidth.length];
-    m_TextColumns.setMax(m_ColumnWidth.length);
-    m_DateTimeColumns.setMax(m_ColumnWidth.length);
-    for (i = 0; i < m_ColumnWidth.length; i++) {
+    types = new ContentType[columnWidth.length];
+    m_TextColumns.setMax(columnWidth.length);
+    m_DateTimeColumns.setMax(columnWidth.length);
+    for (i = 0; i < columnWidth.length; i++) {
       types[i] = null;
       if (m_TextColumns.isInRange(i)) {
         types[i] = ContentType.STRING;
@@ -797,18 +843,13 @@ public class FixedTabularSpreadSheetReader
     }
 
     // data
-    cols = new int[m_ColumnWidth.length + 1];
-    for (i = 0; i < m_ColumnWidth.length; i++)
-      cols[i+1] = cols[i] + m_ColumnWidth[i].intValue();
-
-    if (r instanceof BufferedReader)
-      reader = (BufferedReader) r;
-    else
-      reader = new BufferedReader(r);
+    cols = new int[columnWidth.length + 1];
+    for (i = 0; i < columnWidth.length; i++)
+      cols[i+1] = cols[i] + columnWidth[i].intValue();
 
     try {
       first    = true;
-      cells    = new String[m_ColumnWidth.length];
+      cells    = new String[columnWidth.length];
       count    = -1;
       firstRow = m_FirstRow - 1;
       if (m_NumRows > 0)
@@ -872,5 +913,18 @@ public class FixedTabularSpreadSheetReader
     }
 
     return result;
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, FixedTabularSpreadSheetReader.class, args);
   }
 }

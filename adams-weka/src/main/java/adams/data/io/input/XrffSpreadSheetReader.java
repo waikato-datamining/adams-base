@@ -13,16 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * XrffSpreadSheetReader.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import weka.core.converters.AbstractFileLoader;
-import weka.core.converters.XRFFLoader;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.io.output.XrffSpreadSheetWriter;
+import adams.env.Environment;
+import weka.core.converters.AbstractFileLoader;
+import weka.core.converters.XRFFLoader;
 
 /**
  <!-- globalinfo-start -->
@@ -48,7 +49,6 @@ import adams.data.io.output.XrffSpreadSheetWriter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XrffSpreadSheetReader
   extends AbstractWekaSpreadSheetReader {
@@ -83,5 +83,18 @@ public class XrffSpreadSheetReader
   @Override
   protected AbstractFileLoader newLoader() {
     return new XRFFLoader();
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, XrffSpreadSheetReader.class, args);
   }
 }

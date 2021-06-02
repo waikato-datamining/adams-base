@@ -25,6 +25,7 @@ import adams.data.conversion.MatlabArrayToSpreadSheet;
 import adams.data.io.output.Mat5SpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.env.Environment;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import us.hebi.matlab.mat.format.Mat5;
@@ -344,5 +345,18 @@ public class Mat5SpreadSheetReader
     }
 
     return result;
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, Mat5SpreadSheetReader.class, args);
   }
 }

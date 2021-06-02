@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSpreadSheetReader.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -29,11 +29,14 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.OptionUtils;
+import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetTypeHandler;
+import adams.env.Environment;
 import org.apache.commons.io.input.ReaderInputStream;
 
 import java.io.BufferedReader;
@@ -48,15 +51,18 @@ import java.util.zip.GZIPInputStream;
  * Ancestor for classes that can read spreadsheets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSpreadSheetReader
-  extends AbstractOptionHandler 
+  extends AbstractOptionHandler
   implements SpreadSheetReader, EncodingSupporter, FileFormatHandler,
-             SpreadSheetTypeHandler, AdditionalInformationHandler {
+  SpreadSheetTypeHandler, AdditionalInformationHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4828477005893179066L;
+
+  public static final String OPTION_INPUT = "--input";
+
+  public static final String OPTION_OUTPUT = "--output";
 
   /**
    * How to read the data.
@@ -81,13 +87,13 @@ public abstract class AbstractSpreadSheetReader
 
   /** whether the read process was stopped through an external source. */
   protected boolean m_Stopped;
-  
+
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
-  
+
   /** the last error that occurred. */
   protected String m_LastError;
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -96,12 +102,12 @@ public abstract class AbstractSpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "data-row-type", "dataRowType",
-	    getDefaultDataRowType());
+      "data-row-type", "dataRowType",
+      getDefaultDataRowType());
 
     m_OptionManager.add(
-	    "spreadsheet-type", "spreadSheetType",
-	    new DefaultSpreadSheet());
+      "spreadsheet-type", "spreadSheetType",
+      new DefaultSpreadSheet());
   }
 
   /**
@@ -110,12 +116,12 @@ public abstract class AbstractSpreadSheetReader
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Encoding        = new BaseCharset();
     m_SpreadSheetType = getDefaultSpreadSheet();
     m_DataRowType     = getDefaultDataRowType();
   }
-  
+
   /**
    * Returns a string describing the format (used in the file chooser).
    *
@@ -168,13 +174,13 @@ public abstract class AbstractSpreadSheetReader
 
   /**
    * Returns the default row type.
-   * 
+   *
    * @return		the default
    */
   protected DataRow getDefaultDataRowType() {
     return new DenseDataRow();
   }
-  
+
   /**
    * Sets the type of data row to use.
    *
@@ -235,17 +241,17 @@ public abstract class AbstractSpreadSheetReader
 
   /**
    * Sets the encoding to use.
-   * 
+   *
    * @param value	the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
    */
   public void setEncoding(BaseCharset value) {
     m_Encoding = value;
     reset();
   }
-  
+
   /**
    * Returns the encoding to use.
-   * 
+   *
    * @return		the encoding, e.g. "UTF-8" or "UTF-16", empty string for default
    */
   public BaseCharset getEncoding() {
@@ -284,25 +290,25 @@ public abstract class AbstractSpreadSheetReader
    * ({@link InputType#READER}, {@link InputType#STREAM}).
    * <br><br>
    * Default implementation returns false.
-   * 
+   *
    * @return		true if to automatically decompress
    */
   protected boolean supportsCompressedInput() {
     return false;
   }
-  
+
   /**
    * Returns whether the file should get decompressed, i.e., 
    * {@link #supportsCompressedInput()} returns true and the filename ends
    * with ".gz".
-   * 
+   *
    * @param filename	the filename to check
    * @return		true if decompression should occur
    */
   protected boolean canDecompress(String filename) {
     return supportsCompressedInput() && filename.toLowerCase().endsWith(".gz");
   }
-  
+
   /**
    * Hook method to perform some checks before performing the actual read.
    * <br><br>
@@ -327,34 +333,34 @@ public abstract class AbstractSpreadSheetReader
     InputStream		input;
 
     check();
-    
+
     m_LastError = null;
     m_Stopped   = false;
     reader      = null;
     input       = null;
     try {
       switch (getInputType()) {
-	case FILE:
-	  result = doRead(new PlaceholderFile(filename));
-	  break;
-	case STREAM:
-	  input = new FileInputStream(filename);
-	  if (canDecompress(filename))
-	    input = new GZIPInputStream(input);
-	  result = doRead(input);
-	  break;
-	case READER:
-	  input = new FileInputStream(filename);
-	  if (canDecompress(filename))
-	    input = new GZIPInputStream(input);
-	  if (m_Encoding != null)
-	    reader = new BufferedReader(new InputStreamReader(input, getEncoding().charsetValue()));
-	  else
-	    reader = new BufferedReader(new InputStreamReader(input));
-	  result = doRead(reader);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+        case FILE:
+          result = doRead(new PlaceholderFile(filename));
+          break;
+        case STREAM:
+          input = new FileInputStream(filename);
+          if (canDecompress(filename))
+            input = new GZIPInputStream(input);
+          result = doRead(input);
+          break;
+        case READER:
+          input = new FileInputStream(filename);
+          if (canDecompress(filename))
+            input = new GZIPInputStream(input);
+          if (m_Encoding != null)
+            reader = new BufferedReader(new InputStreamReader(input, getEncoding().charsetValue()));
+          else
+            reader = new BufferedReader(new InputStreamReader(input));
+          result = doRead(reader);
+          break;
+        default:
+          throw new IllegalStateException("Unhandled input type: " + getInputType());
       }
     }
     catch (Throwable e) {
@@ -368,7 +374,7 @@ public abstract class AbstractSpreadSheetReader
         FileUtils.closeQuietly(input);
       }
     }
-    
+
     if (m_Stopped)
       result = null;
 
@@ -386,22 +392,22 @@ public abstract class AbstractSpreadSheetReader
     SpreadSheet		result;
 
     check();
-    
+
     m_Stopped   = false;
     m_LastError = null;
 
     try {
       switch (getInputType()) {
-	case FILE:
-	  throw new IllegalStateException("Only supports reading from files, not input streams!");
-	case STREAM:
-	  result = doRead(stream);
-	  break;
-	case READER:
-	  result = doRead(new BufferedReader(new InputStreamReader(stream)));
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+        case FILE:
+          throw new IllegalStateException("Only supports reading from files, not input streams!");
+        case STREAM:
+          result = doRead(stream);
+          break;
+        case READER:
+          result = doRead(new BufferedReader(new InputStreamReader(stream)));
+          break;
+        default:
+          throw new IllegalStateException("Unhandled input type: " + getInputType());
       }
     }
     catch (Exception e) {
@@ -409,7 +415,7 @@ public abstract class AbstractSpreadSheetReader
       m_LastError = "Failed to read from stream!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
-    
+
     if (m_Stopped)
       result = null;
 
@@ -433,16 +439,16 @@ public abstract class AbstractSpreadSheetReader
 
     try {
       switch (getInputType()) {
-	case FILE:
-	  throw new IllegalStateException("Only supports reading from files, not input streams!");
-	case STREAM:
-	  result = doRead(new ReaderInputStream(r));
-	  break;
-	case READER:
-	  result = doRead(r);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled input type: " + getInputType());
+        case FILE:
+          throw new IllegalStateException("Only supports reading from files, not input streams!");
+        case STREAM:
+          result = doRead(new ReaderInputStream(r));
+          break;
+        case READER:
+          result = doRead(r);
+          break;
+        default:
+          throw new IllegalStateException("Unhandled input type: " + getInputType());
       }
     }
     catch (Exception e) {
@@ -450,7 +456,7 @@ public abstract class AbstractSpreadSheetReader
       m_LastError = "Failed to read from reader!\n" + LoggingHelper.throwableToString(e);
       getLogger().severe(m_LastError);
     }
-    
+
     if (m_Stopped)
       result = null;
 
@@ -504,10 +510,10 @@ public abstract class AbstractSpreadSheetReader
   public void stopExecution() {
     m_Stopped = true;
   }
-  
+
   /**
    * Returns whether the reading was stopped.
-   * 
+   *
    * @return		true if stopped
    */
   public boolean isStopped() {
@@ -516,31 +522,31 @@ public abstract class AbstractSpreadSheetReader
 
   /**
    * Returns whether an error was encountered during the last read.
-   * 
+   *
    * @return		true if an error occurred
    */
   public boolean hasLastError() {
     return (m_LastError != null);
   }
-  
+
   /**
    * Sets the value for the last error that occurred during read.
-   * 
+   *
    * @param value	the error string, null if none occurred
    */
   protected void setLastError(String value) {
     m_LastError = value;
   }
-  
+
   /**
    * Returns the error that occurred during the last read.
-   * 
+   *
    * @return		the error string, null if none occurred
    */
   public String getLastError() {
     return m_LastError;
   }
-  
+
   /**
    * Returns a list with classnames of readers.
    *
@@ -548,5 +554,62 @@ public abstract class AbstractSpreadSheetReader
    */
   public static String[] getReaders() {
     return ClassLister.getSingleton().getClassnames(SpreadSheetReader.class);
+  }
+
+  /**
+   * Runs the reader from commandline.
+   *
+   * @param env		the environment class to use
+   * @param reader	the reader to execute
+   * @param args	the commandline arguments, use --input to specify the input file/dir
+   *                    and --output-dir to specify directory to save them as .spec files
+   */
+  public static void runReader(Class env, Class reader, String[] args) {
+    SpreadSheetReader 		readerInst;
+    int				i;
+    PlaceholderFile		inputFile;
+    PlaceholderFile		outputFile;
+    CsvSpreadSheetWriter 	writer;
+    SpreadSheet			sheet;
+
+    Environment.setEnvironmentClass(env);
+    LoggingHelper.useHandlerFromOptions(args);
+
+    try {
+      if (OptionUtils.helpRequested(args)) {
+        System.out.println("Help requested...\n");
+        readerInst = (SpreadSheetReader) OptionUtils.forName(SpreadSheetReader.class, reader.getName(), new String[0]);
+        System.out.print("\n" + OptionUtils.list(readerInst));
+        LoggingHelper.outputHandlerOption();
+      }
+      else {
+        if (OptionUtils.hasFlag(args, OPTION_INPUT)) {
+          inputFile = new PlaceholderFile(OptionUtils.getOption(args, OPTION_INPUT));
+          OptionUtils.removeOption(args, OPTION_INPUT);
+        }
+        else {
+          System.err.println("Failed to supply input via " + OPTION_INPUT + "!");
+          return;
+	}
+        outputFile = null;
+        if (OptionUtils.hasFlag(args, OPTION_OUTPUT)) {
+          outputFile = new PlaceholderFile(OptionUtils.getOption(args, OPTION_OUTPUT));
+          OptionUtils.removeOption(args, OPTION_OUTPUT);
+        }
+        readerInst = (SpreadSheetReader) OptionUtils.forName(SpreadSheetReader.class, reader.getName(), args);
+        sheet = readerInst.read(inputFile);
+        if (outputFile != null) {
+	  System.out.println(outputFile);
+	  writer = new CsvSpreadSheetWriter();
+	  writer.write(sheet, outputFile);
+        }
+        else {
+          System.out.println(sheet);
+        }
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SqlDumpSpreadSheetReader.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -25,6 +25,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.io.output.SqlDumpSpreadSheetWriter;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.env.Environment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,7 +85,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SqlDumpSpreadSheetReader
   extends AbstractSpreadSheetReader
@@ -587,5 +587,18 @@ public class SqlDumpSpreadSheetReader
       return null;
     else
       return m_Reader.next();
+  }
+
+  /**
+   * Runs the reader from the command-line.
+   *
+   * Use the option {@link #OPTION_INPUT} to specify the input file.
+   * If the option {@link #OPTION_OUTPUT} is specified then the read sheet
+   * gets output as .csv files in that directory.
+   *
+   * @param args	the command-line options to use
+   */
+  public static void main(String[] args) {
+    runReader(Environment.class, SqlDumpSpreadSheetReader.class, args);
   }
 }
