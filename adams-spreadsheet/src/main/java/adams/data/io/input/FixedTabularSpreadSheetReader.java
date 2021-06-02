@@ -856,7 +856,7 @@ public class FixedTabularSpreadSheetReader
 	lastRow = firstRow + m_NumRows - 1;
       else
         lastRow = -1;
-      while ((line = reader.readLine()) != null) {
+      while ((line = nextLine(reader)) != null) {
 	count++;
 	if (count < firstRow)
 	  continue;
