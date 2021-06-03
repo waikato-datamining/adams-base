@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2021} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -73,6 +73,20 @@ to files.
 
 The following chapters cover the actors for compression and decompression in 
 more detail.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Boolean conditions}
+The following boolean flow conditions can be applied to file (String/File objects)
+or byte arrays:
+\begin{tight_itemize}
+  \item IsBzip2Compressed
+  \item IsGzipCompressed
+  \item IsRarCompressed
+  \item IsXzCompressed
+  \item IsZipCompressed
+  \item IsZstdCompressed
+\end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Compression}

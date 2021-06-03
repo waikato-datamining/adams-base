@@ -15,7 +15,7 @@
 
 /*
  * XzUtils.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -293,5 +293,41 @@ public class XzUtils {
       FileUtils.closeQuietly(cis);
       FileUtils.closeQuietly(bos);
     }
+  }
+
+  /**
+   * Checks whether the file is xz compressed.
+   * See: https://tukaani.org/xz/xz-file-format.txt
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isXzCompressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 6);
+    if (data != null)
+      return isXzCompressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is xz compressed.
+   * See: https://tukaani.org/xz/xz-file-format.txt
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isXzCompressed(byte[] data) {
+    if (data.length >= 6)
+      return (data[0] == (byte) 0xFD)
+	&& (data[1] == (byte) 0x37)
+	&& (data[2] == (byte) 0x7A)
+	&& (data[3] == (byte) 0x58)
+	&& (data[4] == (byte) 0x5A)
+	&& (data[5] == (byte) 0x00);
+    else
+      return false;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * RarUtils.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -443,5 +443,41 @@ public class RarUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the file is rar compressed.
+   * See: https://en.wikipedia.org/wiki/RAR_(file_format)
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isRarCompressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 6);
+    if (data != null)
+      return isRarCompressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is rar compressed.
+   * See: https://en.wikipedia.org/wiki/RAR_(file_format)
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isRarCompressed(byte[] data) {
+    if (data.length >= 6)
+      return (data[0] == (byte) 'R')
+	&& (data[1] == (byte) 'a')
+	&& (data[2] == (byte) 'r')
+	&& (data[3] == (byte) '!')
+	&& (data[4] == (byte) 0x1A)
+	&& (data[5] == (byte) 0x07);
+    else
+      return false;
   }
 }

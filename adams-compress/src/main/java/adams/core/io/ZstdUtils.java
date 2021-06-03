@@ -15,7 +15,7 @@
 
 /*
  * ZstdUtils.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -292,5 +292,39 @@ public class ZstdUtils {
       FileUtils.closeQuietly(cis);
       FileUtils.closeQuietly(bos);
     }
+  }
+
+  /**
+   * Checks whether the file is Zstd compressed.
+   * See: https://en.wikipedia.org/wiki/Zstandard
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isZstdCompressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 4);
+    if (data != null)
+      return isZstdCompressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is Zstd compressed.
+   * See: https://en.wikipedia.org/wiki/Zstandard
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isZstdCompressed(byte[] data) {
+    if (data.length >= 4)
+      return (data[0] == (byte) 0x28)
+	&& (data[1] == (byte) 0xb5)
+	&& (data[2] == (byte) 0x2f)
+	&& (data[3] == (byte) 0xfd);
+    else
+      return false;
   }
 }

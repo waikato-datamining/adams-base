@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ZipUtils.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -557,5 +557,39 @@ public class ZipUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the file is zip compressed.
+   * See: https://en.wikipedia.org/wiki/ZIP_(file_format)#File_headers
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isZipCompressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 4);
+    if (data != null)
+      return isZipCompressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is zip compressed.
+   * See: https://en.wikipedia.org/wiki/ZIP_(file_format)#File_headers
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isZipCompressed(byte[] data) {
+    if (data.length >= 4)
+      return (data[0] == (byte) 'P')
+	&& (data[1] == (byte) 'K')
+	&& (data[2] == (byte) 0x4b)
+	&& (data[3] == (byte) 0x50);
+    else
+      return false;
   }
 }

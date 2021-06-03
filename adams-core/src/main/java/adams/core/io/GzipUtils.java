@@ -295,4 +295,35 @@ public class GzipUtils {
       FileUtils.closeQuietly(bos);
     }
   }
+
+  /**
+   * Checks whether the file is gzip compressed.
+   * See: https://en.wikipedia.org/wiki/Gzip#File_format
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isGzipCompressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 2);
+    if (data != null)
+      return isGzipCompressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is gzip compressed.
+   * See: https://en.wikipedia.org/wiki/Gzip#File_format
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isGzipCompressed(byte[] data) {
+    if (data.length >= 2)
+      return (data[0] == (byte) 0x1f) && (data[1] == (byte) 0x8b);
+    else
+      return false;
+  }
 }

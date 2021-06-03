@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -27,6 +27,8 @@ import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
+import gnu.trove.list.TByteList;
+import gnu.trove.list.array.TByteArrayList;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -282,6 +284,36 @@ public class FileUtils {
       System.err.println("Failed to read bytes from '" + file + "':");
       e.printStackTrace();
       return null;
+    }
+  }
+
+  /**
+   * Loads the specified maximum number of bytes from a binary file.
+   *
+   * @param file	the file to load
+   * @param max		the maximum number of bytes to load
+   * @return		the binary content, null in case of an error
+   */
+  public static byte[] loadFromBinaryFile(File file, int max) {
+    TByteList		result;
+    FileInputStream	fis;
+    int			b;
+
+    result = new TByteArrayList();
+    fis    = null;
+    try {
+      fis = new FileInputStream(file.getAbsolutePath());
+      while ((result.size() < max) && ((b = fis.read()) != -1))
+	result.add((byte) b);
+      return result.toArray();
+    }
+    catch (Exception e) {
+      System.err.println("Failed to read " + max + " bytes from '" + file + "':");
+      e.printStackTrace();
+      return null;
+    }
+    finally {
+      closeQuietly(fis);
     }
   }
 

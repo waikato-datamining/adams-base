@@ -15,7 +15,7 @@
 
 /*
  * Bzip2Utils.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -296,5 +296,36 @@ public class Bzip2Utils {
       FileUtils.closeQuietly(cis);
       FileUtils.closeQuietly(bos);
     }
+  }
+
+  /**
+   * Checks whether the file is bzip2 compressed.
+   * See: https://en.wikipedia.org/wiki/Bzip2#File_format
+   *
+   * @param file	the file to inspect
+   * @return		true if gzip
+   */
+  public static boolean isBzip2Compressed(File file) {
+    byte[]	data;
+
+    data = FileUtils.loadFromBinaryFile(file, 2);
+    if (data != null)
+      return isBzip2Compressed(data);
+    else
+      return false;
+  }
+
+  /**
+   * Checks whether the array is bzip2 compressed.
+   * See: https://en.wikipedia.org/wiki/Bzip2#File_format
+   *
+   * @param data  	the data to inspect
+   * @return		true if gzip
+   */
+  public static boolean isBzip2Compressed(byte[] data) {
+    if (data.length >= 2)
+      return (data[0] == (byte) 'B') && (data[1] == (byte) 'Z');
+    else
+      return false;
   }
 }
