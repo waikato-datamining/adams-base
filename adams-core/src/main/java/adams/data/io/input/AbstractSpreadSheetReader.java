@@ -68,7 +68,6 @@ public abstract class AbstractSpreadSheetReader
    * How to read the data.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum InputType {
     /** read from a file. */
@@ -566,7 +565,6 @@ public abstract class AbstractSpreadSheetReader
    */
   public static void runReader(Class env, Class reader, String[] args) {
     SpreadSheetReader 		readerInst;
-    int				i;
     PlaceholderFile		inputFile;
     PlaceholderFile		outputFile;
     CsvSpreadSheetWriter 	writer;
@@ -578,6 +576,12 @@ public abstract class AbstractSpreadSheetReader
     try {
       if (OptionUtils.helpRequested(args)) {
         System.out.println("Help requested...\n");
+        System.out.println("General options");
+        System.out.println("===============\n");
+        System.out.println(OPTION_INPUT + " <file>");
+        System.out.println("\tThe file to load with the reader.\n");
+        System.out.println(OPTION_OUTPUT + " <file>");
+        System.out.println("\tThe (optional) CSV file to write the spreadsheet to.\n");
         readerInst = (SpreadSheetReader) OptionUtils.forName(SpreadSheetReader.class, reader.getName(), new String[0]);
         System.out.print("\n" + OptionUtils.list(readerInst));
         LoggingHelper.outputHandlerOption();
