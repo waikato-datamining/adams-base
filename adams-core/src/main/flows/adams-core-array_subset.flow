@@ -1,13 +1,15 @@
 # Project: adams
-# Date: 2016-02-15 11:28:12
+# Date: 2021-06-06 10:38:16
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "This flow shows how to extract a subset of elements\\nfrom an array, creating a new array." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bolts.csv
  adams.flow.transformer.TextFileReader -reader adams.data.io.input.LineArrayTextReader
  adams.flow.control.Tee
   adams.flow.transformer.ArrayToSequence
   adams.flow.sink.Display -name "All lines" -short-title true -writer adams.data.io.output.NullWriter
- adams.flow.transformer.ArraySubset -elements 1-5,10-20
+ adams.flow.transformer.ArraySubsetGeneration -generator "adams.flow.transformer.arraysubsetgeneration.RangeSubset -elements 1-5,10-20"
  adams.flow.transformer.ArrayToSequence
  adams.flow.sink.Display -name "Subset of lines" -short-title true -x -3 -writer adams.data.io.output.NullWriter

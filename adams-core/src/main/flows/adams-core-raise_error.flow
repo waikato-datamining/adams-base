@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2016-02-15 11:33:44
+# Date: 2021-06-06 10:38:52
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "The TryCatch will capture the error thrown by the RaiseError\\ncontrol actor when it encounters the \\\"b\\\" string token.\\nIt then reacts to the error in the \\\"catch\\\" branch, outputting\\na stripped down version of the error." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.StringConstants -string a -string b -string c
  adams.flow.control.TryCatch -try "adams.flow.control.SubProcess -name try" -catch "adams.flow.control.SubProcess -name catch" -store-error true
@@ -10,6 +12,6 @@ adams.flow.control.Flow -annotation "The TryCatch will capture the error thrown 
   adams.flow.source.SequenceSource -name catch
    adams.flow.source.Variable -var-name trycatch
    adams.flow.transformer.StringSplit -expression \n
-   adams.flow.transformer.ArraySubset -elements 1,2
+   adams.flow.transformer.ArraySubsetGeneration -generator "adams.flow.transformer.arraysubsetgeneration.RangeSubset -elements 1,2"
    adams.flow.transformer.StringJoin -glue " "
  adams.flow.sink.Display -writer adams.data.io.output.NullWriter

@@ -538,6 +538,10 @@ adams.flow.core.TriggerableEvent=\
 adams.flow.core.displaytype.AbstractDisplayType=\
   adams.flow.core.displaytype
 
+# the array subset generators
+adams.flow.transformer.arraysubsetgeneration.AbstractArraySubsetGenerator=\
+  adams.flow.transformer.arraysubsetgeneration
+
 # the DataContainer post-processors
 adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor=\
   adams.flow.transformer.datacontainer

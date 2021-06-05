@@ -15,13 +15,14 @@
 
 /*
  * ArraySubset.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.classmanager.ClassManager;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -85,6 +86,9 @@ import java.lang.reflect.Array;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+  useInstead = ArraySubsetGeneration.class
+)
 public class ArraySubset
   extends AbstractTransformer {
 
