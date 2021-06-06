@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LinearRegressionOverlayPaintlet.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
@@ -26,7 +26,7 @@ import adams.data.utils.LOWESS;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.AbstractStrokePaintlet;
+import adams.gui.visualization.core.AbstractStrokePaintletWithContainerIDMatching;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 
@@ -76,10 +76,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LOWESSOverlayPaintlet
-  extends AbstractStrokePaintlet
+  extends AbstractStrokePaintletWithContainerIDMatching
   implements XYSequencePaintlet, AntiAliasingSupporter, TechnicalInformationHandler {
 
   /** for serialization. */
@@ -280,8 +279,10 @@ public class LOWESSOverlayPaintlet
     points = new ArrayList<>();
     for (i = 0; i < getSequencePanel().getContainerManager().countVisible(); i++) {
       cont = getSequencePanel().getContainerManager().getVisible(i);
-      for (XYSequencePoint p: cont.getData())
-      points.add(new Point2D.Double(p.getX(), p.getY()));
+      if (isContainerIDMatch(cont.getID())) {
+        for (XYSequencePoint p : cont.getData())
+          points.add(new Point2D.Double(p.getX(), p.getY()));
+      }
     }
 
     smoothed = LOWESS.calculate(points, m_Window);

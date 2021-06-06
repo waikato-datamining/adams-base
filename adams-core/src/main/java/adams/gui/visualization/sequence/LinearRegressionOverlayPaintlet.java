@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LinearRegressionOverlayPaintlet.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
@@ -26,7 +26,7 @@ import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.core.AbstractStrokePaintlet;
+import adams.gui.visualization.core.AbstractStrokePaintletWithContainerIDMatching;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import gnu.trove.list.array.TDoubleArrayList;
@@ -91,7 +91,7 @@ import java.awt.Graphics;
  * @version $Revision$
  */
 public class LinearRegressionOverlayPaintlet
-  extends AbstractStrokePaintlet
+  extends AbstractStrokePaintletWithContainerIDMatching
   implements XYSequencePaintlet, AntiAliasingSupporter {
 
   /** for serialization. */
@@ -397,9 +397,11 @@ public class LinearRegressionOverlayPaintlet
     y = new TDoubleArrayList();
     for (i = 0; i < getSequencePanel().getContainerManager().countVisible(); i++) {
       cont = getSequencePanel().getContainerManager().getVisible(i);
-      for (XYSequencePoint p: cont.getData()) {
-	x.add(p.getX());
-	y.add(p.getY());
+      if (isContainerIDMatch(cont.getID())) {
+        for (XYSequencePoint p : cont.getData()) {
+          x.add(p.getX());
+          y.add(p.getY());
+        }
       }
     }
     lr = StatUtils.linearRegression(x.toArray(), y.toArray());
