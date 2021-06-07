@@ -15,7 +15,7 @@
 
 /*
  * ParserHelper.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -317,8 +317,8 @@ public class ParserHelper
    * @return 		the numeric value, NaN if not a double
    */
   public Double toDouble(Object obj) {
-    if (obj instanceof Double)
-      return (Double) obj;
+    if (obj instanceof Number)
+      return ((Number) obj).doubleValue();
     else
       return Double.NaN;
   }
@@ -330,8 +330,8 @@ public class ParserHelper
    * @return 		the numeric value, MAX_VALUE if not a double
    */
   public Integer toInteger(Object obj) {
-    if (obj instanceof Double)
-      return ((Double) obj).intValue();
+    if (obj instanceof Number)
+      return ((Number) obj).intValue();
     else
       return Integer.MAX_VALUE;
   }
