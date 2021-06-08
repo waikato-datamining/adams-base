@@ -15,7 +15,7 @@
 
 /*
  * WekaClustererPostProcessor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -110,9 +110,18 @@ public class WekaClustererPostProcessor
    */
   @Override
   public String globalInfo() {
-    return
-      "Applies the specified post-processor to the cluster "
-	+ "container (" + Utils.classToString(WekaModelContainer.class) + ")";
+    String  result;
+    String  additional;
+
+    result = "Applies the specified post-processor to the cluster "
+      + "container (" + Utils.classToString(WekaModelContainer.class) + ").";
+
+    additional = m_PostProcessor.getAdditionalInformation();
+    if (!additional.isEmpty())
+      result += "\n\n"
+        + "Post-processor information:\n" + additional;
+
+    return result;
   }
 
   /**

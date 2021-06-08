@@ -13,14 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractClustererPostProcessor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.wekaclusterer;
 
 import adams.core.AdditionalInformationHandler;
-import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.WekaModelContainer;
 
@@ -29,7 +28,6 @@ import adams.flow.container.WekaModelContainer;
  * produces.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClustererPostProcessor
   extends AbstractOptionHandler 
@@ -58,8 +56,9 @@ public abstract class AbstractClustererPostProcessor
 
     keys = getContainerKeys();
     if ((keys != null) && (keys.length > 0)) {
-      result.append("Container keys: ");
-      result.append(Utils.flatten(keys, ", "));
+      result.append("Container keys:\n");
+      for (String key: keys)
+        result.append("- ").append(key).append("\n");
     }
     
     return result.toString();
