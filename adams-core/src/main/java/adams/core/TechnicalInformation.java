@@ -15,7 +15,7 @@
 
 /*
  * TechnicalInformation.java
- * Copyright (C) 2006-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -514,7 +514,7 @@ public class TechnicalInformation {
 
       // URL
       if (exists(Field.URL))
-	result += " URL " + getValue(Field.URL) + ".";
+	result += " URL " + getValue(Field.URL) + " ";
     }
     // CONFERENCE/INPROCEEDINGS
     else if ( (getType() == Type.CONFERENCE) || (getType() == Type.INPROCEEDINGS) ) {
@@ -574,7 +574,7 @@ public class TechnicalInformation {
       if (exists(Field.ADDRESS))
 	result += " " + getValue(Field.ADDRESS) + ".";
       if (exists(Field.URL))
-	result += " URL " + getValue(Field.URL) + ".";
+	result += " URL " + getValue(Field.URL) + " ";
     }
     
     // additional informations?
