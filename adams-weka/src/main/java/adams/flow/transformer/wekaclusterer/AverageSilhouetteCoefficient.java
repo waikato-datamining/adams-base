@@ -76,7 +76,7 @@ public class AverageSilhouetteCoefficient
     result = new TechnicalInformation(Type.MISC);
     result.setValue(Field.AUTHOR, "WikiPedia");
     result.setValue(Field.TITLE, "Silhouette (clustering)");
-    result.setValue(Field.URL, "https://en.wikipedia.org/wiki/Silhouette_%28clustering%292");
+    result.setValue(Field.URL, "https://en.wikipedia.org/wiki/Silhouette_%28clustering%29");
 
     return result;
   }
@@ -118,7 +118,7 @@ public class AverageSilhouetteCoefficient
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String DistanceFunctionTipText() {
+  public String distanceFunctionTipText() {
     return "The distance function to use.";
   }
 
