@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2021-06-09 10:27:10
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Builds a clusterer on a dataset with the class attribute removed\\nand outputs the computed average silhouette coefficient." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClustererSetup -clusterer "weka.clusterers.EM -I 100 -N 3 -X 10 -max -1 -ll-cv 1.0E-6 -ll-iter 1.0E-6 -M 1.0E-6 -K 10 -num-slots 1 -S 100"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.arff
+ adams.flow.transformer.WekaFileReader -loader weka.core.converters.ArffLoader
+ adams.flow.transformer.WekaFilter -filter "weka.filters.MultiFilter -F \"weka.filters.unsupervised.attribute.Remove -R last\" -F \"weka.filters.unsupervised.attribute.Standardize \""
+ adams.flow.transformer.WekaTrainClusterer -post-processor "adams.flow.transformer.wekaclusterer.AverageSilhouetteCoefficient -distance-function \"weka.core.EuclideanDistance -D -R first-last\""
+ adams.flow.control.ContainerValuePicker -value "Average Silhouette Coefficient"
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
