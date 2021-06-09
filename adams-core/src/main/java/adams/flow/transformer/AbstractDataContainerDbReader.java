@@ -15,11 +15,12 @@
 
 /*
  * AbstractDataContainerDbReader.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.LenientModeSupporter;
 import adams.data.container.DataContainer;
 import adams.db.DataProvider;
 import adams.db.FilteredDataProvider;
@@ -35,7 +36,7 @@ import adams.flow.transformer.datacontainer.NoPostProcessing;
  */
 public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   extends AbstractDbTransformer
-  implements DataContainerDbReader<T> {
+  implements DataContainerDbReader<T>, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4736058667429890220L;

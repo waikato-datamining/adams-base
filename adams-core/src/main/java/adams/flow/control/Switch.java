@@ -15,11 +15,12 @@
 
 /*
  * Switch.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.flow.condition.bool.BooleanCondition;
@@ -133,7 +134,7 @@ import java.util.List;
 public class Switch
   extends AbstractDirectedControlActor
   implements InputConsumer, OutputProducer, MutableActorHandler, 
-             IndexedBooleanConditionSupporter {
+             IndexedBooleanConditionSupporter, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 185561131623293880L;

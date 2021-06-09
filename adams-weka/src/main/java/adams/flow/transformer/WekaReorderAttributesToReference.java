@@ -15,10 +15,11 @@
 
 /*
  * WekaReorderAttributesToReference.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
+import adams.core.LenientModeSupporter;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
@@ -137,11 +138,10 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaReorderAttributesToReference
   extends AbstractTransformer
-  implements OptionalOneTimeInitializer, DynamicInitializer {
+  implements OptionalOneTimeInitializer, DynamicInitializer, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 530323409335629567L;

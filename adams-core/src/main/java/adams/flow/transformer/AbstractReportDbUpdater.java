@@ -15,12 +15,13 @@
 
 /*
  * AbstractReportDbUpdater.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.Constants;
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.Utils;
@@ -44,11 +45,10 @@ import java.sql.ResultSetMetaData;
  * are part of a {@link MutableReportHandler} object.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8087 $
  */
 public abstract class AbstractReportDbUpdater
   extends AbstractTransformer
-  implements DatabaseConnectionUser {
+  implements DatabaseConnectionUser, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1429977151568224156L;

@@ -15,10 +15,11 @@
 
 /*
  * AbstractObjectFinder.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
@@ -32,7 +33,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  */
 public abstract class AbstractObjectFinder
   extends AbstractOptionHandler
-  implements ObjectFinder, QuickInfoSupporter {
+  implements ObjectFinder, QuickInfoSupporter, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 2092237222859238898L;

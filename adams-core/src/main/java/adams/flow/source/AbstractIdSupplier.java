@@ -15,23 +15,24 @@
 
 /*
  * AbstractIdSupplier.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.util.ArrayList;
-
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
+
+import java.util.ArrayList;
 
 /**
  * Abstract ancestor for ID suppliers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractIdSupplier
-  extends AbstractArrayProvider {
+  extends AbstractArrayProvider
+  implements LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8462709950859959951L;
