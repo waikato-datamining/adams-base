@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.ClassCrossReference;
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.conversion.ReportArrayToMap;
@@ -35,7 +36,10 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Merges the passing through spectrum&#47;sample data objects with the referenced map of sample data objects in storage (the map uses the sample ID as key).
+ * Merges the passing through report handler&#47;report objects with the referenced map of report objects in storage. The specified key field is used to determine the key (string) in the map.<br>
+ * <br>
+ * See also:<br>
+ * adams.data.conversion.ReportArrayToMap
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -101,13 +105,18 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: MERGE_CURRENT_WITH_OTHER
  * </pre>
  *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, missing IDs in the map won't cause an error.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MergeReportFromMap
   extends AbstractTransformer
-  implements StorageUser, ClassCrossReference {
+  implements StorageUser, ClassCrossReference, LenientModeSupporter {
 
   private static final long serialVersionUID = 2746984385469969356L;
 
@@ -126,6 +135,9 @@ public class MergeReportFromMap
 
   /** the merge type. */
   protected MergeReport.MergeType m_Merge;
+
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
 
   /**
    * Returns a string describing the object.
@@ -166,6 +178,10 @@ public class MergeReportFromMap
     m_OptionManager.add(
       "merge", "merge",
       MergeReport.MergeType.MERGE_CURRENT_WITH_OTHER);
+
+    m_OptionManager.add(
+      "lenient", "lenient",
+      false);
   }
 
   /**
@@ -256,6 +272,35 @@ public class MergeReportFromMap
   }
 
   /**
+   * Sets whether to use lenient mode (missing IDs in map won't cause error).
+   *
+   * @param value	true if to turn on lenient mode
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use lenient mode (missing IDs in map won't cause error).
+   *
+   * @return		true if lenient mode on
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, missing IDs in the map won't cause an error.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return the Class of objects that can be processed
@@ -297,6 +342,7 @@ public class MergeReportFromMap
     result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "key", m_Key, ", key: ");
     result += QuickInfoHelper.toString(this, "merge", m_Merge, ", merge: ");
+    result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
 
     return result;
   }
@@ -315,78 +361,93 @@ public class MergeReportFromMap
     Report			other;
     Report			merged;
     String			id;
+    boolean			skip;
 
     result = null;
     map    = null;
+    skip   = false;
 
     // get map
     if (getStorageHandler().getStorage().has(m_StorageName)) {
       if (getStorageHandler().getStorage().get(m_StorageName) instanceof Map)
 	map = (Map<String,Report>) getStorageHandler().getStorage().get(m_StorageName);
       else
-        result = "Expected Report/ReportHandler in storage, but found: " + Utils.classToString(getStorageHandler().getStorage().get(m_StorageName));
+	result = "Expected map in storage, but found: " + Utils.classToString(getStorageHandler().getStorage().get(m_StorageName));
     }
     else {
-      result = "Storage item with bays not available: " + m_StorageName;
+      result = "Storage item with map not available: " + m_StorageName;
     }
 
     // input data
     handler = null;
     current = new Report();
     merged  = new Report();
+    other   = new Report();
     id      = null;
-    if (m_InputToken.hasPayload(MutableReportHandler.class)) {
-      handler = m_InputToken.getPayload(MutableReportHandler.class);
-      current = handler.getReport();
-      id      = "" + current.getValue(m_Key);
-    }
-    else if (m_InputToken.hasPayload(Report.class)) {
-      current = m_InputToken.getPayload(Report.class);
-      id      = "" + current.getValue(m_Key);
-    }
-    else {
-      result = m_InputToken.unhandledData();
+    if (result == null) {
+      if (m_InputToken.hasPayload(MutableReportHandler.class)) {
+	handler = m_InputToken.getPayload(MutableReportHandler.class);
+	current = handler.getReport();
+	id = "" + current.getValue(m_Key);
+      }
+      else if (m_InputToken.hasPayload(Report.class)) {
+	current = m_InputToken.getPayload(Report.class);
+	id = "" + current.getValue(m_Key);
+      }
+      else {
+	result = m_InputToken.unhandledData();
+      }
     }
 
     // get from map
-    other = new Report();
     if (result == null) {
       if (map != null) {
-        if (map.containsKey(id))
+	if (map.containsKey(id)) {
 	  other = map.get(id);
-	else
+	}
+	else if (m_Lenient) {
+	  getLogger().warning("Failed to retrieve report from map using ID: " + id);
+	  skip = true;
+	}
+	else {
 	  result = "Failed to retrieve report from map using ID: " + id;
+	}
       }
     }
 
     if (result == null) {
-      switch (m_Merge) {
-	case REPLACE:
-	  merged = other.getClone();
-	  break;
-
-	case MERGE_CURRENT_WITH_OTHER:
-	  merged = current.getClone();
-	  merged.mergeWith(other);
-	  break;
-
-	case MERGE_OTHER_WITH_CURRENT:
-	  merged = other.getClone();
-	  merged.mergeWith(current);
-	  break;
-
-	default:
-	  result = "Unhandled merge type: " + m_Merge;
-      }
-    }
-
-    if (result == null) {
-      if (handler != null) {
-	handler.setReport(merged);
-	m_OutputToken = new Token(handler);
+      if (skip) {
+        m_OutputToken = m_InputToken;
       }
       else {
-        m_OutputToken = new Token(merged);
+	switch (m_Merge) {
+	  case REPLACE:
+	    merged = other.getClone();
+	    break;
+
+	  case MERGE_CURRENT_WITH_OTHER:
+	    merged = current.getClone();
+	    merged.mergeWith(other);
+	    break;
+
+	  case MERGE_OTHER_WITH_CURRENT:
+	    merged = other.getClone();
+	    merged.mergeWith(current);
+	    break;
+
+	  default:
+	    result = "Unhandled merge type: " + m_Merge;
+	}
+
+	if (result == null) {
+	  if (handler != null) {
+	    handler.setReport(merged);
+	    m_OutputToken = new Token(handler);
+	  }
+	  else {
+	    m_OutputToken = new Token(merged);
+	  }
+	}
       }
     }
 
