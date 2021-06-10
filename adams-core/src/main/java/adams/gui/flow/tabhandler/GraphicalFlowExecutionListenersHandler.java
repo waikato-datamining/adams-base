@@ -15,7 +15,7 @@
 
 /*
  * GraphicalFlowExecutionListenersHandler.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tabhandler;
@@ -142,10 +142,12 @@ public class GraphicalFlowExecutionListenersHandler
    * Gets called when the page changes.
    */
   public void display() {
-    getEditor().getTabs().setVisible(
-      GraphicalFlowExecutionListenersTab.class,
-      hasDisplays(),
-      false);
+    synchronized(getEditor().getTabs()) {
+      getEditor().getTabs().setVisible(
+        GraphicalFlowExecutionListenersTab.class,
+        hasDisplays(),
+        false);
+    }
   }
 
   /**

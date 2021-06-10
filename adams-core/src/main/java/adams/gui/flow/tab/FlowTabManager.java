@@ -15,7 +15,7 @@
 
 /*
  * FlowTabManager.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -210,7 +210,7 @@ public class FlowTabManager
    * @param paths	the selected paths
    * @param actors	the selected actors
    */
-  public void notifyTabs(final TreePath[] paths, final Actor[] actors) {
+  public synchronized void notifyTabs(final TreePath[] paths, final Actor[] actors) {
     DelayedActionRunnable.AbstractAction	action;
 
     if (getTabCount() == 0)
@@ -243,7 +243,7 @@ public class FlowTabManager
    *
    * @param panel	the current panel
    */
-  public void notifyTabs(final FlowPanel panel) {
+  public synchronized void notifyTabs(final FlowPanel panel) {
     DelayedActionRunnable.AbstractAction	action;
 
     action = new DelayedActionRunnable.AbstractAction(m_NotifyingTabChangeListenersRunnable) {
@@ -272,7 +272,7 @@ public class FlowTabManager
    *
    * @param tree	the tree to use as basis
    */
-  public void refresh(Tree tree) {
+  public synchronized void refresh(Tree tree) {
     TreePath[]	paths;
     Actor[]	actors;
     int		i;
