@@ -15,7 +15,7 @@
 
 /*
  * CleanUp.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.multipageaction;
@@ -71,15 +71,18 @@ public class CleanUp
     result = new JMenuItem(getName());
     result.setIcon(getIcon());
     result.setEnabled(
-      (multi.getSelectedIndices().length == 1)
+      ((multi.getSelectedIndices().length == 1)
         && multi.hasCurrentPanel()
-	&& !multi.getCurrentPanel().isRunning()
-	&& !multi.getCurrentPanel().isStopping()
-	&& !multi.getCurrentPanel().isSwingWorkerRunning()
-	&& (multi.getCurrentPanel().getLastFlow() != null));
+        && !multi.getCurrentPanel().isRunning()
+        && !multi.getCurrentPanel().isStopping()
+        && !multi.getCurrentPanel().isSwingWorkerRunning()
+        && (multi.getCurrentPanel().getLastFlow() != null))
+        || (multi.getSelectedIndices().length > 1));
     result.addActionListener((ActionEvent ae) -> {
-      multi.getCurrentPanel().clearNotification();
-      multi.getCurrentPanel().cleanUp();
+      for (int index: multi.getSelectedIndices()) {
+	multi.getPanelAt(index).clearNotification();
+	multi.getPanelAt(index).cleanUp();
+      }
     });
 
     return result;
