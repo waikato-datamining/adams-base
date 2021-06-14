@@ -81,3 +81,5 @@ adams.parser.SpreadSheetFormulaText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.parser.StringExpressionText=adams.gui.goe.AbstractSimpleScriptEditor
 adams.flow.control.StorageName=adams.gui.goe.BaseObjectEditor
 adams.core.VariableNameValuePair=adams.gui.goe.VariableNameValuePairEditor
+adams.core.base.MavenArtifact=adams.gui.goe.MavenArtifactEditor
+adams.core.base.MavenRepository=adams.gui.goe.MavenRepositoryEditor

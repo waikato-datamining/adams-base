@@ -374,3 +374,8 @@ adams.data.report.SuffixField#valueOf=adams.core.option.parsing.SuffixFieldParsi
 adams.core.VariableNameValuePair=true
 adams.core.VariableNameValuePair#toString=adams.core.option.parsing.VariableNameValuePairParsing#toString
 adams.core.VariableNameValuePair#valueOf=adams.core.option.parsing.VariableNameValuePairParsing#valueOf
+
+# MavenArtifact objects
+adams.core.base.MavenArtifact=true
+adams.core.base.MavenArtifact#toString=adams.core.option.parsing.MavenArtifactParsing#toString
+adams.core.base.MavenArtifact#valueOf=adams.core.option.parsing.MavenArtifactParsing#valueOf
