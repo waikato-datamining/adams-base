@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -57,7 +57,6 @@ import java.util.Map;
  * using <code>ctrl+c</code>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #ENV_ADAMS_OPTS
  */
 public class Launcher {
@@ -144,6 +143,7 @@ public class Launcher {
     m_Arguments                = new String[0];
     m_Runtime                  = Runtime.getRuntime();
     m_ClassPathAugmentations   = new ArrayList<>();
+    m_ClassPathAugmentations.add(ImplicitClassPathAugmenter.class.getName());
     m_EnvironmentModifiers     = new ArrayList<>();
     m_PriorityJars             = new ArrayList<>();
     m_EnvVars                  = new ArrayList<>();
@@ -834,6 +834,7 @@ public class Launcher {
       System.out.println("[-cpa <classname>]");
       System.out.println("\tOptional classpath augmenters (classname + options).");
       System.out.println("\tCan be supplied multiple times.");
+      System.out.println("\tNote: adams.core.management.MultiClassPathAugmenter gets added automatically");
       System.out.println("\tExample: -cpa adams.core.management.SystemClassPathAugmenter");
       System.out.println("[-priority <jar>]");
       System.out.println("\tOptional jar (with path) that should be added at start of classpath.");

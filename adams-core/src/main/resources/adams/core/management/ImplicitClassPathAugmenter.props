@@ -1,0 +1,7 @@
+# File for enabling/disabling classpath augmenters to apply via
+# adams.core.management.ImplicitClassPathAugmenter.
+#
+# Format:
+#   class = true|false
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
