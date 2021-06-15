@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTransformHeaderCells.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -651,32 +651,44 @@ public class SpreadSheetTransformHeaderCells
       if (output != null)
 	output = ((Token) output).getPayload();
 
-      if (output instanceof Double)
-	cell.setContent((Double) output);
-      else if (output instanceof Integer)
-	cell.setContent((Integer) output);
-      else if (output instanceof Long)
-	cell.setContent((Long) output);
-      else if (output instanceof DateTime)
-	cell.setContent((DateTime) output);
-      else if (output instanceof Time)
-	cell.setContent((Time) output);
-      else if (output instanceof TimeMsec)
-	cell.setContent((TimeMsec) output);
-      else if (output instanceof Date)
-	cell.setContent((Date) output);
-      else if (output instanceof String)
-	cell.setContentAsString((String) output);
-      else
+      if (output instanceof Double) {
+        cell.setContent((Double) output);
+      }
+      else if (output instanceof Integer) {
+        cell.setContent((Integer) output);
+      }
+      else if (output instanceof Long) {
+        cell.setContent((Long) output);
+      }
+      else if (output instanceof DateTime) {
+        cell.setContent((DateTime) output);
+      }
+      else if (output instanceof Time) {
+        cell.setContent((Time) output);
+      }
+      else if (output instanceof TimeMsec) {
+        cell.setContent((TimeMsec) output);
+      }
+      else if (output instanceof Date) {
+        cell.setContent((Date) output);
+      }
+      else if (output instanceof String) {
+        if (((String) output).startsWith("="))
+          cell.setContent((String) output);
+        else
+          cell.setContentAsString((String) output);
+      }
+      else {
 	result = "Don't know how to set cell value for transformation output type:\n"
-	    + Utils.classesToString(classOut)
-	    + "/"
-	    + ((output != null) ? output.getClass().getName() : "null") + "\n"
-	    + "The input that resulted in this output:\n"
-	    + Utils.classesToString(classIn)
-	    + "/"
-	    + ((input != null) ? input.getClass().getName() : "null")
-	    + "/" + cell.getContent();
+	  + Utils.classesToString(classOut)
+	  + "/"
+	  + ((output != null) ? output.getClass().getName() : "null") + "\n"
+	  + "The input that resulted in this output:\n"
+	  + Utils.classesToString(classIn)
+	  + "/"
+	  + ((input != null) ? input.getClass().getName() : "null")
+	  + "/" + cell.getContent();
+      }
     }
 
     return result;

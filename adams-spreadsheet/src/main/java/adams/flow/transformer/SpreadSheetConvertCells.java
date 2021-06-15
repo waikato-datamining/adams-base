@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetConvertCells.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -487,32 +487,48 @@ public class SpreadSheetConvertCells
       output = m_Conversion.getOutput();
       m_Conversion.cleanUp();
       
-      if (classOut == Double.class)
+      if (classOut == Double.class) {
 	cell.setContent((Double) output);
-      else if (classOut == Integer.class)
+      }
+      else if (classOut == Integer.class) {
 	cell.setContent((Integer) output);
-      else if (classOut == Long.class)
+      }
+      else if (classOut == Long.class) {
 	cell.setContent((Long) output);
-      else if (classOut == Date.class)
+      }
+      else if (classOut == Date.class) {
 	cell.setContent((Date) output);
-      else if (classOut == DateTime.class)
+      }
+      else if (classOut == DateTime.class) {
 	cell.setContent((DateTime) output);
-      else if (classOut == DateTimeMsec.class)
+      }
+      else if (classOut == DateTimeMsec.class) {
 	cell.setContent((DateTimeMsec) output);
-      else if (classOut == Time.class)
+      }
+      else if (classOut == Time.class) {
 	cell.setContent((Time) output);
-      else if (classOut == TimeMsec.class)
+      }
+      else if (classOut == TimeMsec.class) {
 	cell.setContent((TimeMsec) output);
-      else if (classOut == String.class)
-	cell.setContentAsString((String) output);
-      else if (classOut == Object.class)
+      }
+      else if (classOut == String.class) {
+        if (((String) output).startsWith("="))
+          cell.setContent((String) output);
+        else
+          cell.setContentAsString((String) output);
+      }
+      else if (classOut == Object.class) {
 	cell.setNative(output);
-      else if (classOut == Unknown.class)
+      }
+      else if (classOut == Unknown.class) {
 	cell.setNative(output);
-      else if (classOut == SpreadSheet.class)
+      }
+      else if (classOut == SpreadSheet.class) {
 	transfer((SpreadSheet) output, cell);
-      else
+      }
+      else {
 	result = "Don't know how to set cell value for conversion output type: " + classOut.getName();
+      }
     }
     
     return result;

@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetConvertHeaderCells.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -30,6 +30,7 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 import java.util.Date;
 
@@ -341,6 +342,10 @@ public class SpreadSheetConvertHeaderCells
 	input = cell.toTimeMsec();
       else if (classIn == String.class)
 	input = cell.getContent();
+      else if (classIn == Object.class)
+	input = cell.getNative();
+      else if (classIn == Unknown.class)
+	input = cell.getNative();
       else
 	result = "Don't know how to get cell value for conversion input type: " + classIn.getName();
     }
@@ -354,26 +359,45 @@ public class SpreadSheetConvertHeaderCells
       output = m_Conversion.getOutput();
       m_Conversion.cleanUp();
       
-      if (classOut == Double.class)
-	cell.setContent((Double) output);
-      else if (classOut == Integer.class)
-	cell.setContent((Integer) output);
-      else if (classOut == Long.class)
-	cell.setContent((Long) output);
-      else if (classOut == Date.class)
-	cell.setContent((Date) output);
-      else if (classOut == DateTime.class)
-	cell.setContent((DateTime) output);
-      else if (classOut == DateTimeMsec.class)
-	cell.setContent((DateTimeMsec) output);
-      else if (classOut == Time.class)
-	cell.setContent((Time) output);
-      else if (classOut == TimeMsec.class)
-	cell.setContent((TimeMsec) output);
-      else if (classOut == String.class)
-	cell.setContentAsString((String) output);
-      else
-	result = "Don't know how to set cell value for conversion output type: " + classOut.getName();
+      if (classOut == Double.class) {
+        cell.setContent((Double) output);
+      }
+      else if (classOut == Integer.class) {
+        cell.setContent((Integer) output);
+      }
+      else if (classOut == Long.class) {
+        cell.setContent((Long) output);
+      }
+      else if (classOut == Date.class) {
+        cell.setContent((Date) output);
+      }
+      else if (classOut == DateTime.class) {
+        cell.setContent((DateTime) output);
+      }
+      else if (classOut == DateTimeMsec.class) {
+        cell.setContent((DateTimeMsec) output);
+      }
+      else if (classOut == Time.class) {
+        cell.setContent((Time) output);
+      }
+      else if (classOut == TimeMsec.class) {
+        cell.setContent((TimeMsec) output);
+      }
+      else if (classOut == String.class) {
+        if (((String) output).startsWith("="))
+          cell.setContent((String) output);
+        else
+          cell.setContentAsString((String) output);
+      }
+      else if (classOut == Object.class) {
+	cell.setNative(output);
+      }
+      else if (classOut == Unknown.class) {
+	cell.setNative(output);
+      }
+      else {
+        result = "Don't know how to set cell value for conversion output type: " + classOut.getName();
+      }
     }
     
     return result;
