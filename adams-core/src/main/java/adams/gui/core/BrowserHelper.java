@@ -15,7 +15,7 @@
 
 /*
  * BrowserHelper.java
- * Copyright (C) 2006-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -64,7 +64,6 @@ public class BrowserHelper {
    * Default handler for hyperlinks. Opens URL in default browser.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class DefaultHyperlinkListener
     implements HyperlinkListener {
@@ -75,19 +74,26 @@ public class BrowserHelper {
      * @param e the event responsible for the update
      */
     public void hyperlinkUpdate(HyperlinkEvent e) {
+      String	url;
+
+      url = null;
+      if (e.getURL() != null)
+	url = "" + e.getURL();
+
       if (e instanceof HTMLFrameHyperlinkEvent) {
 	if (e.getSource() instanceof JEditorPane) {
 	  JEditorPane editor = (JEditorPane) e.getSource();
 	  HTMLDocument doc = (HTMLDocument) editor.getDocument();
 	  doc.processHTMLFrameHyperlinkEvent((HTMLFrameHyperlinkEvent) e);
 	}
-      } 
+      }
       else if (e.getEventType() == EventType.ACTIVATED) {
 	try {
-	  BrowserHelper.openURL(e.getURL().toString());
-	} 
+	  if (url != null)
+	    openURL(url);
+	}
 	catch (Exception ex) {
-	  ex.printStackTrace();
+	  ConsolePanel.getSingleton().append("Failed to open URL: " + url, ex);
 	}
       }
     }

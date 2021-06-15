@@ -15,7 +15,7 @@
 
 /*
  * HelpHistoryPanel.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.help;
 
@@ -24,6 +24,7 @@ import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
 import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
@@ -63,7 +64,7 @@ public class HelpHistoryPanel
     private static final long serialVersionUID = 2552148773749071235L;
 
     /** the text area to display the StringBuilder in. */
-    protected JEditorPane m_Text;
+    protected BaseHtmlEditorPane m_Text;
 
     /**
      * Initializes the frame.
@@ -84,7 +85,7 @@ public class HelpHistoryPanel
 
       getContentPane().setLayout(new BorderLayout());
 
-      m_Text = new JEditorPane();
+      m_Text = new BaseHtmlEditorPane();
       m_Text.setFont(Fonts.getMonospacedFont());
       getContentPane().add(new BaseScrollPane(m_Text), BorderLayout.CENTER);
     }

@@ -41,7 +41,6 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -1475,7 +1474,7 @@ public class GUIHelper {
     String[]			lines;
     int				height;
     TextPanel 			textPanel;
-    JEditorPane 		htmlPanel;
+    BaseHtmlEditorPane 		htmlPanel;
     
     parent = GUIHelper.getParentComponent(parent);
 
@@ -1493,10 +1492,8 @@ public class GUIHelper {
     htmlPanel = null;
     textPanel = null;
     if (html) {
-      htmlPanel = new JEditorPane();
-      htmlPanel.setContentType("text/html");
-      htmlPanel.setEditable(false);
-      htmlPanel.addHyperlinkListener(new BaseHyperlinkListener());
+      htmlPanel = new BaseHtmlEditorPane();
+      htmlPanel.addDefaultHyperlinkListener();
       dlg.getContentPane().add(new BaseScrollPane(htmlPanel), BorderLayout.CENTER);
     }
     else {

@@ -15,16 +15,16 @@
 
 /*
  * ClassHelpPanel.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextField;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.DelayedActionRunnable.AbstractAction;
 import adams.gui.core.Fonts;
@@ -35,7 +35,6 @@ import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JEditorPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -68,7 +67,7 @@ public class ClassHelpPanel
   protected SearchableBaseList m_ListClasses;
 
   /** for displaying the help. */
-  protected JEditorPane m_TextPaneHelp;
+  protected BaseHtmlEditorPane m_TextPaneHelp;
 
   /** the change listeners. */
   protected Set<ChangeListener> m_ChangeListeners;
@@ -152,11 +151,9 @@ public class ClassHelpPanel
     });
     split.setTopComponent(new BaseScrollPane(m_ListClasses));
 
-    m_TextPaneHelp = new JEditorPane();
-    m_TextPaneHelp.setEditable(false);
+    m_TextPaneHelp = new BaseHtmlEditorPane();
     m_TextPaneHelp.setFont(Fonts.getMonospacedFont());
-    m_TextPaneHelp.setAutoscrolls(true);
-    m_TextPaneHelp.addHyperlinkListener(new DefaultHyperlinkListener());
+    m_TextPaneHelp.addDefaultHyperlinkListener();
     split.setBottomComponent(new BaseScrollPane(m_TextPaneHelp));
   }
 

@@ -24,9 +24,9 @@ import adams.core.net.HtmlUtils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BaseScrollPane;
 
-import javax.swing.JEditorPane;
 import java.awt.BorderLayout;
 
 /**
@@ -48,7 +48,7 @@ public class SimpleHTML
     private static final long serialVersionUID = -3009467848041701061L;
 
     /** the pane for displaying the HTML. */
-    protected JEditorPane m_PaneHTML;
+    protected BaseHtmlEditorPane m_PaneHTML;
 
     /** the column range to display. */
     protected SpreadSheetColumnRange m_Columns;
@@ -75,9 +75,8 @@ public class SimpleHTML
 
       setLayout(new BorderLayout());
 
-      m_PaneHTML = new JEditorPane();
-      m_PaneHTML.setContentType("text/html");
-      m_PaneHTML.setEditable(false);
+      m_PaneHTML = new BaseHtmlEditorPane();
+      m_PaneHTML.addDefaultHyperlinkListener();
       add(new BaseScrollPane(m_PaneHTML), BorderLayout.CENTER);
     }
 

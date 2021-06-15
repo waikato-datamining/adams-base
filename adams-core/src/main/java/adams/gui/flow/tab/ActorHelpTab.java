@@ -21,12 +21,11 @@ package adams.gui.flow.tab;
 
 import adams.core.option.HtmlHelpProducer;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.Fonts;
 
 import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
@@ -48,7 +47,7 @@ public class ActorHelpTab
   public final static String DEFAULT_TEXT = "<html><center><b>No actor selected</b></center></html>";
 
   /** for displaying the help text. */
-  protected JEditorPane m_TextArea;
+  protected BaseHtmlEditorPane m_TextArea;
 
   /**
    * Initializes the widgets.
@@ -58,14 +57,11 @@ public class ActorHelpTab
 
     setLayout(new BorderLayout());
 
-    m_TextArea = new JEditorPane();
+    m_TextArea = new BaseHtmlEditorPane();
     m_TextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    m_TextArea.setEditable(false);
     m_TextArea.setFont(Fonts.getMonospacedFont());
-    m_TextArea.setAutoscrolls(true);
-    m_TextArea.setContentType("text/html");
     m_TextArea.setText(DEFAULT_TEXT);
-    m_TextArea.addHyperlinkListener(new DefaultHyperlinkListener());
+    m_TextArea.addDefaultHyperlinkListener();
 
     add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
   }

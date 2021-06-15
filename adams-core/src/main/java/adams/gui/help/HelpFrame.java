@@ -15,7 +15,7 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -23,6 +23,7 @@ package adams.gui.help;
 import adams.core.classmanager.ClassManager;
 import adams.core.net.HtmlUtils;
 import adams.gui.core.BaseFrame;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BrowserHelper;
@@ -120,7 +121,7 @@ public class HelpFrame
   protected BaseSplitPane m_SplitPane;
 
   /** the editor pane. */
-  protected JEditorPane m_Text;
+  protected BaseHtmlEditorPane m_Text;
 
   /** the clear menu item. */
   protected JMenuItem m_MenuItemClear;
@@ -153,11 +154,9 @@ public class HelpFrame
     m_SplitPane.setDividerLocation(200);
     add(m_SplitPane, BorderLayout.CENTER);
 
-    m_Text = new JEditorPane();
+    m_Text = new BaseHtmlEditorPane();
     m_Text.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    m_Text.setEditable(false);
     m_Text.setFont(Fonts.getMonospacedFont());
-    m_Text.setAutoscrolls(true);
     m_Text.addHyperlinkListener(new HelpHyperlinkListener());
     m_Text.addKeyListener(getKeyListener());
     m_Text.setFont(Fonts.getMonospacedFont());

@@ -13,20 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorParametersTab.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
 import adams.core.option.HtmlParametersProducer;
 import adams.flow.core.Actor;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 import adams.gui.core.Fonts;
 
 import javax.swing.BorderFactory;
-import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
@@ -35,7 +34,6 @@ import java.awt.BorderLayout;
  * Tab for displaying the parameters for the currently selected actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorParametersTab
   extends AbstractEditorTab
@@ -48,7 +46,7 @@ public class ActorParametersTab
   public final static String DEFAULT_TEXT = "<html><center><b>No actor selected</b></center></html>";
 
   /** for displaying the help text. */
-  protected JEditorPane m_TextArea;
+  protected BaseHtmlEditorPane m_TextArea;
 
   /**
    * Initializes the widgets.
@@ -58,14 +56,11 @@ public class ActorParametersTab
 
     setLayout(new BorderLayout());
 
-    m_TextArea = new JEditorPane();
+    m_TextArea = new BaseHtmlEditorPane();
     m_TextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    m_TextArea.setEditable(false);
     m_TextArea.setFont(Fonts.getMonospacedFont());
-    m_TextArea.setAutoscrolls(true);
-    m_TextArea.setContentType("text/html");
     m_TextArea.setText(DEFAULT_TEXT);
-    m_TextArea.addHyperlinkListener(new DefaultHyperlinkListener());
+    m_TextArea.addDefaultHyperlinkListener();
 
     add(new BaseScrollPane(m_TextArea), BorderLayout.CENTER);
   }
