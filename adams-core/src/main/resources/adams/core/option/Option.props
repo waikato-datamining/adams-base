@@ -379,3 +379,13 @@ adams.core.VariableNameValuePair#valueOf=adams.core.option.parsing.VariableNameV
 adams.core.base.MavenArtifact=true
 adams.core.base.MavenArtifact#toString=adams.core.option.parsing.MavenArtifactParsing#toString
 adams.core.base.MavenArtifact#valueOf=adams.core.option.parsing.MavenArtifactParsing#valueOf
+
+# MavenArtifactExclusion objects
+adams.core.base.MavenArtifactExclusion=true
+adams.core.base.MavenArtifactExclusion#toString=adams.core.option.parsing.MavenArtifactExclusionParsing#toString
+adams.core.base.MavenArtifactExclusion#valueOf=adams.core.option.parsing.MavenArtifactExclusionParsing#valueOf
+
+# MavenRepository objects
+adams.core.base.MavenRepository=true
+adams.core.base.MavenRepository#toString=adams.core.option.parsing.MavenRepositoryParsing#toString
+adams.core.base.MavenRepository#valueOf=adams.core.option.parsing.MavenRepositoryParsing#valueOf
