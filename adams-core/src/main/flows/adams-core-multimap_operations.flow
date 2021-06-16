@@ -1,0 +1,44 @@
+# Project: adams
+# Date: 2021-06-16 14:58:31
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Shows how to perform operations involving multiple maps." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.TabView -short-title true -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.Display -name "Merge (no overwrite)" -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name "Merge (overwrite)" -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name "Common keys" -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "new map 1"
+  adams.flow.source.NewMap
+  adams.flow.transformer.SetMapValue -key a -value a -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetMapValue -name "SetMapValue (2)" -key b -value b -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetMapValue -name "SetMapValue (3)" -key c -value c -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetStorageValue -storage-name map1
+ adams.flow.control.Trigger -name "new map 2"
+  adams.flow.source.NewMap
+  adams.flow.transformer.SetMapValue -key a -value 1 -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetMapValue -name "SetMapValue (2)" -key b -value 2 -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetMapValue -name "SetMapValue (3)" -key d -value 4 -conversion adams.data.conversion.ObjectToObject
+  adams.flow.transformer.SetStorageValue -storage-name map2
+ adams.flow.control.Trigger -name "merge (no overwrite)"
+  adams.flow.source.StorageValuesArray -storage-name map1 -storage-name map2 -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.MultiMapOperation -operation adams.flow.transformer.multimapoperation.Merge
+  adams.flow.transformer.Convert -conversion adams.data.conversion.MapToKeyValuePairs
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.AnyToString
+  adams.flow.sink.CallableSink -callable "Merge (no overwrite)"
+ adams.flow.control.Trigger -name "merge (overwrite)"
+  adams.flow.source.StorageValuesArray -storage-name map1 -storage-name map2 -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.MultiMapOperation -operation "adams.flow.transformer.multimapoperation.Merge -overwrite true"
+  adams.flow.transformer.Convert -conversion adams.data.conversion.MapToKeyValuePairs
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.AnyToString
+  adams.flow.sink.CallableSink -callable "Merge (overwrite)"
+ adams.flow.control.Trigger -name "common keys"
+  adams.flow.source.StorageValuesArray -storage-name map1 -storage-name map2 -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.MultiMapOperation -operation adams.flow.transformer.multimapoperation.CommonKeys
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
+  adams.flow.sink.CallableSink -callable "Common keys"

@@ -550,6 +550,10 @@ adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor=\
 adams.flow.transformer.datacontainer.AbstractDataContainerPreProcessor=\
   adams.flow.transformer.datacontainer
 
+# the multi-map operations
+adams.flow.transformer.multimapoperation.AbstractMultiMapOperation=\
+  adams.flow.transformer.multimapoperation
+
 # the Report post-processors
 adams.flow.transformer.report.AbstractReportPostProcessor=\
   adams.flow.transformer.report
