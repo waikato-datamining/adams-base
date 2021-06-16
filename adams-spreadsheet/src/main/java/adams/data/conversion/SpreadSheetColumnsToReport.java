@@ -19,7 +19,9 @@
  */
 package adams.data.conversion;
 
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
+import adams.core.logging.LoggingHelper;
 import adams.data.report.Report;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
@@ -27,6 +29,9 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetRowRange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -39,31 +44,37 @@ import adams.data.spreadsheet.SpreadSheetRowRange;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-col-report-names &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: colReportNames)
  * &nbsp;&nbsp;&nbsp;The (optional) column that contains the report names.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-cols-report-values &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: colsReportValues)
  * &nbsp;&nbsp;&nbsp;The columns to get the report values from.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-rows-report &lt;adams.data.spreadsheet.SpreadSheetRowRange&gt; (property: rowsReport)
  * &nbsp;&nbsp;&nbsp;The rows that contain report.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then errors (e.g., due to corrupt data) will not cause exceptions.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetColumnsToReport
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -258589003642261978L;
@@ -76,6 +87,9 @@ public class SpreadSheetColumnsToReport
 
   /** the rows to get the report from. */
   protected SpreadSheetRowRange m_RowsReport;
+
+  /** whether to skip over errors. */
+  protected boolean m_Lenient;
 
   /**
    * Returns a string describing the object.
@@ -105,6 +119,10 @@ public class SpreadSheetColumnsToReport
     m_OptionManager.add(
       "rows-report", "rowsReport",
       new SpreadSheetRowRange());
+
+    m_OptionManager.add(
+      "lenient", "lenient",
+      false);
   }
 
   /**
@@ -195,6 +213,38 @@ public class SpreadSheetColumnsToReport
   }
 
   /**
+   * Sets whether to skip over errors.
+   *
+   * @param value	true if to skip
+   */
+  @Override
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether whether to skip over errors.
+   *
+   * @return		true if to skip
+   */
+  @Override
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String lenientTipText() {
+    return "If enabled, then errors (e.g., due to corrupt data) will not cause exceptions.";
+  }
+
+  /**
    * Returns the class that is accepted as input.
    *
    * @return		the class
@@ -226,6 +276,7 @@ public class SpreadSheetColumnsToReport
     result = QuickInfoHelper.toString(this, "rowsReport", (m_RowsReport.isEmpty() ? "-none-" : m_RowsReport.getRange()), "rows: ");
     result += QuickInfoHelper.toString(this, "colReportNames", (m_ColReportNames.isEmpty() ? "-none-" : m_ColReportNames.getIndex()), ", names: ");
     result += QuickInfoHelper.toString(this, "colsReportValues", (m_ColsReportValues.isEmpty() ? "-none-" : m_ColsReportValues.getRange()), ", value cols: ");
+    result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
 
     return result;
   }
@@ -238,7 +289,8 @@ public class SpreadSheetColumnsToReport
    */
   @Override
   protected Object doConvert() throws Exception {
-    Report[]		result;
+    List<Report> 	result;
+    Report		report;
     SpreadSheet		sheet;
     int			i;
     int			n;
@@ -265,27 +317,37 @@ public class SpreadSheetColumnsToReport
     if (rowsMeta.length == 0)
       throw new IllegalStateException("No rows for report: " + m_RowsReport.getRange());
 
-    result = new Report[colsValues.length];
+    result = new ArrayList<>();
     for (i = 0; i < colsValues.length; i++) {
-      result[i] = new Report();
+      try {
+	report = new Report();
 
-      // report
-      if (colMeta > -1) {
-	for (n = 0; n < rowsMeta.length; n++) {
-	  row = sheet.getRow(rowsMeta[n]);
-	  if (row.hasCell(colsValues[i]) && !row.getCell(colsValues[i]).isMissing()) {
-	    cell = row.getCell(colsValues[i]);
-	    if (cell.isNumeric())
-	      result[i].setNumericValue(row.getCell(colMeta).getContent(), cell.toDouble());
-	    else if (cell.isBoolean())
-	      result[i].setBooleanValue(row.getCell(colMeta).getContent(), cell.toBoolean());
-	    else
-	      result[i].setStringValue(row.getCell(colMeta).getContent(), cell.getContent());
+	// report
+	if (colMeta > -1) {
+	  for (n = 0; n < rowsMeta.length; n++) {
+	    row = sheet.getRow(rowsMeta[n]);
+	    if (row.hasCell(colsValues[i]) && !row.getCell(colsValues[i]).isMissing()) {
+	      cell = row.getCell(colsValues[i]);
+	      if (cell.isNumeric())
+		report.setNumericValue(row.getCell(colMeta).getContent(), cell.toDouble());
+	      else if (cell.isBoolean())
+		report.setBooleanValue(row.getCell(colMeta).getContent(), cell.toBoolean());
+	      else
+		report.setStringValue(row.getCell(colMeta).getContent(), cell.getContent());
+	    }
 	  }
 	}
+
+	result.add(report);
+      }
+      catch (Exception e) {
+	if (m_Lenient)
+	  getLogger().warning("Failed to process column " + (colsValues[i] + 1) + ":\n" + LoggingHelper.throwableToString(e));
+	else
+	  throw e;
       }
     }
-    
-    return result;
+
+    return result.toArray(new Report[0]);
   }
 }
