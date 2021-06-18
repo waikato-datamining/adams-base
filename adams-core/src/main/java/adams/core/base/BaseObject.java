@@ -15,7 +15,7 @@
 
 /*
  * BaseObject.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -26,7 +26,10 @@ import adams.core.Utils;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -300,7 +303,17 @@ public abstract class BaseObject
     
     return result;
   }
-  
+
+  /**
+   * Turns the BaseObject array into a string list.
+   *
+   * @param array	the array to convert
+   * @return		the generated string list
+   */
+  public static List<String> toStringList(BaseObject[] array) {
+    return new ArrayList<>(Arrays.asList(toStringArray(array)));
+  }
+
   /**
    * Turns the String array into a BaseObject array.
    * 
@@ -316,7 +329,7 @@ public abstract class BaseObject
     result = Array.newInstance(cls, array.length);
     for (i = 0; i < array.length; i++) {
       try {
-	obj = (BaseObject) cls.newInstance();
+	obj = (BaseObject) cls.getDeclaredConstructor().newInstance();
 	obj.setValue(array[i]);
 	Array.set(result, i, obj);
       }
@@ -327,6 +340,17 @@ public abstract class BaseObject
     }
     
     return (BaseObject[]) result;
+  }
+
+  /**
+   * Turns the String array into a BaseObject array.
+   *
+   * @param array	the array to convert
+   * @param cls		the BaseObject derived class to use
+   * @return		the generated object array
+   */
+  public static BaseObject[] toObjectArray(List<String> array, Class cls) {
+    return toObjectArray(array.toArray(new String[0]), cls);
   }
 
   /**
