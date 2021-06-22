@@ -143,7 +143,6 @@ public class Launcher {
     m_Arguments                = new String[0];
     m_Runtime                  = Runtime.getRuntime();
     m_ClassPathAugmentations   = new ArrayList<>();
-    m_ClassPathAugmentations.add(ImplicitClassPathAugmenter.class.getName());
     m_EnvironmentModifiers     = new ArrayList<>();
     m_PriorityJars             = new ArrayList<>();
     m_EnvVars                  = new ArrayList<>();
@@ -155,6 +154,8 @@ public class Launcher {
     m_SuppressErrorDialog      = false;
     m_OutputPrinter            = DefaultOutputPrinter.class;
     m_ConsoleObject            = null;
+
+    addClassPathAugmentations(new ImplicitClassPathAugmenter());
   }
 
   /**
@@ -455,10 +456,15 @@ public class Launcher {
 	continue;
       file = new File(part.trim());
       if (!file.isDirectory()) {
-	path = file.getParentFile().getAbsolutePath();
-	if (!jars.containsKey(path))
-	  jars.put(path, new ArrayList<>());
-	jars.get(path).add(file.getName());
+        if (file.getParentFile() != null) {
+          path = file.getParentFile().getAbsolutePath();
+          if (!jars.containsKey(path))
+            jars.put(path, new ArrayList<>());
+          jars.get(path).add(file.getName());
+        }
+        else {
+          System.err.println("Failed to determine parent path for '" + file + "', skipping!");
+	}
       }
       else {
 	dirs.add(part);
