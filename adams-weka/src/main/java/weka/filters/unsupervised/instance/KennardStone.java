@@ -13,21 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * KennardStone.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package weka.filters.unsupervised.instance;
 
 import adams.core.Range;
 import gnu.trove.list.TDoubleList;
-import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.list.array.TIntArrayList;
 import weka.core.Capabilities;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.Utils;
 import weka.core.WekaOptionUtils;
 import weka.filters.Filter;
 import weka.filters.SimpleBatchFilter;
@@ -35,6 +34,7 @@ import weka.filters.unsupervised.attribute.SavitzkyGolay;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -48,27 +48,30 @@ import java.util.Vector;
  *
  <!-- options-start -->
  * Valid options are: <p>
- * 
+ *
  * <pre> -number-in-subset &lt;value&gt;
  *  Number of rows in subset.
  *  (default: -1)</pre>
- * 
+ *
  * <pre> -pre-filter &lt;value&gt;
  *  Pre-filter to apply to the data to perform the search on.
  *  (default: weka.filters.unsupervised.attribute.SavitzkyGolay -left 3 -right 3 -polynomial 2 -derivative 1)</pre>
- * 
+ *
  * <pre> -att-range &lt;value&gt;
  *  The attribute range to limit distance calculation to (after applying pre-filter).
  *  (default: first-last)</pre>
- * 
+ *
+ * <pre> -V
+ *  Whether to invert the selection.</pre>
+ *
  * <pre> -output-debug-info
  *  If set, filter is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, filter capabilities are not checked before filter is built
  *  (use with caution).</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -85,6 +88,8 @@ public class KennardStone
 
   protected static String ATT_RANGE = "att-range";
 
+  protected static String INVERT_SELECTION = "V";
+
   public static final int DEFAULT_NUMBER_IN_SUBSET = -1;
 
   public static final Filter DEFAULT_PRE_FILTER = new SavitzkyGolay();
@@ -99,6 +104,9 @@ public class KennardStone
 
   /** the range of attributes to apply to. */
   protected Range m_AttRange = DEFAULT_ATT_RANGE;
+
+  /** whether to invert the selection. */
+  protected boolean m_InvertSelection;
 
   /**
    * Returns a string describing this filter.
@@ -128,6 +136,7 @@ public class KennardStone
     WekaOptionUtils.addOption(result, numberInSubsetTipText(), "" + DEFAULT_NUMBER_IN_SUBSET, NUMBER_IN_SUBSET);
     WekaOptionUtils.addOption(result, preFilterTipText(), DEFAULT_PRE_FILTER, PRE_FILTER);
     WekaOptionUtils.addOption(result, attRangeTipText(), DEFAULT_ATT_RANGE, ATT_RANGE);
+    WekaOptionUtils.addFlag(result, invertSelectionTipText(), INVERT_SELECTION);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -142,6 +151,7 @@ public class KennardStone
     setNumberInSubset(WekaOptionUtils.parse(options, NUMBER_IN_SUBSET, DEFAULT_NUMBER_IN_SUBSET));
     setPreFilter((Filter) WekaOptionUtils.parse(options, PRE_FILTER, DEFAULT_PRE_FILTER));
     setAttRange(WekaOptionUtils.parse(options, ATT_RANGE, DEFAULT_ATT_RANGE));
+    setInvertSelection(Utils.getFlag(INVERT_SELECTION, options));
     super.setOptions(options);
   }
 
@@ -155,6 +165,7 @@ public class KennardStone
     WekaOptionUtils.add(result, NUMBER_IN_SUBSET, getNumberInSubset());
     WekaOptionUtils.add(result, PRE_FILTER, getPreFilter());
     WekaOptionUtils.add(result, ATT_RANGE, getAttRange());
+    WekaOptionUtils.add(result, INVERT_SELECTION, getInvertSelection());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
   }
@@ -247,6 +258,34 @@ public class KennardStone
   }
 
   /**
+   * Sets if selection is to be inverted.
+   *
+   * @param value 	true if inversion is to be performed
+   */
+  public void setInvertSelection(boolean value) {
+    m_InvertSelection = value;
+  }
+
+  /**
+   * Gets if selection is to be inverted.
+   *
+   * @return 		true if the selection is to be inverted
+   */
+  public boolean getInvertSelection() {
+    return m_InvertSelection;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the explorer/experimenter gui
+   */
+  public String invertSelectionTipText() {
+    return "Whether to invert the selection.";
+  }
+
+  /**
    * Returns the Capabilities of this filter. Derived filters have to override
    * this method to enable capabilities.
    *
@@ -328,8 +367,9 @@ public class KennardStone
     int		i;
     int		j;
     int		m;
-    TIntList 	chosen;
-    TIntList 	remaining;
+    ArrayList<Integer> 	chosen;
+    HashSet<Integer> 	chosenSet;
+    ArrayList<Integer> 	remaining;
     double 	maxDistance;
     int 	chosen1;
     int 	chosen2;
@@ -365,13 +405,13 @@ public class KennardStone
     }
 
     //Keep a record of chosen and remaining indices
-    chosen    = new TIntArrayList();
-    remaining = new TIntArrayList();
+    chosen    = new ArrayList<>();
+    remaining = new ArrayList<>();
     for (i = 0; i < filtered.numInstances(); i++)
       remaining.add(i);
 
     //find 2 samples that are furthest apart using uniform distance
-    maxDistance = -1;
+    maxDistance =  0;
     chosen1     = -1;
     chosen2     = -1;
     for (i = 0; i < filtered.numInstances() - 1; i++) {
@@ -390,7 +430,7 @@ public class KennardStone
 
     //Loop through until the right amount are found.
     for (m = 3; m <= m_NumberInSubset; m++) {
-      maxDistanceTest = -1;
+      maxDistanceTest = 0;
       bestIndex = -1;
       for (i = 0; i < remaining.size(); i++) {
 	lowestDistanceSingle = Double.POSITIVE_INFINITY;
@@ -410,8 +450,17 @@ public class KennardStone
       remaining.remove(remaining.indexOf(bestIndex));
     }
 
-    for (i = 0; i < chosen.size(); i++)
-      result.add(original.instance(chosen.get(i)));
+    if (m_InvertSelection) {
+      chosenSet = new HashSet<>(chosen);
+      for (i = 0; i < original.numInstances(); i++) {
+        if (!chosenSet.contains(i))
+	  result.add(original.instance(i));
+      }
+    }
+    else {
+      for (i = 0; i < chosen.size(); i++)
+	result.add(original.instance(chosen.get(i)));
+    }
 
     return result;
   }
