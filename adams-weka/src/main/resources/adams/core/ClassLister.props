@@ -316,3 +316,7 @@ weka.filters.unsupervised.instance.instanceweightsmodifiers.InstanceWeightsModif
 # Lists the multiplicative scatter correction schemes
 weka.filters.unsupervised.attribute.multiplicativescattercorrection.AbstractMultiplicativeScatterCorrection=\
   weka.filters.unsupervised.attribute.multiplicativescattercorrection
+
+# Lists the detrend schemes
+weka.filters.unsupervised.attribute.detrend.AbstractDetrend=\
+  weka.filters.unsupervised.attribute.detrend
