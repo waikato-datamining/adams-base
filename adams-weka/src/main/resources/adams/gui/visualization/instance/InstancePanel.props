@@ -82,7 +82,7 @@ Plot.AdjustToVisibleData=true
 Plot.StrokeThickness=1.0
 Plot.SidePanelWidth=200
 Plot.ColorProvider=adams.gui.visualization.core.DefaultColorProvider
-Plot.AntiAliasing=true
+Plot.AntiAliasing=false
 Plot.ToolTip.MaxColumns=80
 Plot.ToolTip.MaxRows=40
 
