@@ -312,3 +312,7 @@ weka.filters.unsupervised.attribute.attributeweightsmodifiers.AttributeWeightsMo
 # Lists the InstanceWeightsModifier schemes
 weka.filters.unsupervised.instance.instanceweightsmodifiers.InstanceWeightsModifier=\
   weka.filters.unsupervised.instance.instanceweightsmodifiers
+
+# Lists the multiplicative scatter correction schemes
+weka.filters.unsupervised.attribute.multiplicativescattercorrection.AbstractMultiplicativeScatterCorrection=\
+  weka.filters.unsupervised.attribute.multiplicativescattercorrection
