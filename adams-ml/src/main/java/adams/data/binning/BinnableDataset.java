@@ -15,7 +15,7 @@
 
 /*
  * BinnableDataset.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning;
@@ -25,6 +25,7 @@ import adams.data.binning.operation.Wrapping;
 import adams.data.binning.operation.Wrapping.BinValueExtractor;
 import adams.data.binning.operation.Wrapping.IndexedBinValueExtractor;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.ml.data.Dataset;
 
 import java.io.Serializable;
@@ -152,7 +153,7 @@ public class BinnableDataset {
    * @return		the generated list
    * @throws Exception	if extraction of class value fails
    */
-  public static List<Binnable<DataRow>> toBinnableUsingClass(Dataset data, int index) throws Exception {
+  public static List<Binnable<DataRow>> toBinnableUsingClass(SpreadSheet data, int index) throws Exception {
     return Wrapping.wrap(data.rows(), new ClassValueBinValueExtractor(index));
   }
 
@@ -163,7 +164,7 @@ public class BinnableDataset {
    * @return		the generated list
    * @throws Exception	if extraction of index fails
    */
-  public static List<Binnable<DataRow>> toBinnableUsingIndex(Dataset data) throws Exception {
+  public static List<Binnable<DataRow>> toBinnableUsingIndex(SpreadSheet data) throws Exception {
     return Wrapping.wrap(data.rows(), new IndexedBinValueExtractor<>());
   }
 
@@ -177,6 +178,22 @@ public class BinnableDataset {
     Dataset result;
 
     result = (Dataset) list.get(0).getPayload().getOwner().getHeader();
+    for (DataRow row: Wrapping.unwrap(list))
+      result.addRow().assign(row);
+
+    return result;
+  }
+
+  /**
+   * Turns a binnable list back into Rows.
+   *
+   * @param list	the list to convert
+   * @return		the generated data rows
+   */
+  public static SpreadSheet toSpreadSheet(List<Binnable<DataRow>> list) {
+    SpreadSheet result;
+
+    result = list.get(0).getPayload().getOwner().getHeader();
     for (DataRow row: Wrapping.unwrap(list))
       result.addRow().assign(row);
 
