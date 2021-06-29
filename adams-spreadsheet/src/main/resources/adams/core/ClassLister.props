@@ -79,6 +79,10 @@ adams.flow.transformer.SpreadSheetMergeActor=\
 adams.flow.transformer.AbstractSpreadSheetTransformer=\
   adams.flow.transformer
 
+# the generators for indexed splits runs that process SpreadSheet objects
+adams.flow.transformer.indexedsplitsrunsgenerator.SpreadSheetIndexedSplitsRunsGenerator=\
+  adams.flow.transformer.indexedsplitsrunsgenerator
+
 # the multi-sheet operations
 adams.flow.transformer.multispreadsheetoperation.AbstractMultiSpreadSheetOperation=\
   adams.flow.transformer.multispreadsheetoperation

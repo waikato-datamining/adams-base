@@ -46,7 +46,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetRandomSplitGenerator
-  extends AbstractIndexedSplitsRunsGenerator
+  extends AbstractSpreadSheetIndexedSplitsRunsGenerator
   implements Randomizable {
 
   private static final long serialVersionUID = -845552507613381226L;
@@ -197,16 +197,6 @@ public class SpreadSheetRandomSplitGenerator
       result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");
 
     return result;
-  }
-
-  /**
-   * Returns the type of classes that are accepted as input.
-   *
-   * @return the classes
-   */
-  @Override
-  public Class[] accepts() {
-    return new Class[]{SpreadSheet.class};
   }
 
   /**
