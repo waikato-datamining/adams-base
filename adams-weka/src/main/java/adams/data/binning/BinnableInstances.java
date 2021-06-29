@@ -15,7 +15,7 @@
 
 /*
  * BinnableInstances.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.binning;
@@ -119,6 +119,26 @@ public class BinnableInstances {
     }
   }
 
+  /**
+   * Group extractor for numeric class attributes
+   * (using string representation of values).
+   */
+  public static class NumericClassGroupExtractor
+    implements GroupExtractor<Instance>, Serializable {
+
+    private static final long serialVersionUID = -2381541290397169468L;
+
+    /**
+     * Extracts the group from the binnable object.
+     *
+     * @param item	the item to extract the group from
+     * @return		the extracted group
+     */
+    @Override
+    public String extractGroup(Binnable<Instance> item) {
+      return "" + item.getPayload().classValue();
+    }
+  }
 
   /**
    * Turns Instances into a list of binnables using the class value.
