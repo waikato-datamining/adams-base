@@ -24,18 +24,15 @@ import adams.core.MessageCollection;
 import adams.core.io.FileUtils;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.data.indexedsplits.IndexedSplit;
-import adams.data.indexedsplits.IndexedSplits;
 import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.data.indexedsplits.SplitIndices;
 import adams.data.io.input.JsonIndexedSplitsRunsReader;
-import adams.env.Environment;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 
-import java.io.File;
 import java.io.Writer;
 
 /**
@@ -199,30 +196,5 @@ public class JsonIndexedSplitsRunsWriter
     finally {
       FileUtils.closeQuietly(jwriter);
     }
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-
-    IndexedSplitsRuns runs = new IndexedSplitsRuns();
-    runs.getMetaData().put("url", "https://github.com/fracpete");
-    runs.getMetaData().put("author", "me");
-    runs.getMetaData().put("dataset", "something cool");
-    IndexedSplits splits = new IndexedSplits();
-    IndexedSplit split = new IndexedSplit(0);
-    splits.add(split);
-    SplitIndices train = new SplitIndices("train", new int[]{0,1,2,3,4,5,6,7,8,9});
-    SplitIndices test = new SplitIndices("test", new int[]{10,11,12,13,14,15,16,17,18,19});
-    SplitIndices val = new SplitIndices("val", new int[]{20,21,22,23,24,25,26,27,28,29});
-    split.add(train);
-    split.add(test);
-    split.add(val);
-    runs.add(new IndexedSplitsRun(0, splits));
-
-    MessageCollection errors = new MessageCollection();
-    JsonIndexedSplitsRunsWriter writer = new JsonIndexedSplitsRunsWriter();
-    writer.setPrettyPrinting(true);
-    if (!writer.write(new File("/home/fracpete/temp/runs.json"), runs, errors))
-      System.out.println(errors);
   }
 }

@@ -27,9 +27,7 @@ import adams.data.indexedsplits.IndexedSplits;
 import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.data.indexedsplits.SplitIndices;
-import adams.env.Environment;
 
-import java.io.File;
 import java.io.Reader;
 
 /**
@@ -143,17 +141,5 @@ public class PropertiesIndexedSplitsRunsReader
     }
 
     return result;
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-
-    MessageCollection errors = new MessageCollection();
-    PropertiesIndexedSplitsRunsReader reader = new PropertiesIndexedSplitsRunsReader();
-    IndexedSplitsRuns runs = reader.read(new File("/home/fracpete/temp/runs.props"), errors);
-    if (!errors.isEmpty())
-      System.out.println(errors);
-    else
-      System.out.println(runs);
   }
 }

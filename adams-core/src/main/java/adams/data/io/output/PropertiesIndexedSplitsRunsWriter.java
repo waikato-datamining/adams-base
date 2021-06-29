@@ -23,16 +23,11 @@ package adams.data.io.output;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.data.indexedsplits.IndexedSplit;
 import adams.data.indexedsplits.IndexedSplits;
-import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
-import adams.data.indexedsplits.SplitIndices;
 import adams.data.io.input.PropertiesIndexedSplitsRunsReader;
 import adams.data.statistics.StatUtils;
-import adams.env.Environment;
 
-import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 
@@ -133,29 +128,5 @@ public class PropertiesIndexedSplitsRunsWriter
     catch (Exception e) {
       return false;
     }
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-
-    IndexedSplitsRuns runs = new IndexedSplitsRuns();
-    runs.getMetaData().put("url", "https://github.com/fracpete");
-    runs.getMetaData().put("author", "me");
-    runs.getMetaData().put("dataset", "something cool");
-    IndexedSplits splits = new IndexedSplits();
-    IndexedSplit split = new IndexedSplit(0);
-    splits.add(split);
-    SplitIndices train = new SplitIndices("train", new int[]{0,1,2,3,4,5,6,7,8,9});
-    SplitIndices test = new SplitIndices("test", new int[]{10,11,12,13,14,15,16,17,18,19});
-    SplitIndices val = new SplitIndices("val", new int[]{20,21,22,23,24,25,26,27,28,29});
-    split.add(train);
-    split.add(test);
-    split.add(val);
-    runs.add(new IndexedSplitsRun(0, splits));
-
-    MessageCollection errors = new MessageCollection();
-    PropertiesIndexedSplitsRunsWriter writer = new PropertiesIndexedSplitsRunsWriter();
-    if (!writer.write(new File("/home/fracpete/temp/runs.props"), runs, errors))
-      System.out.println(errors);
   }
 }

@@ -26,10 +26,8 @@ import adams.data.indexedsplits.IndexedSplits;
 import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.data.indexedsplits.SplitIndices;
-import adams.env.Environment;
 import com.google.gson.Gson;
 
-import java.io.File;
 import java.io.Reader;
 import java.util.List;
 import java.util.Map;
@@ -163,17 +161,5 @@ public class JsonIndexedSplitsRunsReader
       errors.add("Failed to read from JSON!", e);
       return null;
     }
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-
-    MessageCollection errors = new MessageCollection();
-    JsonIndexedSplitsRunsReader reader = new JsonIndexedSplitsRunsReader();
-    IndexedSplitsRuns runs = reader.read(new File("/home/fracpete/temp/runs.json"), errors);
-    if (!errors.isEmpty())
-      System.out.println(errors);
-    else
-      System.out.println(runs);
   }
 }
