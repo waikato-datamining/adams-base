@@ -46,6 +46,10 @@ adams.data.weka.predictions.AbstractErrorScaler=\
 adams.flow.transformer.WekaMergeInstancesActor=\
   adams.flow.transformer
 
+# the generators for indexed splits runs that process Instanes objects
+adams.flow.transformer.indexedsplitsrunsgenerator.InstancesIndexedSplitsRunsGenerator=\
+  adams.flow.transformer.indexedsplitsrunsgenerator
+
 # the processor schemes for classifier setups
 adams.flow.transformer.wekaclassifiersetupprocessor.AbstractClassifierSetupProcessor=\
   adams.flow.transformer.wekaclassifiersetupprocessor
