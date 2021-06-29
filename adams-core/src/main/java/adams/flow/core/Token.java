@@ -15,7 +15,7 @@
 
 /*
  * Token.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -108,6 +108,10 @@ public class Token
    * @return		the payload
    */
   public <T> T getPayload(Class<T> cls) {
+    if ((m_Payload != null) && !m_Payload.getClass().isAssignableFrom(cls))
+      throw new IllegalArgumentException(
+	"Tried to retrieve payload as '" + Utils.classToString(cls) + "', "
+	  + "but had '" + Utils.classToString(m_Payload) + "' stored!");
     return (T) m_Payload;
   }
 
