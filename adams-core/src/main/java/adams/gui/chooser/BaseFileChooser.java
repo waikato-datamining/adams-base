@@ -15,7 +15,7 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -509,12 +509,16 @@ public class BaseFileChooser
     result = super.showDialog(parent, approveButtonText);
 
     // fix extensions?
+    extensions = null;
     if (m_AutoAppendExtension) {
       // determine extension to add
-      if ((getFileFilter() != getAcceptAllFileFilter()) && !isGlobFilter(getFileFilter()))
-	extensions = ((ExtensionFileFilter) getFileFilter()).getExtensions();
-      else
-	extensions = new String[]{getDefaultExtension()};
+      if ((getFileFilter() != getAcceptAllFileFilter()) && !isGlobFilter(getFileFilter())) {
+        extensions = ((ExtensionFileFilter) getFileFilter()).getExtensions();
+      }
+      else {
+        if (getDefaultExtension() != null)
+          extensions = new String[]{getDefaultExtension()};
+      }
 
       // fix extensions if necessary
       if (extensions != null) {
