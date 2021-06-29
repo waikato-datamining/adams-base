@@ -185,6 +185,10 @@ adams.data.io.input.AbstractImageReader=\
 adams.data.io.input.AbstractObjectReader=\
   adams.data.io.input
 
+# the indexed splits readers
+adams.data.io.input.AbstractIndexedSplitsRunsReader=\
+  adams.data.io.input
+
 # the container writers
 adams.data.io.output.AbstractDataContainerWriter=\
   adams.data.io.output
@@ -215,6 +219,10 @@ adams.data.io.output.AbstractImageWriter=\
 
 # the object writers
 adams.data.io.output.AbstractObjectWriter=\
+  adams.data.io.output
+
+# the indexed splits writers
+adams.data.io.output.AbstractIndexedSplitsRunsWriter=\
   adams.data.io.output
 
 # the schemes for extracting the ID from spectra/sample data
@@ -569,6 +577,10 @@ adams.flow.transformer.splitfile.AbstractFileSplitter=\
 # the map filters
 adams.flow.transformer.mapfilter.AbstractMapFilter=\
   adams.flow.transformer.mapfilter
+
+# the generators for indexed splits runs
+adams.flow.transformer.indexedsplitsrunsgenerator.AbstractIndexedSplitsRunsGenerator=\
+  adams.flow.transformer.indexedsplitsrunsgenerator
 
 # the genetic algorithms
 adams.opt.genetic.AbstractGeneticAlgorithm=\
