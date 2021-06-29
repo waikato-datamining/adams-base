@@ -108,7 +108,7 @@ public class Token
    * @return		the payload
    */
   public <T> T getPayload(Class<T> cls) {
-    if ((m_Payload != null) && !m_Payload.getClass().isAssignableFrom(cls))
+    if ((m_Payload != null) && !ClassLocator.matches(cls, m_Payload.getClass()))
       throw new IllegalArgumentException(
 	"Tried to retrieve payload as '" + Utils.classToString(cls) + "', "
 	  + "but had '" + Utils.classToString(m_Payload) + "' stored!");
