@@ -579,7 +579,7 @@ adams.flow.transformer.mapfilter.AbstractMapFilter=\
   adams.flow.transformer.mapfilter
 
 # the generators for indexed splits runs
-adams.flow.transformer.indexedsplitsrunsgenerator.AbstractIndexedSplitsRunsGenerator=\
+adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator=\
   adams.flow.transformer.indexedsplitsrunsgenerator
 
 # the genetic algorithms

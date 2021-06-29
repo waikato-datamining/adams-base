@@ -25,7 +25,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BaseKeyValuePair;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.flow.core.Token;
-import adams.flow.transformer.indexedsplitsrunsgenerator.AbstractIndexedSplitsRunsGenerator;
 import adams.flow.transformer.indexedsplitsrunsgenerator.ManualSplitGenerator;
 
 /**
@@ -99,7 +98,7 @@ public class IndexedSplitsRunsGenerator
   private static final long serialVersionUID = 7448032116260228656L;
 
   /** the generator to use. */
-  protected AbstractIndexedSplitsRunsGenerator m_Generator;
+  protected adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator m_Generator;
 
   /** the meta-data to add. */
   protected BaseKeyValuePair[] m_MetaData;
@@ -135,7 +134,7 @@ public class IndexedSplitsRunsGenerator
    *
    * @param value	the generator
    */
-  public void setGenerator(AbstractIndexedSplitsRunsGenerator value) {
+  public void setGenerator(adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator value) {
     m_Generator = value;
     reset();
   }
@@ -145,7 +144,7 @@ public class IndexedSplitsRunsGenerator
    *
    * @return		the generator
    */
-  public AbstractIndexedSplitsRunsGenerator getGenerator() {
+  public adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator getGenerator() {
     return m_Generator;
   }
 

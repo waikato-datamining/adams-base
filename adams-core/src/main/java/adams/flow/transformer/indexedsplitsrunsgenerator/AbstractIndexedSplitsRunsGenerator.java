@@ -21,7 +21,6 @@
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
 import adams.core.MessageCollection;
-import adams.core.QuickInfoSupporter;
 import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.indexedsplits.IndexedSplitsRuns;
@@ -34,7 +33,7 @@ import adams.flow.core.Compatibility;
  */
 public abstract class AbstractIndexedSplitsRunsGenerator
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements IndexedSplitsRunsGenerator {
 
   private static final long serialVersionUID = 6513142055574442720L;
 
