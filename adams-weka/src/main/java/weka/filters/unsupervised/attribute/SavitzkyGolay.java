@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SavitzkyGolay.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.attribute;
@@ -38,6 +38,7 @@ import weka.filters.UnsupervisedFilter;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -82,7 +83,7 @@ import java.util.Vector;
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * Valid options are: <p>
  *
  * <pre> -left &lt;int&gt;
  *  The number of points to the left (&gt;= 0).
@@ -100,10 +101,13 @@ import java.util.Vector;
  *  The order of the derivative (&gt;= 0).
  *  (default: 1)</pre>
  *
+ * <pre> -keep-attribute-names
+ *  Whether to keep the original attribute names or use new ones ('att-XYZ').
+ *  (default: don't keep)</pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SavitzkyGolay
   extends SimpleStreamFilter
@@ -123,6 +127,9 @@ public class SavitzkyGolay
 
   /** the number of points to the right of a data point. */
   protected int m_NumPointsRight = 3;
+
+  /** whether to keep the original attribute names. */
+  protected boolean m_KeepAttributeNames;
 
   /** the calculated coefficients. */
   protected double[] m_Coefficients;
@@ -181,9 +188,9 @@ public class SavitzkyGolay
    * @return 		an enumeration of all the available options.
    */
   public Enumeration listOptions() {
-    Vector 	result;
+    Vector<Option> 	result;
 
-    result = new Vector();
+    result = new Vector<>();
 
     result.addElement(new Option(
 	"\tThe number of points to the left (>= 0).\n"
@@ -204,6 +211,11 @@ public class SavitzkyGolay
 	"\tThe order of the derivative (>= 0).\n"
 	+ "\t(default: 1)",
 	"derivative", 1, "-derivative <int>"));
+
+    result.addElement(new Option(
+	"\tWhether to keep the original attribute names or use new ones ('att-XYZ').\n"
+	+ "\t(default: don't keep)",
+	"keep-attribute-names", 0, "-keep-attribute-names"));
 
     return result.elements();
   }
@@ -245,6 +257,8 @@ public class SavitzkyGolay
       setDerivativeOrder(Integer.parseInt(tmpStr));
     else
       setDerivativeOrder(1);
+
+    setKeepAttributeNames(Utils.getFlag("keep-attribute-names", options));
   }
 
   /**
@@ -253,9 +267,9 @@ public class SavitzkyGolay
    * @return 		an array of strings suitable for passing to setOptions
    */
   public String[] getOptions() {
-    Vector<String>	result;
+    List<String> result;
 
-    result = new Vector<String>();
+    result = new ArrayList<>();
 
     result.add("-left");
     result.add("" + getNumPointsLeft());
@@ -269,7 +283,10 @@ public class SavitzkyGolay
     result.add("-derivative");
     result.add("" + getDerivativeOrder());
 
-    return result.toArray(new String[result.size()]);
+    if (getKeepAttributeNames())
+      result.add("-keep-attribute-names");
+
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -422,6 +439,35 @@ public class SavitzkyGolay
   }
 
   /**
+   * Sets whether to keep the original attribute names.
+   *
+   * @param value 	true if to keep
+   */
+  public void setKeepAttributeNames(boolean value) {
+    m_KeepAttributeNames = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to keep the original attribute names.
+   *
+   * @return 		true if to keep
+   */
+  public boolean getKeepAttributeNames() {
+    return m_KeepAttributeNames;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String keepAttributeNamesTipText() {
+    return "If enabled, the original attribute names are kept rather than using new ones ('att-XYZ').";
+  }
+
+  /**
    * Returns the Capabilities of this filter. Derived filters have to
    * override this method to enable capabilities.
    *
@@ -463,6 +509,7 @@ public class SavitzkyGolay
     int				i;
     int				count;
     boolean			hasClass;
+    List<String>		original;
 
     hasClass = (inputFormat.classIndex() > -1);
 
@@ -472,10 +519,24 @@ public class SavitzkyGolay
       count--;
     count -= m_NumPointsLeft + m_NumPointsRight + 1;
 
+    // determine original attribute names
+    original = new ArrayList<>();
+    for (i = 0; i < inputFormat.numAttributes(); i++) {
+      if (i == inputFormat.classIndex())
+        continue;
+      original.add(inputFormat.attribute(i).name());
+    }
+    for (i = 0; i < m_NumPointsLeft; i++)
+      original.remove(0);
+
     // create new attributes
-    atts = new ArrayList<Attribute>();
-    for (i = 0; i < count; i++)
-      atts.add(new Attribute("att" + (i+1)));
+    atts = new ArrayList<>();
+    for (i = 0; i < count; i++) {
+      if (m_KeepAttributeNames)
+        atts.add(new Attribute(original.get(i)));
+      else
+	atts.add(new Attribute("att" + (i + 1)));
+    }
 
     // add class attribute (if present)
     if (hasClass)
