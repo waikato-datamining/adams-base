@@ -28,7 +28,7 @@ import java.util.HashMap;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MetaData
-  extends HashMap<String,String> {
+  extends HashMap<String,Object> {
 
   private static final long serialVersionUID = 3534089057338513027L;
 }

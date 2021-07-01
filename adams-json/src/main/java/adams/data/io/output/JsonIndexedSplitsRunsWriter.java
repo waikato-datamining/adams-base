@@ -149,6 +149,7 @@ public class JsonIndexedSplitsRunsWriter
     SplitIndices	ind;
     JsonArray		jind;
     JsonWriter		jwriter;
+    Object		value;
 
     // generate json
     json = new JsonObject();
@@ -175,8 +176,17 @@ public class JsonIndexedSplitsRunsWriter
     }
     // 2. meta data
     meta = new JsonObject();
-    for (String key: runs.getMetaData().keySet())
-      meta.addProperty(key, runs.getMetaData().get(key));
+    for (String key: runs.getMetaData().keySet()) {
+      value = runs.getMetaData().get(key);
+      if (value instanceof Number)
+	meta.addProperty(key, (Number) value);
+      else if (value instanceof Boolean)
+	meta.addProperty(key, (Boolean) value);
+      else if (value instanceof Character)
+	meta.addProperty(key, (Character) value);
+      else
+	meta.addProperty(key, "" + value);
+    }
     json.add("meta-data", meta);
 
     // write json out

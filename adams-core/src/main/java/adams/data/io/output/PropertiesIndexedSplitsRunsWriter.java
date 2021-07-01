@@ -119,7 +119,7 @@ public class PropertiesIndexedSplitsRunsWriter
 
     // meta-data
     for (String key: runs.getMetaData().keySet())
-      props.setProperty("metadata." + key, runs.getMetaData().get(key));
+      props.setProperty("metadata." + key, "" + runs.getMetaData().get(key));
 
     try {
       props.store(writer, null);
