@@ -104,7 +104,12 @@ public class ManualSplitGenerator
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "splits", m_Splits);
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "splits", m_Splits, ", splits: ");
+
+    return result;
   }
 
   /**

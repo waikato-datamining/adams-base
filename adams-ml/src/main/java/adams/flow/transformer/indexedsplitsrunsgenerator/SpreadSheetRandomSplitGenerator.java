@@ -191,7 +191,8 @@ public class SpreadSheetRandomSplitGenerator
   public String getQuickInfo() {
     String	result;
 
-    result = QuickInfoHelper.toString(this, "percentage", m_Percentage, "percentage: ");
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "percentage", m_Percentage, ", percentage: ");
     result += QuickInfoHelper.toString(this, "preserveOrder", (m_PreserveOrder ? "preserve order" : "randomize"), ", ");
     if (!m_PreserveOrder)
       result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");

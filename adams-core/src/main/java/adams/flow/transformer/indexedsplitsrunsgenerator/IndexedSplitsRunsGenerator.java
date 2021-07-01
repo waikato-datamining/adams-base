@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoSupporter;
 import adams.core.option.OptionHandler;
 import adams.data.indexedsplits.IndexedSplitsRuns;
+import adams.flow.core.FlowContextHandler;
 
 /**
  * Interface for schemes that generate indexed splits runs.
@@ -31,7 +32,7 @@ import adams.data.indexedsplits.IndexedSplitsRuns;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public interface IndexedSplitsRunsGenerator
-  extends OptionHandler, QuickInfoSupporter {
+  extends OptionHandler, QuickInfoSupporter, FlowContextHandler {
 
   /**
    * Returns the type of classes that are accepted as input.

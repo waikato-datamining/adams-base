@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.base.BaseKeyValuePair;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.flow.core.Token;
 import adams.flow.transformer.indexedsplitsrunsgenerator.ManualSplitGenerator;
@@ -82,12 +81,6 @@ import adams.flow.transformer.indexedsplitsrunsgenerator.ManualSplitGenerator;
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.indexedsplitsrunsgenerator.ManualSplitGenerator
  * </pre>
  *
- * <pre>-meta-data &lt;adams.core.base.BaseKeyValuePair&gt; [-meta-data ...] (property: metaData)
- * &nbsp;&nbsp;&nbsp;The meta-data to attach; any variables in the 'value' parts get automatically
- * &nbsp;&nbsp;&nbsp;expanded.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -99,9 +92,6 @@ public class IndexedSplitsRunsGenerator
 
   /** the generator to use. */
   protected adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator m_Generator;
-
-  /** the meta-data to add. */
-  protected BaseKeyValuePair[] m_MetaData;
 
   /**
    * Returns a string describing the object.
@@ -123,10 +113,6 @@ public class IndexedSplitsRunsGenerator
     m_OptionManager.add(
       "generator", "generator",
       new ManualSplitGenerator());
-
-    m_OptionManager.add(
-      "meta-data", "metaData",
-      new BaseKeyValuePair[0]);
   }
 
   /**
@@ -159,47 +145,13 @@ public class IndexedSplitsRunsGenerator
   }
 
   /**
-   * Sets the meta-data to attach. Variables in 'value' parts get automatically expanded.
-   *
-   * @param value	the meta-data
-   */
-  public void setMetaData(BaseKeyValuePair[] value) {
-    m_MetaData = value;
-    reset();
-  }
-
-  /**
-   * Returns the meta-data to attach. Variables in 'value' parts get automatically expanded.
-   *
-   * @return		the meta-data
-   */
-  public BaseKeyValuePair[] getMetaData() {
-    return m_MetaData;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String metaDataTipText() {
-    return "The meta-data to attach; any variables in the 'value' parts get automatically expanded.";
-  }
-
-  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    String	result;
-
-    result = QuickInfoHelper.toString(this, "generator", m_Generator, "generator: ");
-    result += QuickInfoHelper.toString(this, "metaData", m_MetaData, ", meta-data: ");
-
-    return result;
+    return QuickInfoHelper.toString(this, "generator", m_Generator, "generator: ");
   }
 
   /**
@@ -236,6 +188,7 @@ public class IndexedSplitsRunsGenerator
     result = null;
     errors = new MessageCollection();
     try {
+      m_Generator.setFlowContext(this);
       runs = m_Generator.generate(m_InputToken.getPayload(), errors);
       if (runs == null) {
 	if (errors.isEmpty())
@@ -244,10 +197,6 @@ public class IndexedSplitsRunsGenerator
 	  result = "Failed to generate runs:\n" + errors;
       }
       else {
-        if (m_MetaData.length > 0) {
-          for (BaseKeyValuePair metaData: m_MetaData)
-            runs.getMetaData().put(metaData.getPairKey(), getVariables().expand(metaData.getPairValue()));
-	}
         m_OutputToken = new Token(runs);
       }
     }

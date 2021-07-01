@@ -21,9 +21,12 @@
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
 import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseKeyValuePair;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.indexedsplits.IndexedSplitsRuns;
+import adams.flow.core.Actor;
 import adams.flow.core.Compatibility;
 
 /**
@@ -37,15 +40,78 @@ public abstract class AbstractIndexedSplitsRunsGenerator
 
   private static final long serialVersionUID = 6513142055574442720L;
 
+  /** the meta-data to add. */
+  protected BaseKeyValuePair[] m_MetaData;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "meta-data", "metaData",
+      new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Sets the meta-data to attach. Variables in 'value' parts get automatically expanded.
+   *
+   * @param value	the meta-data
+   */
+  public void setMetaData(BaseKeyValuePair[] value) {
+    m_MetaData = value;
+    reset();
+  }
+
+  /**
+   * Returns the meta-data to attach. Variables in 'value' parts get automatically expanded.
+   *
+   * @return		the meta-data
+   */
+  public BaseKeyValuePair[] getMetaData() {
+    return m_MetaData;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String metaDataTipText() {
+    return "The meta-data to attach; any variables in the 'value' parts get automatically expanded.";
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
-   * <br>
-   * Default implementation returns null.
    *
    * @return		null if no info available, otherwise short string
    */
   public String getQuickInfo() {
-    return null;
+    return QuickInfoHelper.toString(this, "metaData", m_MetaData, "meta-data: ");
   }
 
   /**
@@ -67,6 +133,9 @@ public abstract class AbstractIndexedSplitsRunsGenerator
     if (data == null)
       return "No data provided!";
 
+    if (m_FlowContext == null)
+      return "No flow context set!";
+
     comp = new Compatibility();
     if (!comp.isCompatible(new Class[]{data.getClass()}, accepts()))
       return "Input of '" + Utils.classToString(data) + "' is not compatible with: " + Utils.classesToString(accepts());
@@ -84,6 +153,23 @@ public abstract class AbstractIndexedSplitsRunsGenerator
   protected abstract IndexedSplitsRuns doGenerate(Object data, MessageCollection errors);
 
   /**
+   * For post-processing successfully generated splits.
+   *
+   * @param data	the input data
+   * @param runs	the generated runs
+   * @param errors	for storing errors
+   * @return		the runs, null if failed to post-process
+   */
+  protected IndexedSplitsRuns postGenerate(Object data, IndexedSplitsRuns runs, MessageCollection errors) {
+    if (m_MetaData.length > 0) {
+      for (BaseKeyValuePair metaData: m_MetaData)
+	runs.getMetaData().put(metaData.getPairKey(), getFlowContext().getVariables().expand(metaData.getPairValue()));
+    }
+
+    return runs;
+  }
+
+  /**
    * Generates the indexed splits.
    *
    * @param data	the data to use for generating the splits
@@ -91,7 +177,8 @@ public abstract class AbstractIndexedSplitsRunsGenerator
    * @return		the splits or null in case of error
    */
   public IndexedSplitsRuns generate(Object data, MessageCollection errors) {
-    String	msg;
+    IndexedSplitsRuns	result;
+    String		msg;
 
     msg = check(data);
     if (msg != null) {
@@ -99,6 +186,9 @@ public abstract class AbstractIndexedSplitsRunsGenerator
       return null;
     }
 
-    return doGenerate(data, errors);
+    result = doGenerate(data, errors);
+    result = postGenerate(data, result, errors);
+
+    return result;
   }
 }
