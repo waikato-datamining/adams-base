@@ -18,7 +18,7 @@
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.transformer.indexedsplitsrunsgenerator;
+package adams.data.indexedsplits;
 
 import adams.core.option.AbstractOptionHandler;
 

@@ -18,10 +18,9 @@
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.transformer.indexedsplitsrunsgenerator;
+package adams.data.indexedsplits;
 
-import adams.data.indexedsplits.IndexedSplitsRuns;
-import adams.data.indexedsplits.MetaData;
+import adams.flow.transformer.indexedsplitsrunsgenerator.InstancesIndexedSplitsRunsGenerator;
 import weka.core.Attribute;
 import weka.core.Instances;
 

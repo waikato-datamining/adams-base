@@ -18,11 +18,10 @@
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.transformer.indexedsplitsrunsgenerator;
+package adams.data.indexedsplits;
 
 import adams.core.LenientModeSupporter;
 import adams.core.option.OptionHandler;
-import adams.data.indexedsplits.IndexedSplitsRuns;
 
 /**
  * Interface for compatibility checks between data and indexed splits runs.
