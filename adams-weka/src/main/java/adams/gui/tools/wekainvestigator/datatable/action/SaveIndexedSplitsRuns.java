@@ -95,10 +95,10 @@ public class SaveIndexedSplitsRuns
       panelParams = new ParameterPanel();
       m_Dialog.getContentPane().add(panelParams, BorderLayout.CENTER);
 
-      m_PanelGenerator = new GenericObjectEditorPanel(InstancesIndexedSplitsRunsGenerator.class, new InstancesRandomSplitGenerator());
+      m_PanelGenerator = new GenericObjectEditorPanel(InstancesIndexedSplitsRunsGenerator.class, new InstancesRandomSplitGenerator(), true);
       panelParams.addParameter("Generator", m_PanelGenerator);
 
-      m_PanelWriter = new GenericObjectEditorPanel(AbstractIndexedSplitsRunsWriter.class, new JsonIndexedSplitsRunsWriter());
+      m_PanelWriter = new GenericObjectEditorPanel(AbstractIndexedSplitsRunsWriter.class, new JsonIndexedSplitsRunsWriter(), true);
       panelParams.addParameter("Writer", m_PanelWriter);
 
       m_PanelOutput = new FileChooserPanel();
