@@ -20,16 +20,10 @@
 
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
-import adams.core.MessageCollection;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.data.indexedsplits.MetaData;
-import adams.data.io.input.PropertiesIndexedSplitsRunsReader;
-import adams.env.Environment;
 import weka.core.Attribute;
 import weka.core.Instances;
-import weka.core.converters.ConverterUtils.DataSource;
-
-import java.io.File;
 
 /**
  * Performs compatibility tests between indexed splits configurations and Weka Instances objects.
@@ -129,29 +123,5 @@ public class InstancesIndexedSplitsRunsCompatibility
     }
 
     return null;
-  }
-
-  public static void main(String[] args) throws Exception {
-    Environment.setEnvironmentClass(Environment.class);
-
-    Instances data = DataSource.read("/home/fracpete/temp/Fe.arff");
-    data.setClassIndex(data.numAttributes() - 1);
-
-    IndexedSplitsRuns runs;
-    MessageCollection errors = new MessageCollection();
-    PropertiesIndexedSplitsRunsReader reader = new PropertiesIndexedSplitsRunsReader();
-    runs = reader.read(new File("/home/fracpete/temp/out.props"), errors);
-    //JsonIndexedSplitsRunsReader reader = new JsonIndexedSplitsRunsReader();
-    //runs = reader.read(new File("/home/fracpete/temp/out.json"), errors);
-
-    String msg;
-    InstancesIndexedSplitsRunsCompatibility comp = new InstancesIndexedSplitsRunsCompatibility();
-    comp.setLenient(true);
-    msg = comp.isCompatible(data, runs);
-    System.out.println("lenient: " + msg);
-
-    comp.setLenient(false);
-    msg = comp.isCompatible(data, runs);
-    System.out.println("strict: " + msg);
   }
 }
