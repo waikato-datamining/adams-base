@@ -164,17 +164,17 @@ public abstract class AbstractInstancesIndexedSplitsRunsGenerator
       meta = runs.getMetaData();
 
       if (m_AddDatasetInformation || m_AddAttributeInformation)
-	meta.put("dataset.num_attributes", inst.numAttributes());
+	meta.put(DATASET_NUMATTRIBUTES, inst.numAttributes());
 
       if (m_AddDatasetInformation) {
-        meta.put("dataset.name", inst.relationName());
-        meta.put("dataset.num_instances", inst.numInstances());
+        meta.put(DATASET_NAME, inst.relationName());
+        meta.put(DATASET_NUMINSTANCES, inst.numInstances());
       }
 
       if (m_AddAttributeInformation) {
         for (i = 0; i < inst.numAttributes(); i++) {
-          meta.put("dataset.attribute." + i + ".name", inst.attribute(i).name());
-          meta.put("dataset.attribute." + i + ".type", Attribute.typeToStringShort(inst.attribute(i).type()));
+          meta.put(PREFIX_DATASET_ATTRIBUTE + i + SUFFIX_NAME, inst.attribute(i).name());
+          meta.put(PREFIX_DATASET_ATTRIBUTE + i + SUFFIX_TYPE, Attribute.typeToStringShort(inst.attribute(i).type()));
 	}
       }
     }

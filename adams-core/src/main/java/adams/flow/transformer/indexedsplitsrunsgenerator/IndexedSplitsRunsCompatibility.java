@@ -14,29 +14,30 @@
  */
 
 /*
- * InstancesIndexedSplitsRunsGenerator.java
+ * IndexedSplitsRunsCompatibility.java
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
+import adams.core.LenientModeSupporter;
+import adams.core.option.OptionHandler;
+import adams.data.indexedsplits.IndexedSplitsRuns;
+
 /**
- * Indicator interface for generators that process Instances objects.
+ * Interface for compatibility checks between data and indexed splits runs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface InstancesIndexedSplitsRunsGenerator
-  extends IndexedSplitsRunsGenerator {
+public interface IndexedSplitsRunsCompatibility
+  extends OptionHandler, LenientModeSupporter {
 
-  public static final String DATASET_NUMATTRIBUTES = "dataset.num_attributes";
-
-  public static final String DATASET_NUMINSTANCES = "dataset.num_instances";
-
-  public static final String DATASET_NAME = "dataset.name";
-
-  public static final String PREFIX_DATASET_ATTRIBUTE = "dataset.attribute.";
-
-  public static final String SUFFIX_NAME = ".name";
-
-  public static final String SUFFIX_TYPE = ".type";
+  /**
+   * Checks whether the data is compatible with the indexed splits.
+   *
+   * @param data	the data to check
+   * @param runs 	the indexed splits to compare against
+   * @return		null if successfully passed checks, otherwise error message
+   */
+  public String isCompatible(Object data, IndexedSplitsRuns runs);
 }
