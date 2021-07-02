@@ -26,6 +26,7 @@ import adams.data.indexedsplits.IndexedSplit;
 import adams.data.indexedsplits.IndexedSplits;
 import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
+import adams.data.indexedsplits.MetaData;
 import adams.data.indexedsplits.SplitIndices;
 
 import java.io.Reader;
@@ -106,6 +107,7 @@ public class PropertiesIndexedSplitsRunsReader
     int[]		indices;
     int			i;
     int			id;
+    MetaData		metadata;
 
     result = new IndexedSplitsRuns();
     props  = new Properties();
@@ -134,6 +136,11 @@ public class PropertiesIndexedSplitsRunsReader
 	  }
 	}
       }
+
+      // meta-data
+      metadata = result.getMetaData();
+      for (String key: props.keySetAll("metadata."))
+        metadata.put(key.substring("metadata.".length()), props.getProperty(key));
     }
     catch (Exception e) {
       errors.add("Failed to read splits!", e);
