@@ -15,11 +15,13 @@
 
 /*
  * WekaInvestigatorPreferencesPanel.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.io.FileUtils;
+import adams.data.io.input.AbstractIndexedSplitsRunsReader;
+import adams.data.io.input.JsonIndexedSplitsRunsReader;
 import adams.data.weka.classattribute.LastAttribute;
 import adams.data.weka.relationname.NoChange;
 import adams.env.Environment;
@@ -126,6 +128,13 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.BuildModelPreserveOrder", PropertyType.BOOLEAN);
     addPropertyType("Classify.BuildModelSeed", PropertyType.INTEGER);
     addPropertyType("Classify.ModelDirectory", PropertyType.DIRECTORY_ABSOLUTE);
+    addPropertyType("Classify.IndexedSplitsRunsFile", PropertyType.DIRECTORY_ABSOLUTE);
+    addPropertyType("Classify.IndexedSplitsRunsReader", PropertyType.OBJECT_EDITOR);
+    setChooser("Classify.IndexedSplitsRunsReader", new GenericObjectEditorPanel(
+      AbstractIndexedSplitsRunsReader.class, new JsonIndexedSplitsRunsReader(), true));
+    addPropertyType("Classify.IndexedSplitsRunsTrainSplitName", PropertyType.STRING);
+    addPropertyType("Classify.IndexedSplitsRunsTestSplitName", PropertyType.STRING);
+    addPropertyType("Classify.IndexedSplitsRunsLenient", PropertyType.BOOLEAN);
     addPropertyType("Classify.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("Classify.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator[0]));

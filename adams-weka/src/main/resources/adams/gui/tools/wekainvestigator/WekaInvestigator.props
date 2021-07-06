@@ -166,6 +166,26 @@ Classify.BuildModelSeed=1
 # (directory; %c=current, %h=user home, %t=temp directory)
 Classify.ModelDirectory=%c
 
+# the initial directory for the indexed splits runs files
+# (directory; %c=current, %h=user home, %t=temp directory)
+Classify.IndexedSplitsRunsFile=%c
+
+# the default reader for indexed splits runs
+# (classname + options)
+Classify.IndexedSplitsRunsReader=adams.data.io.input.JsonIndexedSplitsRunsReader
+
+# the default name for the train split for indexed splits runs
+# (string)
+Classify.IndexedSplitsRunsTrainSplitName=train
+
+# the default name for the train split for indexed splits runs
+# (string)
+Classify.IndexedSplitsRunsTestSplitName=test
+
+# whether to be lenient with the checks between dataset and indexed splits runs
+# (boolean)
+Classify.IndexedSplitsRunsLenient=false
+
 # the default output generators to use
 # (blank-separated list of "classname + options")
 Classify.OutputGenerators=\
