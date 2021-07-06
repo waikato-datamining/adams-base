@@ -23,6 +23,7 @@ package adams.flow.transformer.indexedsplitsrunsgenerator;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.Variables;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.indexedsplits.IndexedSplitsRuns;
@@ -133,9 +134,6 @@ public abstract class AbstractIndexedSplitsRunsGenerator
     if (data == null)
       return "No data provided!";
 
-    if (m_FlowContext == null)
-      return "No flow context set!";
-
     comp = new Compatibility();
     if (!comp.isCompatible(new Class[]{data.getClass()}, accepts()))
       return "Input of '" + Utils.classToString(data) + "' is not compatible with: " + Utils.classesToString(accepts());
@@ -161,9 +159,17 @@ public abstract class AbstractIndexedSplitsRunsGenerator
    * @return		the runs, null if failed to post-process
    */
   protected IndexedSplitsRuns postGenerate(Object data, IndexedSplitsRuns runs, MessageCollection errors) {
+    String	value;
+
     if (m_MetaData.length > 0) {
-      for (BaseKeyValuePair metaData: m_MetaData)
-	runs.getMetaData().put(metaData.getPairKey(), getFlowContext().getVariables().expand(metaData.getPairValue()));
+      for (BaseKeyValuePair metaData : m_MetaData) {
+        value = metaData.getPairValue();
+        if (value.contains(Variables.START) && value.contains(Variables.END) && (getFlowContext() != null))
+          value = getFlowContext().getVariables().expand(value);
+        else
+          getLogger().warning("No flow context set, cannot expand variable(s): " + metaData);
+	runs.getMetaData().put(metaData.getPairKey(), value);
+      }
     }
 
     return runs;
