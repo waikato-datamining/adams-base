@@ -67,7 +67,7 @@ public class InstancesRandomSplitGenerator
    */
   @Override
   public String globalInfo() {
-    return "Random split generator that works on spreadsheets.";
+    return "Random split generator that works on Instances objects.";
   }
 
   /**
