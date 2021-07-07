@@ -47,6 +47,15 @@ public class IndexedSplitsRun
   }
 
   /**
+   * Sets the run ID.
+   *
+   * @param value	the ID
+   */
+  public void setID(int value) {
+    m_ID = value;
+  }
+
+  /**
    * Returns the run ID.
    *
    * @return		the ID
