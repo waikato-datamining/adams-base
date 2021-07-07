@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2021-07-08 11:09:28
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Shows how to generate indexed splits for a dataset that can be used by other frameworks as well." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff -use-forward-slashes true
+ adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.IndexedSplitsRunsGenerator -generator "adams.flow.transformer.indexedsplitsrunsgenerator.InstancesCrossValidationFoldGenerator -add-dataset-information true -add-attribute-information true"
+ adams.flow.sink.IndexedSplitsRunsWriter -output ${FLOWS}/output/bolts_cv_splits.json -writer adams.data.io.output.JsonIndexedSplitsRunsWriter

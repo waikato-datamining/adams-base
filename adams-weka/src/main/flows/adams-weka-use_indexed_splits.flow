@@ -1,0 +1,31 @@
+# Project: adams
+# Date: 2021-07-08 11:14:39
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Utilizes an existing indexed splits file and applies it to a dataset to evaluate a classifier.\\n\\nRequires the following flow to run first, generating the splits file:\\n  adams-weka-generate_indexed_splits.flow" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
+  adams.flow.sink.HistoryDisplay -name Summary -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.ActualVsPredictedPlot -name Errors -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.gui.print.NullWriter -limit ACTUAL -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy -custom-paintlet "adams.gui.visualization.sequence.MetaDataValuePaintlet -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy" -overlay adams.gui.visualization.sequence.StraightLineOverlayPaintlet
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load splits"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/output/bolts_cv_splits.json
+  adams.flow.transformer.IndexedSplitsRunsReader -reader adams.data.io.input.JsonIndexedSplitsRunsReader
+  adams.flow.transformer.SetStorageValue -storage-name runs
+ adams.flow.control.Trigger -name "load dataset"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff -use-forward-slashes true
+  adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name dataset
+ adams.flow.control.Trigger -name evaluate
+  adams.flow.source.StorageValue -storage-name dataset -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.IndexedSplitsRunsEvaluation -type STORAGE -storage runs -evaluation adams.flow.transformer.indexedsplitsrunsevaluation.InstancesIndexedSplitsRunsEvaluation
+  adams.flow.transformer.ArrayToSequence
+  adams.flow.control.Tee -name summary
+   adams.flow.transformer.WekaEvaluationSummary
+   adams.flow.sink.CallableSink -callable Summary
+  adams.flow.control.Tee -name errors
+   adams.flow.transformer.WekaPredictionsToSpreadSheet
+   adams.flow.sink.CallableSink -callable Errors
