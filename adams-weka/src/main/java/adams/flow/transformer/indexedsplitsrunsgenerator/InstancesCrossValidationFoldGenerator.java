@@ -34,8 +34,6 @@ import adams.data.splitgenerator.generic.crossvalidation.CrossValidationGenerato
 import adams.data.splitgenerator.generic.crossvalidation.FoldPair;
 import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.stratification.DefaultStratification;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -278,7 +276,6 @@ public class InstancesCrossValidationFoldGenerator
     List<Binnable<Instance>> 		binnableInst;
     FoldPair<Binnable<Instance>> 	foldPair;
     List<FoldPair<Binnable<Instance>>> 	foldPairs;
-    TIntList 				originalIndices;
     int					fold;
 
     instances = (Instances) data;
@@ -326,12 +323,7 @@ public class InstancesCrossValidationFoldGenerator
       throw new IllegalStateException("Failed to create binnable Instances!", e);
     }
 
-    foldPairs = generator.generate(binnableInst);
-
-    originalIndices = new TIntArrayList();
-    for (FoldPair<Binnable<Instance>> pair : foldPairs)
-      originalIndices.addAll(pair.getTest().getOriginalIndices());
-
+    foldPairs        = generator.generate(binnableInst);
     result           = new IndexedSplitsRuns();
     indexedSplits    = new IndexedSplits();
     indexedSplitsRun = new IndexedSplitsRun(0, indexedSplits);
