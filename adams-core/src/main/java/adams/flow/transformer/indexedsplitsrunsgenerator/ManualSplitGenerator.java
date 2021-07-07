@@ -21,6 +21,7 @@
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
 import adams.core.MessageCollection;
+import adams.core.OptionalRandomizable;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.base.BaseKeyValuePair;
@@ -29,9 +30,12 @@ import adams.data.indexedsplits.IndexedSplits;
 import adams.data.indexedsplits.IndexedSplitsRun;
 import adams.data.indexedsplits.IndexedSplitsRuns;
 import adams.data.indexedsplits.SplitIndices;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Uses the manually defined split ranges to generate the splits.
@@ -39,9 +43,16 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ManualSplitGenerator
-  extends AbstractIndexedSplitsRunsGenerator {
+  extends AbstractIndexedSplitsRunsGenerator
+  implements OptionalRandomizable {
 
   private static final long serialVersionUID = -8978470236154443815L;
+
+  /** whether to randomize the data. */
+  protected boolean m_Randomize;
+
+  /** the seed value. */
+  protected long m_Seed;
 
   /** the named ranges. */
   protected BaseKeyValuePair[] m_Splits;
@@ -64,8 +75,80 @@ public class ManualSplitGenerator
     super.defineOptions();
 
     m_OptionManager.add(
+      "seed", "seed",
+      1L);
+
+    m_OptionManager.add(
+      "randomize", "randomize",
+      false);
+
+    m_OptionManager.add(
       "split", "splits",
       new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Sets whether to randomize the data.
+   *
+   * @param value	true if to randomize the data
+   */
+  @Override
+  public void setRandomize(boolean value) {
+    m_Randomize = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to randomize the data.
+   *
+   * @return		true if to randomize the data
+   */
+  @Override
+  public boolean getRandomize() {
+    return m_Randomize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String randomizeTipText() {
+    return "If enabled, the data is randomized first.";
+  }
+
+  /**
+   * Sets the seed value.
+   *
+   * @param value	the seed
+   */
+  @Override
+  public void setSeed(long value) {
+    m_Seed = value;
+    reset();
+  }
+
+  /**
+   * Returns the seed value.
+   *
+   * @return		the seed
+   */
+  @Override
+  public long getSeed() {
+    return m_Seed;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String seedTipText() {
+    return "The seed value for the random number generator.";
   }
 
   /**
@@ -107,6 +190,8 @@ public class ManualSplitGenerator
     String	result;
 
     result = super.getQuickInfo();
+    if (m_Randomize)
+      result += QuickInfoHelper.toString(this, "seed", m_Seed, ", seed: ");
     result += QuickInfoHelper.toString(this, "splits", m_Splits, ", splits: ");
 
     return result;
@@ -159,17 +244,26 @@ public class ManualSplitGenerator
     Object[]		array;
     Map<String,Range> 	ranges;
     Range		range;
+    TIntList		indices;
+    int			i;
+    int[]		rangeIndices;
+    int[]		actualIndices;
 
-    array = (Object[]) data;
+    array   = (Object[]) data;
+    indices = new TIntArrayList();
+    for (i = 0; i < array.length; i++)
+      indices.add(i);
+    if (m_Randomize)
+      indices.shuffle(new Random(m_Seed));
 
     // init ranges
     ranges = new HashMap<>();
     for (BaseKeyValuePair split: m_Splits) {
       range = new Range(split.getPairValue());
-      range.setMax(array.length);
+      range.setMax(indices.size());
       if (range.getIntIndices().length == 0)
         errors.add("Range '" + split.getPairValue() + "' did not generate any indices!");
-      ranges.put(split.getPairValue(), range);
+      ranges.put(split.getPairKey(), range);
     }
     if (!errors.isEmpty())
       return null;
@@ -182,7 +276,11 @@ public class ManualSplitGenerator
     indexedSplitsRun = new IndexedSplitsRun(0, indexedSplits);
     result.add(indexedSplitsRun);
     for (String name: ranges.keySet()) {
-      splitIndices = new SplitIndices(name, ranges.get(name).getIntIndices());
+      rangeIndices = ranges.get(name).getIntIndices();
+      actualIndices = new int[rangeIndices.length];
+      for (i = 0; i < rangeIndices.length; i++)
+        actualIndices[i] = indices.get(rangeIndices[i]);
+      splitIndices = new SplitIndices(name, actualIndices);
       indexedSplit.add(splitIndices);
     }
 
