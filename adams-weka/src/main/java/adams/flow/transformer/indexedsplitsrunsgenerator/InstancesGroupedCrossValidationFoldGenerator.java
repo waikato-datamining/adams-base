@@ -88,7 +88,9 @@ public class InstancesGroupedCrossValidationFoldGenerator
    */
   @Override
   public String globalInfo() {
-    return "Split generator that generates folds for cross-validation for Instances objects.";
+    return "Split generator that generates folds for cross-validation for Instances objects.\n"
+      + "Ensures that groups of instances stay together, determined via a regular "
+      + "expression (eg '^(.*)-([0-9]+)-(.*)$') and a group replacement string (eg '$2').";
   }
 
   /**
