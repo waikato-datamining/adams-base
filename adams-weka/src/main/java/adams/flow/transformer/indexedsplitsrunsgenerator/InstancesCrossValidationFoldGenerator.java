@@ -21,8 +21,8 @@
 package adams.flow.transformer.indexedsplitsrunsgenerator;
 
 import adams.core.MessageCollection;
+import adams.core.OptionalRandomizable;
 import adams.core.QuickInfoHelper;
-import adams.core.Randomizable;
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableInstances;
 import adams.data.indexedsplits.IndexedSplit;
@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class InstancesCrossValidationFoldGenerator
   extends AbstractInstancesIndexedSplitsRunsGenerator
-  implements Randomizable {
+  implements OptionalRandomizable {
 
   private static final long serialVersionUID = -845552507613381226L;
 
@@ -130,6 +130,7 @@ public class InstancesCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -140,6 +141,7 @@ public class InstancesCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -150,6 +152,7 @@ public class InstancesCrossValidationFoldGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String randomizeTipText() {
     return "If enabled, the data is randomized first.";
   }
