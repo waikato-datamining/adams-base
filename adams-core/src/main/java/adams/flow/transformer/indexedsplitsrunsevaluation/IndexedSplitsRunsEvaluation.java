@@ -14,7 +14,7 @@
  */
 
 /*
- * IndexedSplitsRunsCompatibility.java
+ * IndexedSplitsRunsEvaluation.java
  * Copyright (C) 2021 University of Waikato, Hamilton, NZ
  */
 
