@@ -586,6 +586,10 @@ adams.flow.transformer.indexedsplitsrunsevaluation.IndexedSplitsRunsEvaluation=\
 adams.flow.transformer.indexedsplitsrunsgenerator.IndexedSplitsRunsGenerator=\
   adams.flow.transformer.indexedsplitsrunsgenerator
 
+# the prediction generators for indexed splits runs
+adams.flow.transformer.indexedsplitsrunspredictions.IndexedSplitsRunsPredictions=\
+  adams.flow.transformer.indexedsplitsrunspredictions
+
 # the genetic algorithms
 adams.opt.genetic.AbstractGeneticAlgorithm=\
   adams.opt.genetic
