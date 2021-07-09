@@ -1,0 +1,24 @@
+# Project: adams
+# Date: 2021-07-09 14:28:09
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Utilizes an existing indexed splits file and applies it to a dataset to generate predictions with a classifier.\\n\\nRequires the following flow to run first, generating the splits file:\\n  adams-weka-generate_indexed_splits.flow" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
+  adams.flow.sink.SpreadSheetDisplay -name Predictions -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load splits"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/output/bolts_cv_splits.json
+  adams.flow.transformer.IndexedSplitsRunsReader -reader adams.data.io.input.JsonIndexedSplitsRunsReader
+  adams.flow.transformer.SetStorageValue -storage-name runs
+ adams.flow.control.Trigger -name "load dataset"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bodyfat.arff -use-forward-slashes true
+  adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name dataset
+ adams.flow.control.Trigger -name preditions
+  adams.flow.source.StorageValue -storage-name dataset -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.IndexedSplitsRunsPredictions -type STORAGE -storage runs -generator adams.flow.transformer.indexedsplitsrunspredictions.InstancesIndexedSplitsRunsPredictions
+  adams.flow.sink.CallableSink -callable Predictions
