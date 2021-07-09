@@ -323,7 +323,7 @@ public class IndexedSplitsRunsPredictions
     String	result;
 
     result  = QuickInfoHelper.toString(this, "type", m_Type, "type: ");
-    result += QuickInfoHelper.toString(this, "generator", m_Generator, "generator: ");
+    result += QuickInfoHelper.toString(this, "generator", m_Generator, ", generator: ");
 
     return result;
   }
