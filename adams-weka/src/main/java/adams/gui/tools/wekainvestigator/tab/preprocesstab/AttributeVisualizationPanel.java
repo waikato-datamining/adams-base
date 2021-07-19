@@ -261,6 +261,15 @@ public class AttributeVisualizationPanel extends JPanel {
   }
 
   /**
+   * Returns the underlying data.
+   *
+   * @return		the data
+   */
+  public Instances getInstances() {
+    return m_data;
+  }
+
+  /**
    * Returns the class selection combo box if the parent component wants to
    * place it in itself or in some component other than this component.
    */
@@ -312,6 +321,15 @@ public class AttributeVisualizationPanel extends JPanel {
     }
 
     this.repaint();
+  }
+
+  /**
+   * Returns the attribute being displayed.
+   *
+   * @return		the attribute
+   */
+  public int getAttribute() {
+    return m_attribIndex;
   }
 
   /**
