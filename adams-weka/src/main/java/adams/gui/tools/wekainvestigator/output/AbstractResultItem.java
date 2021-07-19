@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractResultItem.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.output;
@@ -33,7 +33,6 @@ import java.util.Date;
  * Container for a data to be stored in result history.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractResultItem
   extends LoggingObject
@@ -128,6 +127,7 @@ public abstract class AbstractResultItem
       m_TabbedPane = new OutputTabbedPane();
       m_TabbedPane.setShowCloseTabButton(true);
       m_TabbedPane.setCloseTabsWithMiddleMouseButton(false);
+      m_TabbedPane.setTabLayoutPolicy(OutputTabbedPane.SCROLL_TAB_LAYOUT);
     }
     return m_TabbedPane;
   }
