@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorTabbedPane.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
 import adams.core.classmanager.ClassManager;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -62,6 +63,7 @@ public class InvestigatorTabbedPane
 
     setCloseTabsWithMiddleMouseButton(false);
     setShowCloseTabButton(true);
+    setTabLayoutPolicy(BaseTabbedPane.SCROLL_TAB_LAYOUT);
   }
 
   /**
