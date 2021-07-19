@@ -334,7 +334,10 @@ public class AttributeSummaryPanel
   }
 
   /** The instances we're playing with */
-  protected Instances m_Instances;
+  protected Instances m_Instances = null;
+
+  /** the current attribute index. */
+  protected int m_Index = -1;
 
   /** Cached stats on the attributes we've summarized so far */
   protected AttributeStats[] m_AttributeStats;
@@ -368,6 +371,7 @@ public class AttributeSummaryPanel
    */
   public void setInstances(Instances inst) {
     m_Instances      = inst;
+    m_Index          = -1;
     m_AttributeStats = new AttributeStats[(inst != null) ? inst.numAttributes() : 0];
     m_InfoPanel.clear();
     m_StatsTable.clear();
@@ -389,14 +393,26 @@ public class AttributeSummaryPanel
   }
 
   /**
+   * Returns the currently set data.
+   *
+   * @return		the data, null if none set
+   */
+  public Instances getInstances() {
+    return m_Instances;
+  }
+
+  /**
    * Sets the attribute that statistics will be displayed for.
    *
    * @param index the index of the attribute to display
    */
   public void setAttribute(final int index) {
-    if (m_Instances == null)
+    if (m_Instances == null) {
+      m_Index = -1;
       return;
+    }
 
+    m_Index = index;
     m_InfoPanel.updateLabels(m_Instances.attribute(index));
     if (m_AttributeStats[index] == null) {
       Thread t = new Thread(() -> {
@@ -416,6 +432,15 @@ public class AttributeSummaryPanel
       m_InfoPanel.updateStatistics(m_AttributeStats[index]);
       m_StatsTable.updateStatistics(m_AttributeStats[index], m_Instances.attribute(index), m_allEqualWeights);
     }
+  }
+
+  /**
+   * Returns the currently set index.
+   *
+   * @return		the index, -1 if none set
+   */
+  public int getAttribute() {
+    return m_Index;
   }
 
   /**
