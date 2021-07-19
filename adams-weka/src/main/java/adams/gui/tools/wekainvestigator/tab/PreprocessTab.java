@@ -43,9 +43,9 @@ import adams.gui.tools.wekainvestigator.data.MemoryContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabRunnableJob;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSelectionPanel;
-import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeSummaryPanel;
-import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.InstancesSummaryPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.MultiAttributeSummaryPanel;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.MultiAttributeVisualizationPanel;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.AbstractSelectedAttributesAction;
 import adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction.Remove;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -128,10 +128,10 @@ public class PreprocessTab
   protected AttributeSelectionPanel m_PanelAttSelection;
 
   /** the attribute summary panel. */
-  protected AttributeSummaryPanel m_PanelAttSummary;
+  protected MultiAttributeSummaryPanel m_PanelAttSummary;
 
   /** the attribute visualization panel. */
-  protected AttributeVisualizationPanel m_PanelAttVisualization;
+  protected MultiAttributeVisualizationPanel m_PanelAttVisualization;
 
   /** the currently selected attributes. */
   protected BaseTextField m_TextSelectedAttributes;
@@ -304,7 +304,8 @@ public class PreprocessTab
 	m_PanelAttVisualization.setAttribute(indices[0]);
       }
       else {
-	// TODO unset?
+        m_PanelAttSummary.setAttributes(indices);
+	m_PanelAttVisualization.setAttributes(indices);
       }
     });
     panel.add(m_PanelAttSelection, BorderLayout.CENTER);
@@ -313,11 +314,11 @@ public class PreprocessTab
     panel = new JPanel(new GridLayout(2, 1));
     m_PanelMain.add(panel);
 
-    m_PanelAttSummary = new AttributeSummaryPanel();
+    m_PanelAttSummary = new MultiAttributeSummaryPanel();
     m_PanelAttSummary.setBorder(BorderFactory.createTitledBorder("Attribute summary"));
     panel.add(m_PanelAttSummary);
 
-    m_PanelAttVisualization = new AttributeVisualizationPanel();
+    m_PanelAttVisualization = new MultiAttributeVisualizationPanel();
     panel2 = new JPanel(new BorderLayout());
     panel2.setBorder(BorderFactory.createTitledBorder("Attribute visualization"));
     panel2.add(m_PanelAttVisualization);
