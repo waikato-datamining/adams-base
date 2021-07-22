@@ -32,6 +32,8 @@ import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.core.OneTouchPanel;
+import adams.gui.core.OneTouchPanel.Location;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -49,6 +51,7 @@ import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.core.Capabilities;
 import weka.core.Instances;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -104,29 +107,32 @@ public class CrossValidation
   /** the number of folds. */
   protected JSpinner m_SpinnerFolds;
 
-  /** whether to use separate evaluations per fold. */
-  protected BaseCheckBox m_CheckBoxPerFoldOutput;
-
   /** the seed value. */
   protected NumberTextField m_TextSeed;
-
-  /** the jobrunner. */
-  protected GenericObjectEditorPanel m_GOEJobRunner;
 
   /** the additional attributes to store. */
   protected SelectOptionPanel m_SelectAdditionalAttributes;
 
-  /** whether to use views. */
-  protected BaseCheckBox m_CheckBoxUseViews;
-
   /** the fold generator. */
   protected GenericObjectEditorPanel m_GOEGenerator;
 
-  /** whether to discard the predictions. */
-  protected BaseCheckBox m_CheckBoxDiscardPredictions;
-  
   /** how to produce the final model. */
   protected GenericObjectEditorPanel m_GOEFinalModel;
+
+  /** the panel with the advanced parameters. */
+  protected ParameterPanel m_PanelParametersAdvanced;
+
+  /** whether to use separate evaluations per fold. */
+  protected BaseCheckBox m_CheckBoxPerFoldOutput;
+
+  /** the jobrunner. */
+  protected GenericObjectEditorPanel m_GOEJobRunner;
+
+  /** whether to use views. */
+  protected BaseCheckBox m_CheckBoxUseViews;
+
+  /** whether to discard the predictions. */
+  protected BaseCheckBox m_CheckBoxDiscardPredictions;
 
   /** performs the actual evaluation. */
   protected WekaCrossValidationExecution m_CrossValidation;
@@ -159,11 +165,13 @@ public class CrossValidation
     CrossValidationFoldGenerator	generator;
     JobRunner				jobrunner;
     AbstractFinalModelGenerator		finalmodel;
+    OneTouchPanel			oneTouchPanel;
 
     super.initGUI();
 
     props = getProperties();
 
+    // 1. basic options
     m_PanelParameters = new ParameterPanel();
     m_PanelOptions.add(m_PanelParameters, BorderLayout.CENTER);
 
@@ -181,13 +189,6 @@ public class CrossValidation
     m_SpinnerFolds.setToolTipText("The number of folds to use (< 2 for LOO-CV)");
     m_SpinnerFolds.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Folds", m_SpinnerFolds);
-
-    // per fold output?
-    m_CheckBoxPerFoldOutput = new BaseCheckBox();
-    m_CheckBoxPerFoldOutput.setSelected(props.getBoolean("Classify.PerFoldOutput", false));
-    m_CheckBoxPerFoldOutput.setToolTipText("Keep separate evaluations per fold to inspect per fold performance");
-    m_CheckBoxPerFoldOutput.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Per fold output", m_CheckBoxPerFoldOutput);
 
     // seed
     m_TextSeed = new NumberTextField(Type.INTEGER, "" + props.getInteger("Classify.Seed", 1));
@@ -208,27 +209,6 @@ public class CrossValidation
     });
     m_PanelParameters.addParameter("Seed", m_TextSeed);
 
-    // jobrunner
-    try {
-      jobrunner = (JobRunner) OptionUtils.forCommandLine(
-        JobRunner.class,
-	props.getProperty("Classify.JobRunner", new LocalJobRunner().toCommandLine()));
-    }
-    catch (Exception e) {
-      jobrunner = new LocalJobRunner();
-    }
-    m_GOEJobRunner = new GenericObjectEditorPanel(JobRunner.class, jobrunner, true);
-    m_GOEJobRunner.setToolTipText("Whether to execute the jobs locally or remotely");
-    m_GOEJobRunner.addChangeListener((ChangeEvent e) -> update());
-    m_PanelParameters.addParameter("Job runner", m_GOEJobRunner);
-
-    // use views?
-    m_CheckBoxUseViews = new BaseCheckBox();
-    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
-    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
-    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
-
     // generator
     try {
       generator = (CrossValidationFoldGenerator) OptionUtils.forCommandLine(
@@ -243,13 +223,6 @@ public class CrossValidation
     m_GOEGenerator.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Generator", m_GOEGenerator);
 
-    // discard predictions?
-    m_CheckBoxDiscardPredictions = new BaseCheckBox();
-    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
-    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
-    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
-
     // additional attributes
     m_SelectAdditionalAttributes = new SelectOptionPanel();
     m_SelectAdditionalAttributes.setCurrent(new String[0]);
@@ -258,6 +231,51 @@ public class CrossValidation
     m_SelectAdditionalAttributes.setDialogTitle("Select additional attributes");
     m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
+
+    // 2. advanced options
+    m_PanelParametersAdvanced = new ParameterPanel();
+    oneTouchPanel = new OneTouchPanel(Location.BOTTOM);
+    m_PanelOptions.add(oneTouchPanel, BorderLayout.SOUTH);
+    oneTouchPanel.getContentPanel().add(m_PanelParametersAdvanced, BorderLayout.CENTER);
+    oneTouchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+    oneTouchPanel.setToolTipVisible("Click to hide advanced options");
+    oneTouchPanel.setToolTipHidden("Click to show advanced options");
+    oneTouchPanel.setContentVisible(false);
+
+    // per fold output?
+    m_CheckBoxPerFoldOutput = new BaseCheckBox();
+    m_CheckBoxPerFoldOutput.setSelected(props.getBoolean("Classify.PerFoldOutput", false));
+    m_CheckBoxPerFoldOutput.setToolTipText("Keep separate evaluations per fold to inspect per fold performance");
+    m_CheckBoxPerFoldOutput.addActionListener((ActionEvent e) -> update());
+    m_PanelParametersAdvanced.addParameter("Per fold output", m_CheckBoxPerFoldOutput);
+
+    // jobrunner
+    try {
+      jobrunner = (JobRunner) OptionUtils.forCommandLine(
+        JobRunner.class,
+	props.getProperty("Classify.JobRunner", new LocalJobRunner().toCommandLine()));
+    }
+    catch (Exception e) {
+      jobrunner = new LocalJobRunner();
+    }
+    m_GOEJobRunner = new GenericObjectEditorPanel(JobRunner.class, jobrunner, true);
+    m_GOEJobRunner.setToolTipText("Whether to execute the jobs locally or remotely");
+    m_GOEJobRunner.addChangeListener((ChangeEvent e) -> update());
+    m_PanelParametersAdvanced.addParameter("Job runner", m_GOEJobRunner);
+
+    // use views?
+    m_CheckBoxUseViews = new BaseCheckBox();
+    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
+    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
+    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
+    m_PanelParametersAdvanced.addParameter("Use views", m_CheckBoxUseViews);
+
+    // discard predictions?
+    m_CheckBoxDiscardPredictions = new BaseCheckBox();
+    m_CheckBoxDiscardPredictions.setSelected(props.getBoolean("Classify.DiscardPredictions", false));
+    m_CheckBoxDiscardPredictions.setToolTipText("Save memory by discarding predictions?");
+    m_CheckBoxDiscardPredictions.addActionListener((ActionEvent e) -> update());
+    m_PanelParametersAdvanced.addParameter("Discard predictions", m_CheckBoxDiscardPredictions);
 
     // final model?
     try {
@@ -271,7 +289,7 @@ public class CrossValidation
     m_GOEFinalModel = new GenericObjectEditorPanel(AbstractFinalModelGenerator.class, finalmodel, true);
     m_GOEFinalModel.setToolTipText("How to produce a final model");
     m_GOEFinalModel.addChangeListener((ChangeEvent e) -> update());
-    m_PanelParameters.addParameter("Final model", m_GOEFinalModel);
+    m_PanelParametersAdvanced.addParameter("Final model", m_GOEFinalModel);
   }
 
   /**
