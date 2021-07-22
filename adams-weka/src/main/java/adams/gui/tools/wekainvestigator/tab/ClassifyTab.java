@@ -122,6 +122,7 @@ public class ClassifyTab
       m_Owner = owner;
       setAllowRemove(true);
       setAllowRename(false);
+      setButtonPanelVisible(true);
     }
 
     /**

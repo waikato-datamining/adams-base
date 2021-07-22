@@ -120,6 +120,7 @@ public class AssociateTab
       m_Owner = owner;
       setAllowRemove(true);
       setAllowRename(false);
+      setButtonPanelVisible(true);
     }
 
     /**

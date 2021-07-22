@@ -139,6 +139,15 @@ public class HelpHistoryPanel
   }
 
   /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    setButtonPanelVisible(true);
+  }
+
+  /**
    * Returns the file chooser and creates it if necessary.
    */
   protected BaseFileChooser getFileChooser() {
