@@ -15,7 +15,7 @@
 
 /*
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -28,7 +28,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
@@ -36,6 +35,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -296,15 +296,33 @@ public abstract class AbstractNamedHistoryPanel<T>
     public String createHistoryEntryToolTip(AbstractNamedHistoryPanel<T> history, int index);
   }
 
+  /** the panel for the list. */
+  protected BasePanel m_PanelList;
+
   /** the JList listing the history entries. */
-  protected JList m_List;
+  protected BaseList m_List;
 
   /** the underlying list model. */
   protected DefaultListModel m_ListModel;
 
   /** the filtered model. */
   protected DefaultListModel m_ListModelFiltered;
-  
+
+  /** the panel for the list buttons. */
+  protected BasePanel m_PanelListButtons;
+
+  /** the move up button. */
+  protected BaseFlatButton m_ButtonUp;
+
+  /** the move down button. */
+  protected BaseFlatButton m_ButtonDown;
+
+  /** the remove button. */
+  protected BaseFlatButton m_ButtonRemove;
+
+  /** the remove all button. */
+  protected BaseFlatButton m_ButtonRemoveAll;
+
   /** stores the actual objects (name &lt;-&gt; object relation). */
   protected Hashtable<String,T> m_Entries;
 
@@ -364,7 +382,10 @@ public abstract class AbstractNamedHistoryPanel<T>
 
     setLayout(new BorderLayout());
 
-    m_List = new JList(m_ListModel);
+    m_PanelList = new BasePanel(new BorderLayout(0, 0));
+    add(m_PanelList, BorderLayout.CENTER);
+
+    m_List = new BaseList(m_ListModel);
     m_List.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     m_List.addMouseListener(new MouseAdapter() {
       @Override
@@ -411,6 +432,7 @@ public abstract class AbstractNamedHistoryPanel<T>
       }
     });
     m_List.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+      updateButtons();
       // update entry
       String name = getSelectedEntry();
       if (name != null)
@@ -420,8 +442,33 @@ public abstract class AbstractNamedHistoryPanel<T>
 	new HistoryEntrySelectionEvent(
 	  AbstractNamedHistoryPanel.this, getSelectedEntries()));
     });
-    add(new BaseScrollPane(m_List), BorderLayout.CENTER);
-    
+    m_PanelList.add(new BaseScrollPane(m_List), BorderLayout.CENTER);
+
+    // buttons
+    m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
+    m_PanelListButtons.setVisible(false);
+    m_PanelList.add(m_PanelListButtons, BorderLayout.SOUTH);
+
+    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp.setToolTipText("Moves up selected");
+    m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
+    m_PanelListButtons.add(m_ButtonUp);
+
+    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown.setToolTipText("Moves down selected");
+    m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
+    m_PanelListButtons.add(m_ButtonDown);
+
+    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove.setToolTipText("Removes currently selected");
+    m_ButtonRemove.addActionListener((ActionEvent e) -> removeEntries(m_List.getSelectedIndices()));
+    m_PanelListButtons.add(m_ButtonRemove);
+
+    m_ButtonRemoveAll = new BaseFlatButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll.setToolTipText("Removes all");
+    m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllEntries());
+    m_PanelListButtons.add(m_ButtonRemoveAll);
+
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false, null, true, "");
     m_PanelSearch.setVisible(false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> {
@@ -434,6 +481,93 @@ public abstract class AbstractNamedHistoryPanel<T>
       updateSearch();
     });
     add(m_PanelSearch, BorderLayout.SOUTH);
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateButtons();
+  }
+
+  /**
+   * moves the selected items up by 1.
+   */
+  public void moveUp() {
+    m_List.moveUp();
+  }
+
+  /**
+   * moves the selected item down by 1.
+   */
+  public void moveDown() {
+    m_List.moveDown();
+  }
+
+  /**
+   * moves the selected items to the top.
+   */
+  public void moveTop() {
+    m_List.moveTop();
+  }
+
+  /**
+   * moves the selected items to the end.
+   */
+  public void moveBottom() {
+    m_List.moveBottom();
+  }
+
+  /**
+   * checks whether the selected items can be moved up.
+   *
+   * @return		true if the selected items can be moved
+   */
+  public boolean canMoveUp() {
+    return m_List.canMoveUp();
+  }
+
+  /**
+   * checks whether the selected items can be moved down.
+   *
+   * @return		true if the selected items can be moved
+   */
+  public boolean canMoveDown() {
+    return m_List.canMoveDown();
+  }
+
+  /**
+   * Sets whether the buttons are shown.
+   *
+   * @param value	true if buttons are shown
+   */
+  public void setButtonPanelVisible(boolean value) {
+    m_PanelListButtons.setVisible(value);
+  }
+
+  /**
+   * Returns whether the buttons are shown.
+   *
+   * @return		true if buttons are shown
+   */
+  public boolean isButtonPanelVisible() {
+    return m_PanelListButtons.isVisible();
+  }
+
+  /**
+   * Updates the enabled state of the buttons.
+   */
+  protected void updateButtons() {
+    int		numSelected;
+
+    numSelected = m_List.getSelectedIndices().length;
+
+    m_ButtonUp.setEnabled((numSelected > 0) && canMoveUp());
+    m_ButtonDown.setEnabled((numSelected > 0) && canMoveDown());
+    m_ButtonRemove.setEnabled((numSelected > 0) && getAllowRemove());
+    m_ButtonRemoveAll.setEnabled(getAllowRemove() && (count() > 0));
   }
 
   /**
@@ -461,6 +595,8 @@ public abstract class AbstractNamedHistoryPanel<T>
    */
   public void setAllowRemove(boolean value) {
     m_AllowRemove = value;
+    m_ButtonRemove.setVisible(value);
+    m_ButtonRemoveAll.setVisible(value);
   }
 
   /**
@@ -530,6 +666,19 @@ public abstract class AbstractNamedHistoryPanel<T>
     menuitem.addActionListener((ActionEvent ae) -> copyEntryNames(indices));
     result.add(menuitem);
 
+    // move up
+    menuitem = new JMenuItem("Move up");
+    menuitem.setEnabled(canMoveUp());
+    menuitem.addActionListener((ActionEvent ae) -> moveUp());
+    result.addSeparator();
+    result.add(menuitem);
+
+    // move down
+    menuitem = new JMenuItem("Move down");
+    menuitem.setEnabled(canMoveDown());
+    menuitem.addActionListener((ActionEvent ae) -> moveDown());
+    result.add(menuitem);
+
     // remove
     menuitem = new JMenuItem();
     if (indices.length > 1)
@@ -539,21 +688,13 @@ public abstract class AbstractNamedHistoryPanel<T>
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled(indices.length >= 1);
     menuitem.addActionListener((ActionEvent ae) -> removeEntries(indices));
+    result.addSeparator();
     result.add(menuitem);
 
     // remove all
     menuitem = new JMenuItem("Remove all");
     menuitem.setEnabled(m_Entries.size() > 0);
-    menuitem.addActionListener((ActionEvent ae) -> {
-      String msg = "Do you want to remove ";
-      if (count() != 1)
-        msg += "all " + count() + " entries?";
-      else
-        msg += "the only entry?";
-      if (GUIHelper.showConfirmMessage(getParent(), msg) != ApprovalDialog.APPROVE_OPTION)
-        return;
-      clear();
-    });
+    menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllEntries());
     result.add(menuitem);
 
     // rename - if enabled
@@ -566,6 +707,24 @@ public abstract class AbstractNamedHistoryPanel<T>
     }
 
     return result;
+  }
+
+  /**
+   * Prompts the user before removing all entries.
+   */
+  protected void checkedRemoveAllEntries() {
+    String 	msg;
+
+    msg = "Do you want to remove ";
+    if (count() != 1)
+      msg += "all " + count() + " entries?";
+    else
+      msg += "the only entry?";
+
+    if (GUIHelper.showConfirmMessage(getParent(), msg) != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    clear();
   }
 
   /**
