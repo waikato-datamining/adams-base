@@ -119,7 +119,7 @@ public class ClusterTab
       super();
       m_Owner = owner;
       setAllowRemove(true);
-      setAllowRename(false);
+      setAllowRename(true);
       setButtonPanelVisible(true);
     }
 

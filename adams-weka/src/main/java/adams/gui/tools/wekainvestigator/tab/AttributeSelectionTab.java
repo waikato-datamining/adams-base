@@ -129,7 +129,7 @@ public class AttributeSelectionTab
       super();
       m_Owner = owner;
       setAllowRemove(true);
-      setAllowRename(false);
+      setAllowRename(true);
       setButtonPanelVisible(true);
     }
 
