@@ -200,13 +200,6 @@ public class TrainTestSplit
     m_SelectAdditionalAttributes.setToolTipText("Additional attributes to make available in plots");
     m_PanelParameters.addParameter("Additional attributes", m_SelectAdditionalAttributes);
 
-    // use views?
-    m_CheckBoxUseViews = new BaseCheckBox();
-    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
-    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
-    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
-    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
-
     // generator
     try {
       generator = (RandomSplitGenerator) OptionUtils.forCommandLine(
@@ -220,6 +213,13 @@ public class TrainTestSplit
     m_GOEGenerator = new GenericObjectEditorPanel(RandomSplitGenerator.class, generator, true);
     m_GOEGenerator.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Generator", m_GOEGenerator);
+
+    // use views?
+    m_CheckBoxUseViews = new BaseCheckBox();
+    m_CheckBoxUseViews.setSelected(props.getBoolean("Classify.UseViews", false));
+    m_CheckBoxUseViews.setToolTipText("Save memory by using views instead of creating copies of datasets?");
+    m_CheckBoxUseViews.addActionListener((ActionEvent e) -> update());
+    m_PanelParameters.addParameter("Use views", m_CheckBoxUseViews);
 
     // discard predictions?
     m_CheckBoxDiscardPredictions = new BaseCheckBox();

@@ -15,7 +15,7 @@
 
 /*
  * ClassifyTab.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -530,7 +530,7 @@ public class ClassifyTab
       classes = ClassLister.getSingleton().getClasses(AbstractOutputGenerator.class);
       for (Class cls: classes) {
         try {
-          final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
+          final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.getDeclaredConstructor().newInstance();
           menuitem = new JMenuItem(generator.getTitle());
           menuitem.setEnabled((indices.length == 1) && generator.canGenerateOutput(getEntry(indices[0])));
           menuitem.addActionListener((ActionEvent ae) -> generateOutput(generator, getEntry(indices[0])));
@@ -550,7 +550,7 @@ public class ClassifyTab
 	classes = ClassLister.getSingleton().getClasses(AbstractOutputGenerator.class);
 	for (Class cls : classes) {
 	  try {
-	    final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.newInstance();
+	    final AbstractOutputGenerator generator = (AbstractOutputGenerator) cls.getDeclaredConstructor().newInstance();
 	    menuitem = new JMenuItem(generator.getTitle());
 	    menuitem.setEnabled(generator.canGenerateOutput(getEntry(indices[0])));
 	    menuitem.addActionListener((ActionEvent ae) -> compareOutput(generator, indices));
@@ -682,7 +682,7 @@ public class ClassifyTab
           "Failed to instantiate output generator:\n" + cmds[i], e);
       }
     }
-    m_OutputGenerators = generators.toArray(new AbstractOutputGenerator[generators.size()]);
+    m_OutputGenerators = generators.toArray(new AbstractOutputGenerator[0]);
   }
 
   /**
@@ -741,7 +741,7 @@ public class ClassifyTab
     classes            = AbstractClassifierEvaluation.getEvaluations();
     for (Class c: classes) {
       try {
-        eval = (AbstractClassifierEvaluation) c.newInstance();
+        eval = (AbstractClassifierEvaluation) c.getDeclaredConstructor().newInstance();
         eval.setOwner(this);
         m_ModelEvaluations.addElement(eval);
       }
@@ -753,7 +753,7 @@ public class ClassifyTab
     m_ComboBoxEvaluations.addActionListener((ActionEvent e) -> {
       if (m_ComboBoxEvaluations.getSelectedIndex() == -1)
         return;
-      m_CurrentEvaluation = (AbstractClassifierEvaluation) m_ComboBoxEvaluations.getSelectedItem();
+      m_CurrentEvaluation = m_ComboBoxEvaluations.getSelectedItem();
       m_PanelEvaluationSetup.removeAll();
       m_PanelEvaluationSetup.add(m_CurrentEvaluation.getPanel());
       m_CurrentEvaluation.update();
@@ -761,7 +761,10 @@ public class ClassifyTab
       m_PanelEvaluationSetup.revalidate();
       m_PanelEvaluationSetup.doLayout();
     });
-    m_PanelEvaluation.add(m_ComboBoxEvaluations, BorderLayout.NORTH);
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
+    panel.add(m_ComboBoxEvaluations, BorderLayout.CENTER);
+    m_PanelEvaluation.add(panel, BorderLayout.NORTH);
 
     // setup
     m_PanelEvaluationSetup = new JPanel(new BorderLayout());
