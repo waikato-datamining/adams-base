@@ -234,7 +234,7 @@ public class CrossValidation
 
     // 2. advanced options
     m_PanelParametersAdvanced = new ParameterPanel();
-    oneTouchPanel = new OneTouchPanel(Location.BOTTOM);
+    oneTouchPanel = new OneTouchPanel(Location.TOP);
     m_PanelOptions.add(oneTouchPanel, BorderLayout.SOUTH);
     oneTouchPanel.getContentPanel().add(m_PanelParametersAdvanced, BorderLayout.CENTER);
     oneTouchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
