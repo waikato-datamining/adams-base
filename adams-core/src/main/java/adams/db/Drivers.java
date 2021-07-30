@@ -15,7 +15,7 @@
 
 /*
  * Drivers.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -25,8 +25,7 @@ import adams.core.logging.LoggingObject;
 import adams.env.DriversDefinition;
 import adams.env.Environment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -45,6 +44,9 @@ public class Drivers
 
   /** the key for the drivers list in the props file. */
   public final static String KEY_DRIVERS = "Drivers";
+
+  /** the key for the excluded drivers list in the props file. */
+  public final static String KEY_EXCLUDED = "Excluded";
 
   /** the singleton. */
   protected static Drivers m_Singleton;
@@ -79,14 +81,21 @@ public class Drivers
    */
   public List getDrivers() {
     String[]	list;
+    Set<String> excluded;
 
     if (m_Drivers == null) {
       m_Drivers = new ArrayList();
 
-      list = m_Properties.getProperty(KEY_DRIVERS, "").replace(" ", "").split(",");
+      list     = m_Properties.getProperty(KEY_DRIVERS, "").replace(" ", "").split(",");
+      excluded = new HashSet<>(Arrays.asList(m_Properties.getProperty(KEY_EXCLUDED, "").replace(" ", "").split(",")));
       for (String driver: list) {
+        if (excluded.contains(driver)) {
+          getLogger().info("Excluded driver: " + driver);
+          continue;
+        }
 	try {
-	  m_Drivers.add(ClassManager.getSingleton().forName(driver).newInstance());
+	  getLogger().severe("Adding driver: " + driver);
+	  m_Drivers.add(ClassManager.getSingleton().forName(driver).getDeclaredConstructor().newInstance());
 	}
 	catch(Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to load driver '" + driver + "': ", e);

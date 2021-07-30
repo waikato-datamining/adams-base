@@ -4,7 +4,7 @@
 
 # the JDBC driver classes (comma-separated lst)
 Drivers=\
-  com.mysql.jdbc.Driver
+  com.mysql.cj.jdbc.Driver
 
-# The excluded drivers
-# Excluded=...
+Excluded=\
+  com.mysql.jdbc.Driver
