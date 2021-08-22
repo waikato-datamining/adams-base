@@ -102,8 +102,8 @@
   </properties>
 
   <scm>
-    <connection>scm:git:https://github.com/waikato-datamining/adams-base</connection>
-    <developerConnection>scm:git:https://github.com/waikato-datamining/adams-base</developerConnection>
+    <connection>scm:git:ssh://git@github.com/waikato-datamining/adams-base</connection>
+    <developerConnection>scm:git:ssh://git@github.com/waikato-datamining/adams-base</developerConnection>
     <url>https://github.com/waikato-datamining/adams-base</url>
     <tag>HEAD</tag>
   </scm>
