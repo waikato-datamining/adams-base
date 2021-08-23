@@ -15,7 +15,7 @@
 
 /*
  * Measure.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.opt.genetic;
@@ -70,6 +70,8 @@ public enum Measure {
   AREA_UNDER_ROC(false, true, false, true),
   /** area under precision recall curve. */
   AREA_UNDER_PRC(false, true, false, true),
+  /** Matthews Correlation coefficient. */
+  MATTHEWS_CC(false, true, false),
   ;
 
 
@@ -154,6 +156,8 @@ public enum Measure {
         return EvaluationStatistic.AREA_UNDER_PRC;
       case AREA_UNDER_ROC:
         return EvaluationStatistic.AREA_UNDER_ROC;
+      case MATTHEWS_CC:
+        return EvaluationStatistic.MATTHEWS_CORRELATION_COEFFICIENT;
       default:
         throw new IllegalStateException("Unhandled measure: " + this);
     }
