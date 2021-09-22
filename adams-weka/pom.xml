@@ -338,8 +338,8 @@
 
     <dependency>
       <groupId>ml.dmlc</groupId>
-      <artifactId>xgboost4j</artifactId>
-      <version>0.82</version>
+      <artifactId>xgboost4j_2.12</artifactId>
+      <version>1.4.1</version>
     </dependency>
   </dependencies>
 
