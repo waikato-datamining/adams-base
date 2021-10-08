@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationEvaluator.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -580,6 +580,11 @@ public class WekaCrossValidationEvaluator
       }
     }
 
+    if (m_CrossValidation != null) {
+      m_CrossValidation.cleanUp();
+      m_CrossValidation = null;
+    }
+
     return result;
   }
 
@@ -588,8 +593,11 @@ public class WekaCrossValidationEvaluator
    */
   @Override
   public void stopExecution() {
-    if (m_CrossValidation != null)
+    if (m_CrossValidation != null) {
       m_CrossValidation.stopExecution();
+      m_CrossValidation.cleanUp();
+      m_CrossValidation = null;
+    }
     super.stopExecution();
   }
 }

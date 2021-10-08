@@ -15,7 +15,7 @@
 
 /*
  * CrossValidation.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -430,6 +430,7 @@ public class CrossValidation
     getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
     finalModel.generate(this, data, item);
 
+    m_CrossValidation.cleanUp();
     m_CrossValidation = null;
   }
 

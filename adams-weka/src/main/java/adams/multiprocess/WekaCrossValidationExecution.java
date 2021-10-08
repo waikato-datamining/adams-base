@@ -15,17 +15,12 @@
 
 /*
  * WekaCrossValidation.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
-import adams.core.MessageCollection;
-import adams.core.ObjectCopyHelper;
-import adams.core.Performance;
-import adams.core.StatusMessageHandler;
-import adams.core.Stoppable;
-import adams.core.ThreadLimiter;
+import adams.core.*;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
@@ -49,7 +44,7 @@ import weka.core.Instances;
  */
 public class WekaCrossValidationExecution
   extends CustomLoggingLevelObject
-  implements Stoppable, InstancesViewSupporter, ThreadLimiter, FlowContextHandler {
+  implements Stoppable, InstancesViewSupporter, ThreadLimiter, FlowContextHandler, CleanUpHandler {
 
   private static final long serialVersionUID = 2021758441076652982L;
 
@@ -660,5 +655,24 @@ public class WekaCrossValidationExecution
     getLogger().severe("Execution stopped");
     if (m_ActualJobRunner != null)
       m_ActualJobRunner.terminate(m_WaitForJobs);
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    m_Classifier           = null;
+    m_Data                 = null;
+    m_Output               = null;
+    m_OutputBuffer         = null;
+    m_JobRunnerSetup       = null;
+    m_JobRunner            = null;
+    m_ActualJobRunner      = null;
+    m_Evaluation           = null;
+    m_Evaluations          = null;
+    m_Classifiers          = null;
+    m_OriginalIndices      = null;
+    m_StatusMessageHandler = null;
+    m_FlowContext          = null;
   }
 }
