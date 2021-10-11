@@ -15,11 +15,12 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Shortening;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.flow.core.Token;
@@ -242,6 +243,7 @@ public class LookUpUpdate
 
     result  = QuickInfoHelper.toString(this, "keyColumn", m_KeyColumn, "key: ");
     result += QuickInfoHelper.toString(this, "valueColumn", m_ValueColumn, ", value: ");
+    result += QuickInfoHelper.toString(this, "rules", m_Rules.isEmpty() ? "-none-" : Shortening.shortenEnd(m_Rules.stringValue(), 40), ", rules: ");
 
     return result;
   }
