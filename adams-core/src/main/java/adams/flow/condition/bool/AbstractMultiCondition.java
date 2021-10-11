@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiCondition.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -26,7 +26,6 @@ import adams.flow.core.Actor;
  * Ancestor for conditions that use multiple sub-conditions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiCondition
   extends AbstractBooleanCondition {
@@ -83,7 +82,7 @@ public abstract class AbstractMultiCondition
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "conditions", m_Conditions.length + " condition" + ((m_Conditions.length != 1) ? "s" : ""));
+    return QuickInfoHelper.toString(this, "conditions", getClass().getSimpleName() + ": " + m_Conditions.length + " condition" + ((m_Conditions.length != 1) ? "s" : ""));
   }
 
   /**
