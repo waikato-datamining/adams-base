@@ -1260,7 +1260,7 @@ module.
   jdbc:mysql://<HOST>:3306/<DATABASE>?nullDatabaseMeansCurrent=true
   \end{verbatim}
 
-  \item If you get an error message like \verb|Incorrect datetime value: '0000-00-00 00:00:00.000' for column 'TIMESTAMP' at row 1|
+  \item If you get an error message like \texttt{Incorrect datetime value: '0000-00-00 00:00:00.000' for column 'TIMESTAMP' at row 1}
   then add the following to your connection string:
   \begin{verbatim}
     jdbc:mysql://<HOST>:3306/<DATABASE>?sessionVariables=sql_mode='ALLOW_INVALID_DATES'
