@@ -466,7 +466,7 @@ public class ParserHelper
     
     result = new StringBuilder();
     if (pos > 0)
-      result.append(str.substring(0, pos + 1));
+      result.append(str.substring(0, pos));
     result.append(newStr);
     result.append(str.substring(pos + len));
     
