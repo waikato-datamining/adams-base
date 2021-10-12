@@ -15,11 +15,12 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -75,6 +76,27 @@ import java.util.logging.Level;
  *               | expr and expr<br>
  *               | expr or expr<br>
  * <br>
+ * # string functions<br>
+ *               | substr ( expr , start [, end] )<br>
+ *               | left ( expr , len )<br>
+ *               | mid ( expr , start , len )<br>
+ *               | right ( expr , len )<br>
+ *               | rept ( expr , count )<br>
+ *               | concatenate ( expr1 , expr2 [, expr3-5] )<br>
+ *               | lower[case] ( expr )<br>
+ *               | upper[case] ( expr )<br>
+ *               | trim ( expr )<br>
+ *               | matches ( expr , regexp )<br>
+ *               | len[gth] ( str )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
+ *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
+ *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ * <br>
  *               | expr + expr<br>
  *               | expr - expr<br>
  *               | expr * expr<br>
@@ -112,6 +134,8 @@ import java.util.logging.Level;
  *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - The 'all' method applies the value to all the values in the lookup table<br>
  *   that match the regular expression.<br>
+ * - Positions are 1-based.<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * - Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.<br>
  * - The 'has' function checks whether a variable&#47;symbol is present.<br>
  * <br><br>
@@ -179,7 +203,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LookUpUpdate
-  extends AbstractSymbolEvaluator<SpreadSheet> {
+    extends AbstractSymbolEvaluator<SpreadSheet> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8014316012335802585L;
@@ -210,9 +234,9 @@ public class LookUpUpdate
   @Override
   public String globalInfo() {
     return
-      "Evaluates lookup update rules updating the spreadsheet.\n\n"
-	+ "The following grammar is used:\n\n"
-	+ getGrammar();
+	"Evaluates lookup update rules updating the spreadsheet.\n\n"
+	    + "The following grammar is used:\n\n"
+	    + getGrammar();
   }
 
   /**
@@ -223,24 +247,24 @@ public class LookUpUpdate
     super.defineOptions();
 
     m_OptionManager.add(
-      "reader", "reader",
-      new CsvSpreadSheetReader());
+	"reader", "reader",
+	new CsvSpreadSheetReader());
 
     m_OptionManager.add(
-      "input", "input",
-      new PlaceholderFile("."));
+	"input", "input",
+	new PlaceholderFile("."));
 
     m_OptionManager.add(
-      "key-column", "keyColumn",
-      new SpreadSheetColumnIndex("1"));
+	"key-column", "keyColumn",
+	new SpreadSheetColumnIndex("1"));
 
     m_OptionManager.add(
-      "value-column", "valueColumn",
-      new SpreadSheetColumnIndex("2"));
+	"value-column", "valueColumn",
+	new SpreadSheetColumnIndex("2"));
 
     m_OptionManager.add(
-      "use-native", "useNative",
-      false);
+	"use-native", "useNative",
+	false);
   }
 
   /**
@@ -250,80 +274,103 @@ public class LookUpUpdate
    */
   public String getGrammar() {
     return
-      "expr_list ::= expr_list expr_part | expr_part\n"
-	+ "\n"
-	+ "expr_part ::= conditional | assignment\n"
-	+ "\n"
-	+ "conditional ::=   if expr then assignments end\n"
-	+ "                | if expr then assignments else assignments end\n"
-	+ "\n"
-	+ "assignments ::= assignments assignment | assignment\n"
-	+ "assignment ::=\n"
-	+ "                VARIABLE := expr;\n"
-	+ "              | all ( \"regexp\" ) := expr;\n"
-	+ "\n"
-	+ "expr ::=        ( expr )\n"
-	+ "              | NUMBER\n"
-	+ "              | STRING\n"
-	+ "              | BOOLEAN\n"
-	+ "              | VARIABLE\n"
-	+ "\n"
-	+ "              | true\n"
-	+ "              | false\n"
-	+ "\n"
-	+ "              | -expr\n"
-	+ "\n"
-	+ "              | expr < expr\n"
-	+ "              | expr <= expr\n"
-	+ "              | expr > expr\n"
-	+ "              | expr >= expr\n"
-	+ "              | expr = expr\n"
-	+ "              | expr != expr\n"
-	+ "\n"
-	+ "              | not expr\n"
-	+ "              | expr and expr\n"
-	+ "              | expr or expr\n"
-	+ "\n"
-	+ "              | expr + expr\n"
-	+ "              | expr - expr\n"
-	+ "              | expr * expr\n"
-	+ "              | expr / expr\n"
-	+ "              | expr % expr\n"
-	+ "              | expr ^ expr\n"
-	+ "\n"
-	+ "              | abs ( expr )\n"
-	+ "              | sqrt ( expr )\n"
-	+ "              | cbrt ( expr )\n"
-	+ "              | log ( expr )\n"
-	+ "              | log10 ( expr )\n"
-	+ "              | exp ( expr )\n"
-	+ "              | sin ( expr )\n"
-	+ "              | sinh ( expr )\n"
-	+ "              | cos ( expr )\n"
-	+ "              | cosh ( expr )\n"
-	+ "              | tan ( expr )\n"
-	+ "              | tanh ( expr )\n"
-	+ "              | atan ( expr )\n"
-	+ "              | atan2 ( exprY , exprX )\n"
-	+ "              | hypot ( exprX , exprY )\n"
-	+ "              | signum ( expr )\n"
-	+ "              | rint ( expr )\n"
-	+ "              | floor ( expr )\n"
-	+ "              | pow[er] ( expr , expr )\n"
-	+ "              | ceil ( expr )\n"
-	+ "              | min ( expr1 , expr2 )\n"
-	+ "              | max ( expr1 , expr2 )\n"
-	+ "              | has ( variable )\n"
-	+ "\n"
-	+ "Notes:\n"
-        + "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\"), any character\n"
-        + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
-        + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
-	+ "- The 'all' method applies the value to all the values in the lookup table\n"
-	+ "  that match the regular expression.\n"
-	+ "- Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.\n"
-	+ "- The 'has' function checks whether a variable/symbol is present.\n"
-      ;
+	"expr_list ::= expr_list expr_part | expr_part\n"
+	    + "\n"
+	    + "expr_part ::= conditional | assignment\n"
+	    + "\n"
+	    + "conditional ::=   if expr then assignments end\n"
+	    + "                | if expr then assignments else assignments end\n"
+	    + "\n"
+	    + "assignments ::= assignments assignment | assignment\n"
+	    + "assignment ::=\n"
+	    + "                VARIABLE := expr;\n"
+	    + "              | all ( \"regexp\" ) := expr;\n"
+	    + "\n"
+	    + "expr ::=        ( expr )\n"
+	    + "              | NUMBER\n"
+	    + "              | STRING\n"
+	    + "              | BOOLEAN\n"
+	    + "              | VARIABLE\n"
+	    + "\n"
+	    + "              | true\n"
+	    + "              | false\n"
+	    + "\n"
+	    + "              | -expr\n"
+	    + "\n"
+	    + "              | expr < expr\n"
+	    + "              | expr <= expr\n"
+	    + "              | expr > expr\n"
+	    + "              | expr >= expr\n"
+	    + "              | expr = expr\n"
+	    + "              | expr != expr\n"
+	    + "\n"
+	    + "              | not expr\n"
+	    + "              | expr and expr\n"
+	    + "              | expr or expr\n"
+	    + "\n"
+	    + "# string functions\n"
+	    + "              | substr ( expr , start [, end] )\n"
+	    + "              | left ( expr , len )\n"
+	    + "              | mid ( expr , start , len )\n"
+	    + "              | right ( expr , len )\n"
+	    + "              | rept ( expr , count )\n"
+	    + "              | concatenate ( expr1 , expr2 [, expr3-5] )\n"
+	    + "              | lower[case] ( expr )\n"
+	    + "              | upper[case] ( expr )\n"
+	    + "              | trim ( expr )\n"
+	    + "              | matches ( expr , regexp )\n"
+	    + "              | len[gth] ( str )\n"
+	    + "              | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)\n"
+	    + "              | contains ( str , find ) (checks whether 'str' string contains 'find' string)\n"
+	    + "              | replace ( str , pos , len , newstr )\n"
+	    + "              | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')\n"
+	    + "              | substitute ( str , find , replace [, occurrences] )\n"
+	    + "              | str ( expr )\n"
+	    + "              | str ( expr  , numdecimals )\n"
+	    + "              | str ( expr  , decimalformat )\n"
+	    + "\n"
+	    + "              | expr + expr\n"
+	    + "              | expr - expr\n"
+	    + "              | expr * expr\n"
+	    + "              | expr / expr\n"
+	    + "              | expr % expr\n"
+	    + "              | expr ^ expr\n"
+	    + "\n"
+	    + "              | abs ( expr )\n"
+	    + "              | sqrt ( expr )\n"
+	    + "              | cbrt ( expr )\n"
+	    + "              | log ( expr )\n"
+	    + "              | log10 ( expr )\n"
+	    + "              | exp ( expr )\n"
+	    + "              | sin ( expr )\n"
+	    + "              | sinh ( expr )\n"
+	    + "              | cos ( expr )\n"
+	    + "              | cosh ( expr )\n"
+	    + "              | tan ( expr )\n"
+	    + "              | tanh ( expr )\n"
+	    + "              | atan ( expr )\n"
+	    + "              | atan2 ( exprY , exprX )\n"
+	    + "              | hypot ( exprX , exprY )\n"
+	    + "              | signum ( expr )\n"
+	    + "              | rint ( expr )\n"
+	    + "              | floor ( expr )\n"
+	    + "              | pow[er] ( expr , expr )\n"
+	    + "              | ceil ( expr )\n"
+	    + "              | min ( expr1 , expr2 )\n"
+	    + "              | max ( expr1 , expr2 )\n"
+	    + "              | has ( variable )\n"
+	    + "\n"
+	    + "Notes:\n"
+	    + "- Variables are either all alphanumeric and -/_ (e.g., \"ABc_1-2\"), any character\n"
+	    + "  apart from \"]\" enclosed by \"[\" and \"]\" (e.g., \"[Hello World]\") or\n"
+	    + "  enclosed by single quotes (e.g., \"'Hello World'\").\n"
+	    + "- The 'all' method applies the value to all the values in the lookup table\n"
+	    + "  that match the regular expression.\n"
+	    + "- Positions are 1-based.\n"
+	    + "- 'str' uses "  + Utils.classToString(java.text.DecimalFormat.class) + " when supplying a format string\n"
+	    + "- Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.\n"
+	    + "- The 'has' function checks whether a variable/symbol is present.\n"
+	;
   }
 
   /**
@@ -517,14 +564,13 @@ public class LookUpUpdate
    */
   @Override
   protected Object initializeSymbol(String name, String value) {
-    Double	result;
+    Object	result;
 
     try {
-      result = new Double(value);
+      result = Double.parseDouble(value);
     }
     catch (Exception e) {
-      result = null;
-      getLogger().log(Level.SEVERE, "Failed to parse the value of symbol '" + name + "': " + value, e);
+      result = value;
     }
 
     return result;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpUpdateTest.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -35,11 +35,11 @@ import junit.framework.TestSuite;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LookUpUpdateTest
-  extends AbstractSymbolEvaluatorTestCase<Double, LookUpUpdate> {
+    extends AbstractSymbolEvaluatorTestCase<Double, LookUpUpdate> {
 
   /** the spreadsheet to use as basis for the formulas. */
   protected SpreadSheet m_Sheet;
-  
+
   /**
    * Initializes the test.
    *
@@ -48,7 +48,7 @@ public class LookUpUpdateTest
   public LookUpUpdateTest(String name) {
     super(name);
   }
-  
+
   /**
    * Called by JUnit before each test method.
    *
@@ -57,9 +57,9 @@ public class LookUpUpdateTest
   @Override
   protected void setUp() throws Exception {
     String	filename;
-    
+
     super.setUp();
-    
+
     filename = "lookup2.csv";
     m_TestHelper.copyResourceToTmp(filename);
     m_Sheet = new CsvSpreadSheetReader().read(new TmpFile(filename));
@@ -75,20 +75,35 @@ public class LookUpUpdateTest
   protected BaseString[][][] getRegressionSymbols() {
     return new BaseString[][][]{
 	{
-	  {/** no symbols. */},	//  1
-	  {/** no symbols. */},	//  2
-	  {/** no symbols. */},	//  3
-	  {/** no symbols. */},	//  4
-	  {/** no symbols. */},	//  5
-	  {/** no symbols. */},	//  6
-	  {/** no symbols. */},	//  7
-	  {/** no symbols. */},	//  8
-	  {/** no symbols. */},	//  9
-	  {new BaseString("_Hello World=1")},	//  10
-	  {new BaseString("Hello World=1")},	//  11
-	  {new BaseString("Hello World=9.9")},	//  12
-	  {new BaseString("_Hello World=9.9")},	//  13
-	  {new BaseString("_Hello World=9.9")},	//  14
+	    {/* no symbols. */},	//  1
+	    {/* no symbols. */},	//  2
+	    {/* no symbols. */},	//  3
+	    {/* no symbols. */},	//  4
+	    {/* no symbols. */},	//  5
+	    {/* no symbols. */},	//  6
+	    {/* no symbols. */},	//  7
+	    {/* no symbols. */},	//  8
+	    {/* no symbols. */},	//  9
+	    {new BaseString("_Hello World=1")},	//  10
+	    {new BaseString("Hello World=1")},	//  11
+	    {new BaseString("Hello World=9.9")},	//  12
+	    {new BaseString("_Hello World=9.9")},	//  13
+	    {new BaseString("_Hello World=9.9")},	//  14
+	    {new BaseString("_var=some string")},	//  15
+	    {new BaseString("_var=some string")},	//  16
+	    {new BaseString("_var=some string")},	//  17
+	    {new BaseString("_var=some string")},	//  18
+	    {new BaseString("_var=some string")},	//  19
+	    {new BaseString("_var=some string")},	//  20
+	    {new BaseString("_var=some string")},	//  21
+	    {/* no symbols. */},			//  22
+	    {/* no symbols. */},			//  23
+	    {new BaseString("_var=some string")},	//  24
+	    {new BaseString("_var=some string")},	//  25
+	    {new BaseString("_var=some string")},	//  26
+	    {new BaseString("_var=some string")},	//  27
+	    {new BaseString("_var=some string")},	//  28
+	    {new BaseString("_num=1.234")},		//  29
 	}
     };
   }
@@ -102,20 +117,35 @@ public class LookUpUpdateTest
   protected String[][] getRegressionExpressions() {
     return new String[][]{
 	{
-	  "",					                                           //  1
-	  "if (C = 2) then C := A * B; end",				                   //  2
-	  "if (C = 3) then C := A * B + 0.1; else C := A + 10; end",			           //  3
-	  "C := 5;",			                                                   //  4
-	  "if (C = 2) then C := A * B + 0.1; E := \"A*B+0.1\"; else C := A + 10; E := \"A+10\"; end",  //  5
-	  "if (C = 2) then C := A * B + 0.1; end D := 0.5; E := \"updated\";",		   //  6
-	  "all(\".*\") := 0.33;",		                                           //  7
-	  "C := -5;",			                                                   //  8
-	  "if (C = 2) then all(\".*\") := 0.12; else all(\".*\") := 0.78; end",		   //  9
-	  "if ([_Hello World] = 1) then C := 1.3; end",				   //  10
-	  "if ('Hello World' = 1) then C := 4.5; end",				   //  11
-	  "C := [Hello World];",			                                   //  12
-	  "C := '_Hello World';",			                                   //  13
-	  "C := has('_Hello World');",			                                   //  14
+	    "",					                                           //  1
+	    "if (C = 2) then C := A * B; end",				                   //  2
+	    "if (C = 3) then C := A * B + 0.1; else C := A + 10; end",			   //  3
+	    "C := 5;",			                                                   //  4
+	    "if (C = 2) then C := A * B + 0.1; E := \"A*B+0.1\"; else C := A + 10; E := \"A+10\"; end",  //  5
+	    "if (C = 2) then C := A * B + 0.1; end D := 0.5; E := \"updated\";",	   //  6
+	    "all(\".*\") := 0.33;",		                                           //  7
+	    "C := -5;",			                                                   //  8
+	    "if (C = 2) then all(\".*\") := 0.12; else all(\".*\") := 0.78; end",	   //  9
+	    "if ([_Hello World] = 1) then C := 1.3; end",				   //  10
+	    "if ('Hello World' = 1) then C := 4.5; end",				   //  11
+	    "C := [Hello World];",			                                   //  12
+	    "C := '_Hello World';",			                                   //  13
+	    "C := has('_Hello World');",			                           //  14
+	    "if (_var = \"some string\") then C := -1.0; end",				   //  15
+	    "if (_var != \"some string\") then C := -1.0; end",				   //  16
+	    "if (matches(_var, \"^.*ome str.*$\")) then C := -1.0; end",		   //  17
+	    "if (substr(_var, 4) == \"e string\") then C := -1.0; end",			   //  18
+	    "if (left(_var, 4) == \"some\") then C := -1.0; end",			   //  19
+	    "if (right(_var, 4) == \"ring\") then C := -1.0; end",			   //  20
+	    "if (mid(_var, 4, 4) == \"e st\") then C := -1.0; end",			   //  21
+	    "_v := trim(rept(\" Yo \", 3)); C := _v;",					   //  22
+	    "_v := trim(rept(\" Yo \", 3)); C := len(_v);",				   //  23
+	    "C := find(\"str\", _var);",						   //  24
+	    "C := contains(_var, \"str\");",						   //  25
+	    "C := replace(_var, 3, 5, \"STR\");",					   //  26
+	    "C := replaceall(_var, \"s[ot]\", \"S.\");",				   //  27
+	    "C := substitute(_var, \"s\", \"S\");",					   //  28
+	    "C := concatenate(str(_num, 1), \" \", str(_num, 3));",			   //  29
 	}
     };
   }

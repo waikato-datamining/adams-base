@@ -8,63 +8,80 @@ package adams.parser.lookupupdate;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int POW = 23;
-  public static final int SQRT = 15;
-  public static final int ABS = 14;
-  public static final int GE = 47;
-  public static final int ASSIGNMENT = 37;
-  public static final int UMINUS = 7;
-  public static final int LPAREN = 40;
-  public static final int SEMI = 38;
-  public static final int ATAN2 = 34;
-  public static final int CBRT = 28;
-  public static final int TAN = 20;
-  public static final int MINUS = 6;
-  public static final int FLOOR = 22;
-  public static final int RPAREN = 41;
-  public static final int AND = 51;
-  public static final int NOT = 50;
-  public static final int LT = 44;
-  public static final int OR = 52;
-  public static final int COMMA = 39;
-  public static final int SINH = 31;
-  public static final int SIGNUM = 36;
-  public static final int PLUS = 8;
-  public static final int MIN = 25;
-  public static final int IF = 2;
-  public static final int EXP = 17;
-  public static final int LE = 45;
-  public static final int BOOLEAN = 54;
-  public static final int EOF = 0;
-  public static final int COSH = 30;
-  public static final int TRUE = 42;
-  public static final int error = 1;
-  public static final int MODULO = 12;
-  public static final int HAS = 27;
-  public static final int NUMBER = 53;
-  public static final int COS = 19;
-  public static final int EQ = 48;
-  public static final int LOG = 16;
+  public static final int LEFT = 34;
   public static final int TIMES = 9;
-  public static final int ELSE = 4;
-  public static final int VARIABLE = 55;
-  public static final int TANH = 32;
-  public static final int SIN = 18;
-  public static final int NOT_EQ = 49;
-  public static final int THEN = 3;
-  public static final int END = 5;
-  public static final int STRING = 56;
-  public static final int RINT = 21;
-  public static final int ALL = 13;
-  public static final int CEIL = 24;
-  public static final int HYPOT = 35;
-  public static final int FALSE = 43;
-  public static final int LOG10 = 29;
-  public static final int ATAN = 33;
   public static final int DIVISION = 10;
-  public static final int GT = 46;
+  public static final int GT = 63;
+  public static final int REPLACEALL = 38;
+  public static final int FLOOR = 22;
+  public static final int UPPERCASE = 30;
+  public static final int RIGHT = 35;
+  public static final int ATAN = 50;
+  public static final int GE = 64;
+  public static final int TANH = 49;
+  public static final int LOWERCASE = 29;
+  public static final int SEMI = 55;
+  public static final int EXP = 17;
+  public static final int SIN = 18;
+  public static final int ASSIGNMENT = 54;
+  public static final int COMMA = 56;
+  public static final int RPAREN = 58;
+  public static final int POW = 23;
+  public static final int ALL = 13;
+  public static final int LT = 61;
+  public static final int LPAREN = 57;
+  public static final int FALSE = 60;
+  public static final int NOT = 67;
+  public static final int LE = 62;
+  public static final int LOG10 = 46;
+  public static final int MIN = 25;
+  public static final int THEN = 3;
+  public static final int STR = 44;
+  public static final int CEIL = 24;
+  public static final int SIGNUM = 53;
+  public static final int TRIM = 32;
+  public static final int EQ = 65;
+  public static final int MID = 36;
+  public static final int TAN = 20;
+  public static final int LOG = 16;
+  public static final int COSH = 47;
+  public static final int NUMBER = 70;
+  public static final int MODULO = 12;
+  public static final int TRUE = 59;
+  public static final int MATCHES = 31;
+  public static final int PLUS = 8;
+  public static final int BOOLEAN = 71;
+  public static final int FIND = 40;
+  public static final int VARIABLE = 72;
   public static final int MAX = 26;
+  public static final int CONCATENATE = 42;
+  public static final int ELSE = 4;
+  public static final int LENGTH = 33;
+  public static final int COS = 19;
+  public static final int EOF = 0;
+  public static final int SUBSTITUTE = 39;
+  public static final int REPEAT = 43;
+  public static final int MINUS = 6;
+  public static final int OR = 69;
+  public static final int RINT = 21;
+  public static final int HAS = 27;
+  public static final int error = 1;
+  public static final int IF = 2;
+  public static final int CONTAINS = 41;
+  public static final int ABS = 14;
+  public static final int END = 5;
+  public static final int REPLACE = 37;
+  public static final int NOT_EQ = 66;
+  public static final int SINH = 48;
   public static final int EXPONENT = 11;
+  public static final int SQRT = 15;
+  public static final int STRING = 73;
+  public static final int CBRT = 45;
+  public static final int AND = 68;
+  public static final int UMINUS = 7;
+  public static final int SUBSTR = 28;
+  public static final int HYPOT = 52;
+  public static final int ATAN2 = 51;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -94,6 +111,23 @@ public interface sym {
   "MIN",
   "MAX",
   "HAS",
+  "SUBSTR",
+  "LOWERCASE",
+  "UPPERCASE",
+  "MATCHES",
+  "TRIM",
+  "LENGTH",
+  "LEFT",
+  "RIGHT",
+  "MID",
+  "REPLACE",
+  "REPLACEALL",
+  "SUBSTITUTE",
+  "FIND",
+  "CONTAINS",
+  "CONCATENATE",
+  "REPEAT",
+  "STR",
   "CBRT",
   "LOG10",
   "COSH",

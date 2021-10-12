@@ -36,6 +36,7 @@ import java_cup.runtime.*;
 
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.Array;
 
 import adams.core.*;
 import adams.core.base.*;
@@ -124,6 +125,8 @@ parser code {:
 terminal IF, THEN, ELSE, END;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
 terminal ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS;
+terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LENGTH;
+terminal LEFT, RIGHT, MID, REPLACE, REPLACEALL, SUBSTITUTE, FIND, CONTAINS, CONCATENATE, REPEAT, STR;
 terminal CBRT, LOG10, COSH, SINH, TANH, ATAN, ATAN2, HYPOT, SIGNUM;
 terminal ASSIGNMENT, SEMI, COMMA, LPAREN, RPAREN;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR;
@@ -143,6 +146,7 @@ precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
 precedence left ALL, ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, MIN, MAX, HAS;
+precedence left STR, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, TRIM, LENGTH;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -269,6 +273,55 @@ expr ::=        LPAREN expr:c RPAREN
               | expr:l OR expr:r
                 {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
 
+              | MATCHES LPAREN expr:s COMMA expr:pattern RPAREN
+                {: RESULT = new Boolean(parser.getHelper().toString(s).matches(parser.getHelper().toString(pattern))); :}
+              | CONTAINS LPAREN expr:s COMMA expr:f RPAREN
+                {: RESULT = new Boolean(parser.getHelper().toString(s).contains(parser.getHelper().toString(f))); :}
+              | FIND LPAREN expr:f COMMA expr:s RPAREN
+                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase()) + 1); :}
+              | FIND LPAREN expr:f COMMA expr:s COMMA expr:p RPAREN
+                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase(), parser.getHelper().toInteger(p) - 1) + 1); :}
+              | SUBSTR LPAREN expr:s COMMA expr:start RPAREN
+               {: RESULT = parser.getHelper().toString(s).substring(parser.getHelper().toDouble(start).intValue() - 1); :}
+              | SUBSTR LPAREN expr:s COMMA expr:start COMMA expr:end RPAREN
+                {: RESULT = parser.getHelper().toString(s).substring(parser.getHelper().toDouble(start).intValue() - 1, parser.getHelper().toDouble(end).intValue() - 1); :}
+              | LEFT LPAREN expr:s COMMA expr:n RPAREN
+                {: RESULT = parser.getHelper().left(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | MID LPAREN expr:s COMMA expr:f COMMA expr:n RPAREN
+                {: RESULT = parser.getHelper().mid(parser.getHelper().toString(s), parser.getHelper().toInteger(f) - 1, parser.getHelper().toInteger(n)); :}
+              | RIGHT LPAREN expr:s COMMA expr:n RPAREN
+                {: RESULT = parser.getHelper().right(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | REPEAT LPAREN expr:s COMMA expr:n RPAREN
+                {: RESULT = parser.getHelper().repeat(parser.getHelper().toString(s), parser.getHelper().toInteger(n)); :}
+              | CONCATENATE LPAREN expr:s1 COMMA expr:s2 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2)); :}
+              | CONCATENATE LPAREN expr:s1 COMMA expr:s2 COMMA expr:s3 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3)); :}
+              | CONCATENATE LPAREN expr:s1 COMMA expr:s2 COMMA expr:s3 COMMA expr:s4 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3) + parser.getHelper().toString(s4)); :}
+              | CONCATENATE LPAREN expr:s1 COMMA expr:s2 COMMA expr:s3 COMMA expr:s4 COMMA expr:s5 RPAREN
+                {: RESULT = new String(parser.getHelper().toString(s1) + parser.getHelper().toString(s2) + parser.getHelper().toString(s3) + parser.getHelper().toString(s4) + parser.getHelper().toString(s5)); :}
+              | LOWERCASE LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).toLowerCase(); :}
+              | UPPERCASE LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).toUpperCase(); :}
+              | TRIM LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s).trim(); :}
+              | REPLACE LPAREN expr:s COMMA expr:p COMMA expr:l COMMA expr:n RPAREN
+                {: RESULT = parser.getHelper().replace(parser.getHelper().toString(s), parser.getHelper().toInteger(p) - 1, parser.getHelper().toInteger(l), parser.getHelper().toString(n)); :}
+              | REPLACEALL LPAREN expr:s COMMA expr:f COMMA expr:r RPAREN
+                {: RESULT = parser.getHelper().toString(s).replaceAll(parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
+              | SUBSTITUTE LPAREN expr:s COMMA expr:f COMMA expr:r RPAREN
+                {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r)); :}
+              | SUBSTITUTE LPAREN expr:s COMMA expr:f COMMA expr:r COMMA expr:o RPAREN
+                {: RESULT = parser.getHelper().substitute(parser.getHelper().toString(s), parser.getHelper().toString(f), parser.getHelper().toString(r), parser.getHelper().toInteger(o)); :}
+              | STR LPAREN expr:s RPAREN
+                {: RESULT = parser.getHelper().toString(s); :}
+              | STR LPAREN expr:d COMMA expr:n RPAREN
+                {: RESULT = adams.core.Utils.doubleToString(parser.getHelper().toDouble(d), parser.getHelper().toInteger(n)); :}
+              | STR LPAREN expr:d COMMA STRING:f RPAREN
+                {: RESULT = new java.text.DecimalFormat(f).format(parser.getHelper().toDouble(d)); :}
+
               | ABS LPAREN expr:e RPAREN
                 {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
               | SQRT LPAREN expr:e RPAREN
@@ -315,6 +368,13 @@ expr ::=        LPAREN expr:c RPAREN
                 {: RESULT = new Double(Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
               | HAS LPAREN VARIABLE:v RPAREN
                 {: RESULT = new Boolean(parser.getSymbols().containsKey(v.toString())); :}
+              | LENGTH LPAREN expr:s RPAREN
+                {:
+                   if (s.getClass().isArray())
+                     RESULT = new Double(Array.getLength(s));
+                   else
+                     RESULT = new Double(parser.getHelper().toString(s).length());
+                :}
 
               | expr:l PLUS expr:r
                 {: RESULT = new Double(parser.getHelper().toNumber(l) + parser.getHelper().toNumber(r)); :}
