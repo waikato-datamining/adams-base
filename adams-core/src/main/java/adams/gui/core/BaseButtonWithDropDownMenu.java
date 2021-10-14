@@ -15,7 +15,7 @@
 
 /*
  * BaseButtonWithDropDownMenu.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -84,6 +84,13 @@ public class BaseButtonWithDropDownMenu
     m_MenuItems = new ArrayList<>();
     m_Menu      = null;
     addActionListener((ActionEvent ae) -> showMenu());
+  }
+
+  /**
+   * Removes all supplied menu items. Does not affect a supplied menu.
+   */
+  public void clearMenu() {
+    m_MenuItems.clear();
   }
 
   /**
