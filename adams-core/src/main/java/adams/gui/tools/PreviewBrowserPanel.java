@@ -102,8 +102,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PreviewBrowserPanel
-  extends BasePanel
-  implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
+    extends BasePanel
+    implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5284765971012530865L;
@@ -116,7 +116,7 @@ public class PreviewBrowserPanel
    * @version $Revision$
    */
   public static class FileComparator
-    implements Comparator<File> {
+      implements Comparator<File> {
 
     /**
      * Compares its two arguments for order.  Returns a negative integer,
@@ -522,9 +522,9 @@ public class PreviewBrowserPanel
     fileList = new ArrayList<>();
     if (files != null) {
       for (File file : files) {
-        if (file.isDirectory())
-          continue;
-        fileList.add(file);
+	if (file.isDirectory())
+	  continue;
+	fileList.add(file);
       }
     }
     Collections.sort(fileList, new FileComparator());
@@ -585,9 +585,9 @@ public class PreviewBrowserPanel
       catch (Exception e) {
 	m_ArchiveHandler = null;
 	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to obtain archive handler for '" + localFiles[0] + "':",
-	  e);
+	    LoggingLevel.SEVERE,
+	    "Failed to obtain archive handler for '" + localFiles[0] + "':",
+	    e);
       }
     }
     else {
@@ -635,16 +635,16 @@ public class PreviewBrowserPanel
 	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles[i].toString()), TempUtils.getTempDirectory());
 	if (!m_ArchiveHandler.extract(selFiles[i].toString(), tmpFiles[i])) {
 	  ConsolePanel.getSingleton().append(
-	    LoggingLevel.SEVERE,
-	    "Failed to extract file '" + selFiles[i] + "'!");
+	      LoggingLevel.SEVERE,
+	      "Failed to extract file '" + selFiles[i] + "'!");
 	  return;
 	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
-	  LoggingLevel.SEVERE,
-	  "Failed to extract file '" + selFiles[i] + "':",
-	  e);
+	    LoggingLevel.SEVERE,
+	    "Failed to extract file '" + selFiles[i] + "':",
+	    e);
       }
     }
     m_PanelContent.display(tmpFiles, false);
@@ -754,7 +754,7 @@ public class PreviewBrowserPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<>(
-	SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
+	  SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
@@ -930,7 +930,7 @@ public class PreviewBrowserPanel
 	return;
       String comment = GUIHelper.showInputDialog(this, "Please enter comment: ", "");
       if (comment == null)
-        return;
+	return;
       addToNotes(comment + "\n" + m_PanelDir.getCurrent() + File.separator + obj.toString());
     });
     result.add(menuitem);
@@ -940,10 +940,10 @@ public class PreviewBrowserPanel
       m_LocalFilesActions = new ArrayList<>();
       classes             = ClassLister.getSingleton().getClasses(AbstractLocalFilesAction.class);
       for (Class cls: classes) {
-        try {
-          local = (AbstractLocalFilesAction) cls.newInstance();
-          local.setOwner(this);
-          m_LocalFilesActions.add(local);
+	try {
+	  local = (AbstractLocalFilesAction) cls.newInstance();
+	  local.setOwner(this);
+	  m_LocalFilesActions.add(local);
 	}
 	catch (Exception ex) {
 	  ConsolePanel.getSingleton().append("Failed to instantiate local files action: " + Utils.classToString(cls), ex);
@@ -1142,14 +1142,14 @@ public class PreviewBrowserPanel
     else {
       table = null;
       if (m_PanelContent.getComponent() instanceof JTable)
-        table = (JTable) m_PanelContent.getComponent();
+	table = (JTable) m_PanelContent.getComponent();
       else if (m_PanelContent.getComponent() instanceof JTableSupporter)
-        table = ((JTableSupporter) m_PanelContent.getComponent()).getTable();
+	table = ((JTableSupporter) m_PanelContent.getComponent()).getTable();
       if ((table != null) && SendToActionUtils.isAvailable(JTable.class, cls)) {
-        result = m_PanelContent.getComponent();
+	result = m_PanelContent.getComponent();
       }
       else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
-        result = m_PanelContent.getComponent();
+	result = m_PanelContent.getComponent();
       }
     }
 
@@ -1195,7 +1195,7 @@ public class PreviewBrowserPanel
 
   /**
    * Sets the text for the archive file search.
-   * 
+   *
    * @param search	the search term
    */
   public void setArchiveSearch(String search) {
@@ -1205,11 +1205,20 @@ public class PreviewBrowserPanel
 
   /**
    * Returns the search term of the archive file search.
-   * 
+   *
    * @return		the search term
    */
   public String getArchiveSearch() {
     return m_SearchArchiveFiles.getSearchText();
+  }
+
+  /**
+   * Returns the content panel.
+   *
+   * @return		the content panel
+   */
+  public PreviewDisplay getContentPanel() {
+    return m_PanelContent;
   }
 
   /**
@@ -1264,8 +1273,8 @@ public class PreviewBrowserPanel
       return;
 
     msg = FileUtils.writeToFileMsg(
-      m_FileChooserNotes.getSelectedFile().getAbsolutePath(),
-      m_Notes.toString(), false, null);
+	m_FileChooserNotes.getSelectedFile().getAbsolutePath(),
+	m_Notes.toString(), false, null);
     if (msg != null)
       GUIHelper.showErrorMessage(this, "Failed to save notes to: " + m_FileChooserNotes.getSelectedFile() + "\n" + msg);
   }
