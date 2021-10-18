@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MemoryContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -26,7 +26,6 @@ import weka.core.Instances;
  * Dataset exists only in memory.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MemoryContainer
   extends AbstractDataContainer {
@@ -65,10 +64,10 @@ public class MemoryContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
   @Override
-  protected boolean doReload() {
-    return true;
+  protected String doReload() {
+    return null;
   }
 }

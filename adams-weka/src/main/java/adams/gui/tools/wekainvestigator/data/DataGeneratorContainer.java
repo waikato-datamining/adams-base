@@ -84,18 +84,17 @@ public class DataGeneratorContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
   @Override
-  protected boolean doReload() {
+  protected String doReload() {
     try {
       m_Generator.defineDataFormat();
       m_Data = m_Generator.generateExamples();
-      return true;
+      return null;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to regenerate data: " + OptionUtils.getCommandLine(m_Generator), e);
-      return false;
+      return handleException("Failed to regenerate data: " + OptionUtils.getCommandLine(m_Generator), e);
     }
   }
 

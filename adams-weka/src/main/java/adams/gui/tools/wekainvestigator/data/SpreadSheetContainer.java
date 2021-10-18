@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -28,13 +28,11 @@ import weka.core.Instances;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.logging.Level;
 
 /**
  * SpreadSheet-based dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetContainer
   extends AbstractDataContainer {
@@ -107,10 +105,10 @@ public class SpreadSheetContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
   @Override
-  protected boolean doReload() {
+  protected String doReload() {
     SpreadSheet 		sheet;
     SpreadSheetToWekaInstances 	conv;
     String			msg;
@@ -123,11 +121,10 @@ public class SpreadSheetContainer
       if (msg != null)
         throw new IllegalArgumentException("Failed to convert spreadsheet!\n" + msg);
       m_Data = (Instances) conv.getOutput();
-      return true;
+      return null;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to reload: " + m_Source, e);
-      return false;
+      return handleException("Failed to reload: " + m_Source, e);
     }
   }
 

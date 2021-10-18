@@ -15,7 +15,7 @@
 
 /*
  * DatabaseContainer.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -34,7 +34,6 @@ import weka.experiment.InstanceQuery;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.util.logging.Level;
 
 /**
  * Dataset loaded from database.
@@ -117,10 +116,10 @@ public class DatabaseContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
   @Override
-  protected boolean doReload() {
+  protected String doReload() {
     InstanceQuery 	instq;
 
     try {
@@ -130,11 +129,10 @@ public class DatabaseContainer
       instq.setPassword(m_Password);
       instq.setQuery(m_Query);
       m_Data = instq.retrieveInstances();
-      return true;
+      return null;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to reload from database: " + m_URL, e);
-      return false;
+      return handleException("Failed to reload from database: " + m_URL, e);
     }
   }
 

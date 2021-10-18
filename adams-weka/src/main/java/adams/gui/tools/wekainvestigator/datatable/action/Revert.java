@@ -90,16 +90,19 @@ public class Revert
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
+    String    msg;
+
     for (DataContainer cont: getSelectedData()) {
       if (hasChanged(cont) && cont.canReload()) {
         logMessage("Reverting dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
-        if (cont.reload()) {
+        msg = cont.reload();
+        if (msg == null) {
 	  getOwner().getOwner().updateClassAttribute(cont.getData());
 	  logMessage("Successfully reverted " + cont.getID() + "!");
           fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getData().indexOf(cont)));
 	}
         else {
-	  logMessage("Failed to revert!");
+	  logMessage("Failed to revert:\n" + msg);
 	}
       }
     }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -30,7 +30,6 @@ import java.util.Date;
  * Interface for data containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface DataContainer
   extends Comparable<DataContainer>, UndoHandlerWithQuickAccess, CleanUpHandler {
@@ -59,9 +58,9 @@ public interface DataContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
-  public boolean reload();
+  public String reload();
 
   /**
    * Checks whether the data has been modified.

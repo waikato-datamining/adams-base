@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataContainer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.data;
 
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.gui.core.Undo;
 import adams.gui.core.Undo.UndoPoint;
@@ -35,11 +36,10 @@ import java.util.Date;
  * Ancestor for data containers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDataContainer
-  extends LoggingObject
-  implements DataContainer, UndoListener {
+    extends LoggingObject
+    implements DataContainer, UndoListener {
 
   private static final long serialVersionUID = 6267905940957451551L;
 
@@ -138,24 +138,24 @@ public abstract class AbstractDataContainer
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
-  protected abstract boolean doReload();
+  protected abstract String doReload();
 
   /**
    * Reloads the data.
    *
-   * @return		true if successfully reloaded
+   * @return		null if successfully reloaded, otherwise error message
    */
   @Override
-  public boolean reload() {
-    boolean	result;
+  public String reload() {
+    String	result;
 
-    result = false;
+    result = null;
 
     if (canReload()) {
       result = doReload();
-      if (result) {
+      if (result == null) {
 	setModified(false);
 	if (isUndoSupported())
 	  getUndo().clear();
@@ -258,8 +258,8 @@ public abstract class AbstractDataContainer
    */
   protected Serializable[] getUndoData() {
     return new Serializable[]{
-      m_Data,
-      m_Modified
+	m_Data,
+	m_Modified
     };
   }
 
@@ -284,6 +284,17 @@ public abstract class AbstractDataContainer
   }
 
   /**
+   * Logs the error and returns a compiled error string.
+   *
+   * @param msg		the message to use
+   * @param t		the exception
+   * @return		the generated error message
+   */
+  protected String handleException(String msg, Throwable t) {
+    return LoggingHelper.handleException(this, msg, t);
+  }
+
+  /**
    * Compares this container with the specified one.
    *
    * @param o		the container to compare with
@@ -296,7 +307,7 @@ public abstract class AbstractDataContainer
 
     result = getSource().compareTo(o.getSource());
     if (result == 0)
-      result = new Integer(getID()).compareTo(o.getID());
+      result = Integer.compare(getID(), o.getID());
 
     return result;
   }
