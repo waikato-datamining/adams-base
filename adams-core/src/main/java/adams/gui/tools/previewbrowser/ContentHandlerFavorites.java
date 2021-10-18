@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -52,7 +53,8 @@ public class ContentHandlerFavorites
    * Encapsulates a single favorite.
    */
   public static class ContentHandlerFavorite
-      extends LoggingObject {
+      extends LoggingObject
+      implements Comparable<ContentHandlerFavorite> {
 
     private static final long serialVersionUID = -7917753097321799489L;
 
@@ -141,6 +143,46 @@ public class ContentHandlerFavorites
      */
     public String toString() {
       return "ext=" + m_Extension + ", name=" + m_Name + ", cmdline=" + m_Commandline;
+    }
+
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     *
+     * Just uses the name.
+     *
+     * @param o the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     * @throws NullPointerException if the specified object is null
+     * @throws ClassCastException   if the specified object's type prevents it
+     *                              from being compared to this object.
+     */
+    @Override
+    public int compareTo(ContentHandlerFavorite o) {
+      return getName().compareTo(o.getName());
+    }
+
+    /**
+     * Checks whether the object is the same as itself (using the name).
+     *
+     * @param o		the object to compare with
+     * @return		true if a content handler favorite with the same name
+     */
+    @Override
+    public boolean equals(Object o) {
+      return (o instanceof ContentHandlerFavorite) && (compareTo((ContentHandlerFavorite) o) == 0);
+    }
+
+    /**
+     * Returns the hash code of the name.
+     *
+     * @return		the hash code
+     */
+    @Override
+    public int hashCode() {
+      return m_Name.hashCode();
     }
   }
 
@@ -330,6 +372,27 @@ public class ContentHandlerFavorites
   }
 
   /**
+   * Updates the favorite.
+   *
+   * @param ext		the extension this favorite is for
+   * @param name	the name of the favorite
+   * @param handler	the handler
+   * @return		the generated favorite
+   */
+  public synchronized boolean updateFavorite(String ext, String name, AbstractContentHandler handler) {
+    boolean		 	result;
+    ContentHandlerFavorite 	updated;
+
+    updated = new ContentHandlerFavorite(ext, name, handler);
+    result  = m_Favorites.remove(updated);
+    m_Favorites.add(updated);
+    if (m_AutoSave)
+      updateFavorites();
+
+    return result;
+  }
+
+  /**
    * Removes the favorite with the specified name.
    *
    * @param name	the name of the favorite to remove
@@ -343,8 +406,8 @@ public class ContentHandlerFavorites
 
     for (i = 0; i < m_Favorites.size(); i++) {
       if (m_Favorites.get(i).getName().equals(name)) {
-        result = m_Favorites.remove(i);
-        break;
+	result = m_Favorites.remove(i);
+	break;
       }
     }
 
@@ -365,9 +428,9 @@ public class ContentHandlerFavorites
     i = 0;
     while (i < m_Favorites.size()) {
       if (m_Favorites.get(i).getExtension().equalsIgnoreCase(ext))
-        m_Favorites.remove(i);
+	m_Favorites.remove(i);
       else
-        i++;
+	i++;
     }
 
     if (m_AutoSave)
@@ -457,6 +520,25 @@ public class ContentHandlerFavorites
     });
     button.addToMenu(item);
 
+    // for updating favorites
+    if (favorites.size() > 0) {
+      submenu = new JMenu("Update");
+      button.addToMenu(submenu);
+      for (i = 0; i < favorites.size(); i++) {
+	final ContentHandlerFavorite f = favorites.get(i);
+	item = new JMenuItem(f.getName());
+	item.addActionListener((ActionEvent e) -> {
+	  int retVal = GUIHelper.showConfirmMessage(display.getParent(), "Do you want to update favorite '" + f.getName() + "'?");
+	  if (retVal != ApprovalDialog.APPROVE_OPTION)
+	    return;
+	  AbstractContentHandler current = display.getContentHandler();
+	  ContentHandlerFavorites.getSingleton().updateFavorite(ext, f.getName(), current);
+	  customizeDropDownButton(button, ext, display);
+	});
+	submenu.add(item);
+      }
+    }
+
     // for removing favorites
     if (favorites.size() > 0) {
       button.addSeparatorToMenu();
@@ -480,9 +562,9 @@ public class ContentHandlerFavorites
     if (favorites.size() > 0) {
       item = new JMenuItem("Remove all for ." + ext);
       item.addActionListener((ActionEvent e) -> {
-        int retVal = GUIHelper.showConfirmMessage(display.getParent(), "Do you want to delete all favorites for extension '." + ext + "'?");
-        if (retVal != ApprovalDialog.APPROVE_OPTION)
-          return;
+	int retVal = GUIHelper.showConfirmMessage(display.getParent(), "Do you want to delete all favorites for extension '." + ext + "'?");
+	if (retVal != ApprovalDialog.APPROVE_OPTION)
+	  return;
 	ContentHandlerFavorites.getSingleton().removeFavorites(ext);
 	customizeDropDownButton(button, ext, display);
       });
