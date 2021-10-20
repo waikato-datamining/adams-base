@@ -82,7 +82,7 @@ public class PreviewDisplay
   protected BaseButtonWithDropDownMenu m_ButtonFavorites;
 
   /** the cached previews (content handler -> preview). */
-  protected Map<Class,PreviewPanel> m_PreviewCache;
+  protected Map<String,PreviewPanel> m_PreviewCache;
 
   /** the button for displaying the options for the content handler. */
   protected BaseButton m_ButtonContentHandler;
@@ -378,8 +378,8 @@ public class PreviewDisplay
 
       if (contentHandler != null) {
 	// cached?
-	if (m_ReusePreviews && m_PreviewCache.containsKey(contentHandler.getClass())) {
-	  result = m_PreviewCache.get(contentHandler.getClass());
+	if (m_ReusePreviews && m_PreviewCache.containsKey(contentHandler.toCommandLine())) {
+	  result = m_PreviewCache.get(contentHandler.toCommandLine());
 	  if (contentHandler instanceof MultipleFileContentHandler)
 	    result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
 	  else
@@ -393,7 +393,7 @@ public class PreviewDisplay
 	}
 	// cache preview
 	if (m_ReusePreviews)
-	  m_PreviewCache.put(contentHandler.getClass(), result);
+	  m_PreviewCache.put(contentHandler.toCommandLine(), result);
       }
 
       SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
