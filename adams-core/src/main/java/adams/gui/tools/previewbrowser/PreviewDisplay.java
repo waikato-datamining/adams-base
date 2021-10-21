@@ -179,6 +179,7 @@ public class PreviewDisplay
    */
   public void updateFavorite(String ext, ContentHandlerFavorites.ContentHandlerFavorite favorite) {
     m_Favorites.put(ext, favorite);
+    m_CurrentFavorite = favorite;
   }
 
   /**
@@ -187,8 +188,6 @@ public class PreviewDisplay
    * @param favorite	the favorite instance
    */
   public void selectFavorite(ContentHandlerFavorites.ContentHandlerFavorite favorite) {
-    m_CurrentFavorite = favorite;
-
     updateFavorite(m_CurrentExtension, favorite);
 
     // we have favorites available now
@@ -201,6 +200,18 @@ public class PreviewDisplay
     m_ComboBoxContentHandlers.setSelectedIndex(0);
     m_IgnoreContentHandlerChanges = false;
     display(m_CurrentFiles, true);
+  }
+
+  /**
+   * Returns the actual content handler in use.
+   *
+   * @return		the handler in use
+   */
+  public AbstractContentHandler getActualContentHandler() {
+    if (m_CurrentFavorite != null)
+      return m_CurrentFavorite.getHandler();
+    else
+      return getContentHandler();
   }
 
   /**
@@ -256,6 +267,8 @@ public class PreviewDisplay
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;
 
+    m_PreviewCache.remove(handler.toCommandLine());
+
     if (index == -1) {
       favorite = new ContentHandlerFavorites.ContentHandlerFavorite(m_CurrentExtension, m_CurrentFavorite.m_Name, (AbstractContentHandler) dialog.getCurrent());
       updateFavorite(m_CurrentExtension, favorite);
@@ -265,7 +278,6 @@ public class PreviewDisplay
       PropertiesManager.setCustomContentHandler(handler);
       m_ListContentHandlers.set(index, handler);
     }
-    m_PreviewCache.remove(handler.getClass());
 
     if (m_CurrentFiles != null)
       display(m_CurrentFiles, false);
@@ -333,9 +345,9 @@ public class PreviewDisplay
       m_ModelContentHandlers.removeAllElements();
       m_ListContentHandlers.clear();
       if (m_Favorites.containsKey(ext)) {
-        if (m_CurrentFavorite != null)
+	if (m_CurrentFavorite != null)
 	  m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + ": " + m_CurrentFavorite.getName() + "]");
-        else
+	else
 	  m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + "]");
       }
       else {
@@ -350,10 +362,10 @@ public class PreviewDisplay
 
       contentHandler = null;
       if (m_CurrentFavorite != null) {
-        if (m_CurrentFavorite.getExtension().equalsIgnoreCase(ext))
+	if (m_CurrentFavorite.getExtension().equalsIgnoreCase(ext))
 	  contentHandler = m_CurrentFavorite.getHandler();
-        else
-          m_CurrentFavorite = null;
+	else
+	  m_CurrentFavorite = null;
       }
       if (contentHandler == null) {
 	// set preferred one
