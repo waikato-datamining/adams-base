@@ -349,6 +349,8 @@ public class ContentHandlerFavorites
 	result.add(f);
     }
 
+    Collections.sort(result);
+
     return result;
   }
 
@@ -509,7 +511,7 @@ public class ContentHandlerFavorites
     // for adding a favorite
     item = new JMenuItem("Add to favorites...");
     item.addActionListener((ActionEvent e) -> {
-      AbstractContentHandler current = display.getContentHandler();
+      AbstractContentHandler current = display.getActualContentHandler();
       String name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
       if (name == null)
 	return;
@@ -531,7 +533,7 @@ public class ContentHandlerFavorites
 	  int retVal = GUIHelper.showConfirmMessage(display.getParent(), "Do you want to update favorite '" + f.getName() + "'?");
 	  if (retVal != ApprovalDialog.APPROVE_OPTION)
 	    return;
-	  AbstractContentHandler current = display.getContentHandler();
+	  AbstractContentHandler current = display.getActualContentHandler();
 	  ContentHandlerFavorites.getSingleton().updateFavorite(ext, f.getName(), current);
 	  customizeDropDownButton(button, ext, display);
 	});
