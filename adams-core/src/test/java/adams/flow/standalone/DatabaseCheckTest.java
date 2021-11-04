@@ -15,7 +15,7 @@
 
 /*
  * DatabaseCheckTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -33,7 +33,6 @@ import junit.framework.TestSuite;
  * Tests the DatabaseCheck actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseCheckTest
   extends AbstractFlowTest {
@@ -59,7 +58,7 @@ public class DatabaseCheckTest
     dbcon.setPassword(getDatabasePassword());
 
     DatabaseCheck dbc = new DatabaseCheck();
-    dbc.setRegExp(new BaseRegExp(".*" + getDatabaseURL().replaceAll(".*\\/", "") + ".*"));
+    dbc.setRegExp(new BaseRegExp(".*" + getDatabaseURL().replaceAll("\\?.*", "").replaceAll(".*\\/", "") + ".*"));
 
     Flow flow = new Flow();
     flow.setActors(new Actor[]{
