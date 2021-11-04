@@ -15,7 +15,7 @@
 
 /*
  * StandalonesTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -35,7 +35,6 @@ import junit.framework.TestSuite;
  * Just uses the WhileLoopTest since it uses a Standalones actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StandalonesTest
   extends AbstractFlowTest {
@@ -61,7 +60,7 @@ public class StandalonesTest
     dbcon.setPassword(getDatabasePassword());
 
     DatabaseCheck dbc = new DatabaseCheck();
-    dbc.setRegExp(new BaseRegExp(".*" + getDatabaseURL().replaceAll(".*\\/", "") + ".*"));
+    dbc.setRegExp(new BaseRegExp(".*" + getDatabaseURL().replaceAll("\\?.*", "").replaceAll(".*\\/", "") + ".*"));
 
     Tool tl = new Tool();
 
