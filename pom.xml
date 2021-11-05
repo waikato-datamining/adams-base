@@ -33,8 +33,6 @@
     <module>adams-groovy</module>
     <module>adams-imaging</module>
     <module>adams-imaging-boofcv</module>
-    <module>adams-imaging-imagemagick</module>
-    <module>adams-imaging-openimaj</module>
     <module>adams-json</module>
     <module>adams-jython</module>
     <module>adams-math</module>
