@@ -15,7 +15,7 @@
 
 /*
  * Debug.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -676,7 +676,7 @@ public class Debug
     if (getOwner() == null)
       return false;
     if (getOwner().getRoot() instanceof Flow) {
-      newListenerPanel();
+      newListenerPanelIfNecessary();
       ((Flow) getOwner().getRoot()).showGraphicalFlowExecutionListeners();
       return true;
     }
