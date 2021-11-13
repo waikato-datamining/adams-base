@@ -15,7 +15,7 @@
 
 /*
  * PreferencesManagerPanel.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -29,9 +29,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
 import adams.gui.core.UISettings;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -116,14 +114,29 @@ public class PreferencesManagerPanel
       panelButtons.add(buttonReset);
       final BaseButton buttonApply = new BaseButton("Apply");
       buttonApply.addActionListener((ActionEvent e) -> {
-	String msg = panel.activate();
-	if (msg != null)
-	  GUIHelper.showErrorMessage(
-	    PreferencesManagerPanel.this,
-	    "Failed to activate preferences for " + panel.getTitle() + ":\n" + msg);
-	else
-	  showRestartNotification();
-	buttonReset.setEnabled(panel.canReset());
+	SwingWorker worker = new SwingWorker() {
+	  String msg = null;
+	  @Override
+	  protected Object doInBackground() throws Exception {
+	    buttonReset.setEnabled(false);
+	    buttonApply.setEnabled(false);
+	    msg = panel.activate();
+	    return null;
+	  }
+	  @Override
+	  protected void done() {
+	    buttonApply.setEnabled(true);
+	    buttonReset.setEnabled(panel.canReset());
+	    if (msg != null)
+	      GUIHelper.showErrorMessage(
+		  PreferencesManagerPanel.this,
+		  "Failed to activate preferences for " + panel.getTitle() + ":\n" + msg);
+	    else
+	      showRestartNotification();
+	    super.done();
+	  }
+	};
+	worker.execute();
       });
       panelButtons.add(buttonApply);
       if (panel.requiresWrapper())
