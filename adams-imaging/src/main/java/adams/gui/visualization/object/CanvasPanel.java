@@ -15,7 +15,7 @@
 
 /*
  * CanvasPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -129,7 +129,7 @@ public class CanvasPanel
     setLayout(new BorderLayout());
 
     addMouseWheelListener((MouseWheelEvent e) -> {
-      double oldZoom = m_Owner.getZoom();
+      double oldZoom = m_Owner.getActualZoom();
       double newZoom;
       int rotation = e.getWheelRotation();
       if (rotation < 0)
