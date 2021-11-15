@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2020 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,13 +31,19 @@ import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextAreaWithButtons;
+import adams.gui.core.BaseToggleButton;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
+import adams.gui.help.AbstractHelpGenerator;
+import adams.gui.help.HelpContainer;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
@@ -108,6 +114,15 @@ public class PropertySheetPanel extends BasePanel
   /** Holds current object values for each property. */
   protected Object[] m_Values;
 
+  /** the split pane. */
+  protected BaseSplitPane m_SplitPane;
+
+  /** the panel with the content. */
+  protected JPanel m_PanelContent;
+
+  /** the editor pane. */
+  protected BaseHtmlEditorPane m_PanelHelp;
+
   /** the panel for the parameters. */
   protected ParameterPanel m_ParameterPanel;
 
@@ -124,7 +139,7 @@ public class PropertySheetPanel extends BasePanel
   protected String m_GlobalInfo;
 
   /** Button to pop up the full help text in a separate frame. */
-  protected BaseButton m_ButtonHelp;
+  protected BaseToggleButton m_ButtonHelp;
 
   /** The panel holding global info and help, if provided by
       the object being editied. */
@@ -133,15 +148,44 @@ public class PropertySheetPanel extends BasePanel
   /** A support object for handling property change listeners. */
   protected PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
 
-  /** whether to suppress the about box. */
+  /** whether to show/suppress the about box. */
   protected boolean m_ShowAboutBox;
 
   /**
-   * Creates the property sheet panel.
+   * For initializing members.
    */
-  public PropertySheetPanel() {
-    setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+  @Override
+  protected void initialize() {
+    super.initialize();
+
     m_ShowAboutBox = true;
+  }
+
+  /**
+   * Initializes the widgets.
+   */
+  @Override
+  protected void initGUI() {
+    super.initGUI();
+
+    setLayout(new BorderLayout());
+    setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+
+    m_PanelContent = new JPanel(new BorderLayout());
+
+    m_PanelHelp = new BaseHtmlEditorPane();
+    m_PanelHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_PanelHelp.setFont(Fonts.getMonospacedFont());
+    m_PanelHelp.addHyperlinkListener(new HelpFrame.HelpHyperlinkListener());
+    m_PanelHelp.setPreferredSize(new Dimension(200, 20));
+    m_PanelHelp.setFont(Fonts.getMonospacedFont());
+
+    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPane.setResizeWeight(0.5);
+    m_SplitPane.setLeftComponent(m_PanelContent);
+    m_SplitPane.setRightComponent(new BaseScrollPane(m_PanelHelp));
+    m_SplitPane.setRightComponentHidden(true);
+    add(m_SplitPane, BorderLayout.CENTER);
   }
 
   /**
@@ -356,24 +400,28 @@ public class PropertySheetPanel extends BasePanel
     initHelp();
 
     // Close any child windows at this point
-    removeAll();
+    m_PanelContent.removeAll();
 
-    setLayout(new BorderLayout());
+    m_PanelContent.setLayout(new BorderLayout());
     JPanel scrollablePanel = new JPanel(new BorderLayout());
     BaseScrollPane scrollPane = new BaseScrollPane(scrollablePanel);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
-    add(scrollPane, BorderLayout.CENTER);
+    m_PanelContent.add(scrollPane, BorderLayout.CENTER);
 
-    setVisible(false);
+    m_PanelContent.setVisible(false);
 
     if (m_GlobalInfo != null) {
       summary = extractFirstSentence(m_GlobalInfo, true);
-      m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      m_ButtonHelp = new BaseToggleButton(GUIHelper.getIcon("help.gif"));
       m_ButtonHelp.setToolTipText("Help on " + m_Target.getClass().getName());
+      m_ButtonHelp.setSelected(!m_SplitPane.isRightComponentHidden());
       m_ButtonHelp.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent a) {
-	  openHelpDialog();
+	  if (m_ButtonHelp.isSelected())
+	    openHelpPanel();
+	  else
+	    closeHelpPanel();
 	}
       });
 
@@ -390,7 +438,7 @@ public class PropertySheetPanel extends BasePanel
 	  BorderFactory.createEmptyBorder(5, 5, 5, 5)));
       m_PanelAbout.addToButtonsPanel(m_ButtonHelp);
       if (m_ShowAboutBox)
-	add(m_PanelAbout, BorderLayout.NORTH);
+	m_PanelContent.add(m_PanelAbout, BorderLayout.NORTH);
     }
 
     m_ParameterPanel = null;
@@ -558,23 +606,11 @@ public class PropertySheetPanel extends BasePanel
       scrollablePanel.add(empty);
     }
 
-    // Mnemonics don't seem to work here??
-    //setMnemonics();
+    m_PanelContent.validate();
 
-    validate();
-
-    // sometimes, the calculated dimensions seem to be too small and the
-    // scrollbars show up, though there is still plenty of space on the
-    // screen. hence we increase the dimensions a bit to fix this.
-    dim = scrollablePanel.getPreferredSize();
-    dim.height += 5;
-    dim.width  += 5;
-    scrollPane.setPreferredSize(dim);
-    validate();
-    if (getParentDialog() != null)
-      GUIHelper.fixPosition(getParentDialog());
-
-    setVisible(true);
+    m_PanelContent.setVisible(true);
+    if (!m_SplitPane.isRightComponentHidden())
+      updateHelpPanel();
   }
 
   /**
@@ -604,11 +640,36 @@ public class PropertySheetPanel extends BasePanel
   }
 
   /**
-   * opens the help frame.
+   * opens the help panel.
    */
-  protected void openHelpDialog() {
+  protected void openHelpPanel() {
+    HelpContainer cont;
+
     initHelp();
-    HelpFrame.showHelp(getTarget());
+    updateHelpPanel();
+    m_SplitPane.setRightComponentHidden(false);
+  }
+
+  /**
+   * Updates the content in the help panel.
+   */
+  protected void updateHelpPanel() {
+    HelpContainer 	cont;
+    int			location;
+
+    location = m_SplitPane.getDividerLocation();
+    cont = AbstractHelpGenerator.generateHelp(getTarget());
+    m_PanelHelp.setContentType(cont.isHtml() ? "text/html" : "text/plain");
+    m_PanelHelp.setText(cont.getHelp());
+    m_PanelHelp.setCaretPosition(0);
+    m_SplitPane.setDividerLocation(location);
+  }
+
+  /**
+   * closes the help panel.
+   */
+  protected void closeHelpPanel() {
+    m_SplitPane.setRightComponentHidden(true);
   }
 
   /**
@@ -850,7 +911,7 @@ public class PropertySheetPanel extends BasePanel
    *
    * @return		the help button
    */
-  public BaseButton getHelpButton() {
+  public BaseToggleButton getHelpButton() {
     return m_ButtonHelp;
   }
 }
