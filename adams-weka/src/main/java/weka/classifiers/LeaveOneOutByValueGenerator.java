@@ -257,8 +257,10 @@ public class LeaveOneOutByValueGenerator
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
 
-    if (canRandomize())
+    if (canRandomize()) {
+      m_Data = new Instances(m_Data);
       m_Data.randomize(new Random(getSeed()));
+    }
 
     m_UniqueValues = new ArrayList<>();
     m_Index.setData(m_Data);
