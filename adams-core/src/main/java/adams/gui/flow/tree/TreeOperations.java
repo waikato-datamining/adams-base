@@ -15,7 +15,7 @@
 
 /*
  * TreeOperations.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -852,6 +852,7 @@ public class TreeOperations
     else
       dialog.setTitle("Show...");
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setShowHelpInline(false);
     dialog.getGOEEditor().setClassType(Actor.class);
     dialog.setProposedClasses(null);
     dialog.setCurrent(currNode.getActor().shallowCopy());

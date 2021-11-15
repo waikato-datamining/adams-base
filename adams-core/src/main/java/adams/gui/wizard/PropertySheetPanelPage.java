@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertySheetPanelPage.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -23,16 +23,14 @@ import adams.core.Properties;
 import adams.core.option.OptionUtils;
 import adams.gui.goe.PropertySheetPanel;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * Wizard page that use a {@link PropertySheetPanel} for displaying
  * the properties of an object.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertySheetPanelPage
   extends AbstractWizardPage {
@@ -72,12 +70,8 @@ public class PropertySheetPanelPage
     
     m_PanelSheet = new PropertySheetPanel();
     m_PanelSheet.setShowAboutBox(false);
-    m_PanelSheet.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        updateButtons();
-      }
-    });
+    m_PanelSheet.setShowHelpInline(false);
+    m_PanelSheet.addPropertyChangeListener((PropertyChangeEvent evt) -> updateButtons());
     add(m_PanelSheet, BorderLayout.CENTER);
   }
 

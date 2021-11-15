@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2020 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -142,6 +142,9 @@ public class GenericObjectEditor
 
   /** whether the class can be changed. */
   protected boolean m_canChangeClassInDialog;
+
+  /** whether to display the help inline or separate dialog. */
+  protected boolean m_ShowHelpInline;
 
   /** the class filter in use. */
   protected AbstractItemFilter m_Filter;
@@ -610,6 +613,7 @@ public class GenericObjectEditor
       }
 
       // Set the object as the target of the propertysheet
+      m_PropertySheetChild.setShowHelpInline(m_ShowHelpInline);
       m_PropertySheetChild.setTarget(m_Object);
 
       // update tree
@@ -710,6 +714,7 @@ public class GenericObjectEditor
     m_DefaultValue             = null;
     m_MinimumChars             = 0;
     m_PostProcessObjectHandler = null;
+    m_ShowHelpInline           = true;
 
     setCanChangeClassInDialog(canChangeClassInDialog);
   }
@@ -734,6 +739,24 @@ public class GenericObjectEditor
    */
   public boolean getCanChangeClassInDialog() {
     return m_canChangeClassInDialog;
+  }
+
+  /**
+   * Sets whether to show the help in panel or as separate dialog.
+   *
+   * @param value	true if to show in panel
+   */
+  public void setShowHelpInline(boolean value) {
+    m_ShowHelpInline = value;
+  }
+
+  /**
+   * Returns whether the help is display in panel or separate dialog.
+   *
+   * @return		true if shown in panel
+   */
+  public boolean getShowHelpInline() {
+    return m_ShowHelpInline;
   }
 
   /**

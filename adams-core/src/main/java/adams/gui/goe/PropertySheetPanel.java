@@ -46,6 +46,7 @@ import adams.gui.help.AbstractHelpGenerator;
 import adams.gui.help.HelpContainer;
 import adams.gui.help.HelpFrame;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -59,7 +60,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.Beans;
@@ -139,7 +139,7 @@ public class PropertySheetPanel extends BasePanel
   protected String m_GlobalInfo;
 
   /** Button to pop up the full help text in a separate frame. */
-  protected BaseToggleButton m_ButtonHelp;
+  protected AbstractButton m_ButtonHelp;
 
   /** The panel holding global info and help, if provided by
       the object being editied. */
@@ -151,6 +151,9 @@ public class PropertySheetPanel extends BasePanel
   /** whether to show/suppress the about box. */
   protected boolean m_ShowAboutBox;
 
+  /** whether to display the help in panel or separate dialog. */
+  protected boolean m_ShowHelpInline;
+
   /**
    * For initializing members.
    */
@@ -158,7 +161,8 @@ public class PropertySheetPanel extends BasePanel
   protected void initialize() {
     super.initialize();
 
-    m_ShowAboutBox = true;
+    m_ShowAboutBox   = true;
+    m_ShowHelpInline = true;
   }
 
   /**
@@ -205,6 +209,25 @@ public class PropertySheetPanel extends BasePanel
    */
   public boolean getShowAboutBox() {
     return m_ShowAboutBox;
+  }
+
+  /**
+   * Sets whether to show the help in panel or as separate dialog.
+   * Must happen before calling {@link #setTarget(Object)}.
+   *
+   * @param value	true if to show in panel
+   */
+  public void setShowHelpInline(boolean value) {
+    m_ShowHelpInline = value;
+  }
+
+  /**
+   * Returns whether the help is display in panel or separate dialog.
+   *
+   * @return		true if shown in panel
+   */
+  public boolean getShowHelpInline() {
+    return m_ShowHelpInline;
   }
 
   /**
@@ -391,7 +414,6 @@ public class PropertySheetPanel extends BasePanel
     JLabel 				empty;
     AbstractGenericObjectEditorHandler	handler;
     boolean				canChangeClass;
-    Dimension				dim;
     JComponent				view;
 
     m_Target = targ;
@@ -412,16 +434,23 @@ public class PropertySheetPanel extends BasePanel
 
     if (m_GlobalInfo != null) {
       summary = extractFirstSentence(m_GlobalInfo, true);
-      m_ButtonHelp = new BaseToggleButton(GUIHelper.getIcon("help.gif"));
+      if (m_ShowHelpInline) {
+	m_ButtonHelp = new BaseToggleButton(GUIHelper.getIcon("help.gif"));
+	m_ButtonHelp.setSelected(!m_SplitPane.isRightComponentHidden());
+      }
+      else {
+	m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      }
       m_ButtonHelp.setToolTipText("Help on " + m_Target.getClass().getName());
-      m_ButtonHelp.setSelected(!m_SplitPane.isRightComponentHidden());
-      m_ButtonHelp.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent a) {
+      m_ButtonHelp.addActionListener((ActionEvent a) -> {
+	if (m_ShowHelpInline) {
 	  if (m_ButtonHelp.isSelected())
 	    openHelpPanel();
 	  else
 	    closeHelpPanel();
+	}
+	else {
+	  openHelpDialog();
 	}
       });
 
@@ -623,28 +652,17 @@ public class PropertySheetPanel extends BasePanel
   }
 
   /**
-   * Sets the mnemonics of the labels.
+   * opens the help frame.
    */
-  protected void setMnemonics() {
-    String[]	labels;
-    char[]	mnemonics;
-    int		i;
-
-    labels = new String[editableProperties()];
-    for (i = 0; i < editableProperties(); i++)
-      labels[i] = m_ParameterPanel.getLabel(i).getText();
-
-    mnemonics = GUIHelper.getMnemonics(labels);
-    for (i = 0; i < editableProperties(); i++)
-      m_ParameterPanel.getLabel(i).setDisplayedMnemonic(mnemonics[i]);
+  protected void openHelpDialog() {
+    initHelp();
+    HelpFrame.showHelp(getTarget());
   }
 
   /**
    * opens the help panel.
    */
   protected void openHelpPanel() {
-    HelpContainer cont;
-
     initHelp();
     updateHelpPanel();
     m_SplitPane.setRightComponentHidden(false);
@@ -700,8 +718,7 @@ public class PropertySheetPanel extends BasePanel
 	  m_Values[i] = value;
 	  Method setter = property.getWriteMethod();
 	  try {
-	    Object args[] = { value };
-	    args[0] = value;
+	    Object[] args = {value};
 	    setter.invoke(m_Target, args);
 	  }
 	  catch (InvocationTargetException ex) {
@@ -762,7 +779,7 @@ public class PropertySheetPanel extends BasePanel
 	if (getter == null || setter == null)
 	  continue;
 
-	Object args[] = { };
+	Object[] args = {};
 	o = getter.invoke(m_Target, args);
       }
       catch (Exception ex) {
@@ -904,14 +921,5 @@ public class PropertySheetPanel extends BasePanel
       result = null;
 
     return result;
-  }
-
-  /**
-   * Returns the help button in use.
-   *
-   * @return		the help button
-   */
-  public BaseToggleButton getHelpButton() {
-    return m_ButtonHelp;
   }
 }
