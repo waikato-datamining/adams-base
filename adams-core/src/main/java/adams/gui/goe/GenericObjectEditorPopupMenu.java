@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -105,6 +105,17 @@ public class GenericObjectEditorPopupMenu
       canChangeClass = getCanChangeClassInDialog(((GenericArrayEditor) editor).getElementEditor());
     else
       canChangeClass = getCanChangeClassInDialog(editor);
+
+    item = new JMenuItem("Use default", GUIHelper.getIcon("undo.gif"));
+    item.addActionListener((ActionEvent e) -> {
+      try {
+	editor.setValue(editor.getValue().getClass().newInstance());
+      }
+      catch (Exception ex) {
+        GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
+      }
+    });
+    add(item);
 
     // copy nested
     if (hasNested) {
