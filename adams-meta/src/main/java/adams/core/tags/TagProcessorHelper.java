@@ -15,11 +15,12 @@
 
 /*
  * TagProcessorHelper.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.tags;
 
+import adams.core.Variables;
 import adams.core.base.BaseKeyValuePair;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
@@ -52,7 +53,7 @@ public class TagProcessorHelper {
     tags = ((TagHandler) obj).getAllTags();
     for (BaseKeyValuePair t: tags) {
       if (t.getPairKey().equals(tag))
-        return true;
+	return true;
     }
 
     return false;
@@ -63,11 +64,13 @@ public class TagProcessorHelper {
    *
    * @param obj		the object to obtain the tag value from
    * @param tag		the tag to look for
+   * @param vars	the variables to use, ignored if null
    * @return		the associated value, otherwise null
    * 			(eg if the object is not a tag handler or the tag
    * 			is not present)
    */
-  protected static String getTagValue(Object obj, String tag) {
+  protected static String getTagValue(Object obj, String tag, Variables vars) {
+    String			result;
     List<BaseKeyValuePair>	tags;
 
     if (!(obj instanceof TagHandler))
@@ -75,8 +78,16 @@ public class TagProcessorHelper {
 
     tags = ((TagHandler) obj).getAllTags();
     for (BaseKeyValuePair t: tags) {
-      if (t.getPairKey().equals(tag))
-        return t.getPairValue();
+      if (t.getPairKey().equals(tag)) {
+        result = t.getPairValue();
+        if ((vars != null) && (result.contains(Variables.START))) {
+          result = vars.expand(result);
+          // failed to expand? use null
+          if (result.contains(Variables.START))
+            result = null;
+        }
+        return result;
+      }
     }
 
     return null;
@@ -93,9 +104,24 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static String getTagString(Object obj, String tag, String defValue) {
+    return getTagString(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static String getTagString(Object obj, String tag, String defValue, Variables vars) {
     String	result;
 
-    result = getTagValue(obj, tag);
+    result = getTagValue(obj, tag, vars);
     if (result == null)
       result = defValue;
 
@@ -113,17 +139,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static boolean getTagBoolean(Object obj, String tag, boolean defValue) {
+    return getTagBoolean(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static boolean getTagBoolean(Object obj, String tag, boolean defValue, Variables vars) {
     boolean	result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Boolean.parseBoolean(value);
+	result = Boolean.parseBoolean(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -141,17 +182,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static byte getTagByte(Object obj, String tag, byte defValue) {
+    return getTagByte(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static byte getTagByte(Object obj, String tag, byte defValue, Variables vars) {
     byte		result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Byte.parseByte(value);
+	result = Byte.parseByte(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -169,17 +225,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static int getTagInt(Object obj, String tag, int defValue) {
+    return getTagInt(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static int getTagInt(Object obj, String tag, int defValue, Variables vars) {
     int		result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Integer.parseInt(value);
+	result = Integer.parseInt(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -197,17 +268,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static long getTagLong(Object obj, String tag, long defValue) {
+    return getTagLong(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static long getTagLong(Object obj, String tag, long defValue, Variables vars) {
     long	result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Long.parseLong(value);
+	result = Long.parseLong(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -225,17 +311,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static float getTagFloat(Object obj, String tag, float defValue) {
+    return getTagFloat(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static float getTagFloat(Object obj, String tag, float defValue, Variables vars) {
     float	result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Float.parseFloat(value);
+	result = Float.parseFloat(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -253,17 +354,32 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   public static double getTagDouble(Object obj, String tag, double defValue) {
+    return getTagDouble(obj, tag, defValue, null);
+  }
+
+  /**
+   * Returns the value of the tag if present, otherwise the default value.
+   *
+   * @param obj		the object to obtain the tag value from
+   * @param tag		the tag to look for
+   * @param defValue	the default value
+   * @param vars	the variables to use, ignored if null
+   * @return		the associated value, otherwise the default value
+   * 			(eg if the object is not a tag handler or the tag
+   * 			is not present)
+   */
+  public static double getTagDouble(Object obj, String tag, double defValue, Variables vars) {
     double	result;
     String	value;
 
     result = defValue;
-    value  = getTagValue(obj, tag);
+    value  = getTagValue(obj, tag, vars);
     if (value != null) {
       try {
-        result = Double.parseDouble(value);
+	result = Double.parseDouble(value);
       }
       catch (Exception e) {
-        result = defValue;
+	result = defValue;
       }
     }
 
@@ -301,9 +417,9 @@ public class TagProcessorHelper {
   protected static void addToMap(Map<String,BaseKeyValuePair> map, BaseKeyValuePair[] tags, boolean override) {
     for (BaseKeyValuePair tag: tags) {
       if (map.containsKey(tag.getPairValue()) && override)
-        map.put(tag.getPairKey(), tag);
+	map.put(tag.getPairKey(), tag);
       else if (!map.containsKey(tag.getPairKey()))
-        map.put(tag.getPairKey(), tag);
+	map.put(tag.getPairKey(), tag);
     }
   }
 
