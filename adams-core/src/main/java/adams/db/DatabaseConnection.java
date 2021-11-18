@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -32,10 +32,9 @@ import adams.env.Environment;
  * Currently set up for MYSQL.
  *
  *  @author  dale (dale at waikato dot ac dot nz)
- *  @version $Revision$
  */
 public class DatabaseConnection
-  extends AbstractDatabaseConnection {
+    extends AbstractDatabaseConnection {
 
   /** for serialization. */
   private static final long serialVersionUID = -3625820307854172417L;
@@ -45,11 +44,6 @@ public class DatabaseConnection
 
   /** for managing the database connections. */
   private static DatabaseManager<DatabaseConnection> m_DatabaseManager;
-  static {
-    m_DatabaseManager = new DatabaseManager<>("adams");
-    DatabaseConnection dbcon = new DatabaseConnection();
-    m_DatabaseManager.setDefault(DatabaseConnection.getSingleton(dbcon.getURL(), dbcon.getUser(), dbcon.getPassword()));
-  }
 
   /**
    * Local Database Constructor.
@@ -91,6 +85,20 @@ public class DatabaseConnection
   }
 
   /**
+   * Returns the database manager, instantiates it if necessary.
+   *
+   * @return		the manager
+   */
+  protected static synchronized DatabaseManager<DatabaseConnection> getDatabaseManager() {
+    if (m_DatabaseManager == null) {
+      m_DatabaseManager = new DatabaseManager<>("adams");
+      DatabaseConnection dbcon = new DatabaseConnection();
+      m_DatabaseManager.setDefault(DatabaseConnection.getSingleton(dbcon.getURL(), dbcon.getUser(), dbcon.getPassword()));
+    }
+    return m_DatabaseManager;
+  }
+
+  /**
    * Returns the global database connection object. If not instantiated yet, it
    * will automatically try to connect to the database server.
    *
@@ -100,13 +108,13 @@ public class DatabaseConnection
    * @return		the singleton
    */
   public static synchronized DatabaseConnection getSingleton(String url, String user, BasePassword password) {
-    if (!m_DatabaseManager.has(url, user, password)) {
-      m_DatabaseManager.add(new DatabaseConnection(url, user, password));
+    if (!getDatabaseManager().has(url, user, password)) {
+      getDatabaseManager().add(new DatabaseConnection(url, user, password));
     }
     else {
-      if (!m_DatabaseManager.get(url, user, password).isConnected()) {
+      if (!getDatabaseManager().get(url, user, password).isConnected()) {
 	try {
-	  m_DatabaseManager.get(url, user, password).connect();
+	  getDatabaseManager().get(url, user, password).connect();
 	}
 	catch (Exception e) {
 	  e.printStackTrace();
@@ -114,7 +122,7 @@ public class DatabaseConnection
       }
     }
 
-    return m_DatabaseManager.get(url, user, password);
+    return getDatabaseManager().get(url, user, password);
   }
 
   /**
@@ -126,7 +134,7 @@ public class DatabaseConnection
    * @see		#getConnectOnStartUp()
    */
   public static synchronized DatabaseConnection getSingleton() {
-    return m_DatabaseManager.getDefault();
+    return getDatabaseManager().getDefault();
   }
 
   /**

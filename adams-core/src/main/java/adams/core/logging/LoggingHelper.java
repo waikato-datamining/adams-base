@@ -15,7 +15,7 @@
 
 /*
  * LoggingHelper.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -54,11 +54,6 @@ public class LoggingHelper {
 
   /** the formatter for the timestamp. */
   protected static DateFormat m_DateFormat;
-
-  static {
-    m_DefaultHandler = new MultiHandler();
-    ((MultiHandler) m_DefaultHandler).addHandler(new SimpleConsoleHandler());
-  }
 
   /**
    * Returns the log level for the specified class. E.g., for the class
@@ -144,8 +139,8 @@ public class LoggingHelper {
 
     result = Logger.getLogger(cls.getName());
     result.setLevel(getLevel(cls));
-    result.removeHandler(m_DefaultHandler);
-    result.addHandler(m_DefaultHandler);
+    result.removeHandler(getDefaultHandler());
+    result.addHandler(getDefaultHandler());
     result.setUseParentHandlers(false);
 
     return result;
@@ -163,8 +158,8 @@ public class LoggingHelper {
 
     result = Logger.getLogger(name);
     result.setLevel(Level.WARNING);
-    result.removeHandler(m_DefaultHandler);
-    result.addHandler(m_DefaultHandler);
+    result.removeHandler(getDefaultHandler());
+    result.addHandler(getDefaultHandler());
     result.setUseParentHandlers(false);
 
     return result;
@@ -257,7 +252,7 @@ public class LoggingHelper {
    *
    * @param value	the handler
    */
-  public static void setDefaultHandler(Handler value) {
+  public static synchronized void setDefaultHandler(Handler value) {
     Handler			old;
     LogManager			manager;
     Enumeration<String>		names;
@@ -295,7 +290,11 @@ public class LoggingHelper {
    *
    * @return		the handler
    */
-  public static Handler getDefaultHandler() {
+  public static synchronized Handler getDefaultHandler() {
+    if (m_DefaultHandler == null) {
+      m_DefaultHandler = new MultiHandler();
+      ((MultiHandler) m_DefaultHandler).addHandler(new SimpleConsoleHandler());
+    }
     return m_DefaultHandler;
   }
 
