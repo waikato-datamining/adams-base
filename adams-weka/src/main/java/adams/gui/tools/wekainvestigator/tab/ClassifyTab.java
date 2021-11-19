@@ -421,6 +421,7 @@ public class ClassifyTab
 	    for (int i = 0; i < comps.size(); i++) {
 	      JPanel subPanel = new JPanel(new BorderLayout());
 	      JLabel label = new JLabel(labels.get(i));
+	      label.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 	      subPanel.add(label, BorderLayout.NORTH);
 	      subPanel.add(comps.get(i), BorderLayout.CENTER);
 	      panel.addItem(subPanel);
