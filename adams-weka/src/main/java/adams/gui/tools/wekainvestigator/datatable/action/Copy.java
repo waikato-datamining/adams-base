@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Copy.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
  * Copies the selected dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Copy
   extends AbstractEditableDataTableAction {
@@ -70,7 +69,7 @@ public class Copy
     newCont = new MemoryContainer(new Instances(cont.getData()));
     newCont.getData().setRelationName(newName);
     getData().add(newCont);
-    logMessage("Successfully copied " + cont.getID() + " to " + newCont.getID() + "!");
+    logMessage("Successfully copied " + cont.getID() + "/" + cont.getData().relationName() + " to " + newCont.getID() + "/" + newCont.getData().relationName() + "!");
     fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_ADDED, getData().size() - 1));
   }
 
