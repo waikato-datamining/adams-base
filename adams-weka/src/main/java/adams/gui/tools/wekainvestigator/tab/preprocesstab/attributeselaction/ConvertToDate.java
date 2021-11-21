@@ -15,7 +15,7 @@
 
 /*
  * ConvertToDate.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
@@ -83,7 +83,7 @@ public class ConvertToDate
 	logError("Attribute at #" + (indices[i]+1) + " is not of type string!", getName());
 	return;
       }
-      indicesStr.append("" + (indices[i] + 1));
+      indicesStr.append("#" + (indices[i] + 1));
     }
 
     format = GUIHelper.showInputDialog(getOwner().getParent(), "Please enter parse format:", StringToDate.DEFAULT_FORMAT);
@@ -91,7 +91,7 @@ public class ConvertToDate
       return;
 
     run = () -> {
-      showStatus("Converting selected attributes to date...");
+      showStatus("Converting selected attributes to date: " + indicesStr);
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.StringToDate stringtodate = new weka.filters.unsupervised.attribute.StringToDate();

@@ -15,7 +15,7 @@
 
 /*
  * ConvertToString.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
@@ -76,11 +76,11 @@ public class ConvertToString
     for (i = 0; i < indices.length; i++) {
       if (i > 0)
         indicesStr.append(",");
-      indicesStr.append("" + (indices[i] + 1));
+      indicesStr.append("#" + (indices[i] + 1));
     }
 
     run = () -> {
-      showStatus("Converting checked attributes to string...");
+      showStatus("Converting checked attributes to string: " + indicesStr);
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();

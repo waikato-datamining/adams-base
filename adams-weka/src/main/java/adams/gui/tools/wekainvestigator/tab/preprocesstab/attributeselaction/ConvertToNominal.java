@@ -15,7 +15,7 @@
 
 /*
  * ConvertToNominal.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
@@ -77,11 +77,11 @@ public class ConvertToNominal
     for (i = 0; i < indices.length; i++) {
       if (i > 0)
         indicesStr.append(",");
-      indicesStr.append("" + (indices[i] + 1));
+      indicesStr.append("#" + (indices[i] + 1));
     }
 
     run = () -> {
-      showStatus("Converting selected attributes to nominal...");
+      showStatus("Converting selected attributes to nominal: " + indicesStr);
       boolean keep = getOwner().getCheckBoxKeepName().isSelected();
       String oldName = cont.getData().relationName();
       weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();
