@@ -258,6 +258,7 @@ public class AttributeSummaryPanel
     @Override
     protected void initGUI() {
       super.initGUI();
+      setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
       setShowSimpleHeaderPopupMenu(false);
       setShowSimpleCellPopupMenu(true);
       getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -326,10 +327,20 @@ public class AttributeSummaryPanel
 	}
 	setModel(new DefaultTableModel(data, colNames));
       }
+      else if (att.isString()) {
+	Object[] colNames = {"No.", "String value"};
+	Object[][] data = new Object[att.numValues()][2];
+	for (int i = 0; i < att.numValues(); i++) {
+	  data[i][0] = i + 1;
+	  data[i][1] = att.value(i);
+	}
+	setModel(new DefaultTableModel(data, colNames));
+      }
       else {
 	setModel(new DefaultTableModel());
       }
       getColumnModel().setColumnMargin(4);
+      setOptimalColumnWidth();
     }
   }
 
