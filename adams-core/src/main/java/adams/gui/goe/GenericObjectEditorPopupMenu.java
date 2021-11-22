@@ -110,6 +110,7 @@ public class GenericObjectEditorPopupMenu
     item.addActionListener((ActionEvent e) -> {
       try {
 	editor.setValue(editor.getValue().getClass().newInstance());
+	notifyChangeListeners();
       }
       catch (Exception ex) {
         GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
