@@ -138,9 +138,7 @@ public class SimpleArffSaver
   public void resetOptions() {
     super.resetOptions();
 
-    m_OutputFile       = null;
-    m_MaxDecimalPlaces = DEFAULT_MAX_DECIMAL_PLACES;
-    m_Encoding         = new BaseCharset();
+    m_OutputFile = null;
   }
 
   /**
@@ -410,7 +408,7 @@ public class SimpleArffSaver
    *
    * @param args 	should contain the options of a Saver.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     runFileSaver(new SimpleArffSaver(), args);
   }
 }

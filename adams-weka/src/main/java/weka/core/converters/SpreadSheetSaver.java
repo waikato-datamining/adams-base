@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSaver.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -123,7 +123,6 @@ public class SpreadSheetSaver
   public void resetOptions() {
     super.resetOptions();
     
-    m_Writer     = new CsvSpreadSheetWriter();
     m_OutputFile = null;
   }
   
