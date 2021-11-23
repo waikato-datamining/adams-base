@@ -261,7 +261,7 @@ public class AttributeSummaryPanel
       setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
       setShowSimpleHeaderPopupMenu(false);
       setShowSimpleCellPopupMenu(true);
-      getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
 
     /**
