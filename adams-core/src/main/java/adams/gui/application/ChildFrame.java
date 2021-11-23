@@ -15,7 +15,7 @@
 
 /*
  * ChildFrame.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -43,7 +43,6 @@ import java.awt.event.WindowEvent;
  * Specialized JFrame class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ChildFrame
   extends BaseFrame
@@ -143,12 +142,6 @@ public class ChildFrame
 
       @Override
       public void windowClosing(WindowEvent e) {
-        if (!m_UISettingsPrefix.isEmpty()) {
-          UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
-          UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
-          UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
-          UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
-        }
         cleanUp();
         if (!m_DisposeCalled && (getDefaultCloseOperation() == JFrame.DISPOSE_ON_CLOSE))
           dispose();
@@ -261,6 +254,16 @@ public class ChildFrame
    */
   @Override
   public void dispose() {
+    if (!m_DisposeCalled) {
+      if (!m_UISettingsPrefix.isEmpty()) {
+        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
+        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
+        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
+        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
+        UISettings.save();
+      }
+    }
+
     m_DisposeCalled = true;
 
     if (getParentFrame() != null) {
