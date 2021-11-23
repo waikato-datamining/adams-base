@@ -13,13 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowExecutionListenerWithTable.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
-import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
@@ -27,27 +26,17 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.GUIHelper;
-import adams.gui.core.MouseUtils;
 import adams.gui.core.SortableAndSearchableTable;
 
-import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
 
 /**
  * Ancestor for graphical listeners that display their data in a table.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowExecutionListenerWithTable
   extends AbstractGraphicalFlowExecutionListener {
@@ -89,13 +78,8 @@ public abstract class AbstractFlowExecutionListenerWithTable
     
     result  = new BasePanel(new BorderLayout());
     m_Table = new SortableAndSearchableTable(createTableModel());
-    m_Table.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-	if (MouseUtils.isRightClick(e))
-	  showPopupMenu(e);
-      }
-    });
+    m_Table.setShowSimpleCellPopupMenu(true);
+    m_Table.setShowSimpleHeaderPopupMenu(true);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
     
     return result;
@@ -149,50 +133,6 @@ public abstract class AbstractFlowExecutionListenerWithTable
     return result;
   }
 
-  /**
-   * Shows a popup menu.
-   *
-   * @param e		the event that triggered the menu
-   */
-  protected void showPopupMenu(MouseEvent e) {
-    BasePopupMenu menu;
-    JMenuItem	  menuitem;
-
-    menu = new BasePopupMenu();
-
-    menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
-    menuitem.setEnabled(m_Table.getSelectedRowCount() > 0);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	m_Table.copyToClipboard();
-      }
-    });
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Save as...");
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	int ret = getFileChooser().showSaveDialog(m_Table);
-	if (ret != SpreadSheetFileChooser.APPROVE_OPTION)
-	  return;
-	File file = getFileChooser().getSelectedFile();
-	SpreadSheetWriter writer = getFileChooser().getWriter();
-	if (!writer.write(getSheet(), file)) {
-	  GUIHelper.showErrorMessage(
-	      m_Table,
-	      "Failed to save spreadsheet to the following file:\n" + file);
-	}
-      }
-    });
-    menu.add(menuitem);
-
-    menu.showAbsolute(m_Table, e);
-  }
-  
   /**
    * Updates the table in the GUI with a new table model.
    * 
