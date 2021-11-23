@@ -37,7 +37,7 @@ import java.awt.event.ActionEvent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ConvertToNominal
-  extends AbstractSelectedAttributesAction {
+    extends AbstractSelectedAttributesAction {
 
   private static final long serialVersionUID = -217537095007987947L;
 
@@ -60,6 +60,7 @@ public class ConvertToNominal
   protected void doActionPerformed(ActionEvent e) {
     int[]		indices;
     StringBuilder	indicesStr;
+    StringBuilder	indicesStr2;
     int			i;
     int			index;
     DataContainer 	cont;
@@ -73,11 +74,15 @@ public class ConvertToNominal
     indices = getOwner().getAttributeSelectionPanel().getSelectedAttributes();
     if (indices.length == 0)
       return;
-    indicesStr = new StringBuilder();
+    indicesStr  = new StringBuilder();
+    indicesStr2 = new StringBuilder();
     for (i = 0; i < indices.length; i++) {
-      if (i > 0)
+      if (i > 0) {
         indicesStr.append(",");
+        indicesStr2.append(",");
+      }
       indicesStr.append("#" + (indices[i] + 1));
+      indicesStr2.append("" + (indices[i] + 1));
     }
 
     run = () -> {
@@ -87,25 +92,25 @@ public class ConvertToNominal
       weka.filters.unsupervised.attribute.AnyToString anytostring = new weka.filters.unsupervised.attribute.AnyToString();
       anytostring.setRange(new WekaAttributeRange(indicesStr.toString()));
       weka.filters.unsupervised.attribute.StringToNominal stringtonominal = new weka.filters.unsupervised.attribute.StringToNominal();
-      stringtonominal.setAttributeRange(indicesStr.toString());
+      stringtonominal.setAttributeRange(indicesStr2.toString());
       MultiFilter multi = new MultiFilter();
       multi.setFilters(new Filter[]{anytostring, stringtonominal});
       logMessage("Filter: " + OptionUtils.getCommandLine(multi));
       try {
-	multi.setInputFormat(cont.getData());
-	Instances filtered = Filter.useFilter(cont.getData(), multi);
-	if (keep)
-	  filtered.setRelationName(oldName);
-	cont.setData(filtered);
-	fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
-	SwingUtilities.invokeLater(() -> {
-	  if (getOwner().getAttributeSelectionPanel().getTable().getRowCount() > 0)
-	    getOwner().getAttributeSelectionPanel().getTable().setSelectedRow(0);
-	});
+        multi.setInputFormat(cont.getData());
+        Instances filtered = Filter.useFilter(cont.getData(), multi);
+        if (keep)
+          filtered.setRelationName(oldName);
+        cont.setData(filtered);
+        fireDataChange(new WekaInvestigatorDataEvent(getOwner().getOwner(), WekaInvestigatorDataEvent.ROWS_MODIFIED, getSelectedRows()[0]));
+        SwingUtilities.invokeLater(() -> {
+          if (getOwner().getAttributeSelectionPanel().getTable().getRowCount() > 0)
+            getOwner().getAttributeSelectionPanel().getTable().setSelectedRow(0);
+        });
         showStatus("Finished converting selected attributes to nominal...");
       }
       catch (Throwable ex) {
-	logError("Failed to convert selected attributes to nominal!", ex, getName());
+        logError("Failed to convert selected attributes to nominal!", ex, getName());
       }
       m_Owner.executionFinished();
       showStatus("");
@@ -119,10 +124,10 @@ public class ConvertToNominal
   @Override
   public void update() {
     setEnabled(
-      (getOwner() != null)
-	&& !isBusy()
-        && (getSelectedRows().length == 1)
-        && (getOwner().getAttributeSelectionPanel().getSelectedAttributes().length > 0)
-        && m_Owner.canStartExecution());
+        (getOwner() != null)
+            && !isBusy()
+            && (getSelectedRows().length == 1)
+            && (getOwner().getAttributeSelectionPanel().getSelectedAttributes().length > 0)
+            && m_Owner.canStartExecution());
   }
 }
