@@ -321,6 +321,8 @@ public class BaseTable
 	}
       }
     });
+
+    getTableHeader().setReorderingAllowed(false);
   }
 
   /**
