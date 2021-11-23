@@ -164,6 +164,7 @@ public class PartialLeastSquaresTab
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPane.setDividerLocation(props.getInteger("PartialLeastSquares.LeftPanelWidth", 200));
     m_SplitPane.setOneTouchExpandable(true);
+    m_SplitPane.setUISettingsParameters(getClass(), "HorizontalDivider");
     m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
 
     m_PanelLeft = new JPanel(new BorderLayout());

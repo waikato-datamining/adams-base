@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTabWithDataTable.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -108,6 +108,7 @@ public abstract class AbstractInvestigatorTabWithDataTable
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
     m_SplitPane.setOneTouchExpandable(true);
+    m_SplitPane.setUISettingsParameters(getClass(), "VerticalDivider");
     m_ContentPanel.add(m_SplitPane, BorderLayout.CENTER);
 
     m_Model = new DataTableModel(new ArrayList<>(), hasReadOnlyTable());
