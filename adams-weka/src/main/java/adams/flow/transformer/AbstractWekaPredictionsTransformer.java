@@ -15,13 +15,13 @@
 
 /*
  * AbstractWekaPredictionsTransformer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
+import adams.data.weka.WekaAttributeRange;
 import adams.flow.container.WekaEvaluationContainer;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -37,7 +37,6 @@ import java.util.logging.Level;
  * Evaluation object into a different format.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWekaPredictionsTransformer
   extends AbstractTransformer {
@@ -67,7 +66,7 @@ public abstract class AbstractWekaPredictionsTransformer
   protected boolean m_UseOriginalIndices;
 
   /** the additional attributes from the test data to add to the output. */
-  protected Range m_TestAttributes;
+  protected WekaAttributeRange m_TestAttributes;
 
   /** the optional prefix to disambiguate the measure attributes from the original ones. */
   protected String m_MeasuresPrefix;
@@ -109,7 +108,7 @@ public abstract class AbstractWekaPredictionsTransformer
 
     m_OptionManager.add(
 	    "test-attributes", "testAttributes",
-	    new Range(""));
+	    new WekaAttributeRange(""));
 
     m_OptionManager.add(
 	    "measures-prefix", "measuresPrefix",
@@ -357,7 +356,7 @@ public abstract class AbstractWekaPredictionsTransformer
    *
    * @param value	the range
    */
-  public void setTestAttributes(Range value) {
+  public void setTestAttributes(WekaAttributeRange value) {
     m_TestAttributes = value;
     reset();
   }
@@ -367,7 +366,7 @@ public abstract class AbstractWekaPredictionsTransformer
    *
    * @return		the range
    */
-  public Range getTestAttributes() {
+  public WekaAttributeRange getTestAttributes() {
     return m_TestAttributes;
   }
 
@@ -430,7 +429,7 @@ public abstract class AbstractWekaPredictionsTransformer
     Remove	remove;
 
     try {
-      m_TestAttributes.setMax(data.numAttributes());
+      m_TestAttributes.setData(data);
       indices = m_TestAttributes.getIntIndices();
       remove = new Remove();
       remove.setAttributeIndicesArray(indices);
@@ -440,7 +439,7 @@ public abstract class AbstractWekaPredictionsTransformer
       return Filter.useFilter(data, remove);
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to filter test data using range: " + m_TestAttributes, e);
+      getLogger().log(Level.SEVERE, "Failed to filter test data using range: " + m_TestAttributes.getRange(), e);
       return null;
     }
   }
