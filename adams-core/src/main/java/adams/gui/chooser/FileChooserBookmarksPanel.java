@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileChooserBookmarksPanel.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -35,7 +35,6 @@ import javax.swing.JFileChooser;
  * Panel for bookmarking directories in a {@link JFileChooser}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileChooserBookmarksPanel
   extends AbstractBookmarksPanel {
@@ -223,5 +222,13 @@ public class FileChooserBookmarksPanel
   @Override
   protected AbstractFactory newFactory() {
     return new FileChooserBookmarksFactory();
+  }
+
+  /**
+   * Updates the enabled state of the buttons.
+   */
+  @Override
+  public void updateButtons() {
+    super.updateButtons();
   }
 }
