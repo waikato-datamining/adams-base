@@ -223,12 +223,4 @@ public class FileChooserBookmarksPanel
   protected AbstractFactory newFactory() {
     return new FileChooserBookmarksFactory();
   }
-
-  /**
-   * Updates the enabled state of the buttons.
-   */
-  @Override
-  public void updateButtons() {
-    super.updateButtons();
-  }
 }
