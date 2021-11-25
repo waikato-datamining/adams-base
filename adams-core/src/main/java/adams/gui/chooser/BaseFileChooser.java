@@ -504,6 +504,7 @@ public class BaseFileChooser
     String[]		extensions;
     
     m_PanelBookmarks.reload();
+    m_PanelBookmarks.updateButtons();
     
     parent = GUIHelper.getParentComponent(parent);
     result = super.showDialog(parent, approveButtonText);
