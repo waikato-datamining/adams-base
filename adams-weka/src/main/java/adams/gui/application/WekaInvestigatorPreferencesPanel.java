@@ -80,6 +80,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Preprocess.BatchFilter", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.Serialize", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.SerializeFile", PropertyType.FILE_ABSOLUTE);
+    addPropertyType("Preprocess.MaxAttributesToVisualize", PropertyType.INTEGER);
 
     // associate
     addPropertyType("Associate.Associator", PropertyType.OBJECT_EDITOR);

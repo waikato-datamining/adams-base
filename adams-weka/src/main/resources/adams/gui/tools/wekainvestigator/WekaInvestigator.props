@@ -76,6 +76,10 @@ Preprocess.Serialize=false
 # (file)
 Preprocess.SerializeFile=.
 
+# The maximum number of attributes to visualize (summary table/histogram)
+# (int)
+Preprocess.MaxAttributesToVisualize=5
+
 # The default maximum width for data columns.
 # (integer)
 Data.MaxColWidth=100
