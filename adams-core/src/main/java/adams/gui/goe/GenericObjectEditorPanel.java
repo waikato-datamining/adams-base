@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -328,5 +328,6 @@ public class GenericObjectEditorPanel
    */
   public void propertyChange(PropertyChangeEvent evt) {
     setCurrent(m_Editor.getValue());
+    notifyChangeListeners(new ChangeEvent(m_Self));
   }
 }
