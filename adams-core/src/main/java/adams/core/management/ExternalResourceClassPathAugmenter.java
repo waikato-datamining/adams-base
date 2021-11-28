@@ -13,26 +13,30 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExternalResourceClassPathAugmenter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
+import adams.core.io.PlaceholderDirectory;
+import adams.core.io.PlaceholderFile;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.impl.type.FileArgumentType;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import adams.core.io.PlaceholderDirectory;
-import adams.core.io.PlaceholderFile;
-
 /**
  * Allows the user to add external jars and directories.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExternalResourceClassPathAugmenter
-  extends AbstractClassPathAugmenter {
+    extends AbstractClassPathAugmenter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3380177345627628995L;
@@ -42,7 +46,7 @@ public class ExternalResourceClassPathAugmenter
 
   /** the directories with classes to add to the classpath. */
   protected PlaceholderDirectory[] m_Directories;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -52,21 +56,59 @@ public class ExternalResourceClassPathAugmenter
   public String globalInfo() {
     return "Allows the user to add external jars and directories.";
   }
-  
+
   /**
-   * Adds options to the internal list of options.
+   * Configures and returns the commandline parser.
+   *
+   * @return		the parser
    */
   @Override
-  public void defineOptions() {
-    super.defineOptions();
+  public ArgumentParser getParser() {
+    ArgumentParser 	parser;
 
-    m_OptionManager.add(
-	    "file", "files",
-	    new PlaceholderFile[0]);
+    parser = super.getParser();
 
-    m_OptionManager.add(
-	    "dir", "directories",
-	    new PlaceholderDirectory[0]);
+    parser.addArgument("--file")
+	.setDefault(new ArrayList<String>())
+	.dest("files")
+	.action(Arguments.append())
+	.type(FileArgumentType.class)
+	.help(filesTipText());
+
+    parser.addArgument("--dir")
+	.setDefault(new ArrayList<String>())
+	.dest("dirs")
+	.action(Arguments.append())
+	.type(FileArgumentType.class)
+	.help(directoriesTipText());
+
+    return parser;
+  }
+
+  /**
+   * Sets the parsed options.
+   *
+   * @param ns		the parsed options
+   * @return		if successfully set
+   */
+  protected boolean setOptions(Namespace ns) {
+    List<PlaceholderFile>	files;
+    List<PlaceholderDirectory>	dirs;
+    List<File>			list;
+
+    files = new ArrayList<>();
+    list = ns.getList("files");
+    for (File f: list)
+      files.add(new PlaceholderFile(f));
+    setFiles(files.toArray(new PlaceholderFile[0]));
+
+    dirs = new ArrayList<>();
+    list = ns.getList("dirs");
+    for (File f: list)
+      dirs.add(new PlaceholderDirectory(f));
+    setDirectories(dirs.toArray(new PlaceholderDirectory[0]));
+
+    return true;
   }
 
   /**
@@ -76,7 +118,6 @@ public class ExternalResourceClassPathAugmenter
    */
   public void setFiles(PlaceholderFile[] value) {
     m_Files = value;
-    reset();
   }
 
   /**
@@ -105,7 +146,6 @@ public class ExternalResourceClassPathAugmenter
    */
   public void setDirectories(PlaceholderDirectory[] value) {
     m_Directories = value;
-    reset();
   }
 
   /**
@@ -129,19 +169,19 @@ public class ExternalResourceClassPathAugmenter
 
   /**
    * Returns the classpath parts (jars, directories) to add to the classpath.
-   * 
+   *
    * @return		the additional classpath parts
    */
   public String[] getClassPathAugmentation() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     for (PlaceholderFile file: m_Files)
       result.add(file.getAbsolutePath());
     for (PlaceholderDirectory dir: m_Directories)
       result.add(dir.getAbsolutePath());
-    
-    return result.toArray(new String[result.size()]);
+
+    return result.toArray(new String[0]);
   }
 }

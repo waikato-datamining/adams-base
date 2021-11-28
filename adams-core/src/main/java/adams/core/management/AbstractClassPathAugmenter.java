@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractClassPathAugmenter.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
-import adams.core.option.AbstractOptionHandler;
+import adams.core.option.AbstractSimpleOptionParser;
 
 /**
  * Ancestor for classpath augmenters.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClassPathAugmenter
-  extends AbstractOptionHandler
+  extends AbstractSimpleOptionParser
   implements ClassPathAugmenter {
 
   /** for serialization. */

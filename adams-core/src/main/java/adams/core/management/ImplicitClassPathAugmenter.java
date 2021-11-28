@@ -22,7 +22,6 @@ package adams.core.management;
 
 import adams.core.Properties;
 import adams.core.Utils;
-import adams.core.classmanager.ClassManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +77,7 @@ public class ImplicitClassPathAugmenter
 	if (isLoggingEnabled())
 	  getLogger().info("Augmenter is enabled");
 	try {
-	  cls   = ClassManager.getSingleton().forName(key);
+	  cls   = Class.forName(key);
 	  aug   = (ClassPathAugmenter) cls.getDeclaredConstructor().newInstance();
 	  paths = aug.getClassPathAugmentation();
 	  if (isLoggingEnabled())
