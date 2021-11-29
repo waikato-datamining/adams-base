@@ -324,3 +324,11 @@ weka.filters.unsupervised.attribute.multiplicativescattercorrection.AbstractMult
 # Lists the detrend schemes
 weka.filters.unsupervised.attribute.detrend.AbstractDetrend=\
   weka.filters.unsupervised.attribute.detrend
+
+# the row selection schemes (MultiRowProcessor filter)
+weka.filters.unsupervised.instance.multirowprocessor.selection.AbstractRowSelection=\
+  weka.filters.unsupervised.instance.multirowprocessor.selection
+
+# the row selection processors (MultiRowProcessor filter)
+weka.filters.unsupervised.instance.multirowprocessor.processor.AbstractSelectionProcessor=\
+  weka.filters.unsupervised.instance.multirowprocessor.processor
