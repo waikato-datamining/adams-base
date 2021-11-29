@@ -49,17 +49,13 @@ public class GroupExpression
 
   protected static String INDEX = "index";
 
-  public static final WekaAttributeIndex DEFAULT_INDEX = new WekaAttributeIndex(WekaAttributeIndex.FIRST);
-
   /** the index to use for grouping. */
-  protected WekaAttributeIndex m_Index = DEFAULT_INDEX;
+  protected WekaAttributeIndex m_Index = getDefaultIndex();
 
   protected static String REGEXP = "regexp";
 
-  public static final BaseRegExp DEFAULT_REGEXP = new BaseRegExp(BaseRegExp.MATCH_ALL);
-
   /** the regular expression for the nominal/string attribute. */
-  protected BaseRegExp m_RegExp = DEFAULT_REGEXP;
+  protected BaseRegExp m_RegExp = getDefaultRegExp();
 
   protected static String GROUP = "group";
 
@@ -90,8 +86,8 @@ public class GroupExpression
 
     result = new Vector();
 
-    WekaOptionUtils.addOption(result, indexTipText(), DEFAULT_INDEX, INDEX);
-    WekaOptionUtils.addOption(result, regExpTipText(), DEFAULT_REGEXP.getValue(), REGEXP);
+    WekaOptionUtils.addOption(result, indexTipText(), getDefaultIndex(), INDEX);
+    WekaOptionUtils.addOption(result, regExpTipText(), getDefaultRegExp().getValue(), REGEXP);
     WekaOptionUtils.addOption(result, groupTipText(), DEFAULT_GROUP, GROUP);
     WekaOptionUtils.add(result, super.listOptions());
 
@@ -105,8 +101,8 @@ public class GroupExpression
    * @throws Exception 	if an option is not supported
    */
   public void setOptions(String[] options) throws Exception {
-    setIndex((WekaAttributeIndex) WekaOptionUtils.parse(options, INDEX, DEFAULT_INDEX));
-    setRegExp((BaseRegExp) WekaOptionUtils.parse(options, REGEXP, DEFAULT_REGEXP));
+    setIndex((WekaAttributeIndex) WekaOptionUtils.parse(options, INDEX, getDefaultIndex()));
+    setRegExp((BaseRegExp) WekaOptionUtils.parse(options, REGEXP, getDefaultRegExp()));
     setGroup(WekaOptionUtils.parse(options, GROUP, DEFAULT_GROUP));
     super.setOptions(options);
   }
@@ -123,6 +119,15 @@ public class GroupExpression
     WekaOptionUtils.add(result, GROUP, getGroup());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
+  }
+
+  /**
+   * Returns the default index.
+   *
+   * @return		the default index
+   */
+  protected WekaAttributeIndex getDefaultIndex() {
+    return new WekaAttributeIndex(WekaAttributeIndex.FIRST);
   }
 
   /**
@@ -152,6 +157,15 @@ public class GroupExpression
    */
   public String indexTipText() {
     return "The index of the attribute to determine the group from.";
+  }
+
+  /**
+   * Returns the default regular expression.
+   *
+   * @return		the default
+   */
+  protected BaseRegExp getDefaultRegExp() {
+    return new BaseRegExp(BaseRegExp.MATCH_ALL);
   }
 
   /**
@@ -244,7 +258,7 @@ public class GroupExpression
       else
 	group = data.instance(i).stringValue(index);
       if (!all)
-        group = group.replaceAll(m_RegExp.getValue(), m_Group);
+	group = group.replaceAll(m_RegExp.getValue(), m_Group);
       if (!groups.containsKey(group))
 	groups.put(group, new TIntArrayList());
       groups.get(group).add(i);

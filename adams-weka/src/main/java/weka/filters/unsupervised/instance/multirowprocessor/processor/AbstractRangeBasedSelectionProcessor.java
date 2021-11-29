@@ -34,16 +34,14 @@ import java.util.Vector;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractRangeBasedSelectionProcessor
-  extends AbstractSelectionProcessor {
+    extends AbstractSelectionProcessor {
 
   private static final long serialVersionUID = -598983861360058698L;
 
   protected static String RANGE = "range";
 
-  public static final WekaAttributeRange DEFAULT_RANGE = new WekaAttributeRange(WekaAttributeRange.ALL);
-
   /** the range of attributes to work on. */
-  protected WekaAttributeRange m_Range = DEFAULT_RANGE;
+  protected WekaAttributeRange m_Range = getDefaultRange();
 
   /**
    * Returns an enumeration describing the available options.
@@ -55,7 +53,7 @@ public abstract class AbstractRangeBasedSelectionProcessor
 
     result = new Vector();
 
-    WekaOptionUtils.addOption(result, rangeTipText(), DEFAULT_RANGE, RANGE);
+    WekaOptionUtils.addOption(result, rangeTipText(), getDefaultRange(), RANGE);
     WekaOptionUtils.add(result, super.listOptions());
 
     return WekaOptionUtils.toEnumeration(result);
@@ -68,7 +66,7 @@ public abstract class AbstractRangeBasedSelectionProcessor
    * @throws Exception 	if an option is not supported
    */
   public void setOptions(String[] options) throws Exception {
-    setRange((WekaAttributeRange) WekaOptionUtils.parse(options, RANGE, DEFAULT_RANGE));
+    setRange((WekaAttributeRange) WekaOptionUtils.parse(options, RANGE, getDefaultRange()));
     super.setOptions(options);
   }
 
@@ -82,6 +80,15 @@ public abstract class AbstractRangeBasedSelectionProcessor
     WekaOptionUtils.add(result, RANGE, getRange());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
+  }
+
+  /**
+   * Returns the default range.
+   *
+   * @return		the default range
+   */
+  protected WekaAttributeRange getDefaultRange() {
+    return new WekaAttributeRange(WekaAttributeRange.ALL);
   }
 
   /**
