@@ -15,12 +15,12 @@
 
 /*
  * AbstractEnvironmentModifier.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.management;
 
-import adams.core.option.AbstractOptionHandler;
+import adams.core.option.AbstractSimpleOptionParser;
 
 /**
  * Ancestor for classes that modify the environment used by the {@link Launcher}.
@@ -28,7 +28,7 @@ import adams.core.option.AbstractOptionHandler;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractEnvironmentModifier
-  extends AbstractOptionHandler
+  extends AbstractSimpleOptionParser
   implements EnvironmentModifier {
 
   private static final long serialVersionUID = 3789912747938988523L;

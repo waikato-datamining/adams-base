@@ -21,6 +21,7 @@ package adams.core.management;
 
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
+import adams.core.option.AbstractSimpleOptionParser;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
@@ -318,7 +319,7 @@ public class Launcher {
     EnvironmentModifier	modifier;
 
     try {
-      modifier = (EnvironmentModifier) OptionUtils.forCommandLine(EnvironmentModifier.class, cmdline);
+      modifier = (EnvironmentModifier) AbstractSimpleOptionParser.forCommandline(cmdline);
       m_EnvironmentModifiers.add(modifier);
     }
     catch (Exception e) {

@@ -15,10 +15,12 @@
 
 /*
  * EnvironmentModifier.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.management;
+
+import adams.core.option.SimpleOptionParser;
 
 import java.util.List;
 
@@ -27,7 +29,8 @@ import java.util.List;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public interface EnvironmentModifier {
+public interface EnvironmentModifier
+  extends SimpleOptionParser {
 
   /**
    * Updates the environment variables that the {@link Launcher} uses for
