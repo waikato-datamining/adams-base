@@ -52,21 +52,21 @@ public class GroupExpression
   public static final WekaAttributeIndex DEFAULT_INDEX = new WekaAttributeIndex(WekaAttributeIndex.FIRST);
 
   /** the index to use for grouping. */
-  protected WekaAttributeIndex m_Index;
+  protected WekaAttributeIndex m_Index = DEFAULT_INDEX;
 
   protected static String REGEXP = "regexp";
 
   public static final BaseRegExp DEFAULT_REGEXP = new BaseRegExp(BaseRegExp.MATCH_ALL);
 
   /** the regular expression for the nominal/string attribute. */
-  protected BaseRegExp m_RegExp;
+  protected BaseRegExp m_RegExp = DEFAULT_REGEXP;
 
   protected static String GROUP = "group";
 
   public static final String DEFAULT_GROUP = "$0";
 
   /** the group expression. */
-  protected String m_Group;
+  protected String m_Group = DEFAULT_GROUP;
 
   /**
    * Returns a string describing the row selection scheme.

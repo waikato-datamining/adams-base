@@ -45,7 +45,7 @@ public abstract class AbstractMultiRowProcessorPlugin
   protected static String DEBUG = "debug";
 
   /** whether to output debugging information. */
-  protected boolean m_Debug;
+  protected boolean m_Debug = false;
 
   /**
    * Returns a string describing the processor.

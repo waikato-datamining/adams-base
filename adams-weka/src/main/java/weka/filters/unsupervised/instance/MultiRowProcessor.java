@@ -75,17 +75,13 @@ public class MultiRowProcessor
 
   protected static String ROW_SELECTION = "row-selection";
 
-  public static final AbstractRowSelection DEFAULT_ROW_SELECTION = new IndividualRows();
-
   /** the row selection scheme. */
-  protected AbstractRowSelection m_RowSelection;
+  protected AbstractRowSelection m_RowSelection = getDefaultRowSelection();
 
   protected static String SELECTION_PROCESSOR = "selection-processor";
 
-  public static final AbstractSelectionProcessor DEFAULT_SELECTION_PROCESSOR = new PassThrough();
-
   /** the row processing scheme. */
-  protected AbstractSelectionProcessor m_SelectionProcessor;
+  protected AbstractSelectionProcessor m_SelectionProcessor = getDefaultSelectionProcessor();
 
   /**
    * Returns a string describing this filter.
@@ -96,8 +92,8 @@ public class MultiRowProcessor
   @Override
   public String globalInfo() {
     return "Uses the specified row selection scheme to identify groups of rows "
-        + "in the data coming through and then applies the selected row processor "
-        + "to these subsets.";
+	+ "in the data coming through and then applies the selected row processor "
+	+ "to these subsets.";
   }
 
   /**
@@ -110,8 +106,8 @@ public class MultiRowProcessor
 
     result = new Vector();
 
-    WekaOptionUtils.addOption(result, rowSelectionTipText(), OptionUtils.getCommandLine(DEFAULT_ROW_SELECTION), ROW_SELECTION);
-    WekaOptionUtils.addOption(result, selectionProcessorTipText(), OptionUtils.getCommandLine(DEFAULT_SELECTION_PROCESSOR), SELECTION_PROCESSOR);
+    WekaOptionUtils.addOption(result, rowSelectionTipText(), OptionUtils.getCommandLine(getDefaultRowSelection()), ROW_SELECTION);
+    WekaOptionUtils.addOption(result, selectionProcessorTipText(), OptionUtils.getCommandLine(getDefaultSelectionProcessor()), SELECTION_PROCESSOR);
     WekaOptionUtils.add(result, super.listOptions());
     return WekaOptionUtils.toEnumeration(result);
   }
@@ -123,8 +119,8 @@ public class MultiRowProcessor
    * @throws Exception 	if an option is not supported
    */
   public void setOptions(String[] options) throws Exception {
-    setRowSelection((AbstractRowSelection) WekaOptionUtils.parse(options, ROW_SELECTION, DEFAULT_ROW_SELECTION));
-    setSelectionProcessor((AbstractSelectionProcessor) WekaOptionUtils.parse(options, SELECTION_PROCESSOR, DEFAULT_SELECTION_PROCESSOR));
+    setRowSelection((AbstractRowSelection) WekaOptionUtils.parse(options, ROW_SELECTION, getDefaultRowSelection()));
+    setSelectionProcessor((AbstractSelectionProcessor) WekaOptionUtils.parse(options, SELECTION_PROCESSOR, getDefaultSelectionProcessor()));
     super.setOptions(options);
   }
 
@@ -139,6 +135,15 @@ public class MultiRowProcessor
     WekaOptionUtils.add(result, SELECTION_PROCESSOR, getSelectionProcessor());
     WekaOptionUtils.add(result, super.getOptions());
     return WekaOptionUtils.toArray(result);
+  }
+
+  /**
+   * Returns the default row selection scheme.
+   *
+   * @return		the default
+   */
+  protected AbstractRowSelection getDefaultRowSelection() {
+    return new IndividualRows();
   }
 
   /**
@@ -168,6 +173,15 @@ public class MultiRowProcessor
    */
   public String rowSelectionTipText() {
     return "The scheme for identifying the row subsets to process.";
+  }
+
+  /**
+   * Returns the default selection processor.
+   *
+   * @return		the processor
+   */
+  protected AbstractSelectionProcessor getDefaultSelectionProcessor() {
+    return new PassThrough();
   }
 
   /**
@@ -275,14 +289,14 @@ public class MultiRowProcessor
     for (i = 0; i < subsets.size(); i++) {
       rows = subsets.get(i);
       if (getDebug())
-        debugMsg("Subset " + (i+1) + "/" + subsets.size() + ": " + Utils.arrayToString(rows));
+	debugMsg("Subset " + (i+1) + "/" + subsets.size() + ": " + Utils.arrayToString(rows));
       subset = new ArrayList<>();
       for (int row: rows)
-        subset.add(instances.instance(row));
+	subset.add(instances.instance(row));
       processed = m_SelectionProcessor.processRows(subset);
       for (Instance p: processed) {
-        copyValues(p, false, instances, result);
-        result.add(p);
+	copyValues(p, false, instances, result);
+	result.add(p);
       }
     }
 

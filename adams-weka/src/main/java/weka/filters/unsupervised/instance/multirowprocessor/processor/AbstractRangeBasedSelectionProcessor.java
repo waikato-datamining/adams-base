@@ -43,7 +43,7 @@ public abstract class AbstractRangeBasedSelectionProcessor
   public static final WekaAttributeRange DEFAULT_RANGE = new WekaAttributeRange(WekaAttributeRange.ALL);
 
   /** the range of attributes to work on. */
-  protected WekaAttributeRange m_Range;
+  protected WekaAttributeRange m_Range = DEFAULT_RANGE;
 
   /**
    * Returns an enumeration describing the available options.
