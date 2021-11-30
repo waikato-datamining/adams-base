@@ -859,7 +859,8 @@ public class Flow
       setFlowExecutionListener(multiListen);
     }
 
-    registerGraphicalFlowExecutionListener(debug);
+    if (m_FlowExecutionListeningStarted)
+      registerGraphicalFlowExecutionListener(debug);
 
     if (showView)
       showGraphicalFlowExecutionListeners();
