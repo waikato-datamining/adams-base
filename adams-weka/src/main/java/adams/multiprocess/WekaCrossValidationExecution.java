@@ -14,7 +14,7 @@
  */
 
 /*
- * WekaCrossValidation.java
+ * WekaCrossValidationExecution.java
  * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
  */
 
@@ -652,6 +652,7 @@ public class WekaCrossValidationExecution
    * Stops the execution.
    */
   public void stopExecution() {
+    m_Stopped = true;
     getLogger().severe("Execution stopped");
     if (m_ActualJobRunner != null)
       m_ActualJobRunner.terminate(m_WaitForJobs);

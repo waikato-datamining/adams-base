@@ -593,11 +593,21 @@ public class WekaCrossValidationEvaluator
    */
   @Override
   public void stopExecution() {
-    if (m_CrossValidation != null) {
+    if (m_CrossValidation != null)
       m_CrossValidation.stopExecution();
+    super.stopExecution();
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    if (m_CrossValidation != null) {
       m_CrossValidation.cleanUp();
       m_CrossValidation = null;
     }
-    super.stopExecution();
+
+    super.wrapUp();
   }
 }
