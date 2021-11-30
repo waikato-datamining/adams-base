@@ -32,12 +32,12 @@ import java.util.Set;
 
 /**
  * Displays the registered flow execution listeners.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GraphicalFlowExecutionListenersTab
-  extends AbstractTabChangeAwareEditorTab
-  implements RuntimeTab {
+    extends AbstractTabChangeAwareEditorTab
+    implements RuntimeTab {
 
   /** for serialization. */
   private static final long serialVersionUID = 3636125950515045125L;
@@ -61,7 +61,7 @@ public class GraphicalFlowExecutionListenersTab
   public void update() {
     flowPanelChanged(getCurrentPanel());
   }
-  
+
   /**
    * Notifies the tab of the currently selected flow panel.
    *
@@ -85,26 +85,26 @@ public class GraphicalFlowExecutionListenersTab
 
       GraphicalFlowExecutionListenersHandler handler = panel.getTabHandler(GraphicalFlowExecutionListenersHandler.class);
       if (handler == null)
-        return;
+	return;
       Set<GraphicalFlowExecutionListener> registered = handler.getDisplays();
       if (registered.size() == 0)
 	return;
 
-	m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
-	m_TabbedDisplays.setDetachableTabs(true);
-	for (GraphicalFlowExecutionListener listener: registered) {
-	  String title = listener.getListenerTitle();
-	  if (listener.getOwner() == null)
-	    continue;
-	  if (listener.getOwner().getParentComponent() instanceof FlowPanel)
-	    title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
-	  BasePanel listenerPanel = listener.newListenerPanelIfNecessary();
-	  DetachablePanel detachable = new DetachablePanel();
-	  detachable.setFrameTitle(title);
-	  detachable.getContentPanel().add(listenerPanel, BorderLayout.CENTER);
-	  m_TabbedDisplays.addTab(title, detachable);
-	}
-	add(m_TabbedDisplays, BorderLayout.CENTER);
+      m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
+      m_TabbedDisplays.setDetachableTabs(true);
+      for (GraphicalFlowExecutionListener listener: registered) {
+	String title = listener.getListenerTitle();
+	if (listener.getOwner() == null)
+	  continue;
+	if (listener.getOwner().getParentComponent() instanceof FlowPanel)
+	  title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
+	BasePanel listenerPanel = listener.newListenerPanelIfNecessary();
+	DetachablePanel detachable = new DetachablePanel();
+	detachable.setFrameTitle(title);
+	detachable.getContentPanel().add(listenerPanel, BorderLayout.CENTER);
+	m_TabbedDisplays.addTab(title, detachable);
+      }
+      add(m_TabbedDisplays, BorderLayout.CENTER);
 
       if (getParent() != null) {
 	getParent().invalidate();
