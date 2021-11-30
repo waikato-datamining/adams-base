@@ -15,13 +15,14 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
 
 import adams.core.Properties;
 import adams.core.StaticClassLister;
+import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.core.management.OS;
 import adams.core.option.OptionUtils;
@@ -554,6 +555,10 @@ public abstract class AbstractEnvironment
    */
   public static synchronized AbstractEnvironment getInstance() {
     if (m_Environment == null) {
+      if (m_EnvironmentClass == null) {
+        m_EnvironmentClass = Environment.class;
+        System.err.println("WARNING: no environment class set, using default: " + Utils.classToString(m_EnvironmentClass));
+      }
       try {
 	m_Environment = (AbstractEnvironment) m_EnvironmentClass.newInstance();
       }
