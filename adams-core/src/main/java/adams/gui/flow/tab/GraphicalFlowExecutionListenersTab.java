@@ -15,7 +15,7 @@
 
 /*
  * GraphicalFlowExecutionListenersTab.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -94,6 +94,8 @@ public class GraphicalFlowExecutionListenersTab
 	m_TabbedDisplays.setDetachableTabs(true);
 	for (GraphicalFlowExecutionListener listener: registered) {
 	  String title = listener.getListenerTitle();
+	  if (listener.getOwner() == null)
+	    continue;
 	  if (listener.getOwner().getParentComponent() instanceof FlowPanel)
 	    title = ((FlowPanel) listener.getOwner().getParentComponent()).getTitle() + ":" + title;
 	  BasePanel listenerPanel = listener.newListenerPanelIfNecessary();
