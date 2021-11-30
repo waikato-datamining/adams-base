@@ -319,7 +319,6 @@ public class MultiRowProcessor
    * @param args should contain arguments to the filter: use -h for help
    */
   public static void main(String [] args) {
-    Environment.setEnvironmentClass(Environment.class);
     runFilter(new MultiRowProcessor(), args);
   }
 }
