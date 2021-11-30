@@ -15,7 +15,7 @@
 
 /*
  * MultiListener.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.execution;
@@ -275,7 +275,7 @@ public class MultiListener
     found  = false;
     for (FlowExecutionListener l: m_Listeners) {
       if (l instanceof GraphicalFlowExecutionListener) {
-	subpanel = ((GraphicalFlowExecutionListener) l).newListenerPanel();
+	subpanel = ((GraphicalFlowExecutionListener) l).newListenerPanelIfNecessary();
 	if (subpanel != null) {
 	  found = true;
 	  tabbed.addTab(createTitle(titles, ((GraphicalFlowExecutionListener) l).getListenerTitle()), subpanel);
