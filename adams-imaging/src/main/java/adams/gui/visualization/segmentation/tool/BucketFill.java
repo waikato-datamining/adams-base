@@ -15,7 +15,7 @@
 
 /*
  * BucketFill.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -145,12 +145,12 @@ public class BucketFill
     if (isAutomaticUndoEnabled())
       getCanvas().getOwner().addUndoPoint();
 
-    pColor = new Color(getActiveImage().getRGB(p.x, p.y));
+    pColor = new Color(getActiveImage().getRGB(p.x, p.y), true);
 
     if (m_Foreground)
       ImageUtils.fill(getActiveImage(), p, pColor, getActiveColor());
     else
-      ImageUtils.fill(getActiveImage(), p, pColor, Color.BLACK);
+      ImageUtils.fill(getActiveImage(), p, pColor, new Color(0, 0, 0, 0));
 
     getCanvas().getOwner().getManager().update();
   }

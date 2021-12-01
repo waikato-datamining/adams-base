@@ -15,7 +15,7 @@
 
 /*
  * ImageUtils.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -56,7 +56,7 @@ public class ImageUtils {
     modified  = false;
     for (i = 0; i < pixSource.length; i++) {
       if (pixSource[i] != black) {
-        if (pixSource[i] != pixTarget[i]) {
+	if (pixSource[i] != pixTarget[i]) {
 	  pixTarget[i] = pixSource[i];
 	  modified     = true;
 	}
@@ -101,19 +101,24 @@ public class ImageUtils {
    * @param color 	the new color for non-black pixels
    */
   public static void initImage(BufferedImage image, Color color) {
-    int 	black;
+    int		black_opaque;
+    int 	black_trans;
     int 	rgb;
     int[]	pixels;
     int		i;
     boolean	modified;
 
-    black    = Color.BLACK.getRGB();
-    rgb      = color.getRGB();
-    pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-    modified = false;
+    black_opaque = new Color(0, 0, 0, 255).getRGB();
+    black_trans  = new Color(0, 0, 0, 0).getRGB();
+    rgb          = color.getRGB();
+    pixels       = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    modified     = false;
     for (i = 0; i < pixels.length; i++) {
-      if (pixels[i] != black) {
-	pixels[i] = rgb;
+      if (pixels[i] != black_trans) {
+        if (pixels[i] == black_opaque)
+          pixels[i] = black_trans;
+        else
+	  pixels[i] = rgb;
 	modified  = true;
       }
     }
@@ -133,7 +138,7 @@ public class ImageUtils {
     int[]		pixels;
     int			i;
 
-    black  = Color.BLACK.getRGB();
+    black  = new Color(0, 0, 0, 0).getRGB();
     pixels = new int[width*height];
     for (i = 0; i < pixels.length; i++)
       pixels[i] = black;

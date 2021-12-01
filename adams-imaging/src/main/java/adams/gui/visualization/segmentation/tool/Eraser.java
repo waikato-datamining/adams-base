@@ -15,7 +15,7 @@
 
 /*
  * Eraser.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -28,6 +28,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -53,7 +54,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Eraser
-  extends AbstractShapeTool {
+    extends AbstractShapeTool {
 
   /** the default size. */
   public final static int DEFAULT_SIZE = 9;
@@ -152,11 +153,14 @@ public class Eraser
       x = (int) (p.getX() - m_Size / 2);
       y = (int) (p.getY() - m_Size / 2);
       if (m_RadioRound.isSelected())
-        g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
+	g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
       else
-        g2d.fillRect(x, y, m_Size - 1, m_Size - 1);
+	g2d.fillRect(x, y, m_Size - 1, m_Size - 1);
     }
     g2d.dispose();
+    // unfortunately, we can't draw with transparent black
+    // so we have to replace opaque black with transparent black
+    ImageUtils.replaceColor(getActiveImage(), Color.BLACK, new Color(0, 0, 0, 0));
   }
 
   /**

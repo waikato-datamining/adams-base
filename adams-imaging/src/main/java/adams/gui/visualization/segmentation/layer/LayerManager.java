@@ -15,11 +15,12 @@
 
 /*
  * LayerManager.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
 
+import adams.data.image.BufferedImageHelper;
 import adams.gui.core.Undo;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.event.UndoEvent;
@@ -544,6 +545,8 @@ public class LayerManager
 
     if (image == null)
       image = ImageUtils.newImage(m_ImageLayer.getImage().getWidth(), m_ImageLayer.getImage().getHeight());
+    else if (image.getType() != BufferedImage.TYPE_INT_ARGB)
+      image = BufferedImageHelper.convert(image, BufferedImage.TYPE_INT_ARGB);
 
     result = new OverlayLayer();
     result.setManager(this);
