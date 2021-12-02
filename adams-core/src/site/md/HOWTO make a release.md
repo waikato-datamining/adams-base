@@ -103,7 +103,7 @@ Commands
 
 * increment adams version in all other dependent modules
 
-* copy from "target" all -bin.zip/.deb/.rpm files into the release folder and 
+* copy from "target" all -bin.zip/.deb/.rpm files into the release folder (`adams-release`) and 
   test them 
 
   * adams-addons-all
@@ -117,14 +117,14 @@ Commands
 * copy commands:
  
   ```
-  OUTDIR="../adams.release/"
+  OUTDIR="../adams-release/"
   for i in `find -type d -maxdepth 1 -name "adams-*"`; do echo $i; cp $i/target/*.deb $OUTDIR; cp $i/target/*.rpm $OUTDIR; cp $i/target/*-bin.zip $OUTDIR; done;
   ```
 
 * installation commands
 
   ```
-  OUTDIR="../adams.release/"
+  OUTDIR="../adams-release/"
   cd $OUTDIR
   for i in *.zip; do echo $i; unzip -q $i; done;
   sudo dpkg -i *.deb
