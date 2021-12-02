@@ -157,6 +157,12 @@ Deployment failures
   
 * delete adams-pom artifact (X.Y.Z) from Nexus
 
+* remove last local commit
+
+  ```
+  git reset --soft HEAD^
+  ```
+
 
 Uploads/updates
 ---------------
