@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.adams</groupId>
   <artifactId>adams-pom</artifactId>
-  <version>21.12.0</version>
+  <version>21.12.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>adams-pom</name>
@@ -104,7 +104,7 @@
     <connection>scm:git:ssh://git@github.com/waikato-datamining/adams-base</connection>
     <developerConnection>scm:git:ssh://git@github.com/waikato-datamining/adams-base</developerConnection>
     <url>https://github.com/waikato-datamining/adams-base</url>
-    <tag>adams-pom-21.12.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
