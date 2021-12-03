@@ -190,10 +190,10 @@ Uploads/updates
 * create a README.md (markdown style) and upload this to the sf.net directory
   as well
     
-* copy same files onto adams.cms:
+* copy same files onto NFS share:
 
   ```
-  adams.cms.waikato.ac.nz:/var/www/html/releases/adams
+  /aml-data/research/adams/releases/
   ```
 
 * create new release page (copy an old one and update links)
