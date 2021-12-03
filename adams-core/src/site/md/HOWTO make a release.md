@@ -175,7 +175,8 @@ Uploads/updates
   bin/launcher.sh -main adams.core.ClassLister -super adams.data.conversion.Conversion > conversions.txt
   ```
 
-* create a new directory on sf.net and upload the -bin.zip/.deb/.rpm files via SFTP:
+* create a new directory on sf.net and upload the -bin.zip/.deb/.rpm files 
+  via [SFTP](sftp://frs.sourceforge.net/home/frs/project/theadamsflow):
 
   * adams-addons-all
   * adams-base-all
