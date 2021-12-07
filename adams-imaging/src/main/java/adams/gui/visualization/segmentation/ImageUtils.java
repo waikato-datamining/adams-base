@@ -20,6 +20,8 @@
 
 package adams.gui.visualization.segmentation;
 
+import adams.data.image.IntArrayMatrixView;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -95,6 +97,42 @@ public class ImageUtils {
   }
 
   /**
+   * Replaces the old color with the new one.
+   *
+   * @param image 	the image to process
+   * @param oldColor 	the old color to replace
+   * @param newColor 	the replacement color
+   * @param rangeX	the sub-range of x coordinates to work on (both incl)
+   * @param rangeY	the sub-range of y coordinates to work on (both incl)
+   */
+  public static void replaceColor(BufferedImage image, Color oldColor, Color newColor, int[] rangeX, int[] rangeY) {
+    int			oldC;
+    int			newC;
+    int[]		pixels;
+    int			i;
+    boolean		modified;
+    IntArrayMatrixView	view;
+    int			x;
+    int			y;
+
+    oldC     = oldColor.getRGB();
+    newC     = newColor.getRGB();
+    pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    view     = new IntArrayMatrixView(pixels, image.getWidth(), image.getHeight());
+    modified = false;
+    for (y = rangeY[0]; y <= rangeY[1]; y++) {
+      for (x = rangeX[0]; x <= rangeX[1]; x++) {
+        if (view.get(x, y) == oldC) {
+          view.set(x, y, newC);
+          modified = true;
+	}
+      }
+    }
+    if (modified)
+      image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+  }
+
+  /**
    * Replaces any non-black pixels with the specified color.
    *
    * @param image 	the image to process
@@ -115,9 +153,9 @@ public class ImageUtils {
     modified     = false;
     for (i = 0; i < pixels.length; i++) {
       if (pixels[i] != black_trans) {
-        if (pixels[i] == black_opaque)
-          pixels[i] = black_trans;
-        else
+	if (pixels[i] == black_opaque)
+	  pixels[i] = black_trans;
+	else
 	  pixels[i] = rgb;
 	modified  = true;
       }

@@ -143,15 +143,23 @@ public class Eraser
     double		zoom;
     int			x;
     int			y;
+    int[]		rangeX;
+    int[]		rangeY;
 
     zoom  = getZoom();
     img   = getActiveImage();
     g2d   = img.createGraphics();
     g2d.scale(1 / zoom, 1 / zoom);
     g2d.setColor(Color.BLACK);
+    rangeX = new int[]{img.getWidth(), 0};
+    rangeY = new int[]{img.getHeight(), 0};
     for (Point p: points) {
       x = (int) (p.getX() - m_Size / 2);
       y = (int) (p.getY() - m_Size / 2);
+      rangeX[0] = Math.min(x, rangeX[0]);
+      rangeX[1] = Math.max(x, rangeX[1]);
+      rangeY[0] = Math.min(y, rangeY[0]);
+      rangeY[1] = Math.max(y, rangeY[1]);
       if (m_RadioRound.isSelected())
 	g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
       else
@@ -160,7 +168,7 @@ public class Eraser
     g2d.dispose();
     // unfortunately, we can't draw with transparent black
     // so we have to replace opaque black with transparent black
-    ImageUtils.replaceColor(getActiveImage(), Color.BLACK, new Color(0, 0, 0, 0));
+    ImageUtils.replaceColor(getActiveImage(), Color.BLACK, new Color(0, 0, 0, 0), rangeX, rangeY);
   }
 
   /**
