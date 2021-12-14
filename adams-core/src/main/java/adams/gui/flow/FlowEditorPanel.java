@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -1685,8 +1685,10 @@ public class FlowEditorPanel
       @Override
       protected Object doInBackground() throws Exception {
 	for (PlaceholderFile file: files) {
-	  FlowPanel panel = m_FlowPanels.newPanel();
-	  panel.load(m_FileChooser.getReader(), file);
+	  if (file.exists()) {
+            FlowPanel panel = m_FlowPanels.newPanel();
+            panel.load(m_FileChooser.getReader(), file);
+          }
 	}
 	return null;
       }
