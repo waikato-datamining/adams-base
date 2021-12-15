@@ -20,6 +20,7 @@
 
 package adams.gui.flow;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.StatusMessageHandlerExt;
 import adams.core.io.EncodingSupporter;
@@ -1682,6 +1683,7 @@ public class FlowEditorPanel
 
     files  = m_FileChooser.getSelectedPlaceholderFiles();
     worker = new SwingWorker() {
+      MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
 	for (PlaceholderFile file: files) {
@@ -1689,8 +1691,18 @@ public class FlowEditorPanel
             FlowPanel panel = m_FlowPanels.newPanel();
             panel.load(m_FileChooser.getReader(), file);
           }
+	  else {
+	    errors.add("Flow does not exist: " + file.getAbsolutePath());
+          }
 	}
 	return null;
+      }
+
+      @Override
+      protected void done() {
+        super.done();
+        if (!errors.isEmpty())
+          GUIHelper.showErrorMessage(FlowEditorPanel.this, errors.toString());
       }
     };
     worker.execute();
