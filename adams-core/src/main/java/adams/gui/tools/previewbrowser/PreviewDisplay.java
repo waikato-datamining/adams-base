@@ -293,7 +293,7 @@ public class PreviewDisplay
 
     // transfer search
     currentSearch = (SearchPanel) GUIHelper.findFirstComponent(panel, SearchPanel.class, true, true);
-    if ((m_LastSearch != null) && (currentSearch != null)) {
+    if ((m_LastSearch != null) && !m_LastSearch.getSearchText().isEmpty() && (currentSearch != null)) {
       currentSearch.setSearchText(m_LastSearch.getSearchText());
       currentSearch.setRegularExpression(m_LastSearch.isRegularExpression());
       SwingUtilities.invokeLater(() -> currentSearch.search());
