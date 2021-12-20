@@ -21,6 +21,7 @@
 package adams.gui.tools.previewbrowser;
 
 import adams.core.CleanUpHandler;
+import adams.core.LRUCache;
 import adams.core.io.FileUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
@@ -82,7 +83,7 @@ public class PreviewDisplay
   protected BaseButtonWithDropDownMenu m_ButtonFavorites;
 
   /** the cached previews (content handler -> preview). */
-  protected Map<String,PreviewPanel> m_PreviewCache;
+  protected LRUCache<String,PreviewPanel> m_PreviewCache;
 
   /** the button for displaying the options for the content handler. */
   protected BaseButton m_ButtonContentHandler;
@@ -123,7 +124,7 @@ public class PreviewDisplay
     m_IgnoreContentHandlerChanges = false;
     m_DisplayInProgress           = false;
     m_ListContentHandlers         = new ArrayList<>();
-    m_PreviewCache                = new HashMap<>();
+    m_PreviewCache                = new LRUCache<>(100);
     m_ReusePreviews               = true;
     m_Favorites                   = new HashMap<>();
     m_CurrentFavorite             = null;
@@ -390,7 +391,7 @@ public class PreviewDisplay
 
       if (contentHandler != null) {
 	// cached?
-	if (m_ReusePreviews && m_PreviewCache.containsKey(contentHandler.toCommandLine())) {
+	if (m_ReusePreviews && m_PreviewCache.contains(contentHandler.toCommandLine())) {
 	  result = m_PreviewCache.get(contentHandler.toCommandLine());
 	  if (contentHandler instanceof MultipleFileContentHandler)
 	    result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
@@ -553,6 +554,24 @@ public class PreviewDisplay
   }
 
   /**
+   * Sets the size of the preview cache.
+   *
+   * @param value	the size of the cache
+   */
+  public void setPreviewCacheSize(int value) {
+    m_PreviewCache = new LRUCache<>(value);
+  }
+
+  /**
+   * Returns the size of the preview cache.
+   *
+   * @return		the size of the cache
+   */
+  public int getPreviewCacheSize() {
+    return m_PreviewCache.size();
+  }
+
+  /**
    * Clears the view.
    */
   public void clear() {
@@ -563,8 +582,8 @@ public class PreviewDisplay
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    for (PreviewPanel panel: m_PreviewCache.values())
-      panel.cleanUp();
+    for (Map.Entry<String,PreviewPanel> entry: m_PreviewCache.getAll())
+      entry.getValue().cleanUp();
     m_PreviewCache.clear();
   }
 }

@@ -1,7 +1,6 @@
 # Configuration file for the File content browser.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # The initial divider location
 DividerLocation=300
@@ -20,6 +19,9 @@ MaxRecentDirs=5
 
 # Whether to cache the preview panels
 CacheViews=True
+
+# The size of the cache for the preview panels
+CacheSize=100
 
 # Whether to show hidden files by default (true|false)
 ShowHiddenFiles=false

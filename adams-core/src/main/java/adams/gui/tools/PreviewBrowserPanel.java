@@ -394,6 +394,7 @@ public class PreviewBrowserPanel
 
     // content
     m_PanelContent = new PreviewDisplay();
+    m_PanelContent.setPreviewCacheSize(props.getInteger("CacheSize", 100));
     m_SplitPane.setRightComponent(m_PanelContent);
   }
 
