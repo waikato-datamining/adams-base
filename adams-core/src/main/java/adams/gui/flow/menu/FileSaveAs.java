@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileSaveAs.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
  * Lets user save a flow under new filename.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileSaveAs
   extends AbstractFlowEditorMenuItemAction {
@@ -56,8 +55,6 @@ public class FileSaveAs
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-	   m_State.hasCurrentPanel() 
-	&& m_State.getCurrentPanel().isInputEnabled());
+    setEnabled(m_State.hasCurrentPanel());
   }
 }
