@@ -15,7 +15,7 @@
 
 /*
  * RemoveSmallerRectangle.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -74,10 +74,12 @@ public class RemoveSmallerRectangle
 	    thisArea = otherArea;
 	  }
 	}
-        result.add(largest.getClone());
+	if (!result.contains(largest))
+	  result.add(largest.getClone());
       }
       else {
-        result.add(thisObj.getClone());
+	if (!result.contains(thisObj))
+	  result.add(thisObj.getClone());
       }
     }
 

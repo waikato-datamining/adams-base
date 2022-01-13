@@ -15,7 +15,7 @@
 
 /*
  * KeepHighestMetaDataValue.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -120,10 +120,12 @@ public class KeepHighestMetaDataValue
 	    currScore = otherScore;
 	  }
 	}
-        result.add(keep.getClone());
+        if (!result.contains(keep))
+          result.add(keep.getClone());
       }
       else {
-        result.add(thisObj.getClone());
+        if (!result.contains(thisObj))
+          result.add(thisObj.getClone());
       }
     }
 
