@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetInfo.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -57,12 +57,12 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetInfo
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
@@ -92,7 +92,7 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES|SHEET_VALUES|FIELD_SPEC|FIELD_SPECS|FIELD_TYPE|FIELD_TYPES&gt; (property: type)
+ * <pre>-type &lt;NAME|COMMENTS|TIMEZONE|LOCALE|NUM_COLUMNS|NUM_ROWS|COLUMN_NAME|COLUMN_NAMES|COLUMN_TYPE|CELL_TYPES|CELL_VALUES|COLUMN_VALUES|SHEET_VALUES|FIELD_SPEC|FIELD_SPECS|FIELD_TYPE|FIELD_TYPES&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: NUM_ROWS
  * </pre>
@@ -106,19 +106,19 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;default: last
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-sort &lt;boolean&gt; (property: sort)
  * &nbsp;&nbsp;&nbsp;If enabled, lists (eg names, values) are sorted.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetInfo
-  extends AbstractArrayProvider
-  implements DataInfoActor {
+    extends AbstractArrayProvider
+    implements DataInfoActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -152,6 +152,8 @@ public class SpreadSheetInfo
     CELL_TYPES,
     /** all (unique) cell values (at specified index). */
     CELL_VALUES,
+    /** values in specified column as they appear (unsorted, non-unique). */
+    COLUMN_VALUES,
     /** all (unique) cell values. */
     SHEET_VALUES,
     /** field (at specified index). */
@@ -169,10 +171,10 @@ public class SpreadSheetInfo
 
   /** the index of the column to get the information for. */
   protected SpreadSheetColumnIndex m_ColumnIndex;
-  
+
   /** whether to sort lists. */
   protected boolean m_Sort;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -191,16 +193,16 @@ public class SpreadSheetInfo
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    InfoType.NUM_ROWS);
+	"type", "type",
+	InfoType.NUM_ROWS);
 
     m_OptionManager.add(
-	    "column-index", "columnIndex",
-	    new SpreadSheetColumnIndex(Index.LAST));
+	"column-index", "columnIndex",
+	new SpreadSheetColumnIndex(Index.LAST));
 
     m_OptionManager.add(
-	    "sort", "sort",
-	    true);
+	"sort", "sort",
+	true);
   }
 
   /**
@@ -226,25 +228,26 @@ public class SpreadSheetInfo
     result = QuickInfoHelper.toString(this, "type", m_Type);
 
     types = new HashSet<>(
-      Arrays.asList(
-	InfoType.NAME,
-	InfoType.COMMENTS,
-	InfoType.TIMEZONE,
-	InfoType.LOCALE,
-	InfoType.NUM_COLUMNS,
-	InfoType.NUM_ROWS,
-	InfoType.FIELD_SPEC,
-	InfoType.FIELD_TYPE
-      ));
+	Arrays.asList(
+	    InfoType.NAME,
+	    InfoType.COMMENTS,
+	    InfoType.TIMEZONE,
+	    InfoType.LOCALE,
+	    InfoType.NUM_COLUMNS,
+	    InfoType.NUM_ROWS,
+	    InfoType.FIELD_SPEC,
+	    InfoType.FIELD_TYPE
+	));
     if (!types.contains(m_Type) || QuickInfoHelper.hasVariable(this, "type"))
       result += QuickInfoHelper.toString(this, "columnIndex", m_ColumnIndex, ", index: ");
 
     types = new HashSet<>(
-      Arrays.asList(
-	InfoType.COLUMN_NAMES,
-	InfoType.CELL_VALUES,
-	InfoType.SHEET_VALUES
-      ));
+	Arrays.asList(
+	    InfoType.COLUMN_NAMES,
+	    InfoType.CELL_VALUES,
+	    InfoType.COLUMN_VALUES,
+	    InfoType.SHEET_VALUES
+	));
     if (types.contains(m_Type) || QuickInfoHelper.hasVariable(this, "type"))
       result += QuickInfoHelper.toString(this, "sort", m_Sort, (m_Sort ? "sorted" : "unsorted"), ", ");
 
@@ -368,6 +371,7 @@ public class SpreadSheetInfo
       case COLUMN_TYPE:
       case CELL_TYPES:
       case CELL_VALUES:
+      case COLUMN_VALUES:
       case SHEET_VALUES:
       case FIELD_SPEC:
       case FIELD_SPECS:
@@ -450,7 +454,7 @@ public class SpreadSheetInfo
       case NAME:
 	m_Queue.add(sheet.getName());
 	break;
-      
+
       case COMMENTS:
 	m_Queue.addAll(sheet.getComments());
 	break;
@@ -462,7 +466,7 @@ public class SpreadSheetInfo
       case LOCALE:
 	m_Queue.add(sheet.getLocale().toString());
 	break;
-      
+
       case COLUMN_NAME:
 	if (index != -1)
 	  m_Queue.add(sheet.getHeaderRow().getCell(index).getContent());
@@ -482,7 +486,7 @@ public class SpreadSheetInfo
       case NUM_ROWS:
 	m_Queue.add(sheet.getRowCount());
 	break;
-	
+
       case COLUMN_TYPE:
 	if (index != -1) {
 	  type = sheet.getContentType(index);
@@ -491,7 +495,7 @@ public class SpreadSheetInfo
 	  m_Queue.add(type.toString());
 	}
 	break;
-	
+
       case CELL_TYPES:
 	if (index != -1) {
 	  types = sheet.getContentTypes(index);
@@ -499,39 +503,44 @@ public class SpreadSheetInfo
 	    m_Queue.add(ct.toString());
 	}
 	break;
-	
+
       case CELL_VALUES:
 	if (index != -1)
-          m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, true, m_Sort)));
+	  m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, true, m_Sort)));
+	break;
+
+      case COLUMN_VALUES:
+	if (index != -1)
+	  m_Queue.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, index, false, false)));
 	break;
 
       case SHEET_VALUES:
-        unique = new HashSet<>();
-        for (i = 0; i < sheet.getColumnCount(); i++)
-          unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
-        m_Queue.addAll(unique);
-        Collections.sort(m_Queue);
-        break;
+	unique = new HashSet<>();
+	for (i = 0; i < sheet.getColumnCount(); i++)
+	  unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
+	m_Queue.addAll(unique);
+	Collections.sort(m_Queue);
+	break;
 
       case FIELD_SPEC:
 	if (index != -1)
 	  m_Queue.add(toField(sheet, index).toParseableString());
-        break;
+	break;
 
       case FIELD_SPECS:
-        for (i = 0; i < sheet.getColumnCount(); i++)
+	for (i = 0; i < sheet.getColumnCount(); i++)
 	  m_Queue.add(toField(sheet, i).toParseableString());
-        break;
+	break;
 
       case FIELD_TYPE:
 	if (index != -1)
 	  m_Queue.add(toField(sheet, index).getDataType().toDisplay());
-        break;
+	break;
 
       case FIELD_TYPES:
-        for (i = 0; i < sheet.getColumnCount(); i++)
+	for (i = 0; i < sheet.getColumnCount(); i++)
 	  m_Queue.add(toField(sheet, i).getDataType().toDisplay());
-        break;
+	break;
 
       default:
 	result = "Unhandled info type: " + m_Type;
