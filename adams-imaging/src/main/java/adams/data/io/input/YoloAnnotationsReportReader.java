@@ -581,7 +581,7 @@ public class YoloAnnotationsReportReader
       if (colIndex == -1)
         throw new IllegalStateException("Column with label indices not found: " + index.getIndex());
       label.setSpreadSheet(sheet);
-      colLabel = index.getIntIndex();
+      colLabel = label.getIntIndex();
       if (colLabel == -1)
         throw new IllegalStateException("Column with label strings not found: " + label.getIndex());
       result = new HashMap<>();
