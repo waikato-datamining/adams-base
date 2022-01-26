@@ -15,7 +15,7 @@
 
 /*
  * SimpleArffSpreadSheetReader.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -301,7 +301,7 @@ public class SimpleArffSpreadSheetReader
 	    result.setName(Utils.unquote(line.substring(KEYWORD_RELATION.length()).trim()));
 	  }
 	  else if (lower.startsWith(KEYWORD_ATTRIBUTE)) {
-	    row.addCell("" + row.getCellCount()).setContentAsString(getAttributeName(line));
+	    row.addCell("" + row.getCellCount()).setContentAsString(Utils.unquote(getAttributeName(line)));
 	    types.add(getAttributeType(line));
 	    formats.add(getAttributeDateFormat(line));
 	  }

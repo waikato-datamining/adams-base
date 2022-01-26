@@ -15,7 +15,7 @@
 
 /*
  * SimpleArffSpreadSheetWriter.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -378,7 +378,7 @@ public class SimpleArffSpreadSheetWriter
 	    nominal[i] = true;
 	}
 	// output
-	bwriter.write(SimpleArffSpreadSheetReader.KEYWORD_ATTRIBUTE + " " + content.getColumnName(i) + " ");
+	bwriter.write(SimpleArffSpreadSheetReader.KEYWORD_ATTRIBUTE + " " + Utils.quote(content.getColumnName(i)) + " ");
 	switch (types[i]) {
 	  case STRING:
 	    if (nominal[i]) {
