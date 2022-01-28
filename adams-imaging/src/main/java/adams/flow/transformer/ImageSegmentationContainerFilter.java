@@ -14,20 +14,20 @@
  */
 
 /*
- * ImageSegmentationContainerOperation.java
+ * ImageSegmentationContainerFilter.java
  * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.imagesegmentationcontaineroperation.AbstractImageSegmentationContainerOperation;
+import adams.data.image.imagesegmentationcontainerfilter.AbstractImageSegmentationContainerFilter;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Applies a Image Segmentation container operation to the incoming container(s) and outputs the generated data.
+ * Applies a Image Segmentation container filter to the incoming container(s) and outputs the generated data.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -48,7 +48,7 @@ import adams.flow.core.Token;
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: ImageSegmentationContainerOperation
+ * &nbsp;&nbsp;&nbsp;default: ImageSegmentationContainerFilter
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
@@ -75,8 +75,8 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-operation &lt;adams.data.image.imagesegmentationcontainer.AbstractImageSegmentationContainerOperation&gt; (property: operation)
- * &nbsp;&nbsp;&nbsp;The operation to apply to the containers.
+ * <pre>-filter &lt;adams.data.image.imagesegmentationcontainer.AbstractImageSegmentationContainerFilter&gt; (property: filter)
+ * &nbsp;&nbsp;&nbsp;The filter to apply to the containers.
  * &nbsp;&nbsp;&nbsp;default: adams.data.image.imagesegmentationcontainer.PassThrough
  * </pre>
  *
@@ -84,14 +84,14 @@ import adams.flow.core.Token;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ImageSegmentationContainerOperation
+public class ImageSegmentationContainerFilter
   extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
 
   /** the transformer to apply to the container. */
-  protected AbstractImageSegmentationContainerOperation m_Operation;
+  protected AbstractImageSegmentationContainerFilter m_Filter;
 
   /**
    * Returns a string describing the object.
@@ -101,7 +101,7 @@ public class ImageSegmentationContainerOperation
   @Override
   public String globalInfo() {
     return
-      "Applies a Image Segmentation container operation to the incoming "
+      "Applies a Image Segmentation container filter to the incoming "
 	+ "container(s) and outputs the generated data.";
   }
 
@@ -113,27 +113,27 @@ public class ImageSegmentationContainerOperation
     super.defineOptions();
 
     m_OptionManager.add(
-      "operation", "operation",
-      new adams.data.image.imagesegmentationcontaineroperation.PassThrough());
+      "filter", "filter",
+      new adams.data.image.imagesegmentationcontainerfilter.PassThrough());
   }
 
   /**
-   * Sets the operation to use.
+   * Sets the filter to use.
    *
-   * @param value	the operation
+   * @param value	the filter
    */
-  public void setOperation(AbstractImageSegmentationContainerOperation value) {
-    m_Operation = value;
+  public void setFilter(AbstractImageSegmentationContainerFilter value) {
+    m_Filter = value;
     reset();
   }
 
   /**
-   * Returns the operation in use.
+   * Returns the filter in use.
    *
-   * @return		the operation
+   * @return		the filter
    */
-  public AbstractImageSegmentationContainerOperation getOperation() {
-    return m_Operation;
+  public AbstractImageSegmentationContainerFilter getFilter() {
+    return m_Filter;
   }
 
   /**
@@ -142,8 +142,8 @@ public class ImageSegmentationContainerOperation
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String operationTipText() {
-    return "The operation to apply to the containers.";
+  public String filterTipText() {
+    return "The filter to apply to the containers.";
   }
 
   /**
@@ -153,7 +153,7 @@ public class ImageSegmentationContainerOperation
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "operation", m_Operation);
+    return QuickInfoHelper.toString(this, "filter", m_Filter);
   }
 
   /**
@@ -163,7 +163,7 @@ public class ImageSegmentationContainerOperation
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{ImageSegmentationContainer[].class};
+    return new Class[]{ImageSegmentationContainer.class};
   }
 
   /**
@@ -173,7 +173,7 @@ public class ImageSegmentationContainerOperation
    */
   @Override
   public Class[] generates() {
-    return new Class[]{m_Operation.generates()};
+    return new Class[]{ImageSegmentationContainer.class};
   }
 
   /**
@@ -183,20 +183,20 @@ public class ImageSegmentationContainerOperation
    */
   @Override
   protected String doExecute() {
-    String				result;
-    ImageSegmentationContainer[]	input;
-    Object				output;
+    String			result;
+    ImageSegmentationContainer	input;
+    Object			output;
 
     result = null;
 
     try {
-      input  = (ImageSegmentationContainer[]) m_InputToken.getPayload();
-      output = m_Operation.process(input);
+      input  = (ImageSegmentationContainer) m_InputToken.getPayload();
+      output = m_Filter.filter(input);
       if (output != null)
 	m_OutputToken = new Token(output);
     }
     catch (Exception e) {
-      result = handleException("Failed to transform container(s): ", e);
+      result = handleException("Failed to filter container: ", e);
     }
 
     return result;

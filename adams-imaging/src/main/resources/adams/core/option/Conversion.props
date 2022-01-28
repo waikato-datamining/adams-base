@@ -16,11 +16,13 @@ Rename-imaging-imagereader=adams.flow.transformer.ImageReader-adams.flow.transfo
 Rename-imaging-imagewriter=adams.flow.sink.ImageWriter-adams.flow.sink.ImageFileWriter
 
 # Lists the keys that contain partial classname renaming.
-PartialRename=
+PartialRename=\
+  PartialRename-imgsegoperation
 
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
 #PartialRename-boofcv=.boofcv.flattener.\t.boofcv.features.
+PartialRename-imgsegoperation=adams.data.image.imagesegmentationcontainer.\tadams.data.image.imagesegmentationcontaineroperation.
 
 # List the keys that contain renaming of options (ie "-blah" into "-bloerk")
 RenameOption=

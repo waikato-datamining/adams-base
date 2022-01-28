@@ -18,7 +18,7 @@
  * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.image.imagesegmentationcontainer;
+package adams.data.image.imagesegmentationcontaineroperation;
 
 import adams.flow.container.ImageSegmentationContainer;
 
