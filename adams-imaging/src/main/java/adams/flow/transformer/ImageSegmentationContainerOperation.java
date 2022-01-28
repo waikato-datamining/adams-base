@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.imagesegmentationcontaineroperation.AbstractImageSegmentationContainerOperation;
+import adams.data.imagesegmentation.operation.AbstractImageSegmentationContainerOperation;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
 
@@ -114,7 +114,7 @@ public class ImageSegmentationContainerOperation
 
     m_OptionManager.add(
       "operation", "operation",
-      new adams.data.image.imagesegmentationcontaineroperation.PassThrough());
+      new adams.data.imagesegmentation.operation.PassThrough());
   }
 
   /**

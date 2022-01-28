@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.data.image.imagesegmentationcontainerfilter.AbstractImageSegmentationContainerFilter;
+import adams.data.imagesegmentation.filter.AbstractImageSegmentationContainerFilter;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
 
@@ -114,7 +114,7 @@ public class ImageSegmentationContainerFilter
 
     m_OptionManager.add(
       "filter", "filter",
-      new adams.data.image.imagesegmentationcontainerfilter.PassThrough());
+      new adams.data.imagesegmentation.filter.PassThrough());
   }
 
   /**

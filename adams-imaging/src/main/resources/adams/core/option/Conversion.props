@@ -22,7 +22,7 @@ PartialRename=\
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
 #PartialRename-boofcv=.boofcv.flattener.\t.boofcv.features.
-PartialRename-imgsegoperation=adams.data.image.imagesegmentationcontainer.\tadams.data.image.imagesegmentationcontaineroperation.
+PartialRename-imgsegoperation=adams.data.image.imagesegmentationcontainer.\tadams.data.imagesegmentation.operation.
 
 # List the keys that contain renaming of options (ie "-blah" into "-bloerk")
 RenameOption=

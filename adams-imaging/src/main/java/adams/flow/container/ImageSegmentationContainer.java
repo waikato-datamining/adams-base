@@ -15,7 +15,7 @@
 
 /*
  * ImageSegmentationContainer.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.container;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationContainer
-  extends AbstractContainer {
+    extends AbstractContainer {
 
   private static final long serialVersionUID = -472411106843171690L;
 
@@ -123,5 +123,14 @@ public class ImageSegmentationContainer
    */
   public BufferedImage getBaseImage() {
     return (BufferedImage) getValue(VALUE_BASE);
+  }
+
+  /**
+   * Returns the layers.
+   *
+   * @return		the layers
+   */
+  public Map<String,BufferedImage> getLayers() {
+    return (Map<String,BufferedImage>) getValue(VALUE_LAYERS);
   }
 }

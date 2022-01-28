@@ -18,7 +18,7 @@
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.image.imagesegmentationcontainerfilter;
+package adams.data.imagesegmentation.filter;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.container.ImageSegmentationContainer;
