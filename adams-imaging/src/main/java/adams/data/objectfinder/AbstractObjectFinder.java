@@ -15,7 +15,7 @@
 
 /*
  * AbstractObjectFinder.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -219,5 +219,19 @@ public abstract class AbstractObjectFinder
    */
   public LocatedObjects findObjects(Report report) {
     return findObjects(LocatedObjects.fromReport(report, m_Prefix));
+  }
+
+  /**
+   * Filters the objects in the report.
+   *
+   * @param report	the report to process
+   * @return		the filtered report
+   */
+  public Report filter(Report report) {
+    LocatedObjects  objects;
+
+    objects = findObjects(report);
+
+    return objects.toReport(m_Prefix);
   }
 }

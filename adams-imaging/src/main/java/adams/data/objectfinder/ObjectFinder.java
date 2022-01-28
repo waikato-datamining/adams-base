@@ -15,7 +15,7 @@
 
 /*
  * ObjectFinder.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -86,4 +86,12 @@ public interface ObjectFinder
    * @return		the indices
    */
   public LocatedObjects findObjects(Report report);
+
+  /**
+   * Filters the objects in the report.
+   *
+   * @param report	the report to process
+   * @return		the filtered report
+   */
+  public Report filter(Report report);
 }
