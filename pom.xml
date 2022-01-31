@@ -81,7 +81,7 @@
     <javaws.version>3.0.2</javaws.version>
     <jetty.version>9.4.11.v20180605</jetty.version>
     <moa.version>2021.07.0</moa.version>
-    <weka.version>3.9.5-fork-0.0.2</weka.version>
+    <weka.version>3.9.6-fork-0.0.1</weka.version>
     <weka-lts.version>3.9.0-fork-0.0.12</weka-lts.version>
     <postgresql.version>42.0.0</postgresql.version>
     <postgis.version>2.2.1</postgis.version>
