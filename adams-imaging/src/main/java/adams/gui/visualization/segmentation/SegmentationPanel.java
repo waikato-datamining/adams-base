@@ -23,6 +23,7 @@ package adams.gui.visualization.segmentation;
 import adams.core.ClassLister;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingObject;
 import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.PNGImageReader;
@@ -43,8 +44,12 @@ import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
+import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.segmentation.layer.AbstractLayer;
+import adams.gui.visualization.segmentation.layer.BackgroundLayer;
 import adams.gui.visualization.segmentation.layer.CombinedLayer;
+import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 import adams.gui.visualization.segmentation.tool.AbstractTool;
@@ -68,6 +73,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,6 +89,15 @@ public class SegmentationPanel
 
   /** the zoom factor to use. */
   public final static double ZOOM_FACTOR = 1.4;
+
+  /**
+   * What layers should be selected.
+   */
+  public enum LayerVisibility {
+    ALL,
+    NONE,
+    PREVIOUSLY_VISIBLE,
+  }
 
   /** layer manager. */
   protected LayerManager m_Manager;
@@ -589,6 +604,103 @@ public class SegmentationPanel
     return !m_ButtonAddUndo.isVisible();
   }
 
+  /**
+   * Retrieves the layers from the container.
+   * 
+   * @param segcont		the container to use
+   * @param labels 		the labels to use
+   * @param useSeparateLayers 	whether to use separate layers or combined layers
+   * @param colorProvider	for generating the colors for the layers
+   * @param alpha		the default alpha value to use
+   * @param allowLayerRemoval	whether layers can be removed
+   * @param allowLayerActions 	whether actions are allowed
+   * @param layerVisibility 	the visibility to use
+   * @param lastSettings 	the previous settings, can be null
+   * @param logger 		the logging object to use, can be null
+   */
+  public void fromContainer(ImageSegmentationContainer segcont, String[] labels, boolean useSeparateLayers,
+			    ColorProvider colorProvider, float alpha, boolean allowLayerRemoval,
+			    boolean allowLayerActions, LayerVisibility layerVisibility,
+			    List<AbstractLayer.AbstractLayerState> lastSettings, LoggingObject logger) {
+    Map<String, BufferedImage> 	layers;
+    OverlayLayer		layer;
+
+    getManager().clear();
+    getManager().setImage(
+	segcont.getValue(ImageSegmentationContainer.VALUE_NAME, String.class),
+	segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
+    layers = (Map<String,BufferedImage>) segcont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+    for (String label: labels) {
+      // init layer
+      if (useSeparateLayers) {
+	if (layers != null) {
+	  if (layers.containsKey(label)) {
+	    layer = getManager().addOverlay(label, colorProvider.next(), alpha, layers.get(label));
+	  }
+	  else {
+	    if (logger != null)
+	      logger.getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
+	    layer = getManager().addOverlay(label, colorProvider.next(), alpha);
+	  }
+	}
+	else {
+	  layer = getManager().addOverlay(label, colorProvider.next(), alpha);
+	}
+	layer.setRemovable(allowLayerRemoval);
+	layer.setActionsAvailable(allowLayerActions);
+	switch (layerVisibility) {
+	  case ALL:
+	    layer.setEnabled(true);
+	    break;
+	  case NONE:
+	    layer.setEnabled(false);
+	    break;
+	  case PREVIOUSLY_VISIBLE:
+	    // done through settings;
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled layer visibility type: " + layerVisibility);
+	}
+      }
+      else {
+	if (layers != null) {
+	  if (layers.containsKey(label)) {
+	    getManager().addCombined(label, colorProvider.next(), alpha, layers.get(label));
+	  }
+	  else {
+	    if (logger != null)
+	      logger.getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
+	    getManager().addCombined(label, colorProvider.next(), alpha);
+	  }
+	}
+	else {
+	  getManager().addCombined(label, colorProvider.next(), alpha);
+	}
+      }
+    }
+
+    if ((lastSettings != null) && !lastSettings.isEmpty())
+      getManager().setSettings(lastSettings);
+
+    // overriding visibility settings
+    for (AbstractLayer l: getManager().getLayers()) {
+      if (l instanceof ImageLayer)
+	continue;
+      if (l instanceof BackgroundLayer)
+	continue;
+      switch (layerVisibility) {
+	case ALL:
+	  l.setEnabled(true);
+	  break;
+	case NONE:
+	  l.setEnabled(false);
+	  break;
+      }
+    }
+
+    update();
+  }
+  
   /**
    * Turns the layers into a container.
    *

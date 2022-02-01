@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
@@ -31,10 +32,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
-import adams.gui.visualization.segmentation.layer.AbstractLayer;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
-import adams.gui.visualization.segmentation.layer.BackgroundLayer;
-import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.JPanel;
@@ -235,15 +233,6 @@ public class ImageSegmentationAnnotator
 
   private static final long serialVersionUID = -761517109077084448L;
 
-  /**
-   * What layers should be selected.
-   */
-  public enum LayerVisibility {
-    ALL,
-    NONE,
-    PREVIOUSLY_VISIBLE,
-  }
-
   /** the labels to use. */
   protected BaseString[] m_Labels;
 
@@ -278,7 +267,7 @@ public class ImageSegmentationAnnotator
   protected boolean m_UseSeparateLayers;
 
   /** what layers to have visible (when using separate layers). */
-  protected LayerVisibility m_LayerVisibility;
+  protected SegmentationPanel.LayerVisibility m_LayerVisibility;
 
   /** whether layers can be deleted (when using separate layers). */
   protected boolean m_AllowLayerRemoval;
@@ -357,7 +346,7 @@ public class ImageSegmentationAnnotator
 
     m_OptionManager.add(
       "layer-visibility", "layerVisibility",
-      LayerVisibility.ALL);
+      SegmentationPanel.LayerVisibility.ALL);
 
     m_OptionManager.add(
       "allow-layer-remove", "allowLayerRemoval",
@@ -726,7 +715,7 @@ public class ImageSegmentationAnnotator
    *
    * @param value 	the visibility
    */
-  public void setLayerVisibility(LayerVisibility value) {
+  public void setLayerVisibility(SegmentationPanel.LayerVisibility value) {
     m_LayerVisibility = value;
     reset();
   }
@@ -736,7 +725,7 @@ public class ImageSegmentationAnnotator
    *
    * @return 		the visibility
    */
-  public LayerVisibility getLayerVisibility() {
+  public SegmentationPanel.LayerVisibility getLayerVisibility() {
     return m_LayerVisibility;
   }
 
@@ -915,78 +904,17 @@ public class ImageSegmentationAnnotator
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_ColorProvider.resetColors();
-    m_PanelSegmentation.getManager().clear();
-    m_PanelSegmentation.getManager().setImage(
-      segcont.getValue(ImageSegmentationContainer.VALUE_NAME, String.class),
-      segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
-    layers = (Map<String,BufferedImage>) segcont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
-    for (BaseString label: m_Labels) {
-      // init layer
-      if (m_UseSeparateLayers) {
-        if (layers != null) {
-          if (layers.containsKey(label.getValue())) {
-            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
-          }
-          else {
-            getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-            layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
-          }
-        }
-        else {
-          layer = m_PanelSegmentation.getManager().addOverlay(label.getValue(), m_ColorProvider.next(), m_Alpha);
-        }
-        layer.setRemovable(m_AllowLayerRemoval);
-        layer.setActionsAvailable(m_AllowLayerActions);
-        switch (m_LayerVisibility) {
-          case ALL:
-            layer.setEnabled(true);
-            break;
-          case NONE:
-            layer.setEnabled(false);
-            break;
-          case PREVIOUSLY_VISIBLE:
-            // done through settings;
-            break;
-          default:
-            throw new IllegalStateException("Unhandled layer visibility type: " + m_LayerVisibility);
-        }
-      }
-      else {
-        if (layers != null) {
-          if (layers.containsKey(label.getValue())) {
-            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha, layers.get(label.getValue()));
-          }
-          else {
-            getLogger().warning("Label '" + label + "' not present in layers, using empty layer!");
-            m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha);
-          }
-        }
-        else {
-          m_PanelSegmentation.getManager().addCombined(label.getValue(), m_ColorProvider.next(), m_Alpha);
-        }
-      }
-    }
-
-    if (!m_LastSettings.isEmpty())
-      m_PanelSegmentation.getManager().setSettings(m_LastSettings);
-
-    // overriding visibility settings
-    for (AbstractLayer l: m_PanelSegmentation.getManager().getLayers()) {
-      if (l instanceof ImageLayer)
-	continue;
-      if (l instanceof BackgroundLayer)
-	continue;
-      switch (m_LayerVisibility) {
-	case ALL:
-	  l.setEnabled(true);
-	  break;
-	case NONE:
-	  l.setEnabled(false);
-	  break;
-      }
-    }
-
-    m_PanelSegmentation.update();
+    m_PanelSegmentation.fromContainer(
+        segcont,
+        BaseObject.toStringArray(m_Labels),
+        m_UseSeparateLayers,
+        m_ColorProvider,
+        m_Alpha,
+        m_AllowLayerRemoval,
+        m_AllowLayerActions,
+        m_LayerVisibility,
+        m_LastSettings,
+        this);
 
     // best fit
     if (m_BestFit && !m_BestFitApplied) {
