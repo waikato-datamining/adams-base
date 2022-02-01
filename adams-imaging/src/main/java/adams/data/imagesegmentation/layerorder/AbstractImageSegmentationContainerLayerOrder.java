@@ -65,7 +65,7 @@ public abstract class AbstractImageSegmentationContainerLayerOrder
     String	msg;
 
     msg = check(cont);
-    if (msg == null)
+    if (msg != null)
       throw new IllegalStateException(msg);
 
     return doGenerate(cont);
