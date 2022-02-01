@@ -903,7 +903,6 @@ public class ImageSegmentationAnnotator
 
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
-    m_ColorProvider.resetColors();
     m_PanelSegmentation.fromContainer(
         segcont,
         BaseObject.toStringArray(m_Labels),

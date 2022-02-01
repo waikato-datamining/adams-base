@@ -71,6 +71,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +98,36 @@ public class SegmentationPanel
     ALL,
     NONE,
     PREVIOUSLY_VISIBLE,
+  }
+
+  /**
+   * The settings used when setting up from a container.
+   */
+  public static class ContainerSettings
+      implements Serializable {
+
+    private static final long serialVersionUID = -1259550529300418416L;
+
+    /** the labels in use. */
+    public String[] labels = new String[0];
+
+    /** whether separate layers were used. */
+    public boolean useSeparateLayers = false;
+
+    /** the color provider that was used. */
+    public ColorProvider colorProvider = new DefaultColorProvider();
+
+    /** the alpha value for the layers. */
+    public float alpha = 1.0f;
+
+    /** whether layers can be removed. */
+    public boolean allowLayerRemoval = false;
+
+    /** whether actions are allowed. */
+    public boolean allowLayerActions = false;
+
+    /** the visibility. */
+    public LayerVisibility layerVisibility = LayerVisibility.ALL;
   }
 
   /** layer manager. */
@@ -172,7 +203,7 @@ public class SegmentationPanel
   protected JPanel m_PanelToolButtons;
 
   /** whether separate layers were used. */
-  protected boolean m_UseSeparateLayers;
+  protected ContainerSettings m_ContainerSettings;
 
   /**
    * Initializes the members.
@@ -184,7 +215,7 @@ public class SegmentationPanel
     m_LastMouseListener       = null;
     m_LastMouseMotionListener = null;
     m_ActiveTool              = null;
-    m_UseSeparateLayers       = false;
+    m_ContainerSettings       = null;
   }
 
   /**
@@ -609,12 +640,38 @@ public class SegmentationPanel
   }
 
   /**
+   * Returns the last settings used when calling fromContainer.
+   *
+   * @return		the settings, null if not available
+   * @see		#fromContainer(ImageSegmentationContainer, String[], boolean, ColorProvider, float, boolean, boolean, LayerVisibility, List, LoggingObject)
+   */
+  public ContainerSettings getContainerSettings() {
+    return m_ContainerSettings;
+  }
+
+  /**
    * Retrieves the layers from the container.
-   * 
+   *
+   * @param segcont		the container to use
+   * @param contSettings 	the last settings used when calling fromContainer
+   * @param lastSettings 	the previous settings, can be null
+   * @param logger 		the logging object to use, can be null
+   */
+  public void fromContainer(ImageSegmentationContainer segcont, ContainerSettings contSettings,
+			    List<AbstractLayer.AbstractLayerState> lastSettings, LoggingObject logger) {
+    fromContainer(
+        segcont, contSettings.labels, contSettings.useSeparateLayers, contSettings.colorProvider,
+	contSettings.alpha, contSettings.allowLayerRemoval, contSettings.allowLayerActions,
+	contSettings.layerVisibility, lastSettings, logger);
+  }
+
+  /**
+   * Retrieves the layers from the container.
+   *
    * @param segcont		the container to use
    * @param labels 		the labels to use
    * @param useSeparateLayers 	whether to use separate layers or combined layers
-   * @param colorProvider	for generating the colors for the layers, must be reset before calling this method
+   * @param colorProvider	for generating the colors for the layers, will be reset in this method
    * @param alpha		the default alpha value to use
    * @param allowLayerRemoval	whether layers can be removed
    * @param allowLayerActions 	whether actions are allowed
@@ -629,8 +686,17 @@ public class SegmentationPanel
     Map<String, BufferedImage> 	layers;
     OverlayLayer		layer;
 
-    m_UseSeparateLayers = useSeparateLayers;
+    // keep track of parameters
+    m_ContainerSettings                   = new ContainerSettings();
+    m_ContainerSettings.labels            = labels.clone();
+    m_ContainerSettings.useSeparateLayers = useSeparateLayers;
+    m_ContainerSettings.colorProvider     = colorProvider;
+    m_ContainerSettings.alpha             = alpha;
+    m_ContainerSettings.allowLayerRemoval = allowLayerRemoval;
+    m_ContainerSettings.allowLayerActions = allowLayerActions;
+    m_ContainerSettings.layerVisibility   = layerVisibility;
 
+    colorProvider.resetColors();
     getManager().clear();
     getManager().setImage(
 	segcont.getValue(ImageSegmentationContainer.VALUE_NAME, String.class),
@@ -711,10 +777,10 @@ public class SegmentationPanel
    * Turns the layers into a container. Uses any previously set value whether separate layers were used.
    *
    * @return			the generated container
-   * @see			#m_UseSeparateLayers
+   * @see			#m_ContainerSettings
    */
   public ImageSegmentationContainer toContainer() {
-    return toContainer(m_UseSeparateLayers);
+    return toContainer((m_ContainerSettings != null) && m_ContainerSettings.useSeparateLayers);
   }
 
   /**
