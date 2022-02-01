@@ -15,7 +15,7 @@
 
 /*
  * SegmentationPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -171,6 +171,9 @@ public class SegmentationPanel
   /** the panel with the buttons. */
   protected JPanel m_PanelToolButtons;
 
+  /** whether separate layers were used. */
+  protected boolean m_UseSeparateLayers;
+
   /**
    * Initializes the members.
    */
@@ -181,6 +184,7 @@ public class SegmentationPanel
     m_LastMouseListener       = null;
     m_LastMouseMotionListener = null;
     m_ActiveTool              = null;
+    m_UseSeparateLayers       = false;
   }
 
   /**
@@ -610,7 +614,7 @@ public class SegmentationPanel
    * @param segcont		the container to use
    * @param labels 		the labels to use
    * @param useSeparateLayers 	whether to use separate layers or combined layers
-   * @param colorProvider	for generating the colors for the layers
+   * @param colorProvider	for generating the colors for the layers, must be reset before calling this method
    * @param alpha		the default alpha value to use
    * @param allowLayerRemoval	whether layers can be removed
    * @param allowLayerActions 	whether actions are allowed
@@ -624,6 +628,8 @@ public class SegmentationPanel
 			    List<AbstractLayer.AbstractLayerState> lastSettings, LoggingObject logger) {
     Map<String, BufferedImage> 	layers;
     OverlayLayer		layer;
+
+    m_UseSeparateLayers = useSeparateLayers;
 
     getManager().clear();
     getManager().setImage(
@@ -700,7 +706,17 @@ public class SegmentationPanel
 
     update();
   }
-  
+
+  /**
+   * Turns the layers into a container. Uses any previously set value whether separate layers were used.
+   *
+   * @return			the generated container
+   * @see			#m_UseSeparateLayers
+   */
+  public ImageSegmentationContainer toContainer() {
+    return toContainer(m_UseSeparateLayers);
+  }
+
   /**
    * Turns the layers into a container.
    *
