@@ -27,6 +27,7 @@ import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.PNGImageReader;
 import adams.env.Environment;
+import adams.flow.container.ImageSegmentationContainer;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -43,6 +44,7 @@ import adams.gui.core.NumberTextField.Type;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 import adams.gui.visualization.segmentation.tool.AbstractTool;
@@ -62,8 +64,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Panel for performing segmentation annotations.
@@ -71,8 +76,8 @@ import java.util.Date;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SegmentationPanel
-  extends BasePanel
-  implements ChangeListener, UndoListener {
+    extends BasePanel
+    implements ChangeListener, UndoListener {
 
   private static final long serialVersionUID = -7354416525309860289L;
 
@@ -264,34 +269,34 @@ public class SegmentationPanel
     buttonPointer = null;
     for (Class t: tools) {
       try {
-        final AbstractTool tool = (AbstractTool) t.newInstance();
-        tool.setCanvas(m_PanelCanvas);
-        button = new BaseToggleButton(tool.getIcon());
-        button.setToolTipText(tool.getName());
-        button.addActionListener((ActionEvent e) -> {
-          if (m_LastMouseListener != null)
-            m_PanelCanvas.removeMouseListener(m_LastMouseListener);
-          if (m_LastMouseMotionListener != null)
-            m_PanelCanvas.removeMouseMotionListener(m_LastMouseMotionListener);
-          m_PanelToolOptions.removeAll();
-          tool.setCanvas(m_PanelCanvas);
-          m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
-          m_PanelCanvas.setCursor(tool.getCursor());
-          m_LastMouseListener = tool.getMouseListener();
-          if (m_LastMouseListener != null)
+	final AbstractTool tool = (AbstractTool) t.newInstance();
+	tool.setCanvas(m_PanelCanvas);
+	button = new BaseToggleButton(tool.getIcon());
+	button.setToolTipText(tool.getName());
+	button.addActionListener((ActionEvent e) -> {
+	  if (m_LastMouseListener != null)
+	    m_PanelCanvas.removeMouseListener(m_LastMouseListener);
+	  if (m_LastMouseMotionListener != null)
+	    m_PanelCanvas.removeMouseMotionListener(m_LastMouseMotionListener);
+	  m_PanelToolOptions.removeAll();
+	  tool.setCanvas(m_PanelCanvas);
+	  m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
+	  m_PanelCanvas.setCursor(tool.getCursor());
+	  m_LastMouseListener = tool.getMouseListener();
+	  if (m_LastMouseListener != null)
 	    m_PanelCanvas.addMouseListener(m_LastMouseListener);
-          m_LastMouseMotionListener = tool.getMouseMotionListener();
-          if (m_LastMouseMotionListener != null)
+	  m_LastMouseMotionListener = tool.getMouseMotionListener();
+	  if (m_LastMouseMotionListener != null)
 	    m_PanelCanvas.addMouseMotionListener(m_LastMouseMotionListener);
-          m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
-          m_ActiveTool = tool;
+	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
+	  m_ActiveTool = tool;
 	});
-        group.add(button);
-        if (t.equals(Pointer.class)) {
+	group.add(button);
+	if (t.equals(Pointer.class)) {
 	  m_PanelToolButtons.add(button, 0);
 	  buttonPointer = button;
 	}
-        else {
+	else {
 	  m_PanelToolButtons.add(button);
 	}
       }
@@ -582,6 +587,33 @@ public class SegmentationPanel
    */
   public boolean isAutomaticUndoEnabled() {
     return !m_ButtonAddUndo.isVisible();
+  }
+
+  /**
+   * Turns the layers into a container.
+   *
+   * @param useSeparateLayers	whether to use separate layers or combined layers
+   * @return			the generated container
+   */
+  public ImageSegmentationContainer toContainer(boolean useSeparateLayers) {
+    ImageSegmentationContainer 	result;
+    Map<String, BufferedImage> 	layers;
+
+    layers = new HashMap<>();
+    if (useSeparateLayers) {
+      for (OverlayLayer l : getManager().getOverlays())
+	layers.put(l.getName(), l.getBinaryImage());
+    }
+    else {
+      for (CombinedLayer.CombinedSubLayer l: getManager().getCombinedLayer().getSubLayers())
+	layers.put(l.getName(), l.getBinaryImage());
+    }
+
+    result = new ImageSegmentationContainer();
+    result.setValue(ImageSegmentationContainer.VALUE_BASE, getManager().getImageLayer().getImage());
+    result.setValue(ImageSegmentationContainer.VALUE_LAYERS, layers);
+
+    return result;
   }
 
   /**

@@ -34,7 +34,6 @@ import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 import adams.gui.visualization.segmentation.layer.BackgroundLayer;
-import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
@@ -46,7 +45,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -1009,18 +1007,7 @@ public class ImageSegmentationAnnotator
 
     // output
     if (m_Accepted) {
-      layers = new HashMap<>();
-      if (m_UseSeparateLayers) {
-	for (OverlayLayer l : m_PanelSegmentation.getManager().getOverlays())
-	  layers.put(l.getName(), l.getBinaryImage());
-      }
-      else {
-        for (CombinedSubLayer l: m_PanelSegmentation.getManager().getCombinedLayer().getSubLayers())
-          layers.put(l.getName(), l.getBinaryImage());
-      }
-      segcont = new ImageSegmentationContainer();
-      segcont.setValue(ImageSegmentationContainer.VALUE_BASE, m_PanelSegmentation.getManager().getImageLayer().getImage());
-      segcont.setValue(ImageSegmentationContainer.VALUE_LAYERS, layers);
+      segcont       = m_PanelSegmentation.toContainer(m_UseSeparateLayers);
       m_OutputToken = new Token(segcont);
     }
 
