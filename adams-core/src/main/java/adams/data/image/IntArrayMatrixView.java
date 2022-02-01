@@ -15,7 +15,7 @@
 
 /*
  * IntArrayMatrixView.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -108,7 +108,27 @@ public class IntArrayMatrixView
   public int size() {
     return m_Width * m_Height;
   }
-  
+
+  /**
+   * Returns the value at the specified position.
+   *
+   * @param position	the 0-based position in the underlying array
+   * @return		the value at the position
+   */
+  public int get(int position) {
+    return m_Data[position];
+  }
+
+  /**
+   * Returns the RGBA values at the specified location.
+   *
+   * @param position	the 0-based position in the underlying array
+   * @return		the RGBA values at the position
+   */
+  public int[] getRGBA(int position) {
+    return BufferedImageHelper.split(get(position));
+  }
+
   /**
    * Returns the value at the specified location.
    * 
@@ -130,7 +150,27 @@ public class IntArrayMatrixView
   public int[] getRGBA(int x, int y) {
     return BufferedImageHelper.split(get(x, y));
   }
-  
+
+  /**
+   * Sets the value at the specified location.
+   *
+   * @param position	the 0-based position in the underlying array
+   * @param value	the value to set
+   */
+  public void set(int position, int value) {
+    m_Data[position] = value;
+  }
+
+  /**
+   * Sets the RGBA values at the specified location.
+   *
+   * @param position	the 0-based position in the underlying array
+   * @param rgba	the RGBA values to set
+   */
+  public void setRGBA(int position, int[] rgba) {
+    set(position, BufferedImageHelper.combine(rgba));
+  }
+
   /**
    * Sets the value at the specified location.
    * 
