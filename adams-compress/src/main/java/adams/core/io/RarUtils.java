@@ -15,7 +15,7 @@
 
 /*
  * RarUtils.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -25,8 +25,8 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import com.github.junrar.Archive;
 import com.github.junrar.UnrarCallback;
-import com.github.junrar.Volume;
 import com.github.junrar.rarfile.FileHeader;
+import com.github.junrar.volume.Volume;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -151,7 +151,7 @@ public class RarUtils {
       if (archive.isEncrypted())
 	throw new IllegalStateException("Cannot handle encrypted archives!");
       for (FileHeader entry : archive.getFileHeaders()) {
-	entryFilename = entry.getFileNameString().replace("\\", "/");
+	entryFilename = entry.getFileName().replace("\\", "/");
 
 	// encrypted?
 	if (entry.isEncrypted()) {
