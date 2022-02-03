@@ -111,7 +111,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ImageFileReader
-  extends AbstractTransformer {
+    extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = 7466006970025235243L;
@@ -136,8 +136,8 @@ public class ImageFileReader
   @Override
   public String globalInfo() {
     return
-      "Reads any file format that the specified image reader supports.\n"
-      + "If meta-data is associated with the image, then this can be loaded as well.";
+	"Reads any file format that the specified image reader supports.\n"
+	    + "If meta-data is associated with the image, then this can be loaded as well.";
   }
 
   /**
@@ -148,20 +148,20 @@ public class ImageFileReader
     super.defineOptions();
 
     m_OptionManager.add(
-      "reader", "reader",
-      new JAIImageReader());
+	"reader", "reader",
+	new JAIImageReader());
 
     m_OptionManager.add(
-      "load-meta-data", "loadMetaData",
-      false);
+	"load-meta-data", "loadMetaData",
+	false);
 
     m_OptionManager.add(
-      "meta-data-location", "metaDataLocation",
-      MetaDataFileUtils.MetaDataLocation.SAME_NAME);
+	"meta-data-location", "metaDataLocation",
+	MetaDataFileUtils.MetaDataLocation.SAME_NAME);
 
     m_OptionManager.add(
-      "meta-data-reader", "metaDataReader",
-      new DefaultSimpleReportReader());
+	"meta-data-reader", "metaDataReader",
+	new DefaultSimpleReportReader());
   }
 
   /**
@@ -329,7 +329,7 @@ public class ImageFileReader
 
     if (result == null) {
       if (!m_Reader.isAvailable())
-        result = "Reader '" + m_Reader.getClass().getName() + "' is not available - check setup!";
+	result = "Reader '" + m_Reader.getClass().getName() + "' is not available - check setup!";
     }
 
     return result;
@@ -345,7 +345,7 @@ public class ImageFileReader
     String			result;
     PlaceholderFile		file;
     AbstractImageContainer	cont;
-    PlaceholderFile[]		metaFiles;
+    File[]			metaFiles;
     Report			metaData;
     List	 		reports;
     Report			report;
@@ -361,9 +361,9 @@ public class ImageFileReader
     try {
       cont = m_Reader.read(file);
       if (cont != null)
-        m_OutputToken = new Token(cont);
+	m_OutputToken = new Token(cont);
       else
-        result = "Failed to read image: " + file;
+	result = "Failed to read image: " + file;
     }
     catch (Exception e) {
       result = handleException("Failed to read image: " + file, e);
@@ -373,19 +373,19 @@ public class ImageFileReader
     if (m_LoadMetaData && (result == null)) {
       metaFiles = MetaDataFileUtils.find(this, file, m_MetaDataLocation, m_MetaDataReader.getDefaultFormatExtension(), m_MetaDataReader.getFormatExtensions());
       metaData  = null;
-      for (PlaceholderFile metaFile: metaFiles) {
-        m_MetaDataReader.setInput(metaFile);
-        reports = m_MetaDataReader.read();
-        for (Object obj: reports) {
-          report = (Report) obj;
-          if (metaData == null)
-            metaData = report;
-          else
-            metaData.mergeWith(report);
+      for (File metaFile: metaFiles) {
+	m_MetaDataReader.setInput(new PlaceholderFile(metaFile));
+	reports = m_MetaDataReader.read();
+	for (Object obj: reports) {
+	  report = (Report) obj;
+	  if (metaData == null)
+	    metaData = report;
+	  else
+	    metaData.mergeWith(report);
 	}
       }
       if ((cont != null) && (metaData != null))
-        cont.getReport().mergeWith(metaData);
+	cont.getReport().mergeWith(metaData);
     }
 
     return result;

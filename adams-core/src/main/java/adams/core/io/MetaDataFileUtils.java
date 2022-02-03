@@ -21,9 +21,11 @@
 package adams.core.io;
 
 import adams.core.base.BaseRegExp;
+import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.logging.LoggingObject;
 import adams.flow.source.filesystemsearch.LocalFileSearch;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -47,18 +49,50 @@ public class MetaDataFileUtils {
   }
 
   /**
+   * Lists all the files in the directory that match the specified prefix.
+   *
+   * @param dir		the directory to scan
+   * @param prefix	the prefix that the files require
+   * @return		the matching files
+   */
+  public static File[] list(File dir, String prefix) {
+    List<File>			result;
+    String			dirAbs;
+    LocalDirectoryLister	lister;
+    String[]			files;
+
+    dirAbs = dir.getAbsolutePath();
+    lister = new LocalDirectoryLister();
+    lister.setWatchDir(dirAbs);
+    lister.setUseRelativePaths(true);
+    lister.setRecursive(false);
+    lister.setListDirs(false);
+    lister.setListFiles(true);
+    files = lister.list();
+
+    result = new ArrayList<>();
+    for (String file: files) {
+      if (file.startsWith(prefix))
+	result.add(new File(dirAbs, file));
+    }
+
+    return result.toArray(new File[0]);
+  }
+
+  /**
    * Returns the list of meta-data files that were identified using the provided
    * data file name.
    *
+   * @param source 	the caller, can be null
    * @param dataFile	the data to list the meta-data files for
    * @param location 	how to locate the meta-data files
-   * @param defaultExt 	the default extension to look for
-   * @param exts 	all available extensions to look for
+   * @param defaultExt 	the default extension to look for (no dot)
+   * @param exts 	all available extensions to look for (no dot)
    * @return		the files
    */
-  public static PlaceholderFile[] find(LoggingObject source, PlaceholderFile dataFile, MetaDataLocation location, String defaultExt, String[] exts) {
-    List<PlaceholderFile> 	result;
-    PlaceholderFile		file;
+  public static File[] find(LoggingObject source, PlaceholderFile dataFile, MetaDataLocation location, String defaultExt, String[] exts) {
+    List<File> 			result;
+    File			file;
     LocalFileSearch 		search;
     List<String>		matches;
     int				i;
@@ -82,7 +116,7 @@ public class MetaDataFileUtils {
 	  matches = search.search();
 	  for (i = 0; i < matches.size(); i++) {
 	    if (!extensions.contains(FileUtils.getExtension(matches.get(i))))
-	      result.add(new PlaceholderFile(matches.get(i)));
+	      result.add(new File(matches.get(i)));
 	  }
 	}
 	catch (Exception e) {
@@ -95,7 +129,66 @@ public class MetaDataFileUtils {
 	throw new IllegalStateException("Unhandled meta-data location: " + location);
     }
 
-    return result.toArray(new PlaceholderFile[0]);
+    return result.toArray(new File[0]);
   }
 
+  /**
+   * Looks for a meta-data file for the data file, using the specified extension.
+   * In case of "*" as extension, the first file that matches (and is not the data file)
+   * will get returned.
+   *
+   * @param source 	the caller, can be null
+   * @param dataFile	the file to look for meta-data file
+   * @param ext		the extension the meta-data file should have ('*' can be used)
+   * @return		the meta-data file, null if not found
+   */
+  public static File find(LoggingObject source, File dataFile, String ext) {
+    return find(source, dataFile, null, ext);
+  }
+
+  /**
+   * Looks for a meta-data file for the data file, using the specified suffix and extension.
+   * In case of "*" as extension, the first file that matches suffix (and is not the data file)
+   * will get returned.
+   *
+   * @param source 	the caller, can be null
+   * @param dataFile	the file to look for meta-data file
+   * @param suffix	the (optional) suffix the meta-data file has (before .ext)
+   * @param ext		the extension the meta-data file should have ('*' can be used)
+   * @return		the meta-data file, null if not found
+   */
+  public static File find(LoggingObject source, File dataFile, String suffix, String ext) {
+    File 	result;
+    File[]	files;
+    File	dfile;
+
+    result = null;
+
+    dfile = dataFile.getAbsoluteFile();
+
+    if (suffix == null)
+      suffix = "";
+
+    if (ext.equals("*")) {
+      files = list(dfile.getParentFile(), FileUtils.replaceExtension(dfile, "").getName());
+      for (File file: files) {
+        if (file.equals(dfile))
+          continue;
+        if (!suffix.isEmpty() && !file.getName().startsWith(suffix))
+          continue;
+        result = file;
+        break;
+      }
+    }
+    else {
+      result = FileUtils.replaceExtension(dfile, suffix + "." + ext);
+    }
+
+    if (result == null) {
+      if (source != null)
+        source.getLogger().severe("Failed to locate meta-data file for '" + dataFile + "', using extension '" + ext + "'!");
+    }
+
+    return result;
+  }
 }
