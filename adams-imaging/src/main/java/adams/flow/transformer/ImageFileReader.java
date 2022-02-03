@@ -15,15 +15,13 @@
 
 /*
  * ImageFileReader.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.base.BaseRegExp;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
+import adams.core.io.MetaDataFileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractImageReader;
@@ -32,15 +30,9 @@ import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.report.Report;
 import adams.flow.core.Token;
-import adams.flow.source.filesystemsearch.LocalFileSearch;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -124,14 +116,6 @@ public class ImageFileReader
   /** for serialization. */
   private static final long serialVersionUID = 7466006970025235243L;
 
-  /**
-   * Enum for locating the meta-data.
-   */
-  public enum MetaDataLocation {
-    SAME_NAME,
-    STARTING_WITH,
-  }
-
   /** the image reader to use. */
   protected AbstractImageReader m_Reader;
 
@@ -139,7 +123,7 @@ public class ImageFileReader
   protected boolean m_LoadMetaData;
 
   /** how to locate the meta-data. */
-  protected MetaDataLocation m_MetaDataLocation;
+  protected MetaDataFileUtils.MetaDataLocation m_MetaDataLocation;
 
   /** for reading the meta-data. */
   protected AbstractReportReader m_MetaDataReader;
@@ -173,7 +157,7 @@ public class ImageFileReader
 
     m_OptionManager.add(
       "meta-data-location", "metaDataLocation",
-      MetaDataLocation.SAME_NAME);
+      MetaDataFileUtils.MetaDataLocation.SAME_NAME);
 
     m_OptionManager.add(
       "meta-data-reader", "metaDataReader",
@@ -243,7 +227,7 @@ public class ImageFileReader
    *
    * @param value 	the location
    */
-  public void setMetaDataLocation(MetaDataLocation value) {
+  public void setMetaDataLocation(MetaDataFileUtils.MetaDataLocation value) {
     m_MetaDataLocation = value;
     reset();
   }
@@ -253,7 +237,7 @@ public class ImageFileReader
    *
    * @return 		the location
    */
-  public MetaDataLocation getMetaDataLocation() {
+  public MetaDataFileUtils.MetaDataLocation getMetaDataLocation() {
     return m_MetaDataLocation;
   }
 
@@ -352,54 +336,6 @@ public class ImageFileReader
   }
 
   /**
-   * Returns the list of meta-data files that were identified using the provided
-   * image file name.
-   *
-   * @param imageFile	the image to list the meta-data files for
-   * @return		the files
-   */
-  protected PlaceholderFile[] listMetaDataFiles(PlaceholderFile imageFile) {
-    List<PlaceholderFile>	result;
-    PlaceholderFile		file;
-    LocalFileSearch		search;
-    List<String>		matches;
-    int				i;
-    Set<String>			extensions;
-
-    result = new ArrayList<>();
-
-    switch (m_MetaDataLocation) {
-      case SAME_NAME:
-        file = FileUtils.replaceExtension(imageFile, "." + m_MetaDataReader.getDefaultFormatExtension());
-        if (file.exists())
-          result.add(file);
-	break;
-      case STARTING_WITH:
-        search = new LocalFileSearch();
-        search.setDirectory(new PlaceholderDirectory(imageFile.getParentFile()));
-        search.setRecursive(false);
-        search.setRegExp(new BaseRegExp(FileUtils.replaceExtension(imageFile.getName(), "") + ".*\\." + m_MetaDataReader.getDefaultFormatExtension()));
-        extensions = new HashSet<>(Arrays.asList(m_Reader.getFormatExtensions()));
-        try {
-	  matches = search.search();
-	  for (i = 0; i < matches.size(); i++) {
-	    if (!extensions.contains(FileUtils.getExtension(matches.get(i))))
-	      result.add(new PlaceholderFile(matches.get(i)));
-	  }
-	}
-	catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to locate meta-data files using: " + search.toCommandLine(), e);
-          result = new ArrayList<>();
-	}
-	break;
-      default:
-	throw new IllegalStateException("Unhandled meta-data location: " + m_MetaDataLocation);
-    }
-
-    return result.toArray(new PlaceholderFile[0]);
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -435,7 +371,7 @@ public class ImageFileReader
 
     // meta-data?
     if (m_LoadMetaData && (result == null)) {
-      metaFiles = listMetaDataFiles(file);
+      metaFiles = MetaDataFileUtils.find(this, file, m_MetaDataLocation, m_MetaDataReader.getDefaultFormatExtension(), m_MetaDataReader.getFormatExtensions());
       metaData  = null;
       for (PlaceholderFile metaFile: metaFiles) {
         m_MetaDataReader.setInput(metaFile);
