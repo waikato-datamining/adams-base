@@ -30,7 +30,8 @@ import java.util.TimeZone;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TimeZoneParsing {
+public class TimeZoneParsing
+    extends AbstractParsing {
 
   /**
    * Returns the timezone as string.

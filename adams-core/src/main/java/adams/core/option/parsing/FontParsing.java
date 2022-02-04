@@ -29,7 +29,8 @@ import java.awt.Font;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class FontParsing {
+public class FontParsing
+    extends AbstractParsing {
 
   /** the string for PLAIN. */
   public final static String PLAIN = "PLAIN";

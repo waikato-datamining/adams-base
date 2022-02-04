@@ -28,7 +28,8 @@ import adams.data.spreadsheet.SpreadSheetUnorderedColumnRange;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetUnorderedColumnRangeParsing {
+public class SpreadSheetUnorderedColumnRangeParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

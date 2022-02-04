@@ -29,7 +29,8 @@ import adams.gui.core.AbstractSimpleScript;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SimpleScriptParsing {
+public class SimpleScriptParsing
+    extends AbstractParsing {
 
   /**
    * Returns the script as string.

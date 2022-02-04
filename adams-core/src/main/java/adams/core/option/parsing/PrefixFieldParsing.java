@@ -28,7 +28,8 @@ import adams.data.report.PrefixField;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PrefixFieldParsing {
+public class PrefixFieldParsing
+    extends AbstractParsing {
 
   /**
    * Returns the field as string.

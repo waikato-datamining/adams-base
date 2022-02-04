@@ -28,7 +28,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BaseTimeMsecParsing {
+public class BaseTimeMsecParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

@@ -28,7 +28,8 @@ import adams.data.report.SuffixField;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SuffixFieldParsing {
+public class SuffixFieldParsing
+    extends AbstractParsing {
 
   /**
    * Returns the field as string.

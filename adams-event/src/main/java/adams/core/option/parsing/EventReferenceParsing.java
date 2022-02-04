@@ -28,7 +28,8 @@ import adams.flow.core.EventReference;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class EventReferenceParsing {
+public class EventReferenceParsing
+    extends AbstractParsing {
 
   /**
    * Returns the reference as string.

@@ -28,7 +28,8 @@ import adams.flow.core.ActorPath;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ActorPathParsing {
+public class ActorPathParsing
+  extends AbstractParsing {
 
   /**
    * Returns the reference as string.

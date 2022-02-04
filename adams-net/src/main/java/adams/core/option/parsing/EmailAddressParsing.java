@@ -28,7 +28,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class EmailAddressParsing {
+public class EmailAddressParsing
+    extends AbstractParsing {
 
   /**
    * Returns the field as string.

@@ -29,7 +29,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class VariableNameValuePairParsing {
+public class VariableNameValuePairParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

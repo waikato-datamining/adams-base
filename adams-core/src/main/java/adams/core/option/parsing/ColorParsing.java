@@ -30,7 +30,8 @@ import java.awt.Color;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ColorParsing {
+public class ColorParsing
+    extends AbstractParsing {
 
   /**
    * Returns the color as string.

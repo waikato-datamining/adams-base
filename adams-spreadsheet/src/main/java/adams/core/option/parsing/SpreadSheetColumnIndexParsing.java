@@ -28,7 +28,8 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetColumnIndexParsing {
+public class SpreadSheetColumnIndexParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

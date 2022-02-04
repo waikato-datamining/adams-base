@@ -29,7 +29,8 @@ import adams.gui.core.AbstractAdvancedScript;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class AdvancedScriptParsing {
+public class AdvancedScriptParsing
+    extends AbstractParsing {
 
   /**
    * Returns the script as string.

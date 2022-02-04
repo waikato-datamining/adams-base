@@ -30,7 +30,8 @@ import java.util.Locale;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class LocaleParsing {
+public class LocaleParsing
+    extends AbstractParsing {
 
   /**
    * Returns the locale as string.

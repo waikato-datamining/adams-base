@@ -28,7 +28,8 @@ import adams.data.weka.WekaUnorderedAttributeRange;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class WekaUnorderedAttributeRangeParsing {
+public class WekaUnorderedAttributeRangeParsing
+    extends AbstractParsing {
 
   /**
    * Returns the object as string.

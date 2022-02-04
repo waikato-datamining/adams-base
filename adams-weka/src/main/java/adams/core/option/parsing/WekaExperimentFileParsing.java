@@ -28,7 +28,8 @@ import adams.data.WekaExperimentFile;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class WekaExperimentFileParsing {
+public class WekaExperimentFileParsing
+    extends AbstractParsing {
 
   /**
    * Returns the file as string.

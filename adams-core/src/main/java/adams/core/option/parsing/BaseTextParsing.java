@@ -29,7 +29,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BaseTextParsing {
+public class BaseTextParsing
+    extends AbstractParsing {
 
   /**
    * Returns the BaseText as string.

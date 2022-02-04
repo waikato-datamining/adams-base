@@ -32,7 +32,8 @@ import java.lang.reflect.Array;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class ConfigurableEnumerationItemParsing {
+public class ConfigurableEnumerationItemParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Item as string.

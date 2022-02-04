@@ -28,7 +28,8 @@ import adams.data.spreadsheet.SpreadSheetColumnRange;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetColumnRangeParsing {
+public class SpreadSheetColumnRangeParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

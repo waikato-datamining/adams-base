@@ -29,7 +29,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BaseMarkdownParsing {
+public class BaseMarkdownParsing
+    extends AbstractParsing {
 
   /**
    * Returns the BaseMarkdown as string.

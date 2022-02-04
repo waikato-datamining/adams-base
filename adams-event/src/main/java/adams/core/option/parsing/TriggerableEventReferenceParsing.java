@@ -28,7 +28,8 @@ import adams.flow.core.TriggerableEventReference;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class TriggerableEventReferenceParsing {
+public class TriggerableEventReferenceParsing
+    extends AbstractParsing {
 
   /**
    * Returns the reference as string.

@@ -28,7 +28,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BaseBooleanParsing {
+public class BaseBooleanParsing
+    extends AbstractParsing {
 
   /**
    * Returns the {@link BaseBoolean} as string.

@@ -29,7 +29,8 @@ import java.io.File;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class FileParsing {
+public class FileParsing
+    extends AbstractParsing {
 
   /**
    * Returns the file as string.

@@ -28,7 +28,8 @@ import adams.flow.core.CallableActorReference;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CallableActorReferenceParsing {
+public class CallableActorReferenceParsing
+    extends AbstractParsing {
 
   /**
    * Returns the reference as string.

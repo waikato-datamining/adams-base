@@ -28,7 +28,8 @@ import adams.data.weka.WekaLabelRange;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class WekaLabelRangeParsing {
+public class WekaLabelRangeParsing
+    extends AbstractParsing {
 
   /**
    * Returns the object as string.

@@ -29,7 +29,8 @@ import adams.db.JdbcUrl;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class JdbcUrlParsing {
+public class JdbcUrlParsing
+    extends AbstractParsing {
 
   /**
    * Returns the BaseObject as string.

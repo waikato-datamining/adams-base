@@ -28,7 +28,8 @@ import adams.data.report.Field;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class FieldParsing {
+public class FieldParsing
+    extends AbstractParsing {
 
   /**
    * Returns the field as string.

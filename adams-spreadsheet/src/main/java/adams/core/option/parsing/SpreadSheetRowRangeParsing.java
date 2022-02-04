@@ -28,7 +28,8 @@ import adams.data.spreadsheet.SpreadSheetRowRange;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetRowRangeParsing {
+public class SpreadSheetRowRangeParsing
+    extends AbstractParsing {
 
   /**
    * Returns the Compound as string.

@@ -30,7 +30,8 @@ import adams.core.option.AbstractOption;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BaseObjectParsing {
+public class BaseObjectParsing
+    extends AbstractParsing {
 
   /**
    * Returns the BaseObject as string.

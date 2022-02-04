@@ -28,7 +28,8 @@ import adams.data.weka.WekaAttributeIndex;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class WekaAttributeIndexParsing {
+public class WekaAttributeIndexParsing
+    extends AbstractParsing {
 
   /**
    * Returns the object as string.
