@@ -49,6 +49,6 @@ public class PlaceholderDirectoryParsing {
    * @return		the generated file
    */
   public static Object valueOf(AbstractOption option, String str) {
-    return new PlaceholderDirectory(str);
+    return new PlaceholderDirectory(str.isEmpty() ? "." : str);
   }
 }

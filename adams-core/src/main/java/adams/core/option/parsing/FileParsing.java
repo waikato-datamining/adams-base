@@ -15,7 +15,7 @@
 
 /*
  * FileParsing.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option.parsing;
@@ -50,6 +50,6 @@ public class FileParsing {
    * @return		the generated file
    */
   public static Object valueOf(AbstractOption option, String str) {
-    return new File(str);
+    return new File(str.isEmpty() ? "." : str);
   }
 }
