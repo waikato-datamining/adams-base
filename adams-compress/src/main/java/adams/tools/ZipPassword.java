@@ -13,14 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ZipPassword.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.tools;
 
-import adams.core.password.BruteForcePasswordGenerator;
 import adams.core.Performance;
 import adams.core.ThreadLimiter;
 import adams.core.Utils;
@@ -28,12 +27,13 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingHelper;
+import adams.core.password.BruteForcePasswordGenerator;
 import adams.core.password.DictionaryBasedGenerator;
 import adams.core.password.DictionaryBasedGenerator.Variation;
 import adams.env.Environment;
 import adams.flow.core.RunnableWithLogging;
 import adams.multiprocess.PausableFixedThreadPoolExecutor;
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -97,7 +97,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ZipPassword
   extends AbstractTool
@@ -112,7 +111,6 @@ public class ZipPassword
    * Job for performing brute force attack in paralle.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class BruteForceJob
     extends RunnableWithLogging {
@@ -185,7 +183,7 @@ public class ZipPassword
 	  count++;
 	  password = m_Generator.next();
 	  try {
-	    zipfile.setPassword(password);
+	    zipfile.setPassword(password.toCharArray());
 	    zipfile.extractAll(tmpDir);
 	    m_Owner.outputPassword(password);
 	    return;
@@ -567,7 +565,7 @@ public class ZipPassword
 	count++;
 	password = generator.next();
 	try {
-	  zipfile.setPassword(password);
+	  zipfile.setPassword(password.toCharArray());
 	  zipfile.extractAll(tmpDir);
 	  outputPassword(password);
 	  return;
