@@ -1,0 +1,25 @@
+# Project: adams
+# Date: 2022-03-08 10:12:05
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Trains and evaluates an XGBoost generalized linear model.\\nBased on this example:\\nhttps://github.com/dmlc/xgboost/blob/master/jvm-packages/xgboost4j-example/src/main/java/ml/dmlc/xgboost4j/java/example/GeneralizedLinearModel.java" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load train"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/agaricus.train.arff.gz
+  adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name train
+ adams.flow.control.Trigger -name "load test"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/agaricus.test.arff.gz
+  adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+  adams.flow.transformer.WekaClassSelector
+  adams.flow.transformer.SetStorageValue -storage-name test
+ adams.flow.control.Trigger -name evaluate
+  adams.flow.standalone.CallableActors
+   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.trees.XGBoost -booster GBLINEAR -alpha 1.0E-4 -objective LOGISTIC_REGRESSION_FOR_BINARY_CLASSIFICATION -rounds 4"
+  adams.flow.source.MakeContainer -callable-actor unknown -callable-actor unknown -storage-name train -storage-name test -use-storage true -value-name Train -value-name Test -container-class adams.flow.container.WekaTrainTestSetContainer
+  adams.flow.transformer.WekaTrainTestSetEvaluator -output weka.classifiers.evaluation.output.prediction.Null
+  adams.flow.transformer.WekaEvaluationSummary
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
