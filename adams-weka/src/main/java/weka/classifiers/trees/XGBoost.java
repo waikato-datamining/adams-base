@@ -15,7 +15,7 @@
 
 /*
  * XGBoost.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.trees;
@@ -301,11 +301,171 @@ import java.util.Map;
  * XGBoost as a WEKA classifier.
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class XGBoost extends AbstractSimpleClassifier implements TechnicalInformationHandler {
 
   /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 7228620850250174821L;
+
+  /**
+   * The available types of booster.
+   */
+  public enum BoosterType {
+    GBTREE,
+    GBLINEAR,
+    DART
+  }
+
+  /**
+   * The possible verbosity levels.
+   */
+  public enum Verbosity implements ParamValueProvider {
+    SILENT,
+    WARNING,
+    INFO,
+    DEBUG;
+
+    @Override
+    public Integer paramValue() {
+      return ordinal();
+    }
+  }
+
+  /**
+   * The set of possible learning objectives.
+   */
+  public enum Objective implements ParamValueProvider {
+    LINEAR_REGRESSION("reg:linear"),
+    LOGISTIC_REGRESSION("reg:logistic"),
+    LOGISTIC_REGRESSION_FOR_BINARY_CLASSIFICATION("binary:logistic"),
+    LOGIT_RAW_REGRESSION_FOR_BINARY_CLASSIFICATION("binary:logitraw"),
+    HINGE_LOSS_FOR_BINARY_CLASSIFICATION("binary:hinge"),
+    POISSON_REGRESSION_FOR_COUNT_DATA("count:poisson"),
+    COX_REGRESSION("survival:cox"),
+    SOFTMAX_MULTICLASS_CLASSIFICATION("multi:softmax"),
+    SOFTPROB_MULTICLASS_CLASSIFICATION("multi:softprob"),
+    LAMBDAMART_PAIRWISE_RANKING("rank:pairwise"),
+    LAMBDAMART_MAXIMISE_NDCG("rank:ndcg"),
+    LAMBDAMART_MAXIMISE_MAP("rank:map"),
+    GAMMA_REGRESSION("reg:gamma"),
+    TWEEDIE_REGRESSION("reg:tweedie");
+
+    private final String m_ParamString;
+
+    Objective(String paramString) {
+      m_ParamString = paramString;
+    }
+
+    @Override
+    public String paramValue() {
+      return m_ParamString;
+    }
+  }
+
+  /**
+   * Possible tree-method settings.
+   */
+  public enum TreeMethod {
+    AUTO,
+    EXACT,
+    APPROX,
+    HIST,
+    GPU_EXACT,
+    GPU_HIST
+  }
+
+  /**
+   * Available process-type settings.
+   */
+  public enum ProcessType {
+    DEFAULT,
+    UPDATE
+  }
+
+  /**
+   * Available grow policy settings.
+   */
+  public enum GrowPolicy {
+    DEPTHWISE,
+    LOSSGUIDE
+  }
+
+  /**
+   * Available predictors.
+   */
+  public enum Predictor implements ParamValueProvider {
+    CPU,
+    GPU,
+    DEFAULT;
+
+    @Override
+    public String paramValue() {
+      return name().toLowerCase() + "_predictor";
+    }
+  }
+
+  /**
+   * Available sample-type settings.
+   */
+  public enum SampleType {
+    UNIFORM,
+    WEIGHTED
+  }
+
+  /**
+   * Available normalisation-type settings.
+   */
+  public enum NormaliseType {
+    TREE,
+    FOREST
+  }
+
+  /**
+   * Available updaters.
+   */
+  public enum Updater {
+    SHOTGUN,
+    COORD_DESCENT
+  }
+
+  /**
+   * Available feature selectors.
+   */
+  public enum FeatureSelector {
+    CYCLIC,
+    SHUFFLE,
+    RANDOM,
+    GREEDY,
+    THRIFTY
+  }
+
+  /**
+   * Provides a value suitable as a proxy for the XGBoost parameter system.
+   */
+  protected interface ParamValueProvider {
+
+    /**
+     * Provides a proxy object suitable for the XGBoost parameter system
+     * in place of this object.
+     *
+     * @return The object to give to XGBoost as a parameter.
+     */
+    Object paramValue();
+  }
+
+  /**
+   * Marks a field as participating in the XGBoost parameter system.
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.FIELD)
+  protected @interface XGBoostParameter {
+
+    /**
+     * The name of the parameter this field corresponds to.
+     */
+    String value();
+  }
 
   /*=== General Parameters ===*/
 
@@ -465,6 +625,12 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
 
   /** The trained model. */
   protected Booster m_Booster;
+
+  /** the training dataset. */
+  protected Instances m_Header;
+
+  /** the xgboost parameters. */
+  protected Map<String, Object> m_Params;
 
   /**
    * Returns a string describing the object.
@@ -1592,95 +1758,6 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
   }
 
   /**
-   * Trains the XGBoost classifier on the incoming dataset.
-   *
-   * @param instances The training dataset.
-   * @throws Exception Any internal XGBoost error.
-   */
-  @Override
-  public void buildClassifier(Instances instances) throws Exception {
-    // Make sure we have some training data
-    if (instances == null || instances.numInstances() == 0) {
-      m_Booster = null;
-      return;
-    }
-
-    // Convert the training dataset to the required form
-    DMatrix train = instancesToDMatrix(instances);
-
-    // Abort if we can't create the training set
-    if (train == null) {
-      m_Booster = null;
-      return;
-    }
-
-    // Setup the parameters for XGBoost
-    Map<String, Object> params = createParamsFromOptions();
-
-    // Add a watch on the the training set (unless in silent mode)
-    Map<String, DMatrix> watches = new HashMap<>();
-    if (getVerbosity() != Verbosity.SILENT) watches.put("train", train);
-
-    // Train the classifier
-    m_Booster = ml.dmlc.xgboost4j.java.XGBoost.train(train, params, m_NumberOfRounds, watches, null, null);
-  }
-
-  /**
-   * Returns the Capabilities of this classifier. Maximally permissive
-   * capabilities are allowed by default. Derived classifiers should override
-   * this method and first disable all capabilities and then enable just those
-   * capabilities that make sense for the scheme.
-   *
-   * @return the capabilities of this object
-   * @see Capabilities
-   */
-  @Override
-  public Capabilities getCapabilities() {
-    // Remove all capabilities
-    Capabilities capabilities = super.getCapabilities();
-    capabilities.disableAll();
-
-    // Add the capabilities XGBoost supports
-    capabilities.enable(Capability.NUMERIC_CLASS);
-    capabilities.enable(Capability.NUMERIC_ATTRIBUTES);
-    capabilities.enable(Capability.NOMINAL_CLASS);
-    capabilities.enable(Capability.NOMINAL_ATTRIBUTES);
-    capabilities.enable(Capability.DATE_ATTRIBUTES);
-    capabilities.enable(Capability.DATE_CLASS);
-
-    return capabilities;
-  }
-
-  /**
-   * Classifies the given test instance. The instance has to belong to a dataset
-   * when it's being classified. Note that a classifier MUST implement either
-   * this or distributionForInstance().
-   *
-   * @param instance the instance to be classified
-   * @return the predicted most likely class for the instance or
-   * Utils.missingValue() if no prediction is made
-   * @throws Exception if an error occurred during the prediction
-   */
-  @Override
-  public double classifyInstance(Instance instance) throws Exception {
-    // Make sure we have built the classifier and have data
-    // to classify
-    if (m_Booster == null || instance == null) return Utils.missingValue();
-
-    // Convert the test instance to the required format
-    DMatrix testData = instanceToDMatrix(instance);
-
-    // Abort if we can't create the test data
-    if (testData == null) return Utils.missingValue();
-
-    // Get XGBoost's prediction for the test data
-    float[][] predictions = m_Booster.predict(testData);
-
-    // Only one instance with one class, so only one prediction
-    return predictions[0][0];
-  }
-
-  /**
    * Calculates the number of columns required to represent the attributes
    * of the given dataset when converted to a DMatrix.
    *
@@ -1722,10 +1799,10 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
    * @param instances The dataset to convert.
    * @return The converted dataset.
    */
-  protected DMatrix instancesToDMatrix(Instances instances) throws XGBoostError {
+  protected DMatrix instancesToDMatrix(Instance[] instances) throws XGBoostError {
     // Get the number of rows and columns we need to create
-    int nRows = instances.numInstances();
-    int nColumns = numberOfRequiredDMatrixColumns(instances);
+    int nRows = instances.length;
+    int nColumns = numberOfRequiredDMatrixColumns(m_Header);
 
     // Check we aren't trying to create a zero-area matrix
     if (nRows == 0 || nColumns == 0) return null;
@@ -1736,7 +1813,7 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
     float[] weights = new float[nRows];
 
     // Remember the class index
-    int classIndex = instances.classIndex();
+    int classIndex = m_Header.classIndex();
 
     // Keep track of where to insert the next value (contiguous)
     int insertionIndex = 0;
@@ -1744,7 +1821,7 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
     // Process each row in turn
     for (int rowIndex = 0; rowIndex < nRows; rowIndex++) {
       // Get the instance for this row
-      Instance instance = instances.get(rowIndex);
+      Instance instance = instances[rowIndex];
 
       // Extract the raw values
       double[] instanceData = instance.toDoubleArray();
@@ -1753,12 +1830,15 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
       weights[rowIndex] = (float) instance.weight();
 
       // Save the class value for this row
-      labels[rowIndex] = (float) instanceData[classIndex];
+      if (instance.classIsMissing())
+        labels[rowIndex] = 0.0f;  // XGBoost can't handle NaN
+      else
+        labels[rowIndex] = (float) instanceData[classIndex];
 
       // Extract the instance data into the DMatrix array
       for (int i = 0; i < instanceData.length; i++) {
         // Get the attribute for this column
-        Attribute attribute = instances.attribute(i);
+        Attribute attribute = m_Header.attribute(i);
 
         // Skip the class index
         if (i == classIndex) continue;
@@ -1782,24 +1862,6 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
     dMatrix.setWeight(weights);
 
     return dMatrix;
-  }
-
-  /**
-   * Converts a single instance into a DMatrix (the input type expected by
-   * XGBoost).
-   *
-   * @param instance The instance to convert.
-   * @return The converted instance.
-   */
-  protected DMatrix instanceToDMatrix(Instance instance) throws XGBoostError {
-    // Create a dummy dataset
-    Instances instances = new Instances(instance.dataset(), 1);
-
-    // Copy the instance into the dummy dataset
-    instances.add((Instance) instance.copy());
-
-    // Convert the dummy dataset
-    return instancesToDMatrix(instances);
   }
 
   /**
@@ -1849,161 +1911,124 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
   }
 
   /**
-   * The available types of booster.
+   * Returns the Capabilities of this classifier. Maximally permissive
+   * capabilities are allowed by default. Derived classifiers should override
+   * this method and first disable all capabilities and then enable just those
+   * capabilities that make sense for the scheme.
+   *
+   * @return the capabilities of this object
+   * @see Capabilities
    */
-  public enum BoosterType {
-    GBTREE,
-    GBLINEAR,
-    DART
+  @Override
+  public Capabilities getCapabilities() {
+    // Remove all capabilities
+    Capabilities capabilities = super.getCapabilities();
+    capabilities.disableAll();
+
+    // Add the capabilities XGBoost supports
+    capabilities.enable(Capability.NUMERIC_CLASS);
+    capabilities.enable(Capability.NUMERIC_ATTRIBUTES);
+    capabilities.enable(Capability.NOMINAL_CLASS);
+    capabilities.enable(Capability.NOMINAL_ATTRIBUTES);
+    capabilities.enable(Capability.DATE_ATTRIBUTES);
+    capabilities.enable(Capability.DATE_CLASS);
+
+    capabilities.setMinimumNumberInstances(1);
+
+    return capabilities;
   }
 
   /**
-   * The possible verbosity levels.
+   * Trains the XGBoost classifier on the incoming dataset.
+   *
+   * @param instances The training dataset.
+   * @throws Exception Any internal XGBoost error.
    */
-  public enum Verbosity implements ParamValueProvider {
-    SILENT,
-    WARNING,
-    INFO,
-    DEBUG;
+  @Override
+  public void buildClassifier(Instances instances) throws Exception {
+    getCapabilities().test(instances);
 
-    @Override
-    public Integer paramValue() {
-      return ordinal();
+    m_Header = new Instances(instances, 0);
+
+    // Convert the training dataset to the required form
+    DMatrix train = instancesToDMatrix(instances.toArray(new Instance[0]));
+
+    // Abort if we can't create the training set
+    if (train == null) {
+      m_Booster = null;
+      return;
     }
+
+    // Setup the parameters for XGBoost
+    m_Params = createParamsFromOptions();
+    if (isLoggingEnabled())
+      getLogger().info("XGBoost parameters: " + m_Params);
+
+    // Add a watch on the the training set (unless in silent mode)
+    Map<String, DMatrix> watches = new HashMap<>();
+    if (getVerbosity() != Verbosity.SILENT) watches.put("train", train);
+
+    // Train the classifier
+    m_Booster = ml.dmlc.xgboost4j.java.XGBoost.train(train, m_Params, m_NumberOfRounds, watches, null, null);
   }
 
   /**
-   * The set of possible learning objectives.
+   * Classifies the given test instance. The instance has to belong to a dataset
+   * when it's being classified. Note that a classifier MUST implement either
+   * this or distributionForInstance().
+   *
+   * @param instance the instance to be classified
+   * @return the predicted most likely class for the instance or
+   * Utils.missingValue() if no prediction is made
+   * @throws Exception if an error occurred during the prediction
    */
-  public enum Objective implements ParamValueProvider {
-    LINEAR_REGRESSION("reg:linear"),
-    LOGISTIC_REGRESSION("reg:logistic"),
-    LOGISTIC_REGRESSION_FOR_BINARY_CLASSIFICATION("binary:logistic"),
-    LOGIT_RAW_REGRESSION_FOR_BINARY_CLASSIFICATION("binary:logitraw"),
-    HINGE_LOSS_FOR_BINARY_CLASSIFICATION("binary:hinge"),
-    POISSON_REGRESSION_FOR_COUNT_DATA("count:poisson"),
-    COX_REGRESSION("survival:cox"),
-    SOFTMAX_MULTICLASS_CLASSIFICATION("multi:softmax"),
-    SOFTPROB_MULTICLASS_CLASSIFICATION("multi:softprob"),
-    LAMBDAMART_PAIRWISE_RANKING("rank:pairwise"),
-    LAMBDAMART_MAXIMISE_NDCG("rank:ndcg"),
-    LAMBDAMART_MAXIMISE_MAP("rank:map"),
-    GAMMA_REGRESSION("reg:gamma"),
-    TWEEDIE_REGRESSION("reg:tweedie");
+  @Override
+  public double classifyInstance(Instance instance) throws Exception {
+    // Make sure we have built the classifier and have data
+    // to classify
+    if (m_Booster == null || instance == null) return Utils.missingValue();
 
-    private final String m_ParamString;
+    // Convert the test instance to the required format
+    DMatrix testData = instancesToDMatrix(new Instance[]{instance});
 
-    Objective(String paramString) {
-      m_ParamString = paramString;
-    }
+    // Abort if we can't create the test data
+    if (testData == null) return Utils.missingValue();
 
-    @Override
-    public String paramValue() {
-      return m_ParamString;
-    }
+    // Get XGBoost's prediction for the test data
+    float[][] predictions = m_Booster.predict(testData);
+
+    // Only one instance with one class, so only one prediction
+    if (instance.classAttribute().isNumeric())
+      return predictions[0][0];
+    else
+      return Math.round(predictions[0][0]);
   }
 
   /**
-   * Possible tree-method settings.
+   * Returns a description of this classifier.
+   *
+   * @return a description of this classifier as a string.
    */
-  public enum TreeMethod {
-    AUTO,
-    EXACT,
-    APPROX,
-    HIST,
-    GPU_EXACT,
-    GPU_HIST
+  @Override
+  public String toString() {
+    StringBuilder	result;
+
+    result = new StringBuilder("XGBoost\n=======\n\n");
+    result.append("Parameters: ");
+    if (m_Params != null)
+      result.append(m_Params.toString());
+    else
+      result.append("No model built yet");
+
+    return result.toString();
   }
 
   /**
-   * Available process-type settings.
+   * Main method for running this class.
+   *
+   * @param args the options
    */
-  public enum ProcessType {
-    DEFAULT,
-    UPDATE
-  }
-
-  /**
-   * Available grow policy settings.
-   */
-  public enum GrowPolicy {
-    DEPTHWISE,
-    LOSSGUIDE
-  }
-
-  /**
-   * Available predictors.
-   */
-  public enum Predictor implements ParamValueProvider {
-    CPU,
-    GPU,
-    DEFAULT;
-
-    @Override
-    public String paramValue() {
-      return name().toLowerCase() + "_predictor";
-    }
-  }
-
-  /**
-   * Available sample-type settings.
-   */
-  public enum SampleType {
-    UNIFORM,
-    WEIGHTED
-  }
-
-  /**
-   * Available normalisation-type settings.
-   */
-  public enum NormaliseType {
-    TREE,
-    FOREST
-  }
-
-  /**
-   * Available updaters.
-   */
-  public enum Updater {
-    SHOTGUN,
-    COORD_DESCENT
-  }
-
-  /**
-   * Available feature selectors.
-   */
-  public enum FeatureSelector {
-    CYCLIC,
-    SHUFFLE,
-    RANDOM,
-    GREEDY,
-    THRIFTY
-  }
-
-  /**
-   * Provides a value suitable as a proxy for the XGBoost parameter system.
-   */
-  protected interface ParamValueProvider {
-
-    /**
-     * Provides a proxy object suitable for the XGBoost parameter system
-     * in place of this object.
-     *
-     * @return The object to give to XGBoost as a parameter.
-     */
-    Object paramValue();
-  }
-
-  /**
-   * Marks a field as participating in the XGBoost parameter system.
-   */
-  @Retention(RetentionPolicy.RUNTIME)
-  @Target(ElementType.FIELD)
-  protected @interface XGBoostParameter {
-
-    /**
-     * The name of the parameter this field corresponds to.
-     */
-    String value();
+  public static void main(String[] args) {
+    runClassifier(new XGBoost(), args);
   }
 }
