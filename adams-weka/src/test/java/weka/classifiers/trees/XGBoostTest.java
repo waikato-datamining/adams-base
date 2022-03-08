@@ -14,11 +14,13 @@
  */
 
 /*
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.trees;
 
+import adams.core.management.LDD;
+import adams.core.management.OS;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
@@ -98,6 +100,10 @@ public class XGBoostTest
    * @return the suite
    */
   public static Test suite() {
+    if (OS.isLinux()) {
+      if (LDD.compareTo(XGBoost.MIN_GLIBC_VERSION) < 0)
+        return new TestSuite();
+    }
     return new TestSuite(XGBoostTest.class);
   }
 

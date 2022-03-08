@@ -24,6 +24,8 @@ import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.base.BaseKeyValuePair;
+import adams.core.management.LDD;
+import adams.core.management.OS;
 import adams.core.option.AbstractOption;
 import ml.dmlc.xgboost4j.java.Booster;
 import ml.dmlc.xgboost4j.java.DMatrix;
@@ -307,6 +309,9 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
 
   /** Auto-generated serialisation UID#. */
   private static final long serialVersionUID = 7228620850250174821L;
+
+  // https://github.com/dmlc/xgboost/issues/2578
+  public final static String[] MIN_GLIBC_VERSION = {"2", "23"};
 
   /**
    * The available types of booster.
@@ -1947,6 +1952,14 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
   @Override
   public void buildClassifier(Instances instances) throws Exception {
     getCapabilities().test(instances);
+
+    if (OS.isLinux()) {
+      if (LDD.compareTo(MIN_GLIBC_VERSION) < 0) {
+        throw new Exception(
+            "XGBoost requires a minimum glibc version of " + adams.core.Utils.flatten(MIN_GLIBC_VERSION, ".")
+                + " but found only " + adams.core.Utils.flatten(LDD.version(), ".") + "!");
+      }
+    }
 
     m_Header = new Instances(instances, 0);
 
