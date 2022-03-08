@@ -19,6 +19,7 @@
 
 package weka.classifiers.trees;
 
+import adams.core.Utils;
 import adams.core.management.LDD;
 import adams.core.management.OS;
 import junit.framework.Test;
@@ -101,8 +102,10 @@ public class XGBoostTest
    */
   public static Test suite() {
     if (OS.isLinux()) {
-      if (LDD.compareTo(XGBoost.MIN_GLIBC_VERSION) < 0)
+      if (LDD.compareTo(XGBoost.MIN_GLIBC_VERSION) < 0) {
+        System.err.println("glibc too old (" + Utils.flatten(LDD.version(), ".") + "), minimum required: " + Utils.flatten(XGBoost.MIN_GLIBC_VERSION, "."));
         return new TestSuite();
+      }
     }
     return new TestSuite(XGBoostTest.class);
   }
