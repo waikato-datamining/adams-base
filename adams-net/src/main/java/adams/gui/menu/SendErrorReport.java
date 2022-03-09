@@ -15,7 +15,7 @@
 
 /*
  * SendErrorReport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -48,7 +48,6 @@ import java.util.List;
  * Sends an error report to the specified error report email address.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SendErrorReport
   extends AbstractBasicMenuItemDefinition {
@@ -160,14 +159,15 @@ public class SendErrorReport
     try {
       if (sendEmail.requiresSmtpSessionInitialization()) {
 	sendEmail.initializeSmtpSession(
-	  EmailHelper.getSmtpServer(),
-	  EmailHelper.getSmtpPort(),
-	  EmailHelper.getSmtpStartTLS(),
-	  EmailHelper.getSmtpUseSSL(),
-	  EmailHelper.getSmtpTimeout(),
-	  EmailHelper.getSmtpRequiresAuthentication(),
-	  EmailHelper.getSmtpUser(),
-	  EmailHelper.getSmtpPassword());
+            EmailHelper.getSmtpServer(),
+            EmailHelper.getSmtpPort(),
+            EmailHelper.getSmtpStartTLS(),
+            EmailHelper.getSmtpUseSSL(),
+            EmailHelper.getSmtpTimeout(),
+            EmailHelper.getSmtpRequiresAuthentication(),
+            EmailHelper.getSmtpUser(),
+            EmailHelper.getSmtpPassword(),
+            EmailHelper.getSmtpProtocols());
       }
       sendEmail.sendMail(email);
       GUIHelper.showInformationMessage(null, "Error report sent to " + EmailHelper.getSupportEmail());

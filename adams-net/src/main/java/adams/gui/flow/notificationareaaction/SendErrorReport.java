@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SendErrorReport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.notificationareaaction;
@@ -48,7 +48,6 @@ import java.util.List;
  * Sends an error report to the support email address (if configured).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see EmailHelper#isEnabled()
  * @see EmailHelper#getSupportEmail()
  */
@@ -142,14 +141,15 @@ public class SendErrorReport
 	try {
 	  if (sendEmail.requiresSmtpSessionInitialization()) {
 	    sendEmail.initializeSmtpSession(
-	      EmailHelper.getSmtpServer(),
-	      EmailHelper.getSmtpPort(),
-	      EmailHelper.getSmtpStartTLS(),
-	      EmailHelper.getSmtpUseSSL(),
-	      EmailHelper.getSmtpTimeout(),
-	      EmailHelper.getSmtpRequiresAuthentication(),
-	      EmailHelper.getSmtpUser(),
-	      EmailHelper.getSmtpPassword());
+		EmailHelper.getSmtpServer(),
+		EmailHelper.getSmtpPort(),
+		EmailHelper.getSmtpStartTLS(),
+		EmailHelper.getSmtpUseSSL(),
+		EmailHelper.getSmtpTimeout(),
+		EmailHelper.getSmtpRequiresAuthentication(),
+		EmailHelper.getSmtpUser(),
+		EmailHelper.getSmtpPassword(),
+		EmailHelper.getSmtpProtocols());
 	  }
 	  sendEmail.sendMail(email);
 	  SwingUtilities.invokeLater(() -> m_Owner.getOwner().showStatus("Error report sent!"));

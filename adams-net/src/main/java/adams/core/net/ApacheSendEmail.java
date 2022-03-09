@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ApacheSendEmail.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
@@ -42,7 +42,6 @@ import java.io.Writer;
  * sending emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright ="Apache Software Foundation",
@@ -67,7 +66,10 @@ public class ApacheSendEmail
   
   /** whether to use TLS. */
   protected boolean m_UseTLS;
-  
+
+  /** the protocols to use. */
+  protected String m_Protocols;
+
   /** whether to use SSL. */
   protected boolean m_UseSSL;
   
@@ -114,14 +116,15 @@ public class ApacheSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
-   * @return			the session
+   * @param protocols		the protocols to use, empty for default
    * @throws Exception		if initialization fails
    */
   @Override
-  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, String user, BasePassword pw) throws Exception {
+  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, String user, BasePassword pw, String protocols) throws Exception {
     m_Server       = server;
     m_Port         = port;
     m_UseTLS       = useTLS;
+    m_Protocols    = protocols;
     m_UseSSL       = useSSL;
     m_Timeout      = timeout;
     m_RequiresAuth = requiresAuth;
@@ -135,6 +138,8 @@ public class ApacheSendEmail
 	m_Client = new AuthenticatingSMTPClient();
       else
 	m_Client = new SMTPSClient();
+      if (!m_Protocols.isEmpty())
+        ((SMTPSClient) m_Client).setEnabledProtocols(m_Protocols.split(","));
     }
     else {
       m_Client = new SMTPClient();

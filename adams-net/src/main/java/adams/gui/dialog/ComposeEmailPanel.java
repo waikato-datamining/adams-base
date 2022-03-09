@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ComposeEmailPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -49,7 +49,6 @@ import java.util.HashSet;
  * A panel for composing an email.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ComposeEmailPanel
   extends BasePanel {
@@ -429,7 +428,8 @@ public class ComposeEmailPanel
 	    EmailHelper.getSmtpTimeout(), 
 	    EmailHelper.getSmtpRequiresAuthentication(), 
 	    EmailHelper.getSmtpUser(), 
-	    EmailHelper.getSmtpPassword());
+	    EmailHelper.getSmtpPassword(),
+            EmailHelper.getSmtpProtocols());
 	email = new Email(
 	    new EmailAddress(m_TextFrom.getText()),
 	    (EmailAddress[]) m_GAEPanelTO.getCurrent(),

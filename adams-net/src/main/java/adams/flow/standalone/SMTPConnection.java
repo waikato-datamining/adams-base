@@ -15,7 +15,7 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -137,8 +137,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SMTPConnection
-  extends AbstractStandalone
-  implements OptionalPasswordPrompt, PasswordSupporter {
+    extends AbstractStandalone
+    implements OptionalPasswordPrompt, PasswordSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
@@ -151,6 +151,9 @@ public class SMTPConnection
 
   /** whether to use TLS. */
   protected boolean m_UseTLS;
+
+  /** the protocols to use. */
+  protected String m_Protocols;
 
   /** whether to use SSL. */
   protected boolean m_UseSSL;
@@ -190,7 +193,7 @@ public class SMTPConnection
   @Override
   public String globalInfo() {
     return
-      "SMTP server setup for overriding default parameters.";
+        "SMTP server setup for overriding default parameters.";
   }
 
   /**
@@ -201,52 +204,56 @@ public class SMTPConnection
     super.defineOptions();
 
     m_OptionManager.add(
-      "server", "server",
-      EmailHelper.getSmtpServer());
+        "server", "server",
+        EmailHelper.getSmtpServer());
 
     m_OptionManager.add(
-      "port", "port",
-      EmailHelper.getSmtpPort(), 1, 65536);
+        "port", "port",
+        EmailHelper.getSmtpPort(), 1, 65536);
 
     m_OptionManager.add(
-      "use-tls", "useTLS",
-      EmailHelper.getSmtpStartTLS());
+        "use-tls", "useTLS",
+        EmailHelper.getSmtpStartTLS());
 
     m_OptionManager.add(
-      "use-ssl", "useSSL",
-      EmailHelper.getSmtpUseSSL());
+        "protocols", "protocols",
+        EmailHelper.getSmtpProtocols());
 
     m_OptionManager.add(
-      "timeout", "timeout",
-      EmailHelper.getSmtpTimeout(), 0, null);
+        "use-ssl", "useSSL",
+        EmailHelper.getSmtpUseSSL());
 
     m_OptionManager.add(
-      "requires-auth", "requiresAuthentication",
-      EmailHelper.getSmtpRequiresAuthentication());
+        "timeout", "timeout",
+        EmailHelper.getSmtpTimeout(), 0, null);
 
     m_OptionManager.add(
-      "user", "user",
-      EmailHelper.getSmtpUser(), false);
+        "requires-auth", "requiresAuthentication",
+        EmailHelper.getSmtpRequiresAuthentication());
 
     m_OptionManager.add(
-      "password", "password",
-      EmailHelper.getSmtpPassword(), false);
+        "user", "user",
+        EmailHelper.getSmtpUser(), false);
 
     m_OptionManager.add(
-      "prompt-for-password", "promptForPassword",
-      false);
+        "password", "password",
+        EmailHelper.getSmtpPassword(), false);
 
     m_OptionManager.add(
-      "stop-if-canceled", "stopFlowIfCanceled",
-      false);
+        "prompt-for-password", "promptForPassword",
+        false);
 
     m_OptionManager.add(
-      "custom-stop-message", "customStopMessage",
-      "");
+        "stop-if-canceled", "stopFlowIfCanceled",
+        false);
 
     m_OptionManager.add(
-      "stop-mode", "stopMode",
-      StopMode.GLOBAL);
+        "custom-stop-message", "customStopMessage",
+        "");
+
+    m_OptionManager.add(
+        "stop-mode", "stopMode",
+        StopMode.GLOBAL);
   }
 
   /**
@@ -273,11 +280,12 @@ public class SMTPConnection
     result += QuickInfoHelper.toString(this, "server", m_Server);
     result += QuickInfoHelper.toString(this, "port", m_Port, ":");
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useTLS", m_UseTLS, "TLS"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "protocols", m_Protocols));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useSSL", m_UseSSL, "SSL"));
     if (   (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
-      && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
+        && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow"));
     }
@@ -376,6 +384,35 @@ public class SMTPConnection
    */
   public String useTLSTipText() {
     return "If enabled, TLS (transport layer security) is used.";
+  }
+
+  /**
+   * Sets the SMTP protocols to use.
+   *
+   * @param value	the protocols, empty to use default
+   */
+  public void setProtocols(String value) {
+    m_Protocols = value;
+    reset();
+  }
+
+  /**
+   * Returns the SMTP protocols in use.
+   *
+   * @return		the protocols, empty to use default
+   */
+  public String getProtocols() {
+    return m_Protocols;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String protocolsTipText() {
+    return "The SMTP protocols to use, e.g., 'TLSv1.2'.";
   }
 
   /**
@@ -555,8 +592,8 @@ public class SMTPConnection
    */
   public String promptForPasswordTipText() {
     return
-      "If enabled and authentication is required, the user gets prompted "
-        + "for enter a password if none has been provided in the setup.";
+        "If enabled and authentication is required, the user gets prompted "
+            + "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -615,8 +652,8 @@ public class SMTPConnection
    */
   public String customStopMessageTipText() {
     return
-      "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+        "The custom stop message to use in case a user cancelation stops the "
+            + "flow (default is the full name of the actor)";
   }
 
   /**
@@ -709,14 +746,15 @@ public class SMTPConnection
    */
   public void initializeSmtpSession(AbstractSendEmail sendEmail) throws Exception {
     sendEmail.initializeSmtpSession(
-      m_Server,
-      m_Port,
-      m_UseTLS,
-      m_UseSSL,
-      m_Timeout,
-      m_RequiresAuthentication,
-      m_User,
-      m_ActualPassword);
+        m_Server,
+        m_Port,
+        m_UseTLS,
+        m_UseSSL,
+        m_Timeout,
+        m_RequiresAuthentication,
+        m_User,
+        m_ActualPassword,
+        m_Protocols);
   }
 
   /**

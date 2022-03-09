@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JavaMailSendEmail.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -42,7 +42,6 @@ import javax.mail.util.ByteArrayDataSource;
  * Uses JavaMail for sending emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JavaMailSendEmail
   extends AbstractSendEmail {
@@ -79,7 +78,10 @@ public class JavaMailSendEmail
 
   /** the system-wide property for SMTPS timeout. */
   public final static String KEY_SMTPSTIMEOUT = "mail.smtps.timeout";
-  
+
+  /** the protocols property. */
+  public final static String KEY_PROTOCOLS = "mail.smtp.ssl.protocols";
+
   /** the SMTP session object. */
   protected transient Session m_Session;
 
@@ -114,10 +116,11 @@ public class JavaMailSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
+   * @param protocols		the protocols to use, empty for default
    * @throws Exception		if initialization fails
    */
   @Override
-  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception {
+  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw, final String protocols) throws Exception {
     java.util.Properties 	props;
 
     props = (java.util.Properties) System.getProperties().clone();
@@ -136,6 +139,8 @@ public class JavaMailSendEmail
       props.setProperty(KEY_SMTPAUTH,    "" + requiresAuth);
       props.setProperty(KEY_SMTPTIMEOUT, "" + timeout);
     }
+    if (!protocols.isEmpty())
+      props.setProperty(KEY_PROTOCOLS, protocols);
 
     if (requiresAuth) {
       m_Session = Session.getInstance(

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleMailer.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -38,7 +38,6 @@ import java.util.List;
  * Reads emails stored in files and sends them.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleMailer {
 
@@ -375,7 +374,8 @@ public class SimpleMailer {
 		EmailHelper.getSmtpTimeout(), 
 		EmailHelper.getSmtpRequiresAuthentication(), 
 		EmailHelper.getSmtpUser(), 
-		EmailHelper.getSmtpPassword());
+		EmailHelper.getSmtpPassword(),
+		EmailHelper.getSmtpProtocols());
 	    if (!m_SendEmail.sendMail(eml)) {
 	      System.err.println("Failed to send email!");
 	      if (isDebugOn())

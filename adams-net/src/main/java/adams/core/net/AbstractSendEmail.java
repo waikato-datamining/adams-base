@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSendEmail.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -27,7 +27,6 @@ import adams.core.option.AbstractOptionHandler;
  * Ancestor for classes that can send emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSendEmail
   extends AbstractOptionHandler
@@ -54,10 +53,10 @@ public abstract class AbstractSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
-   * @return			the session
+   * @param protocols		the protocols to use, empty for default
    * @throws Exception		if initialization fails
    */
-  public abstract void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw) throws Exception;
+  public abstract void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, final String user, final BasePassword pw, final String protocols) throws Exception;
 
   /**
    * Sends an email.

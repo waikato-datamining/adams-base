@@ -15,7 +15,7 @@
 
 /*
  * SendEmail.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -298,7 +298,8 @@ public class SendEmail
 	    EmailHelper.getSmtpTimeout(), 
 	    EmailHelper.getSmtpRequiresAuthentication(), 
 	    EmailHelper.getSmtpUser(), 
-	    EmailHelper.getSmtpPassword());
+	    EmailHelper.getSmtpPassword(),
+	    EmailHelper.getSmtpProtocols());
     }
   }
   

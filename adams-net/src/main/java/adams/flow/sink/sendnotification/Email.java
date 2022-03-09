@@ -15,7 +15,7 @@
 
 /*
  * Email.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink.sendnotification;
@@ -394,7 +394,8 @@ public class Email
 	    EmailHelper.getSmtpTimeout(),
 	    EmailHelper.getSmtpRequiresAuthentication(),
 	    EmailHelper.getSmtpUser(),
-	    EmailHelper.getSmtpPassword());
+	    EmailHelper.getSmtpPassword(),
+            EmailHelper.getSmtpProtocols());
     }
   }
 

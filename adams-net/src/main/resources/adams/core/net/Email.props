@@ -1,7 +1,6 @@
 # Properties file listing email related parameters.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # Whether email support is enabled
 Enabled=false
@@ -17,6 +16,10 @@ SmtpRequiresAuthentication=false
 
 # Whether to issue the STARTTLS command
 SmtpStartTls=false
+
+# The protocols to use, eg TLSv1.2
+# empty string for default
+SmtpProtocols=
 
 # Whether to connect using SSL
 SmtpUseSsl=false

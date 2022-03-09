@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailExport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -331,15 +331,16 @@ public class EmailExport
       email = new Email(m_Sender, m_Recipients, m_Subject, m_Body.getValue(), files.toArray(new File[files.size()]));
       try {
 	if (m_SendEmail.requiresSmtpSessionInitialization()) {
-	  m_SendEmail.initializeSmtpSession(
-	    EmailHelper.getSmtpServer(),
-	    EmailHelper.getSmtpPort(),
-	    EmailHelper.getSmtpStartTLS(),
-	    EmailHelper.getSmtpUseSSL(),
-	    EmailHelper.getSmtpTimeout(),
-	    EmailHelper.getSmtpRequiresAuthentication(),
-	    EmailHelper.getSmtpUser(),
-	    EmailHelper.getSmtpPassword());
+          m_SendEmail.initializeSmtpSession(
+              EmailHelper.getSmtpServer(),
+              EmailHelper.getSmtpPort(),
+              EmailHelper.getSmtpStartTLS(),
+              EmailHelper.getSmtpUseSSL(),
+              EmailHelper.getSmtpTimeout(),
+              EmailHelper.getSmtpRequiresAuthentication(),
+              EmailHelper.getSmtpUser(),
+              EmailHelper.getSmtpPassword(),
+              EmailHelper.getSmtpProtocols());
 	}
 	if (!m_SendEmail.sendMail(email))
 	  errors.add("Failed to send email!");

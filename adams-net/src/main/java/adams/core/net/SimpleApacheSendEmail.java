@@ -54,7 +54,7 @@ public class SimpleApacheSendEmail
   
   /** whether to use TLS. */
   protected boolean m_UseTLS;
-  
+
   /** whether to use SSL. */
   protected boolean m_UseSSL;
 
@@ -101,10 +101,11 @@ public class SimpleApacheSendEmail
    * @param requiresAuth	whether authentication is required
    * @param user		the SMTP user
    * @param pw			the SMTP password
+   * @param protocols		ignored
    * @throws Exception		if initialization fails
    */
   @Override
-  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, String user, BasePassword pw) throws Exception {
+  public void initializeSmtpSession(String server, int port, boolean useTLS, boolean useSSL, int timeout, boolean requiresAuth, String user, BasePassword pw, String protocols) throws Exception {
     m_Server       = server;
     m_Port         = port;
     m_UseTLS       = useTLS;

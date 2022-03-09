@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailSetupPanel.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -45,7 +45,6 @@ import java.awt.event.ActionEvent;
  * Panel for configuring the system-wide Email settings.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EmailSetupPanel
   extends AbstractPreferencesPanel {
@@ -73,6 +72,9 @@ public class EmailSetupPanel
 
   /** Whether to start TLS. */
   protected BaseCheckBox m_CheckBoxSmtpStartTLS;
+
+  /** The protocols to use. */
+  protected BaseTextField m_TextSmtpProtocols;
 
   /** Whether to use SSL. */
   protected BaseCheckBox m_CheckBoxSmtpUseSSL;
@@ -137,6 +139,11 @@ public class EmailSetupPanel
     m_CheckBoxSmtpStartTLS.setSelected(EmailHelper.getSmtpStartTLS());
     m_PanelParameters.addParameter("Start _TLS", m_CheckBoxSmtpStartTLS);
 
+    m_TextSmtpProtocols = new BaseTextField(20);
+    m_TextSmtpProtocols.setText(EmailHelper.getSmtpProtocols());
+    m_TextSmtpProtocols.setToolTipText("The protocols to use, e.g., TLSv1.2");
+    m_PanelParameters.addParameter("SMTP Protocols", m_TextSmtpProtocols);
+
     m_CheckBoxSmtpUseSSL = new BaseCheckBox();
     m_CheckBoxSmtpUseSSL.setSelected(EmailHelper.getSmtpUseSSL());
     m_PanelParameters.addParameter("Use SS_L", m_CheckBoxSmtpUseSSL);
@@ -192,6 +199,7 @@ public class EmailSetupPanel
     result.setInteger(EmailHelper.SMTP_TIMEOUT, ((Number) m_SpinnerSmtpTimeout.getValue()).intValue());
     result.setBoolean(EmailHelper.SMTP_REQUIRES_AUTHENTICATION, m_CheckBoxSmtpRequiresAuthentication.isSelected());
     result.setBoolean(EmailHelper.SMTP_START_TLS, m_CheckBoxSmtpStartTLS.isSelected());
+    result.setProperty(EmailHelper.SMTP_PROTOCOLS, m_TextSmtpProtocols.getText());
     result.setBoolean(EmailHelper.SMTP_USE_SSL, m_CheckBoxSmtpUseSSL.isSelected());
     result.setProperty(EmailHelper.SMTP_USER, m_TextSmtpUser.getText());
     result.setPassword(EmailHelper.SMTP_PASSWORD, new BasePassword(m_TextSmtpPassword.getText()));
