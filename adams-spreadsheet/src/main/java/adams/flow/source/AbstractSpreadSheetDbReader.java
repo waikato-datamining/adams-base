@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDbReader.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -303,6 +303,8 @@ public abstract class AbstractSpreadSheetDbReader
 	getLogger().info("Query: " + query);
       m_ResultSet = sql.getResultSet(query);
       sheet       = m_Reader.read(m_ResultSet, m_ChunkSize);
+      if (isLoggingEnabled() && (sheet != null))
+        getLogger().info("Retrieved " + sheet.getRowCount() + " rows");
       if (m_Reader.isFinished() || m_Reader.isStopped()) {
 	m_Reader    = null;
 	m_ResultSet = null;
