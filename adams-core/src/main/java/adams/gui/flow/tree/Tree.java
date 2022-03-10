@@ -55,6 +55,7 @@ import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.MenuHeader;
 import adams.gui.flow.tree.menu.Separator;
 import adams.gui.flow.tree.menu.TreePopupAction;
+import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
 import adams.gui.goe.FlowHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -2139,5 +2140,6 @@ public class Tree
       m_Operations.cleanUp();
       m_Operations = null;
     }
+    AbstractRecordActorAdded.cleanUpAll();
   }
 }

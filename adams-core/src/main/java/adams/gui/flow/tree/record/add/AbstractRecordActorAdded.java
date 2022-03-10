@@ -21,6 +21,7 @@
 package adams.gui.flow.tree.record.add;
 
 import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.logging.ConsoleLoggingObject;
 import adams.flow.core.Actor;
@@ -37,7 +38,8 @@ import java.util.List;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractRecordActorAdded
-    extends ConsoleLoggingObject {
+    extends ConsoleLoggingObject
+    implements CleanUpHandler {
 
   private static final long serialVersionUID = 6333200461304637302L;
 
@@ -92,6 +94,14 @@ public abstract class AbstractRecordActorAdded
   }
 
   /**
+   * Cleans up data structures, frees up memory.
+   * <br/>
+   * Default implementation does nothing.
+   */
+  public void cleanUp() {
+  }
+
+  /**
    * Records the actor that was added.
    *
    * @param added	the node that was added
@@ -121,5 +131,15 @@ public abstract class AbstractRecordActorAdded
       if (recorder.isEnabled(added))
         recorder.record(added, parent, position);
     }
+  }
+
+  /**
+   * Cleans up data structures, frees up memory, for all recorders.
+   */
+  public static void cleanUpAll() {
+    if (m_Recorders == null)
+      return;
+    for (AbstractRecordActorAdded recorder: m_Recorders)
+      recorder.cleanUp();
   }
 }

@@ -284,21 +284,25 @@ public class TreeOperations
     else if (position == InsertPosition.HERE) {
       node       = TreeHelper.pathToNode(path);
       parentNode = (Node) node.getParent();
-      index      = parentNode.getIndex(node);
-      before     = getOwner().getNearestActor(parentNode, index, false);
-      after      = node.getActor();
-      if (after.getSkip())
-	after = getOwner().getNearestActor(parentNode, index, true);
+      if (parentNode != null) {
+	index = parentNode.getIndex(node);
+	before = getOwner().getNearestActor(parentNode, index, false);
+	after = node.getActor();
+	if (after.getSkip())
+	  after = getOwner().getNearestActor(parentNode, index, true);
+      }
     }
     // add after
     else if (position == InsertPosition.AFTER) {
       node       = TreeHelper.pathToNode(path);
       parentNode = (Node) node.getParent();
-      index      = parentNode.getIndex(node);
-      after      = getOwner().getNearestActor(parentNode, index, true);
-      before     = node.getActor();
-      if (before.getSkip())
-	before = getOwner().getNearestActor(parentNode, index, false);
+      if (parentNode != null) {
+	index = parentNode.getIndex(node);
+	after = getOwner().getNearestActor(parentNode, index, true);
+	before = node.getActor();
+	if (before.getSkip())
+	  before = getOwner().getNearestActor(parentNode, index, false);
+      }
     }
 
     if ((handlerInfo == null) && (parentNode != null)) {
