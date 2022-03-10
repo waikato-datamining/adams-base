@@ -40,7 +40,7 @@ public class SimpleLog
   private static final long serialVersionUID = -6799588540903263127L;
 
   /** the file to write the "add" history to .*/
-  public final static String FILENAME_ADDHISTORY = "FlowAddHistory.csv";
+  public final static String FILENAME = "FlowAddHistory.csv";
 
   /**
    * Returns whether the recording is active.
@@ -96,7 +96,7 @@ public class SimpleLog
     StringBuilder	line;
     String		filename;
 
-    filename = Environment.getInstance().getHome() + File.separator + FILENAME_ADDHISTORY;
+    filename = Environment.getInstance().getHome() + File.separator + FILENAME;
 
     // header?
     if (!new File(filename).exists()) {
