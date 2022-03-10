@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NamedCounter.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -32,7 +32,6 @@ import java.util.Set;
  * Provides counters that can be referenced by a name.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NamedCounter
   implements Serializable {
@@ -111,6 +110,16 @@ public class NamedCounter
    */
   public synchronized void clear(String name) {
     m_Counts.put(name, 0);
+  }
+
+  /**
+   * Initializes the counter value for the specified name.
+   *
+   * @param name	the name of the counter
+   * @param count	the value to use
+   */
+  public synchronized void set(String name, int count) {
+    m_Counts.put(name, count);
   }
 
   /**
