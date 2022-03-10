@@ -619,7 +619,7 @@ public class TreeOperations
 	});
 
 	// record
-	if (getOwner().getRecordAdd() && (actors.length == 1)) {
+	if (actors.length == 1) {
 	  AbstractRecordActorAdded.recordAll(
 	      children[0],
 	      parent,
