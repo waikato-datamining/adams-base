@@ -34,23 +34,23 @@ import java.util.Set;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class NamedCounter
-  implements Serializable {
+    implements Serializable {
 
   /** for serialization. */
   private static final long serialVersionUID = -690032882282626773L;
 
   /**
    * Comparator for sorting the names based on the counts associated with them.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision$
    */
   public static class CounterComparator
-    implements Comparator<String> {
-    
+      implements Comparator<String> {
+
     /** the basis for the comparison. */
     protected NamedCounter m_Counter;
-    
+
     /**
      * Initializes the comparator.
      */
@@ -75,7 +75,7 @@ public class NamedCounter
     public int compare(String o1, String o2) {
       if (m_Counter == null)
 	return 0;
-      
+
       if (!m_Counter.has(o1))
 	return 1;
       else if (!m_Counter.has(o2))
@@ -84,7 +84,7 @@ public class NamedCounter
 	return new Integer(m_Counter.current(o1)).compareTo(m_Counter.current(o2));
     }
   }
-  
+
   /** for storing the counts. */
   protected Hashtable<String,Integer> m_Counts;
 
@@ -105,7 +105,7 @@ public class NamedCounter
 
   /**
    * Clears only the specific counter.
-   * 
+   *
    * @param name	the name of the counter
    */
   public synchronized void clear(String name) {
@@ -165,19 +165,19 @@ public class NamedCounter
   public synchronized boolean has(String name) {
     return m_Counts.containsKey(name);
   }
-  
+
   /**
    * Returns the currently stored names.
-   * 
+   *
    * @return		the name enumeration
    */
   public synchronized Iterator<String> names() {
     return m_Counts.keySet().iterator();
   }
-  
+
   /**
    * Returns the currently stored names sorted based on associated.
-   * 
+   *
    * @param asc		if true then names are sorted in ascending manner,
    * 			otherwise in descending manner
    * @return		the name enumeration
@@ -185,26 +185,35 @@ public class NamedCounter
   public synchronized Iterator<String> names(boolean asc) {
     List<String>	result;
     CounterComparator	comp;
-    
+
     result = new ArrayList<>(m_Counts.keySet());
     comp   = new CounterComparator(this);
     Collections.sort(result, comp);
-    
+
     if (!asc)
       Collections.reverse(result);
-    
+
     return result.iterator();
   }
-  
+
   /**
    * Returns the currently stored names.
-   * 
+   *
    * @return		the name set
    */
   public synchronized Set<String> nameSet() {
     return m_Counts.keySet();
   }
-  
+
+  /**
+   * Returns the number of names currently stored.
+   *
+   * @return		the number of stored names
+   */
+  public synchronized int size() {
+    return m_Counts.size();
+  }
+
   /**
    * Returns the current counters as string.
    *
