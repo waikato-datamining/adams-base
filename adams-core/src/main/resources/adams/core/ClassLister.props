@@ -638,6 +638,10 @@ adams.gui.flow.tabhandler.AbstractTabHandler=\
 adams.gui.flow.tree.annotations.AnnotationProcessor=\
   adams.gui.flow.tree.annotations
 
+# the schemes that record when actors get added
+adams.gui.flow.tree.record.add.AbstractRecordActorAdded=\
+  adams.gui.flow.tree.record.add
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application

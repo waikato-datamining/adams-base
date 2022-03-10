@@ -15,7 +15,7 @@
 
 /*
  * TreeOperations.java
- * Copyright (C) 2015-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -99,6 +99,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
+import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.Favorite;
 import adams.gui.goe.FlowHelper;
@@ -564,8 +565,8 @@ public class TreeOperations
 	});
 
 	// record
-	if (getOwner().getRecordAdd() && (actors.length == 1)) {
-	  ActorSuggestion.getSingleton().record(
+	if (actors.length == 1) {
+	  AbstractRecordActorAdded.recordAll(
 	      children[0],
 	      node,
 	      position);
@@ -619,7 +620,7 @@ public class TreeOperations
 
 	// record
 	if (getOwner().getRecordAdd() && (actors.length == 1)) {
-	  ActorSuggestion.getSingleton().record(
+	  AbstractRecordActorAdded.recordAll(
 	      children[0],
 	      parent,
 	      position);
