@@ -1,13 +1,15 @@
 # Project: adams
-# Date: 2016-12-20 13:50:16
+# Date: 2022-03-15 09:35:47
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Extracts meta-data, such as EXIF or IPTC from\\nthe image and displays the generated spreadsheet\\nin textual form." -flow-execution-listener adams.flow.execution.NullListener
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Extracts meta-data, such as EXIF or IPTC from\\nthe image and displays the generated spreadsheet\\nin tables." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.source.FileSupplier -file ${FLOWS}/data/8726547192_1d08b00bdf_o-small.jpg
  adams.flow.control.Branch
-  adams.flow.control.Sequence -name ImageMetaData
-   adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.Sanselan
-   adams.flow.sink.Display -name Sanselan -short-title true -writer adams.data.io.output.NullWriter
-  adams.flow.control.Sequence -name ImageMetaDataExtractor
+  adams.flow.control.Sequence -name "meta-data (apache)"
+   adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.ApacheCommons
+   adams.flow.sink.SpreadSheetDisplay -name Apache -short-title true -display-type adams.flow.core.displaytype.Default -width 800 -height 600 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.control.Sequence -name "meta-data (MetaDataExtractor)"
    adams.flow.transformer.ImageMetaData -extractor adams.flow.transformer.metadata.MetaDataExtractor
-   adams.flow.sink.Display -name MetaDataExtractor -short-title true -x -3 -writer adams.data.io.output.NullWriter
+   adams.flow.sink.SpreadSheetDisplay -name MetaDataExtractor -short-title true -display-type adams.flow.core.displaytype.Default -width 800 -height 600 -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
