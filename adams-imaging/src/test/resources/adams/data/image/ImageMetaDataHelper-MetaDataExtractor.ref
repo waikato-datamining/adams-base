@@ -5,11 +5,16 @@ Key,Value
 "Component 3","Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert"
 "Compression Type",Baseline
 "Data Precision","8 bits"
+"Detected File Type Long Name","Joint Photographic Experts Group"
+"Detected File Type Name",JPEG
+"Detected MIME Type",image/jpeg
+"Expected File Name Extension",jpg
 "File Name",3666455665_18795f0741.jpg
 "File Size","169493 bytes"
 "Image Height","375 pixels"
 "Image Width","500 pixels"
 "Number of Components",3
+"Number of Tables","4 Huffman tables"
 "Resolution Units",inch
 "Thumbnail Height Pixels",0
 "Thumbnail Width Pixels",0
@@ -34,10 +39,14 @@ Contrast,None
 Date/Time,"2021-01-07 15:28:46"
 "Date/Time Digitized","2010-04-23 15:51:35"
 "Date/Time Original","2010-04-23 15:51:35"
+"Detected File Type Long Name","Joint Photographic Experts Group"
+"Detected File Type Name",JPEG
+"Detected MIME Type",image/jpeg
 "Digital Zoom Ratio","Digital zoom not used"
 "Exif Image Height","73 pixels"
 "Exif Image Width","100 pixels"
 "Exif Version",2.21
+"Expected File Name Extension",jpg
 "Exposure Bias Value","-33/100 EV"
 "Exposure Mode","Auto exposure"
 "Exposure Program","Shutter priority"
@@ -46,7 +55,7 @@ F-Number,f/5.6
 "File Name",ColorChecker100423.jpg
 "File Size","20618 bytes"
 "File Source","Digital Still Camera (DSC)"
-Flash,"Flash did not fire, auto"
+Flash,"Flash did not fire"
 "FlashPix Version",1
 "Focal Length","34 mm"
 "Focal Length 35","68 mm"
@@ -61,9 +70,10 @@ Make,Panasonic
 "Metering Mode",Multi-segment
 Model,DMC-GF1
 "Number of Components",3
+"Number of Tables","4 Huffman tables"
 Orientation,"Top, left side (Horizontal / normal)"
 "Primary Chromaticities","64/100 33/100 21/100 71/100 15/100 6/100"
-"Print IM","[208 values]"
+"PrintIM Version",250
 "Resolution Unit",Inch
 "Resolution Unit",Inch
 "Resolution Units",inch
@@ -77,6 +87,20 @@ Software,"GIMP 2.8.22"
 "Thumbnail Length","1799 bytes"
 "Thumbnail Offset","1238 bytes"
 "Thumbnail Width Pixels",0
+"Unknown tag (0x0001)",0x00160016
+"Unknown tag (0x0002)",0x00000000
+"Unknown tag (0x0003)",0x00000064
+"Unknown tag (0x0007)",0x00000000
+"Unknown tag (0x0008)",0x00000000
+"Unknown tag (0x0009)",0x00000000
+"Unknown tag (0x000a)",0x00000000
+"Unknown tag (0x000b)",0x000000ac
+"Unknown tag (0x000c)",0x00000000
+"Unknown tag (0x000d)",0x00000000
+"Unknown tag (0x000e)",0x000000c4
+"Unknown tag (0x0100)",0x00000005
+"Unknown tag (0x0101)",0x00000001
+"Unknown tag (0x0110)",0x00000080
 Version,1.1
 "White Balance",Unknown
 "White Balance Mode","Manual white balance"
