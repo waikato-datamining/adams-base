@@ -410,14 +410,10 @@ public class ObjectLocationsOverlayFromReport
       }
 
       g.setColor(shapeColor == null ? labelColor : shapeColor);
-      if (m_Filled) {
+      if (m_Filled)
 	g.fillPolygon(poly);
-	g.setColor(labelColor);
-	g.drawPolygon(poly);
-      }
-      else {
-	g.drawPolygon(poly);
-      }
+      else
+        g.drawPolygon(poly);
 
       rect = null;
       if (m_PolygonBounds) {
