@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -30,7 +30,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -162,7 +164,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsFromReport
-  extends AbstractDrawObjectsFromReport {
+    extends AbstractDrawObjectsFromReport {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
@@ -173,17 +175,14 @@ public class ObjectLocationsFromReport
   /** whether to draw the shape filled. */
   protected boolean m_Filled;
 
+  /** the alpha value to use for the outlines. */
+  protected int m_OutlineAlpha;
+
+  /** the colors for the polygon bounds. */
+  protected transient Map<Color,Color> m_OutlineColors;
+
   /** whether to draw the bounds of the polygon as well. */
   protected boolean m_PolygonBounds;
-
-  /** the ratio used for determining whether to fall back from polygon on bbox. */
-  protected double m_BoundingBoxFallbackRatio;
-
-  /** whether to vary the shape color. */
-  protected boolean m_VaryShapeColor;
-
-  /** the color provider to use when varying the shape colors. */
-  protected ColorProvider m_ShapeColorProvider;
 
   /**
    * Returns a string describing the object.
@@ -193,19 +192,19 @@ public class ObjectLocationsFromReport
   @Override
   public String globalInfo() {
     return
-      "Displays the locations of objects in the image, using data from the "
-        + "attached report.\n"
-        + "Suffixes:\n"
-        + LocatedObjects.KEY_X + "\n"
-        + LocatedObjects.KEY_Y + "\n"
-        + LocatedObjects.KEY_WIDTH + "\n"
-        + LocatedObjects.KEY_HEIGHT + "\n"
-        + "Optionally, if type information is available per object, the locations "
-        + "can be displayed in distinct colors per type. The type itself can be "
-        + "displayed as well.\n"
-        + "If polygon data should be available (" + LocatedObjects.KEY_POLY_X
-        + " and " + LocatedObjects.KEY_POLY_Y + "), then this takes precedence "
-        + "over the rectangle coordinates.";
+	"Displays the locations of objects in the image, using data from the "
+	    + "attached report.\n"
+	    + "Suffixes:\n"
+	    + LocatedObjects.KEY_X + "\n"
+	    + LocatedObjects.KEY_Y + "\n"
+	    + LocatedObjects.KEY_WIDTH + "\n"
+	    + LocatedObjects.KEY_HEIGHT + "\n"
+	    + "Optionally, if type information is available per object, the locations "
+	    + "can be displayed in distinct colors per type. The type itself can be "
+	    + "displayed as well.\n"
+	    + "If polygon data should be available (" + LocatedObjects.KEY_POLY_X
+	    + " and " + LocatedObjects.KEY_POLY_Y + "), then this takes precedence "
+	    + "over the rectangle coordinates.";
   }
 
   /**
@@ -216,28 +215,32 @@ public class ObjectLocationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
-      "stroke-thickness", "strokeThickness",
-      1.0f, 0.01f, null);
+	"stroke-thickness", "strokeThickness",
+	1.0f, 0.01f, null);
 
     m_OptionManager.add(
-      "filled", "filled",
-      false);
+	"filled", "filled",
+	false);
 
     m_OptionManager.add(
-      "polygon-bounds", "polygonBounds",
-      false);
+	"outline-alpha", "outlineAlpha",
+	255, 0, 255);
 
     m_OptionManager.add(
-      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
-      0.0, 0.0, 1.0);
+	"polygon-bounds", "polygonBounds",
+	false);
 
     m_OptionManager.add(
-      "vary-shape-color", "varyShapeColor",
-      false);
+	"bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+	0.0, 0.0, 1.0);
 
     m_OptionManager.add(
-      "shape-color-provider", "shapeColorProvider",
-      new TranslucentColorProvider());
+	"vary-shape-color", "varyShapeColor",
+	false);
+
+    m_OptionManager.add(
+	"shape-color-provider", "shapeColorProvider",
+	new TranslucentColorProvider());
   }
 
   /**
@@ -296,6 +299,37 @@ public class ObjectLocationsFromReport
    */
   public String filledTipText() {
     return "If enabled, the shape is drawn filled.";
+  }
+
+  /**
+   * Sets the alpha value to use when drawing the outlines.
+   *
+   * @param value 	the alpha value (0: transparent, 255: opaque)
+   */
+  public void setOutlineAlpha(int value) {
+    if (getOptionManager().isValid("polygonBoundsAlpha", value)) {
+      m_OutlineAlpha = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the alpha value to use when drawing the outlines.
+   *
+   * @return 		the alpha value (0: transparent, 255: opaque)
+   */
+  public int getOutlineAlpha() {
+    return m_OutlineAlpha;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outlineAlphaTipText() {
+    return "This alpha is applied to the color of the outlines.";
   }
 
   /**
@@ -463,6 +497,8 @@ public class ObjectLocationsFromReport
     float	width;
     Color 	labelColor;
     Color	shapeColor;
+    Color	actualColor;
+    Color	alphaColor;
 
     g = image.getImage().getGraphics();
 
@@ -473,39 +509,43 @@ public class ObjectLocationsFromReport
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (getUseColorsPerType()) {
-        if (m_Overlays.hasColor(poly))
-          labelColor = m_Overlays.getColor(poly);
+	if (m_Overlays.hasColor(poly))
+	  labelColor = m_Overlays.getColor(poly);
       }
 
       shapeColor = null;
       if (getVaryShapeColor()) {
-        if (m_Overlays.hasShapeColor(poly))
-          shapeColor = m_Overlays.getShapeColor(poly);
+	if (m_Overlays.hasShapeColor(poly))
+	  shapeColor = m_Overlays.getShapeColor(poly);
       }
 
-      g.setColor(shapeColor == null ? labelColor : shapeColor);
+      actualColor = (shapeColor == null) ? labelColor : shapeColor;
+      if (m_OutlineColors == null)
+	m_OutlineColors = new HashMap<>();
+      if (!m_OutlineColors.containsKey(actualColor)) {
+	alphaColor = new Color(actualColor.getRed(), actualColor.getGreen(), actualColor.getBlue(), m_OutlineAlpha);
+	m_OutlineColors.put(actualColor, alphaColor);
+      }
       if (m_Filled) {
+	g.setColor(shapeColor == null ? labelColor : shapeColor);
 	g.fillPolygon(poly);
-	g.setColor(labelColor);
-	g.drawPolygon(poly);
       }
-      else {
-	g.drawPolygon(poly);
-      }
+      g.setColor(m_OutlineColors.get(actualColor));
+      g.drawPolygon(poly);
 
       rect = null;
       if (m_PolygonBounds) {
-	g.setColor(shapeColor == null ? labelColor : shapeColor);
+	g.setColor(m_OutlineColors.get(actualColor));
 	rect = poly.getBounds();
 	g.drawRect(rect.x, rect.y, rect.width, rect.height);
       }
       if (m_Overlays.hasLabel(poly)) {
 	g.setColor(labelColor);
-        label = m_Overlays.getLabel(poly);
-        if (label != null) {
-          if (rect == null)
+	label = m_Overlays.getLabel(poly);
+	if (label != null) {
+	  if (rect == null)
 	    rect = poly.getBounds();
-          m_Overlays.drawString(g, rect, label);
+	  m_Overlays.drawString(g, rect, label);
 	}
       }
     }

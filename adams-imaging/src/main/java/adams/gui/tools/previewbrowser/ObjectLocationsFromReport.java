@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -204,7 +204,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsFromReport
-  extends AbstractContentHandler {
+    extends AbstractContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
@@ -213,7 +213,7 @@ public class ObjectLocationsFromReport
    * The panel for displaying the image.
    */
   public class CombinedPanel
-    extends BasePanel {
+      extends BasePanel {
 
     private static final long serialVersionUID = 236378741683380463L;
 
@@ -253,6 +253,8 @@ public class ObjectLocationsFromReport
       overlay.setLabelOffsetY(m_LabelOffsetY);
       overlay.setPredefinedLabels(m_PredefinedLabels);
       overlay.setFilled(m_Filled);
+      overlay.setOutlineAlpha(m_OutlineAlpha);
+      overlay.setPolygonBounds(m_PolygonBounds);
       overlay.setVaryShapeColor(m_VaryShapeColor);
       overlay.setShapeColorProvider(m_ShapeColorProvider.shallowCopy());
       overlay.setBoundingBoxFallbackRatio(m_BoundingBoxFallbackRatio);
@@ -280,7 +282,7 @@ public class ObjectLocationsFromReport
      */
     protected void updateReport() {
       if (getImagePanel().getCurrentFile() != null)
-        getImagePanel().setAdditionalProperties(loadReport(this, getImagePanel().getCurrentFile()));
+	getImagePanel().setAdditionalProperties(loadReport(this, getImagePanel().getCurrentFile()));
     }
 
     /**
@@ -342,7 +344,7 @@ public class ObjectLocationsFromReport
 
   /** the report reader to use. */
   protected AbstractReportReader m_Reader;
-  
+
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -363,6 +365,12 @@ public class ObjectLocationsFromReport
 
   /** whether to draw the shape filled. */
   protected boolean m_Filled;
+
+  /** the alpha value to use for the outlines. */
+  protected int m_OutlineAlpha;
+
+  /** whether to draw the bounds of the polygon as well. */
+  protected boolean m_PolygonBounds;
 
   /** the label for the rectangles. */
   protected String m_LabelFormat;
@@ -417,9 +425,9 @@ public class ObjectLocationsFromReport
   @Override
   public String globalInfo() {
     return
-      "Displays the following image types with an overlay for the objects "
-	+ "stored in the report with the same name (using object prefix '" + ObjectLocationsOverlayFromReport.PREFIX_DEFAULT + "'): "
-	+ Utils.arrayToString(getExtensions());
+	"Displays the following image types with an overlay for the objects "
+	    + "stored in the report with the same name (using object prefix '" + ObjectLocationsOverlayFromReport.PREFIX_DEFAULT + "'): "
+	    + Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -430,96 +438,104 @@ public class ObjectLocationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
-      "reader", "reader",
-      getDefaultReader());
+	"reader", "reader",
+	getDefaultReader());
 
     m_OptionManager.add(
-      "prefix", "prefix",
-      ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+	"prefix", "prefix",
+	ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 
     m_OptionManager.add(
-      "color", "color",
-      Color.RED);
+	"color", "color",
+	Color.RED);
 
     m_OptionManager.add(
-      "use-colors-per-type", "useColorsPerType",
-      getDefaultUseColorsPerType());
+	"use-colors-per-type", "useColorsPerType",
+	getDefaultUseColorsPerType());
 
     m_OptionManager.add(
-      "type-color-provider", "typeColorProvider",
-      new DefaultColorProvider());
+	"type-color-provider", "typeColorProvider",
+	new DefaultColorProvider());
 
     m_OptionManager.add(
-      "type-suffix", "typeSuffix",
-      ".type");
+	"type-suffix", "typeSuffix",
+	".type");
 
     m_OptionManager.add(
-      "type-regexp", "typeRegExp",
-      new BaseRegExp(BaseRegExp.MATCH_ALL));
+	"type-regexp", "typeRegExp",
+	new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-      "filled", "filled",
-      false);
+	"filled", "filled",
+	false);
 
     m_OptionManager.add(
-      "label-format", "labelFormat",
-      getDefaultLabelFormat());
+	"outline-alpha", "outlineAlpha",
+	255, 0, 255);
 
     m_OptionManager.add(
-      "label-font", "labelFont",
-      Fonts.getSansFont(14));
+	"polygon-bounds", "polygonBounds",
+	false);
 
     m_OptionManager.add(
-      "label-anchor", "labelAnchor",
-      getDefaultLabelAnchor());
+	"label-format", "labelFormat",
+	getDefaultLabelFormat());
 
     m_OptionManager.add(
-      "label-offset-x", "labelOffsetX",
-      getDefaultLabelOffsetX());
+	"label-font", "labelFont",
+	Fonts.getSansFont(14));
 
     m_OptionManager.add(
-      "label-offset-y", "labelOffsetY",
-      getDefaultLabelOffsetY());
+	"label-anchor", "labelAnchor",
+	getDefaultLabelAnchor());
 
     m_OptionManager.add(
-      "predefined-labels", "predefinedLabels",
-      new BaseString[0]);
+	"label-offset-x", "labelOffsetX",
+	getDefaultLabelOffsetX());
 
     m_OptionManager.add(
-      "vary-shape-color", "varyShapeColor",
-      false);
+	"label-offset-y", "labelOffsetY",
+	getDefaultLabelOffsetY());
 
     m_OptionManager.add(
-      "shape-color-provider", "shapeColorProvider",
-      new TranslucentColorProvider());
+	"predefined-labels", "predefinedLabels",
+	new BaseString[0]);
 
     m_OptionManager.add(
-      "finder", "finder",
-      new AllFinder());
+	"vary-shape-color", "varyShapeColor",
+	false);
 
     m_OptionManager.add(
-      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
-      0.0, 0.0, 1.0);
+	"shape-color-provider", "shapeColorProvider",
+	new TranslucentColorProvider());
 
     m_OptionManager.add(
-      "overlap-detection", "overlapDetection",
-      new AreaRatio());
+	"finder", "finder",
+	new AllFinder());
 
     m_OptionManager.add(
-      "overlap-removal", "overlapRemoval",
-      new PassThrough());
+	"bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+	0.0, 0.0, 1.0);
 
     m_OptionManager.add(
-      "use-alternative-location", "useAlternativeLocation",
-      false);
+	"overlap-detection", "overlapDetection",
+	new AreaRatio());
 
     m_OptionManager.add(
-      "alternative-location", "alternativeLocation",
-      new PlaceholderDirectory());
+	"overlap-removal", "overlapRemoval",
+	new PassThrough());
 
     m_OptionManager.add(
-      "show-object-panel", "showObjectPanel",
-      false);
+	"use-alternative-location", "useAlternativeLocation",
+	false);
+
+    m_OptionManager.add(
+	"alternative-location", "alternativeLocation",
+	new PlaceholderDirectory());
+
+    m_OptionManager.add(
+	"show-object-panel", "showObjectPanel",
+	false);
   }
 
   /**
@@ -775,6 +791,66 @@ public class ObjectLocationsFromReport
   }
 
   /**
+   * Sets the alpha value to use when drawing the outlines.
+   *
+   * @param value 	the alpha value (0: transparent, 255: opaque)
+   */
+  public void setOutlineAlpha(int value) {
+    if (getOptionManager().isValid("polygonBoundsAlpha", value)) {
+      m_OutlineAlpha = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the alpha value to use when drawing the outlines.
+   *
+   * @return 		the alpha value (0: transparent, 255: opaque)
+   */
+  public int getOutlineAlpha() {
+    return m_OutlineAlpha;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outlineAlphaTipText() {
+    return "This alpha is applied to the color of the outlines.";
+  }
+
+  /**
+   * Sets whether to draw the polygon bounds.
+   *
+   * @param value 	true if to draw bounds
+   */
+  public void setPolygonBounds(boolean value) {
+    m_PolygonBounds = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to draw the polygon bounds.
+   *
+   * @return 		true if to draw bounds
+   */
+  public boolean getPolygonBounds() {
+    return m_PolygonBounds;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String polygonBoundsTipText() {
+    return "If enabled, the polygon bounds are drawn as well.";
+  }
+
+  /**
    * Returns the default label format.
    *
    * @return		the default
@@ -810,12 +886,12 @@ public class ObjectLocationsFromReport
    */
   public String labelFormatTipText() {
     return "The label format string to use for the rectangles; "
-      + "'#' for index, '@' for type and '$' for short type (type suffix "
-      + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
-      + "value associated with the meta-data key 'BLAH'; "
-      + "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
-      + "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
-      + "after the decimal point.";
+	+ "'#' for index, '@' for type and '$' for short type (type suffix "
+	+ "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
+	+ "value associated with the meta-data key 'BLAH'; "
+	+ "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
+	+ "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
+	+ "after the decimal point.";
   }
 
   /**
@@ -1287,11 +1363,11 @@ public class ObjectLocationsFromReport
     }
     else {
       try {
-        result = AbstractOverlappingObjectRemoval.remove(report, report, m_Finder, m_OverlapDetection, m_OverlapRemoval);
+	result = AbstractOverlappingObjectRemoval.remove(report, report, m_Finder, m_OverlapDetection, m_OverlapRemoval);
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to remove objects!", e);
-        result = report;
+	getLogger().log(Level.SEVERE, "Failed to remove objects!", e);
+	result = report;
       }
     }
 
@@ -1333,7 +1409,7 @@ public class ObjectLocationsFromReport
       m_Reader.setInput(new PlaceholderFile(reportFile));
       reports = m_Reader.read();
       if (reports.size() > 0) {
-        result = reports.get(0);
+	result = reports.get(0);
 	loadAdditionalReports(panel, file, result);
       }
     }
