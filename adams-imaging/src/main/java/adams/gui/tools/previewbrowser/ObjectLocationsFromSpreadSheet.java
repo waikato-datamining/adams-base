@@ -231,6 +231,7 @@ public class ObjectLocationsFromSpreadSheet
       setLayout(new BorderLayout());
 
       m_PanelImage = new ImagePanel();
+      m_PanelImage.getUndo().setEnabled(false);
       overlay = new ObjectLocationsOverlayFromReport();
       overlay.setPrefix(m_Reader.getPrefix());
       overlay.setColor(m_Color);

@@ -15,7 +15,7 @@
 
 /*
  * ImageHandler.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -83,6 +83,7 @@ public class ImageHandler
     ImagePanel		panel;
 
     panel = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     panel.load(file, new JAIImageReader(), -1.0);
 
     return new PreviewPanel(panel, panel.getPaintPanel());

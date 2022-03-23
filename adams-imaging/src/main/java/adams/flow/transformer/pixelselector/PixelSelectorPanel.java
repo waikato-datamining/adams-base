@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PixelSelectorPanel.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
@@ -66,7 +66,6 @@ import java.util.List;
  * Combines an ImagePanel and a Report table.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PixelSelectorPanel
   extends BasePanel 
@@ -146,6 +145,7 @@ public class PixelSelectorPanel
     
     // image
     m_ImagePanel = new ImagePanel();
+    m_ImagePanel.getUndo().setEnabled(false);
     m_ImagePanel.setCustomPopupMenuProvider(this);
     m_SplitPane.setLeftComponent(m_ImagePanel);
     

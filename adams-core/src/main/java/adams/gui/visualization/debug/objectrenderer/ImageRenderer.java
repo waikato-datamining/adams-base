@@ -15,7 +15,7 @@
 
 /*
  * ImageRenderer.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -99,6 +99,7 @@ public class ImageRenderer
     ImagePanel		imagePanel;
 
     imagePanel = new ImagePanel();
+    imagePanel.getUndo().setEnabled(false);
     imagePanel.setShowProperties(true);
     imagePanel.setShowLog(false);
     if (obj instanceof BufferedImageSupporter)

@@ -15,7 +15,7 @@
 
 /*
  * BoofCVImageHandler.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -79,6 +79,7 @@ public class BoofCVImageHandler
     ImagePanel		panel;
 
     panel = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     panel.load(file, new BoofCVImageReader());
 
     return new PreviewPanel(panel, panel.getPaintPanel());

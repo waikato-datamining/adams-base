@@ -15,7 +15,7 @@
 
 /*
  * CocoAnnotationsHandler.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -167,6 +167,7 @@ public class CocoAnnotationsHandler
       setLayout(new BorderLayout());
 
       m_PanelImage = new ImagePanel();
+      m_PanelImage.getUndo().setEnabled(false);
       overlay = new ObjectLocationsOverlayFromReport();
       overlay.setColor(m_Color);
       overlay.setUseColorsPerType(m_UseColorsPerType);

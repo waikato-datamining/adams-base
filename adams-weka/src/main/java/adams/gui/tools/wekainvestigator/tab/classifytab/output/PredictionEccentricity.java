@@ -15,7 +15,7 @@
 
 /*
  * PredictionEccentricity.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -287,6 +287,7 @@ public class PredictionEccentricity
     infoTable = new SpreadSheetTable(infoModel);
     infoTable.setShowSimplePopupMenus(true);
     imagePanel = new ImagePanel();
+    imagePanel.getUndo().setEnabled(false);
     imagePanel.setCurrentImage(matrix.toBufferedImage());
     imagePanel.setScale(-1);
     panel.setBottomComponent(imagePanel);

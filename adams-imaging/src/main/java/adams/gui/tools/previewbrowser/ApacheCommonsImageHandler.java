@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -79,6 +79,7 @@ public class ApacheCommonsImageHandler
     ImagePanel		panel;
 
     panel = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     panel.load(file, new ApacheCommonsImageReader());
 
     return new PreviewPanel(panel, panel.getPaintPanel());

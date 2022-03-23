@@ -15,7 +15,7 @@
 
 /*
  * TrimapImageHandler.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -107,6 +107,7 @@ public class TrimapImageHandler
     cont      = colorizer.transform(cont)[0];
 
     panel = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     panel.setCurrentImage(cont);
     report     = null;
     reportFile = FileUtils.replaceExtension(file, ".xml");

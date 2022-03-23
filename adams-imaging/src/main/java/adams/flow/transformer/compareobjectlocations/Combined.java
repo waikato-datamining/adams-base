@@ -15,7 +15,7 @@
 
 /*
  * Combined.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.compareobjectlocations;
@@ -153,6 +153,7 @@ public class Combined
       super.initGUI();
 
       m_PanelImage = new ImagePanel();
+      m_PanelImage.getUndo().setEnabled(false);
       add(m_PanelImage, BorderLayout.CENTER);
 
       m_PanelColors = new JPanel(new FlowLayout(FlowLayout.LEFT));

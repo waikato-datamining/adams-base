@@ -15,7 +15,7 @@
 
 /*
  * ViaAnnotationsHandler.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -99,6 +99,7 @@ public class ViaAnnotationsHandler
     LocatedObjects			lobjs;
 
     panel      = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     report     = null;
     reportFile = FileUtils.replaceExtension(file, ".json");
     if (reportFile.exists() && reportFile.isFile()) {

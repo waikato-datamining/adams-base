@@ -15,7 +15,7 @@
 
 /*
  * AnnotationsAndPredictionsFromReport.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -342,6 +342,7 @@ public class AnnotationsAndPredictionsFromReport
     Report				report;
 
     panel  = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     report = loadReport(file);
     if (report != null) {
       annotations = new ObjectLocationsOverlayFromReport();

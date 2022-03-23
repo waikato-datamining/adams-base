@@ -15,7 +15,7 @@
 
 /*
  * DeepLabCutCSVHandler.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -99,6 +99,7 @@ public class DeepLabCutCSVHandler
       setLayout(new BorderLayout());
 
       m_PanelImage = new ImagePanel();
+      m_PanelImage.getUndo().setEnabled(false);
       overlay = new SimplePointOverlayFromReport();
       overlay.setPrefix(m_Prefix);
       overlay.setColor(m_Color);

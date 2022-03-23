@@ -587,6 +587,7 @@ public class YoloAnnotationsHandler
     int					height;
 
     panel      = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     report     = null;
     reportFile = FileUtils.replaceExtension(file, ".txt");
     if (reportFile.exists() && reportFile.isFile()) {

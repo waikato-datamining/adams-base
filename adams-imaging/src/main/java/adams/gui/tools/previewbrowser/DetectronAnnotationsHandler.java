@@ -15,7 +15,7 @@
 
 /*
  * DetectronAnnotationsHandler.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -406,6 +406,7 @@ public class DetectronAnnotationsHandler
     boolean                             found;
 
     panel      = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     report     = null;
     reportFile = new File(file.getParent() + "/annotations.json");
     found = false;

@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -250,11 +250,13 @@ public class ImageProcessorSubPanel
     setLayout(new BorderLayout());
 
     m_PanelOriginal = new ImagePanel();
+    m_PanelOriginal.getUndo().setEnabled(false);
     m_PanelOriginal.setShowProperties(false);
     m_PanelOriginal.setShowLog(false);
     popup = new ImagePopupMenuProvider(m_PanelOriginal);
     m_PanelOriginal.setCustomPopupMenuProvider(popup);
     m_PanelProcessed = new ImagePanel();
+    m_PanelProcessed.getUndo().setEnabled(false);
     m_PanelProcessed.setShowProperties(false);
     m_PanelProcessed.setShowLog(false);
     popup = new ImagePopupMenuProvider(m_PanelProcessed);

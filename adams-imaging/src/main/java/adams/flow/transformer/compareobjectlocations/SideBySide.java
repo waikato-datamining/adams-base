@@ -15,7 +15,7 @@
 
 /*
  * SideBySide.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.compareobjectlocations;
@@ -108,11 +108,13 @@ public class SideBySide
       add(m_SplitPane, BorderLayout.CENTER);
 
       m_PanelImageAnnotations = new ImagePanel();
+      m_PanelImageAnnotations.getUndo().setEnabled(false);
       m_PanelImageAnnotations.setBorder(BorderFactory.createTitledBorder("Annotations"));
       m_PanelImageAnnotations.addLeftClickListener(new ViewObjects());
       m_SplitPane.setLeftComponent(m_PanelImageAnnotations);
 
       m_PanelImagePredictions = new ImagePanel();
+      m_PanelImagePredictions.getUndo().setEnabled(false);
       m_PanelImagePredictions.setBorder(BorderFactory.createTitledBorder("Predictions"));
       m_PanelImagePredictions.addLeftClickListener(new ViewObjects());
       m_SplitPane.setRightComponent(m_PanelImagePredictions);

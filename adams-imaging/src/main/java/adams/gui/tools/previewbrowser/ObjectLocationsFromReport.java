@@ -239,6 +239,7 @@ public class ObjectLocationsFromReport
       setLayout(new BorderLayout());
 
       m_PanelImage = new ImagePanel();
+      m_PanelImage.getUndo().setEnabled(false);
       overlay = new ObjectLocationsOverlayFromReport();
       overlay.setPrefix(m_Prefix);
       overlay.setColor(m_Color);

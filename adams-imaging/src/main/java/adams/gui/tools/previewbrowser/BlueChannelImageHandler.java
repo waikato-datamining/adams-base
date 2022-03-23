@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelImageHandler.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -159,6 +159,7 @@ public class BlueChannelImageHandler
     colorizer.cleanUp();
 
     panel = new ImagePanel();
+    panel.getUndo().setEnabled(false);
     panel.setCurrentImage(cont);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
