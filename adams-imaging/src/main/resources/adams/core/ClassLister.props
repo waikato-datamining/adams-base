@@ -178,6 +178,26 @@ adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator=\
 adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor=\
   adams.gui.visualization.object.mouseclick
 
+# the annotation cleaners
+adams.gui.visualization.object.objectannotations.cleaning.AnnotationCleaner=\
+  adams.gui.visualization.object.objectannotations.cleaning
+
+# the annotation colorizers
+adams.gui.visualization.object.objectannotations.colors.AnnotationColors=\
+  adams.gui.visualization.object.objectannotations.colors
+
+# the annotation label plotters
+adams.gui.visualization.object.objectannotations.label.LabelPlotter=\
+  adams.gui.visualization.object.objectannotations.label
+
+# the annotation outline plotters
+adams.gui.visualization.object.objectannotations.outline.OutlinePlotter=\
+  adams.gui.visualization.object.objectannotations.outline
+
+# the annotation shape plotters
+adams.gui.visualization.object.objectannotations.shape.ShapePlotter=\
+  adams.gui.visualization.object.objectannotations.shape
+
 # the object overlays
 adams.gui.visualization.object.overlay.AbstractOverlay=\
   adams.gui.visualization.object.overlay
