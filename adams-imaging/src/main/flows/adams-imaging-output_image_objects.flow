@@ -1,0 +1,19 @@
+# Project: adams
+# Date: 2022-04-01 14:27:04
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Shows how to turn image objects into variables to generate output." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/annotated_objects.report
+ adams.flow.control.Trigger -name "output header"
+  adams.flow.source.CombineVariables -expression x,y,width,height -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.ReportFileReader -reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.GetImageObjects -finder adams.data.objectfinder.AllFinder
+ adams.flow.transformer.ImageObjectToVariables
+ adams.flow.control.Trigger -name output
+  adams.flow.source.CombineVariables -expression @{x},@{y},@{width},@{height} -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Display
