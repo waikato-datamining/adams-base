@@ -15,7 +15,7 @@
 
 /*
  * IndividualImageSegmentationLayerWriter.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -39,7 +39,7 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class IndividualImageSegmentationLayerWriter
-  extends AbstractImageSegmentationAnnotationWriter {
+    extends AbstractImageSegmentationAnnotationWriter {
 
   private static final long serialVersionUID = 8630734382383387883L;
 
@@ -67,12 +67,12 @@ public class IndividualImageSegmentationLayerWriter
     super.defineOptions();
 
     m_OptionManager.add(
-      "skip-base-image", "skipBaseImage",
-      false);
+	"skip-base-image", "skipBaseImage",
+	false);
 
     m_OptionManager.add(
-      "skip-empty-layers", "skipEmptyLayers",
-      false);
+	"skip-empty-layers", "skipEmptyLayers",
+	false);
   }
 
   /**
@@ -179,15 +179,24 @@ public class IndividualImageSegmentationLayerWriter
    *
    * @param image	the image to write
    * @param file	the file to write to
+   * @param binary	whether to make binary
    * @return		null if successful, otherwise error message
    */
-  protected String writeFile(BufferedImage image, PlaceholderFile file) {
-    ApacheCommonsImageWriter	writer;
+  protected String writeFile(BufferedImage image, PlaceholderFile file, boolean binary) {
+    AbstractImageWriter		writer;
     BufferedImageContainer	cont;
+
+    if (binary)
+      image = BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_BINARY);
 
     cont   = new BufferedImageContainer();
     cont.setImage(image);
-    writer = new ApacheCommonsImageWriter();
+
+    if (binary)
+      writer = new JAIImageWriter();
+    else
+      writer = new ApacheCommonsImageWriter();
+
     return writer.write(file, cont);
   }
 
@@ -229,10 +238,10 @@ public class IndividualImageSegmentationLayerWriter
 
     if (!m_SkipBaseImage) {
       if (isLoggingEnabled())
-        getLogger().info("Writing base image to: " + file);
-      result = writeFile(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file);
+	getLogger().info("Writing base image to: " + file);
+      result = writeFile(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file, false);
       if (result != null)
-        result = "Failed to write base image: " + result;
+	result = "Failed to write base image: " + result;
     }
 
     if ((result == null) && (annotations.hasValue(ImageSegmentationContainer.VALUE_LAYERS))) {
@@ -245,10 +254,10 @@ public class IndividualImageSegmentationLayerWriter
 	    continue;
 	  }
 	}
-        layerFile = new PlaceholderFile(prefix + "-" + label + ".png");
+	layerFile = new PlaceholderFile(prefix + "-" + label + ".png");
 	if (isLoggingEnabled())
 	  getLogger().info("Writing layer '" + label + "' to: " + layerFile);
-	result = writeFile(layers.get(label), layerFile);
+	result = writeFile(layers.get(label), layerFile, true);
 	if (result != null) {
 	  result = "Failed to write layer '" + label + "': " + result;
 	  break;
