@@ -954,7 +954,7 @@ public class Utils {
     boolean	serializable;
 
     // same length already?
-    if (Array.getLength(array) == newLen)
+    if ((array != null) && (Array.getLength(array) == newLen))
       return array;
 
     serializable = (defValue instanceof Serializable);
