@@ -15,7 +15,7 @@
 
 /*
  * Utils.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2006 Dr. Herong Yang, http://www.herongyang.com/
  * Copyright (C) 2008 Dave L., stackoverflow
  */
@@ -952,6 +952,10 @@ public class Utils {
     Object	result;
     int		i;
     boolean	serializable;
+
+    // same length already?
+    if (Array.getLength(array) == newLen)
+      return array;
 
     serializable = (defValue instanceof Serializable);
     result       = Array.newInstance((array != null ? array.getClass().getComponentType() : defValue.getClass()), newLen);
