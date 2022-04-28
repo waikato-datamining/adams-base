@@ -15,7 +15,7 @@
 
 /*
  * SQLUtils.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -25,6 +25,8 @@ import adams.core.base.BaseRegExp;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -124,6 +126,38 @@ public class SQLUtils {
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE, "Error closing statement", e);
+      }
+    }
+  }
+
+  /**
+   * Frees the memory associated with the blob object.
+   *
+   * @param blob	the blob to free up, ignored if null
+   */
+  public static void free(Blob blob) {
+    if (blob != null) {
+      try {
+	blob.free();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+  }
+
+  /**
+   * Frees the memory associated with the clob object.
+   *
+   * @param clob	the clob to free up, ignored if null
+   */
+  public static void free(Clob clob) {
+    if (clob != null) {
+      try {
+	clob.free();
+      }
+      catch (Exception e) {
+	// ignored
       }
     }
   }
