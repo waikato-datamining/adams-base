@@ -20,6 +20,7 @@
 
 package adams.gui.flow.tree.menu;
 
+import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.GUIHelper;
@@ -32,7 +33,9 @@ import javax.swing.JMenuItem;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ancestor for actions that add most common actors.
@@ -43,6 +46,49 @@ public abstract class AbstractAddMostCommonActorAction
     extends AbstractTreePopupMenuItemAction{
 
   private static final long serialVersionUID = -4230209427910258312L;
+
+  /** for blacklisting actor classnames that couldn't be instantiated. */
+  static protected Set<String> m_Blacklisted;
+
+  /**
+   * Flags the actor as blacklisted for the current session.
+   *
+   * @param classname	the classname to blacklist
+   */
+  protected void blacklistActor(String classname) {
+    if (m_Blacklisted == null)
+      m_Blacklisted = new HashSet<>();
+    m_Blacklisted.add(classname);
+  }
+
+  /**
+   * Checks whether the actor has been blacklisted.
+   *
+   * @param classname	the classname to check
+   * @return		true if blacklisted
+   */
+  protected boolean isBlacklistedActor(String classname) {
+    return (m_Blacklisted != null) && m_Blacklisted.contains(classname);
+  }
+
+  /**
+   * Instantiates the specified actor if not blacklisted. Blacklists it automatically if it can't be instantiated.
+   *
+   * @param classname	the classname of the actor to instantiate
+   * @return		the actor, null if failed to instantiate
+   */
+  protected Actor newActor(String classname) {
+    Actor	result;
+
+    if (isBlacklistedActor(classname))
+      return null;
+
+    result = AbstractActor.forName(classname, new String[0], true);
+    if (result == null)
+      blacklistActor(classname);
+
+    return result;
+  }
 
   /**
    * Returns the classnames of the most commonly used actors.
@@ -60,8 +106,10 @@ public abstract class AbstractAddMostCommonActorAction
     common = MostCommon.getMostCommon(20);
     filter = m_State.tree.getOperations().configureFilter(path, position);
     for (String actor: common) {
+      if (isBlacklistedActor(actor))
+        continue;
       if (filter.filter(actor))
-        result.add(actor);
+	result.add(actor);
     }
 
     return result;

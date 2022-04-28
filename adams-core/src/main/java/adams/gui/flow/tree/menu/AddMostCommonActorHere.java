@@ -19,7 +19,6 @@
  */
 package adams.gui.flow.tree.menu;
 
-import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.TreeOperations;
 
@@ -62,7 +61,9 @@ public class AddMostCommonActorHere
     menuitems = new ArrayList<>();
     actors    = getMostCommonActors(m_State.selPath, TreeOperations.InsertPosition.HERE);
     for (i = 0; i < actors.size(); i++) {
-      final Actor actor = AbstractActor.forName(actors.get(i), new String[0]);
+      final Actor actor = newActor(actors.get(i));
+      if (actor == null)
+        continue;
       menuitem = newMenuItem(menuitems, actor);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().addActor(
           m_State.selPath, actor, TreeOperations.InsertPosition.HERE, true, TreeOperations.ActorDialog.GOE_FORCED));
