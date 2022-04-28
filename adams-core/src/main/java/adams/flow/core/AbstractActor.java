@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -61,8 +61,8 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractActor
-  extends AbstractOptionHandler
-  implements Actor {
+    extends AbstractOptionHandler
+    implements Actor {
 
   /** for serialization. */
   private static final long serialVersionUID = 6658513163932343273L;
@@ -176,12 +176,12 @@ public abstract class AbstractActor
 	result.append(Utils.classToString(cls[i]));
 	if (ClassLocator.isSubclass(AbstractContainer.class, cls[i]) && !cls[i].equals(AbstractContainer.class)) {
 	  if (!containers.contains(cls[i]))
-            containers.add(cls[i]);
-        }
+	    containers.add(cls[i]);
+	}
 	if (cls[i].isArray() && ClassLocator.isSubclass(AbstractContainer.class, cls[i].getComponentType()) && !cls[i].getComponentType().equals(AbstractContainer.class)) {
 	  if (!containers.contains(cls[i].getComponentType()))
-            containers.add(cls[i].getComponentType());
-        }
+	    containers.add(cls[i].getComponentType());
+	}
       }
     }
 
@@ -229,9 +229,9 @@ public abstract class AbstractActor
     if (this instanceof StopRestrictor) {
       result.append("\nStop restriction: ");
       if (this instanceof OptionalStopRestrictor)
-        result.append("optional (currently: " + (((OptionalStopRestrictor) this).isRestrictingStops() ? "on" : "off") + ")");
+	result.append("optional (currently: " + (((OptionalStopRestrictor) this).isRestrictingStops() ? "on" : "off") + ")");
       else
-        result.append("always");
+	result.append("always");
     }
 
     if (this instanceof InteractiveActor) {
@@ -297,25 +297,25 @@ public abstract class AbstractActor
     super.defineOptions();
 
     m_OptionManager.add(
-      "name", "name",
-      getDefaultName());
+	"name", "name",
+	getDefaultName());
 
     m_OptionManager.add(
-      "annotation", "annotations",
-      new BaseAnnotation(""));
+	"annotation", "annotations",
+	new BaseAnnotation(""));
 
     m_OptionManager.add(
-      "skip", "skip",
-      false);
+	"skip", "skip",
+	false);
     m_OptionManager.disableVariables("skip");
 
     m_OptionManager.add(
-      "stop-flow-on-error", "stopFlowOnError",
-      false);
+	"stop-flow-on-error", "stopFlowOnError",
+	false);
 
     m_OptionManager.add(
-      "silent", "silent",
-      false);
+	"silent", "silent",
+	false);
   }
 
   /**
@@ -560,8 +560,8 @@ public abstract class AbstractActor
 	    stop = true;
 	  if (stop)
 	    flow.stopExecution(msg);
-          else if (!getSilent())
-            source.getLogger().warning(msg);
+	  else if (!getSilent())
+	    source.getLogger().warning(msg);
 	  msg = null;
 	  break;
 
@@ -575,7 +575,7 @@ public abstract class AbstractActor
 	msg = null;
       }
       else if (!getSilent()) {
-        source.getLogger().warning(msg);
+	source.getLogger().warning(msg);
       }
     }
 
@@ -785,10 +785,10 @@ public abstract class AbstractActor
       result = new StringBuilder(getName().replace(".", "\\."));
       parent = getParent();
       if (parent != null) {
-        if (!parent.getFullName().isEmpty())
+	if (!parent.getFullName().isEmpty())
 	  result.insert(0, parent.getFullName() + ".");
-        else
-          result.insert(0, parent.getName().replace(".", "\\.") + ".");
+	else
+	  result.insert(0, parent.getName().replace(".", "\\.") + ".");
       }
       m_FullName = result.toString();
     }
@@ -1113,7 +1113,7 @@ public abstract class AbstractActor
 
     // do we need to re-setup the actor, due to changes in variables?
     if ((m_VariablesUpdated.size() > 0)
-      || ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
+	|| ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
       updateVariables();
       result = performSetUpChecks(false);
     }
@@ -1438,13 +1438,26 @@ public abstract class AbstractActor
    * @return		the instantiated item or null if an error occurred
    */
   public static Actor forName(String classname, String[] options) {
+    return forName(classname, options, false);
+  }
+
+  /**
+   * Instantiates the item with the given options.
+   *
+   * @param classname	the classname of the item to instantiate
+   * @param options	the options for the item
+   * @param quiet	whether to suppress error messages
+   * @return		the instantiated item or null if an error occurred
+   */
+  public static Actor forName(String classname, String[] options, boolean quiet) {
     Actor	result;
 
     try {
       result = (Actor) OptionUtils.forName(Actor.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      if (!quiet)
+	e.printStackTrace();
       result = null;
     }
 
