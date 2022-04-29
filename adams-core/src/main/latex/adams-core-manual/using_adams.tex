@@ -1224,14 +1224,28 @@ ADAMS comes with support for MySQL (and PostgreSQL, HSQLDB, SQLite and MS SQL
 Server via the \textit{adams-db} module).
 See section \ref{databaseaccess} for how to add more databases. The following
 actors allow you to perform some basic operations:
+
+\noindent The following standalone actors are available:
 \begin{tight_itemize}
-	\item \textit{ExecSQL} -- standalone for executing any SQL query.
-	\item \textit{ListTables} -- source actor that iterates through tables
-	in database.
-	\item \textit{SQLIdSupplier} -- source actor that either outputs integer
-	or strings, obtained from an SQL \textit{SELECT} query.
+  \item \textit{DatabaseCheck} -- for checking whether database connection is active and to the correct database
+  \item \textit{DatabaseConnection} -- defines a database connection within its sub-flow
+  \item \textit{ExecSQL} -- for executing any SQL query that do not produce output, typically INSERT/UPDATE/DELETE
+  or ALTER statements.
 \end{tight_itemize}
-For more functionality, see the documentation on the \textit{adams-spreadsheet} 
+
+\noindent The following sources are available:
+\begin{tight_itemize}
+  \item \textit{LargeObjectDbReader} -- reads BLOB or CLOB entities from a table.
+  \item \textit{ListTables} -- iterates through tables in database.
+  \item \textit{SQLIdSupplier} -- either outputs integer or strings, obtained from an SQL \textit{SELECT} query.
+\end{tight_itemize}
+
+\noindent The following sinks are available:
+\begin{tight_itemize}
+  \item \textit{LargeObjectDbWriter} -- for storing BLOB and CLOB entities in tables.
+\end{tight_itemize}
+
+For more functionality, see the documentation on the \textit{adams-spreadsheet}
 module.
 
 \noindent Here are JDBC URL templates for accessing the various types of databases:

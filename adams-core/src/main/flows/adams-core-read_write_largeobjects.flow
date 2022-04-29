@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2022-04-29 11:51:01
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Demonstrates how to write/read BLOB/CLOB objects.\\nDatabase URL, user and password have to be of a valid database when prompted for them.\\nIt will automatically create a table called \\\"storage\\\" with two columns:\\n  data (BLOB), text (CLOB)" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -name Parameters -stop-if-canceled true -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name db_url -display \"Database URL\" -help \"The JDBC URL of the database to use\" -default-value jdbc:mysql://localhost/test" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name db_user -display User -default-value root" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name db_pw -display Password -type PASSWORD" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "DB operations"
+  adams.flow.standalone.DatabaseConnection -url @{db_url} -user @{db_user} -password @{db_pw} -data-type-setup adams.db.datatype.DummySetup
+  adams.flow.source.Start
+  adams.flow.control.ConditionalTrigger -name "create table" -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.TableExists -regexp storage\""
+   adams.flow.standalone.ExecSQL -sql "CREATE TABLE storage (\\n  id INT,\\n  data BLOB,\\n  text BLOB\\n)"
+  adams.flow.control.Trigger -name write
+   adams.flow.source.ForLoop
+   adams.flow.transformer.SetVariable -var-name i
+   adams.flow.control.Trigger -name "insert row"
+    adams.flow.standalone.ExecSQL -sql "insert into storage(id) values(@{i})"
+   adams.flow.control.Trigger -name "insert blob"
+    adams.flow.source.Variable -var-name i -conversion adams.data.conversion.StringToInt
+    adams.flow.sink.LargeObjectDbWriter -blob-conversion adams.data.conversion.JavaObjectToByteArray -query "update storage set data = ? where id = @{i}"
+   adams.flow.control.Trigger -name "insert clob"
+    adams.flow.source.Variable -var-name i -conversion adams.data.conversion.StringToString
+    adams.flow.transformer.StringInsert -position first -value "variable value: "
+    adams.flow.sink.LargeObjectDbWriter -blob-conversion adams.data.conversion.UnknownToUnknown -type CLOB -query "update storage set text = ? where id = @{i}"
+  adams.flow.control.Trigger -name read
+   adams.flow.source.ForLoop
+   adams.flow.transformer.SetVariable -var-name i
+   adams.flow.control.Trigger -name "read blob"
+    adams.flow.source.LargeObjectDbReader -query "select data from storage where id = @{i}" -blob-conversion adams.data.conversion.ByteArrayToJavaObject
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name "read clob"
+    adams.flow.source.LargeObjectDbReader -query "select text from storage where id = @{i}" -type CLOB -blob-conversion adams.data.conversion.UnknownToUnknown
+    adams.flow.sink.CallableSink -callable Display
