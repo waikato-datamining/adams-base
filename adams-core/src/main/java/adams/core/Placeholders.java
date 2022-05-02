@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -207,9 +207,13 @@ public class Placeholders {
     String	result;
 
     // the GUI seems to generate these sometimes...
-    if (s.startsWith("${CWD}/${CWD}"))
+    while (s.startsWith("${CWD}/${CWD}"))
       s = s.substring("${CWD}/".length());
-    if (s.startsWith("${CWD}\\${CWD}"))
+    while (s.startsWith("${CWD}\\${CWD}"))
+      s = s.substring("${CWD}\\".length());
+    while (s.startsWith("${CWD}/${HOME}"))
+      s = s.substring("${CWD}/".length());
+    while (s.startsWith("${CWD}\\${HOME}"))
       s = s.substring("${CWD}\\".length());
 
     result = doExpand(s);
