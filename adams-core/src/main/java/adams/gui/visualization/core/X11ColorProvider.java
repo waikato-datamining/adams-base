@@ -100,7 +100,8 @@ public class X11ColorProvider
   protected void initialize() {
     super.initialize();
 
-    m_CheckTooDark = false;
+    m_CheckTooDark   = false;
+    m_AllowDarkening = false;
 
     m_DefaultColors.add(ColorHelper.valueOf("#00FFFF"));
     m_DefaultColors.add(ColorHelper.valueOf("#7FFFD4"));
