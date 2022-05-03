@@ -15,7 +15,7 @@
 
 /*
  * X11ColorProvider.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -99,6 +99,8 @@ public class X11ColorProvider
    */
   protected void initialize() {
     super.initialize();
+
+    m_CheckTooDark = false;
 
     m_DefaultColors.add(ColorHelper.valueOf("#00FFFF"));
     m_DefaultColors.add(ColorHelper.valueOf("#7FFFD4"));
