@@ -15,21 +15,18 @@
 
 /*
  * ReportField.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
-import adams.flow.core.Token;
+
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -48,13 +45,9 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -62,37 +55,53 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: ReportField
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs the field names as array rather than one-by-one
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression to match the field names against.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
- * <pre>-output-name-only (property: outputNameOnly)
+ * <pre>-output-name-only &lt;boolean&gt; (property: outputNameOnly)
  * &nbsp;&nbsp;&nbsp;If enabled, only the field name is output and not the data type as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportField
-  extends AbstractTransformer {
+    extends AbstractArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -2833759108269704357L;
@@ -106,9 +115,6 @@ public class ReportField
   /** whether to output only the name (not the type). */
   protected boolean m_OutputNameOnly;
 
-  /** the list of fields to forward. */
-  protected List<AbstractField> m_Fields;
-
   /**
    * Returns a string describing the object.
    *
@@ -118,7 +124,7 @@ public class ReportField
   public String globalInfo() {
     return
         "Returns all the fields in a report or the report from a report "
-      + "handling object that match the provided regular expression.";
+            + "handling object that match the provided regular expression.";
   }
 
   /**
@@ -129,73 +135,12 @@ public class ReportField
     super.defineOptions();
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+        "regexp", "regExp",
+        new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "output-name-only", "outputNameOnly",
-	    false);
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Fields = new ArrayList<AbstractField>();
-  }
-
-  /**
-   * Resets the actor.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_Fields.clear();
-  }
-
-  /**
-   * Removes entries from the backup.
-   */
-  @Override
-  protected void pruneBackup() {
-    super.pruneBackup();
-
-    pruneBackup(BACKUP_FIELDS);
-  }
-
-  /**
-   * Backs up the current state of the actor before update the variables.
-   *
-   * @return		the backup
-   */
-  @Override
-  protected Hashtable<String,Object> backupState() {
-    Hashtable<String,Object>	result;
-
-    result = super.backupState();
-
-    result.put(BACKUP_FIELDS, m_Fields);
-
-    return result;
-  }
-
-  /**
-   * Restores the state of the actor before the variables got updated.
-   *
-   * @param state	the backup of the state to restore from
-   */
-  @Override
-  protected void restoreState(Hashtable<String,Object> state) {
-    if (state.containsKey(BACKUP_FIELDS)) {
-      m_Fields = (List<AbstractField>) state.get(BACKUP_FIELDS);
-      state.remove(BACKUP_FIELDS);
-    }
-
-    super.restoreState(state);
+        "output-name-only", "outputNameOnly",
+        false);
   }
 
   /**
@@ -209,8 +154,30 @@ public class ReportField
 
     result  = QuickInfoHelper.toString(this, "regExp", m_RegExp, "regexp: ");
     result += QuickInfoHelper.toString(this, "outputNameOnly", (m_OutputNameOnly ? "name only" : "name + type"), ", output: ");
+    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
 
     return result;
+  }
+
+  /**
+   * Returns the base class of the items.
+   *
+   * @return the class
+   */
+  @Override
+  protected Class getItemClass() {
+    return String.class;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return tip text for this property suitable for
+   * displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String outputArrayTipText() {
+    return "If enabled, outputs the field names as array rather than one-by-one";
   }
 
   /**
@@ -281,15 +248,6 @@ public class ReportField
   }
 
   /**
-   * Returns the class of objects that it generates.
-   *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
-   */
-  public Class[] generates() {
-    return new Class[]{String.class};
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -301,26 +259,30 @@ public class ReportField
     List<AbstractField>	fields;
 
     try {
-      m_Fields.clear();
+      m_Queue.clear();
 
       if (m_InputToken.getPayload() instanceof Report)
-	report = (Report) m_InputToken.getPayload();
+        report = (Report) m_InputToken.getPayload();
       else
-	report = ((ReportHandler) m_InputToken.getPayload()).getReport();
+        report = ((ReportHandler) m_InputToken.getPayload()).getReport();
 
       // match fields
       if (report != null) {
-	fields = report.getFields();
-	for (AbstractField field: fields) {
-	  if (m_RegExp.isMatch(field.getName()))
-	    m_Fields.add(field);
-	}
-	if (isLoggingEnabled())
-	  getLogger().info("Matching fields: " + m_Fields);
+        fields = report.getFields();
+        for (AbstractField field: fields) {
+          if (m_RegExp.isMatch(field.getName())) {
+            if (m_OutputNameOnly)
+              m_Queue.add(field.toString());
+            else
+              m_Queue.add(field.toParseableString());
+          }
+        }
+        if (isLoggingEnabled())
+          getLogger().info("Matching fields: " + m_Queue);
       }
       else {
-	if (isLoggingEnabled())
-	  getLogger().info("No report available: " + m_InputToken);
+        if (isLoggingEnabled())
+          getLogger().info("No report available: " + m_InputToken);
       }
 
       result = null;
@@ -328,38 +290,6 @@ public class ReportField
     catch (Exception e) {
       result = handleException("Failed to get report field(s): " + m_RegExp, e);
     }
-
-    return result;
-  }
-
-  /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  @Override
-  public boolean hasPendingOutput() {
-    return (m_Fields.size() > 0);
-  }
-
-  /**
-   * Returns the generated token.
-   *
-   * @return		the generated token
-   */
-  @Override
-  public Token output() {
-    Token	result;
-
-    if (m_OutputNameOnly)
-      result = new Token(m_Fields.get(0).toString());
-    else
-      result = new Token(m_Fields.get(0).toParseableString());
-    m_Fields.remove(0);
-
-    m_OutputToken = null;
-    m_InputToken  = null;
 
     return result;
   }
