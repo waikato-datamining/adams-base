@@ -22,6 +22,8 @@ package adams.gui.visualization.object.objectannotations.check;
 
 import adams.core.MessageCollection;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 /**
  * Requires the specified meta-data key to be present in all objects.
@@ -96,18 +98,37 @@ public class RequireMetaData
   @Override
   protected String doCheckAnnotations(LocatedObjects objects) {
     MessageCollection	result;
+    int[]		indices;
     int			i;
 
-    result = new MessageCollection();
-
-    for (i = 0; i < objects.size(); i++) {
-      if (!objects.get(i).getMetaData().containsKey(m_Key))
-        result.add("Object #" + (i+1) + " is missing key '" + m_Key + "': " + objects.get(i));
-    }
+    result  = new MessageCollection();
+    indices = findInvalidAnnotationsIndices(objects);
+    for (i = 0; i < indices.length; i++)
+      result.add("Object #" + (indices[i]+1) + " is missing key '" + m_Key + "': " + objects.get(indices[i]));
 
     if (result.isEmpty())
       return null;
     else
       return result.toString();
+  }
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  protected int[] doFindInvalidAnnotationsIndices(LocatedObjects objects) {
+    TIntList	result;
+    int		i;
+
+    result = new TIntArrayList();
+
+    for (i = 0; i < objects.size(); i++) {
+      if (!objects.get(i).getMetaData().containsKey(m_Key))
+	result.add(i);
+    }
+
+    return result.toArray();
   }
 }

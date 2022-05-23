@@ -141,4 +141,31 @@ public abstract class AbstractAnnotationCheck
 
     return doCheckAnnotations(objects);
   }
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  protected abstract int[] doFindInvalidAnnotationsIndices(LocatedObjects objects);
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  public int[] findInvalidAnnotationsIndices(LocatedObjects objects) {
+    String	msg;
+
+    if (!getEnabled())
+      return new int[0];
+
+    msg = check(objects);
+    if (msg != null)
+      throw new IllegalStateException(msg);
+
+    return doFindInvalidAnnotationsIndices(objects);
+  }
 }

@@ -39,4 +39,12 @@ public interface AnnotationCheck
    * @return		null if checks passed, otherwise error message
    */
   public String checkAnnotations(LocatedObjects objects);
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  public int[] findInvalidAnnotationsIndices(LocatedObjects objects);
 }

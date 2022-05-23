@@ -22,6 +22,10 @@ package adams.gui.visualization.object.objectannotations.check;
 
 import adams.core.MessageCollection;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 
 /**
  * Applies the specified checks sequentially.
@@ -104,12 +108,35 @@ public class MultiCheck
     for (i = 0; i < m_Checks.length;  i++) {
       msg = m_Checks[i].checkAnnotations(objects);
       if (msg != null)
-        result.add("Check #" + (i+1) + " reported:\n" + msg);
+	result.add("Check #" + (i+1) + " reported:\n" + msg);
     }
 
     if (result.isEmpty())
       return null;
     else
       return result.toString();
+  }
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  protected int[] doFindInvalidAnnotationsIndices(LocatedObjects objects) {
+    TIntList	result;
+    TIntSet	set;
+    int		i;
+
+    set = new TIntHashSet();
+    for (i = 0; i < m_Checks.length;  i++)
+      set.addAll(m_Checks[i].findInvalidAnnotationsIndices(objects));
+
+    if (set.size() == 0)
+      return new int[0];
+
+    result = new TIntArrayList(set);
+    result.sort();
+    return result.toArray();
   }
 }

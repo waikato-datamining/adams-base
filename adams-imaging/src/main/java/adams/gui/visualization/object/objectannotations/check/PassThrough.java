@@ -52,4 +52,14 @@ public class PassThrough
   protected String doCheckAnnotations(LocatedObjects objects) {
     return null;
   }
+
+  /**
+   * Checks the annotations and returns the indices of the invalid ones.
+   *
+   * @param objects	the annotations to check
+   * @return		the invalid indices, 0-length array if no invalid ones
+   */
+  protected int[] doFindInvalidAnnotationsIndices(LocatedObjects objects) {
+    return new int[0];
+  }
 }
