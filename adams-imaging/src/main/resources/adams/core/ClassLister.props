@@ -178,6 +178,10 @@ adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerator=\
 adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor=\
   adams.gui.visualization.object.mouseclick
 
+# the annotation checks
+adams.gui.visualization.object.objectannotations.check.AnnotationCheck=\
+  adams.gui.visualization.object.objectannotations.check
+
 # the annotation cleaners
 adams.gui.visualization.object.objectannotations.cleaning.AnnotationCleaner=\
   adams.gui.visualization.object.objectannotations.cleaning

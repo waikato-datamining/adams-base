@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -34,6 +34,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
 import adams.gui.visualization.image.interactionlogging.Null;
@@ -47,6 +48,8 @@ import adams.gui.visualization.object.labelselector.AbstractLabelSelectorGenerat
 import adams.gui.visualization.object.labelselector.ButtonSelectorGenerator;
 import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
+import adams.gui.visualization.object.objectannotations.check.AnnotationCheck;
+import adams.gui.visualization.object.objectannotations.check.PassThrough;
 import adams.gui.visualization.object.overlay.AbstractOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import net.minidev.json.JSONArray;
@@ -54,6 +57,8 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -186,6 +191,11 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
  * </pre>
  *
+ * <pre>-annotation-check &lt;adams.gui.visualization.object.objectannotations.check.AnnotationCheck&gt; (property: annotationCheck)
+ * &nbsp;&nbsp;&nbsp;The check to apply to the annotations before enabling the OK button.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.objectannotations.check.PassThrough
+ * </pre>
+ *
  * <pre>-left-divider-location &lt;int&gt; (property: leftDividerLocation)
  * &nbsp;&nbsp;&nbsp;The position for the left divider in pixels.
  * &nbsp;&nbsp;&nbsp;default: 200
@@ -215,12 +225,18 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.image.interactionlogging.Null
  * </pre>
  *
+ * <pre>-allow-using-previous-report &lt;boolean&gt; (property: allowUsingPreviousReport)
+ * &nbsp;&nbsp;&nbsp;If enabled, allows the user to make use of the previous report (ie annotations
+ * &nbsp;&nbsp;&nbsp;); useful when annotations do not change much between images.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectAnnotator
-  extends AbstractInteractiveTransformerDialog {
+    extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -240,6 +256,9 @@ public class ImageObjectAnnotator
 
   /** the overlay to use. */
   protected AbstractOverlay m_Overlay;
+
+  /** the annotation check to apply. */
+  protected AnnotationCheck m_AnnotationCheck;
 
   /** the position for the left divider. */
   protected int m_LeftDividerLocation;
@@ -274,6 +293,15 @@ public class ImageObjectAnnotator
   /** the previous label used. */
   protected String m_PreviousLabel;
 
+  /** the OK button. */
+  protected BaseButton m_ButtonOK;
+
+  /** the Cancel button. */
+  protected BaseButton m_ButtonCancel;
+
+  /** the change listener for updating the OK button. */
+  protected ChangeListener m_ChangeListenerAnnotations;
+
   /**
    * Returns a string describing the object.
    *
@@ -292,48 +320,52 @@ public class ImageObjectAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-      "annotations-display", "annotationsDisplay",
-      new DefaultAnnotationsDisplayGenerator());
+	"annotations-display", "annotationsDisplay",
+	new DefaultAnnotationsDisplayGenerator());
 
     m_OptionManager.add(
-      "annotator", "annotator",
-      new BoundingBoxAnnotator());
+	"annotator", "annotator",
+	new BoundingBoxAnnotator());
 
     m_OptionManager.add(
-      "label-selector", "labelSelector",
-      new ButtonSelectorGenerator());
+	"label-selector", "labelSelector",
+	new ButtonSelectorGenerator());
 
     m_OptionManager.add(
-      "mouse-click", "mouseClick",
-      new NullProcessor());
+	"mouse-click", "mouseClick",
+	new NullProcessor());
 
     m_OptionManager.add(
-      "overlay", "overlay",
-      new ObjectLocationsOverlayFromReport());
+	"overlay", "overlay",
+	new ObjectLocationsOverlayFromReport());
 
     m_OptionManager.add(
-      "left-divider-location", "leftDividerLocation",
-      200, 1, null);
+	"annotation-check", "annotationCheck",
+	new PassThrough());
 
     m_OptionManager.add(
-      "right-divider-location", "rightDividerLocation",
-      900, 1, null);
+	"left-divider-location", "leftDividerLocation",
+	200, 1, null);
 
     m_OptionManager.add(
-      "zoom", "zoom",
-      100.0, 1.0, 1600.0);
+	"right-divider-location", "rightDividerLocation",
+	900, 1, null);
 
     m_OptionManager.add(
-      "best-fit", "bestFit",
-      false);
+	"zoom", "zoom",
+	100.0, 1.0, 1600.0);
 
     m_OptionManager.add(
-      "interaction-logging-filter", "interactionLoggingFilter",
-      new Null());
+	"best-fit", "bestFit",
+	false);
 
     m_OptionManager.add(
-      "allow-using-previous-report", "allowUsingPreviousReport",
-      false);
+	"interaction-logging-filter", "interactionLoggingFilter",
+	new Null());
+
+    m_OptionManager.add(
+	"allow-using-previous-report", "allowUsingPreviousReport",
+	false);
   }
 
   /**
@@ -345,6 +377,7 @@ public class ImageObjectAnnotator
 
     m_PreviousReport = null;
     m_PreviousLabel  = null;
+    m_ChangeListenerAnnotations = (ChangeEvent e) -> checkAnnotations();
   }
 
   /**
@@ -533,6 +566,35 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Sets the check to apply to the annotations before enabling the OK button.
+   *
+   * @param value 	the check
+   */
+  public void setAnnotationCheck(AnnotationCheck value) {
+    m_AnnotationCheck = value;
+    reset();
+  }
+
+  /**
+   * Returns the check to apply to the annotations before enabling the OK button.
+   *
+   * @return 		the check
+   */
+  public AnnotationCheck getAnnotationCheck() {
+    return m_AnnotationCheck;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String annotationCheckTipText() {
+    return "The check to apply to the annotations before enabling the OK button.";
+  }
+
+  /**
    * Sets the position for the left divider in pixels.
    *
    * @param value 	the position
@@ -710,7 +772,7 @@ public class ImageObjectAnnotator
    */
   public String allowUsingPreviousReportTipText() {
     return "If enabled, allows the user to make use of the previous report "
-      + "(ie annotations); useful when annotations do not change much between images.";
+	+ "(ie annotations); useful when annotations do not change much between images.";
   }
 
   /**
@@ -793,26 +855,44 @@ public class ImageObjectAnnotator
    * @param panel	the panel displayed in the frame
    */
   protected void postCreateDialog(final BaseDialog dialog, BasePanel panel) {
-    BaseButton buttonOK;
-    BaseButton	buttonCancel;
     JPanel panelButtons;
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
-    buttonOK = new BaseButton("OK");
-    buttonOK.addActionListener((ActionEvent e) -> {
+    m_ButtonOK = new BaseButton("OK");
+    m_ButtonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
       dialog.setVisible(false);
     });
-    panelButtons.add(buttonOK);
+    panelButtons.add(m_ButtonOK);
 
-    buttonCancel = new BaseButton("Cancel");
-    buttonCancel.addActionListener((ActionEvent e) -> {
+    m_ButtonCancel = new BaseButton("Cancel");
+    m_ButtonCancel.addActionListener((ActionEvent e) -> {
       m_Accepted = false;
       dialog.setVisible(false);
     });
-    panelButtons.add(buttonCancel);
+    panelButtons.add(m_ButtonCancel);
+  }
+
+  /**
+   * Checks the annotations and updates the OK button accordingly.
+   */
+  protected void checkAnnotations() {
+    String	msg;
+
+    if (m_AnnotationCheck == null)
+      return;
+
+    msg = m_AnnotationCheck.checkAnnotations(m_PanelObjectAnnotation.getObjects());
+    if (msg == null) {
+      m_ButtonOK.setToolTipText(null);
+      m_ButtonOK.setEnabled(true);
+    }
+    else {
+      m_ButtonOK.setToolTipText(GUIHelper.processTipText(msg));
+      m_ButtonOK.setEnabled(false);
+    }
   }
 
   /**
@@ -843,16 +923,16 @@ public class ImageObjectAnnotator
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
       if (value.isEmpty()) {
-        array = new JSONArray();
+	array = new JSONArray();
       }
       else {
-        try {
-          parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-          array = (JSONArray) parser.parse(value);
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
-        }
+	try {
+	  parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+	  array = (JSONArray) parser.parse(value);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+	}
       }
     }
 
@@ -933,15 +1013,17 @@ public class ImageObjectAnnotator
     else {
       m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
     }
+    m_PanelObjectAnnotation.addAnnotationChangeListener(m_ChangeListenerAnnotations);
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
+    m_PanelObjectAnnotation.removeAnnotationChangeListener(m_ChangeListenerAnnotations);
 
     if (m_Accepted) {
       imgcont = new BufferedImageContainer();
       imgcont.setImage(m_PanelObjectAnnotation.getImage());
       imgcont.setReport(m_PanelObjectAnnotation.getReport().getClone());
       if (!(m_InteractionLoggingFilter instanceof Null))
-        addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
+	addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
       m_OutputToken = new Token(imgcont);
     }
 

@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotationPanel.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -67,6 +67,7 @@ import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Point;
@@ -77,7 +78,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Panel for annotating objects in images.
@@ -85,8 +88,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotationPanel
-  extends BasePanel
-  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager {
+    extends BasePanel
+    implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager {
 
   private static final long serialVersionUID = 2804494506168717754L;
 
@@ -94,7 +97,7 @@ public class ObjectAnnotationPanel
    * For undo/redo.
    */
   public static class AnnotationsState
-    implements Serializable {
+      implements Serializable {
 
     private static final long serialVersionUID = -578329279093068996L;
 
@@ -145,7 +148,7 @@ public class ObjectAnnotationPanel
 
   /** the panel for the last button controls. */
   protected JPanel m_PanelUsePreviousReport;
-  
+
   /** the button for using the last report. */
   protected BaseFlatButton m_ButtonUsePreviousReport;
 
@@ -188,6 +191,9 @@ public class ObjectAnnotationPanel
   /** the interaction log. */
   protected List<InteractionEvent> m_InteractionLog;
 
+  /** the listeners for annotation changes. */
+  protected Set<ChangeListener> m_AnnotationChangeListeners;
+
   /** the report from the previous session. */
   protected Report m_PreviousReport;
 
@@ -198,14 +204,15 @@ public class ObjectAnnotationPanel
   protected void initialize() {
     super.initialize();
 
-    m_Overlay             = new NullOverlay();
-    m_MouseClickProcessor = new NullProcessor();
-    m_PanelLabelSelector  = null;
-    m_CurrentLabel        = null;
-    m_InteractionLog      = null;
-    m_PreviousReport      = null;
-    m_Undo                = new Undo(List.class, false);
+    m_Overlay                   = new NullOverlay();
+    m_MouseClickProcessor       = new NullProcessor();
+    m_PanelLabelSelector        = null;
+    m_CurrentLabel              = null;
+    m_InteractionLog            = null;
+    m_PreviousReport            = null;
+    m_Undo                      = new Undo(List.class, false);
     m_Undo.addUndoListener(this);
+    m_AnnotationChangeListeners = new HashSet<>();
     setAnnotator(new NullAnnotator());
   }
 
@@ -307,7 +314,7 @@ public class ObjectAnnotationPanel
     });
     m_PanelUsePreviousReport.add(m_ButtonUsePreviousReport);
     m_PanelUsePreviousReport.setVisible(false);
-    
+
     // left split pane
     m_SplitPaneLeft = new BaseSplitPane();
     m_SplitPaneLeft.setOneTouchExpandable(true);
@@ -352,7 +359,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Sets whether the zoom controls are visible or not.
-   * 
+   *
    * @param value	true if visible
    */
   public void setZoomVisible(boolean value) {
@@ -361,7 +368,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Returns whether the zoom controls are visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isZoomVisible() {
@@ -370,7 +377,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Sets whether the undo controls are visible or not.
-   * 
+   *
    * @param value	true if visible
    */
   public void setUndoVisible(boolean value) {
@@ -379,7 +386,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Returns whether the undo controls are visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isUndoVisible() {
@@ -388,7 +395,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Sets whether the brightness controls are visible or not.
-   * 
+   *
    * @param value	true if visible
    */
   public void setBrightnessVisible(boolean value) {
@@ -397,7 +404,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Returns whether the brightness controls are visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isBrightnessVisible() {
@@ -406,7 +413,7 @@ public class ObjectAnnotationPanel
 
   /**
    * Sets whether the controls for using the previous report are visible or not.
-   * 
+   *
    * @param value	true if visible
    */
   public void setUsePreviousReportVisible(boolean value) {
@@ -415,13 +422,13 @@ public class ObjectAnnotationPanel
 
   /**
    * Returns whether the controls for using the previous report are visible or not.
-   * 
+   *
    * @return		true if visible
    */
   public boolean isUsePreviousReportVisible() {
     return m_PanelUsePreviousReport.isVisible();
   }
-  
+
   /**
    * Sets whether to use best fit or specified scale.
    *
@@ -931,6 +938,7 @@ public class ObjectAnnotationPanel
       m_Overlay.annotationsChanged();
     if (source != m_Annotator)
       m_Annotator.annotationsChanged();
+    notifyAnnotationChangeListeners();
     update();
   }
 
@@ -990,11 +998,11 @@ public class ObjectAnnotationPanel
 
     loc = mouseToPixelLocation(pos);
     showStatus(
-      "X: " + (int) (loc.getX() + 1)
-	+ "   "
-	+ "Y: " + (int) (loc.getY() + 1)
-	+ "   "
-	+ "Zoom: " + Utils.doubleToString(getZoom() * 100, 1) + "%");
+	"X: " + (int) (loc.getX() + 1)
+	    + "   "
+	    + "Y: " + (int) (loc.getY() + 1)
+	    + "   "
+	    + "Zoom: " + Utils.doubleToString(getZoom() * 100, 1) + "%");
   }
 
   /**
@@ -1114,6 +1122,35 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Adds the listener for annotation changes.
+   *
+   * @param l		the listener to add
+   */
+  public void addAnnotationChangeListener(ChangeListener l) {
+    m_AnnotationChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for annotation changes.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeAnnotationChangeListener(ChangeListener l) {
+    m_AnnotationChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all annotation change listeners.
+   */
+  protected void notifyAnnotationChangeListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_AnnotationChangeListeners)
+      l.stateChanged(e);
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
@@ -1121,6 +1158,8 @@ public class ObjectAnnotationPanel
       m_PanelAnnotations.cleanUp();
     if (m_Overlay != null)
       m_Overlay.cleanUp();
+    if (m_AnnotationChangeListeners != null)
+      m_AnnotationChangeListeners.clear();
   }
 
   /**
