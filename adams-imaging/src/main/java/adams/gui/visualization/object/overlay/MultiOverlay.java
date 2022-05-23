@@ -35,7 +35,7 @@ public class MultiOverlay
   private static final long serialVersionUID = 6417360675029377483L;
 
   /** the overlays to combine. */
-  protected AbstractOverlay[] m_Overlays;
+  protected Overlay[] m_Overlays;
 
   /**
    * Returns a string describing the object.
@@ -56,7 +56,7 @@ public class MultiOverlay
 
     m_OptionManager.add(
       "overlay", "overlays",
-      new AbstractOverlay[0]);
+      new Overlay[0]);
   }
 
   /**
@@ -65,11 +65,11 @@ public class MultiOverlay
    * @param value 	the overlay
    * @return		itself
    */
-  public MultiOverlay addOverlay(AbstractOverlay value) {
-    AbstractOverlay[] 	overlays;
-    int			i;
+  public MultiOverlay addOverlay(Overlay value) {
+    Overlay[] 	overlays;
+    int		i;
 
-    overlays = new AbstractOverlay[m_Overlays.length + 1];
+    overlays = new Overlay[m_Overlays.length + 1];
     for (i = 0; i < m_Overlays.length; i++)
       overlays[i] = m_Overlays[i];
     overlays[overlays.length - 1] = value;
@@ -84,7 +84,7 @@ public class MultiOverlay
    *
    * @param value 	the overlays
    */
-  public void setOverlays(AbstractOverlay[] value) {
+  public void setOverlays(Overlay[] value) {
     m_Overlays = value;
     reset();
   }
@@ -94,7 +94,7 @@ public class MultiOverlay
    *
    * @return 		the overlays
    */
-  public AbstractOverlay[] getOverlays() {
+  public Overlay[] getOverlays() {
     return m_Overlays;
   }
 

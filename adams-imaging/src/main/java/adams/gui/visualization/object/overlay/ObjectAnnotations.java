@@ -42,8 +42,11 @@ import adams.gui.visualization.object.objectannotations.shape.ShapePlotter;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Flexible overlay for object annotations.
@@ -52,7 +55,7 @@ import java.awt.Graphics2D;
  */
 public class ObjectAnnotations
     extends AbstractOverlay
-    implements ObjectPrefixHandler {
+    implements ObjectPrefixHandler, OverlayWithCustomAlphaSupport {
 
   private static final long serialVersionUID = 7620433880368599467L;
 
@@ -100,6 +103,15 @@ public class ObjectAnnotations
 
   /** indices of invalid annotations. */
   protected transient TIntSet m_InvalidAnnotations;
+
+  /** whether a custom alpha is in use. */
+  protected boolean m_CustomAlphaEnabled;
+
+  /** the custom alpha value to use. */
+  protected int m_CustomAlpha;
+
+  /** the color cache. */
+  protected Map<Color,Color> m_CustomAlphaColorCache;
 
   /**
    * Returns a string describing the object.
@@ -169,6 +181,16 @@ public class ObjectAnnotations
     m_OptionManager.add(
 	"invalid-outline-color", "invalidOutlineColor",
 	new FixedColor());
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_CustomAlpha = 255;
   }
 
   /**
@@ -568,12 +590,55 @@ public class ObjectAnnotations
   }
 
   /**
+   * Sets whether to use a custom alpha value for the overlay colors.
+   *
+   * @param value	true if to use custom alpha
+   */
+  @Override
+  public void setCustomAlphaEnabled(boolean value) {
+    m_CustomAlphaEnabled = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns whether a custom alpha value is in use for the overlay colors.
+   *
+   * @return		true if custom alpha in use
+   */
+  @Override
+  public boolean isCustomAlphaEnabled() {
+    return m_CustomAlphaEnabled;
+  }
+
+  /**
+   * Sets the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @param value	the alpha value
+   */
+  @Override
+  public void setCustomAlpha(int value) {
+    m_CustomAlpha = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @return		the alpha value
+   */
+  @Override
+  public int getCustomAlpha() {
+    return m_CustomAlpha;
+  }
+
+  /**
    * Hook method for when annotations change.
    */
   public void annotationsChanged() {
     super.annotationsChanged();
-    m_Annotations        = null;
-    m_InvalidAnnotations = null;
+    m_Annotations           = null;
+    m_InvalidAnnotations    = null;
+    m_CustomAlphaColorCache = new HashMap<>();
   }
 
   /**
@@ -641,6 +706,30 @@ public class ObjectAnnotations
   }
 
   /**
+   * Applies the custom alpha value to the color if necessary.
+   *
+   * @param c		the color to update
+   * @return		the (potentially) updated color
+   */
+  protected Color applyAlpha(Color c) {
+    Color	result;
+
+    result = c;
+
+    if (m_CustomAlphaEnabled) {
+      if (!m_CustomAlphaColorCache.containsKey(c)) {
+        result = new Color(c.getRed(), c.getGreen(), c.getBlue(), m_CustomAlpha);
+        m_CustomAlphaColorCache.put(c, result);
+      }
+      else {
+	result = m_CustomAlphaColorCache.get(c);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Paints the overlay.
    *
    * @param panel 	the owning panel
@@ -659,16 +748,16 @@ public class ObjectAnnotations
     for (o = 0; o < m_Annotations.size(); o++) {
       object = m_Annotations.get(o);
       if (m_InvalidAnnotations.contains(o)) {
-	m_InvalidShapePlotter.plotShape(object, m_InvalidShapeColor.getColor(object), g2d);
-	m_InvalidOutlinePlotter.plotOutline(object, m_InvalidOutlineColor.getColor(object), g2d);
+	m_InvalidShapePlotter.plotShape(object, applyAlpha(m_InvalidShapeColor.getColor(object)), g2d);
+	m_InvalidOutlinePlotter.plotOutline(object, applyAlpha(m_InvalidOutlineColor.getColor(object)), g2d);
       }
       else {
 	for (i = 0; i < m_ShapePlotters.length; i++)
-	  m_ShapePlotters[i].plotShape(object, m_ShapeColors[i].getColor(object), g2d);
+	  m_ShapePlotters[i].plotShape(object, applyAlpha(m_ShapeColors[i].getColor(object)), g2d);
 	for (i = 0; i < m_OutlinePlotters.length; i++)
-	  m_OutlinePlotters[i].plotOutline(object, m_OutlineColors[i].getColor(object), g2d);
+	  m_OutlinePlotters[i].plotOutline(object, applyAlpha(m_OutlineColors[i].getColor(object)), g2d);
 	for (i = 0; i < m_LabelPlotters.length; i++)
-	  m_LabelPlotters[i].plotLabel(object, m_LabelColors[i].getColor(object), g2d);
+	  m_LabelPlotters[i].plotLabel(object, applyAlpha(m_LabelColors[i].getColor(object)), g2d);
       }
     }
   }

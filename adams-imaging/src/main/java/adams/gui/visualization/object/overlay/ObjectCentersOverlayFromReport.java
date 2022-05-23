@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.object.overlay;
 
@@ -122,14 +122,14 @@ public class ObjectCentersOverlayFromReport
     String	label;
     Rectangle	rect;
 
-    g.setColor(getColor());
+    g.setColor(applyAlpha(getColor()));
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
-          g.setColor(m_Overlays.getColor(poly));
+          g.setColor(applyAlpha(m_Overlays.getColor(poly)));
       }
 
       rect = poly.getBounds();

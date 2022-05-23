@@ -20,57 +20,33 @@
 
 package adams.gui.visualization.object.overlay;
 
-import adams.core.option.AbstractOptionHandler;
+import adams.core.CleanUpHandler;
+import adams.core.option.OptionHandler;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 
 import java.awt.Graphics;
 
 /**
- * Ancestor for overlays.
+ * Interface for overlays.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractOverlay
-  extends AbstractOptionHandler
-  implements Overlay {
-
-  private static final long serialVersionUID = -5270536540300573516L;
-
-  /** whether the overlay is enabled. */
-  protected boolean m_Enabled;
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "enabled", "enabled",
-      true);
-  }
+public interface Overlay
+  extends OptionHandler, CleanUpHandler {
 
   /**
    * Sets whether the overlay is enabled.
    *
    * @param value 	true if enabled
    */
-  @Override
-  public void setEnabled(boolean value) {
-    m_Enabled = value;
-    reset();
-  }
+  public void setEnabled(boolean value);
 
   /**
    * Returns whether the overlay is enabled.
    *
    * @return 		true if enabled
    */
-  @Override
-  public boolean getEnabled() {
-    return m_Enabled;
-  }
+  public boolean getEnabled();
 
   /**
    * Returns the tip text for this property.
@@ -78,10 +54,7 @@ public abstract class AbstractOverlay
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  @Override
-  public String prefixTipText() {
-    return "Determines whether the overlay is enabled or not.";
-  }
+  public String prefixTipText();
 
   /**
    * Paints the overlay.
@@ -89,31 +62,16 @@ public abstract class AbstractOverlay
    * @param panel 	the owning panel
    * @param g		the graphics context
    */
-  protected abstract void doPaint(ObjectAnnotationPanel panel, Graphics g);
-
-  /**
-   * Paints the overlay.
-   *
-   * @param panel 	the owning panel
-   * @param g		the graphics context
-   */
-  @Override
-  public void paint(ObjectAnnotationPanel panel, Graphics g) {
-    if (getEnabled())
-      doPaint(panel, g);
-  }
+  public void paint(ObjectAnnotationPanel panel, Graphics g);
 
   /**
    * Hook method for when annotations change.
    */
-  @Override
-  public void annotationsChanged() {
-  }
+  public void annotationsChanged();
 
   /**
    * Cleans up data structures, frees up memory.
    */
   @Override
-  public void cleanUp() {
-  }
+  public void cleanUp();
 }

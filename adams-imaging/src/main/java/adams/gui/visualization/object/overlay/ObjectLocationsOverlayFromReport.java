@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsOverlayFromReport.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.object.overlay;
 
@@ -39,7 +39,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsOverlayFromReport
-  extends AbstractObjectOverlayFromReport {
+  extends AbstractObjectOverlayFromReport
+  implements OverlayWithCustomAlphaSupport {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
@@ -232,14 +233,14 @@ public class ObjectLocationsOverlayFromReport
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);
 
-    g.setColor(getColor());
+    g.setColor(applyAlpha(getColor()));
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
-          g.setColor(m_Overlays.getColor(poly));
+          g.setColor(applyAlpha(m_Overlays.getColor(poly)));
       }
       if (m_Filled)
         g.fillPolygon(poly);

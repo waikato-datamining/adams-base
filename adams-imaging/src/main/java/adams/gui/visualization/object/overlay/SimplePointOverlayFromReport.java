@@ -15,7 +15,7 @@
 
 /*
  * SimplePointOverlayFromReport.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.object.overlay;
 
@@ -53,7 +53,7 @@ public class SimplePointOverlayFromReport
   @Override
   public String globalInfo() {
     return
-      "Displays points pn the image, using data from the attached report.\n"
+      "Displays points on the image, using data from the attached report.\n"
         + "Suffixes:\n"
         + LocatedObjects.KEY_X + "\n"
         + LocatedObjects.KEY_Y + "\n"
@@ -119,14 +119,14 @@ public class SimplePointOverlayFromReport
     String	label;
     Rectangle	rect;
 
-    g.setColor(getColor());
+    g.setColor(applyAlpha(getColor()));
     g.setFont(getLabelFont());
     for (Polygon poly : locations) {
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
         if (m_Overlays.hasColor(poly))
-          g.setColor(m_Overlays.getColor(poly));
+          g.setColor(applyAlpha(m_Overlays.getColor(poly)));
       }
 
       rect = poly.getBounds();

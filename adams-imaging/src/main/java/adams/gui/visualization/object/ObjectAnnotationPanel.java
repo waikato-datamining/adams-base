@@ -60,12 +60,15 @@ import adams.gui.visualization.object.mouseclick.MultiProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
 import adams.gui.visualization.object.mouseclick.SetLabel;
 import adams.gui.visualization.object.mouseclick.ViewObjects;
-import adams.gui.visualization.object.overlay.AbstractOverlay;
 import adams.gui.visualization.object.overlay.NullOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.object.overlay.Overlay;
+import adams.gui.visualization.object.overlay.OverlayWithCustomAlphaSupport;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -89,7 +92,7 @@ import java.util.Set;
  */
 public class ObjectAnnotationPanel
     extends BasePanel
-    implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager {
+    implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager, PopupMenuCustomizer {
 
   private static final long serialVersionUID = 2804494506168717754L;
 
@@ -174,7 +177,7 @@ public class ObjectAnnotationPanel
   protected BaseStatusBar m_StatusBar;
 
   /** the overlay. */
-  protected AbstractOverlay m_Overlay;
+  protected Overlay m_Overlay;
 
   /** the mouse click processor. */
   protected AbstractMouseClickProcessor m_MouseClickProcessor;
@@ -329,6 +332,7 @@ public class ObjectAnnotationPanel
 
     m_PanelCanvas = new CanvasPanel();
     m_PanelCanvas.setOwner(this);
+    m_PanelCanvas.setPopupMenuCustomizer(this);
     m_PanelCanvas.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -355,6 +359,50 @@ public class ObjectAnnotationPanel
     super.finishInit();
     setLeftDividerLocation(0.2);
     setRightDividerLocation(0.75);
+  }
+
+  /**
+   * For customizing the popup menu.
+   *
+   * @param source the source, e.g., event
+   * @param menu   the menu to customize
+   */
+  @Override
+  public void customizePopupMenu(CanvasPanel source, JPopupMenu menu) {
+    final int 	customAlpha;
+    JMenuItem	menuitem;
+
+    if (m_Overlay instanceof OverlayWithCustomAlphaSupport) {
+      menu.addSeparator();
+
+      customAlpha = ((OverlayWithCustomAlphaSupport) m_Overlay).getCustomAlpha();
+      menuitem = new JMenuItem("Set transparency...");
+      menuitem.addActionListener((ActionEvent e) -> {
+        String alpha = GUIHelper.showInputDialog(ObjectAnnotationPanel.this, "Please enter alpha value (0: transparent, 255: opaque):", "" + customAlpha, "Transparency");
+        if (alpha == null)
+          return;
+        if (!Utils.isInteger(alpha)) {
+          GUIHelper.showErrorMessage(ObjectAnnotationPanel.this, "Please enter an integer value from 0-255 (provided: " + alpha + ")!");
+          return;
+	}
+        int alphaInt = Integer.parseInt(alpha);
+        if ((alphaInt < 0) || (alphaInt > 255)) {
+	  GUIHelper.showErrorMessage(ObjectAnnotationPanel.this, "Please enter an integer value from 0-255 (provided: " + alpha + ")!");
+	  return;
+	}
+	((OverlayWithCustomAlphaSupport) m_Overlay).setCustomAlpha(alphaInt);
+	((OverlayWithCustomAlphaSupport) m_Overlay).setCustomAlphaEnabled(true);
+	update();
+      });
+      menu.add(menuitem);
+
+      menuitem = new JMenuItem("Remove transparency");
+      menuitem.addActionListener((ActionEvent e) -> {
+        ((OverlayWithCustomAlphaSupport) m_Overlay).setCustomAlphaEnabled(false);
+	update();
+      });
+      menu.add(menuitem);
+    }
   }
 
   /**
@@ -897,7 +945,7 @@ public class ObjectAnnotationPanel
    *
    * @param value	the overlay
    */
-  public void setOverlay(AbstractOverlay value) {
+  public void setOverlay(Overlay value) {
     m_Overlay = value;
   }
 
@@ -906,7 +954,7 @@ public class ObjectAnnotationPanel
    *
    * @return		the overlay
    */
-  public AbstractOverlay getOverlay() {
+  public Overlay getOverlay() {
     return m_Overlay;
   }
 

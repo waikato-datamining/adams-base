@@ -15,7 +15,7 @@
 
 /*
  * ClassificationLabelTextOverlay.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.overlay;
@@ -35,7 +35,8 @@ import java.awt.Graphics;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ClassificationLabelTextOverlay
-  extends AbstractOverlay {
+  extends AbstractOverlay
+  implements OverlayWithCustomAlphaSupport {
 
   private static final long serialVersionUID = -4472215867236513662L;
 
@@ -53,6 +54,12 @@ public class ClassificationLabelTextOverlay
 
   /** the y offset for the label. */
   protected int m_LabelOffsetY;
+
+  /** whether a custom alpha is in use. */
+  protected boolean m_CustomAlphaEnabled;
+
+  /** the custom alpha value to use. */
+  protected int m_CustomAlpha;
 
   /**
    * Returns a string describing the object.
@@ -243,6 +250,65 @@ public class ClassificationLabelTextOverlay
   }
 
   /**
+   * Sets whether to use a custom alpha value for the overlay colors.
+   *
+   * @param value	true if to use custom alpha
+   */
+  @Override
+  public void setCustomAlphaEnabled(boolean value) {
+    m_CustomAlphaEnabled = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns whether a custom alpha value is in use for the overlay colors.
+   *
+   * @return		true if custom alpha in use
+   */
+  @Override
+  public boolean isCustomAlphaEnabled() {
+    return m_CustomAlphaEnabled;
+  }
+
+  /**
+   * Sets the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @param value	the alpha value
+   */
+  @Override
+  public void setCustomAlpha(int value) {
+    m_CustomAlpha = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @return		the alpha value
+   */
+  @Override
+  public int getCustomAlpha() {
+    return m_CustomAlpha;
+  }
+
+  /**
+   * Applies the custom alpha value to the color if necessary.
+   *
+   * @param c		the color to update
+   * @return		the (potentially) updated color
+   */
+  protected Color applyAlpha(Color c) {
+    Color	result;
+
+    result = c;
+
+    if (m_CustomAlphaEnabled)
+      result = new Color(c.getRed(), c.getGreen(), c.getBlue(), m_CustomAlpha);
+
+    return result;
+  }
+
+  /**
    * Paints the overlay.
    *
    * @param panel 	the owning panel
@@ -254,7 +320,7 @@ public class ClassificationLabelTextOverlay
 
     label = panel.getCurrentLabel();
     if (label != null) {
-      g.setColor(m_Color);
+      g.setColor(applyAlpha(m_Color));
       g.setFont(getLabelFont());
       g.drawString(label, getLabelOffsetX(), getLabelOffsetY());
     }

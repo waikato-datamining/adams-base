@@ -15,7 +15,7 @@
 
 /*
  * AbstractPointOverlayFromReport.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.object.overlay;
 
@@ -34,8 +34,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +46,8 @@ import java.util.Set;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractPointOverlayFromReport
-  extends AbstractOverlay {
+  extends AbstractOverlay
+  implements OverlayWithCustomAlphaSupport {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;
@@ -57,6 +60,15 @@ public abstract class AbstractPointOverlayFromReport
 
   /** the listeners for locations updates. */
   protected Set<ChangeListener> m_LocationsUpdatedListeners;
+
+  /** whether a custom alpha is in use. */
+  protected boolean m_CustomAlphaEnabled;
+
+  /** the custom alpha value to use. */
+  protected int m_CustomAlpha;
+
+  /** the color cache. */
+  protected Map<Color,Color> m_CustomAlphaColorCache;
 
   /**
    * Adds options to the internal list of options.
@@ -528,7 +540,75 @@ public abstract class AbstractPointOverlayFromReport
    * Hook method for when annotations change.
    */
   public void annotationsChanged() {
+    super.annotationsChanged();
     m_Overlays.reset();
+    m_CustomAlphaColorCache = new HashMap<>();
+  }
+
+  /**
+   * Sets whether to use a custom alpha value for the overlay colors.
+   *
+   * @param value	true if to use custom alpha
+   */
+  @Override
+  public void setCustomAlphaEnabled(boolean value) {
+    m_CustomAlphaEnabled = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns whether a custom alpha value is in use for the overlay colors.
+   *
+   * @return		true if custom alpha in use
+   */
+  @Override
+  public boolean isCustomAlphaEnabled() {
+    return m_CustomAlphaEnabled;
+  }
+
+  /**
+   * Sets the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @param value	the alpha value
+   */
+  @Override
+  public void setCustomAlpha(int value) {
+    m_CustomAlpha = value;
+    annotationsChanged();
+  }
+
+  /**
+   * Returns the custom alpha value (0: transparent, 255: opaque).
+   *
+   * @return		the alpha value
+   */
+  @Override
+  public int getCustomAlpha() {
+    return m_CustomAlpha;
+  }
+
+  /**
+   * Applies the custom alpha value to the color if necessary.
+   *
+   * @param c		the color to update
+   * @return		the (potentially) updated color
+   */
+  protected Color applyAlpha(Color c) {
+    Color	result;
+
+    result = c;
+
+    if (m_CustomAlphaEnabled) {
+      if (!m_CustomAlphaColorCache.containsKey(c)) {
+        result = new Color(c.getRed(), c.getGreen(), c.getBlue(), m_CustomAlpha);
+        m_CustomAlphaColorCache.put(c, result);
+      }
+      else {
+        result = m_CustomAlphaColorCache.get(c);
+      }
+    }
+
+    return result;
   }
 
   /**

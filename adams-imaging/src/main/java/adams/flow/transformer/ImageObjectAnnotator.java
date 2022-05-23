@@ -50,8 +50,8 @@ import adams.gui.visualization.object.mouseclick.AbstractMouseClickProcessor;
 import adams.gui.visualization.object.mouseclick.NullProcessor;
 import adams.gui.visualization.object.objectannotations.check.AnnotationCheck;
 import adams.gui.visualization.object.objectannotations.check.PassThrough;
-import adams.gui.visualization.object.overlay.AbstractOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
+import adams.gui.visualization.object.overlay.Overlay;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -255,7 +255,7 @@ public class ImageObjectAnnotator
   protected AbstractMouseClickProcessor m_MouseClick;
 
   /** the overlay to use. */
-  protected AbstractOverlay m_Overlay;
+  protected Overlay m_Overlay;
 
   /** the annotation check to apply. */
   protected AnnotationCheck m_AnnotationCheck;
@@ -541,7 +541,7 @@ public class ImageObjectAnnotator
    *
    * @param value 	the overlay
    */
-  public void setOverlay(AbstractOverlay value) {
+  public void setOverlay(Overlay value) {
     m_Overlay = value;
     reset();
   }
@@ -551,7 +551,7 @@ public class ImageObjectAnnotator
    *
    * @return 		the overlay
    */
-  public AbstractOverlay getOverlay() {
+  public Overlay getOverlay() {
     return m_Overlay;
   }
 
