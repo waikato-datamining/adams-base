@@ -223,14 +223,18 @@ public class GenericObjectEditor
     /** whether to update the dialog size. */
     protected boolean m_UpdateSize;
 
+    /** whether its the first update. */
+    protected boolean m_FirstUpdate;
+
     /**
      * Creates the GUI editor component.
      */
     public GOEPanel() {
       super();
 
-      m_Backup     = copyObject(m_Object);
-      m_UpdateSize = true;
+      m_Backup      = copyObject(m_Object);
+      m_UpdateSize  = false;
+      m_FirstUpdate = true;
 
       setLayout(new BorderLayout());
 
@@ -624,9 +628,10 @@ public class GenericObjectEditor
       }
 
       // Adjust size of containing window if possible
-      if (m_UpdateSize) {
+      if (m_UpdateSize || m_FirstUpdate) {
 	if ((getTopLevelAncestor() != null) && (getTopLevelAncestor() instanceof Window))
 	  ((Window) getTopLevelAncestor()).pack();
+	m_FirstUpdate = false;
       }
 
       m_IgnoreChanges = false;
