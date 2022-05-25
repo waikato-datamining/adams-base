@@ -2881,7 +2881,6 @@ public class GUIHelper {
 
     // adjust position
     if (updated != null) {
-      System.out.println("updated: " + updated);
       diffX = (updated.width - current.width) / 2;
       diffY = (updated.height - current.height) / 2;
       window.setLocation(position.x - diffX, position.y - diffY);
