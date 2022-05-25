@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2021 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,15 +29,13 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
-import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextAreaWithButtons;
-import adams.gui.core.BaseToggleButton;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -46,7 +44,6 @@ import adams.gui.help.AbstractHelpGenerator;
 import adams.gui.help.HelpContainer;
 import adams.gui.help.HelpFrame;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -114,8 +111,8 @@ public class PropertySheetPanel extends BasePanel
   /** Holds current object values for each property. */
   protected Object[] m_Values;
 
-  /** the split pane. */
-  protected BaseSplitPane m_SplitPane;
+  /** the tabbed pane. */
+  protected BaseTabbedPane m_TabbedPane;
 
   /** the panel with the content. */
   protected JPanel m_PanelContent;
@@ -137,9 +134,6 @@ public class PropertySheetPanel extends BasePanel
 
   /** the text from the globalInfo method, if any. */
   protected String m_GlobalInfo;
-
-  /** Button to pop up the full help text in a separate frame. */
-  protected AbstractButton m_ButtonHelp;
 
   /** The panel holding global info and help, if provided by
       the object being editied. */
@@ -184,12 +178,10 @@ public class PropertySheetPanel extends BasePanel
     m_PanelHelp.setPreferredSize(new Dimension(200, 20));
     m_PanelHelp.setFont(Fonts.getMonospacedFont());
 
-    m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-    m_SplitPane.setResizeWeight(0.5);
-    m_SplitPane.setLeftComponent(m_PanelContent);
-    m_SplitPane.setRightComponent(new BaseScrollPane(m_PanelHelp));
-    m_SplitPane.setRightComponentHidden(true);
-    add(m_SplitPane, BorderLayout.CENTER);
+    m_TabbedPane = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
+    m_TabbedPane.addTab("Options", m_PanelContent);
+    m_TabbedPane.addTab("Help", new BaseScrollPane(m_PanelHelp));
+    add(m_TabbedPane, BorderLayout.CENTER);
   }
 
   /**
@@ -434,26 +426,6 @@ public class PropertySheetPanel extends BasePanel
 
     if (m_GlobalInfo != null) {
       summary = extractFirstSentence(m_GlobalInfo, true);
-      if (m_ShowHelpInline) {
-	m_ButtonHelp = new BaseToggleButton(GUIHelper.getIcon("help.gif"));
-	m_ButtonHelp.setSelected(!m_SplitPane.isRightComponentHidden());
-      }
-      else {
-	m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
-      }
-      m_ButtonHelp.setToolTipText("Help on " + m_Target.getClass().getName());
-      m_ButtonHelp.addActionListener((ActionEvent a) -> {
-	if (m_ShowHelpInline) {
-	  if (m_ButtonHelp.isSelected())
-	    openHelpPanel();
-	  else
-	    closeHelpPanel();
-	}
-	else {
-	  openHelpDialog();
-	}
-      });
-
       m_PanelAbout = new BaseTextAreaWithButtons(summary);
       m_PanelAbout.setColumns(30);
       m_PanelAbout.setEditable(false);
@@ -465,7 +437,6 @@ public class PropertySheetPanel extends BasePanel
       m_PanelAbout.setBorder(BorderFactory.createCompoundBorder(
 	  BorderFactory.createTitledBorder("About"),
 	  BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-      m_PanelAbout.addToButtonsPanel(m_ButtonHelp);
       if (m_ShowAboutBox)
 	m_PanelContent.add(m_PanelAbout, BorderLayout.NORTH);
     }
@@ -638,8 +609,7 @@ public class PropertySheetPanel extends BasePanel
     m_PanelContent.validate();
 
     m_PanelContent.setVisible(true);
-    if (!m_SplitPane.isRightComponentHidden())
-      updateHelpPanel();
+    updateHelpPanel();
   }
 
   /**
@@ -660,34 +630,15 @@ public class PropertySheetPanel extends BasePanel
   }
 
   /**
-   * opens the help panel.
-   */
-  protected void openHelpPanel() {
-    initHelp();
-    updateHelpPanel();
-    m_SplitPane.setRightComponentHidden(false);
-  }
-
-  /**
    * Updates the content in the help panel.
    */
   protected void updateHelpPanel() {
     HelpContainer 	cont;
-    int			location;
 
-    location = m_SplitPane.getDividerLocation();
     cont = AbstractHelpGenerator.generateHelp(getTarget());
     m_PanelHelp.setContentType(cont.isHtml() ? "text/html" : "text/plain");
     m_PanelHelp.setText(cont.getHelp());
     m_PanelHelp.setCaretPosition(0);
-    m_SplitPane.setDividerLocation(location);
-  }
-
-  /**
-   * closes the help panel.
-   */
-  protected void closeHelpPanel() {
-    m_SplitPane.setRightComponentHidden(true);
   }
 
   /**
