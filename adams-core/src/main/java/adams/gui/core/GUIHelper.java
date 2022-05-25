@@ -91,10 +91,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * A little helper class for GUI related stuff.
+ * A "little" helper class for GUI related stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GUIHelper {
 
@@ -151,7 +150,7 @@ public class GUIHelper {
    * @version $Revision$
    */
   public static class DialogCommunication
-    implements Serializable {
+      implements Serializable {
 
     private static final long serialVersionUID = -7319896279709161892L;
 
@@ -329,11 +328,11 @@ public class GUIHelper {
     filename = getImageFilename(name);
     if (filename != null) {
       try {
-        return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+	return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
       }
       catch (Exception e) {
-        System.err.println("Failed to load image: " + filename);
-        e.printStackTrace();
+	System.err.println("Failed to load image: " + filename);
+	e.printStackTrace();
       }
     }
     return null;
@@ -348,11 +347,11 @@ public class GUIHelper {
   public static BufferedImage getExternalImage(String filename) {
     if (filename != null) {
       try {
-        return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+	return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
       }
       catch (Exception e) {
-        System.err.println("Failed to load image: " + filename);
-        e.printStackTrace();
+	System.err.println("Failed to load image: " + filename);
+	e.printStackTrace();
       }
     }
     return null;
@@ -410,8 +409,8 @@ public class GUIHelper {
     // custom size?
     if (c != null) {
       if (m_Properties.getBoolean(c.getClass().getName() + ".pack", false)) {
-        if (window instanceof Window)
-          ((Window) window).pack();
+	if (window instanceof Window)
+	  ((Window) window).pack();
       }
 
       width = scale(m_Properties.getInteger(c.getClass().getName() + ".width", window.getWidth()));
@@ -439,7 +438,7 @@ public class GUIHelper {
 
   /**
    * Determines the left location for a window.
-   * 
+   *
    * @param window	the window to work on
    * @param left	the left position, -1: centered, -2: right-justified
    */
@@ -462,7 +461,7 @@ public class GUIHelper {
 
   /**
    * Determines the top location for a window.
-   * 
+   *
    * @param window	the window to work on
    * @param top		the top position, -1: centered, -2: bottom-justified
    */
@@ -482,7 +481,7 @@ public class GUIHelper {
 
     return result;
   }
-  
+
   /**
    * Sets size and location stored in the props file.
    *
@@ -761,8 +760,8 @@ public class GUIHelper {
       if (!result.exists()) {
 	LOGGER.severe(
 	    "Startup script '" + script
-	    + "' listed for component '" + c.getClass().getName()
-	    + "' does not exist - ignored!");
+		+ "' listed for component '" + c.getClass().getName()
+		+ "' does not exist - ignored!");
 	result = null;
       }
     }
@@ -962,7 +961,7 @@ public class GUIHelper {
     catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to get option handler for key: " + key, e);
     }
-    
+
     return null;
   }
 
@@ -1000,15 +999,15 @@ public class GUIHelper {
 	break;
       }
       else {
-        if (parent instanceof KnownParentSupporter) {
-          if (((KnownParentSupporter) parent).getKnownParent() != null)
-            parent = ((KnownParentSupporter) parent).getKnownParent();
-          else
-            parent = parent.getParent();
-        }
-        else {
-          parent = parent.getParent();
-        }
+	if (parent instanceof KnownParentSupporter) {
+	  if (((KnownParentSupporter) parent).getKnownParent() != null)
+	    parent = ((KnownParentSupporter) parent).getKnownParent();
+	  else
+	    parent = parent.getParent();
+	}
+	else {
+	  parent = parent.getParent();
+	}
       }
     }
 
@@ -1124,7 +1123,7 @@ public class GUIHelper {
 
     if (comp == null)
       return null;
-    
+
     if (comp instanceof Container)
       cont = (Container) comp;
     else
@@ -1141,7 +1140,7 @@ public class GUIHelper {
 
   /**
    * Closes the parent dialog/frame of this container.
-   * 
+   *
    * @param cont	the container to close the parent for
    */
   public static void closeParent(Container cont) {
@@ -1189,12 +1188,12 @@ public class GUIHelper {
   /**
    * Attempts to bring the enclosing window to the front. Note: does not
    * work on all platforms.
-   * 
+   *
    * @param cont	the container whose parent window to bring to front
    */
   public static void toFront(final Container cont) {
     Runnable	run;
-    
+
     run = new Runnable() {
       @Override
       public void run() {
@@ -1206,7 +1205,7 @@ public class GUIHelper {
 	  getParentInternalFrame(cont).toFront();
       }
     };
-    
+
     SwingUtilities.invokeLater(run);
   }
 
@@ -1431,8 +1430,8 @@ public class GUIHelper {
 
     dlg.pack();
     dlg.setSize(
-      getInteger("DefaultSmallDialog.Width", 600),
-      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+	getInteger("DefaultSmallDialog.Width", 600),
+	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     errorPanel.setErrorMessage(msg);
     dlg.setLocationRelativeTo(parent);
     dlg.getApproveButton().requestFocusInWindow();
@@ -1475,7 +1474,7 @@ public class GUIHelper {
     int				height;
     TextPanel 			textPanel;
     BaseHtmlEditorPane 		htmlPanel;
-    
+
     parent = GUIHelper.getParentComponent(parent);
 
     lines  = msg.split("\n");
@@ -1506,8 +1505,8 @@ public class GUIHelper {
     dlg.pack();
     if (size == null)
       dlg.setSize(
-	getInteger("DefaultSmallDialog.Width", 600),
-	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+	  getInteger("DefaultSmallDialog.Width", 600),
+	  Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     else
       dlg.setSize(size);
     dlg.setLocationRelativeTo(parent);
@@ -1606,22 +1605,22 @@ public class GUIHelper {
     int				height;
     TextPanel			editor;
     Long			sync;
-    
+
     pparent = GUIHelper.getParentComponent(parent);
 
     lines  = msg.split("\n");
     height = Math.min(350, (lines.length + 1) * 20);
     if (comm == null) {
       if (pparent instanceof Dialog)
-        dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+	dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
       else
-        dlg = ApprovalDialog.getDialog((Frame) pparent, true);
+	dlg = ApprovalDialog.getDialog((Frame) pparent, true);
     }
     else {
       if (pparent instanceof Dialog)
-        dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+	dlg = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
       else
-        dlg = ApprovalDialog.getDialog((Frame) pparent, false);
+	dlg = ApprovalDialog.getDialog((Frame) pparent, false);
     }
     dlg.setTitle(title);
     dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
@@ -1644,8 +1643,8 @@ public class GUIHelper {
     dlg.getContentPane().add(editor, BorderLayout.CENTER);
     dlg.pack();
     dlg.setSize(
-      getInteger("DefaultSmallDialog.Width", 600),
-      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+	getInteger("DefaultSmallDialog.Width", 600),
+	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     dlg.setLocationRelativeTo(pparent);
     editor.setContent(msg);
     dlg.getCancelButton().requestFocusInWindow();
@@ -1655,29 +1654,29 @@ public class GUIHelper {
       sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dlg.isVisible()) {
-        try {
-          synchronized (sync) {
-            sync.wait(10);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(10);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
       // wait till dialog closed
       while (dlg.isVisible() && !comm.isCloseRequested()) {
-        try {
-          synchronized (sync) {
-            sync.wait(100);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(100);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
 
       if (comm.isCloseRequested())
-        dlg.setVisible(false);
+	dlg.setVisible(false);
     }
 
     return dlg.getOption();
@@ -1685,7 +1684,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for entering a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @return		the value entered, null if cancelled
@@ -1696,7 +1695,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for entering a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
@@ -1739,7 +1738,7 @@ public class GUIHelper {
    * A simple dialog for entering a string.
    * If "comm" is null simple modal dialogs are used, otherwise modeless ones
    * with blocking till dialog closed (or closing requested via communication object).
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Enter value" in that case)
    * @param initial	the initial selection, can be null
@@ -1767,19 +1766,19 @@ public class GUIHelper {
       title = "Enter value";
     if ((msg == null) || (msg.isEmpty()))
       msg = "Enter value";
-    
+
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
       if (pparent instanceof Dialog)
-        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+	dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
       else
-        dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+	dialog = ApprovalDialog.getDialog((Frame) pparent, true);
     }
     else {
       if (pparent instanceof Dialog)
-        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+	dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
       else
-        dialog = ApprovalDialog.getDialog((Frame) pparent, false);
+	dialog = ApprovalDialog.getDialog((Frame) pparent, false);
     }
     dialog.setTitle(title);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
@@ -1790,16 +1789,16 @@ public class GUIHelper {
       lines = initial.split("\n");
       // rows
       if (lines.length > 1)
-        rows = lines.length;
+	rows = lines.length;
       if (rows > 5)
-        rows = 5;
+	rows = 5;
       // cols
       for (String line: lines) {
-        if (line.length() > cols)
-          cols = line.length();
+	if (line.length() > cols)
+	  cols = line.length();
       }
       if (cols > 40)
-        cols = 40;
+	cols = 40;
     }
     if (cols < minCols)
       cols = minCols;
@@ -1817,21 +1816,21 @@ public class GUIHelper {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-          if (KeyUtils.isNoneDown(e.getModifiersEx())) {
-            e.consume();
-            dialog.getApproveButton().doClick();
-          }
-          else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
-            e.consume();
-            textValue.append("\n");
-          }
+	  if (KeyUtils.isNoneDown(e.getModifiersEx())) {
+	    e.consume();
+	    dialog.getApproveButton().doClick();
+	  }
+	  else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
+	    e.consume();
+	    textValue.append("\n");
+	  }
 	}
 	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 	  e.consume();
 	  dialog.getCancelButton().doClick();
 	}
-        if (!e.isConsumed())
-          super.keyPressed(e);
+	if (!e.isConsumed())
+	  super.keyPressed(e);
       }
     });
 
@@ -1840,7 +1839,7 @@ public class GUIHelper {
 
     label = new JLabel(msg);
     panelAll.add(label, BorderLayout.NORTH);
-    
+
     panel = new JPanel(new BorderLayout());
     panel.add(new BaseScrollPane(textValue), BorderLayout.CENTER);
     panelAll.add(panel, BorderLayout.CENTER);
@@ -1854,29 +1853,29 @@ public class GUIHelper {
       sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
-        try {
-          synchronized (sync) {
-            sync.wait(10);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(10);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
       // wait till dialog closed
       while (dialog.isVisible() && !comm.isCloseRequested()) {
-        try {
-          synchronized (sync) {
-            sync.wait(100);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(100);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
 
       if (comm.isCloseRequested())
-        dialog.setVisible(false);
+	dialog.setVisible(false);
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
@@ -1887,7 +1886,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for selecting a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
@@ -1900,7 +1899,7 @@ public class GUIHelper {
 
   /**
    * A simple dialog for selecting a string.
-   * 
+   *
    * @param parent	the parent for this dialog
    * @param msg		the message to display, can be null (uses "Select value" in that case)
    * @param initial	the initial selection, can be null
@@ -1941,22 +1940,22 @@ public class GUIHelper {
       title = "Select value";
     if ((msg == null) || (msg.isEmpty()))
       msg = "Select value";
-    
+
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
       if (pparent instanceof Dialog)
-        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+	dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
       else
-        dialog = ApprovalDialog.getDialog((Frame) pparent, true);
+	dialog = ApprovalDialog.getDialog((Frame) pparent, true);
     }
     else {
       if (pparent instanceof Dialog)
-        dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
+	dialog = ApprovalDialog.getDialog((Dialog) pparent, ModalityType.MODELESS);
       else
-        dialog = ApprovalDialog.getDialog((Frame) pparent, false);
+	dialog = ApprovalDialog.getDialog((Frame) pparent, false);
     }
     dialog.setTitle(title);
-    
+
     combobox = new BaseComboBox<>(options);
     if (!initial.isEmpty())
       combobox.setSelectedItem(initial);
@@ -1988,7 +1987,7 @@ public class GUIHelper {
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(label);
     panelAll.add(panel, BorderLayout.NORTH);
-    
+
     panel = new JPanel(new BorderLayout());
     panel.add(panelCombo, BorderLayout.CENTER);
     panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -2003,29 +2002,29 @@ public class GUIHelper {
       sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
-        try {
-          synchronized (sync) {
-            sync.wait(10);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(10);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
       // wait till dialog closed
       while (dialog.isVisible() && !comm.isCloseRequested()) {
-        try {
-          synchronized (sync) {
-            sync.wait(100);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(100);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
 
       if (comm.isCloseRequested())
-        dialog.setVisible(false);
+	dialog.setVisible(false);
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
@@ -2065,19 +2064,19 @@ public class GUIHelper {
       title = "Select value";
     if ((msg == null) || (msg.isEmpty()))
       msg = "Select alue";
-    
+
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
       if (pparent instanceof Dialog)
-        dialog = new BaseDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
+	dialog = new BaseDialog((Dialog) pparent, ModalityType.DOCUMENT_MODAL);
       else
-        dialog = new BaseDialog((Frame) pparent, true);
+	dialog = new BaseDialog((Frame) pparent, true);
     }
     else {
       if (pparent instanceof Dialog)
-        dialog = new BaseDialog((Dialog) pparent, ModalityType.MODELESS);
+	dialog = new BaseDialog((Dialog) pparent, ModalityType.MODELESS);
       else
-        dialog = new BaseDialog((Frame) pparent, false);
+	dialog = new BaseDialog((Frame) pparent, false);
     }
     dialog.setTitle(title);
 
@@ -2088,7 +2087,7 @@ public class GUIHelper {
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(label);
     panelAll.add(panel, BorderLayout.NORTH);
-    
+
     result = new StringBuilder();
 
     if (horizontal)
@@ -2103,11 +2102,11 @@ public class GUIHelper {
 	dialog.setVisible(false);
       });
       if (option.equals(initial))
-        initialFocus = button;
+	initialFocus = button;
       panelButtons.add(button);
     }
     panelAll.add(panelButtons, BorderLayout.CENTER);
-    
+
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
     dialog.pack();
@@ -2120,29 +2119,29 @@ public class GUIHelper {
       sync = UniqueIDs.nextLong();
       // wait till dialog visible
       while (!dialog.isVisible()) {
-        try {
-          synchronized (sync) {
-            sync.wait(10);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(10);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
       // wait till dialog closed
       while (dialog.isVisible() && !comm.isCloseRequested()) {
-        try {
-          synchronized (sync) {
-            sync.wait(100);
-          }
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  synchronized (sync) {
+	    sync.wait(100);
+	  }
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
 
       if (comm.isCloseRequested())
-        dialog.setVisible(false);
+	dialog.setVisible(false);
     }
 
     if (result.length() == 0)
@@ -2183,13 +2182,13 @@ public class GUIHelper {
   public static String showInputDialog(Component parent, String msg, String initial, String[] options, InputDialogMultiValueSelection view, String title, DialogCommunication comm) {
     switch (view) {
       case COMBOBOX:
-        return showInputDialogComboBox(parent, msg, initial, options, title, comm);
+	return showInputDialogComboBox(parent, msg, initial, options, title, comm);
       case BUTTONS_HORIZONTAL:
-        return showInputDialogButtons(parent, msg, initial, options, title, true, comm);
+	return showInputDialogButtons(parent, msg, initial, options, title, true, comm);
       case BUTTONS_VERTICAL:
-        return showInputDialogButtons(parent, msg, initial, options, title, false, comm);
+	return showInputDialogButtons(parent, msg, initial, options, title, false, comm);
       default:
-        throw new IllegalStateException("Unhandled view type: " + view);
+	throw new IllegalStateException("Unhandled view type: " + view);
     }
   }
 
@@ -2229,11 +2228,11 @@ public class GUIHelper {
       lines  = Utils.breakUp(result, width);
       // too many lines?
       if ((maxLines > -1) && (lines.length > maxLines)) {
-        tmp = new String[maxLines + 1];
-        for (i = 0; i < maxLines; i++)
-          tmp[i] = lines[i];
-        tmp[maxLines] = "...";
-        lines = tmp;
+	tmp = new String[maxLines + 1];
+	for (i = 0; i < maxLines; i++)
+	  tmp[i] = lines[i];
+	tmp[maxLines] = "...";
+	lines = tmp;
       }
       result = processTipText(Utils.flatten(lines, "\n"));
     }
@@ -2361,7 +2360,7 @@ public class GUIHelper {
   /**
    * Retrieves all components of the specified type starting with
    * the given parent container.
-   * 
+   *
    * @param parent	the container to start the search in
    * @param recursive	whether to recurse into other containers
    * @param exact	whether the class must be exactly this type of merely derived
@@ -2371,10 +2370,10 @@ public class GUIHelper {
   protected static void findComponents(Container parent, Class type, boolean recursive, boolean exact, List<Component> list, boolean onlyFirst) {
     int		i;
     Component	comp;
-    
+
     for (i = 0; i < parent.getComponentCount(); i++) {
       comp = parent.getComponent(i);
-      
+
       // match?
       if (exact) {
 	if (comp.getClass().equals(type))
@@ -2386,21 +2385,21 @@ public class GUIHelper {
 	else if (ClassLocator.hasInterface(type, comp.getClass()))
 	  list.add(comp);
       }
-      
+
       // stop at first hit?
       if (onlyFirst && (list.size() > 0))
 	return;
-      
+
       // search deeper?
       if (recursive && (comp instanceof Container))
 	findComponents((Container) comp, type, recursive, exact, list, onlyFirst);
     }
   }
-  
+
   /**
    * Retrieves all components of the specified type starting with
    * the given parent container.
-   * 
+   *
    * @param parent	the container to start the search in
    * @param recursive	whether to recurse into other containers
    * @param exact	whether the class must be exactly this type of merely derived
@@ -2408,17 +2407,17 @@ public class GUIHelper {
    */
   public static List<Component> findAllComponents(Container parent, Class type, boolean recursive, boolean exact) {
     ArrayList<Component>	result;
-    
+
     result = new ArrayList<>();
     findComponents(parent, type, recursive, exact, result, false);
-    
+
     return result;
   }
-  
+
   /**
    * Retrieves the first component of the specified type starting with
    * the given parent container.
-   * 
+   *
    * @param parent	the container to start the search in
    * @param recursive	whether to recurse into other containers
    * @param exact	whether the class must be exactly this type of merely derived
@@ -2426,19 +2425,19 @@ public class GUIHelper {
    */
   public static Component findFirstComponent(Container parent, Class type, boolean recursive, boolean exact) {
     ArrayList<Component>	result;
-    
+
     result = new ArrayList<>();
     findComponents(parent, type, recursive, exact, result, true);
-    
+
     if (result.size() == 0)
       return null;
     else
       return result.get(0);
   }
-  
+
   /**
    * Enables/disables anti-aliasing in the Graphics context.
-   * 
+   *
    * @param g		the graphics context to enable/disable anti-aliasing for
    * @param enable	if true anti-aliasing gets enabled, otherwise disabled
    */
@@ -2448,11 +2447,11 @@ public class GUIHelper {
     else
       ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
   }
-  
+
   /**
    * Determines the top-level menu (the one sitting inside the JMenuBar) that 
    * is associated with a menu item.
-   * 
+   *
    * @param menuitem	the menu item to get the menu bar for
    * @return		the menu, null if not found
    */
@@ -2460,9 +2459,9 @@ public class GUIHelper {
     JMenu	result;
     Container	cont;
     Container	prev;
-    
+
     result = null;
-    
+
     cont = menuitem;
     prev = null;
     while (cont != null) {
@@ -2473,14 +2472,14 @@ public class GUIHelper {
       prev = cont;
       cont = cont.getParent();
     }
-    
+
     return result;
   }
-  
+
   /**
    * Attempts to launch the specified menuitem. Requires to find the overall
    * application frame in order to launch the menu item.
-   * 
+   *
    * @param source	where the menuitem launch originated from
    * @param menuitem	the menuitem class to launch
    * @return		true if successfully launched
@@ -2488,13 +2487,13 @@ public class GUIHelper {
   public static boolean launchMenuItem(Container source, Class menuitem) {
     Child			child;
     AbstractBasicMenuItemDefinition mitem;
-    
+
     child = getParentChild(source);
     if (child == null)
       return false;
     if (child.getParentFrame() == null)
       return false;
-    
+
     try {
       mitem = (AbstractBasicMenuItemDefinition) menuitem.newInstance();
       mitem.setOwner(child.getParentFrame());
@@ -2504,7 +2503,7 @@ public class GUIHelper {
       // ignored
       return false;
     }
-    
+
     return true;
   }
 
@@ -2568,7 +2567,7 @@ public class GUIHelper {
     if (gc == null)
       return null;
     else
-    return gc.getDevice();
+      return gc.getDevice();
   }
 
   /**
@@ -2578,8 +2577,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultDialogDimension() {
     return scale(new Dimension(
-      getInteger("DefaultDialog.Width", 800),
-      getInteger("DefaultDialog.Height", 600)));
+	getInteger("DefaultDialog.Width", 800),
+	getInteger("DefaultDialog.Height", 600)));
   }
 
   /**
@@ -2589,8 +2588,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultSmallDialogDimension() {
     return scale(new Dimension(
-      getInteger("DefaultSmallDialog.Width", 600),
-      getInteger("DefaultSmallDialog.Height", 400)));
+	getInteger("DefaultSmallDialog.Width", 600),
+	getInteger("DefaultSmallDialog.Height", 400)));
   }
 
   /**
@@ -2600,8 +2599,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultTinyDialogDimension() {
     return scale(new Dimension(
-      getInteger("DefaultTinyDialog.Width", 400),
-      getInteger("DefaultTinyDialog.Height", 300)));
+	getInteger("DefaultTinyDialog.Width", 400),
+	getInteger("DefaultTinyDialog.Height", 300)));
   }
 
   /**
@@ -2611,8 +2610,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultLargeDialogDimension() {
     return scale(new Dimension(
-      getInteger("DefaultLargeDialog.Width", 1000),
-      getInteger("DefaultLargeDialog.Height", 800)));
+	getInteger("DefaultLargeDialog.Width", 1000),
+	getInteger("DefaultLargeDialog.Height", 800)));
   }
 
   /**
@@ -2700,19 +2699,17 @@ public class GUIHelper {
   }
 
   /**
-   * Makes the window at least the specified size.
+   * Makes the dimensions at least the specified size.
    *
-   * @param window	the window to potentially resize
+   * @param current	the current dimensions to potentially resize
    * @param min		the minimum dimensions
-   * @return 		true if updated
+   * @return 		null if no update necessary, otherwise the new dimensions
    */
-  public static boolean makeAtLeast(Component window, Dimension min) {
-    Dimension 	current;
+  public static Dimension makeAtLeast(Dimension current, Dimension min) {
     boolean	update;
     int		width;
     int		height;
 
-    current = window.getSize();
     width   = current.width;
     height  = current.height;
     update  = false;
@@ -2728,25 +2725,44 @@ public class GUIHelper {
     }
 
     if (update)
-      window.setSize(new Dimension(width, height));
-
-    return update;
+      return new Dimension(width, height);
+    else
+      return null;
   }
 
   /**
-   * Makes the window at most the specified size.
+   * Makes the window at least the specified size.
    *
    * @param window	the window to potentially resize
-   * @param max		the maximum dimensions
+   * @param min		the minimum dimensions
    * @return 		true if updated
    */
-  public static boolean makeAtMost(Component window, Dimension max) {
+  public static boolean makeAtLeast(Component window, Dimension min) {
     Dimension 	current;
+    Dimension	updated;
+
+    updated = makeAtLeast(window.getSize(), min);
+    if (updated != null) {
+      window.setSize(updated);
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * Makes the dimensions at most the specified size.
+   *
+   * @param current	the current dimensions to potentially resize
+   * @param max		the maximum dimensions
+   * @return 		null if no update necessary, otherwise the new dimensions
+   */
+  public static Dimension makeAtMost(Dimension current, Dimension max) {
     boolean	update;
     int		width;
     int		height;
 
-    current = window.getSize();
     width   = current.width;
     height  = current.height;
     update  = false;
@@ -2762,9 +2778,62 @@ public class GUIHelper {
     }
 
     if (update)
-      window.setSize(new Dimension(width, height));
+      return new Dimension(width, height);
+    else
+      return null;
+  }
 
-    return update;
+  /**
+   * Makes the window at most the specified size.
+   *
+   * @param window	the window to potentially resize
+   * @param max		the maximum dimensions
+   * @return 		true if updated
+   */
+  public static boolean makeAtMost(Component window, Dimension max) {
+    Dimension 	updated;
+    boolean	update;
+    int		width;
+    int		height;
+
+    updated = makeAtMost(window.getSize(), max);
+    if (updated != null) {
+      window.setSize(updated);
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
+   * Fits the dimensions between min/max.
+   *
+   * @param current	the dimensions to adjust
+   * @param min		the minimum size, ignored if null
+   * @param max		the maximum size, ignored if null
+   * @return 		null if no need to update, otherwise the recommended dimensions
+   */
+  public static Dimension makeFit(Dimension current, Dimension min, Dimension max) {
+    Dimension 	result;
+    boolean 	update;
+
+    result = null;
+    update = false;
+    if (min != null) {
+      result = makeAtLeast(current, min);
+      if (result != null) {
+	update  = true;
+	current = result;
+      }
+    }
+    if (max != null) {
+      result = makeAtMost(current, max);
+      if ((result == null) && update)
+	result = current;
+    }
+
+    return result;
   }
 
   /**
@@ -2776,7 +2845,19 @@ public class GUIHelper {
    * @return 		true if updated
    */
   public static boolean pack(Window window, Dimension min, Dimension max) {
-    boolean	updated;
+    Dimension	updated;
+    boolean	update;
+    Dimension 	current;
+    Dimension 	preferred;
+    Dimension 	currentUpdated;
+    Dimension 	preferredUpdated;
+    Point 	position;
+    Dimension 	sizePack;
+    Point 	positionPack;
+    Dimension 	sizeUpdated;
+    Point 	positionUpdated;
+    int		diffX;
+    int		diffY;
 
     // ensure that min < max
     if ((min != null) && (max != null)) {
@@ -2786,15 +2867,30 @@ public class GUIHelper {
 	return false;
     }
 
-    window.pack();
+    position  = window.getLocation();
+    current   = window.getSize();
+    preferred = window.getPreferredSize();
 
-    updated = false;
-    if (min != null)
-      updated = makeAtLeast(window, min);
-    if (max != null)
-      updated = makeAtMost(window, max);
+    currentUpdated   = makeFit(current, min, max);
+    preferredUpdated = makeFit(preferred, min, max);
 
-    return updated;
+    if (preferredUpdated != null)
+      updated = preferredUpdated;
+    else
+      updated = currentUpdated;
+
+    // adjust position
+    if (updated != null) {
+      System.out.println("updated: " + updated);
+      diffX = (updated.width - current.width) / 2;
+      diffY = (updated.height - current.height) / 2;
+      window.setLocation(position.x - diffX, position.y - diffY);
+      window.setSize(updated);
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   /**
@@ -2925,8 +3021,8 @@ public class GUIHelper {
     result = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-        runnable.run();
-        return null;
+	runnable.run();
+	return null;
       }
     };
     result.execute();
