@@ -630,7 +630,7 @@ public class GenericObjectEditor
       // Adjust size of containing window if possible
       if (m_UpdateSize || m_FirstUpdate) {
 	if ((getTopLevelAncestor() != null) && (getTopLevelAncestor() instanceof Window))
-	  ((Window) getTopLevelAncestor()).pack();
+	  GUIHelper.pack(((Window) getTopLevelAncestor()), GUIHelper.getDefaultDialogDimension(), GUIHelper.getDefaultLargeDialogDimension());
 	m_FirstUpdate = false;
       }
 
