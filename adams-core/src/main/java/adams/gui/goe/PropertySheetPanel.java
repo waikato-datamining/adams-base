@@ -145,9 +145,6 @@ public class PropertySheetPanel extends BasePanel
   /** whether to show/suppress the about box. */
   protected boolean m_ShowAboutBox;
 
-  /** whether to display the help in panel or separate dialog. */
-  protected boolean m_ShowHelpInline;
-
   /**
    * For initializing members.
    */
@@ -155,8 +152,7 @@ public class PropertySheetPanel extends BasePanel
   protected void initialize() {
     super.initialize();
 
-    m_ShowAboutBox   = true;
-    m_ShowHelpInline = true;
+    m_ShowAboutBox = true;
   }
 
   /**
@@ -201,25 +197,6 @@ public class PropertySheetPanel extends BasePanel
    */
   public boolean getShowAboutBox() {
     return m_ShowAboutBox;
-  }
-
-  /**
-   * Sets whether to show the help in panel or as separate dialog.
-   * Must happen before calling {@link #setTarget(Object)}.
-   *
-   * @param value	true if to show in panel
-   */
-  public void setShowHelpInline(boolean value) {
-    m_ShowHelpInline = value;
-  }
-
-  /**
-   * Returns whether the help is display in panel or separate dialog.
-   *
-   * @return		true if shown in panel
-   */
-  public boolean getShowHelpInline() {
-    return m_ShowHelpInline;
   }
 
   /**
@@ -610,6 +587,12 @@ public class PropertySheetPanel extends BasePanel
 
     m_PanelContent.setVisible(true);
     updateHelpPanel();
+
+    // tabbedpane doesn't properly update itself, need to switch between pages to achieve that...
+    if (m_TabbedPane.getSelectedIndex() == 1) {
+      m_TabbedPane.setSelectedIndex(0);
+      m_TabbedPane.setSelectedIndex(1);
+    }
   }
 
   /**
@@ -619,14 +602,6 @@ public class PropertySheetPanel extends BasePanel
    */
   public Object getTarget() {
     return m_Target;
-  }
-
-  /**
-   * opens the help frame.
-   */
-  protected void openHelpDialog() {
-    initHelp();
-    HelpFrame.showHelp(getTarget());
   }
 
   /**

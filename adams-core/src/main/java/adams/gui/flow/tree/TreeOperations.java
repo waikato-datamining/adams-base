@@ -857,7 +857,6 @@ public class TreeOperations
     else
       dialog.setTitle("Show...");
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.getGOEEditor().setShowHelpInline(false);
     dialog.getGOEEditor().setClassType(Actor.class);
     dialog.setProposedClasses(null);
     dialog.setCurrent(currNode.getActor().shallowCopy());
