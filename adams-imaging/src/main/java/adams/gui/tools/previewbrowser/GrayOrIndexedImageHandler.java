@@ -23,6 +23,7 @@ import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.GrayOrIndexedColorizer;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.CustomColorProvider;
@@ -33,7 +34,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Changes the unique colors to the ones specified by the color provider for the following image types: tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
+ * Changes the unique colors to the ones specified by the color provider for the following image types: bmp,dcx,gif,hdr,icns,ico,jpg,pcx,png,pnm,psd,tif,tiff,wbmp,xbm,xpm
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,6 +42,11 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.ApacheCommonsImageReader
  * </pre>
  *
  * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
@@ -53,10 +59,13 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GrayOrIndexedImageHandler
-  extends AbstractContentHandler {
+    extends AbstractContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
+
+  /** the image reader to use. */
+  protected AbstractImageReader m_Reader;
 
   /** the color provider for generating the colors. */
   protected ColorProvider m_ColorProvider;
@@ -79,8 +88,50 @@ public class GrayOrIndexedImageHandler
     super.defineOptions();
 
     m_OptionManager.add(
-      "color-provider", "colorProvider",
-      getDefaultColorProvider());
+        "reader", "reader",
+        getDefaultReader());
+
+    m_OptionManager.add(
+        "color-provider", "colorProvider",
+        getDefaultColorProvider());
+  }
+
+  /**
+   * Returns the default image reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultReader() {
+    return new ApacheCommonsImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the image reader
+   */
+  public void setReader(AbstractImageReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the imag reader to use.
+   *
+   * @return		the image reader
+   */
+  public AbstractImageReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String readerTipText() {
+    return "The image reader to use.";
   }
 
   /**
@@ -132,7 +183,7 @@ public class GrayOrIndexedImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new ApacheCommonsImageReader().getFormatExtensions();
+    return m_Reader.getFormatExtensions();
   }
 
   /**
@@ -144,12 +195,10 @@ public class GrayOrIndexedImageHandler
   @Override
   protected PreviewPanel createPreview(File file) {
     ImagePanel				panel;
-    ApacheCommonsImageReader 		reader;
     BufferedImageContainer		cont;
     GrayOrIndexedColorizer		colorizer;
 
-    reader = new ApacheCommonsImageReader();
-    cont   = reader.read(new PlaceholderFile(file));
+    cont = (BufferedImageContainer) m_Reader.read(new PlaceholderFile(file));
     if (cont == null)
       return new NoPreviewAvailablePanel();
 

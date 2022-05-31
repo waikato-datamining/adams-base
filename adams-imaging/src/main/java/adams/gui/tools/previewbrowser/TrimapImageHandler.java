@@ -24,9 +24,12 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.TrimapColorizer;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.VggXmlAnnotationReportReader;
 import adams.data.report.Report;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.image.leftclick.ViewObjects;
@@ -48,15 +51,31 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
+ * </pre>
+ *
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use for coloring in the grayscale&#47;indexed image.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.CustomColorProvider -color #ffff00 -color #0000ff -color #ff0000
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TrimapImageHandler
-  extends AbstractContentHandler {
+    extends AbstractContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
+
+  /** the image reader to use. */
+  protected AbstractImageReader m_Reader;
+
+  /** the color provider for generating the colors. */
+  protected ColorProvider m_ColorProvider;
 
   /**
    * Returns a string describing the object.
@@ -66,7 +85,102 @@ public class TrimapImageHandler
   @Override
   public String globalInfo() {
     return "Displays the following image types as trimaps: " + Utils.arrayToString(getExtensions()) + "\n"
-      + "If VGG XML annotation file with the same name exists, then an object overlay is added.";
+        + "If VGG XML annotation file with the same name exists, then an object overlay is added.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+        "reader", "reader",
+        getDefaultReader());
+
+    m_OptionManager.add(
+        "color-provider", "colorProvider",
+        getDefaultColorProvider());
+  }
+
+  /**
+   * Returns the default image reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the image reader
+   */
+  public void setReader(AbstractImageReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the imag reader to use.
+   *
+   * @return		the image reader
+   */
+  public AbstractImageReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String readerTipText() {
+    return "The image reader to use.";
+  }
+
+  /**
+   * Returns the default color provider.
+   *
+   * @return		the default
+   */
+  protected ColorProvider getDefaultColorProvider() {
+    CustomColorProvider result;
+    result = new CustomColorProvider();
+    result.setColors(new Color[]{Color.YELLOW, Color.BLUE, Color.RED});
+    return result;
+  }
+
+  /**
+   * Sets the color provider to use.
+   *
+   * @param value	the color provider
+   */
+  public void setColorProvider(ColorProvider value) {
+    m_ColorProvider = value;
+    reset();
+  }
+
+  /**
+   * Returns the color provider to use.
+   *
+   * @return		the color provider
+   */
+  public ColorProvider getColorProvider() {
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String colorProviderTipText() {
+    return "The color provider to use for coloring in the grayscale/indexed image.";
   }
 
   /**
@@ -77,7 +191,7 @@ public class TrimapImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return m_Reader.getFormatExtensions();
   }
 
   /**
@@ -89,7 +203,6 @@ public class TrimapImageHandler
   @Override
   protected PreviewPanel createPreview(File file) {
     ImagePanel				panel;
-    JAIImageReader			reader;
     BufferedImageContainer		cont;
     TrimapColorizer			colorizer;
     ObjectLocationsOverlayFromReport	overlay;
@@ -98,8 +211,7 @@ public class TrimapImageHandler
     List<Report> 			reports;
     Report 				report;
 
-    reader = new JAIImageReader();
-    cont   = reader.read(new PlaceholderFile(file));
+    cont = (BufferedImageContainer) m_Reader.read(new PlaceholderFile(file));
     if (cont == null)
       return new NoPreviewAvailablePanel();
 
@@ -117,9 +229,9 @@ public class TrimapImageHandler
       reports = reportReader.read();
       if (reports.size() > 0) {
         report  = reports.get(0);
-	overlay = new ObjectLocationsOverlayFromReport();
-	overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
-	overlay.setColor(Color.GREEN);
+        overlay = new ObjectLocationsOverlayFromReport();
+        overlay.setPrefix(ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+        overlay.setColor(Color.GREEN);
         panel.addImageOverlay(overlay);
       }
     }
