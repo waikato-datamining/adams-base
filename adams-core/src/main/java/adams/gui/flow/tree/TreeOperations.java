@@ -1139,8 +1139,10 @@ public class TreeOperations
     getOwner().addUndoPoint("Pulling up '" + handlerNode.getFullName() + "'");
 
     parentNode.remove(index);
-    for (i = 0; i < subNodes.size(); i++)
+    for (i = 0; i < subNodes.size(); i++) {
       parentNode.insert(subNodes.get(i), index + i);
+      getOwner().updateActorName(subNodes.get(i), true);
+    }
 
     SwingUtilities.invokeLater(() -> {
       getOwner().setModified(true);
