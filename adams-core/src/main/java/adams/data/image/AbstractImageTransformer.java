@@ -15,17 +15,14 @@
 
 /*
  * AbstractImageTransformer.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image;
 
-import adams.core.CleanUpHandler;
-import adams.core.QuickInfoSupporter;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
-import adams.flow.core.FlowContextHandler;
 
 /**
  * Abstract base class for AbstractImage transformations.
@@ -36,7 +33,7 @@ import adams.flow.core.FlowContextHandler;
  */
 public abstract class AbstractImageTransformer<T extends AbstractImageContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, QuickInfoSupporter, FlowContextHandler {
+  implements ImageTransformer<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4566948525813804085L;

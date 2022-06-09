@@ -15,7 +15,7 @@
 
 /*
  * TrimapColorizer.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.image.transformer;
@@ -55,7 +55,8 @@ import java.util.Arrays;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TrimapColorizer
-  extends AbstractBufferedImageTransformer {
+  extends AbstractBufferedImageTransformer
+  implements ImageColorizerWithColorProvider {
 
   private static final long serialVersionUID = 4183676541160281269L;
 
@@ -94,7 +95,6 @@ public class TrimapColorizer
     result = new CustomColorProvider();
     result.setColors(new Color[]{Color.YELLOW, Color.BLUE, Color.RED});
     return result;
-    //return new DefaultColorProvider();
   }
 
   /**

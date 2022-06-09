@@ -58,6 +58,10 @@ adams.data.image.transformer.whitebalance.AbstractWhiteBalanceAlgorithm=\
 adams.data.image.multiimageoperation.AbstractBufferedImageMultiImageOperation=\
   adams.data.image.multiimageoperation
 
+# the image colorizers
+adams.data.image.transformer.ImageColorizer=\
+  adams.data.image.transformer
+
 # the algorithms for calculating object overlaps
 adams.data.objectoverlap.ObjectOverlap=\
   adams.data.objectoverlap

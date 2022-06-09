@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelColorizer.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.image.transformer;
@@ -55,7 +55,8 @@ import java.awt.image.BufferedImage;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BlueChannelColorizer
-  extends AbstractBufferedImageTransformer {
+  extends AbstractBufferedImageTransformer
+  implements ImageColorizerWithColorProvider {
 
   private static final long serialVersionUID = 4183676541160281269L;
 

@@ -15,7 +15,7 @@
 
 /*
  * GrayOrIndexedColorizer.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.image.transformer;
@@ -63,7 +63,8 @@ import java.util.Arrays;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class GrayOrIndexedColorizer
-  extends AbstractBufferedImageTransformer {
+  extends AbstractBufferedImageTransformer
+  implements ImageColorizerWithColorProvider {
 
   private static final long serialVersionUID = 4183676541160281269L;
 
