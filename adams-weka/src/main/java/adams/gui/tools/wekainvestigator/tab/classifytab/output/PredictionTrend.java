@@ -15,7 +15,7 @@
 
 /*
  * PredictionTrend.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -32,6 +32,7 @@ import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -47,7 +48,8 @@ import java.util.HashMap;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PredictionTrend
-  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
+  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel>
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -6829245659118360739L;
 

@@ -15,7 +15,7 @@
 
 /*
  * PeriodicityPaintlet.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -26,6 +26,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.plot.Axis;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
@@ -70,10 +71,10 @@ import java.util.GregorianCalendar;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PeriodicityPaintlet
-  extends AbstractTimeseriesPaintlet {
+  extends AbstractTimeseriesPaintlet
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -6475036298238205843L;

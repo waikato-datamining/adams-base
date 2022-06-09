@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ColorProviderPixelSelectorOverlay.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pixelselector;
 
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 /**
@@ -27,10 +28,10 @@ import adams.gui.visualization.core.DefaultColorProvider;
  * of the overlay.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractColorProviderPixelSelectorOverlay
-  extends AbstractPixelSelectorOverlay {
+  extends AbstractPixelSelectorOverlay
+  implements ColorProviderHandler {
   
   /** for serialization. */
   private static final long serialVersionUID = -2158576853112526562L;

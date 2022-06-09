@@ -15,7 +15,7 @@
 
 /*
  * PNGImageReader.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -27,6 +27,7 @@ import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.gui.core.ColorHelper;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import ar.com.hjg.pngj.IImageLine;
 import ar.com.hjg.pngj.ImageLineByte;
@@ -45,7 +46,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PNGImageReader
-  extends AbstractImageReader<BufferedImageContainer> {
+  extends AbstractImageReader<BufferedImageContainer>
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -4360936418761836176L;
 

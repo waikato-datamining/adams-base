@@ -15,7 +15,7 @@
 
 /*
  * JFreeChartPlot.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -25,6 +25,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
@@ -165,7 +166,7 @@ import java.awt.Shape;
  */
 public class JFreeChartPlot
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider {
+  implements DisplayPanelProvider, ColorProviderHandler {
 
   private static final long serialVersionUID = -2648121220428217287L;
 

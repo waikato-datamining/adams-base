@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelImageSegmentationWriter.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -28,6 +28,7 @@ import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.data.io.input.IndexedPNGImageSegmentationReader;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
@@ -42,7 +43,7 @@ import java.util.Map;
  */
 public class IndexedPNGImageSegmentationWriter
   extends AbstractImageSegmentationAnnotationWriter
-  implements ImageSegmentationAnnotationWriterWithLayerNames {
+  implements ImageSegmentationAnnotationWriterWithLayerNames, ColorProviderHandler {
 
   private static final long serialVersionUID = 3566330074754565825L;
 

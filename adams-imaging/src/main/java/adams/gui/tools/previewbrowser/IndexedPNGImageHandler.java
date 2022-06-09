@@ -23,6 +23,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.PNGImageReader;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -50,7 +51,8 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class IndexedPNGImageHandler
-  extends AbstractContentHandler {
+  extends AbstractContentHandler
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;

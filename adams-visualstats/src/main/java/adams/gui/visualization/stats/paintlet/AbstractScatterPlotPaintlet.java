@@ -15,7 +15,7 @@
 
 /*
  * AbstractScatterPlotPaintlet.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -27,6 +27,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
@@ -40,11 +41,10 @@ import java.util.Map;
  * Abstract class for creating scatterplot paintlets.
  *
  * @author msf8
- * @version $Revision$
  */
 public abstract class AbstractScatterPlotPaintlet
   extends AbstractColorPaintlet
-  implements AntiAliasingSupporter, HitDetectorSupporter<AbstractScatterPlotHitDetector> {
+  implements AntiAliasingSupporter, HitDetectorSupporter<AbstractScatterPlotHitDetector>, ColorProviderHandler {
 
   /** for serialization */
   private static final long serialVersionUID = 7191423312364530577L;

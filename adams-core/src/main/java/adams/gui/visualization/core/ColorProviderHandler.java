@@ -14,20 +14,38 @@
  */
 
 /*
- * ImageColorizer.java
+ * ColorProviderHandler.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.data.image.transformer;
-
-import adams.gui.visualization.core.ColorProviderHandler;
+package adams.gui.visualization.core;
 
 /**
- * Interface for image colorizers that support a color provider.
+ * Interface for classes that make use of a {@link ColorProvider}.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public interface ImageColorizerWithColorProvider
-  extends ImageColorizer, ColorProviderHandler {
+public interface ColorProviderHandler {
 
+  /**
+   * Sets the color provider to use.
+   *
+   * @param value	the color provider
+   */
+  public void setColorProvider(ColorProvider value);
+
+  /**
+   * Returns the color provider to use.
+   *
+   * @return		the color provider
+   */
+  public ColorProvider getColorProvider();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String colorProviderTipText();
 }

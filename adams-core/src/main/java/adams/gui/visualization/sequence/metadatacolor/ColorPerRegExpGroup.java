@@ -15,7 +15,7 @@
 
 /*
  * ColorPerRegExpGroup.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.sequence.metadatacolor;
@@ -23,6 +23,7 @@ package adams.gui.visualization.sequence.metadatacolor;
 import adams.core.base.BaseRegExp;
 import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.ColorProviderWithNameSupport;
 import adams.gui.visualization.core.DefaultColorProvider;
 
@@ -75,7 +76,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ColorPerRegExpGroup
-  extends AbstractMetaDataColor<XYSequencePoint> {
+  extends AbstractMetaDataColor<XYSequencePoint>
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -7097430935066387456L;
 

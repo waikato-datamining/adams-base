@@ -15,7 +15,7 @@
 
 /*
  * ControlChartPlot.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -53,6 +53,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.AbstractLimitedTickGenerator;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -223,10 +224,10 @@ import java.util.HashMap;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ControlChartPlot
-  extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;

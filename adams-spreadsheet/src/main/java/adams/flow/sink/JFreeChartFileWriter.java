@@ -15,7 +15,7 @@
 
 /*
  * JFreeChartFileWriter.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -26,6 +26,7 @@ import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.JAIImageWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.jfreechart.chart.AbstractChartGenerator;
 import adams.gui.visualization.jfreechart.chart.XYLineChart;
@@ -142,7 +143,8 @@ import java.awt.image.BufferedImage;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class JFreeChartFileWriter
-  extends AbstractFileWriter {
+  extends AbstractFileWriter
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -2648121220428217287L;
 

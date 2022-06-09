@@ -15,7 +15,7 @@
 
 /*
  * ImageSegmentationAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -30,6 +30,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
@@ -229,7 +230,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationAnnotator
-  extends AbstractInteractiveTransformerDialog {
+  extends AbstractInteractiveTransformerDialog
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -761517109077084448L;
 

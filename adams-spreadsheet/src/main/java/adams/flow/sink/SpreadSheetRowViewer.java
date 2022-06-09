@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRowViewer.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -28,6 +28,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.spreadsheet.AbstractSpreadSheetRowPaintlet;
@@ -164,7 +165,7 @@ import java.awt.BorderLayout;
  */
 public class SpreadSheetRowViewer
   extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider, TextSupplier {
+  implements DisplayPanelProvider, TextSupplier, ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1283926389472133810L;

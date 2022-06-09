@@ -26,6 +26,7 @@ import adams.data.image.transformer.GrayOrIndexedColorizer;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -59,7 +60,8 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GrayOrIndexedImageHandler
-    extends AbstractContentHandler {
+  extends AbstractContentHandler
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;

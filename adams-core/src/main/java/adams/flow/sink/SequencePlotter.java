@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -54,6 +54,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
@@ -275,7 +276,7 @@ import java.util.HashMap;
 public class SequencePlotter
   extends AbstractGraphicalDisplay
   implements DisplayPanelProvider, FileWriter, ClassCrossReference,
-  DataPlotUpdaterHandler<AbstractPlotUpdater>, TextSupplier {
+  DataPlotUpdaterHandler<AbstractPlotUpdater>, TextSupplier, ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;

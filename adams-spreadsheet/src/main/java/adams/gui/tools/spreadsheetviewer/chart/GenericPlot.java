@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GenericPlot.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -31,6 +31,7 @@ import adams.flow.transformer.plotgenerator.AbstractPlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
 import adams.gui.visualization.core.axis.TickGenerator;
@@ -95,10 +96,10 @@ import adams.gui.visualization.sequence.XYSequencePaintlet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9429 $
  */
 public class GenericPlot
-  extends AbstractRowBasedChartGenerator {
+  extends AbstractRowBasedChartGenerator
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -2088311829009151566L;

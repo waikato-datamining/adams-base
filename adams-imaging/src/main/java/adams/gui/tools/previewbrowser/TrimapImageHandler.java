@@ -29,6 +29,7 @@ import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.VggXmlAnnotationReportReader;
 import adams.data.report.Report;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
@@ -66,7 +67,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TrimapImageHandler
-    extends AbstractContentHandler {
+  extends AbstractContentHandler
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;

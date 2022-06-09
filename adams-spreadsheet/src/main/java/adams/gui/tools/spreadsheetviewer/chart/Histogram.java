@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Histogram.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -43,6 +43,7 @@ import adams.flow.transformer.plotgenerator.RowWisePlotGenerator;
 import adams.flow.transformer.plotgenerator.SimplePlotGenerator;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.SimpleTickGenerator;
@@ -124,10 +125,10 @@ import adams.gui.visualization.sequence.BarPaintlet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10141 $
  */
 public class Histogram
-  extends AbstractChartGenerator {
+  extends AbstractChartGenerator
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -2088311829009151566L;
@@ -136,7 +137,6 @@ public class Histogram
    * Determines how the data is selected for the histogram.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 10141 $
    */
   public enum Selection {
     ROW,

@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesDisplay.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -32,6 +32,7 @@ import adams.flow.sink.timeseriesdisplay.AbstractPlotUpdater;
 import adams.flow.sink.timeseriesdisplay.SimplePlotUpdater;
 import adams.gui.core.BasePanel;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -185,17 +186,15 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesDisplay
   extends AbstractGraphicalDisplay 
-  implements DisplayPanelProvider, DataPlotUpdaterHandler<AbstractPlotUpdater> {
+  implements DisplayPanelProvider, DataPlotUpdaterHandler<AbstractPlotUpdater>, ColorProviderHandler {
 
   /**
    * Panel to be used in {@link DisplayPanelManager} sink.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   protected class DisplayPanel
     extends AbstractComponentDisplayPanel

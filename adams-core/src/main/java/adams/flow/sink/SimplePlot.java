@@ -15,7 +15,7 @@
 
 /*
  * SimplePlot.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -49,6 +49,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.core.Paintlet;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
@@ -218,12 +219,12 @@ import java.util.HashMap;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimplePlot
   extends AbstractGraphicalDisplay
   implements DisplayPanelProvider, FileWriter, ClassCrossReference,
-             TextSupplier, DataPlotUpdaterSupporter<AbstractPlotUpdater> {
+             TextSupplier, DataPlotUpdaterSupporter<AbstractPlotUpdater>,
+             ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3238389451500168650L;

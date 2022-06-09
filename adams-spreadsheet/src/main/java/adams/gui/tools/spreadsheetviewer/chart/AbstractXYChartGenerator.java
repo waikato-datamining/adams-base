@@ -15,7 +15,7 @@
 
 /*
  * AbstractXYChartGenerator.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.chart;
 
@@ -33,6 +33,7 @@ import adams.flow.transformer.plotgenerator.SimplePlotGenerator;
 import adams.flow.transformer.plotgenerator.XYPlotGenerator;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 /**
@@ -41,7 +42,8 @@ import adams.gui.visualization.core.DefaultColorProvider;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractXYChartGenerator
-  extends AbstractRowBasedChartGenerator {
+  extends AbstractRowBasedChartGenerator
+  implements ColorProviderHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3167297287561137402L;

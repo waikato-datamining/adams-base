@@ -27,6 +27,7 @@ import adams.core.base.BaseString;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
@@ -38,7 +39,8 @@ import java.util.HashMap;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PerType
-    extends AbstractAnnotationColors {
+  extends AbstractAnnotationColors
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -1331416212214116733L;
 
