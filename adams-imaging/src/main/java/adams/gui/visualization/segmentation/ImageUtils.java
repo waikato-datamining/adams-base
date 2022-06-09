@@ -15,7 +15,7 @@
 
 /*
  * ImageUtils.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -45,6 +45,7 @@ public class ImageUtils {
     int[] 	pixTarget;
     int		i;
     int		black;
+    int		blackTrans;
     boolean	modified;
 
     if (source.getWidth() != target.getWidth())
@@ -52,12 +53,13 @@ public class ImageUtils {
     if (source.getHeight() != target.getHeight())
       throw new IllegalArgumentException("Images differ in height: " + source.getHeight() + " != " + target.getHeight());
 
-    pixSource = source.getRGB(0, 0, source.getWidth(), source.getHeight(), null, 0, source.getWidth());
-    pixTarget = target.getRGB(0, 0, target.getWidth(), target.getHeight(), null, 0, target.getWidth());
-    black     = Color.BLACK.getRGB();
+    pixSource  = source.getRGB(0, 0, source.getWidth(), source.getHeight(), null, 0, source.getWidth());
+    pixTarget  = target.getRGB(0, 0, target.getWidth(), target.getHeight(), null, 0, target.getWidth());
+    black      = Color.BLACK.getRGB();
+    blackTrans = new Color(0, 0, 0, 0).getRGB();
     modified  = false;
     for (i = 0; i < pixSource.length; i++) {
-      if (pixSource[i] != black) {
+      if ((pixSource[i] != black) && (pixSource[i] != blackTrans)) {
 	if (pixSource[i] != pixTarget[i]) {
 	  pixTarget[i] = pixSource[i];
 	  modified     = true;
@@ -122,9 +124,9 @@ public class ImageUtils {
     modified = false;
     for (y = rangeY[0]; y <= rangeY[1]; y++) {
       for (x = rangeX[0]; x <= rangeX[1]; x++) {
-        if (view.get(x, y) == oldC) {
-          view.set(x, y, newC);
-          modified = true;
+	if (view.get(x, y) == oldC) {
+	  view.set(x, y, newC);
+	  modified = true;
 	}
       }
     }
