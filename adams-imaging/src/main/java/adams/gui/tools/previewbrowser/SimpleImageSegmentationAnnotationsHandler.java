@@ -189,8 +189,10 @@ public class SimpleImageSegmentationAnnotationsHandler
    * @param value	the alphae value
    */
   public void setAlpha(int value) {
-    m_Alpha = value;
-    reset();
+    if (getOptionManager().isValid("alpha", value)) {
+      m_Alpha = value;
+      reset();
+    }
   }
 
   /**
