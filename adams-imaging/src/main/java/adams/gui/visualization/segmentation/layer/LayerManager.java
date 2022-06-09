@@ -777,7 +777,8 @@ public class LayerManager
 	l.draw(g2d);
     }
     else {
-      getCombinedLayer().draw(g2d);
+      if (getCombinedLayer() != null)
+        getCombinedLayer().draw(g2d);
     }
   }
 
