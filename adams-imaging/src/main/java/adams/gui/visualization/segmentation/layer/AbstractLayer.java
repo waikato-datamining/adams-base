@@ -15,7 +15,7 @@
 
 /*
  * AbstractLayer.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -138,7 +138,7 @@ public abstract class AbstractLayer
    * Notifies the change listeners.
    */
   protected void update() {
-    if (m_Manager != null)
+    if ((m_Manager != null) && !m_Manager.ignoreUpdates())
       m_Manager.update();
   }
 

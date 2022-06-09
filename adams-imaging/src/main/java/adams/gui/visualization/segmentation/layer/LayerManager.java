@@ -15,7 +15,7 @@
 
 /*
  * LayerManager.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -51,7 +51,7 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LayerManager
-  implements Serializable, UndoHandlerWithQuickAccess, UndoListener {
+    implements Serializable, UndoHandlerWithQuickAccess, UndoListener {
 
   private static final long serialVersionUID = 4462920156618724031L;
 
@@ -88,6 +88,9 @@ public class LayerManager
   /** the listeners if the best fit is being redone. */
   protected Set<ChangeListener> m_BestFitRedone;
 
+  /** whether to ignore updates. */
+  protected boolean m_IgnoreUpdates;
+
   /**
    * Initializes the layer manager using split layers.
    *
@@ -106,6 +109,7 @@ public class LayerManager
     m_Zoom            = 1.0;
     m_RedoBestFit     = false;
     m_BestFitRedone   = new HashSet<>();
+    m_IgnoreUpdates   = false;
     m_Undo            = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
     m_Undo.setMaxUndo(20);
@@ -129,6 +133,34 @@ public class LayerManager
    */
   public boolean getSplitLayers() {
     return m_SplitLayers;
+  }
+
+  /**
+   * Whether a larger update is to start and updates should be ignored since an explicit update()
+   * call will occur.
+   */
+  public void startUpdate() {
+    m_IgnoreUpdates = true;
+  }
+
+  /**
+   * Reenables automatic updatesagain.
+   *
+   * @param update 	whether to trigger an update
+   */
+  public void finishUpdate(boolean update) {
+    m_IgnoreUpdates = false;
+    if (update)
+      update();
+  }
+
+  /**
+   * Returns whether updates are currently ignored.
+   *
+   * @return		true if ignored
+   */
+  public boolean ignoreUpdates() {
+    return m_IgnoreUpdates;
   }
 
   /**
@@ -258,11 +290,11 @@ public class LayerManager
 	getCombinedLayer().setState(state);
       }
       else if (state instanceof OverlayLayerState) {
-        ostate = (OverlayLayerState) state;
-        if (hasOverlay(ostate.name))
-          getOverlay(ostate.name).setState(ostate);
-        else
-          addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+	ostate = (OverlayLayerState) state;
+	if (hasOverlay(ostate.name))
+	  getOverlay(ostate.name).setState(ostate);
+	else
+	  addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
       }
     }
 
@@ -303,11 +335,11 @@ public class LayerManager
 	getCombinedLayer().setSettings(state);
       }
       else if (state instanceof OverlayLayerState) {
-        ostate = (OverlayLayerState) state;
-        if (hasOverlay(ostate.name))
-          getOverlay(ostate.name).setSettings(ostate);
-        else
-          addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+	ostate = (OverlayLayerState) state;
+	if (hasOverlay(ostate.name))
+	  getOverlay(ostate.name).setSettings(ostate);
+	else
+	  addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
       }
     }
 
@@ -355,7 +387,7 @@ public class LayerManager
 
   /**
    * Returns the zoom in use.
-   * 
+   *
    * @return		the zoom (1.0 = 100%)
    */
   public double getZoom() {
@@ -481,8 +513,8 @@ public class LayerManager
 
     for (OverlayLayer l: m_Overlays) {
       if (l.getName().equals(name)) {
-        result = l;
-        break;
+	result = l;
+	break;
       }
     }
 
@@ -580,8 +612,8 @@ public class LayerManager
     index = -1;
     for (i = 0; i < m_Overlays.size(); i++) {
       if (m_Overlays.get(i).getName().equals(name)) {
-        index = i;
-        break;
+	index = i;
+	break;
       }
     }
 
@@ -629,8 +661,8 @@ public class LayerManager
 
     for (OverlayLayer l: m_Overlays) {
       if (l.getName().equals(name)) {
-        result = l;
-        break;
+	result = l;
+	break;
       }
     }
 
@@ -710,7 +742,7 @@ public class LayerManager
   public OverlayLayer getActiveOverlay() {
     for (OverlayLayer l: m_Overlays) {
       if (l.isActive() && l.isEnabled())
-        return l;
+	return l;
     }
     return null;
   }
@@ -742,7 +774,7 @@ public class LayerManager
     getImageLayer().draw(g2d);
     if (getSplitLayers()) {
       for (OverlayLayer l : getOverlays())
-        l.draw(g2d);
+	l.draw(g2d);
     }
     else {
       getCombinedLayer().draw(g2d);
@@ -782,6 +814,8 @@ public class LayerManager
    * Notifies all change listeners and triggers a repaint.
    */
   public void update() {
+    if (m_IgnoreUpdates)
+      return;
     notifyChangeListeners();
     repaint();
   }

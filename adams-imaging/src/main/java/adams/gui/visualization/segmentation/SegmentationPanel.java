@@ -660,7 +660,7 @@ public class SegmentationPanel
   public void fromContainer(ImageSegmentationContainer segcont, ContainerSettings contSettings,
 			    List<AbstractLayer.AbstractLayerState> lastSettings, LoggingObject logger) {
     fromContainer(
-        segcont, contSettings.labels, contSettings.useSeparateLayers, contSettings.colorProvider,
+	segcont, contSettings.labels, contSettings.useSeparateLayers, contSettings.colorProvider,
 	contSettings.alpha, contSettings.allowLayerRemoval, contSettings.allowLayerActions,
 	contSettings.layerVisibility, lastSettings, logger);
   }
@@ -698,6 +698,7 @@ public class SegmentationPanel
 
     colorProvider.resetColors();
     getManager().clear();
+    getManager().startUpdate();
     getManager().setImage(
 	segcont.getValue(ImageSegmentationContainer.VALUE_NAME, String.class),
 	segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
@@ -770,6 +771,7 @@ public class SegmentationPanel
       }
     }
 
+    getManager().finishUpdate(false);
     update();
   }
 
@@ -808,6 +810,33 @@ public class SegmentationPanel
     result.setValue(ImageSegmentationContainer.VALUE_LAYERS, layers);
 
     return result;
+  }
+
+  /**
+   * Returns the underlying canvas panel.
+   *
+   * @return		the canvas
+   */
+  public CanvasPanel getCanvasPanel() {
+    return m_PanelCanvas;
+  }
+
+  /**
+   * Hides or shows the tools panel.
+   *
+   * @param value	true if to show
+   */
+  public void setToolPanelVisible(boolean value) {
+    m_SplitPaneRight.setRightComponentHidden(!value);
+  }
+
+  /**
+   * Returns whether the tools panel is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isToolPanelVisible() {
+    return !m_SplitPaneRight.isRightComponentHidden();
   }
 
   /**

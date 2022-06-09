@@ -15,7 +15,7 @@
 
 /*
  * OverlayLayer.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -403,6 +403,8 @@ public class OverlayLayer
    * Notifies the change listeners.
    */
   protected void update() {
+    if ((m_Manager != null) && m_Manager.ignoreUpdates())
+      return;
     setApplyButtonState(m_ButtonApply, false);
     super.update();
   }
