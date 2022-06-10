@@ -297,7 +297,7 @@ public class SegmentationPanel
 
     m_PanelLayers = new BasePanel();
     m_PanelLayers.setBorder(BorderFactory.createTitledBorder("Layers"));
-    m_PanelLeft.add(m_PanelLayers, BorderLayout.CENTER);
+    m_PanelLeft.add(new BaseScrollPane(m_PanelLayers), BorderLayout.CENTER);
 
     // right
     m_SplitPaneRight = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
