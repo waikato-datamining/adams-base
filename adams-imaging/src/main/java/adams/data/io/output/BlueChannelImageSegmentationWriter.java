@@ -73,26 +73,6 @@ public class BlueChannelImageSegmentationWriter
   }
 
   /**
-   * Returns the extension(s) of the format.
-   *
-   * @return the extension (without the dot!)
-   */
-  @Override
-  public String[] getFormatExtensions() {
-    return new BlueChannelImageSegmentationReader().getFormatExtensions();
-  }
-
-  /**
-   * Returns the default extension of the format.
-   *
-   * @return the default extension (without the dot!)
-   */
-  @Override
-  public String getDefaultFormatExtension() {
-    return new BlueChannelImageSegmentationReader().getDefaultFormatExtension();
-  }
-
-  /**
    * Writes the image segmentation annotations.
    *
    * @param file        the file to write to

@@ -71,6 +71,25 @@ public abstract class AbstractPNGAnnotationImageSegmentationWriter
   public BaseString[] getLayerNames() {
     return m_LayerNames;
   }
+  /**
+   * Returns the extension(s) of the format.
+   *
+   * @return the extension (without the dot!)
+   */
+  @Override
+  public String[] getFormatExtensions() {
+    return new String[]{"jpg"};
+  }
+
+  /**
+   * Returns the default extension of the format.
+   *
+   * @return the default extension (without the dot!)
+   */
+  @Override
+  public String getDefaultFormatExtension() {
+    return "jpg";
+  }
 
   /**
    * Returns the tip text for this property.

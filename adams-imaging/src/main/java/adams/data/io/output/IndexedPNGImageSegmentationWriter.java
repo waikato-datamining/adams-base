@@ -122,26 +122,6 @@ public class IndexedPNGImageSegmentationWriter
   }
 
   /**
-   * Returns the extension(s) of the format.
-   *
-   * @return the extension (without the dot!)
-   */
-  @Override
-  public String[] getFormatExtensions() {
-    return new IndexedPNGImageSegmentationReader().getFormatExtensions();
-  }
-
-  /**
-   * Returns the default extension of the format.
-   *
-   * @return the default extension (without the dot!)
-   */
-  @Override
-  public String getDefaultFormatExtension() {
-    return new IndexedPNGImageSegmentationReader().getDefaultFormatExtension();
-  }
-
-  /**
    * Writes the image segmentation annotations.
    *
    * @param file        the file to write to
