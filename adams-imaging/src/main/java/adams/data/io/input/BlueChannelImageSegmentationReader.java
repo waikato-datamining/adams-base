@@ -15,13 +15,12 @@
 
 /*
  * BlueChannelImageSegmentationReader.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
 import adams.core.Utils;
-import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
@@ -45,16 +44,9 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BlueChannelImageSegmentationReader
-  extends AbstractImageSegmentationAnnotationReader
-  implements ImageSegmentationAnnotationReaderWithLayerNames {
+  extends AbstractPNGAnnotationImageSegmentationReader {
 
   private static final long serialVersionUID = -5567473437385041915L;
-
-  /** whether to skip the first layer (usually background). */
-  protected boolean m_SkipFirstLayer;
-
-  /** the layer names. */
-  protected BaseString[] m_LayerNames;
 
   /**
    * Returns a string describing the object.
@@ -64,80 +56,6 @@ public class BlueChannelImageSegmentationReader
   @Override
   public String globalInfo() {
     return "The layers are stored in the blue channel, with 0 being the background.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "skip-first-layer", "skipFirstLayer",
-      true);
-
-    m_OptionManager.add(
-      "layer-name", "layerNames",
-      new BaseString[0]);
-  }
-
-  /**
-   * Sets whether to skip the first layer.
-   *
-   * @param value	true if to skip
-   */
-  public void setSkipFirstLayer(boolean value) {
-    m_SkipFirstLayer = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to skip the first layer.
-   *
-   * @return		true if to skip
-   */
-  public boolean getSkipFirstLayer() {
-    return m_SkipFirstLayer;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String skipFirstLayerTipText() {
-    return "If enabled, the first layer gets skipped (usually the background).";
-  }
-
-  /**
-   * Sets the names for the layers to use.
-   *
-   * @param value	the names
-   */
-  public void setLayerNames(BaseString[] value) {
-    m_LayerNames = value;
-    reset();
-  }
-
-  /**
-   * Returns the names for the layers to use.
-   *
-   * @return		the names
-   */
-  public BaseString[] getLayerNames() {
-    return m_LayerNames;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String layerNamesTipText() {
-    return "The names to use for the layers; if additional layers should be present in the data, names get assigned automatically.";
   }
 
   /**
@@ -159,48 +77,6 @@ public class BlueChannelImageSegmentationReader
   @Override
   public String getFormatDescription() {
     return "Blue channel image segmentation";
-  }
-
-  /**
-   * Returns the extension(s) of the format.
-   *
-   * @return the extension (without the dot!)
-   */
-  @Override
-  public String[] getFormatExtensions() {
-    return new String[]{"jpg"};
-  }
-
-  /**
-   * Returns the default extension of the format.
-   *
-   * @return the default extension (without the dot!)
-   */
-  @Override
-  public String getDefaultFormatExtension() {
-    return "jpg";
-  }
-
-  /**
-   * Hook method for performing checks before reading the data.
-   *
-   * @param file	the file to check
-   * @return		null if no errors, otherwise error message
-   */
-  @Override
-  protected String check(PlaceholderFile file) {
-    String	result;
-    File	png;
-
-    result = super.check(file);
-
-    if (result == null) {
-      png = FileUtils.replaceExtension(file, ".png");
-      if (!png.exists())
-        result = "Associated PNG file with annotations is missing!";
-    }
-
-    return result;
   }
 
   /**

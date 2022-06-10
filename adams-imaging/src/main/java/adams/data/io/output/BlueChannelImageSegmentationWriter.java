@@ -15,13 +15,12 @@
 
 /*
  * BlueChannelImageSegmentationWriter.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
 
 import adams.core.base.BaseObject;
-import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.BlueChannelImageSegmentationReader;
@@ -38,13 +37,9 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BlueChannelImageSegmentationWriter
-  extends AbstractImageSegmentationAnnotationWriter
-  implements ImageSegmentationAnnotationWriterWithLayerNames {
+  extends AbstractPNGAnnotationImageSegmentationWriter {
 
   private static final long serialVersionUID = 3566330074754565825L;
-
-  /** the layer names. */
-  protected BaseString[] m_LayerNames;
 
   /**
    * Returns a string describing the object.
@@ -54,47 +49,6 @@ public class BlueChannelImageSegmentationWriter
   @Override
   public String globalInfo() {
     return "The layers get stored in the blue channel, with 0 being the background.";
-  }
-
-  /**
-   * Adds options to the internal list of options.
-   */
-  @Override
-  public void defineOptions() {
-    super.defineOptions();
-
-    m_OptionManager.add(
-      "layer-name", "layerNames",
-      new BaseString[0]);
-  }
-
-  /**
-   * Sets the names for the layers to use; outputs all if none specified.
-   *
-   * @param value	the names
-   */
-  public void setLayerNames(BaseString[] value) {
-    m_LayerNames = value;
-    reset();
-  }
-
-  /**
-   * Returns the names for the layers to use; outputs all if none specified.
-   *
-   * @return		the names
-   */
-  public BaseString[] getLayerNames() {
-    return m_LayerNames;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String layerNamesTipText() {
-    return "The names to of the layers to output; outputs all if none specified.";
   }
 
   /**
@@ -136,29 +90,6 @@ public class BlueChannelImageSegmentationWriter
   @Override
   public String getDefaultFormatExtension() {
     return new BlueChannelImageSegmentationReader().getDefaultFormatExtension();
-  }
-
-  /**
-   * Hook method for performing checks before writing the data.
-   *
-   * @param file	the file to check
-   * @param annotations the annotations to write
-   * @return		null if no errors, otherwise error message
-   */
-  @Override
-  protected String check(PlaceholderFile file, ImageSegmentationContainer annotations) {
-    String			result;
-    Map<String,BufferedImage> 	layers;
-
-    result = super.check(file, annotations);
-
-    if (result == null) {
-      layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
-      if ((layers == null) || (layers.size() == 0))
-        result = "No layers in container!";
-    }
-
-    return result;
   }
 
   /**
