@@ -27,13 +27,13 @@ import adams.core.io.PlaceholderFile;
 import java.io.File;
 
 /**
- * Ancestor for readers that store the annotations in a single PNG file.
+ * Ancestor for readers that read the annotations from a single PNG file.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractPNGAnnotationImageSegmentationReader
-  extends AbstractImageSegmentationAnnotationReader
-  implements ImageSegmentationAnnotationReaderWithLayerNames {
+    extends AbstractImageSegmentationAnnotationReader
+    implements ImageSegmentationAnnotationReaderWithLayerNames {
 
   private static final long serialVersionUID = -5567473437385041915L;
 
@@ -51,12 +51,12 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
     super.defineOptions();
 
     m_OptionManager.add(
-      "skip-first-layer", "skipFirstLayer",
-      true);
+	"skip-first-layer", "skipFirstLayer",
+	true);
 
     m_OptionManager.add(
-      "layer-name", "layerNames",
-      new BaseString[0]);
+	"layer-name", "layerNames",
+	new BaseString[0]);
   }
 
   /**
@@ -138,6 +138,26 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
   }
 
   /**
+   * Locates the PNG annotation file.
+   *
+   * @param file	the JPG file to determine the PNG file for
+   * @return		the PNG file, or null if failed to determine
+   */
+  protected PlaceholderFile locatePNG(PlaceholderFile file) {
+    PlaceholderFile	png;
+
+    png = FileUtils.replaceExtension(file, ".png");
+    if (png.exists())
+      return png;
+
+    png = FileUtils.replaceExtension(file, ".PNG");
+    if (png.exists())
+      return png;
+
+    return null;
+  }
+
+  /**
    * Hook method for performing checks before reading the data.
    *
    * @param file	the file to check
@@ -151,9 +171,9 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
     result = super.check(file);
 
     if (result == null) {
-      png = FileUtils.replaceExtension(file, ".png");
-      if (!png.exists())
-        result = "Associated PNG file with annotations is missing!";
+      png = locatePNG(file);
+      if (png == null)
+	result = "Associated PNG file with annotations is missing!";
     }
 
     return result;

@@ -21,7 +21,6 @@
 package adams.data.io.input;
 
 import adams.core.Utils;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.output.BlueChannelImageSegmentationWriter;
@@ -33,7 +32,6 @@ import gnu.trove.set.hash.TIntHashSet;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +42,7 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BlueChannelImageSegmentationReader
-  extends AbstractPNGAnnotationImageSegmentationReader {
+  extends AbstractCustomPNGAnnotationImageSegmentationReader {
 
   private static final long serialVersionUID = -5567473437385041915L;
 
@@ -88,7 +86,6 @@ public class BlueChannelImageSegmentationReader
   @Override
   protected ImageSegmentationContainer doRead(PlaceholderFile file) {
     ImageSegmentationContainer	result;
-    File			png;
     BufferedImage 		baseImage;
     BufferedImage 		pngImage;
     int[] 			pngPixels;
@@ -104,8 +101,7 @@ public class BlueChannelImageSegmentationReader
     String			layerName;
 
     baseImage     = BufferedImageHelper.read(file).toBufferedImage();
-    png           = FileUtils.replaceExtension(file, ".png");
-    pngImage      = BufferedImageHelper.read(png).toBufferedImage();
+    pngImage      = readPNG(file);
     pngPixels     = BufferedImageHelper.getPixels(pngImage);
     unique        = StatUtils.uniqueValues(pngPixels);
     Arrays.sort(unique);
