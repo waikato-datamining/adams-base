@@ -20,11 +20,14 @@
 
 package adams.data.io.output;
 
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.container.ImageSegmentationContainer;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -33,8 +36,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractPNGAnnotationImageSegmentationWriter
-  extends AbstractImageSegmentationAnnotationWriter
-  implements ImageSegmentationAnnotationWriterWithLayerNames {
+    extends AbstractImageSegmentationAnnotationWriter
+    implements ImageSegmentationAnnotationWriterWithLayerNames {
 
   private static final long serialVersionUID = 3566330074754565825L;
 
@@ -49,8 +52,8 @@ public abstract class AbstractPNGAnnotationImageSegmentationWriter
     super.defineOptions();
 
     m_OptionManager.add(
-      "layer-name", "layerNames",
-      new BaseString[0]);
+	"layer-name", "layerNames",
+	new BaseString[0]);
   }
 
   /**
@@ -71,6 +74,17 @@ public abstract class AbstractPNGAnnotationImageSegmentationWriter
   public BaseString[] getLayerNames() {
     return m_LayerNames;
   }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String layerNamesTipText() {
+    return "The names to of the layers to output; outputs all if none specified.";
+  }
+
   /**
    * Returns the extension(s) of the format.
    *
@@ -92,16 +106,6 @@ public abstract class AbstractPNGAnnotationImageSegmentationWriter
   }
 
   /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String layerNamesTipText() {
-    return "The names to of the layers to output; outputs all if none specified.";
-  }
-
-  /**
    * Hook method for performing checks before writing the data.
    *
    * @param file	the file to check
@@ -118,9 +122,42 @@ public abstract class AbstractPNGAnnotationImageSegmentationWriter
     if (result == null) {
       layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
       if ((layers == null) || (layers.size() == 0))
-        result = "No layers in container!";
+	result = "No layers in container!";
     }
 
     return result;
+  }
+
+  /**
+   * Returns the names of the layers to output.
+   *
+   * @param annotations	the annotations to use as basis
+   * @return		the layer names
+   */
+  protected String[] getLayerNames(ImageSegmentationContainer annotations) {
+    String[] 			result;
+    Map<String,BufferedImage> 	layers;
+
+    layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
+
+    if (m_LayerNames.length == 0) {
+      result = layers.keySet().toArray(new String[0]);
+      Arrays.sort(result);
+    }
+    else {
+      result = BaseObject.toStringArray(m_LayerNames);
+    }
+
+    return result;
+  }
+
+  /**
+   * Generates the annotation file name.
+   *
+   * @param file	the base file name (ie JPG)
+   * @return		the PNG file name
+   */
+  protected PlaceholderFile getAnnotationFile(PlaceholderFile file) {
+    return FileUtils.replaceExtension(file, ".png");
   }
 }

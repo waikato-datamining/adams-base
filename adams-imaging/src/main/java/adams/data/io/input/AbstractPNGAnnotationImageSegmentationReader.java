@@ -52,7 +52,7 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
 
     m_OptionManager.add(
 	"skip-first-layer", "skipFirstLayer",
-	true);
+	false);
 
     m_OptionManager.add(
 	"layer-name", "layerNames",

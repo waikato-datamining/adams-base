@@ -43,9 +43,6 @@ public class IndividualImageSegmentationLayerWriter
 
   private static final long serialVersionUID = 8630734382383387883L;
 
-  /** whether to skip writing base image. */
-  protected boolean m_SkipBaseImage;
-
   /** whether to skip images with only background. */
   protected boolean m_SkipEmptyLayers;
 
@@ -65,10 +62,6 @@ public class IndividualImageSegmentationLayerWriter
   @Override
   public void defineOptions() {
     super.defineOptions();
-
-    m_OptionManager.add(
-	"skip-base-image", "skipBaseImage",
-	false);
 
     m_OptionManager.add(
 	"skip-empty-layers", "skipEmptyLayers",
@@ -117,35 +110,6 @@ public class IndividualImageSegmentationLayerWriter
   }
 
   /**
-   * Sets whether to skip writing the base image.
-   *
-   * @param value 	true if to skip
-   */
-  public void setSkipBaseImage(boolean value) {
-    m_SkipBaseImage = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to skip writing the base image.
-   *
-   * @return 		true if to skip
-   */
-  public boolean getSkipBaseImage() {
-    return m_SkipBaseImage;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String skipBaseImageTipText() {
-    return "If enabled, the base image is not written to disk (eg when updating only the layers).";
-  }
-
-  /**
    * Sets whether to skip writing empty layers (ie only background).
    *
    * @param value 	true if to skip
@@ -179,23 +143,16 @@ public class IndividualImageSegmentationLayerWriter
    *
    * @param image	the image to write
    * @param file	the file to write to
-   * @param binary	whether to make binary
    * @return		null if successful, otherwise error message
    */
-  protected String writeFile(BufferedImage image, PlaceholderFile file, boolean binary) {
+  protected String writeFile(BufferedImage image, PlaceholderFile file) {
     AbstractImageWriter		writer;
     BufferedImageContainer	cont;
 
-    if (binary)
-      image = BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_BINARY);
-
+    image  = BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_BINARY);
     cont   = new BufferedImageContainer();
     cont.setImage(image);
-
-    if (binary)
-      writer = new JAIImageWriter();
-    else
-      writer = new ApacheCommonsImageWriter();
+    writer = new JAIImageWriter();
 
     return writer.write(file, cont);
   }
@@ -236,15 +193,7 @@ public class IndividualImageSegmentationLayerWriter
     result = null;
     prefix = FileUtils.replaceExtension(file.getAbsolutePath(), "");
 
-    if (!m_SkipBaseImage) {
-      if (isLoggingEnabled())
-	getLogger().info("Writing base image to: " + file);
-      result = writeFile(annotations.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class), file, false);
-      if (result != null)
-	result = "Failed to write base image: " + result;
-    }
-
-    if ((result == null) && (annotations.hasValue(ImageSegmentationContainer.VALUE_LAYERS))) {
+    if (annotations.hasValue(ImageSegmentationContainer.VALUE_LAYERS)) {
       layers = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS, Map.class);
       for (String label: layers.keySet()) {
 	if (m_SkipEmptyLayers) {
@@ -257,7 +206,7 @@ public class IndividualImageSegmentationLayerWriter
 	layerFile = new PlaceholderFile(prefix + "-" + label + ".png");
 	if (isLoggingEnabled())
 	  getLogger().info("Writing layer '" + label + "' to: " + layerFile);
-	result = writeFile(layers.get(label), layerFile, true);
+	result = writeFile(layers.get(label), layerFile);
 	if (result != null) {
 	  result = "Failed to write layer '" + label + "': " + result;
 	  break;

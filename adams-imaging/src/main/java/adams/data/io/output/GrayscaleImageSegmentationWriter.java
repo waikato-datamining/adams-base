@@ -14,29 +14,28 @@
  */
 
 /*
- * BlueChannelImageSegmentationWriter.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * GrayscaleImageSegmentationWriter.java
+ * Copyright (C) 2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.BlueChannelImageSegmentationReader;
+import adams.data.io.input.GrayscaleImageSegmentationReader;
 import adams.data.io.input.ImageSegmentationAnnotationReader;
 import adams.flow.container.ImageSegmentationContainer;
 
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
- * The layers get stored in the blue channel, with 0 being the background.
+ * The layers get stored as grayscale values, with 0 being the background.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class BlueChannelImageSegmentationWriter
-  extends AbstractImplicitBackgroundPNGAnnotationImageSegmentationWriter {
+public class GrayscaleImageSegmentationWriter
+    extends AbstractImplicitBackgroundPNGAnnotationImageSegmentationWriter {
 
   private static final long serialVersionUID = 3566330074754565825L;
 
@@ -47,7 +46,7 @@ public class BlueChannelImageSegmentationWriter
    */
   @Override
   public String globalInfo() {
-    return "The layers get stored in the blue channel, with 0 being the background.";
+    return "The layers get stored as grayscale values, with 0 being the background.";
   }
 
   /**
@@ -57,7 +56,7 @@ public class BlueChannelImageSegmentationWriter
    */
   @Override
   public ImageSegmentationAnnotationReader getCorrespondingReader() {
-    return new BlueChannelImageSegmentationReader();
+    return new GrayscaleImageSegmentationReader();
   }
 
   /**
@@ -68,7 +67,7 @@ public class BlueChannelImageSegmentationWriter
    */
   @Override
   public String getFormatDescription() {
-    return new BlueChannelImageSegmentationReader().getFormatDescription();
+    return new GrayscaleImageSegmentationReader().getFormatDescription();
   }
 
   /**
@@ -94,19 +93,18 @@ public class BlueChannelImageSegmentationWriter
     layers     = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
     layerNames = getLayerNames(annotations);
     combPixels = new int[baseImage.getWidth() * baseImage.getHeight()];
-    Arrays.fill(combPixels, 0xFF000000);
     offset     = m_ImplicitBackground ? 1 : 0;
     for (i = 0; i < layerNames.length; i++) {
       if (!layers.containsKey(layerNames[i]))
-        continue;
+	continue;
       currPixels = BufferedImageHelper.getPixels(layers.get(layerNames[i]));
       for (n = 0; n < currPixels.length; n++) {
-        if ((currPixels[n] & 0x00FFFFFF) > 0)
-          combPixels[n] = 0xFF000000 | (i+offset);
+	if ((currPixels[n] & 0x00FFFFFF) > 0)
+	  combPixels[n] = i+offset;
       }
     }
-    combImage = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-    combImage.setRGB(0, 0, combImage.getWidth(), combImage.getHeight(), combPixels, 0, combImage.getWidth());
+    combImage = new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+    combImage.getRaster().setPixels(0, 0, combImage.getWidth(), combImage.getHeight(), combPixels);
 
     return BufferedImageHelper.write(combImage, getAnnotationFile(file));
   }

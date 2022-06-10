@@ -20,7 +20,6 @@
 
 package adams.data.io.output;
 
-import adams.core.base.BaseObject;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.ImageSegmentationAnnotationReader;
@@ -143,13 +142,7 @@ public class IndexedPNGImageSegmentationWriter
 
     baseImage  = (BufferedImage) annotations.getValue(ImageSegmentationContainer.VALUE_BASE);
     layers     = (Map<String,BufferedImage>) annotations.getValue(ImageSegmentationContainer.VALUE_LAYERS);
-    if (m_LayerNames.length == 0) {
-      layerNames = layers.keySet().toArray(new String[0]);
-      Arrays.sort(layerNames);
-    }
-    else {
-      layerNames = BaseObject.toStringArray(m_LayerNames);
-    }
+    layerNames = getLayerNames(annotations);
     combPixels = new int[baseImage.getWidth() * baseImage.getHeight()];
     black      = Color.BLACK.getRGB();
     Arrays.fill(combPixels, black);
@@ -168,6 +161,6 @@ public class IndexedPNGImageSegmentationWriter
     combImage.setRGB(0, 0, combImage.getWidth(), combImage.getHeight(), combPixels, 0, combImage.getWidth());
     combImage = BufferedImageHelper.convert(combImage, BufferedImage.TYPE_BYTE_INDEXED);
 
-    return BufferedImageHelper.write(combImage, file);
+    return BufferedImageHelper.write(combImage, getAnnotationFile(file));
   }
 }
