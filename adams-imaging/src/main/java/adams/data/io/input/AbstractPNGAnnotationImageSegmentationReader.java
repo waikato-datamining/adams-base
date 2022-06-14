@@ -20,11 +20,17 @@
 
 package adams.data.io.input;
 
+import adams.core.LenientModeSupporter;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.image.BufferedImageHelper;
+import adams.flow.container.ImageSegmentationContainer;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Ancestor for readers that read the annotations from a single PNG file.
@@ -33,7 +39,7 @@ import java.io.File;
  */
 public abstract class AbstractPNGAnnotationImageSegmentationReader
     extends AbstractImageSegmentationAnnotationReader
-    implements ImageSegmentationAnnotationReaderWithLayerNames {
+    implements ImageSegmentationAnnotationReaderWithLayerNames, LenientModeSupporter {
 
   private static final long serialVersionUID = -5567473437385041915L;
 
@@ -42,6 +48,9 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
 
   /** the layer names. */
   protected BaseString[] m_LayerNames;
+
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
 
   /**
    * Adds options to the internal list of options.
@@ -57,6 +66,10 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
     m_OptionManager.add(
 	"layer-name", "layerNames",
 	new BaseString[0]);
+
+    m_OptionManager.add(
+	"lenient", "lenient",
+	false);
   }
 
   /**
@@ -118,6 +131,35 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
   }
 
   /**
+   * Sets whether lenient, ie the associated PNG does not have to exist.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value){
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie the associated PNG does not have to exist.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient(){
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, the associated PNG does not have to exist.";
+  }
+
+  /**
    * Returns the extension(s) of the format.
    *
    * @return the extension (without the dot!)
@@ -171,11 +213,54 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
     result = super.check(file);
 
     if (result == null) {
-      png = locatePNG(file);
-      if (png == null)
-	result = "Associated PNG file with annotations is missing!";
+      if (!m_Lenient) {
+	png = locatePNG(file);
+	if (png == null)
+	  result = "Associated PNG file with annotations is missing!";
+      }
     }
 
     return result;
+  }
+
+  /**
+   * Creates a container with the base image and no layers.
+   *
+   * @param file	the base image to load
+   * @return		the container
+   */
+  protected ImageSegmentationContainer newContainer(PlaceholderFile file) {
+    ImageSegmentationContainer 	result;
+    String			name;
+    BufferedImage 		base;
+    Map<String,BufferedImage> 	layers;
+
+    name   = file.getName();
+    base   = BufferedImageHelper.read(file).toBufferedImage();
+    layers = new HashMap<>();
+    result = new ImageSegmentationContainer(name, base, layers);
+
+    return result;
+  }
+
+  /**
+   * Reads the image segmentation annotations.
+   *
+   * @param file	the file to read from
+   * @return		the annotations
+   */
+  protected abstract ImageSegmentationContainer doReadLayers(PlaceholderFile file);
+
+  /**
+   * Reads the image segmentation annotations.
+   *
+   * @param file	the file to read from
+   * @return		the annotations
+   */
+  protected ImageSegmentationContainer doRead(PlaceholderFile file) {
+    if (locatePNG(file) == null)
+      return newContainer(file);
+    else
+      return doReadLayers(file);
   }
 }

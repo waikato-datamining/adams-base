@@ -84,7 +84,7 @@ public class GrayscaleImageSegmentationReader
    * @return the annotations
    */
   @Override
-  protected ImageSegmentationContainer doRead(PlaceholderFile file) {
+  protected ImageSegmentationContainer doReadLayers(PlaceholderFile file) {
     ImageSegmentationContainer	result;
     BufferedImage 		baseImage;
     BufferedImage 		pngImage;

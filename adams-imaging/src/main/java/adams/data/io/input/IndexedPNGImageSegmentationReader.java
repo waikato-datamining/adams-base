@@ -180,7 +180,7 @@ public class IndexedPNGImageSegmentationReader
    * @return the annotations
    */
   @Override
-  protected ImageSegmentationContainer doRead(PlaceholderFile file) {
+  protected ImageSegmentationContainer doReadLayers(PlaceholderFile file) {
     ImageSegmentationContainer	result;
     File			png;
     BufferedImage 		baseImage;
