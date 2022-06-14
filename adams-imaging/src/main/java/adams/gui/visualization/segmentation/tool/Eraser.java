@@ -156,10 +156,10 @@ public class Eraser
     for (Point p: points) {
       x = (int) (p.getX() - m_Size / 2);
       y = (int) (p.getY() - m_Size / 2);
-      rangeX[0] = Math.min(x, rangeX[0]);
-      rangeX[1] = Math.max(x, rangeX[1]);
-      rangeY[0] = Math.min(y, rangeY[0]);
-      rangeY[1] = Math.max(y, rangeY[1]);
+      rangeX[0] = Math.min((int) (x / zoom), rangeX[0]);
+      rangeX[1] = Math.max((int) ((x + m_Size) / zoom), rangeX[1]);
+      rangeY[0] = Math.min((int) (y / zoom), rangeY[0]);
+      rangeY[1] = Math.max((int) ((y + m_Size) / zoom), rangeY[1]);
       if (m_RadioRound.isSelected())
 	g2d.fillOval(x, y, m_Size - 1, m_Size - 1);
       else
