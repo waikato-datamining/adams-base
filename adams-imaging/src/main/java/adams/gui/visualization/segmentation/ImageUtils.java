@@ -117,6 +117,16 @@ public class ImageUtils {
     int			x;
     int			y;
 
+    // ensure valid coordinates
+    if (rangeX[0] < 0)
+      rangeX[0] = 0;
+    if (rangeX[1] >= image.getWidth())
+      rangeX[1] = image.getWidth() - 1;
+    if (rangeY[0] < 0)
+      rangeY[0] = 0;
+    if (rangeY[1] >= image.getHeight())
+      rangeY[1] = image.getHeight() - 1;
+
     oldC     = oldColor.getRGB();
     newC     = newColor.getRGB();
     pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
