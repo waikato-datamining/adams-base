@@ -54,7 +54,7 @@ public interface Overlay
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String prefixTipText();
+  public String enabledTipText();
 
   /**
    * Paints the overlay.

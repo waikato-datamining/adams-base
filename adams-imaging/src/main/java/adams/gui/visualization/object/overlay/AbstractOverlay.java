@@ -79,7 +79,7 @@ public abstract class AbstractOverlay
    * 			displaying in the GUI or for listing the options.
    */
   @Override
-  public String prefixTipText() {
+  public String enabledTipText() {
     return "Determines whether the overlay is enabled or not.";
   }
 
