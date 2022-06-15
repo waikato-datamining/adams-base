@@ -15,7 +15,7 @@
 
 /*
  * IndividualImageSegmentationLayerReader.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -197,7 +197,7 @@ public class IndividualImageSegmentationLayerReader
           else
             getLogger().warning("Image transformer did not generate any output, falling back to original data (" + file + ")!");
 	}
-	layers.put(layer, cont.toBufferedImage());
+	layers.put(layer, BufferedImageHelper.convert(cont.toBufferedImage(), BufferedImage.TYPE_INT_ARGB));
       }
     }
 
