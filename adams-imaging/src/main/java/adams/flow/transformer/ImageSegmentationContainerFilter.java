@@ -15,12 +15,13 @@
 
 /*
  * ImageSegmentationContainerFilter.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.InPlaceProcessing;
 import adams.data.imagesegmentation.filter.AbstractImageSegmentationContainerFilter;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
@@ -34,9 +35,12 @@ import adams.flow.core.Token;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.ImageSegmentationContainer[]<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.ImageSegmentationContainer<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.container.ImageSegmentationContainer[]<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.ImageSegmentationContainer<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.ImageSegmentationContainer: name, base, layers
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -75,9 +79,14 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-filter &lt;adams.data.image.imagesegmentationcontainer.AbstractImageSegmentationContainerFilter&gt; (property: filter)
+ * <pre>-filter &lt;adams.data.imagesegmentation.filter.AbstractImageSegmentationContainerFilter&gt; (property: filter)
  * &nbsp;&nbsp;&nbsp;The filter to apply to the containers.
- * &nbsp;&nbsp;&nbsp;default: adams.data.image.imagesegmentationcontainer.PassThrough
+ * &nbsp;&nbsp;&nbsp;default: adams.data.imagesegmentation.filter.PassThrough
+ * </pre>
+ *
+ * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
+ * &nbsp;&nbsp;&nbsp;If enabled, no copy of the map is created before filtering.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
@@ -85,13 +94,17 @@ import adams.flow.core.Token;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationContainerFilter
-  extends AbstractTransformer {
+    extends AbstractTransformer
+    implements InPlaceProcessing {
 
   /** for serialization. */
   private static final long serialVersionUID = 3690378527551302472L;
 
   /** the transformer to apply to the container. */
   protected AbstractImageSegmentationContainerFilter m_Filter;
+
+  /** whether to skip creating a copy of the container. */
+  protected boolean m_NoCopy;
 
   /**
    * Returns a string describing the object.
@@ -101,8 +114,8 @@ public class ImageSegmentationContainerFilter
   @Override
   public String globalInfo() {
     return
-      "Applies a Image Segmentation container filter to the incoming "
-	+ "container(s) and outputs the generated data.";
+        "Applies a Image Segmentation container filter to the incoming "
+            + "container(s) and outputs the generated data.";
   }
 
   /**
@@ -113,8 +126,12 @@ public class ImageSegmentationContainerFilter
     super.defineOptions();
 
     m_OptionManager.add(
-      "filter", "filter",
-      new adams.data.imagesegmentation.filter.PassThrough());
+        "filter", "filter",
+        new adams.data.imagesegmentation.filter.PassThrough());
+
+    m_OptionManager.add(
+        "no-copy", "noCopy",
+        false);
   }
 
   /**
@@ -147,13 +164,47 @@ public class ImageSegmentationContainerFilter
   }
 
   /**
+   * Sets whether to skip creating a copy of the map before filtering.
+   *
+   * @param value	true if to skip creating copy
+   */
+  public void setNoCopy(boolean value) {
+    m_NoCopy = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip creating a copy of the map before filtering.
+   *
+   * @return		true if copying is skipped
+   */
+  public boolean getNoCopy() {
+    return m_NoCopy;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String noCopyTipText() {
+    return "If enabled, no copy of the container is created before filtering.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "filter", m_Filter);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "filter", m_Filter, "filter: ");
+    result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no-copy", ", ");
+
+    return result;
   }
 
   /**
@@ -190,10 +241,12 @@ public class ImageSegmentationContainerFilter
     result = null;
 
     try {
-      input  = (ImageSegmentationContainer) m_InputToken.getPayload();
+      input = (ImageSegmentationContainer) m_InputToken.getPayload();
+      if (!m_NoCopy)
+        input = input.getClone();
       output = m_Filter.filter(input);
       if (output != null)
-	m_OutputToken = new Token(output);
+        m_OutputToken = new Token(output);
     }
     catch (Exception e) {
       result = handleException("Failed to filter container: ", e);
