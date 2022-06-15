@@ -20,8 +20,11 @@
 
 package adams.flow.container;
 
+import adams.data.image.BufferedImageHelper;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -132,5 +135,33 @@ public class ImageSegmentationContainer
    */
   public Map<String,BufferedImage> getLayers() {
     return (Map<String,BufferedImage>) getValue(VALUE_LAYERS);
+  }
+
+  /**
+   * Returns a clone of itself.
+   *
+   * @return		the clone
+   */
+  @Override
+  public ImageSegmentationContainer getClone() {
+    ImageSegmentationContainer  result;
+    Map<String,BufferedImage>	layers;
+
+    result = new ImageSegmentationContainer();
+
+    if (hasValue(VALUE_NAME))
+      result.setValue(VALUE_NAME, getValue(VALUE_NAME));
+
+    if (hasValue(VALUE_BASE))
+      result.setValue(VALUE_BASE, BufferedImageHelper.deepCopy(getBaseImage()));
+
+    if (hasValue(VALUE_LAYERS)) {
+      layers = new HashMap<>();
+      for (String layer: getLayers().keySet())
+        layers.put(layer, BufferedImageHelper.deepCopy(getLayers().get(layer)));
+      result.setValue(VALUE_LAYERS, layers);
+    }
+
+    return result;
   }
 }
