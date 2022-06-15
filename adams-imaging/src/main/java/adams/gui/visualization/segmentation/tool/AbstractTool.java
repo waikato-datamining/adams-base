@@ -29,6 +29,7 @@ import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
+import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.BorderFactory;
@@ -105,6 +106,19 @@ public abstract class AbstractTool
    */
   public CanvasPanel getCanvas() {
     return m_PanelCanvas;
+  }
+
+  /**
+   * Returns the layer manager.
+   *
+   * @return		the layer manager, null if not available
+   */
+  public LayerManager getLayerManager() {
+    if (m_PanelCanvas == null)
+      return null;
+    if (m_PanelCanvas.getOwner() == null)
+      return null;
+    return m_PanelCanvas.getOwner().getManager();
   }
 
   /**
@@ -375,5 +389,11 @@ public abstract class AbstractTool
       m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
     }
     return m_PanelFullOptions;
+  }
+
+  /**
+   * Hook method for when new annotations have been set.
+   */
+  public void annotationsChanged() {
   }
 }

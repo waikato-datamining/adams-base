@@ -72,6 +72,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -175,6 +176,9 @@ public class SegmentationPanel
   /** the tools panel. */
   protected BasePanel m_PanelTools;
 
+  /** the tools. */
+  protected List<AbstractTool> m_Tools;
+
   /** the split pane for the tools. */
   protected BaseSplitPane m_SplitPaneTools;
 
@@ -216,6 +220,7 @@ public class SegmentationPanel
     m_LastMouseMotionListener = null;
     m_ActiveTool              = null;
     m_ContainerSettings       = null;
+    m_Tools                   = new ArrayList<>();
   }
 
   /**
@@ -286,6 +291,9 @@ public class SegmentationPanel
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     panel.add(m_ButtonRedo);
 
+    m_PanelCanvas = new CanvasPanel();
+    m_PanelCanvas.setOwner(this);
+
     // left
     m_SplitPaneLeft = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
     m_SplitPaneLeft.setResizeWeight(0.0);
@@ -349,6 +357,7 @@ public class SegmentationPanel
 	else {
 	  m_PanelToolButtons.add(button);
 	}
+	m_Tools.add(tool);
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
@@ -358,8 +367,6 @@ public class SegmentationPanel
     // center
     m_PanelCenter = new BasePanel(new BorderLayout());
     m_SplitPaneRight.setLeftComponent(m_PanelCenter);
-    m_PanelCanvas = new CanvasPanel();
-    m_PanelCanvas.setOwner(this);
     m_ScrollPane = new BaseScrollPane(m_PanelCanvas);
     m_PanelCenter.add(m_ScrollPane);
     m_Manager = new LayerManager(m_PanelCanvas);
@@ -476,6 +483,14 @@ public class SegmentationPanel
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Notifies the tools that annotations have changed.
+   */
+  protected void notifyTools() {
+    for (AbstractTool tool: m_Tools)
+      tool.annotationsChanged();
   }
 
   /**
@@ -772,6 +787,7 @@ public class SegmentationPanel
     }
 
     getManager().finishUpdate(false);
+    notifyTools();
     update();
   }
 
