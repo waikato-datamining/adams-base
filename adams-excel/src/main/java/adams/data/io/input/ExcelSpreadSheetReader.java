@@ -15,7 +15,7 @@
 
 /*
  * ExcelSpreadSheetReader.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -28,8 +28,9 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -206,7 +207,7 @@ public class ExcelSpreadSheetReader
     adams.data.spreadsheet.Row	spRow;
     int 			i;
     int				n;
-    int				cellType;
+    CellType 			cellType;
     DateFormat			dformat;
     boolean			numeric;
     int                 	dataRowStart;
@@ -274,13 +275,13 @@ public class ExcelSpreadSheetReader
 		}
 		numeric = !m_TextColumns.isInRange(i);
 		switch (exCell.getCellType()) {
-		  case Cell.CELL_TYPE_BLANK:
-		  case Cell.CELL_TYPE_ERROR:
+		  case BLANK:
+		  case ERROR:
 		    spRow.addCell("" + (i + 1)).setContent("column-" + (i + 1));
 		    break;
-		  case Cell.CELL_TYPE_NUMERIC:
-		    if (HSSFDateUtil.isCellDateFormatted(exCell))
-		      spRow.addCell("" + (i + 1)).setContent(new DateTime(HSSFDateUtil.getJavaDate(exCell.getNumericCellValue())));
+		  case NUMERIC:
+		    if (DateUtil.isCellDateFormatted(exCell))
+		      spRow.addCell("" + (i + 1)).setContent(new DateTime(DateUtil.getJavaDate(exCell.getNumericCellValue())));
 		    else if (numeric)
 		      spRow.addCell("" + (i + 1)).setContent(exCell.getNumericCellValue());
 		    else
@@ -321,20 +322,20 @@ public class ExcelSpreadSheetReader
 		continue;
 	      }
 	      cellType = exCell.getCellType();
-	      if (cellType == Cell.CELL_TYPE_FORMULA)
+	      if (cellType == CellType.FORMULA)
 		cellType = exCell.getCachedFormulaResultType();
 	      numeric = !m_TextColumns.isInRange(n);
 	      switch (cellType) {
-		case Cell.CELL_TYPE_BLANK:
-		case Cell.CELL_TYPE_ERROR:
+		case BLANK:
+		case ERROR:
 		  if (m_MissingValue.isEmpty())
 		    spRow.addCell(n).setMissing();
 		  else
 		    spRow.addCell(n).setContent("");
 		  break;
-		case Cell.CELL_TYPE_NUMERIC:
-		  if (HSSFDateUtil.isCellDateFormatted(exCell))
-		    spRow.addCell(n).setContent(dformat.format(HSSFDateUtil.getJavaDate(exCell.getNumericCellValue())));
+		case NUMERIC:
+		  if (DateUtil.isCellDateFormatted(exCell))
+		    spRow.addCell(n).setContent(dformat.format(DateUtil.getJavaDate(exCell.getNumericCellValue())));
 		  else if (numeric)
 		    spRow.addCell(n).setContent(exCell.getNumericCellValue());
 		  else
