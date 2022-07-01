@@ -15,7 +15,7 @@
 
 /*
  * MemoryMonitor.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -641,5 +641,15 @@ public class MemoryMonitor
       m_Sampler = null;
     }
     super.stopExecution();
+  }
+
+  /**
+   * Cleans up after the execution has finished. Graphical output is left
+   * untouched.
+   */
+  @Override
+  public void wrapUp() {
+    stopExecution();
+    super.wrapUp();
   }
 }
