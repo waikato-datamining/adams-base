@@ -29,6 +29,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.Undo;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -191,6 +192,13 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
+ * <pre>-max-undo &lt;int&gt; (property: maxUndo)
+ * &nbsp;&nbsp;&nbsp;The maximum undo steps to allow, use &lt;=0 for unlimited (CAUTION: uses copies
+ * &nbsp;&nbsp;&nbsp;of images in memory).
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  * <pre>-zoom &lt;double&gt; (property: zoom)
  * &nbsp;&nbsp;&nbsp;The zoom level in percent.
  * &nbsp;&nbsp;&nbsp;default: 100.0
@@ -230,8 +238,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationAnnotator
-  extends AbstractInteractiveTransformerDialog
-  implements ColorProviderHandler {
+    extends AbstractInteractiveTransformerDialog
+    implements ColorProviderHandler {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -259,6 +267,9 @@ public class ImageSegmentationAnnotator
   /** whether to use automatic undo. */
   protected boolean m_AutomaticUndo;
 
+  /** the maximum undo steps. */
+  protected int m_MaxUndo;
+
   /** the zoom level. */
   protected double m_Zoom;
 
@@ -276,7 +287,7 @@ public class ImageSegmentationAnnotator
 
   /** whether layer actions are available (when using separate layers). */
   protected boolean m_AllowLayerActions;
-  
+
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
@@ -307,56 +318,60 @@ public class ImageSegmentationAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-      "label", "labels",
-      new BaseString[0]);
+	"label", "labels",
+	new BaseString[0]);
 
     m_OptionManager.add(
-      "color-provider", "colorProvider",
-      new DefaultColorProvider());
+	"color-provider", "colorProvider",
+	new DefaultColorProvider());
 
     m_OptionManager.add(
-      "alpha", "alpha",
-      0.5f, 0.0f, 1.0f);
+	"alpha", "alpha",
+	0.5f, 0.0f, 1.0f);
 
     m_OptionManager.add(
-      "left-divider-location", "leftDividerLocation",
-      280, 1, null);
+	"left-divider-location", "leftDividerLocation",
+	280, 1, null);
 
     m_OptionManager.add(
-      "right-divider-location", "rightDividerLocation",
-      650, 1, null);
+	"right-divider-location", "rightDividerLocation",
+	650, 1, null);
 
     m_OptionManager.add(
-      "tool-button-columns", "toolButtonColumns",
-      4, 1, null);
+	"tool-button-columns", "toolButtonColumns",
+	4, 1, null);
 
     m_OptionManager.add(
-      "automatic-undo", "automaticUndo",
-      true);
+	"automatic-undo", "automaticUndo",
+	true);
 
     m_OptionManager.add(
-      "zoom", "zoom",
-      100.0, 1.0, null);
+	"max-undo", "maxUndo",
+	Undo.DEFAULT_MAX_UNDO, -1, null);
 
     m_OptionManager.add(
-      "best-fit", "bestFit",
-      false);
+	"zoom", "zoom",
+	100.0, 1.0, null);
 
     m_OptionManager.add(
-      "use-separate-layers", "useSeparateLayers",
-      true);
+	"best-fit", "bestFit",
+	false);
 
     m_OptionManager.add(
-      "layer-visibility", "layerVisibility",
-      SegmentationPanel.LayerVisibility.ALL);
+	"use-separate-layers", "useSeparateLayers",
+	true);
 
     m_OptionManager.add(
-      "allow-layer-remove", "allowLayerRemoval",
-      false);
+	"layer-visibility", "layerVisibility",
+	SegmentationPanel.LayerVisibility.ALL);
 
     m_OptionManager.add(
-      "allow-layer-actions", "allowLayerActions",
-      false);
+	"allow-layer-remove", "allowLayerRemoval",
+	false);
+
+    m_OptionManager.add(
+	"allow-layer-actions", "allowLayerActions",
+	false);
   }
 
   /**
@@ -624,6 +639,35 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets whether to allow using the previous report.
+   *
+   * @param value 	true if allowed
+   */
+  public void setMaxUndo(int value) {
+    m_MaxUndo = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum undo steps.
+   *
+   * @return 		the maximum (-1: unlimited, 0: off)
+   */
+  public int getMaxUndo() {
+    return m_MaxUndo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxUndoTipText() {
+    return "The maximum undo steps to allow, use <=0 for unlimited (CAUTION: uses copies of images in memory).";
+  }
+
+  /**
    * Sets the zoom level in percent (1-inf).
    *
    * @param value 	the zoom
@@ -844,6 +888,7 @@ public class ImageSegmentationAnnotator
     m_PanelSegmentation.setRightDividerLocation(m_RightDividerLocation);
     m_PanelSegmentation.setToolButtonColumns(m_ToolButtonColumns);
     m_PanelSegmentation.setAutomaticUndoEnabled(m_AutomaticUndo);
+    m_PanelSegmentation.getUndo().setMaxUndo(m_MaxUndo <= 0 ? -1 : m_MaxUndo);
     return m_PanelSegmentation;
   }
 
@@ -906,16 +951,16 @@ public class ImageSegmentationAnnotator
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_PanelSegmentation.fromContainer(
-        segcont,
-        BaseObject.toStringArray(m_Labels),
-        m_UseSeparateLayers,
-        m_ColorProvider,
-        m_Alpha,
-        m_AllowLayerRemoval,
-        m_AllowLayerActions,
-        m_LayerVisibility,
-        m_LastSettings,
-        this);
+	segcont,
+	BaseObject.toStringArray(m_Labels),
+	m_UseSeparateLayers,
+	m_ColorProvider,
+	m_Alpha,
+	m_AllowLayerRemoval,
+	m_AllowLayerActions,
+	m_LayerVisibility,
+	m_LastSettings,
+	this);
 
     // best fit
     if (m_BestFit && !m_BestFitApplied) {

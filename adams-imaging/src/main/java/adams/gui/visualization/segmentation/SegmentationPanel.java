@@ -42,6 +42,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.core.Undo;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
 import adams.gui.visualization.core.ColorProvider;
@@ -452,6 +453,15 @@ public class SegmentationPanel
     m_ButtonAddUndo.setEnabled(getManager().isUndoSupported());
     m_ButtonUndo.setEnabled(getManager().getUndo().canUndo());
     m_ButtonRedo.setEnabled(getManager().getUndo().canRedo());
+  }
+
+  /**
+   * Returns the underlying undo handler.
+   *
+   * @return		the Undo
+   */
+  public Undo getUndo() {
+    return getManager().getUndo();
   }
 
   /**

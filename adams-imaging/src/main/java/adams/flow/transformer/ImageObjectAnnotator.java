@@ -35,6 +35,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.Undo;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
 import adams.gui.visualization.image.interactionlogging.Null;
@@ -186,7 +187,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.mouseclick.NullProcessor
  * </pre>
  *
- * <pre>-overlay &lt;adams.gui.visualization.object.overlay.AbstractOverlay&gt; (property: overlay)
+ * <pre>-overlay &lt;adams.gui.visualization.object.overlay.Overlay&gt; (property: overlay)
  * &nbsp;&nbsp;&nbsp;The overlay to use for visualizing the annotations.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport -type-color-provider adams.gui.visualization.core.DefaultColorProvider
  * </pre>
@@ -229,6 +230,13 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;If enabled, allows the user to make use of the previous report (ie annotations
  * &nbsp;&nbsp;&nbsp;); useful when annotations do not change much between images.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-max-undo &lt;int&gt; (property: maxUndo)
+ * &nbsp;&nbsp;&nbsp;The maximum undo steps to allow, use -1 for unlimited 0 to turn off (CAUTION:
+ * &nbsp;&nbsp;&nbsp; uses copies of images in memory).
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
  <!-- options-end -->
@@ -278,6 +286,9 @@ public class ImageObjectAnnotator
   /** whether to allow using the previous report. */
   protected boolean m_AllowUsingPreviousReport;
 
+  /** the maximum undo steps. */
+  protected int m_MaxUndo;
+
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
 
@@ -320,52 +331,56 @@ public class ImageObjectAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-	"annotations-display", "annotationsDisplay",
-	new DefaultAnnotationsDisplayGenerator());
+        "annotations-display", "annotationsDisplay",
+        new DefaultAnnotationsDisplayGenerator());
 
     m_OptionManager.add(
-	"annotator", "annotator",
-	new BoundingBoxAnnotator());
+        "annotator", "annotator",
+        new BoundingBoxAnnotator());
 
     m_OptionManager.add(
-	"label-selector", "labelSelector",
-	new ButtonSelectorGenerator());
+        "label-selector", "labelSelector",
+        new ButtonSelectorGenerator());
 
     m_OptionManager.add(
-	"mouse-click", "mouseClick",
-	new NullProcessor());
+        "mouse-click", "mouseClick",
+        new NullProcessor());
 
     m_OptionManager.add(
-	"overlay", "overlay",
-	new ObjectLocationsOverlayFromReport());
+        "overlay", "overlay",
+        new ObjectLocationsOverlayFromReport());
 
     m_OptionManager.add(
-	"annotation-check", "annotationCheck",
-	new PassThrough());
+        "annotation-check", "annotationCheck",
+        new PassThrough());
 
     m_OptionManager.add(
-	"left-divider-location", "leftDividerLocation",
-	200, 1, null);
+        "left-divider-location", "leftDividerLocation",
+        200, 1, null);
 
     m_OptionManager.add(
-	"right-divider-location", "rightDividerLocation",
-	900, 1, null);
+        "right-divider-location", "rightDividerLocation",
+        900, 1, null);
 
     m_OptionManager.add(
-	"zoom", "zoom",
-	100.0, 1.0, 1600.0);
+        "zoom", "zoom",
+        100.0, 1.0, 1600.0);
 
     m_OptionManager.add(
-	"best-fit", "bestFit",
-	false);
+        "best-fit", "bestFit",
+        false);
 
     m_OptionManager.add(
-	"interaction-logging-filter", "interactionLoggingFilter",
-	new Null());
+        "interaction-logging-filter", "interactionLoggingFilter",
+        new Null());
 
     m_OptionManager.add(
-	"allow-using-previous-report", "allowUsingPreviousReport",
-	false);
+        "allow-using-previous-report", "allowUsingPreviousReport",
+        false);
+
+    m_OptionManager.add(
+        "max-undo", "maxUndo",
+        Undo.DEFAULT_MAX_UNDO, -1, null);
   }
 
   /**
@@ -772,7 +787,36 @@ public class ImageObjectAnnotator
    */
   public String allowUsingPreviousReportTipText() {
     return "If enabled, allows the user to make use of the previous report "
-	+ "(ie annotations); useful when annotations do not change much between images.";
+        + "(ie annotations); useful when annotations do not change much between images.";
+  }
+
+  /**
+   * Sets whether to allow using the previous report.
+   *
+   * @param value 	true if allowed
+   */
+  public void setMaxUndo(int value) {
+    m_MaxUndo = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum undo steps.
+   *
+   * @return 		the maximum (-1: unlimited, 0: off)
+   */
+  public int getMaxUndo() {
+    return m_MaxUndo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxUndoTipText() {
+    return "The maximum undo steps to allow, use -1 for unlimited 0 to turn off (CAUTION: uses copies of images in memory).";
   }
 
   /**
@@ -843,6 +887,8 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setRightDividerLocation(m_RightDividerLocation - m_LeftDividerLocation);
     m_PanelObjectAnnotation.setZoom(m_Zoom / 100.0);
     m_PanelObjectAnnotation.setBestFit(m_BestFit);
+    m_PanelObjectAnnotation.getUndo().setMaxUndo(m_MaxUndo);
+    m_PanelObjectAnnotation.getUndo().setEnabled(m_MaxUndo != 0);
     m_PanelObjectAnnotation.setInteractionLoggingFilter(ObjectCopyHelper.copyObject(m_InteractionLoggingFilter));
     m_PanelObjectAnnotation.setUsePreviousReportVisible(m_AllowUsingPreviousReport);
     return m_PanelObjectAnnotation;
@@ -923,16 +969,16 @@ public class ImageObjectAnnotator
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
       if (value.isEmpty()) {
-	array = new JSONArray();
+        array = new JSONArray();
       }
       else {
-	try {
-	  parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-	  array = (JSONArray) parser.parse(value);
-	}
-	catch (Exception e) {
-	  getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
-	}
+        try {
+          parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+          array = (JSONArray) parser.parse(value);
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+        }
       }
     }
 
@@ -950,14 +996,14 @@ public class ImageObjectAnnotator
       interaction.put("timestamp", formatter.format(event.getTimestamp()));
       interaction.put("id", event.getID());
       if (event.getData() != null) {
-	m2j.setInput(event.getData());
-	msg = m2j.convert();
-	if (msg == null) {
-	  interaction.put("data", m2j.getOutput());
-	}
-	else {
-	  getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
-	}
+        m2j.setInput(event.getData());
+        msg = m2j.convert();
+        if (msg == null) {
+          interaction.put("data", m2j.getOutput());
+        }
+        else {
+          getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
+        }
       }
       array.add(interaction);
     }
@@ -1006,9 +1052,9 @@ public class ImageObjectAnnotator
       resetLabel = ((AutoAdvanceAnnotator) m_Annotator).getAutoAdvanceLabels();
     if (resetLabel) {
       if (m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels().length > 0)
-	m_PanelObjectAnnotation.preselectCurrentLabel(m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels()[0]);
+        m_PanelObjectAnnotation.preselectCurrentLabel(m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels()[0]);
       else
-	m_PanelObjectAnnotation.preselectCurrentLabel(null);
+        m_PanelObjectAnnotation.preselectCurrentLabel(null);
     }
     else {
       m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
@@ -1023,7 +1069,7 @@ public class ImageObjectAnnotator
       imgcont.setImage(m_PanelObjectAnnotation.getImage());
       imgcont.setReport(m_PanelObjectAnnotation.getReport().getClone());
       if (!(m_InteractionLoggingFilter instanceof Null))
-	addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
+        addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
       m_OutputToken = new Token(imgcont);
     }
 
