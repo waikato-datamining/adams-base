@@ -221,7 +221,7 @@ public class Regions
       dec = 0;
 
     for (i = 0; i < m_Regions.length; i++) {
-      rect   = m_Regions[0].rectangleValue();
+      rect   = m_Regions[i].rectangleValue();
       x      = rect.x - dec;
       y      = rect.y - dec;
       width  = rect.width;
