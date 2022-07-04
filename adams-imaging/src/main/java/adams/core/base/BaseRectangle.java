@@ -15,7 +15,7 @@
 
 /*
  * BaseRectangle.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -259,7 +259,7 @@ public class BaseRectangle
    */
   @Override
   public String getTipText() {
-    return "Rectangle location string.";
+    return "Rectangle location string (x y width height).";
   }
 
   /**
