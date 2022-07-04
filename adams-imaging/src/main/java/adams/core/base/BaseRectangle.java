@@ -54,10 +54,10 @@ public class BaseRectangle
    * Initializes the object with the string to parse.
    *
    * @param s		the string to parse
-   * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
+   * @param isXYXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
    */
-  public BaseRectangle(String s, boolean isXY) {
-    super(isXY ? fromXY(s) : s);
+  public BaseRectangle(String s, boolean isXYXY) {
+    super(isXYXY ? fromXYXY(s) : s);
   }
 
   /**
@@ -295,7 +295,7 @@ public class BaseRectangle
    * @return		the converted string
    * @see		#isValidFormat(String)
    */
-  public static String fromXY(String x0y0x1y1) {
+  public static String fromXYXY(String x0y0x1y1) {
     String[]  	parts;
     double[]	values;
     int		i;
