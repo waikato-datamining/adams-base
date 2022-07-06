@@ -1,1 +1,1 @@
-storage: counter
+storage: counter, initial values: -none-, initial count: 0
