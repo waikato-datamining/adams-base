@@ -15,7 +15,7 @@
 
 /*
  * Variable.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -89,7 +89,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Variable
   extends AbstractSimpleSource 
@@ -133,6 +132,15 @@ public class Variable
     m_OptionManager.add(
 	    "conversion", "conversion",
 	    new StringToString());
+  }
+
+  /**
+   * Sets the name of the variable to update.
+   *
+   * @param value	the name
+   */
+  public void setVariableName(String value) {
+    setVariableName(new VariableName(value));
   }
 
   /**
