@@ -22,7 +22,6 @@ package adams.gui.visualization.object.objectannotations.shape;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
-import adams.gui.visualization.object.objectannotations.AnnotationUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -163,7 +162,7 @@ public class FilledPolygon
     int[]	y;
     boolean	fallback;
 
-    fallback = m_Fallback && AnnotationUtils.boundingBoxFallback(object, m_BoundingBoxFallbackRatio);
+    fallback = m_Fallback && object.boundingBoxFallback(m_BoundingBoxFallbackRatio);
 
     g.setColor(color);
     if (!fallback) {

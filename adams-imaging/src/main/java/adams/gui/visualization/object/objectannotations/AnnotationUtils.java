@@ -29,7 +29,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 
 /**
@@ -38,28 +37,6 @@ import java.awt.Rectangle;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class AnnotationUtils {
-
-  /**
-   * Turns the bounding box into a polygon.
-   *
-   * @param object	the object to turn into a polygon
-   * @return		the polygon
-   */
-  public static Polygon bboxToPolygon(LocatedObject object) {
-    return object.bboxToPolygon();
-  }
-
-  /**
-   * Checks whether we need fall back on the bounding box due to the object either not having a
-   * polygon or the polygon being too small in relation to the required polygon/bbox ratio.
-   *
-   * @param object	the object to check
-   * @param minRatio	the minimum poly/bbox ratio that we need
-   * @return		true if fall back on bbox
-   */
-  public static boolean boundingBoxFallback(LocatedObject object, double minRatio) {
-    return object.boundingBoxFallback(minRatio);
-  }
 
   /**
    * Applies further format options. Does nothing if format or value are empty.
