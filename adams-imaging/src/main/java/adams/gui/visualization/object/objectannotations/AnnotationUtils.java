@@ -46,15 +46,7 @@ public class AnnotationUtils {
    * @return		the polygon
    */
   public static Polygon bboxToPolygon(LocatedObject object) {
-    Polygon 	result;
-    int[] 	bbox_x;
-    int[] 	bbox_y;
-
-    bbox_x = new int[]{object.getX(), object.getX() + object.getWidth() - 1, object.getX() + object.getWidth() - 1, object.getX()};
-    bbox_y = new int[]{object.getY(), object.getY(), object.getY() + object.getHeight() - 1, object.getY() + object.getHeight() - 1};
-    result = new Polygon(bbox_x, bbox_y, bbox_x.length);
-
-    return result;
+    return object.bboxToPolygon();
   }
 
   /**
@@ -66,29 +58,7 @@ public class AnnotationUtils {
    * @return		true if fall back on bbox
    */
   public static boolean boundingBoxFallback(LocatedObject object, double minRatio) {
-    boolean	result;
-    Polygon	poly;
-    Polygon	bbox;
-    double	area_poly;
-    double	area_bbox;
-    double	ratio;
-
-    result = false;
-
-    poly = object.hasPolygon() ? object.getPolygon() : null;
-    bbox = bboxToPolygon(object);
-
-    if ((poly != null) && (minRatio > 0)) {
-      area_bbox = LocatedObject.toGeometry(bbox).getArea();
-      area_poly = LocatedObject.toGeometry(poly).getArea();
-      if (area_bbox > 0) {
-	ratio = area_poly / area_bbox;
-	if (ratio < minRatio)
-	  result = true;
-      }
-    }
-
-    return result;
+    return object.boundingBoxFallback(minRatio);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * LocatedObject.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -482,6 +482,56 @@ public class LocatedObject
       return toGeometry(getPolygon());
     else
       return toGeometry(getRectangle());
+  }
+
+  /**
+   * Turns the bounding box into a polygon.
+   *
+   * @return		the polygon
+   */
+  public Polygon bboxToPolygon() {
+    Polygon 	result;
+    int[] 	bbox_x;
+    int[] 	bbox_y;
+
+    bbox_x = new int[]{getX(), getX() + getWidth() - 1, getX() + getWidth() - 1, getX()};
+    bbox_y = new int[]{getY(), getY(), getY() + getHeight() - 1, getY() + getHeight() - 1};
+    result = new Polygon(bbox_x, bbox_y, bbox_x.length);
+
+    return result;
+  }
+
+  /**
+   * Checks whether we need fall back on the bounding box due to the object either not having a
+   * polygon or the polygon being too small in relation to the required polygon/bbox ratio.
+   *
+   * @param minRatio	the minimum poly/bbox ratio that we need
+   * @return		true if fall back on bbox
+   */
+  public boolean boundingBoxFallback(double minRatio) {
+    boolean	result;
+    Polygon	poly;
+    Polygon	bbox;
+    double	area_poly;
+    double	area_bbox;
+    double	ratio;
+
+    result = false;
+
+    poly = hasPolygon() ? getPolygon() : null;
+    bbox = bboxToPolygon();
+
+    if ((poly != null) && (minRatio > 0)) {
+      area_bbox = LocatedObject.toGeometry(bbox).getArea();
+      area_poly = LocatedObject.toGeometry(poly).getArea();
+      if (area_bbox > 0) {
+        ratio = area_poly / area_bbox;
+        if (ratio < minRatio)
+          result = true;
+      }
+    }
+
+    return result;
   }
 
   /**
