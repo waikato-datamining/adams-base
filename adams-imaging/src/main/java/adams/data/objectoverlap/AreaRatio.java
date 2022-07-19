@@ -315,7 +315,7 @@ public class AreaRatio
       for (LocatedObject thisObj : annotations) {
         if (isLoggingEnabled()) {
           if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-	    getLogger().info("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
+	    getLogger().fine("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
           else
 	    getLogger().info("this: " + thisObj);
 	}
@@ -338,9 +338,10 @@ public class AreaRatio
 	  }
 	  if (isLoggingEnabled()) {
 	    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-	      getLogger().info(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> ratio = " + ratio);
+	      getLogger().fine(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> ratio = " + ratio);
 	    else
 	      getLogger().info(" + other: " + otherObj + " -> ratio = " + ratio);
+	    getLogger().info("ratio (" + ratio + ") >= min ratio (" + m_MinOverlapRatio + ") = " + (ratio >= m_MinOverlapRatio));
 	  }
 	  if (ratio >= m_MinOverlapRatio) {
 	    count++;
@@ -381,6 +382,14 @@ public class AreaRatio
 	if (m_CopyMetaData && (otherObjectHighest != null))
 	  copyMetaData(otherObjectHighest, actObj);
 	result.add(actObj);
+	if (isLoggingEnabled()) {
+	  getLogger().info(OVERLAP_COUNT + ": " + count);
+	  getLogger().info(OVERLAP_PERCENTAGE_HIGHEST + ": " + overlapHighest);
+	  if (!m_LabelKey.isEmpty()) {
+	    getLogger().info(OVERLAP_LABEL_HIGHEST + ": " + labelHighest);
+	    getLogger().info(OVERLAP_LABEL_HIGHEST_MATCH + ", " + thisLabel.equals(labelHighest));
+	  }
+	}
       }
 
       if (m_AdditionalObject) {
