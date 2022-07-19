@@ -384,6 +384,7 @@ public class IntersectOverUnionRatio
     double		unionArea;
     Polygon		thisPoly;
     Polygon		otherPoly;
+    boolean		calculated;
 
     result = 0.0;
 
@@ -392,26 +393,34 @@ public class IntersectOverUnionRatio
     if (fallback)
       geometry = GeometryType.BBOX;
 
-    switch (geometry) {
-      case BBOX:
-	ratio         = thisObj.overlapRatio(otherObj);
-	thisObjArea   = thisObj.getHeight() * thisObj.getWidth();
-	intersectArea = thisObjArea * ratio;
-	otherObjArea  = otherObj.getHeight() * otherObj.getWidth();
-	result        = intersectArea / (thisObjArea + otherObjArea - intersectArea);
-	break;
-      case POLYGON:
-        thisPoly  = thisObj.toGeometry();
-        otherPoly = otherObj.toGeometry();
-        if (thisPoly.intersects(otherPoly)) {
-          intersectArea = thisPoly.intersection(otherPoly).getArea();
+    calculated = false;
+    if (geometry == GeometryType.POLYGON) {
+      try {
+	thisPoly  = thisObj.toGeometry();
+	otherPoly = otherObj.toGeometry();
+	if (thisPoly.intersects(otherPoly)) {
+	  intersectArea = thisPoly.intersection(otherPoly).getArea();
 	  unionArea     = thisPoly.union(otherPoly).getArea();
 	  result        = intersectArea / unionArea;
 	}
-	break;
-      default:
-	throw new IllegalStateException("Unhandled geometry type: " + m_Geometry);
+	calculated = true;
+      }
+      catch (Exception e) {
+        geometry = GeometryType.BBOX;
+      }
     }
+
+    if (geometry == GeometryType.BBOX) {
+      ratio         = thisObj.overlapRatio(otherObj);
+      thisObjArea   = thisObj.getHeight() * thisObj.getWidth();
+      intersectArea = thisObjArea * ratio;
+      otherObjArea  = otherObj.getHeight() * otherObj.getWidth();
+      result        = intersectArea / (thisObjArea + otherObjArea - intersectArea);
+      calculated    = true;
+    }
+
+    if (!calculated)
+      throw new IllegalStateException("Unhandled geometry type: " + m_Geometry);
 
     return result;
   }
