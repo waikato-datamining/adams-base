@@ -15,7 +15,7 @@
 
 /*
  * IntersectOverUnionRatio.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -25,6 +25,7 @@ import adams.core.logging.LoggingHelper;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import com.github.fracpete.javautils.struct.Struct2;
+import org.locationtech.jts.geom.Polygon;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -38,8 +39,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class IntersectOverUnionRatio
-  extends AbstractObjectOverlap
-  implements LabelAwareObjectOverlap{
+    extends AbstractObjectOverlap
+    implements LabelAwareObjectOverlap{
 
   private static final long serialVersionUID = 490981014539796857L;
 
@@ -67,6 +68,15 @@ public class IntersectOverUnionRatio
   /** whether to check for additional predicted objects not present in actual. */
   protected boolean m_AdditionalObject;
 
+  /** the geometry to use. */
+  protected GeometryType m_Geometry;
+
+  /** whether to fallback on bounding box. */
+  protected boolean m_Fallback;
+
+  /** the ratio used for determining whether to fall back from polygon on bbox. */
+  protected double m_BoundingBoxFallbackRatio;
+
   /**
    * Returns a string describing the object.
    *
@@ -75,11 +85,11 @@ public class IntersectOverUnionRatio
   @Override
   public String globalInfo() {
     return "Computes the Intersect Over Union (IOU) between annotations and predictions.\n"
-      + "It stores the IOU percentage of the highest IOU found (" + IOU_PERCENTAGE_HIGHEST + ") and the "
-      + "total number of IOU greater than the specified minimum (" + IOU_COUNT + ").\n"
-      + "If a label key (located object meta-data) has been supplied, then the label of the object with "
-      + "the highest IOU gets stored as well (" + IOU_LABEL_HIGHEST + ") and whether the "
-      + "labels match (" + IOU_LABEL_HIGHEST_MATCH + ")";
+	+ "It stores the IOU percentage of the highest IOU found (" + IOU_PERCENTAGE_HIGHEST + ") and the "
+	+ "total number of IOU greater than the specified minimum (" + IOU_COUNT + ").\n"
+	+ "If a label key (located object meta-data) has been supplied, then the label of the object with "
+	+ "the highest IOU gets stored as well (" + IOU_LABEL_HIGHEST + ") and whether the "
+	+ "labels match (" + IOU_LABEL_HIGHEST_MATCH + ")";
   }
 
   /**
@@ -90,20 +100,32 @@ public class IntersectOverUnionRatio
     super.defineOptions();
 
     m_OptionManager.add(
-      "min-iou-ratio", "minIntersectOverUnionRatio",
-      0.0, 0.0, 1.0);
+	"min-iou-ratio", "minIntersectOverUnionRatio",
+	0.0, 0.0, 1.0);
 
     m_OptionManager.add(
-      "label-key", "labelKey",
-      "");
+	"label-key", "labelKey",
+	"");
 
     m_OptionManager.add(
-      "use-other-object", "useOtherObject",
-      false);
+	"use-other-object", "useOtherObject",
+	false);
 
     m_OptionManager.add(
-      "additional-object", "additionalObject",
-      false);
+	"additional-object", "additionalObject",
+	false);
+
+    m_OptionManager.add(
+	"geometry", "geometry",
+	GeometryType.BBOX);
+
+    m_OptionManager.add(
+	"fallback", "fallback",
+	true);
+
+    m_OptionManager.add(
+	"bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+	0.0, 0.0, 1.0);
   }
 
   /**
@@ -170,9 +192,9 @@ public class IntersectOverUnionRatio
    */
   public String labelKeyTipText() {
     return "The (optional) key for a string label in the meta-data; if supplied "
-      + "the value of the object with the highest IOU gets stored in the "
-      + "report using " + IOU_LABEL_HIGHEST + ", "
-      + IOU_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
+	+ "the value of the object with the highest IOU gets stored in the "
+	+ "report using " + IOU_LABEL_HIGHEST + ", "
+	+ IOU_LABEL_HIGHEST_MATCH + " stores whether the labels match.";
   }
 
   /**
@@ -234,6 +256,97 @@ public class IntersectOverUnionRatio
   }
 
   /**
+   * Sets the geometry type to use for the calculations.
+   *
+   * @param value 	the type
+   */
+  public void setGeometry(GeometryType value) {
+    m_Geometry = value;
+    reset();
+  }
+
+  /**
+   * Returns the geometry type to use for the calculations.
+   *
+   * @return 		true if to use
+   */
+  public GeometryType getGeometry() {
+    return m_Geometry;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String geometryTipText() {
+    return "The type of geometry to use for the calculations.";
+  }
+
+  /**
+   * Sets whether to fall back on the bounding box if no polygon available.
+   *
+   * @param value 	true if to use
+   */
+  public void setFallback(boolean value) {
+    m_Fallback = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to fall back on the bounding box if no polygon available.
+   *
+   * @return 		true if to use
+   */
+  public boolean getFallback() {
+    return m_Fallback;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fallbackTipText() {
+    return "Whether to fall back on the bounding box if no polygon available.";
+  }
+
+  /**
+   * Sets the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @param value 	the ratio
+   */
+  public void setBoundingBoxFallbackRatio(double value) {
+    if (getOptionManager().isValid("boundingBoxFallbackRatio", value)) {
+      m_BoundingBoxFallbackRatio = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the ratio between shape area over bbox area. If below the bbox is used
+   * instead of the polygon.
+   *
+   * @return 		the ratio
+   */
+  public double getBoundingBoxFallbackRatio() {
+    return m_BoundingBoxFallbackRatio;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String boundingBoxFallbackRatioTipText() {
+    return "The threshold for the ratio between the areas (shape / bbox), below which the bounding box is used over the polygon (ie bad masks/shapes).";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -246,6 +359,59 @@ public class IntersectOverUnionRatio
     result += QuickInfoHelper.toString(this, "labelKey", (m_LabelKey.isEmpty() ? "-none-" : m_LabelKey), ", label key: ");
     result += QuickInfoHelper.toString(this, "useOtherObject", m_UseOtherObject, "use other obj", ", ");
     result += QuickInfoHelper.toString(this, "additionalObject", m_AdditionalObject, "additional obj", ", ");
+    result += QuickInfoHelper.toString(this, "geometry", m_Geometry, ", geometry: ");
+    if (m_Fallback)
+      result += QuickInfoHelper.toString(this, "boundingBoxFallBackRatio", m_BoundingBoxFallbackRatio, ", bbox fallback ratio: ");
+
+    return result;
+  }
+
+  /**
+   * Calculates the IoU for the two objects.
+   *
+   * @param thisObj	first object
+   * @param otherObj	second object
+   * @return		the IoU
+   */
+  protected double calculateIoU(LocatedObject thisObj, LocatedObject otherObj) {
+    double 		result;
+    GeometryType	geometry;
+    boolean		fallback;
+    double		ratio;
+    double		thisObjArea;
+    double		intersectArea;
+    double		otherObjArea;
+    double		unionArea;
+    Polygon		thisPoly;
+    Polygon		otherPoly;
+
+    result = 0.0;
+
+    geometry = m_Geometry;
+    fallback = m_Fallback && (thisObj.boundingBoxFallback(m_MinIntersectOverUnionRatio) || otherObj.boundingBoxFallback(m_MinIntersectOverUnionRatio));
+    if (fallback)
+      geometry = GeometryType.BBOX;
+
+    switch (geometry) {
+      case BBOX:
+	ratio         = thisObj.overlapRatio(otherObj);
+	thisObjArea   = thisObj.getHeight() * thisObj.getWidth();
+	intersectArea = thisObjArea * ratio;
+	otherObjArea  = otherObj.getHeight() * otherObj.getWidth();
+	result        = intersectArea / (thisObjArea + otherObjArea - intersectArea);
+	break;
+      case POLYGON:
+        thisPoly  = thisObj.toGeometry();
+        otherPoly = otherObj.toGeometry();
+        if (thisPoly.intersects(otherPoly)) {
+          intersectArea = thisPoly.intersection(otherPoly).getArea();
+	  unionArea     = thisPoly.union(otherPoly).getArea();
+	  result        = intersectArea / unionArea;
+	}
+	break;
+      default:
+	throw new IllegalStateException("Unhandled geometry type: " + m_Geometry);
+    }
 
     return result;
   }
@@ -273,6 +439,11 @@ public class IntersectOverUnionRatio
     double		otherObjArea;
     double		iou;
 
+    if (isLoggingEnabled()) {
+      getLogger().info("# annotations: " + annotations.size());
+      getLogger().info("# predictions: " + predictions.size());
+    }
+
     result = new LocatedObjects();
     if (annotations.size() == 0) {
       result = predictions;
@@ -280,10 +451,10 @@ public class IntersectOverUnionRatio
     else {
       Set<LocatedObject> matchingObjects = new HashSet<>();
       for (LocatedObject thisObj : annotations) {
-        if (isLoggingEnabled()) {
-          if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-	    getLogger().info("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
-          else
+	if (isLoggingEnabled()) {
+	  if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
+	    getLogger().fine("this: " + thisObj + " (" + thisObj.getMetaData() + ")");
+	  else
 	    getLogger().info("this: " + thisObj);
 	}
 	count          = 0;
@@ -298,16 +469,13 @@ public class IntersectOverUnionRatio
 	  initMatch(matches, thisObj);
 	  if (m_ExcludeIdentical && thisObj.equals(otherObj))
 	    continue;
-	  ratio = thisObj.overlapRatio(otherObj);
-	  thisObjArea = thisObj.getHeight() * thisObj.getWidth();
-	  intersectArea = thisObjArea * ratio;
-	  otherObjArea = otherObj.getHeight() * otherObj.getWidth();
-	  iou = intersectArea / (thisObjArea + otherObjArea - intersectArea);
+	  iou = calculateIoU(thisObj, otherObj);
 	  if (isLoggingEnabled()) {
 	    if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-	      getLogger().info(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> IOU = " + iou);
+	      getLogger().fine(" + other: " + otherObj + " (" + otherObj.getMetaData() + ")" + " -> IOU = " + iou);
 	    else
 	      getLogger().info(" + other: " + otherObj + " -> IOU = " + iou);
+	    getLogger().info("IOU (" + iou + ") >= min IoU (" + m_MinIntersectOverUnionRatio + ") = " + (iou >= m_MinIntersectOverUnionRatio));
 	  }
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
@@ -315,7 +483,7 @@ public class IntersectOverUnionRatio
 	    if (iou > iouHighest) {
 	      tmpObj = null;
 	      if (m_UseOtherObject) {
-	        tmpObj = actObj;
+		tmpObj = actObj;
 		actObj = otherObj;
 	      }
 	      iouHighest = iou;
@@ -348,6 +516,14 @@ public class IntersectOverUnionRatio
 	if (m_CopyMetaData && (otherObjectHighest != null))
 	  copyMetaData(otherObjectHighest, actObj);
 	result.add(actObj);
+	if (isLoggingEnabled()) {
+	  getLogger().info(IOU_COUNT + ": " + count);
+	  getLogger().info(IOU_PERCENTAGE_HIGHEST + ": " + iouHighest);
+	  if (!m_LabelKey.isEmpty()) {
+	    getLogger().info(IOU_LABEL_HIGHEST + ": " + labelHighest);
+	    getLogger().info(IOU_LABEL_HIGHEST_MATCH + ", " + thisLabel.equals(labelHighest));
+	  }
+	}
       }
 
       if (m_AdditionalObject) {
@@ -378,9 +554,9 @@ public class IntersectOverUnionRatio
     mismatch = new LocatedObjects();
     for (LocatedObject overlap: overlaps) {
       if (overlap.getMetaData().getOrDefault(IOU_LABEL_HIGHEST_MATCH, false).toString().equalsIgnoreCase("true"))
-        match.add(overlap.getClone());
+	match.add(overlap.getClone());
       else
-        mismatch.add(overlap.getClone());
+	mismatch.add(overlap.getClone());
     }
 
     return new Struct2<>(match, mismatch);
