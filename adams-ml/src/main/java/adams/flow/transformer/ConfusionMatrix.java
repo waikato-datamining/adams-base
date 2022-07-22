@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -126,12 +126,18 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-enumerate-labels &lt;boolean&gt; (property: enumerateLabels)
+ * &nbsp;&nbsp;&nbsp;If enable, enumerates the labels in the matrix and outputs a second spreadsheet
+ * &nbsp;&nbsp;&nbsp;with index&#47;label relation.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ConfusionMatrix
-  extends AbstractSpreadSheetTransformer {
+    extends AbstractTransformer {
 
   private static final long serialVersionUID = 6499246835313298302L;
 
@@ -165,6 +171,9 @@ public class ConfusionMatrix
   /** the class labels to use (to enforce ordering other than sorted). */
   protected BaseString[] m_ClassLabels;
 
+  /** whether to number columns instead of using labels. */
+  protected boolean m_EnumerateLabels;
+
   /**
    * Returns a string describing the object.
    *
@@ -173,10 +182,10 @@ public class ConfusionMatrix
   @Override
   public String globalInfo() {
     return
-      "Generates a confusion matrix from the specified actual and predicted "
-	+ "columns containing class labels.\n"
-	+ "Can take a probability column (of prediction) into account for "
-	+ "generating weighted counts.";
+        "Generates a confusion matrix from the specified actual and predicted "
+            + "columns containing class labels.\n"
+            + "Can take a probability column (of prediction) into account for "
+            + "generating weighted counts.";
   }
 
   /**
@@ -187,32 +196,36 @@ public class ConfusionMatrix
     super.defineOptions();
 
     m_OptionManager.add(
-      "actual-column", "actualColumn",
-      new SpreadSheetColumnIndex("1"));
+        "actual-column", "actualColumn",
+        new SpreadSheetColumnIndex("1"));
 
     m_OptionManager.add(
-      "actual-prefix", "actualPrefix",
-      "a: ");
+        "actual-prefix", "actualPrefix",
+        "a: ");
 
     m_OptionManager.add(
-      "predicted-column", "predictedColumn",
-      new SpreadSheetColumnIndex("2"));
+        "predicted-column", "predictedColumn",
+        new SpreadSheetColumnIndex("2"));
 
     m_OptionManager.add(
-      "predicted-prefix", "predictedPrefix",
-      "p: ");
+        "predicted-prefix", "predictedPrefix",
+        "p: ");
 
     m_OptionManager.add(
-      "probability-column", "probabilityColumn",
-      new SpreadSheetColumnIndex(""));
+        "probability-column", "probabilityColumn",
+        new SpreadSheetColumnIndex(""));
 
     m_OptionManager.add(
-      "matrix-values", "matrixValues",
-      MatrixValues.COUNTS);
+        "matrix-values", "matrixValues",
+        MatrixValues.COUNTS);
 
     m_OptionManager.add(
-      "class-labels", "classLabels",
-      new BaseString[0]);
+        "class-labels", "classLabels",
+        new BaseString[0]);
+
+    m_OptionManager.add(
+        "enumerate-labels", "enumerateLabels",
+        false);
   }
 
   /**
@@ -228,6 +241,7 @@ public class ConfusionMatrix
     result += QuickInfoHelper.toString(this, "predictedColumn", m_PredictedColumn, ", predicted: ");
     result += QuickInfoHelper.toString(this, "probabilityColumn", (m_ProbabilityColumn.isEmpty() ? "-none-" : m_ProbabilityColumn.getIndex()), ", probability: ");
     result += QuickInfoHelper.toString(this, "matrixValues", m_MatrixValues, ", values: ");
+    result += QuickInfoHelper.toString(this, "enumerateLabels", m_EnumerateLabels, "enumerated", ", ");
 
     return result;
   }
@@ -436,6 +450,70 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets whether to enumerate the labels rather than using the labels in the matrix.
+   *
+   * @param value	true if to enumerate
+   */
+  public void setEnumerateLabels(boolean value) {
+    m_EnumerateLabels = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to enumerate the labels rather than using the labels in the matrix.
+   *
+   * @return		true if to enumerate
+   */
+  public boolean getEnumerateLabels() {
+    return m_EnumerateLabels;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String enumerateLabelsTipText() {
+    return "If enable, enumerates the labels in the matrix and outputs a second spreadsheet with index/label relation.";
+  }
+
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		adams.core.io.SpreadSheet.class
+   */
+  public Class[] accepts() {
+    return new Class[]{SpreadSheet.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		adams.core.io.SpreadSheet.class
+   */
+  public Class[] generates() {
+    if (m_EnumerateLabels)
+      return new Class[]{SpreadSheet[].class};
+    else
+      return new Class[]{SpreadSheet.class};
+  }
+
+  /**
+   * Returns the actual label to use.
+   *
+   * @param labels	the list of labels
+   * @param index	the index of the label
+   * @return		the label to use
+   */
+  protected String getLabel(List<String> labels, int index) {
+    if (m_EnumerateLabels)
+      return "" + (index+1);
+    else
+      return labels.get(index);
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -444,6 +522,7 @@ public class ConfusionMatrix
   protected String doExecute() {
     String		result;
     SpreadSheet		sheet;
+    SpreadSheet		key;
     int			actCol;
     int			predCol;
     int			probCol;
@@ -482,126 +561,144 @@ public class ConfusionMatrix
 
       // set up matrix
       if (m_ClassLabels.length > 0) {
-	actLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
-	predLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
-	// add missing labels
-	labels = sheet.getCellValues(actCol);
-	for (String label: labels) {
-	  if (actLabels.indexOf(label) == -1)
-	    actLabels.add(label);
-	  if (predLabels.indexOf(label) == -1)
-	    predLabels.add(label);
-	}
-	labels = sheet.getCellValues(predCol);
-	for (String label: labels) {
-	  if (actLabels.indexOf(label) == -1)
-	    actLabels.add(label);
-	  if (predLabels.indexOf(label) == -1)
-	    predLabels.add(label);
-	}
+        actLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
+        predLabels = new ArrayList<>(Arrays.asList(BaseObject.toStringArray(m_ClassLabels)));
+        // add missing labels
+        labels = sheet.getCellValues(actCol);
+        for (String label: labels) {
+          if (actLabels.indexOf(label) == -1)
+            actLabels.add(label);
+          if (predLabels.indexOf(label) == -1)
+            predLabels.add(label);
+        }
+        labels = sheet.getCellValues(predCol);
+        for (String label: labels) {
+          if (actLabels.indexOf(label) == -1)
+            actLabels.add(label);
+          if (predLabels.indexOf(label) == -1)
+            predLabels.add(label);
+        }
       }
       else {
-	actLabels = sheet.getCellValues(actCol);
-	predLabels = sheet.getCellValues(predCol);
-	for (String label : actLabels) {
-	  if (!predLabels.contains(label))
-	    predLabels.add(label);
-	}
-	for (String label : predLabels) {
-	  if (!actLabels.contains(label))
-	    actLabels.add(label);
-	}
-	Collections.sort(predLabels);
-	Collections.sort(actLabels);
+        actLabels = sheet.getCellValues(actCol);
+        predLabels = sheet.getCellValues(predCol);
+        for (String label : actLabels) {
+          if (!predLabels.contains(label))
+            predLabels.add(label);
+        }
+        for (String label : predLabels) {
+          if (!actLabels.contains(label))
+            actLabels.add(label);
+        }
+        Collections.sort(predLabels);
+        Collections.sort(actLabels);
       }
       // missing?
       for (Row r: sheet.rows()) {
         if ((r.hasCell(actCol) && r.getCell(actCol).isMissing())
-	  || (r.hasCell(predCol) && r.getCell(predCol).isMissing())) {
-	  actLabels.add(0, SpreadSheet.MISSING_VALUE);
-	  predLabels.add(0, SpreadSheet.MISSING_VALUE);
-	  break;
-	}
+            || (r.hasCell(predCol) && r.getCell(predCol).isMissing())) {
+          actLabels.add(0, SpreadSheet.MISSING_VALUE);
+          predLabels.add(0, SpreadSheet.MISSING_VALUE);
+          break;
+        }
       }
       matrix = new DefaultSpreadSheet();
       row = matrix.getHeaderRow();
       row.addCell("0").setContentAsString("x");
       for (i = 0; i < predLabels.size(); i++) {
-	row.addCell("" + (i + 1)).setContentAsString(m_PredictedPrefix + predLabels.get(i));
-	predIndices.put(predLabels.get(i), i+1);
+        predLabel = getLabel(predLabels, i);
+        row.addCell("" + (i + 1)).setContentAsString(m_PredictedPrefix + predLabel);
+        predIndices.put(predLabels.get(i), i+1);
       }
       for (i = 0; i < actLabels.size(); i++) {
-	row = matrix.addRow();
-	for (n = 0; n < matrix.getColumnCount(); n++)
-	  row.getCell(n).setContent(0);
-	row.addCell(0).setContentAsString(m_ActualPrefix + actLabels.get(i));
-	actIndices.put(actLabels.get(i), i);
+        row = matrix.addRow();
+        for (n = 0; n < matrix.getColumnCount(); n++)
+          row.getCell(n).setContent(0);
+        actLabel = getLabel(actLabels, i);
+        row.addCell(0).setContentAsString(m_ActualPrefix + actLabel);
+        actIndices.put(actLabels.get(i), i);
       }
 
       // fill in matrix
       for (i = 0; i < sheet.getRowCount(); i++) {
-	row = sheet.getRow(i);
-	if (!row.hasCell(actCol))
-	  continue;
-	if (!row.hasCell(predCol))
-	  continue;
-	if (row.getCell(actCol).isMissing())
-	  actLabel = SpreadSheet.MISSING_VALUE;
-	else
-	  actLabel  = row.getCell(actCol).getContent();
-	if (row.getCell(predCol).isMissing())
-	  predLabel = SpreadSheet.MISSING_VALUE;
-	else
-	  predLabel = row.getCell(predCol).getContent();
-	actIndex  = actIndices.get(actLabel);
-	predIndex = predIndices.get(predLabel);
-	if (probCol == -1)
-	  matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
-	else
-	  matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toDouble() + row.getCell(probCol).toDouble());
+        row = sheet.getRow(i);
+        if (!row.hasCell(actCol))
+          continue;
+        if (!row.hasCell(predCol))
+          continue;
+        if (row.getCell(actCol).isMissing())
+          actLabel = SpreadSheet.MISSING_VALUE;
+        else
+          actLabel  = row.getCell(actCol).getContent();
+        if (row.getCell(predCol).isMissing())
+          predLabel = SpreadSheet.MISSING_VALUE;
+        else
+          predLabel = row.getCell(predCol).getContent();
+        actIndex  = actIndices.get(actLabel);
+        predIndex = predIndices.get(predLabel);
+        if (probCol == -1)
+          matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toLong() + 1);
+        else
+          matrix.getCell(actIndex, predIndex).setContent(matrix.getCell(actIndex, predIndex).toDouble() + row.getCell(probCol).toDouble());
       }
 
       // post-process matrix
       switch (m_MatrixValues) {
-	case COUNTS:
-	  // do nothing
-	  break;
+        case COUNTS:
+          // do nothing
+          break;
 
-	case PERCENTAGES:
-	  sum = 0;
-	  for (i = 0; i < matrix.getRowCount(); i++) {
-	    for (n = 1; n < matrix.getColumnCount(); n++) {
-	      sum += matrix.getCell(i, n).toLong();
-	    }
-	  }
-	  if (sum > 0) {
-	    for (i = 0; i < matrix.getRowCount(); i++) {
-	      for (n = 1; n < matrix.getColumnCount(); n++) {
-		matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
-	      }
-	    }
-	  }
-	  break;
+        case PERCENTAGES:
+          sum = 0;
+          for (i = 0; i < matrix.getRowCount(); i++) {
+            for (n = 1; n < matrix.getColumnCount(); n++) {
+              sum += matrix.getCell(i, n).toLong();
+            }
+          }
+          if (sum > 0) {
+            for (i = 0; i < matrix.getRowCount(); i++) {
+              for (n = 1; n < matrix.getColumnCount(); n++) {
+                matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+              }
+            }
+          }
+          break;
 
-	case PERCENTAGES_PER_ROW:
-	  for (i = 0; i < matrix.getRowCount(); i++) {
-	    sum = 0;
-	    for (n = 1; n < matrix.getColumnCount(); n++) {
-	      sum += matrix.getCell(i, n).toLong();
-	    }
-	    if (sum > 0) {
-	      for (n = 1; n < matrix.getColumnCount(); n++) {
-		matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
-	      }
-	    }
-	  }
-	  break;
+        case PERCENTAGES_PER_ROW:
+          for (i = 0; i < matrix.getRowCount(); i++) {
+            sum = 0;
+            for (n = 1; n < matrix.getColumnCount(); n++) {
+              sum += matrix.getCell(i, n).toLong();
+            }
+            if (sum > 0) {
+              for (n = 1; n < matrix.getColumnCount(); n++) {
+                matrix.getCell(i, n).setContent(matrix.getCell(i, n).toDouble() / sum);
+              }
+            }
+          }
+          break;
 
-	default:
-	  throw new IllegalStateException("Unhandled matrix values: " + m_MatrixValues);
+        default:
+          throw new IllegalStateException("Unhandled matrix values: " + m_MatrixValues);
       }
 
-      m_OutputToken = new Token(matrix);
+      if (m_EnumerateLabels) {
+        key = new DefaultSpreadSheet();
+        row = key.getHeaderRow();
+        row.addCell("I").setContentAsString("Index");
+        row.addCell("A").setContentAsString(m_ActualPrefix.trim());
+        row.addCell("P").setContentAsString(m_PredictedPrefix.trim());
+        for (i = 0; i < Math.max(actLabels.size(), predLabels.size()); i++)
+          key.addRow().addCell("I").setContent(i+1);
+        for (i = 0; i < actLabels.size(); i++)
+          key.getRow(i).addCell("A").setContentAsString(actLabels.get(i));
+        for (i = 0; i < predLabels.size(); i++)
+          key.getRow(i).addCell("P").setContentAsString(predLabels.get(i));
+        m_OutputToken = new Token(new SpreadSheet[]{matrix, key});
+      }
+      else {
+        m_OutputToken = new Token(matrix);
+      }
     }
 
     return result;
