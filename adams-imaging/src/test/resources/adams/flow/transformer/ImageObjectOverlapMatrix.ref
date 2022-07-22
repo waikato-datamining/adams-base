@@ -1,0 +1,12 @@
+--> dumpfile.txt
+Actual,Predicted
+dog,dog
+dog,dog
+dog,dog
+dog,dog
+not_dog,dog
+not_dog,dog
+not_dog,dog
+not_dog,dog
+
+

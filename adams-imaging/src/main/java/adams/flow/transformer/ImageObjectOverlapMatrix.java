@@ -37,7 +37,6 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -116,9 +115,10 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default: type
  * </pre>
  *
- * <pre>-meta-data-highest-label &lt;java.lang.String&gt; (property: metaDataHighestLabel)
- * &nbsp;&nbsp;&nbsp;The meta-data key that stores the highest label.
- * &nbsp;&nbsp;&nbsp;default: overlap_label_highest
+ * <pre>-only-overlaps &lt;boolean&gt; (property: onlyOverlaps)
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs only overlaps and omits entries with no corresponding
+ * &nbsp;&nbsp;&nbsp;match.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
  <!-- options-end -->
@@ -153,8 +153,8 @@ public class ImageObjectOverlapMatrix
   /** the label meta-data key. */
   protected String m_LabelKey;
 
-  /** the metadata key storing the label of the highest match. */
-  protected String m_MetaDataHighestLabel;
+  /** whether to show only overlaps. */
+  protected boolean m_OnlyOverlaps;
 
   /**
    * Returns a string describing the object.
@@ -174,28 +174,28 @@ public class ImageObjectOverlapMatrix
     super.defineOptions();
 
     m_OptionManager.add(
-	"storage-name", "storageName",
-	new StorageName());
+        "storage-name", "storageName",
+        new StorageName());
 
     m_OptionManager.add(
-	"finder", "finder",
-	new AllFinder());
+        "finder", "finder",
+        new AllFinder());
 
     m_OptionManager.add(
-	"algorithm", "algorithm",
-	new AreaRatio());
+        "algorithm", "algorithm",
+        new AreaRatio());
 
     m_OptionManager.add(
-	"matrix-output", "matrixOutput",
-	MatrixOutput.ALL_MATCHES);
+        "matrix-output", "matrixOutput",
+        MatrixOutput.ALL_MATCHES);
 
     m_OptionManager.add(
-	"label-key", "labelKey",
-	"type");
+        "label-key", "labelKey",
+        "type");
 
     m_OptionManager.add(
-	"meta-data-highest-label", "metaDataHighestLabel",
-	AreaRatio.OVERLAP_LABEL_HIGHEST);
+        "only-overlaps", "onlyOverlaps",
+        true);
   }
 
   /**
@@ -344,22 +344,22 @@ public class ImageObjectOverlapMatrix
   }
 
   /**
-   * Sets the key in the meta-data storing the label of the highest match.
+   * Sets whether to output only overlaps and omit entries with no corresponding match or not.
    *
-   * @param value 	the key
+   * @param value	true if only overlaps
    */
-  public void setMetaDataHighestLabel(String value) {
-    m_MetaDataHighestLabel = value;
+  public void setOnlyOverlaps(boolean value) {
+    m_OnlyOverlaps = value;
     reset();
   }
 
   /**
-   * Returns the key in the meta-data storing the label of the highest match.
+   * Returns whether to output only overlaps and omit entries with no corresponding match or not.
    *
-   * @return 		the key
+   * @return		true if only overlaps
    */
-  public String getMetaDataHighestLabel() {
-    return m_MetaDataHighestLabel;
+  public boolean getOnlyOverlaps() {
+    return m_OnlyOverlaps;
   }
 
   /**
@@ -368,8 +368,8 @@ public class ImageObjectOverlapMatrix
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String metaDataHighestLabelTipText() {
-    return "The meta-data key that stores the highest label.";
+  public String onlyOverlapsTipText() {
+    return "If enabled, outputs only overlaps and omits entries with no corresponding match.";
   }
 
   /**
@@ -384,7 +384,6 @@ public class ImageObjectOverlapMatrix
     result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "finder", m_Finder, ", finder: ");
     result += QuickInfoHelper.toString(this, "algorithm", m_Algorithm, ", algorithm: ");
-    result += QuickInfoHelper.toString(this, "metaDataHighestLabel", m_MetaDataHighestLabel, ", highest label: ");
 
     return result;
   }
@@ -410,44 +409,25 @@ public class ImageObjectOverlapMatrix
   }
 
   /**
-   * Initializes the item for flow execution. Also calls the reset() method
-   * first before anything else.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  public String setUp() {
-    String	result;
-
-    result = super.setUp();
-
-    if (result == null) {
-      if ((m_MatrixOutput == MatrixOutput.ONLY_HIGHEST_LABEL) && m_MetaDataHighestLabel.trim().isEmpty())
-	result = "No meta-data key specified that holds the highest label";
-    }
-
-    return result;
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute() {
-    String					result;
-    Report					thisReport;
-    Report					otherReport;
-    LocatedObjects				thisObjs;
-    LocatedObjects				otherObjs;
-    Map<LocatedObject, Set<LocatedObject>>	matches;
-    LocatedObjects				overlaps;
-    SpreadSheet					sheet;
-    Row						row;
-    Set<LocatedObject>				hits;
-    double					highestValue;
-    String					highestLabel;
+    String						result;
+    Report						thisReport;
+    Report						otherReport;
+    LocatedObjects					thisObjs;
+    LocatedObjects					otherObjs;
+    Map<LocatedObject, Map<LocatedObject,Double>>	matches;
+    Map<LocatedObject, Map<LocatedObject,Double>>	additional;
+    LocatedObjects					overlaps;
+    SpreadSheet						sheet;
+    Row							row;
+    Map<LocatedObject,Double>				hits;
+    double						highestValue;
+    String						highestLabel;
 
     result = null;
 
@@ -463,7 +443,7 @@ public class ImageObjectOverlapMatrix
 
     if (result == null) {
       if (!getStorageHandler().getStorage().has(m_StorageName))
-	result = "Report not found in storage: " + m_StorageName;
+        result = "Report not found in storage: " + m_StorageName;
     }
 
     if (result == null) {
@@ -471,35 +451,64 @@ public class ImageObjectOverlapMatrix
       thisObjs    = m_Finder.findObjects(thisReport);
       otherObjs   = m_Finder.findObjects(otherReport);
       sheet       = new DefaultSpreadSheet();
+      matches     = m_Algorithm.matches(thisObjs, otherObjs);
       row         = sheet.getHeaderRow();
       row.addCell("A").setContentAsString("Actual");
       row.addCell("P").setContentAsString("Predicted");
 
       switch (m_MatrixOutput) {
-	case ALL_MATCHES:
-	  matches = m_Algorithm.matches(thisObjs, otherObjs);
-	  for (LocatedObject thisObj: matches.keySet()) {
-	    hits = matches.get(thisObj);
-	    for (LocatedObject otherObj : hits) {
-	      row = sheet.addRow();
-	      row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-	      row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
-	    }
-	  }
-	  break;
+        case ALL_MATCHES:
+          for (LocatedObject thisObj: matches.keySet()) {
+            hits = matches.get(thisObj);
+            if (!m_OnlyOverlaps && (hits.size() == 0)) {
+              row = sheet.addRow();
+              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+              row.addCell("P").setContentAsString(AreaRatio.UNKNOWN_LABEL);
+              continue;
+            }
+            for (LocatedObject otherObj : hits.keySet()) {
+              row = sheet.addRow();
+              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+              row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+            }
+          }
+          break;
 
-	case ONLY_HIGHEST_LABEL:
-	  overlaps    = m_Algorithm.calculate(thisObjs, otherObjs);
-	  for (LocatedObject thisObj: overlaps) {
-	    row = sheet.addRow();
-	    row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-	    row.addCell("P").setContentAsString("" + thisObj.getMetaData().get(m_MetaDataHighestLabel));
-	  }
-	  break;
+        case ONLY_HIGHEST_LABEL:
+          for (LocatedObject thisObj: matches.keySet()) {
+            hits = matches.get(thisObj);
+            if (m_OnlyOverlaps && (hits.size() == 0))
+              continue;
+            row = sheet.addRow();
+            row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+            highestValue = -1.0;
+            highestLabel = AreaRatio.UNKNOWN_LABEL;
+            for (LocatedObject otherObj : hits.keySet()) {
+              if (hits.get(otherObj) > highestValue) {
+                highestValue = hits.get(otherObj);
+                highestLabel = "" + otherObj.getMetaData().get(m_LabelKey);
+              }
+            }
+            row.addCell("P").setContentAsString(highestLabel);
+          }
+          break;
 
-	default:
-	  throw new IllegalStateException("Unhandled matrix output: " + m_MatrixOutput);
+        default:
+          throw new IllegalStateException("Unhandled matrix output: " + m_MatrixOutput);
       }
+
+      if (!m_OnlyOverlaps) {
+        additional = m_Algorithm.matches(otherObjs, thisObjs);
+        for (LocatedObject otherObj: additional.keySet()) {
+          hits = additional.get(otherObj);
+          if (hits.size() == 0) {
+            row = sheet.addRow();
+            row.addCell("A").setContentAsString(AreaRatio.UNKNOWN_LABEL);
+            row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+          }
+        }
+      }
+
       m_OutputToken = new Token(sheet);
     }
 
