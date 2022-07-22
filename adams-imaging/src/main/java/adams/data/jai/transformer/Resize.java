@@ -15,13 +15,12 @@
 
 /*
  * Resize.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.renderable.ParameterBlock;
+import adams.data.image.BufferedImageContainer;
 
 import javax.media.jai.InterpolationBicubic;
 import javax.media.jai.InterpolationBicubic2;
@@ -29,8 +28,8 @@ import javax.media.jai.InterpolationBilinear;
 import javax.media.jai.InterpolationNearest;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
-
-import adams.data.image.BufferedImageContainer;
+import java.awt.image.BufferedImage;
+import java.awt.image.renderable.ParameterBlock;
 
 /**
  <!-- globalinfo-start -->
@@ -43,48 +42,52 @@ import adams.data.image.BufferedImageContainer;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-width &lt;double&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width to resize the image to; use -1 to use original width; use (0-1
  * &nbsp;&nbsp;&nbsp;) for percentage.
  * &nbsp;&nbsp;&nbsp;default: -1.0
  * &nbsp;&nbsp;&nbsp;minimum: -1.0
  * </pre>
- * 
+ *
  * <pre>-height &lt;double&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height to resize the image to; use -1 to use original height; use (0
  * &nbsp;&nbsp;&nbsp;-1) for percentage.
  * &nbsp;&nbsp;&nbsp;default: -1.0
  * &nbsp;&nbsp;&nbsp;minimum: -1.0
  * </pre>
- * 
+ *
  * <pre>-interpolation-type &lt;NEAREST|BILINEAR|BICUBIC|BICUBIC2&gt; (property: interpolationType)
  * &nbsp;&nbsp;&nbsp;The type of interpolation to perform.
  * &nbsp;&nbsp;&nbsp;default: BICUBIC
  * </pre>
- * 
+ *
  * <pre>-num-subsample-bits &lt;int&gt; (property: numSubsampleBits)
  * &nbsp;&nbsp;&nbsp;The number of bits to use for precision when subsampling.
  * &nbsp;&nbsp;&nbsp;default: 8
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
+ * <pre>-force-percentage &lt;boolean&gt; (property: forcePercentage)
+ * &nbsp;&nbsp;&nbsp;Whether to always interpret width&#47;height as percentage (eg when upscaling
+ * &nbsp;&nbsp;&nbsp;the image).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Resize
-  extends AbstractJAITransformer {
+    extends AbstractJAITransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -7139209460998569352L;
 
   /**
    * Type of interpolaction.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum InterpolationType {
     /** nearest. */
@@ -96,18 +99,21 @@ public class Resize
     /** bicubic2. */
     BICUBIC2
   }
-  
+
   /** the new width. */
   protected double m_Width;
 
   /** the new height. */
   protected double m_Height;
-  
+
   /** the type of interpolation to perform. */
   protected InterpolationType m_InterpolationType;
 
   /** the number of subsample bits. */
   protected int m_NumSubsampleBits;
+
+  /** whether to force percentage (eg for scaling larger). */
+  protected boolean m_ForcePercentage;
 
   /**
    * Returns a string describing the object.
@@ -127,20 +133,24 @@ public class Resize
     super.defineOptions();
 
     m_OptionManager.add(
-	    "width", "width",
-	    -1.0, -1.0, null);
+        "width", "width",
+        -1.0, -1.0, null);
 
     m_OptionManager.add(
-	    "height", "height",
-	    -1.0, -1.0, null);
+        "height", "height",
+        -1.0, -1.0, null);
 
     m_OptionManager.add(
-	    "interpolation-type", "interpolationType",
-	    InterpolationType.BICUBIC);
+        "interpolation-type", "interpolationType",
+        InterpolationType.BICUBIC);
 
     m_OptionManager.add(
-	    "num-subsample-bits", "numSubsampleBits",
-	    8, 1, null);
+        "num-subsample-bits", "numSubsampleBits",
+        8, 1, null);
+
+    m_OptionManager.add(
+        "force-percentage", "forcePercentage",
+        false);
   }
 
   /**
@@ -155,7 +165,7 @@ public class Resize
     }
     else {
       getLogger().severe(
-	  "Width must be -1 (current width) or greater, provided: " + value);
+          "Width must be -1 (current width) or greater, provided: " + value);
     }
   }
 
@@ -190,7 +200,7 @@ public class Resize
     }
     else {
       getLogger().severe(
-	  "Height must be -1 (current height) or greater, provided: " + value);
+          "Height must be -1 (current height) or greater, provided: " + value);
     }
   }
 
@@ -242,7 +252,6 @@ public class Resize
     return "The type of interpolation to perform.";
   }
 
-
   /**
    * Sets the precision for subsampling in bits.
    *
@@ -255,7 +264,7 @@ public class Resize
     }
     else {
       getLogger().severe(
-	  "Number of subsample bits must be >0, provided: " + value);
+          "Number of subsample bits must be >0, provided: " + value);
     }
   }
 
@@ -277,6 +286,36 @@ public class Resize
   public String numSubsampleBitsTipText() {
     return "The number of bits to use for precision when subsampling.";
   }
+
+  /**
+   * Sets whether to always interpret the width/height as percentage (eg when upscaling the image).
+   *
+   * @param value 	true if to force
+   */
+  public void setForcePercentage(boolean value) {
+    m_ForcePercentage = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to always interpret the width/height as percentage (eg when upscaling the image).
+   *
+   * @return 		true if to force
+   */
+  public boolean getForcePercentage() {
+    return m_ForcePercentage;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String forcePercentageTipText() {
+    return "Whether to always interpret width/height as percentage (eg when upscaling the image).";
+  }
+
   /**
    * Performs no transformation at all, just returns the input.
    *
@@ -296,13 +335,13 @@ public class Resize
     params.addSource(im);
     if (m_Width == -1)
       params.add((float) 1.0F);
-    else if ((m_Width >= 0) && (m_Width <= 1))
+    else if (((m_Width >= 0) && (m_Width <= 1)) || m_ForcePercentage)
       params.add((float) m_Width);  // x percentage
     else
       params.add((float) ((double) m_Width  / (double) img.getWidth()));    // x scale factor
     if (m_Height == -1)
       params.add((float) 1.0F);
-    else if ((m_Height >= 0) && (m_Height <= 1))
+    else if (((m_Height >= 0) && (m_Height <= 1)) || m_ForcePercentage)
       params.add((float) m_Height);  // x percentage
     else
       params.add((float) ((double) m_Height / (double) img.getHeight()));   // y scale factor
@@ -310,27 +349,27 @@ public class Resize
     params.add(0.0F);  // y translate
     switch (m_InterpolationType) {
       case NEAREST:
-	params.add(new InterpolationNearest());
-	break;
+        params.add(new InterpolationNearest());
+        break;
       case BILINEAR:
-	params.add(new InterpolationBilinear(m_NumSubsampleBits));
-	break;
+        params.add(new InterpolationBilinear(m_NumSubsampleBits));
+        break;
       case BICUBIC:
-	params.add(new InterpolationBicubic(m_NumSubsampleBits));
-	break;
+        params.add(new InterpolationBicubic(m_NumSubsampleBits));
+        break;
       case BICUBIC2:
-	params.add(new InterpolationBicubic2(m_NumSubsampleBits));
-	break;
+        params.add(new InterpolationBicubic2(m_NumSubsampleBits));
+        break;
       default:
-	throw new IllegalStateException("Unhandled interpolation type: " + m_InterpolationType);
+        throw new IllegalStateException("Unhandled interpolation type: " + m_InterpolationType);
     }
-    
+
     imNew = JAI.create("scale", params);
-    
+
     result    = new BufferedImageContainer[1];
     result[0] = (BufferedImageContainer) img.getHeader();
     result[0].setImage(imNew.getAsBufferedImage());
-    
+
     return result;
   }
 }
