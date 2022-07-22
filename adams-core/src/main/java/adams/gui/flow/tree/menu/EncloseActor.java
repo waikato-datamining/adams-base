@@ -15,7 +15,7 @@
 
 /*
  * EncloseActor.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -67,7 +67,9 @@ public class EncloseActor
     int			i;
     List<JMenuItem>	menuitems;
     JMenuItem[]		others;
+    BaseMenu		menuOthers;
 
+    result    = null;
     menuitems = new ArrayList<>();
     actors    = ClassLister.getSingleton().getClassnames(ActorHandler.class);
     for (i = 0; i < actors.length; i++) {
@@ -84,17 +86,26 @@ public class EncloseActor
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
     }
     Collections.sort(menuitems, new MenuItemComparator());
-    result = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
-    result.setText(getName());
-    result.setEnabled(isEnabled());
-    result.setIcon(getIcon());
+    if (menuitems.size() > 0) {
+      result = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
+      result.setText(getName());
+      result.setEnabled(isEnabled());
+      result.setIcon(getIcon());
+    }
 
     // special cases
     others = AbstractEncloseActor.encloseAll(m_State);
-    for (i = 0; i < others.length; i++) {
-      if (i == 0)
-	result.addSeparator();
-      result.add(others[i]);
+    if (others.length > 0) {
+      menuOthers = BaseMenu.createCascadingMenu(others, -1, "More...");
+      menuOthers.setText("Others...");
+      menuOthers.setEnabled(isEnabled());
+      if (result != null) {
+        result.addSeparator();
+        result.add(menuOthers);
+      }
+      else {
+        result = menuOthers;
+      }
     }
 
     return result;
