@@ -98,7 +98,7 @@ public class KeepHighestMetaDataValue
    * @return		the updated objects
    */
   @Override
-  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches) {
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     LocatedObjects	result;
     Set<LocatedObject> 	others;
     LocatedObject 	keep;
@@ -108,7 +108,7 @@ public class KeepHighestMetaDataValue
 
     result = new LocatedObjects();
     for (LocatedObject thisObj : objects) {
-      others = matches.get(thisObj);
+      others = matches.get(thisObj).keySet();
       if ((others != null) && (others.size() > 0)) {
         keep      = thisObj;
 	thisScore = (Double) thisObj.getMetaData().getOrDefault(m_ScoreKey, 0.0);

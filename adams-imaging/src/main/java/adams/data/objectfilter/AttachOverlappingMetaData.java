@@ -15,7 +15,7 @@
 
 /*
  * AttachOverlappingMetaData.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -72,7 +72,7 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class AttachOverlappingMetaData
-  extends AbstractObjectFilter {
+    extends AbstractObjectFilter {
 
   private static final long serialVersionUID = 5647107073729835067L;
 
@@ -106,20 +106,20 @@ public class AttachOverlappingMetaData
     super.defineOptions();
 
     m_OptionManager.add(
-      "storage-name", "storageName",
-      new StorageName());
+	"storage-name", "storageName",
+	new StorageName());
 
     m_OptionManager.add(
-      "finder", "finder",
-      new AllFinder());
+	"finder", "finder",
+	new AllFinder());
 
     m_OptionManager.add(
-      "overlap-detection", "overlapDetection",
-      new AreaRatio());
+	"overlap-detection", "overlapDetection",
+	new AreaRatio());
 
     m_OptionManager.add(
-      "meta-data-key", "metaDataKeys",
-      new BaseString[0]);
+	"meta-data-key", "metaDataKeys",
+	new BaseString[0]);
   }
 
   /**
@@ -278,7 +278,7 @@ public class AttachOverlappingMetaData
 
     if (result == null) {
       if (!m_FlowContext.getStorageHandler().getStorage().has(m_StorageName))
-        result = "Report is not available from storage: " + m_StorageName;
+	result = "Report is not available from storage: " + m_StorageName;
     }
 
     return result;
@@ -292,13 +292,13 @@ public class AttachOverlappingMetaData
    */
   @Override
   protected LocatedObjects doFilter(LocatedObjects objects) {
-    Report					report;
-    LocatedObjects				others;
-    Map<LocatedObject, Set<LocatedObject>> 	matches;
-    Set<LocatedObject>				overlaps;
-    int						index;
-    Iterator<LocatedObject>			iter;
-    LocatedObject				overlap;
+    Report						report;
+    LocatedObjects					others;
+    Map<LocatedObject, Map<LocatedObject,Double>> 	matches;
+    Set<LocatedObject>					overlaps;
+    int							index;
+    Iterator<LocatedObject>				iter;
+    LocatedObject					overlap;
 
     report   = (Report) m_FlowContext.getStorageHandler().getStorage().get(m_StorageName);
     others   = m_Finder.findObjects(report);
@@ -307,12 +307,12 @@ public class AttachOverlappingMetaData
     for (LocatedObject object : matches.keySet()) {
       index = objects.indexOf(object);
       if (index == -1) {
-        getLogger().warning("Failed to locate object: " + object);
+	getLogger().warning("Failed to locate object: " + object);
 	continue;
       }
-      overlaps = matches.get(object);
+      overlaps = matches.get(object).keySet();
       if (overlaps.size() > 1)
-        getLogger().warning("More than one overlap for: " + object);
+	getLogger().warning("More than one overlap for: " + object);
       iter = overlaps.iterator();
       if (iter.hasNext()) {
 	overlap = iter.next();

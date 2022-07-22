@@ -15,7 +15,7 @@
 
 /*
  * RemoveAll.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -54,14 +54,18 @@ public class RemoveAll
    * @return		the updated objects
    */
   @Override
-  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches) {
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     LocatedObjects	result;
     Set<LocatedObject> 	others;
 
     result = new LocatedObjects();
     for (LocatedObject thisObj : objects) {
-      others = matches.get(thisObj);
-      if ((others == null) || (others.size() == 0))
+      if (!matches.containsKey(thisObj)) {
+        result.add(thisObj.getClone());
+        continue;
+      }
+      others = matches.get(thisObj).keySet();
+      if (others.size() == 0)
         result.add(thisObj.getClone());
     }
 

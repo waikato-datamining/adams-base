@@ -15,7 +15,7 @@
 
 /*
  * PassThrough.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -24,7 +24,6 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Does nothing, just returns the image objects as is.
@@ -54,7 +53,7 @@ public class PassThrough
    * @return		the updated objects
    */
   @Override
-  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches) {
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     return objects;
   }
 }

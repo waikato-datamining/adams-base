@@ -15,7 +15,7 @@
 
 /*
  * AbstractObjectOverlap.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -26,9 +26,7 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Ancestor for schemes that calculate image overlaps.
@@ -36,8 +34,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractObjectOverlap
-  extends AbstractOptionHandler
-  implements ObjectOverlap {
+    extends AbstractOptionHandler
+    implements ObjectOverlap {
 
   private static final long serialVersionUID = -6700493470621873334L;
 
@@ -58,16 +56,16 @@ public abstract class AbstractObjectOverlap
     super.defineOptions();
 
     m_OptionManager.add(
-      "exclude-identical", "excludeIdentical",
-      false);
+	"exclude-identical", "excludeIdentical",
+	false);
 
     m_OptionManager.add(
-      "copy-meta-data", "copyMetaData",
-      false);
+	"copy-meta-data", "copyMetaData",
+	false);
 
     m_OptionManager.add(
-      "meta-data-key", "metaDataKeys",
-      new BaseString[0]);
+	"meta-data-key", "metaDataKeys",
+	new BaseString[0]);
   }
 
   /**
@@ -97,8 +95,8 @@ public abstract class AbstractObjectOverlap
    */
   public String excludeIdenticalTipText() {
     return "If enabled, identical objects are not compared with each other; "
-      + "e.g., when looking for overlaps within the same set of objects rather "
-      + "than a different set.";
+	+ "e.g., when looking for overlaps within the same set of objects rather "
+	+ "than a different set.";
   }
 
   /**
@@ -128,7 +126,7 @@ public abstract class AbstractObjectOverlap
    */
   public String copyMetaDataTipText() {
     return "If enabled, the specified meta-data values get copied across to the "
-      + "object that gets returned.";
+	+ "object that gets returned.";
   }
 
   /**
@@ -193,9 +191,9 @@ public abstract class AbstractObjectOverlap
    * @param matches	for storing the matches
    * @param thisObj	the object to initialize the matches for
    */
-  protected void initMatch(Map<LocatedObject, Set<LocatedObject>> matches, LocatedObject thisObj) {
+  protected void initMatch(Map<LocatedObject, Map<LocatedObject,Double>> matches, LocatedObject thisObj) {
     if (!matches.containsKey(thisObj))
-      matches.put(thisObj, new HashSet<>());
+      matches.put(thisObj, new HashMap<>());
   }
 
   /**
@@ -204,10 +202,11 @@ public abstract class AbstractObjectOverlap
    * @param matches	for storing the matches
    * @param thisObj	the object that a match was found for
    * @param otherObj	the match that was found
+   * @param score	the score of the match
    */
-  protected void addMatch(Map<LocatedObject, Set<LocatedObject>> matches, LocatedObject thisObj, LocatedObject otherObj) {
+  protected void addMatch(Map<LocatedObject, Map<LocatedObject,Double>> matches, LocatedObject thisObj, LocatedObject otherObj, double score) {
     initMatch(matches, thisObj);
-    matches.get(thisObj).add(otherObj);
+    matches.get(thisObj).put(otherObj, score);
   }
 
   /**
@@ -218,7 +217,7 @@ public abstract class AbstractObjectOverlap
    * @param matches 	for collecting the matches
    * @return		the overlapping objects
    */
-  protected abstract LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches);
+  protected abstract LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Map<LocatedObject,Double>> matches);
 
   /**
    * Computes the overlapping objects between the annotations and the predictions.
@@ -246,8 +245,8 @@ public abstract class AbstractObjectOverlap
    * @return		the matches
    */
   @Override
-  public Map<LocatedObject, Set<LocatedObject>> matches(LocatedObjects annotations, LocatedObjects predictions) {
-    Map<LocatedObject, Set<LocatedObject>>	result;
+  public Map<LocatedObject, Map<LocatedObject,Double>> matches(LocatedObjects annotations, LocatedObjects predictions) {
+    Map<LocatedObject, Map<LocatedObject,Double>>	result;
     String					msg;
 
     msg = check(annotations, predictions);
@@ -267,7 +266,7 @@ public abstract class AbstractObjectOverlap
   protected void copyMetaData(LocatedObject source, LocatedObject target) {
     for (BaseString key: m_MetaDataKeys) {
       if (source.getMetaData().containsKey(key.getValue()))
-        target.getMetaData().put(key.getValue(), source.getMetaData().get(key.getValue()));
+	target.getMetaData().put(key.getValue(), source.getMetaData().get(key.getValue()));
     }
   }
 }

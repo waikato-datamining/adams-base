@@ -15,7 +15,7 @@
 
 /*
  * AbstractOverlappingObjectRemoval.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -29,7 +29,6 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Ancestor for schemes that remove overlapping images objects.
@@ -37,8 +36,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractOverlappingObjectRemoval
-  extends AbstractOptionHandler
-  implements OverlappingObjectRemoval {
+    extends AbstractOptionHandler
+    implements OverlappingObjectRemoval {
 
   private static final long serialVersionUID = 6991707947586230873L;
 
@@ -50,7 +49,7 @@ public abstract class AbstractOverlappingObjectRemoval
    * @return		the updated objects
    */
   @Override
-  public abstract LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches);
+  public abstract LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches);
 
   /**
    * Removes overlapping objects between the two reports.
@@ -64,11 +63,11 @@ public abstract class AbstractOverlappingObjectRemoval
    * @throws Exception	if instantiation of report fails
    */
   public static Report remove(Report thisReport, Report otherReport, ObjectFinder finder, ObjectOverlap detection, OverlappingObjectRemoval removal) throws Exception {
-    Report 					result;
-    LocatedObjects				thisObjs;
-    LocatedObjects				otherObjs;
-    LocatedObjects 				newObjs;
-    Map<LocatedObject, Set<LocatedObject>> 	matches;
+    Report 						result;
+    LocatedObjects					thisObjs;
+    LocatedObjects					otherObjs;
+    LocatedObjects 					newObjs;
+    Map<LocatedObject, Map<LocatedObject,Double>> 	matches;
 
     thisObjs  = finder.findObjects(LocatedObjects.fromReport(thisReport,  finder.getPrefix()));
     otherObjs = finder.findObjects(LocatedObjects.fromReport(otherReport, finder.getPrefix()));
@@ -81,8 +80,8 @@ public abstract class AbstractOverlappingObjectRemoval
     // transfer non-object fields
     for (AbstractField field: thisReport.getFields()) {
       if (!field.getName().startsWith(finder.getPrefix())) {
-        result.addField(field);
-        result.setValue(field, thisReport.getValue(field));
+	result.addField(field);
+	result.setValue(field, thisReport.getValue(field));
       }
     }
 

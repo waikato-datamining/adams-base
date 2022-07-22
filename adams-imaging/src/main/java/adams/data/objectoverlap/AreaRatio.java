@@ -15,7 +15,7 @@
 
 /*
  * AreaRatio.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -294,7 +294,7 @@ public class AreaRatio
    * @return		the overlapping objects
    */
   @Override
-  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches) {
+  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     LocatedObjects 	result;
     int			count;
     double		overlapHighest;
@@ -345,7 +345,7 @@ public class AreaRatio
 	  }
 	  if (ratio >= m_MinOverlapRatio) {
 	    count++;
-	    addMatch(matches, thisObj, otherObj);
+	    addMatch(matches, thisObj, otherObj, ratio);
 	    if (ratio > overlapHighest) {
 	      tmpObj = null;
 	      if (m_UseOtherObject) {

@@ -54,7 +54,7 @@ public class RemoveSmallerRectangle
    * @return		the updated objects
    */
   @Override
-  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Set<LocatedObject>> matches) {
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     LocatedObjects	result;
     Set<LocatedObject> 	others;
     LocatedObject	largest;
@@ -63,8 +63,10 @@ public class RemoveSmallerRectangle
 
     result = new LocatedObjects();
     for (LocatedObject thisObj : objects) {
-      others = matches.get(thisObj);
-      if ((others != null) && (others.size() > 0)) {
+      if (matches.containsKey(thisObj))
+        continue;
+      others = matches.get(thisObj).keySet();
+      if (others.size() > 0) {
         largest  = thisObj;
 	thisArea = thisObj.getWidth() * thisObj.getHeight();
         for (LocatedObject otherObj : others) {

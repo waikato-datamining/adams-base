@@ -433,7 +433,7 @@ public class IntersectOverUnionRatio
    * @return		the overlapping objects
    */
   @Override
-  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Set<LocatedObject>> matches) {
+  protected LocatedObjects doCalculate(LocatedObjects annotations, LocatedObjects predictions, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
     LocatedObjects 	result;
     int			count;
     double		iouHighest;
@@ -488,7 +488,7 @@ public class IntersectOverUnionRatio
 	  }
 	  if (iou >= m_MinIntersectOverUnionRatio) {
 	    count++;
-	    addMatch(matches, thisObj, otherObj);
+	    addMatch(matches, thisObj, otherObj, iou);
 	    if (iou > iouHighest) {
 	      tmpObj = null;
 	      if (m_UseOtherObject) {

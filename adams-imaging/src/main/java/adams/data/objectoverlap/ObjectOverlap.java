@@ -15,7 +15,7 @@
 
 /*
  * ObjectOverlap.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -26,7 +26,6 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface for schemes that calculate image overlaps.
@@ -59,5 +58,5 @@ public interface ObjectOverlap
    * @param predictions the predictions to compare with
    * @return		the matches
    */
-  public Map<LocatedObject, Set<LocatedObject>> matches(LocatedObjects annotations, LocatedObjects predictions);
+  public Map<LocatedObject, Map<LocatedObject,Double>> matches(LocatedObjects annotations, LocatedObjects predictions);
 }
