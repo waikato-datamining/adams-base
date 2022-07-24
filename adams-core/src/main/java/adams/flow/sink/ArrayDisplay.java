@@ -23,12 +23,16 @@ package adams.flow.sink;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -141,6 +145,18 @@ import java.lang.reflect.Array;
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
+ * <pre>-panel-width &lt;int&gt; (property: panelWidth)
+ * &nbsp;&nbsp;&nbsp;The width of the individual panels.
+ * &nbsp;&nbsp;&nbsp;default: 400
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-panel-height &lt;int&gt; (property: panelHeight)
+ * &nbsp;&nbsp;&nbsp;The height of the individual panels.
+ * &nbsp;&nbsp;&nbsp;default: 300
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -168,6 +184,15 @@ public class ArrayDisplay
 
   /** the number of columns to use (in case of GRID). */
   protected int m_NumCols;
+
+  /** the width of the individual panels. */
+  protected int m_PanelWidth;
+
+  /** the height of the individual panels. */
+  protected int m_PanelHeight;
+
+  /** the panels to display. */
+  protected List<DisplayPanel> m_DisplayPanels;
 
   /**
    * Returns a string describing the object.
@@ -197,6 +222,24 @@ public class ArrayDisplay
     m_OptionManager.add(
 	"num-cols", "numCols",
 	1, 1, null);
+
+    m_OptionManager.add(
+	"panel-width", "panelWidth",
+	400, 1, null);
+
+    m_OptionManager.add(
+	"panel-height", "panelHeight",
+	300, 1, null);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_DisplayPanels = new ArrayList<>();
   }
 
   /**
@@ -287,6 +330,64 @@ public class ArrayDisplay
   }
 
   /**
+   * Sets the width of the individual panels.
+   *
+   * @param value 	the width
+   */
+  public void setPanelWidth(int value) {
+    m_PanelWidth = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set width of the individual panels.
+   *
+   * @return 		the width
+   */
+  public int getPanelWidth() {
+    return m_PanelWidth;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String panelWidthTipText() {
+    return "The width of the individual panels.";
+  }
+
+  /**
+   * Sets the height of the individual panels.
+   *
+   * @param value 	the height
+   */
+  public void setPanelHeight(int value) {
+    m_PanelHeight = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set height of the individual panels.
+   *
+   * @return 		the height
+   */
+  public int getPanelHeight() {
+    return m_PanelHeight;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String panelHeightTipText() {
+    return "The height of the individual panels.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -300,6 +401,8 @@ public class ArrayDisplay
     result += QuickInfoHelper.toString(this, "arrangement", m_Arrangement, ", arrangement: ");
     if (m_Arrangement == Arrangement.GRID)
       result += QuickInfoHelper.toString(this, "numCols", m_NumCols, ", #cols: ");
+    result += QuickInfoHelper.toString(this, "panelWidth", m_PanelWidth, ", pW: ");
+    result += QuickInfoHelper.toString(this, "panelHeight", m_PanelHeight, ", pH: ");
 
     return result;
   }
@@ -350,12 +453,17 @@ public class ArrayDisplay
   protected void displayTabbed(Object[] elements) {
     BaseTabbedPane	pane;
     int			i;
-    DisplayPanel	panel;
+    DisplayPanel 	dpanel;
+    BasePanel		bpanel;
 
     pane = new BaseTabbedPane();
     for (i = 0; i < elements.length; i++) {
-      panel = m_PanelProvider.createDisplayPanel(new Token(elements[i]));
-      pane.addTab("" + (i+1), (JComponent) panel);
+      dpanel = m_PanelProvider.createDisplayPanel(new Token(elements[i]));
+      m_DisplayPanels.add(dpanel);
+      bpanel = new BasePanel(new BorderLayout());
+      bpanel.setPreferredSize(new Dimension(m_PanelWidth, m_PanelHeight));
+      bpanel.add((JComponent) dpanel, BorderLayout.CENTER);
+      pane.addTab("" + (i+1), new BaseScrollPane(bpanel));
     }
     m_Panel.setLayout(new BorderLayout());
     m_Panel.add(pane, BorderLayout.CENTER);
@@ -370,12 +478,21 @@ public class ArrayDisplay
    */
   protected void displayGridded(Object[] elements, int numCols, int numRows) {
     int			i;
-    DisplayPanel	panel;
+    BasePanel		panel;
+    DisplayPanel 	dpanel;
+    BasePanel		bpanel;
 
-    m_Panel.setLayout(new GridLayout(numRows, numCols));
+    panel = new BasePanel();
+    panel.setLayout(new GridLayout(numRows, numCols));
+    m_Panel.setLayout(new BorderLayout());
+    m_Panel.add(new BaseScrollPane(panel), BorderLayout.CENTER);
     for (i = 0; i < elements.length; i++) {
-      panel = m_PanelProvider.createDisplayPanel(new Token(elements[i]));
-      m_Panel.add((JComponent) panel);
+      dpanel = m_PanelProvider.createDisplayPanel(new Token(elements[i]));
+      m_DisplayPanels.add(dpanel);
+      bpanel = new BasePanel(new BorderLayout());
+      bpanel.setPreferredSize(new Dimension(m_PanelWidth, m_PanelHeight));
+      bpanel.add((JComponent) dpanel, BorderLayout.CENTER);
+      panel.add(bpanel);
     }
   }
 
@@ -411,6 +528,18 @@ public class ArrayDisplay
 	break;
       default:
 	throw new IllegalStateException("Unhandled arrangement type: " + m_Arrangement);
+    }
+  }
+
+  /**
+   * Cleans up after the execution has finished.
+   */
+  @Override
+  public void wrapUp() {
+    super.wrapUp();
+    if (m_DisplayPanels != null) {
+      for (DisplayPanel panel: m_DisplayPanels)
+	panel.wrapUp();
     }
   }
 }
