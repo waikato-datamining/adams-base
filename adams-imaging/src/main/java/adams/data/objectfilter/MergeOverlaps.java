@@ -22,7 +22,10 @@ package adams.data.objectfilter;
 
 import adams.core.Utils;
 import adams.data.objectoverlap.AreaRatio;
+import adams.data.objectoverlap.BoundingBoxFallbackSupporter;
+import adams.data.objectoverlap.GeometryType;
 import adams.data.objectoverlap.ObjectOverlap;
+import adams.data.objectoverlap.OptionalBoundingBoxFallbackSupporter;
 import adams.data.statistics.StatUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -252,6 +255,50 @@ public class MergeOverlaps
   }
 
   /**
+   * Turns the located object's polygon or bbox into a Geomtry instance. Takes potential bbox fallback into account.
+   *
+   * @param obj		the object to convert
+   * @return		the generated Gemoetry
+   */
+  protected Geometry toGeometry(LocatedObject obj) {
+    Geometry		result;
+    GeometryType	geometry;
+    boolean		fallback;
+
+    if (obj.hasPolygon())
+      geometry = GeometryType.POLYGON;
+    else
+      geometry = GeometryType.BBOX;
+
+    if (geometry == GeometryType.POLYGON) {
+      if (m_Algorithm instanceof OptionalBoundingBoxFallbackSupporter) {
+	fallback = ((OptionalBoundingBoxFallbackSupporter) m_Algorithm).getFallback()
+	    && obj.boundingBoxFallback(((OptionalBoundingBoxFallbackSupporter) m_Algorithm).getBoundingBoxFallbackRatio());
+	if (fallback)
+	  geometry = GeometryType.BBOX;
+      }
+      else if (m_Algorithm instanceof BoundingBoxFallbackSupporter) {
+	fallback = obj.boundingBoxFallback(((BoundingBoxFallbackSupporter) m_Algorithm).getBoundingBoxFallbackRatio());
+	if (fallback)
+	  geometry = GeometryType.BBOX;
+      }
+    }
+
+    switch (geometry) {
+      case BBOX:
+        result = LocatedObject.toGeometry(obj.getRectangle());
+        break;
+      case POLYGON:
+	result = LocatedObject.toGeometry(obj.getPolygon());
+        break;
+      default:
+        throw new IllegalStateException("Unhandled geometry type: " + geometry);
+    }
+
+    return result;
+  }
+
+  /**
    * Merges the objects into a single on.
    *
    * @param objs	the objects to merge
@@ -279,11 +326,11 @@ public class MergeOverlaps
     result = new ArrayList<>();
     result.add(objs.get(0));
 
-    resultGeo = objs.get(0).toGeometry();
+    resultGeo = toGeometry(objs.get(0));
     for (i = 1; i < objs.size(); i++) {
       // merge polygons
-      other     = objs.get(i);
-      otherGeo  = other.toGeometry();
+      other    = objs.get(i);
+      otherGeo = toGeometry(other);
       try {
 	mergedGeo = resultGeo.union(otherGeo);
       }
