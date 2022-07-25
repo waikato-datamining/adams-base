@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Merges overlapping objects into single object.
@@ -256,8 +257,8 @@ public class MergeOverlaps
    * @param objs	the objects to merge
    * @return		the merged object
    */
-  protected LocatedObject mergeObjects(List<LocatedObject> objs) {
-    LocatedObject	result;
+  protected List<LocatedObject> mergeObjects(List<LocatedObject> objs) {
+    List<LocatedObject>	result;
     Geometry 		resultGeo;
     LocatedObject	other;
     Geometry 		otherGeo;
@@ -272,72 +273,86 @@ public class MergeOverlaps
     double[]		scores;
     double		scoreNew;
 
-    result = objs.get(0);
+    if (objs.size() <= 1)
+      return objs;
 
-    if (objs.size() > 1) {
+    result = new ArrayList<>();
+    result.add(objs.get(0));
+
+    resultGeo = objs.get(0).toGeometry();
+    for (i = 1; i < objs.size(); i++) {
       // merge polygons
-      resultGeo = result.toGeometry();
-      for (i = 1; i < objs.size(); i++) {
-        other     = objs.get(i);
-        otherGeo  = other.toGeometry();
-        mergedGeo = resultGeo.union(otherGeo);
-        if (mergedGeo instanceof Polygon) {
-          bbox   = (Polygon) mergedGeo.getEnvelope();
-          coords = bbox.getCoordinates();
-          // bbox
-          merged = new LocatedObject(
-              (int) coords[0].x,
-	      (int) coords[0].y,
-	      (int) (coords[2].x - coords[0].x + 1),
-	      (int) (coords[2].y - coords[0].y + 1));
-          // polygon
-          coords = mergedGeo.getCoordinates();
-          polyX = new int[coords.length];
-	  polyY = new int[coords.length];
-	  for (n = 0; n < coords.length; n++) {
-	    polyX[n] = (int) coords[n].x;
-	    polyY[n] = (int) coords[n].y;
-	  }
-          merged.setPolygon(new java.awt.Polygon(polyX, polyY, polyX.length));
-	  // for next merge
-          result    = merged;
-          resultGeo = mergedGeo;
-	}
-        else {
-          getLogger().severe("Expected polygon geometry, but got: " + Utils.classToString(mergedGeo));
-	}
+      other     = objs.get(i);
+      otherGeo  = other.toGeometry();
+      try {
+	mergedGeo = resultGeo.union(otherGeo);
+      }
+      catch (Exception e) {
+        getLogger().log(Level.SEVERE, "Failed to combine polygons, keeping object as is: " + other, e);
+        result.add(objs.get(i));
+        continue;
       }
 
-      // merged score
-      scoreNew  = Double.NaN;
-      if (!m_ScoreKey.isEmpty()) {
-	scores = new double[objs.size()];
-	for (i = 0; i < objs.size(); i++)
-	  scores[i] = (Double) objs.get(i).getMetaData().get(m_ScoreKey);
-	switch (m_MergedScoreCalculation) {
-	  case MIN:
-	    scoreNew = StatUtils.min(scores);
-	    break;
-	  case MEAN:
-	    scoreNew = StatUtils.mean(scores);
-	    break;
-	  case MEDIAN:
-	    scoreNew = StatUtils.median(scores);
-	    break;
-	  case MAX:
-	    scoreNew = StatUtils.max(scores);
-	    break;
-	  default:
-	    throw new IllegalStateException("Unhandled score calculation: " + m_MergedScoreCalculation);
+      // interpret merge
+      if (mergedGeo instanceof Polygon) {
+	bbox   = (Polygon) mergedGeo.getEnvelope();
+	coords = bbox.getCoordinates();
+	// bbox
+	merged = new LocatedObject(
+	    (int) coords[0].x,
+	    (int) coords[0].y,
+	    (int) (coords[2].x - coords[0].x + 1),
+	    (int) (coords[2].y - coords[0].y + 1));
+	// polygon
+	coords = mergedGeo.getCoordinates();
+	polyX = new int[coords.length];
+	polyY = new int[coords.length];
+	for (n = 0; n < coords.length; n++) {
+	  polyX[n] = (int) coords[n].x;
+	  polyY[n] = (int) coords[n].y;
 	}
+	merged.setPolygon(new java.awt.Polygon(polyX, polyY, polyX.length));
+	// for next merge
+	result.set(0, merged);
+	resultGeo = mergedGeo;
       }
+      else {
+	getLogger().severe("Expected polygon geometry, but got " + Utils.classToString(mergedGeo) + ", leaving unmerged: " + other);
+	result.add(objs.get(i));
+      }
+    }
 
-      // meta-data
+    // merged score
+    scoreNew  = Double.NaN;
+    if (!m_ScoreKey.isEmpty()) {
+      scores = new double[objs.size()];
+      for (i = 0; i < objs.size(); i++)
+	scores[i] = (Double) objs.get(i).getMetaData().get(m_ScoreKey);
+      switch (m_MergedScoreCalculation) {
+	case MIN:
+	  scoreNew = StatUtils.min(scores);
+	  break;
+	case MEAN:
+	  scoreNew = StatUtils.mean(scores);
+	  break;
+	case MEDIAN:
+	  scoreNew = StatUtils.median(scores);
+	  break;
+	case MAX:
+	  scoreNew = StatUtils.max(scores);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled score calculation: " + m_MergedScoreCalculation);
+      }
+    }
+
+    // meta-data
+    for (i = 0; i < result.size(); i++) {
       if (!m_LabelKey.isEmpty() && objs.get(0).getMetaData().containsKey(m_LabelKey))
-	result.getMetaData().put(m_LabelKey, objs.get(0).getMetaData().get(m_LabelKey));
+	result.get(i).getMetaData().put(m_LabelKey, objs.get(0).getMetaData().get(m_LabelKey));
       if (!m_ScoreKey.isEmpty())
-	result.getMetaData().put(m_ScoreKey, scoreNew);
-      result.getMetaData().put("num_merged_objects", objs.size());
+	result.get(i).getMetaData().put(m_ScoreKey, scoreNew);
+      result.get(i).getMetaData().put("num_merged_objects", objs.size());
       // TODO other meta-data?
     }
 
@@ -356,7 +371,7 @@ public class MergeOverlaps
     Map<LocatedObject, Map<LocatedObject,Double>>	matches;
     List<LocatedObject>					toMerge;
     Set<LocatedObject> 					merged;
-    LocatedObject					mergedObj;
+    List<LocatedObject> 				mergedObjs;
 
     result  = new LocatedObjects();
     matches = m_Algorithm.matches(objects, objects);
@@ -368,8 +383,8 @@ public class MergeOverlaps
       toMerge   = findObjectsToMerge(obj, matches.get(obj), merged);
       merged.addAll(toMerge);
       // merge objects
-      mergedObj = mergeObjects(toMerge);
-      result.add(mergedObj);
+      mergedObjs = mergeObjects(toMerge);
+      result.addAll(mergedObjs);
     }
     return result;
   }
