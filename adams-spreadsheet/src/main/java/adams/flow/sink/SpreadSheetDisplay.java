@@ -333,11 +333,11 @@ public class SpreadSheetDisplay
 
       m_TableModel = new SpreadSheetTableModel(sheet);
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
+      m_Table.setShowRowColumn(m_Owner.getShowRowIndexColumn());
       m_Table.setModel(m_TableModel);
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
       m_Table.setShowFormulas(m_Owner.getShowFormulas());
-      m_Table.setShowRowColumn(m_Owner.getShowRowIndexColumn());
       m_Table.setColumnWidthApproach(m_Owner.getOptimalColumnWidth() ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
     }
 
@@ -898,11 +898,11 @@ public class SpreadSheetDisplay
 
     m_TableModel = new SpreadSheetTableModel(sheet);
     m_TableModel.setReadOnly(m_ReadOnly);
+    m_Table.setShowRowColumn(m_ShowRowIndexColumn);
     m_Table.setModel(m_TableModel);
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
     m_Table.setShowFormulas(m_ShowFormulas);
-    m_Table.setShowRowColumn(m_ShowRowIndexColumn);
     m_Table.setColumnWidthApproach(m_OptimalColumnWidth ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
   }
 
