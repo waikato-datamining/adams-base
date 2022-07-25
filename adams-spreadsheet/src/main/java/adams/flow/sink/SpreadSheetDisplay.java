@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDisplay.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -169,6 +169,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer
  * </pre>
  *
+ * <pre>-show-row-index-col &lt;boolean&gt; (property: showRowIndexColumn)
+ * &nbsp;&nbsp;&nbsp;Whether to show the row index column.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  * <pre>-show-formulas &lt;boolean&gt; (property: showFormulas)
  * &nbsp;&nbsp;&nbsp;Whether to show the formulas or the calculated values.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -210,8 +215,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetDisplay
-  extends AbstractTextualDisplay
-  implements DisplayPanelProvider, SpreadSheetSupporter, ComponentSupplier {
+    extends AbstractTextualDisplay
+    implements DisplayPanelProvider, SpreadSheetSupporter, ComponentSupplier {
 
   /**
    * Custom {@link DisplayPanel}.
@@ -219,8 +224,8 @@ public class SpreadSheetDisplay
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static class SpreadSheetDisplayPanel
-    extends AbstractTextDisplayPanel
-    implements UpdateableDisplayPanel {
+      extends AbstractTextDisplayPanel
+      implements UpdateableDisplayPanel {
 
     private static final long serialVersionUID = 3524967045456783678L;
 
@@ -253,7 +258,7 @@ public class SpreadSheetDisplay
     @Override
     protected void initGUI() {
       if (m_Owner == null)
-	return;
+        return;
 
       super.initGUI();
 
@@ -266,24 +271,24 @@ public class SpreadSheetDisplay
 
       final AbstractSpreadSheetPreviewPanel previewPanel = m_Owner.getPreview().generate();
       if (previewPanel == null) {
-	add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
+        add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
       }
       else {
-	BaseSplitPane splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-	splitPane.setOneTouchExpandable(true);
-	splitPane.setResizeWeight(1.0);
-	splitPane.setTopComponent(new BaseScrollPane(m_Table));
-	splitPane.setBottomComponent(previewPanel);
-	splitPane.setDividerLocation((int) (m_Owner.getHeight() * 0.5));
-	splitPane.setUISettingsParameters(SpreadSheetDisplay.class, "previewDividerLocation");
-	add(splitPane, BorderLayout.CENTER);
-	m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-	  int[] sel = m_Table.getSelectedRows();
-	  int[] rows = new int[sel.length];
-	  for (int i = 0; i < rows.length; i++)
-	    rows[i] = m_Table.getActualRow(sel[i]);
-	  previewPanel.preview(m_Table.toSpreadSheet(), rows);
-	});
+        BaseSplitPane splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setResizeWeight(1.0);
+        splitPane.setTopComponent(new BaseScrollPane(m_Table));
+        splitPane.setBottomComponent(previewPanel);
+        splitPane.setDividerLocation((int) (m_Owner.getHeight() * 0.5));
+        splitPane.setUISettingsParameters(SpreadSheetDisplay.class, "previewDividerLocation");
+        add(splitPane, BorderLayout.CENTER);
+        m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+          int[] sel = m_Table.getSelectedRows();
+          int[] rows = new int[sel.length];
+          for (int i = 0; i < rows.length; i++)
+            rows[i] = m_Table.getActualRow(sel[i]);
+          previewPanel.preview(m_Table.toSpreadSheet(), rows);
+        });
       }
 
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -292,21 +297,21 @@ public class SpreadSheetDisplay
       add(panel, BorderLayout.NORTH);
       m_PanelSearch = null;
       if (m_Owner.getAllowSearch()) {
-	m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
-	m_PanelSearch.addSearchListener((SearchEvent e) ->
-	    m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-	add(m_PanelSearch, BorderLayout.SOUTH);
+        m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+        m_PanelSearch.addSearchListener((SearchEvent e) ->
+            m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+        add(m_PanelSearch, BorderLayout.SOUTH);
       }
 
       if (m_Owner.getSelectedRowsProcessors().length > 0) {
-	PopupMenuCustomizer customizer = new PopupMenuCustomizer() {
-	  @Override
-	  public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	    TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
-	    SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_Owner.getSelectedRowsProcessors()));
-	  }
-	};
-	m_Table.setCellPopupMenuCustomizer(customizer);
+        PopupMenuCustomizer customizer = new PopupMenuCustomizer() {
+          @Override
+          public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+            TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
+            SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_Owner.getSelectedRowsProcessors()));
+          }
+        };
+        m_Table.setCellPopupMenuCustomizer(customizer);
       }
     }
 
@@ -320,11 +325,11 @@ public class SpreadSheetDisplay
       SpreadSheet 	sheet;
 
       if (token.hasPayload(SpreadSheet.class))
-	sheet = token.getPayload(SpreadSheet.class);
+        sheet = token.getPayload(SpreadSheet.class);
       else if (token.hasPayload(SpreadSheetSupporter.class))
-	sheet = token.getPayload(SpreadSheetSupporter.class).toSpreadSheet();
+        sheet = token.getPayload(SpreadSheetSupporter.class).toSpreadSheet();
       else
-	throw new IllegalStateException(token.unhandledData());
+        throw new IllegalStateException(token.unhandledData());
 
       m_TableModel = new SpreadSheetTableModel(sheet);
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
@@ -332,6 +337,7 @@ public class SpreadSheetDisplay
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
       m_Table.setShowFormulas(m_Owner.getShowFormulas());
+      m_Table.setShowRowColumn(m_Owner.getShowRowIndexColumn());
       m_Table.setColumnWidthApproach(m_Owner.getOptimalColumnWidth() ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
     }
 
@@ -401,6 +407,9 @@ public class SpreadSheetDisplay
   /** the custom cell renderer. */
   protected CellRenderingCustomizer m_CellRenderingCustomizer;
 
+  /** whether to show the column with the row index. */
+  protected boolean m_ShowRowIndexColumn;
+
   /** whether to show the formulas instead of the calculated values. */
   protected boolean m_ShowFormulas;
 
@@ -427,8 +436,8 @@ public class SpreadSheetDisplay
   @Override
   public String globalInfo() {
     return
-      "Actor for displaying a spreadsheet.\n"
-	+ "Custom background for negative/positive values can be specified as well.";
+        "Actor for displaying a spreadsheet.\n"
+            + "Custom background for negative/positive values can be specified as well.";
   }
 
   /**
@@ -439,40 +448,44 @@ public class SpreadSheetDisplay
     super.defineOptions();
 
     m_OptionManager.add(
-      "num-decimals", "numDecimals",
-      3, -1, null);
+        "num-decimals", "numDecimals",
+        3, -1, null);
 
     m_OptionManager.add(
-      "cell-rendering-customizer", "cellRenderingCustomizer",
-      new DefaultCellRenderingCustomizer());
+        "cell-rendering-customizer", "cellRenderingCustomizer",
+        new DefaultCellRenderingCustomizer());
 
     m_OptionManager.add(
-      "show-formulas", "showFormulas",
-      false);
+        "show-row-index-col", "showRowIndexColumn",
+        true);
 
     m_OptionManager.add(
-      "allow-search", "allowSearch",
-      false);
+        "show-formulas", "showFormulas",
+        false);
 
     m_OptionManager.add(
-      "optimal-column-width", "optimalColumnWidth",
-      true);
+        "allow-search", "allowSearch",
+        false);
 
     m_OptionManager.add(
-      "read-only", "readOnly",
-      true);
+        "optimal-column-width", "optimalColumnWidth",
+        true);
 
     m_OptionManager.add(
-      "writer", "writer",
-      new NullWriter());
+        "read-only", "readOnly",
+        true);
 
     m_OptionManager.add(
-      "selected-rows-processor", "selectedRowsProcessors",
-      new ProcessSelectedRows[0]);
+        "writer", "writer",
+        new NullWriter());
 
     m_OptionManager.add(
-      "preview", "preview",
-      new NullPreview());
+        "selected-rows-processor", "selectedRowsProcessors",
+        new ProcessSelectedRows[0]);
+
+    m_OptionManager.add(
+        "preview", "preview",
+        new NullPreview());
   }
 
   /**
@@ -581,6 +594,35 @@ public class SpreadSheetDisplay
    */
   public String showFormulasTipText() {
     return "Whether to show the formulas or the calculated values.";
+  }
+
+  /**
+   * Sets whether to show the column with the row indices.
+   *
+   * @param value 	true if to show the column
+   */
+  public void setShowRowIndexColumn(boolean value) {
+    m_ShowRowIndexColumn = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the column with the row indices.
+   *
+   * @return 		true if to show the column
+   */
+  public boolean getShowRowIndexColumn() {
+    return m_ShowRowIndexColumn;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showRowIndexColumnTipText() {
+    return "Whether to show the row index column.";
   }
 
   /**
@@ -793,11 +835,11 @@ public class SpreadSheetDisplay
       splitPane.setUISettingsParameters(SpreadSheetDisplay.class, "previewDividerLocation");
       result.add(splitPane, BorderLayout.CENTER);
       m_Table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-	int[] sel = m_Table.getSelectedRows();
-	int[] rows = new int[sel.length];
-	for (int i = 0; i < rows.length; i++)
-	  rows[i] = m_Table.getActualRow(sel[i]);
-	previewPanel.preview(m_Table.toSpreadSheet(), rows);
+        int[] sel = m_Table.getSelectedRows();
+        int[] rows = new int[sel.length];
+        for (int i = 0; i < rows.length; i++)
+          rows[i] = m_Table.getActualRow(sel[i]);
+        previewPanel.preview(m_Table.toSpreadSheet(), rows);
       });
     }
 
@@ -810,17 +852,17 @@ public class SpreadSheetDisplay
     if (m_AllowSearch) {
       m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
       m_PanelSearch.addSearchListener((SearchEvent e) ->
-	m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+          m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
       result.add(m_PanelSearch, BorderLayout.SOUTH);
     }
 
     if (m_SelectedRowsProcessors.length > 0) {
       customizer = new PopupMenuCustomizer() {
-	@Override
-	public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
-	  TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
-	  SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_SelectedRowsProcessors));
-	}
+        @Override
+        public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
+          TableState state = SpreadSheetTablePopupMenuItemHelper.getState(m_Table, e, TableRowRange.SELECTED);
+          SpreadSheetTablePopupMenuItemHelper.addProcessSelectedRowsToPopupMenu(state, menu, Arrays.asList(m_SelectedRowsProcessors));
+        }
       };
       m_Table.setCellPopupMenuCustomizer(customizer);
     }
@@ -860,6 +902,7 @@ public class SpreadSheetDisplay
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
     m_Table.setShowFormulas(m_ShowFormulas);
+    m_Table.setShowRowColumn(m_ShowRowIndexColumn);
     m_Table.setColumnWidthApproach(m_OptimalColumnWidth ? ColumnWidthApproach.ADAPTIVE : ColumnWidthApproach.NONE);
   }
 
@@ -981,12 +1024,12 @@ public class SpreadSheetDisplay
     if (SendToActionUtils.isAvailable(SpreadSheetTable.class, cls)) {
       result = m_Table;
       if (m_Table.getRowCount() == 0)
-	result = null;
+        result = null;
     }
     else if (SendToActionUtils.isAvailable(JTable.class, cls)) {
       result = m_Table;
       if (m_Table.getRowCount() == 0)
-	result = null;
+        result = null;
     }
     else {
       result = super.getSendToItem(cls);
