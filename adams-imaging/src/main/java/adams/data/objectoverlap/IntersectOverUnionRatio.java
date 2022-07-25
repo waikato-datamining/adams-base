@@ -40,7 +40,7 @@ import java.util.logging.Level;
  */
 public class IntersectOverUnionRatio
     extends AbstractObjectOverlap
-    implements LabelAwareObjectOverlap{
+    implements LabelAwareObjectOverlap, OptionalBoundingBoxFallbackSupporter {
 
   private static final long serialVersionUID = 490981014539796857L;
 

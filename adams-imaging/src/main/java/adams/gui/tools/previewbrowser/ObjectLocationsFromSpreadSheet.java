@@ -32,6 +32,7 @@ import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.objectoverlap.AreaRatio;
+import adams.data.objectoverlap.BoundingBoxFallbackSupporter;
 import adams.data.objectoverlap.ObjectOverlap;
 import adams.data.overlappingobjectremoval.AbstractOverlappingObjectRemoval;
 import adams.data.overlappingobjectremoval.OverlappingObjectRemoval;
@@ -196,7 +197,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsFromSpreadSheet
-    extends AbstractContentHandler {
+    extends AbstractContentHandler
+    implements BoundingBoxFallbackSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;

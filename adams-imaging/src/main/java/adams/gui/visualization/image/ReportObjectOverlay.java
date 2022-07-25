@@ -20,6 +20,7 @@
 package adams.gui.visualization.image;
 
 import adams.core.base.BaseString;
+import adams.data.objectoverlap.BoundingBoxFallbackSupporter;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -40,7 +41,8 @@ import java.util.HashSet;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ReportObjectOverlay
-  extends AbstractReportBasedOverlayHelper {
+  extends AbstractReportBasedOverlayHelper
+  implements BoundingBoxFallbackSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 6356419097401574024L;

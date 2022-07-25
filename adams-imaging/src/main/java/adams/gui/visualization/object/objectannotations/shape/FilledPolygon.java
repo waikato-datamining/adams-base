@@ -21,6 +21,7 @@
 package adams.gui.visualization.object.objectannotations.shape;
 
 import adams.core.QuickInfoHelper;
+import adams.data.objectoverlap.OptionalBoundingBoxFallbackSupporter;
 import adams.flow.transformer.locateobjects.LocatedObject;
 
 import java.awt.Color;
@@ -34,7 +35,8 @@ import java.awt.Rectangle;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FilledPolygon
-    extends AbstractShapePlotter {
+    extends AbstractShapePlotter
+    implements OptionalBoundingBoxFallbackSupporter {
 
   private static final long serialVersionUID = 5516830542182177734L;
 

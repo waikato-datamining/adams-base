@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.object.objectannotations.outline;
 
+import adams.data.objectoverlap.OptionalBoundingBoxFallbackSupporter;
 import adams.flow.transformer.locateobjects.LocatedObject;
 
 import java.awt.Color;
@@ -33,7 +34,8 @@ import java.awt.Rectangle;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PolygonOutline
-  extends AbstractStrokeOutlinePlotter {
+  extends AbstractStrokeOutlinePlotter
+  implements OptionalBoundingBoxFallbackSupporter {
 
   private static final long serialVersionUID = -2429218032837933149L;
 
