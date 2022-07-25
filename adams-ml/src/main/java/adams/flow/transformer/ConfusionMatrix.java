@@ -132,6 +132,12 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-combine-label-columns &lt;boolean&gt; (property: combineLabelColumns)
+ * &nbsp;&nbsp;&nbsp;If enable, combines the label columns of the label key matrix when enumerating
+ * &nbsp;&nbsp;&nbsp;the labels (if act&#47;pred labels are the same).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -173,6 +179,9 @@ public class ConfusionMatrix
 
   /** whether to number columns instead of using labels. */
   protected boolean m_EnumerateLabels;
+
+  /** combine label columns if same. */
+  protected boolean m_CombineLabelColumns;
 
   /**
    * Returns a string describing the object.
@@ -226,6 +235,10 @@ public class ConfusionMatrix
     m_OptionManager.add(
         "enumerate-labels", "enumerateLabels",
         false);
+
+    m_OptionManager.add(
+        "combine-label-columns", "combineLabelColumns",
+        false);
   }
 
   /**
@@ -242,6 +255,7 @@ public class ConfusionMatrix
     result += QuickInfoHelper.toString(this, "probabilityColumn", (m_ProbabilityColumn.isEmpty() ? "-none-" : m_ProbabilityColumn.getIndex()), ", probability: ");
     result += QuickInfoHelper.toString(this, "matrixValues", m_MatrixValues, ", values: ");
     result += QuickInfoHelper.toString(this, "enumerateLabels", m_EnumerateLabels, "enumerated", ", ");
+    result += QuickInfoHelper.toString(this, "combineLabelColumnsIfPossible", m_CombineLabelColumns, "combine label cols", ", ");
 
     return result;
   }
@@ -479,6 +493,35 @@ public class ConfusionMatrix
   }
 
   /**
+   * Sets whether to combine the label columns of the label key matrix when enumerating the labels (act/pred must be same).
+   *
+   * @param value	true if to combine (if possible)
+   */
+  public void setCombineLabelColumns(boolean value) {
+    m_CombineLabelColumns = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to combine the label columns of the label key matrix when enumerating the labels (act/pred must be same).
+   *
+   * @return		true if to combine (if possible)
+   */
+  public boolean getCombineLabelColumns() {
+    return m_CombineLabelColumns;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String combineLabelColumnsTipText() {
+    return "If enable, combines the label columns of the label key matrix when enumerating the labels (if act/pred labels are the same).";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		adams.core.io.SpreadSheet.class
@@ -540,6 +583,7 @@ public class ConfusionMatrix
     int			i;
     int			n;
     int			sum;
+    boolean		same;
 
     result = null;
     sheet  = (SpreadSheet) m_InputToken.getPayload();
@@ -682,18 +726,36 @@ public class ConfusionMatrix
           throw new IllegalStateException("Unhandled matrix values: " + m_MatrixValues);
       }
 
+      // generate key matrix
       if (m_EnumerateLabels) {
+        same = (actLabels.size() == predLabels.size());
+        if (same) {
+          for (i = 0; i < actLabels.size(); i++) {
+            same = actLabels.get(i).equals(predLabels.get(i));
+            if (!same)
+              break;
+          }
+        }
         key = new DefaultSpreadSheet();
+        // header
         row = key.getHeaderRow();
         row.addCell("I").setContentAsString("Index");
-        row.addCell("A").setContentAsString(m_ActualPrefix.trim());
-        row.addCell("P").setContentAsString(m_PredictedPrefix.trim());
+        if (same) {
+          row.addCell("A").setContentAsString(m_ActualPrefix.trim() + " / " + m_PredictedPrefix.trim());
+        }
+        else {
+          row.addCell("A").setContentAsString(m_ActualPrefix.trim());
+          row.addCell("P").setContentAsString(m_PredictedPrefix.trim());
+        }
+        // data
         for (i = 0; i < Math.max(actLabels.size(), predLabels.size()); i++)
           key.addRow().addCell("I").setContent(i+1);
         for (i = 0; i < actLabels.size(); i++)
           key.getRow(i).addCell("A").setContentAsString(actLabels.get(i));
-        for (i = 0; i < predLabels.size(); i++)
-          key.getRow(i).addCell("P").setContentAsString(predLabels.get(i));
+        if (!same) {
+          for (i = 0; i < predLabels.size(); i++)
+            key.getRow(i).addCell("P").setContentAsString(predLabels.get(i));
+        }
         m_OutputToken = new Token(new SpreadSheet[]{matrix, key});
       }
       else {
