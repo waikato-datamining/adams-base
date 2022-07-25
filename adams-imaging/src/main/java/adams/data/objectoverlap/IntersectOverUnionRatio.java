@@ -389,7 +389,7 @@ public class IntersectOverUnionRatio
     result = 0.0;
 
     geometry = m_Geometry;
-    fallback = m_Fallback && (thisObj.boundingBoxFallback(m_MinIntersectOverUnionRatio) || otherObj.boundingBoxFallback(m_MinIntersectOverUnionRatio));
+    fallback = m_Fallback && (thisObj.boundingBoxFallback(m_BoundingBoxFallbackRatio) || otherObj.boundingBoxFallback(m_BoundingBoxFallbackRatio));
     if (fallback)
       geometry = GeometryType.BBOX;
 
