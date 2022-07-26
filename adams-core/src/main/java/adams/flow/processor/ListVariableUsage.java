@@ -27,6 +27,8 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionTraversalPath;
+import adams.flow.core.Actor;
+import adams.flow.core.ActorUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -140,12 +142,15 @@ public class ListVariableUsage
     boolean			result;
     AbstractArgumentOption	arg;
 
-    result = super.isValid(option, obj, path);
+    result = false;
 
-    if (!result && (option instanceof AbstractArgumentOption)) {
+    if (option instanceof AbstractArgumentOption) {
       arg    = (AbstractArgumentOption) option;
-      result = (arg.isVariableAttached() && isNameMatch(arg.getVariable()));
+      result = (arg.isVariableAttached() && arg.getVariableName().equals(m_Name));
     }
+
+    if (!result)
+      result = super.isValid(option, obj, path);
 
     return result;
   }
@@ -153,5 +158,15 @@ public class ListVariableUsage
   @Override
   protected String getHeader() {
     return "Locations referencing variable '" + m_Name + "':";
+  }
+
+  public static void main(String[] args) throws Exception {
+    Actor actor = ActorUtils.read("/home/fracpete/development/projects/waikato-datamining/zespri-skd-sbd-2021/skd/flows/annotation_vs_prediction_pdf.flow");
+    actor.setUp();
+    ListVariableUsage list = new ListVariableUsage();
+    list.setName("only_overlaps");
+    list.process(actor);
+    for (String i: list.getList())
+      System.out.println(i);
   }
 }
