@@ -351,7 +351,7 @@ public class ChangePath
 	return true;
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     });
   }

@@ -19,14 +19,14 @@
  */
 package adams.core;
 
-import java.util.HashSet;
-
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionTraverserWithResult;
 import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
+
+import java.util.HashSet;
 
 /**
  * Option traverser for locating variables.
@@ -158,7 +158,7 @@ public class VariablesFinder
    */
   @Override
   public boolean canRecurse(Object obj) {
-    return canRecurse(obj.getClass());
+    return (obj != null) && canRecurse(obj.getClass());
   }
   
   /**

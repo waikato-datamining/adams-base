@@ -1756,7 +1756,7 @@ public class ActorUtils {
 
       @Override
       public boolean canRecurse(Object obj) {
-        return canRecurse(obj.getClass());
+        return (obj != null) && canRecurse(obj.getClass());
       }
     });
   }
@@ -2019,7 +2019,7 @@ public class ActorUtils {
         return !ClassLocator.hasInterface(Actor.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
       public StringBuilder getResult() {
         return m_Result;

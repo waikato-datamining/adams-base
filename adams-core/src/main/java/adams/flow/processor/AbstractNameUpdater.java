@@ -256,7 +256,7 @@ public abstract class AbstractNameUpdater<T>
    * @return		true if to traverse the options recursively
    */
   public boolean canRecurse(Object obj) {
-    return canRecurse(obj.getClass());
+    return (obj != null) && canRecurse(obj.getClass());
   }
   
   /**

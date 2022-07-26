@@ -154,7 +154,7 @@ public class ListAllStorageNames
 	if (obj instanceof Actor)
 	  return !((Actor) obj).getSkip() && canRecurse(obj.getClass());
 	else
-	  return canRecurse(obj.getClass());
+	  return (obj != null) && canRecurse(obj.getClass());
       }
     });
 

@@ -798,7 +798,7 @@ public class OptionManager
         return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.hasInterface(Actor.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     }, true);
   }
@@ -874,7 +874,7 @@ public class OptionManager
         return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
       public StringBuilder getResult() {
         return m_Result;
@@ -912,7 +912,7 @@ public class OptionManager
         return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     }, true);
   }
@@ -941,7 +941,7 @@ public class OptionManager
         return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     }, true);
   }
@@ -982,7 +982,7 @@ public class OptionManager
         return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     }, true);
   }

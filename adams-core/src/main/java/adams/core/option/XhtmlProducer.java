@@ -222,7 +222,7 @@ public class XhtmlProducer
       if (obj == null)
 	return false;
       else
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
     }
   }
 

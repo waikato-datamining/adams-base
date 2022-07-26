@@ -165,7 +165,7 @@ public abstract class AbstractListingProcessor
 	handleArgumentOption(option, path);
       }
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
-	// ignored
+        handleArgumentOption(option, path);
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
 	Object current = option.getCurrentValue();
@@ -184,7 +184,7 @@ public abstract class AbstractListingProcessor
 	return true;
       }
       public boolean canRecurse(Object obj) {
-	return canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass());
       }
     });
     
