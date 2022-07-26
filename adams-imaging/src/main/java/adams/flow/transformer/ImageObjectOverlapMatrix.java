@@ -40,7 +40,8 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
- * Generates a matrix of overlapping image objects (annotations vs predictions) and their labels.
+ * Generates a matrix of overlapping image objects (annotations vs predictions) and their labels.<br>
+ * When outputting not just overlaps, a separate column 'Overlap' is output as well, indicating whether this row represents an overlap ('yes') or not ('no')
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -138,6 +139,16 @@ public class ImageObjectOverlapMatrix
     ONLY_HIGHEST_LABEL,
   }
 
+  public static final String COL_ACTUAL = "Actual";
+
+  public static final String COL_PREDICTED = "Predicted";
+
+  public static final String COL_OVERLAP = "Overlap";
+
+  public static final String VALUE_NO = "no";
+
+  public static final String VALUE_YES = "yes";
+
   /** the storage item. */
   protected StorageName m_StorageName;
 
@@ -163,7 +174,9 @@ public class ImageObjectOverlapMatrix
    */
   @Override
   public String globalInfo() {
-    return "Generates a matrix of overlapping image objects (annotations vs predictions) and their labels.";
+    return "Generates a matrix of overlapping image objects (annotations vs predictions) and their labels.\n"
+        + "When outputting not just overlaps, a separate column '" + COL_OVERLAP + "' is output as well, indicating "
+        + "whether this row represents an overlap ('" + VALUE_YES + "') or not ('" + VALUE_NO + "')";
   }
 
   /**
@@ -453,8 +466,10 @@ public class ImageObjectOverlapMatrix
       sheet       = new DefaultSpreadSheet();
       matches     = m_Algorithm.matches(thisObjs, otherObjs);
       row         = sheet.getHeaderRow();
-      row.addCell("A").setContentAsString("Actual");
-      row.addCell("P").setContentAsString("Predicted");
+      row.addCell("A").setContentAsString(COL_ACTUAL);
+      row.addCell("P").setContentAsString(COL_PREDICTED);
+      if (!m_OnlyOverlaps)
+        row.addCell("O").setContentAsString(COL_OVERLAP);
 
       switch (m_MatrixOutput) {
         case ALL_MATCHES:
@@ -464,12 +479,16 @@ public class ImageObjectOverlapMatrix
               row = sheet.addRow();
               row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
               row.addCell("P").setContentAsString(AreaRatio.UNKNOWN_LABEL);
+              if (!m_OnlyOverlaps)
+                row.addCell("O").setContentAsString(VALUE_NO);
               continue;
             }
             for (LocatedObject otherObj : hits.keySet()) {
               row = sheet.addRow();
               row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
               row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+              if (!m_OnlyOverlaps)
+                row.addCell("O").setContentAsString(VALUE_YES);
             }
           }
           break;
@@ -479,6 +498,12 @@ public class ImageObjectOverlapMatrix
             hits = matches.get(thisObj);
             if (m_OnlyOverlaps && (hits.size() == 0))
               continue;
+            if (!m_OnlyOverlaps && (hits.size() == 0)) {
+              row = sheet.addRow();
+              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+              row.addCell("P").setContentAsString(AreaRatio.UNKNOWN_LABEL);
+              row.addCell("O").setContentAsString(VALUE_NO);
+            }
             row = sheet.addRow();
             row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
             highestValue = -1.0;
@@ -490,6 +515,8 @@ public class ImageObjectOverlapMatrix
               }
             }
             row.addCell("P").setContentAsString(highestLabel);
+            if (!m_OnlyOverlaps)
+              row.addCell("O").setContentAsString((highestLabel.equals(AreaRatio.UNKNOWN_LABEL)) ? VALUE_NO : VALUE_YES);
           }
           break;
 
@@ -505,6 +532,7 @@ public class ImageObjectOverlapMatrix
             row = sheet.addRow();
             row.addCell("A").setContentAsString(AreaRatio.UNKNOWN_LABEL);
             row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+            row.addCell("O").setContentAsString(VALUE_NO);
           }
         }
       }
