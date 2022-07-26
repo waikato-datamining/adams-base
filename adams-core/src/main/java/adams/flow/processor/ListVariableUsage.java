@@ -15,7 +15,7 @@
 
 /*
  * ListVariableUsage.java
- * Copyright (C) 2015-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.processor;
@@ -27,8 +27,6 @@ import adams.core.base.BaseObject;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionTraversalPath;
-import adams.flow.core.Actor;
-import adams.flow.core.ActorUtils;
 
 /**
  <!-- globalinfo-start -->
@@ -158,15 +156,5 @@ public class ListVariableUsage
   @Override
   protected String getHeader() {
     return "Locations referencing variable '" + m_Name + "':";
-  }
-
-  public static void main(String[] args) throws Exception {
-    Actor actor = ActorUtils.read("/home/fracpete/development/projects/waikato-datamining/zespri-skd-sbd-2021/skd/flows/annotation_vs_prediction_pdf.flow");
-    actor.setUp();
-    ListVariableUsage list = new ListVariableUsage();
-    list.setName("only_overlaps");
-    list.process(actor);
-    for (String i: list.getList())
-      System.out.println(i);
   }
 }
