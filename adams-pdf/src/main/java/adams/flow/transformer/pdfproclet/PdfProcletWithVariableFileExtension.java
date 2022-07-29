@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PdfProcletWithVariableFileExtension.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
@@ -26,7 +26,6 @@ import adams.core.base.BaseString;
  * to work on.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface PdfProcletWithVariableFileExtension
   extends PdfProclet {
@@ -37,6 +36,13 @@ public interface PdfProcletWithVariableFileExtension
    * @param value	the extensions (no dot)
    */
   public void setExtensions(BaseString[] value);
+
+  /**
+   * Returns the extensions that the processor can process.
+   *
+   * @return		the extensions (no dot)
+   */
+  public BaseString[] getExtensions();
 
   /**
    * Returns the tip text for this property.
