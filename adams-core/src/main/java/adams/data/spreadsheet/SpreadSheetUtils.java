@@ -15,11 +15,12 @@
 
 /*
  * SpreadSheetUtils.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
 import adams.core.Utils;
+import adams.gui.core.SpreadSheetTable;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
@@ -427,5 +428,69 @@ public class SpreadSheetUtils {
       Collections.sort(result);
 
     return result.toArray(new String[result.size()]);
+  }
+
+  /**
+   * Determines min/max values in the table.
+   *
+   * @param table	the table to analyze
+   * @param columns	the 0-based column indices in the spreadsheet to get the min/max for, ignored if null
+   * @param rows 	the 0-based row indices in the spreadsheet to get the min/max for, ignored if null
+   * @return		the min and max
+   */
+  public static double[] getMinMax(SpreadSheetTable table, int[] columns, int[] rows) {
+    return getMinMax(table.toSpreadSheet(), columns, rows);
+  }
+
+  /**
+   * Determines min/max values in the spreadsheet.
+   *
+   * @param sheet	the sheet to analyze
+   * @param columns	the 0-based column indices in the spreadsheet to get the min/max for, ignored if null
+   * @param rows 	the 0-based row indices in the spreadsheet to get the min/max for, ignored if null
+   * @return		the min and max
+   */
+  public static double[] getMinMax(SpreadSheet sheet, int[] columns, int[] rows) {
+    double[]	result;
+    int		r;
+    int		c;
+    Cell	cell;
+    double	value;
+    boolean	any;
+    TIntSet	columnSet;
+    TIntSet	rowSet;
+
+    result  = new double[]{Double.MAX_VALUE, Double.MIN_VALUE};
+    any     = false;
+
+    columnSet = null;
+    if ((columns != null) && (columns.length > 0))
+      columnSet = new TIntHashSet(columns);
+    rowSet = null;
+    if ((rows != null) && rows.length > 0)
+      rowSet = new TIntHashSet(rows);
+
+    for (r = 0; r < sheet.getRowCount(); r++) {
+      if ((rowSet != null) && !rowSet.contains(r))
+	continue;
+      for (c = 0; c < sheet.getColumnCount(); c++) {
+	if ((columnSet != null) && !columnSet.contains(c))
+	  continue;
+	cell = sheet.getCell(r, c);
+	if ((cell != null) && !cell.isMissing() && cell.isNumeric()) {
+	  value     = cell.toDouble();
+	  result[0] = Math.min(result[0], value);
+	  result[1] = Math.max(result[1], value);
+	  any       = true;
+	}
+      }
+    }
+
+    if (!any) {
+      result[0] = 0;
+      result[1] = 0;
+    }
+
+    return result;
   }
 }

@@ -15,12 +15,13 @@
 
 /*
  * ConfusionMatrixCellRenderingCustomizer.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.data.spreadsheet.Cell;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.visualization.core.AbstractColorGradientGenerator;
 import adams.gui.visualization.core.ConfusionMatrixColorGenerator;
@@ -278,7 +279,7 @@ public class ConfusionMatrixCellRenderingCustomizer
 	result = m_Highlight;
     }
     else if (m_ValueBasedBackground) {
-      minMax = getMinMax(table, null, null);
+      minMax = SpreadSheetUtils.getMinMax(table, null, null);
       min    = minMax[0];
       max    = minMax[1];
       if (min < max) {

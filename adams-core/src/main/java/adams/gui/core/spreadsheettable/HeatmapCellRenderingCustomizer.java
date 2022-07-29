@@ -15,13 +15,14 @@
 
 /*
  * HeatmapCellRenderingCustomizer.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.visualization.core.AbstractColorGradientGenerator;
 import adams.gui.visualization.core.BiColorGenerator;
@@ -172,7 +173,7 @@ public class HeatmapCellRenderingCustomizer
     if ((m_LastSpreadSheet == null) || (sheet != m_LastSpreadSheet))
       m_LastMinMax = null;
     if (m_LastMinMax == null)
-      m_LastMinMax = getMinMax(table, null, null);
+      m_LastMinMax = SpreadSheetUtils.getMinMax(table, null, null);
     min = m_LastMinMax[0];
     max = m_LastMinMax[1];
     if (min < max) {

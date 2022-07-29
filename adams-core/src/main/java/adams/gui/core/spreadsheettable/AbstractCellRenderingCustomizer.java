@@ -15,17 +15,14 @@
 
 /*
  * AbstractCellRenderingCustomizer.java
- * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
 
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;
@@ -137,59 +134,5 @@ public abstract class AbstractCellRenderingCustomizer
     if ((column == 0) && table.getShowRowColumn())
       return SwingConstants.CENTER;
     return defAlign;
-  }
-
-  /**
-   * Determines min/max values in the table.
-   *
-   * @param table	the table to analyze
-   * @param columns	the 0-based column indices in the spreadsheet to get the min/max for, ignored if null
-   * @param rows 	the 0-based row indices in the spreadsheet to get the min/max for, ignored if null
-   * @return		the min and max
-   */
-  protected double[] getMinMax(SpreadSheetTable table, int[] columns, int[] rows) {
-    double[]	result;
-    SpreadSheet sheet;
-    int		r;
-    int		c;
-    Cell	cell;
-    double	value;
-    boolean	any;
-    TIntSet	columnSet;
-    TIntSet	rowSet;
-
-    result  = new double[]{Double.MAX_VALUE, Double.MIN_VALUE};
-    sheet   = table.toSpreadSheet();
-    any     = false;
-
-    columnSet = null;
-    if ((columns != null) && (columns.length > 0))
-      columnSet = new TIntHashSet(columns);
-    rowSet = null;
-    if ((rows != null) && rows.length > 0)
-      rowSet = new TIntHashSet(rows);
-
-    for (r = 0; r < sheet.getRowCount(); r++) {
-      if ((rowSet != null) && !rowSet.contains(r))
-	continue;
-      for (c = 0; c < sheet.getColumnCount(); c++) {
-	if ((columnSet != null) && !columnSet.contains(c))
-	  continue;
-        cell = sheet.getCell(r, c);
-        if ((cell != null) && !cell.isMissing() && cell.isNumeric()) {
-	  value     = cell.toDouble();
-	  result[0] = Math.min(result[0], value);
-	  result[1] = Math.max(result[1], value);
-	  any       = true;
-	}
-      }
-    }
-
-    if (!any) {
-      result[0] = 0;
-      result[1] = 0;
-    }
-
-    return result;
   }
 }
