@@ -122,6 +122,16 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
+ * <pre>-label-missed &lt;java.lang.String&gt; (property: labelMissed)
+ * &nbsp;&nbsp;&nbsp;The label to use for annotations that have no corresponding predictions.
+ * &nbsp;&nbsp;&nbsp;default: ???
+ * </pre>
+ *
+ * <pre>-label-additional &lt;java.lang.String&gt; (property: labelAdditional)
+ * &nbsp;&nbsp;&nbsp;The label to use for predictions with no corresponding annotations.
+ * &nbsp;&nbsp;&nbsp;default: ???
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -167,6 +177,12 @@ public class ImageObjectOverlapMatrix
   /** whether to show only overlaps. */
   protected boolean m_OnlyOverlaps;
 
+  /** the label to use for missed annotations. */
+  protected String m_LabelMissed;
+
+  /** the label to use additional predictions (with no corresponding annotations). */
+  protected String m_LabelAdditional;
+
   /**
    * Returns a string describing the object.
    *
@@ -175,8 +191,8 @@ public class ImageObjectOverlapMatrix
   @Override
   public String globalInfo() {
     return "Generates a matrix of overlapping image objects (annotations vs predictions) and their labels.\n"
-        + "When outputting not just overlaps, a separate column '" + COL_OVERLAP + "' is output as well, indicating "
-        + "whether this row represents an overlap ('" + VALUE_YES + "') or not ('" + VALUE_NO + "')";
+	+ "When outputting not just overlaps, a separate column '" + COL_OVERLAP + "' is output as well, indicating "
+	+ "whether this row represents an overlap ('" + VALUE_YES + "') or not ('" + VALUE_NO + "')";
   }
 
   /**
@@ -187,28 +203,36 @@ public class ImageObjectOverlapMatrix
     super.defineOptions();
 
     m_OptionManager.add(
-        "storage-name", "storageName",
-        new StorageName());
+	"storage-name", "storageName",
+	new StorageName());
 
     m_OptionManager.add(
-        "finder", "finder",
-        new AllFinder());
+	"finder", "finder",
+	new AllFinder());
 
     m_OptionManager.add(
-        "algorithm", "algorithm",
-        new AreaRatio());
+	"algorithm", "algorithm",
+	new AreaRatio());
 
     m_OptionManager.add(
-        "matrix-output", "matrixOutput",
-        MatrixOutput.ALL_MATCHES);
+	"matrix-output", "matrixOutput",
+	MatrixOutput.ALL_MATCHES);
 
     m_OptionManager.add(
-        "label-key", "labelKey",
-        "type");
+	"label-key", "labelKey",
+	"type");
 
     m_OptionManager.add(
-        "only-overlaps", "onlyOverlaps",
-        true);
+	"only-overlaps", "onlyOverlaps",
+	true);
+
+    m_OptionManager.add(
+	"label-missed", "labelMissed",
+	AreaRatio.UNKNOWN_LABEL);
+
+    m_OptionManager.add(
+	"label-additional", "labelAdditional",
+	AreaRatio.UNKNOWN_LABEL);
   }
 
   /**
@@ -386,6 +410,64 @@ public class ImageObjectOverlapMatrix
   }
 
   /**
+   * Sets the label to use for annotations that have no corresponding predictions.
+   *
+   * @param value	the label
+   */
+  public void setLabelMissed(String value) {
+    m_LabelMissed = value;
+    reset();
+  }
+
+  /**
+   * Returns the label to use for annotations that have no corresponding predictions.
+   *
+   * @return		the label
+   */
+  public String getLabelMissed() {
+    return m_LabelMissed;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelMissedTipText() {
+    return "The label to use for annotations that have no corresponding predictions.";
+  }
+
+  /**
+   * Sets the label to use for predictions with no corresponding annotations.
+   *
+   * @param value	the label
+   */
+  public void setLabelAdditional(String value) {
+    m_LabelAdditional = value;
+    reset();
+  }
+
+  /**
+   * Returns the label to use for predictions with no corresponding annotations.
+   *
+   * @return		the label
+   */
+  public String getLabelAdditional() {
+    return m_LabelAdditional;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelAdditionalTipText() {
+    return "The label to use for predictions with no corresponding annotations.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -441,6 +523,7 @@ public class ImageObjectOverlapMatrix
     Map<LocatedObject,Double>				hits;
     double						highestValue;
     String						highestLabel;
+    boolean 						all;
 
     result = null;
 
@@ -456,7 +539,7 @@ public class ImageObjectOverlapMatrix
 
     if (result == null) {
       if (!getStorageHandler().getStorage().has(m_StorageName))
-        result = "Report not found in storage: " + m_StorageName;
+	result = "Report not found in storage: " + m_StorageName;
     }
 
     if (result == null) {
@@ -465,76 +548,78 @@ public class ImageObjectOverlapMatrix
       otherObjs   = m_Finder.findObjects(otherReport);
       sheet       = new DefaultSpreadSheet();
       matches     = m_Algorithm.matches(thisObjs, otherObjs);
+      all         = !m_OnlyOverlaps;
       row         = sheet.getHeaderRow();
       row.addCell("A").setContentAsString(COL_ACTUAL);
       row.addCell("P").setContentAsString(COL_PREDICTED);
-      if (!m_OnlyOverlaps)
-        row.addCell("O").setContentAsString(COL_OVERLAP);
+      if (all)
+	row.addCell("O").setContentAsString(COL_OVERLAP);
 
       switch (m_MatrixOutput) {
-        case ALL_MATCHES:
-          for (LocatedObject thisObj: matches.keySet()) {
-            hits = matches.get(thisObj);
-            if (!m_OnlyOverlaps && (hits.size() == 0)) {
-              row = sheet.addRow();
-              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-              row.addCell("P").setContentAsString(AreaRatio.UNKNOWN_LABEL);
-              if (!m_OnlyOverlaps)
-                row.addCell("O").setContentAsString(VALUE_NO);
-              continue;
-            }
-            for (LocatedObject otherObj : hits.keySet()) {
-              row = sheet.addRow();
-              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-              row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
-              if (!m_OnlyOverlaps)
-                row.addCell("O").setContentAsString(VALUE_YES);
-            }
-          }
-          break;
+	case ALL_MATCHES:
+	  for (LocatedObject thisObj: matches.keySet()) {
+	    hits = matches.get(thisObj);
+	    if (all && (hits.size() == 0)) {
+	      row = sheet.addRow();
+	      row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+	      row.addCell("P").setContentAsString(m_LabelMissed);
+	      row.addCell("O").setContentAsString(VALUE_NO);
+	      continue;
+	    }
+	    for (LocatedObject otherObj : hits.keySet()) {
+	      row = sheet.addRow();
+	      row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+	      row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+	      if (all)
+		row.addCell("O").setContentAsString(VALUE_YES);
+	    }
+	  }
+	  break;
 
-        case ONLY_HIGHEST_LABEL:
-          for (LocatedObject thisObj: matches.keySet()) {
-            hits = matches.get(thisObj);
-            if (m_OnlyOverlaps && (hits.size() == 0))
-              continue;
-            if (!m_OnlyOverlaps && (hits.size() == 0)) {
-              row = sheet.addRow();
-              row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-              row.addCell("P").setContentAsString(AreaRatio.UNKNOWN_LABEL);
-              row.addCell("O").setContentAsString(VALUE_NO);
-            }
-            row = sheet.addRow();
-            row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
-            highestValue = -1.0;
-            highestLabel = AreaRatio.UNKNOWN_LABEL;
-            for (LocatedObject otherObj : hits.keySet()) {
-              if (hits.get(otherObj) > highestValue) {
-                highestValue = hits.get(otherObj);
-                highestLabel = "" + otherObj.getMetaData().get(m_LabelKey);
-              }
-            }
-            row.addCell("P").setContentAsString(highestLabel);
-            if (!m_OnlyOverlaps)
-              row.addCell("O").setContentAsString((highestLabel.equals(AreaRatio.UNKNOWN_LABEL)) ? VALUE_NO : VALUE_YES);
-          }
-          break;
+	case ONLY_HIGHEST_LABEL:
+	  for (LocatedObject thisObj: matches.keySet()) {
+	    hits = matches.get(thisObj);
+	    if (m_OnlyOverlaps && (hits.size() == 0))
+	      continue;
+	    if (all && (hits.size() == 0)) {
+	      row = sheet.addRow();
+	      row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+	      row.addCell("P").setContentAsString(m_LabelMissed);
+	      row.addCell("O").setContentAsString(VALUE_NO);
+	      continue;
+	    }
+	    row = sheet.addRow();
+	    row.addCell("A").setContentAsString("" + thisObj.getMetaData().get(m_LabelKey));
+	    highestValue = -1.0;
+	    highestLabel = m_LabelMissed;
+	    for (LocatedObject otherObj : hits.keySet()) {
+	      if (hits.get(otherObj) > highestValue) {
+		highestValue = hits.get(otherObj);
+		highestLabel = "" + otherObj.getMetaData().get(m_LabelKey);
+	      }
+	    }
+	    row.addCell("P").setContentAsString(highestLabel);
+	    if (all)
+	      row.addCell("O").setContentAsString((highestLabel.equals(m_LabelMissed)) ? VALUE_NO : VALUE_YES);
+	  }
+	  break;
 
-        default:
-          throw new IllegalStateException("Unhandled matrix output: " + m_MatrixOutput);
+	default:
+	  throw new IllegalStateException("Unhandled matrix output: " + m_MatrixOutput);
       }
 
-      if (!m_OnlyOverlaps) {
-        additional = m_Algorithm.matches(otherObjs, thisObjs);
-        for (LocatedObject otherObj: additional.keySet()) {
-          hits = additional.get(otherObj);
-          if (hits.size() == 0) {
-            row = sheet.addRow();
-            row.addCell("A").setContentAsString(AreaRatio.UNKNOWN_LABEL);
-            row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
-            row.addCell("O").setContentAsString(VALUE_NO);
-          }
-        }
+      // append predictions with no overlapping annotations ("additional")?
+      if (all) {
+	additional = m_Algorithm.matches(otherObjs, thisObjs);
+	for (LocatedObject otherObj: additional.keySet()) {
+	  hits = additional.get(otherObj);
+	  if (hits.size() == 0) {
+	    row = sheet.addRow();
+	    row.addCell("A").setContentAsString(m_LabelAdditional);
+	    row.addCell("P").setContentAsString("" + otherObj.getMetaData().get(m_LabelKey));
+	    row.addCell("O").setContentAsString(VALUE_NO);
+	  }
+	}
       }
 
       m_OutputToken = new Token(sheet);
