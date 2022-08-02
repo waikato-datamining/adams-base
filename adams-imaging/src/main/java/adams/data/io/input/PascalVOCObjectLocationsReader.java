@@ -15,7 +15,7 @@
 
 /*
  * PascalVOCObjectLocationsReader.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -89,6 +89,8 @@ import java.util.logging.Level;
 public class PascalVOCObjectLocationsReader
     extends AbstractReportReader<Report>
     implements ObjectPrefixHandler {
+
+  private static final long serialVersionUID = -7100893374030214070L;
 
   /** the field to use for the ID. */
   protected Field m_ID;
@@ -581,7 +583,8 @@ public class PascalVOCObjectLocationsReader
       addNumeric(report, m_MetaPrefix + "width", width);
       addNumeric(report, m_MetaPrefix + "height", height);
       addNumeric(report, m_MetaPrefix + "depth", depth);
-      addBoolean(report, m_MetaPrefix + "segmented", segmented.equalsIgnoreCase("1"));
+      if (segmented != null)
+        addBoolean(report, m_MetaPrefix + "segmented", segmented.equalsIgnoreCase("1"));
       result.add(report);
     }
 
