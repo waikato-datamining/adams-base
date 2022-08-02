@@ -23,6 +23,9 @@ CacheViews=True
 # The size of the cache for the preview panels
 CacheSize=100
 
+# Whether to fix the content handler rather than always loading it from .props (preferred)
+UseFixedHandler=false
+
 # Whether to show hidden files by default (true|false)
 ShowHiddenFiles=false
 

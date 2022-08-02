@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -214,6 +214,9 @@ public class PreviewBrowserPanel
 
   /** the "cache views" menu item. */
   protected JMenuItem m_MenuItemCacheViews;
+
+  /** the "use fixed handler" menu item. */
+  protected JMenuItem m_MenuItemUseFixedHandler;
 
   /** the "show hidden files" menu item. */
   protected JMenuItem m_MenuItemShowHiddenFiles;
@@ -491,6 +494,7 @@ public class PreviewBrowserPanel
    * @param value	true if to reuse
    */
   public void setReusePreviews(boolean value) {
+    m_MenuItemCacheViews.setSelected(value);
     m_PanelContent.setReusePreviews(value);
   }
 
@@ -507,7 +511,83 @@ public class PreviewBrowserPanel
    * Based on check state of menu item, sets whether to reuse the views.
    */
   protected void updateCacheViews() {
-    setReusePreviews(m_MenuItemCacheViews.isSelected());
+      setReusePreviews(m_MenuItemCacheViews.isSelected());
+  }
+
+  /**
+   * Based on check state of menu item, sets whether to use a fixed handler.
+   */
+  protected void updateUseFixedHandler() {
+    setUseFixedContentHandler(m_MenuItemUseFixedHandler.isSelected());
+  }
+
+  /**
+   * Sets whether to use a fixed content handler.
+   *
+   * @param value	true if to use fixed handler
+   */
+  public void setUseFixedContentHandler(boolean value) {
+    m_MenuItemUseFixedHandler.setSelected(value);
+    m_PanelContent.setUseFixedContentHandler(value);
+  }
+
+  /**
+   * Returns whether to use a fixed content handler.
+   *
+   * @return		true if to use fixed handler
+   */
+  public boolean getUseFixedContentHandler() {
+    return m_PanelContent.getUseFixedContentHandler();
+  }
+
+  /**
+   * Based on check state of menu item, sets whether to show/hide hidden files.
+   */
+  protected void updateShowHiddenFiles() {
+    refreshLocalFiles();
+  }
+
+  /**
+   * Sets whether to show hidden files or not.
+   *
+   * @param value	true if to show
+   */
+  public void setShowHiddenFiles(boolean value) {
+    m_MenuItemShowHiddenFiles.setSelected(value);
+  }
+
+  /**
+   * Returns whether to show hidden files or not.
+   * 
+   * @return		true if to show
+   */
+  public boolean getShowHiddenFiles() {
+    return m_MenuItemShowHiddenFiles.isSelected();
+  }
+
+  /**
+   * Based on check state of menu item, sets whether to show/hide temp files.
+   */
+  protected void updateShowTempFiles() {
+    refreshLocalFiles();
+  }
+
+  /**
+   * Sets whether to show temp files or not.
+   *
+   * @param value	true if to show
+   */
+  public void setShowTempFiles(boolean value) {
+    m_MenuItemShowTempFiles.setSelected(value);
+  }
+
+  /**
+   * Returns whether to show temp files or not.
+   *
+   * @return		true if to show
+   */
+  public boolean getShowTempFiles() {
+    return m_MenuItemShowTempFiles.isSelected();
   }
 
   /**
@@ -809,12 +889,20 @@ public class PreviewBrowserPanel
       menuitem.addActionListener((ActionEvent e) -> updateCacheViews());
       m_MenuItemCacheViews = menuitem;
 
+      // View/Use fixed handler
+      menuitem = new JCheckBoxMenuItem("Use fixed handler");
+      menuitem.setSelected(PropertiesManager.getProperties().getBoolean("UseFixedHandler", true));
+      menu.add(menuitem);
+      menuitem.setMnemonic('f');
+      menuitem.addActionListener((ActionEvent e) -> updateUseFixedHandler());
+      m_MenuItemUseFixedHandler = menuitem;
+
       // View/Show hidden files
       menuitem = new JCheckBoxMenuItem("Show hidden files");
       menuitem.setSelected(PropertiesManager.getProperties().getBoolean("ShowHiddenFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('h');
-      menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
+      menuitem.addActionListener((ActionEvent e) -> updateShowHiddenFiles());
       m_MenuItemShowHiddenFiles = menuitem;
 
       // View/Show temp files
@@ -822,7 +910,7 @@ public class PreviewBrowserPanel
       menuitem.setSelected(PropertiesManager.getProperties().getBoolean("ShowTempFiles", false));
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.addActionListener((ActionEvent e) -> refreshLocalFiles());
+      menuitem.addActionListener((ActionEvent e) -> updateShowTempFiles());
       m_MenuItemShowTempFiles = menuitem;
 
       // Notes
@@ -1043,11 +1131,26 @@ public class PreviewBrowserPanel
 
     if (result != null) {
       // use same directory
-      result.open(new PlaceholderDirectory(m_PanelDir.getCurrent()));
+      if (!result.getDirPanel().getCurrent().equals(getDirPanel().getCurrent()))
+	result.getDirPanel().setCurrent(getDirPanel().getCurrent());
       // search
-      result.setLocalSearch(getLocalSearch());
-      result.setArchiveSearch(getArchiveSearch());
+      if (!result.getLocalSearch().equals(getLocalSearch()))
+	result.setLocalSearch(getLocalSearch());
+      if (!result.getArchiveSearch().equals(getArchiveSearch()))
+	result.setArchiveSearch(getArchiveSearch());
+      // view
+      if (result.getUseFixedContentHandler() != getUseFixedContentHandler())
+	result.setUseFixedContentHandler(getUseFixedContentHandler());
+      if (result.getReusePreviews() != getReusePreviews())
+	result.setReusePreviews(getReusePreviews());
+      if (result.getShowHiddenFiles() != getShowHiddenFiles())
+      result.setShowHiddenFiles(getShowHiddenFiles());
+      if (result.getShowTempFiles() != getShowTempFiles())
+	result.setShowTempFiles(getShowTempFiles());
     }
+
+    if (result != null)
+      result.reload();
 
     return result;
   }
