@@ -179,6 +179,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-use-simple-header &lt;boolean&gt; (property: useSimpleHeader)
+ * &nbsp;&nbsp;&nbsp;Whether to use a simple table header (and also suppress the combobox for
+ * &nbsp;&nbsp;&nbsp;jumping to a column).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-allow-search &lt;boolean&gt; (property: allowSearch)
  * &nbsp;&nbsp;&nbsp;Whether to allow the user to search the table.
  * &nbsp;&nbsp;&nbsp;default: false
@@ -291,10 +297,13 @@ public class SpreadSheetDisplay
         });
       }
 
-      JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      SpreadSheetColumnComboBox columnCombo = new SpreadSheetColumnComboBox(m_Table);
-      panel.add(columnCombo);
-      add(panel, BorderLayout.NORTH);
+      if (!m_Owner.getUseSimpleHeader()) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        SpreadSheetColumnComboBox columnCombo = new SpreadSheetColumnComboBox(m_Table);
+        panel.add(columnCombo);
+        add(panel, BorderLayout.NORTH);
+      }
+
       m_PanelSearch = null;
       if (m_Owner.getAllowSearch()) {
         m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
@@ -334,6 +343,7 @@ public class SpreadSheetDisplay
       m_TableModel = new SpreadSheetTableModel(sheet);
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
       m_TableModel.setShowRowColumn(m_Owner.getShowRowIndexColumn());
+      m_TableModel.setUseSimpleHeader(m_Owner.getUseSimpleHeader());
       m_Table.setModel(m_TableModel);
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
@@ -413,6 +423,9 @@ public class SpreadSheetDisplay
   /** whether to show the formulas instead of the calculated values. */
   protected boolean m_ShowFormulas;
 
+  /** whether to use the simple header. */
+  protected boolean m_UseSimpleHeader;
+
   /** whether to allow searching. */
   protected boolean m_AllowSearch;
 
@@ -461,6 +474,10 @@ public class SpreadSheetDisplay
 
     m_OptionManager.add(
         "show-formulas", "showFormulas",
+        false);
+
+    m_OptionManager.add(
+        "use-simple-header", "useSimpleHeader",
         false);
 
     m_OptionManager.add(
@@ -623,6 +640,35 @@ public class SpreadSheetDisplay
    */
   public String showRowIndexColumnTipText() {
     return "Whether to show the row index column.";
+  }
+
+  /**
+   * Sets whether to use a simple table (and also suppress the combobox for jumping to a column).
+   *
+   * @param value 	true if to use
+   */
+  public void setUseSimpleHeader(boolean value) {
+    m_UseSimpleHeader = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use a simple table (and also suppress the combobox for jumping to a column).
+   *
+   * @return 		true if to use
+   */
+  public boolean getUseSimpleHeader() {
+    return m_UseSimpleHeader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useSimpleHeaderTipText() {
+    return "Whether to use a simple table header (and also suppress the combobox for jumping to a column).";
   }
 
   /**
@@ -843,10 +889,12 @@ public class SpreadSheetDisplay
       });
     }
 
-    panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    columnCombo = new SpreadSheetColumnComboBox(m_Table);
-    panel.add(columnCombo);
-    result.add(panel, BorderLayout.NORTH);
+    if (!m_UseSimpleHeader) {
+      panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+      columnCombo = new SpreadSheetColumnComboBox(m_Table);
+      panel.add(columnCombo);
+      result.add(panel, BorderLayout.NORTH);
+    }
 
     m_PanelSearch = null;
     if (m_AllowSearch) {
@@ -899,6 +947,7 @@ public class SpreadSheetDisplay
     m_TableModel = new SpreadSheetTableModel(sheet);
     m_TableModel.setReadOnly(m_ReadOnly);
     m_TableModel.setShowRowColumn(m_ShowRowIndexColumn);
+    m_TableModel.setUseSimpleHeader(m_UseSimpleHeader);
     m_Table.setModel(m_TableModel);
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
