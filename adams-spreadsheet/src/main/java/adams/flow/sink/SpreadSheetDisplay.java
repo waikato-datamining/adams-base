@@ -333,7 +333,7 @@ public class SpreadSheetDisplay
 
       m_TableModel = new SpreadSheetTableModel(sheet);
       m_TableModel.setReadOnly(m_Owner.getReadOnly());
-      m_Table.setShowRowColumn(m_Owner.getShowRowIndexColumn());
+      m_TableModel.setShowRowColumn(m_Owner.getShowRowIndexColumn());
       m_Table.setModel(m_TableModel);
       m_Table.setNumDecimals(m_Owner.getNumDecimals());
       m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_Owner.getCellRenderingCustomizer()));
@@ -898,7 +898,7 @@ public class SpreadSheetDisplay
 
     m_TableModel = new SpreadSheetTableModel(sheet);
     m_TableModel.setReadOnly(m_ReadOnly);
-    m_Table.setShowRowColumn(m_ShowRowIndexColumn);
+    m_TableModel.setShowRowColumn(m_ShowRowIndexColumn);
     m_Table.setModel(m_TableModel);
     m_Table.setNumDecimals(m_NumDecimals);
     m_Table.setCellRenderingCustomizer((CellRenderingCustomizer) OptionUtils.shallowCopy(m_CellRenderingCustomizer));
