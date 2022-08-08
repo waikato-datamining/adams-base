@@ -265,7 +265,7 @@ public class MergeOverlaps
     GeometryType	geometry;
     boolean		fallback;
 
-    if (obj.hasPolygon())
+    if (obj.hasValidPolygon())
       geometry = GeometryType.POLYGON;
     else
       geometry = GeometryType.BBOX;
