@@ -352,7 +352,17 @@ public class LocatedObject
    * @return		true if present
    */
   public boolean hasPolygon() {
-    return m_MetaData.containsKey(KEY_POLY_X) && m_MetaData.containsKey(KEY_POLY_Y);
+    return m_MetaData.containsKey(KEY_POLY_X)
+        && m_MetaData.containsKey(KEY_POLY_Y);
+  }
+
+  /**
+   * Checks whether polygon meta-data is present.
+   *
+   * @return		true if present
+   */
+  public boolean hasValidPolygon() {
+    return hasPolygon() && (getPolygonX().length >= 4) && (getPolygonY().length >= 4);
   }
 
   /**
@@ -518,7 +528,7 @@ public class LocatedObject
 
     result = false;
 
-    poly = hasPolygon() ? getPolygon() : null;
+    poly = hasValidPolygon() ? getPolygon() : null;
     bbox = bboxToPolygon();
 
     if ((poly != null) && (minRatio > 0)) {
@@ -529,6 +539,9 @@ public class LocatedObject
         if (ratio < minRatio)
           result = true;
       }
+    }
+    else if (poly == null) {
+      result = true;
     }
 
     return result;
