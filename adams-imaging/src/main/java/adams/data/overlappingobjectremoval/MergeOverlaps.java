@@ -15,11 +15,13 @@
 
 /*
  * MergeOverlaps.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022 University of Waikato, Hamilton, NZ
  */
 
-package adams.data.objectfilter;
+package adams.data.overlappingobjectremoval;
 
+import adams.data.objectfilter.MergeOverlapsHelper;
+import adams.data.objectfilter.MergedScoreCalculation;
 import adams.data.objectoverlap.AreaRatio;
 import adams.data.objectoverlap.ObjectOverlap;
 import adams.flow.transformer.locateobjects.LocatedObject;
@@ -31,14 +33,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Merges overlapping objects into single object.
+ * Merges overlapping objects into single one.
  *
- * @author fracpete (fracpete at waikato dot ac dot nz)
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MergeOverlaps
-    extends AbstractObjectFilter {
+    extends AbstractOverlappingObjectRemoval {
 
-  private static final long serialVersionUID = 7648379268675475506L;
+  private static final long serialVersionUID = 2003246733816658910L;
 
   /** the object overlap calculation to use. */
   protected ObjectOverlap m_Algorithm;
@@ -55,7 +57,7 @@ public class MergeOverlaps
   /**
    * Returns a string describing the object.
    *
-   * @return a description suitable for displaying in the gui
+   * @return 			a description suitable for displaying in the gui
    */
   @Override
   public String globalInfo() {
@@ -203,25 +205,24 @@ public class MergeOverlaps
   }
 
   /**
-   * Filters the image objects.
+   * Removes overlapping image objects.
    *
-   * @param objects the objects to filter
-   * @return the updated object list
+   * @param objects	the objects to clean up
+   * @param matches	the matches that were determined by an algorithm, used as basis for removal
+   * @return		the updated objects
    */
   @Override
-  protected LocatedObjects doFilter(LocatedObjects objects) {
-    LocatedObjects					result;
-    Map<LocatedObject, Map<LocatedObject,Double>>	matches;
-    List<LocatedObject>					toMerge;
-    Set<LocatedObject> 					merged;
-    List<LocatedObject> 				mergedObjs;
+  public LocatedObjects removeOverlaps(LocatedObjects objects, Map<LocatedObject, Map<LocatedObject,Double>> matches) {
+    LocatedObjects		result;
+    List<LocatedObject> 	toMerge;
+    Set<LocatedObject> 		merged;
+    List<LocatedObject> 	mergedObjs;
 
     result  = new LocatedObjects();
-    matches = m_Algorithm.matches(objects, objects);
     merged  = new HashSet<>();
     for (LocatedObject obj: matches.keySet()) {
       if (merged.contains(obj))
-        continue;
+	continue;
       // find/record objects to merge
       toMerge   = MergeOverlapsHelper.findObjectsToMerge(obj, matches.get(obj), merged, m_LabelKey);
       merged.addAll(toMerge);
