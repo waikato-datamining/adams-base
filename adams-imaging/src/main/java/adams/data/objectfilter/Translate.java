@@ -15,7 +15,7 @@
 
 /*
  * Translate.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -57,10 +57,10 @@ public class Translate
 
   private static final long serialVersionUID = -2181381799680316619L;
 
-  /** the scale factor for x/width. */
+  /** the translation for x. */
   protected int m_X;
 
-  /** the scale factor for y/height. */
+  /** the translation for y. */
   protected int m_Y;
 
   /**
