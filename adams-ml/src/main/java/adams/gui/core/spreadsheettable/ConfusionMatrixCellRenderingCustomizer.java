@@ -204,8 +204,9 @@ public class ConfusionMatrixCellRenderingCustomizer
     if ((column == 0) && table.getShowRowColumn())
       return result;
 
-    column--;
-    if (column == 0)
+    if (table.getShowRowColumn())
+      column--;
+    if ((column == 0) && (!table.getUseSimpleHeader()))
       return result.deriveFont(Font.BOLD);
 
     return result;
