@@ -63,7 +63,7 @@ public class RemoveSmallerRectangle
 
     result = new LocatedObjects();
     for (LocatedObject thisObj : objects) {
-      if (matches.containsKey(thisObj))
+      if (!matches.containsKey(thisObj))
         continue;
       others = matches.get(thisObj).keySet();
       if (others.size() > 0) {
