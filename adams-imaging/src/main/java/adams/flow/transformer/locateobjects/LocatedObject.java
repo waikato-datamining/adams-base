@@ -30,8 +30,10 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.statistics.StatUtils;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.awt.Polygon;
@@ -45,12 +47,12 @@ import java.util.Map;
 
 /**
  * Container for located objects.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LocatedObject
-  implements Serializable, CloneHandler<LocatedObject>, Comparable<LocatedObject>,
-             SpreadSheetSupporter {
+    implements Serializable, CloneHandler<LocatedObject>, Comparable<LocatedObject>,
+    SpreadSheetSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8662599273386642371L;
@@ -63,16 +65,16 @@ public class LocatedObject
 
   /** the cut-out object, if available. */
   protected BufferedImage m_Image;
-  
+
   /** the x of the top-left corner in the original image. */
   protected int m_X;
-  
+
   /** the y of the top-left corner in the original image. */
   protected int m_Y;
-  
+
   /** the width of the actual object sub-image. */
   protected int m_Width;
-  
+
   /** the height of the actual object sub-image. */
   protected int m_Height;
 
@@ -143,7 +145,7 @@ public class LocatedObject
 
   /**
    * Initializes the container.
-   * 
+   *
    * @param image	the object image, can be null
    * @param x		the x of the top-left corner in the original image
    * @param y		the y of the top-left corner in the original image
@@ -174,59 +176,89 @@ public class LocatedObject
   }
 
   /**
+   * Initializes the container.
+   *
+   * @param rect	the rectangle
+   */
+  public LocatedObject(Rectangle rect) {
+    this(null, rect);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param image	the object image, can be null
+   * @param rect	the rectangle
+   */
+  public LocatedObject(BufferedImage image, Rectangle rect) {
+    this(image, rect, null);
+  }
+
+  /**
+   * Initializes the container.
+   *
+   * @param image	the object image, can be null
+   * @param rect	the rectangle
+   * @param metaData	optional meta-data, can be null
+   */
+  public LocatedObject(BufferedImage image, Rectangle rect, Map<String,Object> metaData) {
+    this(image, rect.x, rect.y, rect.width, rect.height, metaData);
+  }
+
+  /**
    * Returns a clone of the object.
    *
    * @return		the clone
    */
   public LocatedObject getClone() {
     return new LocatedObject(
-      (m_Image != null ? BufferedImageHelper.deepCopy(m_Image) : null),
-      m_X,
-      m_Y,
-      m_Width,
-      m_Height,
-      getMetaData(true));
+	(m_Image != null ? BufferedImageHelper.deepCopy(m_Image) : null),
+	m_X,
+	m_Y,
+	m_Width,
+	m_Height,
+	getMetaData(true));
   }
 
   /**
    * Returns the image.
-   * 
+   *
    * @return		the image, null if not available
    */
   public BufferedImage getImage() {
     return m_Image;
   }
-  
+
   /**
    * Returns the X of the top-left corner.
-   * 
+   *
    * @return		the X
    */
   public int getX() {
     return m_X;
   }
-  
+
   /**
    * Returns the Y of the top-left corner.
-   * 
+   *
    * @return		the Y
    */
   public int getY() {
     return m_Y;
   }
-  
+
   /**
    * Returns the width of the object sub-image.
-   * 
+   *
    * @return		the width
    */
   public int getWidth() {
     return m_Width;
   }
-  
+
   /**
    * Returns the height of the object sub-image.
-   * 
+   *
    * @return		the height
    */
   public int getHeight() {
@@ -339,10 +371,10 @@ public class LocatedObject
    */
   public QuadrilateralLocation getLocation() {
     return new QuadrilateralLocation(
-      m_X, m_Y,
-      m_X + m_Width - 1, m_Y,
-      m_X + m_Width - 1, m_Y + m_Height - 1,
-      m_X, m_Y + m_Height - 1
+	m_X, m_Y,
+	m_X + m_Width - 1, m_Y,
+	m_X + m_Width - 1, m_Y + m_Height - 1,
+	m_X, m_Y + m_Height - 1
     );
   }
 
@@ -353,7 +385,7 @@ public class LocatedObject
    */
   public boolean hasPolygon() {
     return m_MetaData.containsKey(KEY_POLY_X)
-        && m_MetaData.containsKey(KEY_POLY_Y);
+	&& m_MetaData.containsKey(KEY_POLY_Y);
   }
 
   /**
@@ -382,10 +414,10 @@ public class LocatedObject
    */
   public Rectangle getRectangle(double scale) {
     return new Rectangle(
-      (int) (getX() * scale),
-      (int) (getY() * scale),
-      (int) (getWidth() * scale),
-      (int) (getHeight() * scale));
+	(int) (getX() * scale),
+	(int) (getY() * scale),
+	(int) (getWidth() * scale),
+	(int) (getHeight() * scale));
   }
 
   /**
@@ -410,7 +442,7 @@ public class LocatedObject
 	  result[i] = (int) Double.parseDouble(parts[i]);
       }
       catch (Exception e) {
-        result = new int[0];
+	result = new int[0];
       }
     }
 
@@ -462,8 +494,8 @@ public class LocatedObject
 
     if (scale != 1.0) {
       for (i = 0; i < x.length; i++) {
-        x[i] = (int) (x[i] * scale);
-        y[i] = (int) (y[i] * scale);
+	x[i] = (int) (x[i] * scale);
+	y[i] = (int) (y[i] * scale);
       }
     }
 
@@ -478,6 +510,28 @@ public class LocatedObject
   public void setPolygon(Polygon value) {
     getMetaData().put(KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(value.xpoints), ","));
     getMetaData().put(KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(value.ypoints), ","));
+  }
+
+  /**
+   * Stores the JTS polygon in the meta-data.
+   *
+   * @param value	the JTS polygon to use
+   */
+  public void setPolygon(org.locationtech.jts.geom.Polygon value) {
+    org.locationtech.jts.geom.Polygon 	bbox;
+    Coordinate[]			coords;
+    int[]				polyX;
+    int[]				polyY;
+    int 				i;
+
+    coords = value.getCoordinates();
+    polyX = new int[coords.length];
+    polyY = new int[coords.length];
+    for (i = 0; i < coords.length; i++) {
+      polyX[i] = (int) coords[i].x;
+      polyY[i] = (int) coords[i].y;
+    }
+    setPolygon(new Polygon(polyX, polyY, polyX.length));
   }
 
   /**
@@ -535,9 +589,9 @@ public class LocatedObject
       area_bbox = LocatedObject.toGeometry(bbox).getArea();
       area_poly = LocatedObject.toGeometry(poly).getArea();
       if (area_bbox > 0) {
-        ratio = area_poly / area_bbox;
-        if (ratio < minRatio)
-          result = true;
+	ratio = area_poly / area_bbox;
+	if (ratio < minRatio)
+	  result = true;
       }
     }
     else if (poly == null) {
@@ -588,25 +642,25 @@ public class LocatedObject
       py = getPolygonY();
       padjusted = false;
       for (i = 0; i < px.length; i++) {
-        if (px[i] < 0) {
-          px[i]     = 0;
-          padjusted = true;
+	if (px[i] < 0) {
+	  px[i]     = 0;
+	  padjusted = true;
 	}
-        if (px[i] >= width) {
-          px[i]     = width - 1;
-          padjusted = true;
+	if (px[i] >= width) {
+	  px[i]     = width - 1;
+	  padjusted = true;
 	}
-        if (py[i] < 0) {
-          py[i]     = 0;
-          padjusted = true;
+	if (py[i] < 0) {
+	  py[i]     = 0;
+	  padjusted = true;
 	}
-        if (py[i] >= height) {
-          py[i]     = height - 1;
-          padjusted = true;
+	if (py[i] >= height) {
+	  py[i]     = height - 1;
+	  padjusted = true;
 	}
       }
       if (padjusted) {
-        setPolygon(new Polygon(px, py, px.length));
+	setPolygon(new Polygon(px, py, px.length));
 	result = true;
       }
     }
@@ -654,9 +708,9 @@ public class LocatedObject
     otherBottom = other.getY() + other.getHeight() - 1;
 
     xOverlap = inRange(thisLeft, otherLeft, otherRight)
-      || inRange(otherLeft, thisLeft, thisRight);
+	|| inRange(otherLeft, thisLeft, thisRight);
     yOverlap = inRange(thisTop, otherTop, otherBottom)
-      || inRange(otherTop, thisTop, thisBottom);
+	|| inRange(otherTop, thisTop, thisBottom);
 
     return xOverlap && yOverlap;
   }
@@ -855,14 +909,46 @@ public class LocatedObject
 
     factory = new GeometryFactory();
     coords = new ArrayList<>();
-      coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
-      coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY()));
-      coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY() + rectangle.getHeight() - 1));
-      coords.add(new Coordinate(rectangle.getX(), rectangle.getY() + rectangle.getHeight() - 1));
-      coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
+    coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
+    coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY()));
+    coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY() + rectangle.getHeight() - 1));
+    coords.add(new Coordinate(rectangle.getX(), rectangle.getY() + rectangle.getHeight() - 1));
+    coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
     ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
     result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
 
+    return result;
+  }
+
+  /**
+   * Returns the boundaries of the JTS polygon.
+   *
+   * @param polygon	the polygon to get the bounds for
+   * @return		the bounds, empty rectangle if failed to compute
+   */
+  public static Rectangle polygonBounds(org.locationtech.jts.geom.Polygon polygon) {
+    Rectangle				result;
+    Geometry				envelope;
+    org.locationtech.jts.geom.Polygon	bbox;
+    Coordinate[]			coords;
+    Point				point;
+
+    result   = new Rectangle();
+    envelope = polygon.getEnvelope();
+    if (envelope instanceof org.locationtech.jts.geom.Polygon) {
+      bbox = (org.locationtech.jts.geom.Polygon) polygon.getEnvelope();
+      coords = bbox.getCoordinates();
+      result = new Rectangle(
+	  (int) coords[0].x,
+	  (int) coords[0].y,
+	  (int) (coords[2].x - coords[0].x + 1),
+	  (int) (coords[2].y - coords[0].y + 1));
+    }
+    else if (envelope instanceof org.locationtech.jts.geom.Point) {
+      point = (org.locationtech.jts.geom.Point) envelope;
+      if (!point.isEmpty())
+	result = new Rectangle((int) point.getX(), (int) point.getY(), 0, 0);
+    }
     return result;
   }
 }
