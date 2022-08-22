@@ -66,7 +66,7 @@ public class RemoveLargerRectangle
       if (!matches.containsKey(thisObj))
         continue;
       others = matches.get(thisObj).keySet();
-      if (others.size() > 0) {
+      if (others.size() > 1) {
         smallest = thisObj;
 	thisArea = thisObj.getWidth() * thisObj.getHeight();
         for (LocatedObject otherObj : others) {

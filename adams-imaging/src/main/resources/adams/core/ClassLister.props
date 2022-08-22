@@ -63,6 +63,10 @@ adams.data.image.transformer.ImageColorizer=\
   adams.data.image.transformer
 
 # the algorithms for calculating object overlaps
+adams.data.areaoverlap.AreaOverlap=\
+  adams.data.areaoverlap
+
+# the algorithms for calculating object overlaps
 adams.data.objectoverlap.ObjectOverlap=\
   adams.data.objectoverlap
 
