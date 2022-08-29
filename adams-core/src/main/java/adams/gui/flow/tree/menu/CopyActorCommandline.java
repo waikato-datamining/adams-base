@@ -14,50 +14,60 @@
  */
 
 /*
- * CopyActorMore.java
- * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
+ * CopyActorCommandline.java
+ * Copyright (C) 2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
-import adams.gui.action.AbstractPropertiesAction;
+import adams.gui.flow.tree.Node;
+import adams.gui.flow.tree.TreeHelper;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+
+import java.awt.event.ActionEvent;
 
 /**
- * Menu for additional copy actions.
- *
+ * For copying the currently selected actor and placing it on the
+ * clipboard.
+ * 
  * @author fracpete
  */
-public class CopyActorMore
-    extends AbstractTreePopupSubMenuAction {
+public class CopyActorCommandline
+  extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
-
+  
   /**
    * Returns the caption of this action.
-   *
+   * 
    * @return		the caption, null if not applicable
    */
   @Override
   protected String getTitle() {
-    return "Copy...";
+    return "Copy (command-line)";
   }
 
   /**
-   * Returns the sub menu actions.
-   *
-   * @return		the submenu items
+   * Updates the action using the current state information.
    */
   @Override
-  protected AbstractPropertiesAction[] getSubMenuActions() {
-    AbstractPropertiesAction[]	result;
+  protected void doUpdate() {
+    setEnabled((m_State.numSel == 1));
+  }
 
-    result = new AbstractPropertiesAction[]{
-        new CopyActorPlainText(),
-        new CopyActorCommandline(),
-        new CopyActorPath(),
-        new CopyActorName(),
-    };
+  /**
+   * The action to execute.
+   *
+   * @param e		the event
+   */
+  @Override
+  protected void doActionPerformed(ActionEvent e) {
+    Node[]		nodes;
 
-    return result;
+    nodes = TreeHelper.pathsToNodes(m_State.selPaths);
+    if (nodes.length != 1)
+      return;
+
+    ClipboardHelper.copyToClipboard(nodes[0].getFullActor().toCommandLine());
   }
 }
