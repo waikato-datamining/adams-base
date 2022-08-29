@@ -15,11 +15,12 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
+import adams.core.DeepCopyOperator;
 import adams.core.ObjectCopyHelper;
 import adams.core.Performance;
 import adams.core.QuickInfoHelper;
@@ -69,66 +70,66 @@ import java.util.concurrent.TimeUnit;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: LoadBalancer
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-load &lt;adams.flow.core.Actor&gt; [-load ...] (property: loadActors)
  * &nbsp;&nbsp;&nbsp;The actors to 'load-balance'.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.Null
  * </pre>
- * 
+ *
  * <pre>-num-threads &lt;int&gt; (property: numThreads)
  * &nbsp;&nbsp;&nbsp;The number of threads to use for load-balancing (-1 means one for each core
  * &nbsp;&nbsp;&nbsp;&#47;cpu).
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
- * 
+ *
  * <pre>-use-local-storage &lt;boolean&gt; (property: useLocalStorage)
  * &nbsp;&nbsp;&nbsp;If enabled, then each thread will restrict the scope of storage to be local;
  * &nbsp;&nbsp;&nbsp; initially, a shallow copy of the storage is taken at the thread's time 
  * &nbsp;&nbsp;&nbsp;of creation.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-deep-copy &lt;boolean&gt; (property: deepCopy)
  * &nbsp;&nbsp;&nbsp;If enabled, the local storage gets copied using a deep copy.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LoadBalancer
-  extends AbstractControlActor
-  implements InputConsumer, MutableActorHandler {
+    extends AbstractControlActor
+    implements InputConsumer, MutableActorHandler, DeepCopyOperator {
 
   /** for serialization. */
   private static final long serialVersionUID = -8782869993629454572L;
@@ -171,10 +172,10 @@ public class LoadBalancer
   @Override
   public String globalInfo() {
     return
-      "Runs the specified 'load actor' in as many separate threads as "
-	+ "specified with the 'num-threads' parameter.\n"
-	+ "Always uses a copy of the variables.\n"
-	+ "NB: no callable transformer or sink allowed.";
+        "Runs the specified 'load actor' in as many separate threads as "
+            + "specified with the 'num-threads' parameter.\n"
+            + "Always uses a copy of the variables.\n"
+            + "NB: no callable transformer or sink allowed.";
   }
 
   /**
@@ -185,20 +186,20 @@ public class LoadBalancer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "load", "loadActors",
-	    new Actor[]{new Null()});
+        "load", "loadActors",
+        new Actor[]{new Null()});
 
     m_OptionManager.add(
-	    "num-threads", "numThreads",
-	    0);
+        "num-threads", "numThreads",
+        0);
 
     m_OptionManager.add(
-	    "use-local-storage", "useLocalStorage",
-	    false);
+        "use-local-storage", "useLocalStorage",
+        false);
 
     m_OptionManager.add(
-	    "deep-copy", "deepCopy",
-	    false);
+        "deep-copy", "deepCopy",
+        false);
   }
 
   /**
@@ -325,8 +326,8 @@ public class LoadBalancer
   public String useLocalStorageTipText() {
     return
         "If enabled, then each thread will restrict the scope of storage "
-      + "to be local; initially, a shallow copy of the storage is taken at the "
-      + "thread's time of creation.";
+            + "to be local; initially, a shallow copy of the storage is taken at the "
+            + "thread's time of creation.";
   }
 
   /**
@@ -334,6 +335,7 @@ public class LoadBalancer
    *
    * @param value	if true a deep copy for the local storage will be performed
    */
+  @Override
   public void setDeepCopy(boolean value) {
     m_DeepCopy = value;
     reset();
@@ -344,6 +346,7 @@ public class LoadBalancer
    *
    * @return		true if a deep copy is performed
    */
+  @Override
   public boolean getDeepCopy() {
     return m_DeepCopy;
   }
@@ -354,6 +357,7 @@ public class LoadBalancer
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String deepCopyTipText() {
     return "If enabled, the local storage gets copied using a deep copy.";
   }
@@ -602,12 +606,12 @@ public class LoadBalancer
     if (result == null) {
       // check for callable actors
       actors = ActorUtils.enumerate(
-	  m_Actors, 
-	  new Class[]{CallableTransformer.class, CallableSink.class});
+          m_Actors,
+          new Class[]{CallableTransformer.class, CallableSink.class});
       if (actors.size() > 0)
-	result = "No callable transformer or sink allowed!";
+        result = "No callable transformer or sink allowed!";
     }
-    
+
     if (result == null) {
       m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
       m_ThreadsSpawned   = 0;
@@ -626,14 +630,14 @@ public class LoadBalancer
     m_CurrentToken = token;
     while ((m_Executor.getActiveCount() >= m_Executor.getMaximumPoolSize()) && !isStopped()) {
       if (isLoggingEnabled())
-	getLogger().info("Waiting for free thread...");
+        getLogger().info("Waiting for free thread...");
       try {
-	synchronized(m_Executor) {
-	  m_Executor.wait(100);
-	}
+        synchronized(m_Executor) {
+          m_Executor.wait(100);
+        }
       }
       catch (Exception e) {
-	// ignored
+        // ignored
       }
     }
   }
@@ -682,7 +686,7 @@ public class LoadBalancer
     // any other callable name errors should have been captured already in
     // "setUp()" call when starting the flow
     getScopeHandler().setEnforceCallableNameCheck(false);
-    
+
     m_ThreadsSpawned++;
     token = m_CurrentToken;
     count = m_ThreadsSpawned;
@@ -709,29 +713,29 @@ public class LoadBalancer
     for (StorageName sname: getStorageHandler().getStorage().keySet()) {
       svalue = getStorageHandler().getStorage().get(sname);
       if (m_UseLocalStorage)
-	shell.getStorage().put(sname, ObjectCopyHelper.copyObject(svalue));
+        shell.getStorage().put(sname, ObjectCopyHelper.copyObject(svalue));
       else
-	shell.getStorage().put(sname, svalue);
+        shell.getStorage().put(sname, svalue);
     }
     shell.getStorage().put(new StorageName(inputName), token.getPayload());
     m_ToCleanUp.add(shell);
     job = new CallableWithResult<String>() {
       protected String doCall() throws Exception {
-	String result = null;
-	try {
-	  if (isLoggingEnabled())
-	    getLogger().info("Starting thread #" + count);
-	  result = shell.execute();
-	  if (result != null)
-	    shell.getLogger().severe(result);
-	  if (isLoggingEnabled())
-	    getLogger().info("...finished thread #" + (count) + ((result == null) ? "" : " with error"));
-	}
-	catch (Exception e) {
-	  result = handleException("Failed to execute thread #" + count + ": ", e);
-	}
+        String result = null;
+        try {
+          if (isLoggingEnabled())
+            getLogger().info("Starting thread #" + count);
+          result = shell.execute();
+          if (result != null)
+            shell.getLogger().severe(result);
+          if (isLoggingEnabled())
+            getLogger().info("...finished thread #" + (count) + ((result == null) ? "" : " with error"));
+        }
+        catch (Exception e) {
+          result = handleException("Failed to execute thread #" + count + ": ", e);
+        }
 
-	return result;
+        return result;
       }
     };
     synchronized(m_Executor) {
@@ -749,12 +753,12 @@ public class LoadBalancer
     if (m_Executor != null) {
       m_Executor.shutdown();
       while (!m_Executor.isTerminated()) {
-	try {
-	  m_Executor.awaitTermination(100, TimeUnit.MILLISECONDS);
-	}
-	catch (Exception e) {
-	  // ignored
-	}
+        try {
+          m_Executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+        }
+        catch (Exception e) {
+          // ignored
+        }
       }
       m_Executor = null;
     }
@@ -762,14 +766,14 @@ public class LoadBalancer
 
     super.wrapUp();
   }
-  
+
   /**
    * Stops the processing of tokens without stopping the flow.
    */
   public void flushExecution() {
     for (Actor actor: m_ToCleanUp) {
       if (actor instanceof ActorHandler)
-	((ActorHandler) actor).flushExecution();
+        ((ActorHandler) actor).flushExecution();
     }
   }
 
@@ -780,13 +784,13 @@ public class LoadBalancer
   public void stopExecution() {
     if (m_Executor != null) {
       try {
-	synchronized(m_Executor) {
-	  m_Executor.notifyAll();
-	  m_Executor.shutdownNow();
-	}
+        synchronized(m_Executor) {
+          m_Executor.notifyAll();
+          m_Executor.shutdownNow();
+        }
       }
       catch (Exception e) {
-	// ignored
+        // ignored
       }
     }
 
