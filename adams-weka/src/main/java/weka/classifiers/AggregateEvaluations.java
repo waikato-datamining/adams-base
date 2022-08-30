@@ -15,7 +15,7 @@
 
 /*
  * AggregateEvaluations.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -320,6 +320,13 @@ public class AggregateEvaluations
 	  if (label.equals("?"))
 	    continue;
 	  labels.add(label);
+	}
+	predictedLabels = SpreadSheetUtils.getColumn(sheet, colPred, true, true, "?");
+	for (String label: predictedLabels) {
+	  if (label.equals("?"))
+	    continue;
+	  if (!labels.contains(label))
+	    labels.add(label);
 	}
 	setClassLabels(labels);
       }
