@@ -964,6 +964,25 @@ public class TreeOperations
     String		oldName;
     String 		newName;
     Node		node;
+
+    node    = TreeHelper.pathToNode(path);
+    oldName = node.getActor().getName();
+    newName = GUIHelper.showInputDialog(
+	GUIHelper.getParentComponent(getOwner()),
+	"Please enter new name:", oldName);
+
+    renameActor(path, newName);
+  }
+
+  /**
+   * Renames an actor.
+   *
+   * @param path	the path to the actor
+   * @param newName 	the new name for the actor
+   */
+  public void renameActor(TreePath path, String newName) {
+    String		oldName;
+    Node		node;
     Node		parent;
     Actor		actorOld;
     Actor		actorNew;
@@ -971,9 +990,6 @@ public class TreeOperations
 
     node    = TreeHelper.pathToNode(path);
     oldName = node.getActor().getName();
-    newName = GUIHelper.showInputDialog(
-	GUIHelper.getParentComponent(getOwner()),
-	"Please enter new name:", oldName);
 
     if (newName != null) {
       actorOld = node.getActor();
@@ -1000,6 +1016,20 @@ public class TreeOperations
 	getOwner().locateAndDisplay(node.getFullName(), true);
 	getOwner().refreshTabs();
       });
+    }
+  }
+
+  /**
+   * Cleans up the names of actors.
+   *
+   * @param paths	the paths to the actors
+   */
+  public void cleanUpActorName(TreePath[] paths) {
+    Node			node;
+
+    for (TreePath path: paths) {
+      node = TreeHelper.pathToNode(path);
+      renameActor(path, node.getActor().getDefaultName());
     }
   }
 
