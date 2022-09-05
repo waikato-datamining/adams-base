@@ -13,20 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RenameActor.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import java.awt.event.ActionEvent;
 
 /**
- * For removing breakpoints either below currently selected node or everywhere
- * (if no actor selected).
+ * For renaming actors.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class RenameActor
   extends AbstractTreePopupMenuItemAction {
