@@ -122,7 +122,7 @@ public abstract class AbstractRecordActorAdded
           m_Recorders.add(rec);
 	}
         catch (Exception e) {
-	  ConsolePanel.getSingleton().append("Failled to instantiate: " + Utils.classToString(cls), e);
+	  ConsolePanel.getSingleton().append("Failed to instantiate: " + Utils.classToString(cls), e);
 	}
       }
     }
