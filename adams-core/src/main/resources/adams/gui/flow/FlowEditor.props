@@ -191,7 +191,7 @@ Tree.PopupMenu=\
   -,\
   adams.gui.flow.tree.menu.AddBreakpoint,\
   adams.gui.flow.tree.menu.AddFromTemplate,\
-  adams.gui.flow.tree.menu.EncloseActor,\
+  adams.gui.flow.tree.menu.EncloseActorCompact,\
   adams.gui.flow.tree.menu.PullUpActor,\
   adams.gui.flow.tree.menu.SwapActor,\
   adams.gui.flow.tree.menu.CreateCallableActor,\
@@ -223,6 +223,6 @@ Tree.PopupMenuExtensions=
 # (true|false)
 Tree.RecordAdd=false
 
-# Whether to record actors that the user encloses, to improve suggestions
+# Whether to record actors that the user encloses, to provide shorter list
 # (true|false)
-Tree.RecordEnclose=false
+Tree.RecordEnclose=true
