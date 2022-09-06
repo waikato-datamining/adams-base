@@ -100,6 +100,7 @@ import adams.gui.flow.FlowEditorDialog;
 import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
 import adams.gui.flow.tree.postprocessor.AbstractEditPostProcessor;
 import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
+import adams.gui.flow.tree.record.enclose.AbstractRecordActorEnclosed;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.Favorite;
 import adams.gui.goe.FlowHelper;
@@ -1129,6 +1130,12 @@ public class TreeOperations
 	getOwner().notifyActorChangeListeners(new ActorChangeEvent(getOwner(), current, Type.MODIFY));
 	getOwner().redraw();
       });
+
+      // record enclosing
+      AbstractRecordActorEnclosed.recordAll(
+	  getOwner(),
+	  paths,
+	  handler);
     }
     catch (Exception e) {
       if (paths.length == 1)

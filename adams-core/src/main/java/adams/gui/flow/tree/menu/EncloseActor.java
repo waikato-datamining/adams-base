@@ -28,6 +28,7 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.enclose.AbstractEncloseActor;
+import adams.gui.flow.tree.record.enclose.MostCommon;
 
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
@@ -66,6 +67,8 @@ public class EncloseActor
     String[]		actors;
     int			i;
     List<JMenuItem>	menuitems;
+    BaseMenu		menuCommon;
+    List<JMenuItem>	menuitemsCommon;
     JMenuItem[]		others;
     BaseMenu		menuOthers;
 
@@ -91,6 +94,38 @@ public class EncloseActor
       result.setText(getName());
       result.setEnabled(isEnabled());
       result.setIcon(getIcon());
+    }
+
+    // common ones
+    if (m_State.tree.getRecordEnclose()) {
+      actors          = MostCommon.getMostCommon(20).toArray(new String[0]);
+      menuitemsCommon = new ArrayList<>();
+      for (i = 0; i < actors.length; i++) {
+        final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0]);
+        if (!actor.getActorHandlerInfo().canEncloseActors())
+          continue;
+        if (actor instanceof Flow)
+          continue;
+        if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
+          continue;
+        menuitem = new JMenuItem(actor.getClass().getSimpleName());
+        menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
+        menuitemsCommon.add(menuitem);
+        menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
+      }
+      Collections.sort(menuitemsCommon, new MenuItemComparator());
+      if (menuitemsCommon.size() > 0) {
+        menuCommon = BaseMenu.createCascadingMenu(menuitemsCommon, -1, "More...");
+        menuCommon.setText("Common...");
+        menuCommon.setEnabled(isEnabled());
+        if (result != null) {
+          result.addSeparator();
+          result.add(menuCommon);
+        }
+        else {
+          result = menuCommon;
+        }
+      }
     }
 
     // special cases

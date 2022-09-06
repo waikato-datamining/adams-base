@@ -198,6 +198,9 @@ public class Tree
   /** whether to record the adding of actors to improve suggestions. */
   protected boolean m_RecordAdd;
 
+  /** whether to record the enclosing of actors to improve suggestions. */
+  protected boolean m_RecordEnclose;
+
   /** whether to allow the popup menu. */
   protected boolean m_AllowNodePopup;
 
@@ -912,6 +915,26 @@ public class Tree
    */
   public boolean getRecordAdd() {
     return m_RecordAdd;
+  }
+
+  /**
+   * Sets whether to record the enclosing of actors in order to improve the
+   * suggestions.
+   *
+   * @param value	true if to record
+   */
+  public void setRecordEnclose(boolean value) {
+    m_RecordEnclose = value;
+  }
+
+  /**
+   * Returns whether to record the enclosing of actors in order to improve the
+   * suggestions.
+   *
+   * @return		true if to record
+   */
+  public boolean getRecordEnclose() {
+    return m_RecordEnclose;
   }
 
   /**

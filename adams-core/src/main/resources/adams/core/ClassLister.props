@@ -642,6 +642,10 @@ adams.gui.flow.tree.annotations.AnnotationProcessor=\
 adams.gui.flow.tree.record.add.AbstractRecordActorAdded=\
   adams.gui.flow.tree.record.add
 
+# the schemes that record when actors get added
+adams.gui.flow.tree.record.enclose.AbstractRecordActorEnclosed=\
+  adams.gui.flow.tree.record.enclose
+
 # the startup initialization applets
 adams.gui.application.Initialization=\
   adams.gui.application

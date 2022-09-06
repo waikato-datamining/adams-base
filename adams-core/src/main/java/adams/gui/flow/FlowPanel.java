@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -1892,6 +1892,7 @@ public class FlowPanel
     tree.setIgnoreNameChanges(props.getBoolean("Tree.IgnoreNameChanges", false));
     tree.setScaleFactor(props.getDouble("Tree.ScaleFactor", 1.0));
     tree.setRecordAdd(props.getBoolean("Tree.RecordAdd", false));
+    tree.setRecordEnclose(props.getBoolean("Tree.RecordEnclose", false));
     tree.setVariableHighlightBackground(props.getProperty("VariableHighlight.Background", "#FFDD88"));
     tree.setShowQuickInfo(props.getBoolean("ShowQuickInfo", true));
     tree.setShowAnnotations(props.getBoolean("ShowAnnotations", true));
