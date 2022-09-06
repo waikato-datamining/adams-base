@@ -71,7 +71,7 @@ public class MostCommon
    */
   @Override
   public boolean isEnabled(Node added) {
-    return true;
+    return added.getOwner().getRecordAdd();
   }
 
   /**
