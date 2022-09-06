@@ -30,6 +30,7 @@ import adams.gui.core.BrowserHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -187,13 +188,13 @@ public class HelpFrame
     menu.addChangeListener((ChangeEvent e) -> updateMenu());
     result.add(menu);
     
-    item = new JMenuItem("Clear", GUIHelper.getIcon("new.gif"));
+    item = new JMenuItem("Clear", ImageManager.getIcon("new.gif"));
     item.setMnemonic('l');
     item.addActionListener((ActionEvent e) -> m_PanelHistory.clear());
     menu.add(item);
     m_MenuItemClear = item;
     
-    item = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    item = new JMenuItem("Save as...", ImageManager.getIcon("save.gif"));
     item.setMnemonic('S');
     item.addActionListener((ActionEvent e) -> {
       if (m_PanelHistory.getSelectedEntry() == null)
@@ -205,7 +206,7 @@ public class HelpFrame
     
     menu.addSeparator();
     
-    item = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+    item = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
     item.setMnemonic('C');
     item.addActionListener((ActionEvent e) -> setVisible(false));
     menu.add(item);

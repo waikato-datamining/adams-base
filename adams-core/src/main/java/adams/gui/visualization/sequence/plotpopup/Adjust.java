@@ -21,7 +21,7 @@
 package adams.gui.visualization.sequence.plotpopup;
 
 import adams.data.sequence.XYSequence;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.sequence.XYSequenceContainer;
@@ -87,7 +87,7 @@ public class Adjust
     JMenuItem		item;
 
     item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
+    item.setIcon(ImageManager.getEmptyIcon());
     if (((XYSequencePanel) panel).getAdjustToVisibleData())
       item.setText("Adjust to loaded data");
     else

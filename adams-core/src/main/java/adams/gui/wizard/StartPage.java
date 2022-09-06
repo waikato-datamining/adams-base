@@ -20,7 +20,7 @@
 package adams.gui.wizard;
 
 import adams.core.Properties;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -48,7 +48,7 @@ public class StartPage
   protected void initGUI() {
     super.initGUI();
 
-    m_LabelLogo = new JLabel(GUIHelper.getIcon("adams_logo.png"));
+    m_LabelLogo = new JLabel(ImageManager.getIcon("adams_logo.png"));
 
     add(m_LabelLogo, BorderLayout.NORTH);
     add(m_ScrollPaneDescription, BorderLayout.CENTER);

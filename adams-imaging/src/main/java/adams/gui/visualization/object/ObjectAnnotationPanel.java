@@ -37,6 +37,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
@@ -241,36 +242,36 @@ public class ObjectAnnotationPanel
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original image size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
-    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonZoom.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonZoom.setIcon(ImageManager.getIcon("validate_blue.png")));
     label = new JLabel("Zoom");
     label.setDisplayedMnemonic('Z');
     label.setLabelFor(m_TextZoom);
     m_PanelZoom.add(label);
     m_PanelZoom.add(m_TextZoom);
-    m_ButtonZoom = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom = new BaseFlatButton(ImageManager.getIcon("validate.png"));
     m_ButtonZoom.setToolTipText("Apply zoom");
     m_ButtonZoom.addActionListener((ActionEvent e) -> {
       setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
-      m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+      m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
       update();
     });
     m_PanelZoom.add(m_ButtonZoom);
 
     m_PanelZoom.add(new JLabel(" "));
 
-    m_ButtonZoomClear = new BaseFlatButton(GUIHelper.getIcon("zoom_clear.png"));
+    m_ButtonZoomClear = new BaseFlatButton(ImageManager.getIcon("zoom_clear.png"));
     m_ButtonZoomClear.setToolTipText("Clear zoom");
     m_ButtonZoomClear.addActionListener((ActionEvent e) -> clearZoom());
     m_PanelZoom.add(m_ButtonZoomClear);
-    m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
+    m_ButtonZoomIn = new BaseFlatButton(ImageManager.getIcon("zoom_in.png"));
     m_ButtonZoomIn.setToolTipText("Zoom in");
     m_ButtonZoomIn.addActionListener((ActionEvent e) -> zoomIn());
     m_PanelZoom.add(m_ButtonZoomIn);
-    m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
+    m_ButtonZoomOut = new BaseFlatButton(ImageManager.getIcon("zoom_out.png"));
     m_ButtonZoomOut.setToolTipText("Zoom out");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
     m_PanelZoom.add(m_ButtonZoomOut);
-    m_ButtonZoomBestFit = new BaseFlatButton(GUIHelper.getIcon("zoom_fit.png"));
+    m_ButtonZoomBestFit = new BaseFlatButton(ImageManager.getIcon("zoom_fit.png"));
     m_ButtonZoomBestFit.setToolTipText("Best fit");
     m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
     m_PanelZoom.add(m_ButtonZoomBestFit);
@@ -278,11 +279,11 @@ public class ObjectAnnotationPanel
     m_PanelUndo = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_PanelUndo);
     m_PanelUndo.add(new JLabel(" "));
-    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo = new BaseFlatButton(ImageManager.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo changes");
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo());
     m_PanelUndo.add(m_ButtonUndo);
-    m_ButtonRedo = new BaseFlatButton(GUIHelper.getIcon("redo.gif"));
+    m_ButtonRedo = new BaseFlatButton(ImageManager.getIcon("redo.gif"));
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     m_PanelUndo.add(m_ButtonRedo);
@@ -295,13 +296,13 @@ public class ObjectAnnotationPanel
     m_TextBrightness.setColumns(5);
     m_TextBrightness.setToolTipText("100 = original brightness");
     m_TextBrightness.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
-    m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> m_ButtonBrightness.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextBrightness.addAnyChangeListener((ChangeEvent e) -> m_ButtonBrightness.setIcon(ImageManager.getIcon("validate_blue.png")));
     m_PanelBrightness.add(m_TextBrightness);
-    m_ButtonBrightness = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonBrightness = new BaseFlatButton(ImageManager.getIcon("validate.png"));
     m_ButtonBrightness.setToolTipText("Apply current values");
     m_ButtonBrightness.addActionListener((ActionEvent e) -> {
       m_PanelCanvas.setBrightness(m_TextBrightness.getValue().floatValue());
-      m_ButtonBrightness.setIcon(GUIHelper.getIcon("validate.png"));
+      m_ButtonBrightness.setIcon(ImageManager.getIcon("validate.png"));
       update();
     });
     m_PanelBrightness.add(m_ButtonBrightness);
@@ -502,7 +503,7 @@ public class ObjectAnnotationPanel
    */
   public void setZoom(double value) {
     m_TextZoom.setValue(RoundingUtils.round(value * 100, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     m_PanelCanvas.setZoom(value);
   }
 
@@ -529,7 +530,7 @@ public class ObjectAnnotationPanel
    */
   public void clearZoom() {
     m_TextZoom.setValue(100);
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     setZoom(1.0);
     update();
   }
@@ -539,7 +540,7 @@ public class ObjectAnnotationPanel
    */
   public void zoomIn() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * ZOOM_FACTOR, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
   }
@@ -549,7 +550,7 @@ public class ObjectAnnotationPanel
    */
   public void zoomOut() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / ZOOM_FACTOR, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
   }
@@ -561,7 +562,7 @@ public class ObjectAnnotationPanel
     setBestFit(true);
     update();
     m_TextZoom.setValue(RoundingUtils.round(getActualZoom() * 100.0, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     setBestFit(true);
   }
 

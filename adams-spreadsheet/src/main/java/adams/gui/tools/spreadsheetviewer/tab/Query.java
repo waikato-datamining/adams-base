@@ -25,6 +25,7 @@ import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetQuery;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.event.RecentItemEvent;
@@ -119,17 +120,17 @@ public class Query
     panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panelButtonsRight, BorderLayout.EAST);
 
-    m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    m_ButtonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     m_ButtonHelp.setMnemonic('H');
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
     panelButtonsLeft.add(m_ButtonHelp);
 
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
     m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
     panelButtonsRight.add(m_ButtonHistory);
 
-    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonExecute.setMnemonic('E');
     m_ButtonExecute.setEnabled(false);
     m_ButtonExecute.addActionListener((ActionEvent e) -> performQuery());

@@ -533,27 +533,27 @@ public class MultiPagePane
     m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
-    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Moves up selected");
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
-    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseFlatButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Moves down selected");
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
-    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseFlatButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Removes currently selected");
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPages());
     m_PanelListButtons.add(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new BaseFlatButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseFlatButton(ImageManager.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Removes all");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllPages());
     m_PanelListButtons.add(m_ButtonRemoveAll);
 
-    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo = new BaseFlatButton(ImageManager.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo removal");
     m_ButtonUndo.addActionListener((ActionEvent e) -> undoPageClose());
     m_ButtonUndo.setVisible(false);
@@ -1370,7 +1370,7 @@ public class MultiPagePane
 
     // remove
     menuitem = new JMenuItem("Remove");
-    menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+    menuitem.setIcon(ImageManager.getIcon("delete.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
     menuitem.setEnabled((index > -1) && canRemoveSelectedPages());
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveSelectedPages());
@@ -1378,7 +1378,7 @@ public class MultiPagePane
 
     // remove all
     menuitem = new JMenuItem("Remove all");
-    menuitem.setIcon(GUIHelper.getIcon("delete_all.gif"));
+    menuitem.setIcon(ImageManager.getIcon("delete_all.gif"));
     menuitem.setEnabled(!isReadOnly() && (m_PageListModel.getSize() > 0));
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllPages());
     result.add(menuitem);
@@ -1391,13 +1391,13 @@ public class MultiPagePane
 	result.addSeparator();
 	if (detach.isDetached()) {
 	  menuitem = new JMenuItem("Reattach");
-	  menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
+	  menuitem.setIcon(ImageManager.getIcon("minimize.png"));
 	  menuitem.addActionListener((ActionEvent ae) -> detach.reattach());
 	  result.add(menuitem);
 	}
 	else {
 	  menuitem = new JMenuItem("Detach");
-	  menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
+	  menuitem.setIcon(ImageManager.getIcon("maximize.png"));
 	  menuitem.addActionListener((ActionEvent ae) -> {
 	    updateTitle(title, detach);
 	    detach.detach();

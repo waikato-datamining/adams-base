@@ -21,7 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import adams.flow.core.Actor;
 import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion;
 
@@ -76,7 +76,7 @@ public class SwapActor
         menuitem = new JMenuItem(actor.getClass().getSimpleName() + " (" + actor.getClass().getPackage().getName() + ")");
       else
         menuitem = new JMenuItem(actor.getClass().getSimpleName());
-      menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
+      menuitem.setIcon(ImageManager.getIcon(actor.getClass()));
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().swapActor(m_State.selPath, actor));
     }

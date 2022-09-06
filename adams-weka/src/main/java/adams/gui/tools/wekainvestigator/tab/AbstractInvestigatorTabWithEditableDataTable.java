@@ -26,7 +26,7 @@ import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitButton;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -111,22 +111,22 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
 
     super.initGUI();
 
-    m_ButtonActivate = new BaseFlatButton("Activate", GUIHelper.getIcon("location.png"));
+    m_ButtonActivate = new BaseFlatButton("Activate", ImageManager.getIcon("location.png"));
     m_ButtonActivate.addActionListener((ActionEvent e) -> activate(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonActivate);
 
-    m_ButtonRemove = new BaseFlatButton("Remove", GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseFlatButton("Remove", ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonUndo = new BaseFlatButton("Undo", GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo = new BaseFlatButton("Undo", ImageManager.getIcon("undo.gif"));
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonUndo);
 
-    m_ButtonSave = new BaseFlatButton("Save", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseFlatButton("Save", ImageManager.getIcon("save.gif"));
     m_Table.addToButtonsPanel(m_ButtonSave);
 
-    m_ButtonAction = new BaseSplitButton("...", GUIHelper.getEmptyIcon());
+    m_ButtonAction = new BaseSplitButton("...", ImageManager.getEmptyIcon());
     m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractEditableDataTableAction action: m_Actions) {
@@ -138,12 +138,12 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_Table.addToButtonsPanel(m_ButtonAction);
 
     panel = new JPanel(new GridLayout(1, 2));
-    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener((ActionEvent e) -> {
       ListHelper.moveUp(getData(), getSelectedRows());
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
-    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseFlatButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener((ActionEvent e) -> {
       ListHelper.moveDown(getData(), getSelectedRows());
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));

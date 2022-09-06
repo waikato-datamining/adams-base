@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.output;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.DetachablePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -108,12 +109,12 @@ public abstract class AbstractOutputPanelWithPopupMenu<T extends BaseFileChooser
     result = super.createPopupMenu();
 
     if (canCopyToClipboard()) {
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.addActionListener((ActionEvent e) -> copyToClipboard());
       result.add(menuitem);
     }
 
-    menuitem = new JMenuItem("Save...", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Save...", ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent e) -> save());
     result.add(menuitem);
 

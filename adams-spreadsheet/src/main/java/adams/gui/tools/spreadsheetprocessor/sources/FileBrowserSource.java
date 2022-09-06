@@ -32,6 +32,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.FilePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -133,7 +134,7 @@ public class FileBrowserSource
       m_PanelReader = new GenericObjectEditorPanel(SpreadSheetReader.class, new CsvSpreadSheetReader());
       panelParams.addParameter("Reader", m_PanelReader);
 
-      m_ButtonLoad = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonLoad = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonLoad.addActionListener((ActionEvent e) -> load());
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(m_ButtonLoad);

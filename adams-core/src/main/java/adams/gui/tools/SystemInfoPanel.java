@@ -36,6 +36,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MapTableModel;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
@@ -242,7 +243,7 @@ public class SystemInfoPanel
 
       // File/Save as
       menuitem = new JMenuItem("Save as...");
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
       menuitem.addActionListener(new ActionListener() {
@@ -259,7 +260,7 @@ public class SystemInfoPanel
 	menu.addSeparator();
 
       // File/Close
-      menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener(new ActionListener() {
@@ -275,7 +276,7 @@ public class SystemInfoPanel
       result.add(menu);
 
       // Edit/Copy
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
       menuitem.addActionListener(new ActionListener() {
@@ -287,7 +288,7 @@ public class SystemInfoPanel
       m_MenuItemEditCopy = menuitem;
 
       // Edit/Select all
-      menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
       menuitem.addActionListener(new ActionListener() {

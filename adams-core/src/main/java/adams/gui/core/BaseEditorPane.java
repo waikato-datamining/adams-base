@@ -109,12 +109,12 @@ public class BaseEditorPane
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.addActionListener((ActionEvent e) -> copy());
     menuitem.setEnabled(getSelectedText() != null);
     result.add(menuitem);
 
-    menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent e) -> selectAll());
     result.add(menuitem);
 

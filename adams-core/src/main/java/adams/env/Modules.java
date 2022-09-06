@@ -22,6 +22,7 @@ package adams.env;
 import adams.core.Properties;
 import adams.core.base.BaseDateTime;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;
 import java.io.Serializable;
@@ -124,18 +125,18 @@ public class Modules {
       if (!GUIHelper.isHeadless()) {
         if (m_LogoName.length() > 0) {
           try {
-            m_Logo = GUIHelper.getIcon(m_LogoName);
+            m_Logo = ImageManager.getIcon(m_LogoName);
             if (m_Logo == null)
               m_Logo = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(m_LogoName));
           }
           catch (Exception e) {
             System.err.println("Failed to load image '" + m_LogoName + "' from classpath:");
             e.printStackTrace();
-            m_Logo = GUIHelper.getIcon("unknown-module.png");
+            m_Logo = ImageManager.getIcon("unknown-module.png");
           }
         }
         else {
-          m_Logo = GUIHelper.getIcon("default-module.png");
+          m_Logo = ImageManager.getIcon("default-module.png");
         }
       }
     }

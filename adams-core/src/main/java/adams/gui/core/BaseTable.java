@@ -853,11 +853,11 @@ public class BaseTable
     menu = new BasePopupMenu();
     col = columnAtPoint(e.getPoint());
 
-    menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy column name", ImageManager.getIcon("copy.gif"));
     menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getColumnName(col)));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
+    menuitem = new JMenuItem("Copy column", ImageManager.getIcon("copy_column.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
       StringBuilder content = new StringBuilder();
@@ -875,19 +875,19 @@ public class BaseTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Optimal column width", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Optimal column width", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth(col));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Optimal column widths", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Optimal column widths", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Set column width...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Set column width...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(col));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Set column widths...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Set column widths...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
     menu.add(menuitem);
 
@@ -945,21 +945,21 @@ public class BaseTable
     col  = columnAtPoint(e.getPoint());
 
     menuitem = new JMenuItem("Select all");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       selectAll();
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Select none");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       clearSelection();
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Invert selection");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       invertRowSelection();
     });
@@ -971,13 +971,13 @@ public class BaseTable
       menuitem = new JMenuItem("Copy rows");
     else
       menuitem = new JMenuItem("Copy row");
-    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_row.gif"));
     menuitem.setEnabled(getSelectedRowCount() > 0);
     menuitem.addActionListener((ActionEvent ae) -> copyToClipboard());
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy cell");
-    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
       if (row == -1)
@@ -988,7 +988,7 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
+    menuitem = new JMenuItem("Copy column", ImageManager.getIcon("copy_column.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
       if (col == -1)
         return;
@@ -1006,14 +1006,14 @@ public class BaseTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy table", GUIHelper.getIcon("copy_table.gif"));
+    menuitem = new JMenuItem("Copy table", ImageManager.getIcon("copy_table.gif"));
     menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(toSpreadSheet().toString()));
     menu.add(menuitem);
 
     menu.addSeparator();
 
     submenu = new JMenu("Save");
-    submenu.setIcon(GUIHelper.getIcon("save.gif"));
+    submenu.setIcon(ImageManager.getIcon("save.gif"));
     menu.add(submenu);
 
     menuitem = new JMenuItem("Save all...");

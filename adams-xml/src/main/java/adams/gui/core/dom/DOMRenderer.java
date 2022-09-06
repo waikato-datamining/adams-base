@@ -20,7 +20,7 @@
 
 package adams.gui.core.dom;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -55,7 +55,7 @@ public class DOMRenderer
    * Initializes the members.
    */
   protected void initialize() {
-    m_Icon = GUIHelper.getIcon("brackets2.gif");
+    m_Icon = ImageManager.getIcon("brackets2.gif");
   }
 
   /**

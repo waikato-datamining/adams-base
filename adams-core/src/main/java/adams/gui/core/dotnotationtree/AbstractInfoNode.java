@@ -20,12 +20,12 @@
 
 package adams.gui.core.dotnotationtree;
 
-import javax.swing.Icon;
-
 import adams.core.Utils;
 import adams.core.net.HtmlUtils;
 import adams.gui.core.BaseTreeNode;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
+
+import javax.swing.Icon;
 
 /**
  * Abstract class for nodes that display some kind of information.
@@ -96,9 +96,9 @@ public abstract class AbstractInfoNode
    */
   public synchronized Icon getIcon() {
     if (m_Icon == null) {
-      m_Icon = GUIHelper.getIcon(getIconName());
+      m_Icon = ImageManager.getIcon(getIconName());
       if (m_Icon == null)
-	m_Icon = GUIHelper.getEmptyIcon();
+	m_Icon = ImageManager.getEmptyIcon();
     }
 
     return m_Icon;

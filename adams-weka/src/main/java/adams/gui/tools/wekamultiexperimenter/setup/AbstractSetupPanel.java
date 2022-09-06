@@ -20,7 +20,7 @@
 package adams.gui.tools.wekamultiexperimenter.setup;
 
 import adams.core.ClassLister;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.tools.wekamultiexperimenter.AbstractExperimenterPanel;
 import adams.gui.tools.wekamultiexperimenter.io.AbstractExperimentIO;
 
@@ -195,7 +195,7 @@ public abstract class AbstractSetupPanel<T>
    * @return		the icon
    */
   public Icon getTabIcon() {
-    return GUIHelper.getIcon("settings.png");
+    return ImageManager.getIcon("settings.png");
   }
   
   /**

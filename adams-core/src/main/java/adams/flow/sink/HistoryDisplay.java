@@ -29,6 +29,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BufferHistoryPanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TextEditorPanel;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -850,7 +851,7 @@ public class HistoryDisplay
     menuitem = new JMenuItem("Print...");
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
-    menuitem.setIcon(GUIHelper.getIcon("print.gif"));
+    menuitem.setIcon(ImageManager.getIcon("print.gif"));
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getTextPanel().printText());
     pos = indexOfMenuItem(result, m_MenuItemFileClose);
     result.insertSeparator(pos);
@@ -878,7 +879,7 @@ public class HistoryDisplay
     result.addChangeListener((ChangeEvent e) -> updateMenu());
 
     // Edit/Copy
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.copy());
@@ -886,7 +887,7 @@ public class HistoryDisplay
     m_MenuItemEditCopy = menuitem;
 
     // Edit/Select all
-    menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.selectAll());
@@ -914,7 +915,7 @@ public class HistoryDisplay
     // View/Font
     menuitem = new JMenuItem("Choose font...");
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getIcon("font.png"));
+    menuitem.setIcon(ImageManager.getIcon("font.png"));
     menuitem.setMnemonic('f');
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getTextPanel().selectFont());
     m_MenuItemViewFont = menuitem;
@@ -932,7 +933,7 @@ public class HistoryDisplay
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(m_HistoryPanel.getHistory().getLineWrap());
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('L');
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setLineWrap(!m_HistoryPanel.getHistory().getLineWrap()));
     m_MenuItemViewLineWrap = menuitem;
@@ -941,7 +942,7 @@ public class HistoryDisplay
     menuitem = new JCheckBoxMenuItem("Word wrap style");
     menuitem.setSelected(m_HistoryPanel.getHistory().getWrapStyleWord());
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('W');
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setWrapStyleWord(!m_HistoryPanel.getHistory().getWrapStyleWord()));
     m_MenuItemViewWrapStyleWord = menuitem;

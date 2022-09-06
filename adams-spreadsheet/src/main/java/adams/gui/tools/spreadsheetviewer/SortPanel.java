@@ -10,7 +10,7 @@ import adams.data.spreadsheet.RowComparator;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.SortSetupEvent;
 import adams.gui.event.SortSetupEvent.EventType;
 import adams.gui.event.SortSetupListener;
@@ -92,7 +92,7 @@ public class SortPanel
     m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelButtons, BorderLayout.NORTH);
 
-    m_ButtonReset = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonReset = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonReset.setToolTipText("Click to reset the conditions");
     m_ButtonReset.addActionListener(new ActionListener() {
       @Override
@@ -102,7 +102,7 @@ public class SortPanel
     });
     m_PanelButtons.add(m_ButtonReset);
 
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(ImageManager.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Click to add a condition");
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override

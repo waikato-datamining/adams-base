@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.spreadsheet.plotpopup;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.spreadsheet.SpreadSheetRow;
@@ -87,7 +87,7 @@ public class Adjust
     JMenuItem		item;
 
     item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
+    item.setIcon(ImageManager.getEmptyIcon());
     if (((SpreadSheetRowPanel) panel).getAdjustToVisibleData())
       item.setText("Adjust to loaded data");
     else

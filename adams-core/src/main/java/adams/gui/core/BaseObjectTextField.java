@@ -152,7 +152,7 @@ public class BaseObjectTextField<T extends BaseObject>
       help = (HelpProvider) getObject();
       if (help.getHelpURL() != null) {
 	menuitem = new JMenuItem("Help");
-	menuitem.setIcon(GUIHelper.getIcon(help.getHelpIcon()));
+	menuitem.setIcon(ImageManager.getIcon(help.getHelpIcon()));
 	menuitem.addActionListener((ActionEvent e) -> BrowserHelper.openURL(help.getHelpURL()));
 	result.add(menuitem);
       }

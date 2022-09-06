@@ -34,6 +34,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.flow.tree.Node;
 import adams.gui.goe.actorpathtree.ActorPathNode;
@@ -331,7 +332,7 @@ public class VariableSupport {
 
       if (!argoption.isVariableAttached()) {
 	// regular variable
-	item = new JMenuItem("Set variable...", GUIHelper.getIcon("variable.gif"));
+	item = new JMenuItem("Set variable...", ImageManager.getIcon("variable.gif"));
 	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
@@ -354,7 +355,7 @@ public class VariableSupport {
 	result.add(item);
 
 	// callable actor reference
-	item = new JMenuItem("Attach callable actor...", GUIHelper.getIcon(CallableActors.class.getName() + ".gif"));
+	item = new JMenuItem("Attach callable actor...", ImageManager.getIcon(CallableActors.class.getName() + ".gif"));
 	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
@@ -371,7 +372,7 @@ public class VariableSupport {
 	result.add(item);
 
 	// storage value reference
-	item = new JMenuItem("Attach storage value...", GUIHelper.getIcon(StorageValue.class.getName() + ".gif"));
+	item = new JMenuItem("Attach storage value...", ImageManager.getIcon(StorageValue.class.getName() + ".gif"));
 	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
@@ -395,7 +396,7 @@ public class VariableSupport {
       }
       else {
 	if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_CALLABLEACTOR)) {
-	  item = new JMenuItem("Re-attach callable actor...", GUIHelper.getIcon(CallableActors.class.getName() + ".gif"));
+	  item = new JMenuItem("Re-attach callable actor...", ImageManager.getIcon(CallableActors.class.getName() + ".gif"));
 	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -412,7 +413,7 @@ public class VariableSupport {
 	  result.add(item);
 	}
 	else if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_STORAGE)) {
-	  item = new JMenuItem("Re-attach storage value...", GUIHelper.getIcon(StorageValue.class.getName() + ".gif"));
+	  item = new JMenuItem("Re-attach storage value...", ImageManager.getIcon(StorageValue.class.getName() + ".gif"));
 	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -436,7 +437,7 @@ public class VariableSupport {
 	  result.add(item);
 	}
 	else {
-	  item = new JMenuItem("Change variable '" + fArgOption.getVariableName() + "'...", GUIHelper.getIcon("variable.gif"));
+	  item = new JMenuItem("Change variable '" + fArgOption.getVariableName() + "'...", ImageManager.getIcon("variable.gif"));
 	  item.setEnabled(allowsVars);
 	  item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -461,11 +462,11 @@ public class VariableSupport {
 	}
 
 	if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_CALLABLEACTOR))
-	  item = new JMenuItem("Detach callable actor '" + argoption.getVariableName().substring(FlowVariables.PREFIX_CALLABLEACTOR.length()) + "'", GUIHelper.getIcon("delete.gif"));
+	  item = new JMenuItem("Detach callable actor '" + argoption.getVariableName().substring(FlowVariables.PREFIX_CALLABLEACTOR.length()) + "'", ImageManager.getIcon("delete.gif"));
 	else if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_STORAGE))
-	  item = new JMenuItem("Detach storage value '" + argoption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length()) + "'", GUIHelper.getIcon("delete.gif"));
+	  item = new JMenuItem("Detach storage value '" + argoption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length()) + "'", ImageManager.getIcon("delete.gif"));
 	else
-	  item = new JMenuItem("Remove variable '" + argoption.getVariableName() + "'", GUIHelper.getIcon("delete.gif"));
+	  item = new JMenuItem("Remove variable '" + argoption.getVariableName() + "'", ImageManager.getIcon("delete.gif"));
 	item.setEnabled(allowsVars);
 	item.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
@@ -478,7 +479,7 @@ public class VariableSupport {
 	result.add(item);
       }
 
-      JMenuItem menuitem = new JMenuItem("Use default", GUIHelper.getIcon("undo.gif"));
+      JMenuItem menuitem = new JMenuItem("Use default", ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -535,11 +536,11 @@ public class VariableSupport {
   public static void updateButton(BaseFlatButton button, String variable) {
     if (button != null) {
       if (variable != null) {
-	button.setIcon(GUIHelper.getIcon("variable_present.gif"));
+	button.setIcon(ImageManager.getIcon("variable_present.gif"));
 	button.setToolTipText(BUTTON_HINT_PREFIX + variable);
       }
       else {
-	button.setIcon(GUIHelper.getIcon("variable_notpresent.gif"));
+	button.setIcon(ImageManager.getIcon("variable_notpresent.gif"));
 	button.setToolTipText(null);
       }
     }

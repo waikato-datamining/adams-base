@@ -50,6 +50,7 @@ import adams.gui.core.BaseStatusBar.StatusProcessor;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -357,7 +358,7 @@ public class FlowRunnerPanel
     m_ActionExecutionDisplayErrors = action;
 
     // Execution/Headless
-    action = new ToggleAction("Headless", GUIHelper.getEmptyIcon());
+    action = new ToggleAction("Headless", ImageManager.getEmptyIcon());
     action.setMnemonic(KeyEvent.VK_H);
     action.setAccelerator("ctrl pressed H");
     m_ActionHeadless = action;
@@ -518,11 +519,11 @@ public class FlowRunnerPanel
     // Execution
     m_ActionRun.setEnabled(inputEnabled && (m_CurrentFlow instanceof Flow));
     if ((pausable != null) && pausable.isPaused()) {
-      m_ActionPauseAndResume.setIcon(GUIHelper.getIcon("resume.gif"));
+      m_ActionPauseAndResume.setIcon(ImageManager.getIcon("resume.gif"));
       m_ActionPauseAndResume.setName("Resume");
     }
     else {
-      m_ActionPauseAndResume.setIcon(GUIHelper.getIcon("pause.gif"));
+      m_ActionPauseAndResume.setIcon(ImageManager.getIcon("pause.gif"));
       m_ActionPauseAndResume.setName("Pause");
     }
     m_ActionPauseAndResume.setEnabled(isRunning());
@@ -654,7 +655,7 @@ public class FlowRunnerPanel
 	  final String annotation = m_CurrentSetVariables.get(i).getAnnotations().getValue();
 	  final String variable = m_CurrentSetVariables.get(i).getVariableName().getValue();
 	  if (annotation.length() > 0) {
-	    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+	    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
 	    buttonHelp.addActionListener(new ActionListener() {
 	      public void actionPerformed(ActionEvent e) {
 		GUIHelper.showInformationMessage(

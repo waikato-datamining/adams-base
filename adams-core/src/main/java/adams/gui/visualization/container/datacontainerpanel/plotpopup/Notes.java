@@ -22,7 +22,7 @@ package adams.gui.visualization.container.datacontainerpanel.plotpopup;
 
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
@@ -93,7 +93,7 @@ public class Notes<T extends DataContainer, M extends AbstractContainerManager, 
 
     visibleConts = panel.getTableModelContainers(true);
     item = new JMenuItem("Notes");
-    item.setIcon(GUIHelper.getIcon("report.gif"));
+    item.setIcon(ImageManager.getIcon("report.gif"));
     item.addActionListener((ActionEvent ae) -> panel.showNotes(visibleConts));
     menu.add(item);
   }

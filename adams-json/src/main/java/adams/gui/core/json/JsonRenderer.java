@@ -20,7 +20,7 @@
 
 package adams.gui.core.json;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -72,12 +72,12 @@ public class JsonRenderer
    * Initializes the members.
    */
   protected void initialize() {
-    m_IconObject = GUIHelper.getIcon("object.gif");
-    m_IconArray  = GUIHelper.getIcon("brackets.gif");
-    m_IconOther  = GUIHelper.getEmptyIcon();
-    m_IconNum    = GUIHelper.getIcon("json_number.gif");
-    m_IconStr    = GUIHelper.getIcon("json_string.gif");
-    m_IconBool   = GUIHelper.getIcon("json_boolean.gif");
+    m_IconObject = ImageManager.getIcon("object.gif");
+    m_IconArray  = ImageManager.getIcon("brackets.gif");
+    m_IconOther  = ImageManager.getEmptyIcon();
+    m_IconNum    = ImageManager.getIcon("json_number.gif");
+    m_IconStr    = ImageManager.getIcon("json_string.gif");
+    m_IconBool   = ImageManager.getIcon("json_boolean.gif");
   }
 
   /**

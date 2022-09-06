@@ -29,6 +29,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
@@ -123,11 +124,11 @@ public abstract class AbstractWizardPage
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
-    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
   }

@@ -34,7 +34,7 @@ import adams.data.report.Report;
 import adams.flow.transformer.ImageAnnotator.AnnotatorPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.NullOverlay;
 import adams.gui.visualization.image.interactionlogging.Null;
@@ -113,7 +113,7 @@ public class AnnotateImage
       m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       add(m_PanelButtons, BorderLayout.SOUTH);
 
-      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
       m_ButtonSave.addActionListener((ActionEvent e) -> saveReport(m_PanelAnnotator, m_CurrentFile));
       m_PanelButtons.add(m_ButtonSave);
     }

@@ -21,7 +21,7 @@ package adams.gui.chooser;
 
 import adams.core.Properties;
 import adams.env.Environment;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.googlecode.jfilechooserbookmarks.AbstractBookmarksPanel;
 import com.googlecode.jfilechooserbookmarks.AbstractFactory;
 import com.googlecode.jfilechooserbookmarks.AbstractIconLoader;
@@ -117,7 +117,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getDown() {
-      return GUIHelper.getIcon("arrow_down.gif");
+      return ImageManager.getIcon("arrow_down.gif");
     }
 
     /**
@@ -127,7 +127,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getUp() {
-      return GUIHelper.getIcon("arrow_up.gif");
+      return ImageManager.getIcon("arrow_up.gif");
     }
 
     /**
@@ -137,7 +137,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getAdd() {
-      return GUIHelper.getIcon("add.gif");
+      return ImageManager.getIcon("add.gif");
     }
 
     /**
@@ -147,7 +147,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getRemove() {
-      return GUIHelper.getIcon("remove.gif");
+      return ImageManager.getIcon("remove.gif");
     }
 
     /**
@@ -157,7 +157,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getRename() {
-      return GUIHelper.getEmptyIcon();
+      return ImageManager.getEmptyIcon();
     }
 
     /**
@@ -167,7 +167,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getCopy() {
-      return GUIHelper.getIcon("copy.gif");
+      return ImageManager.getIcon("copy.gif");
     }
 
     /**
@@ -177,7 +177,7 @@ public class FileChooserBookmarksPanel
      */
     @Override
     public ImageIcon getPaste() {
-      return GUIHelper.getIcon("paste.gif");
+      return ImageManager.getIcon("paste.gif");
     }
   }
 

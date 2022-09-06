@@ -34,6 +34,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
 import adams.gui.event.RecentItemEvent;
@@ -292,7 +293,7 @@ public abstract class AbstractScriptingDialog
     m_Menu.add(menu);
 
     // File/New
-    menuitem = new JMenuItem("New", GUIHelper.getIcon("new.gif"));
+    menuitem = new JMenuItem("New", ImageManager.getIcon("new.gif"));
     menuitem.setMnemonic('N');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
     menuitem.addActionListener(new ActionListener() {
@@ -305,7 +306,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemFileLoad = menuitem;
 
     // File/Load
-    menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
+    menuitem = new JMenuItem("Open...", ImageManager.getIcon("open.gif"));
     menuitem.setMnemonic('O');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
     menuitem.addActionListener(new ActionListener() {
@@ -337,7 +338,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemFileLoadRecent = submenu;
 
     // File/Save
-    menuitem = new JMenuItem("Save", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Save", ImageManager.getIcon("save.gif"));
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
     menuitem.addActionListener(new ActionListener() {
@@ -350,7 +351,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemFileSave = menuitem;
 
     // File/Save
-    menuitem = new JMenuItem("Save as...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Save as...", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
     menuitem.addActionListener(new ActionListener() {
@@ -363,7 +364,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemFileSaveAs = menuitem;
 
     // File/Print
-    menuitem = new JMenuItem("Print", GUIHelper.getIcon("print.gif"));
+    menuitem = new JMenuItem("Print", ImageManager.getIcon("print.gif"));
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
     menuitem.addActionListener(new ActionListener() {
@@ -377,7 +378,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemFileClose = menuitem;
 
     // File/Close
-    menuitem = new JMenuItem("Close", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Close", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('l');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("alt pressed F4"));
     menuitem.addActionListener(new ActionListener() {
@@ -408,7 +409,7 @@ public abstract class AbstractScriptingDialog
     menuitem.setMnemonic('U');
     menuitem.setEnabled(m_Undo.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-    menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("undo.gif"));
     menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -423,7 +424,7 @@ public abstract class AbstractScriptingDialog
     menuitem.setMnemonic('R');
     menuitem.setEnabled(m_Undo.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-    menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("redo.gif"));
     menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -434,7 +435,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemEditRedo = menuitem;
 
     // Edit/Clear
-    menuitem = new JMenuItem("Clear", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Clear", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
     menuitem.addActionListener(new ActionListener() {
@@ -448,7 +449,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemEditClear = menuitem;
 
     // Edit/Recorded
-    menuitem = new JMenuItem("Append recorded commands", GUIHelper.getIcon("log.gif"));
+    menuitem = new JMenuItem("Append recorded commands", ImageManager.getIcon("log.gif"));
     menuitem.setMnemonic('R');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("shift pressed INSERT"));
     menuitem.addActionListener(new ActionListener() {
@@ -472,7 +473,7 @@ public abstract class AbstractScriptingDialog
     m_Menu.add(menu);
 
     // Script/Start
-    menuitem = new JMenuItem("Start", GUIHelper.getIcon("run.gif"));
+    menuitem = new JMenuItem("Start", ImageManager.getIcon("run.gif"));
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
     menuitem.addActionListener(new ActionListener() {
@@ -485,7 +486,7 @@ public abstract class AbstractScriptingDialog
     m_MenuItemScriptStart = menuitem;
 
     // Script/Stop
-    menuitem = new JMenuItem("Stop", GUIHelper.getIcon("stop.gif"));
+    menuitem = new JMenuItem("Stop", ImageManager.getIcon("stop.gif"));
     menuitem.setMnemonic('o');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F5"));
     menuitem.addActionListener(new ActionListener() {
@@ -509,7 +510,7 @@ public abstract class AbstractScriptingDialog
     m_Menu.add(menu);
 
     // View/Word wrap
-    menuitem = new JCheckBoxMenuItem("Word wrap", GUIHelper.getEmptyIcon());
+    menuitem = new JCheckBoxMenuItem("Word wrap", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('W');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
     menuitem.setSelected(m_TextScript.getWordWrap());
@@ -534,7 +535,7 @@ public abstract class AbstractScriptingDialog
     m_Menu.add(menu);
 
     // Help/Commands
-    menuitem = new JMenuItem("Commands", GUIHelper.getIcon("help.gif"));
+    menuitem = new JMenuItem("Commands", ImageManager.getIcon("help.gif"));
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("F1"));
     menuitem.addActionListener(new ActionListener() {

@@ -26,6 +26,7 @@ import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.debug.InspectionPanel;
@@ -464,7 +465,7 @@ public class Tree
 
     menu = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(obj != null);
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -474,7 +475,7 @@ public class Tree
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Export...", ImageManager.getIcon("save.gif"));
     menuitem.setEnabled(obj != null);
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -484,7 +485,7 @@ public class Tree
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Inspect...", GUIHelper.getIcon("object.gif"));
+    menuitem = new JMenuItem("Inspect...", ImageManager.getIcon("object.gif"));
     menuitem.setEnabled(obj != null);
     menuitem.addActionListener(new ActionListener() {
       @Override

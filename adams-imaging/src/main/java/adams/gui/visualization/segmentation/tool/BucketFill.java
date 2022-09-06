@@ -24,7 +24,7 @@ import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
@@ -118,7 +118,7 @@ public class BucketFill
    */
   @Override
   public Icon getIcon() {
-    return GUIHelper.getIcon("bucket.png");
+    return ImageManager.getIcon("bucket.png");
   }
 
   /**

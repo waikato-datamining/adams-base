@@ -203,12 +203,12 @@ public class DetachablePanel
     result = new JPopupMenu();
 
     if (isDetached()) {
-      menuitem = new JMenuItem("Reattach", GUIHelper.getIcon("minimize.png"));
+      menuitem = new JMenuItem("Reattach", ImageManager.getIcon("minimize.png"));
       menuitem.addActionListener((ActionEvent e) -> reattach());
       result.add(menuitem);
     }
     else {
-      menuitem = new JMenuItem("Detach", GUIHelper.getIcon("maximize.png"));
+      menuitem = new JMenuItem("Detach", ImageManager.getIcon("maximize.png"));
       menuitem.addActionListener((ActionEvent e) -> detach());
       result.add(menuitem);
     }

@@ -31,6 +31,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.PropertiesTableModel;
 import adams.gui.core.RecentFilesHandler;
@@ -271,7 +272,7 @@ public class PropertiesViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -300,7 +301,7 @@ public class PropertiesViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('s');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  save();
@@ -318,7 +319,7 @@ public class PropertiesViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();

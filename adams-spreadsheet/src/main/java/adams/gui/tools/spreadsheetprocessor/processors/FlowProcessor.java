@@ -34,6 +34,7 @@ import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.flow.FlowPanel;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
@@ -118,23 +119,23 @@ public class FlowProcessor
       panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
       panelBottom.add(panelButtons, BorderLayout.EAST);
 
-      m_ButtonNew = new BaseButton(GUIHelper.getIcon("new.gif"));
+      m_ButtonNew = new BaseButton(ImageManager.getIcon("new.gif"));
       m_ButtonNew.addActionListener((ActionEvent e) -> newFlow());
       panelButtons.add(m_ButtonNew);
 
-      m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+      m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
       m_ButtonLoad.addActionListener((ActionEvent e) -> loadFlow());
       panelButtons.add(m_ButtonLoad);
 
-      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
       m_ButtonSave.addActionListener((ActionEvent e) -> saveFlow());
       panelButtons.add(m_ButtonSave);
 
-      m_ButtonCheck = new BaseButton(GUIHelper.getIcon("validate.png"));
+      m_ButtonCheck = new BaseButton(ImageManager.getIcon("validate.png"));
       m_ButtonCheck.addActionListener((ActionEvent e) -> checkFlow(false));
       panelButtons.add(m_ButtonCheck);
 
-      m_ButtonRun = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonRun = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
       panelButtons.add(m_ButtonRun);
 

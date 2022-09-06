@@ -29,6 +29,7 @@ import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
@@ -520,7 +521,7 @@ public class ExperimenterPanel
 	  final AbstractSetupPanel setup = (AbstractSetupPanel) cls.newInstance();
 	  menuitem = new JMenuItem(setup.getSetupName());
 	  if (setup.getClass().getName().equals(defSetup)) {
-	    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+	    menuitem.setIcon(ImageManager.getIcon("new.gif"));
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
 	  }
 	  menuitem.addActionListener((ActionEvent e) -> newSetup(cls));
@@ -536,7 +537,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener((ActionEvent e) -> openSetup());
 
       // File/Recent files
@@ -561,7 +562,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> saveSetup());
       m_MenuItemFileSave = menuitem;
 
@@ -570,7 +571,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> saveSetupAs());
       m_MenuItemFileSaveAs = menuitem;
 
@@ -580,7 +581,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> close());
 
       // Execution
@@ -594,7 +595,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed R"));
-      menuitem.setIcon(GUIHelper.getIcon("run.gif"));
+      menuitem.setIcon(ImageManager.getIcon("run.gif"));
       menuitem.addActionListener((ActionEvent e) -> startExecution());
       m_MenuItemExecutionStart = menuitem;
 
@@ -603,7 +604,7 @@ public class ExperimenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('p');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed K"));
-      menuitem.setIcon(GUIHelper.getIcon("stop_blue.gif"));
+      menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
       menuitem.addActionListener((ActionEvent e) -> stopExecution());
       m_MenuItemExecutionStop = menuitem;
 
@@ -613,7 +614,7 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Reset");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemExecutionReset = menuitem;
 
@@ -621,7 +622,7 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Use file name");
       menu.add(menuitem);
       menuitem.setMnemonic('f');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemUseFilename = menuitem;
 
@@ -629,7 +630,7 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Prefix datasets with index");
       menu.add(menuitem);
       menuitem.setMnemonic('i');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemPrefixDatasetsWithIndex = menuitem;
 
@@ -643,7 +644,7 @@ public class ExperimenterPanel
       menuitem = new JMenuItem("Open...");
       menu.add(menuitem);
       menuitem.setMnemonic('O');
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener((ActionEvent e) -> openResults());
 
       // Analysis/Recent files
@@ -667,7 +668,7 @@ public class ExperimenterPanel
       // TODO
       // menu.add(menuitem);
       menuitem.setMnemonic('D');
-      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.setIcon(ImageManager.getIcon("database.gif"));
       menuitem.addActionListener((ActionEvent e) -> openResultsDB());
 
       // Analysis/Save as
@@ -675,7 +676,7 @@ public class ExperimenterPanel
       menu.addSeparator();
       menu.add(menuitem);
       menuitem.setMnemonic('S');
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> saveResults());
       m_MenuItemResultsSave = menuitem;
 

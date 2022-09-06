@@ -22,7 +22,7 @@ package adams.gui.goe.classtree;
 
 import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -53,7 +53,7 @@ public class ClassTreeRenderer
     super.initialize();
 
     m_Icons            = new Hashtable<String,Icon>();
-    m_MissingActorIcon = GUIHelper.getIcon("missing_actor_icon.gif");
+    m_MissingActorIcon = ImageManager.getIcon("missing_actor_icon.gif");
   }
 
   /**
@@ -77,7 +77,7 @@ public class ClassTreeRenderer
       else {
         try {
 	  cls    = ClassManager.getSingleton().forName(classname);
-          result = GUIHelper.getIcon(cls);
+          result = ImageManager.getIcon(cls);
 	  if (result != null)
 	    m_Icons.put(classname, result);
 	  else if (ClassLocator.hasInterface(Actor.class, cls))

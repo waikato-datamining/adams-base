@@ -28,6 +28,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import weka.core.Memory;
 import weka.core.logging.Logger;
 import weka.core.logging.Logger.Level;
@@ -129,7 +130,7 @@ public class MultiExplorer
     m_SplitPane.setTopComponent(m_PanelHistory);
 
     // left buttons
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(ImageManager.getIcon("add.gif"));
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new Explorer panel");
@@ -145,7 +146,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonAdd);
 
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the currently selected Explorer panel");
     m_ButtonCopy.addActionListener((ActionEvent e) -> {
@@ -172,7 +173,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseButton(ImageManager.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected Explorer panels");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
@@ -182,7 +183,7 @@ public class MultiExplorer
     });
     m_PanelButtons.add(m_ButtonRemove);
 
-    m_ButtonWorkspace = new BaseButton(GUIHelper.getIcon("workspace.png"));
+    m_ButtonWorkspace = new BaseButton(ImageManager.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
     m_ButtonWorkspace.addActionListener((ActionEvent ae) -> {

@@ -23,7 +23,7 @@ package adams.gui.flow.tree.menu;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.flow.tree.TreeOperations;
@@ -126,7 +126,7 @@ public abstract class AbstractAddMostCommonActorAction
     JMenuItem 	result;
 
     result = new JMenuItem(actor.getClass().getSimpleName());
-    result.setIcon(GUIHelper.getIcon(actor.getClass()));
+    result.setIcon(ImageManager.getIcon(actor.getClass()));
     menuitems.add(result);
 
     return result;

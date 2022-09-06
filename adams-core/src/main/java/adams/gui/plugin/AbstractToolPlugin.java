@@ -20,7 +20,7 @@
 package adams.gui.plugin;
 
 import adams.core.logging.LoggingObject;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -85,12 +85,12 @@ public abstract class AbstractToolPlugin<T extends JPanel>
 
     if (getIconName() != null) {
       if (getIconName().contains("/"))
-        result = GUIHelper.getExternalIcon(getIconName());
+        result = ImageManager.getExternalIcon(getIconName());
       else
-        result = GUIHelper.getIcon(getIconName());
+        result = ImageManager.getIcon(getIconName());
     }
     else {
-      result = GUIHelper.getEmptyIcon();
+      result = ImageManager.getEmptyIcon();
     }
 
     return result;

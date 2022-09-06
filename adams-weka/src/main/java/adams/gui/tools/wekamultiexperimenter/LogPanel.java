@@ -23,7 +23,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -68,7 +68,7 @@ public class LogPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
     
-    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -105,6 +105,6 @@ public class LogPanel
    * @return		the icon
    */
   public Icon getTabIcon() {
-    return GUIHelper.getIcon("log.gif");
+    return ImageManager.getIcon("log.gif");
   }
 }

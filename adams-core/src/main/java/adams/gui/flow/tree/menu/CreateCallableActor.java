@@ -23,7 +23,7 @@ import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.flow.core.ActorReferenceHandler;
 import adams.gui.action.AbstractPropertiesAction;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;
 import java.awt.event.ActionEvent;
@@ -84,7 +84,7 @@ public class CreateCallableActor
 	    m_State.tree.getOperations().createCallableActor(m_State.selPath, cls);
 	  }
 	};
-	icon = GUIHelper.getIcon(clsname);
+	icon = ImageManager.getIcon(clsname);
 	if (icon != null)
 	  action.setIcon(icon);
 	result.add(action);

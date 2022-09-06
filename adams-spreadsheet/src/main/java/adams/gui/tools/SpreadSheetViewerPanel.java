@@ -36,6 +36,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
@@ -514,9 +515,9 @@ public class SpreadSheetViewerPanel
 	    final AbstractDataPlugin data = (AbstractDataPlugin) ClassManager.getSingleton().forName(cls).newInstance();
 	    m_DataPlugins.add(data);
 	    if (data.getMenuIcon() == null)
-	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getEmptyIcon());
+	      menuitem = new JMenuItem(data.getMenuText(), ImageManager.getEmptyIcon());
 	    else
-	      menuitem = new JMenuItem(data.getMenuText(), GUIHelper.getIcon(data.getMenuIcon()));
+	      menuitem = new JMenuItem(data.getMenuText(), ImageManager.getIcon(data.getMenuIcon()));
 	    menuitem.addActionListener(e -> process(data));
 	    m_MenuItemDataPlugins.add(menuitem);
 	    menu.add(menuitem);
@@ -554,9 +555,9 @@ public class SpreadSheetViewerPanel
 	    final AbstractViewPlugin view = (AbstractViewPlugin) ClassManager.getSingleton().forName(cls).newInstance();
 	    m_ViewPlugins.add(view);
 	    if (view.getMenuIcon() == null)
-	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getEmptyIcon());
+	      menuitem = new JMenuItem(view.getMenuText(), ImageManager.getEmptyIcon());
 	    else
-	      menuitem = new JMenuItem(view.getMenuText(), GUIHelper.getIcon(view.getMenuIcon()));
+	      menuitem = new JMenuItem(view.getMenuText(), ImageManager.getIcon(view.getMenuIcon()));
 	    menuitem.addActionListener(e -> view(view));
 	    m_MenuItemViewPlugins.add(menuitem);
 	    menu.add(menuitem);
@@ -1178,7 +1179,7 @@ public class SpreadSheetViewerPanel
       title += " - " + current.getTabTitle();
     dialog.setTitle(title);
     if (plugin.getMenuIcon() != null)
-      dialog.setIconImage(GUIHelper.getIcon(plugin.getMenuIcon()).getImage());
+      dialog.setIconImage(ImageManager.getIcon(plugin.getMenuIcon()).getImage());
     dialog.getContentPane().add(panel, BorderLayout.CENTER);
     dialog.setCancelVisible(plugin.requiresButtons());
     dialog.setApproveVisible(plugin.requiresButtons());

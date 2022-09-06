@@ -157,8 +157,8 @@ public class BaseDialog
    * For initializing the GUI.
    */
   protected void initGUI() {
-    if (GUIHelper.getLogoIcon() != null)
-      setIconImage(GUIHelper.getLogoIcon().getImage());
+    if (ImageManager.getLogoIcon() != null)
+      setIconImage(ImageManager.getLogoIcon().getImage());
 
     setDefaultCloseOperation(BaseDialog.HIDE_ON_CLOSE);
   }

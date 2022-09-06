@@ -82,8 +82,8 @@ public class BaseWindow
    * For initializing the GUI.
    */
   protected void initGUI() {
-    if (GUIHelper.getLogoIcon() != null)
-      setIconImage(GUIHelper.getLogoIcon().getImage());
+    if (ImageManager.getLogoIcon() != null)
+      setIconImage(ImageManager.getLogoIcon().getImage());
   }
 
   /**

@@ -29,6 +29,7 @@ import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tabhandler.RegisteredDisplaysHandler;
@@ -594,11 +595,11 @@ public abstract class AbstractDisplay
     result.getContentPane().add(panel, BorderLayout.CENTER);
     result.setDefaultCloseOperation(getFrameDefaultCloseOperation());
     result.setSize(ActorUtils.determineSize(result, m_X, m_Y, m_Width, m_Height));
-    icon = GUIHelper.getIcon(getClass());
+    icon = ImageManager.getIcon(getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
     else
-      result.setIconImage(GUIHelper.getIcon("flow.gif").getImage());
+      result.setIconImage(ImageManager.getIcon("flow.gif").getImage());
     if (panel instanceof MenuBarProvider)
       result.setJMenuBar(((MenuBarProvider) panel).getMenuBar());
     else if (this instanceof MenuBarProvider)

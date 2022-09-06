@@ -39,6 +39,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
@@ -248,46 +249,46 @@ public class SegmentationPanel
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original image size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
-    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonZoom.setIcon(GUIHelper.getIcon("validate_blue.png")));
+    m_TextZoom.addAnyChangeListener((ChangeEvent e) -> m_ButtonZoom.setIcon(ImageManager.getIcon("validate_blue.png")));
     label = new JLabel("Zoom");
     label.setDisplayedMnemonic('Z');
     label.setLabelFor(m_TextZoom);
     panel.add(Fonts.usePlain(label));
     panel.add(m_TextZoom);
-    m_ButtonZoom = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom = new BaseFlatButton(ImageManager.getIcon("validate.png"));
     m_ButtonZoom.setToolTipText("Apply zoom");
     m_ButtonZoom.addActionListener((ActionEvent e) -> {
       m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
-      m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+      m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
       m_Manager.update();
     });
     panel.add(m_ButtonZoom);
-    m_ButtonZoomClear = new BaseFlatButton(GUIHelper.getIcon("zoom_clear.png"));
+    m_ButtonZoomClear = new BaseFlatButton(ImageManager.getIcon("zoom_clear.png"));
     m_ButtonZoomClear.setToolTipText("Clear zoom");
     m_ButtonZoomClear.addActionListener((ActionEvent e) -> clearZoom());
     panel.add(m_ButtonZoomClear);
-    m_ButtonZoomIn = new BaseFlatButton(GUIHelper.getIcon("zoom_in.png"));
+    m_ButtonZoomIn = new BaseFlatButton(ImageManager.getIcon("zoom_in.png"));
     m_ButtonZoomIn.setToolTipText("Zoom in");
     m_ButtonZoomIn.addActionListener((ActionEvent e) -> zoomIn());
     panel.add(m_ButtonZoomIn);
-    m_ButtonZoomOut = new BaseFlatButton(GUIHelper.getIcon("zoom_out.png"));
+    m_ButtonZoomOut = new BaseFlatButton(ImageManager.getIcon("zoom_out.png"));
     m_ButtonZoomOut.setToolTipText("Zoom out");
     m_ButtonZoomOut.addActionListener((ActionEvent e) -> zoomOut());
     panel.add(m_ButtonZoomOut);
-    m_ButtonZoomBestFit = new BaseFlatButton(GUIHelper.getIcon("zoom_fit.png"));
+    m_ButtonZoomBestFit = new BaseFlatButton(ImageManager.getIcon("zoom_fit.png"));
     m_ButtonZoomBestFit.setToolTipText("Best fit");
     m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
     panel.add(m_ButtonZoomBestFit);
     panel.add(new JLabel(" "));
-    m_ButtonAddUndo = new BaseFlatButton(GUIHelper.getIcon("undo_add.gif"));
+    m_ButtonAddUndo = new BaseFlatButton(ImageManager.getIcon("undo_add.gif"));
     m_ButtonAddUndo.setToolTipText("Add undo point");
     m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndoPoint());
     panel.add(m_ButtonAddUndo);
-    m_ButtonUndo = new BaseFlatButton(GUIHelper.getIcon("undo.gif"));
+    m_ButtonUndo = new BaseFlatButton(ImageManager.getIcon("undo.gif"));
     m_ButtonUndo.setToolTipText("Undo changes");
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo());
     panel.add(m_ButtonUndo);
-    m_ButtonRedo = new BaseFlatButton(GUIHelper.getIcon("redo.gif"));
+    m_ButtonRedo = new BaseFlatButton(ImageManager.getIcon("redo.gif"));
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     panel.add(m_ButtonRedo);
@@ -521,7 +522,7 @@ public class SegmentationPanel
    */
   public void setZoom(double value) {
     m_TextZoom.setValue(value);
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     update();
   }
@@ -540,7 +541,7 @@ public class SegmentationPanel
    */
   public void clearZoom() {
     m_TextZoom.setValue(100);
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     m_Manager.setZoom(1.0);
     m_Manager.update();
   }
@@ -550,7 +551,7 @@ public class SegmentationPanel
    */
   public void zoomIn() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() * ZOOM_FACTOR, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     m_Manager.update();
   }
@@ -560,7 +561,7 @@ public class SegmentationPanel
    */
   public void zoomOut() {
     m_TextZoom.setValue(RoundingUtils.round(m_TextZoom.getValue().doubleValue() / ZOOM_FACTOR, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
     m_Manager.setZoom(m_TextZoom.getValue().doubleValue() / 100.0);
     m_Manager.update();
   }
@@ -571,7 +572,7 @@ public class SegmentationPanel
   public void bestFitZoom() {
     m_Manager.bestFitZoom();
     m_TextZoom.setValue(RoundingUtils.round(m_Manager.getZoom() * 100, 1));
-    m_ButtonZoom.setIcon(GUIHelper.getIcon("validate.png"));
+    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
   }
 
   /**

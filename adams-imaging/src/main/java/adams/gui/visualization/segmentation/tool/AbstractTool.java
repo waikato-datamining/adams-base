@@ -26,7 +26,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
@@ -335,7 +335,7 @@ public abstract class AbstractTool
   protected BaseFlatButton createApplyButton() {
     BaseFlatButton 	result;
 
-    result = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    result = new BaseFlatButton(ImageManager.getIcon("validate.png"));
     result.setToolTipText("Apply current values");
     result.addActionListener((ActionEvent e) -> apply((BaseFlatButton) e.getSource()));
 
@@ -350,9 +350,9 @@ public abstract class AbstractTool
    */
   protected void setApplyButtonState(BaseFlatButton button, boolean modified) {
     if (modified)
-      button.setIcon(GUIHelper.getIcon("validate_blue.png"));
+      button.setIcon(ImageManager.getIcon("validate_blue.png"));
     else
-      button.setIcon(GUIHelper.getIcon("validate.png"));
+      button.setIcon(ImageManager.getIcon("validate.png"));
   }
 
   /**

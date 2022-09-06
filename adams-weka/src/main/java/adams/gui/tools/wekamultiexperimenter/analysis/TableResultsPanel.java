@@ -32,6 +32,7 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.SpreadSheetTableModel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -106,7 +107,7 @@ public class TableResultsPanel
     m_TextAreaKey.setTextFont(Fonts.getMonospacedFont());
     m_SplitPane.setBottomComponent(m_TextAreaKey);
 
-    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> {
       if (m_TextAreaKey.getSelectedText() != null)
 	ClipboardHelper.copyToClipboard(m_TextAreaKey.getSelectedText());
@@ -115,7 +116,7 @@ public class TableResultsPanel
     });
     m_TextAreaKey.addToButtonsPanel(m_ButtonCopy);
 
-    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> {
       int retVal = m_FileChooser.showSaveDialog(TableResultsPanel.this);
       if (retVal != BaseFileChooser.APPROVE_OPTION)

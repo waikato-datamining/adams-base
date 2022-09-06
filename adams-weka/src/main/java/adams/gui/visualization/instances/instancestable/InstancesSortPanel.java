@@ -8,7 +8,7 @@ package adams.gui.visualization.instances.instancestable;
 import adams.data.instances.InstanceComparator;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.InstancesSortSetupEvent;
 import adams.gui.event.InstancesSortSetupEvent.EventType;
 import adams.gui.event.InstancesSortSetupListener;
@@ -89,12 +89,12 @@ public class InstancesSortPanel
     m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelButtons, BorderLayout.NORTH);
 
-    m_ButtonReset = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonReset = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonReset.setToolTipText("Click to reset the conditions");
     m_ButtonReset.addActionListener((ActionEvent e) -> resetDefinitions());
     m_PanelButtons.add(m_ButtonReset);
 
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(ImageManager.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Click to add a condition");
     m_ButtonAdd.addActionListener((ActionEvent e) -> addDefinition());
     m_PanelButtons.add(m_ButtonAdd);

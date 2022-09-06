@@ -19,14 +19,13 @@
  */
 package adams.gui.action;
 
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-
-import adams.gui.core.GUIHelper;
+import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ancestor for checkbox menu item actions.
@@ -77,7 +76,7 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dial
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
-      result.setIcon(GUIHelper.getEmptyIcon());
+      result.setIcon(ImageManager.getEmptyIcon());
     
     return result;
   }

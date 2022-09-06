@@ -28,6 +28,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.goe.GenericArrayEditorPanel;
@@ -670,15 +671,15 @@ public class ScatterPlot
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Save data...", ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Save visible data...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Save visible data...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> saveVisible());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Show data...", GUIHelper.getIcon("spreadsheet.png"));
+    menuitem = new JMenuItem("Show data...", ImageManager.getIcon("spreadsheet.png"));
     menuitem.addActionListener((ActionEvent ae) -> showData());
     menu.add(menuitem);
   }

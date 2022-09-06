@@ -23,6 +23,7 @@ package adams.gui.tools;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MultiPagePane;
 import adams.gui.tools.sqlworkbench.SqlMetaDataPanel;
@@ -128,14 +129,14 @@ public class SqlWorkbenchPanel
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Queries/New query
-      menuitem = new JMenuItem("New SQL query", GUIHelper.getIcon("query.gif"));
+      menuitem = new JMenuItem("New SQL query", ImageManager.getIcon("query.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.addActionListener((ActionEvent e) -> newQuery());
       menu.add(menuitem);
       m_MenuItemNewQuery = menuitem;
 
       // Queries/New meta-data
-      menuitem = new JMenuItem("New meta-data query", GUIHelper.getIcon("metadata.gif"));
+      menuitem = new JMenuItem("New meta-data query", ImageManager.getIcon("metadata.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
       menuitem.addActionListener((ActionEvent e) -> newMetaData());
       menu.add(menuitem);
@@ -144,14 +145,14 @@ public class SqlWorkbenchPanel
       menu.addSeparator();
 
       // Queries/Close query
-      menuitem = new JMenuItem("Close query", GUIHelper.getIcon("delete.gif"));
+      menuitem = new JMenuItem("Close query", ImageManager.getIcon("delete.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener((ActionEvent e) -> closeQuery());
       menu.add(menuitem);
       m_MenuItemCloseQuery = menuitem;
 
       // Queries/Close all queries
-      menuitem = new JMenuItem("Close all queries", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Close all queries", ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> closeAllQueries());
       menu.add(menuitem);
       m_MenuItemCloseAllQueries = menuitem;
@@ -159,7 +160,7 @@ public class SqlWorkbenchPanel
       menu.addSeparator();
 
       // Queries/Close
-      menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
       menu.add(menuitem);

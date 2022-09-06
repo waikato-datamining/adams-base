@@ -44,6 +44,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.event.RecentItemEvent;
@@ -724,7 +725,7 @@ public class InstanceComparePanel
       arffpanel = new ArffPanel(m_Indexer.getDataset());
       dialog.getContentPane().add(arffpanel, BorderLayout.CENTER);
 
-      buttonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
+      buttonClose = new BaseButton("Close", ImageManager.getIcon("exit.png"));
       buttonClose.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           dialog.setVisible(false);
@@ -1041,7 +1042,7 @@ public class InstanceComparePanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  reload();
@@ -1055,7 +1056,7 @@ public class InstanceComparePanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();

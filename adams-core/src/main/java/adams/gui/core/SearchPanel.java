@@ -266,7 +266,7 @@ public class SearchPanel
 
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
-    m_ButtonClear = new JLabel(GUIHelper.getIcon("clear_text.png"));
+    m_ButtonClear = new JLabel(ImageManager.getIcon("clear_text.png"));
     m_ButtonClear.setToolTipText("Clears the search text");
     m_ButtonClear.addMouseListener(new MouseAdapter() {
       @Override
@@ -282,7 +282,7 @@ public class SearchPanel
       }
     });
 
-    m_ButtonSearch = new JLabel(GUIHelper.getIcon("find.gif"));
+    m_ButtonSearch = new JLabel(ImageManager.getIcon("find.gif"));
     m_ButtonSearch.setToolTipText("Performs the search");
     setButtonCaption(m_ButtonCaption);
     m_ButtonSearch.addMouseListener(new MouseAdapter() {
@@ -353,23 +353,23 @@ public class SearchPanel
 
     menu = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
+    menuitem = new JMenuItem("Cut", ImageManager.getIcon("cut.gif"));
     menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.cut());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.copy());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
     menuitem.addActionListener((ActionEvent ex) -> m_TextSearch.paste());
     menu.add(menuitem);
 
     menu.addSeparator();
     if (isRegularExpressionEnabled())
-      menuitem = new JMenuItem("Disable regexp search", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Disable regexp search", ImageManager.getEmptyIcon());
     else
-      menuitem = new JMenuItem("Enable regexp search", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Enable regexp search", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ex) -> setRegularExpressionEnabled(!isRegularExpressionEnabled()));
     menu.add(menuitem);
 

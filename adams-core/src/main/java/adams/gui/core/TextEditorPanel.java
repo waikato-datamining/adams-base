@@ -905,7 +905,7 @@ public class TextEditorPanel
 
     menu = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_TextArea.getSelectedText() != null);
     menuitem.addActionListener((ActionEvent ae) -> {
       m_TextArea.requestFocus();
@@ -913,7 +913,7 @@ public class TextEditorPanel
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
     menuitem.setEnabled(m_TextArea.getText().length() > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       m_TextArea.requestFocus();
@@ -922,7 +922,7 @@ public class TextEditorPanel
     });
     menu.add(menuitem);
 
-    menuitem = new JCheckBoxMenuItem("Line wrap", GUIHelper.getEmptyIcon());
+    menuitem = new JCheckBoxMenuItem("Line wrap", ImageManager.getEmptyIcon());
     menuitem.setSelected(getLineWrap());
     menuitem.addActionListener((ActionEvent ae) -> setLineWrap(!getLineWrap()));
     menu.addSeparator();

@@ -30,6 +30,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.SpreadSheetProcessorEvent;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
@@ -104,7 +105,7 @@ public class ChartTarget
       m_TextTitle = new BaseTextField();
       panelParams.addParameter("Title", m_TextTitle);
 
-      m_ButtonGenerate = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonGenerate = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonGenerate.addActionListener((ActionEvent e) -> generate());
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(m_ButtonGenerate);

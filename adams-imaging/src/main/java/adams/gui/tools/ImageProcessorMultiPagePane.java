@@ -24,6 +24,7 @@ import adams.data.io.input.AbstractImageReader;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MultiPagePane;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -189,7 +190,7 @@ public class ImageProcessorMultiPagePane
     result = super.createPopup(e);
 
     menuitem = new JMenuItem("Open containing folder");
-    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
     menuitem.setEnabled(
       (getSelectedIndices().length == 1)
         && hasCurrentPanel()
@@ -201,7 +202,7 @@ public class ImageProcessorMultiPagePane
     result.add(menuitem);
 
     menuitem = new JMenuItem("Copy filename");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(
       (getSelectedIndices().length == 1)
         && hasCurrentPanel()

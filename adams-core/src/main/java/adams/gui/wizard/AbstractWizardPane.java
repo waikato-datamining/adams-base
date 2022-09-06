@@ -28,6 +28,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
@@ -159,11 +160,11 @@ public abstract class AbstractWizardPane
     m_ButtonCancelFinish.addActionListener((ActionEvent e) -> cancelFinish());
     m_PanelButtons.add(m_ButtonCancelFinish);
 
-    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     m_PanelButtonsProperties.add(m_ButtonLoad);
 
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     m_PanelButtonsProperties.add(m_ButtonSave);
   }

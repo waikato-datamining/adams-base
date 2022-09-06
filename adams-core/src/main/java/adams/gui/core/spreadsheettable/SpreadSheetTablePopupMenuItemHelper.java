@@ -23,7 +23,7 @@ package adams.gui.core.spreadsheettable;
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.TableRowRange;
 
@@ -230,7 +230,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
     for (SpreadSheetTablePopupMenuItem item: items) {
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
-        menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+        menuitem.setIcon(ImageManager.getIcon(item.getIconName()));
       addAction(state, isRow, menuitem, item);
       menu.add(menuitem);
     }
@@ -272,7 +272,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
     proc = (ProcessSelectedRows) item;
     menuitem = new JMenuItem(item.getMenuItem());
     if (item.getIconName() != null)
-      menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+      menuitem.setIcon(ImageManager.getIcon(item.getIconName()));
     enabled = (state.selRows.length >= proc.minNumRows());
     if (proc.maxNumRows() > -1)
       enabled = enabled && (state.selRows.length <= proc.maxNumRows());

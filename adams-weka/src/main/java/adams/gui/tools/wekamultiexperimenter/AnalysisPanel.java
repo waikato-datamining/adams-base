@@ -21,7 +21,7 @@ package adams.gui.tools.wekamultiexperimenter;
 
 import adams.core.ObjectCopyHelper;
 import adams.gui.core.BaseComboBox;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.tools.wekamultiexperimenter.analysis.AbstractAnalysisPanel;
 import adams.gui.tools.wekamultiexperimenter.analysis.DefaultAnalysisPanel;
 import weka.core.Instances;
@@ -188,6 +188,6 @@ public class AnalysisPanel
    * @return		the icon
    */
   public Icon getTabIcon() {
-    return GUIHelper.getIcon("glasses.gif");
+    return ImageManager.getIcon("glasses.gif");
   }
 }

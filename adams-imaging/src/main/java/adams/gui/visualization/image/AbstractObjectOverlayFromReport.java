@@ -32,6 +32,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
@@ -1087,7 +1088,7 @@ public abstract class AbstractObjectOverlayFromReport
     JMenuItem		menuitem;
 
     if (!getTypeSuffix().isEmpty()) {
-      menuitem = new JMenuItem("Displayed types", GUIHelper.getIcon("objecttypes.gif"));
+      menuitem = new JMenuItem("Displayed types", ImageManager.getIcon("objecttypes.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
         String type = GUIHelper.showInputDialog(source, "Regular expression for type", getTypeRegExp().getValue());
         if (type == null)

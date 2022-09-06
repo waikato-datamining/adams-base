@@ -42,6 +42,7 @@ import adams.flow.sink.TextSupplier;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.PNGWriter;
@@ -895,7 +896,7 @@ public abstract class AbstractMultiView
     menu.add(menuitem);
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-    menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+    menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();

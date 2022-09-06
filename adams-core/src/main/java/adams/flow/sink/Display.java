@@ -25,6 +25,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TextEditorPanel;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -338,7 +339,7 @@ public class Display
     menuitem = new JMenuItem("Print...");
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
-    menuitem.setIcon(GUIHelper.getIcon("print.gif"));
+    menuitem.setIcon(ImageManager.getIcon("print.gif"));
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).printText());
     pos = indexOfMenuItem(result, m_MenuItemFileClose);
     result.insertSeparator(pos);
@@ -370,7 +371,7 @@ public class Display
     menuitem.setMnemonic('U');
     menuitem.setEnabled(fPanel.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-    menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("undo.gif"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.undo());
     result.add(menuitem);
     m_MenuItemEditUndo = menuitem;
@@ -379,13 +380,13 @@ public class Display
     menuitem.setMnemonic('R');
     menuitem.setEnabled(fPanel.canUndo());
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-    menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("redo.gif"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.redo());
     result.add(menuitem);
     m_MenuItemEditRedo = menuitem;
 
     // Edit/Cut
-    menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
+    menuitem = new JMenuItem("Cut", ImageManager.getIcon("cut.gif"));
     menuitem.setMnemonic('u');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed X"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.cut());
@@ -394,7 +395,7 @@ public class Display
     m_MenuItemEditCut = menuitem;
 
     // Edit/Copy
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.copy());
@@ -402,7 +403,7 @@ public class Display
     m_MenuItemEditCopy = menuitem;
 
     // Edit/Paste
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
     menuitem.setMnemonic('P');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed V"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.paste());
@@ -410,7 +411,7 @@ public class Display
     m_MenuItemEditPaste = menuitem;
 
     // Edit/Select all
-    menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('S');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.selectAll());
@@ -419,7 +420,7 @@ public class Display
     m_MenuItemEditSelectAll = menuitem;
 
     // Edit/Find
-    menuitem = new JMenuItem("Find", GUIHelper.getIcon("find.gif"));
+    menuitem = new JMenuItem("Find", ImageManager.getIcon("find.gif"));
     menuitem.setMnemonic('F');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.find());
@@ -428,7 +429,7 @@ public class Display
     m_MenuItemEditFind = menuitem;
 
     // Edit/Find next
-    menuitem = new JMenuItem("Find next", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Find next", ImageManager.getEmptyIcon());
     menuitem.setMnemonic('n');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed G"));
     menuitem.addActionListener((ActionEvent e) -> fPanel.findNext());
@@ -455,7 +456,7 @@ public class Display
     // View/Font
     menuitem = new JMenuItem("Choose font...");
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getIcon("font.png"));
+    menuitem.setIcon(ImageManager.getIcon("font.png"));
     menuitem.setMnemonic('f');
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).selectFont());
     m_MenuItemViewFont = menuitem;
@@ -464,7 +465,7 @@ public class Display
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(((TextEditorPanel) m_Panel).getLineWrap());
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('L');
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setLineWrap(!((TextEditorPanel) m_Panel).getLineWrap()));
     m_MenuItemViewLineWrap = menuitem;
@@ -473,7 +474,7 @@ public class Display
     menuitem = new JCheckBoxMenuItem("Word wrap style");
     menuitem.setSelected(((TextEditorPanel) m_Panel).getWrapStyleWord());
     result.add(menuitem);
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('W');
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setWrapStyleWord(!((TextEditorPanel) m_Panel).getWrapStyleWord()));
     m_MenuItemViewWrapStyleWord = menuitem;

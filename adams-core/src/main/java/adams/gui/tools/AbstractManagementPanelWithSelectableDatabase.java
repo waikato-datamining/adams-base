@@ -20,7 +20,7 @@
 
 package adams.gui.tools;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SqlConnectionPanel;
 import adams.gui.dialog.ApprovalDialog;
 
@@ -60,7 +60,7 @@ public abstract class AbstractManagementPanelWithSelectableDatabase<T extends Co
   protected boolean addToFileMenu(JMenu menu) {
     JMenuItem		menuitem;
 
-    menuitem = new JMenuItem("Databases...", GUIHelper.getIcon("database.gif"));
+    menuitem = new JMenuItem("Databases...", ImageManager.getIcon("database.gif"));
     menuitem.addActionListener((ActionEvent e) -> selectDatabase());
     menu.add(menuitem);
     m_MenuItemFileDatabase = menuitem;

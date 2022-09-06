@@ -55,6 +55,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
@@ -661,7 +662,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
@@ -672,7 +673,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('D');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed D"));
-      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.setIcon(ImageManager.getIcon("database.gif"));
       menuitem.addActionListener(e -> loadDataFromDatabase());
 
       // File/Open
@@ -680,7 +681,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(e -> loadDataFromDisk());
 
       // File/Recent files
@@ -713,7 +714,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> close());
 
       // Edit
@@ -727,7 +728,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('n');
       menuitem.setSelected(m_Undo.isEnabled());
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
         if (m_MenuItemEnableUndo.isSelected())
           getScriptingEngine().add(
@@ -746,7 +747,7 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('U');
       menuitem.setEnabled(m_Undo.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener((ActionEvent e) -> undo());
       m_MenuItemUndo = menuitem;
 
@@ -755,7 +756,7 @@ public class TimeseriesExplorer
       menuitem.setMnemonic('R');
       menuitem.setEnabled(m_Undo.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-      menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("redo.gif"));
       menuitem.addActionListener((ActionEvent e) -> redo());
       m_MenuItemRedo = menuitem;
 
@@ -770,7 +771,7 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
-      menuitem.setIcon(GUIHelper.getIcon("run.gif"));
+      menuitem.setIcon(ImageManager.getIcon("run.gif"));
       menuitem.addActionListener((ActionEvent e) -> filter());
       m_MenuItemFilter = menuitem;
 
@@ -786,14 +787,14 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('m');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed M"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> manageScripts());
 
       // Scripts/Start recording
       menuitem = new JMenuItem("Start recording");
       menu.add(menuitem);
       menuitem.setMnemonic('S');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> startRecording());
       m_MenuItemStartRecording = menuitem;
 
@@ -801,7 +802,7 @@ public class TimeseriesExplorer
       menuitem = new JMenuItem("Stop recording");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> stopRecording());
       m_MenuItemStopRecording = menuitem;
 

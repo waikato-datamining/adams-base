@@ -21,7 +21,7 @@
 package adams.gui.visualization.sequence.plotpopup;
 
 import adams.data.sequence.XYSequence;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.sequence.XYSequenceContainer;
@@ -86,7 +86,7 @@ public class SaveVisibleDataPoints
   public void customize(DataContainerPanelWithContainerList<XYSequence, XYSequenceContainerManager, XYSequenceContainer> panel, MouseEvent e, JPopupMenu menu) {
     JMenuItem		item;
 
-    item = new JMenuItem("Save visible data points...", GUIHelper.getEmptyIcon());
+    item = new JMenuItem("Save visible data points...", ImageManager.getEmptyIcon());
     item.addActionListener((ActionEvent ae) -> ((XYSequencePanel) panel).saveVisibleDataPoints());
     menu.add(item);
   }

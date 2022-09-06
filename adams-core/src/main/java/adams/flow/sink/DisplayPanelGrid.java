@@ -27,6 +27,7 @@ import adams.gui.core.AdjustableGridPanel;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
@@ -533,7 +534,7 @@ public class DisplayPanelGrid
     menu.add(menuitem);
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent e) -> saveAs());
     m_MenuItemFileSaveAs = menuitem;
 
@@ -547,7 +548,7 @@ public class DisplayPanelGrid
     menu.add(menuitem);
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-    menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+    menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 

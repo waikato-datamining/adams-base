@@ -27,6 +27,7 @@ import adams.core.logging.LoggingObject;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -600,7 +601,7 @@ public class Favorites
     favorites = getFavorites(cls);
 
     submenu = new JMenu("Favorites");
-    submenu.setIcon(GUIHelper.getIcon("favorite.gif"));
+    submenu.setIcon(ImageManager.getIcon("favorite.gif"));
     menu.add(submenu);
 
     // for adding a favorite

@@ -23,7 +23,7 @@ package adams.gui.goe.popupmenu;
 import adams.core.optiontransfer.AbstractOptionTransfer;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseMenu;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.actorswap.AbstractActorSwapSuggestion;
 import adams.gui.goe.GenericObjectEditor;
@@ -111,7 +111,7 @@ public class SwapActor
         menuitem = new JMenuItem(target.getClass().getSimpleName() + " (" + target.getClass().getPackage().getName() + ")");
       else
         menuitem = new JMenuItem(target.getClass().getSimpleName());
-      menuitem.setIcon(GUIHelper.getIcon(target.getClass()));
+      menuitem.setIcon(ImageManager.getIcon(target.getClass()));
       menuitems.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> swapActor(editor, current, target));
     }
@@ -119,7 +119,7 @@ public class SwapActor
     submenu = BaseMenu.createCascadingMenu(menuitems, -1, "More...");
     submenu.setText("Swap actor");
     submenu.setEnabled(true);
-    submenu.setIcon(GUIHelper.getIcon("swap.gif"));
+    submenu.setIcon(ImageManager.getIcon("swap.gif"));
     menu.add(submenu);
   }
 }

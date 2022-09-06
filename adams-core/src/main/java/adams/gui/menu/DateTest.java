@@ -33,6 +33,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.JPanel;
@@ -133,7 +134,7 @@ public class DateTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new DateFormatString().getHelpURL());
     });
@@ -175,7 +176,7 @@ public class DateTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new DateFormatString().getHelpURL());
     });

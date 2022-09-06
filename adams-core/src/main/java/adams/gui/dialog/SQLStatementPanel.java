@@ -24,7 +24,7 @@ import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SQLSyntaxEditorPanel;
 import adams.gui.event.RecentItemEvent;
@@ -134,32 +134,32 @@ public class SQLStatementPanel
     m_ButtonOptions.setToolTipText("Options menu");
     // cut
     menuitem = new JMenuItem("Cut");
-    menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
+    menuitem.setIcon(ImageManager.getIcon("cut.gif"));
     menuitem.setEnabled(m_PanelStatement.canCut());
     menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.cut());
     m_ButtonOptions.addToMenu(menuitem);
     // copy
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_PanelStatement.canCopy());
     menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.copy());
     m_ButtonOptions.addToMenu(menuitem);
     // paste
     menuitem = new JMenuItem("Paste");
-    menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+    menuitem.setIcon(ImageManager.getIcon("paste.gif"));
     menuitem.setEnabled(m_PanelStatement.canPaste());
     menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.paste());
     m_ButtonOptions.addToMenu(menuitem);
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setSelected(m_PanelStatement.getWordWrap());
     menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected()));
     m_ButtonOptions.addSeparatorToMenu();
     m_ButtonOptions.addToMenu(menuitem);
     m_PanelButtonsLeft.add(m_ButtonOptions);
     
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
     m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
     m_PanelButtonsLeft.add(m_ButtonHistory);
@@ -168,7 +168,7 @@ public class SQLStatementPanel
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelStatement instanceof AdditionalInformationHandler) {
-      m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      m_ButtonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
       m_ButtonHelp.addActionListener((ActionEvent e) -> {
 	String help = ((AdditionalInformationHandler) m_PanelStatement).getAdditionalInformation();
 	HelpFrame.showHelp(SQLStatement.class, help, false);

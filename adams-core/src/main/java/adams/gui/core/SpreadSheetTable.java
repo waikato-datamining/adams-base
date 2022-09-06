@@ -258,12 +258,12 @@ public class SpreadSheetTable
       range = TableRowRange.ALL;
     state  = SpreadSheetTablePopupMenuItemHelper.getState(this, e, range);
 
-    menuitem = new JMenuItem("Copy column name", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy column name", ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled((getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(state.actCol)));
     menu.add(menuitem);
     
-    menuitem = new JMenuItem("Copy column", GUIHelper.getIcon("copy_column.gif"));
+    menuitem = new JMenuItem("Copy column", ImageManager.getIcon("copy_column.gif"));
     menuitem.setEnabled((getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
@@ -280,7 +280,7 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
     
-    menuitem = new JMenuItem("Rename column", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Rename column", ImageManager.getEmptyIcon());
     menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (state.selCol > 0) || !getShowRowColumn()));
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = ((SpreadSheetTableModel) getUnsortedModel()).toSpreadSheet();
@@ -300,9 +300,9 @@ public class SpreadSheetTable
 
     asc  = !e.isShiftDown();
     if (asc)
-      menuitem = new JMenuItem("Sort (asc)", GUIHelper.getIcon("sort-ascending.png"));
+      menuitem = new JMenuItem("Sort (asc)", ImageManager.getIcon("sort-ascending.png"));
     else
-      menuitem = new JMenuItem("Sort (desc)", GUIHelper.getIcon("sort-descending.png"));
+      menuitem = new JMenuItem("Sort (desc)", ImageManager.getIcon("sort-descending.png"));
     menuitem.setEnabled(!isReadOnly() && (getShowRowColumn() && (state.selCol > 0)) || !getShowRowColumn());
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
@@ -317,7 +317,7 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
+    menuitem = new JMenuItem("Filter", ImageManager.getIcon("filter.png"));
     menuitem.setEnabled(state.selCol > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
@@ -330,7 +330,7 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Filter (RegExp)", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Filter (RegExp)", ImageManager.getEmptyIcon());
     menuitem.setEnabled(state.selCol > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
@@ -343,19 +343,19 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Remove filter", ImageManager.getIcon("delete.gif"));
     menuitem.setEnabled(isColumnFiltered(state.selCol));
     menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.selCol));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
+    menuitem = new JMenuItem("Remove all filters", ImageManager.getIcon("delete_all.gif"));
     menuitem.setEnabled(isAnyColumnFiltered());
     menuitem.addActionListener((ActionEvent ae) -> removeAllColumnFilters());
     menu.add(menuitem);
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Insert column", GUIHelper.getIcon("insert-column.png"));
+    menuitem = new JMenuItem("Insert column", ImageManager.getIcon("insert-column.png"));
     menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener((ActionEvent ae) -> {
       String colName = GUIHelper.showInputDialog(
@@ -373,7 +373,7 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove column", GUIHelper.getIcon("delete-column.png"));
+    menuitem = new JMenuItem("Remove column", ImageManager.getIcon("delete-column.png"));
     menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
@@ -388,19 +388,19 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Optimal column width", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Optimal column width", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth(state.selCol));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Optimal column widths", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Optimal column widths", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setOptimalColumnWidth());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Set column width...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Set column width...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidth(state.selCol));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Set column widths...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Set column widths...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> setColumnWidths());
     menu.add(menuitem);
 
@@ -449,13 +449,13 @@ public class SpreadSheetTable
       menuitem = new JMenuItem("Copy rows");
     else
       menuitem = new JMenuItem("Copy row");
-    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_row.gif"));
     menuitem.setEnabled(getSelectedRowCount() > 0);
     menuitem.addActionListener((ActionEvent ae) -> copyToClipboard());
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy cell");
-    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
       if (state.selRow == -1)
@@ -468,7 +468,7 @@ public class SpreadSheetTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Insert row", GUIHelper.getIcon("insert-row.png"));
+    menuitem = new JMenuItem("Insert row", ImageManager.getIcon("insert-row.png"));
     menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
@@ -481,7 +481,7 @@ public class SpreadSheetTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove row", GUIHelper.getIcon("delete-row.png"));
+    menuitem = new JMenuItem("Remove row", ImageManager.getIcon("delete-row.png"));
     menuitem.setEnabled(!isReadOnly());
     menuitem.addActionListener((ActionEvent ae) -> {
       SpreadSheet sheet = toSpreadSheet();
@@ -498,21 +498,21 @@ public class SpreadSheetTable
     menu.addSeparator();
 
     menuitem = new JMenuItem("Select all");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       selectAll();
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Select none");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       clearSelection();
     });
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Invert selection");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       invertRowSelection();
     });
@@ -526,7 +526,7 @@ public class SpreadSheetTable
       menuitem = new JMenuItem("Save selected...");
     else
       menuitem = new JMenuItem("Save visible...");
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> saveAs(range));
     menu.add(menuitem);
 
@@ -537,21 +537,21 @@ public class SpreadSheetTable
     menu.addSeparator();
 
     menuitem = new JCheckBoxMenuItem("Show formulas");
-    menuitem.setIcon(GUIHelper.getIcon("formula.png"));
+    menuitem.setIcon(ImageManager.getIcon("formula.png"));
     menuitem.setEnabled(getRowCount() > 0);
     menuitem.setSelected(getShowFormulas());
     menuitem.addActionListener((ActionEvent ae) -> setShowFormulas(!getShowFormulas()));
     menu.add(menuitem);
 
     menuitem = new JCheckBoxMenuItem("Show cell types");
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setEnabled(getRowCount() > 0);
     menuitem.setSelected(getShowCellTypes());
     menuitem.addActionListener((ActionEvent ae) -> setShowCellTypes(!getShowCellTypes()));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Set number of decimals");
-    menuitem.setIcon(GUIHelper.getIcon("decimal-place.png"));
+    menuitem.setIcon(ImageManager.getIcon("decimal-place.png"));
     menuitem.setEnabled(getRowCount() > 0);
     menuitem.addActionListener((ActionEvent ae) -> enterNumDecimals());
     menu.add(menuitem);

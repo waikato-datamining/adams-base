@@ -24,6 +24,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TextEditorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -73,7 +74,7 @@ public class WekaGenericObjectEditorPopupMenu
       canChangeClass = getCanChangeClassInDialog(((GenericArrayEditor) editor).getElementEditor());
 
     // copy cmdline
-    item = new JMenuItem("Copy setup", GUIHelper.getEmptyIcon());
+    item = new JMenuItem("Copy setup", ImageManager.getEmptyIcon());
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	StringBuilder content = new StringBuilder();
@@ -97,7 +98,7 @@ public class WekaGenericObjectEditorPopupMenu
 
     if (canChangeClass) {
       // paste
-      item = new JMenuItem("Paste setup", GUIHelper.getIcon("paste.gif"));
+      item = new JMenuItem("Paste setup", ImageManager.getIcon("paste.gif"));
       item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
       item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -107,7 +108,7 @@ public class WekaGenericObjectEditorPopupMenu
       add(item);
 
       // enter setup
-      item = new JMenuItem("Enter setup...", GUIHelper.getIcon("input.png"));
+      item = new JMenuItem("Enter setup...", ImageManager.getIcon("input.png"));
       item.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  final BaseDialog dlg;

@@ -27,6 +27,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
@@ -99,7 +100,7 @@ public class InvestigatorTabbedPane
 
     // icon
     button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
-    button.setIcon((tab.getTabIcon() == null) ? null : GUIHelper.getIcon(tab.getTabIcon()));
+    button.setIcon((tab.getTabIcon() == null) ? null : ImageManager.getIcon(tab.getTabIcon()));
     button.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {

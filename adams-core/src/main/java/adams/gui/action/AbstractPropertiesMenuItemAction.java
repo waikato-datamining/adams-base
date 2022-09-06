@@ -19,11 +19,10 @@
  */
 package adams.gui.action;
 
-import java.awt.Dialog;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
-
-import adams.gui.core.GUIHelper;
+import java.awt.Dialog;
 
 /**
  * Ancestor for simple menu item actions.
@@ -50,7 +49,7 @@ public abstract class AbstractPropertiesMenuItemAction<T, D extends Dialog>
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
-      result.setIcon(GUIHelper.getEmptyIcon());
+      result.setIcon(ImageManager.getEmptyIcon());
     
     return result;
   }

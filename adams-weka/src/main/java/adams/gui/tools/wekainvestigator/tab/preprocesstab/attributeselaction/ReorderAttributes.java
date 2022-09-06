@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.preprocesstab.attributeselaction;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
@@ -97,10 +98,10 @@ public class ReorderAttributes
     for (i = 0; i < data.numAttributes(); i++)
       model.addElement(data.attribute(i).name());
     list       = new BaseListWithButtons(model);
-    buttonUp   = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    buttonUp   = new BaseButton(ImageManager.getIcon("arrow_up.gif"));
     buttonUp.addActionListener((ActionEvent ae) -> list.moveUp());
     list.addToButtonsPanel(buttonUp);
-    buttonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    buttonDown = new BaseButton(ImageManager.getIcon("arrow_down.gif"));
     buttonDown.addActionListener((ActionEvent ae) -> list.moveDown());
     list.addToButtonsPanel(buttonDown);
     list.addListSelectionListener((ListSelectionEvent ae) -> {

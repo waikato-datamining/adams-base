@@ -39,6 +39,7 @@ import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SqlConnectionPanel;
 import adams.gui.event.SpreadSheetProcessorEvent;
@@ -163,7 +164,7 @@ public class DatabaseTarget
       m_TextBatchSize = new BaseObjectTextField<>(new BaseInteger(1));
       paramsPanel.addParameter("Batch size", m_TextBatchSize);
 
-      m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonExecute.addActionListener((ActionEvent e) -> generate());
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(m_ButtonExecute);

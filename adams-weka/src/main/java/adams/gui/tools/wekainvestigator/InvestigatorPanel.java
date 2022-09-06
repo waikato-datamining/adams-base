@@ -45,6 +45,7 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 import adams.gui.event.RecentItemEvent;
@@ -288,7 +289,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabCopyTab.setName("Copy tab");
-    m_ActionTabCopyTab.setIcon(GUIHelper.getIcon("copy.gif"));
+    m_ActionTabCopyTab.setIcon(ImageManager.getIcon("copy.gif"));
 
     m_ActionTabSaveParameters = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
@@ -301,7 +302,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabSaveParameters.setName("Save parameters...");
-    m_ActionTabSaveParameters.setIcon(GUIHelper.getIcon("save.gif"));
+    m_ActionTabSaveParameters.setIcon(ImageManager.getIcon("save.gif"));
 
     m_ActionTabLoadParameters = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
@@ -314,7 +315,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabLoadParameters.setName("Load parameters...");
-    m_ActionTabLoadParameters.setIcon(GUIHelper.getIcon("open.gif"));
+    m_ActionTabLoadParameters.setIcon(ImageManager.getIcon("open.gif"));
 
     m_ActionTabCloseTab = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
@@ -327,7 +328,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabCloseTab.setName("Close tab");
-    m_ActionTabCloseTab.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
+    m_ActionTabCloseTab.setIcon(ImageManager.getIcon("close_tab_focused.gif"));
 
     m_ActionTabCloseAllTabs = new AbstractBaseAction() {
       private static final long serialVersionUID = 2162739410818834253L;
@@ -338,7 +339,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabCloseAllTabs.setName("Close all tabs");
-    m_ActionTabCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionTabCloseAllTabs.setIcon(ImageManager.getEmptyIcon());
 
     m_ActionTabUndoCloseTab = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
@@ -349,7 +350,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionTabUndoCloseTab.setName("Undo close tab");
-    m_ActionTabUndoCloseTab.setIcon(GUIHelper.getIcon("undo.gif"));
+    m_ActionTabUndoCloseTab.setIcon(ImageManager.getIcon("undo.gif"));
 
     m_ActionFileClose = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
@@ -392,7 +393,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionFileClassAttribute.setName("Class attribute...");
-    m_ActionFileClassAttribute.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionFileClassAttribute.setIcon(ImageManager.getEmptyIcon());
 
     m_ActionFileRelationName = new AbstractBaseAction() {
       private static final long serialVersionUID = -1104246458353845500L;
@@ -402,7 +403,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionFileRelationName.setName("Relation name...");
-    m_ActionFileRelationName.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionFileRelationName.setIcon(ImageManager.getEmptyIcon());
 
     m_ActionFileStopJob = new AbstractBaseAction() {
       private static final long serialVersionUID = 429814291989678829L;
@@ -412,7 +413,7 @@ public class InvestigatorPanel
       }
     };
     m_ActionFileStopJob.setName("Stop job");
-    m_ActionFileStopJob.setIcon(GUIHelper.getIcon("stop_red.gif"));
+    m_ActionFileStopJob.setIcon(ImageManager.getIcon("stop_red.gif"));
     m_ActionFileStopJob.setAccelerator("ctrl pressed K");
   }
 
@@ -475,7 +476,7 @@ public class InvestigatorPanel
 
       // File/Sources
       m_MenuFileSources = new BaseMenu("Other sources");
-      m_MenuFileSources.setIcon(GUIHelper.getEmptyIcon());
+      m_MenuFileSources.setIcon(ImageManager.getEmptyIcon());
       menu.add(m_MenuFileSources);
       classes = ClassLister.getSingleton().getClasses(AbstractSource.class);
       for (final Class cls: classes) {
@@ -514,20 +515,20 @@ public class InvestigatorPanel
 
       // Options/Undo enabled
       m_MenuItemOptionsUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
-      m_MenuItemOptionsUndoEnabled.setIcon(GUIHelper.getIcon("undo.gif"));
+      m_MenuItemOptionsUndoEnabled.setIcon(ImageManager.getIcon("undo.gif"));
       m_MenuItemOptionsUndoEnabled.setSelected(getProperties().getBoolean("General.UndoEnabled", true));
       m_MenuItemOptionsUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
       menu.add(m_MenuItemOptionsUndoEnabled);
 
       // Options/Calculate model size
       m_MenuItemOptionsCalculateModelSize = new JCheckBoxMenuItem("Calculate model size");
-      m_MenuItemOptionsCalculateModelSize.setIcon(GUIHelper.getIcon("object.gif"));
+      m_MenuItemOptionsCalculateModelSize.setIcon(ImageManager.getIcon("object.gif"));
       m_MenuItemOptionsCalculateModelSize.setSelected(getProperties().getBoolean("General.CalculateModelSize", false));
       menu.add(m_MenuItemOptionsCalculateModelSize);
 
       // Options/Sort attribute names
       m_MenuItemOptionsSortAttributeNames = new JCheckBoxMenuItem("Sort attribute names");
-      m_MenuItemOptionsSortAttributeNames.setIcon(GUIHelper.getIcon("sort-ascending.png"));
+      m_MenuItemOptionsSortAttributeNames.setIcon(ImageManager.getIcon("sort-ascending.png"));
       m_MenuItemOptionsSortAttributeNames.setSelected(getProperties().getBoolean("General.SortAttributeNames", true));
       m_MenuItemOptionsSortAttributeNames.addActionListener((ActionEvent e) -> toggleSortAttributeNames());
       menu.add(m_MenuItemOptionsSortAttributeNames);
@@ -540,7 +541,7 @@ public class InvestigatorPanel
 
       // Tab/New tab
       m_MenuTabNewTab = new BaseMenu("New tab");
-      m_MenuTabNewTab.setIcon(GUIHelper.getIcon("new.gif"));
+      m_MenuTabNewTab.setIcon(ImageManager.getIcon("new.gif"));
       menu.add(m_MenuTabNewTab);
       classes = ClassLister.getSingleton().getClasses(AbstractInvestigatorTab.class);
       for (final Class cls: classes) {
@@ -548,9 +549,9 @@ public class InvestigatorPanel
 	  tab      = (AbstractInvestigatorTab) cls.newInstance();
 	  menuitem = new JMenuItem(tab.getTitle());
 	  if (tab.getTabIcon() == null)
-	    menuitem.setIcon(GUIHelper.getEmptyIcon());
+	    menuitem.setIcon(ImageManager.getEmptyIcon());
 	  else
-	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
+	    menuitem.setIcon(ImageManager.getIcon(tab.getTabIcon()));
           // shortcut?
           if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));

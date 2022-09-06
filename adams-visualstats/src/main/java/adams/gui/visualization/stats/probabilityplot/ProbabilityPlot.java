@@ -30,6 +30,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.core.PaintablePanel;
@@ -433,7 +434,7 @@ public class ProbabilityPlot
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem menuitem;
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Save data...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
   }

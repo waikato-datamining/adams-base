@@ -37,6 +37,7 @@ import adams.db.SQLStatement;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SqlConnectionPanel;
 import adams.gui.dialog.SQLStatementPanel;
@@ -151,7 +152,7 @@ public class DatabaseSource
         }
       });
 
-      m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
       m_ButtonExecute.setToolTipText("Executes the query (Alt+X)");
       m_PanelQuery.getButtonsLeft().add(m_ButtonExecute);

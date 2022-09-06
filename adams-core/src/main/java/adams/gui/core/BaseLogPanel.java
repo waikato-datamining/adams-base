@@ -104,7 +104,7 @@ public class BaseLogPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonClearLog = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonClearLog = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonClearLog.setEnabled(false);
     m_ButtonClearLog.setToolTipText("Clear log");
     m_ButtonClearLog.addActionListener(new ActionListener() {
@@ -115,7 +115,7 @@ public class BaseLogPanel
     });
     panel.add(m_ButtonClearLog);
 
-    m_ButtonCopyLog = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopyLog = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopyLog.setEnabled(false);
     m_ButtonCopyLog.setToolTipText("Copy log");
     m_ButtonCopyLog.addActionListener(new ActionListener() {
@@ -126,7 +126,7 @@ public class BaseLogPanel
     });
     panel.add(m_ButtonCopyLog);
 
-    m_ButtonSaveLog = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSaveLog = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSaveLog.setEnabled(false);
     m_ButtonSaveLog.setToolTipText("Save log");
     m_ButtonSaveLog.addActionListener(new ActionListener() {

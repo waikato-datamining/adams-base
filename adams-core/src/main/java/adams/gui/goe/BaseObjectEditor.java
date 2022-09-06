@@ -31,6 +31,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -307,7 +308,7 @@ public class BaseObjectEditor
       m_ButtonHelp.setVisible(getHelpURL() != null);
       m_ButtonHelp.setToolTipText("<html>" + GUIHelper.processTipText(getHelpDescription(), 120) + "</html>");
       if (getHelpIcon() != null)
-	m_ButtonHelp.setIcon(GUIHelper.getIcon(getHelpIcon()));
+	m_ButtonHelp.setIcon(ImageManager.getIcon(getHelpIcon()));
       else
 	m_ButtonHelp.setIcon(null);
       m_ButtonHelp.setText(getHelpTitle());

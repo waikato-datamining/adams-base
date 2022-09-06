@@ -27,6 +27,7 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.BorderLayout;
@@ -83,7 +84,7 @@ public class PlainTextResultsPanel
     m_TextAreaResults.setTextFont(Fonts.getMonospacedFont());
     add(m_TextAreaResults, BorderLayout.CENTER);
 
-    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> {
       if (m_TextAreaResults.getSelectedText() != null)
 	ClipboardHelper.copyToClipboard(m_TextAreaResults.getSelectedText());
@@ -92,7 +93,7 @@ public class PlainTextResultsPanel
     });
     m_TextAreaResults.addToButtonsPanel(m_ButtonCopy);
 
-    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> {
       int retVal = m_FileChooser.showSaveDialog(PlainTextResultsPanel.this);
       if (retVal != BaseFileChooser.APPROVE_OPTION)

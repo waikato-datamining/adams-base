@@ -32,6 +32,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.goe.GenericObjectEditorPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -106,7 +107,7 @@ public class StringConversion
     textLeft.setLineWrap(true);
     textLeft.setWrapStyleWord(true);
     textLeft.setTextFont(Fonts.getMonospacedFont());
-    button = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    button = new BaseButton(ImageManager.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -114,7 +115,7 @@ public class StringConversion
       }
     });
     textLeft.addToButtonsPanel(button);
-    button = new BaseButton(GUIHelper.getIcon("paste.gif"));
+    button = new BaseButton(ImageManager.getIcon("paste.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -138,7 +139,7 @@ public class StringConversion
     textRight.setLineWrap(true);
     textRight.setWrapStyleWord(true);
     textRight.setTextFont(Fonts.getMonospacedFont());
-    button = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    button = new BaseButton(ImageManager.getIcon("copy.gif"));
     button.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

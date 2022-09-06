@@ -13,6 +13,7 @@ import adams.gui.core.BaseList;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.FlowPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -182,7 +183,7 @@ public class Clipboard
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelButtons, BorderLayout.SOUTH);
     
-    m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonClear.setToolTipText("Remove all entries");
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
@@ -192,7 +193,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonClear);
     
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(ImageManager.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Add currently selected actor to clipboard");
     m_ButtonAdd.addActionListener(new ActionListener() {
       @Override
@@ -206,7 +207,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonAdd);
     
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Remove selected entries");
     m_ButtonRemove.addActionListener(new ActionListener() {
       @Override
@@ -219,7 +220,7 @@ public class Clipboard
     });
     m_PanelButtons.add(m_ButtonRemove);
     
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copy actor to system clipboard");
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override

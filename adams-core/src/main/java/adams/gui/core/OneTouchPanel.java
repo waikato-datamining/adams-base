@@ -138,7 +138,7 @@ public class OneTouchPanel
     m_PanelContent = new BasePanel(new BorderLayout());
     add(m_PanelContent, BorderLayout.CENTER);
 
-    m_ButtonVisibility = new BaseButton(GUIHelper.getIcon(m_IconVisible));
+    m_ButtonVisibility = new BaseButton(ImageManager.getIcon(m_IconVisible));
     m_ButtonVisibility.setBorder(BorderFactory.createEmptyBorder());
     m_ButtonVisibility.setPreferredSize(new Dimension(18, 18));
     m_ButtonVisibility.setBorderPainted(false);
@@ -200,9 +200,9 @@ public class OneTouchPanel
    */
   public void setContentVisible(boolean value) {
     if (value)
-      m_ButtonVisibility.setIcon(GUIHelper.getIcon(m_IconVisible));
+      m_ButtonVisibility.setIcon(ImageManager.getIcon(m_IconVisible));
     else
-      m_ButtonVisibility.setIcon(GUIHelper.getIcon(m_IconHidden));
+      m_ButtonVisibility.setIcon(ImageManager.getIcon(m_IconHidden));
     m_PanelContent.setVisible(value);
     updateToolTip();
   }

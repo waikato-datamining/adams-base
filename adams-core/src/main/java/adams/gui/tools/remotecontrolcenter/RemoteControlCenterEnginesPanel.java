@@ -25,7 +25,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -108,31 +108,31 @@ public class RemoteControlCenterEnginesPanel
     m_ListEngines.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     add(m_ListEngines, BorderLayout.CENTER);
 
-    m_ButtonRefresh = new BaseButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton("Refresh", ImageManager.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refreshEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonRefresh);
 
     m_ListEngines.addToButtonsPanel(new JLabel());
 
-    m_ButtonAdd = new BaseButton("Add", GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton("Add", ImageManager.getIcon("add.gif"));
     m_ButtonAdd.addActionListener((ActionEvent e) -> addEngine());
     m_ListEngines.addToButtonsPanel(m_ButtonAdd);
 
-    m_ButtonRemove = new BaseButton("Remove", GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseButton("Remove", ImageManager.getIcon("remove.gif"));
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonRemove);
 
-    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> copyEngine());
     m_ListEngines.addToButtonsPanel(m_ButtonCopy);
 
     m_ListEngines.addToButtonsPanel(new JLabel());
 
-    m_ButtonStart = new BaseButton("Start", GUIHelper.getIcon("run.gif"));
+    m_ButtonStart = new BaseButton("Start", ImageManager.getIcon("run.gif"));
     m_ButtonStart.addActionListener((ActionEvent e) -> startEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonStart);
 
-    m_ButtonStop = new BaseButton("Stop", GUIHelper.getIcon("stop_blue.gif"));
+    m_ButtonStop = new BaseButton("Stop", ImageManager.getIcon("stop_blue.gif"));
     m_ButtonStop.addActionListener((ActionEvent e) -> stopEngines());
     m_ListEngines.addToButtonsPanel(m_ButtonStop);
   }

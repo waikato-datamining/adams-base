@@ -34,7 +34,7 @@ import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseSplitButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -274,7 +274,7 @@ public class PreprocessTab
     panel.add(panelAtts, BorderLayout.SOUTH);
     m_TextSelectedAttributes = new BaseTextField(15);
     m_TextSelectedAttributes.setEditable(false);
-    m_ButtonSelectedAttributes = new BaseFlatButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonSelectedAttributes = new BaseFlatButton(ImageManager.getIcon("copy.gif"));
     m_ButtonSelectedAttributes.setSize(m_TextSelectedAttributes.getHeight(), m_TextSelectedAttributes.getHeight());
     m_ButtonSelectedAttributes.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(m_TextSelectedAttributes.getText()));
     panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));

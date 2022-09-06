@@ -27,7 +27,7 @@ import adams.core.option.OptionProducer;
 import adams.flow.control.Flow;
 import adams.flow.control.Flow.ErrorHandling;
 import adams.flow.core.Actor;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.test.AbstractDatabaseTestCase;
 import adams.test.AbstractTestHelper;
 import adams.test.Regression;
@@ -316,6 +316,6 @@ public abstract class AbstractFlowTest
    * Tests whether an image is available for the actor.
    */
   public void testImage() {
-    assertNotNull("No icon found", GUIHelper.getIcon(getTestedClass()));
+    assertNotNull("No icon found", ImageManager.getIcon(getTestedClass()));
   }
 }

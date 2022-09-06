@@ -25,6 +25,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.DragAndDropTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.visualization.multiobjectexport.AbstractMultiObjectExport;
 import adams.gui.visualization.multiobjectexport.DirectoryExport;
@@ -69,7 +70,7 @@ public class OutputTabbedPane
 
     addTab(title, comp);
     button = (ButtonTabComponent) getTabComponentAt(getTabCount() - 1);
-    button.setIcon(GUIHelper.getIcon("menu.gif"));
+    button.setIcon(ImageManager.getIcon("menu.gif"));
 
     return getTabCount() - 1;
   }

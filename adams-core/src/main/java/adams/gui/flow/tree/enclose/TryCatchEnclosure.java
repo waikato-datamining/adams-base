@@ -22,7 +22,7 @@ package adams.gui.flow.tree.enclose;
 
 import adams.flow.control.TryCatch;
 import adams.flow.core.MutableActorHandler;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -76,7 +76,7 @@ public class TryCatchEnclosure
     JMenuItem		result;
 
     result = new JMenuItem(TryCatch.class.getSimpleName());
-    result.setIcon(GUIHelper.getIcon(TryCatch.class));
+    result.setIcon(ImageManager.getIcon(TryCatch.class));
     result.addActionListener((ActionEvent e) -> {
       if (state.selPaths.length == 1)
 	state.tree.addUndoPoint("Enclosing node '" + TreeHelper.pathToActor(state.selPaths[0]).getFullName() + "' in " + TryCatch.class.getName());

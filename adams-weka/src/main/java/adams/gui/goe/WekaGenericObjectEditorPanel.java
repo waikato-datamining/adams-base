@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.HistorySelectionEvent;
 import weka.gui.GenericObjectEditor.GOEPanel;
 
@@ -199,7 +200,7 @@ public class WekaGenericObjectEditorPanel
       notifyChangeListeners(new ChangeEvent(m_Self));
     });
 
-    item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
+    item = new JMenuItem("Edit...", ImageManager.getIcon("properties.gif"));
     item.addActionListener((ActionEvent e) -> choose());
     menu.insert(new JPopupMenu.Separator(), 0);
     menu.insert(item, 0);

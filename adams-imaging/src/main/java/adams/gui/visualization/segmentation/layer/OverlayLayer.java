@@ -31,7 +31,7 @@ import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
 
@@ -127,7 +127,7 @@ public class OverlayLayer
     m_ButtonActivate.setToolTipText("Activate layer");
     m_ButtonActivate.addActionListener((ActionEvent e) -> getManager().activate(this));
     panelRow.add(m_ButtonActivate);
-    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseFlatButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setVisible(false);
     m_ButtonRemove.setToolTipText("Remove layer");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {

@@ -28,6 +28,7 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.goe.GenericObjectEditorDialog;
 
@@ -171,7 +172,7 @@ public class PreviewDisplay
     m_ButtonContentHandler.addActionListener((ActionEvent e) -> editContentHandler());
     m_ButtonContentHandler.setToolTipText("Open dialog to configure content handler");
 
-    m_ButtonFavorites = new BaseButtonWithDropDownMenu(GUIHelper.getIcon("favorite.gif"));
+    m_ButtonFavorites = new BaseButtonWithDropDownMenu(ImageManager.getIcon("favorite.gif"));
     m_ButtonFavorites.setToolTipText("Select or manage favorite content handlers");
 
     m_PanelContentHandlers.add(new JLabel("Preferred handler"));

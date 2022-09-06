@@ -21,7 +21,7 @@
 package adams.gui.goe.actorpathtree;
 
 import adams.core.classmanager.ClassManager;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.dotnotationtree.DotNotationRenderer;
 
 import javax.swing.Icon;
@@ -51,7 +51,7 @@ public class ActorPathTreeRenderer
     super.initialize();
 
     m_Icons            = new Hashtable<String,Icon>();
-    m_MissingActorIcon = GUIHelper.getIcon("missing_actor_icon.gif");
+    m_MissingActorIcon = ImageManager.getIcon("missing_actor_icon.gif");
   }
 
   /**
@@ -77,7 +77,7 @@ public class ActorPathTreeRenderer
       }
       else {
 	try {
-	  result = GUIHelper.getIcon(ClassManager.getSingleton().forName(classname));
+	  result = ImageManager.getIcon(ClassManager.getSingleton().forName(classname));
           if (result != null)
             m_Icons.put(classname, result);
 	  else

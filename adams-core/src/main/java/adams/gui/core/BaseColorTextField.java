@@ -108,7 +108,7 @@ public class BaseColorTextField
 
       result = super.getPopupMenu();
 
-      menuitem = new JMenuItem("Choose...", GUIHelper.getIcon("colorpicker.png"));
+      menuitem = new JMenuItem("Choose...", ImageManager.getIcon("colorpicker.png"));
       menuitem.addActionListener((ActionEvent e) -> chooseColor());
       result.addSeparator();
       result.add(menuitem);

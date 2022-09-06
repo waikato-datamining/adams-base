@@ -42,6 +42,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.DragAndDropTree;
 import adams.gui.core.DragAndDropTreeNodeCollection;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -1943,9 +1944,9 @@ public class Tree
   @Override
   protected ImageIcon getDropMenuActionIcon(DropMenu action) {
     if (action == DropMenu.ADD)
-      return GUIHelper.getIcon("flow.gif");
+      return ImageManager.getIcon("flow.gif");
     else if (action == DropMenu.CANCEL)
-      return GUIHelper.getIcon("delete.gif");
+      return ImageManager.getIcon("delete.gif");
     else
       return super.getDropMenuActionIcon(action);
   }

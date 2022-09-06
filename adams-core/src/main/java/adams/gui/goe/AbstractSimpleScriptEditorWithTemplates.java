@@ -19,6 +19,14 @@
  */
 package adams.gui.goe;
 
+import adams.core.Properties;
+import adams.env.Environment;
+import adams.env.SimpleScriptEditorTemplatesDefinition;
+import adams.gui.core.ImageManager;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
@@ -26,15 +34,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-
-import adams.core.Properties;
-import adams.env.Environment;
-import adams.env.SimpleScriptEditorTemplatesDefinition;
-import adams.gui.core.GUIHelper;
 
 /**
  * Ancestor for script editors that support text templates.
@@ -130,7 +129,7 @@ public abstract class AbstractSimpleScriptEditorWithTemplates
       return;
     
     submenu = new JMenu("Templates");
-    submenu.setIcon(GUIHelper.getIcon("template.gif"));
+    submenu.setIcon(ImageManager.getIcon("template.gif"));
     menu.add(submenu);
     
     for (final String template: templates) {

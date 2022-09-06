@@ -473,12 +473,12 @@ public class CheckedTextField
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed C"));
     menuitem.addActionListener(e -> copyToClipboard());
     result.add(menuitem);
 
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
     menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard());
     menuitem.addActionListener(e -> pasteFromClipboard());

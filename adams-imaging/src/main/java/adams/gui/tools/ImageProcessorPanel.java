@@ -37,6 +37,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
@@ -225,23 +226,23 @@ public class ImageProcessorPanel
     m_LabelProgress = new JLabel();
     panelStatus.add(m_LabelProgress);
 
-    m_ButtonNew = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonNew = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonNew.addActionListener((ActionEvent e) -> newFlow());
     panelButtons.add(m_ButtonNew);
 
-    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadFlow());
     panelButtons.add(m_ButtonLoad);
 
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveFlow());
     panelButtons.add(m_ButtonSave);
 
-    m_ButtonCheck = new BaseButton(GUIHelper.getIcon("validate.png"));
+    m_ButtonCheck = new BaseButton(ImageManager.getIcon("validate.png"));
     m_ButtonCheck.addActionListener((ActionEvent e) -> checkFlow(false));
     panelButtons.add(m_ButtonCheck);
 
-    m_ButtonRun = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonRun = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonRun.addActionListener((ActionEvent e) -> runFlow());
     panelButtons.add(m_ButtonRun);
     m_SplitPane.setRightComponent(panel);
@@ -374,7 +375,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener((ActionEvent e) -> open());
       m_MenuItemFileOpen = menuitem;
 
@@ -396,7 +397,7 @@ public class ImageProcessorPanel
       menuitem = new JMenuItem("Close page");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+      menuitem.setIcon(ImageManager.getIcon("delete.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemFileClose = menuitem;
@@ -406,7 +407,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("delete_all.gif"));
+      menuitem.setIcon(ImageManager.getIcon("delete_all.gif"));
       menuitem.addActionListener((ActionEvent e) -> closeAll());
       m_MenuItemFileCloseAll = menuitem;
 
@@ -416,7 +417,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> exit());
 
       // Edit
@@ -430,7 +431,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('U');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener((ActionEvent e) -> undo());
       m_MenuItemEditUndo = menuitem;
 
@@ -439,7 +440,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-      menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("redo.gif"));
       menuitem.addActionListener((ActionEvent e) -> redo());
       m_MenuItemEditRedo = menuitem;
 
@@ -455,7 +456,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('H');
       menuitem.setSelected(false);
-      menuitem.setIcon(GUIHelper.getIcon("ip_layout_horizontal.png"));
+      menuitem.setIcon(ImageManager.getIcon("ip_layout_horizontal.png"));
       menuitem.addActionListener((ActionEvent e) -> {
         for (ImageProcessorSubPanel panel: getAllPanels())
 	  panel.setLayoutType(LayoutType.HORIZONTAL);
@@ -469,7 +470,7 @@ public class ImageProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('V');
       menuitem.setSelected(true);
-      menuitem.setIcon(GUIHelper.getIcon("ip_layout_vertical.png"));
+      menuitem.setIcon(ImageManager.getIcon("ip_layout_vertical.png"));
       menuitem.addActionListener((ActionEvent e) -> {
         for (ImageProcessorSubPanel panel: getAllPanels())
 	  panel.setLayoutType(LayoutType.VERTICAL);
@@ -484,7 +485,7 @@ public class ImageProcessorPanel
       submenu = new JMenu("Add overlay");
       menu.add(submenu);
       submenu.setMnemonic('A');
-      submenu.setIcon(GUIHelper.getIcon("add.gif"));
+      submenu.setIcon(ImageManager.getIcon("add.gif"));
       m_MenuViewRemoveOverlays = submenu;
 
       // View/Add overlay/Original
@@ -511,7 +512,7 @@ public class ImageProcessorPanel
       submenu = new JMenu("Remove overlays");
       menu.add(submenu);
       submenu.setMnemonic('R');
-      submenu.setIcon(GUIHelper.getIcon("remove.gif"));
+      submenu.setIcon(ImageManager.getIcon("remove.gif"));
       m_MenuViewRemoveOverlays = submenu;
 
       // View/Remove overlays/Original
@@ -536,7 +537,7 @@ public class ImageProcessorPanel
       submenu = new JMenu("Locate objects");
       menu.add(submenu);
       submenu.setMnemonic('L');
-      submenu.setIcon(GUIHelper.getIcon("locateobjects.gif"));
+      submenu.setIcon(ImageManager.getIcon("locateobjects.gif"));
       m_MenuViewLocateObjects = submenu;
 
       // View/Locate objects/Original
@@ -568,7 +569,7 @@ public class ImageProcessorPanel
       // View/Zoom
       submenu = new JMenu("Zoom");
       menu.add(submenu);
-      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+      submenu.setIcon(ImageManager.getIcon("glasses.gif"));
 
       // View/Zoom/Original
       subsubmenu = new JMenu("Original");

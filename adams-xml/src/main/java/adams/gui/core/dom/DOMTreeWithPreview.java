@@ -23,7 +23,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.KeyValuePairTableModel;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SortableAndSearchableTable;
@@ -263,7 +263,7 @@ public class DOMTreeWithPreview
     menu = new BasePopupMenu();
 
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_Table.getSelectedRowCount() > 0);
     menuitem.addActionListener(new ActionListener() {
       @Override

@@ -27,6 +27,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
@@ -134,7 +135,7 @@ public class DatasetCompatibilityPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -146,7 +147,7 @@ public class DatasetCompatibilityPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  reload();
@@ -164,7 +165,7 @@ public class DatasetCompatibilityPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();

@@ -130,7 +130,7 @@ public class FilterPanel
 	notifyChangeListeners();
       }
     });
-    m_LabelFilterClear = new JLabel(GUIHelper.getIcon("clear_text.png"));
+    m_LabelFilterClear = new JLabel(ImageManager.getIcon("clear_text.png"));
     m_LabelFilterClear.setToolTipText("Clears the filter text field");
     m_LabelFilterClear.setEnabled(false);
     m_LabelFilterClear.addMouseListener(new MouseAdapter() {

@@ -659,7 +659,7 @@ public class JComponentList
 
     for (int i = 0; i < 10; i++)
       model.addElement(new JLabel("" + i));
-    model.addElement(new JLabel(GUIHelper.getIcon("exit.png"), SwingConstants.LEFT));
-    model.addElement(new JLabel(GUIHelper.getIcon("hand.gif"), SwingConstants.LEFT));
+    model.addElement(new JLabel(ImageManager.getIcon("exit.png"), SwingConstants.LEFT));
+    model.addElement(new JLabel(ImageManager.getIcon("hand.gif"), SwingConstants.LEFT));
   }
 }

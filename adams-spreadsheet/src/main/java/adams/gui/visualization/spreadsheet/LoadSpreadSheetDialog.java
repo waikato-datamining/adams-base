@@ -31,6 +31,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
@@ -233,7 +234,7 @@ public class LoadSpreadSheetDialog
     });
     panel.add(m_FilePanel, BorderLayout.CENTER);
 
-    m_ButtonReload = new BaseButton(GUIHelper.getIcon("refresh.gif"));
+    m_ButtonReload = new BaseButton(ImageManager.getIcon("refresh.gif"));
     m_ButtonReload.setEnabled(false);
     m_ButtonReload.addActionListener((ActionEvent e) -> loadFile(true));
     panelAttributes = new JPanel(new BorderLayout());

@@ -38,6 +38,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.help.AbstractHelpGenerator;
@@ -529,9 +530,9 @@ public class PropertySheetPanel extends BasePanel
       if ((m_Options != null) && getShowVariablePopupButton()) {
 	final BaseFlatButton buttonVars;
 	if ((option instanceof AbstractArgumentOption) && ((AbstractArgumentOption) option).isVariableAttached())
-	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_present.gif"));
+	  buttonVars = new BaseFlatButton(ImageManager.getIcon("variable_present.gif"));
 	else
-	  buttonVars = new BaseFlatButton(GUIHelper.getIcon("variable_notpresent.gif"));
+	  buttonVars = new BaseFlatButton(ImageManager.getIcon("variable_notpresent.gif"));
 	buttonVars.setFocusable(false);
 	buttonVars.addActionListener((ActionEvent e) -> {
 	  BasePopupMenu menu = new BasePopupMenu();

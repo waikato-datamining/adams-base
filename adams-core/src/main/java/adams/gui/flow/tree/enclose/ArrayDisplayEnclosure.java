@@ -24,7 +24,7 @@ import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.sink.ArrayDisplay;
 import adams.flow.sink.DisplayPanelProvider;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -116,7 +116,7 @@ public class ArrayDisplayEnclosure
     JMenuItem 	result;
 
     result = new JMenuItem(ArrayDisplay.class.getSimpleName());
-    result.setIcon(GUIHelper.getIcon(ArrayDisplay.class));
+    result.setIcon(ImageManager.getIcon(ArrayDisplay.class));
     result.addActionListener((ActionEvent e) -> encloseInArrayDisplay(state));
 
     return result;

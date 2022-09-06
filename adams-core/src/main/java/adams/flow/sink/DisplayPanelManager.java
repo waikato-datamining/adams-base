@@ -38,6 +38,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
@@ -962,7 +963,7 @@ public class DisplayPanelManager
 
     result = super.doCreateFrame(panel);
 
-    icon = GUIHelper.getIcon(m_PanelProvider.getClass());
+    icon = ImageManager.getIcon(m_PanelProvider.getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
 
@@ -1087,7 +1088,7 @@ public class DisplayPanelManager
     menu.add(menuitem);
     menuitem.setMnemonic('l');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-    menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+    menuitem.setIcon(ImageManager.getIcon("new.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	clear();
@@ -1100,7 +1101,7 @@ public class DisplayPanelManager
     menu.add(menuitem);
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	saveAs();
@@ -1118,7 +1119,7 @@ public class DisplayPanelManager
     menu.add(menuitem);
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-    menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+    menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	close();

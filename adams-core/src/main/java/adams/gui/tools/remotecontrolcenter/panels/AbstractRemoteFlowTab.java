@@ -27,7 +27,7 @@ import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.scripting.ScriptingHelper;
 import adams.scripting.command.RemoteCommand;
@@ -216,7 +216,7 @@ public abstract class AbstractRemoteFlowTab
     panelConn.add(label);
     panelConn.add(m_TextLocal);
 
-    m_ButtonRefresh = new BaseButton(GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton(ImageManager.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener((ActionEvent e) -> refreshFlows());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonRefresh);
@@ -230,23 +230,23 @@ public abstract class AbstractRemoteFlowTab
     m_TableFlows.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_PanelFlows.add(m_TableFlows, BorderLayout.CENTER);
 
-    m_ButtonPauseFlow = new BaseButton(GUIHelper.getIcon("pause.gif"));
+    m_ButtonPauseFlow = new BaseButton(ImageManager.getIcon("pause.gif"));
     m_ButtonPauseFlow.addActionListener((ActionEvent e) -> pauseFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonPauseFlow);
 
-    m_ButtonResumeFlow = new BaseButton(GUIHelper.getIcon("resume.gif"));
+    m_ButtonResumeFlow = new BaseButton(ImageManager.getIcon("resume.gif"));
     m_ButtonResumeFlow.addActionListener((ActionEvent e) -> resumeFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonResumeFlow);
 
-    m_ButtonStopFlow = new BaseButton(GUIHelper.getIcon("stop_blue.gif"));
+    m_ButtonStopFlow = new BaseButton(ImageManager.getIcon("stop_blue.gif"));
     m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
     m_TableFlows.addToButtonsPanel(m_ButtonStopFlow);
 
-    m_ButtonStopAdams = new BaseButton(GUIHelper.getIcon("exit.png"));
+    m_ButtonStopAdams = new BaseButton(ImageManager.getIcon("exit.png"));
     m_ButtonStopAdams.addActionListener((ActionEvent e) -> stopAdams());
     m_TableFlows.addToButtonsPanel(m_ButtonStopAdams);
 
-    m_ButtonKillAdams = new BaseButton(GUIHelper.getIcon("kill.png"));
+    m_ButtonKillAdams = new BaseButton(ImageManager.getIcon("kill.png"));
     m_ButtonKillAdams.addActionListener((ActionEvent e) -> killAdams());
     m_TableFlows.addToButtonsPanel(m_ButtonKillAdams);
   }

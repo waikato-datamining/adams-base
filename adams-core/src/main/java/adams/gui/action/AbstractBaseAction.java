@@ -20,6 +20,7 @@
 package adams.gui.action;
 
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -84,7 +85,7 @@ public abstract class AbstractBaseAction
    * @param icon	the icon file (without path)
    */
   public AbstractBaseAction(String name, String icon) {
-    this(name, GUIHelper.getIcon(icon));
+    this(name, ImageManager.getIcon(icon));
   }
 
   /**
@@ -127,10 +128,10 @@ public abstract class AbstractBaseAction
    *
    * @param name	the icon
    * @see		#setIcon(Icon)
-   * @see		GUIHelper#getIcon(String)
+   * @see                ImageManager#getIcon(String)
    */
   public void setIcon(String name) {
-    setIcon(GUIHelper.getIcon(name));
+    setIcon(ImageManager.getIcon(name));
   }
 
   /**

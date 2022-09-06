@@ -28,6 +28,7 @@ import adams.core.option.parsing.SimpleScriptParsing;
 import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.StyledTextEditorPanel;
 import adams.gui.help.HelpFrame;
 
@@ -160,7 +161,7 @@ public class AbstractSimpleScriptEditor
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
     
-    buttonOptions = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
+    buttonOptions = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
     buttonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = createPopupMenu();
@@ -173,7 +174,7 @@ public class AbstractSimpleScriptEditor
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
     if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  String help = ((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation();
@@ -229,7 +230,7 @@ public class AbstractSimpleScriptEditor
     
     // cut
     menuitem = new JMenuItem("Cut");
-    menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
+    menuitem.setIcon(ImageManager.getIcon("cut.gif"));
     menuitem.setEnabled(m_TextStatement.canCut());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -241,7 +242,7 @@ public class AbstractSimpleScriptEditor
     
     // copy
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_TextStatement.canCopy());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -253,7 +254,7 @@ public class AbstractSimpleScriptEditor
     
     // paste
     menuitem = new JMenuItem("Paste");
-    menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+    menuitem.setIcon(ImageManager.getIcon("paste.gif"));
     menuitem.setEnabled(m_TextStatement.canPaste());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -265,7 +266,7 @@ public class AbstractSimpleScriptEditor
     
     // undo
     menuitem = new JMenuItem("Undo");
-    menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("undo.gif"));
     menuitem.setEnabled(m_TextStatement.canUndo());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -278,7 +279,7 @@ public class AbstractSimpleScriptEditor
     
     // redo
     menuitem = new JMenuItem("Redo");
-    menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("redo.gif"));
     menuitem.setEnabled(m_TextStatement.canRedo());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -290,7 +291,7 @@ public class AbstractSimpleScriptEditor
     
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(GUIHelper.getIcon("linewrap.png"));
+    menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
     menuitem.setSelected(m_TextStatement.getWordWrap());
     menuitem.addActionListener(new ActionListener() {
       @Override

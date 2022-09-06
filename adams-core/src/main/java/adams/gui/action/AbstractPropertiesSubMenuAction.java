@@ -19,7 +19,7 @@
  */
 package adams.gui.action;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -56,7 +56,7 @@ public abstract class AbstractPropertiesSubMenuAction<T, D extends Dialog>
       if (getIcon() != null)
         result.setIcon(getIcon());
       else
-        result.setIcon(GUIHelper.getEmptyIcon());
+        result.setIcon(ImageManager.getEmptyIcon());
     }
 
     return result;

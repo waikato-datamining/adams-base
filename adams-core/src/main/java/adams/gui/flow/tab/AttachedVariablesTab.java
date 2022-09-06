@@ -26,7 +26,7 @@ import adams.flow.processor.ListAllVariables;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tree.Node;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
@@ -85,7 +85,7 @@ public class AttachedVariablesTab
     setLayout(new BorderLayout());
 
     // table
-    m_ButtonRefresh = new BaseButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton("Refresh", ImageManager.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener(e -> refreshVariables());
 
     m_TableVariables = new BaseTableWithButtons(m_ModelVariables);

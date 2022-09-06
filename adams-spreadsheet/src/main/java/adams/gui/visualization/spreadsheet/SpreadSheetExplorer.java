@@ -35,6 +35,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.SearchPanel;
@@ -331,7 +332,7 @@ public class SpreadSheetExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> clearData());
       m_MenuItemClearData = menuitem;
 
@@ -342,7 +343,7 @@ public class SpreadSheetExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener((ActionEvent e) -> loadData());
 
       // File/Recent files
@@ -370,7 +371,7 @@ public class SpreadSheetExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> close());
 
       // View

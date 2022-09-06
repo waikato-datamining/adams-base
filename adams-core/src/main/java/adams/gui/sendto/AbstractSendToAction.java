@@ -19,10 +19,10 @@
  */
 package adams.gui.sendto;
 
-import javax.swing.ImageIcon;
-
 import adams.core.logging.LoggingObject;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
+
+import javax.swing.ImageIcon;
 
 /**
  * Ancestor for classes that allow data forwarding in some sense, e.g.,
@@ -89,12 +89,12 @@ public abstract class AbstractSendToAction
 
     if (getIconName() != null) {
       if (getIconName().indexOf("/") > -1)
-        result = GUIHelper.getExternalIcon(getIconName());
+        result = ImageManager.getExternalIcon(getIconName());
       else
-        result = GUIHelper.getIcon(getIconName());
+        result = ImageManager.getIcon(getIconName());
     }
     else {
-      result = GUIHelper.getEmptyIcon();
+      result = ImageManager.getEmptyIcon();
     }
 
     return result;

@@ -40,6 +40,7 @@ import adams.gui.application.ChildFrame;
 import adams.gui.application.UserMode;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.axis.Type;
@@ -424,9 +425,9 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWizard
     plot = new PerformancePlot(getTitle(), genetic);
     panelAll.add(plot, BorderLayout.CENTER);
 
-    buttonPause  = new BaseButton(GUIHelper.getIcon("pause.gif"));
-    buttonResume = new BaseButton(GUIHelper.getIcon("resume.gif"));
-    buttonStop   = new BaseButton(GUIHelper.getIcon("stop_blue.gif"));
+    buttonPause  = new BaseButton(ImageManager.getIcon("pause.gif"));
+    buttonResume = new BaseButton(ImageManager.getIcon("resume.gif"));
+    buttonStop   = new BaseButton(ImageManager.getIcon("stop_blue.gif"));
     buttonPause.setEnabled(true);
     buttonResume.setEnabled(false);
     buttonStop.setEnabled(true);

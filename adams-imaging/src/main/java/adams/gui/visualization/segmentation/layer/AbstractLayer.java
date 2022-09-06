@@ -23,7 +23,7 @@ package adams.gui.visualization.segmentation.layer;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
@@ -195,7 +195,7 @@ public abstract class AbstractLayer
   public static BaseFlatButton createApplyButton() {
     BaseFlatButton	result;
 
-    result = new BaseFlatButton(GUIHelper.getIcon("validate.png"));
+    result = new BaseFlatButton(ImageManager.getIcon("validate.png"));
     result.setToolTipText("Apply current values");
     return result;
   }
@@ -208,8 +208,8 @@ public abstract class AbstractLayer
    */
   public static void setApplyButtonState(BaseFlatButton button, boolean modified) {
     if (modified)
-      button.setIcon(GUIHelper.getIcon("validate_blue.png"));
+      button.setIcon(ImageManager.getIcon("validate_blue.png"));
     else
-      button.setIcon(GUIHelper.getIcon("validate.png"));
+      button.setIcon(ImageManager.getIcon("validate.png"));
   }
 }

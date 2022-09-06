@@ -449,22 +449,22 @@ public abstract class AbstractNamedHistoryPanel<T>
     m_PanelListButtons.setVisible(false);
     m_PanelList.add(m_PanelListButtons, BorderLayout.SOUTH);
 
-    m_ButtonUp = new BaseFlatButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Moves up selected");
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
-    m_ButtonDown = new BaseFlatButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseFlatButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Moves down selected");
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
-    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseFlatButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Removes currently selected");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeEntries(m_List.getSelectedIndices()));
     m_PanelListButtons.add(m_ButtonRemove);
 
-    m_ButtonRemoveAll = new BaseFlatButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseFlatButton(ImageManager.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Removes all");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> checkedRemoveAllEntries());
     m_PanelListButtons.add(m_ButtonRemoveAll);

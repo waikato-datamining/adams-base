@@ -35,6 +35,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -216,7 +217,7 @@ public class JdbcUrlEditor
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.EAST);
 
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent connections");
     m_ButtonHistory.addActionListener((ActionEvent e) -> showConnectionsPopup());
     panel.add(m_ButtonHistory);
@@ -353,7 +354,7 @@ public class JdbcUrlEditor
       m_ButtonHelp.setVisible(getHelpURL() != null);
       m_ButtonHelp.setToolTipText("<html>" + GUIHelper.processTipText(getHelpDescription(), 120) + "</html>");
       if (getHelpIcon() != null)
-	m_ButtonHelp.setIcon(GUIHelper.getIcon(getHelpIcon()));
+	m_ButtonHelp.setIcon(ImageManager.getIcon(getHelpIcon()));
       else
 	m_ButtonHelp.setIcon(null);
       m_ButtonHelp.setText(getHelpTitle());

@@ -20,7 +20,7 @@
 
 package adams.gui.goe.popupmenu;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.goe.GenericObjectEditorPopupMenu;
 import adams.gui.goe.PropertyPanel;
@@ -74,16 +74,16 @@ public class Edit
     JMenuItem 	item;
 
     if (comp instanceof PropertyPanel) {
-      item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
+      item = new JMenuItem("Edit...", ImageManager.getIcon("properties.gif"));
       item.addActionListener((ActionEvent e) -> ((PropertyPanel) comp).showPropertyDialog());
       menu.insert(new JPopupMenu.Separator(), 0);
       menu.insert(item, 0);
     }
     else if (comp instanceof GenericObjectEditorPanel) {
       if (((GenericObjectEditorPanel) comp).isEditable())
-	item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
+	item = new JMenuItem("Edit...", ImageManager.getIcon("properties.gif"));
       else
-	item = new JMenuItem("Show...", GUIHelper.getIcon("properties.gif"));
+	item = new JMenuItem("Show...", ImageManager.getIcon("properties.gif"));
       item.addActionListener((ActionEvent e) -> ((GenericObjectEditorPanel) comp).choose());
       menu.insert(new JPopupMenu.Separator(), 0);
       menu.insert(item, 0);

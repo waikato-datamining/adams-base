@@ -25,7 +25,7 @@ import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserBookmarksPanel.FileChooserBookmarksFactory;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchParameters;
 import com.googlecode.jfilechooserbookmarks.Bookmark;
@@ -194,7 +194,7 @@ public class FileChooserBookmarksManagementPanel
     super.initGUI();
 
     // up/down buttons
-    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -209,7 +209,7 @@ public class FileChooserBookmarksManagementPanel
     });
     m_TableValues.addToButtonsPanel(m_ButtonUp);
 
-    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

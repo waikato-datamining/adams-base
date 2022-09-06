@@ -28,7 +28,7 @@ import adams.flow.processor.ListAllVariables;
 import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
 import adams.gui.flow.tree.Node;
 
@@ -249,7 +249,7 @@ public class FindUsages
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
-      result.setIcon(GUIHelper.getEmptyIcon());
+      result.setIcon(ImageManager.getEmptyIcon());
     actor  = m_State.selNode.getActor();
     parent = (m_State.parent != null) ? m_State.parent.getActor() : null;
 

@@ -21,7 +21,7 @@ package adams.gui.flow.tree.menu;
 
 import adams.core.io.FlowFile;
 import adams.flow.core.ExternalActorHandler;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
@@ -60,14 +60,14 @@ public class ExpandCollapseExternalFlow
     setEnabled(enabled);
     if ((m_State.selNode != null) && (m_State.selNode.getExpansionOccurred() && !m_State.selNode.requiresReexpand())) {
       setName("Collapse");
-      setIcon(GUIHelper.getIcon("collapse.png"));
+      setIcon(ImageManager.getIcon("collapse.png"));
     }
     else {
       if ((m_State.selNode != null) && m_State.selNode.requiresReexpand())
         setName("Reexpand");
       else
 	setName("Expand");
-      setIcon(GUIHelper.getIcon("expand.png"));
+      setIcon(ImageManager.getIcon("expand.png"));
     }
   }
 

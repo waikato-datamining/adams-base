@@ -26,7 +26,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import de.intarsys.pdf.pd.PDDocument;
 
@@ -132,7 +132,7 @@ public class PDFPanel
     m_PanelNavigation = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     add(m_PanelNavigation, BorderLayout.SOUTH);
 
-    m_ButtonPrevious = new BaseButton(GUIHelper.getIcon("arrow_left.gif"));
+    m_ButtonPrevious = new BaseButton(ImageManager.getIcon("arrow_left.gif"));
     m_ButtonPrevious.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	previousPage();
@@ -140,7 +140,7 @@ public class PDFPanel
     });
     m_PanelNavigation.add(m_ButtonPrevious);
 
-    m_ButtonNext = new BaseButton(GUIHelper.getIcon("arrow_right.gif"));
+    m_ButtonNext = new BaseButton(ImageManager.getIcon("arrow_right.gif"));
     m_ButtonNext.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	nextPage();

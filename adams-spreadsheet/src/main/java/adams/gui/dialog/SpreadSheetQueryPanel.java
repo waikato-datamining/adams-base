@@ -22,7 +22,7 @@ package adams.gui.dialog;
 import adams.core.AdditionalInformationHandler;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentSpreadSheetQueriesHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.event.RecentItemEvent;
@@ -128,14 +128,14 @@ public class SpreadSheetQueryPanel
     m_PanelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelBottom.add(m_PanelButtonsLeft, BorderLayout.WEST);
     
-    m_ButtonOptions = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
+    m_ButtonOptions = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
     m_ButtonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	JPopupMenu menu = new JPopupMenu();
 	JMenuItem menuitem;
 	// cut
 	menuitem = new JMenuItem("Cut");
-	menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
+	menuitem.setIcon(ImageManager.getIcon("cut.gif"));
 	menuitem.setEnabled(m_PanelQuery.canCut());
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
@@ -146,7 +146,7 @@ public class SpreadSheetQueryPanel
 	menu.add(menuitem);
 	// copy
 	menuitem = new JMenuItem("Copy");
-	menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+	menuitem.setIcon(ImageManager.getIcon("copy.gif"));
 	menuitem.setEnabled(m_PanelQuery.canCopy());
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
@@ -157,7 +157,7 @@ public class SpreadSheetQueryPanel
 	menu.add(menuitem);
 	// paste
 	menuitem = new JMenuItem("Paste");
-	menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+	menuitem.setIcon(ImageManager.getIcon("paste.gif"));
 	menuitem.setEnabled(m_PanelQuery.canPaste());
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
@@ -168,7 +168,7 @@ public class SpreadSheetQueryPanel
 	menu.add(menuitem);
 	// line wrap
 	menuitem = new JCheckBoxMenuItem("Line wrap");
-	menuitem.setIcon(GUIHelper.getEmptyIcon());
+	menuitem.setIcon(ImageManager.getEmptyIcon());
 	menuitem.setSelected(m_PanelQuery.getWordWrap());
 	menuitem.addActionListener(new ActionListener() {
 	  @Override
@@ -184,7 +184,7 @@ public class SpreadSheetQueryPanel
     });
     m_PanelButtonsLeft.add(m_ButtonOptions);
 
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
     m_ButtonHistory.setVisible(false);
     m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
@@ -205,7 +205,7 @@ public class SpreadSheetQueryPanel
     m_PanelBottom.add(m_PanelButtonsRight, BorderLayout.EAST);
 
     if (m_PanelQuery instanceof AdditionalInformationHandler) {
-      m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      m_ButtonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
       m_ButtonHelp.addActionListener((ActionEvent e) -> {
 	String help = m_PanelQuery.getAdditionalInformation();
 	HelpFrame.showHelp(SpreadSheetQuery.class, help, false);

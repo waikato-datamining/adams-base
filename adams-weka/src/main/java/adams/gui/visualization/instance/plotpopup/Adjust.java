@@ -21,7 +21,7 @@
 package adams.gui.visualization.instance.plotpopup;
 
 import adams.data.instance.Instance;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.instance.InstanceContainer;
@@ -87,7 +87,7 @@ public class Adjust
     JMenuItem		item;
 
     item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
+    item.setIcon(ImageManager.getEmptyIcon());
     if (((InstancePanel) panel).getAdjustToVisibleData())
       item.setText("Adjust to loaded data");
     else

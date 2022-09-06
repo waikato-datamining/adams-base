@@ -24,7 +24,7 @@ import adams.env.Modules;
 import adams.env.Modules.Module;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -83,7 +83,7 @@ public class AboutBoxPanel
     setLayout(new BorderLayout());
 
     m_PanelImage = new JPanel(new BorderLayout());
-    m_LabelImage = new JLabel(GUIHelper.getLogoImage());
+    m_LabelImage = new JLabel(ImageManager.getLogoImage());
     m_PanelImage.add(m_LabelImage, BorderLayout.CENTER);
     add(m_PanelImage, BorderLayout.CENTER);
 
@@ -146,7 +146,7 @@ public class AboutBoxPanel
    * @param name	the name of the image
    */
   public void setImage(String name) {
-    m_LabelImage.setIcon(GUIHelper.getIcon(name));
+    m_LabelImage.setIcon(ImageManager.getIcon(name));
   }
 
   /**

@@ -27,7 +27,7 @@ import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JLabel;
@@ -120,7 +120,7 @@ public class OptionTree
 
     m_ButtonUpdate = new BaseButton("Update");
     m_ButtonUpdate.setMnemonic('U');
-    m_ButtonUpdate.setIcon(GUIHelper.getIcon("refresh.gif"));
+    m_ButtonUpdate.setIcon(ImageManager.getIcon("refresh.gif"));
     m_ButtonUpdate.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	updateTree();
@@ -161,7 +161,7 @@ public class OptionTree
 
     m_ButtonCopy = new BaseButton("Copy");
     m_ButtonCopy.setMnemonic('C');
-    m_ButtonCopy.setIcon(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy.setIcon(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	ClipboardHelper.copyToClipboard(m_TextOptionsSelected.getText());

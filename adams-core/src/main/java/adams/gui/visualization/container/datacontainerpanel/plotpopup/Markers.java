@@ -21,7 +21,7 @@
 package adams.gui.visualization.container.datacontainerpanel.plotpopup;
 
 import adams.data.container.DataContainer;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
@@ -88,7 +88,7 @@ public class Markers<T extends DataContainer, M extends AbstractContainerManager
 
     paintlet = (PaintletWithMarkers) panel.getDataPaintlet();
     item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
+    item.setIcon(ImageManager.getEmptyIcon());
     if (!paintlet.isMarkersDisabled())
       item.setText("Disable markers");
     else

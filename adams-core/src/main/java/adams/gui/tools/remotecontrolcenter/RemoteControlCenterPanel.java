@@ -31,6 +31,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.ButtonTabComponent;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab;
@@ -140,7 +141,7 @@ public class RemoteControlCenterPanel
       }
     };
     m_ActionTabCloseTab.setName("Close tab");
-    m_ActionTabCloseTab.setIcon(GUIHelper.getIcon("close_tab_focused.gif"));
+    m_ActionTabCloseTab.setIcon(ImageManager.getIcon("close_tab_focused.gif"));
 
     m_ActionTabCloseAllTabs = new AbstractBaseAction() {
       private static final long serialVersionUID = 2162739410818834253L;
@@ -151,7 +152,7 @@ public class RemoteControlCenterPanel
       }
     };
     m_ActionTabCloseAllTabs.setName("Close all tabs");
-    m_ActionTabCloseAllTabs.setIcon(GUIHelper.getEmptyIcon());
+    m_ActionTabCloseAllTabs.setIcon(ImageManager.getEmptyIcon());
   }
 
   /**
@@ -215,7 +216,7 @@ public class RemoteControlCenterPanel
 
       // Tab/New tab
       m_MenuTabNewTab = new BaseMenu("New tab");
-      m_MenuTabNewTab.setIcon(GUIHelper.getIcon("new.gif"));
+      m_MenuTabNewTab.setIcon(ImageManager.getIcon("new.gif"));
       menu.add(m_MenuTabNewTab);
       classes = ClassLister.getSingleton().getClasses(AbstractRemoteControlCenterTab.class);
       for (final Class cls: classes) {
@@ -223,9 +224,9 @@ public class RemoteControlCenterPanel
 	  tab      = (AbstractRemoteControlCenterTab) cls.newInstance();
 	  menuitem = new JMenuItem(tab.getTitle());
 	  if (tab.getTabIcon() == null)
-	    menuitem.setIcon(GUIHelper.getEmptyIcon());
+	    menuitem.setIcon(ImageManager.getEmptyIcon());
 	  else
-	    menuitem.setIcon(GUIHelper.getIcon(tab.getTabIcon()));
+	    menuitem.setIcon(ImageManager.getIcon(tab.getTabIcon()));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
 	      addTab((AbstractRemoteControlCenterTab) cls.newInstance(), true);
@@ -268,7 +269,7 @@ public class RemoteControlCenterPanel
     if (tab.getTabIcon() == null)
       icon = null;
     else
-      icon = GUIHelper.getIcon(tab.getTabIcon());
+      icon = ImageManager.getIcon(tab.getTabIcon());
 
     tab.setOwner(this);
     m_TabbedPane.addTab(tab.getTitle(), tab);

@@ -22,7 +22,7 @@ package adams.gui.visualization.container.datacontainerpanel.plotpopup;
 
 import adams.data.container.DataContainer;
 import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
@@ -88,7 +88,7 @@ public class AntiAliasing<T extends DataContainer, M extends AbstractContainerMa
 
     paintlet = (AntiAliasingSupporter) panel.getDataPaintlet();
     item = new JMenuItem();
-    item.setIcon(GUIHelper.getEmptyIcon());
+    item.setIcon(ImageManager.getEmptyIcon());
     if (paintlet.isAntiAliasingEnabled())
       item.setText("Disable anti-aliasing");
     else

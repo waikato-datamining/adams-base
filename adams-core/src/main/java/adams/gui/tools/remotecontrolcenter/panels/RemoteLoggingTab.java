@@ -27,7 +27,7 @@ import adams.core.logging.RemoteReceiveHandler.AbstractRemoteListenerRunnable;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
@@ -240,7 +240,7 @@ public class RemoteLoggingTab
     panelHosts.add(label);
     panelHosts.add(m_TextLocal);
 
-    m_ButtonStartStop = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonStartStop = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonStartStop.addActionListener((ActionEvent e) -> startStopLogging());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonStartStop);
@@ -338,8 +338,8 @@ public class RemoteLoggingTab
    */
   public void updateButtons() {
     if ((m_Runnable != null) && m_Runnable.isRunning())
-      m_ButtonStartStop.setIcon(GUIHelper.getIcon("stop_blue.gif"));
+      m_ButtonStartStop.setIcon(ImageManager.getIcon("stop_blue.gif"));
     else
-      m_ButtonStartStop.setIcon(GUIHelper.getIcon("run.gif"));
+      m_ButtonStartStop.setIcon(ImageManager.getIcon("run.gif"));
   }
 }

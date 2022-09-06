@@ -31,7 +31,7 @@ import adams.core.option.parsing.FlowFileParsing;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
 import adams.gui.flow.FlowEditorDialog;
@@ -222,7 +222,7 @@ public class FlowFileEditor
 
     file     = (FlowFile) getValue();
     menuitem = new JMenuItem("Open in Flow editor...");
-    menuitem.setIcon(GUIHelper.getIcon("flow.gif"));
+    menuitem.setIcon(ImageManager.getIcon("flow.gif"));
     menuitem.setEnabled(file.exists() && !file.isDirectory());
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -241,7 +241,7 @@ public class FlowFileEditor
     menu.add(menuitem);
     
     menuitem = new JMenuItem("Open in preview browser...");
-    menuitem.setIcon(GUIHelper.getIcon("previewbrowser.png"));
+    menuitem.setIcon(ImageManager.getIcon("previewbrowser.png"));
     menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> {
       BaseDialog dialog;
@@ -259,19 +259,19 @@ public class FlowFileEditor
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in file browser...");
-    menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+    menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
     menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> FileBrowser.launch(file));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Open in terminal...");
-    menuitem.setIcon(GUIHelper.getIcon("terminal.png"));
+    menuitem.setIcon(ImageManager.getIcon("terminal.png"));
     menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
     menuitem.addActionListener((ActionEvent e) -> Terminal.launch(file));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy (absolute path)");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(true);
     menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(file.getAbsolutePath()));
     menu.add(menuitem);

@@ -31,6 +31,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.ParameterMapFileChooser;
 import adams.gui.core.DetachablePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -148,25 +149,25 @@ public abstract class AbstractInvestigatorTab
     result = super.createPopupMenu();
     index  = getOwner().getTabbedPane().indexOfComponent(this);
 
-    item = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    item = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     item.addActionListener((ActionEvent e) -> {
       getOwner().getTabbedPane().copyTabAt(index);
     });
     result.add(item);
 
     if (serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS))) instanceof Map) {
-      item = new JMenuItem("Save parameters...", GUIHelper.getIcon("save.gif"));
+      item = new JMenuItem("Save parameters...", ImageManager.getIcon("save.gif"));
       item.addActionListener((ActionEvent e) -> saveParameters());
       result.add(item);
 
-      item = new JMenuItem("Load parameters...", GUIHelper.getIcon("open.gif"));
+      item = new JMenuItem("Load parameters...", ImageManager.getIcon("open.gif"));
       item.addActionListener((ActionEvent e) -> loadParameters());
       result.add(item);
     }
 
     result.add(getOwner().getTabbedPane().getTabMoveSubMenu(index));
 
-    item = new JMenuItem("Close", GUIHelper.getIcon("close_tab_focused.gif"));
+    item = new JMenuItem("Close", ImageManager.getIcon("close_tab_focused.gif"));
     item.addActionListener((ActionEvent e) -> {
       if (getOwner().getTabbedPane().canCloseTab(index))
 	getOwner().getTabbedPane().removeTabAt(index);

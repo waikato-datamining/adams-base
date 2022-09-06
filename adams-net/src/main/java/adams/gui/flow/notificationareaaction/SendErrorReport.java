@@ -35,6 +35,7 @@ import adams.flow.core.ActorUtils;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -62,7 +63,7 @@ public class SendErrorReport
   public SendErrorReport() {
     super();
     setName("Send error report...");
-    setIcon(GUIHelper.getIcon("email.png"));
+    setIcon(ImageManager.getIcon("email.png"));
   }
 
   /**

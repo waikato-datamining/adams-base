@@ -29,6 +29,7 @@ import adams.flow.core.StopMode;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 
 import javax.swing.ImageIcon;
@@ -534,11 +535,11 @@ public abstract class AbstractInteractiveTransformerDialog
     result.setDefaultCloseOperation(BaseDialog.HIDE_ON_CLOSE);
     result.setSize(width, height);
     result.setLocationRelativeTo(getParentComponent());
-    icon = GUIHelper.getIcon(getClass());
+    icon = ImageManager.getIcon(getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
     else
-      result.setIconImage(GUIHelper.getIcon("flow.gif").getImage());
+      result.setIconImage(ImageManager.getIcon("flow.gif").getImage());
     if (panel instanceof MenuBarProvider)
       result.setJMenuBar(((MenuBarProvider) panel).getMenuBar());
     else if (this instanceof MenuBarProvider)

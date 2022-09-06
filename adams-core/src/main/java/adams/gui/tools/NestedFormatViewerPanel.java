@@ -35,6 +35,7 @@ import adams.gui.core.BaseTree;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -111,11 +112,11 @@ public class NestedFormatViewerPanel
       }
       else {
         try {
-          result = GUIHelper.getIcon(classname + ".gif");
+          result = ImageManager.getIcon(classname + ".gif");
           if (result == null)
-            result = GUIHelper.getIcon(classname + ".png");
+            result = ImageManager.getIcon(classname + ".png");
           if (result == null)
-            result = GUIHelper.getIcon(classname + ".jpg");
+            result = ImageManager.getIcon(classname + ".jpg");
         }
         catch (Exception e) {
           result = null;
@@ -228,7 +229,7 @@ public class NestedFormatViewerPanel
     if (path != null) {
       result = new BasePopupMenu();
 
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -272,7 +273,7 @@ public class NestedFormatViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -286,7 +287,7 @@ public class NestedFormatViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {

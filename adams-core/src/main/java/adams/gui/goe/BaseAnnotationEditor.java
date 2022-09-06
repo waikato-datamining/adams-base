@@ -30,7 +30,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TextAreaComponent;
 import adams.gui.help.HelpFrame;
 
@@ -145,7 +145,7 @@ public class BaseAnnotationEditor
     panelButtons.add(panel, BorderLayout.WEST);
     buttonClear = new BaseButton("Clear");
     buttonClear.setMnemonic('l');
-    buttonClear.setIcon(GUIHelper.getIcon("new.gif"));
+    buttonClear.setIcon(ImageManager.getIcon("new.gif"));
     buttonClear.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	m_TextValue.setText("");
@@ -165,7 +165,7 @@ public class BaseAnnotationEditor
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
     
-    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String help = getHelpDescription();

@@ -33,6 +33,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.DefaultComboBoxModel;
@@ -194,7 +195,7 @@ public abstract class AbstractDatabaseConnectionPanel
     // buttons
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-    m_ButtonNew = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonNew = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonNew.setToolTipText("Create new connection");
     panel.add(m_ButtonNew);
     m_ButtonNew.addActionListener((ActionEvent e) -> {
@@ -203,7 +204,7 @@ public abstract class AbstractDatabaseConnectionPanel
       m_ButtonNew.setEnabled(true);
     });
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Delete current connection");
     panel.add(m_ButtonRemove);
     m_ButtonRemove.addActionListener((ActionEvent e) -> {

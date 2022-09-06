@@ -27,7 +27,7 @@ import adams.flow.core.ActorHandler;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -465,19 +465,19 @@ public class Renderer
     }
     else {
       try {
-	icon = GUIHelper.getIcon(actor.getClass());
+	icon = ImageManager.getIcon(actor.getClass());
       }
       catch (Exception e) {
 	if (ActorUtils.isControlActor(actor))
-	  icon = GUIHelper.getIcon(ICON_PREFIX + "control.Unknown.gif");
+	  icon = ImageManager.getIcon(ICON_PREFIX + "control.Unknown.gif");
 	else if (ActorUtils.isStandalone(actor))
-	  icon = GUIHelper.getIcon(ICON_PREFIX + "standalone.Unknown.gif");
+	  icon = ImageManager.getIcon(ICON_PREFIX + "standalone.Unknown.gif");
 	else if (ActorUtils.isSource(actor))
-	  icon = GUIHelper.getIcon(ICON_PREFIX + "source.Unknown.gif");
+	  icon = ImageManager.getIcon(ICON_PREFIX + "source.Unknown.gif");
 	else if (ActorUtils.isTransformer(actor))
-	  icon = GUIHelper.getIcon(ICON_PREFIX + "transformer.Unknown.gif");
+	  icon = ImageManager.getIcon(ICON_PREFIX + "transformer.Unknown.gif");
 	else if (ActorUtils.isSink(actor))
-	  icon = GUIHelper.getIcon(ICON_PREFIX + "sink.Unknown.gif");
+	  icon = ImageManager.getIcon(ICON_PREFIX + "sink.Unknown.gif");
       }
 
       if (icon != null) {

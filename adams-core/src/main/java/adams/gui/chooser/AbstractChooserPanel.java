@@ -27,6 +27,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -839,12 +840,12 @@ public abstract class AbstractChooserPanel<T>
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed C"));
     menuitem.addActionListener(e -> copyToClipboard());
     result.add(menuitem);
 
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
     menuitem.setAccelerator(GUIHelper.getKeyStroke("control pressed V"));
     menuitem.setEnabled(isEditable() && ClipboardHelper.canPasteStringFromClipboard() && isValid(ClipboardHelper.pasteStringFromClipboard()));
     menuitem.addActionListener(e -> pasteFromClipboard());
@@ -852,7 +853,7 @@ public abstract class AbstractChooserPanel<T>
 
     result.addSeparator();
 
-    menuitem = new JMenuItem("Use default", GUIHelper.getIcon("revert.png"));
+    menuitem = new JMenuItem("Use default", ImageManager.getIcon("revert.png"));
     menuitem.addActionListener(e -> setDefault());
     result.add(menuitem);
 

@@ -31,6 +31,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.goe.GenericObjectEditorPanel;
 
 import javax.swing.BorderFactory;
@@ -150,7 +151,7 @@ public class OptionsConversionPanel
     m_TextAreaInput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaInput, BorderLayout.CENTER);
 
-    m_ButtonInputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonInputCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonInputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -159,7 +160,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputCopy);
 
-    m_ButtonInputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonInputPaste = new BaseButton("Paste", ImageManager.getIcon("paste.gif"));
     m_ButtonInputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -168,7 +169,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputPaste);
 
-    m_ButtonInputOpen = new BaseButton("Open...", GUIHelper.getIcon("open.gif"));
+    m_ButtonInputOpen = new BaseButton("Open...", ImageManager.getIcon("open.gif"));
     m_ButtonInputOpen.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -190,7 +191,7 @@ public class OptionsConversionPanel
     m_TextAreaOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaOutput, BorderLayout.CENTER);
 
-    m_ButtonOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonOutputCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonOutputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -199,7 +200,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputCopy);
 
-    m_ButtonOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonOutputPaste = new BaseButton("Paste", ImageManager.getIcon("paste.gif"));
     m_ButtonOutputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -208,7 +209,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputPaste);
 
-    m_ButtonOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonOutputSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonOutputSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -225,7 +226,7 @@ public class OptionsConversionPanel
     m_TextAreaCodeOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaCodeOutput, BorderLayout.CENTER);
 
-    m_ButtonCodeOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCodeOutputCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCodeOutputCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -234,7 +235,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaCodeOutput.addToButtonsPanel(m_ButtonCodeOutputCopy);
 
-    m_ButtonCodeOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonCodeOutputPaste = new BaseButton("Paste", ImageManager.getIcon("paste.gif"));
     m_ButtonCodeOutputPaste.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -243,7 +244,7 @@ public class OptionsConversionPanel
     });
     m_TextAreaCodeOutput.addToButtonsPanel(m_ButtonCodeOutputPaste);
 
-    m_ButtonCodeOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonCodeOutputSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonCodeOutputSave.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

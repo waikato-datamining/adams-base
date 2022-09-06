@@ -22,7 +22,7 @@ package adams.gui.visualization.timeseries.plotpopup;
 
 import adams.data.statistics.InformativeStatistic;
 import adams.data.timeseries.Timeseries;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.timeseries.TimeseriesContainer;
@@ -90,7 +90,7 @@ public class Statistics
     final List<TimeseriesContainer> 	visibleConts;
 
     visibleConts = panel.getTableModelContainers(true);
-    item = new JMenuItem("Statistics", GUIHelper.getIcon("statistics.png"));
+    item = new JMenuItem("Statistics", ImageManager.getIcon("statistics.png"));
     item.addActionListener((ActionEvent ae) -> {
       List<InformativeStatistic> stats = new ArrayList<>();
       for (TimeseriesContainer cont: visibleConts)

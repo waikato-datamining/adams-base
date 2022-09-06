@@ -100,7 +100,7 @@ public class SqlConnectionPanel
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     add(panelButtons, BorderLayout.EAST);
 
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent connections");
     m_ButtonHistory.addActionListener((ActionEvent e) -> showConnectionsPopup());
     panelButtons.add(m_ButtonHistory);

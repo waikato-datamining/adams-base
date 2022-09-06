@@ -42,6 +42,7 @@ import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.visualization.core.plot.Axis;
@@ -405,10 +406,10 @@ public class CompareTab
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     result.add(panelButtons, BorderLayout.EAST);
-    buttonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    buttonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     buttonCopy.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(textArea.getText()));
     panelButtons.add(buttonCopy);
-    buttonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    buttonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     buttonSave.addActionListener((ActionEvent e) -> {
       int retVal = m_FileChooserIDs.showSaveDialog(getOwner());
       if (retVal != TextFileChooser.APPROVE_OPTION)

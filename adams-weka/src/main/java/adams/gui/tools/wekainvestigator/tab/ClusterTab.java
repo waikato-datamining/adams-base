@@ -39,6 +39,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
@@ -422,7 +423,7 @@ public class ClusterTab
 	    menubar.add(menu);
 	    SendToActionUtils.addSendToSubmenu(sendTo, menu);
 	    menu.addSeparator();
-	    JMenuItem item = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+	    JMenuItem item = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
 	    item.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
 	    item.addActionListener((ActionEvent e) -> dialog.setVisible(false));
 	    menu.add(item);

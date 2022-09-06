@@ -28,6 +28,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.goe.popupmenu.CustomizerComparator;
 import adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer;
@@ -106,7 +107,7 @@ public class GenericObjectEditorPopupMenu
     else
       canChangeClass = getCanChangeClassInDialog(editor);
 
-    item = new JMenuItem("Use default", GUIHelper.getIcon("undo.gif"));
+    item = new JMenuItem("Use default", ImageManager.getIcon("undo.gif"));
     item.addActionListener((ActionEvent e) -> {
       try {
 	editor.setValue(editor.getValue().getClass().newInstance());
@@ -120,7 +121,7 @@ public class GenericObjectEditorPopupMenu
 
     // copy nested
     if (hasNested) {
-      item = new JMenuItem("Copy nested setup", GUIHelper.getIcon("copy.gif"));
+      item = new JMenuItem("Copy nested setup", ImageManager.getIcon("copy.gif"));
       item.addActionListener((ActionEvent e) ->
 	ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue())));
       add(item);
@@ -128,9 +129,9 @@ public class GenericObjectEditorPopupMenu
 
     // copy cmdline
     if (customStringRepresentation)
-      item = new JMenuItem("Copy " + itemText, GUIHelper.getEmptyIcon());
+      item = new JMenuItem("Copy " + itemText, ImageManager.getEmptyIcon());
     else
-      item = new JMenuItem("Copy command-line setup", GUIHelper.getEmptyIcon());
+      item = new JMenuItem("Copy command-line setup", ImageManager.getEmptyIcon());
     item.addActionListener((ActionEvent e) -> {
       StringBuilder content = new StringBuilder();
       Object current = editor.getValue();
@@ -160,14 +161,14 @@ public class GenericObjectEditorPopupMenu
     add(item);
 
     // paste
-    item = new JMenuItem("Paste " + itemText, GUIHelper.getIcon("paste.gif"));
+    item = new JMenuItem("Paste " + itemText, ImageManager.getIcon("paste.gif"));
     item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
     item.addActionListener((ActionEvent e) ->
       updateEditor(editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard()));
     add(item);
 
     // enter setup
-    item = new JMenuItem("Enter " + itemText + "...", GUIHelper.getIcon("input.png"));
+    item = new JMenuItem("Enter " + itemText + "...", ImageManager.getIcon("input.png"));
     item.addActionListener((ActionEvent e) -> {
       final BaseDialog dlg;
       if (GUIHelper.getParentDialog(comp) != null)

@@ -29,6 +29,7 @@ import adams.env.Environment;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -265,7 +266,7 @@ public class ExplorerExt
       menu.add(menuitem);
       menuitem.setMnemonic('o');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -291,7 +292,7 @@ public class ExplorerExt
       menu.addSeparator();
       menu.add(menuitem);
       menuitem.setMnemonic('U');
-      menuitem.setIcon(GUIHelper.getIcon("internet.gif"));
+      menuitem.setIcon(ImageManager.getIcon("internet.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  loadFromURL();
@@ -302,7 +303,7 @@ public class ExplorerExt
       menuitem = new JMenuItem("Load from database...");
       menu.add(menuitem);
       menuitem.setMnemonic('L');
-      menuitem.setIcon(GUIHelper.getIcon("database.gif"));
+      menuitem.setIcon(ImageManager.getIcon("database.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  loadFromDatabase();
@@ -313,7 +314,7 @@ public class ExplorerExt
       menuitem = new JMenuItem("Generate...");
       menu.add(menuitem);
       menuitem.setMnemonic('G');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  generate();
@@ -326,7 +327,7 @@ public class ExplorerExt
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  save();
@@ -339,7 +340,7 @@ public class ExplorerExt
       menu.add(menuitem);
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  saveAs();
@@ -352,7 +353,7 @@ public class ExplorerExt
       menu.addSeparator();
       menu.add(menuitem);
       menuitem.setMnemonic('c');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  loadClassifier();
@@ -364,7 +365,7 @@ public class ExplorerExt
       menuitem = new JMenuItem("Load clusterer model...");
       menu.add(menuitem);
       menuitem.setMnemonic('l');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  loadClusterer();
@@ -382,7 +383,7 @@ public class ExplorerExt
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();
@@ -404,7 +405,7 @@ public class ExplorerExt
       menuitem.setMnemonic('U');
       menuitem.setEnabled(canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  undo();
@@ -418,7 +419,7 @@ public class ExplorerExt
       menuitem.setMnemonic('D');
       menuitem.setEnabled(canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed E"));
-      menuitem.setIcon(GUIHelper.getIcon("report.gif"));
+      menuitem.setIcon(ImageManager.getIcon("report.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  edit();
@@ -442,7 +443,7 @@ public class ExplorerExt
       menuitem = new JMenuItem("Instance Explorer");
       menuitem.setMnemonic('I');
       menuitem.setEnabled(canUndo());
-      menuitem.setIcon(GUIHelper.getIcon("chart.gif"));
+      menuitem.setIcon(ImageManager.getIcon("chart.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  showInstanceExplorer();

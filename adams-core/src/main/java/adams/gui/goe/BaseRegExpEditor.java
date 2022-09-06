@@ -29,6 +29,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -100,7 +101,7 @@ public class BaseRegExpEditor
     label = new JLabel("Value");
     label.setDisplayedMnemonic('V');
     label.setLabelFor(m_TextValue);
-    m_ButtonHelp = new BaseButton(getHelpTitle(), GUIHelper.getIcon(getHelpIcon()));
+    m_ButtonHelp = new BaseButton(getHelpTitle(), ImageManager.getIcon(getHelpIcon()));
     m_ButtonHelp.setToolTipText(getHelpDescription());
     m_ButtonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

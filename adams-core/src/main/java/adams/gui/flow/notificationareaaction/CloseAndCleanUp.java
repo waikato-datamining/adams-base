@@ -20,7 +20,7 @@
 
 package adams.gui.flow.notificationareaaction;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import java.awt.event.ActionEvent;
 
@@ -40,7 +40,7 @@ public class CloseAndCleanUp
   public CloseAndCleanUp() {
     super();
     setName("Close/clean up");
-    setIcon(GUIHelper.getIcon("close_window.png"));
+    setIcon(ImageManager.getIcon("close_window.png"));
   }
 
   /**

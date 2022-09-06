@@ -48,6 +48,7 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.CustomPopupMenuProvider;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.SearchPanel;
@@ -688,12 +689,12 @@ public class ImagePanel
 	// undo/redo
 	if (getOwner().isUndoSupported() & getOwner().getUndo().isEnabled()) {
 	  undo = getOwner().getUndo();
-	  menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), GUIHelper.getIcon("undo.gif"));
+	  menuitem = new JMenuItem("Undo" + (undo.canUndo() ? (" - " + undo.peekUndoComment()) : ""), ImageManager.getIcon("undo.gif"));
 	  menuitem.setEnabled(undo.canUndo());
 	  menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().undo());
 	  menu.add(menuitem);
 
-	  menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), GUIHelper.getIcon("redo.gif"));
+	  menuitem = new JMenuItem("Redo" + (undo.canRedo() ? (" - " + undo.peekRedoComment()) : ""), ImageManager.getIcon("redo.gif"));
 	  menuitem.setEnabled(undo.canRedo());
 	  menuitem.addActionListener((ActionEvent ae) -> getOwner().getUndo().redo());
 	  menu.add(menuitem);
@@ -702,26 +703,26 @@ public class ImagePanel
 	}
 
 	// copy
-	menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+	menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getCurrentImage()));
 	menu.add(menuitem);
 
 	// export
-	menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+	menuitem = new JMenuItem("Export...", ImageManager.getIcon("save.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> export());
 	menu.addSeparator();
 	menu.add(menuitem);
 
 	// load report
-	menuitem = new JMenuItem("Load report...", GUIHelper.getEmptyIcon());
+	menuitem = new JMenuItem("Load report...", ImageManager.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> loadReport());
 	menu.add(menuitem);
 
 	// save report
-	menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
+	menuitem = new JMenuItem("Save report...", ImageManager.getEmptyIcon());
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> saveReport());
 	menu.add(menuitem);
@@ -729,13 +730,13 @@ public class ImagePanel
 	menu.addSeparator();
 
 	// add overlay
-	menuitem = new JMenuItem("Add overlay...", GUIHelper.getIcon("add.gif"));
+	menuitem = new JMenuItem("Add overlay...", ImageManager.getIcon("add.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> selectImageOverlay());
 	menu.add(menuitem);
 
 	// remove overlays
-	menuitem = new JMenuItem("Remove overlays", GUIHelper.getIcon("remove.gif"));
+	menuitem = new JMenuItem("Remove overlays", ImageManager.getIcon("remove.gif"));
 	menuitem.setEnabled(getCurrentImage() != null);
 	menuitem.addActionListener((ActionEvent ae) -> clearImageOverlays());
 	menu.add(menuitem);
@@ -743,7 +744,7 @@ public class ImagePanel
 	menu.addSeparator();
 
 	// show side pane
-	menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
+	menuitem = new JCheckBoxMenuItem("Show side pane", ImageManager.getIcon("properties.gif"));
 	menuitem.setSelected(!getOwner().getSplitPane().isRightComponentHidden());
 	menuitem.addActionListener((ActionEvent ae) ->
 	  getOwner().getSplitPane().setRightComponentHidden(
@@ -752,7 +753,7 @@ public class ImagePanel
 
 	// zoom
 	submenu = new JMenu("Zoom");
-	submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+	submenu.setIcon(ImageManager.getIcon("glasses.gif"));
 	menu.add(submenu);
 	zooms = new int[]{
 	  -100,

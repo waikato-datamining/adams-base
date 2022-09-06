@@ -30,6 +30,7 @@ import adams.gui.chooser.SpreadSheetFileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
@@ -101,7 +102,7 @@ public class FileSource
       m_PanelInput.setUseSaveDialog(false);
       panelParams.addParameter("Input", m_PanelInput);
 
-      m_ButtonLoad = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonLoad = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonLoad.addActionListener((ActionEvent e) -> load());
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(m_ButtonLoad);

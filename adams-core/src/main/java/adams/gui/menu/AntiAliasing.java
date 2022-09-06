@@ -25,6 +25,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -72,7 +73,7 @@ public class AntiAliasing
     JRadioButtonMenuItem	menuitem;
 
     result = new JMenu(getTitle());
-    result.setIcon(GUIHelper.getIcon(getIconName()));
+    result.setIcon(ImageManager.getIcon(getIconName()));
 
     group    = new ButtonGroup();
     menuitem = new JRadioButtonMenuItem("Enable");

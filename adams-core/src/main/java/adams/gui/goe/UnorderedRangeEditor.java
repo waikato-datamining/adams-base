@@ -26,6 +26,7 @@ import adams.core.option.parsing.UnorderedRangeParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
@@ -306,7 +307,7 @@ public class UnorderedRangeEditor
       m_ButtonHelp.setVisible(getHelpDescription() != null);
       m_ButtonHelp.setToolTipText(createTipText(getHelpDescription()));
       if (getHelpIcon() != null)
-	m_ButtonHelp.setIcon(GUIHelper.getIcon(getHelpIcon()));
+	m_ButtonHelp.setIcon(ImageManager.getIcon(getHelpIcon()));
       else
 	m_ButtonHelp.setIcon(null);
       m_ButtonHelp.setText(getHelpTitle());

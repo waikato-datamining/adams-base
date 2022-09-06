@@ -31,6 +31,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
@@ -169,7 +170,7 @@ public class AbstractAdvancedScriptEditor
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
     if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+      buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
       buttonHelp.setMnemonic('H');
       buttonHelp.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -226,7 +227,7 @@ public class AbstractAdvancedScriptEditor
     
     // cut
     menuitem = new JMenuItem("Cut");
-    menuitem.setIcon(GUIHelper.getIcon("cut.gif"));
+    menuitem.setIcon(ImageManager.getIcon("cut.gif"));
     menuitem.setEnabled(m_TextStatement.canCut());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -238,7 +239,7 @@ public class AbstractAdvancedScriptEditor
     
     // copy
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_TextStatement.canCopy());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -250,7 +251,7 @@ public class AbstractAdvancedScriptEditor
     
     // paste
     menuitem = new JMenuItem("Paste");
-    menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+    menuitem.setIcon(ImageManager.getIcon("paste.gif"));
     menuitem.setEnabled(m_TextStatement.canPaste());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -262,7 +263,7 @@ public class AbstractAdvancedScriptEditor
     
     // undo
     menuitem = new JMenuItem("Undo");
-    menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("undo.gif"));
     menuitem.setEnabled(m_TextStatement.canUndo());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -275,7 +276,7 @@ public class AbstractAdvancedScriptEditor
     
     // redo
     menuitem = new JMenuItem("Redo");
-    menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+    menuitem.setIcon(ImageManager.getIcon("redo.gif"));
     menuitem.setEnabled(m_TextStatement.canRedo());
     menuitem.addActionListener(new ActionListener() {
       @Override
@@ -287,7 +288,7 @@ public class AbstractAdvancedScriptEditor
 
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(GUIHelper.getIcon("linewrap.png"));
+    menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
     menuitem.setSelected(m_TextStatement.getLineWrap());
     menuitem.addActionListener(new ActionListener() {
       @Override

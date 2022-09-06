@@ -158,7 +158,7 @@ public class ConsolePanel
       model.setValue(props.getInteger("LinesDefault", 10000));
       panel.add(m_SpinnerMaxLines);
 
-      m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+      m_ButtonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
       m_ButtonClear.setMnemonic('l');
       m_ButtonClear.addActionListener((ActionEvent e) -> m_TextArea.clear());
       panel.add(m_ButtonClear);
@@ -492,7 +492,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().clear();
@@ -504,7 +504,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
         for (int i = 0; i < m_TabbedPane.getTabCount(); i++)
           ((OutputPanel) m_TabbedPane.getComponentAt(i)).clear();
@@ -516,7 +516,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().saveAs();
@@ -533,7 +533,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
       m_MenuItemExit = menuitem;
 
@@ -547,7 +547,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
-      menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+      menuitem.setIcon(ImageManager.getIcon("copy.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().copy();
@@ -560,7 +560,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('L');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed L"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().setLineWrap(!getCurrentPanel().getLineWrap());
@@ -573,7 +573,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
-      menuitem.setIcon(GUIHelper.getIcon("find.gif"));
+      menuitem.setIcon(ImageManager.getIcon("find.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().find();
@@ -585,7 +585,7 @@ public class ConsolePanel
       menu.add(menuitem);
       menuitem.setMnemonic('N');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed F"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
         if (getCurrentPanel() != null)
           getCurrentPanel().findNext();

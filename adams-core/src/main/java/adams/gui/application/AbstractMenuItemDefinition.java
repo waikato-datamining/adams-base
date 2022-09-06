@@ -24,7 +24,7 @@ package adams.gui.application;
 import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.option.OptionUtils;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -145,9 +145,9 @@ public abstract class AbstractMenuItemDefinition
 
     if (getIconName() != null) {
       if (getIconName().indexOf("/") > -1)
-        result = GUIHelper.getExternalIcon(getIconName());
+        result = ImageManager.getExternalIcon(getIconName());
       else
-        result = GUIHelper.getIcon(getIconName());
+        result = ImageManager.getIcon(getIconName());
     }
 
     return result;

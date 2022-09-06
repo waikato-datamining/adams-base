@@ -25,7 +25,7 @@ import adams.core.CleanUpHandler;
 import adams.core.logging.Logger;
 import adams.db.DatabaseConnectionHandler;
 import adams.gui.core.BaseFrame;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.UISettings;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -153,9 +153,9 @@ public class ChildFrame
       setIconImage(getParentFrame().getIconImage());
     if (m_IconName != null) {
       if (m_IconName.contains("/"))
-        icon = GUIHelper.getExternalIcon(m_IconName);
+        icon = ImageManager.getExternalIcon(m_IconName);
       else
-        icon = GUIHelper.getIcon(m_IconName);
+        icon = ImageManager.getIcon(m_IconName);
       if (icon != null)
         setIconImage(icon.getImage());
     }

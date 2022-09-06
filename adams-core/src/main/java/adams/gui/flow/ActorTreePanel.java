@@ -27,6 +27,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.dotnotationtree.AbstractInfoNode;
@@ -155,7 +156,7 @@ public class ActorTreePanel
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke("control C"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -166,7 +167,7 @@ public class ActorTreePanel
 
     result.addSeparator();
 
-    menuitem = new JMenuItem("Help...", GUIHelper.getIcon("help.gif"));
+    menuitem = new JMenuItem("Help...", ImageManager.getIcon("help.gif"));
     menuitem.setAccelerator(KeyStroke.getKeyStroke("F1"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

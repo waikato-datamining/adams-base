@@ -27,7 +27,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.event.SpreadSheetProcessorEvent;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
@@ -98,7 +98,7 @@ public class ClipboardTarget
       m_PanelWriter = new GenericObjectEditorPanel(SpreadSheetWriter.class, writer, false);
       panelParams.addParameter("Writer", m_PanelWriter);
 
-      m_ButtonCopy = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonCopy = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonCopy.addActionListener((ActionEvent e) -> copy());
       panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(m_ButtonCopy);

@@ -24,7 +24,7 @@ import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.sink.DisplayPanelManager;
 import adams.flow.sink.DisplayPanelProvider;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
 import adams.gui.flow.tree.Node;
@@ -116,7 +116,7 @@ public class DisplayPanelManagerEnclosure
     JMenuItem 	result;
 
     result = new JMenuItem(DisplayPanelManager.class.getSimpleName());
-    result.setIcon(GUIHelper.getIcon(DisplayPanelManager.class));
+    result.setIcon(ImageManager.getIcon(DisplayPanelManager.class));
     result.addActionListener((ActionEvent e) -> encloseInDisplayPanelManager(state));
 
     return result;

@@ -37,7 +37,7 @@ import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -145,7 +145,7 @@ public class SqlMetaDataPanel
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelTop.add(panelButtons, BorderLayout.SOUTH);
 
-    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
     m_ButtonExecute.setToolTipText("Executes the query (Alt+X)");
     panelButtons.add(m_ButtonExecute);

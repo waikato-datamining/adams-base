@@ -22,6 +22,7 @@ package adams.gui.dialog;
 import adams.gui.chooser.FontChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.RecentFilesWithEncodingHandler;
@@ -414,7 +415,7 @@ public class TextPanel
       result.add(menu);
 
       // File/New
-      menuitem = new JMenuItem("New", GUIHelper.getIcon("new.gif"));
+      menuitem = new JMenuItem("New", ImageManager.getIcon("new.gif"));
       menuitem.setMnemonic('N');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.setContent(""));
@@ -423,7 +424,7 @@ public class TextPanel
 
       if (m_CanOpenFiles) {
 	// File/Open
-	menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
+	menuitem = new JMenuItem("Open...", ImageManager.getIcon("open.gif"));
 	menuitem.setMnemonic('O');
 	menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
 	menuitem.addActionListener((ActionEvent e) -> {
@@ -450,7 +451,7 @@ public class TextPanel
 	m_MenuFileLoadRecent = submenu;
 
 	// File/Save
-	menuitem = new JMenuItem("Save", GUIHelper.getIcon("save.gif"));
+	menuitem = new JMenuItem("Save", ImageManager.getIcon("save.gif"));
 	menuitem.setMnemonic('a');
 	menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
 	menuitem.addActionListener((ActionEvent e) -> m_TextPanel.save());
@@ -461,7 +462,7 @@ public class TextPanel
       // File/Save as
       menuitem = new JMenuItem("Save as...");
       if (!m_CanOpenFiles)
-	menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+	menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.saveAs());
@@ -474,7 +475,7 @@ public class TextPanel
 	menu.addSeparator();
 
       // File/Close
-      menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener((ActionEvent e) -> close());
@@ -491,7 +492,7 @@ public class TextPanel
       menuitem.setMnemonic('U');
       menuitem.setEnabled(m_TextPanel.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.undo());
       menu.add(menuitem);
       m_MenuItemEditUndo = menuitem;
@@ -500,13 +501,13 @@ public class TextPanel
       menuitem.setMnemonic('R');
       menuitem.setEnabled(m_TextPanel.canUndo());
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-      menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("redo.gif"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.redo());
       menu.add(menuitem);
       m_MenuItemEditRedo = menuitem;
 
       // Edit/Cut
-      menuitem = new JMenuItem("Cut", GUIHelper.getIcon("cut.gif"));
+      menuitem = new JMenuItem("Cut", ImageManager.getIcon("cut.gif"));
       menuitem.setMnemonic('u');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed X"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.cut());
@@ -515,7 +516,7 @@ public class TextPanel
       m_MenuItemEditCut = menuitem;
 
       // Edit/Copy
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.copy());
@@ -523,7 +524,7 @@ public class TextPanel
       m_MenuItemEditCopy = menuitem;
 
       // Edit/Paste
-      menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+      menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
       menuitem.setMnemonic('P');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed V"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.paste());
@@ -531,7 +532,7 @@ public class TextPanel
       m_MenuItemEditPaste = menuitem;
 
       // Edit/Select all
-      menuitem = new JMenuItem("Select all", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Select all", ImageManager.getEmptyIcon());
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed A"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.selectAll());
@@ -540,7 +541,7 @@ public class TextPanel
       m_MenuItemEditSelectAll = menuitem;
 
       // Edit/Find
-      menuitem = new JMenuItem("Find", GUIHelper.getIcon("find.gif"));
+      menuitem = new JMenuItem("Find", ImageManager.getIcon("find.gif"));
       menuitem.setMnemonic('F');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed F"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.find());
@@ -549,7 +550,7 @@ public class TextPanel
       m_MenuItemEditFind = menuitem;
 
       // Edit/Find next
-      menuitem = new JMenuItem("Find next", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Find next", ImageManager.getEmptyIcon());
       menuitem.setMnemonic('n');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed F"));
       menuitem.addActionListener((ActionEvent e) -> m_TextPanel.findNext());
@@ -565,7 +566,7 @@ public class TextPanel
       // View/Tab size
       menuitem = new JMenuItem("Tab size...");
       menuitem.setMnemonic('T');
-      menuitem.setIcon(GUIHelper.getIcon("text_indent.png"));
+      menuitem.setIcon(ImageManager.getIcon("text_indent.png"));
       menuitem.addActionListener((ActionEvent e) -> {
 	String size = GUIHelper.showInputDialog(
 	  TextPanel.this, "Please enter new tab size (> 0)", "" + m_TextPanel.getTabSize());
@@ -587,7 +588,7 @@ public class TextPanel
       // View/Select font
       menuitem = new JMenuItem("Font...");
       menuitem.setMnemonic('f');
-      menuitem.setIcon(GUIHelper.getIcon("font.png"));
+      menuitem.setIcon(ImageManager.getIcon("font.png"));
       menuitem.addActionListener((ActionEvent e) -> {
 	FontChooser dialog;
 	if (getParentDialog() != null)
@@ -606,7 +607,7 @@ public class TextPanel
       // View/Line wrap
       menuitem = new JCheckBoxMenuItem("Line wrap");
       menuitem.setMnemonic('L');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.setSelected(getLineWrap());
       menuitem.addActionListener((ActionEvent e) ->
 	  m_TextPanel.setLineWrap(m_MenuItemViewLineWrap.isSelected())

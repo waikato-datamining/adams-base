@@ -26,7 +26,7 @@ import adams.flow.core.AbstractDisplay;
 import adams.flow.core.ControlActor;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -199,7 +199,7 @@ public class MissionControl
       panel = new JPanel(new GridLayout(1, 3));
       add(panel, BorderLayout.CENTER);
 
-      m_ButtonPause = new BaseButton(GUIHelper.getIcon("pause.gif"));
+      m_ButtonPause = new BaseButton(ImageManager.getIcon("pause.gif"));
       m_ButtonPause.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -211,7 +211,7 @@ public class MissionControl
       });
       panel.add(m_ButtonPause);
 
-      m_ButtonResume = new BaseButton(GUIHelper.getIcon("resume.gif"));
+      m_ButtonResume = new BaseButton(ImageManager.getIcon("resume.gif"));
       m_ButtonResume.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -223,7 +223,7 @@ public class MissionControl
       });
       panel.add(m_ButtonResume);
 
-      m_ButtonStop = new BaseButton(GUIHelper.getIcon("stop_blue.gif"));
+      m_ButtonStop = new BaseButton(ImageManager.getIcon("stop_blue.gif"));
       m_ButtonStop.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -29,6 +29,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.TitleGenerator;
@@ -179,7 +180,7 @@ public class FileMonitorPanel
       menu.setMnemonic('F');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
-      menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
+      menuitem = new JMenuItem("Open...", ImageManager.getIcon("open.gif"));
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
       menuitem.addActionListener((ActionEvent e) -> open());
@@ -202,7 +203,7 @@ public class FileMonitorPanel
 
       menu.addSeparator();
 
-      menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener((ActionEvent e) -> close());

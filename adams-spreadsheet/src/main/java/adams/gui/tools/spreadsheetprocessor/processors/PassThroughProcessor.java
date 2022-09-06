@@ -23,7 +23,7 @@ package adams.gui.tools.spreadsheetprocessor.processors;
 import adams.core.MessageCollection;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseButton;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
 
@@ -68,7 +68,7 @@ public class PassThroughProcessor
   public Component getWidget() {
     if (m_Panel == null) {
       m_Panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-      m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
       m_ButtonExecute.setToolTipText("Passes through the data (Alt+X)");
       m_Panel.add(m_ButtonExecute);

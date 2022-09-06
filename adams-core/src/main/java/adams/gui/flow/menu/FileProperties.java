@@ -25,7 +25,7 @@ import adams.flow.core.ActorStatistic;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextField;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -116,7 +116,7 @@ public class FileProperties
       size = ByteFormat.toBestFitBytes(m_State.getCurrentFile().length(), 1);
     else
       size = "N/A";
-    buttonStats = new BaseButton("Display", GUIHelper.getIcon("statistics.png"));
+    buttonStats = new BaseButton("Display", ImageManager.getIcon("statistics.png"));
     buttonStats.addActionListener((ActionEvent ae) -> showStatistics());
 
     params = new ParameterPanel();
@@ -128,7 +128,7 @@ public class FileProperties
 	if (MouseUtils.isRightClick(e)) {
 	  e.consume();
 	  BasePopupMenu menu = new BasePopupMenu();
-	  JMenuItem menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+	  JMenuItem menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
 	  menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(textFile.getText()));
 	  menu.add(menuitem);
 	  menu.showAbsolute(textFile, e);

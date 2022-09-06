@@ -21,7 +21,7 @@
 package adams.gui.visualization.segmentation.tool;
 
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -68,7 +68,7 @@ public class Pointer
    */
   @Override
   public Icon getIcon() {
-    return GUIHelper.getIcon("cursor.png");
+    return ImageManager.getIcon("cursor.png");
   }
 
   /**

@@ -34,6 +34,7 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 
@@ -571,7 +572,7 @@ public class PlaceholderManagementPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> save());
       m_MenuItemSave = menuitem;
 
@@ -579,7 +580,7 @@ public class PlaceholderManagementPanel
       menuitem = new JMenuItem("Revert");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("revert.png"));
+      menuitem.setIcon(ImageManager.getIcon("revert.png"));
       menuitem.addActionListener((ActionEvent e) -> revert());
       m_MenuItemRevert = menuitem;
 
@@ -589,7 +590,7 @@ public class PlaceholderManagementPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> close());
       m_MenuItemClose = menuitem;
 

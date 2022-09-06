@@ -19,12 +19,11 @@
  */
 package adams.gui.action;
 
-import java.awt.Dialog;
+import adams.core.Properties;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
-
-import adams.core.Properties;
-import adams.gui.core.GUIHelper;
+import java.awt.Dialog;
 
 /**
  * Ancestor for actions that use a Properties file as basis for shortcuts,
@@ -64,7 +63,7 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
     
     icon = getProperties().getProperty(getClass().getName() + "-Icon");
     if (icon != null)
-      setIcon(GUIHelper.getIcon(icon));
+      setIcon(ImageManager.getIcon(icon));
   }
   
   /**

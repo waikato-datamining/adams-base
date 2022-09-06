@@ -28,6 +28,7 @@ import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SearchPanel;
@@ -198,7 +199,7 @@ public class SpreadSheetPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -217,7 +218,7 @@ public class SpreadSheetPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -242,7 +243,7 @@ public class SpreadSheetPanel
       menu.add(menuitem);
       menuitem.setMnemonic('d');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed D"));
-      menuitem.setIcon(GUIHelper.getIcon("decimal-place.png"));
+      menuitem.setIcon(ImageManager.getIcon("decimal-place.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -255,7 +256,7 @@ public class SpreadSheetPanel
       menuitem = new JMenuItem("Rendering...");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -268,7 +269,7 @@ public class SpreadSheetPanel
       menuitem = new JCheckBoxMenuItem("Show formulas");
       menu.add(menuitem);
       menuitem.setMnemonic('f');
-      menuitem.setIcon(GUIHelper.getIcon("formula.png"));
+      menuitem.setIcon(ImageManager.getIcon("formula.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {

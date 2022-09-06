@@ -40,6 +40,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RecentFilesWithEncodingHandler;
@@ -765,7 +766,7 @@ public class ConsoleOutputAnalyzerPanel
     if (col == 1) {
       // search
       menuitem = new JMenuItem("Search for origin '" + Shortening.shortenEnd(value.toString(), 15) + "'");
-      menuitem.setIcon(GUIHelper.getIcon("find.gif"));
+      menuitem.setIcon(ImageManager.getIcon("find.gif"));
       menuitem.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -780,7 +781,7 @@ public class ConsoleOutputAnalyzerPanel
     else if (col == 2) {
       // search
       menuitem = new JMenuItem("Search for type '" + value.toString() + "'");
-      menuitem.setIcon(GUIHelper.getIcon("find.gif"));
+      menuitem.setIcon(ImageManager.getIcon("find.gif"));
       menuitem.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -794,7 +795,7 @@ public class ConsoleOutputAnalyzerPanel
 
     // copy
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -937,7 +938,7 @@ public class ConsoleOutputAnalyzerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -967,7 +968,7 @@ public class ConsoleOutputAnalyzerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -986,7 +987,7 @@ public class ConsoleOutputAnalyzerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {

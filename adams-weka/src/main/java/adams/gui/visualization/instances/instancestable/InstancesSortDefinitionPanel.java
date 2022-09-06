@@ -8,7 +8,7 @@ package adams.gui.visualization.instances.instancestable;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.InstancesSortSetupEvent;
 import adams.gui.event.InstancesSortSetupEvent.EventType;
 
@@ -97,7 +97,7 @@ public class InstancesSortDefinitionPanel
     add(label);
     add(m_ComboBoxSorting);
 
-    m_ButtonMoveUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonMoveUp = new BaseButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonMoveUp.setToolTipText("Click to move condition up");
     m_ButtonMoveUp.addActionListener(new ActionListener() {
       @Override
@@ -107,7 +107,7 @@ public class InstancesSortDefinitionPanel
     });
     add(m_ButtonMoveUp);
 
-    m_ButtonMoveDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonMoveDown = new BaseButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonMoveDown.setToolTipText("Click to move condition down");
     m_ButtonMoveDown.addActionListener(new ActionListener() {
       @Override
@@ -117,7 +117,7 @@ public class InstancesSortDefinitionPanel
     });
     add(m_ButtonMoveDown);
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Click to remove condition");
     m_ButtonRemove.addActionListener(new ActionListener() {
       @Override

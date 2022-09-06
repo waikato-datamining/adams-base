@@ -24,7 +24,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
@@ -94,7 +94,7 @@ public class SwitchLabel
    */
   @Override
   public Icon getIcon() {
-    return GUIHelper.getIcon("switch_label.png");
+    return ImageManager.getIcon("switch_label.png");
   }
 
   /**

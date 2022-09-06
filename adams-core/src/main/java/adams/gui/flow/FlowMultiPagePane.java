@@ -25,7 +25,7 @@ import adams.core.classmanager.ClassManager;
 import adams.flow.core.Actor;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MultiPagePane;
 import adams.gui.flow.multipageaction.AbstractMultiPageMenuItem;
 import adams.gui.flow.tabhandler.AbstractTabHandler;
@@ -633,13 +633,13 @@ public class FlowMultiPagePane
     indices = getSelectedIndices();
 
     if (isActiveFlowAt(index)) {
-      menuitem = new JMenuItem("Unset active", GUIHelper.getIcon("flow_unsetactive.gif"));
+      menuitem = new JMenuItem("Unset active", ImageManager.getIcon("flow_unsetactive.gif"));
       menuitem.setEnabled(indices.length == 1);
       menuitem.addActionListener((ActionEvent ae) -> unsetActiveFlow());
       result.add(menuitem);
     }
     else {
-      menuitem = new JMenuItem("Set active", GUIHelper.getIcon("flow_setactive.gif"));
+      menuitem = new JMenuItem("Set active", ImageManager.getIcon("flow_setactive.gif"));
       menuitem.setEnabled(indices.length == 1);
       menuitem.addActionListener((ActionEvent ae) -> setActiveFlowAt(index));
       result.add(menuitem);

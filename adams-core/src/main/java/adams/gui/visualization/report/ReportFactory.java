@@ -48,6 +48,7 @@ import adams.gui.core.BaseTextField;
 import adams.gui.core.CustomSearchTableModel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -1615,7 +1616,7 @@ public class ReportFactory {
       });
       panel.add(m_ButtonOK);
 
-      m_ButtonCancel = new BaseButton("Cancel", GUIHelper.getIcon("exit.png"));
+      m_ButtonCancel = new BaseButton("Cancel", ImageManager.getIcon("exit.png"));
       m_ButtonCancel.setMnemonic('a');
       m_ButtonCancel.addActionListener(e -> m_Self.setVisible(false));
       panel.add(m_ButtonCancel);
@@ -1861,10 +1862,10 @@ public class ReportFactory {
           textArea.setCaretPosition(0);
 	}
       });
-      button = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+      button = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
       button.addActionListener(e -> ClipboardHelper.copyToClipboard(textArea.getText()));
       textArea.addToButtonsPanel(button);
-      button = new BaseButton("Save as...", GUIHelper.getIcon("save.gif"));
+      button = new BaseButton("Save as...", ImageManager.getIcon("save.gif"));
       button.addActionListener(e -> {
         TextFileChooser fileChooser = new TextFileChooser();
         int retVal = fileChooser.showSaveDialog(result);

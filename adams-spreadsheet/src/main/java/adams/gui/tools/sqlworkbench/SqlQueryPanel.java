@@ -37,7 +37,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
@@ -148,7 +148,7 @@ public class SqlQueryPanel
       }
     });
 
-    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
     m_ButtonExecute.setToolTipText("Executes the query (Alt+X)");
     m_PanelQuery.getButtonsLeft().add(m_ButtonExecute);

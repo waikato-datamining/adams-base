@@ -22,6 +22,7 @@ package adams.flow.sink.sendnotification;
 
 import adams.core.QuickInfoHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
@@ -126,7 +127,7 @@ public class MessageBox
       dlg = ApprovalDialog.getDialog(null, m_Block);
       dlg.setTitle("Notification");
       dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
-      dlg.setIconImage(GUIHelper.getIcon("information.png").getImage());
+      dlg.setIconImage(ImageManager.getIcon("information.png").getImage());
       editor = new TextPanel();
       editor.setTitle("Notification");
       editor.setEditable(false);

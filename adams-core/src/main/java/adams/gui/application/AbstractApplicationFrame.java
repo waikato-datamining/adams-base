@@ -46,6 +46,7 @@ import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.core.AbstractFrameWithOptionHandling;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.UISettings;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
@@ -1085,12 +1086,12 @@ public abstract class AbstractApplicationFrame
 
     // minimize + restore + separator
     menuitem = new JMenuItem("Minimize");
-    menuitem.setIcon(GUIHelper.getIcon("minimize.png"));
+    menuitem.setIcon(ImageManager.getIcon("minimize.png"));
     menuitem.addActionListener((ActionEvent evt) -> minimizeWindows());
     m_MenuWindows.add(menuitem);
 
     menuitem = new JMenuItem("Restore");
-    menuitem.setIcon(GUIHelper.getIcon("maximize.png"));
+    menuitem.setIcon(ImageManager.getIcon("maximize.png"));
     menuitem.addActionListener((ActionEvent evt) -> restoreWindows());
     m_MenuWindows.add(menuitem);
 
@@ -1123,7 +1124,7 @@ public abstract class AbstractApplicationFrame
 	}
       }
       if (useEmpty)
-	menuitem.setIcon(GUIHelper.getEmptyIcon());
+	menuitem.setIcon(ImageManager.getEmptyIcon());
       insertMenuItem(m_MenuWindows, menuitem, startIndex);
       menuitem.setActionCommand(Integer.toString(child.hashCode()));
       menuitem.addActionListener((ActionEvent evt) -> {

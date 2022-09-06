@@ -20,13 +20,12 @@
 
 package adams.gui.visualization.debug.objecttree;
 
-import java.awt.Component;
+import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
-
-import adams.gui.core.GUIHelper;
+import java.awt.Component;
 
 /**
  * A specialized renderer for the tree elements.
@@ -61,11 +60,11 @@ public class Renderer
   public Renderer() {
     super();
 
-    m_IconCollapsed    = GUIHelper.getIcon("folder_closed.png");
-    m_IconExpanded     = GUIHelper.getIcon("folder_open.png");
-    m_IconArrayElement = GUIHelper.getIcon("brackets.gif");
-    m_IconHash         = GUIHelper.getIcon("hash.gif");
-    m_IconObject       = GUIHelper.getIcon("object.gif");
+    m_IconCollapsed    = ImageManager.getIcon("folder_closed.png");
+    m_IconExpanded     = ImageManager.getIcon("folder_open.png");
+    m_IconArrayElement = ImageManager.getIcon("brackets.gif");
+    m_IconHash         = ImageManager.getIcon("hash.gif");
+    m_IconObject       = ImageManager.getIcon("object.gif");
   }
 
   /**

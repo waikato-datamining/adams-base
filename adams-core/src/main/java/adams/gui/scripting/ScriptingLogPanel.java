@@ -32,6 +32,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.ScriptingEvent;
 import adams.gui.event.ScriptingListener;
 
@@ -118,7 +119,7 @@ public class ScriptingLogPanel
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(panel, BorderLayout.SOUTH);
 
-    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
     m_ButtonClear.setMnemonic('e');
     m_ButtonClear.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -127,7 +128,7 @@ public class ScriptingLogPanel
     });
     panel.add(m_ButtonClear);
 
-    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonSave.setMnemonic('s');
     m_ButtonSave.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -136,7 +137,7 @@ public class ScriptingLogPanel
     });
     panel.add(m_ButtonSave);
 
-    m_ButtonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
+    m_ButtonClose = new BaseButton("Close", ImageManager.getIcon("exit.png"));
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

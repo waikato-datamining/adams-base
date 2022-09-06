@@ -57,7 +57,7 @@ public class Cursors {
    */
   protected static synchronized BufferedImage getPointerImage() {
     if (m_Pointer == null)
-      m_Pointer = GUIHelper.getImage("cursor.png");
+      m_Pointer = ImageManager.getImage("cursor.png");
     return m_Pointer;
   }
 
@@ -506,7 +506,7 @@ public class Cursors {
 
     name = iconName + "-" + x + "-" + y + "-" + scale;
     if (!m_Cache.containsKey(name)) {
-      icon = GUIHelper.getIcon(iconName);
+      icon = ImageManager.getIcon(iconName);
       if (icon == null)
         throw new IllegalStateException("Failed to load icon: " + iconName);
 

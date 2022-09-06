@@ -28,7 +28,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.visualization.image.ImageOverlay;
@@ -170,7 +170,7 @@ public class PixelSelectorPanel
     
     m_ButtonOK = new BaseButton("Accept");
     m_ButtonOK.setMnemonic('A');
-    m_ButtonOK.setIcon(GUIHelper.getIcon("accept.png"));
+    m_ButtonOK.setIcon(ImageManager.getIcon("accept.png"));
     m_ButtonOK.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	closeDialog(APPROVE_OPTION);
@@ -180,7 +180,7 @@ public class PixelSelectorPanel
     
     m_ButtonCancel = new BaseButton("Cancel");
     m_ButtonCancel.setMnemonic('C');
-    m_ButtonCancel.setIcon(GUIHelper.getIcon("delete.gif"));
+    m_ButtonCancel.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonCancel.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	closeDialog(CANCEL_OPTION);
@@ -483,7 +483,7 @@ public class PixelSelectorPanel
       // Dialog/Cancel
       menuitem = new JMenuItem("Cancel");
       menuitem.setMnemonic('C');
-      menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+      menuitem.setIcon(ImageManager.getIcon("delete.gif"));
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           closeDialog(CANCEL_OPTION);
@@ -494,7 +494,7 @@ public class PixelSelectorPanel
       // Dialog/Accept
       menuitem = new JMenuItem("Accept");
       menuitem.setMnemonic('A');
-      menuitem.setIcon(GUIHelper.getIcon("accept.png"));
+      menuitem.setIcon(ImageManager.getIcon("accept.png"));
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           closeDialog(APPROVE_OPTION);

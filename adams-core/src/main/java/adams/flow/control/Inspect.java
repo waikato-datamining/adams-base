@@ -30,6 +30,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -497,7 +498,7 @@ public class Inspect
     m_ButtonSkip = new BaseButton(GUIHelper.stripMnemonic(m_LabelSkip));
     if (GUIHelper.hasMnemonic(m_LabelSkip))
       m_ButtonSkip.setMnemonic(GUIHelper.getMnemonic(m_LabelSkip));
-    m_ButtonSkip.setIcon(GUIHelper.getIcon("delete.gif"));
+    m_ButtonSkip.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonSkip.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -513,7 +514,7 @@ public class Inspect
     m_ButtonAccept = new BaseButton(GUIHelper.stripMnemonic(m_LabelAccept));
     if (GUIHelper.hasMnemonic(m_LabelAccept))
       m_ButtonAccept.setMnemonic(GUIHelper.getMnemonic(m_LabelAccept));
-    m_ButtonAccept.setIcon(GUIHelper.getIcon("accept.png"));
+    m_ButtonAccept.setIcon(ImageManager.getIcon("accept.png"));
     m_ButtonAccept.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

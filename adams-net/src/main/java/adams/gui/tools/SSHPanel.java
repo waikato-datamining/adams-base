@@ -35,6 +35,7 @@ import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelShell;
@@ -319,7 +320,7 @@ public class SSHPanel
     m_ComboBoxAuthenticationType.setSelectedIndex(0);
 
     // output
-    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
     m_ButtonClear.setMnemonic('l');
     m_ButtonClear.addActionListener(new ActionListener() {
       @Override
@@ -327,7 +328,7 @@ public class SSHPanel
 	clear();
       }
     });
-    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setMnemonic('C');
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
@@ -382,7 +383,7 @@ public class SSHPanel
     bottomPanel.add(label);
     bottomPanel.add(m_TextCommand);
     
-    m_ButtonCommand = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonCommand = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonCommand.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

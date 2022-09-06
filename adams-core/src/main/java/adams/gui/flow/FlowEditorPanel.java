@@ -44,6 +44,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseStatusBar.PopupMenuCustomizer;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
@@ -1075,7 +1076,7 @@ public class FlowEditorPanel
       submenu = new JMenu("New");
       menu.add(submenu);
       submenu.setMnemonic('N');
-      submenu.setIcon(GUIHelper.getIcon("new.gif"));
+      submenu.setIcon(ImageManager.getIcon("new.gif"));
       m_MenuFileNew = submenu;
       submenu.add(m_ActionFileNewFromClipboard);
       submenu.addSeparator();
@@ -2191,7 +2192,7 @@ public class FlowEditorPanel
     JMenuItem	menuitem;
 
     if ((source.getStatus(left) != null) && (source.getStatus(left).length() > 0)) {
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(source.getStatus(left)));
       menu.add(menuitem);
     }

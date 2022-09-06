@@ -24,6 +24,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
@@ -213,7 +214,7 @@ public class NormalPlot
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem menuitem;
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Save data...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
   }

@@ -19,7 +19,7 @@
  */
 package adams.gui.flow.menu;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import java.awt.event.ActionEvent;
 
@@ -60,11 +60,11 @@ public class ActivePauseResume
   @Override
   protected void doUpdate() {
     if (m_State.hasActivePanel() && m_State.getActivePanel().isPaused()) {
-      setIcon(GUIHelper.getIcon("active_resume.gif"));
+      setIcon(ImageManager.getIcon("active_resume.gif"));
       setName("Resume");
     }
     else {
-      setIcon(GUIHelper.getIcon("active_pause.gif"));
+      setIcon(ImageManager.getIcon("active_pause.gif"));
       setName("Pause");
     }
     

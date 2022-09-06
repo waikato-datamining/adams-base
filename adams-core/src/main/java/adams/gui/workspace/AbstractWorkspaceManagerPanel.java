@@ -26,6 +26,7 @@ import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
@@ -99,7 +100,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_SplitPane.setTopComponent(m_PanelHistory);
 
     // left buttons
-    m_ButtonAdd = new BaseFlatButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseFlatButton(ImageManager.getIcon("add.gif"));
     height = m_ButtonAdd.getHeight();
     m_ButtonAdd.setSize(height, height);
     m_ButtonAdd.setToolTipText("Adds a new workspace");
@@ -115,7 +116,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     });
     m_PanelButtons.add(m_ButtonAdd);
 
-    m_ButtonRemove = new BaseFlatButton(GUIHelper.getIcon("remove.gif"));
+    m_ButtonRemove = new BaseFlatButton(ImageManager.getIcon("remove.gif"));
     m_ButtonRemove.setSize(height, height);
     m_ButtonRemove.setToolTipText("Removes all selected workspaces");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {

@@ -41,6 +41,7 @@ import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandler;
@@ -370,7 +371,7 @@ public class FlowControlCenterPanel
     // edit
     menuitem = new JMenuItem(m_ButtonEdit.getText());
     menuitem.setEnabled(m_ButtonEdit.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("properties.gif"));
+    menuitem.setIcon(ImageManager.getIcon("properties.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	editSetup();
@@ -381,7 +382,7 @@ public class FlowControlCenterPanel
     // edit flow
     menuitem = new JMenuItem(m_ButtonEditFlow.getText());
     menuitem.setEnabled(m_ButtonEdit.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("flow.gif"));
+    menuitem.setIcon(ImageManager.getIcon("flow.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	editFlow();
@@ -392,7 +393,7 @@ public class FlowControlCenterPanel
     // start
     menuitem = new JMenuItem(m_ButtonStart.getText());
     menuitem.setEnabled(m_ButtonStart.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("run.gif"));
+    menuitem.setIcon(ImageManager.getIcon("run.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	startSetups();
@@ -404,7 +405,7 @@ public class FlowControlCenterPanel
     // pause/resume
     menuitem = new JMenuItem(m_ButtonPauseAndResume.getText());
     menuitem.setEnabled(m_ButtonPauseAndResume.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("pause.gif"));
+    menuitem.setIcon(ImageManager.getIcon("pause.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	pauseAndResumeSetups();
@@ -415,7 +416,7 @@ public class FlowControlCenterPanel
     // stop
     menuitem = new JMenuItem(m_ButtonStop.getText());
     menuitem.setEnabled(m_ButtonStop.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("stop.gif"));
+    menuitem.setIcon(ImageManager.getIcon("stop.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	stopSetups();
@@ -426,7 +427,7 @@ public class FlowControlCenterPanel
     // remove
     menuitem = new JMenuItem(m_ButtonRemove.getText());
     menuitem.setEnabled(m_ButtonRemove.isEnabled());
-    menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+    menuitem.setIcon(ImageManager.getIcon("delete.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	removeSetups();
@@ -438,7 +439,7 @@ public class FlowControlCenterPanel
     // remove all
     menuitem = new JMenuItem(m_ButtonRemoveAll.getText());
     menuitem.setEnabled(m_ButtonRemoveAll.isEnabled());
-    menuitem.setIcon(GUIHelper.getEmptyIcon());
+    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	removeAllSetups();
@@ -680,7 +681,7 @@ public class FlowControlCenterPanel
       menuitem = new JMenuItem("New");
       menu.add(menuitem);
       menuitem.setMnemonic('N');
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -694,7 +695,7 @@ public class FlowControlCenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -724,7 +725,7 @@ public class FlowControlCenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  save();
@@ -737,7 +738,7 @@ public class FlowControlCenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('a');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  saveAs();
@@ -749,7 +750,7 @@ public class FlowControlCenterPanel
       menuitem = new JMenuItem("Revert");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(GUIHelper.getIcon("revert.png"));
+      menuitem.setIcon(ImageManager.getIcon("revert.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  revert();
@@ -763,7 +764,7 @@ public class FlowControlCenterPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();
@@ -786,7 +787,7 @@ public class FlowControlCenterPanel
 	menuitem = new JMenuItem("New Window");
 	menu.add(menuitem);
 	menuitem.setMnemonic('w');
-	menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+	menuitem.setIcon(ImageManager.getIcon("new.gif"));
 	menuitem.addActionListener(new ActionListener() {
 	  public void actionPerformed(ActionEvent e) {
 	    ChildFrame oldFrame = (ChildFrame) GUIHelper.getParent(m_Self, ChildFrame.class);

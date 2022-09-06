@@ -25,6 +25,7 @@ import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -228,7 +229,7 @@ public class SendToActionUtils {
       return false;
 
     submenu = new JMenu(MENUITEM_SENDTO);
-    submenu.setIcon(GUIHelper.getIcon("sendto.png"));
+    submenu.setIcon(ImageManager.getIcon("sendto.png"));
     menu.add(submenu);
 
     return addSubmenu(owner, submenu);

@@ -280,12 +280,12 @@ public class PropertiesParameterPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     m_PanelButtons.add(panel, BorderLayout.WEST);
 
-    m_ButtonLoad = new BaseButton(GUIHelper.getIcon("open.gif"));
+    m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
     m_ButtonLoad.setToolTipText("Load settings from file");
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
     panel.add(m_ButtonLoad);
 
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.setToolTipText("Save current settings to file");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);

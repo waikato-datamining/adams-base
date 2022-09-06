@@ -20,7 +20,7 @@
 
 package adams.gui.flow.notificationareaaction;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import java.awt.event.ActionEvent;
@@ -42,7 +42,7 @@ public class Copy
   public Copy() {
     super();
     setName("Copy");
-    setIcon(GUIHelper.getIcon("copy.gif"));
+    setIcon(ImageManager.getIcon("copy.gif"));
   }
 
   /**

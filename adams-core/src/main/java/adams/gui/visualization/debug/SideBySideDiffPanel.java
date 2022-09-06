@@ -26,7 +26,7 @@ import adams.core.io.PlaceholderFile;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -288,11 +288,11 @@ public class SideBySideDiffPanel
 
     menu = new JPopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getLabelText(left)));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Paste", GUIHelper.getIcon("paste.gif"));
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
       String s = ClipboardHelper.pasteStringFromClipboard();
       PlaceholderFile file = new PlaceholderFile(s);

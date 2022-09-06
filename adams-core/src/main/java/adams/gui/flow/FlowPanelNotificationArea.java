@@ -28,7 +28,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.TabIconSupporter;
@@ -169,7 +169,7 @@ public class FlowPanelNotificationArea
     m_PanelButtons.add(m_ButtonAction);
 
     m_ButtonClose = new BaseFlatButton("Close");
-    m_ButtonClose.setIcon(GUIHelper.getIcon("delete.gif"));
+    m_ButtonClose.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonClose.addActionListener((ActionEvent e) -> {
       clearNotification();
       notifyCloseListeners();

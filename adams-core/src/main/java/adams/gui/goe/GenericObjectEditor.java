@@ -37,6 +37,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
@@ -288,7 +289,7 @@ public class GenericObjectEditor
 	  GenericObjectEditor.this.firePropertyChange();
       });
 
-      m_ButtonOpen = new BaseButton(GUIHelper.getIcon("open.gif"));
+      m_ButtonOpen = new BaseButton(ImageManager.getIcon("open.gif"));
       m_ButtonOpen.setActionCommand(ACTION_CMD_OPEN);
       m_ButtonOpen.setToolTipText("Load a serialized object");
       m_ButtonOpen.setEnabled(true);
@@ -298,7 +299,7 @@ public class GenericObjectEditor
 	  setValue(object);
       });
 
-      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
       m_ButtonSave.setActionCommand(ACTION_CMD_SAVE);
       m_ButtonSave.setToolTipText("Save the current as serialized object");
       m_ButtonSave.setEnabled(true);
@@ -326,7 +327,7 @@ public class GenericObjectEditor
 	close();
       });
 
-      m_ButtonRevert = new BaseButton(GUIHelper.getIcon("undo.gif"));
+      m_ButtonRevert = new BaseButton(ImageManager.getIcon("undo.gif"));
       m_ButtonRevert.setActionCommand(ACTION_CMD_REVERT);
       m_ButtonRevert.setEnabled(true);
       m_ButtonRevert.setToolTipText("Revert changes");
@@ -340,7 +341,7 @@ public class GenericObjectEditor
 	}
       });
 
-      m_ButtonCopyPaste = new BaseButton(GUIHelper.getIcon("arrow-head-down.png"));
+      m_ButtonCopyPaste = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
       m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
       m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
 	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
@@ -1211,7 +1212,7 @@ public class GenericObjectEditor
    * @return 		the choose button
    */
   protected BaseButton createChooseClassButton() {
-    BaseButton setButton = new BaseButton(GUIHelper.getIcon("tree.gif"));
+    BaseButton setButton = new BaseButton(ImageManager.getIcon("tree.gif"));
     setButton.setToolTipText("Select different class");
 
     // anonymous action listener shows a JTree popup and allows the user

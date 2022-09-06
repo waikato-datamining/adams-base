@@ -28,6 +28,7 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractSubMenuDefinition;
 import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.dialog.ApprovalDialog;
@@ -290,26 +291,26 @@ public class RemoteCommands
   protected JMenuItem[] getSubMenuItems() {
     JMenuItem[]		result;
 
-    m_MenuItemCC = new JMenuItem("Control center", GUIHelper.getIcon("remote_command.png"));
+    m_MenuItemCC = new JMenuItem("Control center", ImageManager.getIcon("remote_command.png"));
     m_MenuItemCC.addActionListener((ActionEvent e) -> {
       RemoteControlCenterManagerPanel center = new RemoteControlCenterManagerPanel();
       center.setOwner(getOwner());
       createChildFrame(center, GUIHelper.makeWider(GUIHelper.getDefaultLargeDialogDimension()));
     });
 
-    m_MenuItemStart = new JMenuItem("Start listening...", GUIHelper.getIcon("run.gif"));
+    m_MenuItemStart = new JMenuItem("Start listening...", ImageManager.getIcon("run.gif"));
     m_MenuItemStart.addActionListener((ActionEvent e) -> {
       startScripting();
       updateMenu();
     });
 
-    m_MenuItemStop = new JMenuItem("Stop listening", GUIHelper.getIcon("stop_blue.gif"));
+    m_MenuItemStop = new JMenuItem("Stop listening", ImageManager.getIcon("stop_blue.gif"));
     m_MenuItemStop.addActionListener((ActionEvent e) -> {
       getOwner().setRemoteScriptingEngine(null);
       updateMenu();
     });
 
-    m_MenuItemSend = new JMenuItem("Send...", GUIHelper.getIcon("remote_command_execute.png"));
+    m_MenuItemSend = new JMenuItem("Send...", ImageManager.getIcon("remote_command_execute.png"));
     m_MenuItemSend.addActionListener((ActionEvent e) -> {
       sendCommand();
       updateMenu();

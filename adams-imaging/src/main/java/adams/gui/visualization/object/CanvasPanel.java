@@ -27,6 +27,7 @@ import adams.data.io.output.AbstractImageWriter;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
@@ -312,12 +313,12 @@ public class CanvasPanel
 
     result = new JPopupMenu();
 
-    menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(m_Image != null);
     menuitem.addActionListener((ActionEvent e) -> copyToClipboard());
     result.add(menuitem);
 
-    menuitem = new JMenuItem("Save as...", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Save as...", ImageManager.getIcon("save.gif"));
     menuitem.setEnabled(m_Image != null);
     menuitem.addActionListener((ActionEvent e) -> saveAs());
     result.add(menuitem);

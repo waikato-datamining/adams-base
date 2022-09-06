@@ -20,7 +20,7 @@
 package adams.gui.action;
 
 import adams.core.CleanUpHandler;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -55,7 +55,7 @@ public interface BaseAction
    *
    * @param name	the icon
    * @see		#setIcon(Icon)
-   * @see		GUIHelper#getIcon(String)
+   * @see                ImageManager#getIcon(String)
    */
   public void setIcon(String name);
 

@@ -27,7 +27,7 @@ import adams.flow.processor.ListStorageUsage;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BaseSplitPane;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.FlowPanel;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
 
@@ -103,9 +103,9 @@ public class StorageNamesTab
     m_SplitPane.setTopComponent(panel);
 
     // list
-    m_ButtonRefresh = new BaseButton("Refresh", GUIHelper.getIcon("refresh.gif"));
+    m_ButtonRefresh = new BaseButton("Refresh", ImageManager.getIcon("refresh.gif"));
     m_ButtonRefresh.addActionListener(e -> refreshStorageNames());
-    m_ButtonUsages = new BaseButton("Usages", GUIHelper.getIcon("glasses.gif"));
+    m_ButtonUsages = new BaseButton("Usages", ImageManager.getIcon("glasses.gif"));
     m_ButtonUsages.addActionListener(e -> findUsages());
 
     m_ListStorageNames = new BaseListWithButtons(m_ModelStorageNames);

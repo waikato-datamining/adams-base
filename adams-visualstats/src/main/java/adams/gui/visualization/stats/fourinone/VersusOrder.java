@@ -26,6 +26,7 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.data.statistics.StatUtils;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
@@ -210,7 +211,7 @@ public class VersusOrder
   public void customizePopupMenu(MouseEvent e, JPopupMenu menu) {
     JMenuItem menuitem;
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Save data...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
   }

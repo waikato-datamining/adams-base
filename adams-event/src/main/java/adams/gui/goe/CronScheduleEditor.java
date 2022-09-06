@@ -29,6 +29,7 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import org.quartz.CronExpression;
 
@@ -207,7 +208,7 @@ public class CronScheduleEditor
     panelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtons, BorderLayout.WEST);
 
-    buttonHelp = new BaseButton(GUIHelper.getIcon(getHelpIcon()));
+    buttonHelp = new BaseButton(ImageManager.getIcon(getHelpIcon()));
     buttonHelp.setToolTipText(getHelpDescription());
     buttonHelp.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -216,7 +217,7 @@ public class CronScheduleEditor
     });
     panelButtons.add(buttonHelp);
 
-    buttonTemplates = new BaseButtonWithDropDownMenu(GUIHelper.getIcon("template.gif"));
+    buttonTemplates = new BaseButtonWithDropDownMenu(ImageManager.getIcon("template.gif"));
     buttonTemplates.setToolTipText(getHelpDescription());
     Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
     List<String> items = new ArrayList<>(templates.keySet());
@@ -228,7 +229,7 @@ public class CronScheduleEditor
     }
     panelButtons.add(buttonTemplates);
 
-    buttonValidate = new BaseButton(GUIHelper.getIcon("validate.png"));
+    buttonValidate = new BaseButton(ImageManager.getIcon("validate.png"));
     buttonValidate.setToolTipText("Checks the validity of the expressions");
     buttonValidate.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

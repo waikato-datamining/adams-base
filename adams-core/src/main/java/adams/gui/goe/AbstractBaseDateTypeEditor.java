@@ -29,6 +29,7 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.help.HelpFrame;
 import adams.parser.GrammarSupplier;
 
@@ -275,7 +276,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 	updateButtons();
       }
     });
-    m_ButtonCustomHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    m_ButtonCustomHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     m_ButtonCustomHelp.addActionListener(e1 -> showHelp());
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
@@ -289,7 +290,7 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
 
     m_ButtonTemplates = null;
     if (BaseObject.getTemplates(newDateType().getClass()).size() > 0) {
-      m_ButtonTemplates = new BaseButtonWithDropDownMenu(GUIHelper.getIcon("template.gif"));
+      m_ButtonTemplates = new BaseButtonWithDropDownMenu(ImageManager.getIcon("template.gif"));
       m_ButtonTemplates.setToolTipText("Templates");
       Map<String,B> templates = (Map<String,B>) BaseObject.getTemplates(newDateType().getClass());
       List<String> items = new ArrayList<>(templates.keySet());

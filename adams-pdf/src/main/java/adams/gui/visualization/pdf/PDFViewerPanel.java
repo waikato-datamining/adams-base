@@ -27,6 +27,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.event.RecentItemEvent;
@@ -203,7 +204,7 @@ public class PDFViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -230,7 +231,7 @@ public class PDFViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('t');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           closeFile();
@@ -244,7 +245,7 @@ public class PDFViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('P');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed P"));
-      menuitem.setIcon(GUIHelper.getIcon("print.gif"));
+      menuitem.setIcon(ImageManager.getIcon("print.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  printFile();
@@ -262,7 +263,7 @@ public class PDFViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  close();
@@ -284,7 +285,7 @@ public class PDFViewerPanel
       submenu = new JMenu("Zoom");
       menu.add(submenu);
       submenu.setMnemonic('Z');
-      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+      submenu.setIcon(ImageManager.getIcon("glasses.gif"));
       submenu.addChangeListener(new ChangeListener() {
 	public void stateChanged(ChangeEvent e) {
 	  updateMenu();

@@ -32,6 +32,7 @@ import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BrowserHelper;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.RegExpTextField;
 
@@ -153,7 +154,7 @@ public class RegExpTest
       }
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());
     });
@@ -186,7 +187,7 @@ public class RegExpTest
       fieldMatchOutput.setText(regexp.isMatch(input) ? "yes" : "no");
     });
     panelButtons.add(buttonTest);
-    buttonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     buttonHelp.addActionListener((ActionEvent e) -> {
       BrowserHelper.openURL(new BaseRegExp().getHelpURL());
     });

@@ -31,7 +31,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.CustomPopupMenuProvider;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.FlowPanel;
 import adams.gui.visualization.image.ImageOverlay;
 import adams.gui.visualization.image.ImagePanel;
@@ -120,22 +120,22 @@ public class ImageProcessorSubPanel
 
       menu = new BasePopupMenu();
 
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
       menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(getPanel().getCurrentImage()));
       menu.add(menuitem);
 
-      menuitem = new JMenuItem("Export...", GUIHelper.getIcon("save.gif"));
+      menuitem = new JMenuItem("Export...", ImageManager.getIcon("save.gif"));
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
       menuitem.addActionListener((ActionEvent ae) -> getPanel().export());
       menu.add(menuitem);
 
-      menuitem = new JMenuItem("Load report...", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Load report...", ImageManager.getEmptyIcon());
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
       menuitem.addActionListener((ActionEvent ae) -> getPanel().loadReport());
       menu.add(menuitem);
 
-      menuitem = new JMenuItem("Save report...", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Save report...", ImageManager.getEmptyIcon());
       menuitem.setEnabled(getPanel().getCurrentImage() != null);
       menuitem.addActionListener((ActionEvent ae) -> getPanel().saveReport());
       menu.add(menuitem);
@@ -144,7 +144,7 @@ public class ImageProcessorSubPanel
       menu.addSeparator();
 
       // show side pane
-      menuitem = new JCheckBoxMenuItem("Show side pane", GUIHelper.getIcon("properties.gif"));
+      menuitem = new JCheckBoxMenuItem("Show side pane", ImageManager.getIcon("properties.gif"));
       menuitem.setSelected(getPanel().getShowProperties());
       menuitem.addActionListener((ActionEvent ae) ->
         getPanel().setShowProperties(!getPanel().getShowProperties()));
@@ -153,7 +153,7 @@ public class ImageProcessorSubPanel
       // Zoom
       submenu = new JMenu("Zoom");
       menu.add(submenu);
-      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+      submenu.setIcon(ImageManager.getIcon("glasses.gif"));
 
       //View/Zoom/Zoom in
       menuitem = new JMenuItem("Zoom in");

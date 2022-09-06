@@ -36,6 +36,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
@@ -427,7 +428,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  open();
@@ -454,7 +455,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('v');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  saveAs();
@@ -466,7 +467,7 @@ public class ImageViewerPanel
       menuitem = new JMenuItem("Close page");
       menu.add(menuitem);
       menuitem.setMnemonic('t');
-      menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+      menuitem.setIcon(ImageManager.getIcon("delete.gif"));
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
@@ -485,7 +486,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  exit();
@@ -506,7 +507,7 @@ public class ImageViewerPanel
       menuitem = new JCheckBoxMenuItem("Undo enabled");
       menu.add(menuitem);
       menuitem.setMnemonic('n');
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().getUndo().setEnabled(!getCurrentPanel().getUndo().isEnabled());
@@ -519,7 +520,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('U');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Z"));
-      menuitem.setIcon(GUIHelper.getIcon("undo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("undo.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  undo();
@@ -532,7 +533,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Y"));
-      menuitem.setIcon(GUIHelper.getIcon("redo.gif"));
+      menuitem.setIcon(ImageManager.getIcon("redo.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  redo();
@@ -546,7 +547,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed C"));
-      menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+      menuitem.setIcon(ImageManager.getIcon("copy.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  copy();
@@ -570,7 +571,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed L"));
-      menuitem.setIcon(GUIHelper.getIcon("rotate_left.png"));
+      menuitem.setIcon(ImageManager.getIcon("rotate_left.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  rotate(true);
@@ -583,7 +584,7 @@ public class ImageViewerPanel
       menu.add(menuitem);
       menuitem.setMnemonic('r');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed R"));
-      menuitem.setIcon(GUIHelper.getIcon("rotate_right.png"));
+      menuitem.setIcon(ImageManager.getIcon("rotate_right.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  rotate(false);
@@ -596,7 +597,7 @@ public class ImageViewerPanel
       menu.addSeparator();
       menu.add(menuitem);
       menuitem.setMnemonic('h');
-      menuitem.setIcon(GUIHelper.getIcon("flip_horizontal.png"));
+      menuitem.setIcon(ImageManager.getIcon("flip_horizontal.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  flip(true);
@@ -608,7 +609,7 @@ public class ImageViewerPanel
       menuitem = new JMenuItem("Flip vertically");
       menu.add(menuitem);
       menuitem.setMnemonic('v');
-      menuitem.setIcon(GUIHelper.getIcon("flip_vertical.png"));
+      menuitem.setIcon(ImageManager.getIcon("flip_vertical.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  flip(false);
@@ -620,7 +621,7 @@ public class ImageViewerPanel
       menuitem = new JMenuItem("Pick color...");
       menu.add(menuitem);
       menuitem.setMnemonic('P');
-      menuitem.setIcon(GUIHelper.getIcon("colorpicker.png"));
+      menuitem.setIcon(ImageManager.getIcon("colorpicker.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  pickColor();
@@ -642,7 +643,7 @@ public class ImageViewerPanel
       submenu = new JMenu("Zoom");
       menu.add(submenu);
       submenu.setMnemonic('Z');
-      submenu.setIcon(GUIHelper.getIcon("glasses.gif"));
+      submenu.setIcon(ImageManager.getIcon("glasses.gif"));
       submenu.addChangeListener(new ChangeListener() {
 	public void stateChanged(ChangeEvent e) {
 	  updateMenu();
@@ -718,7 +719,7 @@ public class ImageViewerPanel
       // View/Remove overlays
       menuitem = new JMenuItem("Remove overlays");
       menu.add(menuitem);
-      menuitem.setIcon(GUIHelper.getEmptyIcon());
+      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  removeOverlays();
@@ -729,7 +730,7 @@ public class ImageViewerPanel
       // View/Background color
       menuitem = new JMenuItem("Background color...");
       menu.add(menuitem);
-      menuitem.setIcon(GUIHelper.getIcon("colorpicker.png"));
+      menuitem.setIcon(ImageManager.getIcon("colorpicker.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  chooseBackgroundColor();
@@ -740,7 +741,7 @@ public class ImageViewerPanel
       // View/Properties
       menuitem = new JCheckBoxMenuItem("Show properties");
       menu.add(menuitem);
-      menuitem.setIcon(GUIHelper.getIcon("properties.gif"));
+      menuitem.setIcon(ImageManager.getIcon("properties.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().setShowProperties(!getCurrentPanel().getShowProperties());
@@ -751,7 +752,7 @@ public class ImageViewerPanel
       // View/Log
       menuitem = new JCheckBoxMenuItem("Show log");
       menu.add(menuitem);
-      menuitem.setIcon(GUIHelper.getIcon("log.gif"));
+      menuitem.setIcon(ImageManager.getIcon("log.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().setShowLog(!getCurrentPanel().getShowLog());

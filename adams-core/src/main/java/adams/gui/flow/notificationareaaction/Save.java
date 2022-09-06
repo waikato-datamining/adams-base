@@ -23,6 +23,7 @@ package adams.gui.flow.notificationareaaction;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import java.awt.event.ActionEvent;
 
@@ -43,7 +44,7 @@ public class Save
   public Save() {
     super();
     setName("Save...");
-    setIcon(GUIHelper.getIcon("save.gif"));
+    setIcon(ImageManager.getIcon("save.gif"));
   }
 
   /**

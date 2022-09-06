@@ -45,6 +45,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
@@ -307,7 +308,7 @@ public class PreviewBrowserPanel
       @Override
       public void customizePopupMenu(AbstractChooserPanel owner, JPopupMenu menu) {
 	JMenuItem menuitem = new JMenuItem("Open in file browser...");
-	menuitem.setIcon(GUIHelper.getIcon("filebrowser.png"));
+	menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
 	menuitem.addActionListener((ActionEvent ae) -> FileBrowser.launch(m_PanelDir.getCurrent()));
 	menu.add(menuitem);
       }
@@ -828,7 +829,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open_dir.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open_dir.gif"));
       menuitem.addActionListener((ActionEvent e) -> m_PanelDir.choose());
 
       // File/Recent files
@@ -851,7 +852,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('f');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener((ActionEvent e) -> openFile());
 
       // File/Reload
@@ -859,7 +860,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener((ActionEvent e) -> reload());
 
       // File/Send to
@@ -872,7 +873,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
 
       // View
@@ -924,7 +925,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> clearNotes());
       m_MenuItemClearNotes = menuitem;
 
@@ -933,7 +934,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('V');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed V"));
-      menuitem.setIcon(GUIHelper.getIcon("editor.gif"));
+      menuitem.setIcon(ImageManager.getIcon("editor.gif"));
       menuitem.addActionListener((ActionEvent e) -> viewNotes());
       m_MenuItemViewNotes = menuitem;
 
@@ -942,7 +943,7 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed S"));
-      menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+      menuitem.setIcon(ImageManager.getIcon("save.gif"));
       menuitem.addActionListener((ActionEvent e) -> saveNotes());
       m_MenuItemSaveNotes = menuitem;
 

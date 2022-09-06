@@ -30,6 +30,7 @@ import adams.gui.core.BasePanelWithButtons;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SpreadSheetQueryEditorPanel;
 import adams.gui.core.SpreadSheetTable;
@@ -130,27 +131,27 @@ public class DataQueryTab
     m_PanelQuery.addChangeListener((ChangeEvent e) -> updateButtons());
     panelTop.add(m_PanelQuery, BorderLayout.CENTER);
 
-    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonExecute.setToolTipText("Executes the query on the selected dataset");
     m_ButtonExecute.addActionListener((ActionEvent e) -> executeQuery());
     panelTop.addToButtonsPanel(m_ButtonExecute);
 
-    m_ButtonHistory = new BaseButton(GUIHelper.getIcon("history.png"));
+    m_ButtonHistory = new BaseButton(ImageManager.getIcon("history.png"));
     m_ButtonHistory.setToolTipText("Recent queries");
     m_ButtonHistory.addActionListener((ActionEvent e) -> m_PopupMenu.show(m_ButtonHistory, 0, m_ButtonHistory.getHeight()));
     panelTop.addToButtonsPanel(m_ButtonHistory);
 
-    m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton(ImageManager.getIcon("new.gif"));
     m_ButtonClear.setToolTipText("Removes the previously generated result");
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     panelTop.addToButtonsPanel(m_ButtonClear);
 
-    m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.setToolTipText("Stores the result as a new dataset");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveDataset());
     panelTop.addToButtonsPanel(m_ButtonSave);
 
-    m_ButtonHelp = new BaseButton(GUIHelper.getIcon("help.gif"));
+    m_ButtonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
     m_ButtonHelp.setToolTipText("Help screen for the query language");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
     panelTop.addToButtonsPanel(m_ButtonHelp);

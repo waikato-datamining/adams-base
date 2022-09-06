@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.spreadsheet.plotpopup;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.spreadsheet.SpreadSheetRow;
@@ -86,7 +86,7 @@ public class Histogram
   public void customize(DataContainerPanelWithContainerList<SpreadSheetRow, SpreadSheetRowContainerManager, SpreadSheetRowContainer> panel, MouseEvent e, JPopupMenu menu) {
     JMenuItem		item;
 
-    item = new JMenuItem("Histogram", GUIHelper.getIcon("histogram.png"));
+    item = new JMenuItem("Histogram", ImageManager.getIcon("histogram.png"));
     item.addActionListener((ActionEvent ae) -> ((SpreadSheetRowPanel) panel).showHistogram(panel.getContainerManager().getAllVisible()));
     menu.add(item);
   }

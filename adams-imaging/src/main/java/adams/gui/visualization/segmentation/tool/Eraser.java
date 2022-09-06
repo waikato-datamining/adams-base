@@ -24,7 +24,7 @@ import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
@@ -115,7 +115,7 @@ public class Eraser
    */
   @Override
   public Icon getIcon() {
-    return GUIHelper.getIcon("eraser.png");
+    return ImageManager.getIcon("eraser.png");
   }
 
   /**

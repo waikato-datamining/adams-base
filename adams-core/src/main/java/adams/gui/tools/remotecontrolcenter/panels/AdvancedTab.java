@@ -25,6 +25,7 @@ import adams.gui.chooser.AbstractChooserPanel.ChooseListener;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.SimpleLogPanel;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
@@ -233,7 +234,7 @@ public class AdvancedTab
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panel.add(panelButtons, BorderLayout.SOUTH);
-    m_ButtonSend = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonSend = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonSend.addActionListener((ActionEvent e) -> sendCommand());
     panelButtons.add(m_ButtonSend);
 

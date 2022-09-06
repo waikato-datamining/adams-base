@@ -29,7 +29,7 @@ import adams.flow.core.AbstractActorReference;
 import adams.flow.core.Actor;
 import adams.flow.core.CallableActorUser;
 import adams.gui.action.AbstractPropertiesAction;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.tree.Node;
 import adams.gui.goe.FlowHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -130,7 +130,7 @@ public class GoTo
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
-      result.setIcon(GUIHelper.getEmptyIcon());
+      result.setIcon(ImageManager.getEmptyIcon());
     actor = m_State.selNode.getActor();
     refs  = getReferences(actor);
     paths = new String[refs.length];

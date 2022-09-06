@@ -22,7 +22,7 @@ package adams.gui.flow.tree.menu;
 import adams.core.Properties;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.action.AbstractPropertiesSubMenuAction;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.tree.StateContainer;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -122,7 +122,7 @@ public abstract class AbstractTreePopupSubMenuAction
     if (getIcon() != null)
       result.setIcon(getIcon());
     else
-      result.setIcon(GUIHelper.getEmptyIcon());
+      result.setIcon(ImageManager.getEmptyIcon());
     result.setEnabled(subitems.length > 0);
     for (AbstractPropertiesAction action: subitems) {
       if (action == null) {

@@ -23,7 +23,7 @@ package adams.gui.visualization.instances.instancestable;
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.gui.core.ConsolePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.TableRowRange;
 import adams.gui.visualization.instances.InstancesTable;
 
@@ -204,7 +204,7 @@ public class InstancesTablePopupMenuItemHelper {
         continue;
       menuitem = new JMenuItem(item.getMenuItem());
       if (item.getIconName() != null)
-        menuitem.setIcon(GUIHelper.getIcon(item.getIconName()));
+        menuitem.setIcon(ImageManager.getIcon(item.getIconName()));
       addAction(state, isRow, menuitem, item);
       menu.add(menuitem);
     }

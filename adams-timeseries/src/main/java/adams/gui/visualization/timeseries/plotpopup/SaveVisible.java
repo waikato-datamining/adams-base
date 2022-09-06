@@ -21,7 +21,7 @@
 package adams.gui.visualization.timeseries.plotpopup;
 
 import adams.data.instance.Instance;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.instance.InstanceContainer;
@@ -87,7 +87,7 @@ public class SaveVisible
   public void customize(DataContainerPanelWithContainerList<Instance, InstanceContainerManager, InstanceContainer> panel, MouseEvent e, JPopupMenu menu) {
     JMenuItem		item;
 
-    item = new JMenuItem("Save visible...", GUIHelper.getIcon("save.gif"));
+    item = new JMenuItem("Save visible...", ImageManager.getIcon("save.gif"));
     item.addActionListener((ActionEvent ae) -> ((TimeseriesPanel) panel).saveVisibleSeries());
     menu.add(item);
   }

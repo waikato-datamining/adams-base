@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.segmentation.layer.overlaylayeraction;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.ImageIcon;
@@ -46,9 +46,9 @@ public abstract class AbstractOverlayLayerAction {
    */
   public ImageIcon getIcon() {
     if (getIconName() == null)
-      return GUIHelper.getEmptyIcon();
+      return ImageManager.getEmptyIcon();
     else
-      return GUIHelper.getIcon(getIconName());
+      return ImageManager.getIcon(getIconName());
   }
 
   /**

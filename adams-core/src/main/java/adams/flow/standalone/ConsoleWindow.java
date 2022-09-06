@@ -35,6 +35,7 @@ import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.event.ConsolePanelEvent;
 import adams.gui.event.ConsolePanelListener;
@@ -492,7 +493,7 @@ public class ConsoleWindow
       result.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           clear();
@@ -506,7 +507,7 @@ public class ConsoleWindow
     result.add(menuitem);
     menuitem.setMnemonic('a');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed S"));
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         saveAs();
@@ -524,7 +525,7 @@ public class ConsoleWindow
     result.add(menuitem);
     menuitem.setMnemonic('C');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-    menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+    menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();

@@ -27,6 +27,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
@@ -391,7 +392,7 @@ public class InlineEditor
     JMenuItem		menuitem;
 
     menuitem = new JMenuItem("Copy");
-    menuitem.setIcon(GUIHelper.getIcon("copy.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(isValid(m_TextField.getText()));
     menuitem.addActionListener((ActionEvent e) -> {
       if (m_TextField.getSelectedText() != null)
@@ -402,7 +403,7 @@ public class InlineEditor
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Paste");
-    menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+    menuitem.setIcon(ImageManager.getIcon("paste.gif"));
     menuitem.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
     menuitem.addActionListener((ActionEvent e) -> m_TextField.replaceSelection(ClipboardHelper.pasteStringFromClipboard()));
     menu.add(menuitem);

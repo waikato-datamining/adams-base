@@ -161,8 +161,8 @@ public class ButtonTabComponent
     public TabButton(boolean showIcon) {
       int size = 16;
       m_ShowIcon = showIcon;
-      m_CloseIconFocused = GUIHelper.getIcon("close_tab_focused.gif");
-      m_CloseIconUnfocused = GUIHelper.getIcon("close_tab_unfocused.gif");
+      m_CloseIconFocused = ImageManager.getIcon("close_tab_focused.gif");
+      m_CloseIconUnfocused = ImageManager.getIcon("close_tab_unfocused.gif");
       setPreferredSize(new Dimension(size, size));
       setToolTipText("Close tab");
       //Make the button looks the same for all Laf's

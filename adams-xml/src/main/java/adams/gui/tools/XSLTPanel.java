@@ -27,6 +27,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.TextPanel;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -123,23 +124,23 @@ public class XSLTPanel
       m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
       add(m_PanelButtons, BorderLayout.SOUTH);
 
-      m_ButtonClear = new BaseButton(GUIHelper.getIcon("new.gif"));
+      m_ButtonClear = new BaseButton(ImageManager.getIcon("new.gif"));
       m_ButtonClear.addActionListener((ActionEvent e) -> clear());
       m_PanelButtons.add(m_ButtonClear);
 
-      m_ButtonOpen = new BaseButton(GUIHelper.getIcon("open.gif"));
+      m_ButtonOpen = new BaseButton(ImageManager.getIcon("open.gif"));
       m_ButtonOpen.addActionListener((ActionEvent e) -> open());
       m_PanelButtons.add(m_ButtonOpen);
 
-      m_ButtonSave = new BaseButton(GUIHelper.getIcon("save.gif"));
+      m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
       m_ButtonSave.addActionListener((ActionEvent e) -> save());
       m_PanelButtons.add(m_ButtonSave);
 
-      m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+      m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
       m_ButtonCopy.addActionListener((ActionEvent e) -> copy());
       m_PanelButtons.add(m_ButtonCopy);
 
-      m_ButtonPaste = new BaseButton(GUIHelper.getIcon("paste.gif"));
+      m_ButtonPaste = new BaseButton(ImageManager.getIcon("paste.gif"));
       m_ButtonPaste.addActionListener((ActionEvent e) -> paste());
       m_PanelButtons.add(m_ButtonPaste);
     }
@@ -308,7 +309,7 @@ public class XSLTPanel
     m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     add(m_PanelButtons, BorderLayout.SOUTH);
 
-    m_ButtonApply = new BaseButton("Apply", GUIHelper.getIcon("run.gif"));
+    m_ButtonApply = new BaseButton("Apply", ImageManager.getIcon("run.gif"));
     m_ButtonApply.addActionListener((ActionEvent e) -> apply());
     m_PanelButtons.add(m_ButtonApply);
   }
@@ -331,7 +332,7 @@ public class XSLTPanel
       m_MenuBar.add(menu);
 
       // File/Close
-      menuitem = new JMenuItem("Close", GUIHelper.getIcon("exit.png"));
+      menuitem = new JMenuItem("Close", ImageManager.getIcon("exit.png"));
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());

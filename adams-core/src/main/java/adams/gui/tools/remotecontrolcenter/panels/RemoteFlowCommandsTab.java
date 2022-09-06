@@ -24,7 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseHostname;
 import adams.gui.core.BaseButton;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SimpleLogPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.scripting.command.RemoteCommandOnFlow;
@@ -95,7 +95,7 @@ public class RemoteFlowCommandsTab
     m_GOECommand.setPrefix("Command");
     panelCmd.add(m_GOECommand);
 
-    m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+    m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
     m_ButtonExecute.addActionListener((ActionEvent e) -> executeCommand());
     panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButton.add(m_ButtonExecute);

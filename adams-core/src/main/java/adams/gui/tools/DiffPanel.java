@@ -26,6 +26,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.ParameterPanel;
@@ -290,7 +291,7 @@ public class DiffPanel
     add(m_PanelDiff, BorderLayout.CENTER);
     
     // paste left
-    m_ButtonPasteLeft = new BaseButton(GUIHelper.getIcon("paste.gif"));
+    m_ButtonPasteLeft = new BaseButton(ImageManager.getIcon("paste.gif"));
     m_ButtonPasteLeft.setToolTipText("Paste from clipboard");
     m_ButtonPasteLeft.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -302,7 +303,7 @@ public class DiffPanel
     m_PanelDiff.getPanel(true).add(panel, BorderLayout.SOUTH);
 
     // paste right
-    m_ButtonPasteRight = new BaseButton(GUIHelper.getIcon("paste.gif"));
+    m_ButtonPasteRight = new BaseButton(ImageManager.getIcon("paste.gif"));
     m_ButtonPasteRight.setToolTipText("Paste from clipboard");
     m_ButtonPasteRight.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -344,7 +345,7 @@ public class DiffPanel
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed O"));
-      menuitem.setIcon(GUIHelper.getIcon("open.gif"));
+      menuitem.setIcon(ImageManager.getIcon("open.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  openFiles();
@@ -390,7 +391,7 @@ public class DiffPanel
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  reload();
@@ -403,7 +404,7 @@ public class DiffPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  closeParent();
@@ -424,7 +425,7 @@ public class DiffPanel
       menuitem = new JMenuItem("Paste (left)");
       menu.add(menuitem);
       menuitem.setMnemonic('l');
-      menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+      menuitem.setIcon(ImageManager.getIcon("paste.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  pasteLeft();
@@ -436,7 +437,7 @@ public class DiffPanel
       menuitem = new JMenuItem("Paste (right)");
       menu.add(menuitem);
       menuitem.setMnemonic('r');
-      menuitem.setIcon(GUIHelper.getIcon("paste.gif"));
+      menuitem.setIcon(ImageManager.getIcon("paste.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  pasteRight();

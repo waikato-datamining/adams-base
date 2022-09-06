@@ -22,7 +22,7 @@ package adams.gui.dialog;
 
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -128,7 +128,7 @@ public class DatabaseConnectionsDialog
     m_ButtonDisconnect.addActionListener((ActionEvent e) -> m_Panel.disconnectConnections());
     panel.add(m_ButtonDisconnect);
 
-    m_ButtonClose = new BaseButton("Close", GUIHelper.getIcon("exit.png"));
+    m_ButtonClose = new BaseButton("Close", ImageManager.getIcon("exit.png"));
     m_ButtonClose.setMnemonic('l');
     m_ButtonClose.addActionListener((ActionEvent e) -> m_Self.setVisible(false));
     panel.add(m_ButtonClose);

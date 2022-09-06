@@ -27,6 +27,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.SerializationFileChooser;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -76,13 +77,13 @@ public abstract class AbstractSerializableWorkspaceManagerPanel<P extends Abstra
     height = m_ButtonAdd.getHeight();
 
     // left buttons
-    m_ButtonCopy = new BaseFlatButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseFlatButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setSize(height, height);
     m_ButtonCopy.setToolTipText("Creates a copy of the current workspace");
     m_ButtonCopy.addActionListener((ActionEvent e) -> copyWorkspace());
     m_PanelButtons.add(m_ButtonCopy);
 
-    m_ButtonWorkspace = new BaseFlatButton(GUIHelper.getIcon("workspace.png"));
+    m_ButtonWorkspace = new BaseFlatButton(ImageManager.getIcon("workspace.png"));
     m_ButtonWorkspace.setSize(height, height);
     m_ButtonWorkspace.setToolTipText("Loading/saving of workspaces");
     m_ButtonWorkspace.addActionListener((ActionEvent e) -> {

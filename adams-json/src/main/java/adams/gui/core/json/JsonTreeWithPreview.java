@@ -26,7 +26,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
@@ -109,7 +109,7 @@ public class JsonTreeWithPreview
     panelButtons = new JPanel(new BorderLayout());
     panelPreview.add(panelButtons, BorderLayout.EAST);
     
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

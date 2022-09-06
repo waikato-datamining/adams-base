@@ -26,6 +26,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -114,15 +115,15 @@ public abstract class AbstractSimpleConversionPanel
     m_TextAreaInput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaInput, BorderLayout.CENTER);
 
-    m_ButtonInputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonInputCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonInputCopy.addActionListener((ActionEvent e) -> m_TextAreaInput.getComponent().copy());
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputCopy);
 
-    m_ButtonInputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonInputPaste = new BaseButton("Paste", ImageManager.getIcon("paste.gif"));
     m_ButtonInputPaste.addActionListener((ActionEvent e) -> m_TextAreaInput.getComponent().paste());
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputPaste);
 
-    m_ButtonInputOpen = new BaseButton("Open...", GUIHelper.getIcon("open.gif"));
+    m_ButtonInputOpen = new BaseButton("Open...", ImageManager.getIcon("open.gif"));
     m_ButtonInputOpen.addActionListener((ActionEvent e) -> openInput(m_FileChooserInput, m_TextAreaInput));
     m_TextAreaInput.addToButtonsPanel(m_ButtonInputOpen);
 
@@ -134,15 +135,15 @@ public abstract class AbstractSimpleConversionPanel
     m_TextAreaOutput = new BaseTextAreaWithButtons();
     panel.add(m_TextAreaOutput, BorderLayout.CENTER);
 
-    m_ButtonOutputCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonOutputCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonOutputCopy.addActionListener((ActionEvent e) -> m_TextAreaOutput.getComponent().copy());
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputCopy);
 
-    m_ButtonOutputPaste = new BaseButton("Paste", GUIHelper.getIcon("paste.gif"));
+    m_ButtonOutputPaste = new BaseButton("Paste", ImageManager.getIcon("paste.gif"));
     m_ButtonOutputPaste.addActionListener((ActionEvent e) -> m_TextAreaOutput.getComponent().paste());
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputPaste);
 
-    m_ButtonOutputSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonOutputSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonOutputSave.addActionListener((ActionEvent e) -> saveOutput(m_FileChooserOutput, m_TextAreaOutput));
     m_TextAreaOutput.addToButtonsPanel(m_ButtonOutputSave);
 

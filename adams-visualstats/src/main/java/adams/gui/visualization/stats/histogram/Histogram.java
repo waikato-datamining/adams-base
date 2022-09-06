@@ -34,6 +34,7 @@ import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
@@ -405,11 +406,11 @@ public class Histogram
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Save data...", GUIHelper.getIcon("save.gif"));
+    menuitem = new JMenuItem("Save data...", ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> save());
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Show data...", GUIHelper.getIcon("spreadsheet.png"));
+    menuitem = new JMenuItem("Show data...", ImageManager.getIcon("spreadsheet.png"));
     menuitem.addActionListener((ActionEvent ae) -> showData());
     menu.add(menuitem);
   }

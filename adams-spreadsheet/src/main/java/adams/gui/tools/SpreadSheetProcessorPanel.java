@@ -39,6 +39,7 @@ import adams.gui.core.BaseStatusBar;
 import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.core.SpreadSheetTableWithSearch;
@@ -432,7 +433,7 @@ public class SpreadSheetProcessorPanel
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
 
       // Configuration
@@ -442,13 +443,13 @@ public class SpreadSheetProcessorPanel
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
       // Configuration/Open
-      menuitem = new JMenuItem("Open...", GUIHelper.getIcon("open.gif"));
+      menuitem = new JMenuItem("Open...", ImageManager.getIcon("open.gif"));
       menu.add(menuitem);
       menuitem.setMnemonic('O');
       menuitem.addActionListener((ActionEvent e) -> openConfiguration());
 
       // Configuration/Save
-      menuitem = new JMenuItem("Save...", GUIHelper.getIcon("save.gif"));
+      menuitem = new JMenuItem("Save...", ImageManager.getIcon("save.gif"));
       menu.add(menuitem);
       menuitem.setMnemonic('S');
       menuitem.addActionListener((ActionEvent e) -> saveConfiguration());

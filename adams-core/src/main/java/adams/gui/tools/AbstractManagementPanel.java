@@ -29,6 +29,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.BaseTextPaneWithWordWrap;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.ParameterPanelWithButtons;
 import adams.gui.core.SearchPanel;
@@ -268,7 +269,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       menu.add(menuitem);
       menuitem.setMnemonic('R');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("F5"));
-      menuitem.setIcon(GUIHelper.getIcon("refresh.gif"));
+      menuitem.setIcon(ImageManager.getIcon("refresh.gif"));
       menuitem.addActionListener((ActionEvent e) -> refresh());
       m_MenuItemFileRefresh = menuitem;
 
@@ -281,7 +282,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       menu.add(menuitem);
       menuitem.setMnemonic('C');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed Q"));
-      menuitem.setIcon(GUIHelper.getIcon("exit.png"));
+      menuitem.setIcon(ImageManager.getIcon("exit.png"));
       menuitem.addActionListener((ActionEvent e) -> closeParent());
 
       // Edit
@@ -295,7 +296,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       menu.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
-      menuitem.setIcon(GUIHelper.getIcon("new.gif"));
+      menuitem.setIcon(ImageManager.getIcon("new.gif"));
       menuitem.addActionListener((ActionEvent e) -> clear());
       m_MenuItemEditClear = menuitem;
 
@@ -304,7 +305,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 	menuitem = new JMenuItem("Add");
 	menu.add(menuitem);
 	menuitem.setMnemonic('A');
-	menuitem.setIcon(GUIHelper.getIcon("add.gif"));
+	menuitem.setIcon(ImageManager.getIcon("add.gif"));
 	menuitem.addActionListener((ActionEvent e) -> addObject());
 	m_MenuItemEditAdd = menuitem;
 
@@ -312,7 +313,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 	menuitem = new JMenuItem("Update");
 	menu.add(menuitem);
 	menuitem.setMnemonic('U');
-	menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+	menuitem.setIcon(ImageManager.getIcon("save.gif"));
 	menuitem.addActionListener((ActionEvent e) -> updateObject());
 	m_MenuItemEditUpdate = menuitem;
 
@@ -320,7 +321,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 	menuitem = new JMenuItem("Remove");
 	menu.add(menuitem);
 	menuitem.setMnemonic('R');
-	menuitem.setIcon(GUIHelper.getIcon("delete.gif"));
+	menuitem.setIcon(ImageManager.getIcon("delete.gif"));
 	menuitem.addActionListener((ActionEvent e) -> removeObjects());
 	m_MenuItemEditRemove = menuitem;
       }

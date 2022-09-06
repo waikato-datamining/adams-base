@@ -21,16 +21,15 @@
 
 package adams.gui.menu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Allows the user to switch the user-mode from the GUI.
@@ -130,7 +129,7 @@ public class ProgramUserMode
     JMenuItem	menuitem;
     
     result = new JMenu(getTitle());
-    result.setIcon(GUIHelper.getIcon(getIconName()));
+    result.setIcon(ImageManager.getIcon(getIconName()));
 
     for (final UserMode um: UserMode.values()) {
       menuitem = new JMenuItem(um.toDisplay());

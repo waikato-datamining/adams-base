@@ -84,15 +84,15 @@ public class SimpleLogPanel
     m_TextLog.setWrapStyleWord(true);
     add(m_TextLog, BorderLayout.CENTER);
 
-    m_ButtonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+    m_ButtonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
     m_ButtonClear.addActionListener((ActionEvent e) -> clear());
     m_TextLog.addToButtonsPanel(m_ButtonClear);
 
-    m_ButtonCopy = new BaseButton("Copy", GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton("Copy", ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.addActionListener((ActionEvent e) -> copy());
     m_TextLog.addToButtonsPanel(m_ButtonCopy);
 
-    m_ButtonSave = new BaseButton("Save...", GUIHelper.getIcon("save.gif"));
+    m_ButtonSave = new BaseButton("Save...", ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveAs());
     m_TextLog.addToButtonsPanel(m_ButtonSave);
 

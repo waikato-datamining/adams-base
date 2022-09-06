@@ -33,6 +33,7 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.event.RemoveItemsEvent;
 import gnu.trove.set.hash.TIntHashSet;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -340,31 +341,31 @@ public class GenericArrayEditor
     setLayout(new BorderLayout());
     add(m_Label, BorderLayout.CENTER);
 
-    m_ButtonAdd = new BaseButton(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd = new BaseButton(ImageManager.getIcon("add.gif"));
     m_ButtonAdd.setToolTipText("Add the current item to the array");
     m_ButtonAdd.addActionListener((ActionEvent e) -> addObject(m_ElementEditor.getValue()));
 
-    m_ButtonAddMultiple = new BaseButton(GUIHelper.getIcon("add_multiple.gif"));
+    m_ButtonAddMultiple = new BaseButton(ImageManager.getIcon("add_multiple.gif"));
     m_ButtonAddMultiple.setToolTipText("Add multiple items to the array");
     m_ButtonAddMultiple.addActionListener((ActionEvent e) -> addMultipleObjects());
 
-    m_ButtonCopy = new BaseButton(GUIHelper.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
     m_ButtonCopy.addActionListener((ActionEvent e) -> m_ElementEditor.setValue(ObjectCopyHelper.copyObject(m_ElementList.getSelectedValue())));
 
-    m_ButtonRemove = new BaseButton(GUIHelper.getIcon("delete.gif"));
+    m_ButtonRemove = new BaseButton(ImageManager.getIcon("delete.gif"));
     m_ButtonRemove.setToolTipText("Remove the selected array item(s)");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedObjects());
 
-    m_ButtonRemoveAll = new BaseButton(GUIHelper.getIcon("delete_all.gif"));
+    m_ButtonRemoveAll = new BaseButton(ImageManager.getIcon("delete_all.gif"));
     m_ButtonRemoveAll.setToolTipText("Remove all the array items");
     m_ButtonRemoveAll.addActionListener((ActionEvent e) -> removeAllObjects());
 
-    m_ButtonEdit = new BaseButton(GUIHelper.getIcon("properties.gif"));
+    m_ButtonEdit = new BaseButton(ImageManager.getIcon("properties.gif"));
     m_ButtonEdit.setToolTipText("Edit the selected array item");
     m_ButtonEdit.addActionListener((ActionEvent e) -> editSelectedObject());
 
-    m_ButtonUp = new BaseButton(GUIHelper.getIcon("arrow_up.gif"));
+    m_ButtonUp = new BaseButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.setToolTipText("Move the selected item(s) one up");
     m_ButtonUp.addActionListener((ActionEvent e) -> {
       m_ElementList.moveUp();
@@ -372,7 +373,7 @@ public class GenericArrayEditor
       updateButtons();
     });
 
-    m_ButtonDown = new BaseButton(GUIHelper.getIcon("arrow_down.gif"));
+    m_ButtonDown = new BaseButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.setToolTipText("Move the selected item(s) one down");
     m_ButtonDown.addActionListener((ActionEvent e) -> {
       m_ElementList.moveDown();
@@ -600,7 +601,7 @@ public class GenericArrayEditor
     m_ListModel     = null;
     m_IsPrimitive   = false;
     m_CanSort       = false;
-    m_ButtonAdd.setIcon(GUIHelper.getIcon("add.gif"));
+    m_ButtonAdd.setIcon(ImageManager.getIcon("add.gif"));
     removeAll();
 
     if ((o != null) && (o.getClass().isArray())) {
@@ -748,7 +749,7 @@ public class GenericArrayEditor
 
 	m_ElementEditor.addPropertyChangeListener(new PropertyChangeListener() {
 	  public void propertyChange(PropertyChangeEvent e) {
-	    m_ButtonAdd.setIcon(GUIHelper.getIcon("add_modified.gif"));
+	    m_ButtonAdd.setIcon(ImageManager.getIcon("add_modified.gif"));
 	    repaint();
 	  }
 	});
@@ -1013,7 +1014,7 @@ public class GenericArrayEditor
 	m_ListModel.insertElementAt(object, selected);
       else
 	m_ListModel.addElement(object);
-      m_ButtonAdd.setIcon(GUIHelper.getIcon("add.gif"));
+      m_ButtonAdd.setIcon(ImageManager.getIcon("add.gif"));
       m_Modified = true;
       result     = true;
       updateButtons();

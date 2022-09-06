@@ -24,6 +24,7 @@ import adams.core.classmanager.ClassManager;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
 import javax.swing.event.ChangeEvent;
@@ -217,9 +218,9 @@ public class GenericArrayEditorPanel
     menu = new BasePopupMenu();
 
     if (isEditable())
-      item = new JMenuItem("Edit...", GUIHelper.getIcon("properties.gif"));
+      item = new JMenuItem("Edit...", ImageManager.getIcon("properties.gif"));
     else
-      item = new JMenuItem("Show...", GUIHelper.getIcon("properties.gif"));
+      item = new JMenuItem("Show...", ImageManager.getIcon("properties.gif"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         choose();

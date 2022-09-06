@@ -52,7 +52,7 @@ public class BaseFlatButtonWithDropDownMenu
    * Initializes the button. Uses the "arrow-head-down.png" icon.
    */
   public BaseFlatButtonWithDropDownMenu() {
-    super(GUIHelper.getIcon("arrow-head-down.png"));
+    super(ImageManager.getIcon("arrow-head-down.png"));
     initialize();
   }
 

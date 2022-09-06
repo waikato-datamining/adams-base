@@ -24,6 +24,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.container.DataContainerPanelWithContainerList;
 import adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopupCustomizer;
 import adams.gui.visualization.spreadsheet.SpreadSheetRow;
@@ -89,7 +90,7 @@ public class SaveVisible
   public void customize(DataContainerPanelWithContainerList<SpreadSheetRow, SpreadSheetRowContainerManager, SpreadSheetRowContainer> panel, MouseEvent e, JPopupMenu menu) {
     JMenuItem		item;
 
-    item = new JMenuItem("Save visible...", GUIHelper.getIcon("save.gif"));
+    item = new JMenuItem("Save visible...", ImageManager.getIcon("save.gif"));
     item.addActionListener((ActionEvent ae) -> {
       SpreadSheetFileChooser fc = new SpreadSheetFileChooser();
       int retval = fc.showSaveDialog(panel);

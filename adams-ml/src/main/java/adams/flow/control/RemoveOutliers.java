@@ -40,7 +40,7 @@ import adams.flow.sink.sequenceplotter.ToggleOutlier;
 import adams.flow.transformer.AbstractInteractiveTransformerDialog;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
@@ -441,7 +441,7 @@ public class RemoveOutliers
     panelButtonsRight = new JPanel(new GridLayout(3, 1, 5, 5));
     panelRight.add(panelButtonsRight, BorderLayout.NORTH);
 
-    buttonReset = new BaseButton("Reset", GUIHelper.getIcon("revert.png"));
+    buttonReset = new BaseButton("Reset", ImageManager.getIcon("revert.png"));
     buttonReset.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -462,7 +462,7 @@ public class RemoveOutliers
     });
     panelButtonsRight.add(buttonReset);
 
-    buttonClear = new BaseButton("Clear", GUIHelper.getIcon("new.gif"));
+    buttonClear = new BaseButton("Clear", ImageManager.getIcon("new.gif"));
     buttonClear.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

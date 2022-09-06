@@ -20,7 +20,7 @@
 
 package adams.gui.flow.notificationareaaction;
 
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 
 import javax.swing.SwingWorker;
 import java.awt.event.ActionEvent;
@@ -42,7 +42,7 @@ public class Print
   public Print() {
     super();
     setName("Print...");
-    setIcon(GUIHelper.getIcon("print.gif"));
+    setIcon(ImageManager.getIcon("print.gif"));
   }
 
   /**

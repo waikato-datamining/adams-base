@@ -21,7 +21,7 @@ package adams.gui.core.dom;
 
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTree;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import org.w3c.dom.Node;
@@ -150,7 +150,7 @@ public class DOMTree
     if (selRow > -1) {
       menu = new BasePopupMenu();
 
-      menuitem = new JMenuItem("Copy", GUIHelper.getIcon("copy.gif"));
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
       menuitem.setEnabled(selNode.hasValue());
       menuitem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {

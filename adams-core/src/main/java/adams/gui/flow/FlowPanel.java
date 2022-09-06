@@ -57,6 +57,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.KnownParentSupporter;
 import adams.gui.core.MultiPageIconSupporter;
 import adams.gui.core.RecentFilesHandlerWithCommandline;
@@ -417,7 +418,7 @@ public class FlowPanel
     if (getOwner() != null) {
       index = getOwner().indexOfPage(this);
       if (index != -1)
-        getOwner().setIconAt(index, (icon == null) ? null : GUIHelper.getIcon(icon));
+        getOwner().setIconAt(index, (icon == null) ? null : ImageManager.getIcon(icon));
     }
   }
 

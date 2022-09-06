@@ -26,6 +26,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.SortableAndSearchableWrapperTableModel;
 import adams.gui.core.TableRowRange;
@@ -376,14 +377,14 @@ public class InstancesTable
     instModel = (InstancesTableModel) getUnsortedModel();
 
     if (instModel.isUndoEnabled()) {
-      menuitem = new JMenuItem("Undo", GUIHelper.getIcon("undo.gif"));
+      menuitem = new JMenuItem("Undo", ImageManager.getIcon("undo.gif"));
       menuitem.setEnabled(canUndo());
       menuitem.addActionListener((ActionEvent ae) -> instModel.undo());
       menu.add(menuitem);
       menu.addSeparator();
     }
 
-    menuitem = new JMenuItem("Rename...", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Rename...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       String newName = GUIHelper.showInputDialog(
 	InstancesTable.this, "Please enter new name", getInstances().attribute(state.selCol).name());
@@ -395,7 +396,7 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Delete", ImageManager.getIcon("delete.gif"));
     menuitem.addActionListener((ActionEvent ae) -> {
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(state.actCol).name() + "'?");
       if (retVal == ApprovalDialog.APPROVE_OPTION) {
@@ -409,7 +410,7 @@ public class InstancesTable
     menu.addSeparator();
 
     if (getShowWeightsColumn()) {
-      menuitem = new JMenuItem("Hide weights", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Hide weights", ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent ae) -> {
         setShowWeightsColumn(false);
         setShowAttributeWeights(false);
@@ -417,7 +418,7 @@ public class InstancesTable
       menu.add(menuitem);
     }
     else {
-      menuitem = new JMenuItem("Show weights", GUIHelper.getEmptyIcon());
+      menuitem = new JMenuItem("Show weights", ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent ae) -> {
         setShowWeightsColumn(true);
         setShowAttributeWeights(true);
@@ -425,7 +426,7 @@ public class InstancesTable
       menu.add(menuitem);
     }
 
-    menuitem = new JMenuItem("Filter", GUIHelper.getIcon("filter.png"));
+    menuitem = new JMenuItem("Filter", ImageManager.getIcon("filter.png"));
     menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
@@ -438,7 +439,7 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Filter (RegExp)", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Filter (RegExp)", ImageManager.getEmptyIcon());
     menuitem.setEnabled(state.actCol > -1);
     menuitem.addActionListener((ActionEvent ae) -> {
       String filter = "";
@@ -451,12 +452,12 @@ public class InstancesTable
     });
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove filter", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Remove filter", ImageManager.getIcon("delete.gif"));
     menuitem.setEnabled(isColumnFiltered(state.selCol));
     menuitem.addActionListener((ActionEvent ae) -> removeColumnFilter(state.selCol));
     menu.add(menuitem);
 
-    menuitem = new JMenuItem("Remove all filters", GUIHelper.getIcon("delete_all.gif"));
+    menuitem = new JMenuItem("Remove all filters", ImageManager.getIcon("delete_all.gif"));
     menuitem.setEnabled(isAnyColumnFiltered());
     menuitem.addActionListener((ActionEvent ae) -> removeAllColumnFilters());
     menu.add(menuitem);
@@ -509,13 +510,13 @@ public class InstancesTable
     range.setIndices(state.selRows);
 
     if (instModel.isUndoEnabled()) {
-      menuitem = new JMenuItem("Undo", GUIHelper.getIcon("undo.gif"));
+      menuitem = new JMenuItem("Undo", ImageManager.getIcon("undo.gif"));
       menuitem.setEnabled(canUndo());
       menuitem.addActionListener((ActionEvent ae) -> instModel.undo());
       menu.add(menuitem);
     }
 
-    menuitem = new JMenuItem("Invert selection", GUIHelper.getEmptyIcon());
+    menuitem = new JMenuItem("Invert selection", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> invertRowSelection());
     menu.add(menuitem);
 
@@ -525,13 +526,13 @@ public class InstancesTable
       menuitem = new JMenuItem("Copy rows");
     else
       menuitem = new JMenuItem("Copy row");
-    menuitem.setIcon(GUIHelper.getIcon("copy_row.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_row.gif"));
     menuitem.setEnabled(getSelectedRowCount() > 0);
     menuitem.addActionListener((ActionEvent ae) -> copyToClipboard());
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Copy cell");
-    menuitem.setIcon(GUIHelper.getIcon("copy_cell.gif"));
+    menuitem.setIcon(ImageManager.getIcon("copy_cell.gif"));
     menuitem.setEnabled(getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> {
       if (state.selRow == -1)
@@ -544,7 +545,7 @@ public class InstancesTable
 
     menu.addSeparator();
 
-    menuitem = new JMenuItem("Delete", GUIHelper.getIcon("delete.gif"));
+    menuitem = new JMenuItem("Delete", ImageManager.getIcon("delete.gif"));
     menuitem.setEnabled(state.selRows.length > 0);
     menuitem.addActionListener((ActionEvent ae) -> {
       String msg = "Delete row";
@@ -567,7 +568,7 @@ public class InstancesTable
       menuitem = new JMenuItem("Save selected...");
     else
       menuitem = new JMenuItem("Save visible...");
-    menuitem.setIcon(GUIHelper.getIcon("save.gif"));
+    menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener((ActionEvent ae) -> saveAs(rowrange));
     menu.add(menuitem);
 

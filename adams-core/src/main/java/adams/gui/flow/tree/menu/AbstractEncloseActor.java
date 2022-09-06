@@ -24,7 +24,7 @@ import adams.flow.control.Flow;
 import adams.flow.core.AbstractActor;
 import adams.flow.core.ActorHandler;
 import adams.flow.core.MutableActorHandler;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MenuItemComparator;
 import adams.gui.flow.tree.record.enclose.MostCommon;
 
@@ -81,7 +81,7 @@ public abstract class AbstractEncloseActor
       if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
         continue;
       menuitem = new JMenuItem(actor.getClass().getSimpleName());
-      menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
+      menuitem.setIcon(ImageManager.getIcon(actor.getClass()));
       result.add(menuitem);
       menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
     }
@@ -113,7 +113,7 @@ public abstract class AbstractEncloseActor
 	if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
 	  continue;
 	menuitem = new JMenuItem(actor.getClass().getSimpleName());
-	menuitem.setIcon(GUIHelper.getIcon(actor.getClass()));
+	menuitem.setIcon(ImageManager.getIcon(actor.getClass()));
 	result.add(menuitem);
 	menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
       }

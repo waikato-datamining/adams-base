@@ -23,7 +23,7 @@ package adams.gui.tools.spreadsheetprocessor.processors;
 import adams.core.MessageCollection;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseButton;
-import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.dialog.SpreadSheetQueryPanel;
 import adams.gui.event.SpreadSheetProcessorEvent.EventType;
 import adams.gui.tools.spreadsheetprocessor.AbstractWidget;
@@ -89,7 +89,7 @@ public class QueryProcessor
         }
       });
 
-      m_ButtonExecute = new BaseButton(GUIHelper.getIcon("run.gif"));
+      m_ButtonExecute = new BaseButton(ImageManager.getIcon("run.gif"));
       m_ButtonExecute.addActionListener((ActionEvent e) -> execute());
       m_ButtonExecute.setToolTipText("Executes the query (Alt+X)");
       m_PanelQuery.getButtonsRight().add(m_ButtonExecute);

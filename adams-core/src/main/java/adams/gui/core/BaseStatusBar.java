@@ -476,14 +476,14 @@ public class BaseStatusBar
 
     result = new BasePopupMenu();
 
-    menuitem = new JMenuItem("Show status", GUIHelper.getIcon("editor.gif"));
+    menuitem = new JMenuItem("Show status", ImageManager.getIcon("editor.gif"));
     menuitem.setEnabled(m_StatusLeft.length() > 0);
     menuitem.addActionListener((ActionEvent e) -> displayStatus(left));
     result.add(menuitem);
 
     result.addSeparator();
 
-    menuitem = new JMenuItem("Clear status", GUIHelper.getIcon("new.gif"));
+    menuitem = new JMenuItem("Clear status", ImageManager.getIcon("new.gif"));
     menuitem.setEnabled(m_StatusLeft.length() > 0);
     menuitem.addActionListener((ActionEvent e) -> clearStatus(left));
     result.add(menuitem);
