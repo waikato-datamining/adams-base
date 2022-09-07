@@ -62,28 +62,13 @@ public class ImageManager {
    * @param name	the name of the image to add the path to
    * @return		the full path of the image
    */
-  public static String getImageFilename(String name) {
+  public static String checkImageFilename(String name) {
     String	result;
     String[]	dirs;
     int		i;
     URL url;
 
     result = null;
-
-    // cached?
-    if (m_ImageCache.containsKey(name))
-      return m_ImageCache.get(name);
-
-    // no extension?
-    if (!(name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".png"))) {
-      result = getImageFilename(name + ".gif");
-      if (result == null)
-	result = getImageFilename(name + ".png");
-      if (result != null) {
-        m_ImageCache.put(name, result);
-        return result;
-      }
-    }
 
     dirs = GUIHelper.getString("ImagesDirectory", DEFAULT_IMAGE_DIR).split(",");
     for (i = 0; i < dirs.length; i++) {
@@ -93,7 +78,7 @@ public class ImageManager {
 	url = ClassLoader.getSystemClassLoader().getResource(dirs[i] + name);
 	if (url != null) {
 	  result = dirs[i] + name;
-          m_ImageCache.put(name, result);
+	  m_ImageCache.put(name, result);
 	  break;
 	}
       }
@@ -106,18 +91,69 @@ public class ImageManager {
   }
 
   /**
+   * Removes the gif/png/jpg extension from the name, if any.
+   *
+   * @param name	the name to process
+   * @return		the processed name
+   */
+  protected static String removeExtension(String name) {
+    int		pos;
+    int		len;
+    String	tmp;
+
+    len = name.length();
+    pos = name.lastIndexOf('.');
+
+    // possible image extension?
+    if (pos == len - 4) {
+      tmp = name.toLowerCase();
+      if (tmp.endsWith(".gif") || tmp.endsWith(".png") || tmp.endsWith(".jpg"))
+        name = name.substring(0, len - 4);
+    }
+
+    return name;
+  }
+
+  /**
+   * Adds the path of the images directory to the name of the image.
+   * Automatically tests for .gif and .png if the name does not have an
+   * extension.
+   *
+   * @param name	the name of the image to add the path to
+   * @return		the full path of the image
+   */
+  public static String getImageFilename(String name) {
+    String	result;
+    String[]	dirs;
+    int		i;
+    URL 	url;
+
+    name = removeExtension(name);
+
+    // cached?
+    if (m_ImageCache.containsKey(name))
+      return m_ImageCache.get(name);
+
+    result = checkImageFilename(name + ".gif");
+    if (result == null)
+      result = checkImageFilename(name + ".png");
+    if (result == null)
+      result = checkImageFilename(name + ".jpg");
+    if (result != null)
+      m_ImageCache.put(name, result);
+
+    return result;
+  }
+
+  /**
    * Returns an ImageIcon for the given class.
    *
    * @param cls		the class to get the icon for (gif, png or jpg)
    * @return		the ImageIcon or null if none found
    */
   public static ImageIcon getIcon(Class cls) {
-    if (hasImageFile(cls.getName() + ".gif"))
-      return getIcon(cls.getName() + ".gif");
-    else if (hasImageFile(cls.getName() + ".png"))
-      return getIcon(cls.getName() + ".png");
-    else if (hasImageFile(cls.getName() + ".jpg"))
-      return getIcon(cls.getName() + ".jpg");
+    if (hasImageFile(cls.getName()))
+      return getIcon(cls.getName());
     else
       return null;
   }
