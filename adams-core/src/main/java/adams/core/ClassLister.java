@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -26,12 +26,16 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
+import adams.env.ClasspathBlacklistDefinition;
 import adams.env.Environment;
 import adams.flow.core.Compatibility;
 import adams.gui.goe.AbstractEditorRegistration;
 import nz.ac.waikato.cms.locator.ClassCache;
 import nz.ac.waikato.cms.locator.ClassLocator;
+import nz.ac.waikato.cms.locator.ClassPathTraversal;
+import nz.ac.waikato.cms.locator.ClassTraversalWithBlacklister;
 import nz.ac.waikato.cms.locator.PropertiesBasedClassListTraversal;
+import nz.ac.waikato.cms.locator.blacklisting.SimpleBlacklister;
 
 import java.io.File;
 import java.io.InputStream;
@@ -84,6 +88,9 @@ public class ClassLister
   /** the name of the props file. */
   public final static String BLACKLIST = "ClassLister.blacklist";
 
+  /** the name of the classpath blacklist props file. */
+  public final static String CLASSPATH_BLACKLIST = "ClasspathBlacklist.props";
+
   /** for statically listed classes (superclass -> comma-separated classnames). */
   public static final String CLASSLISTER_CLASSES = "ClassLister.classes";
 
@@ -100,9 +107,29 @@ public class ClassLister
    * Initializes the classlister.
    */
   protected ClassLister() {
-    super();
+    super(new ClassPathTraversal());
 
     long start = System.currentTimeMillis();
+
+    // TODO
+    if (m_ClassTraversal instanceof ClassTraversalWithBlacklister) {
+      Properties props = Environment.getInstance().read(ClasspathBlacklistDefinition.KEY);
+      SimpleBlacklister blacklister = new SimpleBlacklister();
+      String[] parts;
+      // dirs
+      parts = props.getProperty("Directories", "").split(",");
+      for (String part: parts)
+        blacklister.blacklistDir(new File(part.trim()));
+      // files
+      parts = props.getProperty("Files", "").split(",");
+      for (String part: parts)
+        blacklister.blacklistFile(part.trim());
+      // patterns
+      parts = props.getProperty("FilePatterns", "").split(",");
+      for (String part: parts)
+        blacklister.blacklistFilePattern(part.trim());
+      ((ClassTraversalWithBlacklister) m_ClassTraversal).setBlacklister(blacklister);
+    }
 
     // static?
     InputStream classes = null;

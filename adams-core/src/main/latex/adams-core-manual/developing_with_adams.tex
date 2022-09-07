@@ -643,6 +643,35 @@ pattern:
     org\.funky\.conversion\..*Experimental.*
 \end{verbatim}
 
+\subsection{Blacklisting classpath elements}
+ADAMS inspects by default the whole classpath, which can take significant time.
+It therefore allows the user to list directories, files and file patterns that
+can be used for blacklisting parts of the classpath. This can be done through
+the \texttt{ClasspathBlacklist.props} properties file.
+
+\noindent The format is as follows:
+
+\begin{verbatim}
+Directories=dir1,dir2,...
+Files=file1,file2,...
+FilePatterns=regexp1,regexp2,...
+\end{verbatim}
+
+\noindent Using the file patterns is the most flexible for blacklisting jar files, e.g.:
+
+\begin{verbatim}
+Directories=
+Files=
+FilePatterns=\
+  mysql-connector-java.*,\
+  jide-oss.*,\
+  logback.*,slf4j.*,\
+  rsyntaxtextarea.*,\
+  trove4j.*\,
+  jodd-core.*\,
+  java-cup-runtime.*
+\end{verbatim}
+
 \subsection{Applications without dynamic class discovery}
 In order to speed up start up time, applications can get built with
 dynamic class discovery turned off. These applications use class/package

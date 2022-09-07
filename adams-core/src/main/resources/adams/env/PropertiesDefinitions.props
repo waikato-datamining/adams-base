@@ -10,6 +10,7 @@ Definitions=\
   adams.env.CharsetDefinition,\
   adams.env.ClassListerBlacklistDefinition,\
   adams.env.ClassListerDefinition,\
+  adams.env.ClasspathBlacklistDefinition,\
   adams.env.ConditionsDefinition,\
   adams.env.ConversionDefinition,\
   adams.env.DatabaseConnectionDefinition,\

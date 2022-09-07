@@ -1,0 +1,28 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# Directories=dir1,dir2,...
+# Files=file1,file2,...
+# FilePatterns=regexp1,regexp2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# the directories to blacklist during the classpath analysis
+# (comma-separated list of paths)
+Directories=
+
+# the files to blacklist during the classpath analysis
+# (comma-separated list of names, no path)
+Files=
+
+# the regular expressions to use for blacklisting files during the classpath analysis
+# (comma-separated list of regexps)
+FilePatterns=\
+  mysql-connector-java.*,\
+  jide-oss.*,\
+  logback.*,slf4j.*,\
+  rsyntaxtextarea.*,\
+  trove4j.*\,
+  jodd-core.*\,
+  java-cup-runtime.*
