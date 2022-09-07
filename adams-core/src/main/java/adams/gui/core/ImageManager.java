@@ -43,7 +43,13 @@ public class ImageManager {
   public static final String DEFAULT_IMAGE_DIR = "adams/gui/images/";
 
   /** maps icon name to filename. */
-  protected static Map<String,String> m_ImageCache = new HashMap<>();
+  protected static Map<String,String> m_NameCache = new HashMap<>();
+
+  /** maps filename to icon. */
+  protected static Map<String,ImageIcon> m_IconCache = new HashMap<>();
+
+  /** maps filename to buffered image. */
+  protected static Map<String,BufferedImage> m_BufferedImageCache = new HashMap<>();
 
   /** the directories to look for files. */
   protected static List<String> m_ImageDirs;
@@ -153,13 +159,13 @@ public class ImageManager {
     name = removeExtension(name);
 
     // cached?
-    if (m_ImageCache.containsKey(name))
-      return m_ImageCache.get(name);
+    if (m_NameCache.containsKey(name))
+      return m_NameCache.get(name);
 
     // determine dirs?
-    synchronized (m_ImageCache) {
+    synchronized (m_NameCache) {
       if (m_ImageDirs == null)
-        initImageDirs();
+	initImageDirs();
     }
 
     // locate image
@@ -171,7 +177,7 @@ public class ImageManager {
       if (result == null)
 	result = checkImageFilename(m_ImageDirs.get(i), name + ".jpg");
       if (result != null) {
-	m_ImageCache.put(name, result);
+	m_NameCache.put(name, result);
 	break;
       }
     }
@@ -199,13 +205,20 @@ public class ImageManager {
    * @return		the ImageIcon or null if not available
    */
   public static ImageIcon getIcon(String name) {
+    ImageIcon	result;
     String	filename;
 
+    result   = null;
     filename = getImageFilename(name);
-    if (filename != null)
-      return new ImageIcon(ClassLoader.getSystemClassLoader().getResource(filename));
-    else
-      return null;
+
+    if (filename != null) {
+      if (m_IconCache.containsKey(filename))
+	return m_IconCache.get(filename);
+      result = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(filename));
+      m_IconCache.put(filename, result);
+    }
+
+    return result;
   }
 
   /**
@@ -218,7 +231,10 @@ public class ImageManager {
     ImageIcon	result;
 
     try {
+      if (m_IconCache.containsKey(filename))
+	return m_IconCache.get(filename);
       result = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(filename));
+      m_IconCache.put(filename, result);
     }
     catch (Exception e) {
       result = null;
@@ -243,19 +259,24 @@ public class ImageManager {
    * @return		the BufferedImage or null if not available/failed to load
    */
   public static BufferedImage getImage(String name) {
-    String	filename;
+    BufferedImage	result;
+    String		filename;
 
+    result   = null;
     filename = getImageFilename(name);
     if (filename != null) {
+      if (m_BufferedImageCache.containsKey(filename))
+        return m_BufferedImageCache.get(filename);
       try {
-	return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+	result = ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
+	m_BufferedImageCache.put(filename, result);
       }
       catch (Exception e) {
 	System.err.println("Failed to load image: " + filename);
 	e.printStackTrace();
       }
     }
-    return null;
+    return result;
   }
 
   /**
