@@ -1,7 +1,6 @@
 # Parameters for the GUI.
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # The Look'n'Feel
 LookAndFeel=javax.swing.plaf.metal.MetalLookAndFeel
@@ -10,8 +9,12 @@ LookAndFeel=javax.swing.plaf.metal.MetalLookAndFeel
 #LookAndFeel=com.sun.java.swing.plaf.windows.WindowsLookAndFeel
 #LookAndFeel=com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel
 
-# The image directory prefix:
+# The default image directory prefix
 ImagesDirectory=adams/gui/images/
+
+# The image directory prefix for the theme
+# (takes precedence over default image directory prefix)
+ThemeImagesDirectory=
 
 # The application Logo
 LogoImage=adams_logo.png

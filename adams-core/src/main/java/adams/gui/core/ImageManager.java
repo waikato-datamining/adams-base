@@ -24,7 +24,9 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +45,9 @@ public class ImageManager {
   /** maps icon name to filename. */
   protected static Map<String,String> m_ImageCache = new HashMap<>();
 
+  /** the directories to look for files. */
+  protected static List<String> m_ImageDirs;
+
   /**
    * Checks whether the image is available.
    *
@@ -55,36 +60,25 @@ public class ImageManager {
   }
 
   /**
-   * Adds the path of the images directory to the name of the image.
-   * Automatically tests for .gif and .png if the name does not have an
-   * extension.
+   * Checks whether an image with the given name is present in the specified directory.
    *
-   * @param name	the name of the image to add the path to
-   * @return		the full path of the image
+   * @param dir		the directory to look for image
+   * @param name	the name of the image to look for
+   * @return		the full path of the image if present, otherwise null
    */
-  public static String checkImageFilename(String name) {
+  public static String checkImageFilename(String dir, String name) {
     String	result;
-    String[]	dirs;
-    int		i;
-    URL url;
+    URL 	url;
 
     result = null;
 
-    dirs = GUIHelper.getString("ImagesDirectory", DEFAULT_IMAGE_DIR).split(",");
-    for (i = 0; i < dirs.length; i++) {
-      if (!dirs[i].endsWith("/"))
-	dirs[i] += "/";
-      try {
-	url = ClassLoader.getSystemClassLoader().getResource(dirs[i] + name);
-	if (url != null) {
-	  result = dirs[i] + name;
-	  m_ImageCache.put(name, result);
-	  break;
-	}
-      }
-      catch (Exception e) {
-	// ignored
-      }
+    try {
+      url = ClassLoader.getSystemClassLoader().getResource(dir + name);
+      if (url != null)
+	result = dir + name;
+    }
+    catch (Exception e) {
+      // ignored
     }
 
     return result;
@@ -108,16 +102,44 @@ public class ImageManager {
     if (pos == len - 4) {
       tmp = name.toLowerCase();
       if (tmp.endsWith(".gif") || tmp.endsWith(".png") || tmp.endsWith(".jpg"))
-        name = name.substring(0, len - 4);
+	name = name.substring(0, len - 4);
     }
 
     return name;
   }
 
   /**
-   * Adds the path of the images directory to the name of the image.
-   * Automatically tests for .gif and .png if the name does not have an
-   * extension.
+   * Initializes the directories to look for images.
+   */
+  protected static void initImageDirs() {
+    String[]	dirs;
+    int		i;
+
+    m_ImageDirs = new ArrayList<>();
+
+    // theme
+    dirs = GUIHelper.getString("ThemeImagesDirectory", "").split(",");
+    for (i = 0; i < dirs.length; i++) {
+      if (!dirs[i].trim().isEmpty()) {
+	if (!dirs[i].endsWith("/"))
+	  dirs[i] += "/";
+	m_ImageDirs.add(dirs[i]);
+      }
+    }
+
+    // default
+    dirs = GUIHelper.getString("ImagesDirectory", DEFAULT_IMAGE_DIR).split(",");
+    for (i = 0; i < dirs.length; i++) {
+      if (!dirs[i].endsWith("/"))
+	dirs[i] += "/";
+      m_ImageDirs.add(dirs[i]);
+    }
+  }
+
+  /**
+   * Tries to find an image with the specified name in one of the defined
+   * image directories. Automatically checks for .gif/.png/.jpg, therefore
+   * does not require an extension in the name.
    *
    * @param name	the name of the image to add the path to
    * @return		the full path of the image
@@ -134,13 +156,25 @@ public class ImageManager {
     if (m_ImageCache.containsKey(name))
       return m_ImageCache.get(name);
 
-    result = checkImageFilename(name + ".gif");
-    if (result == null)
-      result = checkImageFilename(name + ".png");
-    if (result == null)
-      result = checkImageFilename(name + ".jpg");
-    if (result != null)
-      m_ImageCache.put(name, result);
+    // determine dirs?
+    synchronized (m_ImageCache) {
+      if (m_ImageDirs == null)
+        initImageDirs();
+    }
+
+    // locate image
+    result = null;
+    for (i = 0; i < m_ImageDirs.size(); i++) {
+      result = checkImageFilename(m_ImageDirs.get(i), name + ".gif");
+      if (result == null)
+	result = checkImageFilename(m_ImageDirs.get(i), name + ".png");
+      if (result == null)
+	result = checkImageFilename(m_ImageDirs.get(i), name + ".jpg");
+      if (result != null) {
+	m_ImageCache.put(name, result);
+	break;
+      }
+    }
 
     return result;
   }
