@@ -24,6 +24,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manages images and icons.
@@ -35,7 +37,11 @@ public class ImageManager {
   /** the empty icon name. */
   public final static String EMPTY_ICON = "empty.gif";
 
+  /** the default path for images/icons. */
   public static final String DEFAULT_IMAGE_DIR = "adams/gui/images/";
+
+  /** maps icon name to filename. */
+  protected static Map<String,String> m_ImageCache = new HashMap<>();
 
   /**
    * Checks whether the image is available.
@@ -64,13 +70,19 @@ public class ImageManager {
 
     result = null;
 
+    // cached?
+    if (m_ImageCache.containsKey(name))
+      return m_ImageCache.get(name);
+
     // no extension?
     if (!(name.toLowerCase().endsWith(".gif") || name.toLowerCase().endsWith(".png"))) {
       result = getImageFilename(name + ".gif");
       if (result == null)
 	result = getImageFilename(name + ".png");
-      if (result != null)
-	return result;
+      if (result != null) {
+        m_ImageCache.put(name, result);
+        return result;
+      }
     }
 
     dirs = GUIHelper.getString("ImagesDirectory", DEFAULT_IMAGE_DIR).split(",");
@@ -81,6 +93,7 @@ public class ImageManager {
 	url = ClassLoader.getSystemClassLoader().getResource(dirs[i] + name);
 	if (url != null) {
 	  result = dirs[i] + name;
+          m_ImageCache.put(name, result);
 	  break;
 	}
       }
