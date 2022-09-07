@@ -42,6 +42,12 @@ public class ImageManager {
   /** the default path for images/icons. */
   public static final String DEFAULT_IMAGE_DIR = "adams/gui/images/";
 
+  /** the property in the GUIHelper.props with the default images dir. */
+  public static final String KEY_IMAGES_DIRECTORY = "ImagesDirectory";
+
+  /** the property in the GUIHelper.props with the theme images dir. */
+  public static final String KEY_THEME_IMAGES_DIRECTORY = "ThemeImagesDirectory";
+
   /** maps icon name to filename. */
   protected static Map<String,String> m_NameCache = new HashMap<>();
 
@@ -124,7 +130,7 @@ public class ImageManager {
     m_ImageDirs = new ArrayList<>();
 
     // theme
-    dirs = GUIHelper.getString("ThemeImagesDirectory", "").split(",");
+    dirs = GUIHelper.getString(KEY_THEME_IMAGES_DIRECTORY, "").split(",");
     for (i = 0; i < dirs.length; i++) {
       if (!dirs[i].trim().isEmpty()) {
 	if (!dirs[i].endsWith("/"))
@@ -134,7 +140,7 @@ public class ImageManager {
     }
 
     // default
-    dirs = GUIHelper.getString("ImagesDirectory", DEFAULT_IMAGE_DIR).split(",");
+    dirs = GUIHelper.getString(KEY_IMAGES_DIRECTORY, DEFAULT_IMAGE_DIR).split(",");
     for (i = 0; i < dirs.length; i++) {
       if (!dirs[i].endsWith("/"))
 	dirs[i] += "/";
