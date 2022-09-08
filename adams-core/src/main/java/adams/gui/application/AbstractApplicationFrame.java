@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -90,9 +90,9 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractApplicationFrame
-  extends AbstractFrameWithOptionHandling
-  implements DatabaseConnectionHandler, DatabaseConnectionChangeListener,
-             RestartableApplication, RemoteScriptingEngineHandler {
+    extends AbstractFrameWithOptionHandling
+    implements DatabaseConnectionHandler, DatabaseConnectionChangeListener,
+    RestartableApplication, RemoteScriptingEngineHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5800519559483605870L;
@@ -132,7 +132,7 @@ public abstract class AbstractApplicationFrame
 
   /** the directories containing PDF documentation. */
   protected PlaceholderDirectory[] m_DocumentationDirectories;
-  
+
   /** the application menu in use. */
   protected ApplicationMenu m_AppMenu;
 
@@ -201,7 +201,7 @@ public abstract class AbstractApplicationFrame
     super.initialize();
 
     initializeLogger();
-    
+
     m_DbConn                = getDefaultDatabaseConnection();
     m_DbConn.addChangeListener(this);
 
@@ -213,7 +213,7 @@ public abstract class AbstractApplicationFrame
 
     m_RemoteScriptingEngineUpdateListeners = new HashSet<>();
   }
-  
+
   /**
    * Initializes the logger.
    * <br><br>
@@ -223,10 +223,10 @@ public abstract class AbstractApplicationFrame
   protected void initializeLogger() {
     m_Logger = LoggingHelper.getLogger(getClass());
   }
-  
+
   /**
    * Returns the logger in use.
-   * 
+   *
    * @return		the logger
    */
   @Override
@@ -401,9 +401,9 @@ public abstract class AbstractApplicationFrame
    */
   public String startUpsTipText() {
     return
-        "The menu items to start up immediately; each consists of classname "
-      + "and optional parameters (in case the menu definition implements "
-      + AdditionalParameterHandler.class.getName() + ").";
+	"The menu items to start up immediately; each consists of classname "
+	    + "and optional parameters (in case the menu definition implements "
+	    + AdditionalParameterHandler.class.getName() + ").";
   }
 
   /**
@@ -472,8 +472,8 @@ public abstract class AbstractApplicationFrame
   @Override
   public String enableRestartTipText() {
     return
-        "If enabled and started through the " + Launcher.class.getName()
-	  + " class, the application can be restarted through the menu.";
+	"If enabled and started through the " + Launcher.class.getName()
+	    + " class, the application can be restarted through the menu.";
   }
 
   /**
@@ -503,8 +503,8 @@ public abstract class AbstractApplicationFrame
    */
   public String remoteScriptingEngineCmdLineTipText() {
     return
-        "The command-line of the remote scripting engine to execute at startup "
-	  + "time; use empty string for disable scripting.";
+	"The command-line of the remote scripting engine to execute at startup "
+	    + "time; use empty string for disable scripting.";
   }
 
   /**
@@ -563,8 +563,8 @@ public abstract class AbstractApplicationFrame
       public void windowStateChanged(WindowEvent e) {
 	int state = e.getNewState();
 	if (((state & Frame.MAXIMIZED_VERT) != 0)
-	  || ((state & Frame.MAXIMIZED_HORIZ) != 0)
-	  || ((state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH)) {
+	    || ((state & Frame.MAXIMIZED_HORIZ) != 0)
+	    || ((state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH)) {
 	  setExtendedState(Frame.NORMAL);
 	  setSizeAndLocation();
 	}
@@ -597,10 +597,10 @@ public abstract class AbstractApplicationFrame
       catch (Exception e) {
 	engine = null;
 	getLogger().log(
-	  Level.SEVERE,
-	  "Failed to instantiate remote scripting engine from commandline: '"
-	    + m_RemoteScriptingEngineCmdLine + "'",
-	  e);
+	    Level.SEVERE,
+	    "Failed to instantiate remote scripting engine from commandline: '"
+		+ m_RemoteScriptingEngineCmdLine + "'",
+	    e);
       }
       if (engine != null)
 	setRemoteScriptingEngine(engine);
@@ -866,7 +866,7 @@ public abstract class AbstractApplicationFrame
 
     if (title.length() != 0) {
       if (title.contains(name + ":"))
-        title = title.replace(name + ":", "");
+	title = title.replace(name + ":", "");
       if (title.length() > 50)
 	newTitle += " - " + title.substring(0, 50) + "...";
       else
@@ -958,8 +958,8 @@ public abstract class AbstractApplicationFrame
     while (iter.hasNext()) {
       current = iter.next();
       if (current.getClass() == windowClass) {
-        result = current;
-        break;
+	result = current;
+	break;
       }
     }
 
@@ -988,8 +988,8 @@ public abstract class AbstractApplicationFrame
       found   = current.getTitle().equals(title) || current.getTitle().equals(hostTitle);
 
       if (found) {
-        result = current;
-        break;
+	result = current;
+	break;
       }
     }
 
@@ -1053,7 +1053,7 @@ public abstract class AbstractApplicationFrame
       try {
 	if (child instanceof ChildFrame)
 	  ((ChildFrame) child).setExtendedState(JFrame.NORMAL);
-    }
+      }
       catch (Exception e) {
 	e.printStackTrace();
       }
@@ -1209,7 +1209,7 @@ public abstract class AbstractApplicationFrame
       if (getUserMode().compareTo(item.getUserMode()) < 0) {
 	getLogger().severe(
 	    item.getClass() + " requires at least user mode '"
-	    + getAppMenu().getUserMode() + "' (current: '" + getUserMode() + "')!");
+		+ getAppMenu().getUserMode() + "' (current: '" + getUserMode() + "')!");
 	continue;
       }
       if (item instanceof AbstractBasicMenuItemDefinition)
@@ -1354,7 +1354,7 @@ public abstract class AbstractApplicationFrame
     name   = getHostnamePrefix();
     if (name != null) {
       if (!result.contains(name))
-      result = name + result;
+	result = name + result;
     }
 
     return result;
@@ -1371,6 +1371,9 @@ public abstract class AbstractApplicationFrame
    */
   public static AbstractApplicationFrame runApplication(Class env, Class app, String[] options) {
     AbstractApplicationFrame	result;
+    long			start;
+
+    start = System.currentTimeMillis();
 
     Environment.setEnvironmentClass(env);
     LoggingHelper.useHandlerFromOptions(options);
@@ -1399,6 +1402,8 @@ public abstract class AbstractApplicationFrame
       e.printStackTrace();
       result = null;
     }
+
+    System.out.println(app.getName() + ": Time taken for startup " + (System.currentTimeMillis() - start) + " msec");
 
     return result;
   }
