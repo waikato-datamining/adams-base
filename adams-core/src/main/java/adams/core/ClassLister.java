@@ -111,7 +111,7 @@ public class ClassLister
 
     long start = System.currentTimeMillis();
 
-    // TODO
+    // blacklist dirs/files/file patterns
     if (m_ClassTraversal instanceof ClassTraversalWithBlacklister) {
       Properties props = Environment.getInstance().read(ClasspathBlacklistDefinition.KEY);
       SimpleBlacklister blacklister = new SimpleBlacklister();
