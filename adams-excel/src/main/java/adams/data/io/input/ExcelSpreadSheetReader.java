@@ -25,6 +25,7 @@ import adams.core.DateUtils;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.output.ExcelSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
@@ -115,7 +116,7 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ExcelSpreadSheetReader
-  extends AbstractExcelSpreadSheetReader {
+  extends AbstractExcelSpreadSheetReader<SheetRange> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
@@ -128,6 +129,16 @@ public class ExcelSpreadSheetReader
   @Override
   public String globalInfo() {
     return "Reads MS Excel files (using DOM).";
+  }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return the default
+   */
+  @Override
+  protected SheetRange getDefaultSheetRange() {
+    return new SheetRange(SheetRange.FIRST);
   }
 
   /**
@@ -199,6 +210,7 @@ public class ExcelSpreadSheetReader
   protected List<SpreadSheet> doReadRange(InputStream in) {
     List<SpreadSheet>		result;
     int[]			indices;
+    String[]			sheetNames;
     Workbook			workbook;
     Sheet 			sheet;
     SpreadSheet			spsheet;
@@ -221,7 +233,10 @@ public class ExcelSpreadSheetReader
     dformat  = DateUtils.getTimestampFormatter();
     try {
       workbook = WorkbookFactory.create(in);
-      m_SheetRange.setMax(workbook.getNumberOfSheets());
+      sheetNames = new String[workbook.getNumberOfSheets()];
+      for (i = 0; i < workbook.getNumberOfSheets(); i++)
+        sheetNames[i] = workbook.getSheetName(i);
+      m_SheetRange.setSheetNames(sheetNames);
       indices      = m_SheetRange.getIntIndices();
       firstRow     = m_FirstRow - 1;
       dataRowStart = getNoHeader() ? firstRow : firstRow + 1;

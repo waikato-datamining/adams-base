@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiSheetSpreadSheetReader.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -40,17 +40,16 @@ import java.util.List;
  * document in one go.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class AbstractMultiSheetSpreadSheetReader
+public abstract class AbstractMultiSheetSpreadSheetReader<T extends Range>
   extends AbstractSpreadSheetReader
-  implements MultiSheetSpreadSheetReader {
+  implements MultiSheetSpreadSheetReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -7995524981221985397L;
   
   /** the range of sheets to load. */
-  protected Range m_SheetRange;
+  protected T m_SheetRange;
 
   /**
    * Adds options to the internal list of options.
@@ -61,8 +60,15 @@ public abstract class AbstractMultiSheetSpreadSheetReader
 
     m_OptionManager.add(
 	    "sheets", "sheetRange",
-	    new Range(Range.FIRST));
+	    getDefaultSheetRange());
   }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return		the default
+   */
+  protected abstract T getDefaultSheetRange();
 
   /**
    * Sets the range of the sheets to load.
@@ -70,7 +76,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
    * @param value	the range (1-based)
    */
   @Override
-  public void setSheetRange(Range value) {
+  public void setSheetRange(T value) {
     m_SheetRange = value;
     reset();
   }
@@ -81,7 +87,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader
    * @return		the range (1-based)
    */
   @Override
-  public Range getSheetRange() {
+  public T getSheetRange() {
     return m_SheetRange;
   }
 

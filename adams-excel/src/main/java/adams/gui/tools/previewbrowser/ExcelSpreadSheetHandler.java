@@ -15,13 +15,13 @@
 
 /*
  * ExcelSpreadSheetHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import adams.core.Range;
 import adams.core.io.FileUtils;
 import adams.data.io.input.ExcelSpreadSheetReader;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -114,7 +114,7 @@ public class ExcelSpreadSheetHandler
     ExcelSpreadSheetReader	reader;
 
     reader = new ExcelSpreadSheetReader();
-    reader.setSheetRange(new Range(Range.ALL));
+    reader.setSheetRange(new SheetRange(SheetRange.ALL));
     result = reader.readRange(file);
     if (result == null)
       result = new ArrayList<>();

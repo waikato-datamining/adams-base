@@ -13,28 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiSheetSpreadSheetReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.Range;
+import adams.data.spreadsheet.SpreadSheet;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;
 
-import adams.core.Range;
-import adams.data.spreadsheet.SpreadSheet;
-
 /**
  * Interface for spreadsheet readers that can read multiple sheets from the
  * same document.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface MultiSheetSpreadSheetReader
+public interface MultiSheetSpreadSheetReader<T extends Range>
   extends SpreadSheetReader {
 
   /**
@@ -42,14 +41,14 @@ public interface MultiSheetSpreadSheetReader
    *
    * @param value	the range (1-based)
    */
-  public void setSheetRange(Range value);
+  public void setSheetRange(T value);
 
   /**
    * Returns the range of the sheets to load.
    *
    * @return		the range (1-based)
    */
-  public Range getSheetRange();
+  public T getSheetRange();
 
   /**
    * Returns the tip text for this property.

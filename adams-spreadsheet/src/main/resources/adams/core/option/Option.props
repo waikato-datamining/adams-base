@@ -16,6 +16,16 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
+# SheetIndex objects
+adams.data.spreadsheet.SheetIndex=true
+adams.data.spreadsheet.SheetIndex#toString=adams.core.option.parsing.SheetIndexParsing#toString
+adams.data.spreadsheet.SheetIndex#valueOf=adams.core.option.parsing.SheetIndexParsing#valueOf
+
+# SheetRange objects
+adams.data.spreadsheet.SheetRange=true
+adams.data.spreadsheet.SheetRange#toString=adams.core.option.parsing.SheetRangeParsing#toString
+adams.data.spreadsheet.SheetRange#valueOf=adams.core.option.parsing.SheetRangeParsing#valueOf
+
 # SpreadSheetColumnIndex objects
 adams.data.spreadsheet.SpreadSheetColumnIndex=true
 adams.data.spreadsheet.SpreadSheetColumnIndex#toString=adams.core.option.parsing.SpreadSheetColumnIndexParsing#toString

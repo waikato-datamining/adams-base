@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiSheetSpreadSheetReaderWithMissingValue.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.Range;
 import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.SpreadSheet;
 
@@ -27,10 +28,9 @@ import adams.data.spreadsheet.SpreadSheet;
  * missing value string.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
-  extends AbstractMultiSheetSpreadSheetReader
+public abstract class AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport<T extends Range>
+  extends AbstractMultiSheetSpreadSheetReader<T>
   implements MissingValueSpreadSheetReader {
   
   /** for serialization. */

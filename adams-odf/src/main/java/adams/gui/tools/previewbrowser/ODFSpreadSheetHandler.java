@@ -15,13 +15,13 @@
 
 /*
  * ODFSpreadSheetHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import adams.core.Range;
 import adams.core.io.FileUtils;
 import adams.data.io.input.ODFSpreadSheetReader;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import org.jopendocument.dom.ODPackage;
 
@@ -113,7 +113,7 @@ public class ODFSpreadSheetHandler
     ODFSpreadSheetReader	reader;
 
     reader = new ODFSpreadSheetReader();
-    reader.setSheetRange(new Range(Range.ALL));
+    reader.setSheetRange(new SheetRange(SheetRange.ALL));
     result = reader.readRange(file);
     if (result == null)
       result = new ArrayList<>();

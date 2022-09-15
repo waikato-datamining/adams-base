@@ -15,7 +15,7 @@
 
 /*
  * ODFSpreadSheetReader.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -26,6 +26,7 @@ import adams.data.io.output.ODFSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
@@ -106,7 +107,7 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ODFSpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
+  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport<SheetRange>
   implements NoHeaderSpreadSheetReader, WindowedSpreadSheetReader {
 
   /** for serialization. */
@@ -166,6 +167,16 @@ public class ODFSpreadSheetReader
     m_OptionManager.add(
       "num-rows", "numRows",
       -1, -1, null);
+  }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return the default
+   */
+  @Override
+  protected SheetRange getDefaultSheetRange() {
+    return new SheetRange(SheetRange.FIRST);
   }
 
   /**
@@ -407,6 +418,7 @@ public class ODFSpreadSheetReader
     String		cellStr;
     ODValueType		type;
     ContentType[]	cellTypes;
+    String[]		sheetNames;
     int[]		indices;
     int                 dataRowStart;
     int			firstRow;
@@ -417,8 +429,11 @@ public class ODFSpreadSheetReader
 
     try {
       spreadsheet = org.jopendocument.dom.spreadsheet.SpreadSheet.get(new ODPackage(in));
-      m_SheetRange.setMax(spreadsheet.getSheetCount());
-      indices = m_SheetRange.getIntIndices();
+      sheetNames  = new String[spreadsheet.getSheetCount()];
+      for (i = 0; i < spreadsheet.getSheetCount(); i++)
+        sheetNames[i] = spreadsheet.getSheet(i).getName();
+      m_SheetRange.setSheetNames(sheetNames);
+      indices  = m_SheetRange.getIntIndices();
       firstRow = m_FirstRow - 1;
       dataRowStart = getNoHeader() ? firstRow : firstRow + 1;
       for (int index: indices) {

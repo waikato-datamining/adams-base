@@ -14,6 +14,8 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
+adams.data.spreadsheet.SheetIndex=adams.gui.goe.SheetIndexEditor
+adams.data.spreadsheet.SheetRange=adams.gui.goe.SheetRangeEditor
 adams.data.spreadsheet.SpreadSheetColumnIndex=adams.gui.goe.SpreadSheetColumnIndexEditor
 adams.data.spreadsheet.SpreadSheetColumnRange=adams.gui.goe.SpreadSheetColumnRangeEditor
 adams.data.spreadsheet.SpreadSheetUnorderedColumnRange=adams.gui.goe.SpreadSheetUnorderedColumnRangeEditor

@@ -15,7 +15,7 @@
 
 /*
  * GnumericSpreadSheetReader.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -23,6 +23,7 @@ import adams.core.logging.LoggingHelper;
 import adams.data.io.output.GnumericSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
@@ -106,7 +107,7 @@ import java.util.zip.GZIPInputStream;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class GnumericSpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport
+  extends AbstractMultiSheetSpreadSheetReaderWithMissingValueSupport<SheetRange>
   implements NoHeaderSpreadSheetReader, WindowedSpreadSheetReader {
 
   /** for serialization. */
@@ -166,6 +167,16 @@ public class GnumericSpreadSheetReader
     m_OptionManager.add(
       "num-rows", "numRows",
       -1, -1, null);
+  }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return the default
+   */
+  @Override
+  protected SheetRange getDefaultSheetRange() {
+    return new SheetRange(SheetRange.FIRST);
   }
 
   /**
@@ -372,8 +383,9 @@ public class GnumericSpreadSheetReader
     DocumentBuilderFactory 	dbFactory;
     DocumentBuilder 		dBuilder;
     Document 			doc;
-    NodeList 			sheetList;
+    NodeList 			nodeList;
     int[]			indices;
+    String[]			sheetNames;
     NodeList			cellList;
     int				i;
     int				n;
@@ -403,17 +415,23 @@ public class GnumericSpreadSheetReader
       dBuilder  = dbFactory.newDocumentBuilder();
       doc       = dBuilder.parse(in);    
       doc.getDocumentElement().normalize();
-      
+
+      // get sheet names
+      nodeList = doc.getElementsByTagName("gnm:SheetName");
+      sheetNames = new String[nodeList.getLength()];
+      for (i = 0; i < nodeList.getLength(); i++)
+	sheetNames[i] = nodeList.item(i).getTextContent();
+
       // traverse sheets
-      sheetList = doc.getElementsByTagName("gnm:Sheet");
-      m_SheetRange.setMax(sheetList.getLength());
+      nodeList = doc.getElementsByTagName("gnm:Sheet");
+      m_SheetRange.setSheetNames(sheetNames);
       indices = m_SheetRange.getIntIndices();
       for (i = 0; i < indices.length; i++) {
 	sheet = m_SpreadSheetType.newInstance();
 	sheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(sheet);
 	
-	sheetNode = sheetList.item(indices[i]);
+	sheetNode = nodeList.item(indices[i]);
 	// sheet specs
 	name = "Sheet" + (indices[i]+1);
 	rows = -1;

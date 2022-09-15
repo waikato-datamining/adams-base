@@ -15,7 +15,7 @@
 
 /*
  * Mat5SpreadSheetReader.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -24,6 +24,7 @@ import adams.core.logging.LoggingHelper;
 import adams.data.conversion.MatlabArrayToSpreadSheet;
 import adams.data.io.output.Mat5SpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
+import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import gnu.trove.set.TIntSet;
@@ -81,7 +82,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Mat5SpreadSheetReader
-  extends AbstractMultiSheetSpreadSheetReader {
+    extends AbstractMultiSheetSpreadSheetReader<SheetRange> {
 
   private static final long serialVersionUID = -9113442938603879820L;
 
@@ -109,12 +110,21 @@ public class Mat5SpreadSheetReader
     super.defineOptions();
 
     m_OptionManager.add(
-      "entry-name", "entryName",
-      "");
+	"entry-name", "entryName",
+	"");
 
     m_OptionManager.add(
-      "field-name", "fieldName",
-      "");
+	"field-name", "fieldName",
+	"");
+  }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return		the default
+   */
+  protected SheetRange getDefaultSheetRange() {
+    return new SheetRange(SheetRange.FIRST);
   }
 
   /**
@@ -258,8 +268,8 @@ public class Mat5SpreadSheetReader
       mat5 = Mat5.readFromFile(file.getAbsoluteFile());
 
       if (isLoggingEnabled()) {
-        for (MatFile.Entry entry: mat5.getEntries())
-          getLogger().info("Entry: " + entry.getName());
+	for (MatFile.Entry entry: mat5.getEntries())
+	  getLogger().info("Entry: " + entry.getName());
       }
       entryName = m_EntryName;
 
@@ -272,12 +282,12 @@ public class Mat5SpreadSheetReader
 	}
       }
       if (array == null) {
-        m_LastError = "Failed to load entry: " + m_EntryName;
+	m_LastError = "Failed to load entry: " + m_EntryName;
 	getLogger().severe(m_LastError);
       }
       else {
-        if (array instanceof Struct)
-          array = ((Struct) array).get(m_FieldName);
+	if (array instanceof Struct)
+	  array = ((Struct) array).get(m_FieldName);
 	sheet = convert(array);
 	if (sheet != null)
 	  sheet.setName(entryName);
@@ -306,6 +316,7 @@ public class Mat5SpreadSheetReader
     Array		array;
     int			i;
     TIntSet		indices;
+    String[]		entryNames;
 
     result = new ArrayList<>();
 
@@ -313,19 +324,22 @@ public class Mat5SpreadSheetReader
     if (!m_EntryName.isEmpty()) {
       sheet = read(file);
       if (sheet != null)
-        result.add(sheet);
+	result.add(sheet);
       return result;
     }
 
     try {
-      mat5 = Mat5.readFromFile(file.getAbsoluteFile());
-
-      if (isLoggingEnabled()) {
-        for (MatFile.Entry entry: mat5.getEntries())
-          getLogger().info("Entry: " + entry.getName());
+      mat5       = Mat5.readFromFile(file.getAbsoluteFile());
+      entryNames = new String[mat5.getNumEntries()];
+      i          = 0;
+      for (MatFile.Entry entry: mat5.getEntries()) {
+        entryNames[i] = entry.getName();
+        i++;
+        if (isLoggingEnabled())
+	  getLogger().info("Entry #" + (i+1) + ": " + entry.getName());
       }
 
-      m_SheetRange.setMax(mat5.getNumEntries());
+      m_SheetRange.setSheetNames(entryNames);
       indices = new TIntHashSet(m_SheetRange.getIntIndices());
       i       = 0;
       for (MatFile.Entry entry: mat5.getEntries()) {

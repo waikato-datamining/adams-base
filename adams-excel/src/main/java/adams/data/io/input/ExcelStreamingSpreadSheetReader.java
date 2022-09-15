@@ -15,7 +15,7 @@
 
 /*
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -24,6 +24,7 @@ import adams.core.DateTime;
 import adams.core.DateTimeMsec;
 import adams.core.ExcelHelper;
 import adams.core.License;
+import adams.core.Range;
 import adams.core.Stoppable;
 import adams.core.Time;
 import adams.core.Utils;
@@ -165,7 +166,7 @@ import java.util.logging.Level;
     note = "Adapted example from Apache website"
 )
 public class ExcelStreamingSpreadSheetReader
-  extends AbstractExcelSpreadSheetReader {
+  extends AbstractExcelSpreadSheetReader<Range> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
@@ -647,6 +648,16 @@ public class ExcelStreamingSpreadSheetReader
     m_OptionManager.add(
 	    "cell-string-contenttype", "cellStringContentType",
 	    new ContentType[0]);
+  }
+
+  /**
+   * Returns the default sheet range.
+   *
+   * @return the default
+   */
+  @Override
+  protected Range getDefaultSheetRange() {
+    return new Range(Range.FIRST);
   }
 
   /**
