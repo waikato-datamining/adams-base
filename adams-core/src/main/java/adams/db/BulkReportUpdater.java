@@ -15,7 +15,7 @@
 
 /*
  * BulkReportUpdater.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -23,7 +23,7 @@ import adams.data.report.DataType;
 import adams.data.report.Report;
 
 /**
- * Interface for table classes that handle the reports of a project.
+ * Interface for table classes that support bulk report updates.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @param <T> the type of report to handle
@@ -39,9 +39,10 @@ public interface BulkReportUpdater<T extends Report>
    * @param types	the data types to import
    * @param skipFields 	the fields to skip (regular expression), null to accept all
    * @param batchSize   the maximum number of records in one batch
+   * @param autoCommit  whether to use auto-commit or not (turning off may impact other transactions!)
    * @return		true if successfully inserted/updated
    */
-  public boolean bulkStore(T[] records, DataType[] types, String skipFields, int batchSize);
+  public boolean bulkStore(T[] records, DataType[] types, String skipFields, int batchSize, boolean autoCommit);
 
   /**
    * Interrupts a currently running bulk store, if possible.
