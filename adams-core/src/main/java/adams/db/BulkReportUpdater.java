@@ -40,9 +40,10 @@ public interface BulkReportUpdater<T extends Report>
    * @param skipFields 	the fields to skip (regular expression), null to accept all
    * @param batchSize   the maximum number of records in one batch
    * @param autoCommit  whether to use auto-commit or not (turning off may impact other transactions!)
+   * @param newConnection	uses a separate database connection just for this connection (then no auto-commit doesn't affect the rest)
    * @return		true if successfully inserted/updated
    */
-  public boolean bulkStore(T[] records, DataType[] types, String skipFields, int batchSize, boolean autoCommit);
+  public boolean bulkStore(T[] records, DataType[] types, String skipFields, int batchSize, boolean autoCommit, boolean newConnection);
 
   /**
    * Interrupts a currently running bulk store, if possible.

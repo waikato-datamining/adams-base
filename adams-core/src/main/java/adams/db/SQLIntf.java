@@ -15,7 +15,7 @@
 
 /*
  * SQLIntf.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public interface SQLIntf
-  extends LoggingSupporter, DatabaseConnectionProvider, TableInterface {
+    extends LoggingSupporter, DatabaseConnectionProvider, TableInterface {
 
   /** fake table name. */
   public static String FAKE_TABLE_NAME = "SQL";
@@ -101,6 +102,18 @@ public interface SQLIntf
    * @throws Exception 	if something goes wrong
    */
   public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception;
+
+  /**
+   * Create a Prepared statement with given query.
+   *
+   * @param conn	the database connection to use
+   * @param query 	the query to execute
+   * @param returnKeys 	whether to initialize the statement that it returns
+   *			the generated keys
+   * @return 		PreparedStatement
+   * @throws Exception 	if something goes wrong
+   */
+  public PreparedStatement prepareStatement(Connection conn, String query, boolean returnKeys) throws Exception;
 
   /**
    * Update table.
@@ -244,7 +257,7 @@ public interface SQLIntf
   /**
    * Returns the maximum length for column names. In case the meta-data
    * returns 0, {@link Integer#MAX_VALUE} is used instead.
-   * 
+   *
    * @return			the maximum length
    * @throws SQLException	if the query fails
    */

@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -225,7 +225,7 @@ public class SQL
    * @return 		PreparedStatement
    * @throws Exception 	if something goes wrong
    */
-  public PreparedStatement prepareStatement(String query) throws Exception{
+  public PreparedStatement prepareStatement(String query) throws Exception {
     return prepareStatement(query, false);
   }
 
@@ -238,29 +238,45 @@ public class SQL
    * @return 		PreparedStatement
    * @throws Exception 	if something goes wrong
    */
-  public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception{
-    Connection connection = m_DatabaseConnection.getConnection(true);
-    PreparedStatement stmt = null;
+  public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception {
+    return prepareStatement(getDatabaseConnection().getConnection(true), query, returnKeys);
+  }
+
+  /**
+   * Create a Prepared statement with given query.
+   *
+   * @param conn	the database connection to use
+   * @param query 	the query to execute
+   * @param returnKeys 	whether to initialize the statement that it returns
+   *			the generated keys
+   * @return 		PreparedStatement
+   * @throws Exception 	if something goes wrong
+   */
+  public PreparedStatement prepareStatement(Connection conn, String query, boolean returnKeys) throws Exception {
+    PreparedStatement   stmt;
+
     if (isLoggingEnabled())
       getLogger().info("Preparing statement for: " + query);
+
     try {
       if (returnKeys)
-	stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+	stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
       else
-	stmt = connection.prepareStatement(query);
+	stmt = conn.prepareStatement(query);
     }
     catch (SQLException e) {
       // try again
       if (returnKeys)
-	stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+	stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
       else
-	stmt = connection.prepareStatement(query);
+	stmt = conn.prepareStatement(query);
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Error preparing statement for: " + query, e);
       throw new Exception(e);
     }
-    return(stmt);
+
+    return stmt;
   }
 
   /**
@@ -272,7 +288,7 @@ public class SQL
    * @return			number of rows affected
    * @throws Exception 		if something goes wrong
    */
-  public int update(String updateString, String table, String where) throws Exception{
+  public int update(String updateString, String table, String where) throws Exception {
     String query="UPDATE " + table + " SET " + updateString + " WHERE " + where;
     Connection connection = m_DatabaseConnection.getConnection(true);
     Statement stmt = null;
@@ -453,7 +469,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
-  public ResultSet selectDistinct(String columns, String tables, String where) throws Exception{
+  public ResultSet selectDistinct(String columns, String tables, String where) throws Exception {
     return doSelect(true, columns, tables, where);
   }
 
