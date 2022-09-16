@@ -15,12 +15,14 @@
 
 /*
  * NewSpreadSheet.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.core.base.BaseText;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -49,23 +51,23 @@ import java.util.Arrays;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: NewSpreadSheet
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
@@ -88,29 +90,35 @@ import java.util.Arrays;
  * &nbsp;&nbsp;&nbsp;The comma-separated list of column names.
  * &nbsp;&nbsp;&nbsp;default: A,B,C
  * </pre>
- * 
+ *
+ * <pre>-columns-array &lt;adams.core.base.BaseString&gt; [-columns-array ...] (property: columnsArray)
+ * &nbsp;&nbsp;&nbsp;The array of column names to use (takes precedence over comma-separated
+ * &nbsp;&nbsp;&nbsp;list).
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
- * 
+ *
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- * 
+ *
  * <pre>-comments &lt;adams.core.base.BaseText&gt; (property: comments)
  * &nbsp;&nbsp;&nbsp;The comments to use.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class NewSpreadSheet
-  extends AbstractSimpleSource
-  implements SpreadSheetTypeHandler {
+    extends AbstractSimpleSource
+    implements SpreadSheetTypeHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 494594301273926225L;
@@ -120,6 +128,9 @@ public class NewSpreadSheet
 
   /** the comma-separated list of column headers. */
   protected BaseText m_Columns;
+
+  /** the array of column headers to use. */
+  protected BaseString[] m_ColumnsArray;
 
   /** the data row type to use. */
   protected DataRow m_DataRowType;
@@ -148,24 +159,28 @@ public class NewSpreadSheet
     super.defineOptions();
 
     m_OptionManager.add(
-	    "spreadsheet-name", "sheetName",
-	    "");
+        "spreadsheet-name", "sheetName",
+        "");
 
     m_OptionManager.add(
-	    "columns", "columns",
-	    new BaseText("A,B,C"));
+        "columns", "columns",
+        new BaseText("A,B,C"));
 
     m_OptionManager.add(
-	    "data-row-type", "dataRowType",
-	    new DenseDataRow());
+        "columns-array", "columnsArray",
+        new BaseString[0]);
 
     m_OptionManager.add(
-	    "spreadsheet-type", "spreadSheetType",
-	    new DefaultSpreadSheet());
+        "data-row-type", "dataRowType",
+        new DenseDataRow());
 
     m_OptionManager.add(
-	    "comments", "comments",
-	    new BaseText());
+        "spreadsheet-type", "spreadSheetType",
+        new DefaultSpreadSheet());
+
+    m_OptionManager.add(
+        "comments", "comments",
+        new BaseText());
   }
 
   /**
@@ -179,6 +194,7 @@ public class NewSpreadSheet
 
     result  = QuickInfoHelper.toString(this, "sheetName", (m_SheetName.isEmpty() ? "-none-" : m_SheetName), "name: ");
     result += QuickInfoHelper.toString(this, "columns", m_Columns, ", cols: ");
+    result += QuickInfoHelper.toString(this, "columnsArray", m_ColumnsArray, ", cols array: ");
     result += QuickInfoHelper.toString(this, "dataRowType", m_DataRowType, ", row type: ");
     result += QuickInfoHelper.toString(this, "spreadSheetType", m_SpreadSheetType.getClass(), ", sheet: ");
 
@@ -241,6 +257,35 @@ public class NewSpreadSheet
    */
   public String columnsTipText() {
     return "The comma-separated list of column names.";
+  }
+
+  /**
+   * Sets the array of column names (takes precedence over comma-separated list).
+   *
+   * @param value	the array
+   */
+  public void setColumnsArray(BaseString[] value) {
+    m_ColumnsArray = value;
+    reset();
+  }
+
+  /**
+   * Returns the array of column names (takes precedence over comma-separated list).
+   *
+   * @return		the array
+   */
+  public BaseString[] getColumnsArray() {
+    return m_ColumnsArray;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String columnsArrayTipText() {
+    return "The array of column names to use (takes precedence over comma-separated list).";
   }
 
   /**
@@ -351,26 +396,35 @@ public class NewSpreadSheet
     String[]	cols;
     SpreadSheet	sheet;
     String[]    lines;
-    
+
     result = null;
 
     sheet = m_SpreadSheetType.newInstance();
     if (!m_SheetName.isEmpty())
       sheet.setName(m_SheetName);
     sheet.setDataRowClass(m_DataRowType.getClass());
-    if (!m_Columns.isEmpty()) {
+
+    // determine columns
+    cols = null;
+    if (m_ColumnsArray.length > 0)
+      cols = BaseObject.toStringArray(m_ColumnsArray);
+    else if (!m_Columns.isEmpty())
       cols = m_Columns.getValue().split(",");
+
+    // create header
+    if (cols != null) {
       for (String col : cols)
         sheet.getHeaderRow().addCell("" + sheet.getColumnCount()).setContentAsString(col);
     }
 
+    // add comments
     if (!m_Comments.isEmpty()) {
       lines = Utils.split(m_Comments.getValue(), "\n");
       sheet.getComments().addAll(Arrays.asList(lines));
     }
 
     m_OutputToken = new Token(sheet);
-    
+
     return result;
   }
 }
