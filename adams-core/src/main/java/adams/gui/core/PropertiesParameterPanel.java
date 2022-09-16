@@ -45,6 +45,7 @@ import adams.gui.chooser.DateTimeChooserPanel;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.chooser.FontChooserPanel;
+import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.chooser.TimeChooserPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
 
@@ -87,7 +88,7 @@ import java.util.Set;
  * @see #setPropertyOrder(List)
  */
 public class PropertiesParameterPanel
-  extends BasePanel {
+    extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = -822178750857036833L;
@@ -140,6 +141,8 @@ public class PropertiesParameterPanel
     ENUM,
     /** manually maintained list of string values. */
     LIST,
+    /** manually maintained list of string values (multiple selection). */
+    LIST_MULTI_SELECTION,
     /** string representing a comma-separated list. */
     COMMA_SEPARATED_LIST,
     /** string representing a comma-separated list (fixed list). */
@@ -314,8 +317,8 @@ public class PropertiesParameterPanel
     // update fields
     for (i = 0; i < m_PanelProperties.getParameterCount(); i++) {
       if (m_PanelProperties.getParameter(i) instanceof SQLSyntaxEditorPanel) {
-        query = (SQLSyntaxEditorPanel) m_PanelProperties.getParameter(i);
-        query.setPreferredSize(m_DefaultSQLDimension);
+	query = (SQLSyntaxEditorPanel) m_PanelProperties.getParameter(i);
+	query.setPreferredSize(m_DefaultSQLDimension);
       }
     }
   }
@@ -517,7 +520,7 @@ public class PropertiesParameterPanel
    */
   public boolean hasPropertyHints(String property) {
     return m_PropertyHints.containsKey(property)
-      && (m_PropertyHints.get(property).size() > 0);
+	&& (m_PropertyHints.get(property).size() > 0);
   }
 
   /**
@@ -962,7 +965,7 @@ public class PropertiesParameterPanel
    */
   public void setProperties(Properties value) {
     List<String>		keys;
-    BaseCheckBox			checkbox;
+    BaseCheckBox		checkbox;
     JSpinner			spinner;
     PropertyType		type;
     FontChooserPanel 		fontPanel;
@@ -977,7 +980,8 @@ public class PropertiesParameterPanel
     RangeTextField		rangeText;
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
-    BaseComboBox			combo;
+    BaseComboBox		combo;
+    SelectOptionPanel		optionPanel;
     Component			comp;
     String			help;
     BaseString[]		list;
@@ -994,8 +998,8 @@ public class PropertiesParameterPanel
     keys.addAll(0, m_Order);
     for (String key: keys) {
       if (!m_PropertyTypes.containsKey(key)) {
-        System.err.println(getClass().getName() + ": key '" + key + "' in properties is not defined as a parameter, skipping!");
-        continue;
+	System.err.println(getClass().getName() + ": key '" + key + "' in properties is not defined as a parameter, skipping!");
+	continue;
       }
 
       type = fixPropertyType(key, getPropertyType(key));
@@ -1005,205 +1009,212 @@ public class PropertiesParameterPanel
       label = hasLabel(key) ? getLabel(key) : key;
 
       try {
-        switch (type) {
-          case TIME:
-            timePanel = new TimeChooserPanel();
-            timePanel.setCurrent(new BaseTime(value.getTime(key)).timeValue());
-            if (help != null)
+	switch (type) {
+	  case TIME:
+	    timePanel = new TimeChooserPanel();
+	    timePanel.setCurrent(new BaseTime(value.getTime(key)).timeValue());
+	    if (help != null)
 	      timePanel.setToolTipText(help);
-            timePanel.setInlineEditingEnabled(true);
-            addProperty(key, label, timePanel);
-            break;
-          case DATE:
-            datePanel = new DateChooserPanel();
-            datePanel.setCurrent(new BaseDate(value.getDate(key)).dateValue());
-            if (help != null)
+	    timePanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, timePanel);
+	    break;
+	  case DATE:
+	    datePanel = new DateChooserPanel();
+	    datePanel.setCurrent(new BaseDate(value.getDate(key)).dateValue());
+	    if (help != null)
 	      datePanel.setToolTipText(help);
-            datePanel.setInlineEditingEnabled(true);
-            addProperty(key, label, datePanel);
-            break;
-          case DATETIME:
-            dateTimePanel = new DateTimeChooserPanel();
-            dateTimePanel.setCurrent(new BaseDateTime(value.getDateTime(key)).dateTimeValue());
-            if (help != null)
+	    datePanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, datePanel);
+	    break;
+	  case DATETIME:
+	    dateTimePanel = new DateTimeChooserPanel();
+	    dateTimePanel.setCurrent(new BaseDateTime(value.getDateTime(key)).dateTimeValue());
+	    if (help != null)
 	      dateTimePanel.setToolTipText(help);
-            dateTimePanel.setInlineEditingEnabled(true);
-            addProperty(key, label, dateTimePanel);
-            break;
-          case DOUBLE: {
-            final BaseTextField textfield = new BaseTextField(20);
-            textfield.setText(value.getProperty(key));
-            if (help != null)
+	    dateTimePanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, dateTimePanel);
+	    break;
+	  case DOUBLE: {
+	    final BaseTextField textfield = new BaseTextField(20);
+	    textfield.setText(value.getProperty(key));
+	    if (help != null)
 	      textfield.setToolTipText(help);
-            textfield.setBorder(BorderFactory.createEtchedBorder());
-            textfield.getDocument().addDocumentListener(new DocumentListener() {
-              @Override
-              public void removeUpdate(DocumentEvent e) {
-                check(e);
-              }
-              @Override
-              public void insertUpdate(DocumentEvent e) {
-                check(e);
-              }
-              @Override
-              public void changedUpdate(DocumentEvent e) {
-                check(e);
-              }
-              protected void check(DocumentEvent e) {
-                String text = textfield.getText();
-                if ((text.length() == 0) || Utils.isDouble(text))
-                  textfield.setBorder(BorderFactory.createEtchedBorder());
-                else
-                  textfield.setBorder(BorderFactory.createLineBorder(Color.RED));
-              }
-            });
-            addProperty(key, label, textfield);
-            break;
-          }
-          case STRING:
-            final BaseTextChooserPanel textfield = new BaseTextChooserPanel();
-            textfield.setCurrent(new BaseText(value.getProperty(key)));
-            if (help != null)
+	    textfield.setBorder(BorderFactory.createEtchedBorder());
+	    textfield.getDocument().addDocumentListener(new DocumentListener() {
+	      @Override
+	      public void removeUpdate(DocumentEvent e) {
+		check(e);
+	      }
+	      @Override
+	      public void insertUpdate(DocumentEvent e) {
+		check(e);
+	      }
+	      @Override
+	      public void changedUpdate(DocumentEvent e) {
+		check(e);
+	      }
+	      protected void check(DocumentEvent e) {
+		String text = textfield.getText();
+		if ((text.length() == 0) || Utils.isDouble(text))
+		  textfield.setBorder(BorderFactory.createEtchedBorder());
+		else
+		  textfield.setBorder(BorderFactory.createLineBorder(Color.RED));
+	      }
+	    });
+	    addProperty(key, label, textfield);
+	    break;
+	  }
+	  case STRING:
+	    final BaseTextChooserPanel textfield = new BaseTextChooserPanel();
+	    textfield.setCurrent(new BaseText(value.getProperty(key)));
+	    if (help != null)
 	      textfield.setToolTipText(help);
-            textfield.setInlineEditingEnabled(true);
-            addProperty(key, label, textfield);
-            break;
-          case PASSWORD:
-          case PASSWORD_PLAIN:
-            final JPasswordField pwfield = new JPasswordField(20);
-            pwfield.setText(value.getPassword(key).getValue());
-            if (help != null)
+	    textfield.setInlineEditingEnabled(true);
+	    addProperty(key, label, textfield);
+	    break;
+	  case PASSWORD:
+	  case PASSWORD_PLAIN:
+	    final JPasswordField pwfield = new JPasswordField(20);
+	    pwfield.setText(value.getPassword(key).getValue());
+	    if (help != null)
 	      pwfield.setToolTipText(help);
-            pwfield.setBorder(BorderFactory.createEtchedBorder());
-            addProperty(key, label, pwfield);
-            break;
-          case SQL:
-            final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
-            query.setWordWrap(true);
-            query.setPreferredSize(m_DefaultSQLDimension);
-            query.setContent(value.getProperty(key));
-            if (help != null)
+	    pwfield.setBorder(BorderFactory.createEtchedBorder());
+	    addProperty(key, label, pwfield);
+	    break;
+	  case SQL:
+	    final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
+	    query.setWordWrap(true);
+	    query.setPreferredSize(m_DefaultSQLDimension);
+	    query.setContent(value.getProperty(key));
+	    if (help != null)
 	      query.setToolTipText(help);
-            addProperty(key, label, query);
-            break;
-          case BOOLEAN:
-            checkbox = new BaseCheckBox();
-            checkbox.setSelected(value.getBoolean(key));
-            if (help != null)
+	    addProperty(key, label, query);
+	    break;
+	  case BOOLEAN:
+	    checkbox = new BaseCheckBox();
+	    checkbox.setSelected(value.getBoolean(key));
+	    if (help != null)
 	      checkbox.setToolTipText(help);
-            addProperty(key, label, checkbox);
-            break;
-          case INTEGER:
-            spinner = new JSpinner();
-            spinner.setValue(value.getInteger(key));
-            if (help != null)
+	    addProperty(key, label, checkbox);
+	    break;
+	  case INTEGER:
+	    spinner = new JSpinner();
+	    spinner.setValue(value.getInteger(key));
+	    if (help != null)
 	      spinner.setToolTipText(help);
-            addProperty(key, label, spinner);
-            break;
-          case LONG:
-            spinner = new JSpinner();
-            spinner.setValue(value.getLong(key));
-            spinner.setToolTipText(help);
-            addProperty(key, label, spinner);
-            break;
-          case FONT:
-            fontPanel = new FontChooserPanel();
-            fontPanel.setCurrent((Font) FontParsing.valueOf(null, value.getProperty(key)));
-            if (help != null)
+	    addProperty(key, label, spinner);
+	    break;
+	  case LONG:
+	    spinner = new JSpinner();
+	    spinner.setValue(value.getLong(key));
+	    spinner.setToolTipText(help);
+	    addProperty(key, label, spinner);
+	    break;
+	  case FONT:
+	    fontPanel = new FontChooserPanel();
+	    fontPanel.setCurrent((Font) FontParsing.valueOf(null, value.getProperty(key)));
+	    if (help != null)
 	      fontPanel.setToolTipText(help);
-            addProperty(key, label, fontPanel);
-            break;
-          case DIRECTORY:
-          case DIRECTORY_ABSOLUTE:
-            dirPanel = new DirectoryChooserPanel();
-            dirPanel.setCurrent(new PlaceholderDirectory(value.getPath(key)));
-            dirPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, dirPanel.getPreferredSize().height));
-            if (help != null)
+	    addProperty(key, label, fontPanel);
+	    break;
+	  case DIRECTORY:
+	  case DIRECTORY_ABSOLUTE:
+	    dirPanel = new DirectoryChooserPanel();
+	    dirPanel.setCurrent(new PlaceholderDirectory(value.getPath(key)));
+	    dirPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, dirPanel.getPreferredSize().height));
+	    if (help != null)
 	      dirPanel.setToolTipText(help);
-            dirPanel.setInlineEditingEnabled(true);
-            addProperty(key, label, dirPanel);
-            break;
-          case FILE:
-          case FILE_ABSOLUTE:
-            filePanel = new FileChooserPanel();
-            filePanel.setCurrent(new PlaceholderFile(value.getPath(key)));
-            filePanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, filePanel.getPreferredSize().height));
-            if (help != null)
+	    dirPanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, dirPanel);
+	    break;
+	  case FILE:
+	  case FILE_ABSOLUTE:
+	    filePanel = new FileChooserPanel();
+	    filePanel.setCurrent(new PlaceholderFile(value.getPath(key)));
+	    filePanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, filePanel.getPreferredSize().height));
+	    if (help != null)
 	      filePanel.setToolTipText(help);
-            filePanel.setInlineEditingEnabled(true);
-            addProperty(key, label, filePanel);
-            break;
-          case COLOR:
-            colorPanel = new ColorChooserPanel();
-            colorPanel.setCurrent(value.getColor(key));
-            if (help != null)
+	    filePanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, filePanel);
+	    break;
+	  case COLOR:
+	    colorPanel = new ColorChooserPanel();
+	    colorPanel.setCurrent(value.getColor(key));
+	    if (help != null)
 	      colorPanel.setToolTipText(help);
-            colorPanel.setInlineEditingEnabled(true);
-            addProperty(key, label, colorPanel);
-            break;
-          case ENUM:
-            combo = new BaseComboBox(EnumHelper.getValues(getEnum(key)));
-            combo.setSelectedItem(EnumHelper.parse(getEnum(key), value.getProperty(key)));
-            if (help != null)
+	    colorPanel.setInlineEditingEnabled(true);
+	    addProperty(key, label, colorPanel);
+	    break;
+	  case ENUM:
+	    combo = new BaseComboBox(EnumHelper.getValues(getEnum(key)));
+	    combo.setSelectedItem(EnumHelper.parse(getEnum(key), value.getProperty(key)));
+	    if (help != null)
 	      combo.setToolTipText(help);
-            addProperty(key, label, combo);
-            break;
-          case LIST:
-          case BLANK_SEPARATED_LIST_FIXED:
-          case COMMA_SEPARATED_LIST_FIXED:
-            if (type == PropertyType.BLANK_SEPARATED_LIST_FIXED)
-              combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ' ', true));
-            else if (type == PropertyType.COMMA_SEPARATED_LIST_FIXED)
-              combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
-            else
-              combo = new BaseComboBox(getList(key));
-            if (hasListDefault(key) && !value.hasKey(key))
+	    addProperty(key, label, combo);
+	    break;
+	  case LIST_MULTI_SELECTION:
+	    optionPanel = new SelectOptionPanel();
+	    optionPanel.setOptions(getList(key));
+	    optionPanel.setMultiSelect(true);
+	    optionPanel.setCurrent(OptionUtils.splitOptions(value.getProperty(key)));
+	    addProperty(key, label, optionPanel);
+	    break;
+	  case LIST:
+	  case BLANK_SEPARATED_LIST_FIXED:
+	  case COMMA_SEPARATED_LIST_FIXED:
+	    if (type == PropertyType.BLANK_SEPARATED_LIST_FIXED)
+	      combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ' ', true));
+	    else if (type == PropertyType.COMMA_SEPARATED_LIST_FIXED)
+	      combo = new BaseComboBox(SpreadSheetUtils.split(value.getProperty(key), ',', true));
+	    else
+	      combo = new BaseComboBox(getList(key));
+	    if (hasListDefault(key) && !value.hasKey(key))
 	      combo.setSelectedItem(getListDefault(key));
-            else
+	    else
 	      combo.setSelectedItem(value.getProperty(key));
-            if (help != null)
+	    if (help != null)
 	      combo.setToolTipText(help);
-            addProperty(key, label, combo);
-            break;
-          case BLANK_SEPARATED_LIST:
-          case COMMA_SEPARATED_LIST:
-            chooserPanel = new GenericArrayEditorPanel(new BaseString[0]);
-            chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
-            if (type == PropertyType.BLANK_SEPARATED_LIST)
-              parts = SpreadSheetUtils.split(value.getProperty(key), ' ', true);
-            else
-              parts = SpreadSheetUtils.split(value.getProperty(key), ',', true);
-            list = new BaseString[parts.length];
-            for (i = 0; i < parts.length; i++)
-              list[i] = new BaseString(parts[i]);
-            chooserPanel.setCurrent(list);
-            addProperty(key, label, chooserPanel);
-            break;
-          case OBJECT_EDITOR:
-            chooserPanel = getChooser(key);
-            chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
-            if (help != null)
+	    addProperty(key, label, combo);
+	    break;
+	  case BLANK_SEPARATED_LIST:
+	  case COMMA_SEPARATED_LIST:
+	    chooserPanel = new GenericArrayEditorPanel(new BaseString[0]);
+	    chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
+	    if (type == PropertyType.BLANK_SEPARATED_LIST)
+	      parts = SpreadSheetUtils.split(value.getProperty(key), ' ', true);
+	    else
+	      parts = SpreadSheetUtils.split(value.getProperty(key), ',', true);
+	    list = new BaseString[parts.length];
+	    for (i = 0; i < parts.length; i++)
+	      list[i] = new BaseString(parts[i]);
+	    chooserPanel.setCurrent(list);
+	    addProperty(key, label, chooserPanel);
+	    break;
+	  case OBJECT_EDITOR:
+	    chooserPanel = getChooser(key);
+	    chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
+	    if (help != null)
 	      chooserPanel.setToolTipText(help);
-            try {
-              if (value.getProperty(key).trim().length() > 0)
-                chooserPanel.setCurrent(OptionUtils.forAnyCommandLine(Object.class, value.getProperty(key)));
-            }
-            catch (Exception e) {
+	    try {
+	      if (value.getProperty(key).trim().length() > 0)
+		chooserPanel.setCurrent(OptionUtils.forAnyCommandLine(Object.class, value.getProperty(key)));
+	    }
+	    catch (Exception e) {
 	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate (" + key + "): " + value.getProperty(key), e);
-            }
-            addProperty(key, label, chooserPanel);
-            break;
-          case ARRAY_EDITOR:
+	    }
+	    addProperty(key, label, chooserPanel);
+	    break;
+	  case ARRAY_EDITOR:
 	    if (hasArraySeparator(key))
 	      sep = getArraySeparator(key);
 	    else
 	      sep = ",";
-            chooserPanel = getChooser(key);
-            chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
-            if (help != null)
+	    chooserPanel = getChooser(key);
+	    chooserPanel.setPreferredSize(new Dimension(DEFAULT_WIDTH_CHOOSERS, chooserPanel.getPreferredSize().height));
+	    if (help != null)
 	      chooserPanel.setToolTipText(help);
-            try {
-              if (value.getProperty(key).trim().length() > 0) {
+	    try {
+	      if (value.getProperty(key).trim().length() > 0) {
 		if (sep.equals(" "))
 		  parts = OptionUtils.splitOptions(value.getProperty(key).trim());
 		else
@@ -1216,56 +1227,56 @@ public class PropertiesParameterPanel
 	      for (i = 0; i < parts.length; i++)
 		Array.set(array, i, OptionUtils.forAnyCommandLine(getArrayClass(key), parts[i].trim()));
 	      chooserPanel.setCurrent(array);
-            }
-            catch (Exception e) {
+	    }
+	    catch (Exception e) {
 	      ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to create array (" + key + "): " + value.getProperty(key), e);
-            }
-            addProperty(key, label, chooserPanel);
-            break;
-          case INDEX:
-            indexText = new IndexTextField();
-            indexText.setColumns(20);
-            indexText.setText(value.getProperty(key));
-            if (help != null)
+	    }
+	    addProperty(key, label, chooserPanel);
+	    break;
+	  case INDEX:
+	    indexText = new IndexTextField();
+	    indexText.setColumns(20);
+	    indexText.setText(value.getProperty(key));
+	    if (help != null)
 	      indexText.setToolTipText(help);
-            addProperty(key, label, indexText);
-            break;
-          case RANGE:
-            rangeText = new RangeTextField();
-            rangeText.setColumns(20);
-            rangeText.setText(value.getProperty(key));
-            if (help != null)
+	    addProperty(key, label, indexText);
+	    break;
+	  case RANGE:
+	    rangeText = new RangeTextField();
+	    rangeText.setColumns(20);
+	    rangeText.setText(value.getProperty(key));
+	    if (help != null)
 	      rangeText.setToolTipText(help);
-            addProperty(key, label, rangeText);
-            break;
-          case REGEXP:
-            regexpText = new RegExpTextField();
-            regexpText.setColumns(20);
-            regexpText.setText(value.getProperty(key));
-            if (help != null)
+	    addProperty(key, label, rangeText);
+	    break;
+	  case REGEXP:
+	    regexpText = new RegExpTextField();
+	    regexpText.setColumns(20);
+	    regexpText.setText(value.getProperty(key));
+	    if (help != null)
 	      regexpText.setToolTipText(help);
-            addProperty(key, label, regexpText);
-            break;
+	    addProperty(key, label, regexpText);
+	    break;
 	  case REGEXP_CONSTRAINED_STRING:
-            regexpConstText = new RegExpConstrainedTextField(hasRegExp(key) ? getRegExp(key) : new BaseRegExp(BaseRegExp.MATCH_ALL));
-            regexpConstText.setColumns(20);
-            regexpConstText.setText(value.getProperty(key));
-            if (help != null)
+	    regexpConstText = new RegExpConstrainedTextField(hasRegExp(key) ? getRegExp(key) : new BaseRegExp(BaseRegExp.MATCH_ALL));
+	    regexpConstText.setColumns(20);
+	    regexpConstText.setText(value.getProperty(key));
+	    if (help != null)
 	      regexpConstText.setToolTipText(help);
-            addProperty(key, label, regexpConstText);
-            break;
+	    addProperty(key, label, regexpConstText);
+	    break;
 	  case CUSTOM_COMPONENT:
 	    comp = getComponent(key);
 	    setText(comp, value.getProperty(key));
 	    updateToolTipText(comp, help);
-            addProperty(key, label, getComponent(key));
-            break;
-          default:
-            throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
-        }
+	    addProperty(key, label, getComponent(key));
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled property type (property '" + keys + "'): " + type);
+	}
       }
       catch (Exception e) {
-        ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to set property/type: '" + key + "'/" + type, e);
+	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to set property/type: '" + key + "'/" + type, e);
       }
     }
     invalidate();
@@ -1318,6 +1329,7 @@ public class PropertiesParameterPanel
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
     JComboBox			comboEnum;
+    SelectOptionPanel		optionPanel;
     BaseString[]		list;
     String			key;
     Object			array;
@@ -1333,55 +1345,55 @@ public class PropertiesParameterPanel
       type = getActualPropertyType(key);
 
       switch (type) {
-        case TIME:
-          timePanel = (TimeChooserPanel) comp;
-          result.setTime(key, timePanel.getCurrent());
-          break;
-        case DATE:
-          datePanel = (DateChooserPanel) comp;
-          result.setDate(key, datePanel.getCurrent());
-          break;
-        case DATETIME:
-          dateTimePanel = (DateTimeChooserPanel) comp;
-          result.setDateTime(key, dateTimePanel.getCurrent());
-          break;
-        case DOUBLE:
-          textfield = (JTextField) comp;
-          result.setProperty(key, textfield.getText());
-          break;
-        case STRING:
-          textPanel = (BaseTextChooserPanel) comp;
-          result.setProperty(key, textPanel.getCurrent().getValue());
-          break;
-        case PASSWORD:
-          pwfield = (JPasswordField) comp;
-          result.setPassword(key, new BasePassword(pwfield.getText()));
-          break;
-        case PASSWORD_PLAIN:
-          pwfield = (JPasswordField) comp;
-          result.setProperty(key, pwfield.getText());
-          break;
-        case SQL:
-          query = (SQLSyntaxEditorPanel) comp;
-          result.setProperty(key, query.getContent());
-          break;
-        case BOOLEAN:
-          checkbox = (JCheckBox) comp;
-          result.setBoolean(key, checkbox.isSelected());
-          break;
-        case INTEGER:
-          spinner = (JSpinner) comp;
-          result.setInteger(key, ((Number) spinner.getValue()).intValue());
-          break;
-        case LONG:
-          spinner = (JSpinner) comp;
-          result.setLong(key, ((Number) spinner.getValue()).longValue());
-          break;
-        case FONT:
-          fontPanel = (FontChooserPanel) comp;
-          result.setProperty(key, FontParsing.toString(null, fontPanel.getCurrent()));
-          break;
-        case DIRECTORY:
+	case TIME:
+	  timePanel = (TimeChooserPanel) comp;
+	  result.setTime(key, timePanel.getCurrent());
+	  break;
+	case DATE:
+	  datePanel = (DateChooserPanel) comp;
+	  result.setDate(key, datePanel.getCurrent());
+	  break;
+	case DATETIME:
+	  dateTimePanel = (DateTimeChooserPanel) comp;
+	  result.setDateTime(key, dateTimePanel.getCurrent());
+	  break;
+	case DOUBLE:
+	  textfield = (JTextField) comp;
+	  result.setProperty(key, textfield.getText());
+	  break;
+	case STRING:
+	  textPanel = (BaseTextChooserPanel) comp;
+	  result.setProperty(key, textPanel.getCurrent().getValue());
+	  break;
+	case PASSWORD:
+	  pwfield = (JPasswordField) comp;
+	  result.setPassword(key, new BasePassword(pwfield.getText()));
+	  break;
+	case PASSWORD_PLAIN:
+	  pwfield = (JPasswordField) comp;
+	  result.setProperty(key, pwfield.getText());
+	  break;
+	case SQL:
+	  query = (SQLSyntaxEditorPanel) comp;
+	  result.setProperty(key, query.getContent());
+	  break;
+	case BOOLEAN:
+	  checkbox = (JCheckBox) comp;
+	  result.setBoolean(key, checkbox.isSelected());
+	  break;
+	case INTEGER:
+	  spinner = (JSpinner) comp;
+	  result.setInteger(key, ((Number) spinner.getValue()).intValue());
+	  break;
+	case LONG:
+	  spinner = (JSpinner) comp;
+	  result.setLong(key, ((Number) spinner.getValue()).longValue());
+	  break;
+	case FONT:
+	  fontPanel = (FontChooserPanel) comp;
+	  result.setProperty(key, FontParsing.toString(null, fontPanel.getCurrent()));
+	  break;
+	case DIRECTORY:
 	  dirPanel = (DirectoryChooserPanel) comp;
 	  result.setProperty(key, fixPath(key, dirPanel.getCurrent().getPath()));
 	  break;
@@ -1398,36 +1410,40 @@ public class PropertiesParameterPanel
 	  result.setProperty(key, fixPath(key, filePanel.getCurrent().getAbsolutePath()));
 	  break;
 	case COLOR:
-          colorPanel = (ColorChooserPanel) comp;
-          result.setColor(key, colorPanel.getCurrent());
-          break;
-        case ENUM:
-          comboEnum = (JComboBox) comp;
-          if (comboEnum.getSelectedIndex() > -1)
-            result.setProperty(key, "" + comboEnum.getSelectedItem());
-          break;
-        case LIST:
-        case BLANK_SEPARATED_LIST_FIXED:
-        case COMMA_SEPARATED_LIST_FIXED:
-          comboEnum = (JComboBox) comp;
-          if (comboEnum.getSelectedIndex() > -1)
-            result.setProperty(key, "" + comboEnum.getSelectedItem());
-          break;
-        case BLANK_SEPARATED_LIST:
-        case COMMA_SEPARATED_LIST:
-          chooserPanel = (AbstractChooserPanel) comp;
-          list         = (BaseString[]) chooserPanel.getCurrent();
-          if (type == PropertyType.BLANK_SEPARATED_LIST)
-            result.setProperty(key, Utils.flatten(list, " "));
-          else
-            result.setProperty(key, Utils.flatten(list, ","));
-          break;
-        case OBJECT_EDITOR:
-          chooserPanel = (AbstractChooserPanel) comp;
-          result.setProperty(key, OptionUtils.getCommandLine(chooserPanel.getCurrent()));
-          break;
+	  colorPanel = (ColorChooserPanel) comp;
+	  result.setColor(key, colorPanel.getCurrent());
+	  break;
+	case ENUM:
+	  comboEnum = (JComboBox) comp;
+	  if (comboEnum.getSelectedIndex() > -1)
+	    result.setProperty(key, "" + comboEnum.getSelectedItem());
+	  break;
+	case LIST_MULTI_SELECTION:
+	  optionPanel = (SelectOptionPanel) comp;
+	  result.setProperty(key, OptionUtils.joinOptions(optionPanel.getCurrent()));
+	  break;
+	case LIST:
+	case BLANK_SEPARATED_LIST_FIXED:
+	case COMMA_SEPARATED_LIST_FIXED:
+	  comboEnum = (JComboBox) comp;
+	  if (comboEnum.getSelectedIndex() > -1)
+	    result.setProperty(key, "" + comboEnum.getSelectedItem());
+	  break;
+	case BLANK_SEPARATED_LIST:
+	case COMMA_SEPARATED_LIST:
+	  chooserPanel = (AbstractChooserPanel) comp;
+	  list         = (BaseString[]) chooserPanel.getCurrent();
+	  if (type == PropertyType.BLANK_SEPARATED_LIST)
+	    result.setProperty(key, Utils.flatten(list, " "));
+	  else
+	    result.setProperty(key, Utils.flatten(list, ","));
+	  break;
+	case OBJECT_EDITOR:
+	  chooserPanel = (AbstractChooserPanel) comp;
+	  result.setProperty(key, OptionUtils.getCommandLine(chooserPanel.getCurrent()));
+	  break;
 	case ARRAY_EDITOR:
-          chooserPanel = (AbstractChooserPanel) comp;
+	  chooserPanel = (AbstractChooserPanel) comp;
 	  array = chooserPanel.getCurrent();
 	  items = new String[Array.getLength(array)];
 	  if (hasArraySeparator(key))
@@ -1440,28 +1456,28 @@ public class PropertiesParameterPanel
 	    result.setProperty(key, OptionUtils.joinOptions(items));
 	  else
 	    result.setProperty(key, Utils.flatten(items, sep));
-          break;
-        case INDEX:
-          indexText = (IndexTextField) comp;
-          result.setProperty(key, indexText.getText());
-          break;
-        case RANGE:
-          rangeText = (RangeTextField) comp;
-          result.setProperty(key, rangeText.getText());
-          break;
-        case REGEXP:
-          regexpText = (RegExpTextField) comp;
-          result.setProperty(key, regexpText.getText());
-          break;
-	case REGEXP_CONSTRAINED_STRING:
-          regexpConstText = (RegExpConstrainedTextField) comp;
-          result.setProperty(key, regexpConstText.getText());
-          break;
-	case CUSTOM_COMPONENT:
-          result.setProperty(key, getText(comp));
 	  break;
-        default:
-          throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
+	case INDEX:
+	  indexText = (IndexTextField) comp;
+	  result.setProperty(key, indexText.getText());
+	  break;
+	case RANGE:
+	  rangeText = (RangeTextField) comp;
+	  result.setProperty(key, rangeText.getText());
+	  break;
+	case REGEXP:
+	  regexpText = (RegExpTextField) comp;
+	  result.setProperty(key, regexpText.getText());
+	  break;
+	case REGEXP_CONSTRAINED_STRING:
+	  regexpConstText = (RegExpConstrainedTextField) comp;
+	  result.setProperty(key, regexpConstText.getText());
+	  break;
+	case CUSTOM_COMPONENT:
+	  result.setProperty(key, getText(comp));
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled property type (property '" + key + "'): " + type);
       }
     }
 

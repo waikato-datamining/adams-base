@@ -15,7 +15,7 @@
 
 /*
  * ListSelectionValueDefinition.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -24,9 +24,14 @@ import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
+import adams.core.option.OptionUtils;
 import adams.flow.source.EnterManyValues;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Specialized definition for lists, allowing to define a default value.
@@ -35,7 +40,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  * @see EnterManyValues
  */
 public class ListSelectionValueDefinition
-  extends AbstractValueDefinition {
+    extends AbstractValueDefinition {
 
   private static final long serialVersionUID = -7010111763801708574L;
 
@@ -44,6 +49,9 @@ public class ListSelectionValueDefinition
 
   /** the default value. */
   protected String m_DefaultValue;
+
+  /** whether to use multi-select. */
+  protected boolean m_MultiSelect;
 
   /**
    * Returns a string describing the object.
@@ -63,12 +71,16 @@ public class ListSelectionValueDefinition
     super.defineOptions();
 
     m_OptionManager.add(
-      "value", "values",
-      new BaseString[0]);
+	"value", "values",
+	new BaseString[0]);
 
     m_OptionManager.add(
-      "default-value", "defaultValue",
-      "");
+	"default-value", "defaultValue",
+	"");
+
+    m_OptionManager.add(
+	"multi-select", "multiSelect",
+	false);
   }
 
   /**
@@ -130,13 +142,45 @@ public class ListSelectionValueDefinition
   }
 
   /**
+   * Sets whether to allow selection of multiple options.
+   *
+   * @param value	true if multi-select enabled
+   */
+  public void setMultiSelect(boolean value) {
+    m_MultiSelect = value;
+    reset();
+  }
+
+  /**
+   * Returns whether multiple options can be selected.
+   *
+   * @return		true if multi-select enabled
+   */
+  public boolean isMultiSelect() {
+    return m_MultiSelect;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String multiSelectTipText() {
+    return "Whether to allow multiple items to be selected.";
+  }
+
+  /**
    * Returns the type of the value.
    *
    * @return 		the type
    */
   @Override
   public PropertyType getType() {
-    return PropertyType.LIST;
+    if (m_MultiSelect)
+      return PropertyType.LIST_MULTI_SELECTION;
+    else
+      return PropertyType.LIST;
   }
 
   /**
@@ -192,18 +236,18 @@ public class ListSelectionValueDefinition
     found = false;
     for (BaseString value: m_Values) {
       if (value.getValue().equals(m_DefaultValue)) {
-        found = true;
-        break;
+	found = true;
+	break;
       }
     }
 
     if (!found) {
       if (!m_DefaultValue.isEmpty()) {
-        getLogger().severe("Failed to located default value '" + m_DefaultValue + "' in list values '" + Utils.arrayToString(m_Values) + "'!");
-        return false;
+	getLogger().severe("Failed to located default value '" + m_DefaultValue + "' in list values '" + Utils.arrayToString(m_Values) + "'!");
+	return false;
       }
       else {
-        defValue = m_Values[0].getValue();
+	defValue = m_Values[0].getValue();
       }
     }
     else {
@@ -229,29 +273,42 @@ public class ListSelectionValueDefinition
   public String headlessInteraction() {
     String	msg;
     String	choice;
-    String result;
+    String 	result;
+    Set<String> choiceSet;
+    String[]	values;
 
     result = null;
 
     if (!check())
       return null;
 
+    values = BaseObject.toStringArray(m_Values);
     do {
       msg = "Please select " + (getDisplay().trim().isEmpty() ? getName() : getDisplay())
-	+ " from " + Utils.arrayToString(m_Values)
-	+ " (type: " + getType() + "): ";
+	  + " from " + Utils.arrayToString(m_Values)
+	  + " (type: " + getType() + ", " + (m_MultiSelect ? "separate multiple values with blank" : "") + "): ";
 
       choice = ConsoleHelper.enterValue(msg, getDefaultValueAsString());
       if (choice == null)
-        break;
+	break;
 
       // valid?
-      for (BaseString value: m_Values) {
-        if (value.getValue().equals(choice)) {
-          result = choice;
-          break;
+      choiceSet = new HashSet<>();
+      if (m_MultiSelect) {
+        try {
+	  choiceSet.addAll(Arrays.asList(OptionUtils.splitOptions(choice)));
+	}
+        catch (Exception e) {
+          ConsoleHelper.printlnOut("Failed to split string into separate choices: " + e.getMessage());
+          continue;
 	}
       }
+      else {
+        choiceSet.add(choice);
+      }
+      choiceSet.removeAll(Arrays.asList(values));
+      if (choiceSet.size() == 0)
+        result = choice;
     }
     while (result == null);
 
