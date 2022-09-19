@@ -40,6 +40,9 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
+import adams.flow.control.ConditionalSubProcess;
+import adams.flow.control.ConditionalTee;
+import adams.flow.control.ConditionalTrigger;
 import adams.flow.control.Flow;
 import adams.flow.control.SubProcess;
 import adams.flow.control.Tee;
@@ -1854,6 +1857,36 @@ public class TreeOperations
   }
 
   /**
+   * Lets the user choose a boolean condition.
+   *
+   * @param defCond 	the default condition, can be null
+   * @return		the boolean condition or null if dialog canceled
+   */
+  protected BooleanCondition chooseBooleanCondition(BooleanCondition defCond) {
+    GenericObjectEditorDialog	dialog;
+
+    if (defCond == null)
+      defCond = new Expression();
+
+    if (getOwner().getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
+    else
+      dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
+    dialog.setTitle("Conditions");
+    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(BooleanCondition.class);
+    dialog.setCurrent(defCond);
+    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return null;
+
+    // create node
+    return (BooleanCondition) dialog.getCurrent();
+  }
+
+  /**
    * Turns the selected actor into its conditional equivalent.
    *
    * @param path	the (path to the) actor to turn into its conditional equivalent
@@ -1869,7 +1902,10 @@ public class TreeOperations
     int				index;
     boolean			defaultName;
     boolean			expanded;
-    GenericObjectEditorDialog	dialog;
+    ConditionalSubProcess	subprocess;
+    ConditionalTee		tee;
+    ConditionalTrigger		trigger;
+    BooleanCondition		cond;
 
     currNode   = TreeHelper.pathToNode(path);
     parentNode = (Node) currNode.getParent();
@@ -1885,6 +1921,34 @@ public class TreeOperations
       condEquiv = ((ActorWithConditionalEquivalent) currActor).getConditionalEquivalent();
       if (condEquiv == null)
 	noEquiv = true;
+    }
+
+    // no equivalent, but we can enclose it in a conditional subprocess
+    if (noEquiv && (ActorUtils.isSource(currActor) || ActorUtils.isTransformer(currActor) || ActorUtils.isSink(currActor))) {
+      // choose condition
+      cond = chooseBooleanCondition(null);
+      if (cond == null)
+	return;
+
+      if (ActorUtils.isSource(currActor)) {
+	trigger = new ConditionalTrigger();
+	trigger.setCondition(cond);
+	encloseActor(new TreePath[]{path}, trigger);
+      }
+
+      if (ActorUtils.isTransformer(currActor)) {
+	subprocess = new ConditionalSubProcess();
+	subprocess.setCondition(cond);
+	encloseActor(new TreePath[]{path}, subprocess);
+      }
+
+      if (ActorUtils.isSink(currActor)) {
+	tee = new ConditionalTee();
+	tee.setCondition(cond);
+	encloseActor(new TreePath[]{path}, tee);
+      }
+
+      return;
     }
 
     if (noEquiv) {
@@ -1912,22 +1976,12 @@ public class TreeOperations
     }
 
     // choose condition
-    if (getOwner().getParentDialog() != null)
-      dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
-    else
-      dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
-    dialog.setTitle("Conditions");
-    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-    dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.getGOEEditor().setClassType(BooleanCondition.class);
-    dialog.setCurrent(new Expression());
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+    cond = chooseBooleanCondition(null);
+    if (cond == null)
       return;
 
     // create node
-    ((BooleanConditionSupporter) newActor).setCondition((BooleanCondition) dialog.getCurrent());
+    ((BooleanConditionSupporter) newActor).setCondition(cond);
     newNode = new Node(getOwner(), newActor);
 
     getOwner().addUndoPoint("Making conditional actor from '" + currNode.getActor().getFullName());

@@ -13,31 +13,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MakeConditional.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
+import adams.flow.core.ActorUtils;
 import adams.flow.core.ActorWithConditionalEquivalent;
 
 import java.awt.event.ActionEvent;
 
 /**
  * For turning an actor into its conditonal equivalent.
- * 
+ *
  * @author fracpete
- * @version $Revision$
  */
 public class MakeConditional
-  extends AbstractTreePopupMenuItemAction {
+    extends AbstractTreePopupMenuItemAction {
 
   /** for serialization. */
   private static final long serialVersionUID = 3991575839421394939L;
-  
+
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   @Override
@@ -50,11 +50,20 @@ public class MakeConditional
    */
   @Override
   protected void doUpdate() {
-    setEnabled(	     
-	   m_State.editable 
-	&& m_State.isSingleSel 
-	&& (m_State.tree.getOwner() != null) 
-	&& (m_State.selNode.getActor() instanceof ActorWithConditionalEquivalent));
+    boolean	enabled;
+
+    enabled = m_State.editable
+	&& m_State.isSingleSel
+	&& (m_State.tree.getOwner() != null);
+
+    if (enabled) {
+      enabled = (m_State.selNode.getActor() instanceof ActorWithConditionalEquivalent)
+          || ActorUtils.isSource(m_State.selNode.getActor())
+          || ActorUtils.isTransformer(m_State.selNode.getActor())
+          || ActorUtils.isSink(m_State.selNode.getActor());
+    }
+
+    setEnabled(enabled);
   }
 
   /**
