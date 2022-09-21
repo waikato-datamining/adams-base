@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -226,6 +227,7 @@ public class ExcelSpreadSheetReader
     int				firstRow;
     int 			lastRow;
     List<String>        	header;
+    String			valueStr;
 
     result = new ArrayList<>();
 
@@ -342,11 +344,20 @@ public class ExcelSpreadSheetReader
 	      numeric = !m_TextColumns.isInRange(n);
 	      switch (cellType) {
 		case BLANK:
-		case ERROR:
 		  if (m_MissingValue.isEmpty())
 		    spRow.addCell(n).setMissing();
 		  else
 		    spRow.addCell(n).setContent("");
+		  break;
+		case ERROR:
+		  if (exCell instanceof XSSFCell)
+		    valueStr = ((XSSFCell) exCell).getErrorCellString();
+		  else
+		    valueStr = "Error: " + exCell.getErrorCellValue();
+		  if (m_MissingValue.isMatch(valueStr))
+		    spRow.addCell(n).setMissing();
+		  else
+		    spRow.addCell(n).setContentAsString(valueStr);
 		  break;
 		case NUMERIC:
 		  if (DateUtil.isCellDateFormatted(exCell))
@@ -356,11 +367,34 @@ public class ExcelSpreadSheetReader
 		  else
 		    spRow.addCell(n).setContentAsString(numericToString(exCell));
 		  break;
-		default:
-		  if (m_MissingValue.isMatch(exCell.getStringCellValue()))
+		case BOOLEAN:
+		  spRow.addCell(n).setContent(exCell.getBooleanCellValue());
+		  break;
+		case FORMULA:
+		  valueStr = exCell.getCellFormula();
+		  if (m_MissingValue.isMatch(valueStr))
 		    spRow.addCell(n).setMissing();
 		  else
-		    spRow.addCell(n).setContentAsString(exCell.getStringCellValue());
+		    spRow.addCell(n).setFormula(valueStr);
+		  break;
+		case STRING:
+		  valueStr = exCell.getStringCellValue();
+		  if (m_MissingValue.isMatch(valueStr))
+		    spRow.addCell(n).setMissing();
+		  else
+		    spRow.addCell(n).setContentAsString(valueStr);
+		default:
+		  try {
+		    valueStr = exCell.getStringCellValue();
+		    if (m_MissingValue.isMatch(valueStr))
+		      spRow.addCell(n).setMissing();
+		    else
+		      spRow.addCell(n).setContentAsString(valueStr);
+		  }
+		  catch (Exception e) {
+		    spRow.addCell(n).setMissing();
+		    // ignored
+		  }
 	      }
 	    }
 	  }
