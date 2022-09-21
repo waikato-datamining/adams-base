@@ -186,8 +186,12 @@ adams.gui.visualization.instances.instancestable.ProcessColumn=\
 adams.gui.visualization.instances.instancestable.ProcessRow=\
   adams.gui.visualization.instances.instancestable
 
-# the cell processsors for the InstancesTable
+# the cell processors for the InstancesTable
 adams.gui.visualization.instances.instancestable.ProcessCell=\
+  adams.gui.visualization.instances.instancestable
+
+# the selected rows processors for the InstancesTable
+adams.gui.visualization.instances.instancestable.ProcessSelectedRows=\
   adams.gui.visualization.instances.instancestable
 
 # WEKA single classifier enhancers
