@@ -114,7 +114,6 @@ public class InstancesTablePopupMenuItemHelper {
     String[]					classes;
 
     result = new ArrayList<>();
-    System.out.println(cls.getName());
     classes = ClassLister.getSingleton().getClassnames(cls);
     for (String c : classes) {
       try {
