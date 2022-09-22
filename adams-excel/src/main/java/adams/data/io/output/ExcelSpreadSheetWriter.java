@@ -437,6 +437,9 @@ public class ExcelSpreadSheetWriter
 	      else if (spCell.isNumeric()) {
 		cell.setCellValue(Utils.toDouble(spCell.getContent()));
 	      }
+	      else if (spCell.isBoolean()) {
+	        cell.setCellValue(spCell.toBoolean());
+	      }
 	      else {
 		cell.setCellValue(spCell.getContent());
 	      }
