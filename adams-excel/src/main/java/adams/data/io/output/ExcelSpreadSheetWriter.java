@@ -22,6 +22,7 @@ package adams.data.io.output;
 import adams.core.Constants;
 import adams.core.ExcelHelper;
 import adams.core.Utils;
+import adams.data.DateFormatString;
 import adams.data.io.input.ExcelSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
@@ -44,38 +45,52 @@ import java.util.logging.Level;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-sheet-prefix &lt;java.lang.String&gt; (property: sheetPrefix)
  * &nbsp;&nbsp;&nbsp;The prefix for sheet names.
  * &nbsp;&nbsp;&nbsp;default: Sheet
  * </pre>
- * 
+ *
  * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-output-as-displayed (property: outputAsDisplayed)
- * &nbsp;&nbsp;&nbsp;If enabled, cells are output as displayed, ie, results of formulas instead 
+ *
+ * <pre>-time-format &lt;adams.data.DateFormatString&gt; (property: timeFormat)
+ * &nbsp;&nbsp;&nbsp;The format for times.
+ * &nbsp;&nbsp;&nbsp;default: HH:mm:ss
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ *
+ * <pre>-date-format &lt;adams.data.DateFormatString&gt; (property: dateFormat)
+ * &nbsp;&nbsp;&nbsp;The format for dates.
+ * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ *
+ * <pre>-datetime-format &lt;adams.data.DateFormatString&gt; (property: dateTimeFormat)
+ * &nbsp;&nbsp;&nbsp;The format for date&#47;times.
+ * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * </pre>
+ *
+ * <pre>-output-as-displayed &lt;boolean&gt; (property: outputAsDisplayed)
+ * &nbsp;&nbsp;&nbsp;If enabled, cells are output as displayed, ie, results of formulas instead
  * &nbsp;&nbsp;&nbsp;of the formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExcelSpreadSheetWriter
-  extends AbstractMultiSheetSpreadSheetWriterWithMissingValueSupport 
-  implements SpreadSheetWriterWithFormulaSupport {
+    extends AbstractMultiSheetSpreadSheetWriterWithMissingValueSupport
+    implements SpreadSheetWriterWithFormulaSupport {
 
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
@@ -88,7 +103,16 @@ public class ExcelSpreadSheetWriter
 
   /** whether to write OOXML instead of binary Excel files (latter is default). */
   protected boolean m_WriteOOXML;
-  
+
+  /** the format string for the times. */
+  protected DateFormatString m_TimeFormat;
+
+  /** the format string for the dates. */
+  protected DateFormatString m_DateFormat;
+
+  /** the format string for the date/times. */
+  protected DateFormatString m_DateTimeFormat;
+
   /** whether to output the cells as displayed (disable to output formulas). */
   protected boolean m_OutputAsDisplayed;
 
@@ -110,8 +134,20 @@ public class ExcelSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output-as-displayed", "outputAsDisplayed",
-	    false);
+	"time-format", "timeFormat",
+	new DateFormatString(Constants.TIME_FORMAT));
+
+    m_OptionManager.add(
+	"date-format", "dateFormat",
+	new DateFormatString(Constants.DATE_FORMAT));
+
+    m_OptionManager.add(
+	"datetime-format", "dateTimeFormat",
+	new DateFormatString(Constants.TIMESTAMP_FORMAT));
+
+    m_OptionManager.add(
+	"output-as-displayed", "outputAsDisplayed",
+	false);
   }
 
   /**
@@ -137,7 +173,7 @@ public class ExcelSpreadSheetWriter
 
   /**
    * Returns, if available, the corresponding reader.
-   * 
+   *
    * @return		the reader, null if none available
    */
   public SpreadSheetReader getCorrespondingReader() {
@@ -171,11 +207,98 @@ public class ExcelSpreadSheetWriter
   public boolean getWriteOOXML() {
     return m_WriteOOXML;
   }
-  
+
+  /**
+   * Sets the format for time columns.
+   *
+   * @param value	the format
+   */
+  public void setTimeFormat(DateFormatString value) {
+    m_TimeFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for time columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getTimeFormat() {
+    return m_TimeFormat;
+  }
+
+  /**
+   * Returns the tip time for this property.
+   *
+   * @return 		tip time for this property suitable for
+   * 			displaying in the gui
+   */
+  public String timeFormatTipText() {
+    return "The format for times.";
+  }
+
+  /**
+   * Sets the format for date columns.
+   *
+   * @param value	the format
+   */
+  public void setDateFormat(DateFormatString value) {
+    m_DateFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for date columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getDateFormat() {
+    return m_DateFormat;
+  }
+
+  /**
+   * Returns the tip date for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateFormatTipText() {
+    return "The format for dates.";
+  }
+
+  /**
+   * Sets the format for date/time columns.
+   *
+   * @param value	the format
+   */
+  public void setDateTimeFormat(DateFormatString value) {
+    m_DateTimeFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for date/time columns.
+   *
+   * @return		the format
+   */
+  public DateFormatString getDateTimeFormat() {
+    return m_DateTimeFormat;
+  }
+
+  /**
+   * Returns the tip date/time for this property.
+   *
+   * @return 		tip date for this property suitable for
+   * 			displaying in the gui
+   */
+  public String dateTimeFormatTipText() {
+    return "The format for date/times.";
+  }
+
   /**
    * Sets whether to output the cell content as displayed, ie, no formulas
    * but the result of formulas.
-   * 
+   *
    * @param value	true if to output as displayed
    */
   @Override
@@ -183,11 +306,11 @@ public class ExcelSpreadSheetWriter
     m_OutputAsDisplayed = value;
     reset();
   }
-  
+
   /**
    * Returns whether to output the cell content as displayed, ie, no formulas
    * but the result of formulas.
-   * 
+   *
    * @return		true if to output as displayed
    */
   @Override
@@ -249,15 +372,15 @@ public class ExcelSpreadSheetWriter
 	workbook = new XSSFWorkbook();
       else
 	workbook = new HSSFWorkbook();
-      styleDate     = ExcelHelper.getDateCellStyle(workbook, Constants.DATE_FORMAT);
-      styleDateTime = ExcelHelper.getDateCellStyle(workbook, Constants.TIMESTAMP_FORMAT);
-      styleTime     = ExcelHelper.getDateCellStyle(workbook, Constants.TIME_FORMAT);
-      
+      styleTime     = ExcelHelper.getDateCellStyle(workbook, m_TimeFormat.getValue());
+      styleDate     = ExcelHelper.getDateCellStyle(workbook, m_DateFormat.getValue());
+      styleDateTime = ExcelHelper.getDateCellStyle(workbook, m_DateTimeFormat.getValue());
+
       count = 0;
       names = new HashSet<>();
       for (SpreadSheet cont: content) {
-        if (m_Stopped)
-          return false;
+	if (m_Stopped)
+	  return false;
 
 	sheet = workbook.createSheet();
 	if (cont.getName() != null) {
@@ -320,7 +443,7 @@ public class ExcelSpreadSheetWriter
 	    }
 	  }
 	}
-	
+
 	// next sheet
 	count++;
       }
