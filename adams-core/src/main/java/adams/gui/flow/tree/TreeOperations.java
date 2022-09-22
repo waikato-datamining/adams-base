@@ -40,8 +40,8 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.flow.condition.bool.BooleanCondition;
 import adams.flow.condition.bool.BooleanConditionSupporter;
 import adams.flow.condition.bool.Expression;
+import adams.flow.control.ConditionalSequence;
 import adams.flow.control.ConditionalSubProcess;
-import adams.flow.control.ConditionalTee;
 import adams.flow.control.ConditionalTrigger;
 import adams.flow.control.Flow;
 import adams.flow.control.SubProcess;
@@ -1903,7 +1903,7 @@ public class TreeOperations
     boolean			defaultName;
     boolean			expanded;
     ConditionalSubProcess	subprocess;
-    ConditionalTee		tee;
+    ConditionalSequence 	sequence;
     ConditionalTrigger		trigger;
     BooleanCondition		cond;
 
@@ -1943,9 +1943,9 @@ public class TreeOperations
       }
 
       if (ActorUtils.isSink(currActor)) {
-	tee = new ConditionalTee();
-	tee.setCondition(cond);
-	encloseActor(new TreePath[]{path}, tee);
+	sequence = new ConditionalSequence();
+	sequence.setCondition(cond);
+	encloseActor(new TreePath[]{path}, sequence);
       }
 
       return;
