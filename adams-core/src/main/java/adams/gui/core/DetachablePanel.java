@@ -15,7 +15,7 @@
 
 /*
  * DetachablePanel.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -133,8 +133,6 @@ public class DetachablePanel
     m_DetachedFrame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosed(WindowEvent e) {
-        m_LastFrameSize     = m_DetachedFrame.getSize();
-        m_LastFramePosition = m_DetachedFrame.getLocation();
 	super.windowClosed(e);
 	reattach();
       }
@@ -168,6 +166,9 @@ public class DetachablePanel
     revalidate();
     doLayout();
     repaint();
+
+    m_LastFrameSize = m_DetachedFrame.getSize();
+    m_LastFramePosition = m_DetachedFrame.getLocation();
 
     m_DetachedFrame.dispose();
     m_DetachedFrame = null;
