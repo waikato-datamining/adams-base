@@ -1,0 +1,22 @@
+# Project: adams
+# Date: 2022-07-22 15:15:17
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Replaces the labels with numbers and displays the key as second spreadsheet." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.GridView -short-title true -display-type adams.flow.core.displaytype.Default -num-rows 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name Matrix -short-title true -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer "adams.gui.core.spreadsheettable.ConfusionMatrixCellRenderingCustomizer -background-color-generator adams.gui.visualization.core.ConfusionMatrixColorGenerator" -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name Key -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+ adams.flow.standalone.CallableActors
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/nominal_predictions.csv
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.transformer.ConfusionMatrix -actual-column Actual -predicted-column Predicted -matrix-values PERCENTAGES_PER_ROW -enumerate-labels true
+ adams.flow.control.Tee -name matrix
+  adams.flow.transformer.SetVariable -var-name entry -var-value "row percentages"
+  adams.flow.transformer.GetArrayElement
+  adams.flow.sink.CallableSink -callable Matrix
+ adams.flow.control.Tee -name key
+  adams.flow.transformer.SetVariable -var-name entry -var-value "row percentages (key)"
+  adams.flow.transformer.GetArrayElement -index 2
+  adams.flow.sink.CallableSink -callable Key
