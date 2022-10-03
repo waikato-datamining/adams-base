@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleSavitzkyGolay.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -76,10 +76,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleSavitzkyGolay
-  extends AbstractPlotProcessor
+  extends AbstractPlotProcessorWithBuffer<Point2D>
   implements TechnicalInformationHandler {
   
   /** for serialization. */
@@ -88,9 +87,6 @@ public class SimpleSavitzkyGolay
   /** Size of window size for calculating lowess. */
   protected int m_WindowSize;
 
-  /** for storing the plot data. */
-  protected List<Point2D> m_Data;
-  
   /**
    * Returns a string describing the object.
    *
@@ -103,27 +99,7 @@ public class SimpleSavitzkyGolay
       + "For more information see:\n\n"
       + getTechnicalInformation().toString();
   }
-  
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_Data = new ArrayList<Point2D>();
-  }
 
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Data.clear();
-  }
-  
   /**
    * Returns an instance of a TechnicalInformation object, containing
    * detailed information about the technical background of this class,
@@ -230,6 +206,8 @@ public class SimpleSavitzkyGolay
     result = null;
     
     x = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_X);
+    if (x == null)
+      x = m_XIndex;
     y = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y);
     
     if ((x instanceof Number) && (y instanceof Number)) {
@@ -238,7 +216,7 @@ public class SimpleSavitzkyGolay
       while (m_Data.size() > m_WindowSize)
 	m_Data.remove(0);
       if (m_Data.size() == m_WindowSize) {
-	result = new ArrayList<SequencePlotterContainer>();
+	result = new ArrayList<>();
 	winOff = (m_WindowSize - 1)/2;
 	for (i = winOff; i < m_Data.size() - winOff; i++) {
 	  val = 0;
@@ -248,17 +226,7 @@ public class SimpleSavitzkyGolay
 	}
       }
     }
-    
-    return result;
-  }
 
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  @Override
-  public void cleanUp() {
-    super.cleanUp();
-    
-    m_Data.clear();
+    return result;
   }
 }

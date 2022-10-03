@@ -180,6 +180,14 @@ public abstract class AbstractPlotProcessor
   }
 
   /**
+   * Hook method before processing the plot container.
+   *
+   * @param cont	the container to process
+   */
+  protected void preProcess(SequencePlotterContainer cont) {
+  }
+
+  /**
    * Processes the provided container. Generates new containers
    * if applicable.
    * 
@@ -241,6 +249,7 @@ public abstract class AbstractPlotProcessor
     m_LastError = check(cont);
     
     if (m_LastError == null) {
+      preProcess(cont);
       result = doProcess(cont);
       if (result != null)
 	result = postProcess(result);

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LOWESS.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -70,10 +70,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LOWESS
-  extends AbstractPlotProcessor
+  extends AbstractPlotProcessorWithBuffer<Point2D>
   implements TechnicalInformationHandler {
   
   /** for serialization. */
@@ -82,9 +81,6 @@ public class LOWESS
   /** Size of window size for calculating lowess. */
   protected int m_WindowSize;
 
-  /** for storing the plot data. */
-  protected List<Point2D> m_Data;
-  
   /**
    * Returns a string describing the object.
    *
@@ -96,26 +92,6 @@ public class LOWESS
         "A processor that applies LOWESS smoothing.\n\n"
       + "For more information see:\n\n"
       + getTechnicalInformation().toString();
-  }
-  
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_Data = new ArrayList<Point2D>();
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Data.clear();
   }
 
   /**
@@ -209,6 +185,8 @@ public class LOWESS
     result = null;
     
     x = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_X);
+    if (x == null)
+      x = m_XIndex;
     y = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y);
     
     if ((x instanceof Number) && (y instanceof Number)) {
@@ -220,7 +198,7 @@ public class LOWESS
 	smoothed = adams.data.utils.LOWESS.calculate(m_Data, m_WindowSize);
 	if (smoothed.size() > 0) {
 	  point  = smoothed.get(smoothed.size() / 2);
-	  result = new ArrayList<SequencePlotterContainer>();
+	  result = new ArrayList<>();
 	  result.add(new SequencePlotterContainer(getPlotName(cont), point.getX(), point.getY(), getPlotType()));
 	}
 	else {
@@ -228,17 +206,7 @@ public class LOWESS
 	}
       }
     }
-    
-    return result;
-  }
 
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  @Override
-  public void cleanUp() {
-    super.cleanUp();
-    
-    m_Data.clear();
+    return result;
   }
 }

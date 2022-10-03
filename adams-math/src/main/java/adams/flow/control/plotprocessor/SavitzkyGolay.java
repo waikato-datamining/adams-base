@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SavitzkyGolay.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -106,10 +106,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SavitzkyGolay
-  extends AbstractPlotProcessor
+  extends AbstractPlotProcessorWithBuffer<Point2D>
   implements TechnicalInformationHandler {
   
   /** for serialization. */
@@ -130,9 +129,6 @@ public class SavitzkyGolay
   /** the calculated coefficients. */
   protected double[] m_Coefficients;
 
-  /** for storing the plot data. */
-  protected List<Point2D> m_Data;
-  
   /**
    * Returns a string describing the object.
    *
@@ -153,7 +149,6 @@ public class SavitzkyGolay
   protected void initialize() {
     super.initialize();
     
-    m_Data         = new ArrayList<Point2D>();
     m_Coefficients = null;
   }
 
@@ -164,7 +159,6 @@ public class SavitzkyGolay
   protected void reset() {
     super.reset();
     
-    m_Data.clear();
     m_Coefficients = null;
   }
   
@@ -393,6 +387,8 @@ public class SavitzkyGolay
     result = null;
     
     x = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_X);
+    if (x == null)
+      x = m_XIndex;
     y = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y);
     
     if ((x instanceof Number) && (y instanceof Number)) {
@@ -405,7 +401,7 @@ public class SavitzkyGolay
 	  m_Coefficients = adams.data.utils.SavitzkyGolay.determineCoefficients(
 	      m_NumPointsLeft, m_NumPointsRight, m_PolynomialOrder, m_DerivativeOrder, isLoggingEnabled());
 	}
-	result = new ArrayList<SequencePlotterContainer>();
+	result = new ArrayList<>();
 	width  = m_NumPointsLeft + m_NumPointsRight + 1;
 	for (i = 0; i <= m_Data.size() - width; i++) {
 	  // apply coefficients to window
@@ -417,17 +413,7 @@ public class SavitzkyGolay
 	}
       }
     }
-    
-    return result;
-  }
 
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  @Override
-  public void cleanUp() {
-    super.cleanUp();
-    
-    m_Data.clear();
+    return result;
   }
 }

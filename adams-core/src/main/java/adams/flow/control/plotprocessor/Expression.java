@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Expression.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -68,10 +68,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Expression
-  extends AbstractPlotProcessor {
+  extends AbstractPlotProcessorWithBuffer<Point2D> {
   
   /** for serialization. */
   private static final long serialVersionUID = 5171916489269022308L;
@@ -85,9 +84,6 @@ public class Expression
   /** the expression for Y. */
   protected MathematicalExpressionText m_YExpression;
 
-  /** for storing the plot data. */
-  protected List<Point2D> m_Data;
-  
   /**
    * Returns a string describing the object.
    *
@@ -99,26 +95,6 @@ public class Expression
       "Applies a mathematical function to the data (separately for X and Y).\n"
 	+ "Values can be accessed using 'xN' and 'yN' with 'N' being the "
 	+ "1-based index in the current window.";
-  }
-  
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-    
-    m_Data = new ArrayList<>();
-  }
-
-  /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-    
-    m_Data.clear();
   }
 
   /**
@@ -266,6 +242,8 @@ public class Expression
     result = null;
 
     x = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_X);
+    if (x == null)
+      x = m_XIndex;
     y = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y);
     
     if ((x instanceof Number) && (y instanceof Number)) {
@@ -302,17 +280,7 @@ public class Expression
 	result.add(new SequencePlotterContainer(getPlotName(cont), ((Number) x).doubleValue(), ((Number) y).doubleValue(), getPlotType()));
       }
     }
-    
-    return result;
-  }
 
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  @Override
-  public void cleanUp() {
-    super.cleanUp();
-    
-    m_Data.clear();
+    return result;
   }
 }
