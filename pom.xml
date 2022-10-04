@@ -72,14 +72,14 @@
     <class.adams.flowrunner>adams.flow.FlowRunner</class.adams.flowrunner>
     <class.adams.flowsetuprunner>adams.flow.FlowSetupRunner</class.adams.flowsetuprunner>
     <!-- module-dependent -->
-    <cxf.version>3.4.5</cxf.version>
+    <cxf.version>3.5.3</cxf.version>
     <xercesimpl.version>2.12.1</xercesimpl.version>
     <xjc.version>3.3.1</xjc.version>
     <sun.jaxb.version>3.0.2</sun.jaxb.version>
     <javax.jaxb.version>2.3.1</javax.jaxb.version>
     <javax.activation.version>1.1.1</javax.activation.version>
     <javaws.version>3.0.2</javaws.version>
-    <jetty.version>9.4.11.v20180605</jetty.version>
+    <jetty.version>9.4.48.v20220622</jetty.version>
     <moa.version>2021.07.0</moa.version>
     <weka.version>3.9.6-fork-0.0.1</weka.version>
     <weka-lts.version>3.9.0-fork-0.0.12</weka-lts.version>
