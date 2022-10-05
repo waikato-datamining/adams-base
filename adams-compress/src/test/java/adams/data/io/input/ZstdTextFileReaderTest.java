@@ -14,8 +14,8 @@
  */
 
 /*
- * LzfTextFileReaderTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * ZstdTextFileReaderTest.java
+ * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -25,15 +25,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests the adams.data.io.input.LzfTextFileReader class. Run from commandline with: <br><br>
- * java adams.data.io.input.LzfTextFileReader
- * <br><br>
- * NB: dummy test.
+ * Tests the adams.data.io.input.ZstdTextFileReader class. Run from commandline with: <br><br>
+ * java adams.data.io.input.ZstdTextFileReader
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8587 $
  */
-public class LzfTextFileReaderTest
+public class ZstdTextFileReaderTest
   extends AbstractTextReaderTestCase {
 
   /**
@@ -41,7 +38,7 @@ public class LzfTextFileReaderTest
    *
    * @param name	the name of the test
    */
-  public LzfTextFileReaderTest(String name) {
+  public ZstdTextFileReaderTest(String name) {
     super(name);
   }
   
@@ -54,7 +51,7 @@ public class LzfTextFileReaderTest
   @Override
   protected String[] getRegressionInputFiles() {
     return new String[]{
-        "iris.arff.lzf",
+	"iris.arff.zst",
     };
   }
 
@@ -65,8 +62,8 @@ public class LzfTextFileReaderTest
    */
   @Override
   protected AbstractTextReader[] getRegressionSetups() {
-    return new LzfTextFileReader[]{
-        new LzfTextFileReader(),
+    return new ZstdTextFileReader[]{
+	new ZstdTextFileReader()
     };
   }
 
@@ -76,7 +73,7 @@ public class LzfTextFileReaderTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(LzfTextFileReaderTest.class);
+    return new TestSuite(ZstdTextFileReaderTest.class);
   }
 
   /**

@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 /**
  <!-- globalinfo-start -->
- * Reads content from XZ compressed text files.
+ * Reads content from ZStd compressed text files.
  * <br><br>
  <!-- globalinfo-end -->
  *

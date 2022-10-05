@@ -50,9 +50,6 @@ public class LzfTextFileReader
 
   /** for serialization. */
   private static final long serialVersionUID = 35626483638973054L;
-  
-  /** the reader for reading the decompressed content. */
-  protected AbstractTextReader m_TextReader;
 
   /**
    * Returns a string describing the object.
