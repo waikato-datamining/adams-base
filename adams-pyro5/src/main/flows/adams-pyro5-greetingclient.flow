@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2022-10-05 15:37:39
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-pyro5,adams-python
+#
+adams.flow.control.Flow -annotation "Queries the \\\"example greeting\\\" server.\\n\\nNB: You will need to update the virtualenv path to make this work\\nand install Pyro5 using:\\n  pip install Pyro5\\n\\nBefore executing the flow, start the nameserver as follows:\\n  ./venv/bin/pyro5-ns\\n\\nIn a separate shell, start the greeting server as follows:\\n  ./venv/bin/python3 src/main/flows/data/pyro5-greeting-server.py\\n" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.PythonEnvironment -python ${CWD}/venv/bin/python3
+ adams.flow.standalone.PyroNameServer
+ adams.flow.source.StringConstants -string Blah -conversion adams.data.conversion.StringToString
+ adams.flow.transformer.PyroTransformer -call adams.flow.transformer.pyrotransformer.ExampleGreeting
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter

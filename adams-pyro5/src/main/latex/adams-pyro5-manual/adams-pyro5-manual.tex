@@ -1,0 +1,87 @@
+% This work is made available under the terms of the
+% Creative Commons Attribution-ShareAlike 4.0 license,
+% http://creativecommons.org/licenses/by-sa/4.0/.
+
+\documentclass[a4paper]{book}
+
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{scalefnt}
+\usepackage{tikz}
+
+% watermark -- for draft stage
+%\usepackage[firstpage]{draftwatermark}
+%\SetWatermarkLightness{0.9}
+%\SetWatermarkScale{5}
+
+\input{latex_extensions}
+
+\title{
+  \textbf{ADAMS} \\
+  {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
+  learning \textbf{S}ystem} \\
+  {\Large Module: adams-pyro4} \\
+  \vspace{1cm}
+  \includegraphics[width=2cm]{images/pyro5-module.png} \\
+}
+\author{
+  Peter Reutemann
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{titlepage}
+\maketitle
+
+\thispagestyle{empty}
+\center
+\begin{table}[b]
+	\begin{tabular}{c l l}
+		\parbox[c][2cm]{2cm}{\copyright 2018-2019} &
+		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}}
+	\end{tabular}
+	\includegraphics[width=12cm]{images/cc.png} \\
+\end{table}
+
+\end{titlepage}
+
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Flow}
+
+The following standalones are available:
+\begin{tight_itemize}
+  \item \textit{PyroNameServer} -- for launching/connecting to a Pyro4\cite{pyro4} nameserver, Python environment
+  defined with \textit{PythonEnvironment}.
+  \item \textit{PyroStandalone} -- for calling a Pyro4\cite{pyro4} remote object.
+\end{tight_itemize}
+
+The following sources are available:
+\begin{tight_itemize}
+  \item \textit{PyroSource} -- for generating data with a Pyro4\cite{pyro4} remote object.
+
+\end{tight_itemize}
+
+The following transformers are available:
+\begin{tight_itemize}
+  \item \textit{PyroTransformer} -- for transforming data with a Pyro4\cite{pyro4} remote object.
+\end{tight_itemize}
+
+The following sinks are available:
+\begin{tight_itemize}
+  \item \textit{PyroSink} -- for consuming data with a Pyro4\cite{pyro4} remote object.
+\end{tight_itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{bibliography}
+
+\end{document}
