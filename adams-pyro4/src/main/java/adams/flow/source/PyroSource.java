@@ -23,7 +23,6 @@ package adams.flow.source;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.source.pyrosource.AbstractPyroSource;
-import adams.flow.source.pyrosource.Null;
 
 /**
  <!-- globalinfo-start -->
@@ -116,7 +115,7 @@ public class PyroSource
 
     m_OptionManager.add(
       "call", "call",
-      new Null());
+      new adams.flow.source.pyrosource.Null());
   }
 
   /**

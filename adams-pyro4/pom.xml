@@ -9,10 +9,10 @@
     <version>22.10.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>adams-python</artifactId>
+  <artifactId>adams-pyro4</artifactId>
   <packaging>jar</packaging>
 
-  <name>adams-python</name>
+  <name>adams-pyro4</name>
   <description>Module for making interaction with Python easier.</description>
   <url>https://adams.cms.waikato.ac.nz/</url>
   <organization>
@@ -55,6 +55,26 @@
       <version>${project.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-python</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-python</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>net.razorvine</groupId>
+      <artifactId>pyrolite</artifactId>
+      <version>4.22</version>
     </dependency>
 
     <dependency>

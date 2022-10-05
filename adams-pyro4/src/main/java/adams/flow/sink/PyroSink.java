@@ -22,7 +22,6 @@ package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.sink.pyrosink.AbstractPyroSink;
-import adams.flow.sink.pyrosink.Null;
 
 /**
  <!-- globalinfo-start -->
@@ -115,7 +114,7 @@ public class PyroSink
 
     m_OptionManager.add(
       "call", "call",
-      new Null());
+      new adams.flow.sink.pyrosink.Null());
   }
 
   /**

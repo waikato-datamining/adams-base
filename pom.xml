@@ -42,6 +42,7 @@
     <module>adams-net</module>
     <module>adams-odf</module>
     <module>adams-pdf</module>
+    <module>adams-pyro4</module>
     <module>adams-python</module>
     <module>adams-rsync</module>
     <module>adams-scripts</module>

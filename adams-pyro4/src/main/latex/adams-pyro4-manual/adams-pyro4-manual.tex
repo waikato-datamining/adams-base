@@ -22,9 +22,9 @@
   \textbf{ADAMS} \\
   {\Large \textbf{A}dvanced \textbf{D}ata mining \textbf{A}nd \textbf{M}achine
   learning \textbf{S}ystem} \\
-  {\Large Module: adams-python} \\
+  {\Large Module: adams-pyro4} \\
   \vspace{1cm}
-  \includegraphics[width=2cm]{images/python-module.png} \\
+  \includegraphics[width=2cm]{images/pyro4-module.png} \\
 }
 \author{
   Peter Reutemann
@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2018-2022} &
+		\parbox[c][2cm]{2cm}{\copyright 2018-2019} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}}
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -59,22 +59,25 @@
 
 The following standalones are available:
 \begin{tight_itemize}
-  \item \textit{PythonEnvironment} -- defines what executables to use, system-wide
-  or specific ones (e.g., from a virtual environment).
+  \item \textit{PyroNameServer} -- for launching/connecting to a Pyro4\cite{pyro4} nameserver, Python environment
+  defined with \textit{PythonEnvironment}.
+  \item \textit{PyroStandalone} -- for calling a Pyro4\cite{pyro4} remote object.
 \end{tight_itemize}
 
 The following sources are available:
 \begin{tight_itemize}
-  \item \textit{PipExec} -- executes pip.
-  \item \textit{PythonExec} -- executes the specified Python script.
-  \item \textit{PythonVenvExec} -- executes the specified executable from the virtual
-  environment defined with \textit{PythonEnvironment}.
+  \item \textit{PyroSource} -- for generating data with a Pyro4\cite{pyro4} remote object.
+
 \end{tight_itemize}
 
 The following transformers are available:
 \begin{tight_itemize}
-  \item \textit{PythonExpandScript} -- expands variables and placeholders in a
-  script template and saves it as a separate file.
+  \item \textit{PyroTransformer} -- for transforming data with a Pyro4\cite{pyro4} remote object.
+\end{tight_itemize}
+
+The following sinks are available:
+\begin{tight_itemize}
+  \item \textit{PyroSink} -- for consuming data with a Pyro4\cite{pyro4} remote object.
 \end{tight_itemize}
 
 

@@ -7,8 +7,8 @@
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
 
 # the Pyro standalone calls
-adams.flow.standalone.pyrostandalone.AbstractPyroStandalone=\
-  adams.flow.standalone.pyrostandalone
+adams.flow.transformer.pyrostandalone.AbstractPyroStandalone=\
+  adams.flow.transformer.pyrostandalone
 
 # the Pyro source calls
 adams.flow.source.pyrosource.AbstractPyroSource=\

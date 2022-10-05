@@ -1,8 +1,8 @@
 # Project: adams
-# Date: 2019-01-16 16:44:17
+# Date: 2022-10-05 14:23:05
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-core,adams-python
+# Modules: adams-core,adams-pyro4,adams-python
 #
 adams.flow.control.Flow -annotation "Queries the \\\"example greeting\\\" server.\\n\\nNB: You will need to update the virtualenv path to make this work\\nand install Pyro4 using:\\n  pip install Pyro4" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.PythonEnvironment -python ${CWD}/venv/bin/python3

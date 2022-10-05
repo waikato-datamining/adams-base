@@ -22,7 +22,6 @@ package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.standalone.pyrostandalone.AbstractPyroStandalone;
-import adams.flow.standalone.pyrostandalone.Null;
 
 /**
  <!-- globalinfo-start -->
@@ -111,7 +110,7 @@ public class PyroStandalone
 
     m_OptionManager.add(
       "call", "call",
-      new Null());
+      new adams.flow.standalone.pyrostandalone.Null());
   }
 
   /**
