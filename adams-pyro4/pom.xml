@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
 
   <name>adams-pyro4</name>
-  <description>Module for making interaction with Python easier.</description>
+  <description>Module for communicating with remote Python objects (Pyro4).</description>
   <url>https://adams.cms.waikato.ac.nz/</url>
   <organization>
     <name>University of Waikato, Hamilton, NZ</name>

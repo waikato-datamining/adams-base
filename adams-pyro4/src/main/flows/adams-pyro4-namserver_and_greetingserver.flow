@@ -12,7 +12,7 @@ adams.flow.control.Flow -annotation "Starts up the Pyro4 nameserver,\\n\\nNB: Yo
  adams.flow.standalone.PyroNameServer -server @{hostport} -mode LAUNCH_AND_CONNECT
  adams.flow.source.Start
  adams.flow.control.Trigger -name "start greeting server" -asynchronous true
-  adams.flow.source.PythonExec -output-type BOTH -prefix-stdout "[OUT] " -prefix-stderr "[ERR] " -script ${FLOWS}/data/pyro-greeting-server.py
+  adams.flow.source.PythonExec -output-type BOTH -prefix-stdout "[OUT] " -prefix-stderr "[ERR] " -script ${FLOWS}/data/pyro4-greeting-server.py
   adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
  adams.flow.control.Sleep -interval 2000
  adams.flow.control.Trigger -name "call greeting server"
