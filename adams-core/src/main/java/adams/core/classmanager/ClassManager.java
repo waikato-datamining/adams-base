@@ -15,7 +15,7 @@
 
 /*
  * ClassManager.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.classmanager;
@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ClassManager
-  extends CustomLoggingLevelObject {
+    extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = -25229737422104934L;
 
@@ -43,8 +43,8 @@ public class ClassManager
    * Dummy manager to be used in mapping if no manager was found.
    */
   public static class NoManagerFound
-    extends CustomLoggingLevelObject
-    implements CustomClassManager {
+      extends CustomLoggingLevelObject
+      implements CustomClassManager {
 
     private static final long serialVersionUID = 3626028390421240241L;
 
@@ -92,12 +92,12 @@ public class ClassManager
     m_NoManagerFound = new NoManagerFound();
     for (Class cls: ClassLister.getSingleton().getClasses(CustomClassManager.class)) {
       if (cls.equals(DefaultClassManager.class))
-        continue;
+	continue;
       try {
-        m_Managers.add((CustomClassManager) cls.newInstance());
+	m_Managers.add((CustomClassManager) cls.newInstance());
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);
+	getLogger().log(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);
       }
     }
   }
@@ -116,32 +116,32 @@ public class ClassManager
     if (result == null) {
       // find a manager
       for (CustomClassManager m: m_Managers) {
-        try {
-          m.forName(classname);
-          result = m;
-          break;
+	try {
+	  m.forName(classname);
+	  result = m;
+	  break;
 	}
 	catch (Exception e) {
-          // ignored
+	  // ignored
 	}
       }
 
       // try default one
       if (result == null) {
-        try {
-          m_DefaultManager.forName(classname);
-          result = m_DefaultManager;
+	try {
+	  m_DefaultManager.forName(classname);
+	  result = m_DefaultManager;
 	}
 	catch (Exception e) {
-          // ignored
+	  // ignored
 	}
       }
 
       // cannot be instantiated
       if (result == null)
-        m_Mapping.put(classname, m_NoManagerFound);
+	m_Mapping.put(classname, m_NoManagerFound);
       else
-        m_Mapping.put(classname, result);
+	m_Mapping.put(classname, result);
     }
 
     return m_Mapping.get(classname);
@@ -156,6 +156,22 @@ public class ClassManager
    */
   public synchronized Class forName(String classname) throws Exception {
     return determineManager(classname).forName(classname);
+  }
+
+  /**
+   * Checks whether the class can be loaded.
+   *
+   * @param classname	the class name to check
+   * @return		true if the class exists
+   */
+  public synchronized boolean isAvailable(String classname) {
+    try {
+      forName(classname);
+      return true;
+    }
+    catch (Exception e) {
+      return false;
+    }
   }
 
   /**
