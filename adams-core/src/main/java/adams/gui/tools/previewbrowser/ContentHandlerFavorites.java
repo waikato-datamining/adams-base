@@ -15,7 +15,7 @@
 
 /*
  * HandlerFavorites.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -28,14 +28,14 @@ import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -271,6 +271,8 @@ public class ContentHandlerFavorites
     ContentHandlerFavorite		favorite;
     String[]				names;
     String				cmdline;
+    String				clsname;
+    Set<String>				blacklist;
 
     props = new Properties();
     file  = new File(Environment.getInstance().getHome() + File.separator + FILENAME);
@@ -278,6 +280,7 @@ public class ContentHandlerFavorites
       props.load(file.getAbsolutePath());
 
     favorites = new ArrayList<>();
+    blacklist = new HashSet<>();
     for (String ext : props.keySetAll()) {
       if (ext.contains("|"))
 	continue;
@@ -290,6 +293,20 @@ public class ContentHandlerFavorites
 	    continue;
 	  }
 	  try {
+	    // quietly ignore handlers from modules that aren't present
+            if (!OptionUtils.canInstantiate(cmdline)) {
+              clsname = OptionUtils.extractClassname(cmdline);
+              if (clsname != null) {
+                if (blacklist.contains(clsname))
+                  continue;
+                blacklist.add(clsname);
+                getLogger().warning("Cannot instantiate, skipping: " + clsname);
+              }
+              else {
+                getLogger().warning("Cannot instantiate, skipping: " + cmdline);
+              }
+              continue;
+            }
 	    favorite = new ContentHandlerFavorite(ext, name, (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, cmdline));
 	    favorites.add(favorite);
 	  }
