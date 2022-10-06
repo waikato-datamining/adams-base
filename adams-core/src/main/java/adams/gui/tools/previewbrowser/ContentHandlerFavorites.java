@@ -14,7 +14,7 @@
  */
 
 /*
- * HandlerFavorites.java
+ * ContentHandlerFavorites.java
  * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 
