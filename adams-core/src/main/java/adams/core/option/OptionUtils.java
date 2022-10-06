@@ -15,7 +15,7 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -263,7 +263,7 @@ public class OptionUtils {
 	cls = Class.forName(classname);
       }
       catch (Exception e) {
-        LOGGER.log(Level.SEVERE, "Cannot get class for '" + classname + "' - skipped!", e);
+	LOGGER.log(Level.SEVERE, "Cannot get class for '" + classname + "' - skipped!", e);
 	continue;
       }
 
@@ -511,7 +511,7 @@ public class OptionUtils {
 
     if (cmdline.trim().length() == 0)
       throw new IllegalArgumentException("Empty commandline supplied!");
-    
+
     options    = splitOptions(cmdline);
     classname  = options[0];
     options[0] = "";
@@ -571,13 +571,13 @@ public class OptionUtils {
       if (errors != null)
 	errors.addAll(consumer.getErrors());
       else if (!quiet)
-        LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getErrors(), "\n"));
+	LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getErrors(), "\n"));
     }
     if (consumer.hasWarnings()) {
       if (warnings != null)
-        warnings.addAll(consumer.getWarnings());
+	warnings.addAll(consumer.getWarnings());
       else if (!quiet)
-        LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getWarnings(), "\n"));
+	LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getWarnings(), "\n"));
     }
     if (result == null)
       throw new Exception("Failed to instantiate object of type '" + classType.getName() + "' from '" + cmdline + "! Class not present?");
@@ -661,6 +661,48 @@ public class OptionUtils {
   }
 
   /**
+   * Extracts the classname from the commandline.
+   *
+   * @param cmdline	the commandline to get the classname from
+   * @return		the classname, null if not extracted
+   */
+  public static String extractClassname(String cmdline) {
+    String	result;
+    String[]	parts;
+
+    result = null;
+
+    if (cmdline.trim().length() > 0) {
+      parts = cmdline.split(" ");
+      if (parts.length > 0) {
+        if (parts[0].contains("."))
+          result = parts[0];
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the command-line is likely to succeed to be instantiated,
+   * i.e., the class can be loaded.
+   *
+   * @param cmdline	the commandline with the class to check
+   * @return		true if class can be loaded
+   */
+  public static boolean canInstantiate(String cmdline) {
+    boolean	result;
+    String	clsname;
+
+    result  = false;
+    clsname = extractClassname(cmdline);
+    if (clsname != null)
+      result = ClassManager.getSingleton().isAvailable(clsname);
+
+    return result;
+  }
+
+  /**
    * Returns the string value converted into the appropriate class.
    *
    * @param cls		the required class
@@ -678,28 +720,28 @@ public class OptionUtils {
 
     if ((cls == Byte.class) || (cls == Byte.TYPE))
       result = isDouble ? new Double(value).byteValue() : Byte.valueOf(value);
-    // short
+      // short
     else if ((cls == Short.class) || (cls == Short.TYPE))
       result = isDouble ? new Double(value).shortValue() : Short.valueOf(value);
-    // int
+      // int
     else if ((cls == Integer.class) || (cls == Integer.TYPE))
       result = isDouble ? new Double(value).intValue() : Integer.valueOf(value);
-    // long
+      // long
     else if ((cls == Long.class) || (cls == Long.TYPE))
       result = isDouble ? new Double(value).longValue() : Long.valueOf(value);
-    // float
+      // float
     else if ((cls == Float.class) || (cls == Float.TYPE))
       result = Float.valueOf(value);
-    // double
+      // double
     else if ((cls == Double.class) || (cls == Double.TYPE))
       result = Double.valueOf(value);
-    // boolean
+      // boolean
     else if ((cls == Boolean.class) || (cls == Boolean.TYPE))
       result = Boolean.valueOf(value);
-    // character
+      // character
     else if ((cls == Character.class) || (cls == Character.TYPE))
       result = "" + value;
-    // string
+      // string
     else if (cls == String.class)
       result = value;
 
@@ -780,9 +822,9 @@ public class OptionUtils {
 
       // transfer variables
       if (!expand && transferVars) {
-        result.getOptionManager().setVariables(o.getOptionManager().getVariables());
-        result.getOptionManager().updateVariablesInstance(o.getOptionManager().getVariables());
-        result.getOptionManager().updateVariableValues(true);
+	result.getOptionManager().setVariables(o.getOptionManager().getVariables());
+	result.getOptionManager().updateVariablesInstance(o.getOptionManager().getVariables());
+	result.getOptionManager().updateVariableValues(true);
       }
     }
     catch (Exception e) {
@@ -849,9 +891,9 @@ public class OptionUtils {
     try {
       cmdline = getCommandLine(o);
       if (o instanceof OptionHandler)
-        result = forCommandLine(Object.class, cmdline);
+	result = forCommandLine(Object.class, cmdline);
       else
-        result = forAnyCommandLine(Object.class, cmdline);
+	result = forAnyCommandLine(Object.class, cmdline);
     }
     catch (Exception e) {
       result = null;
@@ -897,9 +939,9 @@ public class OptionUtils {
 
     for (i = 0; i < options.length; i++) {
       if (options[i].length() > 0) {
-        if (result.length() > 0)
-          result.append(" ");
-        result.append(options[i]);
+	if (result.length() > 0)
+	  result.append(" ");
+	result.append(options[i]);
       }
     }
 
@@ -963,8 +1005,8 @@ public class OptionUtils {
 
     for (i = 0; i < options.size(); i++) {
       if (options.get(i).equals(flag)) {
-        result = true;
-        break;
+	result = true;
+	break;
       }
     }
 
@@ -988,8 +1030,8 @@ public class OptionUtils {
     for (i = 0; i < options.length; i++) {
       if (options[i].equals(flag)) {
 	options[i] = "";
-        result     = true;
-        break;
+	result     = true;
+	break;
       }
     }
 
@@ -1013,8 +1055,8 @@ public class OptionUtils {
     for (i = 0; i < options.size(); i++) {
       if (options.get(i).equals(flag)) {
 	options.set(i, "");
-        result     = true;
-        break;
+	result     = true;
+	break;
       }
     }
 
@@ -1047,9 +1089,9 @@ public class OptionUtils {
 
     for (i = 0; i < options.size(); i++) {
       if (options.get(i).equals(option)) {
-        if (i < options.size() - 1)
-          result = options.get(i + 1);
-        break;
+	if (i < options.size() - 1)
+	  result = options.get(i + 1);
+	break;
       }
     }
 
@@ -1072,12 +1114,12 @@ public class OptionUtils {
 
     for (i = 0; i < options.length; i++) {
       if (options[i].equals(option)) {
-        options[i] = "";
-        if (i < options.length - 1) {
-          result         = options[i + 1];
-          options[i + 1] = "";
-        }
-        break;
+	options[i] = "";
+	if (i < options.length - 1) {
+	  result         = options[i + 1];
+	  options[i + 1] = "";
+	}
+	break;
       }
     }
 
@@ -1100,12 +1142,12 @@ public class OptionUtils {
 
     for (i = 0; i < options.size(); i++) {
       if (options.get(i).equals(option)) {
-        options.set(i, "");
-        if (i < options.size() - 1) {
-          result = options.get(i + 1);
-          options.set(i + 1, "");
-        }
-        break;
+	options.set(i, "");
+	if (i < options.size() - 1) {
+	  result = options.get(i + 1);
+	  options.set(i + 1, "");
+	}
+	break;
       }
     }
 
@@ -1240,7 +1282,7 @@ public class OptionUtils {
 	catch (Exception ex) {
 	  LOGGER.log(Level.SEVERE,
 	      "Failed to obtain bean info/property descriptors for class '"
-	      + Utils.classToString(owner) + "'", e);
+		  + Utils.classToString(owner) + "'", e);
 	}
       }
     }
