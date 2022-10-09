@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Not.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -31,33 +31,49 @@ import adams.flow.core.Unknown;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
  * &nbsp;&nbsp;&nbsp;the console (0 = off).
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-condition &lt;adams.flow.condition.bool.AbstractBooleanCondition&gt; (property: condition)
  * &nbsp;&nbsp;&nbsp;The condition to evaluate and negate.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Not
-  extends AbstractBooleanCondition {
+    extends AbstractBooleanCondition {
 
   /** for serialization. */
   private static final long serialVersionUID = -7927342245398106669L;
 
   /** the condition to evaluate and negate. */
   protected BooleanCondition m_Condition;
-  
+
+  /**
+   * Default constructor.
+   */
+  public Not() {
+    super();
+  }
+
+  /**
+   * Initializes Not with the specified base condition.
+   *
+   * @param condition	the condition to negate
+   */
+  public Not(BooleanCondition condition) {
+    this();
+    setCondition(condition);
+  }
+
   /**
    * Returns a string describing the object.
    *
@@ -76,8 +92,8 @@ public class Not
     super.defineOptions();
 
     m_OptionManager.add(
-	    "condition", "condition",
-	    getDefaultCondition());
+	"condition", "condition",
+	getDefaultCondition());
   }
 
   /**
@@ -126,7 +142,7 @@ public class Not
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result = m_Condition.getQuickInfo();
     if (result != null)
       return "! " + result;

@@ -15,35 +15,34 @@
 
 /*
  * VariableTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.VariableName;
-import adams.core.base.BaseRegExp;
-import adams.core.base.BaseText;
+import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.condition.test.FileExists;
+import adams.flow.condition.bool.FileExists;
 import adams.flow.control.Flow;
+import adams.flow.control.IfThenElse;
+import adams.flow.control.Tee;
+import adams.flow.control.Trigger;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
-import adams.flow.standalone.ConditionalStandalone;
-import adams.flow.standalone.DeleteFile;
 import adams.flow.standalone.SetVariable;
-import adams.test.TmpDirectory;
+import adams.flow.transformer.DeleteFile;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests the Variable source.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariableTest
   extends AbstractFlowTest {
@@ -90,36 +89,44 @@ public class VariableTest
    */
   @Override
   public Actor getActor() {
-    FileExists fe = new FileExists();
-    fe.setFile(new TmpFile("bolts.csv"));
-
-    SetVariable sv = new SetVariable();
-    sv.setVariableName(new VariableName("file_exists"));
-    sv.setVariableValue(new BaseText("yes"));
-
-    ConditionalStandalone cond = new ConditionalStandalone();
-    cond.setCondition(fe);
-    cond.setActor(sv);
+    FileSupplier fs = new FileSupplier();
+    fs.setFiles(new PlaceholderFile[]{new TmpFile("bolts.csv")});
 
     DeleteFile df = new DeleteFile();
-    df.setDirectory(new TmpDirectory());
-    df.setRegExp(new BaseRegExp("bolts.csv"));
 
-    SetVariable sv2 = new SetVariable();
-    sv2.setVariableName(new VariableName("file_exists"));
-    sv2.setVariableValue(new BaseText("no"));
+    Tee tee = new Tee();
+    {
+      FileExists fe = new FileExists();
+      fe.setFile(new TmpFile("bolts.csv"));
+      IfThenElse ift = new IfThenElse();
+      ift.setCondition(fe);
+      tee.add(ift);
 
-    Variable var = new Variable();
-    var.setVariableName(new VariableName("file_exists"));
+      SetVariable svy = new SetVariable();
+      svy.setVariableName(new VariableName("file_exists"));
+      svy.setVariableValue("yes");
+      ift.setThenActor(svy);
 
-    DumpFile dump = new DumpFile();
-    dump.setAppend(true);
-    dump.setOutputFile(new TmpFile("dumpfile.txt"));
+      SetVariable svn = new SetVariable();
+      svn.setVariableName(new VariableName("file_exists"));
+      svn.setVariableValue("no");
+      ift.setElseActor(svn);
+    }
+
+    Trigger trigger = new Trigger();
+    {
+      Variable var = new Variable();
+      var.setVariableName(new VariableName("file_exists"));
+      trigger.add(var);
+
+      DumpFile dump = new DumpFile();
+      dump.setAppend(true);
+      dump.setOutputFile(new TmpFile("dumpfile.txt"));
+      trigger.add(dump);
+    }
 
     Flow flow = new Flow();
-    flow.setActors(new Actor[]{cond, df, sv2, var, dump});
-
-    flow.getVariables().set("file_exists", "no");
+    flow.setActors(new Actor[]{fs, df, tee, trigger});
 
     return flow;
   }

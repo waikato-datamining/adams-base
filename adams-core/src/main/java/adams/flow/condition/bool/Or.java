@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Or.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -47,14 +47,29 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Or
   extends AbstractMultiCondition {
 
   /** for serialization. */
   private static final long serialVersionUID = -7930281929775307418L;
-  
+
+  /**
+   * Default constructor.
+   */
+  public Or() {
+    super();
+  }
+
+  /**
+   * Initializes the object with the specified conditions.
+   *
+   * @param conditions  the conditions to use
+   */
+  public Or(BooleanCondition[] conditions) {
+    super(conditions);
+  }
+
   /**
    * Returns a string describing the object.
    *

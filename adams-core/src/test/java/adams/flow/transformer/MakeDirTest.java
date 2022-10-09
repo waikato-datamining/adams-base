@@ -15,30 +15,31 @@
 
 /*
  * MakeDirTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.condition.test.DirExists;
+import adams.flow.condition.bool.DirectoryExists;
+import adams.flow.condition.bool.Not;
+import adams.flow.control.Block;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
+import adams.test.TmpDirectory;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the MakeDir actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MakeDirTest
   extends AbstractFlowTest {
@@ -61,7 +62,7 @@ public class MakeDirTest
     super.setUp();
 
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
-    FileUtils.delete(new TmpFile("blah"));
+    FileUtils.delete(new TmpDirectory("blah"));
   }
 
   /**
@@ -70,7 +71,7 @@ public class MakeDirTest
    * @throws Exception	if tear-down fails
    */
   protected void tearDown() throws Exception {
-    FileUtils.delete(new TmpFile("blah"));
+    FileUtils.delete(new TmpDirectory("blah"));
     m_TestHelper.deleteFileFromTmp("dumpfile.txt");
 
     super.tearDown();
@@ -89,11 +90,10 @@ public class MakeDirTest
 
     MakeDir md = new MakeDir();
 
-    DirExists de = new DirExists();
-    de.setDirectory(new PlaceholderDirectory("blah"));
-    ConditionalTransformer ct = new ConditionalTransformer();
-    ct.setCondition(de);
-    ct.setActor(new PassThrough());
+    DirectoryExists direx = new DirectoryExists();
+    direx.setDirectory(new TmpDirectory("blah"));
+    Block block = new Block();
+    block.setCondition(new Not(direx));
 
     DumpFile df = new DumpFile();
     df.setOutputFile(new TmpFile("dumpfile.txt"));

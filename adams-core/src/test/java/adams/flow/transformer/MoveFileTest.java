@@ -15,22 +15,24 @@
 
 /*
  * MoveFileTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseString;
+import adams.data.conversion.StringToFile;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
-import adams.flow.condition.test.FileExists;
+import adams.flow.condition.bool.FileExists;
+import adams.flow.control.ConditionalTee;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.StringConstants;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the MoveFile actor.
@@ -84,24 +86,31 @@ public class MoveFileTest
   public Actor getActor() {
     StringConstants sc = new StringConstants();
     sc.setStrings(new BaseString[]{
-	new BaseString("${TMP}/bolts2.csv")
+	new BaseString("${TMP}/bolts.csv")
     });
 
     MoveFile mf = new MoveFile();
-    mf.setFile(new TmpFile("bolts.csv"));
-    mf.setInputIsTarget(true);
+    mf.setFile(new TmpFile("bolts2.csv"));
+    mf.setOutputMovedFile(true);
 
     FileExists fe = new FileExists();
     fe.setFile(new TmpFile("bolts2.csv"));
-    ConditionalTransformer ct = new ConditionalTransformer();
+    ConditionalTee ct = new ConditionalTee();
     ct.setCondition(fe);
-    ct.setActor(new PassThrough());
+    {
+      StringToFile s2f = new StringToFile();
+      s2f.setCreatePlaceholderFileObjects(true);
+      Convert conv = new Convert();
+      conv.setConversion(s2f);
+      ct.add(conv);
 
-    DumpFile df = new DumpFile();
-    df.setOutputFile(new TmpFile("dumpfile.txt"));
+      DumpFile df = new DumpFile();
+      df.setOutputFile(new TmpFile("dumpfile.txt"));
+      ct.add(df);
+    }
 
     Flow flow = new Flow();
-    flow.setActors(new Actor[]{sc, mf, df});
+    flow.setActors(new Actor[]{sc, mf, ct});
 
     return flow;
   }

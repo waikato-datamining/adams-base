@@ -494,10 +494,6 @@ adams.flow.source.inputstreamsource.AbstractInputStreamGenerator=\
 adams.flow.source.readersource.AbstractReaderGenerator=\
   adams.flow.source.readersource
 
-# flow conditions
-adams.flow.condition.test.TestCondition=\
-  adams.flow.condition.test
-
 # conditions for the, e.g., IfThenElse control actor
 adams.flow.condition.bool.BooleanCondition=\
   adams.flow.condition.bool

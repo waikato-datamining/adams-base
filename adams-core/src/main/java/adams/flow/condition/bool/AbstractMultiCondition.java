@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiCondition.java
- * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -35,6 +35,23 @@ public abstract class AbstractMultiCondition
   
   /** the conditions to evaluate. */
   protected BooleanCondition[] m_Conditions;
+
+  /**
+   * Default constructor
+   */
+  protected AbstractMultiCondition() {
+    super();
+  }
+
+  /**
+   * Initializes the object with the specified conditions.
+   *
+   * @param conditions  the conditions to use
+   */
+  protected AbstractMultiCondition(BooleanCondition[] conditions) {
+    this();
+    setConditions(conditions);
+  }
 
   /**
    * Adds options to the internal list of options.
