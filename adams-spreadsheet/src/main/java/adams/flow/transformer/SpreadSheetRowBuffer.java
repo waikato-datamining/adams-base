@@ -15,16 +15,19 @@
 
 /*
  * SpreadSheetRowBuffer.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.event.VariableChangeEvent;
 import adams.flow.core.Token;
+import adams.flow.core.VariableMonitor;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -33,18 +36,95 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
+ * Can act in two different ways:<br>
+ * 1. Row -&gt; SpreadSheet<br>
+ * Buffers adams.data.spreadsheet.Row objects and outputs a adams.data.spreadsheet.SpreadSheet object, whenever the interval condition has been met.<br>
+ * 2. SpreadSheet -&gt; Row<br>
+ * Outputs all the adams.data.spreadsheet.Row objects that the incoming adams.data.spreadsheet.SpreadSheet object contains.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
+ * Input&#47;output:<br>
+ * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.Row[]<br>
+ * - generates:<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-name &lt;java.lang.String&gt; (property: name)
+ * &nbsp;&nbsp;&nbsp;The name of the actor.
+ * &nbsp;&nbsp;&nbsp;default: SpreadSheetRowBuffer
+ * </pre>
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
+ * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-operation &lt;SPREADSHEET_TO_ROW|ROW_TO_SPREADSHEET&gt; (property: operation)
+ * &nbsp;&nbsp;&nbsp;The way the buffer operates.
+ * &nbsp;&nbsp;&nbsp;default: ROW_TO_SPREADSHEET
+ * </pre>
+ *
+ * <pre>-check &lt;boolean&gt; (property: checkHeader)
+ * &nbsp;&nbsp;&nbsp;Whether to check the headers - if the headers change, the Row object gets
+ * &nbsp;&nbsp;&nbsp;added to a new spreadsheet (in case of ROW_TO_SPREADSHEET).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-interval &lt;int&gt; (property: interval)
+ * &nbsp;&nbsp;&nbsp;The interval at which to output the SpreadSheet object (in case of ROW_TO_SPREADSHEET
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-clear-buffer &lt;boolean&gt; (property: clearBuffer)
+ * &nbsp;&nbsp;&nbsp;Whether to clear the buffer once the dataset has been forwarded (in case
+ * &nbsp;&nbsp;&nbsp;of ROW_TO_SPREADSHEET).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-var-name &lt;adams.core.VariableName&gt; (property: variableName)
+ * &nbsp;&nbsp;&nbsp;The variable to monitor.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetRowBuffer
-  extends AbstractTransformer {
+    extends AbstractTransformer
+    implements VariableMonitor {
 
   /** for serialization. */
   private static final long serialVersionUID = 6774529845778672623L;
@@ -80,10 +160,16 @@ public class SpreadSheetRowBuffer
 
   /** the interval of when to output the SpreadSheet object. */
   protected int m_Interval;
-  
+
   /** whether to clear the buffer once it has been forwarded. */
   protected boolean m_ClearBuffer;
-  
+
+  /** the variable to listen to. */
+  protected VariableName m_VariableName;
+
+  /** whether variable triggered clear of buffer. */
+  protected boolean m_ClearBufferRequired;
+
   /**
    * Returns a string describing the object.
    *
@@ -92,13 +178,13 @@ public class SpreadSheetRowBuffer
   @Override
   public String globalInfo() {
     return
-        "Can act in two different ways:\n"
-      + "1. Row -> SpreadSheet\n"
-      + "Buffers " + Row.class.getName() + " objects and outputs a " + SpreadSheet.class.getName() + " "
-      + "object, whenever the interval condition has been met.\n"
-      + "2. SpreadSheet -> Row\n"
-      + "Outputs all the " + Row.class.getName() + " objects that the incoming "
-      + SpreadSheet.class.getName() + " object contains.";
+	"Can act in two different ways:\n"
+	    + "1. Row -> SpreadSheet\n"
+	    + "Buffers " + Row.class.getName() + " objects and outputs a " + SpreadSheet.class.getName() + " "
+	    + "object, whenever the interval condition has been met.\n"
+	    + "2. SpreadSheet -> Row\n"
+	    + "Outputs all the " + Row.class.getName() + " objects that the incoming "
+	    + SpreadSheet.class.getName() + " object contains.";
   }
 
   /**
@@ -109,20 +195,24 @@ public class SpreadSheetRowBuffer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "operation", "operation",
-	    Operation.ROW_TO_SPREADSHEET);
+	"operation", "operation",
+	Operation.ROW_TO_SPREADSHEET);
 
     m_OptionManager.add(
-	    "check", "checkHeader",
-	    false);
+	"check", "checkHeader",
+	false);
 
     m_OptionManager.add(
-	    "interval", "interval",
-	    1, 1, null);
+	"interval", "interval",
+	1, 1, null);
 
     m_OptionManager.add(
-	    "clear-buffer", "clearBuffer",
-	    false);
+	"clear-buffer", "clearBuffer",
+	false);
+
+    m_OptionManager.add(
+	"var-name", "variableName",
+	new VariableName());
   }
 
   /**
@@ -137,10 +227,11 @@ public class SpreadSheetRowBuffer
 
     result  = QuickInfoHelper.toString(this, "operation", m_Operation);
     result += QuickInfoHelper.toString(this, "interval", m_Interval, ", interval: ");
-    
-    options = new ArrayList<String>();
+
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "checkHeader", m_CheckHeader, "check header"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "clearBuffer", m_ClearBuffer, "clear"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue()));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -202,8 +293,8 @@ public class SpreadSheetRowBuffer
    */
   public String checkHeaderTipText() {
     return
-        "Whether to check the headers - if the headers change, the Row "
-      + "object gets added to a new spreadsheet (in case of " + Operation.ROW_TO_SPREADSHEET + ").";
+	"Whether to check the headers - if the headers change, the Row "
+	    + "object gets added to a new spreadsheet (in case of " + Operation.ROW_TO_SPREADSHEET + ").";
   }
 
   /**
@@ -233,8 +324,8 @@ public class SpreadSheetRowBuffer
    */
   public String intervalTipText() {
     return
-        "The interval at which to output the SpreadSheet object (in case of " 
-	+ Operation.ROW_TO_SPREADSHEET + ").";
+	"The interval at which to output the SpreadSheet object (in case of "
+	    + Operation.ROW_TO_SPREADSHEET + ").";
   }
 
   /**
@@ -264,8 +355,54 @@ public class SpreadSheetRowBuffer
    */
   public String clearBufferTipText() {
     return
-        "Whether to clear the buffer once the dataset has been forwarded "
-	+ "(in case of " + Operation.ROW_TO_SPREADSHEET + ").";
+	"Whether to clear the buffer once the dataset has been forwarded "
+	    + "(in case of " + Operation.ROW_TO_SPREADSHEET + ").";
+  }
+
+  /**
+   * Sets the name of the variable to monitor.
+   *
+   * @param value	the name
+   */
+  public void setVariableName(VariableName value) {
+    m_VariableName = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the variable to monitor.
+   *
+   * @return		the name
+   */
+  public VariableName getVariableName() {
+    return m_VariableName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variableNameTipText() {
+    return "The variable to monitor.";
+  }
+
+  /**
+   * Gets triggered when a variable changed (added, modified, removed).
+   *
+   * @param e		the event
+   */
+  @Override
+  public void variableChanged(VariableChangeEvent e) {
+    super.variableChanged(e);
+    if ((e.getType() == VariableChangeEvent.Type.MODIFIED) || (e.getType() == VariableChangeEvent.Type.ADDED)) {
+      if (e.getName().equals(m_VariableName.getValue())) {
+	m_ClearBufferRequired = true;
+	if (isLoggingEnabled())
+	  getLogger().info("Clearing of buffer required");
+      }
+    }
   }
 
   /**
@@ -371,6 +508,14 @@ public class SpreadSheetRowBuffer
 
     result = null;
 
+    // monitor variable triggered clear?
+    if (m_ClearBufferRequired) {
+      m_Buffer = null;
+      m_ClearBufferRequired = false;
+      if (isLoggingEnabled())
+        getLogger().info("Buffer cleared (triggered by monitor variable)");
+    }
+
     if (m_Operation == Operation.ROW_TO_SPREADSHEET) {
       if (m_InputToken.getPayload() instanceof Row) {
 	rows = new Row[]{(Row) m_InputToken.getPayload()};
@@ -397,8 +542,11 @@ public class SpreadSheetRowBuffer
 
       if (m_Buffer.getRowCount() % m_Interval == 0) {
 	m_OutputToken = new Token(m_Buffer);
-	if (m_ClearBuffer)
-	  m_Buffer = null;
+        if (m_ClearBuffer) {
+          m_Buffer = null;
+          if (isLoggingEnabled())
+            getLogger().info("Buffer cleared (clearing interval reached)");
+        }
       }
     }
     else if (m_Operation == Operation.SPREADSHEET_TO_ROW) {
