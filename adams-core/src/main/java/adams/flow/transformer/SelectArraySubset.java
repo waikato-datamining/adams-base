@@ -151,6 +151,11 @@ import java.lang.reflect.Array;
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  *
+ * <pre>-initial-search &lt;java.lang.String&gt; (property: initialSearch)
+ * &nbsp;&nbsp;&nbsp;The initial search string to use.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -168,6 +173,9 @@ public class SelectArraySubset
 
   /** the initial selection. */
   protected Range m_InitialSelection;
+
+  /** the initial search string. */
+  protected String m_InitialSearch;
 
   /** the list model to use. */
   protected DefaultListModel<Object> m_ListModel;
@@ -189,8 +197,8 @@ public class SelectArraySubset
   @Override
   public String globalInfo() {
     return
-	"Allows the user to select a subset of the incoming array to be "
-	    + "forwarded in the flow.";
+        "Allows the user to select a subset of the incoming array to be "
+            + "forwarded in the flow.";
   }
 
   /**
@@ -201,16 +209,20 @@ public class SelectArraySubset
     super.defineOptions();
 
     m_OptionManager.add(
-	"message", "message",
-	"Please make your selection");
+        "message", "message",
+        "Please make your selection");
 
     m_OptionManager.add(
-	"allow-search", "allowSearch",
-	false);
+        "allow-search", "allowSearch",
+        false);
 
     m_OptionManager.add(
-	"initial-selection", "initialSelection",
-	new Range());
+        "initial-selection", "initialSelection",
+        new Range());
+
+    m_OptionManager.add(
+        "initial-search", "initialSearch",
+        "");
   }
 
   /**
@@ -225,7 +237,9 @@ public class SelectArraySubset
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "message", m_Message, ", message: ");
     result += QuickInfoHelper.toString(this, "allowSearch", (m_AllowSearch ? "searchable" : "not searchable"), ", ");
-    result += QuickInfoHelper.toString(this, "initialSelection", (m_InitialSelection.isEmpty() ? "-none-" : m_InitialSelection.getRange()), ", initial sel: ");
+    result += QuickInfoHelper.toString(this, "initialSelection", (m_InitialSelection.isEmpty() ? "-none-" : m_InitialSelection.getRange()), ", selection: ");
+    if (m_AllowSearch)
+      result += QuickInfoHelper.toString(this, "initialSearch", (m_InitialSearch.isEmpty() ? "-none-" : m_InitialSearch), ", search: ");
 
     return result;
   }
@@ -358,6 +372,35 @@ public class SelectArraySubset
   }
 
   /**
+   * Sets the initial search string to use.
+   *
+   * @param value	the initial search
+   */
+  public void setInitialSearch(String value) {
+    m_InitialSearch = value;
+    reset();
+  }
+
+  /**
+   * Returns the initial search string in use.
+   *
+   * @return 		the initial search
+   */
+  public String getInitialSearch() {
+    return m_InitialSearch;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String initialSearchTipText() {
+    return "The initial search string to use.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -477,6 +520,10 @@ public class SelectArraySubset
       m_ListModel.addElement(Array.get(array, i));
     m_List.setModel(m_ListModel);
 
+    // initial search
+    if (m_AllowSearch)
+      m_List.search(m_InitialSearch);
+
     // initial selection
     if (m_InitialSelection.isEmpty()) {
       m_List.selectNone();
@@ -495,7 +542,7 @@ public class SelectArraySubset
       indices = m_List.getSelectedIndices();
       array   = Array.newInstance(m_InputToken.getPayload().getClass().getComponentType(), indices.length);
       for (i = 0; i < indices.length; i++)
-	Array.set(array, i, m_ListModel.get(m_List.getActualIndex(indices[i])));
+        Array.set(array, i, m_ListModel.get(m_List.getActualIndex(indices[i])));
       m_OutputToken = new Token(array);
     }
 
