@@ -1,1 +1,1 @@
-INSTANCE_TO_INSTANCES, interval: 1
+INSTANCE_TO_INSTANCES, interval: 1 [@{variable}]
