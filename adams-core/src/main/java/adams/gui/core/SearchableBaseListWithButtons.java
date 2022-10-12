@@ -15,7 +15,7 @@
 
 /*
  * SearchableBaseListWithButtons.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -34,7 +34,7 @@ import java.awt.BorderLayout;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SearchableBaseListWithButtons
-  extends BaseListWithButtons {
+    extends BaseListWithButtons {
 
   private static final long serialVersionUID = 8988746409098190469L;
 
@@ -67,7 +67,7 @@ public class SearchableBaseListWithButtons
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.setVisible(false);
     m_PanelSearch.addSearchListener((SearchEvent e) ->
-      ((SearchableBaseList) m_Component).search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+	((SearchableBaseList) m_Component).search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
     m_PanelAll.add(m_PanelSearch, BorderLayout.SOUTH);
   }
 
@@ -115,5 +115,27 @@ public class SearchableBaseListWithButtons
    */
   public int getActualIndex(int index) {
     return ((SearchableBaseList) m_Component).getActualIndex(index);
+  }
+
+  /**
+   * Performs a search using the specified search string (if search is allowed).
+   *
+   * @param search	the string to search for
+   * @see		#getAllowSearch()
+   */
+  public void search(String search) {
+    if (!getAllowSearch())
+      return;
+    m_PanelSearch.setSearchText(search);
+    m_PanelSearch.search();
+  }
+
+  /**
+   * Clears the search (if search is allowed).
+   */
+  public void clearSearch() {
+    if (!getAllowSearch())
+      return;
+    m_PanelSearch.clearSearch();
   }
 }
