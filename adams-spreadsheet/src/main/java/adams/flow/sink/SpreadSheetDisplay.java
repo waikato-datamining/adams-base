@@ -231,7 +231,7 @@ public class SpreadSheetDisplay
    */
   public static class SpreadSheetDisplayPanel
       extends AbstractTextDisplayPanel
-      implements UpdateableDisplayPanel {
+      implements UpdateableDisplayPanel, ComponentSupplier {
 
     private static final long serialVersionUID = 3524967045456783678L;
 
@@ -381,6 +381,15 @@ public class SpreadSheetDisplay
     @Override
     public String supplyText() {
       return m_TableModel.toSpreadSheet().toString();
+    }
+
+    /**
+     * Supplies the component. May get called even before actor has been executed.
+     *
+     * @return		the component, null if none available
+     */
+    public JComponent supplyComponent() {
+      return m_Table;
     }
 
     /**
