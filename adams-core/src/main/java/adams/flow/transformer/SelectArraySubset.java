@@ -15,12 +15,13 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Range;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.gui.core.BaseButton;
@@ -55,89 +56,107 @@ import java.lang.reflect.Array;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SelectArraySubset
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 400
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -2
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -2
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
- * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting 
+ * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded prior to prompting
  * &nbsp;&nbsp;&nbsp;user.
  * &nbsp;&nbsp;&nbsp;default: Please make your selection
  * </pre>
- * 
+ *
+ * <pre>-allow-search &lt;boolean&gt; (property: allowSearch)
+ * &nbsp;&nbsp;&nbsp;Whether to allow the user to search the list.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-initial-selection &lt;adams.core.Range&gt; (property: initialSelection)
+ * &nbsp;&nbsp;&nbsp;Defines the initial selection of the array elements.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SelectArraySubset
-  extends AbstractInteractiveTransformerDialog {
+    extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -7861621358380784108L;
 
@@ -146,6 +165,9 @@ public class SelectArraySubset
 
   /** whether to allow searching. */
   protected boolean m_AllowSearch;
+
+  /** the initial selection. */
+  protected Range m_InitialSelection;
 
   /** the list model to use. */
   protected DefaultListModel<Object> m_ListModel;
@@ -167,8 +189,8 @@ public class SelectArraySubset
   @Override
   public String globalInfo() {
     return
-      "Allows the user to select a subset of the incoming array to be "
-	+ "forwarded in the flow.";
+	"Allows the user to select a subset of the incoming array to be "
+	    + "forwarded in the flow.";
   }
 
   /**
@@ -179,12 +201,16 @@ public class SelectArraySubset
     super.defineOptions();
 
     m_OptionManager.add(
-      "message", "message",
-      "Please make your selection");
+	"message", "message",
+	"Please make your selection");
 
     m_OptionManager.add(
-      "allow-search", "allowSearch",
-      false);
+	"allow-search", "allowSearch",
+	false);
+
+    m_OptionManager.add(
+	"initial-selection", "initialSelection",
+	new Range());
   }
 
   /**
@@ -198,6 +224,8 @@ public class SelectArraySubset
 
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "message", m_Message, ", message: ");
+    result += QuickInfoHelper.toString(this, "allowSearch", (m_AllowSearch ? "searchable" : "not searchable"), ", ");
+    result += QuickInfoHelper.toString(this, "initialSelection", (m_InitialSelection.isEmpty() ? "-none-" : m_InitialSelection.getRange()), ", initial sel: ");
 
     return result;
   }
@@ -298,6 +326,35 @@ public class SelectArraySubset
    */
   public String allowSearchTipText() {
     return "Whether to allow the user to search the list.";
+  }
+
+  /**
+   * Sets what elements get selected initially.
+   *
+   * @param value	the initial selection
+   */
+  public void setInitialSelection(Range value) {
+    m_InitialSelection = value;
+    reset();
+  }
+
+  /**
+   * Returns what elements get selected initially.
+   *
+   * @return 		the initial selection
+   */
+  public Range getInitialSelection() {
+    return m_InitialSelection;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String initialSelectionTipText() {
+    return "Defines the initial selection of the array elements.";
   }
 
   /**
@@ -419,6 +476,15 @@ public class SelectArraySubset
     for (i = 0; i < Array.getLength(array); i++)
       m_ListModel.addElement(Array.get(array, i));
     m_List.setModel(m_ListModel);
+
+    // initial selection
+    if (m_InitialSelection.isEmpty()) {
+      m_List.selectNone();
+    }
+    else {
+      m_InitialSelection.setMax(m_ListModel.getSize());
+      m_List.setSelectedIndices(m_InitialSelection.getIntIndices());
+    }
 
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Accepted = false;
