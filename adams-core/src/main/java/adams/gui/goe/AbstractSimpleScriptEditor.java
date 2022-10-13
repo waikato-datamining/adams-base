@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleScriptEditor.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,10 +27,13 @@ import adams.core.base.BaseObject;
 import adams.core.option.parsing.SimpleScriptParsing;
 import adams.gui.core.AbstractSimpleScript;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.StyledTextEditorPanel;
-import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -54,8 +57,8 @@ import java.awt.event.ActionListener;
  * @see adams.gui.core.AbstractSimpleScript
  */
 public class AbstractSimpleScriptEditor
-  extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, InlineEditorSupport {
+    extends AbstractPropertyEditorSupport
+    implements CustomStringRepresentationHandler, InlineEditorSupport {
 
   /** The text area with the script. */
   protected StyledTextEditorPanel m_TextStatement;
@@ -119,13 +122,13 @@ public class AbstractSimpleScriptEditor
 
   /**
    * Returns the default size to use for the panels.
-   * 
+   *
    * @return		the size
    */
   protected Dimension getDefaultSize() {
     return GUIHelper.makeTaller(GUIHelper.getDefaultSmallDialogDimension());
   }
-  
+
   /**
    * Gets the custom editor component.
    *
@@ -141,12 +144,15 @@ public class AbstractSimpleScriptEditor
     BaseButton		buttonHelp;
     BaseButton 		buttonOK;
     BaseButton 		buttonClose;
+    JPanel		panelTabbedPane;
+    BaseTabbedPane	tabbedPane;
+    BaseTextArea	textHelp;
+    JPanel		panelHelp;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setSize(getDefaultSize());
     panelAll.setMinimumSize(getDefaultSize());
     panelAll.setPreferredSize(getDefaultSize());
-    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     if (getValue() == null)
       m_TextStatement = new StyledTextEditorPanel();
@@ -157,10 +163,10 @@ public class AbstractSimpleScriptEditor
 
     panelBottom = new JPanel(new BorderLayout());
     panelAll.add(panelBottom, BorderLayout.SOUTH);
-    
+
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
-    
+
     buttonOptions = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
     buttonOptions.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -169,21 +175,10 @@ public class AbstractSimpleScriptEditor
       }
     });
     panelButtonsLeft.add(buttonOptions);
-    
+
     panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
-    if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
-      buttonHelp.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  String help = ((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation();
-          HelpFrame.showHelp(getValue().getClass(), help, false);
-	}
-      });
-      panelButtonsRight.add(buttonHelp);
-    }
-    
     buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
@@ -214,12 +209,37 @@ public class AbstractSimpleScriptEditor
     });
     panelButtonsRight.add(buttonClose);
 
-    return panelAll;
+    // help available?
+    panelTabbedPane = null;
+    if (m_TextStatement instanceof AdditionalInformationHandler) {
+      panelTabbedPane = new JPanel(new BorderLayout());
+      panelTabbedPane.setPreferredSize(GUIHelper.getDefaultSmallDialogDimension());
+      tabbedPane = new BaseTabbedPane(BaseTabbedPane.TOP);
+      tabbedPane.addTab("Script", panelAll);
+      panelTabbedPane.add(tabbedPane, BorderLayout.CENTER);
+      textHelp   = new BaseTextArea(((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation());
+      textHelp.setLineWrap(true);
+      textHelp.setWrapStyleWord(true);
+      textHelp.setFont(Fonts.getMonospacedFont());
+      textHelp.setEditable(false);
+      panelHelp  = new JPanel(new BorderLayout());
+      panelHelp.add(new BaseScrollPane(textHelp), BorderLayout.CENTER);
+      panelHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      tabbedPane.addTab("Help", panelHelp);
+    }
+    else {
+      panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    }
+
+    if (panelTabbedPane != null)
+      return panelTabbedPane;
+    else
+      return panelAll;
   }
 
   /**
    * Creates the popup menu for "..." button.
-   * 
+   *
    * @return		the menu
    */
   protected JPopupMenu createPopupMenu() {
@@ -227,7 +247,7 @@ public class AbstractSimpleScriptEditor
     JMenuItem 	menuitem;
 
     result = new JPopupMenu();
-    
+
     // cut
     menuitem = new JMenuItem("Cut");
     menuitem.setIcon(ImageManager.getIcon("cut.gif"));
@@ -239,7 +259,7 @@ public class AbstractSimpleScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // copy
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(ImageManager.getIcon("copy.gif"));
@@ -251,7 +271,7 @@ public class AbstractSimpleScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // paste
     menuitem = new JMenuItem("Paste");
     menuitem.setIcon(ImageManager.getIcon("paste.gif"));
@@ -263,7 +283,7 @@ public class AbstractSimpleScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // undo
     menuitem = new JMenuItem("Undo");
     menuitem.setIcon(ImageManager.getIcon("undo.gif"));
@@ -276,7 +296,7 @@ public class AbstractSimpleScriptEditor
     });
     result.addSeparator();
     result.add(menuitem);
-    
+
     // redo
     menuitem = new JMenuItem("Redo");
     menuitem.setIcon(ImageManager.getIcon("redo.gif"));
@@ -288,7 +308,7 @@ public class AbstractSimpleScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
@@ -306,12 +326,12 @@ public class AbstractSimpleScriptEditor
 
     return result;
   }
-  
+
   /**
    * Hook-method to add further menu items to the menu of the "..." button.
    * <br><br>
    * Default implementation does nothing.
-   * 
+   *
    * @param menu	the popup menu for the button
    */
   protected void addAdditionalMenuItems(JPopupMenu menu) {
@@ -327,10 +347,10 @@ public class AbstractSimpleScriptEditor
       m_TextStatement.setContent("" + getValue());
     m_TextStatement.setToolTipText(((BaseObject) getValue()).getTipText());
   }
-  
+
   /**
    * Checks whether inline editing is available.
-   * 
+   *
    * @return		true if editing available
    */
   public boolean isInlineEditingAvailable() {
@@ -339,7 +359,7 @@ public class AbstractSimpleScriptEditor
 
   /**
    * Sets the value to use.
-   * 
+   *
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
@@ -349,7 +369,7 @@ public class AbstractSimpleScriptEditor
 
   /**
    * Returns the current value.
-   * 
+   *
    * @return		the current value
    */
   public String getInlineValue() {
@@ -358,7 +378,7 @@ public class AbstractSimpleScriptEditor
 
   /**
    * Checks whether the value id valid.
-   * 
+   *
    * @param value	the value to check
    * @return		true if valid
    */

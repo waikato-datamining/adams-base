@@ -15,7 +15,7 @@
 
 /*
  * AbstractAdvancedScriptEditor.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,10 +29,13 @@ import adams.gui.core.AbstractAdvancedScript;
 import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.BaseTextArea;
 import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
+import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
-import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -56,8 +59,8 @@ import java.awt.event.ActionListener;
  * @see adams.gui.core.AbstractAdvancedScript
  */
 public class AbstractAdvancedScriptEditor
-  extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, InlineEditorSupport {
+    extends AbstractPropertyEditorSupport
+    implements CustomStringRepresentationHandler, InlineEditorSupport {
 
   /** The text area with the script. */
   protected AbstractTextAreaPanelWithAdvancedSyntaxHighlighting m_TextStatement;
@@ -121,13 +124,13 @@ public class AbstractAdvancedScriptEditor
 
   /**
    * Returns the default size to use for the panels.
-   * 
+   *
    * @return		the size
    */
   protected Dimension getDefaultSize() {
     return GUIHelper.makeTaller(GUIHelper.getDefaultSmallDialogDimension());
   }
-  
+
   /**
    * Gets the custom editor component.
    *
@@ -143,12 +146,15 @@ public class AbstractAdvancedScriptEditor
     BaseButton			buttonHelp;
     BaseButton 			buttonOK;
     BaseButton 			buttonClose;
+    JPanel			panelTabbedPane;
+    BaseTabbedPane 		tabbedPane;
+    BaseTextArea 		textHelp;
+    JPanel			panelHelp;
 
     panelAll = new JPanel(new BorderLayout());
     panelAll.setSize(getDefaultSize());
     panelAll.setMinimumSize(getDefaultSize());
     panelAll.setPreferredSize(getDefaultSize());
-    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
     if (getValue() == null)
       m_TextStatement = new DefaultTextAreaPanelWithAdvancedSyntaxHighlighting();
@@ -158,29 +164,17 @@ public class AbstractAdvancedScriptEditor
 
     panelBottom = new JPanel(new BorderLayout());
     panelAll.add(panelBottom, BorderLayout.SOUTH);
-    
+
     panelButtonsLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelBottom.add(panelButtonsLeft, BorderLayout.WEST);
-    
+
     buttonOptions = new BaseButtonWithDropDownMenu();
     buttonOptions.setDropDownMenu(createPopupMenu());
     panelButtonsLeft.add(buttonOptions);
-    
+
     panelButtonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelBottom.add(panelButtonsRight, BorderLayout.EAST);
 
-    if (m_TextStatement instanceof AdditionalInformationHandler) {
-      buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
-      buttonHelp.setMnemonic('H');
-      buttonHelp.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  String help = ((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation();
-          HelpFrame.showHelp(getValue().getClass(), help, false);
-	}
-      });
-      panelButtonsRight.add(buttonHelp);
-    }
-    
     buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
@@ -211,12 +205,37 @@ public class AbstractAdvancedScriptEditor
     });
     panelButtonsRight.add(buttonClose);
 
-    return panelAll;
+    // help available?
+    panelTabbedPane = null;
+    if (m_TextStatement instanceof AdditionalInformationHandler) {
+      panelTabbedPane = new JPanel(new BorderLayout());
+      panelTabbedPane.setPreferredSize(GUIHelper.getDefaultSmallDialogDimension());
+      tabbedPane = new BaseTabbedPane(BaseTabbedPane.TOP);
+      tabbedPane.addTab("Script", panelAll);
+      panelTabbedPane.add(tabbedPane, BorderLayout.CENTER);
+      textHelp   = new BaseTextArea(((AdditionalInformationHandler) m_TextStatement).getAdditionalInformation());
+      textHelp.setLineWrap(true);
+      textHelp.setWrapStyleWord(true);
+      textHelp.setFont(Fonts.getMonospacedFont());
+      textHelp.setEditable(false);
+      panelHelp  = new JPanel(new BorderLayout());
+      panelHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      panelHelp.add(new BaseScrollPane(textHelp), BorderLayout.CENTER);
+      tabbedPane.addTab("Help", panelHelp);
+    }
+    else {
+      panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    }
+
+    if (panelTabbedPane != null)
+      return panelTabbedPane;
+    else
+      return panelAll;
   }
 
   /**
    * Creates the popup menu for "..." button.
-   * 
+   *
    * @return		the menu
    */
   protected JPopupMenu createPopupMenu() {
@@ -224,7 +243,7 @@ public class AbstractAdvancedScriptEditor
     JMenuItem 	menuitem;
 
     result = new JPopupMenu();
-    
+
     // cut
     menuitem = new JMenuItem("Cut");
     menuitem.setIcon(ImageManager.getIcon("cut.gif"));
@@ -236,7 +255,7 @@ public class AbstractAdvancedScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // copy
     menuitem = new JMenuItem("Copy");
     menuitem.setIcon(ImageManager.getIcon("copy.gif"));
@@ -248,7 +267,7 @@ public class AbstractAdvancedScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // paste
     menuitem = new JMenuItem("Paste");
     menuitem.setIcon(ImageManager.getIcon("paste.gif"));
@@ -260,7 +279,7 @@ public class AbstractAdvancedScriptEditor
       }
     });
     result.add(menuitem);
-    
+
     // undo
     menuitem = new JMenuItem("Undo");
     menuitem.setIcon(ImageManager.getIcon("undo.gif"));
@@ -273,7 +292,7 @@ public class AbstractAdvancedScriptEditor
     });
     result.addSeparator();
     result.add(menuitem);
-    
+
     // redo
     menuitem = new JMenuItem("Redo");
     menuitem.setIcon(ImageManager.getIcon("redo.gif"));
@@ -303,12 +322,12 @@ public class AbstractAdvancedScriptEditor
 
     return result;
   }
-  
+
   /**
    * Hook-method to add further menu items to the menu of the "..." button.
    * <br><br>
    * Default implementation does nothing.
-   * 
+   *
    * @param menu	the popup menu for the button
    */
   protected void addAdditionalMenuItems(JPopupMenu menu) {
@@ -324,10 +343,10 @@ public class AbstractAdvancedScriptEditor
       m_TextStatement.setContent("" + getValue());
     m_TextStatement.setToolTipText(((BaseObject) getValue()).getTipText());
   }
-  
+
   /**
    * Checks whether inline editing is available.
-   * 
+   *
    * @return		true if editing available
    */
   public boolean isInlineEditingAvailable() {
@@ -336,7 +355,7 @@ public class AbstractAdvancedScriptEditor
 
   /**
    * Sets the value to use.
-   * 
+   *
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
@@ -346,7 +365,7 @@ public class AbstractAdvancedScriptEditor
 
   /**
    * Returns the current value.
-   * 
+   *
    * @return		the current value
    */
   public String getInlineValue() {
@@ -355,7 +374,7 @@ public class AbstractAdvancedScriptEditor
 
   /**
    * Checks whether the value id valid.
-   * 
+   *
    * @param value	the value to check
    * @return		true if valid
    */

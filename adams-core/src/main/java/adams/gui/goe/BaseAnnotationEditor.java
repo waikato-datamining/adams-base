@@ -15,7 +15,7 @@
 
 /*
  * BaseAnnotationEditor.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,10 +29,12 @@ import adams.flow.processor.ListAnnotationTags;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
+import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.TextAreaComponent;
-import adams.gui.help.HelpFrame;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -52,8 +54,8 @@ import java.awt.event.ActionListener;
  * @see adams.core.base.BaseAnnotation
  */
 public class BaseAnnotationEditor
-  extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, InlineEditorSupport {
+    extends AbstractPropertyEditorSupport
+    implements CustomStringRepresentationHandler, InlineEditorSupport {
 
   /** The text area with the value. */
   protected TextAreaComponent m_TextValue;
@@ -130,6 +132,10 @@ public class BaseAnnotationEditor
     BaseButton		buttonHelp;
     JPanel		panel;
     final BaseCheckBox	checkLineWrap;
+    JPanel		panelTabbedPane;
+    BaseTabbedPane 	tabbedPane;
+    BaseTextArea	textHelp;
+    JPanel		panelHelp;
 
     panelAll    = new JPanel(new BorderLayout());
     m_TextValue = new BaseTextArea();
@@ -161,19 +167,10 @@ public class BaseAnnotationEditor
       }
     });
     panel.add(checkLineWrap);
-    
+
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelButtons.add(panel, BorderLayout.EAST);
-    
-    buttonHelp = new BaseButton(ImageManager.getIcon("help.gif"));
-    buttonHelp.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	String help = getHelpDescription();
-        HelpFrame.showHelp(getValue().getClass(), help, false);
-      }
-    });
-    panel.add(buttonHelp);
-    
+
     buttonOK = new BaseButton("OK");
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener(new ActionListener() {
@@ -195,7 +192,23 @@ public class BaseAnnotationEditor
     });
     panel.add(buttonClose);
 
-    return panelAll;
+    // help available?
+    panelTabbedPane = new JPanel(new BorderLayout());
+    panelTabbedPane.setPreferredSize(GUIHelper.getDefaultSmallDialogDimension());
+    tabbedPane = new BaseTabbedPane(BaseTabbedPane.TOP);
+    tabbedPane.addTab("Annotations", panelAll);
+    panelTabbedPane.add(tabbedPane, BorderLayout.CENTER);
+    textHelp   = new BaseTextArea(getHelpDescription());
+    textHelp.setLineWrap(true);
+    textHelp.setWrapStyleWord(true);
+    textHelp.setFont(Fonts.getMonospacedFont());
+    textHelp.setEditable(false);
+    panelHelp  = new JPanel(new BorderLayout());
+    panelHelp.add(new BaseScrollPane(textHelp), BorderLayout.CENTER);
+    panelHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    tabbedPane.addTab("Help", panelHelp);
+
+    return panelTabbedPane;
   }
 
   /**
@@ -207,10 +220,10 @@ public class BaseAnnotationEditor
     if (!m_TextValue.getText().equals("" + getValue()))
       m_TextValue.setText("" + getValue());
   }
-  
+
   /**
    * Checks whether inline editing is available.
-   * 
+   *
    * @return		always true
    */
   public boolean isInlineEditingAvailable() {
@@ -219,7 +232,7 @@ public class BaseAnnotationEditor
 
   /**
    * Sets the value to use.
-   * 
+   *
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
@@ -228,7 +241,7 @@ public class BaseAnnotationEditor
 
   /**
    * Returns the current value.
-   * 
+   *
    * @return		the current value
    */
   public String getInlineValue() {
@@ -237,30 +250,30 @@ public class BaseAnnotationEditor
 
   /**
    * Checks whether the value id valid.
-   * 
+   *
    * @param value	the value to check
    * @return		always true
    */
   public boolean isInlineValueValid(String value) {
     return true;
   }
-  
+
   /**
    * Returns a long help description, e.g., used in tiptexts.
-   * 
+   *
    * @return		the help text, null if not available
    */
   @Override
   public String getHelpDescription() {
-    return 
+    return
 	"How to write annotations:\n"
-	+ "1. Annotations can be spread over several lines.\n"
-	+ "2. You can use custom tags, using the following format:\n"
-	+ BaseAnnotation.TAG_START + "tagname[:key=value[,key=value...]]" + BaseAnnotation.TAG_END + "\n"
-	+ "3. The 'color' and 'size' keys are automatically interpreted, "
-	+ "with 'color' either being a hex string '#ff0000' or a word like 'red' "
-	+ "and 'size' being an HTML size ranging from 1 to 7.\n"
-	+ "4. You can use the " + ListAnnotationTags.class.getName() + " actor "
-	+ "processor to list tags in a flow.";
+	    + "1. Annotations can be spread over several lines.\n"
+	    + "2. You can use custom tags, using the following format:\n"
+	    + BaseAnnotation.TAG_START + "tagname[:key=value[,key=value...]]" + BaseAnnotation.TAG_END + "\n"
+	    + "3. The 'color' and 'size' keys are automatically interpreted, "
+	    + "with 'color' either being a hex string '#ff0000' or a word like 'red' "
+	    + "and 'size' being an HTML size ranging from 1 to 7.\n"
+	    + "4. You can use the " + ListAnnotationTags.class.getName() + " actor "
+	    + "processor to list tags in a flow.";
   }
 }
