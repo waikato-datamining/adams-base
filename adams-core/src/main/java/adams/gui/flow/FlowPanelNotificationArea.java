@@ -21,11 +21,11 @@ package adams.gui.flow;
 
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
-import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseFlatSplitButton;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseSplitButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ConsolePanel.PanelType;
 import adams.gui.core.ImageManager;
@@ -84,10 +84,10 @@ public class FlowPanelNotificationArea
   protected JPanel m_PanelButtons;
 
   /** the close button. */
-  protected BaseButton m_ButtonClose;
+  protected BaseFlatButton m_ButtonClose;
   
   /** the action button. */
-  protected BaseSplitButton m_ButtonAction;
+  protected BaseFlatSplitButton m_ButtonAction;
 
   /** the checkbox for including the console output. */
   protected BaseCheckBox m_CheckBoxConsole;
@@ -157,7 +157,7 @@ public class FlowPanelNotificationArea
     m_PanelButtons = new JPanel(new GridLayout(0, 1, 5, 5));
     panelRight.add(m_PanelButtons, BorderLayout.NORTH);
 
-    m_ButtonAction = new BaseSplitButton();
+    m_ButtonAction = new BaseFlatSplitButton();
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractNotificationAreaAction action: m_Actions) {
       if (action instanceof CloseAndCleanUp)
@@ -167,7 +167,7 @@ public class FlowPanelNotificationArea
     }
     m_PanelButtons.add(m_ButtonAction);
 
-    m_ButtonClose = new BaseButton("Close");
+    m_ButtonClose = new BaseFlatButton("Close");
     m_ButtonClose.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonClose.addActionListener((ActionEvent e) -> {
       clearNotification();
