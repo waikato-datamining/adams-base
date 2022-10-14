@@ -22,10 +22,9 @@ package adams.gui.core;
 
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JMenuItem;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Simple version of a split button: button + drop-down menu.
@@ -40,12 +39,6 @@ public class BaseSplitButton
 
   /** the menu button. */
   protected BaseButtonWithDropDownMenu m_ButtonMenu;
-
-  /** the main action. */
-  protected Action m_ActionMain;
-
-  /** the menu actions. */
-  protected List<Action> m_ActionsMenu;
 
   /**
    * Creates a button with no set text or icon.
@@ -99,17 +92,6 @@ public class BaseSplitButton
   }
 
   /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_ActionMain  = null;
-    m_ActionsMenu = new ArrayList<>();
-  }
-
-  /**
    * Initializes the widgets.
    */
   @Override
@@ -121,6 +103,7 @@ public class BaseSplitButton
     add(m_ButtonMain, BorderLayout.CENTER);
 
     m_ButtonMenu = new BaseButtonWithDropDownMenu();
+    m_ButtonMenu.setEnabled(false);
     add(m_ButtonMenu, BorderLayout.EAST);
   }
 
@@ -166,7 +149,6 @@ public class BaseSplitButton
    * @param value	the action to use
    */
   public void setAction(Action value) {
-    m_ActionMain = value;
     m_ButtonMain.setAction(value);
   }
 
@@ -176,7 +158,7 @@ public class BaseSplitButton
    * @return		the action in use, can be null
    */
   public Action getAction() {
-    return m_ActionMain;
+    return m_ButtonMain.getAction();
   }
 
   /**
@@ -185,15 +167,26 @@ public class BaseSplitButton
    * @param value	the action to add
    */
   public void add(Action value) {
-    m_ActionsMenu.add(value);
     m_ButtonMenu.addToMenu(value);
+    if (isEnabled())
+      m_ButtonMenu.setEnabled(true);
+  }
+
+  /**
+   * Adds the menu item.
+   *
+   * @param value	the item to add
+   */
+  public void add(JMenuItem value) {
+    m_ButtonMenu.addToMenu(value);
+    if (isEnabled())
+      m_ButtonMenu.setEnabled(true);
   }
 
   /**
    * Adds a menu separator.
    */
   public void addSeparator() {
-    m_ActionsMenu.add(null);
     m_ButtonMenu.addSeparatorToMenu();
   }
 
