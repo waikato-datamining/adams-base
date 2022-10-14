@@ -15,7 +15,7 @@
 
 /*
  *    FlowFileEditor.java
- *    Copyright (C) 1999-2019 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -106,7 +106,7 @@ public class FlowFileEditor
       currentFile = (FlowFile) getValue();
       fileChooser = new FlowFileChooser();
       if (currentFile == null)
-	fileChooser.setCurrentDirectory(new FlowFile(System.getProperty("user.dir")));
+	fileChooser.setCurrentDirectory(new FlowFile(System.getProperty("user.dir")).getAbsoluteFile());
       fileChooser.setApproveButtonText("Select");
       fileChooser.setApproveButtonMnemonic('S');
       fileChooser.addActionListener(new ActionListener() {

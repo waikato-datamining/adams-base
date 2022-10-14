@@ -15,14 +15,13 @@
 
 /*
  * BaseColorTextField.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
 import adams.core.base.BaseColor;
 import adams.event.AnyChangeListenerSupporter;
-import com.jidesoft.plaf.basic.ThemePainter;
 
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
@@ -177,10 +176,7 @@ public class BaseColorTextField
    * @param color	the color to use
    */
   protected void updateButtonColor(Color color) {
-    m_Button.setBackgroundOfState(ThemePainter.STATE_DEFAULT, color);
-    m_Button.setBackgroundOfState(ThemePainter.STATE_ROLLOVER, color);
-    m_Button.setBackgroundOfState(ThemePainter.STATE_SELECTED, color);
-    m_Button.setBackgroundOfState(ThemePainter.STATE_PRESSED, color);
+    setBackground(color);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * Java.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -49,6 +49,40 @@ public class Java {
 
   /** the shortened classpath. */
   protected static String CLASSPATH_SHORT;
+
+  /** the major Java version. */
+  protected static Integer MAJOR_VERSION;
+
+  /**
+   * Returns the major version of Java.
+   *
+   * @return	the major version, -1 if failed to determine
+   */
+  public static int getMajorVersion() {
+    String 	versionStr;
+    int 	versionInt;
+
+    if (MAJOR_VERSION == null) {
+      versionInt = -1;
+      versionStr = System.getProperty("java.version");
+      if (versionStr.startsWith("1."))
+	versionStr = versionStr.substring(2);
+
+      if (versionStr.contains(".")) {
+	versionStr = versionStr.substring(0, versionStr.indexOf('.'));
+	try {
+	  versionInt = Integer.parseInt(versionStr);
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to determine major version in Java version string: " + System.getProperty("java.version"));
+	}
+      }
+
+      MAJOR_VERSION = versionInt;
+    }
+
+    return MAJOR_VERSION;
+  }
 
   /**
    * Returns the Java home directory of the current JVM.

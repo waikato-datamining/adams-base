@@ -15,7 +15,7 @@
 
 /*
  * ExplorerExt.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
@@ -607,7 +607,7 @@ public class ExplorerExt
       loader.setFile(e.getItem());
       getPreprocessPanel().setInstancesFromFile(loader);
       m_CurrentFile = e.getItem();
-      m_FileChooser.setCurrentDirectory(e.getItem().getParentFile());
+      m_FileChooser.setCurrentDirectory(e.getItem().getParentFile().getAbsoluteFile());
       update();
     }
     catch (Exception ex) {

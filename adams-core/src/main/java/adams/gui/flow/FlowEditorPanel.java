@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -489,7 +489,7 @@ public class FlowEditorPanel
     m_RecentFilesHandler  = null;
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")).getAbsoluteFile());
     m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, Actor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
 
     m_MenuItems           = new ArrayList<>();
@@ -2094,7 +2094,7 @@ public class FlowEditorPanel
    * @param value	the new current directory to use
    */
   public void setCurrentDirectory(File value)  {
-    m_FileChooser.setCurrentDirectory(value);
+    m_FileChooser.setCurrentDirectory(value.getAbsoluteFile());
     m_FilenameProposer.setDirectory(value.getAbsolutePath());
   }
 

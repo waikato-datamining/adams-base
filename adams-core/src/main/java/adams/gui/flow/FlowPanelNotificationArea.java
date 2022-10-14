@@ -15,14 +15,14 @@
 
 /*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitButton;
@@ -84,7 +84,7 @@ public class FlowPanelNotificationArea
   protected JPanel m_PanelButtons;
 
   /** the close button. */
-  protected BaseFlatButton m_ButtonClose;
+  protected BaseButton m_ButtonClose;
   
   /** the action button. */
   protected BaseSplitButton m_ButtonAction;
@@ -158,7 +158,6 @@ public class FlowPanelNotificationArea
     panelRight.add(m_PanelButtons, BorderLayout.NORTH);
 
     m_ButtonAction = new BaseSplitButton();
-    m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractNotificationAreaAction action: m_Actions) {
       if (action instanceof CloseAndCleanUp)
@@ -168,7 +167,7 @@ public class FlowPanelNotificationArea
     }
     m_PanelButtons.add(m_ButtonAction);
 
-    m_ButtonClose = new BaseFlatButton("Close");
+    m_ButtonClose = new BaseButton("Close");
     m_ButtonClose.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonClose.addActionListener((ActionEvent e) -> {
       clearNotification();

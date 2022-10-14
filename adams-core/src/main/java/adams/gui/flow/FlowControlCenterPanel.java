@@ -15,7 +15,7 @@
 
 /*
  * FlowControlCenterPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -1017,7 +1017,7 @@ public class FlowControlCenterPanel
 
     m_CurrentFile = file;
 
-    m_FileChooser.setCurrentDirectory(file.getParentFile());
+    m_FileChooser.setCurrentDirectory(file.getParentFile().getAbsoluteFile());
     if (m_RecentFilesHandler != null)
       m_RecentFilesHandler.addRecentItem(file);
 

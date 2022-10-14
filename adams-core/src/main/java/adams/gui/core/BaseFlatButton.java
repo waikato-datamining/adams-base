@@ -15,34 +15,40 @@
 
 /*
  * BaseFlatButton.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
-import com.jidesoft.swing.JideButton;
-
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import java.awt.Font;
+import javax.swing.border.Border;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Custom class for flat buttons.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @see JideButton
  */
 public class BaseFlatButton
-  extends JideButton {
+  extends BaseButton {
 
   private static final long serialVersionUID = 443538647764642995L;
+
+  /** the inactive border. */
+  protected Border m_BorderInactive;
+
+  /** the active border. */
+  protected Border m_BorderActive;
 
   /**
    * Creates a button with no set text or icon.
    */
   public BaseFlatButton() {
     super();
-    initButton();
   }
 
   /**
@@ -52,7 +58,6 @@ public class BaseFlatButton
    */
   public BaseFlatButton(Icon icon) {
     super(icon);
-    initButton();
   }
 
   /**
@@ -62,7 +67,6 @@ public class BaseFlatButton
    */
   public BaseFlatButton(String text) {
     super(text);
-    initButton();
   }
 
   /**
@@ -74,7 +78,6 @@ public class BaseFlatButton
    */
   public BaseFlatButton(Action a) {
     super();
-    initButton();
   }
 
   /**
@@ -85,14 +88,35 @@ public class BaseFlatButton
    */
   public BaseFlatButton(String text, Icon icon) {
     super(text, icon);
-    initButton();
   }
 
   /**
    * Initializes members.
    */
   protected void initButton() {
-    setButtonStyle(JideButton.TOOLBOX_STYLE);
-    setFont(getFont().deriveFont(Font.PLAIN));
+    super.initButton();
+
+    m_BorderActive   = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY.darker()), BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    m_BorderInactive = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
+    setBorderPainted(true);
+    setFocusPainted(true);
+    setFocusable(true);
+    setContentAreaFilled(false);
+    setRolloverEnabled(true);
+    setBorder(m_BorderInactive);
+
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        super.mouseEntered(e);
+        setBorder(m_BorderActive);
+      }
+      @Override
+      public void mouseExited(MouseEvent e) {
+        super.mouseExited(e);
+        setBorder(m_BorderInactive);
+      }
+    });
   }
 }

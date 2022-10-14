@@ -90,7 +90,7 @@ public class Save
       else
         suggested = new PlaceholderFile(m_FileChooser.getCurrentDirectory().getAbsolutePath() + File.separator + FileUtils.createFilename(data.getData().relationName(), "_"));
       m_FileChooser.setDialogTitle("Saving " + (i+1) + "/" + (rows.length) + ": " + data.getData().relationName());
-      m_FileChooser.setCurrentDirectory(suggested.getParentFile());
+      m_FileChooser.setCurrentDirectory(suggested.getParentFile().getAbsoluteFile());
       m_FileChooser.setSelectedFile(suggested);
       retVal = m_FileChooser.showSaveDialog(getOwner());
       if (retVal != WekaFileChooser.APPROVE_OPTION)

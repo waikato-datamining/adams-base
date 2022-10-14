@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaSelectMultipleDatasetsPage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -44,7 +44,6 @@ import java.util.logging.Level;
  * be defined as well. Stores the selected files as blank-separated list.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9915 $
  */
 public class WekaSelectMultipleDatasetsPage
   extends AbstractWizardPage {
@@ -210,7 +209,7 @@ public class WekaSelectMultipleDatasetsPage
    * @param value	the current directory
    */
   public void setCurrentDirectory(File value) {
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value).getAbsoluteFile());
   }
 
   /**

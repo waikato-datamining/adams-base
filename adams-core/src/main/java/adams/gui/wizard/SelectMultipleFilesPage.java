@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectMultipleFilesPage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -253,7 +253,7 @@ public class SelectMultipleFilesPage
    * @param value	the current directory
    */
   public void setCurrentDirectory(File value) {
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value).getAbsoluteFile());
   }
 
   /**

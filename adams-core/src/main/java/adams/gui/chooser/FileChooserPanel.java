@@ -15,7 +15,7 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -393,7 +393,7 @@ public class FileChooserPanel
    * @param value	the current directory
    */
   public void setCurrentDirectory(File value) {
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(value).getAbsoluteFile());
   }
 
   /**

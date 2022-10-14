@@ -285,7 +285,6 @@ public class PreprocessTab
     panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_ButtonSelectedAttributesAction = new BaseSplitButton();
     m_ButtonSelectedAttributesAction.setText("Attribute action");
-    m_ButtonSelectedAttributesAction.setAlwaysDropdown(false);
     m_ButtonSelectedAttributesAction.setButtonEnabled(true);
     m_ButtonSelectedAttributesAction.addChangeListener((ChangeEvent e) -> {
       for (AbstractSelectedAttributesAction action: m_Actions)

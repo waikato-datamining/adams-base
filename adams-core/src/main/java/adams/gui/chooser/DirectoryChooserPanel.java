@@ -15,7 +15,7 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -51,7 +51,7 @@ public class DirectoryChooserPanel
   private static final long serialVersionUID = 6235369491956122980L;
 
   /** the JFileChooser for selecting a file. */
-  protected BaseDirectoryChooser m_DirectoryChooser;
+  protected FileChooser m_DirectoryChooser;
 
   /** the history of dirs. */
   protected Map<Class,PlaceholderDirectoryHistory> m_History;
@@ -95,7 +95,7 @@ public class DirectoryChooserPanel
   protected void initialize() {
     super.initialize();
 
-    m_DirectoryChooser             = new BaseDirectoryChooser();
+    m_DirectoryChooser             = DirectoryChooserFactory.createChooser();
     m_DirectoryChooserTitleDefault = m_DirectoryChooser.getDialogTitle();
     m_DirectoryChooserTitle        = "";
 
@@ -140,7 +140,7 @@ public class DirectoryChooserPanel
     else
       m_DirectoryChooser.setDialogTitle(m_DirectoryChooserTitleDefault);
     m_DirectoryChooser.setSelectedFile(getCurrent());
-    if (m_DirectoryChooser.showOpenDialog(m_Self) == BaseDirectoryChooser.APPROVE_OPTION) {
+    if (m_DirectoryChooser.showOpenDialog(m_Self) == DirectoryChooserFactory.APPROVE_OPTION) {
       m_History.get(getClass()).add(new PlaceholderDirectory(m_DirectoryChooser.getSelectedFile()));
       return m_DirectoryChooser.getSelectedFile();
     }

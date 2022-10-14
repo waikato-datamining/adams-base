@@ -15,7 +15,7 @@
 
 /*
  * MoveTo.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.findinfiles;
@@ -23,7 +23,8 @@ package adams.gui.tools.findinfiles;
 import adams.core.MessageCollection;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
-import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.chooser.DirectoryChooserFactory;
+import adams.gui.chooser.FileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 
@@ -41,7 +42,7 @@ public class MoveTo
   private static final long serialVersionUID = 2602074439493570865L;
 
   /** the directory chooser to use. */
-  protected BaseDirectoryChooser m_DirChooser;
+  protected FileChooser m_DirChooser;
 
   /**
    * Returns the text for the menu item.
@@ -76,11 +77,11 @@ public class MoveTo
 
     // select dir
     if (m_DirChooser == null)
-      m_DirChooser = new BaseDirectoryChooser();
+      m_DirChooser = DirectoryChooserFactory.createChooser();
     retVal = m_DirChooser.showOpenDialog(getOwner());
-    if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
+    if (retVal != DirectoryChooserFactory.APPROVE_OPTION)
       return;
-    dir = m_DirChooser.getSelectedDirectory();
+    dir = DirectoryChooserFactory.getSelectedDirectory(m_DirChooser);
 
     // confirm
     retVal = GUIHelper.showConfirmMessage(

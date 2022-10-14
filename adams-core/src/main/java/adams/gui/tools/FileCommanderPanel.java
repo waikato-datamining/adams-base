@@ -238,7 +238,6 @@ public class FileCommanderPanel
     // discounting the dummy "Actions" action
     if (m_Actions.size() > 1) {
       m_ButtonAction = new BaseSplitButton();
-      m_ButtonAction.setAlwaysDropdown(false);
       m_ButtonAction.setButtonEnabled(true);
       for (AbstractFileCommanderAction action: m_Actions) {
 	if (action.getClass() == Actions.class)

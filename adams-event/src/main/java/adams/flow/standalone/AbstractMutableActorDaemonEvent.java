@@ -15,7 +15,7 @@
 
 /*
  * AbstractMutableActorDaemonEvent.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -28,7 +28,8 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.DaemonEvent;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.Token;
-import com.jidesoft.utils.SwingWorker;
+
+import javax.swing.SwingWorker;
 
 /**
  * Ancestor for daemon events that handle sub-actors.
@@ -38,8 +39,8 @@ import com.jidesoft.utils.SwingWorker;
  * @param <P> the type of the processed event
  */
 public abstract class AbstractMutableActorDaemonEvent<E, P>
-  extends AbstractStandalone
-  implements MutableActorHandler, DaemonEvent {
+    extends AbstractStandalone
+    implements MutableActorHandler, DaemonEvent {
 
   /** for serialization. */
   private static final long serialVersionUID = 4670761846363281951L;
@@ -55,7 +56,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
 
   /** for actors that get executed. */
   protected Sequence m_Actors;
-  
+
   /** whether the actors are currently being executed. */
   protected boolean m_ExecutingActors;
 
@@ -67,12 +68,12 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "no-discard", "noDiscard",
-	    false);
+	"no-discard", "noDiscard",
+	false);
 
     m_OptionManager.add(
-	    "actor", "actors",
-	    new Actor[0]);
+	"actor", "actors",
+	new Actor[0]);
   }
 
   /**
@@ -212,7 +213,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    * @return		null if execution successful, otherwise error message
    */
   protected String processEvent(E e) {
-    SwingWorker		worker;
+    SwingWorker 	worker;
     final P 		preprocessed;
 
     if (!handlesEvent(e))
@@ -242,7 +243,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
 
     if (isStopped())
       return null;
-    
+
     m_ExecutingActors = true;
     worker = new SwingWorker() {
       @Override
@@ -254,12 +255,12 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
       }
       @Override
       protected void done() {
-        super.done();
+	super.done();
 	m_ExecutingActors = false;
       }
     };
     worker.execute();
-    
+
     return null;
   }
 
@@ -409,15 +410,15 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
    */
   public String check() {
     String	result;
-    
+
     result = m_Actors.check();
-    
+
     if (result == null)
       result = checkActors(m_Actors.getActors());
-    
+
     return result;
   }
-  
+
   /**
    * Updates the Variables instance in use.
    * <br><br>
@@ -428,9 +429,9 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
   @Override
   protected void forceVariables(Variables value) {
     int		i;
-    
+
     super.forceVariables(value);
-    
+
     for (i = 0; i < size(); i++)
       get(i).setVariables(value);
   }
@@ -463,7 +464,7 @@ public abstract class AbstractMutableActorDaemonEvent<E, P>
   protected String doExecute() {
     return null;
   }
-  
+
   /**
    * Stops the processing of tokens without stopping the flow.
    */

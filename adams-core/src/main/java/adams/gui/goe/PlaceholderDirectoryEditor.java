@@ -15,7 +15,7 @@
 
 /*
  *    PlaceholderDirectoryEditor.java
- *    Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,7 +27,8 @@ import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.parsing.PlaceholderDirectoryParsing;
-import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.chooser.DirectoryChooserFactory;
+import adams.gui.chooser.FileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
@@ -57,7 +58,7 @@ public class PlaceholderDirectoryEditor
              PopupMenuCustomizer {
 
   /** The directory chooser used for selecting dirs. */
-  protected BaseDirectoryChooser m_DirChooser;
+  protected FileChooser m_DirChooser;
 
   /**
    * Returns a custom string representation of the object.
@@ -104,13 +105,13 @@ public class PlaceholderDirectoryEditor
 
     currentDir = (PlaceholderDirectory) getValue();
     if (currentDir != null)
-      m_DirChooser = new BaseDirectoryChooser();
+      m_DirChooser = DirectoryChooserFactory.createChooser();
     else
-      m_DirChooser = new BaseDirectoryChooser(new File(System.getProperty("user.dir")));
+      m_DirChooser = DirectoryChooserFactory.createChooser(new File(System.getProperty("user.dir")));
     m_DirChooser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String cmdString = e.getActionCommand();
-	if (cmdString.equals(BaseDirectoryChooser.APPROVE_SELECTION)) {
+	if (cmdString.equals(DirectoryChooserFactory.APPROVE_SELECTION)) {
 	  PlaceholderDirectory newVal = new PlaceholderDirectory(m_DirChooser.getSelectedFile().getAbsolutePath());
 	  setValue(newVal);
 	  closeDialog(APPROVE_OPTION);
@@ -121,7 +122,7 @@ public class PlaceholderDirectoryEditor
       }
     });
 
-    return m_DirChooser;
+    return (JComponent) m_DirChooser;
   }
 
   /**

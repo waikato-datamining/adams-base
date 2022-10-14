@@ -15,7 +15,7 @@
 
 /*
  * BaseButton.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;

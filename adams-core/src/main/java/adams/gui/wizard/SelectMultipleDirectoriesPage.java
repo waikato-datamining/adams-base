@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SelectMultipleDirectoriesPage.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
 import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
-import adams.gui.chooser.BaseDirectoryChooser;
 import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.DirectoryChooserFactory;
+import adams.gui.chooser.FileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseListWithButtons;
 
@@ -59,7 +60,7 @@ public class SelectMultipleDirectoriesPage
   protected BaseListWithButtons m_ListDirs;
 
   /** the chooser for selecting the directories. */
-  protected BaseDirectoryChooser m_DirChooser;
+  protected FileChooser m_DirChooser;
 
   /** the button for bringing up the dirchooser. */
   protected BaseButton m_ButtonAdd;
@@ -100,7 +101,7 @@ public class SelectMultipleDirectoriesPage
   protected void initialize() {
     super.initialize();
 
-    m_DirChooser = new BaseDirectoryChooser();
+    m_DirChooser = DirectoryChooserFactory.createChooser();
     m_DirChooser.setMultiSelectionEnabled(true);
   }
 
@@ -210,7 +211,7 @@ public class SelectMultipleDirectoriesPage
    * @param value	the current directory
    */
   public void setCurrentDirectory(File value) {
-    m_DirChooser.setCurrentDirectory(new PlaceholderFile(value));
+    m_DirChooser.setCurrentDirectory(new PlaceholderFile(value).getAbsoluteFile());
   }
 
   /**

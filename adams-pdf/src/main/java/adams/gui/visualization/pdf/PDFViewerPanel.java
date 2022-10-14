@@ -15,7 +15,7 @@
 
 /*
  * PDFViewerPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
@@ -423,7 +423,7 @@ public class PDFViewerPanel
       m_MultiPagePane.addPage(file.getName(), panel);
       m_MultiPagePane.setSelectedIndex(m_MultiPagePane.getPageCount() - 1);
 
-      getFileChooser().setCurrentDirectory(file.getParentFile());
+      getFileChooser().setCurrentDirectory(file.getParentFile().getAbsoluteFile());
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(file);
     }

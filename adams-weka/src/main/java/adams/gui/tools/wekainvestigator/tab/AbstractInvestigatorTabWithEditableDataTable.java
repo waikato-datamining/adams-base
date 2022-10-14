@@ -127,7 +127,6 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_Table.addToButtonsPanel(m_ButtonSave);
 
     m_ButtonAction = new BaseSplitButton("...", ImageManager.getEmptyIcon());
-    m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractEditableDataTableAction action: m_Actions) {
       if (action instanceof Save)

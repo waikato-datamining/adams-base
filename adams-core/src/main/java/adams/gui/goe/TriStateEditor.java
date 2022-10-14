@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TriStateEditor.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.TriState;
 import adams.core.option.AbstractOption;
-import com.jidesoft.swing.TristateCheckBox;
+import adams.gui.core.BaseComboBox;
 
 import javax.swing.JComponent;
 import java.awt.event.ActionEvent;
@@ -34,6 +34,15 @@ import java.awt.event.ActionListener;
  */
 public class TriStateEditor
   extends AbstractBasicTypePropertyEditor {
+
+  /** the unset state. */
+  public final static String STATE_UNSET = "---";
+
+  /** the true state. */
+  public final static String STATE_TRUE = "true";
+
+  /** the false state. */
+  public final static String STATE_FALSE = "false";
 
   /** the current value. */
   protected TriState m_Current;
@@ -54,12 +63,12 @@ public class TriStateEditor
    */
   @Override
   protected JComponent createCustomEditor() {
-    TristateCheckBox	result;
+    BaseComboBox<String> result;
 
-    result = new TristateCheckBox();
+    result = new BaseComboBox<>();
     result.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	TriState state = checkBoxToTriState((TristateCheckBox) e.getSource());
+	TriState state = comboBoxToTriState((BaseComboBox<String>) e.getSource());
 	if (!getValue().equals(state))
 	  setValue(state);
       }
@@ -127,50 +136,53 @@ public class TriStateEditor
     TriState 	state;
     
     resetChosenOption();
-    state = checkBoxToTriState((TristateCheckBox) m_CustomEditor);
+    state = comboBoxToTriState((BaseComboBox<String>) m_CustomEditor);
     if (!m_Current.equals(state))
-      setCheckBoxState((TristateCheckBox) m_CustomEditor, m_Current);
+      selectComboBoxIndex((BaseComboBox<String>) m_CustomEditor, m_Current);
   }
   
   /**
-   * Turns the state of a {@link TristateCheckBox} into {@link TriState} enum.
+   * Turns the state of the combobox into {@link TriState} enum.
    * 
-   * @param checkbox	the checkbox to convert
+   * @param comboBox	the checkbox to convert
    * @return		the state
    */
-  public static TriState checkBoxToTriState(TristateCheckBox checkbox) {
+  public static TriState comboBoxToTriState(BaseComboBox<String> comboBox) {
     TriState 	result;
-    
-    switch (checkbox.getState()) {
-      case TristateCheckBox.STATE_MIXED:
-	result = TriState.NOT_SET;
-	break;
-      case TristateCheckBox.STATE_SELECTED:
+
+    if (comboBox.getSelectedItem() == null)
+      return TriState.NOT_SET;
+
+    switch (comboBox.getSelectedItem()) {
+      case STATE_TRUE:
 	result = TriState.TRUE;
 	break;
+      case STATE_FALSE:
+        result = TriState.FALSE;
+        break;
       default:
-	result = TriState.FALSE;
+	result = TriState.NOT_SET;
     }
     
     return result;
   }
   
   /**
-   * Sets the state of a {@link TristateCheckBox} based on the {@link TriState} enum.
+   * Sets the state of a combobox based on the {@link TriState} enum.
    * 
-   * @param checkbox	the checkbox to update
+   * @param comboBox	the combobox to update
    * @param state	the state to set
    */
-  public static void setCheckBoxState(TristateCheckBox checkbox, TriState state) {
+  public static void selectComboBoxIndex(BaseComboBox<String> comboBox, TriState state) {
     switch (state) {
-      case NOT_SET:
-	checkbox.setState(TristateCheckBox.STATE_MIXED);
-	break;
       case TRUE:
-	checkbox.setState(TristateCheckBox.STATE_SELECTED);
+        comboBox.setSelectedItem(STATE_TRUE);
 	break;
+      case FALSE:
+        comboBox.setSelectedItem(STATE_UNSET);
+        break;
       default:
-	checkbox.setState(TristateCheckBox.STATE_UNSELECTED);
+        comboBox.setSelectedItem(STATE_FALSE);
     }
   }
 

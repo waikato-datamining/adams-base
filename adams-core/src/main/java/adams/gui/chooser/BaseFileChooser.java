@@ -14,8 +14,8 @@
  */
 
 /*
- * BaseFileChooser.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Basejava
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -47,7 +47,8 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class BaseFileChooser
-  extends JFileChooser {
+  extends JFileChooser
+  implements FileChooser {
 
   /** for serialization. */
   private static final long serialVersionUID = -5712455182900852653L;
@@ -136,8 +137,8 @@ public class BaseFileChooser
     if (accessory != null)
       setAccessory(accessory);
 
-    width  = GUIHelper.getInteger("BaseFileChooser.Width", 750);
-    height = GUIHelper.getInteger("BaseFileChooser.Height", 500);
+    width  = GUIHelper.getInteger("BaseWidth", 750);
+    height = GUIHelper.getInteger("BaseHeight", 500);
     if ((width != -1) && (height != -1))
       setPreferredSize(new Dimension(width, height));
   }
@@ -151,8 +152,8 @@ public class BaseFileChooser
     int		height;
     int		width;
     
-    width  = GUIHelper.getInteger("BaseFileChooser.Accessory.Width", -1);
-    height = GUIHelper.getInteger("BaseFileChooser.Accessory.Height", -1);
+    width  = GUIHelper.getInteger("BaseAccessory.Width", -1);
+    height = GUIHelper.getInteger("BaseAccessory.Height", -1);
     if ((width != -1) && (height != -1))
       return new Dimension(width, height);
     else
@@ -182,7 +183,7 @@ public class BaseFileChooser
 
     m_PanelFilter = new FilterPanel(FilterPanel.VERTICAL);
     m_PanelFilter.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-    m_PanelFilter.addChangeListener((ChangeEvent e) -> firePropertyChange(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, null, null));
+    m_PanelFilter.addChangeListener((ChangeEvent e) -> firePropertyChange(FILE_FILTER_CHANGED_PROPERTY, null, null));
     m_PanelBookmarksAndFilter.add(m_PanelFilter, BorderLayout.SOUTH);
 
     return m_PanelBookmarksAndFilter;
@@ -461,7 +462,7 @@ public class BaseFileChooser
     result = false;
     
     // open: file exists -> correct extension
-    if (getDialogType() == OPEN_DIALOG) 
+    if (getDialogType() == OPEN_DIALOG)
       result = file.exists();
     // save: all files -> correct extension
     if ((getDialogType() == SAVE_DIALOG) && (getFileFilter() == getAcceptAllFileFilter()))
@@ -629,11 +630,11 @@ public class BaseFileChooser
    */
   public static File findExistingDir(File dir) {
     if (dir.exists() && dir.isDirectory())
-      return dir;
+      return dir.getAbsoluteFile();
     while (dir.getParentFile() != null) {
       dir = dir.getParentFile();
       if (dir.exists() && dir.isDirectory())
-	return dir;
+	return dir.getAbsoluteFile();
     }
     return new File(System.getProperty("user.dir"));
   }

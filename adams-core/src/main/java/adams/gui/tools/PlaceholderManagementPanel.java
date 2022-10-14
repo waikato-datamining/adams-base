@@ -15,7 +15,7 @@
 
 /*
  * PlaceholderManagementPanel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -25,7 +25,8 @@ import adams.core.Properties;
 import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
-import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.chooser.DirectoryChooserFactory;
+import adams.gui.chooser.FileChooser;
 import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
@@ -374,7 +375,7 @@ public class PlaceholderManagementPanel
     protected BaseTextField m_TextPath;
 
     /** the underlying directory chooser. */
-    protected BaseDirectoryChooser m_DirChooser;
+    protected FileChooser m_DirChooser;
 
     /**
      * Initializes the cell editor.
@@ -383,7 +384,7 @@ public class PlaceholderManagementPanel
      * @param model		the model to use
      * @param dirChooser	the directory chooser to use
      */
-    public PlaceholderTableCellEditor(BaseTable table, PlaceholderTableModel model, BaseDirectoryChooser dirChooser) {
+    public PlaceholderTableCellEditor(BaseTable table, PlaceholderTableModel model, FileChooser dirChooser) {
       super(new BaseTextField());
 
       m_TextPath = (BaseTextField) getComponent();
@@ -395,7 +396,7 @@ public class PlaceholderManagementPanel
 	    e.consume();
 	    m_DirChooser.setSelectedFile(new File(m_TextPath.getText()));
 	    int retVal = m_DirChooser.showOpenDialog(m_Table);
-	    if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
+	    if (retVal != DirectoryChooserFactory.APPROVE_OPTION)
 	      return;
 	    m_TextPath.setText(m_DirChooser.getSelectedFile().getAbsolutePath());
 	  }
@@ -439,7 +440,7 @@ public class PlaceholderManagementPanel
   protected BaseButton m_ButtonRemove;
 
   /** the directory chooser for choosing directories. */
-  protected BaseDirectoryChooser m_DirChooser;
+  protected FileChooser m_DirChooser;
 
   /**
    * Initializes the members.
@@ -448,7 +449,7 @@ public class PlaceholderManagementPanel
   protected void initialize() {
     super.initialize();
 
-    m_DirChooser = new BaseDirectoryChooser();
+    m_DirChooser = DirectoryChooserFactory.createChooser();
     m_DirChooser.setDialogTitle("Select directory");
   }
 
@@ -490,7 +491,7 @@ public class PlaceholderManagementPanel
 	return;
 
       int retVal = m_DirChooser.showOpenDialog(PlaceholderManagementPanel.this);
-      if (retVal != BaseDirectoryChooser.APPROVE_OPTION)
+      if (retVal != DirectoryChooserFactory.APPROVE_OPTION)
 	return;
 
       m_Model.add(key, m_DirChooser.getSelectedFile().getAbsolutePath());

@@ -15,7 +15,7 @@
 
 /*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -216,11 +216,11 @@ public class FlowRunnerPanel
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
     m_TitleGenerator      = new TitleGenerator("Flow runner", true);
-    m_CurrentSetVariables = new Vector<SetVariable>();
-    m_CurrentParameters   = new Vector<BaseTextField>();
-    m_CurrentHelpButtons  = new Vector<BaseButton>();
+    m_CurrentSetVariables = new Vector<>();
+    m_CurrentParameters   = new Vector<>();
+    m_CurrentHelpButtons  = new Vector<>();
     m_FileChooser         = new FlowFileChooser();
-    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")));
+    m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")).getAbsoluteFile());
   }
 
   /**
@@ -1158,7 +1158,7 @@ public class FlowRunnerPanel
    * @param dir		the new current directory to use
    */
   public void setCurrentDirectory(File dir)  {
-    m_FileChooser.setCurrentDirectory(dir);
+    m_FileChooser.setCurrentDirectory(dir.getAbsoluteFile());
   }
 
   /**

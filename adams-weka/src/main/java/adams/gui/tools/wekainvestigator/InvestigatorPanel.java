@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -929,7 +929,7 @@ public class InvestigatorPanel
 	  updateRelationName(e.getItem().getFile(), cont.getData());
 	  SwingUtilities.invokeLater(() -> {
 	    m_Data.add(cont);
-	    m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile());
+	    m_FileChooser.setCurrentDirectory(e.getItem().getFile().getParentFile().getAbsoluteFile());
 	    logAndShowMessage("Loaded: " + e.getItem());
 	    fireDataChange(new WekaInvestigatorDataEvent(
 	      InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_ADDED, m_Data.size() - 1));

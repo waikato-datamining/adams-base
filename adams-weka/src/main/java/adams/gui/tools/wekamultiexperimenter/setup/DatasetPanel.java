@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatasetPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup;
 
@@ -37,7 +37,6 @@ import java.util.Arrays;
  * Panel for listing datasets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatasetPanel
   extends AbstractSetupOptionPanel {
@@ -174,7 +173,7 @@ public class DatasetPanel
       m_FileChooser.setCurrentDirectory(
 	  new PlaceholderFile(
 	      ExperimenterPanel.getProperties().getPath(
-		  "DatasetsInitialDir", "%h")).getAbsoluteFile());
+		  "DatasetsInitialDir", "%h")).getAbsoluteFile().getAbsoluteFile());
     }
   }
 

@@ -560,7 +560,6 @@ public class MultiPagePane
     m_PanelListButtons.add(m_ButtonUndo);
 
     m_ButtonAction = new BaseSplitButton("...");
-    m_ButtonAction.setAlwaysDropdown(false);
     m_ButtonAction.setToolTipText("Additional actions");
     m_ButtonAction.setVisible(false);
     m_PanelListButtons.add(m_ButtonAction);

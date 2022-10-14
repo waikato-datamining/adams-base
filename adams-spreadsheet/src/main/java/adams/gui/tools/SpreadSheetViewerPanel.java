@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -834,7 +834,7 @@ public class SpreadSheetViewerPanel
 	      panel.setReader(sreader);
 	    }
 	  }
-	  m_FileChooser.setCurrentDirectory(file.getParentFile());
+	  m_FileChooser.setCurrentDirectory(file.getParentFile().getAbsoluteFile());
 	  if (m_RecentFilesHandler != null)
 	    m_RecentFilesHandler.addRecentItem(new Setup(file, sreader));
 	}

@@ -15,7 +15,7 @@
 
 /*
  * ActorUsage.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,7 +27,8 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.UserMode;
-import adams.gui.chooser.BaseDirectoryChooser;
+import adams.gui.chooser.DirectoryChooserFactory;
+import adams.gui.chooser.FileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTable;
 import adams.gui.core.GUIHelper;
@@ -53,10 +54,9 @@ import java.util.List;
  * usage. It also allows the user to edit selected flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorUsage
-  extends AbstractBasicMenuItemDefinition {
+    extends AbstractBasicMenuItemDefinition {
 
   /** for serialization. */
   private static final long serialVersionUID = -6548349613973153076L;
@@ -86,10 +86,10 @@ public class ActorUsage
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_FlowEditor = null;
   }
-  
+
   /**
    * Returns the title of the window (and text of menuitem).
    *
@@ -133,45 +133,45 @@ public class ActorUsage
 
   /**
    * Lets the user choose the directory with the flows.
-   * 
+   *
    * @return		the directory, null if dialog canceled
    */
   protected PlaceholderDirectory chooseDir() {
     PlaceholderDirectory	result;
-    BaseDirectoryChooser	chooser;
+    FileChooser 		chooser;
     int				retVal;
-    
+
     result  = null;
-    chooser = new BaseDirectoryChooser(new File("."));
+    chooser = DirectoryChooserFactory.createChooser(new File("."));
     chooser.setDialogTitle("Choose directory with flows");
     retVal  = chooser.showOpenDialog(null);
-    if (retVal == BaseDirectoryChooser.APPROVE_OPTION)
-      result = chooser.getSelectedDirectory();
-    
+    if (retVal == DirectoryChooserFactory.APPROVE_OPTION)
+      result = DirectoryChooserFactory.getSelectedDirectory(chooser);
+
     return result;
   }
 
   /**
    * Generates the spreadsheet with the actor usage.
-   * 
+   *
    * @param dir		the directory to inspect
    * @return		the spreadsheet, null if failed to generate
    */
   protected SpreadSheet determineUsage(PlaceholderDirectory dir) {
     SpreadSheet			result;
     adams.flow.core.ActorUsage	usage;
-    
+
     usage = new adams.flow.core.ActorUsage();
     usage.setRecursive(true);
     usage.setDirectories(new PlaceholderDirectory[]{dir});
     result = usage.execute();
-    
+
     return result;
   }
-  
+
   /**
    * Displays the actor usage.
-   * 
+   *
    * @param sheet	the sheet with the usage
    */
   protected void displayUsage(SpreadSheet sheet) {
@@ -179,7 +179,7 @@ public class ActorUsage
     SpreadSheetTableModel			model;
     SearchPanel					search;
     final BaseButton				editFlow;
-    
+
     model = new SpreadSheetTableModel(sheet);
     model.setUseSimpleHeader(true);
     model.setShowRowColumn(false);
@@ -233,7 +233,7 @@ public class ActorUsage
     createChildFrame(table, GUIHelper.getDefaultDialogDimension());
     table.setOptimalColumnWidth();
   }
-  
+
   /**
    * Launches the functionality of the menu item.
    */
@@ -241,19 +241,19 @@ public class ActorUsage
   public void launch() {
     PlaceholderDirectory	dir;
     SpreadSheet			sheet;
-    
+
     dir = chooseDir();
     if (dir == null) {
       GUIHelper.showErrorMessage(null, "Canceled selection of flow directory!");
       return;
     }
-    
+
     sheet = determineUsage(dir);
     if (sheet == null) {
       GUIHelper.showErrorMessage(null, "Failed to generate overview!");
       return;
     }
-    
+
     displayUsage(sheet);
   }
 
