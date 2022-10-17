@@ -82,7 +82,7 @@
     <javax.activation.version>1.1.1</javax.activation.version>
     <javaws.version>3.0.2</javaws.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
-    <moa.version>2021.07.0</moa.version>
+    <moa.version>2022.10.17</moa.version>
     <weka.version>3.9.6-fork-0.0.1</weka.version>
     <weka-lts.version>3.9.0-fork-0.0.12</weka-lts.version>
     <postgresql.version>42.0.0</postgresql.version>
