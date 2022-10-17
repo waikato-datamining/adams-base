@@ -47,7 +47,7 @@ public class JsonHelper {
    *
    * @param reader	the reader to use
    * @return		the parsed JSON
-   * @throws Exception
+   * @throws Exception  if parsing fails
    */
   protected static Object parse(Reader reader) throws Exception {
     JSONParser		parser;
@@ -152,11 +152,11 @@ public class JsonHelper {
    * @return		the pretty string
    */
   public static String prettyPrint(String json) {
-    JsonParser 	jp;
-    JsonElement je;
+    StringReader  sreader;
+    JsonElement   je;
 
-    jp   = new JsonParser();
-    je   = jp.parse(json);
+    sreader = new StringReader(json);
+    je      = JsonParser.parseReader(sreader);
     return prettyPrint(je);
   }
 }
