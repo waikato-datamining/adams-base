@@ -243,11 +243,6 @@ public interface FileChooser {
    *    chooser.showDialog(parentFrame, null);
    * </pre>
    *
-   * <!--PENDING(jeff) - the following method should be added to the api:
-   *      showDialog(Component parent);-->
-   * <!--PENDING(kwalrath) - should specify modality and what
-   *      "depends" means.-->
-   *
    * <p>
    *
    * The <code>parent</code> argument determines two things:
@@ -364,7 +359,6 @@ public interface FileChooser {
    * @see #getDialogType
    * @see #setApproveButtonText
    */
-  // PENDING(jeff) - fire button text change property
   public void setDialogType(int dialogType);
 
   /**
@@ -452,7 +446,6 @@ public interface FileChooser {
    * @see #setDialogType
    * @see #showDialog
    */
-  // PENDING(jeff) - have ui set this on dialog type change
   public void setApproveButtonText(String approveButtonText);
 
   /**
