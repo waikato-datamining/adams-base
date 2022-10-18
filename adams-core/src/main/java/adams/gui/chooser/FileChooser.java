@@ -20,15 +20,13 @@
 
 package adams.gui.chooser;
 
-import javax.accessibility.AccessibleContext;
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.TransferHandler;
-import javax.swing.UIDefaults;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.filechooser.FileView;
-import javax.swing.plaf.FileChooserUI;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionListener;
@@ -77,7 +75,7 @@ public interface FileChooser {
    *            returns <code>true</code>
    * @see java.awt.GraphicsEnvironment#isHeadless
    * @see #getDragEnabled
-   * @see #setTransferHandler
+   * @see JFileChooser#setTransferHandler
    * @see TransferHandler
    * @since 1.4
    */
@@ -319,7 +317,7 @@ public interface FileChooser {
    *    shown; otherwise, <code>true</code>
    *
    * @see #getControlButtonsAreShown
-   * @see #CONTROL_BUTTONS_ARE_SHOWN_CHANGED_PROPERTY
+   * @see JFileChooser#CONTROL_BUTTONS_ARE_SHOWN_CHANGED_PROPERTY
    * @since 1.3
    */
   public void setControlButtonsAreShown(boolean b);
@@ -797,7 +795,7 @@ public interface FileChooser {
    * with the command string equal to
    * <code>APPROVE_SELECTION</code>.
    *
-   * @see #APPROVE_SELECTION
+   * @see JFileChooser#APPROVE_SELECTION
    */
   public void approveSelection();
 
@@ -808,7 +806,7 @@ public interface FileChooser {
    * with the command string equal to
    * <code>CANCEL_SELECTION</code>.
    *
-   * @see #CANCEL_SELECTION
+   * @see JFileChooser#CANCEL_SELECTION
    */
   public void cancelSelection();
 
@@ -845,43 +843,4 @@ public interface FileChooser {
    * @since 1.4
    */
   public ActionListener[] getActionListeners();
-
-  // *********************************
-  // ***** Pluggable L&F methods *****
-  // *********************************
-
-  /**
-   * Resets the UI property to a value from the current look and feel.
-   *
-   * @see JComponent#updateUI
-   */
-  public void updateUI();
-
-  /**
-   * Returns a string that specifies the name of the L&amp;F class
-   * that renders this component.
-   *
-   * @return the string "FileChooserUI"
-   * @see JComponent#getUIClassID
-   * @see UIDefaults#getUI
-   */
-  public String getUIClassID();
-
-  /**
-   * Gets the UI object which implements the L&amp;F for this component.
-   *
-   * @return the FileChooserUI object that implements the FileChooserUI L&amp;F
-   */
-  public FileChooserUI getUI();
-
-  /**
-   * Gets the AccessibleContext associated with this JFileChooser.
-   * For file choosers, the AccessibleContext takes the form of an
-   * AccessibleJFileChooser.
-   * A new AccessibleJFileChooser instance is created if necessary.
-   *
-   * @return an AccessibleJFileChooser that serves as the
-   *         AccessibleContext of this JFileChooser
-   */
-  public AccessibleContext getAccessibleContext();
 }
