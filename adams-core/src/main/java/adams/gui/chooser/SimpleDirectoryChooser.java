@@ -20,21 +20,104 @@
 
 package adams.gui.chooser;
 
+import adams.gui.core.GUIHelper;
+import com.googlecode.jfilechooserbookmarks.Communication;
+
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import java.awt.Dimension;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 /**
- * Simple directory chooser based on JFileChooser.
+ * A more intuitive dialog for selecting a directory than JFileChooser.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SimpleDirectoryChooser
-  extends BaseFileChooser {
+    extends nz.ac.waikato.cms.adams.simpledirectorychooser.SimpleDirectoryChooser
+    implements FileChooser {
+
+  public static class SimpleDirectoryChooserCommunication
+      implements Communication {
+
+    /** the chooser. */
+    protected SimpleDirectoryChooser m_Chooser;
+
+    /**
+     * Initializes the communication.
+     *
+     * @param chooser	the underlying chooser
+     */
+    public SimpleDirectoryChooserCommunication(SimpleDirectoryChooser chooser) {
+      m_Chooser = chooser;
+    }
+
+    /**
+     * Sets the current directory.
+     *
+     * @param dir the directory to use
+     */
+    @Override
+    public void setCurrentDirectory(File dir) {
+      m_Chooser.setCurrentDirectory(dir);
+    }
+
+    /**
+     * Returns the current directory.
+     *
+     * @return the directory in use
+     */
+    @Override
+    public File getCurrentDirectory() {
+      return m_Chooser.getCurrentDirectory();
+    }
+
+    /**
+     * Returns all the selected files.
+     *
+     * @return the currently selected files
+     */
+    @Override
+    public File[] getSelectedFiles() {
+      return m_Chooser.getSelectedFiles();
+    }
+
+    /**
+     * Scrolls the specified file into view
+     *
+     * @param f the file to scroll into view
+     */
+    @Override
+    public void ensureFileIsVisible(File f) {
+      m_Chooser.ensureFileIsVisible(f);
+    }
+
+    /**
+     * Adds the property change listener.
+     *
+     * @param l the listener to add
+     */
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener l) {
+      m_Chooser.addPropertyChangeListener(l);
+    }
+
+    /**
+     * Removes the property change listener.
+     *
+     * @param l the listener to remove
+     */
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener l) {
+      m_Chooser.removePropertyChangeListener(l);
+    }
+  }
+
+  /** the panel with the bookmarks. */
+  protected FileChooserBookmarksPanel m_PanelBookmarks;
 
   /**
-   * Constructs a <code>BaseFileChooser</code> pointing to the user's
+   * Constructs a <code>SimpleDirectoryChooser</code> pointing to the user's
    * default directory. This default depends on the operating system.
    * It is typically the "My Documents" folder on Windows, and the
    * user's home directory on Unix.
@@ -44,7 +127,7 @@ public class SimpleDirectoryChooser
   }
 
   /**
-   * Constructs a <code>BaseFileChooser</code> using the given path.
+   * Constructs a <code>SimpleDirectoryChooser</code> using the given path.
    * Passing in a <code>null</code>
    * string causes the file chooser to point to the user's default directory.
    * This default depends on the operating system. It is
@@ -59,7 +142,7 @@ public class SimpleDirectoryChooser
   }
 
   /**
-   * Constructs a <code>BaseFileChooser</code> using the given <code>File</code>
+   * Constructs a <code>SimpleDirectoryChooser</code> using the given <code>File</code>
    * as the path. Passing in a <code>null</code> file
    * causes the file chooser to point to the user's default directory.
    * This default depends on the operating system. It is
@@ -74,25 +157,16 @@ public class SimpleDirectoryChooser
   }
 
   /**
-   * For initializing some stuff.
+   * Initializes the widgets.
    */
   @Override
-  protected void initialize() {
-    super.initialize();
+  protected void initWidgets() {
+    Dimension 	dim;
 
-    super.setFileSelectionMode(BaseFileChooser.DIRECTORIES_ONLY);
-  }
-
-  /**
-   * Creates an accessory panel displayed next to the files.
-   *
-   * @return		the panel or null if none available
-   */
-  protected JComponent createAccessoryPanel() {
-    Dimension	dim;
+    super.initWidgets();
 
     m_PanelBookmarks = new FileChooserBookmarksPanel();
-    m_PanelBookmarks.setOwner(this);
+    m_PanelBookmarks.setOwner(new SimpleDirectoryChooserCommunication(this));
     m_PanelBookmarks.setBorder(BorderFactory.createEmptyBorder(2, 5, 0, 0));
     dim = getDefaultAccessoryDimension();
     if (dim != null) {
@@ -101,13 +175,23 @@ public class SimpleDirectoryChooser
       m_PanelBookmarks.setPreferredSize(dim);
     }
 
-    return m_PanelBookmarks;
+    setAccessory(m_PanelBookmarks);
   }
 
   /**
-   * Ignored.
+   * Returns the preferred dimension.
+   *
+   * @return		the dimension, null if to use default
    */
-  public void setFileSelectionMode(int model) {
-    // ignored
+  protected Dimension getDefaultAccessoryDimension() {
+    int		height;
+    int		width;
+
+    width  = GUIHelper.getInteger("BaseAccessory.Width", -1);
+    height = GUIHelper.getInteger("BaseAccessory.Height", -1);
+    if ((width != -1) && (height != -1))
+      return new Dimension(width, height);
+    else
+      return null;
   }
 }

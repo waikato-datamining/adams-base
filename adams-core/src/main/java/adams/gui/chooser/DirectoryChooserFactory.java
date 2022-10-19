@@ -21,6 +21,7 @@
 package adams.gui.chooser;
 
 import adams.core.io.PlaceholderDirectory;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JFileChooser;
 import java.io.File;
@@ -56,13 +57,17 @@ public class DirectoryChooserFactory {
   /** Instruction to approve the current selection (same as pressing yes or ok). */
   public static final String APPROVE_SELECTION = "ApproveSelection";
 
+  public static final String TYPE_JFILECHOOSER = "jfilechooser";
+
+  public static final String TYPE_SIMPLE = "simple";
+
   /**
    * Returns a directory chooser instance with the user's default directory as initial directory.
    *
    * @return		the chooser
    */
   public static FileChooser createChooser() {
-    return new SimpleDirectoryChooser();
+    return createChooser((File) null);
   }
 
   /**
@@ -72,7 +77,7 @@ public class DirectoryChooserFactory {
    * @return		the chooser
    */
   public static FileChooser createChooser(String initialDir) {
-    return new SimpleDirectoryChooser(initialDir);
+    return createChooser(new File(initialDir));
   }
 
   /**
@@ -82,7 +87,25 @@ public class DirectoryChooserFactory {
    * @return		the chooser
    */
   public static FileChooser createChooser(File initialDir) {
-    return new SimpleDirectoryChooser(initialDir);
+    String 	type;
+
+    type = GUIHelper.getString("DirectoryChooserType", TYPE_JFILECHOOSER);
+    switch (type) {
+      case TYPE_JFILECHOOSER:
+        if (initialDir == null)
+	  return new JavaDirectoryChooser();
+        else
+	  return new JavaDirectoryChooser(initialDir);
+
+      case TYPE_SIMPLE:
+	if (initialDir == null)
+	  return new SimpleDirectoryChooser();
+	else
+	  return new SimpleDirectoryChooser(initialDir);
+
+      default:
+	throw new IllegalStateException("Unhandled directory chooser type: " + type);
+    }
   }
 
   /**

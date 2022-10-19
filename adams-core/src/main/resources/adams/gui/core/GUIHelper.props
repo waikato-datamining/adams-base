@@ -183,3 +183,7 @@ ReplaceKeystrokes=
 # Whether to use show a button for quickly accessing the variable popupmenu
 # in the GOE (true|false)
 GenericObjectEditorShowVariablePopupMenuButton=true
+
+# the type of directory chooser to use
+# (jfilechooser,simple)
+DirectoryChooserType=simple

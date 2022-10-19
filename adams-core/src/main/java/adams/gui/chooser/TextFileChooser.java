@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextFileChooser.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -38,7 +38,6 @@ import java.nio.charset.Charset;
  * Specialized filechooser for text files.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TextFileChooser
   extends BaseFileChooser {
@@ -50,7 +49,6 @@ public class TextFileChooser
    * The accessory panel for setting the encoding.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FileEncodingPanel
     extends BasePanel {
@@ -118,16 +116,7 @@ public class TextFileChooser
     public void setOwner(JFileChooser value) {
       m_PanelBookmarks.setOwner(value);
     }
-    
-    /**
-     * Returns the owner.
-     * 
-     * @return		the owner, null if none set
-     */
-    public JFileChooser getOwner() {
-      return m_PanelBookmarks.getOwner();
-    }
-    
+
     /**
      * Sets the encoding.
      * 
