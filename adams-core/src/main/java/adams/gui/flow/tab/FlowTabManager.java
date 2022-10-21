@@ -123,7 +123,7 @@ public class FlowTabManager
     update    = false;
     for (Class tabClass: tabs) {
       try {
-        tab = (AbstractEditorTab) tabClass.newInstance();
+        tab = (AbstractEditorTab) tabClass.getDeclaredConstructor().newInstance();
         if (tab != null) {
           tab.setOwner(this);
           m_TabList.add(tab);

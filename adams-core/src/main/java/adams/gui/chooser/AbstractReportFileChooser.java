@@ -108,7 +108,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((AbstractReportReader) converter).getFormatDescription();
 	  ext  = ((AbstractReportReader) converter).getFormatExtensions();
@@ -259,7 +259,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -293,7 +293,7 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	m_CurrentHandler = null;

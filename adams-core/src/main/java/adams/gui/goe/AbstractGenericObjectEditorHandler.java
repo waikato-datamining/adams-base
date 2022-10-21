@@ -188,7 +188,7 @@ public abstract class AbstractGenericObjectEditorHandler
     // already cached?
     if (m_Cache.containsKey(cls)) {
       try {
-	result = (AbstractGenericObjectEditorHandler) m_Cache.get(cls).newInstance();
+	result = (AbstractGenericObjectEditorHandler) m_Cache.get(cls).getDeclaredConstructor().newInstance();
 	return result;
       }
       catch (Exception e) {
@@ -202,7 +202,7 @@ public abstract class AbstractGenericObjectEditorHandler
       if (m_HandlerClasses[i] == DefaultGenericObjectEditorHandler.class)
 	continue;
       try {
-	handler = (AbstractGenericObjectEditorHandler) m_HandlerClasses[i].newInstance();
+	handler = (AbstractGenericObjectEditorHandler) m_HandlerClasses[i].getDeclaredConstructor().newInstance();
 	if (handler.handles(cls)) {
 	  result = handler;
 	  break;

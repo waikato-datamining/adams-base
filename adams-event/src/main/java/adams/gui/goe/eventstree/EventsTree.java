@@ -58,7 +58,7 @@ public class EventsTree
     
     result = classname;
     try {
-      obj = ClassManager.getSingleton().forName(result).newInstance();
+      obj = ClassManager.getSingleton().forName(result).getDeclaredConstructor().newInstance();
       if (obj instanceof Events)
 	result = null;
       if (node.getParent() == null)

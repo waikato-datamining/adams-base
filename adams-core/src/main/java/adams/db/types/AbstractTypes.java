@@ -145,7 +145,7 @@ public abstract class AbstractTypes
       m_Types = new ArrayList<>();
       for (Class cls: ClassLister.getSingleton().getClasses(AbstractTypes.class)) {
         try {
-          m_Types.add((AbstractTypes) cls.newInstance());
+          m_Types.add((AbstractTypes) cls.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
           System.err.println("Failed to instantiate types class: " + Utils.classToString(cls));

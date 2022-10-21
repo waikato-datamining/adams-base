@@ -444,7 +444,7 @@ public class PropertySheetPanel extends BasePanel
 	pec = m_Properties[i].getPropertyEditorClass();
 	if (pec != null) {
 	  try {
-	    m_Editors[i] = (PropertyEditor) pec.newInstance();
+	    m_Editors[i] = (PropertyEditor) pec.getDeclaredConstructor().newInstance();
 	  }
 	  catch (Exception ex) {
 	    // Drop through.

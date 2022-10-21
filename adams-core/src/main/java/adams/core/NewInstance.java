@@ -315,7 +315,7 @@ public class NewInstance
     }
     else {
       try {
-	return cls.newInstance();
+	return cls.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	if (!quiet)

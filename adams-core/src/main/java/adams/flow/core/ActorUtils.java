@@ -1493,7 +1493,7 @@ public class ActorUtils {
     procs     = new ActorProcessor[names.length];
     for (i = 0; i < names.length; i++) {
       try {
-	procs[i] = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).newInstance();
+	procs[i] = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE,
@@ -1552,7 +1552,7 @@ public class ActorUtils {
       procs     = new ArrayList<>();
       for (i = 0; i < names.length; i++) {
 	try {
-	  proc = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).newInstance();
+	  proc = (ActorProcessor) ClassManager.getSingleton().forName(names[i]).getDeclaredConstructor().newInstance();
 	  if (!variables && (proc instanceof CheckVariableUsage))
 	    continue;
 	  if (!storage && (proc instanceof CheckStorageUsage))

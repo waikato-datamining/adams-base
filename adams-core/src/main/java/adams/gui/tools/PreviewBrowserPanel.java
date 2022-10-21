@@ -632,12 +632,12 @@ public class PreviewBrowserPanel
 
     if (m_ListLocalFiles.getSelectedIndex() < 0)
       return;
-    if (m_ListLocalFiles.getSelectedValues().length < 1)
+    if (m_ListLocalFiles.getSelectedIndices().length < 1)
       return;
 
-    localFiles = new PlaceholderFile[m_ListLocalFiles.getSelectedValues().length];
+    localFiles = new PlaceholderFile[m_ListLocalFiles.getSelectedIndices().length];
     for (n = 0; n < localFiles.length; n++)
-      localFiles[n] = new PlaceholderFile(m_PanelDir.getCurrent().getAbsolutePath() + File.separator + m_ListLocalFiles.getSelectedValues()[n]);
+      localFiles[n] = new PlaceholderFile(m_PanelDir.getCurrent().getAbsolutePath() + File.separator + m_ListLocalFiles.getSelectedValuesList().get(n));
 
     if (AbstractArchiveHandler.hasHandler(localFiles[0])) {
       m_PaneBrowsing.setBottomComponentHidden(false);
@@ -662,7 +662,7 @@ public class PreviewBrowserPanel
       m_IgnoreArchiveHandlerChanges = false;
       try {
 	Class cls = ClassManager.getSingleton().forName((String) m_ComboBoxArchiveHandlers.getSelectedItem());
-	m_ArchiveHandler = (AbstractArchiveHandler) cls.newInstance();
+	m_ArchiveHandler = (AbstractArchiveHandler) cls.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	m_ArchiveHandler = null;
@@ -700,7 +700,7 @@ public class PreviewBrowserPanel
    * Displays an archive file.
    */
   protected synchronized void displayArchiveContent() {
-    Object[]	selFiles;
+    List	selFiles;
     File[]	tmpFiles;
     int		i;
 
@@ -710,22 +710,22 @@ public class PreviewBrowserPanel
     // notify user
     m_PanelContent.displayCreatingView();
 
-    selFiles = m_ListArchiveFiles.getSelectedValues();
-    tmpFiles = new File[selFiles.length];
-    for (i = 0; i < selFiles.length; i++) {
+    selFiles = m_ListArchiveFiles.getSelectedValuesList();
+    tmpFiles = new File[selFiles.size()];
+    for (i = 0; i < selFiles.size(); i++) {
       try {
-	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles[i].toString()), TempUtils.getTempDirectory());
-	if (!m_ArchiveHandler.extract(selFiles[i].toString(), tmpFiles[i])) {
+	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles.get(i).toString()), TempUtils.getTempDirectory());
+	if (!m_ArchiveHandler.extract(selFiles.get(i).toString(), tmpFiles[i])) {
 	  ConsolePanel.getSingleton().append(
 	      LoggingLevel.SEVERE,
-	      "Failed to extract file '" + selFiles[i] + "'!");
+	      "Failed to extract file '" + selFiles.get(i) + "'!");
 	  return;
 	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
 	    LoggingLevel.SEVERE,
-	    "Failed to extract file '" + selFiles[i] + "':",
+	    "Failed to extract file '" + selFiles.get(i) + "':",
 	    e);
       }
     }
@@ -1031,7 +1031,7 @@ public class PreviewBrowserPanel
       classes             = ClassLister.getSingleton().getClasses(AbstractLocalFilesAction.class);
       for (Class cls: classes) {
 	try {
-	  local = (AbstractLocalFilesAction) cls.newInstance();
+	  local = (AbstractLocalFilesAction) cls.getDeclaredConstructor().newInstance();
 	  local.setOwner(this);
 	  m_LocalFilesActions.add(local);
 	}
@@ -1096,12 +1096,12 @@ public class PreviewBrowserPanel
    * Reloads the directory and content.
    */
   public void reload() {
-    Object[]	selected;
+    List	selected;
 
-    selected = m_ListLocalFiles.getSelectedValues();
+    selected = m_ListLocalFiles.getSelectedValuesList();
     open(new PlaceholderDirectory(m_PanelDir.getCurrent()));
-    if (selected.length > 0)
-      m_ListLocalFiles.setSelectedValue(selected[0], true);
+    if (selected.size() > 0)
+      m_ListLocalFiles.setSelectedValue(selected.get(0), true);
   }
 
   /**

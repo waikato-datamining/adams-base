@@ -79,7 +79,7 @@ public class SimpleSuggestion
       try {
         classes = props.getProperty(name).replace(" ", "").split(",");
         for (String cls: classes)
-	  result.add((Actor) ClassManager.getSingleton().forName(cls).newInstance());
+	  result.add((Actor) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate suggestion for '" + name + "': " + props.getProperty(name), e);

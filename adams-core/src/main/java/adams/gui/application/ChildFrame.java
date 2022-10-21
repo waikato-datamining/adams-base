@@ -317,7 +317,7 @@ public class ChildFrame
 
     comp = getContentPane().getComponent(0);
     try {
-      panel  = (JPanel) comp.getClass().newInstance();
+      panel  = (JPanel) comp.getClass().getDeclaredConstructor().newInstance();
       result = new ChildFrame(getParentFrame(), m_InitialTitle, m_IconName);
       result.setSize(getSize());
       result.setLocation(getX() + 20, getY() + 20);

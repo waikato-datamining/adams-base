@@ -108,7 +108,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((AbstractDataContainerReader) converter).getFormatDescription();
 	  ext  = ((AbstractDataContainerReader) converter).getFormatExtensions();
@@ -178,7 +178,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -221,7 +221,7 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         m_CurrentHandler = null;

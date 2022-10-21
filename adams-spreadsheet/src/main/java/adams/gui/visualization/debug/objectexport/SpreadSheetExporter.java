@@ -113,7 +113,7 @@ public class SpreadSheetExporter
     classnames = AbstractSpreadSheetWriter.getWriters();
     for (String classname: classnames) {
       try {
-	writer     = (SpreadSheetWriter) ClassManager.getSingleton().forName(classname).newInstance();
+	writer     = (SpreadSheetWriter) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 	extensions = writer.getFormatExtensions();
 	for (String extension: extensions) {
 	  if (!result.contains(extension))

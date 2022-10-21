@@ -182,7 +182,7 @@ public class AbstractAdvancedScriptEditor
 	String s = m_TextStatement.getContent();
 	if (((AbstractAdvancedScript) getValue()).isValid(s) && !s.equals(((AbstractAdvancedScript) getValue()).getValue())) {
 	  try {
-	    AbstractAdvancedScript newValue = (AbstractAdvancedScript) getValue().getClass().newInstance();
+	    AbstractAdvancedScript newValue = (AbstractAdvancedScript) getValue().getClass().getDeclaredConstructor().newInstance();
 	    newValue.setValue(s);
 	    setValue(newValue);
 	  }

@@ -143,7 +143,7 @@ public class StringToCustomStringRepresentation
     cls    = ClassManager.getSingleton().forName(m_Classname);
     editor = PropertyEditorManager.findEditor(cls);
     if (editor instanceof CustomStringRepresentationHandler) {
-      editor.setValue(cls.newInstance());
+      editor.setValue(cls.getDeclaredConstructor().newInstance());
       result = ((CustomStringRepresentationHandler) editor).fromCustomStringRepresentation((String) m_Input);
     }
     else {

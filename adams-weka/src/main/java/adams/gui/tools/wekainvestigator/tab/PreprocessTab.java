@@ -172,7 +172,7 @@ public class PreprocessTab
     classes   = AbstractSelectedAttributesAction.getActions();
     for (Class cls: classes) {
       try {
-	action = (AbstractSelectedAttributesAction) cls.newInstance();
+	action = (AbstractSelectedAttributesAction) cls.getDeclaredConstructor().newInstance();
 	action.setOwner(this);
 	m_Actions.add(action);
       }

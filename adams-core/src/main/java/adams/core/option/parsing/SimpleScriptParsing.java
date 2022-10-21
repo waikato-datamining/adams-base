@@ -56,7 +56,7 @@ public class SimpleScriptParsing
     try {
       if (cls.isArray())
 	cls = cls.getComponentType();
-      result = (AbstractSimpleScript) cls.newInstance();
+      result = (AbstractSimpleScript) cls.getDeclaredConstructor().newInstance();
       result.setValue(Utils.unbackQuoteChars(str));
     }
     catch (Exception e) {

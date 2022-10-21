@@ -310,7 +310,7 @@ public class SerializationFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -337,7 +337,7 @@ public class SerializationFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

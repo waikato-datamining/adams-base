@@ -232,7 +232,7 @@ public class SpreadSheetToMap
     int		colKey;
     int		colValue;
 
-    result = (Map) m_MapClass.classValue().newInstance();
+    result = (Map) m_MapClass.classValue().getDeclaredConstructor().newInstance();
     sheet  = (SpreadSheet) m_Input;
     m_KeyColumn.setData(sheet);
     colKey = m_KeyColumn.getIntIndex();

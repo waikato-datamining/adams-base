@@ -92,7 +92,7 @@ public class ActorSuggestion {
     actors = new ArrayList<>();
     for (i = 0; i < parts.length; i++)  {
       try {
-	actors.add((Actor) ClassManager.getSingleton().forName(parts[i]).newInstance());
+	actors.add((Actor) ClassManager.getSingleton().forName(parts[i]).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate default actor '" + parts[i] + "':");

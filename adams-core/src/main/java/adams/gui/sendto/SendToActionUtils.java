@@ -68,7 +68,7 @@ public class SendToActionUtils {
       classes = ClassLister.getSingleton().getClassnames(AbstractSendToAction.class);
       for (String cls: classes) {
 	try {
-	  sendto   = (AbstractSendToAction) ClassManager.getSingleton().forName(cls).newInstance();
+	  sendto   = (AbstractSendToAction) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	  accepted = sendto.accepts();
 	  for (Class accept: accepted) {
 	    if (!m_AcceptedCache.containsKey(accept))
@@ -106,7 +106,7 @@ public class SendToActionUtils {
       if (classes != null) {
 	for (Class c: classes) {
 	  try {
-	    action = (AbstractSendToAction) c.newInstance();
+	    action = (AbstractSendToAction) c.getDeclaredConstructor().newInstance();
 	    if (!result.contains(action)) {
 	      action.setOwner(owner);
 	      result.add(action);

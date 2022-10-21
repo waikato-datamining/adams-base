@@ -235,7 +235,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       }
       if ((filter != null) && (m_LastOpenHandler == null)) {
 	try {
-	  m_LastOpenHandler = ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  m_LastOpenHandler = ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate last open handler: " + filter.getClassname(), e);
@@ -252,7 +252,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       }
       if ((filter != null) && (m_LastSaveHandler == null)) {
 	try {
-	  m_LastSaveHandler = ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  m_LastSaveHandler = ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate last save handler: " + filter.getClassname(), e);
@@ -433,7 +433,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -462,7 +462,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	m_CurrentHandler = null;

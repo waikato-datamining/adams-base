@@ -146,7 +146,7 @@ public abstract class AbstractContentHandler
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  handler    = (AbstractContentHandler) ClassManager.getSingleton().forName(handlers[i]).newInstance();
+	  handler    = (AbstractContentHandler) ClassManager.getSingleton().forName(handlers[i]).getDeclaredConstructor().newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    ext = extensions[n];

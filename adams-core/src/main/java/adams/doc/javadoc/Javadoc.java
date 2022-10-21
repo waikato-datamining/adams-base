@@ -348,7 +348,7 @@ public abstract class Javadoc
 
     if (result) {
       try {
-	cls.newInstance();
+	cls.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	result = false;
@@ -372,7 +372,7 @@ public abstract class Javadoc
 
     try {
       cls    = ClassManager.getSingleton().forName(getClassname());
-      result = cls.newInstance();
+      result = cls.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = null;

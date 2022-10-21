@@ -153,7 +153,7 @@ public class JdbcUrlEditor
     JdbcUrl	result;
 
     try {
-      result = (JdbcUrl) getValue().getClass().newInstance();
+      result = (JdbcUrl) getValue().getClass().getDeclaredConstructor().newInstance();
       result.setValue(s);
     }
     catch (Exception e) {

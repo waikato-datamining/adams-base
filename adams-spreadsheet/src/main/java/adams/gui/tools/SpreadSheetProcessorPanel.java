@@ -163,7 +163,7 @@ public class SpreadSheetProcessorPanel
       m_Widgets = new ArrayList<>();
       for (Class cls: classes) {
         try {
-          widget = (AbstractWidget) cls.newInstance();
+          widget = (AbstractWidget) cls.getDeclaredConstructor().newInstance();
           widget.setOwner(m_Owner);
           m_Widgets.add(widget);
 	}

@@ -329,7 +329,7 @@ public class SegmentationPanel
     buttonPointer = null;
     for (Class t: tools) {
       try {
-	final AbstractTool tool = (AbstractTool) t.newInstance();
+	final AbstractTool tool = (AbstractTool) t.getDeclaredConstructor().newInstance();
 	tool.setCanvas(m_PanelCanvas);
 	button = new BaseToggleButton(tool.getIcon());
 	button.setToolTipText(tool.getName());

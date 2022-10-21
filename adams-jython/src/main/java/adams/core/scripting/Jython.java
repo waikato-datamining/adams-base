@@ -172,7 +172,7 @@ public class Jython
 
     if (isPresent()) {
       try {
-	result = ClassManager.getSingleton().forName(CLASS_PYTHONINERPRETER).newInstance();
+	result = ClassManager.getSingleton().forName(CLASS_PYTHONINERPRETER).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate new interpreter!", e);

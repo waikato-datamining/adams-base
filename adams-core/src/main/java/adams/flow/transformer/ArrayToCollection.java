@@ -205,7 +205,7 @@ public class ArrayToCollection
     result = null;
     array  = m_InputToken.getPayload();
     try {
-      coll = (Collection) m_CollectionClass.classValue().newInstance();
+      coll = (Collection) m_CollectionClass.classValue().getDeclaredConstructor().newInstance();
       len = Array.getLength(array);
       for (i = 0; i < len; i++)
 	coll.add(Array.get(array, i));

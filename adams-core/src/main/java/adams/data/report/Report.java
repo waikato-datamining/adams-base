@@ -888,7 +888,7 @@ public class Report
     Report	result;
 
     try {
-      result = (Report) report.getClass().newInstance();
+      result = (Report) report.getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       e.printStackTrace();

@@ -90,7 +90,7 @@ public class ObjectExporterFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	desc      = ((AbstractObjectExporter) converter).getFormatDescription();
 	ext       = ((AbstractObjectExporter) converter).getFormatExtensions();
       }
@@ -140,7 +140,7 @@ public class ObjectExporterFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       try {
 	cls      = ClassManager.getSingleton().forName(filter.getClassname());
-	exporter = (AbstractObjectExporter) cls.newInstance();
+	exporter = (AbstractObjectExporter) cls.getDeclaredConstructor().newInstance();
 	if (exporter.handles(m_CurrentClass))
 	  result.add(filter);
       }

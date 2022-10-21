@@ -94,7 +94,7 @@ public class ClassManager
       if (cls.equals(DefaultClassManager.class))
 	continue;
       try {
-	m_Managers.add((CustomClassManager) cls.newInstance());
+	m_Managers.add((CustomClassManager) cls.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);

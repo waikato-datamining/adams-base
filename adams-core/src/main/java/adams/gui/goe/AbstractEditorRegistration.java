@@ -100,7 +100,7 @@ public abstract class AbstractEditorRegistration
     registrations = getRegistrations();
     for (String classname: registrations) {
       try {
-	registration = (AbstractEditorRegistration) ClassManager.getSingleton().forName(classname).newInstance();
+	registration = (AbstractEditorRegistration) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 	if (registration instanceof AdamsEditorsRegistration)
 	  continue;
 	if (!registration.register())

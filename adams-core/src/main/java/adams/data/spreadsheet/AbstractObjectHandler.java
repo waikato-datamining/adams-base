@@ -115,7 +115,7 @@ public abstract class AbstractObjectHandler<T>
     // already cached?
     if (m_Handlers.containsKey(cls)) {
       try {
-	result = (AbstractObjectHandler) m_Handlers.get(cls).newInstance();
+	result = (AbstractObjectHandler) m_Handlers.get(cls).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate handler: " + m_Handlers.get(cls).getName());
@@ -127,7 +127,7 @@ public abstract class AbstractObjectHandler<T>
       handlers = getHandlers();
       for (String h: handlers) {
 	try {
-	  handler = (AbstractObjectHandler) ClassManager.getSingleton().forName(h).newInstance();
+	  handler = (AbstractObjectHandler) ClassManager.getSingleton().forName(h).getDeclaredConstructor().newInstance();
 	  if (handler.handles(cls)) {
 	    m_Handlers.put(cls, handler.getClass());
 	    result = handler;

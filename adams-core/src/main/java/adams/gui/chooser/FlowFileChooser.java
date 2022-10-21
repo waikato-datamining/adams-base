@@ -127,7 +127,7 @@ public class FlowFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((FlowReader) converter).getFormatDescription();
 	  ext  = ((FlowReader) converter).getFormatExtensions();
@@ -261,7 +261,7 @@ public class FlowFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (FlowReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (FlowReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -288,7 +288,7 @@ public class FlowFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (FlowWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (FlowWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

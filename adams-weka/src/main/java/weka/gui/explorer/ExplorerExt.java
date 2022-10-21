@@ -187,7 +187,7 @@ public class ExplorerExt
     classnames = AbstractAdditionalExplorerPanel.getPanels();
     for (String classname: classnames) {
       try {
-	additional = (AdditionalExplorerPanel) ClassManager.getSingleton().forName(classname).newInstance();
+	additional = (AdditionalExplorerPanel) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 	panel      = additional.getExplorerPanel();
 	handler    = additional.getExplorerPanelHandler();
 	m_Panels.add(panel);

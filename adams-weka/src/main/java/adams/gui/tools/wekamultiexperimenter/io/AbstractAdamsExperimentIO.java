@@ -90,7 +90,7 @@ public abstract class AbstractAdamsExperimentIO<T extends AbstractExperiment>
 
     for (Class cls: classes) {
       try {
-	handler = (FileFormatHandler) cls.newInstance();
+	handler = (FileFormatHandler) cls.getDeclaredConstructor().newInstance();
 	exts    = handler.getFormatExtensions();
 	for (String ext: exts) {
 	  if (!result.contains(ext))

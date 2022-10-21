@@ -124,7 +124,7 @@ public abstract class AbstractPropertyExtractor
     if (m_Cache.containsKey(cls)) {
       try {
 	for (Class extrCls: m_Cache.get(cls))
-	  result.add((AbstractPropertyExtractor) extrCls.newInstance());
+	  result.add((AbstractPropertyExtractor) extrCls.getDeclaredConstructor().newInstance());
 	return result;
       }
       catch (Exception e) {
@@ -138,7 +138,7 @@ public abstract class AbstractPropertyExtractor
       if (m_ExtractorClasses[i] == DefaultPropertyExtractor.class)
 	continue;
       try {
-	extractor = (AbstractPropertyExtractor) m_ExtractorClasses[i].newInstance();
+	extractor = (AbstractPropertyExtractor) m_ExtractorClasses[i].getDeclaredConstructor().newInstance();
 	if (extractor.handles(cls))
 	  result.add(extractor);
       }

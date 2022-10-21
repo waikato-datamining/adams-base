@@ -207,7 +207,7 @@ public class AxisPanel
     m_ShowGridLines          = other.getShowGridLines();
     m_Visibility             = other.getVisibility();
     try {
-      m_Model = other.getAxisModel().getClass().newInstance();
+      m_Model = other.getAxisModel().getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       System.err.println("Failed to create instance of axis model:");

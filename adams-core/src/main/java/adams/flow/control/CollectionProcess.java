@@ -422,9 +422,9 @@ public class CollectionProcess
     if (!isStopped() && (result == null) && (getOutputTokens().size() > 0)) {
       try {
 	if (m_CollectionClass.length() == 0)
-	  collOut = collIn.getClass().newInstance();
+	  collOut = collIn.getClass().getDeclaredConstructor().newInstance();
 	else
-	  collOut = (Collection) m_CollectionClass.classValue().newInstance();
+	  collOut = (Collection) m_CollectionClass.classValue().getDeclaredConstructor().newInstance();
 	for (i = 0; i < getOutputTokens().size(); i++)
 	  collOut.add(getOutputTokens().get(i).getPayload());
 	m_OutputToken = new Token(collOut);

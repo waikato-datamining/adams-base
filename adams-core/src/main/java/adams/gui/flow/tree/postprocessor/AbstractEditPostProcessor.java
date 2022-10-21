@@ -134,7 +134,7 @@ public abstract class AbstractEditPostProcessor
     sel        = tree.getSelectionFullNames();
     for (Class processor : processors) {
       try {
-	proc = (AbstractEditPostProcessor) processor.newInstance();
+	proc = (AbstractEditPostProcessor) processor.getDeclaredConstructor().newInstance();
 	if (proc.applies(parent, oldActor, newActor)) {
 	  if (!confirmed) {
 	    if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?") == JOptionPane.YES_OPTION) {

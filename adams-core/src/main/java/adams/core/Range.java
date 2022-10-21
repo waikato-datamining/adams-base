@@ -881,7 +881,7 @@ public class Range
     Range	result;
     
     try {
-      result = getClass().newInstance();
+      result = getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create new instance of " + getClass().getName(), e);

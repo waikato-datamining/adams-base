@@ -228,7 +228,7 @@ public class ActorClassTreeFilter
     synchronized(m_ClassActorCache) {
       if (!m_ClassActorCache.containsKey(cls)) {
 	try {
-	  actor = (Actor) cls.newInstance();
+	  actor = (Actor) cls.getDeclaredConstructor().newInstance();
 	  m_ClassActorCache.put(cls, actor);
 	}
 	catch (Exception e) {

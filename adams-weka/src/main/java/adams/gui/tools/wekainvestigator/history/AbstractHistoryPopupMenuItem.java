@@ -103,7 +103,7 @@ public abstract class AbstractHistoryPopupMenuItem<H extends AbstractNamedHistor
     menuitems = new ArrayList<>();
     for (Class cls: classes) {
       try {
-	menuitems.add((AbstractHistoryPopupMenuItem) cls.newInstance());
+	menuitems.add((AbstractHistoryPopupMenuItem) cls.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(

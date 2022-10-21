@@ -507,7 +507,7 @@ public class LoggingHelper {
     classname = OptionUtils.removeOption(options, "-logging-handler");
     if (classname != null) {
       try {
-	handler = (Handler) Class.forName(classname).newInstance();
+	handler = (Handler) Class.forName(classname).getDeclaredConstructor().newInstance();
 	multi   = new MultiHandler();
 	multi.setHandlers(new Handler[]{handler});
 	setDefaultHandler(multi);

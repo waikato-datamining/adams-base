@@ -186,7 +186,7 @@ public class AbstractSimpleScriptEditor
 	String s = m_TextStatement.getContent();
 	if (((AbstractSimpleScript) getValue()).isValid(s) && !s.equals(((AbstractSimpleScript) getValue()).getValue())) {
 	  try {
-	    AbstractSimpleScript newValue = (AbstractSimpleScript) getValue().getClass().newInstance();
+	    AbstractSimpleScript newValue = (AbstractSimpleScript) getValue().getClass().getDeclaredConstructor().newInstance();
 	    newValue.setValue(s);
 	    setValue(newValue);
 	  }

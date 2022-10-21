@@ -192,7 +192,7 @@ public class SerializedObjectPanel
       for (String classname: classnames) {
 	try {
 	  cls = ClassManager.getSingleton().forName(classname);
-	  viewers.add((SerializedObjectViewer) cls.newInstance());
+	  viewers.add((SerializedObjectViewer) cls.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
 	  System.err.println("Failed to instantiate viewer '" + classname + "':");

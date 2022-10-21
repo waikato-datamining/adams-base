@@ -88,7 +88,7 @@ public class JenericCommandLineHandler
 
     if (args.length > 0) {
       try {
-	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
 	args[0] = "";
 	setOptions(result, args);
       }

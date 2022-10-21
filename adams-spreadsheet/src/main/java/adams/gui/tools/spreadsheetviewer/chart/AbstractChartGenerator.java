@@ -294,7 +294,7 @@ public abstract class AbstractChartGenerator
     types = counter.names(false);
     if (types.hasNext()) {
       try {
-	result = (TickGenerator) ClassManager.getSingleton().forName(types.next()).newInstance();
+	result = (TickGenerator) ClassManager.getSingleton().forName(types.next()).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	// ignored

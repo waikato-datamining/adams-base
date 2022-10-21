@@ -481,7 +481,7 @@ public class WekaOptionUtils {
     if (value.isEmpty())
       return defValue;
 
-    Index result = defValue.getClass().newInstance();
+    Index result = defValue.getClass().getDeclaredConstructor().newInstance();
     result.setIndex(value);
     return result;
   }
@@ -513,7 +513,7 @@ public class WekaOptionUtils {
     String value;
     Class cls = defValue.getClass().getComponentType();
     while (!(value = Utils.getOption(option, options)).isEmpty()) {
-      Index index = (Index) cls.newInstance();
+      Index index = (Index) cls.getDeclaredConstructor().newInstance();
       index.setIndex(value);
       list.add(index);
     }
@@ -552,7 +552,7 @@ public class WekaOptionUtils {
     String value = Utils.getOption(option, options);
     if (value.isEmpty())
       return defValue;
-    adams.core.Range result = defValue.getClass().newInstance();
+    adams.core.Range result = defValue.getClass().getDeclaredConstructor().newInstance();
     result.setRange(value);
     return result;
   }
@@ -584,7 +584,7 @@ public class WekaOptionUtils {
     String value;
     Class cls = defValue.getClass().getComponentType();
     while (!(value = Utils.getOption(option, options)).isEmpty()) {
-      adams.core.Range range = (adams.core.Range) cls.newInstance();
+      adams.core.Range range = (adams.core.Range) cls.getDeclaredConstructor().newInstance();
       range.setRange(value);
       list.add(range);
     }
@@ -658,7 +658,7 @@ public class WekaOptionUtils {
     String value;
     Class cls = defValue.getClass().getComponentType();
     while (!(value = Utils.getOption(option, options)).isEmpty()) {
-      BaseObject obj = (BaseObject) cls.newInstance();
+      BaseObject obj = (BaseObject) cls.getDeclaredConstructor().newInstance();
       obj.setValue(value);
       list.add(obj);
     }

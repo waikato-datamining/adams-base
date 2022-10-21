@@ -150,7 +150,7 @@ public class PropertiesManager {
       if (m_Blacklisted.contains(handler))
         return null;
       try {
-	result = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handler).newInstance();
+	result = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handler).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         m_Blacklisted.add(handler);
@@ -194,7 +194,7 @@ public class PropertiesManager {
    */
   public static AbstractContentHandler getCustomContentHandler(Class cls) {
     try {
-      return getCustomContentHandler((AbstractContentHandler) cls.newInstance());
+      return getCustomContentHandler((AbstractContentHandler) cls.getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
@@ -255,7 +255,7 @@ public class PropertiesManager {
 
     cmdline = OptionUtils.getCommandLine(handler);
     try {
-      cmdlineDefault = OptionUtils.getCommandLine(handler.getClass().newInstance());
+      cmdlineDefault = OptionUtils.getCommandLine(handler.getClass().getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       cmdlineDefault = handler.getClass().getName();

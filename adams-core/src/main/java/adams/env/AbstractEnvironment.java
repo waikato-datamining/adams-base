@@ -160,7 +160,7 @@ public abstract class AbstractEnvironment
 
     for (String name: definitions) {
       try {
-	definition = (AbstractPropertiesDefinition) Class.forName(name).newInstance();
+	definition = (AbstractPropertiesDefinition) Class.forName(name).getDeclaredConstructor().newInstance();
 	definition.update(this);
 	m_Definitions.put(definition.getKey(), definition);
       }
@@ -560,7 +560,7 @@ public abstract class AbstractEnvironment
         System.err.println("WARNING: no environment class set, using default: " + Utils.classToString(m_EnvironmentClass));
       }
       try {
-	m_Environment = (AbstractEnvironment) m_EnvironmentClass.newInstance();
+	m_Environment = (AbstractEnvironment) m_EnvironmentClass.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	e.printStackTrace();

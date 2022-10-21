@@ -255,7 +255,7 @@ public class CommandlineHelpProducer
       }
       else {
 	try {
-	  val = option.getBaseClass().newInstance();
+	  val = option.getBaseClass().getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
 	  val = null;

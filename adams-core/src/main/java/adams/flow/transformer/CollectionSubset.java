@@ -204,7 +204,7 @@ public class CollectionSubset
     indices  = m_Elements.getIntIndices();
     collNew  = null;
     try {
-      collNew = collOld.getClass().newInstance();
+      collNew = collOld.getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = handleException("Failed to create new collection instance of: " + Utils.classToString(collOld), e);

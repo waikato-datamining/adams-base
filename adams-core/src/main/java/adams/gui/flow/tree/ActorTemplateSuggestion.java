@@ -92,7 +92,7 @@ public class ActorTemplateSuggestion {
     templates = new ArrayList<>();
     for (i = 0; i < parts.length; i++)  {
       try {
-	templates.add((AbstractActorTemplate) ClassManager.getSingleton().forName(parts[i]).newInstance());
+	templates.add((AbstractActorTemplate) ClassManager.getSingleton().forName(parts[i]).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE,

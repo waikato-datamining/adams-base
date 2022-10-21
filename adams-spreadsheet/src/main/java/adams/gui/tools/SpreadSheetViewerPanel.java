@@ -512,7 +512,7 @@ public class SpreadSheetViewerPanel
 	m_DataPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
-	    final AbstractDataPlugin data = (AbstractDataPlugin) ClassManager.getSingleton().forName(cls).newInstance();
+	    final AbstractDataPlugin data = (AbstractDataPlugin) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	    m_DataPlugins.add(data);
 	    if (data.getMenuIcon() == null)
 	      menuitem = new JMenuItem(data.getMenuText(), ImageManager.getEmptyIcon());
@@ -552,7 +552,7 @@ public class SpreadSheetViewerPanel
 	m_ViewPlugins         = new ArrayList<>();
 	for (String cls: classes) {
 	  try {
-	    final AbstractViewPlugin view = (AbstractViewPlugin) ClassManager.getSingleton().forName(cls).newInstance();
+	    final AbstractViewPlugin view = (AbstractViewPlugin) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	    m_ViewPlugins.add(view);
 	    if (view.getMenuIcon() == null)
 	      menuitem = new JMenuItem(view.getMenuText(), ImageManager.getEmptyIcon());

@@ -496,7 +496,7 @@ public class FlowControlCenterPanel
     classname = FlowEditorPanel.getPropertiesEditor().getPath(
 	"FlowEditorClass", FlowEditorPanel.class.getName());
     try {
-      panel = (FlowEditorPanel) ClassManager.getSingleton().forName(classname).newInstance();
+      panel = (FlowEditorPanel) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
     }
     catch (Exception ex) {
       panel = new FlowEditorPanel();

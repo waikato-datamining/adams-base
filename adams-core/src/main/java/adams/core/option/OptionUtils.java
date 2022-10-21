@@ -647,7 +647,7 @@ public class OptionUtils {
     if (!classType.isAssignableFrom(cls))
       throw new Exception(classType.getName() + " is not assignable from " + className);
 
-    result  = cls.newInstance();
+    result  = cls.getDeclaredConstructor().newInstance();
     if (options != null) {
       handler = AbstractCommandLineHandler.getHandler(result);
       handler.setOptions(result, options);
@@ -749,7 +749,7 @@ public class OptionUtils {
     if (result == null) {
       editor = PropertyEditorManager.findEditor(cls);
       if (editor instanceof CustomStringRepresentationHandler) {
-	editor.setValue(cls.newInstance());
+	editor.setValue(cls.getDeclaredConstructor().newInstance());
 	result = ((CustomStringRepresentationHandler) editor).fromCustomStringRepresentation(value);
       }
     }

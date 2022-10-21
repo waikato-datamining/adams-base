@@ -328,7 +328,7 @@ public abstract class AbstractTableAction
       }
       else {
 	try {
-	  taction    = (AbstractTableAction) ClassManager.getSingleton().forName(action).newInstance();
+	  taction    = (AbstractTableAction) ClassManager.getSingleton().forName(action).getDeclaredConstructor().newInstance();
 	  singleAppl = 
 	      (rows.length == 1) 
 	      && (taction.isApplicable(table, rows[0], fields[0], valuesStr[0]));

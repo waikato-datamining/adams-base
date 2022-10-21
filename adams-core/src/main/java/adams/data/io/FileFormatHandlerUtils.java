@@ -84,7 +84,7 @@ public class FileFormatHandlerUtils {
     classes = ClassLister.getSingleton().getClasses(superclass);
     for (Class cls: classes) {
       try {
-	handler = (FileFormatHandler) cls.newInstance();
+	handler = (FileFormatHandler) cls.getDeclaredConstructor().newInstance();
 	exts    = handler.getFormatExtensions();
 	for (String ext: exts) {
 	  if (ext.startsWith("."))

@@ -580,7 +580,7 @@ public class FavoritesManagementPanel
     obj = null;
     try {
       subcls = ClassManager.getSingleton().forName(classes[0]);
-      obj    = subcls.newInstance();
+      obj    = subcls.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       e.printStackTrace();

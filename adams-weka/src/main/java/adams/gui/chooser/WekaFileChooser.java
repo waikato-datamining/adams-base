@@ -129,7 +129,7 @@ public class WekaFileChooser
 
       // get data from converter
       try {
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((AbstractFileLoader) converter).getFileDescription();
 	  ext  = ((AbstractFileLoader) converter).getFileExtensions();
@@ -268,7 +268,7 @@ public class WekaFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractFileLoader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractFileLoader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -300,7 +300,7 @@ public class WekaFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractFileSaver) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractFileSaver) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
 	  handleException("Failed to instantiate writer: " + filter.getClassname(), e);

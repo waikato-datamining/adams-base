@@ -79,7 +79,7 @@ public class GlobalInfoCache {
       try {
 	cls    = ClassManager.getSingleton().forName(clsname);
 	method = cls.getMethod(METHOD_GLOBALINFO, new Class[0]);
-	obj    = cls.newInstance();
+	obj    = cls.getDeclaredConstructor().newInstance();
 	info   = (String) method.invoke(obj, new Object[0]);
       }
       catch (Exception e) {

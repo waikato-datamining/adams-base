@@ -220,7 +220,7 @@ public abstract class AbstractQuickSearchActor
       Class cls = m_SearchPanel.getSelectedClass();
       dialog.setVisible(false);
       try {
-	Actor actor = (Actor) cls.newInstance();
+	Actor actor = (Actor) cls.getDeclaredConstructor().newInstance();
 	addActor(state, actor, position);
       }
       catch (Exception ex) {

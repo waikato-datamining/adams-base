@@ -131,7 +131,7 @@ public class GenericArrayEditor
 						  final boolean isSelected,
 						  final boolean cellHasFocus) {
       try {
-	final PropertyEditor e = (PropertyEditor) m_EditorClass.newInstance();
+	final PropertyEditor e = (PropertyEditor) m_EditorClass.getDeclaredConstructor().newInstance();
 	AbstractGenericObjectEditorHandler handlerGOE = AbstractGenericObjectEditorHandler.getHandler(e);
 	handlerGOE.setClassType(e, m_ValueClass);
 	handlerGOE.setCanChangeClassInDialog(e, true);

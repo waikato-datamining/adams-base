@@ -96,7 +96,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
     classes = ClassLister.getSingleton().getClasses(AbstractPlotPopupCustomizer.class);
     for (Class c: classes) {
       try {
-	m_PlotCustomizers.add((AbstractPlotPopupCustomizer) c.newInstance());
+	m_PlotCustomizers.add((AbstractPlotPopupCustomizer) c.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
@@ -109,7 +109,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
     classes = ClassLister.getSingleton().getClasses(AbstractContainerListPopupCustomizer.class);
     for (Class c: classes) {
       try {
-	m_ContainerListCustomizers.add((AbstractContainerListPopupCustomizer) c.newInstance());
+	m_ContainerListCustomizers.add((AbstractContainerListPopupCustomizer) c.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(

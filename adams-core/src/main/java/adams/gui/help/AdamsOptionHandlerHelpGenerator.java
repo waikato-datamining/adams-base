@@ -67,7 +67,7 @@ public class AdamsOptionHandlerHelpGenerator
   @Override
   public String generate(Class cls) {
     try {
-      return generate(cls.newInstance());
+      return generate(cls.getDeclaredConstructor().newInstance());
     }
     catch (Exception ex) {
       ConsolePanel.getSingleton().append(

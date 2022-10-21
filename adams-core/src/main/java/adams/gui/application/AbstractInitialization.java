@@ -73,7 +73,7 @@ public abstract class AbstractInitialization
     classes = AbstractInitialization.getInitializations();
     for (String cls: classes) {
       try {
-	init   = (Initialization) ClassManager.getSingleton().forName(cls).newInstance();
+	init   = (Initialization) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	result = init.initialize(parent) || result;
       }
       catch (Exception e) {

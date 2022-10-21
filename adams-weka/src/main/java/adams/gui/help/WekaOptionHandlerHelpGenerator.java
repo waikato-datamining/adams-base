@@ -143,7 +143,7 @@ public class WekaOptionHandlerHelpGenerator
     Object		obj;
 
     try {
-      obj = cls.newInstance();
+      obj = cls.getDeclaredConstructor().newInstance();
     }
     catch (Exception ex) {
       ConsolePanel.getSingleton().append(

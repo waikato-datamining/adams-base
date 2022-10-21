@@ -67,7 +67,7 @@ public class DefaultCommandLineHandler
 
     if (args.length > 0) {
       try {
-	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);

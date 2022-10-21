@@ -156,7 +156,7 @@ public class ActionQuickSearch
       m_AllActions = new ArrayList<>();
       for (Class cls: allClasses) {
 	try {
-	  m_AllActions.add(cls.newInstance());
+	  m_AllActions.add(cls.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
 	  ConsolePanel.getSingleton().append("Failed to instantiate action class " + Utils.classToString(cls), e);

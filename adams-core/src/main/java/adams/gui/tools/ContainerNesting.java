@@ -119,7 +119,7 @@ public class ContainerNesting {
     
     // analyzing
     System.err.println("Analyzing container...");
-    Container cont = (Container) ClassManager.getSingleton().forName(args[1]).newInstance();
+    Container cont = (Container) ClassManager.getSingleton().forName(args[1]).getDeclaredConstructor().newInstance();
     BaseTree tree = analyze(cont);
     System.out.println(tree);
     

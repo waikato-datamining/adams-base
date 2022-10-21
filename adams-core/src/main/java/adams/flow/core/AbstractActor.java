@@ -193,7 +193,7 @@ public abstract class AbstractActor
       for (i = 0; i < containers.size(); i++) {
 	result.append("\n- " + containers.get(i).getName() + ": ");
 	try {
-	  cont  = (AbstractContainer) containers.get(i).newInstance();
+	  cont  = (AbstractContainer) containers.get(i).getDeclaredConstructor().newInstance();
 	  enm   = cont.names();
 	  while (enm.hasNext()) {
 	    name = enm.next();

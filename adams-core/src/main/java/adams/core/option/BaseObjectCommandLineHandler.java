@@ -64,7 +64,7 @@ public class BaseObjectCommandLineHandler
 
     if (args.length == 2) {
       try {
-	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result  = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
 	setOptions(result, new String[]{args[1]});
       }
       catch (Exception e) {
@@ -73,7 +73,7 @@ public class BaseObjectCommandLineHandler
     }
     else if (args.length == 1) {
       try {
-	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).newInstance();
+	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);

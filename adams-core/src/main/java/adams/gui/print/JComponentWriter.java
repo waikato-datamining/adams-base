@@ -394,7 +394,7 @@ public abstract class JComponentWriter
     for (i = 0; i < writerNames.length; i++) {
       try {
         cls    = ClassManager.getSingleton().forName(writerNames[i]);
-        writer = (JComponentWriter) cls.newInstance();
+        writer = (JComponentWriter) cls.getDeclaredConstructor().newInstance();
         if (writer.getExtensions().length > 0) {
           filter = new JComponentWriterFileFilter(
               writer.getExtensions(),

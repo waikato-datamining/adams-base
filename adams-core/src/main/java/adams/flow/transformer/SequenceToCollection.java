@@ -375,7 +375,7 @@ public class SequenceToCollection
 	if (isLoggingEnabled())
 	  getLogger().info("Buffered elements: " + m_Elements.size());
 	if ((m_CollectionSize == -1) || (m_Elements.size() == m_CollectionSize)) {
-	  coll = (Collection) ClassManager.getSingleton().forName(m_CollectionClass).newInstance();
+	  coll = (Collection) ClassManager.getSingleton().forName(m_CollectionClass).getDeclaredConstructor().newInstance();
 	  if (isLoggingEnabled())
 	    getLogger().info("Collection type: " + coll.getClass().getComponentType());
 	  coll.addAll(m_Elements);

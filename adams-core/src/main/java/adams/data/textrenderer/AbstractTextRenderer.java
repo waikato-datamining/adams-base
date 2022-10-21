@@ -128,7 +128,7 @@ public abstract class AbstractTextRenderer
         if (renderer.equals(getDefaultRenderer().getClass()))
           continue;
         try {
-          m_Renderers.add((TextRenderer) renderer.newInstance());
+          m_Renderers.add((TextRenderer) renderer.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
           System.err.println("Failed to instantiate text renderer: " + Utils.classToString(renderer));
@@ -188,7 +188,7 @@ public abstract class AbstractTextRenderer
         if (renderer.equals(getDefaultRenderer().getClass()))
           continue;
         try {
-          m_Renderers.add((TextRenderer) renderer.newInstance());
+          m_Renderers.add((TextRenderer) renderer.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
           System.err.println("Failed to instantiate text renderer: " + Utils.classToString(renderer));

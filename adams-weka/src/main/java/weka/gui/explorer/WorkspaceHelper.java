@@ -109,7 +109,7 @@ public class WorkspaceHelper {
     for (i = 0; i < cnames.length; i++) {
       if (cnames[i].equals(DefaultHandler.class.getName()))
 	def = i;
-      handlers.add((AbstractExplorerPanelHandler) ClassManager.getSingleton().forName(cnames[i]).newInstance());
+      handlers.add((AbstractExplorerPanelHandler) ClassManager.getSingleton().forName(cnames[i]).getDeclaredConstructor().newInstance());
     }
 
     if ((def != -1) && (handlers.size() > 1)) {
@@ -246,7 +246,7 @@ public class WorkspaceHelper {
     panels.addAll(expext.getPanels());
     for (n = 0; n < panelCount; n++) {
       cpanel = ClassManager.getSingleton().forName((String) ois.readObject());
-      handler = (AbstractExplorerPanelHandler) ClassManager.getSingleton().forName((String) ois.readObject()).newInstance();
+      handler = (AbstractExplorerPanelHandler) ClassManager.getSingleton().forName((String) ois.readObject()).getDeclaredConstructor().newInstance();
       for (ExplorerPanel panel : panels) {
 	if (panel.getClass().equals(cpanel)) {
 	  handler.deserialize(panel, ois.readObject());

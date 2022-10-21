@@ -318,7 +318,7 @@ public class Tree
     classes     = ClassLister.getSingleton().getClasses(TreePopupAction.class);
     for (Class cls: classes) {
       try {
-	action = (TreePopupAction) cls.newInstance();
+	action = (TreePopupAction) cls.getDeclaredConstructor().newInstance();
 	if (action.hasAccelerator())
 	  m_Shortcuts.add(action);
       }
@@ -1193,7 +1193,7 @@ public class Tree
       }
       else {
 	try {
-	  action = (TreePopupAction) cls.newInstance();
+	  action = (TreePopupAction) cls.getDeclaredConstructor().newInstance();
 	  action.update(state);
 	  menu.add(action.getMenuItem());
 	  first = false;

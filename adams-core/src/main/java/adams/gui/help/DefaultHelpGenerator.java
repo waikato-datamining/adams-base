@@ -81,7 +81,7 @@ public class DefaultHelpGenerator
 
     try {
       try {
-	obj  = cls.newInstance();
+	obj  = cls.getDeclaredConstructor().newInstance();
         meth = cls.getMethod("globalInfo");
         info = (String) meth.invoke(obj);
 	result.append("<h3>DESCRIPTION</h3>\n");

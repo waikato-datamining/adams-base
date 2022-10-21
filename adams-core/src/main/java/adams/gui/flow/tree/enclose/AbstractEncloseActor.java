@@ -78,7 +78,7 @@ public abstract class AbstractEncloseActor
     classes = ClassLister.getSingleton().getClasses(AbstractEncloseActor.class);
     for (Class cls: classes) {
       try {
-	enclose = (AbstractEncloseActor) cls.newInstance();
+	enclose = (AbstractEncloseActor) cls.getDeclaredConstructor().newInstance();
 	if (enclose.canEnclose(state))
 	  result.add(enclose.enclose(state));
       }

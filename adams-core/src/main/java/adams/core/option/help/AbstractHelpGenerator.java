@@ -163,7 +163,7 @@ public abstract class AbstractHelpGenerator
     classes = ClassLister.getSingleton().getClasses(AbstractHelpGenerator.class);
     for (Class cls: classes) {
       try {
-        generator = (AbstractHelpGenerator) cls.newInstance();
+        generator = (AbstractHelpGenerator) cls.getDeclaredConstructor().newInstance();
         if (generator.handles(obj))
           result.append(generator.generate(obj, format));
       }

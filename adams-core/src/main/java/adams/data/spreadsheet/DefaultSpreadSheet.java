@@ -201,7 +201,7 @@ public class DefaultSpreadSheet
     SpreadSheet	result;
     
     try {
-      result = getClass().newInstance();
+      result = getClass().getDeclaredConstructor().newInstance();
       result.setDataRowClass(getDataRowClass());
     }
     catch (Exception e) {

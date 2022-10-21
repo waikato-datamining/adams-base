@@ -223,7 +223,7 @@ public abstract class AbstractCommandLineHandler
     // already cached?
     if (m_Cache.containsKey(cls)) {
       try {
-	result = (AbstractCommandLineHandler) m_Cache.get(cls).newInstance();
+	result = (AbstractCommandLineHandler) m_Cache.get(cls).getDeclaredConstructor().newInstance();
 	return result;
       }
       catch (Exception e) {
@@ -238,7 +238,7 @@ public abstract class AbstractCommandLineHandler
       if (m_HandlerClasses[i] == DefaultCommandLineHandler.class)
 	continue;
       try {
-	handler = (AbstractCommandLineHandler) m_HandlerClasses[i].newInstance();
+	handler = (AbstractCommandLineHandler) m_HandlerClasses[i].getDeclaredConstructor().newInstance();
 	if (handler.handles(cls)) {
           if (m_HandlerClasses[i] == JenericCommandLineHandler.class) {
             jeneric = true;

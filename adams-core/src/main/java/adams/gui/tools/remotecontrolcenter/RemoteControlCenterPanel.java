@@ -221,7 +221,7 @@ public class RemoteControlCenterPanel
       classes = ClassLister.getSingleton().getClasses(AbstractRemoteControlCenterTab.class);
       for (final Class cls: classes) {
 	try {
-	  tab      = (AbstractRemoteControlCenterTab) cls.newInstance();
+	  tab      = (AbstractRemoteControlCenterTab) cls.getDeclaredConstructor().newInstance();
 	  menuitem = new JMenuItem(tab.getTitle());
 	  if (tab.getTabIcon() == null)
 	    menuitem.setIcon(ImageManager.getEmptyIcon());
@@ -229,7 +229,7 @@ public class RemoteControlCenterPanel
 	    menuitem.setIcon(ImageManager.getIcon(tab.getTabIcon()));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
-	      addTab((AbstractRemoteControlCenterTab) cls.newInstance(), true);
+	      addTab((AbstractRemoteControlCenterTab) cls.getDeclaredConstructor().newInstance(), true);
 	    }
 	    catch (Exception ex) {
 	      ConsolePanel.getSingleton().append("Failed to instantiate tab class: " + cls.getName(), ex);

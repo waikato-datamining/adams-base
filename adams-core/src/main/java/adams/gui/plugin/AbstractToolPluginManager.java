@@ -117,7 +117,7 @@ public abstract class AbstractToolPluginManager<T extends ToolPluginSupporter, P
     menuNames = new ArrayList<>();
     for (i = 0; i < plugins.length; i++) {
       try {
-	P plugin = (P) ClassManager.getSingleton().forName(plugins[i]).newInstance();
+	P plugin = (P) ClassManager.getSingleton().forName(plugins[i]).getDeclaredConstructor().newInstance();
 	m_Plugins.add(plugin);
 	if (!menuNames.contains(plugin.getMenu()))
 	  menuNames.add(plugin.getMenu());

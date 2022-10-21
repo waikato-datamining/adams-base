@@ -50,7 +50,7 @@ public class ChooserHelper {
     Object	result;
 
     try {
-      result = ClassManager.getSingleton().forName(subclass).newInstance();
+      result = ClassManager.getSingleton().forName(subclass).getDeclaredConstructor().newInstance();
       result.getClass().asSubclass(superclass);
     }
     catch (Exception e) {

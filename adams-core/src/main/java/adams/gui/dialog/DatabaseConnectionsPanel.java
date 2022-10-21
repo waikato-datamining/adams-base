@@ -80,7 +80,7 @@ public class DatabaseConnectionsPanel
     m_Panels  = new ArrayList<>();
     for (Class cls: classes) {
       try {
-	panel = (AbstractDatabaseConnectionPanel) cls.newInstance();
+	panel = (AbstractDatabaseConnectionPanel) cls.getDeclaredConstructor().newInstance();
 	panel.addChangeListener((ChangeEvent e) -> notifyChangeListeners());
 	m_Panels.add(panel);
       }

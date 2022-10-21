@@ -71,7 +71,7 @@ public class AnalysisPanel
       try {
 	if (classes[i].equals(DefaultAnalysisPanel.class))
 	  continue;
-	panels.add((AbstractAnalysisPanel) classes[i].newInstance());
+	panels.add((AbstractAnalysisPanel) classes[i].getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	logError("Failed to instantiate analysis panel: " + classes[i], "Analysis panels");

@@ -168,7 +168,7 @@ public class FileCommanderDirectoryPanel
     model    = new DefaultComboBoxModel<>();
     for (Class cls : ClassLister.getSingleton().getClasses(AbstractChooserPanelWithIOSupport.class)) {
       try {
-	chooser = (AbstractChooserPanelWithIOSupport) cls.newInstance();
+	chooser = (AbstractChooserPanelWithIOSupport) cls.getDeclaredConstructor().newInstance();
 	model.addElement(chooser);
 	if (cls == DirectoryChooserPanel.class)
 	  selected = chooser;

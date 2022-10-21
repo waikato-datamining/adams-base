@@ -87,7 +87,7 @@ public class AllJavadoc
 	continue;
       try {
 	cls = ClassManager.getSingleton().forName(list[i]);
-	m_Javadocs.add(cls.newInstance());
+	m_Javadocs.add(cls.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate: " + list[i], e);

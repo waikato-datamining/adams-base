@@ -122,7 +122,7 @@ public class FlowPanelNotificationArea
     classes          = AbstractNotificationAreaAction.getActions();
     for (Class cls: classes) {
       try {
-	action = (AbstractNotificationAreaAction) cls.newInstance();
+	action = (AbstractNotificationAreaAction) cls.getDeclaredConstructor().newInstance();
 	action.setOwner(this);
 	m_Actions.add(action);
       }

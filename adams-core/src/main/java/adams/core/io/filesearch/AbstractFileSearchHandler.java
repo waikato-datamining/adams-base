@@ -108,7 +108,7 @@ public abstract class AbstractFileSearchHandler
         if (cls.equals(TextFileSearchHandler.class))
           continue;
         try {
-          m_Handlers.add((AbstractFileSearchHandler) cls.newInstance());
+          m_Handlers.add((AbstractFileSearchHandler) cls.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception e) {
           LOGGER.log(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);

@@ -29,7 +29,10 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
 import adams.gui.core.UISettings;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -87,7 +90,7 @@ public class PreferencesManagerPanel
     classes = AbstractPreferencesPanel.getPanels();
     for (String cls: classes) {
       try {
-	m_Panels.add((PreferencesPanel) ClassManager.getSingleton().forName(cls).newInstance());
+	m_Panels.add((PreferencesPanel) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate preferences panel: " + cls, e);

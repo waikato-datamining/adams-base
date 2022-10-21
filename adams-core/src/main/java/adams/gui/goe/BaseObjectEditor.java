@@ -97,7 +97,7 @@ public class BaseObjectEditor
 	System.err.println("Falling back to BaseString class!");
 	cls = BaseString.class;
       }
-      result = (BaseObject) cls.newInstance();
+      result = (BaseObject) cls.getDeclaredConstructor().newInstance();
       result.setValue(str);
     }
     catch (Exception e) {
@@ -165,7 +165,7 @@ public class BaseObjectEditor
     BaseObject	result;
 
     try {
-      result = (BaseObject) getValue().getClass().newInstance();
+      result = (BaseObject) getValue().getClass().getDeclaredConstructor().newInstance();
       result.setValue(s);
     }
     catch (Exception e) {

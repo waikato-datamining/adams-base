@@ -295,7 +295,7 @@ public class ImageFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  if (!((AbstractImageReader) converter).isAvailable())
 	    continue;
@@ -413,7 +413,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractImageReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -440,7 +440,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractImageWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

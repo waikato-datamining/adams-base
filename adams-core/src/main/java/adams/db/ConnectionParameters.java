@@ -339,7 +339,7 @@ public class ConnectionParameters
     AbstractDatabaseConnection	result;
 
     try {
-      result = (AbstractDatabaseConnection) dbcon.newInstance();
+      result = (AbstractDatabaseConnection) dbcon.getDeclaredConstructor().newInstance();
       result.setURL(getURL());
       result.setUser(getUser());
       result.setPassword(getPassword());
@@ -367,7 +367,7 @@ public class ConnectionParameters
     ConnectionParameters	result;
 
     try {
-      result = (ConnectionParameters) ClassManager.getSingleton().forName(classname).newInstance();
+      result = (ConnectionParameters) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = new ConnectionParameters();

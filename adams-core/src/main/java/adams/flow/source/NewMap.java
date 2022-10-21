@@ -183,7 +183,7 @@ public class NewMap
     result = null;
 
     try {
-      m_OutputToken = new Token(m_MapClass.classValue().newInstance());
+      m_OutputToken = new Token(m_MapClass.classValue().getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       result = handleException("Failed to create map instance!", e);

@@ -166,7 +166,7 @@ public class ExperimenterPanel
 
     try {
       cname        = props.getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
-      m_PanelSetup = (AbstractSetupPanel) ClassManager.getSingleton().forName(cname).newInstance();
+      m_PanelSetup = (AbstractSetupPanel) ClassManager.getSingleton().forName(cname).getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate setups panel: " + props.getProperty("SetupsInitialPanel"), e);
@@ -209,7 +209,7 @@ public class ExperimenterPanel
     current.setOwner(null);
 
     try {
-      newSetup = (AbstractSetupPanel) setup.newInstance();
+      newSetup = (AbstractSetupPanel) setup.getDeclaredConstructor().newInstance();
       newSetup.setOwner(this);
       m_TabbedPane.setComponentAt(0, newSetup);
       m_TabbedPane.setIconAt(0, newSetup.getTabIcon());
@@ -518,7 +518,7 @@ public class ExperimenterPanel
       defSetup = getProperties().getProperty("Setups.InitialPanel", BasicWekaSetupPanel.class.getName());
       for (final Class cls: classes) {
 	try {
-	  final AbstractSetupPanel setup = (AbstractSetupPanel) cls.newInstance();
+	  final AbstractSetupPanel setup = (AbstractSetupPanel) cls.getDeclaredConstructor().newInstance();
 	  menuitem = new JMenuItem(setup.getSetupName());
 	  if (setup.getClass().getName().equals(defSetup)) {
 	    menuitem.setIcon(ImageManager.getIcon("new.gif"));

@@ -219,7 +219,7 @@ public class DefaultAnalysisPanel
     m_PanelsResults = new ArrayList<>();
     for (Class cls : ClassLister.getSingleton().getClasses(AbstractResultsPanel.class)) {
       try {
-	panel = (AbstractResultsPanel) cls.newInstance();
+	panel = (AbstractResultsPanel) cls.getDeclaredConstructor().newInstance();
 	m_PanelsResults.add(panel);
       }
       catch (Exception e) {
@@ -258,7 +258,7 @@ public class DefaultAnalysisPanel
 
     // tester
     try {
-      tester = (Tester) ClassManager.getSingleton().forName(props.getProperty("Results.Tester", PairedCorrectedTTester.class.getName())).newInstance();
+      tester = (Tester) ClassManager.getSingleton().forName(props.getProperty("Results.Tester", PairedCorrectedTTester.class.getName())).getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate tester: " + props.getProperty("Results.Tester"), e);
@@ -269,7 +269,7 @@ public class DefaultAnalysisPanel
 
     // matrix
     try {
-      matrix = (ResultMatrix) ClassManager.getSingleton().forName(props.getProperty("Results.ResultMatrix", ResultMatrixPlainText.class.getName())).newInstance();
+      matrix = (ResultMatrix) ClassManager.getSingleton().forName(props.getProperty("Results.ResultMatrix", ResultMatrixPlainText.class.getName())).getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate matrix: " + props.getProperty("Results.ResultMatrix"), e);

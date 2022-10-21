@@ -497,7 +497,7 @@ public class FlowEditorPanel
     additionals           = AbstractFlowEditorMenuItem.getMenuItems();
     for (Class additional: additionals) {
       try {
-	item = (AbstractFlowEditorMenuItem) additional.newInstance();
+	item = (AbstractFlowEditorMenuItem) additional.getDeclaredConstructor().newInstance();
 	item.setOwner(m_Self);
 	m_AdditionalMenuItems.add(item);
       }

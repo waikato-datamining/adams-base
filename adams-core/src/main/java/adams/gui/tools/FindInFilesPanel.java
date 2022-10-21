@@ -169,7 +169,7 @@ public class FindInFilesPanel
     m_ExceptionHandler = new ConsolePanelExceptionHandler();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractFindInFilesAction.class)) {
       try {
-        action = (AbstractFindInFilesAction) cls.newInstance();
+        action = (AbstractFindInFilesAction) cls.getDeclaredConstructor().newInstance();
         action.setOwner(this);
         m_Actions.add(action);
       }

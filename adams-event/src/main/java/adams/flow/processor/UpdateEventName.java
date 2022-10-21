@@ -131,7 +131,7 @@ public class UpdateEventName
     EventReference	result;
 
     try {
-      result = (EventReference) old.getClass().newInstance();
+      result = (EventReference) old.getClass().getDeclaredConstructor().newInstance();
       result.setValue(newName);
     }
     catch (Exception e) {

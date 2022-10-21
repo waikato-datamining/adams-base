@@ -127,7 +127,7 @@ public class SpreadSheetFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((SpreadSheetReader) converter).getFormatDescription();
 	  ext  = ((SpreadSheetReader) converter).getFormatExtensions();
@@ -261,7 +261,7 @@ public class SpreadSheetFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (SpreadSheetReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (SpreadSheetReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -288,7 +288,7 @@ public class SpreadSheetFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (SpreadSheetWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (SpreadSheetWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

@@ -619,7 +619,7 @@ public abstract class AbstractOptionConsumer<C,V>
     result = null;
 
     try {
-      consumer = cls.newInstance();
+      consumer = cls.getDeclaredConstructor().newInstance();
       result   = consumer.fromString(s);
       consumer.cleanUp();
     }
@@ -646,7 +646,7 @@ public abstract class AbstractOptionConsumer<C,V>
     result = null;
 
     try {
-      consumer = cls.newInstance();
+      consumer = cls.getDeclaredConstructor().newInstance();
       result   = consumer.fromFile(file);
       consumer.cleanUp();
     }
@@ -673,7 +673,7 @@ public abstract class AbstractOptionConsumer<C,V>
     result = null;
 
     try {
-      consumer = cls.newInstance();
+      consumer = cls.getDeclaredConstructor().newInstance();
       consumer.setInput(input);
       result   = consumer.consume();
       consumer.cleanUp();

@@ -261,7 +261,7 @@ public class OptionOutput
 	for (String classname: listing.get(module)) {
           outfile = new PlaceholderFile(subdir.getAbsolutePath() + File.separator + classname + m_Extension);
           try {
-            handler = (OptionHandler) ClassManager.getSingleton().forName(classname).newInstance();
+            handler = (OptionHandler) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 	    m_Producer.produce(handler);
 	    result = FileUtils.writeToFileMsg(outfile.getAbsolutePath(), m_Producer.toString(), false, m_Encoding.getValue());
 	    if (result != null)

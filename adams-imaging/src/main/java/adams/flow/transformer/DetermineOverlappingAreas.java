@@ -378,7 +378,7 @@ public class DetermineOverlappingAreas
     if (newObjs != null) {
       // assemble new report
       try {
-	newReport = thisReport.getClass().newInstance();
+	newReport = thisReport.getClass().getDeclaredConstructor().newInstance();
 	// transfer non-object fields
 	for (AbstractField field: thisReport.getFields()) {
 	  if (!field.getName().startsWith(m_Finder.getPrefix())) {

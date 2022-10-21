@@ -129,7 +129,7 @@ public class InvestigatorWorkspaceHelper
     while (i < list.size()) {
       try {
 	cls = ClassManager.getSingleton().forName((String) list.get(i));
-	tab = (AbstractInvestigatorTab) cls.newInstance();
+	tab = (AbstractInvestigatorTab) cls.getDeclaredConstructor().newInstance();
 	panel.getTabbedPane().addTab(tab, false);
 	tab.deserialize(list.get(i + 1), errors);
       }

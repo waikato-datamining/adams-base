@@ -160,7 +160,7 @@ public class FileCommanderPanel
     classes          = AbstractFileCommanderAction.getActions();
     for (Class cls: classes) {
       try {
-	action = (AbstractFileCommanderAction) cls.newInstance();
+	action = (AbstractFileCommanderAction) cls.getDeclaredConstructor().newInstance();
 	action.setOwner(this);
 	m_Actions.add(action);
       }

@@ -264,7 +264,7 @@ public class BasePanel
       System.exit(1);
     }
 
-    BasePanel panel = (BasePanel) Class.forName(args[0]).newInstance();
+    BasePanel panel = (BasePanel) Class.forName(args[0]).getDeclaredConstructor().newInstance();
     JFrame jf = new JFrame(panel.getClass().getName());
     jf.getContentPane().setLayout(new BorderLayout());
     jf.getContentPane().add(panel, BorderLayout.CENTER);

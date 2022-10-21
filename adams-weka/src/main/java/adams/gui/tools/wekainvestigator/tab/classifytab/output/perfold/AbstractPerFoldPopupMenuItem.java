@@ -102,7 +102,7 @@ public abstract class AbstractPerFoldPopupMenuItem {
     menuitems = new ArrayList<>();
     for (Class cls: classes) {
       try {
-	menuitems.add((AbstractPerFoldPopupMenuItem) cls.newInstance());
+	menuitems.add((AbstractPerFoldPopupMenuItem) cls.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(

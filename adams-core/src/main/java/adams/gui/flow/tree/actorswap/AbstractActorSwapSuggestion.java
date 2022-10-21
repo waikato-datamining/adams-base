@@ -89,7 +89,7 @@ public abstract class AbstractActorSwapSuggestion
     classes = ClassLister.getSingleton().getClasses(AbstractActorSwapSuggestion.class);
     for (Class cls: classes) {
       try {
-	suggestion = (AbstractActorSwapSuggestion) cls.newInstance();
+	suggestion = (AbstractActorSwapSuggestion) cls.getDeclaredConstructor().newInstance();
 	list       = suggestion.suggest(current);
 	if (list.size() > 0)
 	  result.addAll(list);

@@ -94,7 +94,7 @@ public enum Type
     AbstractAxisModel		result;
 
     try {
-      result = (AbstractAxisModel) m_AxisModelClass.newInstance();
+      result = (AbstractAxisModel) m_AxisModelClass.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = null;

@@ -92,7 +92,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     classes          = AbstractEditableDataTableAction.getActions();
     for (Class cls: classes) {
       try {
-	action = (AbstractEditableDataTableAction) cls.newInstance();
+	action = (AbstractEditableDataTableAction) cls.getDeclaredConstructor().newInstance();
 	action.setOwner(this);
 	m_Actions.add(action);
       }

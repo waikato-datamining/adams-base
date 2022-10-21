@@ -497,7 +497,7 @@ public abstract class AbstractOptionProducer<O,I>
     result = null;
 
     try {
-      producer = cls.newInstance();
+      producer = cls.getDeclaredConstructor().newInstance();
       producer.produce(handler);
       result   = producer.toString();
       producer.cleanUp();
@@ -524,7 +524,7 @@ public abstract class AbstractOptionProducer<O,I>
     result = null;
 
     try {
-      producer = cls.newInstance();
+      producer = cls.getDeclaredConstructor().newInstance();
       producer.produce(handler);
       result = producer.getOutput();
       producer.cleanUp();

@@ -118,7 +118,7 @@ public abstract class AbstractRecordActorAdded
       classes     = ClassLister.getSingleton().getClasses(AbstractRecordActorAdded.class);
       for (Class cls: classes) {
         try {
-          rec = (AbstractRecordActorAdded) cls.newInstance();
+          rec = (AbstractRecordActorAdded) cls.getDeclaredConstructor().newInstance();
           m_Recorders.add(rec);
 	}
         catch (Exception e) {

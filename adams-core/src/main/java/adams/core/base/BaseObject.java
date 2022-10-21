@@ -80,7 +80,7 @@ public abstract class BaseObject
     BaseObject	result;
 
     try {
-      result = getClass().newInstance();
+      result = getClass().getDeclaredConstructor().newInstance();
       result.setValue(getValue());
     }
     catch (Exception e) {
@@ -112,7 +112,7 @@ public abstract class BaseObject
     
     if (o instanceof String) {
       try {
-	other = getClass().newInstance();
+	other = getClass().getDeclaredConstructor().newInstance();
 	other.setValue((String) o);
       }
       catch (Exception e) {
@@ -272,7 +272,7 @@ public abstract class BaseObject
     BaseObject	result;
     
     try {
-      result = (BaseObject) cls.newInstance();
+      result = (BaseObject) cls.getDeclaredConstructor().newInstance();
       if (result.isValid(s))
 	result.setValue(s);
       else
@@ -393,13 +393,13 @@ public abstract class BaseObject
     }
 
     try {
-      test = cls.newInstance();
+      test = cls.getDeclaredConstructor().newInstance();
       for (String key : m_Properties.get(cls).keySetAll(new BaseRegExp(".*" + BaseObject.SUFFIX_DISPLAY))) {
 	display = m_Properties.get(cls).getProperty(key);
 	prefix = key.replaceAll("\\" + SUFFIX_DISPLAY + "$", "");
 	value = m_Properties.get(cls).getProperty(prefix + SUFFIX_VALUE, "");
 	if (test.isValid(value)) {
-	  inst = cls.newInstance();
+	  inst = cls.getDeclaredConstructor().newInstance();
 	  inst.setValue(value);
 	  result.put(display, inst);
 	}

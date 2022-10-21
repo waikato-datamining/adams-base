@@ -236,7 +236,7 @@ public class ObjectFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  if (!((AbstractObjectReader) converter).isAvailable())
 	    continue;
@@ -354,7 +354,7 @@ public class ObjectFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -381,7 +381,7 @@ public class ObjectFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractObjectWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractObjectWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

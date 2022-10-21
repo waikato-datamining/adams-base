@@ -61,7 +61,7 @@ public class ConfigurableEnumerationItemParsing
     if (defCurrent.getClass().isArray()) {
       if (Array.getLength(defCurrent) == 0) {
         try {
-	  defValue = (AbstractItem) ((AbstractArgumentOption) option).getBaseClass().newInstance();
+	  defValue = (AbstractItem) ((AbstractArgumentOption) option).getBaseClass().getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           System.err.println("Failed to instantiate " + Utils.classToString(((AbstractArgumentOption) option).getBaseClass()) + "!");

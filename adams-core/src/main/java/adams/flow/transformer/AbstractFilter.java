@@ -315,7 +315,7 @@ public abstract class AbstractFilter
 
     if (m_OutputContainer) {
       try {
-	cont = (AbstractFilterContainer) getOutputContainerClass().newInstance();
+	cont = (AbstractFilterContainer) getOutputContainerClass().getDeclaredConstructor().newInstance();
 	cont.setValue(AbstractFilterContainer.VALUE_FILTER, m_Filter);
 	cont.setValue(AbstractFilterContainer.VALUE_INPUT, m_InputToken.getPayload());
 	cont.setValue(AbstractFilterContainer.VALUE_DATA, output);

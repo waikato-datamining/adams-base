@@ -128,7 +128,7 @@ public class EmailFileChooser
       // get data from converter
       try {
 	cls       = ClassManager.getSingleton().forName(classname);
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((EmailFileReader) converter).getFormatDescription();
 	  ext  = ((EmailFileReader) converter).getFormatExtensions();
@@ -310,7 +310,7 @@ public class EmailFileChooser
     try {
       // determine current converter
       classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = ClassManager.getSingleton().forName(classname).newInstance();
+      newHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 
       if (m_CurrentHandler == null) {
 	m_CurrentHandler = newHandler;
@@ -339,7 +339,7 @@ public class EmailFileChooser
     if (m_CurrentHandler == null) {
       classname = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
       try {
-	m_CurrentHandler = ClassManager.getSingleton().forName(classname).newInstance();
+	m_CurrentHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         m_CurrentHandler = null;
@@ -388,7 +388,7 @@ public class EmailFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (EmailFileReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (EmailFileReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -415,7 +415,7 @@ public class EmailFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (EmailFileWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (EmailFileWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

@@ -70,7 +70,7 @@ public class OutputPanel
     panels   = AbstractOutputPanel.getPanels();
     for (String cls: panels) {
       try {
-	panel = (AbstractOutputPanel) ClassManager.getSingleton().forName(cls).newInstance();
+	panel = (AbstractOutputPanel) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	m_Panels.put(panel.getOutputName(), panel);
       }
       catch (Exception e) {

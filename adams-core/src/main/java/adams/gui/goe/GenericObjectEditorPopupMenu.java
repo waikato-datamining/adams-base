@@ -110,7 +110,7 @@ public class GenericObjectEditorPopupMenu
     item = new JMenuItem("Use default", ImageManager.getIcon("undo.gif"));
     item.addActionListener((ActionEvent e) -> {
       try {
-	editor.setValue(editor.getValue().getClass().newInstance());
+	editor.setValue(editor.getValue().getClass().getDeclaredConstructor().newInstance());
 	notifyChangeListeners();
       }
       catch (Exception ex) {
@@ -220,7 +220,7 @@ public class GenericObjectEditorPopupMenu
       classes = ClassLister.getSingleton().getClasses(GenericObjectEditorPopupMenuCustomizer.class);
       for (Class cls: classes) {
 	try {
-	  customizer = (GenericObjectEditorPopupMenuCustomizer) cls.newInstance();
+	  customizer = (GenericObjectEditorPopupMenuCustomizer) cls.getDeclaredConstructor().newInstance();
 	  m_Customizers.add(customizer);
 	}
 	catch (Exception e) {

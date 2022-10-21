@@ -58,7 +58,7 @@ public class CallableActorsTree
     
     result = classname;
     try {
-      obj = ClassManager.getSingleton().forName(result).newInstance();
+      obj = ClassManager.getSingleton().forName(result).getDeclaredConstructor().newInstance();
       if (obj instanceof CallableActors)
 	result = null;
       if (node.getParent() == null)

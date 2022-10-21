@@ -309,7 +309,7 @@ public class HtmlHelpProducer
       }
       else {
         try {
-          val = option.getBaseClass().newInstance();
+          val = option.getBaseClass().getDeclaredConstructor().newInstance();
         }
         catch (Exception e) {
           val = null;

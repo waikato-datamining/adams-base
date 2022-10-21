@@ -104,7 +104,7 @@ public abstract class AbstractHelpGenerator {
     m_Generators = new ArrayList<>();
     for (Class cls: classes) {
       try {
-	generator = (AbstractHelpGenerator) cls.newInstance();
+	generator = (AbstractHelpGenerator) cls.getDeclaredConstructor().newInstance();
 	if (generator instanceof DefaultHelpGenerator)
 	  continue;
 	m_Generators.add(generator);

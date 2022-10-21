@@ -221,7 +221,7 @@ public abstract class AbstractFlowTest
     producer = null;
     if ((format != null) && (format.length() >= 0)) {
       try {
-	producer = (OptionProducer) ClassManager.getSingleton().forName(format).newInstance();
+	producer = (OptionProducer) ClassManager.getSingleton().forName(format).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate option producer '" + format + "': " + e);

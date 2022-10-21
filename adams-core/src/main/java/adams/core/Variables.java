@@ -688,7 +688,7 @@ public class Variables
     Variables	result;
 
     try {
-      result = getClass().newInstance();
+      result = getClass().getDeclaredConstructor().newInstance();
       result.assign(this, filter);
     }
     catch (Exception e) {

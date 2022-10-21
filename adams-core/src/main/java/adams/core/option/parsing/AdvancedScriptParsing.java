@@ -56,7 +56,7 @@ public class AdvancedScriptParsing
     try {
       if (cls.isArray())
 	cls = cls.getComponentType();
-      result = (AbstractAdvancedScript) cls.newInstance();
+      result = (AbstractAdvancedScript) cls.getDeclaredConstructor().newInstance();
       result.setValue(Utils.unbackQuoteChars(str));
     }
     catch (Exception e) {

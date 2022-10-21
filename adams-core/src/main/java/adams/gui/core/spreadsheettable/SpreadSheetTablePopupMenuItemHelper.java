@@ -143,7 +143,7 @@ public class SpreadSheetTablePopupMenuItemHelper {
     classes = ClassLister.getSingleton().getClassnames(cls);
     for (String c : classes) {
       try {
-	result.add((SpreadSheetTablePopupMenuItem) ClassManager.getSingleton().forName(c).newInstance());
+	result.add((SpreadSheetTablePopupMenuItem) ClassManager.getSingleton().forName(c).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate SpreadSheetTable menu item: " + c, e);

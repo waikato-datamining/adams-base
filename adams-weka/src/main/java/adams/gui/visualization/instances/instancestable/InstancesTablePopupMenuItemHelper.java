@@ -117,7 +117,7 @@ public class InstancesTablePopupMenuItemHelper {
     classes = ClassLister.getSingleton().getClassnames(cls);
     for (String c : classes) {
       try {
-	result.add((InstancesTablePopupMenuItem) ClassManager.getSingleton().forName(c).newInstance());
+	result.add((InstancesTablePopupMenuItem) ClassManager.getSingleton().forName(c).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append("Failed to instantiate InstancesTable menu item: " + c, e);

@@ -102,7 +102,7 @@ public class SerializableObjectReader
 	if (all.length == 2) {
 	  cname = (String) all[0];
 	  data  = (Object[]) all[1];
-	  result = (SerializableObject) ClassManager.getSingleton().forName(cname).newInstance();
+	  result = (SerializableObject) ClassManager.getSingleton().forName(cname).getDeclaredConstructor().newInstance();
 	  result.setSerializationSetup(data);
 	  result.setSetupLoadedOrGenerated(true);
 	  return result;

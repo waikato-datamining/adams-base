@@ -138,7 +138,7 @@ public abstract class AbstractObjectExporter
       if (excl.contains(m_ExporterClasses[i]))
         continue;
       try {
-	exporter = (AbstractObjectExporter) m_ExporterClasses[i].newInstance();
+	exporter = (AbstractObjectExporter) m_ExporterClasses[i].getDeclaredConstructor().newInstance();
 	if (exporter.handles(cls))
 	  exporters.add(m_ExporterClasses[i]);
       }
@@ -169,7 +169,7 @@ public abstract class AbstractObjectExporter
     result = new ArrayList<>();
     for (i = 0; i < exporters.size(); i++) {
       try {
-	result.add((AbstractObjectExporter) exporters.get(i).newInstance());
+	result.add((AbstractObjectExporter) exporters.get(i).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object exporter '" + exporters.get(i).getName() + "':");

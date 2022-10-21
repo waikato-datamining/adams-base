@@ -184,7 +184,7 @@ public class NewCollection
     result = null;
 
     try {
-      m_OutputToken = new Token(m_CollectionClass.classValue().newInstance());
+      m_OutputToken = new Token(m_CollectionClass.classValue().getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       result = handleException("Failed to instantiate class: " + Utils.classToString(m_CollectionClass.classValue()), e);

@@ -79,7 +79,7 @@ public class BaseObjectParsing
 
     try {
       cls    = determineClass(option.getDefaultValue());
-      result = (BaseObject) cls.newInstance();
+      result = (BaseObject) cls.getDeclaredConstructor().newInstance();
       result.setValue(Utils.unbackQuoteChars(str));
     }
     catch (Exception e) {

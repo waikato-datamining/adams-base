@@ -113,7 +113,7 @@ public abstract class AbstractRecordActorEnclosed
       classes     = ClassLister.getSingleton().getClasses(AbstractRecordActorEnclosed.class);
       for (Class cls: classes) {
 	try {
-	  rec = (AbstractRecordActorEnclosed) cls.newInstance();
+	  rec = (AbstractRecordActorEnclosed) cls.getDeclaredConstructor().newInstance();
 	  m_Recorders.add(rec);
 	}
 	catch (Exception e) {

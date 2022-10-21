@@ -139,7 +139,7 @@ public class OverlayLayer
     m_ButtonActions.setVisible(false);
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractOverlayLayerAction.class)) {
       try {
-        final AbstractOverlayLayerAction action = (AbstractOverlayLayerAction) cls.newInstance();
+        final AbstractOverlayLayerAction action = (AbstractOverlayLayerAction) cls.getDeclaredConstructor().newInstance();
         menuitem = new JMenuItem(action.getName());
         menuitem.setIcon(action.getIcon());
         menuitem.addActionListener((ActionEvent e) -> action.performAction(OverlayLayer.this));

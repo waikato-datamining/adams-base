@@ -59,7 +59,7 @@ public class PropertyHelper {
 	if (classname.equals(m_DefaultConverter.getClass().getName()))
 	  continue;
 	try {
-	  converter = (AbstractPropertyValueConverter) ClassManager.getSingleton().forName(classname).newInstance();
+	  converter = (AbstractPropertyValueConverter) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
 	  converters.add(converter);
 	}
 	catch (Exception e) {

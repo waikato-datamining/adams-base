@@ -75,7 +75,7 @@ public abstract class AbstractOverlappingObjectRemoval
     newObjs   = removal.removeOverlaps(thisObjs, matches);
 
     // assemble new report
-    result = thisReport.getClass().newInstance();
+    result = thisReport.getClass().getDeclaredConstructor().newInstance();
 
     // transfer non-object fields
     for (AbstractField field: thisReport.getFields()) {

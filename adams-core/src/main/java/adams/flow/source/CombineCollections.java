@@ -247,7 +247,7 @@ public class CombineCollections
     
     if (result == null) {
       try {
-        all = (Collection) m_CollectionClass.classValue().newInstance();
+        all = (Collection) m_CollectionClass.classValue().getDeclaredConstructor().newInstance();
         for (Object value: values) {
           all.addAll((Collection) value);
         }

@@ -444,7 +444,7 @@ public class DeleteOverlappingImageObjects
 
 	// assemble new report
 	try {
-	  newReport = report.getClass().newInstance();
+	  newReport = report.getClass().getDeclaredConstructor().newInstance();
 	  // transfer non-object fields
 	  for (AbstractField field : report.getFields()) {
 	    if (!field.getName().startsWith(m_Finder.getPrefix())) {

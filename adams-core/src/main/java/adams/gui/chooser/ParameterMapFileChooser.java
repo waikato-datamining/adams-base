@@ -124,7 +124,7 @@ public class ParameterMapFileChooser
 
       // get data from converter
       try {
-	converter = cls.newInstance();
+	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
 	  desc = ((AbstractParameterMapReader) converter).getFormatDescription();
 	  ext  = ((AbstractParameterMapReader) converter).getFormatExtensions();
@@ -258,7 +258,7 @@ public class ParameterMapFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractParameterMapReader) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractParameterMapReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -285,7 +285,7 @@ public class ParameterMapFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractParameterMapWriter) ClassManager.getSingleton().forName(filter.getClassname()).newInstance();
+	  result = (AbstractParameterMapWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

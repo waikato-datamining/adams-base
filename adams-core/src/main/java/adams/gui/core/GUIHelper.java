@@ -2296,7 +2296,7 @@ public class GUIHelper {
       return false;
 
     try {
-      mitem = (AbstractBasicMenuItemDefinition) menuitem.newInstance();
+      mitem = (AbstractBasicMenuItemDefinition) menuitem.getDeclaredConstructor().newInstance();
       mitem.setOwner(child.getParentFrame());
       mitem.launch();
     }

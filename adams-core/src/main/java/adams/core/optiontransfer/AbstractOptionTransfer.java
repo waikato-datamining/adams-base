@@ -145,7 +145,7 @@ public abstract class AbstractOptionTransfer {
       classes     = ClassLister.getSingleton().getClasses(AbstractOptionTransfer.class);
       for (Class cls: classes) {
 	try {
-	  transfer = (AbstractOptionTransfer) cls.newInstance();
+	  transfer = (AbstractOptionTransfer) cls.getDeclaredConstructor().newInstance();
 	  m_Transfers.add(transfer);
 	}
 	catch (Exception e) {

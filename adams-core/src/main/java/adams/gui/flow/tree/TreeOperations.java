@@ -1601,7 +1601,7 @@ public class TreeOperations
 	return;
       }
       try {
-	callableActors = (ActorReferenceHandler) handler.newInstance();
+	callableActors = (ActorReferenceHandler) handler.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	GUIHelper.showErrorMessage(
@@ -1962,7 +1962,7 @@ public class TreeOperations
     newNode  = null;
     newActor = null;
     try {
-      newActor = (Actor) condEquiv.newInstance();
+      newActor = (Actor) condEquiv.getDeclaredConstructor().newInstance();
       // transfer some basic options
       newActor.setAnnotations(currActor.getAnnotations());
       newActor.setSkip(currActor.getSkip());
@@ -2056,7 +2056,7 @@ public class TreeOperations
     newNode  = null;
     newActor = null;
     try {
-      newActor = (Actor) timedEquiv.newInstance();
+      newActor = (Actor) timedEquiv.getDeclaredConstructor().newInstance();
       // transfer some basic options
       newActor.setAnnotations(currActor.getAnnotations());
       newActor.setSkip(currActor.getSkip());

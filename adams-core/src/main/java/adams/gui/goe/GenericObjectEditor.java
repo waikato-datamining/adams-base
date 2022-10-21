@@ -258,7 +258,7 @@ public class GenericObjectEditor
 	String clsname = m_Tree.getSelectedItem();
 	try {
 	  Class cls = ClassManager.getSingleton().forName(clsname);
-	  setValue(cls.newInstance());
+	  setValue(cls.getDeclaredConstructor().newInstance());
 	}
 	catch (Exception ex) {
 	  // ignored

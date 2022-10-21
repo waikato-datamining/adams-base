@@ -89,7 +89,7 @@ public class EncloseClassifier
 	item = new JMenuItem(cls.getName());
 	item.addActionListener((ActionEvent e) -> {
 	  try {
-	    SingleClassifierEnhancer wrapper = (SingleClassifierEnhancer) fCls.newInstance();
+	    SingleClassifierEnhancer wrapper = (SingleClassifierEnhancer) fCls.getDeclaredConstructor().newInstance();
 	    Classifier base = (Classifier) editor.getValue();
 	    wrapper.setClassifier(base);
 	    editor.setValue(wrapper);

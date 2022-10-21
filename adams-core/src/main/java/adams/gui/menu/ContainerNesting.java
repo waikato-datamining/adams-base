@@ -75,7 +75,7 @@ public class ContainerNesting
       return;
     
     try {
-      tree = adams.gui.tools.ContainerNesting.analyze((Container) ClassManager.getSingleton().forName(classname).newInstance());
+      tree = adams.gui.tools.ContainerNesting.analyze((Container) ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(null, "Failed to generate tree:\n" + e);

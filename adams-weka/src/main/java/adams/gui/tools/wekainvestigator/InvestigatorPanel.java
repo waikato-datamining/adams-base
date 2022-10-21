@@ -262,7 +262,7 @@ public class InvestigatorPanel
     classes = getProperties().getProperty("General.DefaultTabs", LogTab.class.getName()).split(",");
     for (String cls: classes) {
       try {
-	tab = (AbstractInvestigatorTab) ClassManager.getSingleton().forName(cls).newInstance();
+	tab = (AbstractInvestigatorTab) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
 	m_TabbedPane.addTab(tab);
       }
       catch (Exception e) {
@@ -481,7 +481,7 @@ public class InvestigatorPanel
       classes = ClassLister.getSingleton().getClasses(AbstractSource.class);
       for (final Class cls: classes) {
 	try {
-	  source   = (AbstractSource) cls.newInstance();
+	  source   = (AbstractSource) cls.getDeclaredConstructor().newInstance();
 	  source.setOwner(this);
 	  menuitem = new JMenuItem(source);
 	  m_MenuFileSources.add(menuitem);
@@ -546,7 +546,7 @@ public class InvestigatorPanel
       classes = ClassLister.getSingleton().getClasses(AbstractInvestigatorTab.class);
       for (final Class cls: classes) {
 	try {
-	  tab      = (AbstractInvestigatorTab) cls.newInstance();
+	  tab      = (AbstractInvestigatorTab) cls.getDeclaredConstructor().newInstance();
 	  menuitem = new JMenuItem(tab.getTitle());
 	  if (tab.getTabIcon() == null)
 	    menuitem.setIcon(ImageManager.getEmptyIcon());
@@ -557,7 +557,7 @@ public class InvestigatorPanel
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
-	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.newInstance();
+	      AbstractInvestigatorTab tabNew = (AbstractInvestigatorTab) cls.getDeclaredConstructor().newInstance();
 	      m_TabbedPane.addTab(tabNew, true);
 	    }
 	    catch (Exception ex) {

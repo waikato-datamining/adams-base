@@ -21,7 +21,6 @@
 package adams.core.option;
 
 import adams.core.logging.LoggingObject;
-import adams.core.management.EnvironmentModifier;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -102,7 +101,7 @@ public abstract class AbstractSimpleOptionParser
     classname = options[0];
     tmpOptions = new String[options.length - 1];
     System.arraycopy(options, 0, tmpOptions, 0, tmpOptions.length);
-    result = (SimpleOptionParser) Class.forName(classname).newInstance();
+    result = (SimpleOptionParser) Class.forName(classname).getDeclaredConstructor().newInstance();
     result.setOptions(tmpOptions);
     return result;
   }

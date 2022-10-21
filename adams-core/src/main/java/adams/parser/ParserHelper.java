@@ -574,7 +574,7 @@ public class ParserHelper
       cnames = AbstractParserFunction.getFunctions();
       for (String cname: cnames) {
 	try {
-	  function = (ParserFunction) ClassManager.getSingleton().forName(cname).newInstance();
+	  function = (ParserFunction) ClassManager.getSingleton().forName(cname).getDeclaredConstructor().newInstance();
 	  map.put(function.getFunctionName(), function);
 	}
 	catch (Exception e) {
@@ -649,7 +649,7 @@ public class ParserHelper
       cnames = AbstractParserProcedure.getProcedures();
       for (String cname: cnames) {
 	try {
-	  procedure = (ParserProcedure) ClassManager.getSingleton().forName(cname).newInstance();
+	  procedure = (ParserProcedure) ClassManager.getSingleton().forName(cname).getDeclaredConstructor().newInstance();
 	  map.put(procedure.getProcedureName(), procedure);
 	}
 	catch (Exception e) {

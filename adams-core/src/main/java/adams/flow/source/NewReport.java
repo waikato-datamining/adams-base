@@ -199,7 +199,7 @@ public class NewReport
     result = null;
     
     try {
-      report        = (Report) m_ReportClass.classValue().newInstance();
+      report        = (Report) m_ReportClass.classValue().getDeclaredConstructor().newInstance();
       m_OutputToken = new Token(report);
     }
     catch (Exception e) {

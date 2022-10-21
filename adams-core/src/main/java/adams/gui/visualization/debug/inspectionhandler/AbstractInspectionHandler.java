@@ -94,7 +94,7 @@ public abstract class AbstractInspectionHandler {
     result = new ArrayList<AbstractInspectionHandler>();
     for (i = 0; i < handlers.size(); i++) {
       try {
-	result.add((AbstractInspectionHandler) handlers.get(i).newInstance());
+	result.add((AbstractInspectionHandler) handlers.get(i).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate inspection handler '" + handlers.get(i).getName() + "':");
@@ -128,7 +128,7 @@ public abstract class AbstractInspectionHandler {
       if (m_HandlerClasses[i] == DefaultInspectionHandler.class)
 	continue;
       try {
-	handler = (AbstractInspectionHandler) m_HandlerClasses[i].newInstance();
+	handler = (AbstractInspectionHandler) m_HandlerClasses[i].getDeclaredConstructor().newInstance();
 	if (handler.handles(cls)) {
 	  handlers.add(m_HandlerClasses[i]);
 	  break;

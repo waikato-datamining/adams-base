@@ -101,7 +101,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     Iterator<T>			iter;
 
     try {
-      result = (AbstractDataContainer<T>) getClass().newInstance();
+      result = (AbstractDataContainer<T>) getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       throw new IllegalStateException(e);
@@ -598,7 +598,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     DataContainer	result;
 
     try {
-      result = cont.getClass().newInstance();
+      result = cont.getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = null;

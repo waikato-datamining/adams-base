@@ -163,7 +163,7 @@ public class Groovy
 
     try {
       cls    = (Class) invoke(interpreter, "parseClass", new Class[]{File.class}, new Object[]{file.getAbsoluteFile()});
-      result = cls.newInstance();
+      result = cls.getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to instantiate script from '" + file + "' as '" + template.getName() + "'!", e);

@@ -219,7 +219,7 @@ public abstract class AbstractSubImagesGenerator
     boolean		anyObjects;
 
     try {
-      result = oldReport.getClass().newInstance();
+      result = oldReport.getClass().getDeclaredConstructor().newInstance();
     }
     catch (Exception e) {
       result = new Report();
