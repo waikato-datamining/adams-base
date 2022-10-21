@@ -15,11 +15,13 @@
 
 /*
  * InetAddressHelper.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
 import java.io.File;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.ArrayList;
@@ -47,12 +49,23 @@ public class InternetHelper {
   protected static String m_Hostname;
 
   /**
+   * Just outputs a message in the console.
+   *
+   * @param msg		the debugging message
+   */
+  protected static void debug(String msg) {
+    System.out.println(InternetHelper.class.getName() + ": " + msg);
+  }
+
+  /**
    * Returns the IP address determined from the network interfaces (using
    * the IP address of the one with a proper host name).
    *
+   * @param ipv4 	whether to return IPv4 or IPv6
+   * @param debug 	whether to output some debugging information
    * @return 		the IP address
    */
-  public static synchronized String getIPFromNetworkInterface() {
+  public static synchronized String getIPFromNetworkInterface(boolean ipv4, boolean debug) {
     String				result;
     List<String>			list;
     Enumeration<NetworkInterface>	enmI;
@@ -73,14 +86,27 @@ public class InternetHelper {
 	  // skip non-active ones
 	  if (!intf.isUp())
 	    continue;
+	  if (debug)
+	    debug("interface: " + intf.getDisplayName());
 	  enmA = intf.getInetAddresses();
 	  while (enmA.hasMoreElements()) {
 	    addr = enmA.nextElement();
 	    list.add(addr.getHostAddress());
-	    if (addr.getHostName().indexOf(':') == -1) {
-	      result = addr.getHostAddress();
-	      found  = true;
-	      break;
+	    if (addr.isLoopbackAddress())
+	      continue;
+	    if (debug)
+	      debug("- address/hostname: " + addr.getHostAddress() + "/" + addr.getHostName());
+	    if (!addr.getHostAddress().equals(addr.getHostName())) {
+	      if (ipv4 && (addr instanceof Inet4Address)) {
+		result = addr.getHostAddress();
+		found  = true;
+		break;
+	      }
+	      else if (!ipv4 && (addr instanceof Inet6Address)) {
+		result = addr.getHostAddress();
+		found = true;
+		break;
+	      }
 	    }
 	  }
 	  if (found)
@@ -96,6 +122,8 @@ public class InternetHelper {
 	  result = list.get(0);
 	else
 	  result = "<unknown>";
+	if (debug)
+	  debug("none found, using: " + result);
       }
 
       m_IPNetworkInterface = result;
@@ -105,6 +133,16 @@ public class InternetHelper {
     }
 
     return result;
+  }
+
+  /**
+   * Returns the IPv4 address determined from the network interfaces (using
+   * the IP address of the one with a proper host name).
+   *
+   * @return 		the IPv4 address
+   */
+  public static synchronized String getIPFromNetworkInterface() {
+    return getIPFromNetworkInterface(true, false);
   }
 
   /**
