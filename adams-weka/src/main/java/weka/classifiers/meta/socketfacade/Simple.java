@@ -15,7 +15,7 @@
 
 /*
  * Simple.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.meta.socketfacade;
@@ -32,6 +32,8 @@ import weka.classifiers.meta.SocketFacade;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+
+import java.io.StringReader;
 
 /**
  * Simple preparation scheme, using JSON with the actual data in CSV format.
@@ -185,10 +187,7 @@ public class Simple
    * @return		the generate JSON object
    */
   protected JsonElement fromBytes(byte[] data) {
-    JsonParser		parser;
-
-    parser = new JsonParser();
-    return parser.parse(new String(data));
+    return JsonParser.parseReader(new StringReader(new String(data)));
   }
 
   /**

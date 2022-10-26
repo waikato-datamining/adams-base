@@ -15,7 +15,7 @@
 
 /*
  * ReportJsonUtils.java
- * Copyright (C) 2018-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.report;
@@ -71,11 +71,9 @@ public class ReportJsonUtils {
    * @throws Exception	if reading/parsing fails
    */
   public static Report fromJson(Reader reader, String prefix) throws Exception {
-    JsonParser  	jp;
     JsonElement 	je;
 
-    jp = new JsonParser();
-    je = jp.parse(reader);
+    je = JsonParser.parseReader(reader);
     return fromJson(je.getAsJsonObject(), prefix);
   }
 
