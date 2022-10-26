@@ -32,6 +32,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for array-based value definitions.
@@ -46,6 +47,9 @@ public abstract class AbstractArrayValueDefinition
   /** the array class. */
   protected BaseClassname m_ArrayClass;
 
+  /** the default values. */
+  protected BaseString[] m_DefaultObjects;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -56,6 +60,10 @@ public abstract class AbstractArrayValueDefinition
     m_OptionManager.add(
 	"array-class", "arrayClass",
 	getDefaultArrayClass());
+
+    m_OptionManager.add(
+	"default-object", "defaultObjects",
+	getDefaultDefaultObjects());
   }
 
   /**
@@ -95,6 +103,42 @@ public abstract class AbstractArrayValueDefinition
   }
 
   /**
+   * Returns the default objects.
+   *
+   * @return		the default
+   */
+  protected abstract BaseString[] getDefaultDefaultObjects();
+
+  /**
+   * Sets the default objects.
+   *
+   * @param value	the objects
+   */
+  public void setDefaultObjects(BaseString[] value) {
+    m_DefaultObjects = value;
+    reset();
+  }
+
+  /**
+   * Returns the default objects.
+   *
+   * @return 		the objects
+   */
+  public BaseString[] getDefaultObjects() {
+    return m_DefaultObjects;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String defaultObjectsTipText() {
+    return "The default objects to use.";
+  }
+
+  /**
    * Returns the type of the value.
    *
    * @return 		the type
@@ -110,7 +154,17 @@ public abstract class AbstractArrayValueDefinition
    * @param value	the default value
    */
   public void setDefaultValueAsString(String value) {
-    // ignored
+    List<BaseString>  	objs;
+    String[]		parts;
+
+    try {
+      parts            = OptionUtils.splitOptions(value);
+      m_DefaultObjects = (BaseString[]) BaseObject.toObjectArray(parts, BaseString.class);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to parse: " + value, e);
+      m_DefaultObjects = new BaseString[0];
+    }
   }
 
   /**
@@ -120,7 +174,7 @@ public abstract class AbstractArrayValueDefinition
    */
   @Override
   public String getDefaultValueAsString() {
-    return "";
+    return OptionUtils.joinOptions(BaseObject.toStringArray(m_DefaultObjects));
   }
 
   /**
@@ -190,7 +244,7 @@ public abstract class AbstractArrayValueDefinition
     do {
       value = ConsoleHelper.enterValue(msg);
       if ((value != null) && (cmd.isValid(value)))
-	  objs.add(new BaseString(value));
+	objs.add(new BaseString(value));
     }
     while (value != null);
 

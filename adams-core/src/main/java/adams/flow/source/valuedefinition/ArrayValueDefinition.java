@@ -21,6 +21,8 @@
 package adams.flow.source.valuedefinition;
 
 import adams.core.base.BaseClassname;
+import adams.core.base.BaseString;
+import adams.core.option.OptionUtils;
 import adams.data.featureconverter.AbstractFeatureConverter;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.goe.GenericArrayEditorPanel;
@@ -58,6 +60,16 @@ public class ArrayValueDefinition
   }
 
   /**
+   * Returns the default objects.
+   *
+   * @return the default
+   */
+  @Override
+  protected BaseString[] getDefaultDefaultObjects() {
+    return new BaseString[0];
+  }
+
+  /**
    * Instantiates the new chooser panel.
    *
    * @return		the panel
@@ -65,7 +77,13 @@ public class ArrayValueDefinition
    */
   @Override
   protected AbstractChooserPanel newChooserPanel() throws Exception {
-    System.out.println(m_ArrayClass.classValue());
-    return new GenericArrayEditorPanel(Array.newInstance(m_ArrayClass.classValue(), 0));
+    Object	defValues;
+    int		i;
+
+    defValues = Array.newInstance(m_ArrayClass.classValue(), m_DefaultObjects.length);
+    for (i = 0; i < m_DefaultObjects.length; i++)
+      Array.set(defValues, i, OptionUtils.valueOf(m_ArrayClass.classValue(), m_DefaultObjects[i].getValue()));
+
+    return new GenericArrayEditorPanel(defValues);
   }
 }
