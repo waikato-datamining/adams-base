@@ -773,6 +773,61 @@ public class OptionUtils {
   }
 
   /**
+   * Turns the object into the appropriate string.
+   *
+   * @param obj		the object to convert
+   * @return		the generated string, null if null string
+   */
+  public static String toString(Object obj) {
+    String			result;
+    PropertyEditor		editor;
+    AbstractCommandLineHandler	handler;
+
+    if (obj == null)
+      return null;
+
+    result = null;
+
+    if (obj instanceof Number)
+      result = obj.toString();
+      // boolean
+    else if (obj instanceof Boolean)
+      result = obj.toString();
+      // character
+    else if (obj instanceof Character)
+      result = obj.toString();
+      // string
+    else if (obj instanceof String)
+      result = obj.toString();
+
+    // custom editor registered (string representation)?
+    if (result == null) {
+      editor = PropertyEditorManager.findEditor(obj.getClass());
+      if (editor instanceof CustomStringRepresentationHandler) {
+        editor.setValue(obj);
+        result = ((CustomStringRepresentationHandler) editor).toCustomStringRepresentation(obj);
+      }
+    }
+
+    // option handler?
+    if (result == null) {
+      try {
+        handler = AbstractCommandLineHandler.getHandler(obj.getClass());
+        result  = handler.toCommandLine(obj);
+      }
+      catch (Exception e) {
+        result = null;
+      }
+    }
+
+    // unhandled
+    if (result == null)
+      throw new IllegalStateException("Unhandled object class: " + obj.getClass().getName());
+
+    return result;
+  }
+
+  /**
    * Creates an OptionHandler object with the same options as the specified one.
    * Also transfers the database connection object, if the object implements
    * the DatabaseConnectionHandler interface.
