@@ -1451,7 +1451,7 @@ public class PropertiesParameterPanel
 	  else
 	    sep = ",";
 	  for (n = 0; n < items.length; n++)
-	    items[n] = OptionUtils.getCommandLine(Array.get(array, n));
+	    items[n] = OptionUtils.toString(Array.get(array, n));
 	  if (sep.equals(" "))
 	    result.setProperty(key, OptionUtils.joinOptions(items));
 	  else
