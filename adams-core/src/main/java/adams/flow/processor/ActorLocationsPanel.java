@@ -15,7 +15,7 @@
 
 /*
  * ActorLocationsPanel.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.processor;
@@ -99,7 +99,7 @@ public class ActorLocationsPanel
     m_ButtonCopy = new BaseButton("Copy");
     m_ButtonCopy.setEnabled(false);
     m_ButtonCopy.addActionListener((ActionEvent e) -> {
-      Object[] values = m_List.getSelectedValues();
+      Object[] values = m_List.getSelectedValuesList().toArray();
       StringBuilder content = new StringBuilder();
       for (Object value: values) {
 	if (content.length() > 0)

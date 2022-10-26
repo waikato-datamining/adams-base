@@ -15,7 +15,7 @@
 
 /*
  * FavoritesManagementPanel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -399,7 +399,7 @@ public class FavoritesManagementPanel
 
     m_ButtonSuperclassRemove = new BaseButton("Remove");
     m_ButtonSuperclassRemove.addActionListener((ActionEvent e) -> {
-      Object[] classes = m_PanelSuperclasses.getSelectedValues();
+      Object[] classes = m_PanelSuperclasses.getSelectedValuesList().toArray();
       for (int i = 0; i < classes.length; i++)
 	m_Favorites.removeFavorites(classes[i].toString());
       m_ListModelSuperclass.update();

@@ -15,7 +15,7 @@
 
 /*
  * FindInFilesPanel.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -395,7 +395,7 @@ public class FindInFilesPanel
     List<File> 	result;
 
     result = new ArrayList<>();
-    for (Object o: m_ListResults.getSelectedValues())
+    for (Object o: m_ListResults.getSelectedValuesList())
       result.add(new PlaceholderFile("" + o).getAbsoluteFile());
 
     return result.toArray(new File[0]);

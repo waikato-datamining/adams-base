@@ -15,7 +15,7 @@
 
 /*
  * BaseListWithButtons.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -29,6 +29,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 /**
  * Graphical component that consists of a BaseTable with buttons on the
@@ -205,16 +206,13 @@ public class BaseListWithButtons
   }
 
   /**
-   * Returns an array of all the selected values, in increasing order based
+   * Returns a list of all the selected items, in increasing order based
    * on their indices in the list.
    *
-   * @return the selected values, or an empty array if nothing is selected
-   * @see #isSelectedIndex
-   * @see #getModel
-   * @see #addListSelectionListener
+   * @return the selected items, or an empty list if nothing is selected
    */
-  public Object[] getSelectedValues() {
-    return m_Component.getSelectedValues();
+  public List getSelectedValuesList() {
+    return m_Component.getSelectedValuesList();
   }
 
   /**
