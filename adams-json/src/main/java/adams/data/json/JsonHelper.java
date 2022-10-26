@@ -15,7 +15,7 @@
 
 /*
  * JsonHelper.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.json;
@@ -49,7 +49,7 @@ public class JsonHelper {
    * @return		the parsed JSON
    * @throws Exception  if parsing fails
    */
-  protected static Object parse(Reader reader) throws Exception {
+  public static Object parse(Reader reader) throws Exception {
     JSONParser		parser;
 
     parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
