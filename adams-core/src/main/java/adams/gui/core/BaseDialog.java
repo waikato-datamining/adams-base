@@ -191,6 +191,15 @@ public class BaseDialog
   /**
    * Sets the prefix for the UI settings (eg stores width/height).
    *
+   * @param cls		the class to use as prefix, ignored if null or empty
+   */
+  public void setUISettingsPrefix(Class cls) {
+    setUISettingsPrefix((cls == null) ? "" : cls.getName());
+  }
+
+  /**
+   * Sets the prefix for the UI settings (eg stores width/height).
+   *
    * @param value	the prefix, ignored if null or empty
    */
   public void setUISettingsPrefix(String value) {
