@@ -424,6 +424,7 @@ public class TreeOperations
 	case GOE_FORCED:
 	case GOE_FORCED_NO_TREE:
 	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
+	  dialog.setUISettingsPrefix("FlowTreeActor");
 	  if (position == InsertPosition.HERE)
 	    dialog.setTitle("Add here...");
 	  else if (position == InsertPosition.AFTER)
@@ -444,7 +445,8 @@ public class TreeOperations
 	    else
 	      dialog.setCurrent(null);
 	  }
-	  dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+	  if (!dialog.getUISettingsApplied())
+	    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
 	  dialog.setVisible(true);
 	  getOwner().updateCurrentEditing(null, null);
 	  if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)
@@ -849,6 +851,7 @@ public class TreeOperations
     getOwner().updateCurrentEditing((Node) currNode.getParent(), currNode);
     actorOld = currNode.getActor().shallowCopy();
     dialog   = GenericObjectEditorDialog.createDialog(getOwner());
+    dialog.setUISettingsPrefix("FlowTreeActor");
     editable = getOwner().isEditable() && !getOwner().isDebug() && currNode.isEditable();
     if ((getOwner().getRootActor() instanceof Flow) && ((Flow) getOwner().getRootActor()).getReadOnly()) {
       retVal   = GUIHelper.showConfirmMessage(getOwner().getParent(), "Flow is marked read-only - proceed with editing (Yes) or only viewing (No)?");
@@ -866,7 +869,8 @@ public class TreeOperations
     dialog.setCurrent(currNode.getActor().shallowCopy());
     dialog.getGOEEditor().setReadOnly(!editable);
     dialog.getGOEEditor().setFilter(getOwner().getOperations().configureFilter(path, null));
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+    if (!dialog.getUISettingsApplied())
+      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
     dialog.setVisible(true);
     getOwner().updateCurrentEditing(null, null);
     if (dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION) {
@@ -1391,6 +1395,7 @@ public class TreeOperations
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentDialog());
       else
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
+      m_DialogProcessActors.setUISettingsPrefix("FlowTreeProcessActors");
       m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
       m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogProcessActors.getGOEEditor().setClassType(ActorProcessor.class);
@@ -1872,12 +1877,14 @@ public class TreeOperations
       dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
+    dialog.setUISettingsPrefix("FlowTreeBooleanCondition");
     dialog.setTitle("Conditions");
     dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(BooleanCondition.class);
     dialog.setCurrent(defCond);
-    dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
+    if (!dialog.getUISettingsApplied())
+      dialog.setLocationRelativeTo(GUIHelper.getParentComponent(getOwner()));
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return null;
