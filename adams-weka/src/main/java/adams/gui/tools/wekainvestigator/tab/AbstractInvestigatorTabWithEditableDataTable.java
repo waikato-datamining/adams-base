@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractInvestigatorTabWithEditableDataTable.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -23,8 +23,8 @@ package adams.gui.tools.wekainvestigator.tab;
 import adams.core.ListHelper;
 import adams.core.logging.LoggingLevel;
 import adams.gui.core.BaseFlatButton;
+import adams.gui.core.BaseFlatSplitButton;
 import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseSplitButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ImageManager;
 import adams.gui.event.UndoEvent;
@@ -45,7 +45,6 @@ import java.util.List;
  * Ancestor for tabs with modifiable data table.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInvestigatorTabWithEditableDataTable
   extends AbstractInvestigatorTabWithDataTable
@@ -63,7 +62,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
   protected BaseFlatButton m_ButtonSave;
 
   /** the action button. */
-  protected BaseSplitButton m_ButtonAction;
+  protected BaseFlatSplitButton m_ButtonAction;
 
   /** the up button. */
   protected BaseFlatButton m_ButtonUp;
@@ -126,7 +125,7 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     m_ButtonSave = new BaseFlatButton("Save", ImageManager.getIcon("save.gif"));
     m_Table.addToButtonsPanel(m_ButtonSave);
 
-    m_ButtonAction = new BaseSplitButton("...", ImageManager.getEmptyIcon());
+    m_ButtonAction = new BaseFlatSplitButton("...", ImageManager.getEmptyIcon());
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractEditableDataTableAction action: m_Actions) {
       if (action instanceof Save)
