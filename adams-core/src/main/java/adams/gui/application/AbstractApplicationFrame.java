@@ -769,7 +769,6 @@ public abstract class AbstractApplicationFrame
 
     // UI settings?
     result.setUISettingsPrefix(title);
-    result.applyUISettings();
 
     // add listener
     result.addDisposeWindowListener();

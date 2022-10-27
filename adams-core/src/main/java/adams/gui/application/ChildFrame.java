@@ -27,7 +27,6 @@ import adams.db.DatabaseConnectionHandler;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
-import adams.gui.core.UISettings;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.ImageIcon;
@@ -35,7 +34,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -69,9 +67,6 @@ public class ChildFrame
   /** whether a window listener to dispose the frame was added. */
   protected boolean m_DisposeWindowListenerAdded;
 
-  /** the UI settings prefix to use. */
-  protected String m_UISettingsPrefix;
-
   /**
    * Constructs a new frame that knows about its parent.
    *
@@ -97,7 +92,6 @@ public class ChildFrame
     m_InitialTitle               = title;
     m_DisposeWindowListenerAdded = false;
     m_IconName                   = icon;
-    m_UISettingsPrefix           = "";
 
     performInitialization();
   }
@@ -191,52 +185,6 @@ public class ChildFrame
   }
 
   /**
-   * Sets the prefix for the UI settings (eg stores width/height).
-   *
-   * @param value	the prefix, ignored if null or empty
-   */
-  public void setUISettingsPrefix(String value) {
-    if (value == null)
-      value = "";
-    m_UISettingsPrefix = value;
-  }
-
-  /**
-   * Returns the prefix for the UI settings.
-   *
-   * @return		the prefix, empty if ignored
-   */
-  public String getUISettingsPrefix() {
-    return m_UISettingsPrefix;
-  }
-
-  /**
-   * Applies any UI settings if present.
-   */
-  public void applyUISettings() {
-    Dimension	size;
-    int		x;
-    int		y;
-
-    // size
-    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width")) {
-      size = getSize();
-      setSize(new Dimension(
-        UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".width", size.width),
-	UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".height", size.height)));
-    }
-
-    // position
-    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".x") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".y")) {
-      x = getX();
-      y = getY();
-      setLocation(
-        UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".x", x),
-	UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".y", y));
-    }
-  }
-
-  /**
    * Calls the cleanUp() method if the first component is a CleanUpHandler.
    */
   public void cleanUp() {
@@ -254,15 +202,8 @@ public class ChildFrame
    */
   @Override
   public void dispose() {
-    if (!m_DisposeCalled) {
-      if (!m_UISettingsPrefix.isEmpty()) {
-        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
-        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
-        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
-        UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
-        UISettings.save();
-      }
-    }
+    if (!m_DisposeCalled)
+      storeUISettings();
 
     m_DisposeCalled = true;
 

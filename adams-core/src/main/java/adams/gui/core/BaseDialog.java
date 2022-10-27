@@ -15,14 +15,17 @@
 
 /*
  * BaseDialog.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.gui.application.ChildFrame;
+
 import javax.swing.JDialog;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
 
 /**
@@ -36,14 +39,24 @@ import java.awt.Frame;
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @see GUIHelper#setSizeAndLocation(java.awt.Window, java.awt.Component)
  */
 public class BaseDialog
-  extends JDialog {
+    extends JDialog {
 
   /** for serialization. */
   private static final long serialVersionUID = 6155286585412623451L;
+
+  /** whether the dispose method has been called already manually. */
+  protected boolean m_DisposeCalled;
+
+  /** the UI settings prefix to use. */
+  protected String m_UISettingsPrefix;
+
+  /** whether the UI settings got stored. */
+  protected boolean m_UISettingsStored;
+
+  /** whether UI settings were applied. */
+  protected boolean m_UISettingsApplied;
 
   /**
    * Creates a modeless dialog without a title and without a specified Frame
@@ -151,6 +164,10 @@ public class BaseDialog
    * For initializing members.
    */
   protected void initialize() {
+    m_DisposeCalled     = false;
+    m_UISettingsPrefix  = "";
+    m_UISettingsStored  = false;
+    m_UISettingsApplied = false;
   }
 
   /**
@@ -172,9 +189,87 @@ public class BaseDialog
   }
 
   /**
+   * Sets the prefix for the UI settings (eg stores width/height).
+   *
+   * @param value	the prefix, ignored if null or empty
+   */
+  public void setUISettingsPrefix(String value) {
+    if (value == null)
+      value = "";
+    m_UISettingsPrefix  = value;
+    m_UISettingsStored  = false;
+    m_UISettingsApplied = false;
+  }
+
+  /**
+   * Returns the prefix for the UI settings.
+   *
+   * @return		the prefix, empty if ignored
+   */
+  public String getUISettingsPrefix() {
+    return m_UISettingsPrefix;
+  }
+
+  /**
+   * Returns whether UI settings were applied. E.g., to determine whether still necessary to set default dimensions/location.
+   *
+   * @return		true if applied
+   */
+  public boolean getUISettingsApplied() {
+    return m_UISettingsApplied;
+  }
+
+  /**
+   * Applies any UI settings if present.
+   */
+  public void applyUISettings() {
+    Dimension 	size;
+    int		x;
+    int		y;
+
+    // size
+    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width")) {
+      m_UISettingsApplied = true;
+      size = getSize();
+      setSize(new Dimension(
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".width", size.width),
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".height", size.height)));
+    }
+
+    // position
+    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".x") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".y")) {
+      m_UISettingsApplied = true;
+      x = getX();
+      y = getY();
+      setLocation(
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".x", x),
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".y", y));
+    }
+
+    m_UISettingsStored = false;
+  }
+
+  /**
+   * Stores the UI settings.
+   */
+  public void storeUISettings() {
+    if (!m_UISettingsStored && !m_UISettingsPrefix.isEmpty()) {
+      m_UISettingsStored = true;
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
+      UISettings.save();
+      m_UISettingsApplied = false;
+    }
+  }
+
+  /**
    * Hook method just before the dialog is made visible.
    */
   protected void beforeShow() {
+    if (!m_UISettingsPrefix.isEmpty())
+      applyUISettings();
   }
 
   /**
@@ -187,6 +282,7 @@ public class BaseDialog
    * Hook method just before the dialog is hidden.
    */
   protected void beforeHide() {
+    storeUISettings();
   }
 
   /**
@@ -212,6 +308,19 @@ public class BaseDialog
       afterShow();
     else
       afterHide();
+  }
+
+  /**
+   * de-registers the child frame with the parent first.
+   */
+  @Override
+  public void dispose() {
+    if (!m_DisposeCalled)
+      storeUISettings();
+
+    m_DisposeCalled = true;
+
+    super.dispose();
   }
 
   /**

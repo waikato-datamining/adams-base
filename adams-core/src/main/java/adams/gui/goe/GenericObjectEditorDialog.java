@@ -304,7 +304,8 @@ public class GenericObjectEditorDialog
     else
       m_Result = APPROVE_OPTION;
 
-    fixSize();
+    if (!getUISettingsApplied())
+      fixSize();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * BaseFrame.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -27,9 +27,11 @@ import adams.core.management.OS;
 import adams.core.management.OS.OperatingSystems;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
+import adams.gui.application.ChildFrame;
 
 import javax.swing.JFrame;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.util.logging.Level;
 
@@ -37,11 +39,10 @@ import java.util.logging.Level;
  * A frame that loads the size and location from the props file automatically.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseFrame
-  extends JFrame
-  implements LoggingSupporter {
+    extends JFrame
+    implements LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4853427519044621963L;
@@ -54,6 +55,15 @@ public class BaseFrame
 
   /** the maximization fix listener. */
   protected MaximizationFixWindowListener m_MaximizationFixWindowListener;
+
+  /** the UI settings prefix to use. */
+  protected String m_UISettingsPrefix;
+
+  /** whether the UI settings got stored. */
+  protected boolean m_UISettingsStored;
+
+  /** whether UI settings were applied. */
+  protected boolean m_UISettingsApplied;
 
   /**
    * Initializes the frame with no title.
@@ -124,7 +134,11 @@ public class BaseFrame
 	getLogger().log(Level.INFO, "Using frame maximization fix (GUIHelper.props)");
     }
     m_MaximizationFixWindowListener = new MaximizationFixWindowListener(
-      this, m_UseMaximizationFix, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
+	this, m_UseMaximizationFix, GUIHelper.getInteger("FrameMaximizationFixDelay", 200));
+
+    m_UISettingsPrefix  = "";
+    m_UISettingsStored  = false;
+    m_UISettingsApplied = false;
   }
 
   /**
@@ -161,7 +175,7 @@ public class BaseFrame
     // size and location
     GUIHelper.setSizeAndLocation(this, this);
   }
-  
+
   /**
    * Initializes the logger.
    * <br><br>
@@ -170,10 +184,10 @@ public class BaseFrame
   protected void initializeLogger() {
     m_Logger = LoggingHelper.getLogger(getClass());
   }
-  
+
   /**
    * Returns the logger in use.
-   * 
+   *
    * @return		the logger
    */
   public synchronized Logger getLogger() {
@@ -181,10 +195,10 @@ public class BaseFrame
       initializeLogger();
     return m_Logger;
   }
-  
+
   /**
    * Returns whether logging is enabled.
-   * 
+   *
    * @return		true if not {@link Level#OFF}
    */
   public boolean isLoggingEnabled() {
@@ -192,9 +206,87 @@ public class BaseFrame
   }
 
   /**
+   * Sets the prefix for the UI settings (eg stores width/height).
+   *
+   * @param value	the prefix, ignored if null or empty
+   */
+  public void setUISettingsPrefix(String value) {
+    if (value == null)
+      value = "";
+    m_UISettingsPrefix  = value;
+    m_UISettingsApplied = false;
+    m_UISettingsStored  = false;
+  }
+
+  /**
+   * Returns the prefix for the UI settings.
+   *
+   * @return		the prefix, empty if ignored
+   */
+  public String getUISettingsPrefix() {
+    return m_UISettingsPrefix;
+  }
+
+  /**
+   * Returns whether UI settings were applied. E.g., to determine whether still necessary to set default dimensions/location.
+   *
+   * @return		true if applied
+   */
+  public boolean getUISettingsApplied() {
+    return m_UISettingsApplied;
+  }
+
+  /**
+   * Applies any UI settings if present.
+   */
+  public void applyUISettings() {
+    Dimension 	size;
+    int		x;
+    int		y;
+
+    // size
+    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width")) {
+      m_UISettingsApplied = true;
+      size = getSize();
+      setSize(new Dimension(
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".width", size.width),
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".height", size.height)));
+    }
+
+    // position
+    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".x") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".y")) {
+      m_UISettingsApplied = true;
+      x = getX();
+      y = getY();
+      setLocation(
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".x", x),
+	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".y", y));
+    }
+
+    m_UISettingsStored = false;
+  }
+
+  /**
+   * Stores the UI settings.
+   */
+  public void storeUISettings() {
+    if (!m_UISettingsStored && !m_UISettingsPrefix.isEmpty()) {
+      m_UISettingsStored = true;
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
+      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
+      UISettings.save();
+      m_UISettingsApplied = false;
+    }
+  }
+
+  /**
    * Hook method just before the dialog is made visible.
    */
   protected void beforeShow() {
+    if (!m_UISettingsPrefix.isEmpty())
+      applyUISettings();
   }
 
   /**
@@ -207,6 +299,7 @@ public class BaseFrame
    * Hook method just before the dialog is hidden.
    */
   protected void beforeHide() {
+    storeUISettings();
   }
 
   /**
