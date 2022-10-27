@@ -15,7 +15,7 @@
 
 /*
  * UpdateID.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container.datacontainerpanel.containerlistpopup;
@@ -99,6 +99,7 @@ public class UpdateID<T extends DataContainer, M extends AbstractContainerManage
       dialog = new GenericObjectEditorDialog(context.panel.getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new GenericObjectEditorDialog(context.panel.getParentFrame(), true);
+    dialog.setUISettingsPrefix(IDExtractor.class);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle(getName());
     dialog.getGOEEditor().setClassType(IDExtractor.class);

@@ -15,7 +15,7 @@
 
 /*
  * Split.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -88,6 +88,7 @@ public class Split
       dialog = new GenericObjectEditorDialog(GUIHelper.getParentDialog(getOwner()), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new GenericObjectEditorDialog(GUIHelper.getParentFrame(getOwner()), true);
+    dialog.setUISettingsPrefix(SplitGenerator.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(SplitGenerator.class);
     dialog.setCurrent(m_LastSplitter);

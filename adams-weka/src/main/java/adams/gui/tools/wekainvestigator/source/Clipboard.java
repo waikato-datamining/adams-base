@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheet.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.source;
@@ -42,7 +42,6 @@ import java.util.Date;
  * Parses content on the clipboard.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Clipboard
   extends AbstractSource {
@@ -75,6 +74,7 @@ public class Clipboard
       result = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     result.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     result.setTitle("Import of clipboard content");
+    result.setUISettingsPrefix(SpreadSheetReader.class);
     result.getGOEEditor().setClassType(SpreadSheetReader.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
     result.setCurrent(m_LastReader);

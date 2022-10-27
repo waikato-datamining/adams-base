@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataTransform.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
  * Filters the columns.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataTransform
   extends AbstractSpreadSheetViewerMenuItemAction {
@@ -67,6 +66,7 @@ public class DataTransform
     else
       result = new GenericObjectEditorDialog(getParentFrame(), true);
     result.setTitle("Transformer");
+    result.setUISettingsPrefix(AbstractSpreadSheetTransformer.class);
     result.getGOEEditor().setClassType(AbstractSpreadSheetTransformer.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
     result.setCurrent(m_LastTransformer);

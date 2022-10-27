@@ -15,7 +15,7 @@
 
 /*
  * SmbDirectoryChooserPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -104,6 +104,7 @@ public class SmbDirectoryChooserPanel
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Remote directory");
+    dialog.setUISettingsPrefix(SmbRemoteDirectorySetup.class);
     dialog.getGOEEditor().setClassType(SmbRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.setCurrent(currentSetup);

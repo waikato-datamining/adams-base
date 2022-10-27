@@ -13,18 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AttachListener.java
- * Copyright (C) 2014 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
 import adams.core.Pausable;
 import adams.flow.core.ActorPath;
 import adams.flow.core.ActorUtils;
-import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.Debug;
 import adams.flow.execution.FlowExecutionListener;
+import adams.flow.execution.debug.AbstractBreakpoint;
 import adams.flow.execution.debug.PathBreakpoint;
 import adams.gui.goe.GenericObjectEditorDialog;
 
@@ -36,7 +36,6 @@ import java.awt.event.ActionEvent;
  * Allows the attaching of flow execution listeners.
  * 
  * @author fracpete
- * @version $Revision$
  */
 public class AttachListener
   extends AbstractTreePopupMenuItemAction {
@@ -93,6 +92,7 @@ public class AttachListener
     else
       dialog = new GenericObjectEditorDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dialog.setTitle("Attach listener [" + m_State.selNode.getFullName() + "]");
+    dialog.setUISettingsPrefix(FlowExecutionListener.class);
     dialog.getGOEEditor().setClassType(FlowExecutionListener.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.setCurrent(debug);

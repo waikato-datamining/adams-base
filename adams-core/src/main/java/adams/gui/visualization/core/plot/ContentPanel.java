@@ -15,7 +15,7 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
@@ -833,6 +833,7 @@ public class ContentPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Edit paintlet");
+    dialog.setUISettingsPrefix(Paintlet.class);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.getGOEEditor().setClassType(Paintlet.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);

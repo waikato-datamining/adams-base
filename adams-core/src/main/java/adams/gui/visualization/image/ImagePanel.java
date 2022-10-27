@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -1011,6 +1011,7 @@ public class ImagePanel
 	  m_GOEImageOverlay = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
 	else
 	  m_GOEImageOverlay = new GenericObjectEditorDialog(getParentFrame(), true);
+	m_GOEImageOverlay.setUISettingsPrefix(ImageOverlay.class);
 	m_GOEImageOverlay.getGOEEditor().setClassType(ImageOverlay.class);
 	m_GOEImageOverlay.getGOEEditor().setCanChangeClassInDialog(true);
 	m_GOEImageOverlay.setCurrent(new NullOverlay());

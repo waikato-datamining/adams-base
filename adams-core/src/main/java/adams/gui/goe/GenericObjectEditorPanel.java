@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -201,6 +201,7 @@ public class GenericObjectEditorPanel
       getEditor().setValue(m_Current);
     if (m_Dialog == null)
       m_Dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
+    m_Dialog.setUISettingsPrefix(getClassType());
     m_Dialog.setLocationRelativeTo(m_Dialog.getParent());
     m_Dialog.setVisible(true);
     if (m_Dialog.getResult() == GenericObjectEditorDialog.APPROVE_OPTION)

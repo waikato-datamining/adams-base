@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -361,6 +361,7 @@ public class SpreadSheetPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Cell rendering customizer");
+    dialog.setUISettingsPrefix(CellRenderingCustomizer.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(CellRenderingCustomizer.class);
     dialog.setCurrent(renderer);

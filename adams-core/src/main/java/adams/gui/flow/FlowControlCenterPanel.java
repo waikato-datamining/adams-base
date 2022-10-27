@@ -817,6 +817,7 @@ public class FlowControlCenterPanel
     if (m_GOEDialog == null) {
       m_GOEDialog = GenericObjectEditorDialog.createDialog(this);
       m_GOEDialog.setTitle("Flow setup");
+      m_GOEDialog.setUISettingsPrefix(FlowSetup.class);
       m_GOEDialog.getGOEEditor().setClassType(FlowSetup.class);
       m_GOEDialog.getGOEEditor().setValue(new FlowSetup());
     }

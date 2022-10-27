@@ -15,7 +15,7 @@
 
 /*
  * TextDirectory.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.source;
@@ -70,6 +70,7 @@ public class TextDirectory
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Text directory loader");
+    dialog.setUISettingsPrefix(Loader.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.getGOEEditor().setClassType(Loader.class);
     dialog.setCurrent(m_Loader);

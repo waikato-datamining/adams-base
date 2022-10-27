@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetExplorer.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -74,7 +74,6 @@ import java.util.List;
  * A panel for exploring Instances visually.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 13451 $
  */
 public class SpreadSheetExplorer
   extends BasePanel
@@ -584,6 +583,7 @@ public class SpreadSheetExplorer
       else
 	m_DialogColorProvider = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogColorProvider.setTitle("Select color provider");
+      m_DialogColorProvider.setUISettingsPrefix(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setClassType(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogColorProvider.setLocationRelativeTo(this);
@@ -609,6 +609,7 @@ public class SpreadSheetExplorer
       else
 	m_DialogPaintlet = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogPaintlet.setTitle("Select paintlet");
+      m_DialogPaintlet.setUISettingsPrefix(AbstractSpreadSheetRowPaintlet.class);
       m_DialogPaintlet.getGOEEditor().setClassType(AbstractSpreadSheetRowPaintlet.class);
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogPaintlet.setLocationRelativeTo(this);

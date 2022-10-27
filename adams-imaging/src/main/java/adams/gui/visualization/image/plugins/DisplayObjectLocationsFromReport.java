@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DisplayObjectLocationsFromReport.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -38,7 +38,6 @@ import java.util.List;
  * Prompts user to select report with object locations to be overlayed.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 198 $
  */
 public class DisplayObjectLocationsFromReport
   extends AbstractImageViewerPlugin {
@@ -112,6 +111,7 @@ public class DisplayObjectLocationsFromReport
     else
       dialog = new GenericObjectEditorDialog(m_CurrentPanel.getParentFrame(), true);
     dialog.setTitle("Configure overlay");
+    dialog.setUISettingsPrefix(AbstractImageOverlay.class);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.getGOEEditor().setClassType(AbstractImageOverlay.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);

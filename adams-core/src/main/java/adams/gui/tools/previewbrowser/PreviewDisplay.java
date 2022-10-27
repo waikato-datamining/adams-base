@@ -269,6 +269,7 @@ public class PreviewDisplay
       dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setUISettingsPrefix(AbstractContentHandler.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.getGOEEditor().setClassType(AbstractContentHandler.class);
     dialog.setCurrent(handler);

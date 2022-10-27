@@ -424,7 +424,7 @@ public class TreeOperations
 	case GOE_FORCED:
 	case GOE_FORCED_NO_TREE:
 	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
-	  dialog.setUISettingsPrefix("FlowTreeActor");
+	  dialog.setUISettingsPrefix(Actor.class);
 	  if (position == InsertPosition.HERE)
 	    dialog.setTitle("Add here...");
 	  else if (position == InsertPosition.AFTER)
@@ -851,7 +851,7 @@ public class TreeOperations
     getOwner().updateCurrentEditing((Node) currNode.getParent(), currNode);
     actorOld = currNode.getActor().shallowCopy();
     dialog   = GenericObjectEditorDialog.createDialog(getOwner());
-    dialog.setUISettingsPrefix("FlowTreeActor");
+    dialog.setUISettingsPrefix(Actor.class);
     editable = getOwner().isEditable() && !getOwner().isDebug() && currNode.isEditable();
     if ((getOwner().getRootActor() instanceof Flow) && ((Flow) getOwner().getRootActor()).getReadOnly()) {
       retVal   = GUIHelper.showConfirmMessage(getOwner().getParent(), "Flow is marked read-only - proceed with editing (Yes) or only viewing (No)?");
@@ -1395,7 +1395,7 @@ public class TreeOperations
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentDialog());
       else
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
-      m_DialogProcessActors.setUISettingsPrefix("FlowTreeProcessActors");
+      m_DialogProcessActors.setUISettingsPrefix(ActorProcessor.class);
       m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
       m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogProcessActors.getGOEEditor().setClassType(ActorProcessor.class);
@@ -1877,7 +1877,7 @@ public class TreeOperations
       dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
-    dialog.setUISettingsPrefix("FlowTreeBooleanCondition");
+    dialog.setUISettingsPrefix(BooleanCondition.class);
     dialog.setTitle("Conditions");
     dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);

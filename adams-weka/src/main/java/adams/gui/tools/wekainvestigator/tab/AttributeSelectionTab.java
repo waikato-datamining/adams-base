@@ -15,7 +15,7 @@
 
 /*
  * AttributeSelectionTab.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -341,6 +341,7 @@ public class AttributeSelectionTab
         dialog = new GenericObjectEditorDialog(getParentFrame(), true);
       dialog.setDefaultCloseOperation(GenericArrayEditorDialog.DISPOSE_ON_CLOSE);
       dialog.setTitle("Configure output");
+      dialog.setUISettingsPrefix(AbstractOutputGenerator.class);
       dialog.getGOEEditor().setCanChangeClassInDialog(false);
       dialog.getGOEEditor().setClassType(AbstractOutputGenerator.class);
       dialog.setCurrent(generator);

@@ -15,7 +15,7 @@
 
 /*
  * EditPasteAsNew.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
  * Lets the user paste a spreadsheet from the clipboard.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EditPasteAsNew
   extends AbstractSpreadSheetViewerMenuItemAction {
@@ -72,6 +71,7 @@ public class EditPasteAsNew
     else
       result = new GenericObjectEditorDialog(getParentFrame(), true);
     result.setTitle("Import of clipboard content");
+    result.setUISettingsPrefix(SpreadSheetReader.class);
     result.getGOEEditor().setClassType(SpreadSheetReader.class);
     result.getGOEEditor().setCanChangeClassInDialog(true);
     result.setCurrent(m_LastReader);

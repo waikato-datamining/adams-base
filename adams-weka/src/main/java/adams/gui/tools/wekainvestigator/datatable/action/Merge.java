@@ -15,7 +15,7 @@
 
 /*
  * Merge.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -36,7 +36,6 @@ import java.awt.event.ActionEvent;
  * Merges the selected datasets (side-by-side).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Append
  */
 public class Merge
@@ -76,6 +75,7 @@ public class Merge
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Configure merge");
+    dialog.setUISettingsPrefix(WekaMergeInstancesActor.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(WekaMergeInstancesActor.class);
     dialog.setCurrent(merge);

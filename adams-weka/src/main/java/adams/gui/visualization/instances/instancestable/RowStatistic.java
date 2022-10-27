@@ -15,7 +15,7 @@
 
 /*
  * RowStatistic.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances.instancestable;
@@ -80,6 +80,7 @@ public class RowStatistic
     else
       setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(state.table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.setUISettingsPrefix(AbstractRowStatistic.class);
     setup.getGOEEditor().setClassType(AbstractRowStatistic.class);
     setup.getGOEEditor().setCanChangeClassInDialog(true);
     last = (AbstractRowStatistic) state.table.getLastSetup(getClass(), true, false);

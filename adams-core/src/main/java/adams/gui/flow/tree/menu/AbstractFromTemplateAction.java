@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFromTemplateAction.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree.menu;
 
@@ -34,7 +34,6 @@ import javax.swing.tree.TreePath;
  * Ancestor for template actions.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFromTemplateAction
   extends AbstractTreePopupMenuItemAction {
@@ -104,6 +103,7 @@ public abstract class AbstractFromTemplateAction
     GenericObjectEditorDialog	m_TemplateDialog;
 
     m_TemplateDialog = GenericObjectEditorDialog.createDialog(m_State.tree);
+    m_TemplateDialog.setUISettingsPrefix(AbstractActorTemplate.class);
     m_TemplateDialog.getGOEEditor().setCanChangeClassInDialog(true);
     m_TemplateDialog.getGOEEditor().setClassType(AbstractActorTemplate.class);
 

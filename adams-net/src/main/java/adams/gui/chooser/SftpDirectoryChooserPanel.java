@@ -15,7 +15,7 @@
 
 /*
  * SftpDirectoryChooserPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -35,7 +35,6 @@ import java.awt.Dialog.ModalityType;
  * Chooser for remote directories (via SFTP).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SftpDirectoryChooserPanel
   extends AbstractChooserPanelWithIOSupport<SftpRemoteDirectorySetup> {
@@ -104,6 +103,7 @@ public class SftpDirectoryChooserPanel
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Remote directory");
+    dialog.setUISettingsPrefix(SftpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setClassType(SftpRemoteDirectorySetup.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(false);
     dialog.setCurrent(currentSetup);

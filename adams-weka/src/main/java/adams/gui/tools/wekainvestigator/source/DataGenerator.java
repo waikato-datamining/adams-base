@@ -15,7 +15,7 @@
 
 /*
  * DataGenerator.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.source;
@@ -69,6 +69,7 @@ public class DataGenerator
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame(), true);
     dialog.setTitle("Data generator");
+    dialog.setUISettingsPrefix(weka.datagenerators.DataGenerator.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(weka.datagenerators.DataGenerator.class);
     dialog.setCurrent(m_Generator);

@@ -15,7 +15,7 @@
 
 /*
  * ChangeColumnType.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -91,6 +91,7 @@ public class ChangeColumnType
     else
       setup = new GenericObjectEditorDialog(GUIHelper.getParentFrame(state.table), true);
     setup.setDefaultCloseOperation(HistogramFactory.SetupDialog.DISPOSE_ON_CLOSE);
+    setup.setUISettingsPrefix(AbstractSpreadSheetColumnConverter.class);
     setup.getGOEEditor().setClassType(AbstractSpreadSheetColumnConverter.class);
     setup.getGOEEditor().setCanChangeClassInDialog(true);
     last = (AbstractSpreadSheetColumnConverter) state.table.getLastSetup(getClass(), true, false);

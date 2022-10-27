@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditorHelper.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -30,15 +30,14 @@ import java.beans.PropertyEditorManager;
 
 /**
  * Helper class for GOE editors.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EditorHelper {
 
   /**
    * Tries to determine a view for the editor.
-   * 
+   *
    * @param editor	the editor to get the view for
    * @return		the view, null if failed to determine one
    */
@@ -46,7 +45,7 @@ public class EditorHelper {
     JComponent	result;
 
     result = null;
-    
+
     if (editor.supportsCustomEditor() && editor.isPaintable()) {
       result = new PropertyPanel(editor);
     }
@@ -59,7 +58,7 @@ public class EditorHelper {
     else if (editor.getAsText() != null) {
       result = new PropertyText(editor);
     }
-    
+
     return result;
   }
 
@@ -74,7 +73,7 @@ public class EditorHelper {
   public static Object simpleEdit(Container parent, Object obj, String title) {
     GenericObjectEditorDialog 	dialogGOE;
     GenericArrayEditorDialog	dialogArray;
-    Object result;
+    Object 			result;
     PropertyEditor		editor;
     boolean			primitive;
 
@@ -93,6 +92,7 @@ public class EditorHelper {
 	dialogGOE = new GenericObjectEditorDialog(GUIHelper.getParentDialog(parent), ModalityType.DOCUMENT_MODAL);
       else
 	dialogGOE = new GenericObjectEditorDialog(GUIHelper.getParentFrame(parent), true);
+      dialogGOE.setUISettingsPrefix("SimpleEditGOE");
       dialogGOE.setTitle(title);
       dialogGOE.getGOEEditor().setClassType(obj.getClass());
       dialogGOE.getGOEEditor().setCanChangeClassInDialog(false);
@@ -109,6 +109,7 @@ public class EditorHelper {
 	dialogArray = new GenericArrayEditorDialog(GUIHelper.getParentDialog(parent), ModalityType.DOCUMENT_MODAL);
       else
 	dialogArray = new GenericArrayEditorDialog(GUIHelper.getParentFrame(parent), true);
+      dialogArray.setUISettingsPrefix("SimpleEditGAE");
       dialogArray.setTitle(title);
       dialogArray.setCurrent(obj);
       dialogArray.pack();

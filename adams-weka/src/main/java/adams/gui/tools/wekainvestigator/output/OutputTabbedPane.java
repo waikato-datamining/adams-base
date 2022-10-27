@@ -15,7 +15,7 @@
 
 /*
  * OutputTabbedPane.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.output;
@@ -128,6 +128,7 @@ public class OutputTabbedPane
       dialog = new GenericObjectEditorDialog(GUIHelper.getParentFrame(this), true);
     dialog.setDefaultCloseOperation(GenericObjectEditorDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Export output");
+    dialog.setUISettingsPrefix(AbstractMultiObjectExport.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(AbstractMultiObjectExport.class);
     dialog.setCurrent(m_LastExport);

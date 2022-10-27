@@ -15,7 +15,7 @@
 
 /*
  * ImageProcessorPanel.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -937,6 +937,7 @@ public class ImageProcessorPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Image overlay");
+    dialog.setUISettingsPrefix(ImageOverlay.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(ImageOverlay.class);
     dialog.setCurrent(last);
@@ -968,6 +969,7 @@ public class ImageProcessorPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Locate objects");
+    dialog.setUISettingsPrefix(AbstractObjectLocator.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(AbstractObjectLocator.class);
     dialog.setCurrent(last);

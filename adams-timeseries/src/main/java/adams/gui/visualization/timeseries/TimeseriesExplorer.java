@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesExplorer.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -131,7 +131,6 @@ import static adams.gui.flow.FlowEditorPanel.getPropertiesEditor;
  * A panel for exploring Timeseries, manipulating them with filters, etc.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimeseriesExplorer
   extends UndoPanel
@@ -1195,6 +1194,7 @@ public class TimeseriesExplorer
       else
 	m_DialogColorProvider = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogColorProvider.setTitle("Select color provider");
+      m_DialogColorProvider.setUISettingsPrefix(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setClassType(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
     }
@@ -1220,6 +1220,7 @@ public class TimeseriesExplorer
       else
 	m_DialogPaintlet = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogPaintlet.setTitle("Select paintlet");
+      m_DialogPaintlet.setUISettingsPrefix(AbstractTimeseriesPaintlet.class);
       m_DialogPaintlet.getGOEEditor().setClassType(AbstractTimeseriesPaintlet.class);
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
     }

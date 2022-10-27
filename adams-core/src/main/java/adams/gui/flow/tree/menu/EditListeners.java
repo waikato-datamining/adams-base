@@ -74,6 +74,7 @@ public class EditListeners
     else
       dialog = new GenericObjectEditorDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
     dialog.setTitle("Edit listeners");
+    dialog.setUISettingsPrefix(FlowExecutionListener.class);
     dialog.getGOEEditor().setClassType(FlowExecutionListener.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     if (m_State.runningFlow.getFlowExecutionListener() instanceof ShallowCopySupporter)

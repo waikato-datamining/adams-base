@@ -954,6 +954,7 @@ public class InvestigatorPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Select class attribute heuristic");
+    dialog.setUISettingsPrefix(AbstractClassAttributeHeuristic.class);
     dialog.getGOEEditor().setClassType(AbstractClassAttributeHeuristic.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.setCurrent(m_ClassAttributeHeuristic);
@@ -994,6 +995,7 @@ public class InvestigatorPanel
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setTitle("Select relation name heuristic");
+    dialog.setUISettingsPrefix(AbstractRelationNameHeuristic.class);
     dialog.getGOEEditor().setClassType(AbstractRelationNameHeuristic.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.setCurrent(m_RelationNameHeuristic);

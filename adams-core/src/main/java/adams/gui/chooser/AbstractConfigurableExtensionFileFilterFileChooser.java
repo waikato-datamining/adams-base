@@ -15,7 +15,7 @@
 
 /*
  * AbstractConfigurableExtensionFileFilterFileChooser.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -378,6 +378,7 @@ public abstract class AbstractConfigurableExtensionFileFilterFileChooser<R,W>
       if (m_CheckBoxOptions.isSelected()) {
 	getEditor().setValue(m_CurrentHandler);
 	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
+	dialog.setUISettingsPrefix(this.getClass());
 	dialog.setLocationRelativeTo(dialog.getParent());
 	dialog.setVisible(true);
 	result = dialog.getResultType();

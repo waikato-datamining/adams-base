@@ -15,7 +15,7 @@
 
 /*
  * BreakpointPanel.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -197,6 +197,7 @@ public class BreakpointPanel
   protected GenericObjectEditorDialog getGOEDialog() {
     if (m_DialogGOE == null) {
       m_DialogGOE = GenericObjectEditorDialog.createDialog(this);
+      m_DialogGOE.setUISettingsPrefix(AbstractBreakpoint.class);
       m_DialogGOE.getGOEEditor().setClassType(AbstractBreakpoint.class);
       m_DialogGOE.getGOEEditor().setCanChangeClassInDialog(true);
       m_DialogGOE.setCurrent(getDefaultBreakpoint());
@@ -214,7 +215,8 @@ public class BreakpointPanel
     dialog.setCurrent(getDefaultBreakpoint());
     dialog.setTitle("Add breakpoint");
     dialog.pack();
-    dialog.setLocationRelativeTo(m_Owner);
+    if (!dialog.getUISettingsApplied())
+      dialog.setLocationRelativeTo(m_Owner);
     dialog.setVisible(true);
     if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
       return;

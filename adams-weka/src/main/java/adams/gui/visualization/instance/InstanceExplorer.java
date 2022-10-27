@@ -15,7 +15,7 @@
 
 /*
  * InstanceExplorer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.instance;
@@ -82,7 +82,6 @@ import java.util.List;
  * A panel for exploring Instances visually.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstanceExplorer
   extends BasePanel
@@ -682,6 +681,7 @@ public class InstanceExplorer
       else
 	m_DialogColorProvider = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogColorProvider.setTitle("Select color provider");
+      m_DialogColorProvider.setUISettingsPrefix(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setClassType(ColorProvider.class);
       m_DialogColorProvider.getGOEEditor().setCanChangeClassInDialog(true);
     }
@@ -707,6 +707,7 @@ public class InstanceExplorer
       else
 	m_DialogPaintlet = new GenericObjectEditorDialog(getParentFrame(), true);
       m_DialogPaintlet.setTitle("Select paintlet");
+      m_DialogPaintlet.setUISettingsPrefix(AbstractInstancePaintlet.class);
       m_DialogPaintlet.getGOEEditor().setClassType(AbstractInstancePaintlet.class);
       m_DialogPaintlet.getGOEEditor().setCanChangeClassInDialog(true);
     }

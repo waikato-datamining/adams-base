@@ -15,7 +15,7 @@
 
 /*
  * HistogramFactory.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.statistics;
@@ -49,7 +49,6 @@ import java.awt.Dialog.ModalityType;
  * A factory for histogram related objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HistogramFactory {
 
@@ -60,7 +59,6 @@ public class HistogramFactory {
    * A panel for displaying a histogram based on the GC data of a chromatogram.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Panel
     extends BasePanel {
@@ -157,7 +155,6 @@ public class HistogramFactory {
    * A dialog that queries the user about parameters for displaying histograms.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class SetupDialog
     extends GenericObjectEditorDialog {
@@ -192,6 +189,7 @@ public class HistogramFactory {
     protected void initialize() {
       super.initialize();
 
+      setUISettingsPrefix(AbstractArrayStatistic.class);
       getGOEEditor().setClassType(AbstractArrayStatistic.class);
       getGOEEditor().setCanChangeClassInDialog(false);
       setCurrent(new ArrayHistogram());
@@ -202,7 +200,6 @@ public class HistogramFactory {
    * Dialog for displaying histograms.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Dialog
     extends BaseDialog {
