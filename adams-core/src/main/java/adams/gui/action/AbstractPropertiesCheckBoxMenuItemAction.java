@@ -13,13 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPropertiesCheckBoxMenuItemAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
-
-import adams.gui.core.ImageManager;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
@@ -31,7 +29,6 @@ import java.awt.event.ActionListener;
  * Ancestor for checkbox menu item actions.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of state
  * @param <D> the type of dialog
  */
@@ -75,9 +72,7 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dial
     });
     if (getIcon() != null)
       result.setIcon(getIcon());
-    else
-      result.setIcon(ImageManager.getEmptyIcon());
-    
+
     return result;
   }
 
