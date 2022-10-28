@@ -27,6 +27,7 @@ Menu-Program=\
   adams.gui.menu.Terminal,\
   -,\
   adams.gui.menu.ProgramUserMode,\
+  adams.gui.menu.ProgramLookAndFeel,\
   adams.gui.menu.Preferences,\
   -,\
   adams.gui.menu.ProgramRestart,\

@@ -51,6 +51,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.core.UISettings;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
+import adams.gui.laf.AbstractLookAndFeel;
 import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
@@ -539,7 +540,7 @@ public abstract class AbstractApplicationFrame
    * Sets the look'n'feel.
    */
   protected void setLookAndFeel() {
-    GUIHelper.setLookAndFeel(GUIHelper.getLookAndFeel());
+    AbstractLookAndFeel.installLookAndFeel();
   }
 
   /**

@@ -49,7 +49,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -1008,36 +1007,6 @@ public class GUIHelper {
     };
 
     SwingUtilities.invokeLater(run);
-  }
-
-  /**
-   * Returns the look'n'feel classname from the props file.
-   *
-   * @return		the classname
-   */
-  public static String getLookAndFeel() {
-    return getString("LookAndFeel", UIManager.getCrossPlatformLookAndFeelClassName());
-  }
-
-  /**
-   * Installs the specified look'n'feel.
-   *
-   * @param classname	the classname of the look'n'feel to install
-   * @return		true if successfully installed
-   */
-  public static boolean setLookAndFeel(String classname) {
-    boolean	result;
-
-    try {
-      UIManager.setLookAndFeel(classname);
-      result = true;
-    }
-    catch (Exception e) {
-      result = false;
-      LOGGER.severe("Can't set look & feel:" + e);
-    }
-
-    return result;
   }
 
   /**

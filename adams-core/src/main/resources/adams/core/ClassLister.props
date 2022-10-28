@@ -726,6 +726,10 @@ adams.gui.application.AbstractBasicMenuItemDefinition=\
 adams.gui.dialog.AbstractDatabaseConnectionPanel=\
   adams.gui.dialog
 
+# the look and feel plugins
+adams.gui.laf.AbstractLookAndFeel=\
+  adams.gui.laf
+
 # the writers for GUI components
 adams.gui.print.JComponentWriter=\
   adams.gui.print
