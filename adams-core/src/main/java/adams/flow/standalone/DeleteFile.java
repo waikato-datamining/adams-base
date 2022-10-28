@@ -15,7 +15,7 @@
 
 /*
  * DeleteFile.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -33,8 +33,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Deletes the files&#47;dirs that match the regular expression below the specified directory.<br>
- * In case of directories, deletion is performed recursively (if a directory matches, then the content gets deleted regardless whether it matches the regular expression or not).
+ * Deletes the files that match the regular expression below the specified directory.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,13 +41,9 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -56,34 +51,46 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: DeleteFile
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: directory)
  * &nbsp;&nbsp;&nbsp;The directory to delete the files in.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the files&#47;dirs must match (empty string matches
- * &nbsp;&nbsp;&nbsp;all).
+ * &nbsp;&nbsp;&nbsp;The regular expression that the files must match (empty string matches all
+ * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
- * <pre>-recursive (property: recursive)
+ * <pre>-recursive &lt;boolean&gt; (property: recursive)
  * &nbsp;&nbsp;&nbsp;Whether to search recursively or not.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-max-depth &lt;int&gt; (property: maxDepth)
@@ -95,10 +102,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DeleteFile
-  extends AbstractStandalone {
+    extends AbstractStandalone {
 
   /** for serialization. */
   private static final long serialVersionUID = 4670761846363281951L;
@@ -114,11 +120,8 @@ public class DeleteFile
   @Override
   public String globalInfo() {
     return
-        "Deletes the files/dirs that match the regular expression below the "
-      + "specified directory.\n"
-      + "In case of directories, deletion is performed recursively (if a directory "
-      + "matches, then the content gets deleted regardless whether it matches "
-      + "the regular expression or not).";
+        "Deletes the files that match the regular expression below the "
+            + "specified directory.";
   }
 
   /**
@@ -129,20 +132,20 @@ public class DeleteFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "dir", "directory",
-	    new PlaceholderDirectory("."));
+        "dir", "directory",
+        new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+        "regexp", "regExp",
+        new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "recursive", "recursive",
-	    false);
+        "recursive", "recursive",
+        false);
 
     m_OptionManager.add(
-	    "max-depth", "maxDepth",
-	    -1);
+        "max-depth", "maxDepth",
+        -1);
   }
 
   /**
@@ -167,7 +170,7 @@ public class DeleteFile
     List<String>	options;
 
     result  = QuickInfoHelper.toString(this, "directory", getDirectory());
-    result += QuickInfoHelper.toString(this, "regExp", getRegExp(), File.separator);
+    result += QuickInfoHelper.toString(this, "regExp", (getRegExp().isEmpty() ? "-all-" : getRegExp().getValue()), File.separator);
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "recursive", getRecursive(), "(recursive)"));
     result += QuickInfoHelper.flatten(options);
@@ -216,7 +219,7 @@ public class DeleteFile
   }
 
   /**
-   * Sets the regular expression for the files/dirs.
+   * Sets the regular expression for the files.
    *
    * @param value	the regular expression
    */
@@ -226,7 +229,7 @@ public class DeleteFile
   }
 
   /**
-   * Returns the regular expression for the files/dirs.
+   * Returns the regular expression for the files.
    *
    * @return		the regular expression
    * @see		LocalDirectoryLister#getRegExp()
@@ -242,7 +245,7 @@ public class DeleteFile
    * 			displaying in the GUI or for listing the options.
    */
   public String regExpTipText() {
-    return "The regular expression that the files/dirs must match (empty string matches all).";
+    return "The regular expression that the files must match (empty string matches all).";
   }
 
   /**
@@ -306,7 +309,7 @@ public class DeleteFile
   public String maxDepthTipText() {
     return
         "The maximum depth to search in recursive mode (1 = only watch "
-       + "directory, -1 = infinite).";
+            + "directory, -1 = infinite).";
   }
 
   /**
@@ -321,32 +324,30 @@ public class DeleteFile
     File	file;
     int		i;
     boolean	deleted;
-    String	type;
 
     result = null;
 
     files = m_Lister.list();
     for (i = 0; i < files.length; i++) {
       file = new File(files[i]);
-      type = (file.isDirectory() ? "directory" : "file");
       try {
-	if (isLoggingEnabled())
-	  getLogger().info(type + " '" + file + "' exists: " + file.exists());
-	if (file.exists()) {
-	  deleted = FileUtils.delete(file);
-	  if (isLoggingEnabled())
-	    getLogger().info(type + " '" + file + "' deleted: " + deleted);
-	  if (!deleted) {
-	    if (result == null)
-	      result = "";
-	    else
-	      result += "\n";
-	    result += "Failed to delete " + type + ": " + file;
-	  }
-	}
+        if (isLoggingEnabled())
+          getLogger().info("file '" + file + "' exists: " + file.exists());
+        if (file.exists()) {
+          deleted = FileUtils.delete(file);
+          if (isLoggingEnabled())
+            getLogger().info("file '" + file + "' deleted: " + deleted);
+          if (!deleted) {
+            if (result == null)
+              result = "";
+            else
+              result += "\n";
+            result += "Failed to delete file: " + file;
+          }
+        }
       }
       catch (Exception e) {
-	result = handleException("Problem deleting " + type + " '" + file + "': ", e);
+        result = handleException("Problem deleting file '" + file + "': ", e);
       }
     }
 
