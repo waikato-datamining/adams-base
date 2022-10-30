@@ -15,7 +15,7 @@
 
 /*
  * AbstractWekaPredictionsTransformer.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -104,7 +104,7 @@ public abstract class AbstractWekaPredictionsTransformer
 
     m_OptionManager.add(
 	    "use-original-indices", "useOriginalIndices",
-	    false);
+	    true);
 
     m_OptionManager.add(
 	    "test-attributes", "testAttributes",
