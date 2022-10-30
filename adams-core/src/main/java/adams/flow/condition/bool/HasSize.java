@@ -94,7 +94,7 @@ public class HasSize
   }
 
   /**
-   * Returns the minimum number of elements the array has to have
+   * Returns the minimum number of elements the collection has to have
    *
    * @return		the number of elements (0-inf)
    */
