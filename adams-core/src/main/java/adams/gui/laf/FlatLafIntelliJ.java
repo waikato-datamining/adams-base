@@ -59,7 +59,7 @@ public class FlatLafIntelliJ
    */
   @Override
   public void doInstall() throws Exception {
-    com.formdev.flatlaf.FlatIntelliJLaf.install();
+    com.formdev.flatlaf.FlatIntelliJLaf.setup();
     UIManager.put("Table.showHorizontalLines", true);
     UIManager.put("Table.showVerticalLines", true);
   }

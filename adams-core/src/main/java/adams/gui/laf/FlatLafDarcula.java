@@ -59,7 +59,7 @@ public class FlatLafDarcula
    */
   @Override
   public void doInstall() throws Exception {
-    com.formdev.flatlaf.FlatDarculaLaf.install();
+    com.formdev.flatlaf.FlatDarculaLaf.setup();
     UIManager.put("Table.showHorizontalLines", true);
     UIManager.put("Table.showVerticalLines", true);
   }
