@@ -87,9 +87,9 @@ public class HasLengthTest
     result[1] = new HasLength();
     result[2] = new HasLength();
     result[3] = new HasLength();
-    result[3].setMinSize(0);
+    result[3].setMinLength(0);
     result[4] = new HasLength();
-    result[4].setMinSize(5);
+    result[4].setMinLength(5);
 
     return result;
   }

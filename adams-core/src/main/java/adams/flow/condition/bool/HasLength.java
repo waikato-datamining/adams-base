@@ -55,7 +55,7 @@ public class HasLength
   private static final long serialVersionUID = 2973832676958171541L;
 
   /** the number of elements to have at least. */
-  protected int m_MinSize;
+  protected int m_MinLength;
 
   /**
    * Returns a string describing the object.
@@ -75,7 +75,7 @@ public class HasLength
     super.defineOptions();
 
     m_OptionManager.add(
-        "min-size", "minSize",
+        "min-length", "minLength",
         1, 0, null);
   }
 
@@ -84,9 +84,9 @@ public class HasLength
    *
    * @param value	the number of elements (0-inf)
    */
-  public void setMinSize(int value) {
-    if (getOptionManager().isValid("minSize", value)) {
-      m_MinSize = value;
+  public void setMinLength(int value) {
+    if (getOptionManager().isValid("minLength", value)) {
+      m_MinLength = value;
       reset();
     }
   }
@@ -96,8 +96,8 @@ public class HasLength
    *
    * @return		the number of elements (0-inf)
    */
-  public int getMinSize() {
-    return m_MinSize;
+  public int getMinLength() {
+    return m_MinLength;
   }
 
   /**
@@ -106,7 +106,7 @@ public class HasLength
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String minSizeTipText() {
+  public String minLengthTipText() {
     return "The minimum number of elements that the array needs to have.";
   }
 
@@ -117,7 +117,7 @@ public class HasLength
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "minSize", m_MinSize, "min size: ");
+    return QuickInfoHelper.toString(this, "minLength", m_MinLength, "min length: ");
   }
 
   /**
@@ -142,6 +142,6 @@ public class HasLength
     Object array;
 
     array = token.getPayload();
-    return (array != null) && (array.getClass().isArray()) && (Array.getLength(array) >= m_MinSize);
+    return (array != null) && (array.getClass().isArray()) && (Array.getLength(array) >= m_MinLength);
   }
 }
