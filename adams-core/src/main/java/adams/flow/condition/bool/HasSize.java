@@ -131,7 +131,7 @@ public class HasSize
    */
   public void setMaxSize(int value) {
     if (getOptionManager().isValid("maxSize", value)) {
-      m_MinSize = value;
+      m_MaxSize = value;
       reset();
     }
   }
