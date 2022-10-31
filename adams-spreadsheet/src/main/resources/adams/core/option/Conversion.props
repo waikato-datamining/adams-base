@@ -18,3 +18,19 @@ PartialRename=
 # general format for partial classname renaming (no regular expression, but case-sensitive):
 # <key>=<find>\t<replace>
 #Rename-statistic=.spreadsheet.statistic.\t.spreadsheet.colstatistic.
+
+# List the keys that contain renaming of options (ie "-blah" into "-bloerk")
+RenameOption=HasRows-numrowsopt
+
+# general format for renaming options
+# <key>=<classname>#<old>#<new>
+#RenameOption-source_callablesource_global=adams.flow.source.CallableSource#global#callable
+HasRows-numrowsopt=adams.flow.condition.bool.HasRows#num-rows#min-rows
+
+# List the keys that contain renaming of properties (ie "blahProp" into "bloerkProp")
+RenameProperty=HasRows-numrowsprop
+
+# general format for renaming properties
+# <key>=<classname>#<oldProp>#<newProp>
+#RenameProperty-source_callablesource_global=adams.flow.source.CallableSource#globalName#callableName
+HasRows-numrowsprop=adams.flow.condition.bool.HasRows#numRows#minRows

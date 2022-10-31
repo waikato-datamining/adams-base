@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HasRowsTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the 'HasRows' boolean condition.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HasRowsTest
   extends AbstractBooleanConditionTestCase {
@@ -122,9 +121,9 @@ public class HasRowsTest
     result    = new HasRows[3];
     result[0] = new HasRows();
     result[1] = new HasRows();
-    result[1].setNumRows(0);
+    result[1].setMinRows(0);
     result[2] = new HasRows();
-    result[2].setNumRows(100);
+    result[2].setMinRows(100);
     
     return result;
   }

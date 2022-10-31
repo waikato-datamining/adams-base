@@ -36,7 +36,7 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * <pre>-min-rows &lt;int&gt; (property: minRows)
  * &nbsp;&nbsp;&nbsp;The minimum number of rows that the spreadsheet needs to have, no lower
  * &nbsp;&nbsp;&nbsp;bound if -1.
  * &nbsp;&nbsp;&nbsp;default: 1
@@ -61,7 +61,7 @@ public class HasRows
   private static final long serialVersionUID = 2973832676958171541L;
 
   /** the minimum number of rows. */
-  protected int m_NumRows;
+  protected int m_MinRows;
 
   /** the maximum number of rows. */
   protected int m_MaxRows;
@@ -84,7 +84,7 @@ public class HasRows
     super.defineOptions();
 
     m_OptionManager.add(
-	"num-rows", "numRows",
+	"min-rows", "minRows",
 	1, -1, null);
 
     m_OptionManager.add(
@@ -97,9 +97,9 @@ public class HasRows
    *
    * @param value	the number of rows (-1: no lower bound)
    */
-  public void setNumRows(int value) {
-    if (getOptionManager().isValid("numRows", value)) {
-      m_NumRows = value;
+  public void setMinRows(int value) {
+    if (getOptionManager().isValid("minRows", value)) {
+      m_MinRows = value;
       reset();
     }
   }
@@ -109,8 +109,8 @@ public class HasRows
    *
    * @return		the number of rows (-1: no lower bound)
    */
-  public int getNumRows() {
-    return m_NumRows;
+  public int getMinRows() {
+    return m_MinRows;
   }
 
   /**
@@ -119,7 +119,7 @@ public class HasRows
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String numRowsTipText() {
+  public String minRowsTipText() {
     return "The minimum number of rows that the spreadsheet needs to have, no lower bound if -1.";
   }
 
@@ -163,7 +163,7 @@ public class HasRows
   public String getQuickInfo() {
     String	result;
 
-    result = QuickInfoHelper.toString(this, "numRows", (m_NumRows == -1 ? "-any-" : "" + m_NumRows), "min rows: ");
+    result = QuickInfoHelper.toString(this, "minRows", (m_MinRows == -1 ? "-any-" : "" + m_MinRows), "min rows: ");
     result += QuickInfoHelper.toString(this, "maxRows", (m_MaxRows == -1 ? "-any-" : "" + m_MaxRows), ", max rows: ");
 
     return result;
@@ -196,8 +196,8 @@ public class HasRows
     if (result) {
       sheet  = (SpreadSheet) token.getPayload();
 
-      if (m_NumRows > -1)
-	result = (sheet.getRowCount() >= m_NumRows);
+      if (m_MinRows > -1)
+	result = (sheet.getRowCount() >= m_MinRows);
 
       if (m_MaxRows > -1)
 	result = (sheet.getRowCount() <= m_MaxRows);
