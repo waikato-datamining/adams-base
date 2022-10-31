@@ -15,7 +15,7 @@
 
 /*
  * HasSize.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -27,7 +27,7 @@ import java.util.Collection;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the collection passing through has a at least the specified number of elements.
+ * Checks whether the collection passing through has the required number of elements.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,9 +38,17 @@ import java.util.Collection;
  * </pre>
  *
  * <pre>-min-size &lt;int&gt; (property: minSize)
- * &nbsp;&nbsp;&nbsp;The minimum number of elements that the collection needs to have.
+ * &nbsp;&nbsp;&nbsp;The minimum number of elements that the collection has to have, no lower
+ * &nbsp;&nbsp;&nbsp;bound if -1.
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-max-size &lt;int&gt; (property: maxSize)
+ * &nbsp;&nbsp;&nbsp;The maximum number of elements that the array can have, no upper bound if
+ * &nbsp;&nbsp;&nbsp;-1.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
  <!-- options-end -->
@@ -48,14 +56,17 @@ import java.util.Collection;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class HasSize
-  extends AbstractBooleanCondition {
+    extends AbstractBooleanCondition {
 
   /** for serialization. */
   private static final long serialVersionUID = 2973832676958171541L;
-  
-  /** the number of elements to have at least. */
+
+  /** the minimum number of elements. */
   protected int m_MinSize;
-  
+
+  /** the maximum number of elements. */
+  protected int m_MaxSize;
+
   /**
    * Returns a string describing the object.
    *
@@ -63,7 +74,7 @@ public class HasSize
    */
   @Override
   public String globalInfo() {
-    return "Checks whether the collection passing through has a at least the specified number of elements.";
+    return "Checks whether the collection passing through has the required number of elements.";
   }
 
   /**
@@ -74,29 +85,30 @@ public class HasSize
     super.defineOptions();
 
     m_OptionManager.add(
-      "min-size", "minSize",
-      1, 0, null);
+	"min-size", "minSize",
+	1, -1, null);
+
+    m_OptionManager.add(
+	"max-size", "maxSize",
+	-1, -1, null);
   }
 
   /**
    * Sets the minimum number of elements the collection has to have.
    *
-   * @param value	the number of elements (0-inf)
+   * @param value	the number of elements (-1: no lower bound)
    */
   public void setMinSize(int value) {
-    if (value >= 0) {
+    if (getOptionManager().isValid("minSize", value)) {
       m_MinSize = value;
       reset();
-    }
-    else {
-      getLogger().warning("Number of elements must be at least 0, provided: " + value);
     }
   }
 
   /**
    * Returns the minimum number of elements the collection has to have
    *
-   * @return		the number of elements (0-inf)
+   * @return		the number of elements (-1: no lower bound)
    */
   public int getMinSize() {
     return m_MinSize;
@@ -109,7 +121,38 @@ public class HasSize
    * 			displaying in the GUI or for listing the options.
    */
   public String minSizeTipText() {
-    return "The minimum number of elements that the collection needs to have.";
+    return "The minimum number of elements that the collection has to have, no lower bound if -1.";
+  }
+
+  /**
+   * Sets the maximum number of elements the array can have.
+   *
+   * @param value	the number of elements (-1: no upper bound)
+   */
+  public void setMaxSize(int value) {
+    if (getOptionManager().isValid("maxSize", value)) {
+      m_MinSize = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of elements the array can have
+   *
+   * @return		the number of elements (-1: no upper bound)
+   */
+  public int getMaxSize() {
+    return m_MaxSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxSizeTipText() {
+    return "The maximum number of elements that the array can have, no upper bound if -1.";
   }
 
   /**
@@ -119,7 +162,12 @@ public class HasSize
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "minSize", m_MinSize, "min size: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "minSize", (m_MinSize == -1 ? "-any-" : "" + m_MinSize), "min size: ");
+    result += QuickInfoHelper.toString(this, "maxSize", (m_MaxSize == -1 ? "-any-" : "" + m_MaxSize), ", max size: ");
+
+    return result;
   }
 
   /**
@@ -141,9 +189,21 @@ public class HasSize
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    Collection coll;
-    
-    coll = (Collection) token.getPayload();
-    return (coll.size() >= m_MinSize);
+    boolean	result;
+    Collection 	coll;
+
+    result = (token.getPayload() instanceof Collection);
+
+    if (result) {
+      coll = (Collection) token.getPayload();
+
+      if (m_MinSize > -1)
+	result = (coll.size() >= m_MinSize);
+
+      if (m_MaxSize > -1)
+	result = (coll.size() <= m_MaxSize);
+    }
+
+    return result;
   }
 }

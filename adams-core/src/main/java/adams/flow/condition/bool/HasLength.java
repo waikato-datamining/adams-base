@@ -28,7 +28,7 @@ import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the array passing through has a at least the specified number of elements.
+ * Checks whether the array passing through has the required number of elements.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -38,10 +38,18 @@ import java.lang.reflect.Array;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-min-size &lt;int&gt; (property: minSize)
- * &nbsp;&nbsp;&nbsp;The minimum number of elements that the array needs to have.
+ * <pre>-min-length &lt;int&gt; (property: minLength)
+ * &nbsp;&nbsp;&nbsp;The minimum number of elements that the array needs to have, no lower bound
+ * &nbsp;&nbsp;&nbsp;if -1.
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-max-length &lt;int&gt; (property: maxLength)
+ * &nbsp;&nbsp;&nbsp;The maximum number of elements that the array can have, no upper bound if
+ * &nbsp;&nbsp;&nbsp;-1.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
  <!-- options-end -->
@@ -54,8 +62,11 @@ public class HasLength
   /** for serialization. */
   private static final long serialVersionUID = 2973832676958171541L;
 
-  /** the number of elements to have at least. */
+  /** the minimum number of elements. */
   protected int m_MinLength;
+
+  /** the maximum number of elements. */
+  protected int m_MaxLength;
 
   /**
    * Returns a string describing the object.
@@ -64,7 +75,7 @@ public class HasLength
    */
   @Override
   public String globalInfo() {
-    return "Checks whether the array passing through has a at least the specified number of elements.";
+    return "Checks whether the array passing through has the required number of elements.";
   }
 
   /**
@@ -75,14 +86,18 @@ public class HasLength
     super.defineOptions();
 
     m_OptionManager.add(
-        "min-length", "minLength",
-        1, 0, null);
+	"min-length", "minLength",
+	1, -1, null);
+
+    m_OptionManager.add(
+	"max-length", "maxLength",
+	-1, -1, null);
   }
 
   /**
    * Sets the minimum number of elements the array has to have.
    *
-   * @param value	the number of elements (0-inf)
+   * @param value	the number of elements (-1: no lower bound)
    */
   public void setMinLength(int value) {
     if (getOptionManager().isValid("minLength", value)) {
@@ -94,7 +109,7 @@ public class HasLength
   /**
    * Returns the minimum number of elements the array has to have
    *
-   * @return		the number of elements (0-inf)
+   * @return		the number of elements (-1: no lower bound)
    */
   public int getMinLength() {
     return m_MinLength;
@@ -107,7 +122,38 @@ public class HasLength
    * 			displaying in the GUI or for listing the options.
    */
   public String minLengthTipText() {
-    return "The minimum number of elements that the array needs to have.";
+    return "The minimum number of elements that the array needs to have, no lower bound if -1.";
+  }
+
+  /**
+   * Sets the maximum number of elements the array can have.
+   *
+   * @param value	the number of elements (-1: no upper bound)
+   */
+  public void setMaxLength(int value) {
+    if (getOptionManager().isValid("maxLength", value)) {
+      m_MinLength = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of elements the array can have
+   *
+   * @return		the number of elements (-1: no upper bound)
+   */
+  public int getMaxLength() {
+    return m_MaxLength;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxLengthTipText() {
+    return "The maximum number of elements that the array can have, no upper bound if -1.";
   }
 
   /**
@@ -117,7 +163,12 @@ public class HasLength
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "minLength", m_MinLength, "min length: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "minLength", (m_MinLength == -1 ? "-any-" : "" + m_MinLength), "min length: ");
+    result += QuickInfoHelper.toString(this, "maxLength", (m_MaxLength == -1 ? "-any-" : "" + m_MaxLength), ", max length: ");
+
+    return result;
   }
 
   /**
@@ -139,9 +190,18 @@ public class HasLength
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    Object array;
+    boolean	result;
+    Object 	array;
 
-    array = token.getPayload();
-    return (array != null) && (array.getClass().isArray()) && (Array.getLength(array) >= m_MinLength);
+    array  = token.getPayload();
+    result = (array != null) && (array.getClass().isArray());
+
+    if (result && (m_MinLength > -1))
+      result = (Array.getLength(array) >= m_MinLength);
+
+    if (result && (m_MaxLength > -1))
+      result = (Array.getLength(array) <= m_MaxLength);
+
+    return result;
   }
 }
