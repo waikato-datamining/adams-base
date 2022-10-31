@@ -132,7 +132,7 @@ public class HasLength
    */
   public void setMaxLength(int value) {
     if (getOptionManager().isValid("maxLength", value)) {
-      m_MinLength = value;
+      m_MaxLength = value;
       reset();
     }
   }
