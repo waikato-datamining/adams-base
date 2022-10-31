@@ -15,13 +15,13 @@
 
 /*
  * PDFExtract.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
+import adams.core.UnorderedRange;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
@@ -50,13 +50,9 @@ import java.io.FileOutputStream;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -64,41 +60,50 @@ import java.io.FileOutputStream;
  * &nbsp;&nbsp;&nbsp;default: PDFExtract
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: output)
  * &nbsp;&nbsp;&nbsp;The PDF file to output the extracted pages to.
- * &nbsp;&nbsp;&nbsp;default: .
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
- * <pre>-pages &lt;java.lang.String&gt; (property: pages)
- * &nbsp;&nbsp;&nbsp;The range of pages to extract; A range is a comma-separated list of single
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first,
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
+ * <pre>-pages &lt;adams.core.UnorderedRange&gt; (property: pages)
+ * &nbsp;&nbsp;&nbsp;The range of pages to extract; An unordered range is a comma-separated list
+ * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used as well: first, second, third, last_2, last_1,
+ * &nbsp;&nbsp;&nbsp;last
  * &nbsp;&nbsp;&nbsp;default: first-last
+ * &nbsp;&nbsp;&nbsp;example: An unordered range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFExtract
-  extends AbstractTransformer {
+    extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -5712406930007899590L;
@@ -107,7 +112,7 @@ public class PDFExtract
   protected PlaceholderFile m_Output;
 
   /** the range of pages to extract. */
-  protected Range m_Pages;
+  protected UnorderedRange m_Pages;
 
   /**
    * Returns a string describing the object.
@@ -128,22 +133,12 @@ public class PDFExtract
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output", "output",
-	    new PlaceholderFile("."));
+        "output", "output",
+        new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "pages", "pages",
-	    new Range(Range.ALL));
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Pages = new Range();
+        "pages", "pages",
+        new UnorderedRange(UnorderedRange.ALL));
   }
 
   /**
@@ -180,7 +175,7 @@ public class PDFExtract
    *
    * @param value	the range
    */
-  public void setPages(Range value) {
+  public void setPages(UnorderedRange value) {
     m_Pages = value;
     reset();
   }
@@ -190,7 +185,7 @@ public class PDFExtract
    *
    * @return 		the range
    */
-  public Range getPages() {
+  public UnorderedRange getPages() {
     return m_Pages;
   }
 
@@ -265,7 +260,7 @@ public class PDFExtract
     fos = null;
     try {
       if (isLoggingEnabled())
-	getLogger().info("Extracting pages from '" + file + "' into '" + m_Output + "'");
+        getLogger().info("Extracting pages from '" + file + "' into '" + m_Output + "'");
       document = new Document();
       fos      = new FileOutputStream(m_Output.getAbsolutePath());
       copy     = new PdfCopy(document, fos);
@@ -275,14 +270,14 @@ public class PDFExtract
       document.addAuthor(System.getProperty("user.name"));
       reader = new PdfReader(file.getAbsolutePath());
       if (isLoggingEnabled())
-	getLogger().info("- #pages: " + reader.getNumberOfPages());
+        getLogger().info("- #pages: " + reader.getNumberOfPages());
       m_Pages.setMax(reader.getNumberOfPages());
       pages = m_Pages.getIntIndices();
       for (i = 0; i < pages.length; i++) {
-	page = pages[i] + 1;
-	copy.addPage(copy.getImportedPage(reader, page));
-	if (isLoggingEnabled())
-	  getLogger().info("- adding page: " + page);
+        page = pages[i] + 1;
+        copy.addPage(copy.getImportedPage(reader, page));
+        if (isLoggingEnabled())
+          getLogger().info("- adding page: " + page);
       }
       copy.freeReader(reader);
       document.close();

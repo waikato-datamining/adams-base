@@ -15,14 +15,14 @@
 
 /*
  * PDFRenderPages.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
+import adams.core.UnorderedRange;
 import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
@@ -56,60 +56,60 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: PDFRenderPages
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-pages &lt;adams.core.Range&gt; (property: pages)
+ *
+ * <pre>-pages &lt;adams.core.UnorderedRange&gt; (property: pages)
  * &nbsp;&nbsp;&nbsp;The range of pages to render.
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An unordered range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-dpi &lt;int&gt; (property: DPI)
  * &nbsp;&nbsp;&nbsp;The DPI to use (dots per inch).
  * &nbsp;&nbsp;&nbsp;default: 72
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFRenderPages
-  extends AbstractTransformer {
+    extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -5712406930007899590L;
 
   /** the pages to render. */
-  protected Range m_Pages;
+  protected UnorderedRange m_Pages;
 
   /** the dpi setting to use. */
   protected int m_DPI;
@@ -135,12 +135,12 @@ public class PDFRenderPages
     super.defineOptions();
 
     m_OptionManager.add(
-	    "pages", "pages",
-	    new Range(Range.ALL));
+        "pages", "pages",
+        new UnorderedRange(UnorderedRange.ALL));
 
     m_OptionManager.add(
-	    "dpi", "DPI",
-	    72, 1, null);
+        "dpi", "DPI",
+        72, 1, null);
   }
 
   /**
@@ -158,7 +158,7 @@ public class PDFRenderPages
    *
    * @param value	the range
    */
-  public void setPages(Range value) {
+  public void setPages(UnorderedRange value) {
     m_Pages = value;
     reset();
   }
@@ -168,7 +168,7 @@ public class PDFRenderPages
    *
    * @return 		the range
    */
-  public Range getPages() {
+  public UnorderedRange getPages() {
     return m_Pages;
   }
 
@@ -272,27 +272,27 @@ public class PDFRenderPages
     doc = PDFBox.load(file);
     if (doc != null) {
       if (isLoggingEnabled())
-	getLogger().info("Rendering pages from '" + file + "'");
+        getLogger().info("Rendering pages from '" + file + "'");
       m_Pages.setMax(doc.getNumberOfPages());
       renderer = new PDFRenderer(doc);
       errors   = new MessageCollection();
       for (int page: m_Pages.getIntIndices()) {
-	if (isLoggingEnabled())
-	  getLogger().info("Rendering page #" + (page + 1));
-	try {
-	  img  = renderer.renderImageWithDPI(page, m_DPI);
-	  cont = new BufferedImageContainer();
-	  cont.setImage(img);
-	  cont.getReport().setStringValue("File", file.getAbsolutePath());
-	  cont.getReport().setNumericValue("Page", (page+1));
-	  m_Images.add(cont);
-	}
-	catch (Exception e) {
-	  errors.add(handleException("Failed to render page #" + (page + 1) + " from " + file, e));
-	}
+        if (isLoggingEnabled())
+          getLogger().info("Rendering page #" + (page + 1));
+        try {
+          img  = renderer.renderImageWithDPI(page, m_DPI);
+          cont = new BufferedImageContainer();
+          cont.setImage(img);
+          cont.getReport().setStringValue("File", file.getAbsolutePath());
+          cont.getReport().setNumericValue("Page", (page+1));
+          m_Images.add(cont);
+        }
+        catch (Exception e) {
+          errors.add(handleException("Failed to render page #" + (page + 1) + " from " + file, e));
+        }
       }
       if (!errors.isEmpty())
-	result = errors.toString();
+        result = errors.toString();
     }
     else {
       result = "Failed to load PDF document: " + file;

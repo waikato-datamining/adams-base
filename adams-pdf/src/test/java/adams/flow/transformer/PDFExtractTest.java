@@ -15,26 +15,25 @@
 
 /*
  * PDFExtractTest.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import adams.core.Range;
+import adams.core.UnorderedRange;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.source.FileSupplier;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the PDFExtract actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFExtractTest
   extends AbstractFlowTest {
@@ -85,7 +84,7 @@ public class PDFExtractTest
     sfs.setFiles(new adams.core.io.PlaceholderFile[]{new TmpFile("multiple_pages.pdf")});
 
     PDFExtract pdf = new PDFExtract();
-    pdf.setPages(new Range("1,4-last"));
+    pdf.setPages(new UnorderedRange("1,4-last"));
     pdf.setOutput(new TmpFile("dumpfile.pdf"));
 
     Flow flow = new Flow();
