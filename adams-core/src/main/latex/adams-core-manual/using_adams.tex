@@ -831,8 +831,13 @@ collections.
 	\item \textit{StorageCollectionInsert} -- inserts the object passing through
 	into the specified collection in storage.
 \end{tight_itemize}
+The following boolean flow conditions are available:
+\begin{tight_itemize}
+  \item \textit{HasLength} - check whether the array passing through has the required min/max length.
+  \item \textit{HasSize} - check whether the collection passing through has the required min/max size.
+\end{tight_itemize}
 Of special importance is the \textit{ArrayProcess} control actor. This actor
-allows you to appply a sequence of actors - defined below the control actor - to
+allows you to apply a sequence of actors - defined below the control actor - to
 all the elements of the array passing through. This is a shortcut to storing the
 length of the array in a variable (\textit{ArrayLength}), turning an array into
 a sequence (\textit{ArrayToSequence}), processing the individual tokens and then
