@@ -15,11 +15,12 @@
 
 /*
  * HasElements.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.annotation.DeprecatedClass;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -48,6 +49,9 @@ import java.lang.reflect.Array;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
+@DeprecatedClass(
+    useInstead = HasLength.class
+)
 public class HasElements
   extends AbstractBooleanCondition {
 
