@@ -15,7 +15,7 @@
 
 /*
  * SqlConnectionPanel.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -229,7 +229,7 @@ public class SqlConnectionPanel
     if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
       return;
 
-    m_DatabaseConnection = DatabaseConnection.getSingleton(textURL.getText(), textUser.getText(), new BasePassword(textPassword.getText()));
+    m_DatabaseConnection = DatabaseConnection.getSingleton(textURL.getText(), textUser.getText(), new BasePassword(new String(textPassword.getPassword())));
     m_DatabaseConnection.setLoggingLevel(comboBoxLoggingLevel.getSelectedItem());
     error = null;
     if (!m_DatabaseConnection.isConnected()) {

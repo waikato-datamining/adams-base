@@ -15,7 +15,7 @@
 
 /*
  * PasswordDialog.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -218,7 +218,7 @@ public class PasswordDialog
    * @return		the password
    */
   public BasePassword getPassword() {
-    return new BasePassword(m_TextPassword.getText());
+    return new BasePassword(new String(m_TextPassword.getPassword()));
   }
 
   /**

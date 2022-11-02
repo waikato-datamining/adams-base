@@ -202,7 +202,7 @@ public class EmailSetupPanel
     result.setProperty(EmailHelper.SMTP_PROTOCOLS, m_TextSmtpProtocols.getText());
     result.setBoolean(EmailHelper.SMTP_USE_SSL, m_CheckBoxSmtpUseSSL.isSelected());
     result.setProperty(EmailHelper.SMTP_USER, m_TextSmtpUser.getText());
-    result.setPassword(EmailHelper.SMTP_PASSWORD, new BasePassword(m_TextSmtpPassword.getText()));
+    result.setPassword(EmailHelper.SMTP_PASSWORD, new BasePassword(new String(m_TextSmtpPassword.getPassword())));
     result.setProperty(EmailHelper.DEFAULT_ADDRESS_FROM, m_TextDefaultFromAddress.getText());
     result.setProperty(EmailHelper.DEFAULT_SIGNATURE, Utils.backQuoteChars(m_TextDefaultSignature.getCurrent().getValue()));
     result.setProperty(EmailHelper.SUPPORT_EMAIL, m_TextSupportEmailAddress.getText());

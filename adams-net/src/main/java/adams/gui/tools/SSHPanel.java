@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SSHPanel.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JCraft (original Shell example)
  */
 package adams.gui.tools;
@@ -500,14 +500,14 @@ public class SSHPanel
 	switch (type) {
 	  case CREDENTIALS:
 	    m_Session = jsch.getSession(m_TextUser.getText(), m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());
-	    m_Session.setPassword(m_TextPassword.getText());
+	    m_Session.setPassword(new String(m_TextPassword.getPassword()));
 	    m_Session.setConfig("StrictHostKeyChecking", "no");
 	    break;
 	  case PUBLIC_KEY:
-	    if (m_TextKeyPassphrase.getText().isEmpty())
+	    if (new String(m_TextKeyPassphrase.getPassword()).isEmpty())
 	      jsch.addIdentity(m_FileChooserPanelKey.getCurrent().getAbsolutePath());
 	    else
-	      jsch.addIdentity(m_FileChooserPanelKey.getCurrent().getAbsolutePath(), m_TextKeyPassphrase.getText());
+	      jsch.addIdentity(m_FileChooserPanelKey.getCurrent().getAbsolutePath(), new String(m_TextKeyPassphrase.getPassword()));
 	    m_Session = jsch.getSession(m_TextUser.getText(), m_TextRemote.getText(), ((Number) m_PortModel.getValue()).intValue());
 	    m_Session.setConfig("StrictHostKeyChecking", "no");
 	    break;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JdbcOutputPanel.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
@@ -136,7 +136,7 @@ public class JdbcOutputPanel
     
     // backup values
     user = m_TextUser.getText();
-    pw   = m_TextPassword.getText();
+    pw   = new String(m_TextPassword.getPassword());
     
     if (getParentDialog() != null)
       dialog = new ApprovalDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
@@ -203,7 +203,7 @@ public class JdbcOutputPanel
       result = new DatabaseResultListener();
       result.setDatabaseURL(m_TextURL.getText());
       result.setUsername(m_TextUser.getText());
-      result.setPassword(m_TextPassword.getText());
+      result.setPassword(new String(m_TextPassword.getPassword()));
     }
     catch (Exception e) {
       result = null;

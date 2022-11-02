@@ -1367,11 +1367,11 @@ public class PropertiesParameterPanel
 	  break;
 	case PASSWORD:
 	  pwfield = (JPasswordField) comp;
-	  result.setPassword(key, new BasePassword(pwfield.getText()));
+	  result.setPassword(key, new BasePassword(new String(pwfield.getPassword())));
 	  break;
 	case PASSWORD_PLAIN:
 	  pwfield = (JPasswordField) comp;
-	  result.setProperty(key, pwfield.getText());
+	  result.setProperty(key, new String(pwfield.getPassword()));
 	  break;
 	case SQL:
 	  query = (SQLSyntaxEditorPanel) comp;

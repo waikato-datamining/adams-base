@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ProxyPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -294,14 +294,14 @@ public class ProxySettingsPanel
     proxy.setNoProxy(Proxy.Type.HTTP, m_TextHttpFtpNoProxy.getText().replaceAll(" ", "").split(","));
     proxy.setAuthentication(Proxy.Type.HTTP, m_CheckBoxHttpFtpAuthentication.isSelected());
     proxy.setUser(Proxy.Type.HTTP, m_TextHttpFtpUser.getText());
-    proxy.setPassword(Proxy.Type.HTTP, new BasePassword(m_TextHttpFtpPassword.getText()));
+    proxy.setPassword(Proxy.Type.HTTP, new BasePassword(new String(m_TextHttpFtpPassword.getPassword())));
 
     // socks
     proxy.setHost(Proxy.Type.SOCKS, m_TextSocksHost.getText());
     proxy.setPort(Proxy.Type.SOCKS, ((Number) m_SpinnerSocksPort.getValue()).intValue());
     proxy.setAuthentication(Proxy.Type.SOCKS, m_CheckBoxSocksAuthentication.isSelected());
     proxy.setUser(Proxy.Type.SOCKS, m_TextSocksUser.getText());
-    proxy.setPassword(Proxy.Type.SOCKS, new BasePassword(m_TextSocksPassword.getText()));
+    proxy.setPassword(Proxy.Type.SOCKS, new BasePassword(new String(m_TextSocksPassword.getPassword())));
 
     result = proxy.save();
     proxy.initializeProxy();

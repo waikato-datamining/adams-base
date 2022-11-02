@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -422,7 +422,7 @@ public abstract class AbstractDatabaseConnectionPanel
     result = newConnectionParameters();
     result.setParameter(ConnectionParameters.PARAM_URL,              m_TextURL.getText());
     result.setParameter(ConnectionParameters.PARAM_USER,             m_TextUser.getText());
-    result.setParameter(ConnectionParameters.PARAM_PASSWORD,         m_TextPassword.getText());
+    result.setParameter(ConnectionParameters.PARAM_PASSWORD,         new String(m_TextPassword.getPassword()));
     result.setParameter(ConnectionParameters.PARAM_LOGGINGLEVEL,     m_ComboBoxLoggingLevel.getSelectedItem().toString());
     result.setParameter(ConnectionParameters.PARAM_CONNECTONSTARTUP, "" + m_CheckBoxConnectOnStartUp.isSelected());
     result.setParameter(ConnectionParameters.PARAM_AUTOCOMMIT,       "" + m_CheckBoxAutoCommit.isSelected());
@@ -526,7 +526,7 @@ public abstract class AbstractDatabaseConnectionPanel
     if (getDatabaseConnection().getOwner() == null)
       return false;
     getDatabaseConnection().getOwner().disconnectConnections();
-    getDatabaseConnection().getOwner().disconnectAllConnections();
+    DatabaseManager.disconnectAllConnections();
     notifyChangeListeners();
     update();
     return true;

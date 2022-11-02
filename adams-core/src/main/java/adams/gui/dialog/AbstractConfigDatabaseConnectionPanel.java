@@ -15,7 +15,7 @@
 
 /*
  * AbstractConfigDatabaseConnectionPanel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -58,7 +58,7 @@ public abstract class AbstractConfigDatabaseConnectionPanel
     if (!((ReconnectableDatabaseConnection) getDatabaseConnection()).reconnect(
       m_TextURL.getText(),
       m_TextUser.getText(),
-      new BasePassword(m_TextPassword.getText()))) {
+      new BasePassword(new String(m_TextPassword.getPassword())))) {
       GUIHelper.showErrorMessage(m_Self, "Failed to connect to " + m_TextURL.getText());
     }
     else {

@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnectionPanel.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -93,7 +93,7 @@ public class DatabaseConnectionPanel
     cmd = Connect.ACTION + " "
       + m_TextURL.getText() + " "
       + m_TextUser.getText() + " "
-      + new BasePassword(m_TextPassword.getText()).stringValue() + " "
+      + new BasePassword(new String(m_TextPassword.getPassword())).stringValue() + " "
       + m_ComboBoxLoggingLevel.getSelectedItem() + " "
       + m_CheckBoxConnectOnStartUp.isSelected() + " "
       + m_CheckBoxAutoCommit.isSelected();
