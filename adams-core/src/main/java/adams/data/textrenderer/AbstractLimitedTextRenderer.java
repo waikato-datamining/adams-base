@@ -56,21 +56,21 @@ public abstract class AbstractLimitedTextRenderer
    *
    * @return		the default
    */
-  protected abstract int getDefaultLimit();
+  public abstract int getDefaultLimit();
 
   /**
    * Returns the minimum limit.
    *
    * @return		the minimum
    */
-  protected abstract Integer getMinLimit();
+  public abstract Integer getMinLimit();
 
   /**
    * Returns the maximum limit.
    *
    * @return		the maximum
    */
-  protected abstract Integer getMaxLimit();
+  public abstract Integer getMaxLimit();
 
   /**
    * Sets the maximum of rows to render.

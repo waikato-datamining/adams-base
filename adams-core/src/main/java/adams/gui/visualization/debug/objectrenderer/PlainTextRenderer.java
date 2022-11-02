@@ -15,12 +15,14 @@
 
 /*
  * PlainTextRenderer.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
 
 import adams.data.textrenderer.AbstractTextRenderer;
+import adams.data.textrenderer.LimitedTextRenderer;
+import adams.data.textrenderer.TextRenderer;
 import adams.gui.core.Fonts;
 import adams.gui.dialog.TextPanel;
 
@@ -33,12 +35,23 @@ import java.awt.BorderLayout;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PlainTextRenderer
-  extends AbstractObjectRenderer {
+    extends AbstractObjectRenderer {
 
   private static final long serialVersionUID = -3528006886476495175L;
 
   /** the last setup. */
   protected TextPanel m_LastTextPanel;
+
+  /**
+   * Returns whether a limit is supported by the renderer.
+   *
+   * @param obj		the object to render
+   * @return		true if supplying a limit has an effect
+   */
+  @Override
+  public boolean supportsLimit(Object obj) {
+    return (AbstractTextRenderer.getRenderer(obj) instanceof LimitedTextRenderer);
+  }
 
   /**
    * Checks whether the renderer can handle the specified class.
@@ -64,15 +77,58 @@ public class PlainTextRenderer
   }
 
   /**
+   * Renders the object.
+   *
+   * @param obj		the object to render
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
+   * @return		the generated string
+   */
+  protected String render(Object obj, Integer limit) {
+    String  		result;
+    TextRenderer 	renderer;
+    LimitedTextRenderer lrenderer;
+    boolean		unlimited;
+    boolean		ok;
+
+    renderer  = AbstractTextRenderer.getRenderer(obj);
+    unlimited = (limit != null) && (limit == -1);
+    if (renderer instanceof LimitedTextRenderer) {
+      lrenderer = (LimitedTextRenderer) renderer;
+      if (unlimited) {
+	result = lrenderer.renderUnlimited(obj);
+      }
+      else {
+	lrenderer.setLimit(lrenderer.getDefaultLimit());
+	if (limit != null) {
+	  ok = true;
+	  if (lrenderer.getMinLimit() != null)
+	    ok = (limit >= lrenderer.getMinLimit());
+	  if (lrenderer.getMaxLimit() != null)
+	    ok = ok && (limit <= lrenderer.getMaxLimit());
+	  if (ok)
+	    lrenderer.setLimit(limit);
+	}
+	result = lrenderer.render(obj);
+      }
+    }
+    else {
+      result = renderer.render(obj);
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual rendering.
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRenderCached(Object obj, JPanel panel) {
-    m_LastTextPanel.setContent(AbstractTextRenderer.renderObject(obj));
+  protected String doRenderCached(Object obj, JPanel panel, Integer limit) {
+    m_LastTextPanel.setContent(render(obj, limit));
     panel.add(m_LastTextPanel, BorderLayout.CENTER);
     return null;
   }
@@ -82,17 +138,18 @@ public class PlainTextRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRender(Object obj, JPanel panel) {
+  protected String doRender(Object obj, JPanel panel, Integer limit) {
     TextPanel 			textPanel;
 
     textPanel = new TextPanel();
     textPanel.setTextFont(Fonts.getMonospacedFont());
     textPanel.setCanOpenFiles(false);
     textPanel.setUpdateParentTitle(false);
-    textPanel.setContent(AbstractTextRenderer.renderObject(obj));
+    textPanel.setContent(render(obj, limit));
     panel.add(textPanel, BorderLayout.CENTER);
 
     m_LastTextPanel = textPanel;

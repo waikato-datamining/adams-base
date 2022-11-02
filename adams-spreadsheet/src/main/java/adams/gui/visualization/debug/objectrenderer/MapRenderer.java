@@ -94,10 +94,11 @@ public class MapRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRenderCached(Object obj, JPanel panel) {
+  protected String doRenderCached(Object obj, JPanel panel, Integer limit) {
     m_LastSheetPanel.setSpreadSheet(mapToSheet((Map) obj));
     panel.add(m_LastSheetPanel, BorderLayout.CENTER);
     return null;
@@ -108,10 +109,11 @@ public class MapRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRender(Object obj, JPanel panel) {
+  protected String doRender(Object obj, JPanel panel, Integer limit) {
     SpreadSheet		sheet;
     SpreadSheetPanel    sheetPanel;
 

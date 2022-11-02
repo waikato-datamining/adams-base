@@ -15,7 +15,7 @@
 
 /*
  * StoragePanel.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -32,11 +32,14 @@ import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTable;
+import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTableWithButtons;
@@ -45,11 +48,17 @@ import adams.gui.event.SearchEvent;
 import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
+import adams.gui.visualization.debug.objectrenderer.ObjectRenderer;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -61,8 +70,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Displays the current items stored in the temp storage of a flow.
@@ -70,8 +81,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class StoragePanel
-  extends BasePanel
-  implements CleanUpHandler, StorageChangeListener {
+    extends BasePanel
+    implements CleanUpHandler, StorageChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 8244881694557542183L;
@@ -82,7 +93,7 @@ public class StoragePanel
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static class TableModel
-    extends AbstractBaseTableModel {
+      extends AbstractBaseTableModel {
 
     /** for serialization. */
     private static final long serialVersionUID = 3509104625095997777L;
@@ -312,12 +323,44 @@ public class StoragePanel
   /** the filechooser for exporting the object. */
   protected ObjectExporterFileChooser m_FileChooser;
 
+  /** the checkbox for applying a render limit. */
+  protected BaseCheckBox m_CheckBoxRenderLimit;
+
+  /** the textfield for the render limit. */
+  protected BaseTextField m_TextFieldRenderLimit;
+
+  /** the button for applying the render limit. */
+  protected BaseFlatButton m_ButtonRenderLimit;
+
+  /** whether the render limit changed. */
+  protected boolean m_RenderLimitChanged;
+
+  /** whether the rendering limit is supported. */
+  protected boolean m_RenderLimitSupported;
+
+  /** the cache for the renderers. */
+  protected Map<String,ObjectRenderer> m_RendererCache;
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_RendererCache        = new HashMap<>();
+    m_RenderLimitChanged   = false;
+    m_RenderLimitSupported = false;
+  }
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
-    JPanel panelTable;
+    JPanel 	panelTable;
+    JPanel	panelBottom;
+    JPanel	panelRenderLimit;
 
     super.initGUI();
 
@@ -328,10 +371,45 @@ public class StoragePanel
     m_SplitPane.setUISettingsParameters(getClass(), "Divider");
     add(m_SplitPane, BorderLayout.CENTER);
 
+    // bottom
+    panelBottom = new JPanel(new BorderLayout(0, 2));
+    panelBottom.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    m_SplitPane.setBottomComponent(panelBottom);
+    m_SplitPane.setBottomComponentHidden(false);
+
     // preview
     m_PanelPreview = new JPanel(new BorderLayout());
-    m_SplitPane.setBottomComponent(m_PanelPreview);
-    m_SplitPane.setBottomComponentHidden(false);
+    panelBottom.add(m_PanelPreview, BorderLayout.CENTER);
+
+    // render limit
+    panelRenderLimit = new JPanel(new BorderLayout(0, 0));
+    panelBottom.add(panelRenderLimit, BorderLayout.SOUTH);
+    m_CheckBoxRenderLimit = new BaseCheckBox("Limit");
+    m_CheckBoxRenderLimit.addActionListener((ActionEvent e) -> updatePreview());
+    panelRenderLimit.add(m_CheckBoxRenderLimit, BorderLayout.WEST);
+    m_TextFieldRenderLimit = new BaseTextField(5);
+    m_TextFieldRenderLimit.setToolTipText("Some renderers use a limit to speed up the display: leave empty for using the renderer's default, -1 for unlimited");
+    m_TextFieldRenderLimit.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+    });
+    panelRenderLimit.add(m_TextFieldRenderLimit, BorderLayout.CENTER);
+    m_ButtonRenderLimit = new BaseFlatButton(ImageManager.getIcon("validate.png"));
+    m_ButtonRenderLimit.addActionListener((ActionEvent e) -> updateRenderLimit());
+    panelRenderLimit.add(m_ButtonRenderLimit, BorderLayout.EAST);
 
     // table
     panelTable = new JPanel(new BorderLayout());
@@ -377,8 +455,8 @@ public class StoragePanel
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> {
       m_Table.getComponent().search(
-	e.getParameters().getSearchString(),
-	e.getParameters().isRegExp());
+	  e.getParameters().getSearchString(),
+	  e.getParameters().isRegExp());
     });
     m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     panelTable.add(m_PanelSearch, BorderLayout.SOUTH);
@@ -402,26 +480,88 @@ public class StoragePanel
   }
 
   /**
+   * Returns the current render limit.
+   *
+   * @return		the limit
+   */
+  protected Integer getRenderLimit() {
+    Integer	result;
+
+    result = null;
+
+    if (m_CheckBoxRenderLimit.isSelected()) {
+      if (Utils.isInteger(m_TextFieldRenderLimit.getText()))
+	result = Integer.parseInt(m_TextFieldRenderLimit.getText());
+    }
+
+    return result;
+  }
+
+  /**
+   * Updates the state of the render widgets.
+   */
+  protected void updateRenderWidgets() {
+    if (m_RenderLimitChanged)
+      m_ButtonRenderLimit.setIcon(ImageManager.getIcon("validate_blue.png"));
+    else
+      m_ButtonRenderLimit.setIcon(ImageManager.getIcon("validate.png"));
+
+    m_CheckBoxRenderLimit.setEnabled(m_RenderLimitSupported);
+    m_TextFieldRenderLimit.setEnabled(m_RenderLimitSupported && m_CheckBoxRenderLimit.isSelected());
+    m_ButtonRenderLimit.setEnabled(m_RenderLimitSupported && m_CheckBoxRenderLimit.isSelected());
+  }
+
+  /**
+   * Updates the render limit.
+   */
+  protected void updateRenderLimit() {
+    m_RenderLimitChanged = false;
+    updateRenderWidgets();
+    updatePreview();
+  }
+
+  /**
+   * Renders the specified object in the provided panel.
+   *
+   * @param panel	the panel to use for rendering
+   * @param obj 	the object to render
+   */
+  protected void renderObject(JPanel panel, Object obj) {
+    String		key;
+    ObjectRenderer 	renderer;
+    Integer		limit;
+
+    panel.removeAll();
+    renderer = null;
+    key      = (obj == null ? "null" : obj.getClass().getName());
+    if ((obj != null) && m_RendererCache.containsKey(key))
+      renderer = m_RendererCache.get(key);
+    if (renderer == null)
+      renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
+    m_RenderLimitSupported = renderer.supportsLimit(obj);
+    limit = (m_RenderLimitSupported ? getRenderLimit() : null);
+    renderer.renderCached(obj, panel, limit);
+    if ((obj != null) && !m_RendererCache.containsKey(key))
+      m_RendererCache.put(key, renderer);
+    updateRenderWidgets();
+  }
+
+  /**
    * Updates the preview.
    */
   protected void updatePreview() {
-    Object			obj;
-    AbstractObjectRenderer	renderer;
+    Object		obj;
+    ObjectRenderer 	renderer;
 
     if (!m_PanelPreview.isVisible())
       return;
     if (m_Table.getSelectedRowCount() != 1)
       return;
     obj = m_TableModel.getObject(
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
 
-    m_PanelPreview.removeAll();
-    renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
-    renderer.render(obj, m_PanelPreview);
-    m_PanelPreview.invalidate();
-    m_PanelPreview.validate();
-    m_PanelPreview.repaint();
+    renderObject(m_PanelPreview, obj);
   }
 
   /**
@@ -439,20 +579,19 @@ public class StoragePanel
    * Shows the preview in a new dialog.
    */
   protected void newPreview() {
-    Object			obj;
-    AbstractObjectRenderer	renderer;
-    JPanel 			preview;
-    BaseDialog			dialog;
+    Object		obj;
+    ObjectRenderer	renderer;
+    JPanel 		preview;
+    BaseDialog		dialog;
 
     if (m_Table.getSelectedRowCount() != 1)
       return;
     obj = m_TableModel.getObject(
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
 
     preview = new JPanel(new BorderLayout());
-    renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
-    renderer.render(obj, preview);
+    renderObject(preview, obj);
 
     if (getParentDialog() != null)
       dialog = new BaseDialog(getParentDialog());
@@ -543,11 +682,11 @@ public class StoragePanel
 	  m_DialogInspect = new BaseDialog(getParentFrame());
 	m_DialogInspect.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
 	m_DialogInspect.addWindowListener(new WindowAdapter() {
-          @Override
-          public void windowClosed(WindowEvent e) {
-            m_DialogInspect = null;
-          }
-        });
+	  @Override
+	  public void windowClosed(WindowEvent e) {
+	    m_DialogInspect = null;
+	  }
+	});
 	m_DialogInspect.getContentPane().setLayout(new BorderLayout());
 	m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
 	m_DialogInspect.setLocationRelativeTo(this);
@@ -614,6 +753,11 @@ public class StoragePanel
    * @param value	the handler to use
    */
   public void setHandler(StorageHandler value) {
+    if ((value != null) && (m_Handler != null)) {
+      if (m_Handler == value)
+        return;
+    }
+
     if (m_Handler != null)
       m_Handler.getStorage().removeChangeListener(this);
     m_Handler    = value;
@@ -675,6 +819,18 @@ public class StoragePanel
    * @param e		the event
    */
   public void storageChanged(StorageChangeEvent e) {
+    List<String> 	names;
+    int			i;
+    int			n;
+    TIntList		rows;
+
+    names = null;
+    if (m_Table.getSelectedRow() > -1) {
+      names = new ArrayList<>();
+      for (int index: m_Table.getSelectedRows())
+	names.add((String) m_Table.getValueAt(index, 1));
+    }
+
     if (e.getType() == Type.MODIFIED) {
       m_TableModel.fireTableRowsUpdated(0, m_TableModel.getRowCount() - 1);
       updatePreview();
@@ -682,6 +838,30 @@ public class StoragePanel
     }
     else {
       m_TableModel.fireTableDataChanged();
+    }
+
+    // reselect
+    if (names != null) {
+      rows = new TIntArrayList();
+      for (i = 0; i < m_Table.getRowCount(); i++) {
+        n = 0;
+        while (n < names.size()) {
+	  if (names.get(n).equals(m_Table.getValueAt(i, 1))) {
+	    rows.add(i);
+	    names.remove(n);
+	    break;
+	  }
+	  else {
+	    n++;
+	  }
+	}
+        if (names.size() == 0)
+          break;
+      }
+      if (rows.size() > 0) {
+        final int[] rowArray = rows.toArray();
+	SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(rowArray));
+      }
     }
   }
 

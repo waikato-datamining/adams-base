@@ -15,7 +15,7 @@
 
 /*
  * LimitedTextRenderer.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
@@ -29,6 +29,27 @@ public interface LimitedTextRenderer
   extends TextRenderer {
 
   public static final String DOTS = "...";
+
+  /**
+   * Returns the default limit.
+   *
+   * @return		the default
+   */
+  public int getDefaultLimit();
+
+  /**
+   * Returns the minimum limit.
+   *
+   * @return		the minimum
+   */
+  public Integer getMinLimit();
+
+  /**
+   * Returns the maximum limit.
+   *
+   * @return		the maximum
+   */
+  public Integer getMaxLimit();
 
   /**
    * Sets the maximum of rows to render.

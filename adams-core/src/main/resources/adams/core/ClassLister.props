@@ -834,7 +834,7 @@ adams.gui.visualization.debug.objectexport.AbstractObjectExporter=\
   adams.gui.visualization.debug.objectexport
 
 # the object renderers
-adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer=\
+adams.gui.visualization.debug.objectrenderer.ObjectRenderer=\
   adams.gui.visualization.debug.objectrenderer
 
 # the image overlays

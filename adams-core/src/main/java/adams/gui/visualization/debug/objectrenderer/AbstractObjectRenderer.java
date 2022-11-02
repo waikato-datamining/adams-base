@@ -15,7 +15,7 @@
 
 /*
  * AbstractObjectRenderer.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objectrenderer;
 
@@ -34,7 +34,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractObjectRenderer
-  extends LoggingObject {
+  extends LoggingObject
+  implements ObjectRenderer {
 
   private static final long serialVersionUID = -7742758428210374232L;
 
@@ -62,7 +63,7 @@ public abstract class AbstractObjectRenderer
     if (m_Renderers != null)
       return;
 
-    m_Renderers       = ClassLister.getSingleton().getClassnames(AbstractObjectRenderer.class);
+    m_Renderers       = ClassLister.getSingleton().getClassnames(ObjectRenderer.class);
     m_RendererClasses = new Class[m_Renderers.length];
     for (i = 0; i < m_Renderers.length; i++) {
       try {
@@ -81,7 +82,7 @@ public abstract class AbstractObjectRenderer
    * @param obj		the object to get a commandline renderer for
    * @return		the renderer
    */
-  public static synchronized List<AbstractObjectRenderer> getRenderer(Object obj) {
+  public static synchronized List<ObjectRenderer> getRenderer(Object obj) {
     if (obj != null)
       return getRenderer(obj.getClass());
     else
@@ -94,14 +95,14 @@ public abstract class AbstractObjectRenderer
    * @param renderers	the renderers to instantiate
    * @return		the instances
    */
-  protected static List<AbstractObjectRenderer> instantiate(List<Class> renderers) {
-    List<AbstractObjectRenderer>	result;
-    int					i;
+  protected static List<ObjectRenderer> instantiate(List<Class> renderers) {
+    List<ObjectRenderer>	result;
+    int				i;
     
     result = new ArrayList<>();
     for (i = 0; i < renderers.size(); i++) {
       try {
-	result.add((AbstractObjectRenderer) renderers.get(i).getDeclaredConstructor().newInstance());
+	result.add((ObjectRenderer) renderers.get(i).getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate object renderer '" + renderers.get(i).getName() + "':");
@@ -118,10 +119,10 @@ public abstract class AbstractObjectRenderer
    * @param cls		the class to get a commandline renderer for
    * @return		the renderer
    */
-  public static synchronized List<AbstractObjectRenderer> getRenderer(Class cls) {
-    AbstractObjectRenderer renderer;
-    List<Class>				renderers;
-    int					i;
+  public static synchronized List<ObjectRenderer> getRenderer(Class cls) {
+    ObjectRenderer 	renderer;
+    List<Class>		renderers;
+    int			i;
 
     initRenderers();
 
@@ -135,7 +136,7 @@ public abstract class AbstractObjectRenderer
       if (m_RendererClasses[i] == PlainTextRenderer.class)
 	continue;
       try {
-	renderer = (AbstractObjectRenderer) m_RendererClasses[i].getDeclaredConstructor().newInstance();
+	renderer = (ObjectRenderer) m_RendererClasses[i].getDeclaredConstructor().newInstance();
 	if (renderer.handles(cls)) {
 	  renderers.add(m_RendererClasses[i]);
 	  break;
@@ -157,6 +158,19 @@ public abstract class AbstractObjectRenderer
   }
 
   /**
+   * Returns whether a limit is supported by the renderer.
+   * <br>
+   * Default implementation returns false.
+   *
+   * @param obj		the object to render
+   * @return		true if supplying a limit has an effect
+   */
+  @Override
+  public boolean supportsLimit(Object obj) {
+    return false;
+  }
+
+  /**
    * Checks whether the renderer can handle the specified class.
    *
    * @param cls		the class to check
@@ -169,25 +183,28 @@ public abstract class AbstractObjectRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
-  protected abstract String doRender(Object obj, JPanel panel);
+  protected abstract String doRender(Object obj, JPanel panel, Integer limit);
 
   /**
    * Renders the object with a new renderer setup.
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
-  public String render(Object obj, JPanel panel) {
+  @Override
+  public String render(Object obj, JPanel panel, Integer limit) {
     String	result;
 
     if (obj == null) {
       result = "No object provided!";
     }
     else {
-      result = doRender(obj, panel);
+      result = doRender(obj, panel, limit);
       if (result == null) {
 	panel.invalidate();
 	panel.validate();
@@ -216,9 +233,10 @@ public abstract class AbstractObjectRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
-  protected String doRenderCached(Object obj, JPanel panel) {
+  protected String doRenderCached(Object obj, JPanel panel, Integer limit) {
     return null;
   }
 
@@ -227,19 +245,21 @@ public abstract class AbstractObjectRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
-  public String renderCached(Object obj, JPanel panel) {
+  @Override
+  public String renderCached(Object obj, JPanel panel, Integer limit) {
     String	result;
 
     if (!canRenderCached(obj, panel))
-      return render(obj, panel);
+      return render(obj, panel, limit);
 
     if (obj == null) {
       result = "No object provided!";
     }
     else {
-      result = doRenderCached(obj, panel);
+      result = doRenderCached(obj, panel, limit);
       if (result == null) {
 	panel.invalidate();
 	panel.validate();
@@ -256,6 +276,6 @@ public abstract class AbstractObjectRenderer
    * @return		the renderer classnames
    */
   public static String[] getRenderers() {
-    return ClassLister.getSingleton().getClassnames(AbstractObjectRenderer.class);
+    return ClassLister.getSingleton().getClassnames(ObjectRenderer.class);
   }
 }

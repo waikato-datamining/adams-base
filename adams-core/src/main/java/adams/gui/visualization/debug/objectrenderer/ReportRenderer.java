@@ -15,7 +15,7 @@
 
 /*
  * ReportRenderer.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -74,10 +74,11 @@ public class ReportRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRenderCached(Object obj, JPanel panel) {
+  protected String doRenderCached(Object obj, JPanel panel, Integer limit) {
     m_LastTable.setModel(new Model((Report) obj));
     panel.add(m_LastPanel, BorderLayout.CENTER);
     return null;
@@ -88,10 +89,11 @@ public class ReportRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRender(Object obj, JPanel panel) {
+  protected String doRender(Object obj, JPanel panel, Integer limit) {
     Report	report;
     BasePanel	reportPanel;
 

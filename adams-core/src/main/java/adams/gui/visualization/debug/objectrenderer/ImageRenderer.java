@@ -72,10 +72,11 @@ public class ImageRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRenderCached(Object obj, JPanel panel) {
+  protected String doRenderCached(Object obj, JPanel panel, Integer limit) {
     if (obj instanceof BufferedImageSupporter)
       m_LastImagePanel.setCurrentImage(((BufferedImageSupporter) obj).toBufferedImage());
     else
@@ -92,10 +93,11 @@ public class ImageRenderer
    *
    * @param obj		the object to render
    * @param panel	the panel to render into
+   * @param limit       the limit to use for the rendering (if applicable), ignored if null
    * @return		null if successful, otherwise error message
    */
   @Override
-  protected String doRender(Object obj, JPanel panel) {
+  protected String doRender(Object obj, JPanel panel, Integer limit) {
     ImagePanel		imagePanel;
 
     imagePanel = new ImagePanel();

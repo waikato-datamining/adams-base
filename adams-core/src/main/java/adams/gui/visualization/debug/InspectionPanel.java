@@ -15,29 +15,37 @@
 
 /*
  * InspectionPanel.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
 import adams.core.ByteFormat;
 import adams.core.CleanUpHandler;
 import adams.core.SizeOf;
+import adams.core.Utils;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.ImageManager;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
+import adams.gui.visualization.debug.objectrenderer.ObjectRenderer;
 import adams.gui.visualization.debug.objecttree.Node;
 import adams.gui.visualization.debug.objecttree.Tree;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +57,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class InspectionPanel
-  extends BasePanel
-  implements CleanUpHandler {
+    extends BasePanel
+    implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3626608063857468806L;
@@ -63,6 +71,15 @@ public class InspectionPanel
 
   /** the search panel. */
   protected SearchPanel m_PanelSearch;
+
+  /** the checkbox for applying a render limit. */
+  protected BaseCheckBox m_CheckBoxRenderLimit;
+
+  /** the textfield for the render limit. */
+  protected BaseTextField m_TextFieldRenderLimit;
+
+  /** the button for applying the render limit. */
+  protected BaseFlatButton m_ButtonRenderLimit;
 
   /** the split pane to use for displaying the tree and the associated data. */
   protected BaseSplitPane m_SplitPane;
@@ -78,12 +95,18 @@ public class InspectionPanel
 
   /** the text field for the size. */
   protected BaseTextField m_TextSize;
-  
+
   /** the last property path in use. */
   protected String[] m_LastPath;
 
+  /** whether the render limit changed. */
+  protected boolean m_RenderLimitChanged;
+
+  /** whether the rendering limit is supported. */
+  protected boolean m_RenderLimitSupported;
+
   /** the cache for the renderers. */
-  protected Map<Class,AbstractObjectRenderer> m_RendererCache;
+  protected Map<String,ObjectRenderer> m_RendererCache;
 
   /**
    * Initializes the members.
@@ -91,18 +114,22 @@ public class InspectionPanel
   @Override
   protected void initialize() {
     super.initialize();
-    
-    m_LastPath      = new String[0];
-    m_RendererCache = new HashMap<>();
+
+    m_LastPath             = new String[0];
+    m_RendererCache        = new HashMap<>();
+    m_RenderLimitChanged   = false;
+    m_RenderLimitSupported = false;
   }
-  
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
     JPanel	panel;
-    
+    JPanel	panelBottom;
+    JPanel	panelRenderLimit;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
@@ -115,30 +142,50 @@ public class InspectionPanel
     m_SplitPane.setLeftComponent(panel);
     m_SplitPane.setDividerLocation(250);
     m_SplitPane.setUISettingsParameters(getClass(), "DividerLocation");
-    
+
     m_Tree = new Tree();
-    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
-      if (m_Tree.getSelectionPath() == null)
-        return;
-      Node node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
-      m_PanelContent.removeAll();
-      AbstractObjectRenderer renderer = null;
-      if ((node.getUserObject() != null) && m_RendererCache.containsKey(node.getUserObject().getClass()))
-        renderer = m_RendererCache.get(node.getUserObject().getClass());
-      if (renderer == null)
-	renderer = AbstractObjectRenderer.getRenderer(node.getUserObject()).get(0);
-      renderer.renderCached(node.getUserObject(), m_PanelContent);
-      if ((node.getUserObject() != null) && !m_RendererCache.containsKey(node.getUserObject().getClass()))
-	m_RendererCache.put(node.getUserObject().getClass(), renderer);
-      m_LastPath = node.getPropertyPath();
-      updateSize(node.getUserObject());
-    });
+    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> renderObject());
     panel.add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
 
+    panelBottom = new JPanel(new GridLayout(0, 1, 0, 2));
+    panelBottom.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    panel.add(panelBottom, BorderLayout.SOUTH);
+
+    // search
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> m_Tree.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
-    panel.add(m_PanelSearch, BorderLayout.SOUTH);
-    
+    panelBottom.add(m_PanelSearch);
+
+    // render limit
+    panelRenderLimit = new JPanel(new BorderLayout(0, 0));
+    panelBottom.add(panelRenderLimit);
+    m_CheckBoxRenderLimit = new BaseCheckBox("Limit");
+    m_CheckBoxRenderLimit.addActionListener((ActionEvent e) -> renderObject());
+    panelRenderLimit.add(m_CheckBoxRenderLimit, BorderLayout.WEST);
+    m_TextFieldRenderLimit = new BaseTextField(5);
+    m_TextFieldRenderLimit.setToolTipText("Some renderers use a limit to speed up the display: leave empty for using the renderer's default, -1 for unlimited");
+    m_TextFieldRenderLimit.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+	m_RenderLimitChanged = true;
+	updateRenderWidgets();
+      }
+    });
+    panelRenderLimit.add(m_TextFieldRenderLimit, BorderLayout.CENTER);
+    m_ButtonRenderLimit = new BaseFlatButton(ImageManager.getIcon("validate.png"));
+    m_ButtonRenderLimit.addActionListener((ActionEvent e) -> updateRenderLimit());
+    panelRenderLimit.add(m_ButtonRenderLimit, BorderLayout.EAST);
+
     m_PanelContent = new BasePanel(new BorderLayout());
 
     m_PanelSize = new BasePanel(new FlowLayout(FlowLayout.LEFT));
@@ -148,9 +195,9 @@ public class InspectionPanel
     m_CheckBoxSize = new BaseCheckBox("Size");
     m_CheckBoxSize.addActionListener((ActionEvent e) -> {
       if (m_Tree.getSelectionPath() == null)
-        updateSize(null);
+	updateSize(null);
       else
-        updateSize(((Node) m_Tree.getSelectionPath().getLastPathComponent()).getUserObject());
+	updateSize(((Node) m_Tree.getSelectionPath().getLastPathComponent()).getUserObject());
     });
     m_PanelSize.add(m_CheckBoxSize);
 
@@ -159,6 +206,88 @@ public class InspectionPanel
     m_PanelSize.add(m_TextSize);
 
     m_SplitPane.setRightComponent(m_PanelContent);
+  }
+
+  /**
+   * Finalizes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+    updateRenderWidgets();
+  }
+
+  /**
+   * Returns the current render limit.
+   *
+   * @return		the limit
+   */
+  protected Integer getRenderLimit() {
+    Integer	result;
+
+    result = null;
+
+    if (m_CheckBoxRenderLimit.isSelected()) {
+      if (Utils.isInteger(m_TextFieldRenderLimit.getText()))
+	result = Integer.parseInt(m_TextFieldRenderLimit.getText());
+    }
+
+    return result;
+  }
+
+  /**
+   * Updates the state of the render widgets.
+   */
+  protected void updateRenderWidgets() {
+    if (m_RenderLimitChanged)
+      m_ButtonRenderLimit.setIcon(ImageManager.getIcon("validate_blue.png"));
+    else
+      m_ButtonRenderLimit.setIcon(ImageManager.getIcon("validate.png"));
+
+    m_CheckBoxRenderLimit.setEnabled(m_RenderLimitSupported);
+    m_TextFieldRenderLimit.setEnabled(m_RenderLimitSupported && m_CheckBoxRenderLimit.isSelected());
+    m_ButtonRenderLimit.setEnabled(m_RenderLimitSupported && m_CheckBoxRenderLimit.isSelected());
+  }
+
+  /**
+   * Updates the render limit.
+   */
+  protected void updateRenderLimit() {
+    m_RenderLimitChanged = false;
+    updateRenderWidgets();
+    renderObject();
+  }
+
+  /**
+   * Renders the currently selected object.
+   */
+  protected void renderObject() {
+    Node 		node;
+    String		key;
+    Object		obj;
+    ObjectRenderer 	renderer;
+    Integer		limit;
+
+    if (m_Tree.getSelectionPath() == null)
+      return;
+
+    node = (Node) m_Tree.getSelectionPath().getLastPathComponent();
+    m_PanelContent.removeAll();
+    renderer = null;
+    obj      = node.getUserObject();
+    key      = (obj == null ? "null" : obj.getClass().getName());
+    if ((obj != null) && m_RendererCache.containsKey(key))
+      renderer = m_RendererCache.get(key);
+    if (renderer == null)
+      renderer = AbstractObjectRenderer.getRenderer(obj).get(0);
+    m_RenderLimitSupported = renderer.supportsLimit(obj);
+    limit = (m_RenderLimitSupported ? getRenderLimit() : null);
+    renderer.renderCached(obj, m_PanelContent, limit);
+    if ((obj != null) && !m_RendererCache.containsKey(key))
+      m_RendererCache.put(key, renderer);
+    m_LastPath = node.getPropertyPath();
+    updateSize(obj);
+    updateRenderWidgets();
   }
 
   /**

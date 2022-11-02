@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTextRenderer.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
@@ -52,7 +52,7 @@ public class SpreadSheetTextRenderer
    * @return		the default
    */
   @Override
-  protected int getDefaultLimit() {
+  public int getDefaultLimit() {
     return 100;
   }
 
@@ -62,7 +62,7 @@ public class SpreadSheetTextRenderer
    * @return		the minimum
    */
   @Override
-  protected Integer getMinLimit() {
+  public Integer getMinLimit() {
     return 0;
   }
 
@@ -72,7 +72,7 @@ public class SpreadSheetTextRenderer
    * @return		the maximum
    */
   @Override
-  protected Integer getMaxLimit() {
+  public Integer getMaxLimit() {
     return null;
   }
 
