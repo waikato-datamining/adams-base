@@ -1,0 +1,19 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# the OpenCV feature generators
+adams.data.opencv.features.AbstractOpenCVFeatureGenerator=\
+  adams.data.opencv.features
+
+# the OpenCV transformers
+adams.data.opencv.transformer.AbstractOpenCVTransformer=\
+  adams.data.opencv.transformer
+
+# the OpenCV multi-image operations
+adams.data.opencv.multiimageoperation.AbstractOpenCVMultiImageOperation=\
+  adams.data.opencv.multiimageoperation

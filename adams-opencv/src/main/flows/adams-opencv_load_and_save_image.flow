@@ -1,0 +1,12 @@
+# Project: adams
+# Date: 2022-11-03 13:31:24
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-opencv,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Loads an image, converts it to OpenCV format and saves it as ${FLOWS}/output/test.jpg" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.SetVariable -name "output file" -var-name output_file -var-value ${FLOWS}/output/test.jpg -value-type FILE_FORWARD_SLASHES
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3267694739_4981d2f944_z.jpg -use-forward-slashes true
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.Convert -conversion adams.data.conversion.AnyImageToOpenCV
+ adams.flow.sink.ImageFileWriter -output @{output_file} -writer adams.data.io.output.OpenCVImageWriter

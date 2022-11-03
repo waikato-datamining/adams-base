@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2022-11-03 13:31:41
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-opencv,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Loads an image using the OpenCV image reader and displays it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3267694739_4981d2f944_z.jpg -use-forward-slashes true
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.OpenCVImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -zoom -1.0 -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay

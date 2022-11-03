@@ -41,6 +41,7 @@
     <module>adams-ml</module>
     <module>adams-net</module>
     <module>adams-odf</module>
+    <module>adams-opencv</module>
     <module>adams-pdf</module>
     <module>adams-pyro4</module>
     <module>adams-pyro5</module>
@@ -100,6 +101,7 @@
     <gson.version>2.8.9</gson.version>
     <debianmavenplugin.version>1.0.20</debianmavenplugin.version>
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
+    <javacv.version>1.5.8</javacv.version>
   </properties>
 
   <scm>

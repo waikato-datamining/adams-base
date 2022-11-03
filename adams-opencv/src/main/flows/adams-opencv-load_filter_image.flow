@@ -1,0 +1,40 @@
+# Project: adams
+# Date: 2022-11-03 17:00:40
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-opencv,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Loads an image using the OpenCV image reader, applies some transformations and displays the results." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -width 1200 -height 600 -provider "adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -show-properties true -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay" -entry-name-variable entry
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3267694739_4981d2f944_z.jpg -use-forward-slashes true
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.OpenCVImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.control.Tee -name original
+  adams.flow.transformer.SetVariable -var-name entry -var-value original
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name blurred
+  adams.flow.transformer.OpenCVTransformer -transformer "adams.data.opencv.transformer.GaussianBlur -kernel-width 11 -kernel-height 11"
+  adams.flow.transformer.SetVariable -var-name entry -var-value blurred
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name gray
+  adams.flow.transformer.OpenCVTransformer -transformer adams.data.opencv.transformer.ConvertType
+  adams.flow.transformer.SetVariable -var-name entry -var-value gray
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name binary
+  adams.flow.transformer.OpenCVTransformer -name "OpenCVTransformer (2)" -transformer adams.data.opencv.transformer.ConvertType
+  adams.flow.transformer.OpenCVTransformer -transformer adams.data.opencv.transformer.Threshold
+  adams.flow.transformer.SetVariable -var-name entry -var-value binary
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "binary (otsu)"
+  adams.flow.transformer.OpenCVTransformer -name "OpenCVTransformer (2)" -transformer adams.data.opencv.transformer.ConvertType
+  adams.flow.transformer.OpenCVTransformer -transformer "adams.data.opencv.transformer.Threshold -type THRESH_OTSU"
+  adams.flow.transformer.SetVariable -var-name entry -var-value "binary (otsu)"
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "resized (factors)"
+  adams.flow.transformer.OpenCVTransformer -transformer "adams.data.opencv.transformer.Resize -factor-x 0.5 -factor-y 0.5"
+  adams.flow.transformer.SetVariable -var-name entry -var-value "resized (factors)"
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
+ adams.flow.control.Tee -name "resized (absolute)"
+  adams.flow.transformer.OpenCVTransformer -transformer "adams.data.opencv.transformer.Resize -type ABSOLUTE -width 200"
+  adams.flow.transformer.SetVariable -var-name entry -var-value "resized (absolute)"
+  adams.flow.sink.CallableSink -callable DisplayPanelManager
