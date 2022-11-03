@@ -26,6 +26,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.opencv.OpenCVHelper;
 import adams.data.opencv.OpenCVImageContainer;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
@@ -64,6 +65,20 @@ public abstract class AbstractOpenCVFeatureGeneratorTestCase
   @Override
   protected AbstractTestHelper newTestHelper() {
     return new TestHelper(this, "adams/data/opencv/features/data");
+  }
+
+  /**
+   * Called by JUnit before each test method.
+   *
+   * @throws Exception if an error occurs.
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    // skip test if opencv is unavailable
+    if (!OpenCVHelper.isAvailable())
+      m_SkipTests.add(getClass().getName());
   }
 
   /**

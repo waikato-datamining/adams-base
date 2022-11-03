@@ -26,6 +26,7 @@ import adams.data.report.Report;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.opencv.global.opencv_imgcodecs;
 import org.bytedeco.opencv.opencv_core.Mat;
 
 import java.awt.image.BufferedImage;
@@ -36,6 +37,28 @@ import java.awt.image.BufferedImage;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class OpenCVHelper {
+
+  /** whether OpenCV is available. */
+  protected static Boolean m_Available;
+
+  /**
+   * Checks whether OpenCV is available.
+   *
+   * @return		true if available
+   */
+  public static synchronized boolean isAvailable() {
+    if (m_Available == null) {
+      try {
+        new opencv_imgcodecs();
+	m_Available = true;
+      }
+      catch (Throwable e) {
+	m_Available = false;
+      }
+    }
+
+    return m_Available;
+  }
 
   /**
    * Converts the Mat object into a BufferedImage one.

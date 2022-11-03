@@ -31,7 +31,7 @@ import adams.data.opencv.transformer.ConvertType;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.DenseDataRow;
 import adams.env.Environment;
-import adams.flow.AbstractFlowTest;
+import adams.flow.AbstractOpenCVFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.flowrestart.NullManager;
 import adams.flow.core.AbstractActor;
@@ -53,7 +53,7 @@ import java.util.List;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  */
 public class OpenCVFeatureGeneratorTest
-  extends AbstractFlowTest {
+  extends AbstractOpenCVFlowTest {
 
   /**
    * Initializes the test.

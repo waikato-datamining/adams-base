@@ -28,6 +28,7 @@ import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.opencv.OpenCVHelper;
 import adams.data.opencv.OpenCVImageContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -68,6 +69,20 @@ public abstract class AbstractOpenCVTransformerTestCase
   @Override
   protected AbstractTestHelper newTestHelper() {
     return new TestHelper(this, "adams/data/opencv/transformer/data");
+  }
+
+  /**
+   * Called by JUnit before each test method.
+   *
+   * @throws Exception if an error occurs.
+   */
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    // skip test if opencv is unavailable
+    if (!OpenCVHelper.isAvailable())
+      m_SkipTests.add(getClass().getName());
   }
 
   /**

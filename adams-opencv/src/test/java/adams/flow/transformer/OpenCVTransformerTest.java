@@ -27,7 +27,7 @@ import adams.data.io.input.OpenCVImageReader;
 import adams.data.io.output.OpenCVImageWriter;
 import adams.data.opencv.transformer.GaussianBlur;
 import adams.env.Environment;
-import adams.flow.AbstractFlowTest;
+import adams.flow.AbstractOpenCVFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.control.flowrestart.NullManager;
 import adams.flow.core.AbstractActor;
@@ -49,7 +49,7 @@ import java.util.List;
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
  */
 public class OpenCVTransformerTest
-  extends AbstractFlowTest {
+  extends AbstractOpenCVFlowTest {
 
   /**
    * Initializes the test.
