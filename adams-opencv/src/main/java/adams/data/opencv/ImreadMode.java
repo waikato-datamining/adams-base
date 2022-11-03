@@ -23,6 +23,8 @@ package adams.data.opencv;
 /**
  * Modes for reading images using imread.
  *
+ * https://docs.opencv.org/4.6.0/d8/d6a/group__imgcodecs__flags.html#ga61d9b0126a3e57d9277ac48327799c80
+ *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public enum ImreadMode {
