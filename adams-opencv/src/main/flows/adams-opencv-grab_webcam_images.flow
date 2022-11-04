@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2022-11-04 13:53:12
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-opencv,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Grabs images from the webcam and displays them." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.OpenCVDeviceFrameGrabber
+ adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay

@@ -1,0 +1,1 @@
+grabber: org.bytedeco.javacv.OpenCVFrameGrabber, device: 0, μsec delay: 0
