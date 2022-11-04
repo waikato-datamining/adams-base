@@ -20,6 +20,7 @@
 
 package adams.data.opencv.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.opencv.ColorConversionCode;
 import adams.data.opencv.OpenCVImageContainer;
 import adams.data.opencv.ThresholdType;
@@ -88,8 +89,8 @@ public class Threshold
   @Override
   public String globalInfo() {
     return "Generates a binary image using the specified image. Automatically converts the image to grayscale.\n"
-        + "For more information see:\n"
-        + "https://docs.opencv.org/4.6.0/d7/d1b/group__imgproc__misc.html#gaa9e58d2860d4afa658ef70a9b1115576";
+	+ "For more information see:\n"
+	+ "https://docs.opencv.org/4.6.0/d7/d1b/group__imgproc__misc.html#gaa9e58d2860d4afa658ef70a9b1115576";
   }
 
   /**
@@ -100,16 +101,16 @@ public class Threshold
     super.defineOptions();
 
     m_OptionManager.add(
-        "threshold", "threshold",
-        127, 0, 255);
+	"threshold", "threshold",
+	127, 0, 255);
 
     m_OptionManager.add(
-        "max-value", "maxValue",
-        255, 0, 255);
+	"max-value", "maxValue",
+	255, 0, 255);
 
     m_OptionManager.add(
-        "type", "type",
-        ThresholdType.THRESH_BINARY);
+	"type", "type",
+	ThresholdType.THRESH_BINARY);
   }
 
   /**
@@ -201,6 +202,22 @@ public class Threshold
    */
   public String typeTipText() {
     return "The type of thresholding to apply.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "threshold", m_Threshold, "threshold: ");
+    result += QuickInfoHelper.toString(this, "maxValue", m_MaxValue, ", max: ");
+    result += QuickInfoHelper.toString(this, "type", m_Type, ", type: ");
+
+    return result;
   }
 
   /**

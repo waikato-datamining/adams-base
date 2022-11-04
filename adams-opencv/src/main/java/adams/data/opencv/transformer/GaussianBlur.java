@@ -20,6 +20,7 @@
 
 package adams.data.opencv.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.opencv.BorderType;
 import adams.data.opencv.OpenCVImageContainer;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -103,8 +104,8 @@ public class GaussianBlur
   @Override
   public String globalInfo() {
     return "Applies Gaussian blur to the image.\n"
-        + "For more information see:\n"
-        + "https://docs.opencv.org/4.6.0/d4/d86/group__imgproc__filter.html#gaabe8c836e97159a9193fb0b11ac52cf1";
+	+ "For more information see:\n"
+	+ "https://docs.opencv.org/4.6.0/d4/d86/group__imgproc__filter.html#gaabe8c836e97159a9193fb0b11ac52cf1";
   }
 
   /**
@@ -115,24 +116,24 @@ public class GaussianBlur
     super.defineOptions();
 
     m_OptionManager.add(
-        "kernel-width", "kernelWidth",
-        3, 1, null);
+	"kernel-width", "kernelWidth",
+	3, 1, null);
 
     m_OptionManager.add(
-        "kernel-height", "kernelHeight",
-        3, 1, null);
+	"kernel-height", "kernelHeight",
+	3, 1, null);
 
     m_OptionManager.add(
-        "sigma-x", "sigmaX",
-        0.0, 0.0, null);
+	"sigma-x", "sigmaX",
+	0.0, 0.0, null);
 
     m_OptionManager.add(
-        "sigma-y", "sigmaY",
-        0.0, 0.0, null);
+	"sigma-y", "sigmaY",
+	0.0, 0.0, null);
 
     m_OptionManager.add(
-        "border-type", "borderType",
-        BorderType.BORDER_DEFAULT);
+	"border-type", "borderType",
+	BorderType.BORDER_DEFAULT);
   }
 
   /**
@@ -286,6 +287,23 @@ public class GaussianBlur
    */
   public String borderTypeTipText() {
     return "The type of border to use.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "width", m_KernelWidth, "w: ");
+    result += QuickInfoHelper.toString(this, "height", m_KernelHeight, ", h: ");
+    result += QuickInfoHelper.toString(this, "sigmaX", m_SigmaX, ", sx: ");
+    result += QuickInfoHelper.toString(this, "sigmaY", m_SigmaY, ", sy: ");
+
+    return result;
   }
 
   /**

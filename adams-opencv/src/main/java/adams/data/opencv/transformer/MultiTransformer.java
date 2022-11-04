@@ -20,6 +20,7 @@
 
 package adams.data.opencv.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.opencv.OpenCVImageContainer;
 
 import java.util.ArrayList;
@@ -108,6 +109,16 @@ public class MultiTransformer
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "transformers", m_Transformers, "transformers: ");
+  }
+
+  /**
    * Performs the transformation.
    *
    * @param img		the image to process (can be modified, since it is a copy)
@@ -119,9 +130,9 @@ public class MultiTransformer
     List<OpenCVImageContainer>	input;
     int					i;
 
-    result = new ArrayList<OpenCVImageContainer>();
+    result = new ArrayList<>();
     result.add(img);
-    input  = new ArrayList<OpenCVImageContainer>();
+    input  = new ArrayList<>();
 
     for (i = 0; i < m_Transformers.length; i++) {
       if (isLoggingEnabled())

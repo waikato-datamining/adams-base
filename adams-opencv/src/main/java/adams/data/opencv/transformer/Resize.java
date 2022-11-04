@@ -20,6 +20,7 @@
 
 package adams.data.opencv.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.opencv.InterpolationType;
 import adams.data.opencv.OpenCVImageContainer;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -331,6 +332,29 @@ public class Resize
    */
   public String interpolationTipText() {
     return "The interpolation type.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = null;
+
+    if (m_Type == ResizeType.ABSOLUTE) {
+      result = QuickInfoHelper.toString(this, "width", m_Width, "width: ");
+      result += QuickInfoHelper.toString(this, "height", m_Height, ", height: ");
+    }
+    else if (m_Type == ResizeType.FACTORS) {
+      result = QuickInfoHelper.toString(this, "factorX", m_FactorX, "x: ");
+      result += QuickInfoHelper.toString(this, "factorY", m_FactorY, ", y: ");
+    }
+
+    return result;
   }
 
   /**

@@ -20,6 +20,7 @@
 
 package adams.data.opencv.transformer;
 
+import adams.core.QuickInfoHelper;
 import adams.data.opencv.ColorConversionCode;
 import adams.data.opencv.OpenCVImageContainer;
 import org.bytedeco.opencv.opencv_core.Mat;
@@ -93,6 +94,16 @@ public class ConvertType
    */
   public String conversionTipText() {
     return "The color conversion to apply.";
+  }
+
+  /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "conversion", m_Conversion, "conversion: ");
   }
 
   /**

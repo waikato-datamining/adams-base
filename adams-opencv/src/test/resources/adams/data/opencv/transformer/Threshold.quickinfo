@@ -1,0 +1,1 @@
+threshold: 127, max: 255, type: THRESH_BINARY
