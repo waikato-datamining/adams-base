@@ -13,29 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PdfFont.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
+
+import adams.core.CloneHandler;
+import adams.core.Utils;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import adams.core.CloneHandler;
-import adams.core.Utils;
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
-
 /**
  * A helper class for PDF fonts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PdfFont
   implements Serializable, CloneHandler<PdfFont> {
@@ -254,7 +252,7 @@ public class PdfFont
     font   = toFont();
     result = font.getFamilyname();
     result += "" + SEPARATOR + Utils.flatten(getFontFaces(font), ",");
-    result += "" + SEPARATOR + new Float(font.getSize()).intValue();
+    result += "" + SEPARATOR + Float.valueOf(font.getSize()).intValue();
 
     return result;
   }

@@ -15,7 +15,7 @@
 
 /*
  * PDFInfo.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -103,7 +103,6 @@ import java.util.HashSet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFInfo
   extends AbstractArrayProvider
@@ -330,11 +329,11 @@ public class PDFInfo
 	  break;
 
 	case WIDTH:
-	  m_Queue.add(new Double(reader.getPageSize(m_PageIndex.getIntIndex() + 1).getWidth()));
+	  m_Queue.add(Double.valueOf(reader.getPageSize(m_PageIndex.getIntIndex() + 1).getWidth()));
 	  break;
 
 	case HEIGHT:
-	  m_Queue.add(new Double(reader.getPageSize(m_PageIndex.getIntIndex() + 1).getHeight()));
+	  m_Queue.add(Double.valueOf(reader.getPageSize(m_PageIndex.getIntIndex() + 1).getHeight()));
 	  break;
 
 	default:

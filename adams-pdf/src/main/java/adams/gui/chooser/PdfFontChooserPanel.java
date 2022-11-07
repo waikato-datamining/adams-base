@@ -1,6 +1,6 @@
 /*
  * Copyright (c) Ian F. Darwin, http://www.darwinsys.com/, 1996-2002.
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  *
  * All rights reserved. Software written by Ian F. Darwin and others.
  * $Id: LICENSE,v 1.8 2004/02/09 03:33:38 ian Exp $
@@ -63,6 +63,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A font selection panel.
@@ -72,7 +73,6 @@ import java.util.Arrays;
  *
  * @author Ian Darwin -- initial code
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     author = "Ian Darwin",
@@ -81,7 +81,7 @@ import java.util.Arrays;
     url = "http://www.java2s.com/Code/Java/Tiny-Application/Afontselectiondialog.htm"
 )
 public class PdfFontChooserPanel
-  extends BasePanel {
+    extends BasePanel {
 
   /** for serialization. */
   private static final long serialVersionUID = 4228582248866956387L;
@@ -217,14 +217,14 @@ public class PdfFontChooserPanel
   protected PdfFont createFont() {
     int		family;
     int		style;
-    Object[]	styles;
+    List 	styles;
     int		i;
 
     family = PdfFont.getFontFamily((String) m_ListFontName.getSelectedValue());
     style  = Font.NORMAL;
-    styles = m_ListFontFace.getSelectedValues();
-    for (i = 0; i < styles.length; i++)
-      style |= PdfFont.getFontFace((String) styles[i]);
+    styles = m_ListFontFace.getSelectedValuesList();
+    for (i = 0; i < styles.size(); i++)
+      style |= PdfFont.getFontFace((String) styles.get(i));
 
     return new PdfFont(family, style, (Integer) m_ListFontSize.getSelectedValue());
   }
@@ -307,12 +307,12 @@ public class PdfFontChooserPanel
 
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        chooser.setVisible(true);
-        PdfFont myNewFont = chooser.getCurrent();
-        System.out.println("You chose " + PdfFontParsing.toString(null, myNewFont));
-        label.setFont(myNewFont.toJavaFont());
-        frame.pack();
-        chooser.dispose();
+	chooser.setVisible(true);
+	PdfFont myNewFont = chooser.getCurrent();
+	System.out.println("You chose " + PdfFontParsing.toString(null, myNewFont));
+	label.setFont(myNewFont.toJavaFont());
+	frame.pack();
+	chooser.dispose();
       }
     });
 
