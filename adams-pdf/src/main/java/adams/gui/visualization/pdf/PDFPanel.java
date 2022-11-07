@@ -13,222 +13,105 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
-import adams.core.Utils;
-import adams.core.io.JPod;
-import adams.gui.core.BaseButton;
+import adams.core.CleanUpHandler;
+import adams.core.io.IcePDF;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePopupMenu;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextField;
-import adams.gui.core.ImageManager;
-import adams.gui.core.MouseUtils;
-import de.intarsys.pdf.pd.PDDocument;
+import org.icepdf.core.pobjects.Document;
+import org.icepdf.ri.common.SwingController;
+import org.icepdf.ri.common.SwingViewBuilder;
+import org.icepdf.ri.util.FontPropertiesManager;
+import org.icepdf.ri.util.ViewerPropertiesManager;
 
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.io.File;
 
 /**
  * Panel for displaying a PDF file.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFPanel
-  extends BasePanel {
+    extends BasePanel
+    implements CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -1994121429485824895L;
 
-  /** the zoom levels. */
-  public final static int[] ZOOMS = {
-    25,
-    50,
-    66,
-    75,
-    100,
-    150,
-    200,
-    400,
-    800
-  };
+  /** the component controller. */
+  protected SwingController m_Controller;
 
+  /** the viewer itself. */
+  protected JPanel m_ViewerComponentPanel;
 
-  /** the actual display panel. */
-  protected PDFCanvas m_PDFCanvas;
-
-  /** the scrollpane around the pdf panel. */
-  protected BaseScrollPane m_ScrollPane;
-
-  /** the panel with the navigation. */
-  protected BasePanel m_PanelNavigation;
-
-  /** the edit field with the page number. */
-  protected BaseTextField m_TextPage;
-
-  /** the previous page button. */
-  protected BaseButton m_ButtonPrevious;
-
-  /** the next page button. */
-  protected BaseButton m_ButtonNext;
-
-  /** the PDF to display. */
-  protected PDDocument m_Document;
-
-  /** the total number of pages label. */
-  protected JLabel m_LabelPages;
+  /** whether a document is present. */
+  protected boolean m_HasDocument;
 
   /**
    * Initializes the members.
    */
+  @Override
   protected void initialize() {
     super.initialize();
 
-    m_Document = null;
+    m_HasDocument = false;
   }
 
   /**
    * Initializes the widgets.
    */
   protected void initGUI() {
+    ViewerPropertiesManager 	properties;
+    SwingViewBuilder 		factory;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
 
-    try {
-      m_PDFCanvas  = new PDFCanvas();
-      m_PDFCanvas.addMouseListener(new MouseAdapter() {
-	public void mouseClicked(MouseEvent e) {
-	  if (MouseUtils.isRightClick(e)) {
-	    e.consume();
-	    showPopup(e);
-	  }
-	  else {
-	    super.mouseClicked(e);
-	  }
-	}
-      });
-      m_ScrollPane = new BaseScrollPane(m_PDFCanvas);
-      add(m_ScrollPane, BorderLayout.CENTER);
-    }
-    catch (Exception e) {
-      System.err.println("Failed to instantiate PDFPagePanel:");
-      e.printStackTrace();
-    }
+    // build a component controller
+    m_Controller = new SwingController();
+    m_Controller.setIsEmbeddedComponent(true);
 
-    m_PanelNavigation = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    add(m_PanelNavigation, BorderLayout.SOUTH);
+    // read stored system font properties.
+    FontPropertiesManager.getInstance().loadOrReadSystemFonts();
 
-    m_ButtonPrevious = new BaseButton(ImageManager.getIcon("arrow_left.gif"));
-    m_ButtonPrevious.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	previousPage();
-      }
-    });
-    m_PanelNavigation.add(m_ButtonPrevious);
+    properties = ViewerPropertiesManager.getInstance();
+    properties.getPreferences().putFloat(ViewerPropertiesManager.PROPERTY_DEFAULT_ZOOM_LEVEL, 1.25f);
 
-    m_ButtonNext = new BaseButton(ImageManager.getIcon("arrow_right.gif"));
-    m_ButtonNext.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	nextPage();
-      }
-    });
-    m_PanelNavigation.add(m_ButtonNext);
+    factory = new SwingViewBuilder(m_Controller, properties);
 
-    m_TextPage = new BaseTextField(5);
-    m_TextPage.addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-	  if (Utils.isInteger(m_TextPage.getText()))
-	    showPage(Integer.parseInt(m_TextPage.getText()) - 1);
-	}
-      }
-    });
-    m_PanelNavigation.add(m_TextPage);
-    m_LabelPages = new JLabel();
-    m_PanelNavigation.add(m_LabelPages);
+    // add interactive mouse link annotation support via callback
+    m_Controller.getDocumentViewController().setAnnotationCallback(
+	new org.icepdf.ri.common.MyAnnotationCallback(m_Controller.getDocumentViewController()));
+    m_ViewerComponentPanel = factory.buildViewerPanel();
 
-    updateButtons();
-  }
-
-  /**
-   * Displays the previous page.
-   */
-  protected void previousPage() {
-    if (m_Document == null)
-      return;
-
-    m_PDFCanvas.selectPreviousPage();
-    m_TextPage.setText("" + (m_PDFCanvas.getPageIndex() + 1));
-
-    updateButtons();
-  }
-
-  /**
-   * Displays the next page.
-   */
-  protected void nextPage() {
-    if (m_Document == null)
-      return;
-
-    m_PDFCanvas.selectNextPage();
-    m_TextPage.setText("" + (m_PDFCanvas.getPageIndex() + 1));
-
-    updateButtons();
-  }
-
-  /**
-   * Displays the specified page.
-   *
-   * @param pageNo	the page to display (0-based)
-   */
-  protected void showPage(int pageNo) {
-    if ((pageNo >= 0) && (pageNo < m_PDFCanvas.getPageCount())) {
-      m_TextPage.setText("" + (pageNo + 1));
-      m_PDFCanvas.selectPage(pageNo);
-    }
-
-    updateButtons();
+    add(m_ViewerComponentPanel, BorderLayout.CENTER);
   }
 
   /**
    * Sets the document to display.
    *
-   * @param value	the PDF document to display
+   * @param filename	the PDF document to display
    */
-  public void setDocument(PDDocument value) {
-    try {
-      if (m_Document != null)
-	m_Document.close();
-    }
-    catch (Exception e) {
-      System.err.println("Failed to close PDF document:");
-      e.printStackTrace();
-    }
-    m_Document = value;
-    if (m_Document != null) {
-      m_PDFCanvas.setDoc(m_Document);
-      m_LabelPages.setText(" of " + m_PDFCanvas.getPageCount());
-      showPage(0);
-    }
-    else {
-      m_LabelPages.setText("");
-      m_TextPage.setText("");
-      updateButtons();
-    }
+  public void setDocument(String filename) {
+    m_Controller.closeDocument();
+    m_Controller.openDocument(filename);
+    m_HasDocument = true;
+  }
+
+  /**
+   * Sets the document to display.
+   *
+   * @param file	the PDF document to display
+   */
+  public void setDocument(File file) {
+    setDocument(file.getAbsolutePath());
   }
 
   /**
@@ -236,15 +119,16 @@ public class PDFPanel
    *
    * @return		the PDF document, can be null if none set yet
    */
-  public PDDocument getDocument() {
-    return m_Document;
+  public Document getDocument() {
+    return m_Controller.getDocument();
   }
 
   /**
    * Closes the document.
    */
   public void closeDocument() {
-    JPod.close(m_Document);
+    m_HasDocument = false;
+    m_Controller.closeDocument();
   }
 
   /**
@@ -253,7 +137,7 @@ public class PDFPanel
    * @param value	the scaling factor
    */
   public void setScale(double value) {
-    m_PDFCanvas.setScale(value);
+    m_Controller.setZoom((float) value);
   }
 
   /**
@@ -262,66 +146,44 @@ public class PDFPanel
    * @return		the scaling factor
    */
   public double getScale() {
-    return m_PDFCanvas.getScale();
+    return m_Controller.getDocumentViewController().getZoom();
   }
 
   /**
-   * Updates the state of the buttons.
-   */
-  protected void updateButtons() {
-    boolean	loaded;
-
-    loaded = (m_Document != null) && (m_PDFCanvas.getPageCount() > 0);
-    m_ButtonPrevious.setEnabled(loaded && (m_PDFCanvas.getPageIndex() > 0));
-    m_ButtonNext.setEnabled(loaded && (m_PDFCanvas.getPageIndex() < m_PDFCanvas.getPageCount() - 1));
-  }
-
-  /**
-   * Displays popup menu.
+   * Whether a document is present.
    *
-   * @param e		the event that triggered the popup
+   * @return		true if document present
    */
-  protected void showPopup(MouseEvent e) {
-    BasePopupMenu 	menu;
-    JMenuItem		menuitem;
-    int			i;
+  public boolean hasDocument() {
+    return m_HasDocument;
+  }
 
-    menu = new BasePopupMenu();
+  /**
+   * Saves the document to the specified file.
+   *
+   * @param file	the output file
+   * @return		null if successful, otherwise error message
+   */
+  public String saveTo(File file) {
+    if (!m_HasDocument)
+      return null;
 
-    //View/Zoom/Zoom in
-    menuitem = new JMenuItem("Zoom in");
-    menu.add(menuitem);
-    menuitem.setMnemonic('i');
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	setScale(getScale() * 1.5);
-      }
-    });
+    return IcePDF.saveTo(getDocument(), file);
+  }
 
-    //View/Zoom/Zoom out
-    menuitem = new JMenuItem("Zoom out");
-    menu.add(menuitem);
-    menuitem.setMnemonic('o');
-    menuitem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	setScale(getScale() / 1.5);
-      }
-    });
+  /**
+   * Prints the PDF.
+   *
+   * @param withDialog 	whether to show the print dialog
+   */
+  public void print(boolean withDialog) {
+    m_Controller.print(withDialog);
+  }
 
-    // zoom levels
-    // TODO: add "fit" zoom
-    menu.addSeparator();
-    for (i = 0; i < ZOOMS.length; i++) {
-      final int fZoom = ZOOMS[i];
-      menuitem = new JMenuItem(ZOOMS[i] + "%");
-      menu.add(menuitem);
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  setScale((double) fZoom / 100.0);
-	}
-      });
-    }
-
-    menu.showAbsolute(e.getComponent(), e);
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    closeDocument();
   }
 }

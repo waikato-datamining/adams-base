@@ -13,14 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFPrinter.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.sendto;
 
-import adams.core.io.JPod;
+import adams.core.io.IcePDF;
 import adams.core.io.PDFBox;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.icepdf.core.pobjects.Document;
 
 import java.io.File;
 
@@ -28,10 +30,9 @@ import java.io.File;
  * Action for sending PDF to the printer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFPrinter
-  extends AbstractSendToAction {
+    extends AbstractSendToAction {
 
   /** for serialization. */
   private static final long serialVersionUID = -6357616730945070639L;
@@ -65,8 +66,8 @@ public class PDFPrinter
   @Override
   public Class[] accepts() {
     return new Class[]{
-      de.intarsys.pdf.pd.PDDocument.class,
-      org.apache.pdfbox.pdmodel.PDDocument.class,
+	Document.class,
+	PDDocument.class,
     };
   }
 
@@ -80,22 +81,24 @@ public class PDFPrinter
   public String send(Object o) {
     String		result;
     File                file;
+    String		msg;
 
     result = null;
 
-    if (o instanceof de.intarsys.pdf.pd.PDDocument) {
+    if (o instanceof Document) {
       file = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-      if (JPod.save((de.intarsys.pdf.pd.PDDocument) o, file)) {
-        if (!PDFBox.printWithDialog(file))
-          result = "Failed to print PDF document: " + file;
+      msg  = IcePDF.saveTo((Document) o, file);
+      if (msg == null) {
+	if (!PDFBox.printWithDialog(file))
+	  result = "Failed to print PDF document: " + file;
       }
       else {
-        result = "Failed to save PDF document to: " + file;
+	result = "Failed to save PDF document to: " + file + "\n" + msg;
       }
     }
     else if (o instanceof org.apache.pdfbox.pdmodel.PDDocument) {
       if (!PDFBox.print((org.apache.pdfbox.pdmodel.PDDocument) o))
-        result = "Failed to print PDF document";
+	result = "Failed to print PDF document";
     }
     else {
       result = "Cannot print object: " + o.getClass();

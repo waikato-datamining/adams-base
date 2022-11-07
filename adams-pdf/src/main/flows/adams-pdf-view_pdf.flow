@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2016-02-15 14:52:56
+# Date: 2022-11-08 11:27:14
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-pdf
+#
 adams.flow.control.Flow -annotation "Displays a simple PDF file in the viewer." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.FileSupplier -file ${FLOWS}/data/multiple_pages.pdf
- adams.flow.sink.PDFViewer -writer adams.gui.print.NullWriter -zoom 75.0
+ adams.flow.sink.PDFViewer -display-type adams.flow.core.displaytype.Default -height 800 -writer adams.gui.print.NullWriter -zoom 75.0

@@ -13,18 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
 import adams.core.CleanUpHandler;
-import adams.core.io.JPod;
 import adams.gui.visualization.pdf.PDFPanel;
-import de.intarsys.pdf.pd.PDDocument;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -54,8 +52,8 @@ public class PDFHandler
   /** for serialization. */
   private static final long serialVersionUID = -1036622788944128074L;
 
-  /** the current PDF document. */
-  protected PDDocument m_Document;
+  /** the PDF panel. */
+  protected PDFPanel m_PDFPanel;
 
   /**
    * Returns a string describing the object.
@@ -86,19 +84,16 @@ public class PDFHandler
    */
   @Override
   protected PreviewPanel createPreview(File file) {
-    PDFPanel	result;
-
-    m_Document = JPod.load(file);
-    result     = new PDFPanel();
-    result.setDocument(m_Document);
-
-    return new PreviewPanel(result);
+    m_PDFPanel = new PDFPanel();
+    m_PDFPanel.setDocument(file);
+    return new PreviewPanel(m_PDFPanel);
   }
 
   /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    JPod.close(m_Document);
+    if (m_PDFPanel != null)
+      m_PDFPanel.cleanUp();
   }
 }

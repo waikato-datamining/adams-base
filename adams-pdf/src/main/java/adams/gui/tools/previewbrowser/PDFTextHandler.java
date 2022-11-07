@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFTextHandler.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
-import adams.core.io.JPod;
+import adams.core.io.PDFBox;
 import adams.gui.core.TextEditorPanel;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -43,7 +43,6 @@ import adams.gui.core.TextEditorPanel;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFTextHandler
   extends AbstractContentHandler {
@@ -83,7 +82,7 @@ public class PDFTextHandler
     TextEditorPanel	result;
 
     result = new TextEditorPanel();
-    result.setContent(JPod.extract(file));
+    result.setContent(PDFBox.extractText(file));
     result.setEditable(false);
 
     return new PreviewPanel(result, result.getTextArea());

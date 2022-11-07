@@ -15,12 +15,12 @@
 
 /*
  * PDFExtractImages.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.core.io.JPod;
+import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.core.Token;
@@ -83,7 +83,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFExtractImages
   extends AbstractTransformer {
@@ -154,12 +153,15 @@ public class PDFExtractImages
 
     if (isLoggingEnabled())
       getLogger().info("Extracting images from '" + file + "'");
-    content = JPod.extractImages(file);
-
-    if (content == null) {
-      result = "Failed to extract images from '" + file + "'!";
+    try {
+      content = PDFBox.extractImages(file);
     }
-    else {
+    catch (Exception e) {
+      result = handleException("Failed to extract images from: " + file, e);
+      content = null;
+    }
+
+    if (content != null) {
       m_Images.clear();
       for (BufferedImage img: content) {
 	cont = new BufferedImageContainer();

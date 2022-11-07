@@ -15,12 +15,11 @@
 
 /*
  * PDFViewer.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import adams.core.io.JPod;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseFileChooser;
@@ -30,7 +29,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.visualization.pdf.PDFPanel;
-import de.intarsys.pdf.pd.PDDocument;
+import org.icepdf.core.pobjects.Document;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
@@ -119,11 +118,10 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFViewer
-  extends AbstractGraphicalDisplay
-  implements DisplayPanelProvider, SendToActionSupporter {
+    extends AbstractGraphicalDisplay
+    implements DisplayPanelProvider, SendToActionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1523870513962160664L;
@@ -155,8 +153,8 @@ public class PDFViewer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "zoom", "zoom",
-	    100.0);
+	"zoom", "zoom",
+	100.0);
   }
 
   /**
@@ -213,10 +211,8 @@ public class PDFViewer
    */
   @Override
   public void clearPanel() {
-    if (m_PDFPanel != null) {
-      JPod.close(m_PDFPanel.getDocument());
-      m_PDFPanel.setDocument(null);
-    }
+    if (m_PDFPanel != null)
+      m_PDFPanel.closeDocument();
   }
 
   /**
@@ -265,13 +261,15 @@ public class PDFViewer
    */
   protected void saveAs() {
     int			retVal;
+    String		msg;
 
     retVal = getPDFFileChooser().showSaveDialog(m_Panel);
     if (retVal != BaseFileChooser.APPROVE_OPTION)
       return;
 
-    if (!JPod.save(m_PDFPanel.getDocument(), getPDFFileChooser().getSelectedFile()))
-      GUIHelper.showErrorMessage(getParentComponent(), "Failed to save PDF document to: " + getPDFFileChooser().getSelectedFile());
+    msg = m_PDFPanel.saveTo(getPDFFileChooser().getSelectedFile());
+    if (msg != null)
+      GUIHelper.showErrorMessage(getParentComponent(), "Failed to save PDF document to: " + getPDFFileChooser().getSelectedFile() + "\n" + msg);
   }
 
   /**
@@ -284,9 +282,9 @@ public class PDFViewer
   protected void display(Token token) {
     clearPanel();
     if (token.getPayload() instanceof String)
-      m_PDFPanel.setDocument(JPod.load(new PlaceholderFile((String) token.getPayload())));
+      m_PDFPanel.setDocument(token.getPayload(String.class));
     else if (token.getPayload() instanceof File)
-      m_PDFPanel.setDocument(JPod.load((File) token.getPayload()));
+      m_PDFPanel.setDocument(token.getPayload(File.class));
     m_PDFPanel.setScale(m_Zoom / 100.0);
   }
 
@@ -298,7 +296,7 @@ public class PDFViewer
     super.cleanUpGUI();
 
     if (m_PDFPanel != null)
-      JPod.close(m_PDFPanel.getDocument());
+      m_PDFPanel.cleanUp();
   }
 
   /**
@@ -323,13 +321,13 @@ public class PDFViewer
       @Override
       public void display(Token token) {
 	if (token.getPayload() instanceof String)
-	  m_PDFPanel.setDocument(JPod.load(new PlaceholderFile((String) token.getPayload())));
+	  m_PDFPanel.setDocument(token.getPayload(String.class));
 	else if (token.getPayload() instanceof File)
-	  m_PDFPanel.setDocument(JPod.load((File) token.getPayload()));
+	  m_PDFPanel.setDocument(token.getPayload(File.class));
 	m_PDFPanel.setScale(m_Zoom / 100.0);
       }
       public void cleanUp() {
-	JPod.close(m_PDFPanel.getDocument());
+	m_PDFPanel.cleanUp();
       }
       @Override
       public void clearPanel() {
@@ -340,7 +338,7 @@ public class PDFViewer
 	return m_PDFPanel;
       }
     };
-    
+
     if (token != null)
       result.display(token);
 
@@ -363,7 +361,7 @@ public class PDFViewer
    */
   @Override
   public Class[] getSendToClasses() {
-    return new Class[]{PlaceholderFile.class, PDDocument.class};
+    return new Class[]{PlaceholderFile.class, Document.class};
   }
 
   /**
@@ -374,8 +372,8 @@ public class PDFViewer
    */
   @Override
   public boolean hasSendToItem(Class[] cls) {
-    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(PDDocument.class, cls))
-           && (m_PDFPanel.getDocument() != null);
+    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(Document.class, cls))
+	&& (m_PDFPanel.getDocument() != null);
   }
 
   /**
@@ -387,19 +385,21 @@ public class PDFViewer
   @Override
   public Object getSendToItem(Class[] cls) {
     Object	result;
+    String	msg;
 
     result = null;
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (m_PDFPanel.getDocument() != null) {
 	result = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-	if (!JPod.save(m_PDFPanel.getDocument(), (File) result)) {
-	  getLogger().severe("Failed to save PDF to '" + result + "'!");
+	msg    = m_PDFPanel.saveTo((File) result);
+	if (msg != null) {
+	  getLogger().severe("Failed to save PDF to '" + result + "'!\n" + msg);
 	  result = null;
 	}
       }
     }
-    else if (SendToActionUtils.isAvailable(PDDocument.class, cls)) {
+    else if (SendToActionUtils.isAvailable(Document.class, cls)) {
       result = m_PDFPanel.getDocument();
     }
 

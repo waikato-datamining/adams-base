@@ -22,16 +22,11 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.UnorderedRange;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.env.Environment;
+import adams.core.io.iTextPDF;
 import adams.flow.core.Token;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfReader;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -241,15 +236,6 @@ public class PDFExtract
   protected String doExecute() {
     String		result;
     File		file;
-    int			i;
-    Document 		document;
-    PdfCopy 		copy;
-    PdfReader 		reader;
-    int[]		pages;
-    int			page;
-    FileOutputStream	fos;
-
-    result = null;
 
     // get file
     if (m_InputToken.getPayload() instanceof File)
@@ -257,37 +243,7 @@ public class PDFExtract
     else
       file = new PlaceholderFile((String) m_InputToken.getPayload());
 
-    fos = null;
-    try {
-      if (isLoggingEnabled())
-        getLogger().info("Extracting pages from '" + file + "' into '" + m_Output + "'");
-      document = new Document();
-      fos      = new FileOutputStream(m_Output.getAbsolutePath());
-      copy     = new PdfCopy(document, fos);
-      document.open();
-      document.addCreationDate();
-      document.addCreator(Environment.getInstance().getProject());
-      document.addAuthor(System.getProperty("user.name"));
-      reader = new PdfReader(file.getAbsolutePath());
-      if (isLoggingEnabled())
-        getLogger().info("- #pages: " + reader.getNumberOfPages());
-      m_Pages.setMax(reader.getNumberOfPages());
-      pages = m_Pages.getIntIndices();
-      for (i = 0; i < pages.length; i++) {
-        page = pages[i] + 1;
-        copy.addPage(copy.getImportedPage(reader, page));
-        if (isLoggingEnabled())
-          getLogger().info("- adding page: " + page);
-      }
-      copy.freeReader(reader);
-      document.close();
-    }
-    catch (Exception e) {
-      result = handleException("Failed to extract pages: ", e);
-    }
-    finally {
-      FileUtils.closeQuietly(fos);
-    }
+    result = iTextPDF.extractPages(this, file, m_Pages, m_Output);
 
     if (result == null)
       m_OutputToken = new Token(m_Output.getAbsolutePath());

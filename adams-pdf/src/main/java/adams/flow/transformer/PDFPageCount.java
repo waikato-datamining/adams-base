@@ -15,16 +15,16 @@
 
 /*
  * PDFPageCount.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
-import adams.core.io.JPod;
+import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -75,7 +75,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFPageCount
   extends AbstractTransformer {
@@ -133,7 +132,7 @@ public class PDFPageCount
 
     if (isLoggingEnabled())
       getLogger().info("Determining page count of '" + file + "'");
-    count = JPod.getPageCount(file);
+    count = PDFBox.getPageCount(file);
 
     if (count == -1)
       result = "Failed to determine page count of '" + file + "'!";

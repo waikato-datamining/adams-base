@@ -15,18 +15,21 @@
 
 /*
  * PDFExtractText.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-
 import adams.core.QuickInfoHelper;
-import adams.core.Range;
-import adams.core.io.JPod;
+import adams.core.UnorderedRange;
+import adams.core.io.FileUtils;
+import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.TempUtils;
+import adams.core.io.iTextPDF;
 import adams.flow.core.Token;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -85,10 +88,9 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFExtractText
-  extends AbstractTransformer {
+    extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -5712406930007899590L;
@@ -97,7 +99,7 @@ public class PDFExtractText
   protected PlaceholderFile m_Output;
 
   /** the range of pages to extract. */
-  protected Range m_Pages;
+  protected UnorderedRange m_Pages;
 
   /**
    * Returns a string describing the object.
@@ -107,7 +109,7 @@ public class PDFExtractText
   @Override
   public String globalInfo() {
     return
-        "Actor for extracting the text of a range of pages from a PDF file.";
+	"Actor for extracting the text of a range of pages from a PDF file.";
   }
 
   /**
@@ -118,18 +120,8 @@ public class PDFExtractText
     super.defineOptions();
 
     m_OptionManager.add(
-	    "pages", "pages",
-	    new Range(Range.ALL));
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Pages = new Range();
+	"pages", "pages",
+	new UnorderedRange(UnorderedRange.ALL));
   }
 
   /**
@@ -137,7 +129,7 @@ public class PDFExtractText
    *
    * @param value	the range
    */
-  public void setPages(Range value) {
+  public void setPages(UnorderedRange value) {
     m_Pages = value;
     reset();
   }
@@ -147,7 +139,7 @@ public class PDFExtractText
    *
    * @return 		the range
    */
-  public Range getPages() {
+  public UnorderedRange getPages() {
     return m_Pages;
   }
 
@@ -198,6 +190,7 @@ public class PDFExtractText
   protected String doExecute() {
     String	result;
     File	file;
+    File	tmpFile;
     String	content;
 
     result = null;
@@ -210,7 +203,18 @@ public class PDFExtractText
 
     if (isLoggingEnabled())
       getLogger().info("Extracting text from '" + file + "'");
-    content = JPod.extract(file, m_Pages);
+
+    content = null;
+    if (!m_Pages.isAllRange()) {
+      tmpFile = TempUtils.createTempFile("pdfextracttext-", ".pdf");
+      result  = iTextPDF.extractPages(this, file, m_Pages, tmpFile);
+      if (result == null)
+	content = PDFBox.extractText(tmpFile);
+      FileUtils.delete(tmpFile);
+    }
+    else {
+      content = PDFBox.extractText(file);
+    }
 
     if (content == null)
       result = "Failed to extract text from '" + file + "'!";

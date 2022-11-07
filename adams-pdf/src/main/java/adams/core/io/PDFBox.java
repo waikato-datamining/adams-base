@@ -13,27 +13,41 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PDFBox.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import adams.gui.core.ImageManager;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.printing.PDFPageable;
+import org.apache.pdfbox.text.PDFTextStripper;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.print.PrinterJob;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
  * Helper class for PDFBox library.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFBox {
 
@@ -206,5 +220,126 @@ public class PDFBox {
       LOGGER.log(Level.SEVERE, "Failed to print PDF document!", e);
       return false;
     }
+  }
+
+  /**
+   * Returns the number of pages in the PDF document.
+   *
+   * @param file	the PDF file to get the page count for
+   * @return		the page count, -1 if failed to determine
+   */
+  public static int getPageCount(File file) {
+    int		result;
+    PDDocument 	doc;
+
+    try {
+      doc    = PDDocument.load(file.getAbsoluteFile());
+      result = doc.getNumberOfPages();
+    }
+    catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to determine page count of: " + file, e);
+      result = -1;
+    }
+
+    return result;
+  }
+
+  /**
+   * Extracts the text from the PDF.
+   *
+   * @param file	the PDF to get the text from
+   * @return		the text, null if failed to extract
+   */
+  public static String extractText(File file) {
+    String 		result;
+    PDDocument 		doc;
+    PDFTextStripper 	stripper;
+
+    try {
+      doc      = PDDocument.load(file.getAbsoluteFile());
+      stripper = new PDFTextStripper();
+      result   = stripper.getText(doc);
+    }
+    catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to extract text from: " + file, e);
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
+   * Extracts images from PDF resources.
+   *
+   * @param resources		the resources to extract the images from
+   * @return			the list of extracted iamges
+   * @throws IOException	if extraction fails
+   */
+  @MixedCopyright(
+      author = "https://stackoverflow.com/users/156669/matt",
+      url = "https://stackoverflow.com/a/37664125/4698227",
+      license = License.CC_BY_SA_3
+  )
+  public static List<RenderedImage> extractImagesFromResources(PDResources resources) throws IOException {
+    List<RenderedImage> 	result;
+    PDXObject 			xObject;
+
+    result = new ArrayList<>();
+
+    if (resources == null)
+      return result;
+
+    for (COSName xObjectName : resources.getXObjectNames()) {
+      xObject = resources.getXObject(xObjectName);
+      if (xObject instanceof PDFormXObject)
+	result.addAll(extractImagesFromResources(((PDFormXObject) xObject).getResources()));
+      else if (xObject instanceof PDImageXObject)
+	result.add(((PDImageXObject) xObject).getImage());
+    }
+
+    return result;
+  }
+
+  /**
+   * Extracts images from a PDF document.
+   *
+   * @param document		the document to extract the images from
+   * @return			the list of extracted iamges
+   * @throws IOException	if extraction fails
+   */
+  @MixedCopyright(
+      author = "https://stackoverflow.com/users/156669/matt",
+      url = "https://stackoverflow.com/a/37664125/4698227",
+      license = License.CC_BY_SA_3
+  )
+  public static List<BufferedImage> extractImages(PDDocument document) throws IOException {
+    List<BufferedImage> 	result;
+    List<RenderedImage> 	images;
+
+    images = new ArrayList<>();
+    for (PDPage page : document.getPages()) {
+      for (RenderedImage image: extractImagesFromResources(page.getResources())) {
+	if (!images.contains(image))
+	  images.add(image);
+      }
+    }
+
+    // convert to BufferedImage
+    result = new ArrayList<>();
+    for (RenderedImage image : images)
+      result.add(ImageManager.toBufferedImage(image));
+
+    return result;
+  }
+
+  /**
+   * Extracts images from a PDF document.
+   *
+   * @param file		the file to extract the images from
+   * @return			the list of extracted iamges
+   * @throws IOException	if extraction fails
+   */
+  public static List<BufferedImage> extractImages(File file) throws IOException {
+    return extractImages(PDDocument.load(file.getAbsoluteFile()));
   }
 }

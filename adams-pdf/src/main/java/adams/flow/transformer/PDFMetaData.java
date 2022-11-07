@@ -15,12 +15,13 @@
 
 /*
  * PDFMetaData.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.License;
+import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -33,11 +34,13 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
- * Actor for extracting a range of pages from a PDF file.
+ * Actor for extracting the meta-data from a PDF.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -47,18 +50,14 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -66,38 +65,38 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;default: PDFMetaData
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: output)
- * &nbsp;&nbsp;&nbsp;The PDF file to output the extracted pages to.
- * &nbsp;&nbsp;&nbsp;default: .
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-pages &lt;java.lang.String&gt; (property: pages)
- * &nbsp;&nbsp;&nbsp;The range of pages to extract; A range is a comma-separated list of single
- * &nbsp;&nbsp;&nbsp;1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts
- * &nbsp;&nbsp;&nbsp;the range '...'; the following placeholders can be used as well: first,
- * &nbsp;&nbsp;&nbsp;second, third, last_2, last_1, last
- * &nbsp;&nbsp;&nbsp;default: first-last
+ * <pre>-output-type &lt;SPREADSHEET|MAP&gt; (property: outputType)
+ * &nbsp;&nbsp;&nbsp;How to output the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     author = "Apache",
@@ -105,10 +104,21 @@ import java.util.Set;
     note = "Original class: org.apache.pdfbox.examples.pdmodel.ExtractMetadata"
 )
 public class PDFMetaData
-  extends AbstractTransformer {
+    extends AbstractTransformer {
 
   /** for serialization. */
   private static final long serialVersionUID = -5712406930007899590L;
+
+  /**
+   * How to output the meta-data
+   */
+  public enum OutputType {
+    SPREADSHEET,
+    MAP,
+  }
+
+  /** how to output the meta-data. */
+  protected OutputType m_OutputType;
 
   /**
    * Returns a string describing the object.
@@ -118,13 +128,64 @@ public class PDFMetaData
   @Override
   public String globalInfo() {
     return
-        "Actor for extracting the meta-data from a PDF.";
+	"Actor for extracting the meta-data from a PDF.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+	"output-type", "outputType",
+	OutputType.SPREADSHEET);
+  }
+
+  /**
+   * Sets how to output the meta-data.
+   *
+   * @param value	the type
+   */
+  public void setOutputType(OutputType value) {
+    m_OutputType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to output the meta-data.
+   *
+   * @return 		the type
+   */
+  public OutputType getOutputType() {
+    return m_OutputType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return         tip text for this property suitable for
+   *             displaying in the GUI or for listing the options.
+   */
+  public String outputTypeTipText() {
+    return "How to output the meta-data.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "outputType", m_OutputType, "output: ");
   }
 
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
+   * @return		the input
    */
   public Class[] accepts() {
     return new Class[]{String.class, File.class};
@@ -133,15 +194,22 @@ public class PDFMetaData
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
+   * @return		the output
    */
   public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+    switch (m_OutputType) {
+      case SPREADSHEET:
+	return new Class[]{SpreadSheet.class};
+      case MAP:
+	return new Class[]{Map.class};
+      default:
+	throw new IllegalStateException("Unhandled output type: "  + m_OutputType);
+    }
   }
 
   /**
    * Adds the cell content to the spreadsheet.
-   * 
+   *
    * @param row		the row to add this to
    * @param header	the column name
    * @param content	the content for the cell
@@ -154,7 +222,7 @@ public class PDFMetaData
 
   /**
    * Adds the cell content to the spreadsheet.
-   * 
+   *
    * @param row		the row to add this to
    * @param header	the column name
    * @param content	the content for the cell
@@ -163,6 +231,22 @@ public class PDFMetaData
     row.getOwner().getHeaderRow().addCell(header).setContent(header);
     if (content != null)
       row.addCell(header).setContent(content);
+  }
+
+  /**
+   * Adds the value to the map if not null.
+   * 
+   * @param map		the map to add to
+   * @param key		the key for the value
+   * @param value	the value to add
+   */
+  public void addMapValue(Map<String,Object> map, String key, Object value) {
+    if (value != null) {
+      if (value instanceof Calendar)
+        map.put(key, ((Calendar) value).getTime());
+      else
+	map.put(key, value);
+    }
   }
   
   /**
@@ -175,6 +259,7 @@ public class PDFMetaData
     String			result;
     File			file;
     SpreadSheet			sheet;
+    Map<String,Object>		map;
     PDDocument 			document;
     PDDocumentInformation	info;
     Row				row;
@@ -188,34 +273,54 @@ public class PDFMetaData
     else
       file = new PlaceholderFile((String) m_InputToken.getPayload());
 
-    sheet = new DefaultSpreadSheet();
-    sheet.setDataRowClass(SparseDataRow.class);
-    sheet.setName("Meta-Data: " + file.getAbsolutePath());
-
     try {
-      row      = sheet.addRow();
       document = PDDocument.load(file.getAbsoluteFile());
       info     = document.getDocumentInformation();
+      keys     = info.getMetadataKeys();
 
-      addCell(row, "Title",             info.getTitle());
-      addCell(row, "Subject",           info.getSubject());
-      addCell(row, "Author",            info.getAuthor());
-      addCell(row, "Keywords",          info.getKeywords());
-      addCell(row, "Producer",          info.getProducer());
-      addCell(row, "Creation Date",     info.getCreationDate());
-      addCell(row, "Modification Date", info.getModificationDate());
-      addCell(row, "Creator",           info.getCreator());
-      addCell(row, "Trapped",           info.getTrapped());
-      keys = info.getMetadataKeys();
-      for (String key: keys)
-	addCell(row, "Meta-" + key, info.getCustomMetadataValue(key));
+      switch (m_OutputType) {
+	case SPREADSHEET:
+	  sheet = new DefaultSpreadSheet();
+	  sheet.setDataRowClass(SparseDataRow.class);
+	  sheet.setName("Meta-Data: " + file.getAbsolutePath());
+	  row = sheet.addRow();
+	  addCell(row, "Title",             info.getTitle());
+	  addCell(row, "Subject",           info.getSubject());
+	  addCell(row, "Author",            info.getAuthor());
+	  addCell(row, "Keywords",          info.getKeywords());
+	  addCell(row, "Producer",          info.getProducer());
+	  addCell(row, "Creation Date",     info.getCreationDate());
+	  addCell(row, "Modification Date", info.getModificationDate());
+	  addCell(row, "Creator",           info.getCreator());
+	  addCell(row, "Trapped",           info.getTrapped());
+	  for (String key: keys)
+	    addCell(row, "Meta-" + key, info.getCustomMetadataValue(key));
+	  m_OutputToken = new Token(sheet);
+	  break;
+
+	case MAP:
+	  map = new HashMap<>();
+	  addMapValue(map, "Title",             info.getTitle());
+	  addMapValue(map, "Subject",           info.getSubject());
+	  addMapValue(map, "Author",            info.getAuthor());
+	  addMapValue(map, "Keywords",          info.getKeywords());
+	  addMapValue(map, "Producer",          info.getProducer());
+	  addMapValue(map, "Creation Date",     info.getCreationDate());
+	  addMapValue(map, "Modification Date", info.getModificationDate());
+	  addMapValue(map, "Creator",           info.getCreator());
+	  addMapValue(map, "Trapped",           info.getTrapped());
+	  for (String key: keys)
+	    addMapValue(map, "Meta-" + key, info.getCustomMetadataValue(key));
+	  m_OutputToken = new Token(map);
+	  break;
+
+	default:
+	  throw new IllegalStateException("Unhandled output type: " + m_OutputType);
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to extract meta-data: ", e);
     }
-
-    if (result == null)
-      m_OutputToken = new Token(sheet);
 
     return result;
   }

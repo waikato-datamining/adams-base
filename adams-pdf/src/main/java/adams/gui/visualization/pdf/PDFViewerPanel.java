@@ -20,8 +20,6 @@
 package adams.gui.visualization.pdf;
 
 import adams.core.Properties;
-import adams.core.io.JPod;
-import adams.core.io.PDFBox;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
@@ -34,7 +32,8 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
-import de.intarsys.pdf.pd.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.icepdf.core.pobjects.Document;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -53,8 +52,8 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PDFViewerPanel
-  extends BasePanel
-  implements MenuBarProvider, SendToActionSupporter {
+    extends BasePanel
+    implements MenuBarProvider, SendToActionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 1270944412770632645L;
@@ -65,7 +64,7 @@ public class PDFViewerPanel
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static class MultiPagePane
-    extends adams.gui.core.MultiPagePane {
+      extends adams.gui.core.MultiPagePane {
 
     /** for serialization. */
     private static final long serialVersionUID = -2048229771213837710L;
@@ -119,15 +118,6 @@ public class PDFViewerPanel
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileExit;
 
-  /** the menu "zoom". */
-  protected JMenu m_MenuViewZoom;
-
-  /** the menu item "zoom in". */
-  protected JMenuItem m_MenuItemViewZoomIn;
-
-  /** the menu item "zoom out". */
-  protected JMenuItem m_MenuItemViewZoomOut;
-
   /** the filedialog for loading CSV files. */
   protected transient BaseFileChooser m_FileChooser;
 
@@ -162,7 +152,7 @@ public class PDFViewerPanel
    */
   protected BaseFileChooser getFileChooser() {
     BaseFileChooser	fileChooser;
-    
+
     if (m_FileChooser == null) {
       fileChooser = new BaseFileChooser();
       fileChooser.addChoosableFileFilter(ExtensionFileFilter.getPdfFileFilter());
@@ -170,7 +160,7 @@ public class PDFViewerPanel
       fileChooser.setMultiSelectionEnabled(true);
       m_FileChooser = fileChooser;
     }
-    
+
     return m_FileChooser;
   }
 
@@ -215,8 +205,8 @@ public class PDFViewerPanel
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
-      m_RecentFilesHandler = new RecentFilesHandler<JMenu>(SESSION_FILE, 5, submenu);
-      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
+      m_RecentFilesHandler = new RecentFilesHandler<>(SESSION_FILE, 5, submenu);
+      m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
 	}
@@ -233,9 +223,9 @@ public class PDFViewerPanel
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
       menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          closeFile();
-        }
+	public void actionPerformed(ActionEvent e) {
+	  closeFile();
+	}
       });
       m_MenuItemFileClose = menuitem;
 
@@ -270,72 +260,6 @@ public class PDFViewerPanel
 	}
       });
       m_MenuItemFileExit = menuitem;
-
-      // View
-      menu = new JMenu("View");
-      result.add(menu);
-      menu.setMnemonic('V');
-      menu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
-
-      // View/Zoom
-      submenu = new JMenu("Zoom");
-      menu.add(submenu);
-      submenu.setMnemonic('Z');
-      submenu.setIcon(ImageManager.getIcon("glasses.gif"));
-      submenu.addChangeListener(new ChangeListener() {
-	public void stateChanged(ChangeEvent e) {
-	  updateMenu();
-	}
-      });
-      m_MenuViewZoom = submenu;
-
-      //View/Zoom/Zoom in
-      menuitem = new JMenuItem("Zoom in");
-      submenu.add(menuitem);
-      menuitem.setMnemonic('i');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed I"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getCurrentPanel().setScale(getCurrentPanel().getScale() * 1.5);
-	}
-      });
-      m_MenuItemViewZoomIn = menuitem;
-
-      //View/Zoom/Zoom out
-      menuitem = new JMenuItem("Zoom out");
-      submenu.add(menuitem);
-      menuitem.setMnemonic('o');
-      menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed O"));
-      menuitem.addActionListener(new ActionListener() {
-	public void actionPerformed(ActionEvent e) {
-	  getCurrentPanel().setScale(getCurrentPanel().getScale() / 1.5);
-	}
-      });
-      m_MenuItemViewZoomOut = menuitem;
-
-      // zoom levels
-      // TODO: add "fit" zoom
-      submenu.addSeparator();
-      for (i = 0; i < PDFPanel.ZOOMS.length; i++) {
-	final int fZoom = PDFPanel.ZOOMS[i];
-	menuitem = new JMenuItem(PDFPanel.ZOOMS[i] + "%");
-	submenu.add(menuitem);
-	if (PDFPanel.ZOOMS[i] == 100)
-	  menuitem.setAccelerator(GUIHelper.getKeyStroke("1"));
-	else if (PDFPanel.ZOOMS[i] == 200)
-	  menuitem.setAccelerator(GUIHelper.getKeyStroke("2"));
-	else if (PDFPanel.ZOOMS[i] == 400)
-	  menuitem.setAccelerator(GUIHelper.getKeyStroke("4"));
-	menuitem.addActionListener(new ActionListener() {
-	  public void actionPerformed(ActionEvent e) {
-	    zoom(fZoom);
-	  }
-	});
-      }
 
       // update menu
       m_MenuBar = result;
@@ -380,11 +304,6 @@ public class PDFViewerPanel
     // File
     m_MenuItemFileClose.setEnabled(pdfAvailable);
     m_MenuItemFilePrint.setEnabled(pdfAvailable);
-
-    // View
-    m_MenuViewZoom.setEnabled(pdfAvailable);
-    m_MenuItemViewZoomIn.setEnabled(pdfAvailable);
-    m_MenuItemViewZoomOut.setEnabled(pdfAvailable);
   }
 
   /**
@@ -410,23 +329,15 @@ public class PDFViewerPanel
    */
   public void load(File file) {
     PDFPanel	panel;
-    PDDocument	document;
 
-    document = JPod.load(file);
-    if (document == null) {
-      GUIHelper.showErrorMessage(
-	  this, "Error loading PDF file:\n" + file);
-    }
-    else {
-      panel = new PDFPanel();
-      panel.setDocument(document);
-      m_MultiPagePane.addPage(file.getName(), panel);
-      m_MultiPagePane.setSelectedIndex(m_MultiPagePane.getPageCount() - 1);
+    panel = new PDFPanel();
+    panel.setDocument(file);
+    m_MultiPagePane.addPage(file.getName(), panel);
+    m_MultiPagePane.setSelectedIndex(m_MultiPagePane.getPageCount() - 1);
 
-      getFileChooser().setCurrentDirectory(file.getParentFile().getAbsoluteFile());
-      if (m_RecentFilesHandler != null)
-	m_RecentFilesHandler.addRecentItem(file);
-    }
+    getFileChooser().setCurrentDirectory(file.getParentFile().getAbsoluteFile());
+    if (m_RecentFilesHandler != null)
+      m_RecentFilesHandler.addRecentItem(file);
   }
 
   /**
@@ -454,14 +365,7 @@ public class PDFViewerPanel
     if (index == -1)
       return;
 
-    file = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-    if (JPod.save(m_MultiPagePane.getPanelAt(index).getDocument(), file)) {
-      if (!PDFBox.print(file))
-        GUIHelper.showErrorMessage(this, "Failed to print PDF document: " + file);
-    }
-    else {
-      GUIHelper.showErrorMessage(this, "Failed to save PDF document to: " + file);
-    }
+    m_MultiPagePane.getPanelAt(index).print(true);
   }
 
   /**
@@ -486,7 +390,7 @@ public class PDFViewerPanel
    * @return		the class
    */
   public Class[] getSendToClasses() {
-    return new Class[]{PlaceholderFile.class, PDDocument.class};
+    return new Class[]{PlaceholderFile.class, Document.class};
   }
 
   /**
@@ -496,9 +400,9 @@ public class PDFViewerPanel
    * @return		true if an object is available for sending
    */
   public boolean hasSendToItem(Class[] cls) {
-    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(PDDocument.class, cls))
-           && (getCurrentPanel() != null)
-           && (getCurrentPanel().getDocument() != null);
+    return    (SendToActionUtils.isAvailable(PlaceholderFile.class, cls) || SendToActionUtils.isAvailable(Document.class, cls))
+	&& (getCurrentPanel() != null)
+	&& (getCurrentPanel().getDocument() != null);
   }
 
   /**
@@ -509,14 +413,16 @@ public class PDFViewerPanel
    */
   public Object getSendToItem(Class[] cls) {
     Object	result;
+    String	msg;
 
     result = null;
 
     if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
       if (getCurrentPanel().getDocument() != null) {
 	result = SendToActionUtils.nextTmpFile("pdfviewer", "pdf");
-	if (!JPod.save(getCurrentPanel().getDocument(), (File) result)) {
-	  System.err.println("Failed to save PDF to '" + result + "'!");
+	msg    = getCurrentPanel().saveTo((File) result);
+	if (msg != null) {
+	  System.err.println("Failed to save PDF to '" + result + "':\n" + msg);
 	  result = null;
 	}
       }
