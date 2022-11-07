@@ -23,9 +23,12 @@ package adams.gui.core;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -272,7 +275,7 @@ public class ImageManager {
     filename = getImageFilename(name);
     if (filename != null) {
       if (m_BufferedImageCache.containsKey(filename))
-        return m_BufferedImageCache.get(filename);
+	return m_BufferedImageCache.get(filename);
       try {
 	result = ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
 	m_BufferedImageCache.put(filename, result);
@@ -336,6 +339,34 @@ public class ImageManager {
     filename = GUIHelper.getString("LogoIcon", "");
     if (filename.length() != 0)
       result = getIcon(filename);
+
+    return result;
+  }
+
+  /**
+   * Converts a RenderedImage into a BufferedImage.
+   *
+   * @param image	the image to convert
+   * @return		the converted image
+   */
+  public static BufferedImage toBufferedImage(RenderedImage image) {
+    BufferedImage 		result;
+    WritableRaster 		raster;
+    Hashtable<String,Object> 	props;
+
+    if (image instanceof BufferedImage) {
+      result = (BufferedImage) image;
+    }
+    else {
+      raster = image.getColorModel().createCompatibleWritableRaster(image.getWidth(), image.getHeight());
+      props = new Hashtable<>();
+      if (image.getPropertyNames() != null) {
+	for (String key : image.getPropertyNames())
+	  props.put(key, image.getProperty(key));
+      }
+      result = new BufferedImage(image.getColorModel(), raster, image.getColorModel().isAlphaPremultiplied(), props);
+      image.copyData(raster);
+    }
 
     return result;
   }
