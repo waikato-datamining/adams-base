@@ -15,7 +15,7 @@
 
 /*
  * UISettings.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -112,8 +112,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Integer value) {
-    getProperties().setInteger(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getInteger(key, value))) {
+      getProperties().setInteger(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -135,8 +140,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Long value) {
-    getProperties().setLong(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getLong(key, value))) {
+      getProperties().setLong(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -158,8 +168,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Double value) {
-    getProperties().setDouble(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getDouble(key, value))) {
+      getProperties().setDouble(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -181,8 +196,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Boolean value) {
-    getProperties().setBoolean(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getBoolean(key, value))) {
+      getProperties().setBoolean(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -204,8 +224,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Time value) {
-    getProperties().setTime(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getTime(key, value))) {
+      getProperties().setTime(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -227,8 +252,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, DateTime value) {
-    getProperties().setDateTime(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getDateTime(key, value))) {
+      getProperties().setDateTime(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -250,8 +280,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Date value) {
-    getProperties().setDate(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getDate(key, value))) {
+      getProperties().setDate(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -273,8 +308,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Color value) {
-    getProperties().setColor(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getColor(key, value))) {
+      getProperties().setColor(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -296,8 +336,13 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, BasePassword value) {
-    getProperties().setPassword(createKey(cls, property), value);
-    flagModified();
+    String 	key;
+
+    key = createKey(cls, property);
+    if ((value != null) && !value.equals(getProperties().getPassword(key, value))) {
+      getProperties().setPassword(key, value);
+      flagModified();
+    }
   }
 
   /**
@@ -319,8 +364,15 @@ public class UISettings {
    * @param value	the value to set
    */
   public static synchronized void set(Class cls, String property, Dimension value) {
-    getProperties().setProperty(createKey(cls, property), value.width + ";" + value.height);
-    flagModified();
+    String 	key;
+    String	valStr;
+
+    key    = createKey(cls, property);
+    valStr = value.width + ";" + value.height;
+    if (!valStr.equals(getProperties().getProperty(key, valStr))) {
+      getProperties().setProperty(key, valStr);
+      flagModified();
+    }
   }
 
   /**
@@ -628,12 +680,15 @@ public class UISettings {
       m_SaveRunnable = new DelayedActionRunnable(SECONDS_WAIT * 1000, 250);
       m_SaveThread = new Thread(m_SaveRunnable);
       m_SaveThread.start();
+      System.out.println("Start save");
     }
     m_SaveRunnable.queue(new AbstractAction(m_SaveRunnable) {
       @Override
       public String execute() {
-        m_SaveRunnable.stopExecution();
-        m_SaveRunnable = null;
+	System.out.println("Finishing save");
+	m_SaveRunnable.stopExecution();
+	m_SaveRunnable = null;
+	m_SaveThread   = null;
 	return save();
       }
     });
