@@ -255,6 +255,7 @@ public class PDFBox {
     PDDocument 		doc;
     PDFTextStripper 	stripper;
 
+    doc = null;
     try {
       doc      = PDDocument.load(file.getAbsoluteFile());
       stripper = new PDFTextStripper();
@@ -263,6 +264,16 @@ public class PDFBox {
     catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to extract text from: " + file, e);
       result = null;
+    }
+    finally {
+      if (doc != null) {
+	try {
+	  doc.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
     }
 
     return result;
@@ -340,6 +351,22 @@ public class PDFBox {
    * @throws IOException	if extraction fails
    */
   public static List<BufferedImage> extractImages(File file) throws IOException {
-    return extractImages(PDDocument.load(file.getAbsoluteFile()));
+    List<BufferedImage>	result;
+    PDDocument		doc;
+
+    doc = null;
+    try {
+      doc = PDDocument.load(file.getAbsoluteFile());
+      return extractImages(doc);
+    }
+    finally {
+      try {
+        if (doc != null)
+          doc.close();
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
   }
 }
