@@ -59,6 +59,10 @@
           <groupId>javax.servlet</groupId>
           <artifactId>servlet-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-test-junit5</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
