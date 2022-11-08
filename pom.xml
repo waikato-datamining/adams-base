@@ -34,7 +34,6 @@
     <module>adams-imaging</module>
     <module>adams-imaging-boofcv</module>
     <module>adams-json</module>
-    <module>adams-jython</module>
     <module>adams-math</module>
     <module>adams-matlab</module>
     <module>adams-meta</module>
