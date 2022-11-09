@@ -27,6 +27,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
 import adams.core.option.parsing.PlaceholderDirectoryParsing;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserFactory;
 import adams.gui.chooser.FileChooser;
 import adams.gui.core.BaseDialog;
@@ -39,6 +40,7 @@ import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import java.awt.Container;
 import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,9 +55,9 @@ import java.io.File;
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
  */
 public class PlaceholderDirectoryEditor
-  extends AbstractPropertyEditorSupport
-  implements CustomStringRepresentationHandler, InlineEditorSupport, 
-             PopupMenuCustomizer {
+    extends AbstractPropertyEditorSupport
+    implements CustomStringRepresentationHandler, InlineEditorSupport,
+    MultiSelectionEditor, PopupMenuCustomizer {
 
   /** The directory chooser used for selecting dirs. */
   protected FileChooser m_DirChooser;
@@ -155,10 +157,10 @@ public class PlaceholderDirectoryEditor
       val = f.getPath();
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
-  
+
   /**
    * Checks whether inline editing is available.
-   * 
+   *
    * @return		true if editing available
    */
   public boolean isInlineEditingAvailable() {
@@ -167,7 +169,7 @@ public class PlaceholderDirectoryEditor
 
   /**
    * Sets the value to use.
-   * 
+   *
    * @param value	the value to use
    */
   public void setInlineValue(String value) {
@@ -177,21 +179,53 @@ public class PlaceholderDirectoryEditor
 
   /**
    * Returns the current value.
-   * 
+   *
    * @return		the current value
    */
   public String getInlineValue() {
-    return ((PlaceholderDirectory) getValue()).toString();
+    return getValue().toString();
   }
 
   /**
    * Checks whether the value id valid.
-   * 
+   *
    * @param value	the value to check
    * @return		true if valid
    */
   public boolean isInlineValueValid(String value) {
     return PlaceholderDirectory.isValid(value);
+  }
+
+  /**
+   * Returns the selected objects.
+   *
+   * @param parent	the parent container
+   * @return		the objects
+   */
+  @Override
+  public Object[] getSelectedObjects(Container parent) {
+    PlaceholderDirectory[]	result;
+    File[]			selected;
+    FileChooser 		chooser;
+    int				retVal;
+    int				i;
+
+    chooser = DirectoryChooserFactory.createChooser(new PlaceholderFile(System.getProperty("user.dir")));
+    chooser.setApproveButtonText("Select");
+    chooser.setApproveButtonMnemonic('S');
+    chooser.setMultiSelectionEnabled(true);
+    retVal = chooser.showOpenDialog(parent);
+    if (retVal == BaseFileChooser.APPROVE_OPTION) {
+      selected = chooser.getSelectedFiles();
+      result   = new PlaceholderDirectory[selected.length];
+      for (i = 0; i < selected.length; i++)
+        result[i] = new PlaceholderDirectory(selected[i]);
+    }
+    else {
+      result = new PlaceholderDirectory[0];
+    }
+
+    return result;
   }
 
   /**
