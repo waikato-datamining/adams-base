@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OS.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -23,7 +23,6 @@ package adams.core.management;
  * Helper class for operating system related stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OS {
 
@@ -49,6 +48,9 @@ public class OS {
   /** whether the OS is Android. */
   protected static Boolean m_IsAndroid;
 
+  /** whether the architecture is arm64. */
+  protected static Boolean m_IsArm64;
+
   /**
    * Checks whether the operating system is Windows.
    *
@@ -71,6 +73,18 @@ public class OS {
       m_IsMac = System.getProperty("os.name").toLowerCase().startsWith("mac os");
 
     return m_IsMac;
+  }
+
+  /**
+   * Checks whether the architecture is arm64.
+   *
+   * @return		true if arm64
+   */
+  public synchronized static boolean isArm64() {
+    if (m_IsArm64 == null)
+      m_IsArm64 = System.getProperty("os.arch").toLowerCase().startsWith("aarch64");
+
+    return m_IsArm64;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -109,13 +109,13 @@ public class Launcher {
 
   /** the process that got launched. */
   protected Process m_Process;
-  
+
   /** the debug level. */
   protected int m_DebugLevel;
-  
+
   /** whether to ignore the ADAMS environment options. */
   protected boolean m_IgnoreEnvironmentOptions;
-  
+
   /** whether to suppress error dialog. */
   protected boolean m_SuppressErrorDialog;
 
@@ -127,10 +127,10 @@ public class Launcher {
 
   /** for stderr. */
   protected OutputProcessStream m_StdErr;
-  
+
   /** the console object that calls the launcher (if any). */
   protected LoggingObject m_ConsoleObject;
-  
+
   /**
    * Initializes the launcher.
    */
@@ -172,11 +172,11 @@ public class Launcher {
     value  = value.trim().toLowerCase();
     if (value.endsWith("k") || value.endsWith("m") || value.endsWith("g")) {
       try {
-	Integer.parseInt(value.substring(0, value.length() - 1));
-	m_Memory = value;
+        Integer.parseInt(value.substring(0, value.length() - 1));
+        m_Memory = value;
       }
       catch (Exception e) {
-	result = "Failed to parse '" + value + "': " + e;
+        result = "Failed to parse '" + value + "': " + e;
       }
     }
     else {
@@ -219,9 +219,9 @@ public class Launcher {
     suffix = "";
     for (i = m_Memory.length() - 1; i >= 0; i--) {
       if ((m_Memory.charAt(i) >= '0') && (m_Memory.charAt(i) <= '9'))
-	break;
+        break;
       else
-	suffix = m_Memory.charAt(i) + suffix;
+        suffix = m_Memory.charAt(i) + suffix;
     }
     amount = m_Memory.substring(0, m_Memory.length() - suffix.length());
     factor = 1.5;
@@ -270,7 +270,7 @@ public class Launcher {
     try {
       file = new File(value);
       if (file.exists() && file.isFile())
-	m_JavaAgentJar = value;
+        m_JavaAgentJar = value;
     }
     catch (Exception e) {
       result = "Java agent jar not found or not a file: " + value;
@@ -397,44 +397,44 @@ public class Launcher {
     thread = new Thread() {
       @Override
       public void run() {
-	if (m_Process != null)
-	  m_Process.destroy();
+        if (m_Process != null)
+          m_Process.destroy();
       }
     };
     m_Runtime.addShutdownHook(thread);
   }
-  
+
   /**
    * Sets to ignore the ADAMS environment options. 
    */
   public void ignoreEnvironmentOptions() {
     m_IgnoreEnvironmentOptions = true;
   }
-  
+
   /**
    * Suppresses the error dialog.
    */
   public void suppressErrorDialog() {
     m_SuppressErrorDialog = true;
   }
-  
+
   /**
    * Sets the output printer class to use.
-   * 
+   *
    * @param cls		the class to use
    * @throws IllegalArgumentException	if the class is not derived from {@link AbstractOutputPrinter}
    */
   public void setOutputPrinter(Class cls) {
     if (!ClassLocator.isSubclass(AbstractOutputPrinter.class, cls))
       throw new IllegalArgumentException(
-	  "Class is not derived from " + AbstractOutputPrinter.class.getName() + ": " + cls.getName());
+          "Class is not derived from " + AbstractOutputPrinter.class.getName() + ": " + cls.getName());
     m_OutputPrinter = cls;
   }
 
   /**
    * Sets the owning console object to use for the output printer if that
    * implements {@link LoggingObjectOwner}.
-   * 
+   *
    * @param owner	the owner for the output printer, can be null
    */
   public void setConsoleObject(LoggingObject owner) {
@@ -454,7 +454,7 @@ public class Launcher {
 
     for (String part : cpath) {
       if (part.trim().isEmpty())
-	continue;
+        continue;
       file = new File(part.trim());
       if (!file.isDirectory()) {
         if (file.getParentFile() != null) {
@@ -465,10 +465,10 @@ public class Launcher {
         }
         else {
           System.err.println("Failed to determine parent path for '" + file + "', skipping!");
-	}
+        }
       }
       else {
-	dirs.add(part);
+        dirs.add(part);
       }
     }
 
@@ -478,7 +478,7 @@ public class Launcher {
 
     return result;
   }
-  
+
   /**
    * Assembles the classpath.
    *
@@ -498,29 +498,38 @@ public class Launcher {
     sep   = System.getProperty("path.separator");
 
     // add platform-specific path (if available)
-    if (OS.isMac())
+    if (OS.isMac() && OS.isArm64())
+      os = "macosxarm";
+    else if (OS.isMac() && !OS.isArm64())
       os = "macosx";
     else if (OS.isWindows())
       os = "windows";
-    else
+    else if (OS.isLinux() && OS.isArm64())
+      os = "linuxarm";
+    else if (OS.isLinux())
       os = "linux";
-    os += OS.getBitness();
+    else
+      os = null; // no native libraries supported
+    if (os != null)
+      os += OS.getBitness();
     parts = System.getProperty("java.class.path").split(sep);
     cpath.addAll(Arrays.asList(parts));
-    for (String part: parts) {
-      // platform specific sub-directory present?
-      file = new File(part);
-      if (file.isFile())
-	file = file.getParentFile();
-      file = new File(file.getAbsolutePath() + File.separator + os);
-      if (file.exists() && file.isDirectory()) {
-	jars = file.list((File dir, String name) -> {
-	  return name.endsWith(".jar");
-	});
-	for (String jar: jars) {
-	  cpath.add(file.getAbsolutePath() + File.separator + jar);
-	}
-	break;
+    if (os != null) {
+      for (String part: parts) {
+        // platform specific sub-directory present?
+        file = new File(part);
+        if (file.isFile())
+          file = file.getParentFile();
+        file = new File(file.getAbsolutePath() + File.separator + os);
+        if (file.exists() && file.isDirectory()) {
+          jars = file.list((File dir, String name) -> {
+            return name.endsWith(".jar");
+          });
+          for (String jar : jars) {
+            cpath.add(file.getAbsolutePath() + File.separator + jar);
+          }
+          break;
+        }
       }
     }
 
@@ -544,7 +553,7 @@ public class Launcher {
 
   /**
    * Returns the stdout handler.
-   * 
+   *
    * @return		the handler
    */
   public OutputProcessStream getStdOut() {
@@ -553,7 +562,7 @@ public class Launcher {
 
   /**
    * Returns the stderr handler.
-   * 
+   *
    * @return		the handler
    */
   public OutputProcessStream getStdErr() {
@@ -570,7 +579,7 @@ public class Launcher {
 
   /**
    * Launches the main class.
-   * 
+   *
    * @return		null if OK, otherwise an error message
    */
   public String execute() {
@@ -583,11 +592,11 @@ public class Launcher {
     Thread		thStdErr;
 
     result = null;
-    
+
     enableRestart = false;
     try {
       if (ClassLocator.hasInterface(RestartableApplication.class, Class.forName(m_MainClass)))
-	enableRestart = true;
+        enableRestart = true;
     }
     catch (Exception e) {
       System.err.println("Failed to instantiate class '" + m_MainClass + "'!");
@@ -615,13 +624,13 @@ public class Launcher {
 
     if (!m_IgnoreEnvironmentOptions) {
       if (System.getenv(ENV_ADAMS_OPTS) != null) {
-	try {
-	  cmd.addAll(Arrays.asList(OptionUtils.splitOptions(System.getenv(ENV_ADAMS_OPTS))));
-	}
-	catch (Exception e) {
-	  System.err.println("Error parsing environment variable '" + ENV_ADAMS_OPTS + "':");
-	  e.printStackTrace();
-	}
+        try {
+          cmd.addAll(Arrays.asList(OptionUtils.splitOptions(System.getenv(ENV_ADAMS_OPTS))));
+        }
+        catch (Exception e) {
+          System.err.println("Error parsing environment variable '" + ENV_ADAMS_OPTS + "':");
+          e.printStackTrace();
+        }
       }
     }
 
@@ -631,21 +640,21 @@ public class Launcher {
 
     try {
       if (m_DebugLevel > 1) {
-	System.out.println("\nGenerated command-line:\n" + Utils.flatten(cmd, "\n"));
-	System.out.println("\nEnvironment variables:\n" + Utils.flatten(m_EnvVars, "\n"));
+        System.out.println("\nGenerated command-line:\n" + Utils.flatten(cmd, "\n"));
+        System.out.println("\nEnvironment variables:\n" + Utils.flatten(m_EnvVars, "\n"));
       }
 
       m_Process = m_Runtime.exec(
-	cmd.toArray(new String[cmd.size()]),
-	m_EnvVars.toArray(new String[m_EnvVars.size()]),
-	new File(System.getProperty("basedir", ".")));
+          cmd.toArray(new String[cmd.size()]),
+          m_EnvVars.toArray(new String[m_EnvVars.size()]),
+          new File(System.getProperty("basedir", ".")));
       m_StdOut  = new OutputProcessStream(m_Process, m_OutputPrinter, true);
       m_StdErr  = new OutputProcessStream(m_Process, m_OutputPrinter, false);
       if (m_ConsoleObject != null) {
-	if (m_StdOut.getPrinter() instanceof LoggingObjectOwner)
-	  ((LoggingObjectOwner) m_StdOut.getPrinter()).setOwner(m_ConsoleObject);
-	if (m_StdErr.getPrinter() instanceof LoggingObjectOwner)
-	  ((LoggingObjectOwner) m_StdErr.getPrinter()).setOwner(m_ConsoleObject);
+        if (m_StdOut.getPrinter() instanceof LoggingObjectOwner)
+          ((LoggingObjectOwner) m_StdOut.getPrinter()).setOwner(m_ConsoleObject);
+        if (m_StdErr.getPrinter() instanceof LoggingObjectOwner)
+          ((LoggingObjectOwner) m_StdErr.getPrinter()).setOwner(m_ConsoleObject);
       }
       thStdOut = new Thread(m_StdOut);
       thStdErr = new Thread(m_StdErr);
@@ -655,48 +664,48 @@ public class Launcher {
       retVal = m_Process.waitFor();
 
       if (m_DebugLevel > 0)
-	System.out.println("Exit code: " + retVal);
+        System.out.println("Exit code: " + retVal);
       if (retVal != 0)
-	result = "Exit code=" + retVal;
+        result = "Exit code=" + retVal;
 
       while (thStdOut.isAlive()) {
-	try {
-	  synchronized(this) {
-	    wait(50);
-	  }
-	}
-	catch (Exception e) {
-	  // ignored
-	}
+        try {
+          synchronized(this) {
+            wait(50);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
       }
       while (thStdErr.isAlive()) {
-	try {
-	  synchronized(this) {
-	    wait(50);
-	  }
-	}
-	catch (Exception e) {
-	  // ignored
-	}
+        try {
+          synchronized(this) {
+            wait(50);
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
       }
 
       m_Process = null;
 
       if (retVal == CODE_RESTART) {
-	return execute();
+        return execute();
       }
       else if (retVal == CODE_RESTART_MORE_HEAP) {
-	increaseHeap();
-	return execute();
+        increaseHeap();
+        return execute();
       }
       else if (retVal != 0) {
-	msg = "Application exited unexpectedly with exit code " + retVal + ", "
-	    + "options used for starting process:\n\n"
-	    + Utils.flatten(cmd, "\n");
-	System.err.println(msg);
-	if (!m_SuppressErrorDialog && !GUIHelper.isHeadless())
-	  GUIHelper.showErrorMessage(
-	      null, msg, "Application exited unexpectedly!");
+        msg = "Application exited unexpectedly with exit code " + retVal + ", "
+            + "options used for starting process:\n\n"
+            + Utils.flatten(cmd, "\n");
+        System.err.println(msg);
+        if (!m_SuppressErrorDialog && !GUIHelper.isHeadless())
+          GUIHelper.showErrorMessage(
+              null, msg, "Application exited unexpectedly!");
       }
     }
     catch (Exception e) {
@@ -705,7 +714,7 @@ public class Launcher {
       e.printStackTrace();
       result += e;
     }
-    
+
     return result;
   }
 
@@ -756,31 +765,31 @@ public class Launcher {
     // JVM options
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-jvm")) != null)
-	launcher.addJVMOption(value);
+        launcher.addJVMOption(value);
     }
 
     // classpath augmenters
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-cpa")) != null)
-	launcher.addClassPathAugmentations(value);
+        launcher.addClassPathAugmentations(value);
     }
 
     // priority jars
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-priority")) != null)
-	launcher.addPriorityJar(value);
+        launcher.addPriorityJar(value);
     }
 
     // environment variable
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-env")) != null)
-	launcher.addEnvVar(value);
+        launcher.addEnvVar(value);
     }
 
     // environment modifiers
     if (result == null) {
       while ((value = OptionUtils.removeOption(options, "-env-modifier")) != null)
-	launcher.addEnvironmentModifier(value);
+        launcher.addEnvironmentModifier(value);
     }
 
     if (result == null)
@@ -799,7 +808,7 @@ public class Launcher {
 
     for (i = 0; i < args.length; i++) {
       if (args[i].startsWith("\"") && args[i].endsWith("\""))
-	args[i] = args[i].substring(1, args[i].length() - 1);
+        args[i] = args[i].substring(1, args[i].length() - 1);
     }
   }
 
