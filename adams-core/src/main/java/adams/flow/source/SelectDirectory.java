@@ -1,5 +1,5 @@
 /*
- *   This program is free software: you can redistribute it and/or modify
+ *   This PROGRAM is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
@@ -27,6 +27,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
@@ -64,24 +65,24 @@ import java.util.List;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -92,14 +93,31 @@ import java.util.List;
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-parent-component-actor &lt;adams.flow.core.CallableActorReference&gt; (property: parentComponentActor)
+ * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
+ * &nbsp;&nbsp;&nbsp;flow panel.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * </pre>
+ *
+ * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
+ * &nbsp;&nbsp;&nbsp;of the callable actor.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-dir-chooser-title &lt;java.lang.String&gt; (property: directoryChooserTitle)
  * &nbsp;&nbsp;&nbsp;The title for the directory chooser dialog.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-initial-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: initialDirectory)
@@ -108,14 +126,19 @@ import java.util.List;
  * </pre>
  *
  * <pre>-absolute &lt;boolean&gt; (property: absoluteDirectoryName)
- * &nbsp;&nbsp;&nbsp;If enabled, the directory name is output in absolute instead of relative 
+ * &nbsp;&nbsp;&nbsp;If enabled, the directory name is output in absolute instead of relative
  * &nbsp;&nbsp;&nbsp;form.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
- * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix
  * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-multi-selection-enabled &lt;boolean&gt; (property: multiSelectionEnabled)
+ * &nbsp;&nbsp;&nbsp;If enabled, multiple directories can be selected.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -125,7 +148,7 @@ import java.util.List;
  * </pre>
  *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
- * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -160,6 +183,9 @@ public class SelectDirectory
   /** whether to output forward slashes. */
   protected boolean m_UseForwardSlashes;
 
+  /** whether to allow multi-selection. */
+  protected boolean m_MultiSelectionEnabled;
+
   /** whether to automate the actor. */
   protected boolean m_NonInteractive;
 
@@ -180,8 +206,8 @@ public class SelectDirectory
   @Override
   public String globalInfo() {
     return
-	"Pops up a directory chooser dialog, prompting the user to select a "
-	    + "directory. The directory then gets forwarded as string.";
+        "Pops up a directory chooser dialog, prompting the user to select a "
+            + "directory. The directory then gets forwarded as string.";
   }
 
   /**
@@ -192,32 +218,36 @@ public class SelectDirectory
     super.defineOptions();
 
     m_OptionManager.add(
-	"dir-chooser-title", "directoryChooserTitle",
-	"");
+        "dir-chooser-title", "directoryChooserTitle",
+        "");
 
     m_OptionManager.add(
-	"initial-dir", "initialDirectory",
-	new PlaceholderDirectory("."));
+        "initial-dir", "initialDirectory",
+        new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-	"absolute", "absoluteDirectoryName",
-	false);
+        "absolute", "absoluteDirectoryName",
+        false);
 
     m_OptionManager.add(
-	"use-forward-slashes", "useForwardSlashes",
-	false);
+        "use-forward-slashes", "useForwardSlashes",
+        false);
 
     m_OptionManager.add(
-	"non-interactive", "nonInteractive",
-	false);
+        "multi-selection-enabled", "multiSelectionEnabled",
+        false);
 
     m_OptionManager.add(
-	"restoration-enabled", "restorationEnabled",
-	false);
+        "non-interactive", "nonInteractive",
+        false);
 
     m_OptionManager.add(
-	"restoration-file", "restorationFile",
-	new PlaceholderFile());
+        "restoration-enabled", "restorationEnabled",
+        false);
+
+    m_OptionManager.add(
+        "restoration-file", "restorationFile",
+        new PlaceholderFile());
   }
 
   /**
@@ -244,6 +274,7 @@ public class SelectDirectory
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "absoluteDirectoryName", m_AbsoluteDirectoryName, "absolute"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useForwardSlashes", m_UseForwardSlashes, "forward"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "multiSelectionEnabled", m_MultiSelectionEnabled, "multi-select"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stops flow if canceled"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "nonInteractive", m_NonInteractive, "non-interactive"));
     result += QuickInfoHelper.flatten(options);
@@ -365,8 +396,37 @@ public class SelectDirectory
    */
   public String useForwardSlashesTipText() {
     return
-	"If enabled, forward slashes are used in the output (but "
-	    + "the '\\\\' prefix of UNC paths is not converted).";
+        "If enabled, forward slashes are used in the output (but "
+            + "the '\\\\' prefix of UNC paths is not converted).";
+  }
+
+  /**
+   * Sets whether to allow selection of multiple directories.
+   *
+   * @param value	if true to allow selection of multiple dirs
+   */
+  public void setMultiSelectionEnabled(boolean value) {
+    m_MultiSelectionEnabled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to allow selection of multiple directories.
+   *
+   * @return		true if multiple dirs can be selected
+   */
+  public boolean getMultiSelectionEnabled() {
+    return m_MultiSelectionEnabled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String multiSelectionEnabledTipText() {
+    return "If enabled, multiple directories can be selected.";
   }
 
   /**
@@ -475,22 +535,65 @@ public class SelectDirectory
    * Converts the file object into a string.
    *
    * @param file	the file to convert
+   * @param absolute 	whether to generate absolute paths
+   * @param forward 	whether to enforce forward slashes
+   * @return		the generated string
+   */
+  protected String convert(File file, boolean absolute, boolean forward) {
+    String	result;
+
+    if (absolute)
+      result = file.getAbsolutePath();
+    else
+      result = new PlaceholderFile(file).toString();
+
+    if (forward)
+      result = FileUtils.useForwardSlashes(result);
+
+    return result;
+  }
+
+  /**
+   * Converts the file object into a string.
+   *
+   * @param file	the file to convert
    * @return		the generated string
    * @see		#getAbsoluteDirectoryName()
    * @see		#getUseForwardSlashes()
    */
   protected String convert(File file) {
-    String	result;
+    return convert(file, m_AbsoluteDirectoryName, m_UseForwardSlashes);
+  }
 
-    if (m_AbsoluteDirectoryName)
-      result = file.getAbsolutePath();
-    else
-      result = new PlaceholderFile(file).toString();
+  /**
+   * Converts the file objects into a string.
+   *
+   * @param files	the files to convert
+   * @param absolute 	whether to generate absolute paths
+   * @param forward 	whether to enforce forward slashes
+   * @return		the generated string
+   */
+  protected String[] convert(File[] files, boolean absolute, boolean forward) {
+    String[]	result;
+    int		i;
 
-    if (m_UseForwardSlashes)
-      result = FileUtils.useForwardSlashes(result);
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = convert(files[i], absolute, forward);
 
     return result;
+  }
+
+  /**
+   * Converts the file objects into a string.
+   *
+   * @param files	the files to convert
+   * @return		the generated string
+   * @see		#getAbsoluteDirectoryName()
+   * @see		#getUseForwardSlashes()
+   */
+  protected String[] convert(File[] files) {
+    return convert(files, m_AbsoluteDirectoryName, m_UseForwardSlashes);
   }
 
   /**
@@ -503,24 +606,42 @@ public class SelectDirectory
     boolean			result;
     int				retVal;
     File 			dir;
+    File[]			dirs;
+    String[]			dirsStr;
     FileChooser 		dirChooser;
     Properties			props;
     String			msg;
-    PlaceholderDirectory	initial;
+    PlaceholderDirectory[]	initial;
+    int				i;
 
-    initial = m_InitialDirectory;
+    initial = new PlaceholderDirectory[]{m_InitialDirectory};
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
       props = new Properties();
-      props.setProperty(KEY_INITIAL, initial.getAbsolutePath());
+      props.setProperty(KEY_INITIAL, initial[0].getAbsolutePath());
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
-	initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+        try {
+          dirsStr = OptionUtils.splitOptions(props.getProperty(KEY_INITIAL));
+          if (dirsStr.length > 0) {
+            initial = new PlaceholderDirectory[dirsStr.length];
+            for (i = 0; i < dirsStr.length; i++)
+              initial[i] = new PlaceholderDirectory(dirsStr[i]);
+          }
+        }
+        catch (Exception e) {
+          getLogger().warning("Failed to parse initial directory from restoration file: " + props.getPassword(KEY_INITIAL));
+        }
     }
+    if (!m_MultiSelectionEnabled && (initial.length > 1))
+      initial = new PlaceholderDirectory[]{initial[0]};
 
     if (m_NonInteractive) {
-      m_OutputToken = new Token(convert(initial));
+      if (m_MultiSelectionEnabled)
+        m_OutputToken = new Token(convert(initial));
+      else
+        m_OutputToken = new Token(convert(initial[0]));
       return true;
     }
 
@@ -528,19 +649,37 @@ public class SelectDirectory
     dirChooser = DirectoryChooserFactory.createChooser();
     if (m_DirectoryChooserTitle.length() > 0)
       dirChooser.setDialogTitle(m_DirectoryChooserTitle);
-    dirChooser.setCurrentDirectory(initial.getAbsoluteFile());
-    dirChooser.setSelectedFile(initial.getAbsoluteFile());
+    dirChooser.setMultiSelectionEnabled(m_MultiSelectionEnabled);
+    if (m_MultiSelectionEnabled) {
+      dirChooser.setCurrentDirectory(initial[0]);
+      dirChooser.setSelectedFiles(initial);
+    }
+    else {
+      dirChooser.setCurrentDirectory(initial[0]);
+      dirChooser.setSelectedFile(initial[0]);
+    }
     retVal = dirChooser.showOpenDialog(getActualParentComponent());
     if (retVal == DirectoryChooserFactory.APPROVE_OPTION) {
       result = true;
-      dir = dirChooser.getSelectedFile();
-      m_OutputToken = new Token(convert(dir));
+      dir    = null;
+      dirs   = null;
+      if (m_MultiSelectionEnabled) {
+        dirs = dirChooser.getSelectedFiles();
+        m_OutputToken = new Token(convert(dirs));
+      }
+      else {
+        dir = dirChooser.getSelectedFile();
+        m_OutputToken = new Token(convert(dir));
+      }
       if (m_RestorationEnabled) {
-	props = new Properties();
-	props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
-	msg = RestorableActorHelper.write(props, m_RestorationFile);
-	if (msg != null)
-	  getLogger().warning(msg);
+        props = new Properties();
+        if (dir != null)
+          props.setProperty(KEY_INITIAL, convert(dir, true, true));
+        else if (dirs != null)
+          props.setProperty(KEY_INITIAL, OptionUtils.joinOptions(convert(dirs, true, true)));
+        msg = RestorableActorHelper.write(props, m_RestorationFile);
+        if (msg != null)
+          getLogger().warning(msg);
       }
     }
 
@@ -574,9 +713,9 @@ public class SelectDirectory
       props.setProperty(KEY_INITIAL, initial.getAbsolutePath());
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
-	initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
+        initial = new PlaceholderDirectory(props.getProperty(KEY_INITIAL));
     }
 
     if (m_NonInteractive) {
@@ -589,14 +728,14 @@ public class SelectDirectory
     if (dir != null) {
       result = dir.isDirectory();
       if (result) {
-	m_OutputToken = new Token(convert(dir));
-	if (m_RestorationEnabled) {
-	  props = new Properties();
-	  props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
-	  msg = RestorableActorHelper.write(props, m_RestorationFile);
-	  if (msg != null)
-	    getLogger().warning(msg);
-	}
+        m_OutputToken = new Token(convert(dir));
+        if (m_RestorationEnabled) {
+          props = new Properties();
+          props.setProperty(KEY_INITIAL, dir.getAbsolutePath());
+          msg = RestorableActorHelper.write(props, m_RestorationFile);
+          if (msg != null)
+            getLogger().warning(msg);
+        }
       }
     }
 
@@ -609,7 +748,10 @@ public class SelectDirectory
    * @return		the Class of the generated tokens
    */
   public Class[] generates() {
-    return new Class[]{String.class};
+    if (m_MultiSelectionEnabled)
+      return new Class[]{String[].class};
+    else
+      return new Class[]{String.class};
   }
 
   /**
