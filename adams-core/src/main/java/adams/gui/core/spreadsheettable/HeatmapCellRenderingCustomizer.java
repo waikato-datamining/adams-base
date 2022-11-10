@@ -48,7 +48,7 @@ public class HeatmapCellRenderingCustomizer
   /** the color values (starting at 0). */
   protected transient Map<Integer,Color> m_Colors;
 
-  /** the last spradsheet that was used. */
+  /** the last spreadsheet that was used. */
   protected transient SpreadSheet m_LastSpreadSheet;
 
   /** the last min/max values. */
