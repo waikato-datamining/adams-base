@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2020 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2022 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -106,15 +106,14 @@ set BASEDIR=%~dp0\..
 
 :AssembleCmd
 set JCMD=java
+where /q "java"
+if %ERRORLEVEL% NEQ 0 set JCMD=""
 
 if not "%JAVA_HOME%"=="" if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
 if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
 
 if not "%JAVACMD%"=="" if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
-if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
-
-where /q "java"
-if %ERRORLEVEL% NEQ 0 echo "No Java installed?" & goto javaerror
+if not "%JAVACMD%"=="" set JCMD="%JAVACMD%"
 
 echo Using: %JCMD%
 
@@ -137,7 +136,10 @@ echo You can download Java from:
 echo   https://adoptopenjdk.net/
 echo And configure the JAVA_HOME environment variable to point to your Java installation
 echo (use the directory above the "bin" directory for the environment variable):
-echo   https://www.techjunkie.com/environment-variables-windows-10/
+echo   https://www.alphr.com/environment-variables-windows-10/
+echo   https://www.alphr.com/set-environment-variables-windows-11/
+echo Alternatively, you can also set the JAVACMD environment variable that points to the
+echo actual java.exe.
 pause
 goto end
 
