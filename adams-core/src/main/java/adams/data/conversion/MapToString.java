@@ -23,6 +23,7 @@ package adams.data.conversion;
 import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,6 +178,8 @@ public class MapToString
       valueObj = input.get(keyObj);
       if (valueObj instanceof Date)
 	value = dformat.format((Date) valueObj);
+      else if (valueObj.getClass().isArray())
+        value = Utils.arrayToString(valueObj);
       else
 	value = "" + valueObj;
       result.append(key).append(":\n");
