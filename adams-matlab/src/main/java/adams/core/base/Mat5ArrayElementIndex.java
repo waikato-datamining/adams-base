@@ -32,7 +32,7 @@ import us.hebi.matlab.mat.types.Array;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Mat5ArrayElementIndex
-    extends AbstractBaseString {
+  extends AbstractBaseString {
 
   private static final long serialVersionUID = -8138523980228144441L;
 
@@ -100,6 +100,16 @@ public class Mat5ArrayElementIndex
    * @return		the array of positions, empty array if nothing specified
    */
   public int[] indexValue() {
+    return indexValue(false);
+  }
+
+  /**
+   * Returns the value as dimensional index. Uses -1 for unspecified/empty dimensions (eg for iterating).
+   *
+   * @param convertToZeroBased	true: convert from 1-based to 0-based, false: leave unchanged
+   * @return		the array of positions, empty array if nothing specified
+   */
+  public int[] indexValue(boolean convertToZeroBased) {
     int[]	result;
     String[]	parts;
     int		i;
@@ -115,6 +125,13 @@ public class Mat5ArrayElementIndex
 	  result[i] = -1;
 	else
 	  result[i] = Integer.parseInt(parts[i]);
+      }
+    }
+
+    if (convertToZeroBased) {
+      for (i = 0; i < result.length; i++) {
+        if (result[i] > 0)
+          result[i]--;
       }
     }
 
@@ -135,7 +152,7 @@ public class Mat5ArrayElementIndex
     index  = indexValue();
     for (i = 0; i < index.length; i++) {
       if (index[i] == -1)
-        result.add(i);
+	result.add(i);
     }
 
     return result.toArray();

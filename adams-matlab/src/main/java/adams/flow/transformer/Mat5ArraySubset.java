@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.Mat5ArrayElementIndex;
 import adams.data.matlab.ArrayElementType;
+import adams.data.matlab.MatlabArrayIndexSupporter;
 import adams.data.matlab.MatlabUtils;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -91,6 +92,12 @@ import java.util.Arrays;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-zero-based-index &lt;boolean&gt; (property: zeroBasedIndex)
+ * &nbsp;&nbsp;&nbsp;If true, the index is treated as 0-based (eg 0;0;0 for first value) rather
+ * &nbsp;&nbsp;&nbsp;than 1-based ones (eg 1;1;1 for first value).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-element-type &lt;BOOLEAN|BYTE|SHORT|INTEGER|LONG|FLOAT|DOUBLE&gt; (property: elementType)
  * &nbsp;&nbsp;&nbsp;Specifies the type of the value being retrieved.
  * &nbsp;&nbsp;&nbsp;default: DOUBLE
@@ -101,12 +108,16 @@ import java.util.Arrays;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Mat5ArraySubset
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements MatlabArrayIndexSupporter {
 
   private static final long serialVersionUID = -1043266053222175480L;
 
   /** the element index to use. */
   protected Mat5ArrayElementIndex m_Index;
+
+  /** whether to interpret the indices as 0-based or 1-based. */
+  protected boolean m_ZeroBasedIndex;
 
   /** the element type. */
   protected ArrayElementType m_ElementType;
@@ -136,6 +147,10 @@ public class Mat5ArraySubset
       new Mat5ArrayElementIndex());
 
     m_OptionManager.add(
+      "zero-based-index", "zeroBasedIndex",
+      false);
+
+    m_OptionManager.add(
       "element-type", "elementType",
       ArrayElementType.DOUBLE);
   }
@@ -150,6 +165,7 @@ public class Mat5ArraySubset
     String	result;
 
     result  = QuickInfoHelper.toString(this, "index", m_Index, "index: ");
+    result += QuickInfoHelper.toString(this, "zeroBasedIndex", (m_ZeroBasedIndex ? "0-based" : "1-based"), ", ");
     result += QuickInfoHelper.toString(this, "elementType", m_ElementType, ", element: ");
 
     return result;
@@ -160,6 +176,7 @@ public class Mat5ArraySubset
    *
    * @param value	the index
    */
+  @Override
   public void setIndex(Mat5ArrayElementIndex value) {
     m_Index = value;
     reset();
@@ -170,6 +187,7 @@ public class Mat5ArraySubset
    *
    * @return		the index
    */
+  @Override
   public Mat5ArrayElementIndex getIndex() {
     return m_Index;
   }
@@ -180,8 +198,41 @@ public class Mat5ArraySubset
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String indexTipText() {
     return "The index of the single value (all dimensions specified) or array subset to retrieve (some dimensions left empty).";
+  }
+
+  /**
+   * Sets whether the index is 0-based or 1-based.
+   *
+   * @param value	true if 0-based
+   */
+  @Override
+  public void setZeroBasedIndex(boolean value) {
+    m_ZeroBasedIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns whether the index is 0-based or 1-based.
+   *
+   * @return		true if 0-based
+   */
+  @Override
+  public boolean getZeroBasedIndex() {
+    return m_ZeroBasedIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String zeroBasedIndexTipText() {
+    return "If true, the index is treated as 0-based (eg 0;0;0 for first value) rather than 1-based ones (eg 1;1;1 for first value).";
   }
 
   /**
@@ -263,7 +314,7 @@ public class Mat5ArraySubset
 
     result = null;
     array  = m_InputToken.getPayload(Array.class);
-    index  = m_Index.indexValue();
+    index  = m_Index.indexValue(!m_ZeroBasedIndex);
     open   = m_Index.openDimensions();
 
     if (!m_Index.isCompatible(array))
