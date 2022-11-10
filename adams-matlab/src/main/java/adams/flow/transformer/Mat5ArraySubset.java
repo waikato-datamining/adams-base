@@ -27,9 +27,12 @@ import adams.data.matlab.ArrayElementType;
 import adams.data.matlab.MatlabUtils;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+import gnu.trove.set.hash.TIntHashSet;
 import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Array;
 import us.hebi.matlab.mat.types.Matrix;
+
+import java.util.Arrays;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +91,7 @@ import us.hebi.matlab.mat.types.Matrix;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-output-type &lt;BOOLEAN|BYTE|SHORT|INTEGER|LONG|FLOAT|DOUBLE&gt; (property: outputType)
+ * <pre>-element-type &lt;BOOLEAN|BYTE|SHORT|INTEGER|LONG|FLOAT|DOUBLE&gt; (property: elementType)
  * &nbsp;&nbsp;&nbsp;Specifies the type of the value being retrieved.
  * &nbsp;&nbsp;&nbsp;default: DOUBLE
  * </pre>
@@ -98,15 +101,15 @@ import us.hebi.matlab.mat.types.Matrix;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Mat5ArraySubset
-    extends AbstractTransformer {
+  extends AbstractTransformer {
 
   private static final long serialVersionUID = -1043266053222175480L;
 
   /** the element index to use. */
   protected Mat5ArrayElementIndex m_Index;
 
-  /** the output type. */
-  protected ArrayElementType m_OutputType;
+  /** the element type. */
+  protected ArrayElementType m_ElementType;
 
   /**
    * Returns a string describing the object.
@@ -116,9 +119,9 @@ public class Mat5ArraySubset
   @Override
   public String globalInfo() {
     return "Outputs either a single value (all dimensions in index specified) "
-	+ "from an array or a subset (if one or more dimensions left empty).\n"
-	+ "Only arrays of type " + Utils.classToString(Matrix.class) + " are "
-	+ "currently supported.";
+      + "from an array or a subset (if one or more dimensions left empty).\n"
+      + "Only arrays of type " + Utils.classToString(Matrix.class) + " are "
+      + "currently supported.";
   }
 
   /**
@@ -129,12 +132,12 @@ public class Mat5ArraySubset
     super.defineOptions();
 
     m_OptionManager.add(
-	"index", "index",
-	new Mat5ArrayElementIndex());
+      "index", "index",
+      new Mat5ArrayElementIndex());
 
     m_OptionManager.add(
-	"output-type", "outputType",
-	ArrayElementType.DOUBLE);
+      "element-type", "elementType",
+      ArrayElementType.DOUBLE);
   }
 
   /**
@@ -147,7 +150,7 @@ public class Mat5ArraySubset
     String	result;
 
     result  = QuickInfoHelper.toString(this, "index", m_Index, "index: ");
-    result += QuickInfoHelper.toString(this, "outputType", m_OutputType, ", output: ");
+    result += QuickInfoHelper.toString(this, "elementType", m_ElementType, ", element: ");
 
     return result;
   }
@@ -182,22 +185,22 @@ public class Mat5ArraySubset
   }
 
   /**
-   * Sets the output type of the value.
+   * Sets the type of the element to retrieve.
    *
    * @param value	the type
    */
-  public void setOutputType(ArrayElementType value) {
-    m_OutputType = value;
+  public void setElementType(ArrayElementType value) {
+    m_ElementType = value;
     reset();
   }
 
   /**
-   * Returns the output type of the value.
+   * Returns the type of the element to retrieve.
    *
    * @return		the type
    */
-  public ArrayElementType getOutputType() {
-    return m_OutputType;
+  public ArrayElementType getElementType() {
+    return m_ElementType;
   }
 
   /**
@@ -206,7 +209,7 @@ public class Mat5ArraySubset
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String outputTypeTipText() {
+  public String elementTypeTipText() {
     return "Specifies the type of the value being retrieved.";
   }
 
@@ -233,7 +236,7 @@ public class Mat5ArraySubset
     if (m_Index.openDimensions().length > 0)
       return new Class[]{Array.class};
 
-    return new Class[]{m_OutputType.getType()};
+    return new Class[]{m_ElementType.getType()};
   }
 
   /**
@@ -255,6 +258,8 @@ public class Mat5ArraySubset
     int[]		n;
     int[] 		indexSource;
     int[] 		indexTarget;
+    TIntHashSet 	set;
+    int			dummyAxis;
 
     result = null;
     array  = m_InputToken.getPayload(Array.class);
@@ -272,15 +277,40 @@ public class Mat5ArraySubset
     if (result == null) {
       source = (Matrix) array;
       if (open.length == 0) {
-	m_OutputToken = new Token(MatlabUtils.getElement(source, index, m_OutputType));
+	m_OutputToken = new Token(MatlabUtils.getElement(source, index, m_ElementType));
       }
       else {
 	dimsSource = source.getDimensions();
-	dimsTarget = new int[open.length];
-	for (i = 0; i < dimsTarget.length; i++)
-	  dimsTarget[i] = dimsSource[open[i]];
-	target = Mat5.newMatrix(dimsTarget);  // TODO single col?
-	MatlabUtils.transfer(source, dimsSource, open, m_Index.indexValue(), target, dimsTarget, m_OutputType);
+	// single col/row?
+	// Matrix requires at least two dimensions
+	// insert a "dummy" axis of length 1, which then contains the col/row
+	if (open.length == 1) {
+	  dummyAxis = -1;
+	  set = new TIntHashSet(open);
+	  for (i = 0; i < dimsSource.length; i++) {
+	    if (!set.contains(i)) {
+	      dummyAxis = i;
+	      set.add(i);
+	      open = set.toArray();
+	      Arrays.sort(open);
+	      break;
+	    }
+	  }
+	  dimsTarget = new int[open.length];
+	  for (i = 0; i < dimsTarget.length; i++) {
+	    if (i == dummyAxis)
+	      dimsTarget[i] = 1;
+	    else
+	      dimsTarget[i] = dimsSource[open[i]];
+	  }
+	}
+	else {
+	  dimsTarget = new int[open.length];
+	  for (i = 0; i < dimsTarget.length; i++)
+	    dimsTarget[i] = dimsSource[open[i]];
+	}
+	target = Mat5.newMatrix(dimsTarget);
+	MatlabUtils.transfer(source, dimsSource, open, index, target, dimsTarget, m_ElementType);
 	m_OutputToken = new Token(target);
       }
     }
