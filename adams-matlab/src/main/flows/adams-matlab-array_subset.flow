@@ -1,0 +1,23 @@
+# Project: adams
+# Date: 2022-11-10 18:56:15
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Retrieves the specified subset from the specified hyperspectral image.\\nFor index you can use:\\n- ;;Z retrieves the (Z+1)th band\\n- X;Y;Z retrieves the value at X/Y from the (Z+1)th band\\n" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -name Parameters -stop-if-canceled true -value "adams.flow.source.valuedefinition.FileValueDefinition -name input -display Input -help \"The matlab file to load\" -file-chooser-title Input -extension mat -default-value ${EXAMPLE_FLOWS}/data/Indian_pines_corrected.mat -use-forward-slashes true" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name entry_name -display \"Entry name\" -help \"the name in the struct to retrieve\" -default-value indian_pines_corrected" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name index -display Index -help \"Format \\\"DIM1;DIM2;...\\\" with empty DIMs getting iterated, e.g., \\\";;1\\\" will retrieve 2nd band of 3-dimensional array\" -default-value ;;10" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name "load and display"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/Indian_pines_corrected.mat -use-forward-slashes true
+  adams.flow.transformer.Mat5FileReader
+  adams.flow.transformer.Mat5FileGetArray -entry-name @{entry_name}
+  adams.flow.transformer.Mat5ArraySubset -index @{index}
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Or -condition adams.flow.condition.bool.IsNumeric -condition adams.flow.condition.bool.IsBoolean"
+   adams.flow.control.Sequence -name then
+    adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+   adams.flow.control.Sequence -name else
+    adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+    adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -width 1200 -height 900 -cell-rendering-customizer "adams.gui.core.spreadsheettable.HeatmapCellRenderingCustomizer -background-color-generator \"adams.gui.visualization.core.BiColorGenerator -first-color #ffffff -second-color #ff0000\"" -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
