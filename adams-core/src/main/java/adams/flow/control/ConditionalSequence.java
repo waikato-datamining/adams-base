@@ -157,9 +157,13 @@ public class ConditionalSequence
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result = m_Condition.getQuickInfo();
-    
+    if (result != null)
+      result = m_Condition.getClass().getSimpleName() + ": " + result;
+    else
+      result = m_Condition.getClass().getSimpleName();
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
     

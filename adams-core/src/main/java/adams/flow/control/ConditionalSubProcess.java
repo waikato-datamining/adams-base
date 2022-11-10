@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConditionalSubProcess.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -79,7 +79,6 @@ import adams.flow.condition.bool.Expression;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConditionalSubProcess
   extends SubProcess
@@ -195,9 +194,13 @@ public class ConditionalSubProcess
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result = m_Condition.getQuickInfo();
-    
+    if (result != null)
+      result = m_Condition.getClass().getSimpleName() + ": " + result;
+    else
+      result = m_Condition.getClass().getSimpleName();
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
     

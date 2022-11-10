@@ -15,7 +15,7 @@
 
 /*
  * IfThenElse.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -99,7 +99,6 @@ public class IfThenElse
    * A specialized director for an AbstractIfThenElse control actor.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class IfThenElseDirector
     extends AbstractDirector {
@@ -298,10 +297,14 @@ public class IfThenElse
     String	result;
     
     result = m_Condition.getQuickInfo();
+    if (result != null)
+      result = m_Condition.getClass().getSimpleName() + ": " + result;
+    else
+      result = m_Condition.getClass().getSimpleName();
     
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
-    
+
     return result;
   }
 

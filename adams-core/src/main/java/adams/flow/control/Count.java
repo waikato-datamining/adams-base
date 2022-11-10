@@ -15,7 +15,7 @@
 
 /*
  * Count.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -117,7 +117,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Count
   extends Tee
@@ -181,6 +180,11 @@ public class Count
     String	result;
 
     result = m_Condition.getQuickInfo();
+    if (result != null)
+      result = m_Condition.getClass().getSimpleName() + ": " + result;
+    else
+      result = m_Condition.getClass().getSimpleName();
+
     result += QuickInfoHelper.toString(this, "incrementOnlyIfConditionMet", m_IncrementOnlyIfConditionMet, "[incr. only if condition met]", " ");
     result += QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue(), ", monitor: ");
 

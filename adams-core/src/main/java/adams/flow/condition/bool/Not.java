@@ -147,7 +147,7 @@ public class Not
     if (result != null)
       return "! " + result;
     else
-      return "! " + m_Condition.getClass().getName();
+      return "! " + m_Condition.getClass().getSimpleName();
   }
 
   /**

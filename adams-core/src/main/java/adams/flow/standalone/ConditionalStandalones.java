@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConditionalStandalones.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -78,7 +78,6 @@ import adams.flow.core.NullToken;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConditionalStandalones
   extends Standalones {
@@ -120,9 +119,13 @@ public class ConditionalStandalones
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result = m_Condition.getQuickInfo();
-    
+    if (result != null)
+      result = m_Condition.getClass().getSimpleName() + ": " + result;
+    else
+      result = m_Condition.getClass().getSimpleName();
+
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
     
