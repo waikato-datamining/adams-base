@@ -131,4 +131,33 @@ public class MatlabUtils {
       finished = increment(indexTarget, dimsTarget);
     }
   }
+
+  /**
+   * Returns the element according to the specified type.
+   *
+   * @param source	the matrix to get the element from
+   * @param index	the index of the element
+   * @param type	the type of element
+   * @return		the value
+   */
+  public static Object getElement(Matrix source, int[] index, ArrayElementType type) {
+    switch (type) {
+      case BOOLEAN:
+	return source.getBoolean(index);
+      case BYTE:
+	return source.getByte(index);
+      case SHORT:
+	return source.getShort(index);
+      case INTEGER:
+	return source.getInt(index);
+      case LONG:
+	return source.getLong(index);
+      case FLOAT:
+	return source.getFloat(index);
+      case DOUBLE:
+	return source.getDouble(index);
+      default:
+        throw new IllegalStateException("Unhandled element type: " + type);
+    }
+  }
 }

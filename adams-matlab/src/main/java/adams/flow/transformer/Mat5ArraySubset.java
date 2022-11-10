@@ -272,29 +272,7 @@ public class Mat5ArraySubset
     if (result == null) {
       source = (Matrix) array;
       if (open.length == 0) {
-	switch (m_OutputType) {
-	  case BOOLEAN:
-	    m_OutputToken = new Token(source.getBoolean(index));
-	    break;
-	  case BYTE:
-	    m_OutputToken = new Token(source.getByte(index));
-	    break;
-	  case SHORT:
-	    m_OutputToken = new Token(source.getShort(index));
-	    break;
-	  case INTEGER:
-	    m_OutputToken = new Token(source.getInt(index));
-	    break;
-	  case LONG:
-	    m_OutputToken = new Token(source.getLong(index));
-	    break;
-	  case FLOAT:
-	    m_OutputToken = new Token(source.getFloat(index));
-	    break;
-	  case DOUBLE:
-	    m_OutputToken = new Token(source.getDouble(index));
-	    break;
-	}
+	m_OutputToken = new Token(MatlabUtils.getElement(source, index, m_OutputType));
       }
       else {
 	dimsSource = source.getDimensions();
