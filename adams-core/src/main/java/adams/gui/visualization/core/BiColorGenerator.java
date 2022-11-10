@@ -61,7 +61,8 @@ import java.awt.Color;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class BiColorGenerator
-  extends AbstractColorGradientGenerator {
+  extends AbstractColorGradientGenerator
+  implements ColorGradientGeneratorWithFixedNumberOfColors {
 
   /** for serialization. */
   private static final long serialVersionUID = 3344443413467944112L;
@@ -124,6 +125,7 @@ public class BiColorGenerator
    *
    * @param value	the number of colors
    */
+  @Override
   public void setNumColors(int value) {
     if (getOptionManager().isValid("numColors", value)) {
       m_NumColors = value;
@@ -136,6 +138,7 @@ public class BiColorGenerator
    *
    * @return		the number of colors
    */
+  @Override
   public int getNumColors() {
     return m_NumColors;
   }
@@ -146,6 +149,7 @@ public class BiColorGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String numColorsTipText() {
     return "The number of colors in the gradient to use.";
   }
