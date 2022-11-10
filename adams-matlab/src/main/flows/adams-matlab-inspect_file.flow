@@ -1,12 +1,13 @@
 # Project: adams
-# Date: 2021-04-21 15:22:47
+# Date: 2022-11-10 15:33:22
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-matlab,adams-spreadsheet
 #
 adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles regular arrays and structs (one level only)." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
-  adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -provider "adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview" -entry-name-variable entryname
+  adams.flow.sink.DisplayPanelManager -name Array -short-title true -display-type adams.flow.core.displaytype.Default -provider "adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview" -entry-name-variable entryname
+  adams.flow.sink.Display -name Info -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
  adams.flow.source.SelectFile -file-chooser-title "Select Matlab file" -extension .mat -restoration-enabled true -restoration-file @{restore}
  adams.flow.transformer.Mat5FileReader
@@ -18,6 +19,10 @@ adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles reg
  adams.flow.control.Trigger -name "display entry"
   adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.Mat5FileGetArray -entry-name @{entry}
+  adams.flow.control.Tee -name info
+   adams.flow.transformer.Mat5ArrayInfo -type ALL
+   adams.flow.transformer.Convert -conversion "adams.data.conversion.MapToString -sort-keys true"
+   adams.flow.sink.CallableSink -callable Info
   adams.flow.transformer.SetStorageValue -storage-name entry
   adams.flow.control.IfThenElse -condition adams.flow.condition.bool.IsMatlabStruct
    adams.flow.control.Sequence -name then
@@ -32,8 +37,8 @@ adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles reg
      adams.flow.transformer.GetMapValue -key @{field}
      adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.MatlabArrayToSpreadSheet
      adams.flow.transformer.SetVariable -var-name entryname -var-value @{entry}/@{field} -expand-value true
-     adams.flow.sink.CallableSink -callable DisplayPanelManager
+     adams.flow.sink.CallableSink -callable Array
    adams.flow.control.Sequence -name else
     adams.flow.transformer.SetVariable -var-name entryname -var-value @{entry}
     adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
-    adams.flow.sink.CallableSink -callable DisplayPanelManager
+    adams.flow.sink.CallableSink -callable Array
