@@ -15,12 +15,13 @@
 
 /*
  * MatlabArrayToSpreadSheet.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
 import adams.core.Utils;
+import adams.data.matlab.MatlabUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -82,34 +83,6 @@ public class MatlabArrayToSpreadSheet
   }
 
   /**
-   * Converts a character cell into a string. Rows are interpreted as lines.
-   *
-   * @param matChar	the cell to convert
-   * @return		the generated string
-   */
-  protected String charToString(Char matChar) {
-    StringBuilder 	result;
-    int			cols;
-    int			rows;
-    int			x;
-    int			y;
-
-    result = new StringBuilder();
-
-    rows = matChar.getNumRows();
-    cols = matChar.getNumCols();
-
-    for (y = 0; y < rows; y++) {
-      if (y > 0)
-        result.append("\n");
-      for (x = 0; x < cols; x++)
-        result.append(matChar.getChar(y, x));
-    }
-
-    return result.toString();
-  }
-
-  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -144,7 +117,7 @@ public class MatlabArrayToSpreadSheet
       throw new IllegalStateException("Unhandled array type: " + Utils.classToString(array));
 
     if (matChar != null) {
-      lines = charToString(matChar).split("\n");
+      lines = MatlabUtils.charToString(matChar).split("\n");
       result = new DefaultSpreadSheet();
       row    = result.getHeaderRow();
       row.addCell("0").setContentAsString("Line");
@@ -169,7 +142,7 @@ public class MatlabArrayToSpreadSheet
 	}
 	else if (matCell != null) {
 	  if (matCell.get(n, i) instanceof AbstractCharBase)
-	    cell.setContent(charToString((AbstractCharBase) matCell.get(n, i)));
+	    cell.setContent(MatlabUtils.charToString((AbstractCharBase) matCell.get(n, i)));
 	  else
 	    cell.setContent(matCell.get(n, i).toString());
 	}
