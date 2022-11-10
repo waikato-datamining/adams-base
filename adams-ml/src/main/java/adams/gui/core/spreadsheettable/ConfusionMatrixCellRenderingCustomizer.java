@@ -23,7 +23,7 @@ package adams.gui.core.spreadsheettable;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.SpreadSheetTable;
-import adams.gui.visualization.core.AbstractColorGradientGenerator;
+import adams.gui.visualization.core.ColorGradientGenerator;
 import adams.gui.visualization.core.ConfusionMatrixColorGenerator;
 
 import javax.swing.SwingConstants;
@@ -49,7 +49,7 @@ public class ConfusionMatrixCellRenderingCustomizer
   protected boolean m_ValueBasedBackground;
 
   /** the color provider to use for the background. */
-  protected AbstractColorGradientGenerator m_BackgroundColorGenerator;
+  protected ColorGradientGenerator m_BackgroundColorGenerator;
 
   /** the color values (starting at 0). */
   protected transient Map<Integer,Color> m_Colors;
@@ -159,7 +159,7 @@ public class ConfusionMatrixCellRenderingCustomizer
    *
    * @param value	the generator
    */
-  public void setBackgroundColorGenerator(AbstractColorGradientGenerator value) {
+  public void setBackgroundColorGenerator(ColorGradientGenerator value) {
     m_BackgroundColorGenerator = value;
     reset();
   }
@@ -170,7 +170,7 @@ public class ConfusionMatrixCellRenderingCustomizer
    *
    * @return		the generator
    */
-  public AbstractColorGradientGenerator getBackgroundColorGenerator() {
+  public ColorGradientGenerator getBackgroundColorGenerator() {
     return m_BackgroundColorGenerator;
   }
 

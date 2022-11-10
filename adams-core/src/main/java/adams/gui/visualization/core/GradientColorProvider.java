@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GradientColorProvider.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -37,7 +37,7 @@ import java.util.Arrays;
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  * 
- * <pre>-generator &lt;adams.gui.visualization.core.AbstractColorGradientGenerator&gt; (property: generator)
+ * <pre>-generator &lt;adams.gui.visualization.core.ColorGradientGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The generator to use for generating the gradient.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.BiColorGenerator
  * </pre>
@@ -45,7 +45,6 @@ import java.util.Arrays;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GradientColorProvider
   extends AbstractColorProvider {
@@ -54,7 +53,7 @@ public class GradientColorProvider
   private static final long serialVersionUID = 6416066461328053283L;
   
   /** the gradient generator to use. */
-  protected AbstractColorGradientGenerator m_Generator;
+  protected ColorGradientGenerator m_Generator;
   
   /**
    * Returns a string describing the object.
@@ -94,7 +93,7 @@ public class GradientColorProvider
    *
    * @param value	the generator to use
    */
-  public void setGenerator(AbstractColorGradientGenerator value) {
+  public void setGenerator(ColorGradientGenerator value) {
     m_Generator = value;
     reset();
     resetColors();
@@ -105,7 +104,7 @@ public class GradientColorProvider
    *
    * @return		the generator in use
    */
-  public AbstractColorGradientGenerator getGenerator() {
+  public ColorGradientGenerator getGenerator() {
     return m_Generator;
   }
 

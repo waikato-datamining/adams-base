@@ -21,8 +21,8 @@ package adams.data.conversion;
 
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
-import adams.gui.visualization.core.AbstractColorGradientGenerator;
 import adams.gui.visualization.core.BiColorGenerator;
+import adams.gui.visualization.core.ColorGradientGenerator;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -40,7 +40,7 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
- * <pre>-generator &lt;adams.gui.visualization.core.AbstractColorGradientGenerator&gt; (property: generator)
+ * <pre>-generator &lt;adams.gui.visualization.core.ColorGradientGenerator&gt; (property: generator)
  * &nbsp;&nbsp;&nbsp;The generator to use for creating the gradient colors.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.BiColorGenerator
  * </pre>
@@ -77,7 +77,7 @@ public class DoubleMatrixToBufferedImage
   private static final long serialVersionUID = 2535421741524997185L;
 
   /** the generator to use. */
-  protected AbstractColorGradientGenerator m_Generator;
+  protected ColorGradientGenerator m_Generator;
 
   /** the color for missing values. */
   protected Color m_MissingValueColor;
@@ -147,7 +147,7 @@ public class DoubleMatrixToBufferedImage
    *
    * @param value	the generator
    */
-  public void setGenerator(AbstractColorGradientGenerator value) {
+  public void setGenerator(ColorGradientGenerator value) {
     m_Generator = value;
     reset();
   }
@@ -157,7 +157,7 @@ public class DoubleMatrixToBufferedImage
    *
    * @return		the generator
    */
-  public AbstractColorGradientGenerator getGenerator() {
+  public ColorGradientGenerator getGenerator() {
     return m_Generator;
   }
 

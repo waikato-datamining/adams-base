@@ -797,7 +797,7 @@ adams.gui.visualization.core.ColorProviderWithNameSupport=\
   adams.gui.visualization.core
 
 # gradient color generators
-adams.gui.visualization.core.AbstractColorGradientGenerator=\
+adams.gui.visualization.core.ColorGradientGenerator=\
   adams.gui.visualization.core
 
 # mouse movement trackers

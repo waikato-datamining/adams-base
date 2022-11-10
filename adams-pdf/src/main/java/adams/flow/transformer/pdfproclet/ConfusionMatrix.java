@@ -22,8 +22,8 @@ package adams.flow.transformer.pdfproclet;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheetUtils;
-import adams.gui.visualization.core.AbstractColorGradientGenerator;
 import adams.gui.visualization.core.BiColorGenerator;
+import adams.gui.visualization.core.ColorGradientGenerator;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
@@ -183,7 +183,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-background-color-generator &lt;adams.gui.visualization.core.AbstractColorGradientGenerator&gt; (property: backgroundColorGenerator)
+ * <pre>-background-color-generator &lt;adams.gui.visualization.core.ColorGradientGenerator&gt; (property: backgroundColorGenerator)
  * &nbsp;&nbsp;&nbsp;The color generator to use for obtaining the colors for coloring in the
  * &nbsp;&nbsp;&nbsp;backgrounds.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.BiColorGenerator -first-color #ffffff -second-color #ff0000
@@ -206,7 +206,7 @@ public class ConfusionMatrix
   protected boolean m_ValueBasedBackground;
 
   /** the color provider to use for the background. */
-  protected AbstractColorGradientGenerator m_BackgroundColorGenerator;
+  protected ColorGradientGenerator m_BackgroundColorGenerator;
 
   /** the color values (starting at 0). */
   protected transient Map<Integer,Color> m_Colors;
@@ -314,7 +314,7 @@ public class ConfusionMatrix
    *
    * @return		the generator
    */
-  protected AbstractColorGradientGenerator getDefaultBackgroundColorGenerator() {
+  protected ColorGradientGenerator getDefaultBackgroundColorGenerator() {
     BiColorGenerator 	result;
 
     result = new BiColorGenerator();
@@ -330,7 +330,7 @@ public class ConfusionMatrix
    *
    * @param value	the generator
    */
-  public void setBackgroundColorGenerator(AbstractColorGradientGenerator value) {
+  public void setBackgroundColorGenerator(ColorGradientGenerator value) {
     m_BackgroundColorGenerator = value;
     reset();
   }
@@ -341,7 +341,7 @@ public class ConfusionMatrix
    *
    * @return		the generator
    */
-  public AbstractColorGradientGenerator getBackgroundColorGenerator() {
+  public ColorGradientGenerator getBackgroundColorGenerator() {
     return m_BackgroundColorGenerator;
   }
 

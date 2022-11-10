@@ -13,28 +13,28 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractColorGradientGenerator.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
-import java.awt.Color;
-
 import adams.core.ClassLister;
 import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+
+import java.awt.Color;
 
 /**
  * Ancestor for classes that generate color gradients.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractColorGradientGenerator
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ColorGradientGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -1744081070964662031L;
@@ -59,6 +59,7 @@ public abstract class AbstractColorGradientGenerator
    *
    * @return		the colors
    */
+  @Override
   public Color[] generate() {
     check();
     return doGenerate();
@@ -78,6 +79,7 @@ public abstract class AbstractColorGradientGenerator
    * @throws ClassCastException 	if the specified object's type prevents it
    *         				from being compared to this object.
    */
+  @Override
   public int compareTo(Object o) {
     if (o == null)
       return 1;
@@ -93,6 +95,7 @@ public abstract class AbstractColorGradientGenerator
    * @param o	the object to be compared
    * @return	true if the object is the same as this one
    */
+  @Override
   public boolean equals(Object o) {
     return (compareTo(o) == 0);
   }
@@ -102,7 +105,8 @@ public abstract class AbstractColorGradientGenerator
    *
    * @return		the shallow copy
    */
-  public AbstractColorGradientGenerator shallowCopy() {
+  @Override
+  public ColorGradientGenerator shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -112,8 +116,9 @@ public abstract class AbstractColorGradientGenerator
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractColorGradientGenerator shallowCopy(boolean expand) {
-    return (AbstractColorGradientGenerator) OptionUtils.shallowCopy(this, expand);
+  @Override
+  public ColorGradientGenerator shallowCopy(boolean expand) {
+    return (ColorGradientGenerator) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -122,7 +127,7 @@ public abstract class AbstractColorGradientGenerator
    * @return		the generator classnames
    */
   public static String[] getGenerators() {
-    return ClassLister.getSingleton().getClassnames(AbstractColorGradientGenerator.class);
+    return ClassLister.getSingleton().getClassnames(ColorGradientGenerator.class);
   }
 
   /**
@@ -132,11 +137,11 @@ public abstract class AbstractColorGradientGenerator
    * @param options	the options for the generator
    * @return		the instantiated generator or null if an error occurred
    */
-  public static AbstractColorGradientGenerator forName(String classname, String[] options) {
-    AbstractColorGradientGenerator	result;
+  public static ColorGradientGenerator forName(String classname, String[] options) {
+    ColorGradientGenerator	result;
 
     try {
-      result = (AbstractColorGradientGenerator) OptionUtils.forName(AbstractColorGradientGenerator.class, classname, options);
+      result = (ColorGradientGenerator) OptionUtils.forName(ColorGradientGenerator.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -155,7 +160,7 @@ public abstract class AbstractColorGradientGenerator
    * @return		the instantiated generator
    * 			or null if an error occurred
    */
-  public static AbstractColorGradientGenerator forCommandLine(String cmdline) {
-    return (AbstractColorGradientGenerator) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static ColorGradientGenerator forCommandLine(String cmdline) {
+    return (ColorGradientGenerator) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }
