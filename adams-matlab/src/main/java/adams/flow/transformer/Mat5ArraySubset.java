@@ -181,7 +181,7 @@ public class Mat5ArraySubset
    * 			displaying in the GUI or for listing the options.
    */
   public String indexTipText() {
-    return "The index of the single value (all dimensions specified) or array subset to retrieve (some dimensions left empty); uses 0-based indices.";
+    return "The index of the single value (all dimensions specified) or array subset to retrieve (some dimensions left empty).";
   }
 
   /**

@@ -161,6 +161,6 @@ public class Mat5ArrayElementIndex
    */
   @Override
   public String getTipText() {
-    return "Array element index using format (0-based): \"DIM1;DIM2;...\" with empty DIM signifying to iterate over all values.";
+    return "Array element index using format: \"DIM1;DIM2;...\" with empty DIM signifying to iterate over all values.";
   }
 }
