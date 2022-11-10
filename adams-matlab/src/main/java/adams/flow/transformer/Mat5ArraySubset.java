@@ -23,6 +23,8 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.Mat5ArrayElementIndex;
+import adams.data.matlab.ArrayElementType;
+import adams.data.matlab.MatlabUtils;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import us.hebi.matlab.mat.format.Mat5;
@@ -100,24 +102,11 @@ public class Mat5ArraySubset
 
   private static final long serialVersionUID = -1043266053222175480L;
 
-  /**
-   * The output type.
-   */
-  public enum OutputType {
-    BOOLEAN,
-    BYTE,
-    SHORT,
-    INTEGER,
-    LONG,
-    FLOAT,
-    DOUBLE,
-  }
-
   /** the element index to use. */
   protected Mat5ArrayElementIndex m_Index;
 
   /** the output type. */
-  protected OutputType m_OutputType;
+  protected ArrayElementType m_OutputType;
 
   /**
    * Returns a string describing the object.
@@ -145,7 +134,7 @@ public class Mat5ArraySubset
 
     m_OptionManager.add(
 	"output-type", "outputType",
-	OutputType.DOUBLE);
+	ArrayElementType.DOUBLE);
   }
 
   /**
@@ -197,7 +186,7 @@ public class Mat5ArraySubset
    *
    * @param value	the type
    */
-  public void setOutputType(OutputType value) {
+  public void setOutputType(ArrayElementType value) {
     m_OutputType = value;
     reset();
   }
@@ -207,7 +196,7 @@ public class Mat5ArraySubset
    *
    * @return		the type
    */
-  public OutputType getOutputType() {
+  public ArrayElementType getOutputType() {
     return m_OutputType;
   }
 
@@ -244,98 +233,7 @@ public class Mat5ArraySubset
     if (m_Index.openDimensions().length > 0)
       return new Class[]{Array.class};
 
-    switch (m_OutputType) {
-      case BOOLEAN:
-	return new Class[]{Boolean.class};
-      case BYTE:
-	return new Class[]{Byte.class};
-      case SHORT:
-	return new Class[]{Short.class};
-      case INTEGER:
-	return new Class[]{Integer.class};
-      case LONG:
-	return new Class[]{Long.class};
-      case FLOAT:
-	return new Class[]{Float.class};
-      case DOUBLE:
-	return new Class[]{Double.class};
-      default:
-	throw new IllegalStateException("Unhandled output type: " + m_OutputType);
-    }
-  }
-
-  /**
-   * Increments the index.
-   *
-   * @param index	the current index
-   * @param dims 	the dimensions (ie max values)
-   * @return		true if finished
-   */
-  protected boolean increment(int[] index, int[] dims) {
-    int		pos;
-
-    pos = index.length - 1;
-    index[pos]++;
-    while (index[pos] >= dims[pos]) {
-      if (pos == 0)
-	return true;
-      index[pos] = 0;
-      pos--;
-      index[pos]++;
-    }
-
-    return false;
-  }
-
-  /**
-   * For transferring the subset from the original matrix into the new one.
-   *
-   * @param source	the source matrix
-   * @param dimsSource	the dimensions of the source matrix
-   * @param openSource	the indices of the "open" dimensions
-   * @param target	the target matrix
-   * @param dimsTarget	the dimensions of the target matrix
-   */
-  protected void transfer(Matrix source, int[] dimsSource, int[] openSource, Matrix target, int[] dimsTarget) {
-    int		i;
-    int[] 	indexSource;
-    int[] 	indexTarget;
-    boolean	finished;
-
-    finished    = false;
-    indexTarget = new int[dimsTarget.length];
-    indexSource = m_Index.indexValue();
-
-    while (!finished) {
-      for (i = 0; i < indexTarget.length; i++)
-	indexSource[openSource[i]] = indexTarget[i];
-
-      switch (m_OutputType) {
-	case BOOLEAN:
-	  target.setBoolean(indexTarget, source.getBoolean(indexSource));
-	  break;
-	case BYTE:
-	  target.setByte(indexTarget, source.getByte(indexSource));
-	  break;
-	case SHORT:
-	  target.setShort(indexTarget, source.getShort(indexSource));
-	  break;
-	case INTEGER:
-	  target.setInt(indexTarget, source.getInt(indexSource));
-	  break;
-	case LONG:
-	  target.setLong(indexTarget, source.getLong(indexSource));
-	  break;
-	case FLOAT:
-	  target.setFloat(indexTarget, source.getFloat(indexSource));
-	  break;
-	case DOUBLE:
-	  target.setDouble(indexTarget, source.getDouble(indexSource));
-	  break;
-      }
-
-      finished = increment(indexTarget, dimsTarget);
-    }
+    return new Class[]{m_OutputType.getType()};
   }
 
   /**
@@ -404,7 +302,7 @@ public class Mat5ArraySubset
 	for (i = 0; i < dimsTarget.length; i++)
 	  dimsTarget[i] = dimsSource[open[i]];
 	target = Mat5.newMatrix(dimsTarget);  // TODO single col?
-	transfer(source, dimsSource, open, target, dimsTarget);
+	MatlabUtils.transfer(source, dimsSource, open, m_Index.indexValue(), target, dimsTarget, m_OutputType);
 	m_OutputToken = new Token(target);
       }
     }

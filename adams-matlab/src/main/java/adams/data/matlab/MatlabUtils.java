@@ -21,6 +21,7 @@
 package adams.data.matlab;
 
 import us.hebi.matlab.mat.types.Char;
+import us.hebi.matlab.mat.types.Matrix;
 
 /**
  * TODO: What this class does.
@@ -55,5 +56,79 @@ public class MatlabUtils {
     }
 
     return result.toString();
+  }
+
+  /**
+   * Increments the index.
+   *
+   * @param index	the current index
+   * @param dims 	the dimensions (ie max values)
+   * @return		true if finished
+   */
+  public static boolean increment(int[] index, int[] dims) {
+    int		pos;
+
+    pos = index.length - 1;
+    index[pos]++;
+    while (index[pos] >= dims[pos]) {
+      if (pos == 0)
+	return true;
+      index[pos] = 0;
+      pos--;
+      index[pos]++;
+    }
+
+    return false;
+  }
+
+  /**
+   * For transferring the subset from the original matrix into the new one.
+   *
+   * @param source	the source matrix
+   * @param dimsSource	the dimensions of the source matrix
+   * @param openSource	the indices of the "open" dimensions
+   * @param indexSource the indices in the source to use
+   * @param target	the target matrix
+   * @param dimsTarget	the dimensions of the target matrix
+   * @param type	the element type to use for transferring the data
+   */
+  public static void transfer(Matrix source, int[] dimsSource, int[] openSource, int[] indexSource, Matrix target, int[] dimsTarget, ArrayElementType type) {
+    int		i;
+    int[] 	indexTarget;
+    boolean	finished;
+
+    finished    = false;
+    indexTarget = new int[dimsTarget.length];
+
+    while (!finished) {
+      for (i = 0; i < indexTarget.length; i++)
+	indexSource[openSource[i]] = indexTarget[i];
+
+      switch (type) {
+	case BOOLEAN:
+	  target.setBoolean(indexTarget, source.getBoolean(indexSource));
+	  break;
+	case BYTE:
+	  target.setByte(indexTarget, source.getByte(indexSource));
+	  break;
+	case SHORT:
+	  target.setShort(indexTarget, source.getShort(indexSource));
+	  break;
+	case INTEGER:
+	  target.setInt(indexTarget, source.getInt(indexSource));
+	  break;
+	case LONG:
+	  target.setLong(indexTarget, source.getLong(indexSource));
+	  break;
+	case FLOAT:
+	  target.setFloat(indexTarget, source.getFloat(indexSource));
+	  break;
+	case DOUBLE:
+	  target.setDouble(indexTarget, source.getDouble(indexSource));
+	  break;
+      }
+
+      finished = increment(indexTarget, dimsTarget);
+    }
   }
 }
