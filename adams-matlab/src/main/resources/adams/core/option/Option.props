@@ -15,6 +15,11 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
+# Mat5ArrayDimensions objects
+adams.core.base.Mat5ArrayDimensions=true
+adams.core.base.Mat5ArrayDimensions#toString=adams.core.option.parsing.Mat5ArrayDimensionsParsing#toString
+adams.core.base.Mat5ArrayDimensions#valueOf=adams.core.option.parsing.Mat5ArrayDimensionsParsing#valueOf
+
 # Mat5ArrayElementIndex objects
 adams.core.base.Mat5ArrayElementIndex=true
 adams.core.base.Mat5ArrayElementIndex#toString=adams.core.option.parsing.Mat5ArrayElementIndexParsing#toString

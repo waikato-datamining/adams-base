@@ -24,7 +24,7 @@ import us.hebi.matlab.mat.types.Char;
 import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * TODO: What this class does.
+ * Helper class for Matlab data structures.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -159,5 +159,81 @@ public class MatlabUtils {
       default:
         throw new IllegalStateException("Unhandled element type: " + type);
     }
+  }
+
+  /**
+   * Sets the element according to the specified type.
+   *
+   * @param source	the matrix to set the element in
+   * @param index	the index of the element
+   * @param type	the type of element
+   * @param value 	the value of the element, gets automatically parsed if string
+   * @return		null if successfully set, otherwise error message
+   */
+  public static String setElement(Matrix source, int[] index, ArrayElementType type, Object value) {
+    String	result;
+
+    result = null;
+    try {
+      // parse?
+      if (value instanceof String) {
+	switch (type) {
+	  case BOOLEAN:
+	    value = Boolean.parseBoolean((String) value);
+	    break;
+	  case BYTE:
+	    value = Byte.parseByte((String) value);
+	    break;
+	  case SHORT:
+	    value = Short.parseShort((String) value);
+	    break;
+	  case INTEGER:
+	    value = Integer.parseInt((String) value);
+	    break;
+	  case LONG:
+	    value = Long.parseLong((String) value);
+	    break;
+	  case FLOAT:
+	    value = Float.parseFloat((String) value);
+	    break;
+	  case DOUBLE:
+	    value = Double.parseDouble((String) value);
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled element type: " + type);
+	}
+      }
+
+      switch (type) {
+	case BOOLEAN:
+	  source.setBoolean(index, (Boolean) value);
+	  break;
+	case BYTE:
+	  source.setByte(index, (Byte) value);
+	  break;
+	case SHORT:
+	  source.setShort(index, (Short) value);
+	  break;
+	case INTEGER:
+	  source.setInt(index, (Integer) value);
+	  break;
+	case LONG:
+	  source.setLong(index, (Long) value);
+	  break;
+	case FLOAT:
+	  source.setFloat(index, (Float) value);
+	  break;
+	case DOUBLE:
+	  source.setDouble(index, (Double) value);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled element type: " + type);
+      }
+    }
+    catch (Exception e) {
+      result = "Failed to set ";
+    }
+
+    return result;
   }
 }

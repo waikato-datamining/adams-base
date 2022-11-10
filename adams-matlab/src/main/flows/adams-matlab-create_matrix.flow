@@ -1,0 +1,30 @@
+# Project: adams
+# Date: 2022-11-11 10:39:27
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Creates a 3x3 matrix, fills in values, adds it to a struct and saves it to a .mat file.\\nAlso displays the matrix as a spreadsheet and a specific element from the matrix." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "new matrix"
+  adams.flow.source.NewMat5Matrix
+  adams.flow.transformer.Mat5SetMatrixElement -index 1;1 -value 1
+  adams.flow.transformer.Mat5SetMatrixElement -name "Mat5SetMatrixElement (2)" -index 2;2 -value 2
+  adams.flow.transformer.Mat5SetMatrixElement -name "Mat5SetMatrixElement (3)" -index 3;3 -value 3
+  adams.flow.transformer.SetStorageValue -storage-name matrix
+ adams.flow.control.Trigger -name "create file"
+  adams.flow.source.NewMat5File
+  adams.flow.transformer.Mat5FileAddArray -retrieval-type STORAGE -object-storage matrix -entry-name data
+  adams.flow.sink.Mat5FileWriter -output ${FLOWS}/output/3by3.mat
+ adams.flow.control.Trigger -name "display matrix"
+  adams.flow.source.StorageValue -storage-name matrix -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+  adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+ adams.flow.control.Trigger -name "display array element"
+  adams.flow.standalone.SetVariable -name index -var-name index -var-value 2;2
+  adams.flow.source.StorageValue -storage-name matrix -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.Mat5GetMatrixElement -index 2;2
+  adams.flow.transformer.SetVariable -var-name value
+  adams.flow.control.Trigger -name output
+   adams.flow.source.CombineVariables -expression "@{index} -> @{value}" -conversion adams.data.conversion.StringToString
+   adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
