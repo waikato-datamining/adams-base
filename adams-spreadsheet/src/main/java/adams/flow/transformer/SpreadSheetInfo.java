@@ -440,7 +440,6 @@ public class SpreadSheetInfo
     int				index;
     ContentType			type;
     Collection<ContentType>	types;
-    HashSet<String>		unique;
     int				i;
 
     result = null;
@@ -515,11 +514,7 @@ public class SpreadSheetInfo
 	break;
 
       case SHEET_VALUES:
-	unique = new HashSet<>();
-	for (i = 0; i < sheet.getColumnCount(); i++)
-	  unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
-	m_Queue.addAll(unique);
-	Collections.sort(m_Queue);
+	m_Queue.addAll(SpreadSheetUtils.uniqueValues(sheet));
 	break;
 
       case FIELD_SPEC:
