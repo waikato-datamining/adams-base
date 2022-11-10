@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2022-11-10 15:33:22
+# Date: 2022-11-10 19:06:04
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-matlab,adams-spreadsheet
@@ -40,5 +40,15 @@ adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles reg
      adams.flow.sink.CallableSink -callable Array
    adams.flow.control.Sequence -name else
     adams.flow.transformer.SetVariable -var-name entryname -var-value @{entry}
-    adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
-    adams.flow.sink.CallableSink -callable Array
+    adams.flow.control.Tee -name "# dimensions"
+     adams.flow.transformer.Mat5ArrayInfo
+     adams.flow.transformer.SetVariable -var-name num_dims
+    adams.flow.control.ConditionalTrigger -name "prompt of index" -condition "adams.flow.condition.bool.Expression -expression \"@{num_dims} > 2\""
+     adams.flow.standalone.SetVariable -name reset -var-name index -var-value ""
+     adams.flow.source.EnterValue -message "Index of matrix to retrieve (@{num_dims} dims, format: DIM1;DIM2;..., iterates over empty dims)" -initial-value ;;0
+     adams.flow.transformer.SetVariable -var-name index
+    adams.flow.control.ConditionalTee -name "can we display?" -condition "adams.flow.condition.bool.Expression -expression \"(@{num_dims} <= 2) or (\\\\\\\"@{index}\\\\\\\" != \\\\\\\"\\\\\\\")\""
+     adams.flow.control.ConditionalSubProcess -name "create subset" -condition "adams.flow.condition.bool.Expression -expression \"@{num_dims} > 2\""
+      adams.flow.transformer.Mat5ArraySubset -index @{index}
+     adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+     adams.flow.sink.CallableSink -callable Array
