@@ -36,7 +36,6 @@ import java.util.Set;
  * Helper class for spreadsheet related functionality.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetUtils {
 
@@ -490,6 +489,26 @@ public class SpreadSheetUtils {
       result[0] = 0;
       result[1] = 0;
     }
+
+    return result;
+  }
+
+  /**
+   * Returns a sorted list of all unique values in the spreadsheet (excludes missing values).
+   *
+   * @param sheet	the sheet to get the values for
+   * @return		the unique values
+   */
+  public static List<String> uniqueValues(SpreadSheet sheet) {
+    List<String> 	result;
+    int			i;
+    Set<String> 	unique;
+
+    unique = new HashSet<>();
+    for (i = 0; i < sheet.getColumnCount(); i++)
+      unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
+    result = new ArrayList<>(unique);
+    Collections.sort(result);
 
     return result;
   }

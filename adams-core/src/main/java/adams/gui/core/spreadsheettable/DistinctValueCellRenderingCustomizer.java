@@ -29,14 +29,9 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Each distinct value in the spreadsheet gets its own color.
@@ -161,8 +156,6 @@ public class DistinctValueCellRenderingCustomizer
    */
   protected synchronized void initColors(SpreadSheet sheet) {
     Color[]		colors;
-    int			i;
-    Set<String> 	unique;
     List<String> 	values;
 
     if (m_Colors != null)
@@ -176,11 +169,7 @@ public class DistinctValueCellRenderingCustomizer
         m_Colors.put(value.getValue(), m_ColorProvider.next());
     }
     else {
-      unique = new HashSet<>();
-      for (i = 0; i < sheet.getColumnCount(); i++)
-	unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
-      values = new ArrayList<>(unique);
-      Collections.sort(values);
+      values = SpreadSheetUtils.uniqueValues(sheet);
       for (String value: values)
 	m_Colors.put(value, m_ColorProvider.next());
     }
