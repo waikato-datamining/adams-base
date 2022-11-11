@@ -1,0 +1,19 @@
+--> dumpfile.txt
+DIMENSIONS:
+  3,3
+NUM_COLS:
+  3
+NUM_DIMENSIONS:
+  2
+NUM_ELEMENTS:
+  9
+NUM_ROWS:
+  3
+STR_DIMENSIONS:
+  3x3
+TYPE_ID:
+  6
+TYPE_NAME:
+  Double
+
+
