@@ -15,7 +15,7 @@
 
 /*
  * Mat5FileInfo.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -29,6 +29,7 @@ import us.hebi.matlab.mat.types.MatFile;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -336,6 +337,9 @@ public class Mat5FileInfo
       catch (Exception e) {
 	result = handleException("Failed to generate information: " + m_Type, e);
       }
+
+      if ((result == null) && m_Sort && (m_Queue.size() > 1))
+        Collections.sort(m_Queue);
     }
 
     return result;
