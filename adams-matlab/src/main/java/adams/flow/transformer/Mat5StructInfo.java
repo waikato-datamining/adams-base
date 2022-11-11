@@ -97,7 +97,7 @@ import java.util.HashSet;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabStructInfo
+public class Mat5StructInfo
   extends AbstractArrayProvider
   implements DataInfoActor {
 
