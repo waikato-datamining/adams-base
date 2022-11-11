@@ -168,7 +168,7 @@ public class Mat5SetMatrixElement
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "index", m_Index, "index: ");
+    result  = QuickInfoHelper.toString(this, "index", (m_Index.isEmpty() ? "-none-" : m_Index.getValue()), "index: ");
     result += QuickInfoHelper.toString(this, "zeroBasedIndex", (m_ZeroBasedIndex ? "0-based" : "1-based"), ", ");
     result += QuickInfoHelper.toString(this, "elementType", m_ElementType, ", element: ");
     result += QuickInfoHelper.toString(this, "value", m_Value, ", value: ");
