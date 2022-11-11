@@ -1,0 +1,23 @@
+# Project: adams
+# Date: 2022-11-11 16:38:25
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Creates a Matlab struct with two matrices." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "new matrix 1"
+  adams.flow.source.NewMat5Matrix
+  adams.flow.transformer.Mat5SetMatrixElement -index 2;2 -value 2.2
+  adams.flow.transformer.SetStorageValue -storage-name mat1
+ adams.flow.control.Trigger -name "new matrix 2"
+  adams.flow.source.NewMat5Matrix -dimensions 2;2;2
+  adams.flow.transformer.Mat5SetMatrixElement -index 1;1;1 -value 1
+  adams.flow.transformer.SetStorageValue -storage-name mat2
+ adams.flow.control.Trigger -name "new struct"
+  adams.flow.source.NewMat5Struct
+  adams.flow.transformer.Mat5SetStructField -object-storage mat1 -field matrix1
+  adams.flow.transformer.Mat5SetStructField -name "Mat5SetStructField (2)" -object-storage mat2 -field matrix2
+  adams.flow.transformer.Mat5StructInfo -output-array true -type FIELD_NAMES
+  adams.flow.transformer.StringJoin -glue \n
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
