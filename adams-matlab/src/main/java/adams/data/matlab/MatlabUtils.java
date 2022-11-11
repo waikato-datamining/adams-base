@@ -20,6 +20,7 @@
 
 package adams.data.matlab;
 
+import us.hebi.matlab.mat.types.Array;
 import us.hebi.matlab.mat.types.Char;
 import us.hebi.matlab.mat.types.Matrix;
 
@@ -235,5 +236,24 @@ public class MatlabUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Generates a string representation of the array dimensions.
+   *
+   * @param array	the array to generate the dimensions for
+   * @return		the generated string
+   */
+  public static String arrayDimensionsToString(Array array) {
+    StringBuilder 	result;
+
+    result = new StringBuilder();
+    for (int dim: array.getDimensions()) {
+      if (result.length() > 0)
+	result.append("x");
+      result.append(dim);
+    }
+
+    return result.toString();
   }
 }

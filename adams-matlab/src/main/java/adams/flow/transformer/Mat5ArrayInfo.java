@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.matlab.MatlabUtils;
 import adams.flow.core.DataInfoActor;
 import us.hebi.matlab.mat.types.Array;
 
@@ -239,7 +240,6 @@ public class Mat5ArrayInfo
    */
   protected List getInfo(Array array, InfoType type) {
     List		result;
-    StringBuilder	dims;
 
     result = new ArrayList();
     switch (type) {
@@ -256,13 +256,7 @@ public class Mat5ArrayInfo
 	result.add(array.getNumDimensions());
 	break;
       case STR_DIMENSIONS:
-	dims = new StringBuilder();
-	for (int dim: array.getDimensions()) {
-	  if (dims.length() > 0)
-	    dims.append("x");
-	  dims.append(dim);
-	}
-	result.add(dims.toString());
+	result.add(MatlabUtils.arrayDimensionsToString(array));
 	break;
       case NUM_COLS:
 	result.add(array.getNumCols());
