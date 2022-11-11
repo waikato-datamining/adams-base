@@ -15,14 +15,13 @@
 
 /*
  * MatlabStructInfo.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.DataInfoActor;
-import us.hebi.matlab.mat.format.Mat5File;
 import us.hebi.matlab.mat.types.Struct;
 
 import java.util.Arrays;
@@ -275,7 +274,7 @@ public class Mat5StructInfo
     result = null;
 
     struct = null;
-    if (m_InputToken.hasPayload(Mat5File.class))
+    if (m_InputToken.hasPayload(Struct.class))
       struct = m_InputToken.getPayload(Struct.class);
     else
       result = m_InputToken.unhandledData();
