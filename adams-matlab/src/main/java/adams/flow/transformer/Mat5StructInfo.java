@@ -25,6 +25,7 @@ import adams.flow.core.DataInfoActor;
 import us.hebi.matlab.mat.types.Struct;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -298,6 +299,9 @@ public class Mat5StructInfo
 	result = handleException("Failed to generate information: " + m_Type, e);
       }
     }
+
+    if ((result == null) && m_Sort && (m_Queue.size() > 1))
+      Collections.sort(m_Queue);
 
     return result;
   }
