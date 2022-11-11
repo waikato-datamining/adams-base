@@ -23,11 +23,12 @@ package adams.gui.visualization.debug.inspectionhandler;
 import adams.data.conversion.MatlabArrayToSpreadSheet;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import us.hebi.matlab.mat.types.Array;
+import us.hebi.matlab.mat.types.Struct;
 
 import java.util.Hashtable;
 
 /**
- * For inspecting Matlab Struct objects.
+ * For inspecting Matlab Array/Struct objects.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -56,18 +57,24 @@ public class Mat5Array
     Hashtable<String,Object>	result;
     Object			value;
     Array 			array;
+    Struct			struct;
     MatlabArrayToSpreadSheet	conv;
     String			msg;
 
     result = new Hashtable<>();
 
     array = (Array) obj;
-    if (array.getNumDimensions() <= 2) {
+    if (array instanceof Struct) {
+      struct = (Struct) array;
+      for (String field: struct.getFieldNames())
+	result.put(field, struct.get(field));
+    }
+    else if (array.getNumDimensions() <= 2) {
       conv = new MatlabArrayToSpreadSheet();
       conv.setInput(array);
       msg = conv.convert();
       if (msg == null)
-        result.put("data", conv.getOutput());
+	result.put("data", conv.getOutput());
       conv.cleanUp();
     }
 
