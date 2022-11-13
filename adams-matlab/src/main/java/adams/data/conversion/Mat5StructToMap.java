@@ -14,13 +14,12 @@
  */
 
 /*
- * MatlabStructToMap.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Mat5StructToMap.java
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
 
-import us.hebi.matlab.mat.types.Array;
 import us.hebi.matlab.mat.types.Struct;
 
 import java.util.HashMap;
@@ -42,7 +41,7 @@ import java.util.Map;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabStructToMap
+public class Mat5StructToMap
   extends AbstractConversion {
 
   private static final long serialVersionUID = -2006396004849089721L;
@@ -78,6 +77,29 @@ public class MatlabStructToMap
   }
 
   /**
+   * Adds the Struct recursively.
+   *
+   * @param map		the map to add to
+   * @param struct	the struct to add
+   */
+  protected void addStruct(Map map, Struct struct) {
+    Object	obj;
+    Map		submap;
+
+    for (String field: struct.getFieldNames()) {
+      obj = struct.get(field);
+      if (obj instanceof Struct) {
+	submap = new HashMap();
+	map.put(field, submap);
+	addStruct(submap, (Struct) obj);
+      }
+      else {
+	map.put(field, obj);
+      }
+    }
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -85,13 +107,24 @@ public class MatlabStructToMap
    */
   @Override
   protected Object doConvert() throws Exception {
-    Map<String,Array>		result;
-    Struct			struct;
+    Map		result;
+    Struct	struct;
+    Object	obj;
+    Map		submap;
 
     result = new HashMap<>();
     struct = (Struct) m_Input;
-    for (String field: struct.getFieldNames())
-      result.put(field, struct.get(field));
+    for (String field: struct.getFieldNames()) {
+      obj = struct.get(field);
+      if (obj instanceof Struct) {
+        submap = new HashMap();
+        result.put(field, submap);
+        addStruct(submap, (Struct) obj);
+      }
+      else {
+	result.put(field, obj);
+      }
+    }
 
     return result;
   }

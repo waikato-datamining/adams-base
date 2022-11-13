@@ -15,5 +15,5 @@ adams.flow.control.Flow -annotation "Reads a .mat file." -flow-execution-listene
  adams.flow.control.Trigger -name "load entry"
   adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
   adams.flow.transformer.Mat5FileGetArray -entry-name @{entry}
-  adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+  adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToSpreadSheet
   adams.flow.sink.CallableSink -callable Content

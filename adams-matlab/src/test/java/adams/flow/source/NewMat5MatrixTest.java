@@ -22,7 +22,7 @@ package adams.flow.source;
 
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
-import adams.data.conversion.MatlabArrayToSpreadSheet;
+import adams.data.conversion.Mat5ArrayToSpreadSheet;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -118,7 +118,7 @@ public class NewMat5MatrixTest
 
       // Flow.Convert
       Convert convert = new Convert();
-      MatlabArrayToSpreadSheet matlabarraytospreadsheet = new MatlabArrayToSpreadSheet();
+      Mat5ArrayToSpreadSheet matlabarraytospreadsheet = new Mat5ArrayToSpreadSheet();
       convert.setConversion(matlabarraytospreadsheet);
 
       actors.add(convert);

@@ -14,8 +14,8 @@
  */
 
 /*
- * SpreadSheetToMatlabArray.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * SpreadSheetToMat5Array.java
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
@@ -42,7 +42,7 @@ import us.hebi.matlab.mat.types.Matrix;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetToMatlabArray
+public class SpreadSheetToMat5Array
   extends AbstractConversion {
 
   private static final long serialVersionUID = 1720918361869379610L;

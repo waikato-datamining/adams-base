@@ -13,10 +13,10 @@ adams.flow.control.Flow -annotation "Stores two spreadsheets in a .mat file." -f
   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.csv
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.control.Tee -name data
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name data
   adams.flow.control.Tee -name header
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name header
   adams.flow.control.Trigger -name add
    adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown
@@ -27,10 +27,10 @@ adams.flow.control.Flow -annotation "Stores two spreadsheets in a .mat file." -f
   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/iris.csv
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.control.Tee -name data
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name data
   adams.flow.control.Tee -name header
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name header
   adams.flow.control.Trigger -name add
    adams.flow.source.StorageValue -storage-name mat -conversion adams.data.conversion.UnknownToUnknown

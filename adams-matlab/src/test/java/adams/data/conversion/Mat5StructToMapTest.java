@@ -14,25 +14,25 @@
  */
 
 /*
- * SpreadSheetToMatlabArrayTest.java
+ * Mat5StructToMapTest.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import us.hebi.matlab.mat.format.Mat5;
+import us.hebi.matlab.mat.types.Matrix;
+import us.hebi.matlab.mat.types.Struct;
 
 /**
- * Tests the SpreadSheetToMatlabArray conversion.
+ * Tests the MatlabStructToMap conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetToMatlabArrayTest
+public class Mat5StructToMapTest
   extends AbstractConversionTestCase {
 
   /**
@@ -40,7 +40,7 @@ public class SpreadSheetToMatlabArrayTest
    *
    * @param name 	the name of the test
    */
-  public SpreadSheetToMatlabArrayTest(String name) {
+  public Mat5StructToMapTest(String name) {
     super(name);
   }
 
@@ -51,26 +51,16 @@ public class SpreadSheetToMatlabArrayTest
    */
   @Override
   protected Object[] getRegressionInput() {
-    SpreadSheet   	sheet;
-    Row			row;
-    int			num;
-    int			i;
-    int			n;
+    Struct 	struct;
+    Matrix	mat;
 
-    sheet = new DefaultSpreadSheet();
-    row   = sheet.getHeaderRow();
-    num   = 3;
-    for (i = 0; i < num; i++)
-      row.addCell("" + i).setContentAsString("col" + i);
+    struct = Mat5.newStruct(1, 1);
+    mat    = Mat5.newMatrix(new int[]{3, 3});
+    struct.set("mat1", mat);
+    mat    = Mat5.newMatrix(new int[]{2, 2, 2});
+    struct.set("mat2", mat);
 
-    for (i = 0; i < num; i++) {
-      row = sheet.addRow();
-      for (n = 0; n < num; n++)
-        row.addCell(n).setContent(n);
-      row.addCell(i).setContent(i);
-    }
-
-    return new Object[]{sheet};
+    return new Object[]{struct};
   }
 
   /**
@@ -80,7 +70,7 @@ public class SpreadSheetToMatlabArrayTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{new SpreadSheetToMatlabArray()};
+    return new Conversion[]{new Mat5StructToMap()};
   }
 
   /**
@@ -99,7 +89,7 @@ public class SpreadSheetToMatlabArrayTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(SpreadSheetToMatlabArrayTest.class);
+    return new TestSuite(Mat5StructToMapTest.class);
   }
 
   /**

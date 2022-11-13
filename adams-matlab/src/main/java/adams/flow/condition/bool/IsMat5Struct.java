@@ -14,8 +14,8 @@
  */
 
 /*
- * IsMatlabMatrix.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * IsMat5Struct.java
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.condition.bool;
@@ -23,11 +23,11 @@ package adams.flow.condition.bool;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
-import us.hebi.matlab.mat.types.Array;
+import us.hebi.matlab.mat.types.Struct;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the object represents a Matlab matrix.
+ * Checks whether the object represents a Matlab struct data structure.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,7 +41,7 @@ import us.hebi.matlab.mat.types.Array;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class IsMatlabMatrix
+public class IsMat5Struct
   extends AbstractBooleanCondition {
 
   private static final long serialVersionUID = -5554295190330759110L;
@@ -53,7 +53,7 @@ public class IsMatlabMatrix
    */
   @Override
   public String globalInfo() {
-    return "Checks whether the object represents a Matlab matrix.";
+    return "Checks whether the object represents a Matlab struct data structure.";
   }
 
   /**
@@ -86,7 +86,7 @@ public class IsMatlabMatrix
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
     if ((token != null) && (token.getPayload() != null))
-      return (token.getPayload() instanceof Array);
+      return (token.getPayload() instanceof Struct);
     else
       return false;
   }

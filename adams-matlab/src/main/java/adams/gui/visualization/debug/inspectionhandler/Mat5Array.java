@@ -20,7 +20,7 @@
 
 package adams.gui.visualization.debug.inspectionhandler;
 
-import adams.data.conversion.MatlabArrayToSpreadSheet;
+import adams.data.conversion.Mat5ArrayToSpreadSheet;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import us.hebi.matlab.mat.types.Array;
 import us.hebi.matlab.mat.types.Struct;
@@ -58,7 +58,7 @@ public class Mat5Array
     Object			value;
     Array 			array;
     Struct			struct;
-    MatlabArrayToSpreadSheet	conv;
+    Mat5ArrayToSpreadSheet conv;
     String			msg;
 
     result = new Hashtable<>();
@@ -70,7 +70,7 @@ public class Mat5Array
 	result.put(field, struct.get(field));
     }
     else if (array.getNumDimensions() <= 2) {
-      conv = new MatlabArrayToSpreadSheet();
+      conv = new Mat5ArrayToSpreadSheet();
       conv.setInput(array);
       msg = conv.convert();
       if (msg == null)

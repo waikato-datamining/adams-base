@@ -14,20 +14,19 @@
  */
 
 /*
- * SpreadSheetHeaderToMatlabArray.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Mat5ArrayToDoubleMatrix.java
+ * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import adams.data.spreadsheet.SpreadSheet;
-import us.hebi.matlab.mat.format.Mat5;
+import adams.core.Utils;
 import us.hebi.matlab.mat.types.Array;
-import us.hebi.matlab.mat.types.Cell;
+import us.hebi.matlab.mat.types.Matrix;
 
 /**
  <!-- globalinfo-start -->
- * Converts the spreadsheet header with the column names into a Matlab array.
+ * Converts a 2-dimensional Matlab array into a double matrix.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -39,12 +38,12 @@ import us.hebi.matlab.mat.types.Cell;
  *
  <!-- options-end -->
  *
- * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetHeaderToMatlabArray
+public class Mat5ArrayToDoubleMatrix
   extends AbstractConversion {
 
-  private static final long serialVersionUID = 6039846859150610999L;
+  private static final long serialVersionUID = 1324403475035054937L;
 
   /**
    * Returns a string describing the object.
@@ -53,7 +52,7 @@ public class SpreadSheetHeaderToMatlabArray
    */
   @Override
   public String globalInfo() {
-    return "Converts the spreadsheet header with the column names into a Matlab array.";
+    return "Converts a 2-dimensional Matlab array into a double matrix.";
   }
 
   /**
@@ -63,7 +62,7 @@ public class SpreadSheetHeaderToMatlabArray
    */
   @Override
   public Class accepts() {
-    return SpreadSheet.class;
+    return Array.class;
   }
 
   /**
@@ -73,7 +72,7 @@ public class SpreadSheetHeaderToMatlabArray
    */
   @Override
   public Class generates() {
-    return Array.class;
+    return Double[][].class;
   }
 
   /**
@@ -84,14 +83,26 @@ public class SpreadSheetHeaderToMatlabArray
    */
   @Override
   protected Object doConvert() throws Exception {
-    Cell 		result;
-    SpreadSheet		sheet;
-    int			i;
+    Double[][]	result;
+    Array	array;
+    Matrix	matrix;
+    int		i;
+    int		n;
 
-    sheet = (SpreadSheet) m_Input;
-    result = Mat5.newCell(new int[]{1, sheet.getColumnCount()});
-    for (i = 0; i < sheet.getColumnCount(); i++)
-      result.set(i, Mat5.newString(sheet.getColumnName(i)));
+    array = (Array) m_Input;
+    if (array.getNumDimensions() > 2)
+      throw new IllegalStateException("Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions());
+
+    if (!(array instanceof Matrix))
+      throw new IllegalStateException("Array is not of type " + Utils.classToString(Matrix.class) + "!");
+    matrix = (Matrix) array;
+
+    // transfer data
+    result = new Double[matrix.getNumRows()][matrix.getNumCols()];
+    for (n = 0; n < array.getNumRows(); n++) {
+      for (i = 0; i < array.getNumCols(); i++)
+	result[n][i] = matrix.getDouble(n, i);
+    }
 
     return result;
   }

@@ -21,12 +21,12 @@ adams.flow.control.Flow -annotation "Stores a map with Matlab arrays in a .mat f
    adams.flow.transformer.SetVariable -var-name name
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
   adams.flow.control.Tee -name data
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name value
    adams.flow.transformer.SetVariable -var-name key -var-value @{name}_data -expand-value true
    adams.flow.transformer.CallableTransformer -name add -callable "add value to map"
   adams.flow.control.Tee -name header
-   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMatlabArray
+   adams.flow.transformer.Convert -conversion adams.data.conversion.SpreadSheetHeaderToMat5Array
    adams.flow.transformer.SetStorageValue -storage-name value
    adams.flow.transformer.SetVariable -var-name key -var-value @{name}_header -expand-value true
    adams.flow.transformer.CallableTransformer -name add -callable "add value to map"

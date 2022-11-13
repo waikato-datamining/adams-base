@@ -14,20 +14,20 @@
  */
 
 /*
- * IsMatlabStruct.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * SpreadSheetHeaderToMat5Array.java
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
-package adams.flow.condition.bool;
+package adams.data.conversion;
 
-import adams.flow.core.Actor;
-import adams.flow.core.Token;
-import adams.flow.core.Unknown;
-import us.hebi.matlab.mat.types.Struct;
+import adams.data.spreadsheet.SpreadSheet;
+import us.hebi.matlab.mat.format.Mat5;
+import us.hebi.matlab.mat.types.Array;
+import us.hebi.matlab.mat.types.Cell;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the object represents a Matlab struct data structure.
+ * Converts the spreadsheet header with the column names into a Matlab array.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,10 +41,10 @@ import us.hebi.matlab.mat.types.Struct;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class IsMatlabStruct
-  extends AbstractBooleanCondition {
+public class SpreadSheetHeaderToMat5Array
+  extends AbstractConversion {
 
-  private static final long serialVersionUID = -5554295190330759110L;
+  private static final long serialVersionUID = 6039846859150610999L;
 
   /**
    * Returns a string describing the object.
@@ -53,41 +53,46 @@ public class IsMatlabStruct
    */
   @Override
   public String globalInfo() {
-    return "Checks whether the object represents a Matlab struct data structure.";
+    return "Converts the spreadsheet header with the column names into a Matlab array.";
   }
 
   /**
-   * Returns the quick info string to be displayed in the flow editor.
+   * Returns the class that is accepted as input.
    *
-   * @return the info or null if no info to be displayed
+   * @return the class
    */
   @Override
-  public String getQuickInfo() {
-    return null;
+  public Class accepts() {
+    return SpreadSheet.class;
   }
 
   /**
-   * Returns the class that the consumer accepts.
+   * Returns the class that is generated as output.
    *
-   * @return adams.flow.core.Unknown.class
+   * @return the class
    */
   @Override
-  public Class[] accepts() {
-    return new Class[]{Unknown.class};
+  public Class generates() {
+    return Array.class;
   }
 
   /**
-   * Performs the actual evaluation.
+   * Performs the actual conversion.
    *
-   * @param owner the owning actor
-   * @param token the current token passing through
-   * @return the result of the evaluation
+   * @throws Exception if something goes wrong with the conversion
+   * @return the converted data
    */
   @Override
-  protected boolean doEvaluate(Actor owner, Token token) {
-    if ((token != null) && (token.getPayload() != null))
-      return (token.getPayload() instanceof Struct);
-    else
-      return false;
+  protected Object doConvert() throws Exception {
+    Cell 		result;
+    SpreadSheet		sheet;
+    int			i;
+
+    sheet = (SpreadSheet) m_Input;
+    result = Mat5.newCell(new int[]{1, sheet.getColumnCount()});
+    for (i = 0; i < sheet.getColumnCount(); i++)
+      result.set(i, Mat5.newString(sheet.getColumnName(i)));
+
+    return result;
   }
 }

@@ -91,17 +91,19 @@ The following sinks are available:
 
 The following conversions are available:
 \begin{tight_itemize}
-  \item \textit{MatlabArrayToDoubleMatrix} -- converts a (2-dimensional) Matlab array into a double matrix
-  \item \textit{MatlabArrayToSpreadSheet} -- converts a (2-dimensional) Matlab array into a spreadsheet
-  \item \textit{MatlabStructToMap} -- converts a Matlab struct object into a map
-  \item \textit{SpreadSheetHeaderToMatlabArray} -- turns the spreadsheet header (ie the column names) into an array
-  \item \textit{SpreadSheetToMatlabArray} -- turns a spreadsheet into an array (matrix or cell)
+  \item \textit{Mat5ArrayToDoubleMatrix} -- converts a (2-dimensional) Matlab array into a double matrix
+  \item \textit{Mat5ArrayToSpreadSheet} -- converts a (2-dimensional) Matlab array into a spreadsheet
+  \item \textit{Mat5FileToMap} -- converts a Matlab file object into a map
+  \item \textit{Mat5StructToMap} -- converts a Matlab struct object into a map
+  \item \textit{SpreadSheetHeaderToMat5Array} -- turns the spreadsheet header (ie the column names) into an array
+  \item \textit{SpreadSheetToMat5Array} -- turns a spreadsheet into an array (matrix or cell)
 \end{tight_itemize}
 
 The following boolean conditions are available:
 \begin{tight_itemize}
-  \item \textit{IsMatlabArray} -- checks whether the token contains a Matlab array object.
-  \item \textit{IsMatlabStruct} -- checks whether the token contains a Matlab Struct object.
+  \item \textit{IsMat5Array} -- checks whether the token contains a Matlab array object.
+  \item \textit{IsMat5Matrix} -- checks whether the token contains a Matlab matrix object.
+  \item \textit{IsMat5Struct} -- checks whether the token contains a Matlab struct object.
 \end{tight_itemize}
 
 

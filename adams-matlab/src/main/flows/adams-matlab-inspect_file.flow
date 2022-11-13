@@ -24,18 +24,18 @@ adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles reg
    adams.flow.transformer.Convert -conversion "adams.data.conversion.MapToString -sort-keys true"
    adams.flow.sink.CallableSink -callable Info
   adams.flow.transformer.SetStorageValue -storage-name entry
-  adams.flow.control.IfThenElse -condition adams.flow.condition.bool.IsMatlabStruct
+  adams.flow.control.IfThenElse -condition adams.flow.condition.bool.IsMat5Struct
    adams.flow.control.Sequence -name then
-    adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabStructToMap
+    adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5StructToMap
     adams.flow.transformer.GetMapKeys -output-array true
     adams.flow.transformer.SelectArraySubset
     adams.flow.transformer.ArrayToSequence
     adams.flow.transformer.SetVariable -var-name field
     adams.flow.control.Trigger -name "display field"
      adams.flow.source.StorageValue -storage-name entry -conversion adams.data.conversion.UnknownToUnknown
-     adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabStructToMap
+     adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5StructToMap
      adams.flow.transformer.GetMapValue -key @{field}
-     adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+     adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.Mat5ArrayToSpreadSheet
      adams.flow.transformer.SetVariable -var-name entryname -var-value @{entry}/@{field} -expand-value true
      adams.flow.sink.CallableSink -callable Array
    adams.flow.control.Sequence -name else
@@ -50,5 +50,5 @@ adams.flow.control.Flow -annotation "Allows to inspect .mat files.\\nHandles reg
     adams.flow.control.ConditionalTee -name "can we display?" -condition "adams.flow.condition.bool.Expression -expression \"(@{num_dims} <= 2) or (\\\\\\\"@{index}\\\\\\\" != \\\\\\\"\\\\\\\")\""
      adams.flow.control.ConditionalSubProcess -name "create subset" -condition "adams.flow.condition.bool.Expression -expression \"@{num_dims} > 2\""
       adams.flow.transformer.Mat5ArraySubset -index @{index}
-     adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+     adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToSpreadSheet
      adams.flow.sink.CallableSink -callable Array

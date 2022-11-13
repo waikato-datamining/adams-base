@@ -19,5 +19,5 @@ adams.flow.control.Flow -annotation "Retrieves the specified subset from the spe
    adams.flow.control.Sequence -name then
     adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
    adams.flow.control.Sequence -name else
-    adams.flow.transformer.Convert -conversion adams.data.conversion.MatlabArrayToSpreadSheet
+    adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToSpreadSheet
     adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -width 1200 -height 900 -cell-rendering-customizer "adams.gui.core.spreadsheettable.HeatmapCellRenderingCustomizer -background-color-generator \"adams.gui.visualization.core.BiColorGenerator -first-color #ffffff -second-color #ff0000\"" -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview

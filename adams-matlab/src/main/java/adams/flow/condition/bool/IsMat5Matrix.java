@@ -14,7 +14,7 @@
  */
 
 /*
- * IsMatlabArray.java
+ * IsMat5Matrix.java
  * Copyright (C) 2022 University of Waikato, Hamilton, NZ
  */
 
@@ -27,7 +27,7 @@ import us.hebi.matlab.mat.types.Array;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the object represents a Matlab array.
+ * Checks whether the object represents a Matlab matrix.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,7 +41,7 @@ import us.hebi.matlab.mat.types.Array;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class IsMatlabArray
+public class IsMat5Matrix
   extends AbstractBooleanCondition {
 
   private static final long serialVersionUID = -5554295190330759110L;
@@ -53,7 +53,7 @@ public class IsMatlabArray
    */
   @Override
   public String globalInfo() {
-    return "Checks whether the object represents a Matlab array.";
+    return "Checks whether the object represents a Matlab matrix.";
   }
 
   /**

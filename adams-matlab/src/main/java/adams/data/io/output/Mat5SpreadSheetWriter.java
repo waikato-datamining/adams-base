@@ -15,13 +15,13 @@
 
 /*
  * Mat5SpreadSheetWriter.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
 
 import adams.core.io.PlaceholderFile;
-import adams.data.conversion.SpreadSheetToMatlabArray;
+import adams.data.conversion.SpreadSheetToMat5Array;
 import adams.data.io.input.Mat5SpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
@@ -126,7 +126,7 @@ public class Mat5SpreadSheetWriter
     int				i;
     int				n;
     Mat5File			mat5;
-    SpreadSheetToMatlabArray	conv;
+    SpreadSheetToMat5Array conv;
     Array			array;
     String			msg;
 
@@ -144,7 +144,7 @@ public class Mat5SpreadSheetWriter
     }
 
     mat5 = Mat5.newMatFile();
-    conv = new SpreadSheetToMatlabArray();
+    conv = new SpreadSheetToMat5Array();
     for (i = 0; i < content.length; i++) {
       conv.setInput(content[i]);
       msg = conv.convert();

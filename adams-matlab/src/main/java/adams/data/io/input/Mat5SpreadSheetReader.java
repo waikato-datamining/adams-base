@@ -21,7 +21,7 @@
 package adams.data.io.input;
 
 import adams.core.logging.LoggingHelper;
-import adams.data.conversion.MatlabArrayToSpreadSheet;
+import adams.data.conversion.Mat5ArrayToSpreadSheet;
 import adams.data.io.output.Mat5SpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SheetRange;
@@ -234,9 +234,9 @@ public class Mat5SpreadSheetReader
    * @throws Exception	if conversion failed
    */
   protected SpreadSheet convert(Array array) throws Exception {
-    MatlabArrayToSpreadSheet	conv;
+    Mat5ArrayToSpreadSheet conv;
 
-    conv = new MatlabArrayToSpreadSheet();
+    conv = new Mat5ArrayToSpreadSheet();
     conv.setInput(array);
     m_LastError = conv.convert();
     if (m_LastError == null)

@@ -14,36 +14,28 @@
  */
 
 /*
- * MatlabArrayToDoubleMatrix.java
+ * Mat5FileToMap.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import adams.core.Utils;
-import us.hebi.matlab.mat.types.Array;
-import us.hebi.matlab.mat.types.Matrix;
+import us.hebi.matlab.mat.format.Mat5File;
+import us.hebi.matlab.mat.types.MatFile;
+import us.hebi.matlab.mat.types.Struct;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- <!-- globalinfo-start -->
- * Converts a 2-dimensional Matlab array into a double matrix.
- * <br><br>
- <!-- globalinfo-end -->
- *
- <!-- options-start -->
- * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
- * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
- * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- *
- <!-- options-end -->
+ * TODO: What this class does.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabArrayToDoubleMatrix
+public class Mat5FileToMap
   extends AbstractConversion {
 
-  private static final long serialVersionUID = 1324403475035054937L;
+  private static final long serialVersionUID = 448419021229335154L;
 
   /**
    * Returns a string describing the object.
@@ -52,7 +44,7 @@ public class MatlabArrayToDoubleMatrix
    */
   @Override
   public String globalInfo() {
-    return "Converts a 2-dimensional Matlab array into a double matrix.";
+    return "Turns the Mat5File data structure into a nested map.";
   }
 
   /**
@@ -62,7 +54,7 @@ public class MatlabArrayToDoubleMatrix
    */
   @Override
   public Class accepts() {
-    return Array.class;
+    return Mat5File.class;
   }
 
   /**
@@ -72,7 +64,30 @@ public class MatlabArrayToDoubleMatrix
    */
   @Override
   public Class generates() {
-    return Double[][].class;
+    return Map.class;
+  }
+
+  /**
+   * Adds the Struct recursively.
+   *
+   * @param map		the map to add to
+   * @param struct	the struct to add
+   */
+  protected void addStruct(Map map, Struct struct) {
+    Object	obj;
+    Map		submap;
+
+    for (String field: struct.getFieldNames()) {
+      obj = struct.get(field);
+      if (obj instanceof Struct) {
+	submap = new HashMap();
+	map.put(field, submap);
+	addStruct(submap, (Struct) obj);
+      }
+      else {
+	map.put(field, obj);
+      }
+    }
   }
 
   /**
@@ -83,25 +98,21 @@ public class MatlabArrayToDoubleMatrix
    */
   @Override
   protected Object doConvert() throws Exception {
-    Double[][]	result;
-    Array	array;
-    Matrix	matrix;
-    int		i;
-    int		n;
+    Map		result;
+    Map		submap;
+    Mat5File	mat5;
 
-    array = (Array) m_Input;
-    if (array.getNumDimensions() > 2)
-      throw new IllegalStateException("Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions());
-
-    if (!(array instanceof Matrix))
-      throw new IllegalStateException("Array is not of type " + Utils.classToString(Matrix.class) + "!");
-    matrix = (Matrix) array;
-
-    // transfer data
-    result = new Double[matrix.getNumRows()][matrix.getNumCols()];
-    for (n = 0; n < array.getNumRows(); n++) {
-      for (i = 0; i < array.getNumCols(); i++)
-	result[n][i] = matrix.getDouble(n, i);
+    result = new HashMap();
+    mat5   = (Mat5File) m_Input;
+    for (MatFile.Entry entry: mat5.getEntries()) {
+      if (entry.getValue() instanceof Struct) {
+	submap = new HashMap();
+	result.put(entry.getName(), submap);
+	addStruct(submap, (Struct) entry.getValue());
+      }
+      else {
+	result.put(entry.getName(), entry.getValue());
+      }
     }
 
     return result;

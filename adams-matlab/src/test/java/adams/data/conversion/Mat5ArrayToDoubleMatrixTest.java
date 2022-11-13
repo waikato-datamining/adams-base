@@ -14,25 +14,24 @@
  */
 
 /*
- * SpreadSheetHeaderToMatlabArrayTest.java
+ * Mat5ArrayToDoubleMatrixTest.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import us.hebi.matlab.mat.format.Mat5;
+import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * Tests the SpreadSheetHeaderToMatlabArray conversion.
+ * Tests the MatlabArrayToDoubleMatrix conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class SpreadSheetHeaderToMatlabArrayTest
+public class Mat5ArrayToDoubleMatrixTest
   extends AbstractConversionTestCase {
 
   /**
@@ -40,7 +39,7 @@ public class SpreadSheetHeaderToMatlabArrayTest
    *
    * @param name 	the name of the test
    */
-  public SpreadSheetHeaderToMatlabArrayTest(String name) {
+  public Mat5ArrayToDoubleMatrixTest(String name) {
     super(name);
   }
 
@@ -51,26 +50,15 @@ public class SpreadSheetHeaderToMatlabArrayTest
    */
   @Override
   protected Object[] getRegressionInput() {
-    SpreadSheet   	sheet;
-    Row			row;
-    int			num;
-    int			i;
-    int			n;
+    Matrix    mat;
 
-    sheet = new DefaultSpreadSheet();
-    row   = sheet.getHeaderRow();
-    num   = 3;
-    for (i = 0; i < num; i++)
-      row.addCell("" + i).setContentAsString("col" + i);
+    mat = Mat5.newMatrix(new int[]{2, 2});
+    mat.setDouble(new int[]{0, 0}, 1.0);
+    mat.setDouble(new int[]{0, 1}, 2.0);
+    mat.setDouble(new int[]{1, 0}, 3.0);
+    mat.setDouble(new int[]{1, 1}, 4.0);
 
-    for (i = 0; i < num; i++) {
-      row = sheet.addRow();
-      for (n = 0; n < num; n++)
-        row.addCell(n).setContent(n);
-      row.addCell(i).setContent(i);
-    }
-
-    return new Object[]{sheet};
+    return new Object[]{mat};
   }
 
   /**
@@ -80,7 +68,7 @@ public class SpreadSheetHeaderToMatlabArrayTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{new SpreadSheetHeaderToMatlabArray()};
+    return new Conversion[]{new Mat5ArrayToDoubleMatrix()};
   }
 
   /**
@@ -99,7 +87,7 @@ public class SpreadSheetHeaderToMatlabArrayTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(SpreadSheetHeaderToMatlabArrayTest.class);
+    return new TestSuite(Mat5ArrayToDoubleMatrixTest.class);
   }
 
   /**

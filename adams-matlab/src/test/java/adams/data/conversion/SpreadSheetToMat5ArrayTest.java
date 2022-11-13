@@ -14,24 +14,25 @@
  */
 
 /*
- * MatlabArrayToSpreadSheetTest.java
+ * SpreadSheetToMat5ArrayTest.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import adams.data.spreadsheet.DefaultSpreadSheet;
+import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import us.hebi.matlab.mat.format.Mat5;
-import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * Tests the MatlabArrayToSpreadSheet conversion.
+ * Tests the SpreadSheetToMatlabArray conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabArrayToSpreadSheetTest
+public class SpreadSheetToMat5ArrayTest
   extends AbstractConversionTestCase {
 
   /**
@@ -39,7 +40,7 @@ public class MatlabArrayToSpreadSheetTest
    *
    * @param name 	the name of the test
    */
-  public MatlabArrayToSpreadSheetTest(String name) {
+  public SpreadSheetToMat5ArrayTest(String name) {
     super(name);
   }
 
@@ -50,15 +51,26 @@ public class MatlabArrayToSpreadSheetTest
    */
   @Override
   protected Object[] getRegressionInput() {
-    Matrix    mat;
+    SpreadSheet   	sheet;
+    Row			row;
+    int			num;
+    int			i;
+    int			n;
 
-    mat = Mat5.newMatrix(new int[]{2, 2});
-    mat.setDouble(new int[]{0, 0}, 1.0);
-    mat.setDouble(new int[]{0, 1}, 2.0);
-    mat.setDouble(new int[]{1, 0}, 3.0);
-    mat.setDouble(new int[]{1, 1}, 4.0);
+    sheet = new DefaultSpreadSheet();
+    row   = sheet.getHeaderRow();
+    num   = 3;
+    for (i = 0; i < num; i++)
+      row.addCell("" + i).setContentAsString("col" + i);
 
-    return new Object[]{mat};
+    for (i = 0; i < num; i++) {
+      row = sheet.addRow();
+      for (n = 0; n < num; n++)
+        row.addCell(n).setContent(n);
+      row.addCell(i).setContent(i);
+    }
+
+    return new Object[]{sheet};
   }
 
   /**
@@ -68,7 +80,7 @@ public class MatlabArrayToSpreadSheetTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{new MatlabArrayToSpreadSheet()};
+    return new Conversion[]{new SpreadSheetToMat5Array()};
   }
 
   /**
@@ -87,7 +99,7 @@ public class MatlabArrayToSpreadSheetTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(MatlabArrayToSpreadSheetTest.class);
+    return new TestSuite(SpreadSheetToMat5ArrayTest.class);
   }
 
   /**

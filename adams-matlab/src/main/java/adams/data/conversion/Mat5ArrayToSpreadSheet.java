@@ -14,7 +14,7 @@
  */
 
 /*
- * MatlabArrayToSpreadSheet.java
+ * Mat5ArrayToSpreadSheet.java
  * Copyright (C) 2021-2022 University of Waikato, Hamilton, NZ
  */
 
@@ -47,7 +47,7 @@ import us.hebi.matlab.mat.types.Matrix;
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabArrayToSpreadSheet
+public class Mat5ArrayToSpreadSheet
   extends AbstractConversion {
 
   private static final long serialVersionUID = -2006396004849089721L;

@@ -14,7 +14,7 @@
  */
 
 /*
- * MatlabArrayToDoubleMatrixTest.java
+ * Mat5ArrayToSpreadSheetTest.java
  * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
 
@@ -27,11 +27,11 @@ import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * Tests the MatlabArrayToDoubleMatrix conversion.
+ * Tests the MatlabArrayToSpreadSheet conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class MatlabArrayToDoubleMatrixTest
+public class Mat5ArrayToSpreadSheetTest
   extends AbstractConversionTestCase {
 
   /**
@@ -39,7 +39,7 @@ public class MatlabArrayToDoubleMatrixTest
    *
    * @param name 	the name of the test
    */
-  public MatlabArrayToDoubleMatrixTest(String name) {
+  public Mat5ArrayToSpreadSheetTest(String name) {
     super(name);
   }
 
@@ -68,7 +68,7 @@ public class MatlabArrayToDoubleMatrixTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{new MatlabArrayToDoubleMatrix()};
+    return new Conversion[]{new Mat5ArrayToSpreadSheet()};
   }
 
   /**
@@ -87,7 +87,7 @@ public class MatlabArrayToDoubleMatrixTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(MatlabArrayToDoubleMatrixTest.class);
+    return new TestSuite(Mat5ArrayToSpreadSheetTest.class);
   }
 
   /**
