@@ -28,7 +28,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: What this class does.
+ <!-- globalinfo-start -->
+ * Turns the Mat5File data structure into a nested map.
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -80,12 +91,12 @@ public class Mat5FileToMap
     for (String field: struct.getFieldNames()) {
       obj = struct.get(field);
       if (obj instanceof Struct) {
-	submap = new HashMap();
-	map.put(field, submap);
-	addStruct(submap, (Struct) obj);
+        submap = new HashMap();
+        map.put(field, submap);
+        addStruct(submap, (Struct) obj);
       }
       else {
-	map.put(field, obj);
+        map.put(field, obj);
       }
     }
   }
@@ -106,12 +117,12 @@ public class Mat5FileToMap
     mat5   = (Mat5File) m_Input;
     for (MatFile.Entry entry: mat5.getEntries()) {
       if (entry.getValue() instanceof Struct) {
-	submap = new HashMap();
-	result.put(entry.getName(), submap);
-	addStruct(submap, (Struct) entry.getValue());
+        submap = new HashMap();
+        result.put(entry.getName(), submap);
+        addStruct(submap, (Struct) entry.getValue());
       }
       else {
-	result.put(entry.getName(), entry.getValue());
+        result.put(entry.getName(), entry.getValue());
       }
     }
 
