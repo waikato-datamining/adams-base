@@ -19,7 +19,9 @@
  */
 package adams.gui.tools.previewbrowser;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -27,18 +29,19 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types: bmp,gif,jpg,jpeg,png
+ * Displays the following image types: jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
  *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-image-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: imageReader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
  *
  <!-- options-end -->
@@ -51,6 +54,9 @@ public class ImageHandler
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
 
+  /** the image reader to use. */
+  protected AbstractImageReader m_ImageReader;
+
   /**
    * Returns a string describing the object.
    *
@@ -62,6 +68,56 @@ public class ImageHandler
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "image-reader", "imageReader",
+      getDefaultImageReader());
+  }
+
+  /**
+   * Returns the default reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultImageReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the reader
+   */
+  public void setImageReader(AbstractImageReader value) {
+    m_ImageReader = value;
+    reset();
+  }
+
+  /**
+   * Returns the image reader to use.
+   *
+   * @return		the reader
+   */
+  public AbstractImageReader getImageReader() {
+    return m_ImageReader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageReaderTipText() {
+    return "The image reader to use.";
+  }
+
+  /**
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
@@ -69,7 +125,7 @@ public class ImageHandler
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return getImageReader().getFormatExtensions();
   }
 
   /**
@@ -84,7 +140,7 @@ public class ImageHandler
 
     panel = new ImagePanel();
     panel.getUndo().setEnabled(false);
-    panel.load(file, new JAIImageReader(), -1.0);
+    panel.load(file, ObjectCopyHelper.copyObject(getImageReader()), -1.0);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
   }
@@ -100,7 +156,7 @@ public class ImageHandler
     ImagePanel 	panel;
 
     panel  = (ImagePanel) previewPanel.getComponent();
-    panel.load(file, new JAIImageReader(), panel.getScale());
+    panel.load(file, ObjectCopyHelper.copyObject(getImageReader()), panel.getScale());
 
     return previewPanel;
   }

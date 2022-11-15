@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2022-11-14 10:44:38
+# Date: 2022-11-14 10:59:05
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-matlab,adams-spreadsheet
@@ -10,4 +10,4 @@ adams.flow.control.Flow -annotation "Reads a .mat file into a map." -flow-execut
  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/test.mat
  adams.flow.transformer.Mat5FileReader
  adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5FileToMap
- adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.sink.ObjectViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter
