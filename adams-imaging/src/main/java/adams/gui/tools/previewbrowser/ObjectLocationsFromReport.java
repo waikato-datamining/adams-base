@@ -20,6 +20,7 @@
 
 package adams.gui.tools.previewbrowser;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.base.BaseString;
@@ -27,6 +28,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.ImageAnchor;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
@@ -64,7 +66,7 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
+ * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): report,report.gz
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -72,6 +74,11 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-image-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: imageReader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
  *
  * <pre>-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: reader)
@@ -115,6 +122,18 @@ import java.util.logging.Level;
  *
  * <pre>-filled &lt;boolean&gt; (property: filled)
  * &nbsp;&nbsp;&nbsp;If enabled, the shape is drawn filled.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-outline-alpha &lt;int&gt; (property: outlineAlpha)
+ * &nbsp;&nbsp;&nbsp;This alpha is applied to the color of the outlines.
+ * &nbsp;&nbsp;&nbsp;default: 255
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ *
+ * <pre>-polygon-bounds &lt;boolean&gt; (property: polygonBounds)
+ * &nbsp;&nbsp;&nbsp;If enabled, the polygon bounds are drawn as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -200,13 +219,18 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
+ * <pre>-show-object-panel &lt;boolean&gt; (property: showObjectPanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the panel for selecting located objects is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsFromReport
-    extends AbstractContentHandler
-    implements BoundingBoxFallbackSupporter {
+  extends AbstractContentHandler
+  implements BoundingBoxFallbackSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
@@ -215,7 +239,7 @@ public class ObjectLocationsFromReport
    * The panel for displaying the image.
    */
   public class CombinedPanel
-      extends BasePanel {
+    extends BasePanel {
 
     private static final long serialVersionUID = 236378741683380463L;
 
@@ -345,6 +369,9 @@ public class ObjectLocationsFromReport
     }
   }
 
+  /** the image reader to use. */
+  protected AbstractImageReader m_ImageReader;
+
   /** the report reader to use. */
   protected AbstractReportReader m_Reader;
 
@@ -428,9 +455,9 @@ public class ObjectLocationsFromReport
   @Override
   public String globalInfo() {
     return
-	"Displays the following image types with an overlay for the objects "
-	    + "stored in the report with the same name (using object prefix '" + ObjectLocationsOverlayFromReport.PREFIX_DEFAULT + "'): "
-	    + Utils.arrayToString(getExtensions());
+      "Displays the following image types with an overlay for the objects "
+	+ "stored in the report with the same name (using object prefix '" + ObjectLocationsOverlayFromReport.PREFIX_DEFAULT + "'): "
+	+ Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -441,104 +468,146 @@ public class ObjectLocationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
-	"reader", "reader",
-	getDefaultReader());
+      "image-reader", "imageReader",
+      getDefaultImageReader());
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+      "reader", "reader",
+      getDefaultReader());
 
     m_OptionManager.add(
-	"color", "color",
-	Color.RED);
+      "prefix", "prefix",
+      ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 
     m_OptionManager.add(
-	"use-colors-per-type", "useColorsPerType",
-	getDefaultUseColorsPerType());
+      "color", "color",
+      Color.RED);
 
     m_OptionManager.add(
-	"type-color-provider", "typeColorProvider",
-	new DefaultColorProvider());
+      "use-colors-per-type", "useColorsPerType",
+      getDefaultUseColorsPerType());
 
     m_OptionManager.add(
-	"type-suffix", "typeSuffix",
-	".type");
+      "type-color-provider", "typeColorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	"type-regexp", "typeRegExp",
-	new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "type-suffix", "typeSuffix",
+      ".type");
 
     m_OptionManager.add(
-	"filled", "filled",
-	false);
+      "type-regexp", "typeRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	"outline-alpha", "outlineAlpha",
-	255, 0, 255);
+      "filled", "filled",
+      false);
 
     m_OptionManager.add(
-	"polygon-bounds", "polygonBounds",
-	false);
+      "outline-alpha", "outlineAlpha",
+      255, 0, 255);
 
     m_OptionManager.add(
-	"label-format", "labelFormat",
-	getDefaultLabelFormat());
+      "polygon-bounds", "polygonBounds",
+      false);
 
     m_OptionManager.add(
-	"label-font", "labelFont",
-	Fonts.getSansFont(14));
+      "label-format", "labelFormat",
+      getDefaultLabelFormat());
 
     m_OptionManager.add(
-	"label-anchor", "labelAnchor",
-	getDefaultLabelAnchor());
+      "label-font", "labelFont",
+      Fonts.getSansFont(14));
 
     m_OptionManager.add(
-	"label-offset-x", "labelOffsetX",
-	getDefaultLabelOffsetX());
+      "label-anchor", "labelAnchor",
+      getDefaultLabelAnchor());
 
     m_OptionManager.add(
-	"label-offset-y", "labelOffsetY",
-	getDefaultLabelOffsetY());
+      "label-offset-x", "labelOffsetX",
+      getDefaultLabelOffsetX());
 
     m_OptionManager.add(
-	"predefined-labels", "predefinedLabels",
-	new BaseString[0]);
+      "label-offset-y", "labelOffsetY",
+      getDefaultLabelOffsetY());
 
     m_OptionManager.add(
-	"vary-shape-color", "varyShapeColor",
-	false);
+      "predefined-labels", "predefinedLabels",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	"shape-color-provider", "shapeColorProvider",
-	new TranslucentColorProvider());
+      "vary-shape-color", "varyShapeColor",
+      false);
 
     m_OptionManager.add(
-	"finder", "finder",
-	new AllFinder());
+      "shape-color-provider", "shapeColorProvider",
+      new TranslucentColorProvider());
 
     m_OptionManager.add(
-	"bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
-	0.0, 0.0, 1.0);
+      "finder", "finder",
+      new AllFinder());
 
     m_OptionManager.add(
-	"overlap-detection", "overlapDetection",
-	new AreaRatio());
+      "bounding-box-fallback-ratio", "boundingBoxFallbackRatio",
+      0.0, 0.0, 1.0);
 
     m_OptionManager.add(
-	"overlap-removal", "overlapRemoval",
-	new PassThrough());
+      "overlap-detection", "overlapDetection",
+      new AreaRatio());
 
     m_OptionManager.add(
-	"use-alternative-location", "useAlternativeLocation",
-	false);
+      "overlap-removal", "overlapRemoval",
+      new PassThrough());
 
     m_OptionManager.add(
-	"alternative-location", "alternativeLocation",
-	new PlaceholderDirectory());
+      "use-alternative-location", "useAlternativeLocation",
+      false);
 
     m_OptionManager.add(
-	"show-object-panel", "showObjectPanel",
-	false);
+      "alternative-location", "alternativeLocation",
+      new PlaceholderDirectory());
+
+    m_OptionManager.add(
+      "show-object-panel", "showObjectPanel",
+      false);
+  }
+
+  /**
+   * Returns the default image reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultImageReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the reader
+   */
+  public void setImageReader(AbstractImageReader value) {
+    m_ImageReader = value;
+    reset();
+  }
+
+  /**
+   * Returns the image reader to use.
+   *
+   * @return		the reader
+   */
+  public AbstractImageReader getImageReader() {
+    return m_ImageReader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageReaderTipText() {
+    return "The image reader to use.";
   }
 
   /**
@@ -889,12 +958,12 @@ public class ObjectLocationsFromReport
    */
   public String labelFormatTipText() {
     return "The label format string to use for the rectangles; "
-	+ "'#' for index, '@' for type and '$' for short type (type suffix "
-	+ "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
-	+ "value associated with the meta-data key 'BLAH'; "
-	+ "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
-	+ "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
-	+ "after the decimal point.";
+      + "'#' for index, '@' for type and '$' for short type (type suffix "
+      + "must be defined for '@' and '$'), '{BLAH}' gets replaced with the "
+      + "value associated with the meta-data key 'BLAH'; "
+      + "for instance: '# @' or '# {BLAH}'; in case of numeric values, use '|.X' "
+      + "to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals "
+      + "after the decimal point.";
   }
 
   /**
@@ -1342,7 +1411,7 @@ public class ObjectLocationsFromReport
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return getImageReader().getFormatExtensions();
   }
 
   /**
@@ -1450,7 +1519,7 @@ public class ObjectLocationsFromReport
     panel.setAlternativeLocation(m_AlternativeLocation);
     panel.setUseAlternativeLocation(m_UseAlternativeLocation);
     report = loadReport(panel, file);
-    panel.getImagePanel().load(file, new JAIImageReader(), -1.0);
+    panel.getImagePanel().load(file, ObjectCopyHelper.copyObject(getImageReader()), -1.0);
     panel.getImagePanel().setAdditionalProperties(report);
 
     postProcessPanel(panel, report, true);
@@ -1471,7 +1540,7 @@ public class ObjectLocationsFromReport
 
     panel  = (CombinedPanel) previewPanel.getComponent();
     report = loadReport(panel, file);
-    panel.getImagePanel().load(file, new JAIImageReader(), panel.getImagePanel().getScale());
+    panel.getImagePanel().load(file, ObjectCopyHelper.copyObject(getImageReader()), panel.getImagePanel().getScale());
     panel.getImagePanel().setAdditionalProperties(report);
 
     postProcessPanel(panel, report, false);

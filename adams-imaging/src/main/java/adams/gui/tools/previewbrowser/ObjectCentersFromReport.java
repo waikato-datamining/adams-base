@@ -20,11 +20,13 @@
 
 package adams.gui.tools.previewbrowser;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.objectfinder.AllFinder;
@@ -55,7 +57,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): tif,jpg,tiff,bmp,gif,png,wbmp,jpeg
+ * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -63,6 +65,11 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-image-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: imageReader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -142,6 +149,11 @@ import java.util.List;
  * <pre>-alternative-location &lt;adams.core.io.PlaceholderDirectory&gt; (property: alternativeLocation)
  * &nbsp;&nbsp;&nbsp;The alternative location to use look for associated reports.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-show-object-panel &lt;boolean&gt; (property: showObjectPanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the panel for selecting located objects is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
@@ -280,6 +292,9 @@ public class ObjectCentersFromReport
     }
   }
 
+  /** the image reader to use. */
+  protected AbstractImageReader m_ImageReader;
+
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -334,8 +349,8 @@ public class ObjectCentersFromReport
   public String globalInfo() {
     return
       "Displays the following image types with an overlay for the objects "
-	+ "stored in the report with the same name (using object prefix '" + ObjectCentersOverlayFromReport.PREFIX_DEFAULT + "'): "
-	+ Utils.arrayToString(getExtensions());
+        + "stored in the report with the same name (using object prefix '" + ObjectCentersOverlayFromReport.PREFIX_DEFAULT + "'): "
+        + Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -344,6 +359,10 @@ public class ObjectCentersFromReport
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "image-reader", "imageReader",
+      getDefaultImageReader());
 
     m_OptionManager.add(
       "prefix", "prefix",
@@ -404,6 +423,44 @@ public class ObjectCentersFromReport
     m_OptionManager.add(
       "show-object-panel", "showObjectPanel",
       false);
+  }
+
+  /**
+   * Returns the default image reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultImageReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the reader
+   */
+  public void setImageReader(AbstractImageReader value) {
+    m_ImageReader = value;
+    reset();
+  }
+
+  /**
+   * Returns the image reader to use.
+   *
+   * @return		the reader
+   */
+  public AbstractImageReader getImageReader() {
+    return m_ImageReader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageReaderTipText() {
+    return "The image reader to use.";
   }
 
   /**
@@ -855,7 +912,7 @@ public class ObjectCentersFromReport
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return getImageReader().getFormatExtensions();
   }
 
   /**
@@ -904,7 +961,7 @@ public class ObjectCentersFromReport
       reportReader.setInput(new PlaceholderFile(reportFile));
       reports = reportReader.read();
       if (reports.size() > 0)
-	result = filterReport(reports.get(0));
+        result = filterReport(reports.get(0));
     }
 
     return result;
@@ -925,7 +982,7 @@ public class ObjectCentersFromReport
     panel.setAlternativeLocation(m_AlternativeLocation);
     panel.setUseAlternativeLocation(m_UseAlternativeLocation);
     report = loadReport(panel, file);
-    panel.getImagePanel().load(file, new JAIImageReader(), -1.0);
+    panel.getImagePanel().load(file, ObjectCopyHelper.copyObject(getImageReader()), -1.0);
     panel.getImagePanel().setAdditionalProperties(report);
 
     return new PreviewPanel(panel, panel.getImagePanel().getPaintPanel());
@@ -944,7 +1001,7 @@ public class ObjectCentersFromReport
 
     panel  = (CombinedPanel) previewPanel.getComponent();
     report = loadReport(panel, file);
-    panel.getImagePanel().load(file, new JAIImageReader(), panel.getImagePanel().getScale());
+    panel.getImagePanel().load(file, ObjectCopyHelper.copyObject(getImageReader()), panel.getImagePanel().getScale());
     panel.getImagePanel().setAdditionalProperties(report);
 
     return previewPanel;

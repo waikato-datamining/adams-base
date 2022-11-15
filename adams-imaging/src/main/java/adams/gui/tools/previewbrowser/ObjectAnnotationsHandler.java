@@ -24,6 +24,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
@@ -56,6 +57,11 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
+ * <pre>-image-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: imageReader)
+ * &nbsp;&nbsp;&nbsp;The image reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
  *
  * <pre>-file-suffix &lt;java.lang.String&gt; (property: fileSuffix)
@@ -114,13 +120,16 @@ import java.util.List;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotationsHandler
-    extends AbstractContentHandler
-    implements ObjectPrefixHandler {
+  extends AbstractContentHandler
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -6655562227841341465L;
 
   /** the file suffix to force (incl extension). */
   protected String m_FileSuffix;
+
+  /** the image reader to use. */
+  protected AbstractImageReader m_ImageReader;
 
   /** the reader to use. */
   protected AbstractReportReader m_Reader;
@@ -167,44 +176,86 @@ public class ObjectAnnotationsHandler
     super.defineOptions();
 
     m_OptionManager.add(
-        "file-suffix", "fileSuffix",
-        "");
+      "image-reader", "imageReader",
+      getDefaultImageReader());
 
     m_OptionManager.add(
-        "reader", "reader",
-        getDefaultReader());
+      "file-suffix", "fileSuffix",
+      "");
 
     m_OptionManager.add(
-        "prefix", "prefix",
-        "Object.");
+      "reader", "reader",
+      getDefaultReader());
 
     m_OptionManager.add(
-        "cleaner", "cleaners",
-        new AnnotationCleaner[0]);
+      "prefix", "prefix",
+      "Object.");
 
     m_OptionManager.add(
-        "shape-plotter", "shapePlotters",
-        new ShapePlotter[0]);
+      "cleaner", "cleaners",
+      new AnnotationCleaner[0]);
 
     m_OptionManager.add(
-        "shape-color", "shapeColors",
-        new AnnotationColors[0]);
+      "shape-plotter", "shapePlotters",
+      new ShapePlotter[0]);
 
     m_OptionManager.add(
-        "outline-plotter", "outlinePlotters",
-        new OutlinePlotter[]{new RectangleOutline()});
+      "shape-color", "shapeColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-        "outline-color", "outlineColors",
-        new AnnotationColors[]{new FixedColor()});
+      "outline-plotter", "outlinePlotters",
+      new OutlinePlotter[]{new RectangleOutline()});
 
     m_OptionManager.add(
-        "label-plotter", "labelPlotters",
-        new LabelPlotter[0]);
+      "outline-color", "outlineColors",
+      new AnnotationColors[]{new FixedColor()});
 
     m_OptionManager.add(
-        "label-color", "labelColors",
-        new AnnotationColors[0]);
+      "label-plotter", "labelPlotters",
+      new LabelPlotter[0]);
+
+    m_OptionManager.add(
+      "label-color", "labelColors",
+      new AnnotationColors[0]);
+  }
+
+  /**
+   * Returns the default image reader.
+   *
+   * @return		the default
+   */
+  protected AbstractImageReader getDefaultImageReader() {
+    return new JAIImageReader();
+  }
+
+  /**
+   * Sets the image reader to use.
+   *
+   * @param value	the reader
+   */
+  public void setImageReader(AbstractImageReader value) {
+    m_ImageReader = value;
+    reset();
+  }
+
+  /**
+   * Returns the image reader to use.
+   *
+   * @return		the reader
+   */
+  public AbstractImageReader getImageReader() {
+    return m_ImageReader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageReaderTipText() {
+    return "The image reader to use.";
   }
 
   /**
@@ -532,7 +583,7 @@ public class ObjectAnnotationsHandler
    */
   @Override
   public String[] getExtensions() {
-    return new JAIImageReader().getFormatExtensions();
+    return getImageReader().getFormatExtensions();
   }
 
   /**
@@ -589,7 +640,7 @@ public class ObjectAnnotationsHandler
     panel.getUndo().setEnabled(false);
     panel.addImageOverlay(overlay);
     report = loadAnnotations(panel, file);
-    panel.load(file, new JAIImageReader(), -1.0);
+    panel.load(file, ObjectCopyHelper.copyObject(getImageReader()), -1.0);
     panel.setAdditionalProperties(report);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
@@ -608,7 +659,7 @@ public class ObjectAnnotationsHandler
 
     panel  = (ImagePanel) previewPanel.getComponent();
     report = loadAnnotations(panel, file);
-    panel.load(file, new JAIImageReader(), panel.getScale());
+    panel.load(file, ObjectCopyHelper.copyObject(getImageReader()), panel.getScale());
     panel.setAdditionalProperties(report);
 
     return previewPanel;
