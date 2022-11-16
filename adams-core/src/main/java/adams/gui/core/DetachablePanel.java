@@ -25,6 +25,8 @@ import adams.core.CleanUpHandler;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,6 +34,8 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Ancestor for panels that can be detached in a frame and also reattached again.
@@ -43,6 +47,10 @@ public class DetachablePanel
   implements PopupMenuProvider, CleanUpHandler {
 
   private static final long serialVersionUID = -2818808520522758309L;
+
+  public final static String DETACH_ICON = "maximize.png";
+
+  public final static String REATTACH_ICON = "minimize.png";
 
   /** the content panel. */
   protected BasePanel m_ContentPanel;
@@ -68,6 +76,12 @@ public class DetachablePanel
   /** the last position of the frame. */
   protected Point m_LastFramePosition;
 
+  /** the detach listeners. */
+  protected Set<ChangeListener> m_DetachListeners;
+
+  /** the reattach listeners. */
+  protected Set<ChangeListener> m_ReattachListeners;
+
   /**
    * Initializes the members.
    */
@@ -79,6 +93,8 @@ public class DetachablePanel
     m_DetachedFrame       = null;
     m_LastFrameSize       = null;
     m_LastFramePosition   = null;
+    m_DetachListeners     = new HashSet<>();
+    m_ReattachListeners   = new HashSet<>();
   }
 
   /**
@@ -98,7 +114,7 @@ public class DetachablePanel
     panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     m_PanelReattach.add(panel, BorderLayout.CENTER);
 
-    m_ButtonReattach = new BaseButton("Reattach");
+    m_ButtonReattach = new BaseButton("Reattach", ImageManager.getIcon(REATTACH_ICON));
     m_ButtonReattach.addActionListener((ActionEvent e) -> reattach());
     panel.add(m_ButtonReattach);
   }
@@ -152,6 +168,8 @@ public class DetachablePanel
     revalidate();
     doLayout();
     repaint();
+
+    notifyDetachListeners();
   }
 
   /**
@@ -172,6 +190,8 @@ public class DetachablePanel
 
     m_DetachedFrame.dispose();
     m_DetachedFrame = null;
+
+    notifyReattachListeners();
   }
 
   /**
@@ -204,12 +224,12 @@ public class DetachablePanel
     result = new JPopupMenu();
 
     if (isDetached()) {
-      menuitem = new JMenuItem("Reattach", ImageManager.getIcon("minimize.png"));
+      menuitem = new JMenuItem("Reattach", ImageManager.getIcon(REATTACH_ICON));
       menuitem.addActionListener((ActionEvent e) -> reattach());
       result.add(menuitem);
     }
     else {
-      menuitem = new JMenuItem("Detach", ImageManager.getIcon("maximize.png"));
+      menuitem = new JMenuItem("Detach", ImageManager.getIcon(DETACH_ICON));
       menuitem.addActionListener((ActionEvent e) -> detach());
       result.add(menuitem);
     }
@@ -251,10 +271,84 @@ public class DetachablePanel
   }
 
   /**
+   * Adds the listener for detach events.
+   *
+   * @param l		the listener to add
+   */
+  public void addDetachListener(ChangeListener l) {
+    m_DetachListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for detach events.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeDetachListener(ChangeListener l) {
+    m_DetachListeners.remove(l);
+  }
+
+  /**
+   * Removes all detach event listeners.
+   */
+  public void clearDetachListeners() {
+    m_DetachListeners.clear();
+  }
+
+  /**
+   * Notifies all detach listeners.
+   */
+  protected void notifyDetachListeners() {
+    ChangeEvent		e;
+    
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_DetachListeners.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
+  }
+
+  /**
+   * Adds the listener for reattach events.
+   *
+   * @param l		the listener to add
+   */
+  public void addReattachListener(ChangeListener l) {
+    m_ReattachListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for reattach events.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeReattachListener(ChangeListener l) {
+    m_ReattachListeners.remove(l);
+  }
+
+  /**
+   * Removes all reattach event listeners.
+   */
+  public void clearReattachListeners() {
+    m_ReattachListeners.clear();
+  }
+
+  /**
+   * Notifies all reattach listeners.
+   */
+  protected void notifyReattachListeners() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ReattachListeners.toArray(new ChangeListener[0]))
+      l.stateChanged(e);
+  }
+
+  /**
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
     if (isDetached())
       reattach();
+    m_DetachListeners.clear();
+    m_ReattachListeners.clear();
   }
 }
