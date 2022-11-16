@@ -28,9 +28,11 @@ import adams.flow.transformer.locateobjects.LocatedObjectFilter;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.core.BaseButton;
-import adams.gui.core.BaseList;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.event.SearchEvent;
 import adams.gui.visualization.object.objectannotations.cleaning.AnnotationCleaner;
 import adams.gui.visualization.object.objectannotations.colors.AnnotationColors;
 import adams.gui.visualization.object.objectannotations.colors.FixedColor;
@@ -43,18 +45,18 @@ import adams.gui.visualization.object.objectannotations.shape.ShapePlotter;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
-import javax.swing.DefaultListModel;
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -84,11 +86,11 @@ public class ObjectAnnotations
     /** the located objects. */
     protected LocatedObjects m_LocatedObjects;
 
-    /** the list with the objects. */
-    protected BaseList m_ListObjects;
+    /** the table with the objects. */
+    protected SortableAndSearchableTable m_TableObjects;
 
-    /** the list model with the objects. */
-    protected DefaultListModel<LocatedObject> m_ModelObjects;
+    /** the table model with the objects. */
+    protected LocatedObjectsTableModel m_ModelObjects;
 
     /** the label for counts. */
     protected JLabel m_LabelCounts;
@@ -101,6 +103,9 @@ public class ObjectAnnotations
 
     /** the button for inverting the selection. */
     protected BaseButton m_ButtonInvert;
+
+    /** the panel for searching the table. */
+    protected SearchPanel m_PanelSearch;
 
     /**
      * Initializes the members.
@@ -125,10 +130,12 @@ public class ObjectAnnotations
 
       setLayout(new BorderLayout());
 
-      m_ModelObjects = new DefaultListModel<>();
-      m_ListObjects = new BaseList(m_ModelObjects);
-      m_ListObjects.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-      m_ListObjects.addListSelectionListener((ListSelectionEvent e) -> {
+      m_ModelObjects = new LocatedObjectsTableModel(LocatedObjectsTableModel.MetaDataDisplay.MULTI_COLUMN);
+      m_TableObjects = new SortableAndSearchableTable(m_ModelObjects);
+      m_TableObjects.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
+      m_TableObjects.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+      m_TableObjects.setShowSimplePopupMenus(true);
+      m_TableObjects.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
 	updateCounts();
 	if (m_Owner == null)
 	  return;
@@ -138,10 +145,10 @@ public class ObjectAnnotations
 	  return;
 	m_Owner.getOwner().update();
       });
-      add(new BaseScrollPane(m_ListObjects), BorderLayout.CENTER);
+      add(new BaseScrollPane(m_TableObjects), BorderLayout.CENTER);
 
       // bottom panel
-      panelBottom = new JPanel(new GridLayout(2, 1, 0, 0));
+      panelBottom = new JPanel(new GridLayout(3, 1, 0, 0));
       add(panelBottom, BorderLayout.SOUTH);
 
       // counts
@@ -156,18 +163,26 @@ public class ObjectAnnotations
 
       m_ButtonAll = new BaseButton("All");
       m_ButtonAll.setToolTipText("Selects all objects");
-      m_ButtonAll.addActionListener((ActionEvent) -> m_ListObjects.selectAll());
+      m_ButtonAll.addActionListener((ActionEvent) -> m_TableObjects.selectAll());
       panel.add(m_ButtonAll);
 
       m_ButtonNone = new BaseButton("None");
       m_ButtonNone.setToolTipText("Removes any selection");
-      m_ButtonNone.addActionListener((ActionEvent) -> m_ListObjects.selectNone());
+      m_ButtonNone.addActionListener((ActionEvent) -> m_TableObjects.selectNone());
       panel.add(m_ButtonNone);
 
       m_ButtonInvert = new BaseButton("Invert");
       m_ButtonInvert.setToolTipText("Inverts the selection");
-      m_ButtonInvert.addActionListener((ActionEvent) -> m_ListObjects.invertSelection());
+      m_ButtonInvert.addActionListener((ActionEvent) -> m_TableObjects.invertSelection());
       panel.add(m_ButtonInvert);
+
+      setPreferredSize(new Dimension(250, 0));
+
+      m_PanelSearch = new SearchPanel(SearchPanel.LayoutType.HORIZONTAL, false);
+      m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
+      m_PanelSearch.addSearchListener((SearchEvent e) ->
+	m_TableObjects.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+      panelBottom.add(m_PanelSearch);
     }
 
     /**
@@ -203,7 +218,7 @@ public class ObjectAnnotations
      * Updates the labels with the counts.
      */
     protected void updateCounts() {
-      m_LabelCounts.setText("Total: " + m_ModelObjects.getSize() + ", Selected: " + m_ListObjects.getSelectedIndices().length);
+      m_LabelCounts.setText("Total: " + m_ModelObjects.getRowCount() + ", Selected: " + m_TableObjects.getSelectedRows().length);
     }
 
     /**
@@ -238,7 +253,8 @@ public class ObjectAnnotations
 	return result;
       });
       update();
-      m_ListObjects.selectAll();
+      m_TableObjects.setOptimalColumnWidths(new int[]{0, 1, 2, 3, 4});
+      m_TableObjects.selectAll();
     }
 
     /**
@@ -254,28 +270,26 @@ public class ObjectAnnotations
      * Updates the display.
      */
     public void update() {
-      DefaultListModel<LocatedObject>	model;
-      List selectedObjs;
-      TIntList selected;
-      int				index;
+      LocatedObjectsTableModel	model;
+      int[]			selRows;
+      TIntList 			selected;
+      int			index;
 
       if (m_Owner == null)
 	return;
 
-      selectedObjs = m_ListObjects.getSelectedValuesList();
-      model = new DefaultListModel<>();
-      for (LocatedObject obj: m_LocatedObjects)
-	model.addElement(obj);
+      selRows = m_TableObjects.getSelectedRows();
+      model   = new LocatedObjectsTableModel(m_ModelObjects.getMetaDataDisplay(), m_LocatedObjects);
 
       m_ModelObjects = model;
-      m_ListObjects.setModel(m_ModelObjects);
+      m_TableObjects.setModel(m_ModelObjects);
       selected = new TIntArrayList();
-      for (Object obj: selectedObjs) {
-	index = m_ModelObjects.indexOf(obj);
+      for (int selRow: selRows) {
+        index = model.indexOf(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
 	if (index > -1)
 	  selected.add(index);
       }
-      m_ListObjects.setSelectedIndices(selected.toArray());
+      m_TableObjects.setSelectedRows(selected.toArray());
     }
 
     /**
@@ -285,15 +299,15 @@ public class ObjectAnnotations
      */
     public LocatedObjectFilter getFilter() {
       Set<LocatedObject> 	selectedSet;
-      List			selectedObjs;
+      int[]			selRows;
 
       if (m_ModelObjects == null)
 	return new AcceptAllLocatedObjectsFilter();
 
-      selectedObjs = m_ListObjects.getSelectedValuesList();
-      selectedSet  = new HashSet<>();
-      for (Object obj: selectedObjs)
-	selectedSet.add((LocatedObject) obj);
+      selectedSet = new HashSet<>();
+      selRows     = m_TableObjects.getSelectedRows();
+      for (int selRow: selRows)
+        selectedSet.add(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
 
       return new AbstractObjectOverlayFromReport.SelectedObjectFilter(selectedSet);
     }
@@ -851,10 +865,12 @@ public class ObjectAnnotations
     if (filter == null)
       filter = new AcceptAllLocatedObjectsFilter();
     annotations = new LocatedObjects();
-    for (LocatedObject obj: m_Annotations) {
-      if (!filter.accept(obj))
-	continue;
-      annotations.add(obj);
+    if (m_Annotations != null) {
+      for (LocatedObject obj : m_Annotations) {
+	if (!filter.accept(obj))
+	  continue;
+	annotations.add(obj);
+      }
     }
 
     doPaintObjects(panel, g, annotations);
