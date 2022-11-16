@@ -176,13 +176,13 @@ public class ObjectAnnotations
       m_ButtonInvert.addActionListener((ActionEvent) -> m_TableObjects.invertSelection());
       panel.add(m_ButtonInvert);
 
-      setPreferredSize(new Dimension(250, 0));
-
       m_PanelSearch = new SearchPanel(SearchPanel.LayoutType.HORIZONTAL, false);
       m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
       m_PanelSearch.addSearchListener((SearchEvent e) ->
 	m_TableObjects.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
       panelBottom.add(m_PanelSearch);
+
+      setPreferredSize(new Dimension(250, 0));
     }
 
     /**
