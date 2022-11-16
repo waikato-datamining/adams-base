@@ -87,7 +87,7 @@ public class SplitPanelWithOptionalComponents
     m_SplitPane = new BaseSplitPane(m_Orientation);
     m_SplitPane.setOneTouchExpandable(true);
 
-    m_LeftDetachablePanel = new DetachablePanel();
+    m_LeftDetachablePanel  = new DetachablePanel();
     m_RightDetachablePanel = new DetachablePanel();
   }
 
@@ -248,7 +248,7 @@ public class SplitPanelWithOptionalComponents
 
   /**
    * Returns whether the left component is detachable.
-   * 
+   *
    * @return		true if detachable
    */
   public boolean isLeftDetachable() {
@@ -311,6 +311,42 @@ public class SplitPanelWithOptionalComponents
   }
 
   /**
+   * Sets the frame title for the detached left component.
+   *
+   * @param value	the title
+   */
+  public void setLeftDetachedFrameTitle(String value) {
+    m_LeftDetachablePanel.setFrameTitle(value);
+  }
+
+  /**
+   * Returns the frame title for the detached left component.
+   *
+   * @return		the title
+   */
+  public String getLeftDetachedFrameTitle() {
+    return m_LeftDetachablePanel.getFrameTitle();
+  }
+
+  /**
+   * Sets the frame title for the detached right component.
+   *
+   * @param value	the title
+   */
+  public void setRightDetachedFrameTitle(String value) {
+    m_RightDetachablePanel.setFrameTitle(value);
+  }
+
+  /**
+   * Returns the frame title for the detached right component.
+   *
+   * @return		the title
+   */
+  public String getRightDetachedFrameTitle() {
+    return m_RightDetachablePanel.getFrameTitle();
+  }
+
+  /**
    * Return the divider location.
    *
    * @param location	the divider location
@@ -345,16 +381,16 @@ public class SplitPanelWithOptionalComponents
 
     if (left) {
       if (m_LeftDetachable) {
-        m_LeftDetachablePanel.clearReattachListeners();
-        m_LeftDetachablePanel.clearDetachListeners();
-        m_LeftDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
-        m_LeftDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
-        button.addActionListener((ActionEvent e) -> {
-          if (m_LeftDetachablePanel.isDetached())
+	m_LeftDetachablePanel.clearReattachListeners();
+	m_LeftDetachablePanel.clearDetachListeners();
+	m_LeftDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
+	m_LeftDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
+	button.addActionListener((ActionEvent e) -> {
+	  if (m_LeftDetachablePanel.isDetached())
 	    m_LeftDetachablePanel.reattach();
-          else
+	  else
 	    m_LeftDetachablePanel.detach();
-        });
+	});
 	m_LeftDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
 	m_LeftDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
 	return m_LeftDetachablePanel;
@@ -365,19 +401,19 @@ public class SplitPanelWithOptionalComponents
     }
     else {
       if (m_RightDetachable) {
-        m_RightDetachablePanel.clearReattachListeners();
-        m_RightDetachablePanel.clearDetachListeners();
-        m_RightDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
-        m_RightDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
-        button.addActionListener((ActionEvent e) -> {
-          if (m_RightDetachablePanel.isDetached())
-            m_RightDetachablePanel.reattach();
-          else
-            m_RightDetachablePanel.detach();
-        });
-        m_RightDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
-        m_RightDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
-        return m_RightDetachablePanel;
+	m_RightDetachablePanel.clearReattachListeners();
+	m_RightDetachablePanel.clearDetachListeners();
+	m_RightDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
+	m_RightDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
+	button.addActionListener((ActionEvent e) -> {
+	  if (m_RightDetachablePanel.isDetached())
+	    m_RightDetachablePanel.reattach();
+	  else
+	    m_RightDetachablePanel.detach();
+	});
+	m_RightDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
+	m_RightDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
+	return m_RightDetachablePanel;
       }
       else {
 	return component;
