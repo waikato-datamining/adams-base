@@ -1410,6 +1410,7 @@ public class ImagePanel
     add(m_MainSplitPane, BorderLayout.CENTER);
 
     m_LeftSplitPanel = new SplitPanelWithOptionalComponents();
+    m_LeftSplitPanel.setLeftDetachable(true);
     m_LeftSplitPanel.setDividerLocation(200);
     m_LeftSplitPanel.setUISettingsParameters(getClass());
     m_MainSplitPane.setLeftComponent(m_LeftSplitPanel);
@@ -2052,6 +2053,24 @@ public class ImagePanel
    */
   public void removeLeftPanel() {
     m_LeftSplitPanel.removeLeftComponent();
+  }
+
+  /**
+   * Sets the frame title for the detached left component.
+   *
+   * @param value	the title
+   */
+  public void setLeftDetachedFrameTitle(String value) {
+    m_LeftSplitPanel.setLeftDetachedFrameTitle(value);
+  }
+
+  /**
+   * Returns the frame title for the detached left component.
+   *
+   * @return		the title
+   */
+  public String getLeftDetachedFrameTitle() {
+    return m_LeftSplitPanel.getLeftDetachedFrameTitle();
   }
 
   /**

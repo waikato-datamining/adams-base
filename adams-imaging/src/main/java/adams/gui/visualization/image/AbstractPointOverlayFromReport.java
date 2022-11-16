@@ -929,6 +929,7 @@ public abstract class AbstractPointOverlayFromReport
     if (panel.getOwner() == null)
       return;
 
+    panel.getOwner().setLeftDetachedFrameTitle("Points");
     if (m_ShowPointPanel)
       panel.getOwner().setLeftPanel(getLocatedPointsPanel());
     else

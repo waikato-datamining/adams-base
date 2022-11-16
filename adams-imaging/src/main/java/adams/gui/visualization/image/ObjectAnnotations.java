@@ -725,6 +725,7 @@ public class ObjectAnnotations
     if (panel.getOwner() == null)
       return;
 
+    panel.getOwner().setLeftDetachedFrameTitle("Objects");
     if (m_ShowObjectPanel)
       panel.getOwner().setLeftPanel(getLocatedObjectsPanel());
     else
