@@ -272,6 +272,7 @@ public class ObjectAnnotations
     public void update() {
       LocatedObjectsTableModel	model;
       int[]			selRows;
+      int			actRow;
       TIntList 			selected;
       int			index;
 
@@ -285,7 +286,10 @@ public class ObjectAnnotations
       m_TableObjects.setModel(m_ModelObjects);
       selected = new TIntArrayList();
       for (int selRow: selRows) {
-        index = model.indexOf(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
+        actRow = m_TableObjects.getActualRow(selRow);
+        if (actRow == -1)
+          continue;
+        index = model.indexOf(m_ModelObjects.getObjects().get(actRow));
 	if (index > -1)
 	  selected.add(index);
       }

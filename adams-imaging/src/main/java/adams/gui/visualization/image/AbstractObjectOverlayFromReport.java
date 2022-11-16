@@ -181,7 +181,7 @@ public abstract class AbstractObjectOverlayFromReport
       m_TableObjects.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
       m_TableObjects.setShowSimplePopupMenus(true);
       m_TableObjects.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-        updateCounts();
+	updateCounts();
 	if (m_Owner == null)
 	  return;
 	if (m_Owner.getOwner() == null)
@@ -224,7 +224,7 @@ public abstract class AbstractObjectOverlayFromReport
       m_PanelSearch = new SearchPanel(SearchPanel.LayoutType.HORIZONTAL, false);
       m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
       m_PanelSearch.addSearchListener((SearchEvent e) ->
-        m_TableObjects.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+	m_TableObjects.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
       panelBottom.add(m_PanelSearch);
 
       setPreferredSize(new Dimension(250, 0));
@@ -247,7 +247,7 @@ public abstract class AbstractObjectOverlayFromReport
     public void setOwner(AbstractObjectOverlayFromReport value) {
       m_Owner = value;
       if (m_Owner != null)
-        update();
+	update();
     }
 
     /**
@@ -276,13 +276,13 @@ public abstract class AbstractObjectOverlayFromReport
       Set<LocatedObject> 	newObjs;
 
       if (value == null)
-        return;
+	return;
 
       // update necessary?
       currentObjs = new HashSet<>(m_LocatedObjects);
       newObjs     = new HashSet<>(value);
       if (currentObjs.containsAll(newObjs) && newObjs.containsAll(currentObjs))
-        return;
+	return;
 
       m_LocatedObjects = new LocatedObjects(value);
       m_LocatedObjects.sort((LocatedObject o1, LocatedObject o2) -> {
@@ -316,11 +316,12 @@ public abstract class AbstractObjectOverlayFromReport
     public void update() {
       LocatedObjectsTableModel	model;
       int[]			selRows;
+      int			actRow;
       TIntList 			selected;
       int			index;
 
       if (m_Owner == null)
-        return;
+	return;
 
       selRows = m_TableObjects.getSelectedRows();
       model   = new LocatedObjectsTableModel(m_ModelObjects.getMetaDataDisplay(), m_LocatedObjects);
@@ -329,9 +330,12 @@ public abstract class AbstractObjectOverlayFromReport
       m_TableObjects.setModel(m_ModelObjects);
       selected = new TIntArrayList();
       for (int selRow: selRows) {
-        index = model.indexOf(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
-        if (index > -1)
-          selected.add(index);
+        actRow = m_TableObjects.getActualRow(selRow);
+        if (actRow == -1)
+          continue;
+	index = model.indexOf(m_ModelObjects.getObjects().get(actRow));
+	if (index > -1)
+	  selected.add(index);
       }
       m_TableObjects.setSelectedRows(selected.toArray());
     }
@@ -346,12 +350,12 @@ public abstract class AbstractObjectOverlayFromReport
       int[]			selRows;
 
       if (m_ModelObjects == null)
-        return new AcceptAllLocatedObjectsFilter();
+	return new AcceptAllLocatedObjectsFilter();
 
       selectedSet = new HashSet<>();
       selRows     = m_TableObjects.getSelectedRows();
       for (int selRow: selRows)
-        selectedSet.add(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
+	selectedSet.add(m_ModelObjects.getObjects().get(m_TableObjects.getActualRow(selRow)));
 
       return new AbstractObjectOverlayFromReport.SelectedObjectFilter(selectedSet);
     }
@@ -380,64 +384,64 @@ public abstract class AbstractObjectOverlayFromReport
     super.defineOptions();
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	PREFIX_DEFAULT);
+      "prefix", "prefix",
+      PREFIX_DEFAULT);
 
     m_OptionManager.add(
-	"color", "color",
-	Color.RED);
+      "color", "color",
+      Color.RED);
 
     m_OptionManager.add(
-	"use-colors-per-type", "useColorsPerType",
-	false);
+      "use-colors-per-type", "useColorsPerType",
+      false);
 
     m_OptionManager.add(
-	"type-color-provider", "typeColorProvider",
-	new DefaultColorProvider());
+      "type-color-provider", "typeColorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	"type-suffix", "typeSuffix",
-	".type");
+      "type-suffix", "typeSuffix",
+      ".type");
 
     m_OptionManager.add(
-	"type-regexp", "typeRegExp",
-	new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "type-regexp", "typeRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	"label-format", "labelFormat",
-	"#");
+      "label-format", "labelFormat",
+      "#");
 
     m_OptionManager.add(
-	"label-font", "labelFont",
-	Fonts.getSansFont(14));
+      "label-font", "labelFont",
+      Fonts.getSansFont(14));
 
     m_OptionManager.add(
-	"label-anchor", "labelAnchor",
-	getDefaultLabelAnchor());
+      "label-anchor", "labelAnchor",
+      getDefaultLabelAnchor());
 
     m_OptionManager.add(
-	"label-offset-x", "labelOffsetX",
-	getDefaultLabelOffsetX());
+      "label-offset-x", "labelOffsetX",
+      getDefaultLabelOffsetX());
 
     m_OptionManager.add(
-	"label-offset-y", "labelOffsetY",
-	getDefaultLabelOffsetY());
+      "label-offset-y", "labelOffsetY",
+      getDefaultLabelOffsetY());
 
     m_OptionManager.add(
-	"predefined-labels", "predefinedLabels",
-	new BaseString[0]);
+      "predefined-labels", "predefinedLabels",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	"vary-shape-color", "varyShapeColor",
-	false);
+      "vary-shape-color", "varyShapeColor",
+      false);
 
     m_OptionManager.add(
-	"shape-color-provider", "shapeColorProvider",
-	new TranslucentColorProvider());
+      "shape-color-provider", "shapeColorProvider",
+      new TranslucentColorProvider());
 
     m_OptionManager.add(
-	"show-object-panel", "showObjectPanel",
-	false);
+      "show-object-panel", "showObjectPanel",
+      false);
   }
 
   /**
@@ -1088,7 +1092,7 @@ public abstract class AbstractObjectOverlayFromReport
     if (updated) {
       notifyLocationsUpdatedListeners();
       if (m_ShowObjectPanel)
-        m_PanelObjects.setLocatedObjects(m_Overlays.getAllObjects());
+	m_PanelObjects.setLocatedObjects(m_Overlays.getAllObjects());
     }
   }
 
@@ -1104,15 +1108,15 @@ public abstract class AbstractObjectOverlayFromReport
     if (!getTypeSuffix().isEmpty()) {
       menuitem = new JMenuItem("Displayed types", ImageManager.getIcon("objecttypes.gif"));
       menuitem.addActionListener((ActionEvent e) -> {
-        String type = GUIHelper.showInputDialog(source, "Regular expression for type", getTypeRegExp().getValue());
-        if (type == null)
-          return;
-        if (!getTypeRegExp().isValid(type)) {
-          GUIHelper.showErrorMessage(source, "Invalid regular expression: " + type);
-          return;
+	String type = GUIHelper.showInputDialog(source, "Regular expression for type", getTypeRegExp().getValue());
+	if (type == null)
+	  return;
+	if (!getTypeRegExp().isValid(type)) {
+	  GUIHelper.showErrorMessage(source, "Invalid regular expression: " + type);
+	  return;
 	}
 	setTypeRegExp(new BaseRegExp(type));
-        source.update();
+	source.update();
       });
       menu.add(menuitem);
     }
