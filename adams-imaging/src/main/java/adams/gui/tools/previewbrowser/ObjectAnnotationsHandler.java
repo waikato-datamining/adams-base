@@ -115,6 +115,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-show-object-panel &lt;boolean&gt; (property: showObjectPanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the panel for selecting located objects is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -157,6 +162,9 @@ public class ObjectAnnotationsHandler
 
   /** the colorizers for the labels. */
   protected AnnotationColors[] m_LabelColors;
+
+  /** whether to show the located object panel. */
+  protected boolean m_ShowObjectPanel;
 
   /**
    * Returns a string describing the object.
@@ -218,6 +226,10 @@ public class ObjectAnnotationsHandler
     m_OptionManager.add(
       "label-color", "labelColors",
       new AnnotationColors[0]);
+
+    m_OptionManager.add(
+      "show-object-panel", "showObjectPanel",
+      false);
   }
 
   /**
@@ -576,6 +588,35 @@ public class ObjectAnnotationsHandler
   }
 
   /**
+   * Sets whether to show the panel with the located panels.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowObjectPanel(boolean value) {
+    m_ShowObjectPanel = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the panel with the located objects.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowObjectPanel() {
+    return m_ShowObjectPanel;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showObjectPanelTipText() {
+    return "If enabled, the panel for selecting located objects is being displayed.";
+  }
+
+  /**
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
@@ -636,6 +677,7 @@ public class ObjectAnnotationsHandler
     overlay.setOutlineColors(ObjectCopyHelper.copyObjects(m_OutlineColors));
     overlay.setLabelPlotters(ObjectCopyHelper.copyObjects(m_LabelPlotters));
     overlay.setLabelColors(ObjectCopyHelper.copyObjects(m_LabelColors));
+    overlay.setShowObjectPanel(m_ShowObjectPanel);
     panel  = new ImagePanel();
     panel.getUndo().setEnabled(false);
     panel.addImageOverlay(overlay);
