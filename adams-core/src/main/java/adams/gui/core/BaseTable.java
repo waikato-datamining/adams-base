@@ -15,7 +15,7 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -565,6 +565,29 @@ public class BaseTable
   public void setOptimalColumnWidthBounded(final int column, final int max) {
     if (isVisible())
       SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthBounded(column, max));
+  }
+
+  /**
+   * Sets the optimal column widths for the specified columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param columns	the columns to resize
+   */
+  public void setOptimalColumnWidths(int[] columns) {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidths(columns));
+  }
+
+  /**
+   * Sets the optimal columns width for the specified columns. AutoResize must be set
+   * to BaseTable.AUTO_RESIZE_OFF.
+   *
+   * @param columns	the columns to resize
+   * @param max		the maximum width
+   */
+  public void setOptimalColumnWidthsBounded(final int[] columns, final int max) {
+    if (isVisible())
+      SwingUtilities.invokeLater(() -> getTableHelper().setOptimalColumnWidthsBounded(columns, max));
   }
 
   /**
