@@ -53,6 +53,7 @@ import adams.gui.core.MouseUtils;
 import adams.gui.core.PopupMenuCustomizer;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SplitPanelWithOptionalComponents;
 import adams.gui.core.Undo;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.core.UndoPanel;
@@ -78,7 +79,6 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -136,137 +136,6 @@ public class ImagePanel
 
   /** the tab title for the log. */
   public static final String TAB_LOG = "Log";
-
-  /**
-   * A panel that has an optional left panel.
-   */
-  public static class SplitPanelWithOptionalLeftPanel
-    extends BasePanel {
-
-    /** the split pane. */
-    protected BaseSplitPane m_SplitPane;
-
-    /** the left panel. */
-    protected JComponent m_LeftComponent;
-
-    /** the right panel. */
-    protected JComponent m_RightComponent;
-
-    /** the dummy right panel. */
-    protected JPanel m_RightPanelDummy;
-
-    /**
-     * Initializes the members.
-     */
-    @Override
-    protected void initGUI() {
-      super.initGUI();
-
-      setLayout(new BorderLayout());
-
-      m_SplitPane       = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
-      m_SplitPane.setOneTouchExpandable(true);
-      m_SplitPane.setDividerLocation(200);
-      m_SplitPane.setUISettingsParameters(ImagePanel.class, "left-split-divider-location");
-      // TODO m_SplitPane.setUISettingsParameters();
-      m_RightPanelDummy = new JPanel();
-    }
-
-    /**
-     * Finishes the initialization.
-     */
-    @Override
-    protected void finishInit() {
-      super.finishInit();
-      update();
-    }
-
-    /**
-     * Sets the left component.
-     *
-     * @param value	the left component, can be null
-     */
-    public void setLeftComponent(JPanel value) {
-      m_LeftComponent = value;
-      update();
-    }
-
-    /**
-     * Returns the left component.
-     *
-     * @return		the left component, can be null
-     */
-    public JComponent getLeftComponent() {
-      return m_LeftComponent;
-    }
-
-    /**
-     * Removes the left component.
-     */
-    public void removeLeftComponent() {
-      setLeftComponent(null);
-    }
-
-    /**
-     * Sets the right component.
-     *
-     * @param value 	the right component
-     */
-    public void setRightComponent(JComponent value) {
-      m_RightComponent = value;
-      update();
-    }
-
-    /**
-     * Returns the right component.
-     *
-     * @return		the right component
-     */
-    public JComponent getRightComponent() {
-      return m_RightComponent;
-    }
-
-    /**
-     * Return the divider location.
-     *
-     * @return		the divider location
-     */
-    public void setDividerLocation(int location) {
-      m_SplitPane.setDividerLocation(location);
-    }
-
-    /**
-     * Return the divider location.
-     *
-     * @return		the divider location
-     */
-    public int getDividerLocation() {
-      return m_SplitPane.getDividerLocation();
-    }
-
-    /**
-     * Updates the layout.
-     */
-    protected void update() {
-      JComponent rightComponent;
-
-      removeAll();
-
-      rightComponent = (m_RightComponent == null) ? m_RightPanelDummy : m_RightComponent;
-
-      if (m_LeftComponent == null) {
-        add(rightComponent, BorderLayout.CENTER);
-      }
-      else {
-        add(m_SplitPane, BorderLayout.CENTER);
-        m_SplitPane.setLeftComponent(m_LeftComponent);
-        m_SplitPane.setRightComponent(rightComponent);
-      }
-
-      doLayout();
-      repaint();
-    }
-  }
 
   /**
    * The panel used for painting.
@@ -1467,7 +1336,7 @@ public class ImagePanel
   protected BaseSplitPane m_MainSplitPane;
 
   /** the left pane for displaying other panels. */
-  protected SplitPanelWithOptionalLeftPanel m_LeftSplitPanel;
+  protected SplitPanelWithOptionalComponents m_LeftSplitPanel;
 
   /** the background color. */
   protected Color m_BackgroundColor;
@@ -1540,7 +1409,9 @@ public class ImagePanel
     m_MainSplitPane.setResizeWeight(1.0);
     add(m_MainSplitPane, BorderLayout.CENTER);
 
-    m_LeftSplitPanel = new SplitPanelWithOptionalLeftPanel();
+    m_LeftSplitPanel = new SplitPanelWithOptionalComponents();
+    m_LeftSplitPanel.setDividerLocation(200);
+    m_LeftSplitPanel.setUISettingsParameters(getClass());
     m_MainSplitPane.setLeftComponent(m_LeftSplitPanel);
     m_MainSplitPane.setLeftComponentHidden(false);
     removeLeftPanel();
