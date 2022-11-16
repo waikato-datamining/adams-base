@@ -15,7 +15,7 @@
 
 /*
  * JTableHelper.java
- * Copyright (C) 2005-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2005-2022 University of Waikato, Hamilton, New Zealand
  * Copyright http://fopps.sourceforge.net/
  */
 
@@ -28,6 +28,8 @@ import adams.core.logging.LoggingHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -49,10 +51,10 @@ import java.util.logging.Level;
  * @see weka.gui.JTableHelper
  */
 @MixedCopyright(
-    copyright = "2002, 2003 Oliver Wieland",
-    license = License.GPL2,
-    url = "http://fopps.sourceforge.net/",
-    note = "org.fopps.ui.EnhancedTable"
+  copyright = "2002, 2003 Oliver Wieland",
+  license = License.GPL2,
+  url = "http://fopps.sourceforge.net/",
+  note = "org.fopps.ui.EnhancedTable"
 )
 public class JTableHelper {
 
@@ -161,17 +163,17 @@ public class JTableHelper {
     dec      = (int) Math.ceil((double) rowCount / (double) MAX_ROWS);
     try {
       for (row = rowCount - 1; row >= 0; row -= dec) {
-        cell = table.getValueAt(row, col);
-        if (cell instanceof String)
-          cellStr = (String) cell;
+	cell = table.getValueAt(row, col);
+	if (cell instanceof String)
+	  cellStr = (String) cell;
 	else
 	  cellStr = "" + cell;
-        if (cellStr.length() > MAX_CHARS)
-          continue;
-        c = table.prepareRenderer(
-            table.getCellRenderer(row, col),
-            row, col);
-        result = Math.max(result, c.getPreferredSize().width + 10);
+	if (cellStr.length() > MAX_CHARS)
+	  continue;
+	c = table.prepareRenderer(
+	  table.getCellRenderer(row, col),
+	  row, col);
+	result = Math.max(result, c.getPreferredSize().width + 10);
 	if (max > -1) {
 	  if (result >= max) {
 	    result = max;
@@ -252,9 +254,9 @@ public class JTableHelper {
 	return -1;
       // Not explicitly impossible
       Component c = h.getTableCellRendererComponent(
-          table,
-          column.getHeaderValue(),
-          false, false, -1, col);
+	table,
+	column.getHeaderValue(),
+	false, false, -1, col);
       width = c.getPreferredSize().width + 5;
     }
 
@@ -307,16 +309,88 @@ public class JTableHelper {
       width = calcColumnWidthBounded(table, col, max);
 
       if (width >= 0) {
-        SwingUtilities.invokeLater(() -> {
-          JTableHeader header = table.getTableHeader();
-          if (col < table.getColumnModel().getColumnCount()) {
-            TableColumn column = table.getColumnModel().getColumn(col);
-            column.setPreferredWidth(width);
-            table.doLayout();
-            header.repaint();
-          }
-        });
+	SwingUtilities.invokeLater(() -> {
+	  JTableHeader header = table.getTableHeader();
+	  if (col < table.getColumnModel().getColumnCount()) {
+	    TableColumn column = table.getColumnModel().getColumn(col);
+	    column.setPreferredWidth(width);
+	    table.doLayout();
+	    header.repaint();
+	  }
+	});
       }
+    }
+  }
+
+  /**
+   * sets the optimal column width for the given columns.
+   *
+   * @param cols	the column indices
+   */
+  public void setOptimalColumnWidths(final int[] cols) {
+    setOptimalColumnWidthsBounded(m_Table, cols, -1);
+  }
+
+  /**
+   * sets the optimal column width for the given columns.
+   *
+   * @param table	the table to work on
+   * @param cols	the column indices
+   */
+  public static void setOptimalColumnWidths(final JTable table, final int[] cols) {
+    setOptimalColumnWidthsBounded(table, cols, -1);
+  }
+
+  /**
+   * sets the optimal column width for the given columns.
+   *
+   * @param cols	the column indices
+   * @param max         the maximum column width, -1 for unlimited
+   */
+  public void setOptimalColumnWidthsBounded(final int[] cols, int max) {
+    setOptimalColumnWidthsBounded(m_Table, cols, max);
+  }
+
+  /**
+   * sets the optimal column width for the given columns.
+   *
+   * @param table	the table to work on
+   * @param cols	the column indices
+   * @param max         the maximum column width, -1 for unlimited
+   */
+  public static void setOptimalColumnWidthsBounded(final JTable table, final int[] cols, int max) {
+    final int	  	width;
+    TIntList		colsChecked;
+    final int[]		colsValid;
+    final int[]		widths;
+    int			i;
+
+    colsChecked = new TIntArrayList();
+    for (int col: cols) {
+      if ((col >= 0) && (col < table.getColumnModel().getColumnCount()))
+        colsChecked.add(col);
+    }
+    colsValid = colsChecked.toArray();
+    widths    = new int[colsValid.length];
+    for (i = 0; i < colsValid.length; i++)
+      widths[i] = calcColumnWidthBounded(table, colsValid[i], max);
+
+    if (colsValid.length > 0) {
+      SwingUtilities.invokeLater(() -> {
+	JTableHeader header = table.getTableHeader();
+	boolean update = false;
+	for (int n = 0; n < colsValid.length; n++) {
+	  if (colsValid[n] < table.getColumnModel().getColumnCount()) {
+	    TableColumn column = table.getColumnModel().getColumn(colsValid[n]);
+	    column.setPreferredWidth(widths[n]);
+	    update = true;
+	  }
+	}
+	if (update) {
+	  table.doLayout();
+	  header.repaint();
+	}
+      });
     }
   }
 
@@ -398,13 +472,13 @@ public class JTableHelper {
       width = calcHeaderWidthBounded(table, col, max);
 
       if (width >= 0) {
-        SwingUtilities.invokeLater(() -> {
-          JTableHeader header = table.getTableHeader();
-          TableColumn column = table.getColumnModel().getColumn(col);
-          column.setPreferredWidth(width);
-          table.doLayout();
-          header.repaint();
-        });
+	SwingUtilities.invokeLater(() -> {
+	  JTableHeader header = table.getTableHeader();
+	  TableColumn column = table.getColumnModel().getColumn(col);
+	  column.setPreferredWidth(width);
+	  table.doLayout();
+	  header.repaint();
+	});
       }
     }
   }
@@ -502,9 +576,9 @@ public class JTableHelper {
     for (n = 0; n < model.getRowCount(); n++) {
       row = result.addRow("" + n);
       for (i = 0; i < model.getColumnCount(); i++) {
-        value = model.getValueAt(n, i);
-        if (value != null)
-          row.addCell("" + i).setContent(value.toString());
+	value = model.getValueAt(n, i);
+	if (value != null)
+	  row.addCell("" + i).setContent(value.toString());
       }
     }
 
