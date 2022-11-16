@@ -20,9 +20,14 @@
 
 package adams.gui.core;
 
+import adams.core.CleanUpHandler;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 
 /**
  * A panel that has optional left/top or right/bottom components.
@@ -31,25 +36,43 @@ import java.awt.BorderLayout;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SplitPanelWithOptionalComponents
-  extends BasePanel {
+  extends BasePanel
+  implements CleanUpHandler {
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
 
-  /** the left panel. */
+  /** the detachable panel for the left component. */
+  protected DetachablePanel m_LeftDetachablePanel;
+
+  /** the left component. */
   protected JComponent m_LeftComponent;
 
-  /** the right panel. */
+  /** the detachable panel for the right component. */
+  protected DetachablePanel m_RightDetachablePanel;
+
+  /** the right component. */
   protected JComponent m_RightComponent;
 
   /** the orientation. */
   protected int m_Orientation;
 
+  /** whether the left component is detachable. */
+  protected boolean m_LeftDetachable;
+
+  /** whether the right component is detachable. */
+  protected boolean m_RightDetachable;
+
+  /**
+   * Initializes the members.
+   */
   @Override
   protected void initialize() {
     super.initialize();
 
-    m_Orientation = BaseSplitPane.HORIZONTAL_SPLIT;
+    m_Orientation     = BaseSplitPane.HORIZONTAL_SPLIT;
+    m_RightDetachable = false;
+    m_LeftDetachable  = false;
   }
 
   /**
@@ -63,6 +86,9 @@ public class SplitPanelWithOptionalComponents
 
     m_SplitPane = new BaseSplitPane(m_Orientation);
     m_SplitPane.setOneTouchExpandable(true);
+
+    m_LeftDetachablePanel = new DetachablePanel();
+    m_RightDetachablePanel = new DetachablePanel();
   }
 
   /**
@@ -107,10 +133,12 @@ public class SplitPanelWithOptionalComponents
   /**
    * Sets the left component.
    *
-   * @param value	the left component, can be null
+   * @param value	the left component, null to remove
    */
   public void setLeftComponent(JPanel value) {
     m_LeftComponent = value;
+    if ((m_LeftComponent == null) && (m_LeftDetachablePanel.isDetached()))
+      m_LeftDetachablePanel.reattach();
     update();
   }
 
@@ -133,17 +161,19 @@ public class SplitPanelWithOptionalComponents
   /**
    * Sets the right component.
    *
-   * @param value 	the right component, null to use empty panel
+   * @param value 	the right component, null to remove
    */
   public void setRightComponent(JComponent value) {
     m_RightComponent = value;
+    if ((m_RightComponent == null) && (m_RightDetachablePanel.isDetached()))
+      m_RightDetachablePanel.reattach();
     update();
   }
 
   /**
    * Returns the right component.
    *
-   * @return		the right component
+   * @return		the right component, can be null
    */
   public JComponent getRightComponent() {
     return m_RightComponent;
@@ -207,6 +237,80 @@ public class SplitPanelWithOptionalComponents
   }
 
   /**
+   * Sets whether the left component is detachable.
+   *
+   * @param value	true if to be detachable
+   */
+  public void setLeftDetachable(boolean value) {
+    m_LeftDetachable = value;
+    update();
+  }
+
+  /**
+   * Returns whether the left component is detachable.
+   * 
+   * @return		true if detachable
+   */
+  public boolean isLeftDetachable() {
+    return m_LeftDetachable;
+  }
+
+  /**
+   * Sets whether the right component is detachable.
+   *
+   * @param value	true if to be detachable
+   */
+  public void setRightDetachable(boolean value) {
+    m_RightDetachable = value;
+    update();
+  }
+
+  /**
+   * Returns whether the right component is detachable.
+   *
+   * @return		true if detachable
+   */
+  public boolean isRightDetachable() {
+    return m_RightDetachable;
+  }
+
+  /**
+   * Sets whether the top component is detachable.
+   *
+   * @param value	true if to be detachable
+   */
+  public void setTopDetachable(boolean value) {
+    setLeftDetachable(value);
+  }
+
+  /**
+   * Returns whether the top component is detachable.
+   *
+   * @return		true if detachable
+   */
+  public boolean isTopDetachable() {
+    return isLeftDetachable();
+  }
+
+  /**
+   * Sets whether the bottom component is detachable.
+   *
+   * @param value	true if to be detachable
+   */
+  public void setBottomDetachable(boolean value) {
+    setRightDetachable(value);
+  }
+
+  /**
+   * Returns whether the bottom component is detachable.
+   *
+   * @return		true if detachable
+   */
+  public boolean isBottomDetachable() {
+    return isRightDetachable();
+  }
+
+  /**
    * Return the divider location.
    *
    * @param location	the divider location
@@ -225,24 +329,96 @@ public class SplitPanelWithOptionalComponents
   }
 
   /**
+   * Wraps the component in a detachable panel, if necessary.
+   *
+   * @param component	the component to wrap
+   * @param left	whether left or right component
+   * @return		the (potentially) wrapped component
+   */
+  protected JComponent makeDetachableIfNecessary(JComponent component, boolean left) {
+    JPanel			panel;
+    final BaseFlatButton	button;
+
+    panel  = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    button = new BaseFlatButton(ImageManager.getIcon(DetachablePanel.DETACH_ICON));
+    panel.add(button);
+
+    if (left) {
+      if (m_LeftDetachable) {
+        m_LeftDetachablePanel.clearReattachListeners();
+        m_LeftDetachablePanel.clearDetachListeners();
+        m_LeftDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
+        m_LeftDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
+        button.addActionListener((ActionEvent e) -> {
+          if (m_LeftDetachablePanel.isDetached())
+	    m_LeftDetachablePanel.reattach();
+          else
+	    m_LeftDetachablePanel.detach();
+        });
+	m_LeftDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
+	m_LeftDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
+	return m_LeftDetachablePanel;
+      }
+      else {
+	return component;
+      }
+    }
+    else {
+      if (m_RightDetachable) {
+        m_RightDetachablePanel.clearReattachListeners();
+        m_RightDetachablePanel.clearDetachListeners();
+        m_RightDetachablePanel.addReattachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.DETACH_ICON)));
+        m_RightDetachablePanel.addDetachListener((ChangeEvent e) -> button.setIcon(ImageManager.getIcon(DetachablePanel.REATTACH_ICON)));
+        button.addActionListener((ActionEvent e) -> {
+          if (m_RightDetachablePanel.isDetached())
+            m_RightDetachablePanel.reattach();
+          else
+            m_RightDetachablePanel.detach();
+        });
+        m_RightDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
+        m_RightDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
+        return m_RightDetachablePanel;
+      }
+      else {
+	return component;
+      }
+    }
+  }
+
+  /**
    * Updates the layout.
    */
   protected void update() {
+    m_LeftDetachablePanel.getContentPanel().removeAll();
+    m_RightDetachablePanel.getContentPanel().removeAll();
     removeAll();
 
     if ((m_LeftComponent != null) && (m_RightComponent != null)) {
       add(m_SplitPane, BorderLayout.CENTER);
-      m_SplitPane.setLeftComponent(m_LeftComponent);
-      m_SplitPane.setRightComponent(m_RightComponent);
+      m_SplitPane.setLeftComponent(makeDetachableIfNecessary(m_LeftComponent, m_LeftDetachable));
+      m_SplitPane.setRightComponent(makeDetachableIfNecessary(m_RightComponent, m_RightDetachable));
     }
     else if (m_LeftComponent != null) {
-      add(m_LeftComponent, BorderLayout.CENTER);
+      add(makeDetachableIfNecessary(m_LeftComponent, m_LeftDetachable), BorderLayout.CENTER);
     }
     else if (m_RightComponent != null) {
-      add(m_RightComponent, BorderLayout.CENTER);
+      add(makeDetachableIfNecessary(m_RightComponent, m_RightDetachable), BorderLayout.CENTER);
     }
 
     doLayout();
     repaint();
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    m_RightDetachablePanel.cleanUp();
+    m_LeftDetachablePanel.cleanUp();
+    if (m_LeftComponent instanceof CleanUpHandler)
+      ((CleanUpHandler) m_LeftComponent).cleanUp();
+    if (m_RightComponent instanceof CleanUpHandler)
+      ((CleanUpHandler) m_RightComponent).cleanUp();
   }
 }
