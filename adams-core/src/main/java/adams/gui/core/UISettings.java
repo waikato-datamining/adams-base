@@ -680,12 +680,10 @@ public class UISettings {
       m_SaveRunnable = new DelayedActionRunnable(SECONDS_WAIT * 1000, 250);
       m_SaveThread = new Thread(m_SaveRunnable);
       m_SaveThread.start();
-      System.out.println("Start save");
     }
     m_SaveRunnable.queue(new AbstractAction(m_SaveRunnable) {
       @Override
       public String execute() {
-	System.out.println("Finishing save");
 	m_SaveRunnable.stopExecution();
 	m_SaveRunnable = null;
 	m_SaveThread   = null;
