@@ -365,6 +365,32 @@ public class SplitPanelWithOptionalComponents
   }
 
   /**
+   * Specifies how to distribute extra space when the size of the split pane
+   * changes. A value of 0, the default,
+   * indicates the right/bottom component gets all the extra space (the
+   * left/top component acts fixed), where as a value of 1 specifies the
+   * left/top component gets all the extra space (the right/bottom component
+   * acts fixed). Specifically, the left/top component gets (weight * diff)
+   * extra space and the right/bottom component gets (1 - weight) * diff
+   * extra space.
+   *
+   * @param value as described above
+   * @throws IllegalArgumentException if <code>value</code> is &lt; 0 or &gt; 1
+   */
+  public void setResizeWeight(double value) {
+    m_SplitPane.setResizeWeight(value);
+  }
+
+  /**
+   * Returns the number that determines how extra space is distributed.
+   * @return how extra space is to be distributed on a resize of the
+   *         split pane
+   */
+  public double getResizeWeight() {
+    return m_SplitPane.getResizeWeight();
+  }
+
+  /**
    * Wraps the component in a detachable panel, if necessary.
    *
    * @param component	the component to wrap
