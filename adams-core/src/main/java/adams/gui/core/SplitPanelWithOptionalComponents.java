@@ -63,6 +63,12 @@ public class SplitPanelWithOptionalComponents
   /** whether the right component is detachable. */
   protected boolean m_RightDetachable;
 
+  /** whether a button to detach left component is visible. */
+  protected boolean m_LeftDetachableButtonVisible;
+
+  /** whether a button to detach right component is visible. */
+  protected boolean m_RightDetachableButtonVisible;
+
   /**
    * Initializes the members.
    */
@@ -70,9 +76,11 @@ public class SplitPanelWithOptionalComponents
   protected void initialize() {
     super.initialize();
 
-    m_Orientation     = BaseSplitPane.HORIZONTAL_SPLIT;
-    m_RightDetachable = false;
-    m_LeftDetachable  = false;
+    m_Orientation               = BaseSplitPane.HORIZONTAL_SPLIT;
+    m_LeftDetachable            = false;
+    m_LeftDetachableButtonVisible  = false;
+    m_RightDetachable           = false;
+    m_RightDetachableButtonVisible = false;
   }
 
   /**
@@ -347,6 +355,80 @@ public class SplitPanelWithOptionalComponents
   }
 
   /**
+   * Sets whether the button to detach the left component is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setLeftDetachableButtonVisible(boolean value) {
+    m_LeftDetachableButtonVisible = value;
+    update();
+  }
+
+  /**
+   * Returns the frame title for the detached left component.
+   *
+   * @return		true if visible
+   */
+  public boolean isLeftDetachableButtonVisible() {
+    return m_LeftDetachableButtonVisible;
+  }
+
+  /**
+   * Sets whether the button to detach the right component is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setRightDetachableButtonVisible(boolean value) {
+    m_RightDetachableButtonVisible = value;
+    update();
+  }
+
+  /**
+   * Returns the frame title for the detached right component.
+   *
+   * @return		true if visible
+   */
+  public boolean isRightDetachableButtonVisible() {
+    return m_RightDetachableButtonVisible;
+  }
+
+  /**
+   * Sets whether the button to detach the top component is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setTopDetachableButtonVisible(boolean value) {
+    setLeftDetachableButtonVisible(value);
+  }
+
+  /**
+   * Returns the frame title for the detached top component.
+   *
+   * @return		true if visible
+   */
+  public boolean isTopDetachableButtonVisible() {
+    return isLeftDetachableButtonVisible();
+  }
+
+  /**
+   * Sets whether the button to detach the bottom component is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setBottomDetachableButtonVisible(boolean value) {
+    setRightDetachableButtonVisible(value);
+  }
+
+  /**
+   * Returns the frame title for the detached bottom component.
+   *
+   * @return		true if visible
+   */
+  public boolean isBottomDetachableButtonVisible() {
+    return isRightDetachableButtonVisible();
+  }
+
+  /**
    * Return the divider location.
    *
    * @param location	the divider location
@@ -417,7 +499,8 @@ public class SplitPanelWithOptionalComponents
 	  else
 	    m_LeftDetachablePanel.detach();
 	});
-	m_LeftDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
+	if (m_LeftDetachableButtonVisible)
+          m_LeftDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
 	m_LeftDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
 	return m_LeftDetachablePanel;
       }
@@ -437,7 +520,8 @@ public class SplitPanelWithOptionalComponents
 	  else
 	    m_RightDetachablePanel.detach();
 	});
-	m_RightDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
+	if (m_RightDetachableButtonVisible)
+          m_RightDetachablePanel.getContentPanel().add(panel, BorderLayout.NORTH);
 	m_RightDetachablePanel.getContentPanel().add(component, BorderLayout.CENTER);
 	return m_RightDetachablePanel;
       }

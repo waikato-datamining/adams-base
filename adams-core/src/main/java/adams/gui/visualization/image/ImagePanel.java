@@ -1411,6 +1411,7 @@ public class ImagePanel
 
     m_LeftSplitPanel = new SplitPanelWithOptionalComponents();
     m_LeftSplitPanel.setLeftDetachable(true);
+    m_LeftSplitPanel.setLeftDetachableButtonVisible(true);
     m_LeftSplitPanel.setDividerLocation(200);
     m_LeftSplitPanel.setUISettingsParameters(getClass());
     m_MainSplitPane.setLeftComponent(m_LeftSplitPanel);
