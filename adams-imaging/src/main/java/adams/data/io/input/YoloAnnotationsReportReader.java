@@ -28,11 +28,13 @@ import adams.data.report.Report;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.data.statistics.StatUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +44,16 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Reads text files with YOLO object annotations, one object definition per line:<br>
- * &lt;object-class&gt; &lt;x&gt; &lt;y&gt; &lt;width&gt; &lt;height&gt;<br>
- * Notes:<br>
+ * BBox format:<br>
+ * - format: &lt;object-class&gt; &lt;x&gt; &lt;y&gt; &lt;width&gt; &lt;height&gt;<br>
  * - object-class: 0-based index<br>
  * - x&#47;y: normalized center of annotation<br>
  * - width&#47;height: normalized width&#47;height<br>
- * - Normalization uses image width&#47;height
+ * - Normalization uses image width&#47;height<br>
+ * Polygon format:<br>
+ * - format: &lt;object-class&gt; &lt;x0&gt; &lt;y0&gt; &lt;x1&gt; &lt;y1&gt;...<br>
+ * - object-class: 0-based index<br>
+ * - x&#47;y: normalized polygon point
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -111,8 +117,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class YoloAnnotationsReportReader
-    extends AbstractReportReader<Report>
-    implements ObjectPrefixHandler {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 5716807404370681434L;
 
@@ -154,12 +160,16 @@ public class YoloAnnotationsReportReader
   @Override
   public String globalInfo() {
     return "Reads text files with YOLO object annotations, one object definition per line:\n"
-        + "<object-class> <x> <y> <width> <height>\n"
-        + "Notes:\n"
-        + "- object-class: 0-based index\n"
-        + "- x/y: normalized center of annotation\n"
-        + "- width/height: normalized width/height\n"
-        + "- Normalization uses image width/height";
+      + "BBox format:\n"
+      + "- format: <object-class> <x> <y> <width> <height>\n"
+      + "- object-class: 0-based index\n"
+      + "- x/y: normalized center of annotation\n"
+      + "- width/height: normalized width/height\n"
+      + "- Normalization uses image width/height\n"
+      + "Polygon format:\n"
+      + "- format: <object-class> <x0> <y0> <x1> <y1>...\n"
+      + "- object-class: 0-based index\n"
+      + "- x/y: normalized polygon point";
   }
 
   /**
@@ -170,36 +180,36 @@ public class YoloAnnotationsReportReader
     super.defineOptions();
 
     m_OptionManager.add(
-        "width", "width",
-        1000, 1, null);
+      "width", "width",
+      1000, 1, null);
 
     m_OptionManager.add(
-        "height", "height",
-        1000, 1, null);
+      "height", "height",
+      1000, 1, null);
 
     m_OptionManager.add(
-        "label-definitions", "labelDefinitions",
-        new PlaceholderFile());
+      "label-definitions", "labelDefinitions",
+      new PlaceholderFile());
 
     m_OptionManager.add(
-        "label-reader", "labelReader",
-        new CsvSpreadSheetReader());
+      "label-reader", "labelReader",
+      new CsvSpreadSheetReader());
 
     m_OptionManager.add(
-        "col-index", "colIndex",
-        new SpreadSheetColumnIndex("1"));
+      "col-index", "colIndex",
+      new SpreadSheetColumnIndex("1"));
 
     m_OptionManager.add(
-        "col-label", "colLabel",
-        new SpreadSheetColumnIndex("2"));
+      "col-label", "colLabel",
+      new SpreadSheetColumnIndex("2"));
 
     m_OptionManager.add(
-        "prefix", "prefix",
-        ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
+      "prefix", "prefix",
+      ObjectLocationsOverlayFromReport.PREFIX_DEFAULT);
 
     m_OptionManager.add(
-        "label-suffix", "labelSuffix",
-        "type");
+      "label-suffix", "labelSuffix",
+      "type");
   }
 
   /**
@@ -499,6 +509,9 @@ public class YoloAnnotationsReportReader
     int			w;
     int			h;
     boolean		loadLabels;
+    int[]		polyX;
+    int[]		polyY;
+    int			i;
 
     result  = new ArrayList<>();
 
@@ -542,6 +555,31 @@ public class YoloAnnotationsReportReader
 
           lobj = new LocatedObject(x, y, w, h);
           lobj.getMetaData().put(m_LabelSuffix, labelStr);
+          lobjs.add(lobj);
+        }
+        else if ((parts.length > 5) && (parts.length % 2 == 1)) {
+          if (m_Labels != null)
+            labelStr = m_Labels.get(Integer.parseInt(parts[0]));
+          else
+            labelStr = parts[0];
+          polyX  = new int[(parts.length - 1) / 2];
+          polyY  = new int[(parts.length - 1) / 2];
+          for (i = 1; i < parts.length - 1; i += 2) {
+            xN = Double.parseDouble(parts[i]);
+            yN = Double.parseDouble(parts[i + 1]);
+            x  = (int) Math.round(xN * m_Width);
+            y  = (int) Math.round(yN * m_Height);
+            polyX[(i - 1) / 2] = x;
+            polyY[(i - 1) / 2] = y;
+          }
+          w = StatUtils.max(polyX) - StatUtils.min(polyX) + 1;
+          h = StatUtils.max(polyY) - StatUtils.min(polyY) + 1;
+          x = StatUtils.min(polyX);
+          y = StatUtils.min(polyY);
+
+          lobj = new LocatedObject(x, y, w, h);
+          lobj.getMetaData().put(m_LabelSuffix, labelStr);
+          lobj.setPolygon(new Polygon(polyX, polyY, polyX.length));
           lobjs.add(lobj);
         }
         else {

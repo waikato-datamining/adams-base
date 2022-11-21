@@ -42,12 +42,16 @@ import java.util.Map;
 /**
  <!-- globalinfo-start -->
  * Writes text files with YOLO object annotations, one object definition per line:<br>
- * &lt;object-class&gt; &lt;x&gt; &lt;y&gt; &lt;width&gt; &lt;height&gt;<br>
- * Notes:<br>
+ * BBox format:<br>
+ * - format: &lt;object-class&gt; &lt;x&gt; &lt;y&gt; &lt;width&gt; &lt;height&gt;<br>
  * - object-class: 0-based index<br>
  * - x&#47;y: normalized center of annotation<br>
  * - width&#47;height: normalized width&#47;height<br>
- * - Normalization uses image width&#47;height
+ * - Normalization uses image width&#47;height<br>
+ * Polygon format:<br>
+ * - format: &lt;object-class&gt; &lt;x0&gt; &lt;y0&gt; &lt;x1&gt; &lt;y1&gt;...<br>
+ * - object-class: 0-based index<br>
+ * - x&#47;y: normalized polygon point
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -106,12 +110,17 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
  *
+ * <pre>-use-polygon-format &lt;boolean&gt; (property: usePolygonFormat)
+ * &nbsp;&nbsp;&nbsp;If enabled, outputs the data in polygon format rather than bbox format.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class YoloAnnotationsReportWriter
-    extends AbstractReportWriter<Report> {
+  extends AbstractReportWriter<Report> {
 
   private static final long serialVersionUID = -7250784020894287952L;
 
@@ -139,6 +148,9 @@ public class YoloAnnotationsReportWriter
   /** the column with the label string. */
   protected SpreadSheetColumnIndex m_ColLabel;
 
+  /** output polygon format rather than bbox format. */
+  protected boolean m_UsePolygonFormat;
+
   /** the label mapping. */
   protected transient Map<Integer,String> m_Labels;
 
@@ -153,12 +165,16 @@ public class YoloAnnotationsReportWriter
   @Override
   public String globalInfo() {
     return "Writes text files with YOLO object annotations, one object definition per line:\n"
-        + "<object-class> <x> <y> <width> <height>\n"
-        + "Notes:\n"
-        + "- object-class: 0-based index\n"
-        + "- x/y: normalized center of annotation\n"
-        + "- width/height: normalized width/height\n"
-        + "- Normalization uses image width/height";
+      + "BBox format:\n"
+      + "- format: <object-class> <x> <y> <width> <height>\n"
+      + "- object-class: 0-based index\n"
+      + "- x/y: normalized center of annotation\n"
+      + "- width/height: normalized width/height\n"
+      + "- Normalization uses image width/height\n"
+      + "Polygon format:\n"
+      + "- format: <object-class> <x0> <y0> <x1> <y1>...\n"
+      + "- object-class: 0-based index\n"
+      + "- x/y: normalized polygon point";
   }
 
   /**
@@ -169,36 +185,40 @@ public class YoloAnnotationsReportWriter
     super.defineOptions();
 
     m_OptionManager.add(
-        "finder", "finder",
-        new AllFinder());
+      "finder", "finder",
+      new AllFinder());
 
     m_OptionManager.add(
-        "label-key", "labelKey",
-        "");
+      "label-key", "labelKey",
+      "");
 
     m_OptionManager.add(
-        "width", "width",
-        1000, 1, null);
+      "width", "width",
+      1000, 1, null);
 
     m_OptionManager.add(
-        "height", "height",
-        1000, 1, null);
+      "height", "height",
+      1000, 1, null);
 
     m_OptionManager.add(
-        "label-definitions", "labelDefinitions",
-        new PlaceholderFile());
+      "label-definitions", "labelDefinitions",
+      new PlaceholderFile());
 
     m_OptionManager.add(
-        "label-reader", "labelReader",
-        new CsvSpreadSheetReader());
+      "label-reader", "labelReader",
+      new CsvSpreadSheetReader());
 
     m_OptionManager.add(
-        "col-index", "colIndex",
-        new SpreadSheetColumnIndex("1"));
+      "col-index", "colIndex",
+      new SpreadSheetColumnIndex("1"));
 
     m_OptionManager.add(
-        "col-label", "colLabel",
-        new SpreadSheetColumnIndex("2"));
+      "col-label", "colLabel",
+      new SpreadSheetColumnIndex("2"));
+
+    m_OptionManager.add(
+      "use-polygon-format", "usePolygonFormat",
+      false);
   }
 
   /**
@@ -434,6 +454,35 @@ public class YoloAnnotationsReportWriter
   }
 
   /**
+   * Sets whether to use polygon format or bbox format.
+   *
+   * @param value 	true if to use
+   */
+  public void setUsePolygonFormat(boolean value) {
+    m_UsePolygonFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use polygon format or bbox format.
+   *
+   * @return 		true if to use
+   */
+  public boolean getUsePolygonFormat() {
+    return m_UsePolygonFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String usePolygonFormatTipText() {
+    return "If enabled, outputs the data in polygon format rather than bbox format.";
+  }
+
+  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -463,6 +512,7 @@ public class YoloAnnotationsReportWriter
   @Override
   protected boolean writeData(Report data) {
     LocatedObjects 	objs;
+    StringBuilder	line;
     List<String>	lines;
     Map<String,Integer>	revLabels;
     String		label;
@@ -472,15 +522,18 @@ public class YoloAnnotationsReportWriter
     double		yN;
     double		wN;
     double		hN;
+    int[]		polyX;
+    int[]		polyY;
+    int			i;
 
     // labels?
     loadLabels = false;
     if ((m_LabelDefinitions.exists() && !m_LabelDefinitions.isDirectory())) {
       loadLabels = (m_Labels == null);
       if (m_LabelDefinitionsMonitor == null)
-        m_LabelDefinitionsMonitor = new LastModified();
+	m_LabelDefinitionsMonitor = new LastModified();
       if (!loadLabels)
-        loadLabels = m_LabelDefinitionsMonitor.hasChanged(m_LabelDefinitions);
+	loadLabels = m_LabelDefinitionsMonitor.hasChanged(m_LabelDefinitions);
       m_LabelDefinitionsMonitor.update(m_LabelDefinitions);
     }
     if (loadLabels)
@@ -488,7 +541,7 @@ public class YoloAnnotationsReportWriter
     revLabels = new HashMap<>();
     if (m_Labels != null) {
       for (Map.Entry<Integer,String> entry: m_Labels.entrySet())
-        revLabels.put(entry.getValue(), entry.getKey());
+	revLabels.put(entry.getValue(), entry.getKey());
     }
 
     lines = new ArrayList<>();
@@ -496,25 +549,45 @@ public class YoloAnnotationsReportWriter
     for (LocatedObject obj: objs) {
       index = -1;
       if (obj.getMetaData().containsKey(m_LabelKey)) {
-        label = "" + obj.getMetaData().get(m_LabelKey);
-        if (revLabels.containsKey(label))
-          index = revLabels.get(label);
-        else
-          getLogger().warning("Label " + label + " not found in definitions, skipping: " + obj);
+	label = "" + obj.getMetaData().get(m_LabelKey);
+	if (revLabels.containsKey(label))
+	  index = revLabels.get(label);
+	else
+	  getLogger().warning("Label " + label + " not found in definitions, skipping: " + obj);
       }
       else {
-        getLogger().warning("No label found under '" + m_LabelKey + "', skipping: " + obj);
+	getLogger().warning("No label found under '" + m_LabelKey + "', skipping: " + obj);
       }
 
       if (index == -1)
-        continue;
+	continue;
 
-      xN = (double) (obj.getX() + obj.getWidth() / 2) / m_Width;
-      yN = (double) (obj.getY() + obj.getHeight() / 2) / m_Height;
-      wN = (double) obj.getWidth() / m_Width;
-      hN = (double) obj.getHeight() / m_Height;
+      line = new StringBuilder().append(index);
+      if (m_UsePolygonFormat) {
+	if (obj.hasPolygon()) {
+	  polyX = obj.getPolygonX();
+	  polyY = obj.getPolygonY();
+	}
+	else {
+	  polyX = new int[]{obj.getX(), obj.getX() + obj.getWidth() - 1, obj.getX() + obj.getWidth() - 1,  obj.getX()};
+	  polyY = new int[]{obj.getY(), obj.getY(),                      obj.getY() + obj.getHeight() - 1, obj.getY() + obj.getHeight() - 1};
+	}
+	for (i = 0; i < polyX.length; i++)
+	  line.append(" ").append((double) polyX[i] / m_Width)
+	    .append(" ").append((double) polyY[i] / m_Height);
+      }
+      else {
+	xN = (double) (obj.getX() + obj.getWidth() / 2) / m_Width;
+	yN = (double) (obj.getY() + obj.getHeight() / 2) / m_Height;
+	wN = (double) obj.getWidth() / m_Width;
+	hN = (double) obj.getHeight() / m_Height;
 
-      lines.add(index + " " + xN + " " + yN + " " + wN + " " + hN);
+	line.append(" ").append(xN)
+	  .append(" ").append(yN)
+	  .append(" ").append(wN)
+	  .append(" ").append(hN);
+      }
+      lines.add(line.toString());
     }
 
     if (lines.size() > 0) {
