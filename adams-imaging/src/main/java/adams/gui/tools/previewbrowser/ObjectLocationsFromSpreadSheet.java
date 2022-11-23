@@ -661,7 +661,7 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /**
-   * Sets the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   * Sets the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
    *
    * @param value 	the suffix
    */
@@ -671,7 +671,7 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /**
-   * Returns the alternative file suffix to use for locating the associated spreadsheet (eg '-rois').
+   * Returns the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
    *
    * @return 		the suffix
    */
@@ -686,7 +686,7 @@ public class ObjectLocationsFromSpreadSheet
    * 			displaying in the GUI or for listing the options.
    */
   public String alternativeFileSuffixTipText() {
-    return "The alternative file suffix to use for locating the associated spreadsheet (eg '-rois').";
+    return "The alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').";
   }
 
   /**
