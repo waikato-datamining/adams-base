@@ -115,7 +115,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getInteger(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getInteger(key, null))) {
       getProperties().setInteger(key, value);
       flagModified();
     }
@@ -143,7 +143,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getLong(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getLong(key, null))) {
       getProperties().setLong(key, value);
       flagModified();
     }
@@ -171,7 +171,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getDouble(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getDouble(key, null))) {
       getProperties().setDouble(key, value);
       flagModified();
     }
@@ -199,7 +199,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getBoolean(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getBoolean(key, null))) {
       getProperties().setBoolean(key, value);
       flagModified();
     }
@@ -227,7 +227,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getTime(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getTime(key, null))) {
       getProperties().setTime(key, value);
       flagModified();
     }
@@ -255,7 +255,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getDateTime(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getDateTime(key, null))) {
       getProperties().setDateTime(key, value);
       flagModified();
     }
@@ -283,7 +283,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getDate(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getDate(key, null))) {
       getProperties().setDate(key, value);
       flagModified();
     }
@@ -311,7 +311,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getColor(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getColor(key, null))) {
       getProperties().setColor(key, value);
       flagModified();
     }
@@ -339,7 +339,7 @@ public class UISettings {
     String 	key;
 
     key = createKey(cls, property);
-    if ((value != null) && !value.equals(getProperties().getPassword(key, value))) {
+    if ((value != null) && !value.equals(getProperties().getPassword(key, null))) {
       getProperties().setPassword(key, value);
       flagModified();
     }
@@ -369,7 +369,7 @@ public class UISettings {
 
     key    = createKey(cls, property);
     valStr = value.width + ";" + value.height;
-    if (!valStr.equals(getProperties().getProperty(key, valStr))) {
+    if (!valStr.equals(getProperties().getProperty(key, null))) {
       getProperties().setProperty(key, valStr);
       flagModified();
     }
