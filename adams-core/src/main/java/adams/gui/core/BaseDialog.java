@@ -20,8 +20,6 @@
 
 package adams.gui.core;
 
-import adams.gui.application.ChildFrame;
-
 import javax.swing.JDialog;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -237,22 +235,22 @@ public class BaseDialog
     int		y;
 
     // size
-    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".width")) {
+    if (UISettings.has(BaseDialog.class, m_UISettingsPrefix + ".width") && UISettings.has(BaseDialog.class, m_UISettingsPrefix + ".width")) {
       m_UISettingsApplied = true;
       size = getSize();
       setSize(new Dimension(
-	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".width", size.width),
-	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".height", size.height)));
+	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".width", size.width),
+	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".height", size.height)));
     }
 
     // position
-    if (UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".x") && UISettings.has(ChildFrame.class, m_UISettingsPrefix + ".y")) {
+    if (UISettings.has(BaseDialog.class, m_UISettingsPrefix + ".x") && UISettings.has(BaseDialog.class, m_UISettingsPrefix + ".y")) {
       m_UISettingsApplied = true;
       x = getX();
       y = getY();
       setLocation(
-	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".x", x),
-	  UISettings.get(ChildFrame.class, m_UISettingsPrefix + ".y", y));
+	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".x", x),
+	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".y", y));
     }
 
     m_UISettingsStored = false;
@@ -264,10 +262,10 @@ public class BaseDialog
   public void storeUISettings() {
     if (!m_UISettingsStored && !m_UISettingsPrefix.isEmpty()) {
       m_UISettingsStored = true;
-      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".width", getWidth());
-      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".height", getHeight());
-      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".x", getX());
-      UISettings.set(ChildFrame.class, m_UISettingsPrefix + ".y", getY());
+      UISettings.set(BaseDialog.class, m_UISettingsPrefix + ".width", getWidth());
+      UISettings.set(BaseDialog.class, m_UISettingsPrefix + ".height", getHeight());
+      UISettings.set(BaseDialog.class, m_UISettingsPrefix + ".x", getX());
+      UISettings.set(BaseDialog.class, m_UISettingsPrefix + ".y", getY());
       UISettings.save();
       m_UISettingsApplied = false;
     }
