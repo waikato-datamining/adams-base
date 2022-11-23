@@ -375,6 +375,9 @@ public class ObjectLocationsFromReport
   /** the report reader to use. */
   protected AbstractReportReader m_Reader;
 
+  /** the alternative file suffix to use. */
+  protected String m_AlternativeFileSuffix;
+
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -474,6 +477,10 @@ public class ObjectLocationsFromReport
     m_OptionManager.add(
       "reader", "reader",
       getDefaultReader());
+
+    m_OptionManager.add(
+      "alternative-file-suffix", "alternativeFileSuffix",
+      "");
 
     m_OptionManager.add(
       "prefix", "prefix",
@@ -646,6 +653,35 @@ public class ObjectLocationsFromReport
    */
   public String readerTipText() {
     return "The reader to use for reading the report.";
+  }
+
+  /**
+   * Sets the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
+   *
+   * @param value 	the suffix
+   */
+  public void setAlternativeFileSuffix(String value) {
+    m_AlternativeFileSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
+   *
+   * @return 		the suffix
+   */
+  public String getAlternativeFileSuffix() {
+    return m_AlternativeFileSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeFileSuffixTipText() {
+    return "The alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').";
   }
 
   /**
@@ -1476,7 +1512,7 @@ public class ObjectLocationsFromReport
       baseFile = new PlaceholderFile(panel.getAlternativeLocation().getAbsolutePath() + File.separator + file.getName());
     else
       baseFile = file;
-    reportFile = FileUtils.replaceExtension(baseFile, "." + m_Reader.getDefaultFormatExtension());
+    reportFile = FileUtils.replaceExtension(baseFile, m_AlternativeFileSuffix + "." + m_Reader.getDefaultFormatExtension());
     if (reportFile.exists() && reportFile.isFile()) {
       m_Reader.setInput(new PlaceholderFile(reportFile));
       reports = m_Reader.read();
