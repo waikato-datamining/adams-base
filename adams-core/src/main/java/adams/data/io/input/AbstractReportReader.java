@@ -15,7 +15,7 @@
 
 /*
  * AbstractQuantitationReader.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -147,7 +147,7 @@ public abstract class AbstractReportReader<T extends Report>
     
     checkData();
     data = readData();
-    if (!m_Stopped)
+    if (!m_Stopped && (data != null))
       postRead(data);
 
     if (m_Stopped && (data != null))
