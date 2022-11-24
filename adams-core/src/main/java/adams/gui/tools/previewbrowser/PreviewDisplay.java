@@ -54,8 +54,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PreviewDisplay
-    extends BasePanel
-    implements CleanUpHandler {
+  extends BasePanel
+  implements CleanUpHandler {
 
   private static final long serialVersionUID = -6515079548026850756L;
 
@@ -159,13 +159,13 @@ public class PreviewDisplay
     m_ComboBoxContentHandlers = new BaseComboBox<>(m_ModelContentHandlers);
     m_ComboBoxContentHandlers.addActionListener((ActionEvent e) -> {
       if (m_IgnoreContentHandlerChanges)
-        return;
+	return;
       if (m_ComboBoxContentHandlers.getSelectedIndex() > 0)
-        m_CurrentFavorite = null;
+	m_CurrentFavorite = null;
       updatePreferredContentHandler();
       m_LastSearch = null;
       if (m_CurrentFiles != null)
-        display(m_CurrentFiles, false);
+	display(m_CurrentFiles, false);
     });
 
     m_ButtonContentHandler = new BaseButton("...");
@@ -248,18 +248,19 @@ public class PreviewDisplay
     int							index;
     AbstractContentHandler				handler;
     ContentHandlerFavorites.ContentHandlerFavorite  	favorite;
+    int							i;
 
     handler = null;
     index   = -1;
     if (m_ComboBoxContentHandlers.getSelectedIndex() == 0) {
       if (m_CurrentFavorite != null)
-        handler = m_CurrentFavorite.getHandler();
+	handler = m_CurrentFavorite.getHandler();
     }
     else {
       if (m_ComboBoxContentHandlers.getSelectedIndex() < 1)
-        index = 1;
+	index = 1;
       else
-        index = m_ComboBoxContentHandlers.getSelectedIndex();
+	index = m_ComboBoxContentHandlers.getSelectedIndex();
       handler = m_ListContentHandlers.get(index);
     }
     if (handler == null)
@@ -270,7 +271,7 @@ public class PreviewDisplay
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
     dialog.setUISettingsPrefix(AbstractContentHandler.class);
-    dialog.getGOEEditor().setCanChangeClassInDialog(false);
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
     dialog.getGOEEditor().setClassType(AbstractContentHandler.class);
     dialog.setCurrent(handler);
     dialog.setLocationRelativeTo(getParent());
@@ -287,7 +288,19 @@ public class PreviewDisplay
     else {
       handler = (AbstractContentHandler) dialog.getCurrent();
       PropertiesManager.setCustomContentHandler(handler);
-      m_ListContentHandlers.set(index, handler);
+      index = -1;
+      for (i = 0; i < m_ListContentHandlers.size(); i++) {
+        if (m_ListContentHandlers.get(i) == null)
+          continue;
+        if (m_ListContentHandlers.get(i).getClass().equals(handler.getClass())) {
+          index = i;
+          break;
+	}
+      }
+      if (index > -1) {
+	m_ListContentHandlers.set(index, handler);
+	m_ComboBoxContentHandlers.setSelectedIndex(index);
+      }
     }
 
     m_LastContentHandler = handler;
@@ -354,79 +367,79 @@ public class PreviewDisplay
 
     if (AbstractContentHandler.hasHandler(localFiles[0])) {
       if (m_UseFixedContentHandler && (m_LastContentHandler != null)) {
-        contentHandler = m_LastContentHandler;
+	contentHandler = m_LastContentHandler;
       }
       else {
-        handlers = AbstractContentHandler.getHandlersForFile(localFiles[0]);
-        // update combobox
-        m_IgnoreContentHandlerChanges = true;
-        m_ModelContentHandlers.removeAllElements();
-        m_ListContentHandlers.clear();
-        if (m_Favorites.containsKey(ext)) {
-          if (m_CurrentFavorite != null)
-            m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + ": " + m_CurrentFavorite.getName() + "]");
-          else
-            m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + "]");
-        }
-        else {
-          m_ModelContentHandlers.addElement(DISPLAY_NO_FAVORITES);
-        }
-        m_ListContentHandlers.add(null);
-        for (Class handler : handlers) {
-          m_ModelContentHandlers.addElement(handler.getName());
-          m_ListContentHandlers.add(PropertiesManager.getCustomContentHandler(handler));
-        }
-        m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
+	handlers = AbstractContentHandler.getHandlersForFile(localFiles[0]);
+	// update combobox
+	m_IgnoreContentHandlerChanges = true;
+	m_ModelContentHandlers.removeAllElements();
+	m_ListContentHandlers.clear();
+	if (m_Favorites.containsKey(ext)) {
+	  if (m_CurrentFavorite != null)
+	    m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + ": " + m_CurrentFavorite.getName() + "]");
+	  else
+	    m_ModelContentHandlers.addElement("[" + DISPLAY_FAVORITE + "]");
+	}
+	else {
+	  m_ModelContentHandlers.addElement(DISPLAY_NO_FAVORITES);
+	}
+	m_ListContentHandlers.add(null);
+	for (Class handler : handlers) {
+	  m_ModelContentHandlers.addElement(handler.getName());
+	  m_ListContentHandlers.add(PropertiesManager.getCustomContentHandler(handler));
+	}
+	m_PanelContentHandlers.setVisible(m_ModelContentHandlers.getSize() > 1);
 
-        contentHandler = null;
-        if (m_CurrentFavorite != null) {
-          if (m_CurrentFavorite.getExtension().equalsIgnoreCase(ext))
-            contentHandler = m_CurrentFavorite.getHandler();
-          else
-            m_CurrentFavorite = null;
-        }
-        if (contentHandler == null) {
-          // set preferred one
-          preferred = PropertiesManager.getPreferredContentHandler(localFiles[0]);
-          prefIndex = -1;
-          if (preferred != null) {
-            for (i = 0; i < handlers.size(); i++) {
-              if (preferred.getClass() == handlers.get(i)) {
-                prefIndex = i;
-                break;
-              }
-            }
-          }
-          if ((prefIndex == -1) && (m_ModelContentHandlers.getSize() > 0))
-            prefIndex = 0;
-          if (prefIndex > -1) {
-            m_ComboBoxContentHandlers.setSelectedIndex(prefIndex + 1);
-            // get preferred handler
-            contentHandler = m_ListContentHandlers.get(prefIndex + 1);
-          }
-        }
+	contentHandler = null;
+	if (m_CurrentFavorite != null) {
+	  if (m_CurrentFavorite.getExtension().equalsIgnoreCase(ext))
+	    contentHandler = m_CurrentFavorite.getHandler();
+	  else
+	    m_CurrentFavorite = null;
+	}
+	if (contentHandler == null) {
+	  // set preferred one
+	  preferred = PropertiesManager.getPreferredContentHandler(localFiles[0]);
+	  prefIndex = -1;
+	  if (preferred != null) {
+	    for (i = 0; i < handlers.size(); i++) {
+	      if (preferred.getClass() == handlers.get(i)) {
+		prefIndex = i;
+		break;
+	      }
+	    }
+	  }
+	  if ((prefIndex == -1) && (m_ModelContentHandlers.getSize() > 0))
+	    prefIndex = 0;
+	  if (prefIndex > -1) {
+	    m_ComboBoxContentHandlers.setSelectedIndex(prefIndex + 1);
+	    // get preferred handler
+	    contentHandler = m_ListContentHandlers.get(prefIndex + 1);
+	  }
+	}
       }
 
       if (contentHandler != null) {
-        m_LastContentHandler = contentHandler;
+	m_LastContentHandler = contentHandler;
 
-        // cached?
-        if (m_ReusePreviews && m_PreviewCache.contains(contentHandler.toCommandLine())) {
-          result = m_PreviewCache.get(contentHandler.toCommandLine());
-          if (contentHandler instanceof MultipleFileContentHandler)
-            result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
-          else
-            result = contentHandler.reusePreview(localFiles[0], result);
-        }
-        else {
-          if (contentHandler instanceof MultipleFileContentHandler)
-            result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
-          else
-            result = contentHandler.getPreview(localFiles[0]);
-        }
-        // cache preview
-        if (m_ReusePreviews && !(result instanceof NoPreviewAvailablePanel))
-          m_PreviewCache.put(contentHandler.toCommandLine(), result);
+	// cached?
+	if (m_ReusePreviews && m_PreviewCache.contains(contentHandler.toCommandLine())) {
+	  result = m_PreviewCache.get(contentHandler.toCommandLine());
+	  if (contentHandler instanceof MultipleFileContentHandler)
+	    result = ((MultipleFileContentHandler) contentHandler).reusePreview(localFiles, result);
+	  else
+	    result = contentHandler.reusePreview(localFiles[0], result);
+	}
+	else {
+	  if (contentHandler instanceof MultipleFileContentHandler)
+	    result = ((MultipleFileContentHandler) contentHandler).getPreview(localFiles);
+	  else
+	    result = contentHandler.getPreview(localFiles[0]);
+	}
+	// cache preview
+	if (m_ReusePreviews && !(result instanceof NoPreviewAvailablePanel))
+	  m_PreviewCache.put(contentHandler.toCommandLine(), result);
       }
 
       SwingUtilities.invokeLater(() -> m_IgnoreContentHandlerChanges = false);
@@ -460,9 +473,9 @@ public class PreviewDisplay
 
     if (localFiles != null) {
       for (File localFile: localFiles) {
-        result = FileUtils.getExtension(localFile);
-        if (result != null)
-          break;
+	result = FileUtils.getExtension(localFile);
+	if (result != null)
+	  break;
       }
     }
 
@@ -489,20 +502,20 @@ public class PreviewDisplay
 
     if (!wait) {
       worker = new SwingWorker() {
-        JPanel contentPanel;
-        @Override
-        protected Object doInBackground() throws Exception {
-          contentPanel = createPreview(localFiles);
-          return null;
-        }
-        @Override
-        protected void done() {
-          if (contentPanel != null)
-            displayView(contentPanel);
-          m_DisplayInProgress = false;
-          ContentHandlerFavorites.getSingleton().customizeDropDownButton(m_ButtonFavorites, m_CurrentExtension, PreviewDisplay.this);
-          super.done();
-        }
+	JPanel contentPanel;
+	@Override
+	protected Object doInBackground() throws Exception {
+	  contentPanel = createPreview(localFiles);
+	  return null;
+	}
+	@Override
+	protected void done() {
+	  if (contentPanel != null)
+	    displayView(contentPanel);
+	  m_DisplayInProgress = false;
+	  ContentHandlerFavorites.getSingleton().customizeDropDownButton(m_ButtonFavorites, m_CurrentExtension, PreviewDisplay.this);
+	  super.done();
+	}
       };
       worker.execute();
     }
@@ -536,7 +549,7 @@ public class PreviewDisplay
     for (File file: m_CurrentFiles) {
       ext = FileUtils.getExtension(file);
       if (ext == null)
-        continue;
+	continue;
       ext = ext.toLowerCase();
       exts.add(ext);
     }
