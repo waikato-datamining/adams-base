@@ -25,7 +25,9 @@ import adams.core.logging.LoggingSupporter;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 import java.io.BufferedReader;
@@ -33,6 +35,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.Array;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -158,5 +163,45 @@ public class JsonHelper {
     sreader = new StringReader(json);
     je      = JsonParser.parseReader(sreader);
     return prettyPrint(je);
+  }
+
+  /**
+   * Turns the object into a JSON object, if necessary.
+   *
+   * @param value	the value associated with the key
+   */
+  public static Object toJSON(Object value) {
+    Map map;
+    List list;
+    JSONObject json;
+    JSONArray array;
+    int		i;
+
+    if (value == null) {
+      return null;
+    }
+    else if (value instanceof Map) {
+      map  = (Map) value;
+      json = new JSONObject();
+      for (Object key : map.keySet())
+        json.put(key.toString(), toJSON(map.get(key)));
+      return json;
+    }
+    else if (value instanceof List) {
+      list  = (List) value;
+      array = new JSONArray();
+      for (i = 0; i < list.size(); i++)
+        array.add(toJSON(list.get(i)));
+      return array;
+    }
+    else if (value.getClass().isArray()) {
+      array = new JSONArray();
+      for (i = 0; i < Array.getLength(value); i++)
+        array.add(toJSON(Array.get(value, i)));
+      return array;
+    }
+    else {
+      return value;
+    }
   }
 }

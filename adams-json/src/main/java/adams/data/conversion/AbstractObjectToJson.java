@@ -15,17 +15,12 @@
 
 /*
  * AbstractObjectToJson.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import net.minidev.json.JSONArray;
+import adams.data.json.JsonHelper;
 import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
-
-import java.lang.reflect.Array;
-import java.util.List;
-import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -60,52 +55,12 @@ public abstract class AbstractObjectToJson
   }
 
   /**
-   * Turns the object into a JSON object, if necessary.
-   *
-   * @param value	the value associated with the key
-   */
-  protected Object toJSON(Object value) {
-    Map 	map;
-    List	list;
-    JSONObject 	json;
-    JSONArray 	array;
-    int		i;
-
-    if (value == null) {
-      return null;
-    }
-    else if (value instanceof Map) {
-      map  = (Map) value;
-      json = new JSONObject();
-      for (Object key : map.keySet())
-	json.put(key.toString(), toJSON(map.get(key)));
-      return json;
-    }
-    else if (value instanceof List) {
-      list  = (List) value;
-      array = new JSONArray();
-      for (i = 0; i < list.size(); i++)
-	array.add(toJSON(list.get(i)));
-      return array;
-    }
-    else if (value.getClass().isArray()) {
-      array = new JSONArray();
-      for (i = 0; i < Array.getLength(value); i++)
-	array.add(toJSON(Array.get(value, i)));
-      return array;
-    }
-    else {
-      return value;
-    }
-  }
-
-  /**
    * Performs the actual conversion.
    *
    * @return		the converted data
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    return toJSON(m_Input);
+    return JsonHelper.toJSON(m_Input);
   }
 }
