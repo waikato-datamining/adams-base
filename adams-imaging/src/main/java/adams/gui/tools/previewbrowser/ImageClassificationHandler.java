@@ -203,7 +203,7 @@ public class ImageClassificationHandler
 
     m_OptionManager.add(
       "offset-y", "offsetY",
-      20);
+      40);
   }
 
   /**
