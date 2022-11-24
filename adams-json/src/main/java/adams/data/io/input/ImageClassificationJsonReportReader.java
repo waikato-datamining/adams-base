@@ -48,6 +48,16 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
+ * <pre>-field-label &lt;adams.data.report.Field&gt; (property: fieldLabel)
+ * &nbsp;&nbsp;&nbsp;The field to store the label under.
+ * &nbsp;&nbsp;&nbsp;default: Classification[S]
+ * </pre>
+ *
+ * <pre>-field-score &lt;adams.data.report.Field&gt; (property: fieldScore)
+ * &nbsp;&nbsp;&nbsp;The field to store the score under.
+ * &nbsp;&nbsp;&nbsp;default: Score[N]
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -212,15 +222,15 @@ public class ImageClassificationJsonReportReader
     if (json instanceof JSONObject) {
       obj = (JSONObject) json;
       for (String key: obj.keySet()) {
-	try {
-	  if (obj.getAsNumber(key).doubleValue() > score) {
-	    label = key;
-	    score = obj.getAsNumber(key).doubleValue();
-	  }
-	}
-	catch (Exception e) {
-	  // ignored
-	}
+        try {
+          if (obj.getAsNumber(key).doubleValue() > score) {
+            label = key;
+            score = obj.getAsNumber(key).doubleValue();
+          }
+        }
+        catch (Exception e) {
+          // ignored
+        }
       }
     }
 
