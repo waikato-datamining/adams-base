@@ -45,7 +45,7 @@ public class AnnotationUtils {
    * @param format	the format to apply
    * @return		the processed value
    */
-  protected static String applyFormatOptions(String value, String format) {
+  public static String applyFormatOptions(String value, String format) {
     int		decimals;
     boolean	isDouble;
     String	tmp;
