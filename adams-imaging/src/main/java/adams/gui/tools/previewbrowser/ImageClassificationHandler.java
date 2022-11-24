@@ -25,7 +25,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
-import adams.data.io.input.DefaultSimpleReportReader;
+import adams.data.io.input.ImageClassificationSpreadSheetReportReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.report.DataType;
 import adams.data.report.Field;
@@ -250,7 +250,7 @@ public class ImageClassificationHandler
    * @return		the reader
    */
   protected AbstractReportReader getDefaultReader() {
-    return new DefaultSimpleReportReader();
+    return new ImageClassificationSpreadSheetReportReader();
   }
 
   /**
