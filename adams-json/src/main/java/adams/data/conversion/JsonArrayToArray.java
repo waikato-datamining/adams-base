@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonArrayToArray.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.data.json.JsonHelper;
 import net.minidev.json.JSONArray;
 
 /**
@@ -40,7 +41,6 @@ import net.minidev.json.JSONArray;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonArrayToArray
   extends AbstractConversion {
@@ -86,6 +86,6 @@ public class JsonArrayToArray
    */
   @Override
   protected Object doConvert() throws Exception {
-    return ((JSONArray) m_Input).toArray();
+    return JsonHelper.toArray((JSONArray) m_Input);
   }
 }

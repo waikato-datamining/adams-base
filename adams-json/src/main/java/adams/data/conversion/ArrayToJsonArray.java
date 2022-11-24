@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayToJsonArray.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.data.json.JsonHelper;
 import net.minidev.json.JSONArray;
-
-import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -42,7 +41,6 @@ import java.lang.reflect.Array;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayToJsonArray
   extends AbstractConversion {
@@ -88,16 +86,9 @@ public class ArrayToJsonArray
    */
   @Override
   protected Object doConvert() throws Exception {
-    JSONArray	result;
-    int		i;
-    
     if (!m_Input.getClass().isArray())
       throw new IllegalArgumentException("Input is not an array: " + m_Input.getClass().getName());
     
-    result = new JSONArray();
-    for (i = 0; i < Array.getLength(m_Input); i++)
-      result.add(Array.get(m_Input, i));
-    
-    return result;
+    return JsonHelper.toJSON(m_Input);
   }
 }

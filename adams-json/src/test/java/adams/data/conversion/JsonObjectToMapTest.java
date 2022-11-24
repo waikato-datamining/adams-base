@@ -15,7 +15,7 @@
 
 /*
  * JsonObjectToMapTest.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -23,7 +23,6 @@ package adams.data.conversion;
 import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 /**
@@ -55,7 +54,7 @@ public class JsonObjectToMapTest
     result = new Object[2];
     result[0] = new JSONObject();
     result[1] = new JSONObject();
-    ((JSONObject) result[1]).put("hey", new JSONArray());
+    ((JSONObject) result[1]).put("hey", new JSONObject());
     ((JSONObject) result[1]).put("blah", new JSONObject());
     
     return result;

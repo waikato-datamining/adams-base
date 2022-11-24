@@ -36,6 +36,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -84,8 +85,8 @@ public class JsonHelper {
 	logging.getLogger().log(Level.SEVERE, "Failed to read JSON string: " + json, e);
       }
       else {
-        System.err.println("Failed to read JSON string: " + json);
-        e.printStackTrace();
+	System.err.println("Failed to read JSON string: " + json);
+	e.printStackTrace();
       }
       return null;
     }
@@ -119,8 +120,8 @@ public class JsonHelper {
 	logging.getLogger().log(Level.SEVERE, "Failed to read JSON file: " + file, e);
       }
       else {
-        System.err.println("Failed to read JSON file: " + file);
-        e.printStackTrace();
+	System.err.println("Failed to read JSON file: " + file);
+	e.printStackTrace();
       }
       return null;
     }
@@ -184,24 +185,73 @@ public class JsonHelper {
       map  = (Map) value;
       json = new JSONObject();
       for (Object key : map.keySet())
-        json.put(key.toString(), toJSON(map.get(key)));
+	json.put(key.toString(), toJSON(map.get(key)));
       return json;
     }
     else if (value instanceof List) {
       list  = (List) value;
       array = new JSONArray();
       for (i = 0; i < list.size(); i++)
-        array.add(toJSON(list.get(i)));
+	array.add(toJSON(list.get(i)));
       return array;
     }
     else if (value.getClass().isArray()) {
       array = new JSONArray();
       for (i = 0; i < Array.getLength(value); i++)
-        array.add(toJSON(Array.get(value, i)));
+	array.add(toJSON(Array.get(value, i)));
       return array;
     }
     else {
       return value;
     }
+  }
+
+  /**
+   * Turns the JSON array into an object array.
+   *
+   * @param array	the array to convert
+   * @return		the generated map
+   */
+  public static Object[] toArray(JSONArray array) {
+    Object[]	result;
+    Object	obj;
+    int		i;
+
+    result = new Object[array.size()];
+    for (i = 0; i < array.size(); i++) {
+      obj = array.get(i);
+      if (obj instanceof JSONArray)
+        result[i] = toArray((JSONArray) obj);
+      else if (obj instanceof JSONObject)
+        result[i] = toMap((JSONObject) obj);
+      else
+        result[i] = obj;
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the JSON object into a map.
+   *
+   * @param object	the object to convert
+   * @return		the generated map
+   */
+  public static Map<String,Object> toMap(JSONObject object) {
+    Map<String,Object>	result;
+    Object		obj;
+
+    result = new HashMap<>();
+    for (String key: object.keySet()) {
+      obj = object.get(key);
+      if (obj instanceof JSONObject)
+	result.put(key, toMap((JSONObject) obj));
+      else if (obj instanceof JSONArray)
+	result.put(key, toArray((JSONArray) obj));
+      else
+	result.put(key, obj);
+    }
+
+    return result;
   }
 }

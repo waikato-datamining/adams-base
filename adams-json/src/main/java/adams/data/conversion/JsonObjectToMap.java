@@ -15,13 +15,13 @@
 
 /*
  * JsonObjectToMap.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.data.json.JsonHelper;
 import net.minidev.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +39,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonObjectToMap
   extends AbstractConversion {
@@ -85,14 +84,6 @@ public class JsonObjectToMap
    */
   @Override
   protected Object doConvert() throws Exception {
-    Map<String,Object>	result;
-    JSONObject		obj;
-
-    result = new HashMap<>();
-    obj    = (JSONObject) m_Input;
-    for (String key: obj.keySet())
-      result.put(key, obj.get(key));
-
-    return result;
+    return JsonHelper.toMap((JSONObject) m_Input);
   }
 }
