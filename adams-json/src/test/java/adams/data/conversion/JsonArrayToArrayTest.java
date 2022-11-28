@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonArrayToArrayTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -29,7 +29,6 @@ import net.minidev.json.JSONArray;
  * Tests the JsonArrayToArray conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonArrayToArrayTest
   extends AbstractConversionTestCase {
@@ -55,9 +54,9 @@ public class JsonArrayToArrayTest
     result = new Object[2];
     result[0] = new JSONArray();
     result[1] = new JSONArray();
-    ((JSONArray) result[1]).add(new Integer(1));
-    ((JSONArray) result[1]).add(new Integer(2));
-    ((JSONArray) result[1]).add(new Integer(3));
+    ((JSONArray) result[1]).add(1);
+    ((JSONArray) result[1]).add(2);
+    ((JSONArray) result[1]).add(3);
     
     return result;
   }
