@@ -27,7 +27,7 @@ import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * Tests the MatlabArrayToDoubleMatrix conversion.
+ * Tests the Mat5ArrayToDoubleMatrix conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */

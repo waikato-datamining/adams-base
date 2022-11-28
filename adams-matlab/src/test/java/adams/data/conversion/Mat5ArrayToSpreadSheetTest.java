@@ -27,7 +27,7 @@ import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Matrix;
 
 /**
- * Tests the MatlabArrayToSpreadSheet conversion.
+ * Tests the Mat5ArrayToSpreadSheet conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */

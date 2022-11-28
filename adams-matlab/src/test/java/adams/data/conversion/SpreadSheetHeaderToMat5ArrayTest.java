@@ -28,7 +28,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests the SpreadSheetHeaderToMatlabArray conversion.
+ * Tests the SpreadSheetHeaderToMat5Array conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */

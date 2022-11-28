@@ -28,7 +28,7 @@ import us.hebi.matlab.mat.types.Matrix;
 import us.hebi.matlab.mat.types.Struct;
 
 /**
- * Tests the MatlabStructToMap conversion.
+ * Tests the Mat5StructToMap conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
