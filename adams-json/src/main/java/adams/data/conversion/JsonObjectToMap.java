@@ -19,6 +19,7 @@
  */
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.data.json.JsonHelper;
 import net.minidev.json.JSONObject;
 
@@ -36,6 +37,11 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  *
+ * <pre>-arrays-as-lists &lt;boolean&gt; (property: arraysAsLists)
+ * &nbsp;&nbsp;&nbsp;If enabled, JSON arrays get converted to Java lists rather than Java arrays.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -46,6 +52,9 @@ public class JsonObjectToMap
   /** for serialization. */
   private static final long serialVersionUID = -468714756281370533L;
 
+  /** whether to return arrays as lists. */
+  protected boolean m_ArraysAsLists;
+
   /**
    * Returns a string describing the object.
    *
@@ -54,6 +63,46 @@ public class JsonObjectToMap
   @Override
   public String globalInfo() {
     return "Turns a JSON object into a map.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "arrays-as-lists", "arraysAsLists",
+      false);
+  }
+
+  /**
+   * Sets whether to return JSON arrays as Java arrays or lists.
+   *
+   * @param value	true if as lists
+   */
+  public void setArraysAsLists(boolean value) {
+    m_ArraysAsLists = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to return JSON arrays as Java arrays or lists.
+   *
+   * @return		true if as lists
+   */
+  public boolean getArraysAsLists() {
+    return m_ArraysAsLists;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String arraysAsListsTipText() {
+    return "If enabled, JSON arrays get converted to Java lists rather than Java arrays.";
   }
 
   /**
@@ -77,6 +126,16 @@ public class JsonObjectToMap
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "arraysAsLists", (m_ArraysAsLists ? "as-lists" : "as-arrays"), "output: ");
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @return		the converted data
@@ -84,6 +143,6 @@ public class JsonObjectToMap
    */
   @Override
   protected Object doConvert() throws Exception {
-    return JsonHelper.toMap((JSONObject) m_Input);
+    return JsonHelper.toMap((JSONObject) m_Input, m_ArraysAsLists);
   }
 }

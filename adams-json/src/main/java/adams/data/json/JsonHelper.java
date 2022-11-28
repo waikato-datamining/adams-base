@@ -36,6 +36,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +211,7 @@ public class JsonHelper {
    * Turns the JSON array into an object array.
    *
    * @param array	the array to convert
-   * @return		the generated map
+   * @return		the generated array
    */
   public static Object[] toArray(JSONArray array) {
     Object[]	result;
@@ -221,11 +222,36 @@ public class JsonHelper {
     for (i = 0; i < array.size(); i++) {
       obj = array.get(i);
       if (obj instanceof JSONArray)
-        result[i] = toArray((JSONArray) obj);
+	result[i] = toArray((JSONArray) obj);
       else if (obj instanceof JSONObject)
-        result[i] = toMap((JSONObject) obj);
+	result[i] = toMap((JSONObject) obj, false);
       else
-        result[i] = obj;
+	result[i] = obj;
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the JSON array into an object list.
+   *
+   * @param array	the array to convert
+   * @return		the generated list
+   */
+  public static List<Object> toList(JSONArray array) {
+    List<Object>	result;
+    Object		obj;
+    int			i;
+
+    result = new ArrayList<>();
+    for (i = 0; i < array.size(); i++) {
+      obj = array.get(i);
+      if (obj instanceof JSONArray)
+	result.add(toList((JSONArray) obj));
+      else if (obj instanceof JSONObject)
+	result.add(toMap((JSONObject) obj, true));
+      else
+	result.add(obj);
     }
 
     return result;
@@ -237,19 +263,25 @@ public class JsonHelper {
    * @param object	the object to convert
    * @return		the generated map
    */
-  public static Map<String,Object> toMap(JSONObject object) {
+  public static Map<String,Object> toMap(JSONObject object, boolean arraysAsList) {
     Map<String,Object>	result;
     Object		obj;
 
     result = new HashMap<>();
     for (String key: object.keySet()) {
       obj = object.get(key);
-      if (obj instanceof JSONObject)
-	result.put(key, toMap((JSONObject) obj));
-      else if (obj instanceof JSONArray)
-	result.put(key, toArray((JSONArray) obj));
-      else
+      if (obj instanceof JSONObject) {
+	result.put(key, toMap((JSONObject) obj, arraysAsList));
+      }
+      else if (obj instanceof JSONArray) {
+        if (arraysAsList)
+	  result.put(key, toList((JSONArray) obj));
+        else
+	  result.put(key, toArray((JSONArray) obj));
+      }
+      else {
 	result.put(key, obj);
+      }
     }
 
     return result;
