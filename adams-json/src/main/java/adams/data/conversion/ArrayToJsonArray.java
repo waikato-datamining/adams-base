@@ -19,6 +19,7 @@
  */
 package adams.data.conversion;
 
+import adams.core.Utils;
 import adams.data.json.JsonHelper;
 import net.minidev.json.JSONArray;
 
@@ -87,7 +88,7 @@ public class ArrayToJsonArray
   @Override
   protected Object doConvert() throws Exception {
     if (!m_Input.getClass().isArray())
-      throw new IllegalArgumentException("Input is not an array: " + m_Input.getClass().getName());
+      throw new IllegalArgumentException("Input is not an array: " + Utils.classToString(m_Input));
     
     return JsonHelper.toJSON(m_Input);
   }
