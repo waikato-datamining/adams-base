@@ -30,9 +30,21 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Converts a map into a Matlab struct object.<br>
+ * Supported nested elements:<br>
+ * - java.util.Map<br>
+ * - Matlab array&#47;struct<br>
+ * - spreadsheet<br>
+ * - Double matrix
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -112,9 +124,9 @@ public class MapToMat5Struct
       sp2a.setInput(object);
       msg = sp2a.convert();
       if (msg == null)
-	result = (Array) sp2a.getOutput();
+        result = (Array) sp2a.getOutput();
       else
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       sp2a.cleanUp();
     }
 
@@ -141,9 +153,9 @@ public class MapToMat5Struct
       key   = "" + k;
       array = convert(map.get(k));
       if (array != null)
-	result.set(key, array);
+        result.set(key, array);
       else
-	getLogger().warning("Failed to convert map value '" + key + "' into array!");
+        getLogger().warning("Failed to convert map value '" + key + "' into array!");
     }
 
     return result;
