@@ -1,0 +1,35 @@
+# Project: adams
+# Date: 2022-11-29 11:40:46
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Creates a Matlab file object from a Java map and saves it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.NewMap
+ adams.flow.control.SubProcess -name mat1
+  adams.flow.control.Trigger -name "create matrix"
+   adams.flow.source.NewMat5Matrix
+   adams.flow.transformer.Mat5SetMatrixElement -index 1;1 -value 2
+   adams.flow.transformer.SetStorageValue -storage-name mat1
+  adams.flow.transformer.SetMapValue -key mat1 -type STORAGE -storage mat1 -conversion adams.data.conversion.ObjectToObject
+ adams.flow.control.SubProcess -name mat2
+  adams.flow.control.Trigger -name "create matrix"
+   adams.flow.source.NewMat5Matrix -dimensions 2;2
+   adams.flow.transformer.Mat5SetMatrixElement -index 1;1 -value 5
+   adams.flow.transformer.Mat5SetMatrixElement -name "Mat5SetMatrixElement (2)" -index 2;2 -value 6
+   adams.flow.transformer.SetStorageValue -storage-name mat2
+  adams.flow.transformer.SetMapValue -key mat2 -type STORAGE -storage mat2 -conversion adams.data.conversion.ObjectToObject
+ adams.flow.control.SubProcess -name map2
+  adams.flow.control.Trigger -name "new map"
+   adams.flow.source.NewMap
+   adams.flow.transformer.SetStorageValue -storage-name map2
+   adams.flow.control.SubProcess -name mat3
+    adams.flow.control.Trigger -name "create matrix"
+     adams.flow.source.NewMat5Matrix
+     adams.flow.transformer.Mat5SetMatrixElement -index 3;3 -value 11
+     adams.flow.transformer.SetStorageValue -storage-name mat3
+    adams.flow.transformer.SetMapValue -key mat3 -type STORAGE -storage mat3 -conversion adams.data.conversion.ObjectToObject
+   adams.flow.transformer.SetMapValue -key mat3 -type STORAGE -storage mat3 -conversion adams.data.conversion.ObjectToObject
+ adams.flow.transformer.SetMapValue -key map2 -type STORAGE -storage map2 -conversion adams.data.conversion.ObjectToObject
+ adams.flow.transformer.Convert -conversion adams.data.conversion.MapToMat5File
+ adams.flow.sink.Mat5FileWriter -output ${EXAMPLE_FLOWS}/output/from_map.mat
