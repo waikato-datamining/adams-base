@@ -20,6 +20,7 @@
 
 package adams.data.conversion;
 
+import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.matlab.ArrayElementType;
 import adams.data.matlab.MatlabUtils;
@@ -104,6 +105,16 @@ public class Mat5ArrayToString
    */
   public String elementTypeTipText() {
     return "Specifies the type of the values in the array.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "elementType", m_ElementType, "element: ");
   }
 
   /**
