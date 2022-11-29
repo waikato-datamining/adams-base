@@ -165,13 +165,13 @@ public class MatlabUtils {
   /**
    * Sets the element according to the specified type.
    *
-   * @param source	the matrix to set the element in
+   * @param target	the matrix to set the element in
    * @param index	the index of the element
    * @param type	the type of element
    * @param value 	the value of the element, gets automatically parsed if string
    * @return		null if successfully set, otherwise error message
    */
-  public static String setElement(Matrix source, int[] index, ArrayElementType type, Object value) {
+  public static String setElement(Matrix target, int[] index, ArrayElementType type, Object value) {
     String	result;
 
     result = null;
@@ -207,25 +207,25 @@ public class MatlabUtils {
 
       switch (type) {
 	case BOOLEAN:
-	  source.setBoolean(index, (Boolean) value);
+	  target.setBoolean(index, (Boolean) value);
 	  break;
 	case BYTE:
-	  source.setByte(index, (Byte) value);
+	  target.setByte(index, (Byte) value);
 	  break;
 	case SHORT:
-	  source.setShort(index, (Short) value);
+	  target.setShort(index, (Short) value);
 	  break;
 	case INTEGER:
-	  source.setInt(index, (Integer) value);
+	  target.setInt(index, (Integer) value);
 	  break;
 	case LONG:
-	  source.setLong(index, (Long) value);
+	  target.setLong(index, (Long) value);
 	  break;
 	case FLOAT:
-	  source.setFloat(index, (Float) value);
+	  target.setFloat(index, (Float) value);
 	  break;
 	case DOUBLE:
-	  source.setDouble(index, (Double) value);
+	  target.setDouble(index, (Double) value);
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled element type: " + type);
