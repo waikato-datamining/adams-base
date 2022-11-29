@@ -83,6 +83,30 @@ public class MatlabUtils {
   }
 
   /**
+   * Increments the index.
+   *
+   * @param index	the current index
+   * @param dims 	the dimensions (ie max values)
+   * @param open 	the indices that are "open" to be incremented
+   * @return		true if finished
+   */
+  public static boolean increment(int[] index, int[] dims, int[] open) {
+    int		pos;
+
+    pos = open.length - 1;
+    index[open[pos]]++;
+    while (index[open[pos]] >= dims[open[pos]]) {
+      if (pos == 0)
+	return true;
+      index[open[pos]] = 0;
+      pos--;
+      index[open[pos]]++;
+    }
+
+    return false;
+  }
+
+  /**
    * For transferring the subset from the original matrix into the new one.
    *
    * @param source	the source matrix
@@ -252,7 +276,7 @@ public class MatlabUtils {
    * Generates a string representation of the array dimensions.
    *
    * @param array	the array to generate the dimensions for
-   * @[param separator 	the separator to use for the dimensions
+   * @param separator 	the separator to use for the dimensions
    * @return		the generated string
    */
   public static String arrayDimensionsToString(Array array, String separator) {
