@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.base.Mat5ArrayElementIndex;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractArgumentOption;
+import adams.data.conversion.Mat5ArrayToString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -141,6 +142,11 @@ public class Mat5ArraySubsetTest
       mat5arraysubset.setZeroBasedIndex(true);
 
       actors.add(mat5arraysubset);
+
+      // Mat5ArrayToString
+      Convert conv = new Convert();
+      conv.setConversion(new Mat5ArrayToString());
+      actors.add(conv);
 
       // Flow.DumpFile
       DumpFile dumpfile = new DumpFile();
