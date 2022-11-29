@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2022-11-29 16:29:56
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Turns a matrix into a human-readable string." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.NewMat5Matrix
+ adams.flow.transformer.Mat5SetMatrixElement -index 1;1 -value 1
+ adams.flow.transformer.Mat5SetMatrixElement -name "Mat5SetMatrixElement (2)" -index 2;2 -value 2
+ adams.flow.transformer.Mat5SetMatrixElement -name "Mat5SetMatrixElement (3)" -index 3;3 -value 3
+ adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToString
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
