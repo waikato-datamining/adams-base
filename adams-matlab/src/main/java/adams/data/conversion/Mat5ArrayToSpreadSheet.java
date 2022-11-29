@@ -83,6 +83,27 @@ public class Mat5ArrayToSpreadSheet
   }
 
   /**
+   * Checks whether the data can be processed.
+   *
+   * @return		null if checks passed, otherwise error message
+   */
+  @Override
+  protected String checkData() {
+    String	result;
+    Array	array;
+
+    result = super.checkData();
+
+    if (result == null) {
+      array = (Array) m_Input;
+      if (array.getNumDimensions() > 2)
+        result = "Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions();
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -101,9 +122,7 @@ public class Mat5ArrayToSpreadSheet
     int				n;
     String[]			lines;
 
-    array = (Array) m_Input;
-    if (array.getNumDimensions() > 2)
-      throw new IllegalStateException("Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions());
+    array  = (Array) m_Input;
     matrix = null;
     if (array instanceof Matrix)
       matrix = (Matrix) array;

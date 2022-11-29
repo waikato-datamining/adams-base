@@ -76,6 +76,29 @@ public class Mat5ArrayToDoubleMatrix
   }
 
   /**
+   * Checks whether the data can be processed.
+   *
+   * @return		null if checks passed, otherwise error message
+   */
+  @Override
+  protected String checkData() {
+    String	result;
+    Array	array;
+
+    result = super.checkData();
+
+    if (result == null) {
+      array = (Array) m_Input;
+      if (array.getNumDimensions() > 2)
+        result = "Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions();
+      else if (!(array instanceof Matrix))
+        result = "Array is not of type " + Utils.classToString(Matrix.class) + "!";
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -89,12 +112,7 @@ public class Mat5ArrayToDoubleMatrix
     int		i;
     int		n;
 
-    array = (Array) m_Input;
-    if (array.getNumDimensions() > 2)
-      throw new IllegalStateException("Cannot handle arrays with more than two dimensions, received: " + array.getNumDimensions());
-
-    if (!(array instanceof Matrix))
-      throw new IllegalStateException("Array is not of type " + Utils.classToString(Matrix.class) + "!");
+    array  = (Array) m_Input;
     matrix = (Matrix) array;
 
     // transfer data

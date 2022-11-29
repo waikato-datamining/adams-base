@@ -76,6 +76,27 @@ public class DoubleMatrixToMat5Array
   }
 
   /**
+   * Checks whether the data can be processed.
+   *
+   * @return		null if checks passed, otherwise error message
+   */
+  @Override
+  protected String checkData() {
+    String  	result;
+    Double[][] 	input;
+
+    result = super.checkData();
+
+    if (result == null) {
+      input = (Double[][]) m_Input;
+      if (input.length == 0)
+	throw new IllegalStateException("No data in double matrix!");
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -88,14 +109,11 @@ public class DoubleMatrixToMat5Array
     int		y;
     int		x;
 
-    input = (Double[][]) m_Input;
-    if (input.length == 0)
-      throw new IllegalStateException("No data in double matrix!");
-
+    input  = (Double[][]) m_Input;
     result = Mat5.newMatrix(input.length, input[0].length);
     for (y = 0; y < input.length; y++) {
       for (x = 0; x < input[0].length; x++)
-        result.setDouble(y, x, input[y][x]);
+	result.setDouble(y, x, input[y][x]);
     }
 
     return result;
