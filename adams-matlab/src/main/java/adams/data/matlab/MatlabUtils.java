@@ -239,18 +239,29 @@ public class MatlabUtils {
   }
 
   /**
-   * Generates a string representation of the array dimensions.
+   * Generates a string representation of the array dimensions, uses 'x' as separator.
    *
    * @param array	the array to generate the dimensions for
    * @return		the generated string
    */
   public static String arrayDimensionsToString(Array array) {
+    return arrayDimensionsToString(array, "x");
+  }
+
+  /**
+   * Generates a string representation of the array dimensions.
+   *
+   * @param array	the array to generate the dimensions for
+   * @[param separator 	the separator to use for the dimensions
+   * @return		the generated string
+   */
+  public static String arrayDimensionsToString(Array array, String separator) {
     StringBuilder 	result;
 
     result = new StringBuilder();
     for (int dim: array.getDimensions()) {
       if (result.length() > 0)
-	result.append("x");
+	result.append(separator);
       result.append(dim);
     }
 

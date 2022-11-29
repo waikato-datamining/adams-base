@@ -90,13 +90,18 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: NUM_DIMENSIONS
  * </pre>
  *
+ * <pre>-dim-separator &lt;java.lang.String&gt; (property: dimSeparator)
+ * &nbsp;&nbsp;&nbsp;The separator to use for the dimensions when outputting STR_DIMENSIONS.
+ * &nbsp;&nbsp;&nbsp;default: x
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Mat5ArrayInfo
-    extends AbstractArrayProvider
-    implements DataInfoActor {
+  extends AbstractArrayProvider
+  implements DataInfoActor {
 
   private static final long serialVersionUID = 8251699709312918726L;
 
@@ -120,6 +125,9 @@ public class Mat5ArrayInfo
   /** the type of information to generate. */
   protected InfoType m_Type;
 
+  /** the separator to use for the dimsnions. */
+  protected String m_DimSeparator;
+
   /**
    * Returns a string describing the object.
    *
@@ -138,8 +146,12 @@ public class Mat5ArrayInfo
     super.defineOptions();
 
     m_OptionManager.add(
-	"type", "type",
-	InfoType.NUM_DIMENSIONS);
+      "type", "type",
+      InfoType.NUM_DIMENSIONS);
+
+    m_OptionManager.add(
+      "dim-separator", "dimSeparator",
+      "x");
   }
 
   /**
@@ -180,6 +192,35 @@ public class Mat5ArrayInfo
    */
   public String typeTipText() {
     return "The type of information to generate.";
+  }
+
+  /**
+   * Sets the separator to use in case of {@link InfoType#STR_DIMENSIONS}.
+   *
+   * @param value	the separator
+   */
+  public void setDimSeparator(String value) {
+    m_DimSeparator = value;
+    reset();
+  }
+
+  /**
+   * Returns the separator to use in case of {@link InfoType#STR_DIMENSIONS}.
+   *
+   * @return		the separator
+   */
+  public String getDimSeparator() {
+    return m_DimSeparator;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String dimSeparatorTipText() {
+    return "The separator to use for the dimensions when outputting " + InfoType.STR_DIMENSIONS + ".";
   }
 
   /**
@@ -227,6 +268,7 @@ public class Mat5ArrayInfo
     String		result;
 
     result = QuickInfoHelper.toString(this, "type", m_Type);
+    result += QuickInfoHelper.toString(this, "dimSeparator", m_DimSeparator, ", dim sep: ");
 
     return result;
   }
@@ -256,7 +298,7 @@ public class Mat5ArrayInfo
 	result.add(array.getNumDimensions());
 	break;
       case STR_DIMENSIONS:
-	result.add(MatlabUtils.arrayDimensionsToString(array));
+	result.add(MatlabUtils.arrayDimensionsToString(array, m_DimSeparator));
 	break;
       case NUM_COLS:
 	result.add(array.getNumCols());
