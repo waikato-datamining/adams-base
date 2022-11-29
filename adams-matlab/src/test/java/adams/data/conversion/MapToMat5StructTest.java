@@ -63,7 +63,7 @@ public class MapToMat5StructTest
     map.put("mat1", Mat5.newMatrix(new int[]{3, 3}));
     map.put("dm1", new Double[][]{{1.0, 2.0}, {3.0, 4.0}});
 
-    struct = Mat5.newStruct(1, 1);
+    struct = Mat5.newStruct();
     mat    = Mat5.newMatrix(new int[]{3, 3});
     struct.set("mat2", mat);
     map.put("str1", struct);

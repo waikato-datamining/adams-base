@@ -54,7 +54,7 @@ public class Mat5StructToMapTest
     Struct 	struct;
     Matrix	mat;
 
-    struct = Mat5.newStruct(1, 1);
+    struct = Mat5.newStruct();
     mat    = Mat5.newMatrix(new int[]{3, 3});
     struct.set("mat1", mat);
     mat    = Mat5.newMatrix(new int[]{2, 2, 2});

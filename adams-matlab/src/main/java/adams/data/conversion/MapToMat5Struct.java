@@ -147,7 +147,7 @@ public class MapToMat5Struct
     String	key;
     Array	array;
 
-    result = Mat5.newStruct(1, 1);
+    result = Mat5.newStruct();
 
     for (Object k: map.keySet()) {
       key   = "" + k;
