@@ -42,6 +42,26 @@ public class DoubleMatrixToMat5ArrayTest
   }
 
   /**
+   * Turns the data object into a useful string representation.
+   *
+   * @param data	the object to convert
+   * @return		the string representation
+   */
+  @Override
+  protected String toString(Object data) {
+    Mat5ArrayToString 	conv;
+    String		msg;
+
+    conv = new Mat5ArrayToString();
+    conv.setInput(data);
+    msg = conv.convert();
+    if (msg == null)
+      return "" + conv.getOutput();
+    else
+      return super.toString(data);
+  }
+
+  /**
    * Returns the input data to use in the regression test.
    *
    * @return		the objects
