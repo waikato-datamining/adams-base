@@ -107,6 +107,43 @@ public class MatlabUtils {
   }
 
   /**
+   * Transfers a single cell from one matrix to another.
+   *
+   * @param source	the source matrix
+   * @param sourceIndex	the index of the cell in the source matrix
+   * @param target	the target matrix
+   * @param targetIndex	the index of the cell in the target matrix
+   * @param type	the type of element to transfer
+   */
+  public static void transfer(Matrix source, int[] sourceIndex, Matrix target, int[] targetIndex, ArrayElementType type) {
+    switch (type) {
+      case BOOLEAN:
+	target.setBoolean(targetIndex, source.getBoolean(sourceIndex));
+	break;
+      case BYTE:
+	target.setByte(targetIndex, source.getByte(sourceIndex));
+	break;
+      case SHORT:
+	target.setShort(targetIndex, source.getShort(sourceIndex));
+	break;
+      case INTEGER:
+	target.setInt(targetIndex, source.getInt(sourceIndex));
+	break;
+      case LONG:
+	target.setLong(targetIndex, source.getLong(sourceIndex));
+	break;
+      case FLOAT:
+	target.setFloat(targetIndex, source.getFloat(sourceIndex));
+	break;
+      case DOUBLE:
+	target.setDouble(targetIndex, source.getDouble(sourceIndex));
+	break;
+      default:
+        throw new IllegalStateException("Unhandled element type: " + type);
+    }
+  }
+
+  /**
    * For transferring the subset from the original matrix into the new one.
    *
    * @param source	the source matrix
@@ -129,31 +166,38 @@ public class MatlabUtils {
       for (i = 0; i < indexTarget.length; i++)
 	indexSource[openSource[i]] = indexTarget[i];
 
-      switch (type) {
-	case BOOLEAN:
-	  target.setBoolean(indexTarget, source.getBoolean(indexSource));
-	  break;
-	case BYTE:
-	  target.setByte(indexTarget, source.getByte(indexSource));
-	  break;
-	case SHORT:
-	  target.setShort(indexTarget, source.getShort(indexSource));
-	  break;
-	case INTEGER:
-	  target.setInt(indexTarget, source.getInt(indexSource));
-	  break;
-	case LONG:
-	  target.setLong(indexTarget, source.getLong(indexSource));
-	  break;
-	case FLOAT:
-	  target.setFloat(indexTarget, source.getFloat(indexSource));
-	  break;
-	case DOUBLE:
-	  target.setDouble(indexTarget, source.getDouble(indexSource));
-	  break;
-      }
+      transfer(source, indexSource, target, indexTarget, type);
 
       finished = increment(indexTarget, dimsTarget);
+    }
+  }
+
+  /**
+   * For transferring the subset from the original matrix into the new one.
+   *
+   * @param source	the source matrix
+   * @param indexSource the source index template to use, initializes with all 0s if null
+   * @param dimsSource	the dimensions of the source matrix
+   * @param openSource	the indices of the "open" dimensions
+   * @param target	the target matrix
+   * @param indexTarget the target index template to use, initializes with all 0s if null
+   * @param dimsTarget	the dimensions of the target matrix
+   * @param openTarget 	the indices of the "open" dimensions
+   * @param type	the element type to use for transferring the data
+   */
+  public static void transfer(Matrix source, int[] indexSource, int[] dimsSource, int[] openSource, Matrix target, int[] indexTarget, int[] dimsTarget, int[] openTarget, ArrayElementType type) {
+    boolean	finished;
+
+    if (indexSource == null)
+      indexSource = new int[dimsSource.length];
+    if (indexTarget == null)
+      indexTarget = new int[dimsTarget.length];
+
+    finished = false;
+    while (!finished) {
+      transfer(source, indexSource, target, indexTarget, type);
+      finished = increment(indexSource, dimsSource, openSource);
+      increment(indexTarget, dimsTarget, openTarget);
     }
   }
 

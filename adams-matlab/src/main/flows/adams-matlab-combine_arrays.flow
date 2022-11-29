@@ -1,0 +1,46 @@
+# Project: adams
+# Date: 2022-11-30 11:21:09
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-matlab,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Combines multiple arrays into a single one with an additional dimension." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.HistoryDisplay -name Input -short-title true -display-type adams.flow.core.displaytype.Default -entry-name-variable i
+  adams.flow.sink.Display -name Combined -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+  adams.flow.sink.HistoryDisplay -name Split -short-title true -display-type adams.flow.core.displaytype.Default -entry-name-variable i
+ adams.flow.standalone.CallableActors
+  adams.flow.control.Sequence -name "display input"
+   adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToString
+   adams.flow.sink.CallableSink -callable Input
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name mat1
+  adams.flow.source.NewMat5Matrix
+  adams.flow.transformer.Mat5SetMatrixElement -index 1;1 -value 1
+  adams.flow.transformer.SetStorageValue -storage-name mat1
+  adams.flow.sink.CallableSink -callable "display input"
+ adams.flow.control.Trigger -name mat2
+  adams.flow.source.NewMat5Matrix
+  adams.flow.transformer.Mat5SetMatrixElement -index 2;2 -value 2
+  adams.flow.transformer.SetStorageValue -storage-name mat2
+  adams.flow.sink.CallableSink -callable "display input"
+ adams.flow.control.Trigger -name mat3
+  adams.flow.source.NewMat5Matrix
+  adams.flow.transformer.Mat5SetMatrixElement -index 3;3 -value 3
+  adams.flow.transformer.SetStorageValue -storage-name mat3
+  adams.flow.sink.CallableSink -callable "display input"
+ adams.flow.control.Trigger -name combine
+  adams.flow.source.StorageValuesArray -storage-name mat1 -storage-name mat2 -storage-name mat3 -conversion adams.data.conversion.UnknownToUnknown
+  adams.flow.transformer.Convert -conversion adams.data.conversion.CombineMat5Arrays
+  adams.flow.transformer.SetStorageValue -storage-name mat
+  adams.flow.control.Tee -name display
+   adams.flow.sink.CallableSink -callable Combined
+  adams.flow.transformer.Mat5ArrayInfo -output-array true -type DIMENSIONS
+  adams.flow.transformer.GetArrayElement -index last
+  adams.flow.transformer.SetVariable -var-name num
+ adams.flow.control.Trigger -name "separate again"
+  adams.flow.source.StorageForLoop -upper @{num} -variable i -storage mat
+  adams.flow.transformer.SetVariable -var-name index -var-value ;;@{i} -expand-value true
+  adams.flow.transformer.Mat5ArraySubset -index @{index}
+  adams.flow.transformer.Convert -conversion adams.data.conversion.Mat5ArrayToString
+  adams.flow.sink.CallableSink -callable Split
