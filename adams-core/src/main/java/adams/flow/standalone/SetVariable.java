@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -564,6 +564,37 @@ public class SetVariable
 
   /** whether to override using an environment variable. */
   protected boolean m_EnvVarOptional;
+
+  /**
+   * Default constructor.
+   */
+  public SetVariable() {
+    super();
+  }
+
+  /**
+   * Constructor for setting variable name and value.
+   *
+   * @param name	the variable name
+   * @param value	the variable value
+   */
+  public SetVariable(VariableName name, BaseText value) {
+    this();
+    setVariableName(name);
+    setVariableValue(value);
+  }
+
+  /**
+   * Constructor for setting variable name and value.
+   *
+   * @param name	the variable name
+   * @param value	the variable value
+   */
+  public SetVariable(String name, String value) {
+    this();
+    setVariableName(name);
+    setVariableValue(value);
+  }
 
   /**
    * Returns a string describing the object.
