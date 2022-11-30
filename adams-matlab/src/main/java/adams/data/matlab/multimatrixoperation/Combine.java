@@ -21,8 +21,9 @@
 package adams.data.matlab.multimatrixoperation;
 
 import adams.core.QuickInfoHelper;
-import adams.data.conversion.CombineMat5Arrays;
 import adams.data.matlab.ArrayElementType;
+import adams.data.matlab.MatlabUtils;
+import us.hebi.matlab.mat.format.Mat5;
 import us.hebi.matlab.mat.types.Matrix;
 
 /**
@@ -128,19 +129,34 @@ public class Combine
   @Override
   protected Matrix[] doProcess(Matrix[] matrices) {
     Matrix[]		result;
-    CombineMat5Arrays 	conv;
-    String		msg;
+    int[]	inputIndex;
+    int[]	inputDims;
+    int[] 	inputOpen;
+    int[]	outputIndex;
+    int[]	outputDims;
+    int[] 	outputOpen;
+    int		i;
 
-    result = new Matrix[1];
-    conv   = new CombineMat5Arrays();
-    conv.setElementType(m_ElementType);
-    conv.setInput(matrices);
-    msg = conv.convert();
-    if (msg != null)
-      throw new IllegalStateException("Failed to combine matrices:\n" + msg);
-    else
-      result[0] = (Matrix) conv.getOutput();
-    conv.cleanUp();
+    inputDims   = matrices[0].getDimensions();
+    outputDims  = new int[inputDims.length + 1];
+    System.arraycopy(inputDims, 0, outputDims, 0, inputDims.length);
+    outputDims[outputDims.length - 1] = matrices.length;
+    inputOpen   = new int[inputDims.length];
+    outputOpen  = new int[inputDims.length];
+    inputIndex  = new int[inputDims.length];
+    outputIndex = new int[outputDims.length];
+    for (i = 0; i < inputDims.length; i++) {
+      inputOpen[i]  = i;
+      outputOpen[i] = i;
+    }
+    result    = new Matrix[1];
+    result[0] = Mat5.newMatrix(outputDims);
+    for (i = 0; i < matrices.length; i++) {
+      outputIndex[outputIndex.length - 1] = i;
+      MatlabUtils.transfer(
+        matrices[i], inputIndex.clone(), inputDims, inputOpen,
+        result[0], outputIndex.clone(), outputDims, outputOpen, m_ElementType);
+    }
 
     return result;
   }
