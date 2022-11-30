@@ -44,6 +44,17 @@ import us.hebi.matlab.mat.types.Matrix;
  * &nbsp;&nbsp;&nbsp;default: DOUBLE
  * </pre>
  *
+ * <pre>-compact &lt;boolean&gt; (property: compact)
+ * &nbsp;&nbsp;&nbsp;If enabled, the output omits spaces.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use; -1 means automatic.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
@@ -55,6 +66,12 @@ public class Mat5ArrayToString
 
   /** the element type. */
   protected ArrayElementType m_ElementType;
+
+  /** whether to output compact string (ie no blanks). */
+  protected boolean m_Compact;
+
+  /** the number of decimals. */
+  protected int m_NumDecimals;
 
   /**
    * Returns a string describing the object.
@@ -76,6 +93,14 @@ public class Mat5ArrayToString
     m_OptionManager.add(
       "element-type", "elementType",
       ArrayElementType.DOUBLE);
+
+    m_OptionManager.add(
+      "compact", "compact",
+      false);
+
+    m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      -1, -1, null);
   }
 
   /**
@@ -108,13 +133,79 @@ public class Mat5ArrayToString
   }
 
   /**
+   * Sets whether to output compact format (ie no spaces).
+   *
+   * @param value	true if compact
+   */
+  public void setCompact(boolean value) {
+    m_Compact = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output compact format (ie no spaces).
+   *
+   * @return		true if compact
+   */
+  public boolean getCompact() {
+    return m_Compact;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String compactTipText() {
+    return "If enabled, the output omits spaces.";
+  }
+
+  /**
+   * Sets the number of decimals after the decimal point to use.
+   *
+   * @param value	the number of decimals, -1 is automatic
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals after the decimal point to use.
+   *
+   * @return		the number of decimals, -1 is automatic
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals after the decimal point to use; -1 means automatic.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "elementType", m_ElementType, "element: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "elementType", m_ElementType, "element: ");
+    result +=  QuickInfoHelper.toString(this, "compact", m_Compact, "compact", ", ");
+    result += QuickInfoHelper.toString(this, "numDecimals", (m_NumDecimals == -1 ? "auto" : "" + m_NumDecimals), ", #decimals: ");
+
+    return result;
   }
 
   /**
@@ -140,7 +231,7 @@ public class Mat5ArrayToString
 
     if (result == null) {
       if (!(m_Input instanceof Matrix))
-        result = "Expected " + Utils.classToString(Matrix.class) + " but got " + Utils.classToString(m_Input);
+	result = "Expected " + Utils.classToString(Matrix.class) + " but got " + Utils.classToString(m_Input);
     }
 
     return result;
@@ -161,6 +252,7 @@ public class Mat5ArrayToString
     int			x;
     int			y;
     int[]		index;
+    Object		value;
 
     result = new StringBuilder();
     input  = (Matrix) m_Input;
@@ -171,15 +263,24 @@ public class Mat5ArrayToString
       index = new int[2];
       result.append("[");
       for (y = 0; y < numRows; y++) {
-        if (y > 0)
-          result.append("; ");
-        for (x = 0; x < numCols; x++) {
-          if (x > 0)
-            result.append(", ");
-          index[0] = y;
-          index[1] = x;
-          result.append(MatlabUtils.getElement(input, index, m_ElementType));
-        }
+	if (y > 0) {
+	  result.append(";");
+	  if (!m_Compact)
+	    result.append(" ");
+	}
+	for (x = 0; x < numCols; x++) {
+	  if (x > 0) {
+	    result.append(",");
+	    if (!m_Compact)
+	      result.append(" ");
+	  }
+	  index[0] = y;
+	  index[1] = x;
+	  value    = MatlabUtils.getElement(input, index, m_ElementType);
+	  if ((m_NumDecimals > -1) && (value instanceof Number))
+	    value = Utils.doubleToString(((Number) value).doubleValue(), m_NumDecimals);
+	  result.append(value);
+	}
       }
       result.append("]");
     }

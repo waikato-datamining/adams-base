@@ -1,1 +1,1 @@
-element: DOUBLE
+element: DOUBLE, #decimals: auto

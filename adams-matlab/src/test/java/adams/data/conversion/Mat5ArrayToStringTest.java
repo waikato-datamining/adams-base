@@ -68,7 +68,15 @@ public class Mat5ArrayToStringTest
    */
   @Override
   protected Conversion[] getRegressionSetups() {
-    return new Conversion[]{new Mat5ArrayToString()};
+    Mat5ArrayToString[] result;
+
+    result    = new Mat5ArrayToString[2];
+    result[0] = new Mat5ArrayToString();
+    result[1] = new Mat5ArrayToString();
+    result[1].setNumDecimals(0);
+    result[1].setCompact(true);
+
+    return result;
   }
 
   /**
