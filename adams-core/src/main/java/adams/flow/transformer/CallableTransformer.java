@@ -15,7 +15,7 @@
 
 /*
  * CallableTransformer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
@@ -78,7 +79,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableTransformer
   extends AbstractCallableActor
@@ -92,6 +92,23 @@ public class CallableTransformer
 
   /** the token that is to be fed into the callable transformer. */
   protected transient Token m_InputToken;
+
+  /**
+   * Default constructor.
+   */
+  public CallableTransformer() {
+    super();
+  }
+
+  /**
+   * Allows setting the callable name.
+   *
+   * @param name	the reference to use
+   */
+  public CallableTransformer(CallableActorReference name) {
+    this();
+    setCallableName(name);
+  }
 
   /**
    * Returns a string describing the object.

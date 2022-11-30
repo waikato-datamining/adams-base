@@ -15,7 +15,7 @@
 
 /*
  * CallableSource.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.OutputProducer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -75,7 +76,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableSource
   extends AbstractCallableActor
@@ -83,6 +83,23 @@ public class CallableSource
 
   /** for serialization. */
   private static final long serialVersionUID = -99235787254225765L;
+
+  /**
+   * Default constructor.
+   */
+  public CallableSource() {
+    super();
+  }
+
+  /**
+   * Allows setting the callable name.
+   *
+   * @param name	the reference to use
+   */
+  public CallableSource(CallableActorReference name) {
+    this();
+    setCallableName(name);
+  }
 
   /**
    * Returns a string describing the object.

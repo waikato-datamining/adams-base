@@ -15,7 +15,7 @@
 
 /*
  * CallableSink.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -23,6 +23,7 @@ package adams.flow.sink;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
@@ -77,7 +78,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CallableSink
   extends AbstractCallableActor
@@ -91,6 +91,23 @@ public class CallableSink
 
   /** the token that is to be fed to the callable sink. */
   protected transient Token m_CurrentInput;
+
+  /**
+   * Default constructor.
+   */
+  public CallableSink() {
+    super();
+  }
+
+  /**
+   * Allows setting the callable name.
+   *
+   * @param name	the reference to use
+   */
+  public CallableSink(CallableActorReference name) {
+    this();
+    setCallableName(name);
+  }
 
   /**
    * Returns a string describing the object.

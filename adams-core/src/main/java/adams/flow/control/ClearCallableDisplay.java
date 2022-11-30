@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClearCallableDisplay.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.AbstractDisplay;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -84,7 +85,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClearCallableDisplay
   extends AbstractCallableActor
@@ -98,6 +98,23 @@ public class ClearCallableDisplay
 
   /** the output token. */
   protected Token m_OutputToken;
+
+  /**
+   * Default constructor.
+   */
+  public ClearCallableDisplay() {
+    super();
+  }
+
+  /**
+   * Allows setting the callable name.
+   *
+   * @param name	the reference to use
+   */
+  public ClearCallableDisplay(CallableActorReference name) {
+    this();
+    setCallableName(name);
+  }
 
   /**
    * Returns a string describing the object.

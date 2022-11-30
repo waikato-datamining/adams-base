@@ -15,13 +15,14 @@
 
 /*
  * CloseCallableDisplay.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
+import adams.flow.core.CallableActorReference;
 import adams.flow.core.ControlActor;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.OutputProducer;
@@ -105,6 +106,23 @@ public class CloseCallableDisplay
 
   /** the output token. */
   protected Token m_OutputToken;
+
+  /**
+   * Default constructor.
+   */
+  public CloseCallableDisplay() {
+    super();
+  }
+
+  /**
+   * Allows setting the callable name.
+   *
+   * @param name	the reference to use
+   */
+  public CloseCallableDisplay(CallableActorReference name) {
+    this();
+    setCallableName(name);
+  }
 
   /**
    * Returns a string describing the object.
