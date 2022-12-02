@@ -138,7 +138,7 @@ public class FlowPanel
 
   /** the current worker thread. */
   protected Thread m_CurrentThread;
-  
+
   /** whether a swingworker is currently running. */
   protected boolean m_RunningSwingWorker;
 
@@ -258,10 +258,10 @@ public class FlowPanel
     m_TabHandlers = new ArrayList<>();
     for (Class cls: ClassLister.getSingleton().getClasses(AbstractTabHandler.class)) {
       try {
-        m_TabHandlers.add((AbstractTabHandler) newInstance(cls, new Class[]{FlowPanel.class}, new Object[]{this}));
+	m_TabHandlers.add((AbstractTabHandler) newInstance(cls, new Class[]{FlowPanel.class}, new Object[]{this}));
       }
       catch (Exception e) {
-        ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);
+	ConsolePanel.getSingleton().append("Failed to instantiate tab handler: " + Utils.classToString(cls), e);
       }
     }
   }
@@ -349,7 +349,7 @@ public class FlowPanel
       if (getEditor() != null)
 	getEditor().getTabs().notifyTabs(m_Tree.getSelectionPaths(), m_Tree.getSelectedActors());
     });
-    
+
     m_PanelNotification = new FlowPanelNotificationArea();
     m_PanelNotification.setOwner(this);
     m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
@@ -363,10 +363,10 @@ public class FlowPanel
   @Override
   protected void finishInit() {
     super.finishInit();
-    
+
     clearNotification();
   }
-  
+
   /**
    * Returns the editor this panel belongs to.
    *
@@ -408,7 +408,7 @@ public class FlowPanel
 
   /**
    * Sets the page icon.
-   * 
+   *
    * @param icon	the name of the icon, null to unset it
    */
   @Override
@@ -418,7 +418,7 @@ public class FlowPanel
     if (getOwner() != null) {
       index = getOwner().indexOfPage(this);
       if (index != -1)
-        getOwner().setIconAt(index, (icon == null) ? null : ImageManager.getIcon(icon));
+	getOwner().setIconAt(index, (icon == null) ? null : ImageManager.getIcon(icon));
     }
   }
 
@@ -547,7 +547,7 @@ public class FlowPanel
 
   /**
    * Updates the title of the dialog/frame if the title generator is enabled.
-   * 
+   *
    * @see		#getTitleGenerator()
    */
   public void updateTitle() {
@@ -585,7 +585,7 @@ public class FlowPanel
    */
   public void setCurrentFile(File value) {
     String	tmp;
-    
+
     m_CurrentFile = value;
     if (value == null) {
       m_Title = "";
@@ -626,10 +626,10 @@ public class FlowPanel
   public File getCurrentFile() {
     return m_CurrentFile;
   }
-  
+
   /**
    * Returns the title generator in use.
-   * 
+   *
    * @return		the generator
    */
   public TitleGenerator getTitleGenerator() {
@@ -684,18 +684,18 @@ public class FlowPanel
 	cleanUp();
 	addUndoPoint("Saving undo data...", "Loading '" + file.getName() + "'");
 	showStatus("Loading '" + file + "'...");
-        setPageIcon("hourglass.png");
+	setPageIcon("hourglass.png");
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	update();
 
 	if (reader instanceof NestedFlowReader) {
 	  List nested = ((NestedFlowReader) reader).readNested(file);
-          m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
-        }
-        else {
+	  m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
+	}
+	else {
 	  Actor actor = reader.readActor(file);
 	  m_Flow = TreeHelper.buildTree(actor);
-        }
+	}
 	m_Errors.addAll(reader.getErrors());
 	m_Warnings.addAll(reader.getWarnings());
 	setCurrentFlow(m_Flow);
@@ -704,20 +704,20 @@ public class FlowPanel
 
 	showStatus("");
 
-        return null;
+	return null;
       }
 
       @Override
       protected void done() {
-        boolean   		canExecute;
-        String    		msg;
-        StringBuilder 		notifications;
-        NotificationType	type;
+	boolean   		canExecute;
+	String    		msg;
+	StringBuilder 		notifications;
+	NotificationType	type;
 
 	m_RunningSwingWorker = false;
-        canExecute           = execute && m_Errors.isEmpty();
+	canExecute           = execute && m_Errors.isEmpty();
 
-        SwingUtilities.invokeLater(() -> setPageIcon(null));
+	SwingUtilities.invokeLater(() -> setPageIcon(null));
 
 	if (m_Errors.isEmpty()) {
 	  setCurrentFile(file);
@@ -728,7 +728,7 @@ public class FlowPanel
 	    FileUtils.replaceExtension(file.getAbsolutePath(), " (incomplete).")
 	      + FileUtils.getExtension(file)));
 	  setModified(true);
-        }
+	}
 	if (m_RecentFilesHandler != null)
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
 	notifications = new StringBuilder();
@@ -736,13 +736,13 @@ public class FlowPanel
 	  notifications.append("Error(s):\n" + m_Errors);
 	}
 	if (!m_Warnings.isEmpty()) {
-          msg = "Warning(s):\n" + m_Warnings;
-          if (canExecute)
-            ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
-          else
-            notifications.append("\n\n").append(msg);
-        }
-        if (notifications.length() > 0) {
+	  msg = "Warning(s):\n" + m_Warnings;
+	  if (canExecute)
+	    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
+	  else
+	    notifications.append("\n\n").append(msg);
+	}
+	if (notifications.length() > 0) {
 	  type = NotificationType.INFO;
 	  if (!m_Warnings.isEmpty())
 	    type = NotificationType.WARNING;
@@ -755,14 +755,14 @@ public class FlowPanel
 
 	update();
 
-        super.done();
+	super.done();
 
-        if (action != null)
-          action.execute();
+	if (action != null)
+	  action.execute();
 
-        // execute flow?
-        if (canExecute)
-          FlowPanel.this.run();
+	// execute flow?
+	if (canExecute)
+	  FlowPanel.this.run();
       }
     };
     worker.execute();
@@ -854,13 +854,13 @@ public class FlowPanel
 
   /**
    * Sets the flow that was last executed.
-   * 
+   *
    * @param actor	the flow
    */
   public void setLastFlow(Actor actor) {
     m_LastFlow = actor;
   }
-  
+
   /**
    * Returns the last executed flow (if any).
    *
@@ -920,7 +920,7 @@ public class FlowPanel
       if (!getTree().isModified())
 	result = false;
       if (m_FlowFileMonitor.hasChanged(getCurrentFile()))
-        result = true;
+	result = true;
     }
 
     return result;
@@ -932,9 +932,11 @@ public class FlowPanel
   public void revert() {
     FlowFileChooser	filechooser;
     final List<String>	expanded;
+    final List<String> 	selection;
     SwingWorker		worker;
 
-    expanded = getTree().getExpandedFullNames();
+    expanded  = getTree().getExpandedFullNames();
+    selection = getTree().getSelectionFullNames();
 
     cleanUp();
     clearNotification();
@@ -948,8 +950,10 @@ public class FlowPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-        getTree().setExpandedFullNames(expanded);
-        getTree().requestFocus();
+	getTree().setExpandedFullNames(expanded);
+	getTree().setSelectionFullNames(selection);
+	getTree().repaint();
+	getTree().requestFocus();
 	return null;
       }
     };
@@ -988,7 +992,7 @@ public class FlowPanel
 	  if (size >= maxActors) {
 	    if (m_CheckLargeFlowsOnSave == null) {
 	      int retVal = GUIHelper.showConfirmMessage(
-	        m_Owner,
+		m_Owner,
 		"The flow contains more than " + maxActors + " actors (" + size + "), flow checks may take quite some time.\n"
 		  + "Do you still want to proceed with checks?");
 	      switch (retVal) {
@@ -1011,7 +1015,7 @@ public class FlowPanel
 	    check = ActorUtils.checkFlow(full, false, false, file);
 	  if (check != null) {
 	    String msg = "Pre-save check failed - continue with save?\n\nDetails:\n\n" + check;
-            showNotification(msg, NotificationType.ERROR);
+	    showNotification(msg, NotificationType.ERROR);
 	    int retVal = GUIHelper.showConfirmMessage(
 	      m_Owner, msg);
 	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
@@ -1021,9 +1025,9 @@ public class FlowPanel
 	      return null;
 	    }
 	  }
-          else {
-            clearNotification();
-          }
+	  else {
+	    clearNotification();
+	  }
 	}
 
 	SwingUtilities.invokeLater(() -> setPageIcon("save.gif"));
@@ -1033,22 +1037,22 @@ public class FlowPanel
 	else
 	  m_Result = writer.write(rootNode.getFullActor(), file);
 	showStatus("");
-        return null;
+	return null;
       }
 
       @Override
       protected void done() {
-        if (m_Cancelled) {
+	if (m_Cancelled) {
 	  SwingUtilities.invokeLater(() -> setPageIcon(null));
 	  showStatus("");
 	  getTree().requestFocus();
 	}
 	else if (!m_Result) {
 	  SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
-          GUIHelper.showErrorMessage(
-            m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
+	  GUIHelper.showErrorMessage(
+	    m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
 	  getTree().requestFocus();
-        }
+	}
 	else {
 	  SwingUtilities.invokeLater(() -> setPageIcon("validate_blue.gif"));
 	  showStatus("");
@@ -1062,7 +1066,7 @@ public class FlowPanel
 
 	update();
 
-        super.done();
+	super.done();
       }
     };
     worker.execute();
@@ -1135,7 +1139,7 @@ public class FlowPanel
     m_CurrentThread = null;
     update();
   }
-  
+
   /**
    * Returns whether a flow is currently running.
    *
@@ -1199,7 +1203,7 @@ public class FlowPanel
 
   /**
    * Stops the flow. Does not cleanUp.
-   * 
+   *
    * @see 	#stop(boolean)
    */
   public void stop() {
@@ -1208,12 +1212,12 @@ public class FlowPanel
 
   /**
    * Stops the flow.
-   * 
+   *
    * @param cleanUp	whether to clean up as well
    */
   public void stop(final boolean cleanUp) {
     SwingWorker	worker;
-    
+
     if (m_CurrentWorker != null) {
       worker = new SwingWorker() {
 	@Override
@@ -1251,13 +1255,13 @@ public class FlowPanel
   public void cleanUp() {
     if (m_LastFlow != null) {
       if (isDebugTreeVisible()) {
-        setDebugTreeVisible(false);
-        getDebugTree().setActor(new Flow());
+	setDebugTreeVisible(false);
+	getDebugTree().setActor(new Flow());
       }
       showStatus("Cleaning up");
       try {
-        for (AbstractTabHandler handler: getTabHandlers())
-          handler.cleanUp();
+	for (AbstractTabHandler handler: getTabHandlers())
+	  handler.cleanUp();
 	m_LastFlow.destroy();
 	m_LastFlow = null;
 	showStatus("");
@@ -1330,9 +1334,9 @@ public class FlowPanel
 
       @Override
       protected void done() {
-        super.done();
-        SwingUtilities.invokeLater(() ->  {
-          getTree().requestFocus();
+	super.done();
+	SwingUtilities.invokeLater(() ->  {
+	  getTree().requestFocus();
 	  update();
 	  showStatus("");
 	});
@@ -1365,7 +1369,7 @@ public class FlowPanel
 
       @Override
       protected void done() {
-        super.done();
+	super.done();
 	getTree().requestFocus();
 	update();
 	showStatus("");
@@ -1406,11 +1410,11 @@ public class FlowPanel
 
     if ((getTree().getSelectionCount() == 1) && !getTree().isRootSelected()) {
       retVal = GUIHelper.showConfirmMessage(
-        this,
-        "<html>Process only below selected actor or process complete flow?<br><br>Currently selected actor:</html>",
+	this,
+	"<html>Process only below selected actor or process complete flow?<br><br>Currently selected actor:</html>",
 	getTree().getSelectedFullName(),
-        "Confirm",
-        "Below selected actor", "Complete flow", "Cancel");
+	"Confirm",
+	"Below selected actor", "Complete flow", "Cancel");
       if (retVal == GUIHelper.CANCEL_OPTION)
 	return;
       selected = (retVal == GUIHelper.APPROVE_OPTION);
@@ -1461,7 +1465,7 @@ public class FlowPanel
 
   /**
    * Returns the panel with the variables.
-   * 
+   *
    * @return		the panel, null if not available
    */
   public VariableManagementPanel getVariablesPanel() {
@@ -1623,13 +1627,13 @@ public class FlowPanel
 
   /**
    * Returns the split pane.
-   * 
+   *
    * @return		the split pane
    */
   public BaseSplitPane getSplitPane() {
     return m_SplitPaneEditor;
   }
-  
+
   /**
    * Returns the tree.
    *
@@ -1703,7 +1707,7 @@ public class FlowPanel
   @Override
   public boolean hasSendToItem(Class[] cls) {
     return    SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JComponent.class}, cls)
-           && !(!getTree().isModified() && (getCurrentFile() == null));
+      && !(!getTree().isModified() && (getCurrentFile() == null));
   }
 
   /**
@@ -1766,8 +1770,8 @@ public class FlowPanel
 
     for (AbstractTabHandler handler: m_TabHandlers) {
       if (handler.getClass().equals(cls)) {
-        result = (T) handler;
-        break;
+	result = (T) handler;
+	break;
       }
     }
 
@@ -1776,7 +1780,7 @@ public class FlowPanel
 
   /**
    * Displays the notification text.
-   * 
+   *
    * @param msg		the text to display
    * @param type	the type of notification (info/warning/error)
    */
@@ -1792,7 +1796,7 @@ public class FlowPanel
       }
     });
   }
-  
+
   /**
    * Removes the notification.
    */
@@ -1808,7 +1812,7 @@ public class FlowPanel
    */
   public boolean isInputEnabled() {
     return
-	   !isRunning()
+      !isRunning()
 	&& !isStopping()
 	&& !isSwingWorkerRunning();
   }
@@ -1833,19 +1837,19 @@ public class FlowPanel
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-        m_RunningSwingWorker = true;
-        SwingUtilities.invokeLater(() -> {
+	m_RunningSwingWorker = true;
+	SwingUtilities.invokeLater(() -> {
 	  showStatus(statusMsg);
 	  update();
 	});
-        runnable.run();
+	runnable.run();
 	return null;
       }
 
       @Override
       protected void done() {
-        m_RunningSwingWorker = false;
-        SwingUtilities.invokeLater(() -> {
+	m_RunningSwingWorker = false;
+	SwingUtilities.invokeLater(() -> {
 	  if (clearMsg)
 	    showStatus("");
 	  update();
