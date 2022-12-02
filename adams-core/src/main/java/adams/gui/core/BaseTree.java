@@ -15,10 +15,13 @@
 
 /*
  * BaseTree.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
+
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JTree;
@@ -29,6 +32,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -94,7 +98,7 @@ public class BaseTree
    */
   public void expandRoot() {
     TreeNode root = (TreeNode) getModel().getRoot();
-    if ((root != null) && (root instanceof DefaultMutableTreeNode))
+    if (root instanceof DefaultMutableTreeNode)
       expand((DefaultMutableTreeNode) root);
   }
 
@@ -150,7 +154,7 @@ public class BaseTree
    */
   public void collapseRoot() {
     TreeNode root = (TreeNode) getModel().getRoot();
-    if ((root != null) && (root instanceof DefaultMutableTreeNode))
+    if (root instanceof DefaultMutableTreeNode)
       collapse((DefaultMutableTreeNode) root);
   }
 
@@ -218,30 +222,30 @@ public class BaseTree
     else
       collapsePath(parent);
   }
-  
+
   /**
    * Returns all currently expanded nodes.
-   * 
+   *
    * @return		the expanded nodes
    */
   public List<TreePath> getExpandedTreePaths() {
     return getExpandedTreePaths(null);
   }
-  
+
   /**
    * Returns all currently expanded nodes, starting from the specified node.
-   * 
+   *
    * @param node	the node to start from, use null for root
    * @return		the expanded nodes
    */
   public List<TreePath> getExpandedTreePaths(DefaultMutableTreeNode node) {
     ArrayList<TreePath>		result;
     Enumeration<TreePath>	enm;
-    
-    result = new ArrayList<TreePath>();
+
+    result = new ArrayList<>();
     if (getModel().getRoot() == null)
       return result;
-    
+
     if (node == null)
       node = (DefaultMutableTreeNode) getModel().getRoot();
     enm = getExpandedDescendants(new TreePath(node));
@@ -249,22 +253,22 @@ public class BaseTree
       while (enm.hasMoreElements())
 	result.add(enm.nextElement());
     }
-    
+
     return result;
   }
-  
+
   /**
    * Expands the specified nodes, all others get collapsed.
-   * 
+   *
    * @param nodes	the nodes to have expanded
    */
   public void setExpandedTreePaths(List<TreePath> nodes) {
     setExpandedTreePaths(null, nodes);
   }
-  
+
   /**
    * Expands the specified nodes, all others get collapsed.
-   * 
+   *
    * @param node	the starting node, use null for root
    * @param nodes	the nodes to have expanded
    */
@@ -275,19 +279,19 @@ public class BaseTree
     current = getExpandedTreePaths(node);
     if (current.equals(nodes))
       return;
-    
+
     if (node == null)
       collapseAll();
     else
       collapseAll(node);
-    
+
     for (TreePath n: nodes)
       setExpandedState(n, true);
   }
-  
+
   /**
    * Returns whether the root node is selected.
-   * 
+   *
    * @return		true if selected
    */
   public boolean isRootSelected() {
@@ -296,10 +300,10 @@ public class BaseTree
 
     if (getModel().getRoot() == null)
       return false;
-    
+
     path   = new TreePath(getModel().getRoot());
     result = isPathSelected(path);
-    
+
     return result;
   }
 
@@ -311,11 +315,11 @@ public class BaseTree
     if (getModel().getRoot() != null)
       redraw((DefaultMutableTreeNode) getModel().getRoot());
   }
-  
+
   /**
    * Redraws the node and its subtree. Model must be derived from 
    * {@link DefaultTreeModel}.
-   * 
+   *
    * @param node	the node (and its subtree) to redraw
    */
   public void redraw(DefaultMutableTreeNode node) {
@@ -330,7 +334,7 @@ public class BaseTree
       setSelectionRows(selected);
     }
   }
-  
+
   /**
    * Tries to determine the frame this panel is part of.
    *
@@ -368,7 +372,7 @@ public class BaseTree
 
     for (i = 0; i < value.length; i++) {
       if (value[i])
-        expandRow(i);
+	expandRow(i);
     }
   }
 
@@ -412,7 +416,7 @@ public class BaseTree
     ArrayList<Boolean>	result;
     int			i;
 
-    result = new ArrayList<Boolean>();
+    result = new ArrayList<>();
 
     for (i = 0; i < getRowCount(); i++)
       result.add(isExpanded(i));
@@ -449,6 +453,59 @@ public class BaseTree
   }
 
   /**
+   * Returns the first visible row.
+   *
+   * @return		the visible row, -1 if none found
+   */
+  @MixedCopyright(
+    copyright = "2003-2011 JetBrains",
+    license = License.APACHE2,
+    url = "http://www.java2s.com/example/java/swing/get-first-visible-row-from-jtree.html"
+  )
+  public int getFirstVisibleRow() {
+    int 	result;
+    Rectangle   visible;
+    int		i;
+    Rectangle 	bounds;
+
+    visible = getVisibleRect();
+    result  = -1;
+
+    for (i = 0; i < getRowCount(); i++) {
+      bounds = getRowBounds(i);
+      if ((visible.y <= bounds.y) && (visible.y + visible.height >= bounds.y + bounds.height)) {
+	result = i;
+	break;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the last visible row.
+   *
+   * @return		the visible row, -1 if none found
+   */
+  public int getLastVisibleRow() {
+    int 	result;
+    Rectangle   visible;
+    int		i;
+    Rectangle 	bounds;
+
+    visible = getVisibleRect();
+    result  = -1;
+
+    for (i = 0; i < getRowCount(); i++) {
+      bounds = getRowBounds(i);
+      if ((visible.y <= bounds.y) && (visible.y + visible.height >= bounds.y + bounds.height))
+	result = i;
+    }
+
+    return result;
+  }
+
+  /**
    * Adds the node (and its potentional children) to the StringBuilder.
    *
    * @param builder	for adding the tree structure to
@@ -477,7 +534,7 @@ public class BaseTree
       builder.append("|\n");
     }
     builder.append(indentStr);
-    builder.append("+ " + node.toString() + "\n");
+    builder.append("+ ").append(node.toString()).append("\n");
 
     // add children
     for (i = 0; i < node.getChildCount(); i++) {
@@ -503,7 +560,7 @@ public class BaseTree
 
     root = getModel().getRoot();
     if (root instanceof TreeNode) {
-      more = new ArrayList<Boolean>();
+      more = new ArrayList<>();
       more.add(false);
       toString(result, 0, (TreeNode) root, more);
     }
@@ -513,10 +570,10 @@ public class BaseTree
 
     return result.toString();
   }
-  
+
   /**
    * Generates a string representation of the tree in plain text.
-   * 
+   *
    * @return		the string representation
    */
   public String toPlainText() {
@@ -528,7 +585,7 @@ public class BaseTree
 
     root = getModel().getRoot();
     if (root instanceof BaseTreeNode) {
-      more = new ArrayList<Boolean>();
+      more = new ArrayList<>();
       more.add(false);
       toPlainText(result, 0, (BaseTreeNode) root, more);
     }
@@ -575,7 +632,7 @@ public class BaseTree
 	builder.append("+ ");
       else
 	builder.append("  ");
-      builder.append(lines[i] + "\n");
+      builder.append(lines[i]).append("\n");
     }
 
     // add children
