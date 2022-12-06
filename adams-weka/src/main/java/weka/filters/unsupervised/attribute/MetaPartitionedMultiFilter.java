@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MetaPartitionedMultiFilter.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package weka.filters.unsupervised.attribute;
 
@@ -69,7 +69,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MetaPartitionedMultiFilter
   extends SimpleBatchFilter {
@@ -84,7 +83,7 @@ public class MetaPartitionedMultiFilter
   protected Filter[] m_Filters = {new AllFilter()};
 
   /** The prefixes. */
-  protected BaseString m_Prefixes[] = {
+  protected BaseString[] m_Prefixes = {
     new BaseString("filtered")
   };
 
@@ -556,7 +555,7 @@ public class MetaPartitionedMultiFilter
 	  System.err.println("RegExp #" + (i+1) + " (" + m_RegExp[i] + ") matched no attribute names!");
 	}
 	else {
-	  range = indices.get(i).toArray(new Integer[indices.get(i).size()]);
+	  range = indices.get(i).toArray(new Integer[0]);
 	  aRange = new adams.core.Range();
 	  aRange.setIndices(range);
 	  ranges.add(new Range(aRange.getRange()));
@@ -571,9 +570,9 @@ public class MetaPartitionedMultiFilter
       // configure filter
       m_ActualFilter = new PartitionedMultiFilter2();
       m_ActualFilter.setRemoveUnused(m_RemoveUnused);
-      m_ActualFilter.setFilters(filters.toArray(new Filter[filters.size()]));
-      m_ActualFilter.setRanges(ranges.toArray(new Range[ranges.size()]));
-      m_ActualFilter.setPrefixes(prefixes.toArray(new BaseString[prefixes.size()]));
+      m_ActualFilter.setFilters(filters.toArray(new Filter[0]));
+      m_ActualFilter.setRanges(ranges.toArray(new Range[0]));
+      m_ActualFilter.setPrefixes(prefixes.toArray(new BaseString[0]));
       m_ActualFilter.setInputFormat(inputFormat);
 
       if (getDebug())
