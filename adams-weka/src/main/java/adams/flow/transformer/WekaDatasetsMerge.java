@@ -15,7 +15,7 @@
 
 /*
  * WekaDatasetsMerge.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -160,6 +160,26 @@ public class WekaDatasetsMerge
   }
 
   /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return the Class of objects that can be processed
+   */
+  @Override
+  public Class[] accepts() {
+    return new Class[]{Instances[].class, Instance[].class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return the Class of the generated tokens
+   */
+  @Override
+  public Class[] generates() {
+    return new Class[]{Instances.class};
+  }
+
+  /**
    * Gets the input Instances to merge.
    *
    * @return The input Instances objects to merge.
@@ -214,16 +234,6 @@ public class WekaDatasetsMerge
   }
 
   /**
-   * Sets the payload of the output token for this transformer.
-   *
-   * @param output The output payload.
-   */
-  protected void setOutput(Instances output) {
-    m_OutputToken = new Token();
-    m_OutputToken.setPayload(output);
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return null if everything is fine, otherwise error message
@@ -238,32 +248,13 @@ public class WekaDatasetsMerge
       Instances joinedDataset = m_MergeMethod.merge(datasetsToMerge);
 
       // Set the result against the output token
-      setOutput(joinedDataset);
+      m_OutputToken = new Token();
+      m_OutputToken.setPayload(joinedDataset);
 
       return null;
     }
     catch (Exception e) {
-      return e.getMessage();
+      return handleException("Failed to merge datasets!", e);
     }
-  }
-
-  /**
-   * Returns the class that the consumer accepts.
-   *
-   * @return the Class of objects that can be processed
-   */
-  @Override
-  public Class[] accepts() {
-    return new Class[]{Instances[].class, Instance[].class};
-  }
-
-  /**
-   * Returns the class of objects that it generates.
-   *
-   * @return the Class of the generated tokens
-   */
-  @Override
-  public Class[] generates() {
-    return new Class[]{Instances.class};
   }
 }
