@@ -20,6 +20,7 @@
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.core.ObjectCopyHelper;
 import adams.flow.core.Token;
 import adams.flow.transformer.WekaInstancesMerge;
 import adams.flow.transformer.WekaMergeInstancesActor;
@@ -42,6 +43,9 @@ public class Merge
   extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
+
+  /** the last merge setup. */
+  protected WekaMergeInstancesActor m_LastSetup;
 
   /**
    * Instantiates the action.
@@ -69,7 +73,10 @@ public class Merge
     String			msg;
     MemoryContainer		cont;
 
-    merge = new WekaInstancesMerge();
+    if (m_LastSetup == null)
+      merge = new WekaInstancesMerge();
+    else
+      merge = ObjectCopyHelper.copyObject(m_LastSetup);
     if (getOwner().getParentDialog() != null)
       dialog = new GenericObjectEditorDialog(getOwner().getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
@@ -87,7 +94,9 @@ public class Merge
       logMessage("Merge cancelled!");
       return;
     }
-    merge = (WekaMergeInstancesActor) dialog.getCurrent();
+    merge       = (WekaMergeInstancesActor) dialog.getCurrent();
+    m_LastSetup = ObjectCopyHelper.copyObject(merge);
+    logMessage("Merge setup: " + merge.toCommandLine());
     dialog.dispose();
 
     // collect data

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Rename.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -32,12 +32,14 @@ import java.util.Random;
  * Randomizes the selected dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Randomize
   extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
+
+  /** the last seed. */
+  protected Long m_LastSeed;
 
   /**
    * Instantiates the action.
@@ -59,9 +61,13 @@ public class Randomize
     String 		seedStr;
     long		seed;
 
+    if (m_LastSeed == null)
+      seedStr = "1";
+    else
+      seedStr = "" + m_LastSeed;
     cont = getSelectedData()[0];
     logMessage("Randomizing dataset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
-    seedStr = GUIHelper.showInputDialog(getOwner(), "Please enter seed value for randomization: ", "1");
+    seedStr = GUIHelper.showInputDialog(getOwner(), "Please enter seed value for randomization: ", seedStr);
     if (seedStr == null) {
       logMessage("Randomization cancelled!");
       return;
@@ -70,7 +76,9 @@ public class Randomize
       logMessage("Seed not integer, randomization cancelled!");
       return;
     }
-    seed = Long.parseLong(seedStr);
+    seed       = Long.parseLong(seedStr);
+    m_LastSeed = seed;
+    logMessage("Randomizing with seed: " + seed);
     cont.addUndoPoint("randomizing with seed " + seed);
     cont.getData().randomize(new Random(seed));
     cont.setModified(true);

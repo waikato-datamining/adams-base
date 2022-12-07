@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RandomSubset.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
 
+import adams.core.option.OptionUtils;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.NumberTextField;
@@ -40,12 +41,26 @@ import java.awt.event.ActionEvent;
  * Creates a random subset from a dataset and inserts it as a new dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RandomSubset
   extends AbstractEditableDataTableAction {
 
   private static final long serialVersionUID = -8374323161691034031L;
+
+  /** the last seed used. */
+  protected Integer m_LastSeed;
+
+  /** the last percentage used. */
+  protected Double m_LastPercentage;
+
+  /** whether replacement was used. */
+  protected Boolean m_LastReplacement;
+
+  /** whether supervised version was used. */
+  protected Boolean m_LastSupervised;
+
+  /** the last bias used. */
+  protected Double m_LastBias;
 
   /**
    * Instantiates the action.
@@ -84,22 +99,24 @@ public class RandomSubset
 
     params = new ParameterPanel();
     textSeed = new NumberTextField(Type.INTEGER);
-    textSeed.setValue(1);
+    textSeed.setValue(m_LastSeed == null ? 1 : m_LastSeed);
     textSeed.setToolTipText("The seed value to use for randomizing the data");
     params.addParameter("Seed", textSeed);
     textPercentage = new NumberTextField(Type.DOUBLE);
-    textPercentage.setValue(66.0);
+    textPercentage.setValue(m_LastPercentage == null ? 66.0 : m_LastPercentage);
     textPercentage.setToolTipText("The size of the subset (0;100)");
     params.addParameter("Percentage", textPercentage);
     checkboxReplacement = new BaseCheckBox();
     checkboxReplacement.setToolTipText("Whether to allow instances being drawn multiple times");
+    checkboxReplacement.setSelected(m_LastReplacement == null? false : m_LastReplacement);
     params.addParameter("With replacement", checkboxReplacement);
     if ((cont.getData().classIndex() > -1) && cont.getData().classAttribute().isNominal()) {
       checkboxSupervised = new BaseCheckBox();
       checkboxSupervised.setToolTipText("Whether to take the class distribution into account");
+      checkboxSupervised.setSelected(m_LastSupervised == null? false : m_LastSupervised);
       params.addParameter("Supervised?", checkboxSupervised);
       textBias = new NumberTextField(Type.DOUBLE);
-      textBias.setValue(0.0);
+      textBias.setValue(m_LastBias == null ? 0.0 : m_LastBias);
       textBias.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 0.0, 1.0));
       textBias.setToolTipText("Bias towards uniform class distribution: 0 = as in data, 1 = uniform");
       params.addParameter("Bias (if supervised)", textBias);
@@ -127,6 +144,12 @@ public class RandomSubset
     supervised  = (checkboxSupervised != null) && checkboxSupervised.isSelected();
     bias        = supervised ? textBias.getValue().doubleValue() : 0;
 
+    m_LastSeed        = seed;
+    m_LastPercentage  = percentage;
+    m_LastReplacement = replacement;
+    m_LastSupervised  = supervised;
+    m_LastBias        = bias;
+
     logMessage("Generating subset: " + cont.getID() + "/" + cont.getData().relationName() + " [" + cont.getSource() + "]");
 
     if (supervised) {
@@ -142,6 +165,7 @@ public class RandomSubset
       ((weka.filters.unsupervised.instance.Resample) filter).setSampleSizePercent(percentage);
       ((weka.filters.unsupervised.instance.Resample) filter).setNoReplacement(!replacement);
     }
+    logMessage("Filter setup: " + OptionUtils.getCommandLine(filter));
     try {
       filter.setInputFormat(cont.getData());
       newCont = new MemoryContainer(Filter.useFilter(cont.getData(), filter));
