@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -1836,11 +1836,25 @@ public class ActorUtils {
     Actor		actor;
     ActorPath 		path;
     String[]		lines;
+    int			i;
     String[]		parts;
 
     result = new ArrayList<>();
-    lines  = text.split(":");
+    lines  = text.split(" " + current.getName());
     if (lines.length > 0) {
+      // fix up splitting
+      for (i = 1; i < lines.length; i++) {
+	lines[i] = lines[i].trim();
+	// each reporting level has a ":" prefixing the next level -> remove
+	if (lines[i].endsWith(":"))
+	  lines[i] = lines[i].substring(0, lines[i].length() - 1);
+	// last line may have error message after ":" -> remove
+	else if (i == lines.length - 1)
+	  lines[i] = lines[i].substring(0, lines[i].lastIndexOf(":"));
+	lines[i] = current.getName() + lines[i];
+      }
+
+      // iterate lines
       for (String line : lines) {
 	path  = new ActorPath(line.trim());
 	actor = ActorUtils.locate(path, current, true, true);
