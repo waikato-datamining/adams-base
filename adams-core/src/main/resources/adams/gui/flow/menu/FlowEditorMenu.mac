@@ -53,6 +53,7 @@ adams.gui.flow.menu.RunRemoveAllBreakpoints-Shortcut=
 adams.gui.flow.menu.RunVariables-Shortcut=
 adams.gui.flow.menu.RunStorage-Shortcut=
 adams.gui.flow.menu.RunDisplayErrors-Shortcut=
+adams.gui.flow.menu.RunParseError-Shortcut=
 adams.gui.flow.menu.RunClearGraphicalOutput-Shortcut=
 adams.gui.flow.menu.RunHeadless-Shortcut=meta H
 adams.gui.flow.menu.RunGC-Shortcut=

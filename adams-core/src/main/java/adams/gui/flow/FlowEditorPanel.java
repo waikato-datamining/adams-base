@@ -109,6 +109,7 @@ import adams.gui.flow.menu.RunEnableAllBreakpoints;
 import adams.gui.flow.menu.RunGC;
 import adams.gui.flow.menu.RunHeadless;
 import adams.gui.flow.menu.RunKill;
+import adams.gui.flow.menu.RunParseError;
 import adams.gui.flow.menu.RunPauseResume;
 import adams.gui.flow.menu.RunRemoveAllBreakpoints;
 import adams.gui.flow.menu.RunRun;
@@ -351,6 +352,9 @@ public class FlowEditorPanel
 
   /** the "display errors" action. */
   protected FlowEditorAction m_ActionRunDisplayErrors;
+
+  /** the parse error action. */
+  protected FlowEditorAction m_ActionRunParseError;
 
   /** the "Clear graphical output" action. */
   protected FlowEditorAction m_ActionRunClearGraphicalOutput;
@@ -764,6 +768,11 @@ public class FlowEditorPanel
     // Run/Display errors
     action = new RunDisplayErrors();
     m_ActionRunDisplayErrors = action;
+    m_MenuItems.add(action);
+
+    // Run/Parse Error
+    action = new RunParseError();
+    m_ActionRunParseError = action;
     m_MenuItems.add(action);
 
     // Run/Clear graphical output
@@ -1196,6 +1205,7 @@ public class FlowEditorPanel
       menu.add(m_ActionRunStorage);
       menu.addSeparator();
       menu.add(m_ActionRunDisplayErrors);
+      menu.add(m_ActionRunParseError);
       menu.add(m_ActionRunClearGraphicalOutput);
       menu.addSeparator();
       menu.add(m_ActionRunHeadless);
