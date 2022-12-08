@@ -15,13 +15,15 @@
 
 /*
  * BaseTabbedPane.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import adams.core.CleanUpHandler;
 import adams.core.Shortening;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.event.TabClosedEvent;
+import adams.gui.event.TabClosedListener;
 
 import javax.swing.Icon;
 import javax.swing.JMenuItem;
@@ -174,7 +176,7 @@ public class BaseTabbedPane
 
       result = super.remove(o);
       if (result) {
-        undo = (TabUndo) o;
+	undo = (TabUndo) o;
 	if (undo.component instanceof CleanUpHandler)
 	  ((CleanUpHandler) undo.component).cleanUp();
       }
@@ -212,6 +214,9 @@ public class BaseTabbedPane
 
   /** the listeners for tab changes. */
   protected Set<ChangeListener> m_TabChangeListeners;
+
+  /** the listeners for tabs being closed. */
+  protected Set<TabClosedListener> m_TabClosedListeners;
 
   /**
    * Creates an empty <code>TabbedPane</code> with a default
@@ -268,6 +273,7 @@ public class BaseTabbedPane
     m_MaxTabCloseUndo                = 0;
     m_TabUndoList                    = null;
     m_TabChangeListeners             = new HashSet<>();
+    m_TabClosedListeners             = new HashSet<>();
   }
 
   /**
@@ -688,11 +694,15 @@ public class BaseTabbedPane
    */
   @Override
   public void removeTabAt(int index) {
+    Component	comp;
+
+    comp = getComponentAt(index);
     addTabUndo(index);
     if (getComponentAt(index) instanceof DetachablePanel)
       ((DetachablePanel) getComponentAt(index)).reattach();
     super.removeTabAt(index);
     notifyTabChangeListeners();
+    notifyTabClosedListeners(index, comp);
   }
 
   /**
@@ -897,5 +907,44 @@ public class BaseTabbedPane
     e = new ChangeEvent(this);
     for (ChangeListener l: m_TabChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Adds the listener for closing tabs.
+   *
+   * @param l		the listener to add
+   */
+  public void addTabClosedListeners(TabClosedListener l) {
+    m_TabClosedListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for closing tabs.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeTabClosedListeners(TabClosedListener l) {
+    m_TabClosedListeners.remove(l);
+  }
+
+  /**
+   * Removes all tab closed listeners.
+   */
+  public void clearTabClosedListeners() {
+    m_TabClosedListeners.clear();
+  }
+
+  /**
+   * Notifies all the tab closed listeners
+   *
+   * @param tabIndex 	the index of the tab that got closed
+   * @param component	the component that got removed
+   */
+  protected void notifyTabClosedListeners(int tabIndex, Component component) {
+    TabClosedEvent e;
+
+    e = new TabClosedEvent(this, tabIndex, component);
+    for (TabClosedListener l: m_TabClosedListeners)
+      l.tabClosed(e);
   }
 }
