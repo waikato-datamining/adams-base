@@ -22,6 +22,10 @@ package adams.flow.condition.bool;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Actor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Ancestor for conditions that use multiple sub-conditions.
  *
@@ -32,7 +36,7 @@ public abstract class AbstractMultiCondition
 
   /** for serialization. */
   private static final long serialVersionUID = -7930281929775307418L;
-  
+
   /** the conditions to evaluate. */
   protected BooleanCondition[] m_Conditions;
 
@@ -61,8 +65,21 @@ public abstract class AbstractMultiCondition
     super.defineOptions();
 
     m_OptionManager.add(
-	    "condition", "conditions",
-	    new BooleanCondition[0]);
+      "condition", "conditions",
+      new BooleanCondition[0]);
+  }
+
+  /**
+   * Adds the condition to the current ones.
+   *
+   * @param value	the condition to add
+   */
+  public void addCondition(BooleanCondition value) {
+    List<BooleanCondition> 	conds;
+
+    conds = new ArrayList<>(Arrays.asList(m_Conditions));
+    conds.add(value);
+    setConditions(conds.toArray(new BooleanCondition[0]));
   }
 
   /**
@@ -91,7 +108,7 @@ public abstract class AbstractMultiCondition
    * 			displaying in the GUI or for listing the options.
    */
   public abstract String conditionsTipText();
-  
+
   /**
    * Returns the quick info string to be displayed in the flow editor.
    *
