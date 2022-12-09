@@ -101,6 +101,9 @@ public class StoragePanel
     /** the underlying storage. */
     protected Storage m_Storage;
 
+    /** whether cache data is available. */
+    protected boolean m_HasCacheData;
+
     /** the converted storage. */
     protected String[][] m_Data;
 
@@ -147,7 +150,24 @@ public class StoragePanel
      * Initializes the model.
      */
     protected void initialize() {
-      m_Data = takeSnapshot(m_Storage);
+      m_HasCacheData = hasCaches(m_Storage);
+      m_Data         = takeSnapshot(m_Storage);
+    }
+
+    /**
+     * Checks whether any cache data is to be displayed.
+     *
+     * @param storage	the storage to inspect
+     * @return		true if cache data present
+     */
+    protected boolean hasCaches(Storage storage) {
+      boolean   		result;
+      Iterator<String>		caches;
+
+      caches = storage.caches();
+      result = caches.hasNext();
+
+      return result;
     }
 
     /**
@@ -221,7 +241,7 @@ public class StoragePanel
      * @return		always 3
      */
     public int getColumnCount() {
-      return 3;
+      return (!m_HasCacheData ? 2 : 3);
     }
 
     /**
@@ -241,7 +261,10 @@ public class StoragePanel
      * @return			the value
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
-      return m_Data[rowIndex][columnIndex];
+      if (!m_HasCacheData)
+        return m_Data[rowIndex][columnIndex + 1];
+      else
+	return m_Data[rowIndex][columnIndex];
     }
 
     /**
@@ -255,6 +278,9 @@ public class StoragePanel
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
       String	cache;
       String	name;
+
+      if (!m_HasCacheData)
+        columnIndex++;
 
       if (columnIndex == 2) {
 	cache = (String) getValueAt(rowIndex, 0);
@@ -286,14 +312,21 @@ public class StoragePanel
      */
     @Override
     public String getColumnName(int column) {
-      if (column == 0)
-	return "Cache";
-      else if (column == 1)
-	return "Name";
-      else if (column == 2)
-	return "Type";
-      else
-	throw new IllegalArgumentException("Illegal column index: " + column);
+      if (!m_HasCacheData) {
+	if (column == 0)
+	  return "Name";
+	else if (column == 1)
+	  return "Type";
+      }
+      else {
+	if (column == 0)
+	  return "Cache";
+	else if (column == 1)
+	  return "Name";
+	else if (column == 2)
+	  return "Type";
+      }
+      throw new IllegalArgumentException("Illegal column index: " + column);
     }
 
     /**
@@ -309,7 +342,7 @@ public class StoragePanel
 
       otherData = takeSnapshot(other);
       if (m_Data.length != otherData.length)
-        return true;
+	return true;
 
       for (n = 0; n < m_Data.length; n++) {
 	for (i = 0; i < m_Data[n].length; i++) {
@@ -799,7 +832,7 @@ public class StoragePanel
   public void setHandler(StorageHandler value) {
     if ((value != null) && (m_Handler != null)) {
       if (m_Handler.getStorage() == value.getStorage()) {
-        if (!m_TableModel.isDifferent(value.getStorage()))
+	if (!m_TableModel.isDifferent(value.getStorage()))
 	  return;
       }
     }
