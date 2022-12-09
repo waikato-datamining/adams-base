@@ -81,8 +81,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class StoragePanel
-    extends BasePanel
-    implements CleanUpHandler, StorageChangeListener {
+  extends BasePanel
+  implements CleanUpHandler, StorageChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = 8244881694557542183L;
@@ -93,7 +93,7 @@ public class StoragePanel
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static class TableModel
-      extends AbstractBaseTableModel {
+    extends AbstractBaseTableModel {
 
     /** for serialization. */
     private static final long serialVersionUID = 3509104625095997777L;
@@ -147,6 +147,17 @@ public class StoragePanel
      * Initializes the model.
      */
     protected void initialize() {
+      m_Data = takeSnapshot(m_Storage);
+    }
+
+    /**
+     * Takes a snapshot of the storage and turns it into a string array.
+     *
+     * @param storage	the storage to use
+     * @return		the snapshot
+     */
+    protected String[][] takeSnapshot(Storage storage) {
+      String[][] 		result;
       int			size;
       Iterator<String>		caches;
       String			cache;
@@ -154,38 +165,40 @@ public class StoragePanel
       int			index;
 
       // determine size
-      size = m_Storage.size();
-      caches = m_Storage.caches();
+      size = storage.size();
+      caches = storage.caches();
       while (caches.hasNext()) {
 	cache = caches.next();
-	size += m_Storage.size(cache);
+	size += storage.size(cache);
       }
 
       // fill in data
-      m_Data = new String[size][3];
+      result = new String[size][3];
       index  = 0;
       // regular
-      keys   = new ArrayList<>(m_Storage.keySet());
+      keys   = new ArrayList<>(storage.keySet());
       Collections.sort(keys);
       for (StorageName key: keys) {
-	m_Data[index][0] = "";
-	m_Data[index][1] = key.getValue();
-	m_Data[index][2] = getClassString(m_Storage.get(key));
+	result[index][0] = "";
+	result[index][1] = key.getValue();
+	result[index][2] = getClassString(storage.get(key));
 	index++;
       }
       // caches
-      caches = m_Storage.caches();
+      caches = storage.caches();
       while (caches.hasNext()) {
 	cache = caches.next();
-	keys  = new ArrayList<>(m_Storage.keySet(cache));
+	keys  = new ArrayList<>(storage.keySet(cache));
 	Collections.sort(keys);
 	for (StorageName key: keys) {
-	  m_Data[index][0] = cache;
-	  m_Data[index][1] = key.getValue();
-	  m_Data[index][2] = getClassString(m_Storage.get(cache, key));
+	  result[index][0] = cache;
+	  result[index][1] = key.getValue();
+	  result[index][2] = getClassString(storage.get(cache, key));
 	  index++;
 	}
       }
+
+      return result;
     }
 
     /**
@@ -281,6 +294,37 @@ public class StoragePanel
 	return "Type";
       else
 	throw new IllegalArgumentException("Illegal column index: " + column);
+    }
+
+    /**
+     * Checks whether the storage contains different data.
+     *
+     * @param other	the other storage to compare with
+     * @return		true if different
+     */
+    public boolean isDifferent(Storage other) {
+      String[][]	otherData;
+      int		i;
+      int		n;
+
+      otherData = takeSnapshot(other);
+      if (m_Data.length != otherData.length)
+        return true;
+
+      for (n = 0; n < m_Data.length; n++) {
+	for (i = 0; i < m_Data[n].length; i++) {
+	  if ((m_Data[n][i] == null) && (otherData[n][i] == null))
+	    continue;
+	  if ((m_Data[n][i] == null) && (otherData[n][i] != null))
+	    return true;
+	  if ((m_Data[n][i] != null) && (otherData[n][i] == null))
+	    return true;
+	  if (!m_Data[n][i].equals(otherData[n][i]))
+	    return true;
+	}
+      }
+
+      return false;
     }
   }
 
@@ -455,8 +499,8 @@ public class StoragePanel
     m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
     m_PanelSearch.addSearchListener((SearchEvent e) -> {
       m_Table.getComponent().search(
-	  e.getParameters().getSearchString(),
-	  e.getParameters().isRegExp());
+	e.getParameters().getSearchString(),
+	e.getParameters().isRegExp());
     });
     m_PanelSearch.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     panelTable.add(m_PanelSearch, BorderLayout.SOUTH);
@@ -558,8 +602,8 @@ public class StoragePanel
     if (m_Table.getSelectedRowCount() != 1)
       return;
     obj = m_TableModel.getObject(
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
 
     renderObject(m_PanelPreview, obj);
   }
@@ -587,8 +631,8 @@ public class StoragePanel
     if (m_Table.getSelectedRowCount() != 1)
       return;
     obj = m_TableModel.getObject(
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
 
     preview = new JPanel(new BorderLayout());
     renderObject(preview, obj);
@@ -754,14 +798,16 @@ public class StoragePanel
    */
   public void setHandler(StorageHandler value) {
     if ((value != null) && (m_Handler != null)) {
-      if (m_Handler == value)
-        return;
+      if (m_Handler.getStorage() == value.getStorage()) {
+        if (!m_TableModel.isDifferent(value.getStorage()))
+	  return;
+      }
     }
 
     if (m_Handler != null)
       m_Handler.getStorage().removeChangeListener(this);
     m_Handler    = value;
-    m_TableModel = new TableModel(value.getStorage());
+    m_TableModel = new TableModel(value == null ? new Storage() : value.getStorage());
     m_Table.setModel(m_TableModel);
     m_Table.setOptimalColumnWidth();
     m_Handler.getStorage().addChangeListener(this);
@@ -844,8 +890,8 @@ public class StoragePanel
     if (names != null) {
       rows = new TIntArrayList();
       for (i = 0; i < m_Table.getRowCount(); i++) {
-        n = 0;
-        while (n < names.size()) {
+	n = 0;
+	while (n < names.size()) {
 	  if (names.get(n).equals(m_Table.getValueAt(i, 1))) {
 	    rows.add(i);
 	    names.remove(n);
@@ -855,11 +901,11 @@ public class StoragePanel
 	    n++;
 	  }
 	}
-        if (names.size() == 0)
-          break;
+	if (names.size() == 0)
+	  break;
       }
       if (rows.size() > 0) {
-        final int[] rowArray = rows.toArray();
+	final int[] rowArray = rows.toArray();
 	SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(rowArray));
       }
     }
