@@ -15,7 +15,7 @@
 
 /*
  * SetStorageValue.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -99,6 +99,33 @@ public class SetStorageValue
   protected StorageName m_StorageName;
 
   /**
+   * Default constructor.
+   */
+  public SetStorageValue() {
+    super();
+  }
+
+  /**
+   * Constructor that sets the storage name as well.
+   *
+   * @param storageName the storage name to use
+   */
+  public SetStorageValue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Constructor that sets the storage name as well.
+   *
+   * @param storageName the storage name to use
+   */
+  public SetStorageValue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -153,6 +180,15 @@ public class SetStorageValue
    */
   public String cacheTipText() {
     return "The name of the cache to store the value in; uses the regular storage if left empty.";
+  }
+
+  /**
+   * Sets the name of the stored value.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**
