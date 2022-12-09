@@ -15,7 +15,7 @@
 
 /*
  * TextFileReader.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -90,7 +90,6 @@ import java.io.InputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TextFileReader
   extends AbstractTransformer {
@@ -103,6 +102,23 @@ public class TextFileReader
 
   /** the file input stream in use. */
   protected transient InputStream m_Stream;
+
+  /**
+   * Default constructor.
+   */
+  public TextFileReader() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified reader.
+   *
+   * @param reader    the reader to use
+   */
+  public TextFileReader(AbstractTextReader reader) {
+    this();
+    setReader(reader);
+  }
 
   /**
    * Returns a string describing the object.
