@@ -15,7 +15,7 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -25,6 +25,7 @@ import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
@@ -430,6 +431,7 @@ public abstract class AbstractTee
 
     result = checkTeeActor(index, actor);
     if (result == null) {
+      ActorUtils.uniqueName(actor, this, index);
       m_Actors.add(index, actor);
       reset();
       updateParent();

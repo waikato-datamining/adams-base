@@ -15,7 +15,7 @@
 
 /*
  * MutableConnectedControlActor.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -169,6 +169,7 @@ public abstract class MutableConnectedControlActor
   public String add(int index, Actor actor) {
     if (actor == this)
       throw new IllegalArgumentException("Cannot add itself!");
+    ActorUtils.uniqueName(actor, this, index);
     m_Actors.add(index, actor);
     m_Actors.get(index).setParent(null);
     m_Actors.get(index).setParent(this);
