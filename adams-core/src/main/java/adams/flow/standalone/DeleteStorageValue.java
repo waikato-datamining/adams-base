@@ -15,7 +15,7 @@
 
 /*
  * DeleteStorageValue.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -129,6 +129,33 @@ public class DeleteStorageValue
   protected BaseRegExp m_RegExp;
 
   /**
+   * Default constructor.
+   */
+  public DeleteStorageValue() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param storageName     the name to use
+   */
+  public DeleteStorageValue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param storageName     the name to use
+   */
+  public DeleteStorageValue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -222,6 +249,15 @@ public class DeleteStorageValue
    */
   public String cacheTipText() {
     return "The name of the cache to remove the value from; uses the regular storage if left empty.";
+  }
+
+  /**
+   * Sets the name of the stored value.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**
