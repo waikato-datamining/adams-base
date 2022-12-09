@@ -15,7 +15,7 @@
 
 /*
  * Standalones.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -78,6 +78,23 @@ public class Standalones
 
   /** for serialization. */
   private static final long serialVersionUID = 4755216459759839030L;
+
+  /**
+   * Default constructor.
+   */
+  public Standalones() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param name      the name to use
+   */
+  public Standalones(String name) {
+    this();
+    setName(name);
+  }
 
   /**
    * Returns a string describing the object.
