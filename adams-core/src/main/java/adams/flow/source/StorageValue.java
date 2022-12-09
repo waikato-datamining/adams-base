@@ -15,7 +15,7 @@
 
 /*
  * StorageValue.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -96,7 +96,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StorageValue
   extends AbstractSimpleSource
@@ -116,6 +115,33 @@ public class StorageValue
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor.
+   */
+  public StorageValue() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName   the name to use
+   */
+  public StorageValue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName   the name to use
+   */
+  public StorageValue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
 
   /**
    * Returns a string describing the object.
@@ -179,6 +205,15 @@ public class StorageValue
    */
   public String cacheTipText() {
     return "The name of the cache to retrieve the value from; uses the regular storage if left empty.";
+  }
+
+  /**
+   * Sets the name of the stored value.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**

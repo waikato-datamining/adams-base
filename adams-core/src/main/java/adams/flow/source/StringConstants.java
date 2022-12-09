@@ -15,13 +15,14 @@
 
 /*
  * StringConstants.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.StringToString;
@@ -104,6 +105,33 @@ public class StringConstants
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor.
+   */
+  public StringConstants() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified strings.
+   *
+   * @param strings   the strings to use
+   */
+  public StringConstants(BaseString[] strings) {
+    this();
+    setStrings(strings);
+  }
+
+  /**
+   * Initializes with the specified strings.
+   *
+   * @param strings   the strings to use
+   */
+  public StringConstants(String[] strings) {
+    this();
+    setStrings(strings);
+  }
 
   /**
    * Returns a string describing the object.
@@ -189,9 +217,18 @@ public class StringConstants
   }
 
   /**
-   * Sets the IDs of the spectrums to load.
+   * Sets the strings to output.
    *
-   * @param value	the IDs
+   * @param value	the output
+   */
+  public void setStrings(String[] value) {
+    setStrings((BaseString[]) BaseObject.toObjectArray(value, BaseString.class));
+  }
+
+  /**
+   * Sets the strings to output.
+   *
+   * @param value	the output
    */
   public void setStrings(BaseString[] value) {
     m_Strings = value;
@@ -199,9 +236,9 @@ public class StringConstants
   }
 
   /**
-   * Returns the IDs to load.
+   * Returns the strings to output.
    *
-   * @return		the IDs
+   * @return		the output
    */
   public BaseString[] getStrings() {
     return m_Strings;

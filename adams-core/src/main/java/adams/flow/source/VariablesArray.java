@@ -15,7 +15,7 @@
 
 /*
  * VariablesArray.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.VariableName;
 import adams.core.VariableUser;
+import adams.core.base.BaseObject;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.StringToString;
 import adams.flow.core.Token;
@@ -93,7 +94,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariablesArray
   extends AbstractSource 
@@ -110,6 +110,33 @@ public class VariablesArray
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor.
+   */
+  public VariablesArray() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified names.
+   *
+   * @param variableNames   the names to use
+   */
+  public VariablesArray(VariableName[] variableNames) {
+    this();
+    setVariableNames(variableNames);
+  }
+
+  /**
+   * Initializes with the specified names.
+   *
+   * @param variableNames   the names to use
+   */
+  public VariablesArray(String[] variableNames) {
+    this();
+    setVariableNames(variableNames);
+  }
 
   /**
    * Returns a string describing the object.
@@ -147,6 +174,15 @@ public class VariablesArray
   public void addVariableName(VariableName value) {
     m_VariableNames = (VariableName[]) Utils.adjustArray(m_VariableNames, m_VariableNames.length + 1, value);
     reset();
+  }
+
+  /**
+   * Sets the names of the variables.
+   *
+   * @param value	the names
+   */
+  public void setVariableNames(String[] value) {
+    setVariableNames((VariableName[]) BaseObject.toObjectArray(value, VariableName.class));
   }
 
   /**

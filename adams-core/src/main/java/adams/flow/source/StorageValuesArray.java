@@ -15,13 +15,14 @@
 
 /*
  * StorageValuesArray.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.base.BaseObject;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.UnknownToUnknown;
 import adams.flow.control.StorageName;
@@ -98,7 +99,6 @@ import java.lang.reflect.Array;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StorageValuesArray
   extends AbstractSource
@@ -118,6 +118,33 @@ public class StorageValuesArray
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor.
+   */
+  public StorageValuesArray() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified storage names.
+   *
+   * @param storageNames    the names to use
+   */
+  public StorageValuesArray(StorageName[] storageNames) {
+    this();
+    setStorageNames(storageNames);
+  }
+
+  /**
+   * Initializes with the specified storage names.
+   *
+   * @param storageNames    the names to use
+   */
+  public StorageValuesArray(String[] storageNames) {
+    this();
+    setStorageNames(storageNames);
+  }
 
   /**
    * Returns a string describing the object.
@@ -159,6 +186,15 @@ public class StorageValuesArray
   public void addStorageName(StorageName value) {
     m_StorageNames = (StorageName[]) Utils.adjustArray(m_StorageNames, m_StorageNames.length + 1, value);
     reset();
+  }
+
+  /**
+   * Sets the names of the stored values.
+   *
+   * @param value	the names
+   */
+  public void setStorageNames(String[] value) {
+    setStorageNames((StorageName[]) BaseObject.toObjectArray(value, StorageName.class));
   }
 
   /**

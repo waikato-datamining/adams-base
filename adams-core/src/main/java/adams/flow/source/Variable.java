@@ -107,6 +107,33 @@ public class Variable
   protected Conversion m_Conversion;
 
   /**
+   * Default constructor.
+   */
+  public Variable() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param variableName    the name to use
+   */
+  public Variable(VariableName variableName) {
+    this();
+    setVariableName(variableName);
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param variableName    the name to use
+   */
+  public Variable(String variableName) {
+    this();
+    setVariableName(variableName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
