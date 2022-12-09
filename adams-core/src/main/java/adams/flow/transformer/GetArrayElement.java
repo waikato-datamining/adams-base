@@ -15,17 +15,17 @@
 
 /*
  * GetArrayElement.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.lang.reflect.Array;
 
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.lang.reflect.Array;
 
 /**
  <!-- globalinfo-start -->
@@ -82,7 +82,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetArrayElement
   extends AbstractTransformer {
@@ -92,6 +91,23 @@ public class GetArrayElement
 
   /** the index of the element to pick. */
   protected Index m_Index;
+
+  /**
+   * Default constructor.
+   */
+  public GetArrayElement() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified index.
+   *
+   * @param index     the index to use
+   */
+  public GetArrayElement(Index index) {
+    this();
+    setIndex(index);
+  }
 
   /**
    * Returns a string describing the object.
