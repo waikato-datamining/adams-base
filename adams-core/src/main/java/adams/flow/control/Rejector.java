@@ -15,7 +15,7 @@
 
 /*
  * Rejector.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -90,7 +90,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Rejector
   extends Tee {
@@ -100,6 +99,23 @@ public class Rejector
 
   /** the source to fill in the log entries. */
   protected String m_LogSource;
+
+  /**
+   * Default constructor.
+   */
+  public Rejector() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param name      the name to use
+   */
+  public Rejector(String name) {
+    this();
+    setName(name);
+  }
 
   /**
    * Returns a string describing the object.
