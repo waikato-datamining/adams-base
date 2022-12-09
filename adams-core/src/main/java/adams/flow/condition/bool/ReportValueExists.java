@@ -15,7 +15,7 @@
 
 /*
  * ReportValueExists.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -59,6 +59,23 @@ public class ReportValueExists
   
   /** the field in the report to check. */
   protected Field m_Field;
+
+  /**
+   * Default constructor.
+   */
+  public ReportValueExists() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified field.
+   *
+   * @param field   the field to use
+   */
+  public ReportValueExists(Field field) {
+    this();
+    setField(field);
+  }
 
   /**
    * Returns a string describing the object.

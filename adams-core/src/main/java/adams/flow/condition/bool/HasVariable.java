@@ -15,7 +15,7 @@
 
 /*
  * HasVariable.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -55,6 +55,33 @@ public class HasVariable
   protected VariableName m_VariableName;
 
   /**
+   * Default constructor.
+   */
+  public HasVariable() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified variable name.
+   *
+   * @param variableName   the variable name to use
+   */
+  public HasVariable(VariableName variableName) {
+    this();
+    setVariableName(variableName);
+  }
+
+  /**
+   * Initializes with the specified variable name.
+   *
+   * @param variableName   the variable name to use
+   */
+  public HasVariable(String variableName) {
+    this();
+    setVariableName(variableName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -85,6 +112,15 @@ public class HasVariable
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "variableName", m_VariableName, "variable: ");
+  }
+
+  /**
+   * Sets the name of the variable to check.
+   *
+   * @param value	the name
+   */
+  public void setVariableName(String value) {
+    setVariableName(new VariableName(value));
   }
 
   /**

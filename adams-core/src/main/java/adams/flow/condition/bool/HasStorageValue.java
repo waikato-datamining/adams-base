@@ -15,7 +15,7 @@
 
 /*
  * HasStorageValue.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -55,6 +55,33 @@ public class HasStorageValue
   protected StorageName m_StorageName;
 
   /**
+   * Default constructor.
+   */
+  public HasStorageValue() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName the name to use
+   */
+  public HasStorageValue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName the name to use
+   */
+  public HasStorageValue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -85,6 +112,15 @@ public class HasStorageValue
   @Override
   public String getQuickInfo() {
     return QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+  }
+
+  /**
+   * Sets the name of the stored value.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**

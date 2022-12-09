@@ -15,7 +15,7 @@
 
 /*
  * Expression.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -187,6 +187,33 @@ public class Expression
 
   /** for serialization. */
   private static final long serialVersionUID = -9169161144858552052L;
+
+  /**
+   * Default constructor.
+   */
+  public Expression() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified expression.
+   *
+   * @param expression  the expression to use
+   */
+  public Expression(BooleanExpressionText expression) {
+    this();
+    setExpression(expression);
+  }
+
+  /**
+   * Initializes with the specified expression.
+   *
+   * @param expression  the expression to use
+   */
+  public Expression(String expression) {
+    this();
+    setExpression(expression);
+  }
 
   /**
    * Returns a string describing the object.
