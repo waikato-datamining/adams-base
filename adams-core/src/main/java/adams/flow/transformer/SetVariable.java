@@ -589,6 +589,26 @@ public class SetVariable
   }
 
   /**
+   * Constructor for setting variable name.
+   *
+   * @param name	the variable name
+   */
+  public SetVariable(VariableName name) {
+    this();
+    setVariableName(name);
+  }
+
+  /**
+   * Constructor for setting variable name.
+   *
+   * @param name	the variable name
+   */
+  public SetVariable(String name) {
+    this();
+    setVariableName(name);
+  }
+
+  /**
    * Constructor for setting variable name and value.
    *
    * @param name	the variable name
