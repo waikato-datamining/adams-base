@@ -15,7 +15,7 @@
 
 /*
  * Convert.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -91,6 +91,23 @@ public class Convert
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor.
+   */
+  public Convert() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified conversion.
+   *
+   * @param conversion  the conversion to use
+   */
+  public Convert(Conversion conversion) {
+    this();
+    setConversion(conversion);
+  }
 
   /**
    * Returns a string describing the object.
