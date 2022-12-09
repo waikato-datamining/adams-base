@@ -15,7 +15,7 @@
 
 /*
  * EnQueue.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -88,6 +88,33 @@ public class EnQueue
   protected StorageName m_StorageName;
 
   /**
+   * Default constructor.
+   */
+  public EnQueue() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName   the name to use
+   */
+  public EnQueue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName   the name to use
+   */
+  public EnQueue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
@@ -130,6 +157,15 @@ public class EnQueue
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
 
     return result;
+  }
+
+  /**
+   * Sets the name for the queue in the internal storage.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**

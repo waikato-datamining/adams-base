@@ -15,7 +15,7 @@
 
 /*
  * DeQueue.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -97,7 +97,34 @@ public class DeQueue
 
   /** the poll interval in msec. */
   protected int m_Interval;
-  
+
+  /**
+   * Default constructor.
+   */
+  public DeQueue() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName     the name
+   */
+  public DeQueue(StorageName storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
+  /**
+   * Initializes with the specified storage name.
+   *
+   * @param storageName     the name
+   */
+  public DeQueue(String storageName) {
+    this();
+    setStorageName(storageName);
+  }
+
   /**
    * Returns a string describing the object.
    *
@@ -150,6 +177,15 @@ public class DeQueue
     result += QuickInfoHelper.toString(this, "interval", m_Interval, ", interval: ");
 
     return result;
+  }
+
+  /**
+   * Sets the name for the queue in the internal storage.
+   *
+   * @param value	the name
+   */
+  public void setStorageName(String value) {
+    setStorageName(new StorageName(value));
   }
 
   /**
