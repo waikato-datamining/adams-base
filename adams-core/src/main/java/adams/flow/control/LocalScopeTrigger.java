@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTrigger.java
- * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -193,6 +193,23 @@ public class LocalScopeTrigger
 
   /** whether a restricted stop occurred. */
   protected boolean m_RestrictedStop;
+
+  /**
+   * Default constructor.
+   */
+  public LocalScopeTrigger() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param name      the name to use
+   */
+  public LocalScopeTrigger(String name) {
+    this();
+    setName(name);
+  }
 
   /**
    * Returns a string describing the object.

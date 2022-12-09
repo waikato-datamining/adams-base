@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -194,6 +194,23 @@ public class LocalScopeTransformer
 
   /** whether a restricted stop occurred. */
   protected boolean m_RestrictedStop;
+
+  /**
+   * Default constructor.
+   */
+  public LocalScopeTransformer() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified name.
+   *
+   * @param name      the name to use
+   */
+  public LocalScopeTransformer(String name) {
+    this();
+    setName(name);
+  }
 
   /**
    * Returns a string describing the object.
