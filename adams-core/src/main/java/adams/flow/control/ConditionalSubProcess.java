@@ -111,7 +111,7 @@ public class ConditionalSubProcess
   }
 
   /**
-   * Initializes the actor with the specified name.
+   * Initializes the actor with the specified name/condition.
    *
    * @param name      the name to use
    * @param condition the condition to use
@@ -119,6 +119,16 @@ public class ConditionalSubProcess
   public ConditionalSubProcess(String name, BooleanCondition condition) {
     this();
     setName(name);
+    setCondition(condition);
+  }
+
+  /**
+   * Initializes the actor with the specified condition.
+   *
+   * @param condition the condition to use
+   */
+  public ConditionalSubProcess(BooleanCondition condition) {
+    this();
     setCondition(condition);
   }
 

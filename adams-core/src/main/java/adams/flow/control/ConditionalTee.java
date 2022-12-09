@@ -130,7 +130,7 @@ public class ConditionalTee
   }
 
   /**
-   * Initializes the actor with the specified name.
+   * Initializes the actor with the specified name/condition.
    *
    * @param name      the name to use
    * @param condition the condition to use
@@ -138,6 +138,16 @@ public class ConditionalTee
   public ConditionalTee(String name, BooleanCondition condition) {
     this();
     setName(name);
+    setCondition(condition);
+  }
+
+  /**
+   * Initializes the actor with the specified condition.
+   *
+   * @param condition the condition to use
+   */
+  public ConditionalTee(BooleanCondition condition) {
+    this();
     setCondition(condition);
   }
 
