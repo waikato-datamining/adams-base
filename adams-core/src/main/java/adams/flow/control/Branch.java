@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -143,7 +143,24 @@ public class Branch
   
   /** the collected output. */
   protected HashMap<Integer,Token> m_CollectedOutput;
-  
+
+  /**
+   * Default constructor.
+   */
+  public Branch() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public Branch(String name) {
+    this();
+    setName(name);
+  }
+
   /**
    * Returns a string describing the object.
    *

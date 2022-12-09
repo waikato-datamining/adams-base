@@ -92,7 +92,36 @@ public class ConditionalSubProcess
   
   /** whether to drop tokens when condition didn't hold true. */
   protected boolean m_DropTokensOnConditionFail;
-  
+
+  /**
+   * Default constructor.
+   */
+  public ConditionalSubProcess() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public ConditionalSubProcess(String name) {
+    this();
+    setName(name);
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name      the name to use
+   * @param condition the condition to use
+   */
+  public ConditionalSubProcess(String name, BooleanCondition condition) {
+    this();
+    setName(name);
+    setCondition(condition);
+  }
+
   /**
    * Returns a string describing the object.
    *

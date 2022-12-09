@@ -113,6 +113,35 @@ public class ConditionalTee
   protected BooleanCondition m_Condition;
 
   /**
+   * Default constructor.
+   */
+  public ConditionalTee() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public ConditionalTee(String name) {
+    this();
+    setName(name);
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name      the name to use
+   * @param condition the condition to use
+   */
+  public ConditionalTee(String name, BooleanCondition condition) {
+    this();
+    setName(name);
+    setCondition(condition);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui

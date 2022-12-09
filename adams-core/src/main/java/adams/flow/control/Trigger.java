@@ -15,7 +15,7 @@
 
 /*
  * Trigger.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -88,6 +88,23 @@ public class Trigger
 
   /** for serialization. */
   private static final long serialVersionUID = 4690934665757923783L;
+
+  /**
+   * Default constructor.
+   */
+  public Trigger() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public Trigger(String name) {
+    this();
+    setName(name);
+  }
 
   /**
    * Returns a string describing the object.

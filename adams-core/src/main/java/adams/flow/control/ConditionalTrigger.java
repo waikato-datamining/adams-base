@@ -112,6 +112,35 @@ public class ConditionalTrigger
   protected BooleanCondition m_Condition;
 
   /**
+   * Default constructor.
+   */
+  public ConditionalTrigger() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public ConditionalTrigger(String name) {
+    this();
+    setName(name);
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name      the name to use
+   * @param condition the condition to use
+   */
+  public ConditionalTrigger(String name, BooleanCondition condition) {
+    this();
+    setName(name);
+    setCondition(condition);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui

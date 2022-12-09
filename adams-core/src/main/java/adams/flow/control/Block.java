@@ -15,7 +15,7 @@
 
 /*
  * Block.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -200,6 +200,23 @@ public class Block
 
   /** the condition to evaluate. */
   protected BooleanCondition m_Condition;
+
+  /**
+   * Default constructor.
+   */
+  public Block() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified condition.
+   *
+   * @param condition   the condition to use
+   */
+  public Block(BooleanCondition condition) {
+    this();
+    setCondition(condition);
+  }
 
   /**
    * Returns a string describing the object.

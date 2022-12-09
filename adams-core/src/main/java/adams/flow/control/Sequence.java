@@ -95,6 +95,23 @@ public class Sequence
   protected boolean m_RestrictedStop;
 
   /**
+   * Default constructor.
+   */
+  public Sequence() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public Sequence(String name) {
+    this();
+    setName(name);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui

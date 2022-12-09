@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TriggerOnce.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -101,7 +101,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TriggerOnce
   extends Trigger
@@ -118,6 +117,22 @@ public class TriggerOnce
 
   /** whether the actor was executed once. */
   protected boolean m_ExecutedOnce;
+
+  /**
+   * Default constructor.
+   */
+  public TriggerOnce() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public TriggerOnce(String name) {
+    super(name);
+  }
 
   /**
    * Returns a string describing the object.

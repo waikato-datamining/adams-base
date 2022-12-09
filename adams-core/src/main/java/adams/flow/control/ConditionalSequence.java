@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConditionalSequence.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -84,7 +84,6 @@ import adams.flow.condition.bool.Expression;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConditionalSequence
   extends Sequence
@@ -95,6 +94,35 @@ public class ConditionalSequence
   
   /** the condition that determines the execution of the subprocess items. */
   protected BooleanCondition m_Condition;
+
+  /**
+   * Default constructor.
+   */
+  public ConditionalSequence() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name    the name to use
+   */
+  public ConditionalSequence(String name) {
+    this();
+    setName(name);
+  }
+
+  /**
+   * Initializes the actor with the specified name.
+   *
+   * @param name      the name to use
+   * @param condition the condition to use
+   */
+  public ConditionalSequence(String name, BooleanCondition condition) {
+    this();
+    setName(name);
+    setCondition(condition);
+  }
 
   /**
    * Returns a string describing the object.
