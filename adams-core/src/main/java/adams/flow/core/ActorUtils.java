@@ -1840,10 +1840,11 @@ public class ActorUtils {
     String[]		parts;
 
     result = new ArrayList<>();
+    text   = text.replaceAll(":\\n.*", "");  // remove trailing error message text
     lines  = text.split(" " + current.getName());
     if (lines.length > 0) {
       // fix up splitting
-      for (i = 1; i < lines.length; i++) {
+      for (i = 0; i < lines.length; i++) {
 	lines[i] = lines[i].trim();
 	// each reporting level has a ":" prefixing the next level -> remove
 	if (lines[i].endsWith(":"))
@@ -1851,7 +1852,8 @@ public class ActorUtils {
 	// last line may have error message after ":" -> remove
 	else if (i == lines.length - 1)
 	  lines[i] = lines[i].substring(0, lines[i].lastIndexOf(":"));
-	lines[i] = current.getName() + lines[i];
+	if (i > 0)
+	  lines[i] = current.getName() + lines[i];
       }
 
       // iterate lines
