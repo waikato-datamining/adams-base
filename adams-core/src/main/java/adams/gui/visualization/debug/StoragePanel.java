@@ -222,6 +222,15 @@ public class StoragePanel
     }
 
     /**
+     * Returns whether cache data is present.
+     *
+     * @return		true if cache data present (3 columns instead of 2)
+     */
+    public boolean hasCacheData() {
+      return m_HasCacheData;
+    }
+
+    /**
      * Returns the object associated with the specified key.
      *
      * @param cache	the cache to access, use null or empty string if regular storage
@@ -262,7 +271,7 @@ public class StoragePanel
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
       if (!m_HasCacheData)
-        return m_Data[rowIndex][columnIndex + 1];
+	return m_Data[rowIndex][columnIndex + 1];
       else
 	return m_Data[rowIndex][columnIndex];
     }
@@ -280,7 +289,7 @@ public class StoragePanel
       String	name;
 
       if (!m_HasCacheData)
-        columnIndex++;
+	columnIndex++;
 
       if (columnIndex == 2) {
 	cache = (String) getValueAt(rowIndex, 0);
@@ -628,15 +637,19 @@ public class StoragePanel
    */
   protected void updatePreview() {
     Object		obj;
-    ObjectRenderer 	renderer;
 
     if (!m_PanelPreview.isVisible())
       return;
     if (m_Table.getSelectedRowCount() != 1)
       return;
-    obj = m_TableModel.getObject(
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+    if (m_TableModel.hasCacheData())
+      obj = m_TableModel.getObject(
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+    else
+      obj = m_TableModel.getObject(
+	null,
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0));
 
     renderObject(m_PanelPreview, obj);
   }
@@ -657,15 +670,19 @@ public class StoragePanel
    */
   protected void newPreview() {
     Object		obj;
-    ObjectRenderer	renderer;
     JPanel 		preview;
     BaseDialog		dialog;
 
     if (m_Table.getSelectedRowCount() != 1)
       return;
-    obj = m_TableModel.getObject(
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
-      (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+    if (m_TableModel.hasCacheData())
+      obj = m_TableModel.getObject(
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0),
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 1));
+    else
+      obj = m_TableModel.getObject(
+	null,
+	(String) m_Table.getValueAt(m_Table.getSelectedRow(), 0));
 
     preview = new JPanel(new BorderLayout());
     renderObject(preview, obj);
@@ -713,8 +730,14 @@ public class StoragePanel
     if (m_Table.getSelectedRow() == -1)
       return null;
 
-    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
-    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+    if (m_TableModel.hasCacheData()) {
+      cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+      name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+    }
+    else {
+      cache = null;
+      name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    }
 
     return m_TableModel.getObject(cache, name);
   }
