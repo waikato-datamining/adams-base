@@ -15,7 +15,7 @@
 
 /*
  * GoTo.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -138,9 +138,9 @@ public class GoTo
       nodes = FlowHelper.findCallableActorsHandler(m_State.selNode);
       for (i = 0; i < refs.length; i++) {
 	for (n = 0; n < nodes.size(); n++) {
-	  int index = nodes.get(i).indexOf(refs[i].getValue());
+	  int index = nodes.get(n).indexOf(refs[i].getValue());
 	  if (index > -1) {
-	    paths[i] = ((Node) nodes.get(i).getChildAt(index)).getFullName();
+	    paths[i] = ((Node) nodes.get(n).getChildAt(index)).getFullName();
 	    break;
 	  }
 	}
