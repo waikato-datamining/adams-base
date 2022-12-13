@@ -1836,11 +1836,12 @@ public class ActorUtils {
     Actor		actor;
     ActorPath 		path;
     String[]		lines;
+    String		line;
     int			i;
     String[]		parts;
 
     result = new ArrayList<>();
-    text   = text.replaceAll(":\\n.*", "");  // remove trailing error message text
+    text   = text.replaceAll(":\\n.*", "").replaceAll("\\n.*", "");  // remove trailing error message text
     lines  = text.split(" " + current.getName());
     if (lines.length > 0) {
       // fix up splitting
@@ -1857,7 +1858,8 @@ public class ActorUtils {
       }
 
       // iterate lines
-      for (String line : lines) {
+      for (i = 0; i < lines.length; i++) {
+        line  = lines[i];
 	path  = new ActorPath(line.trim());
 	actor = ActorUtils.locate(path, current, true, true);
 	if (actor != null) {
@@ -1873,6 +1875,20 @@ public class ActorUtils {
 	    if (actor != null) {
 	      if (!result.contains(path.toString()))
 		result.add(path.toString());
+	    }
+	  }
+	}
+	// last line and trailing error message?
+	else if ((i == lines.length - 1) && (line.contains(":"))) {
+	  // shorten the line until we find an actor
+	  while (line.contains(":")) {
+	    line  = line.substring(0, line.lastIndexOf(":")).trim();
+	    path  = new ActorPath(line.trim());
+	    actor = ActorUtils.locate(path, current, true, true);
+	    if (actor != null) {
+	      if (!result.contains(path.toString()))
+		result.add(path.toString());
+	      break;
 	    }
 	  }
 	}
