@@ -694,9 +694,9 @@ public class StoragePanel
     dialog.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
     dialog.getContentPane().setLayout(new BorderLayout());
     dialog.getContentPane().add(preview, BorderLayout.CENTER);
-    dialog.setLocationRelativeTo(this);
     dialog.setTitle("Preview (" + getSelectedObjectID() + ")");
     dialog.setSize(GUIHelper.getDefaultDialogDimension());
+    dialog.setLocationRelativeTo(dialog.getParent());
     dialog.setVisible(true);
   }
 
@@ -763,14 +763,14 @@ public class StoragePanel
       if (getParentDialog() != null)
 	dialog = new BaseDialog(getParentDialog());
       else
-	dialog= new BaseDialog(getParentFrame());
+	dialog = new BaseDialog(getParentFrame());
       dialog.setDefaultCloseOperation(BaseDialog.DISPOSE_ON_CLOSE);
       dialog.getContentPane().setLayout(new BorderLayout());
       dialog.getContentPane().add(inspectionPanel, BorderLayout.CENTER);
-      dialog.setLocationRelativeTo(this);
       dialog.setTitle("Inspect (" + getSelectedObjectID() + ")");
       inspectionPanel.setCurrent(getSelectedObject());
       dialog.setSize(GUIHelper.getDefaultDialogDimension());
+      dialog.setLocationRelativeTo(dialog.getParent());
       dialog.setVisible(true);
     }
     else {
@@ -789,7 +789,8 @@ public class StoragePanel
 	});
 	m_DialogInspect.getContentPane().setLayout(new BorderLayout());
 	m_DialogInspect.getContentPane().add(m_PanelInspect, BorderLayout.CENTER);
-	m_DialogInspect.setLocationRelativeTo(this);
+        m_DialogInspect.setSize(GUIHelper.getDefaultDialogDimension());
+	m_DialogInspect.setLocationRelativeTo(m_DialogInspect.getParent());
       }
       m_DialogInspect.setTitle("Inspect (" + getSelectedObjectID() + ")");
       m_PanelInspect.setCurrent(getSelectedObject());
