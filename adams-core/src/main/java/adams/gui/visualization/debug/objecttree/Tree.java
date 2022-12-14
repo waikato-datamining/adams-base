@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -32,7 +32,6 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.debug.InspectionPanel;
 import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
-import adams.gui.visualization.debug.objecttree.Node.NodeType;
 import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 

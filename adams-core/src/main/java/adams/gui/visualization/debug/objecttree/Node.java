@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Node.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.objecttree;
 
@@ -29,7 +29,6 @@ import java.util.List;
  * Specialized tree node.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Node
   extends BaseTreeNode {
@@ -37,21 +36,6 @@ public class Node
   /** for serialization. */
   private static final long serialVersionUID = 39921763469189066L;
 
-  /**
-   * The types of nodes.
-   *
-   * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
-   */
-  public enum NodeType {
-    /** normal. */
-    NORMAL,
-    /** array element. */
-    ARRAY_ELEMENT,
-    /** hashcode. */
-    HASHCODE
-  }
-  
   /** the name of the property. */
   protected String m_Property;
 
