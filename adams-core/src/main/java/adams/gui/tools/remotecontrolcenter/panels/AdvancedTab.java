@@ -15,7 +15,7 @@
 
 /*
  * AdvancedTab.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.remotecontrolcenter.panels;
@@ -245,7 +245,6 @@ public class AdvancedTab
     m_TabbedPane.addTab("Log", m_Log);
 
     m_Results = new InspectionPanel();
-    m_Results.setMaxDepth(5);
     m_TabbedPane.addTab("Results", m_Results);
 
     m_TabbedPane.setSelectedIndex(0);

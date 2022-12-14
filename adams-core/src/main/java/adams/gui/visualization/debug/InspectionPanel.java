@@ -291,24 +291,6 @@ public class InspectionPanel
   }
 
   /**
-   * Sets the maximum depth to use.
-   *
-   * @param value	the depth
-   */
-  public void setMaxDepth(int value) {
-    m_Tree.setMaxDepth(value);
-  }
-
-  /**
-   * Returns the current maximum depth.
-   *
-   * @return		the depth
-   */
-  public int getMaxDepth() {
-    return m_Tree.getMaxDepth();
-  }
-
-  /**
    * Sets the object to inspect.
    *
    * @param value	the object to inspect

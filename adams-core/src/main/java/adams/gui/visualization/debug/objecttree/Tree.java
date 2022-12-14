@@ -15,12 +15,12 @@
 
 /*
  * Tree.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
  */
+
 package adams.gui.visualization.debug.objecttree;
 
 import adams.core.Utils;
-import adams.core.option.OptionHandler;
 import adams.data.textrenderer.AbstractTextRenderer;
 import adams.gui.chooser.ObjectExporterFileChooser;
 import adams.gui.core.BasePopupMenu;
@@ -30,53 +30,44 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.visualization.debug.InspectionPanel;
-import adams.gui.visualization.debug.inspectionhandler.AbstractInspectionHandler;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
-import adams.gui.visualization.debug.propertyextractor.AbstractPropertyExtractor;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JMenuItem;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
+import java.awt.Cursor;
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyEditorManager;
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
  * Specialized tree that displays the properties of an object.
  * <br><br>
  * In order to avoid loops, a HashSet is used for keeping track of the processed
- * objects. Of course, custom equals(Object)/compareTo(Object) methods will
+ * objects. Unfortunately, custom equals(Object)/compareTo(Object) methods will
  * interfere with this mechanism.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Tree
-  extends BaseTree {
-
-  /** for serialization. */
-  private static final long serialVersionUID = -127345486742553561L;
+  extends BaseTree
+  implements TreeWillExpandListener, TreeExpansionListener {
 
   /** the label for the hashcode. */
   public final static String LABEL_HASHCODE = "hashCode";
 
   /** the maximum number of array/list elements to show. */
   public final static int MAX_ITEMS = 100;
-
-  /** the maximum depth of the tree. */
-  public final static int MAX_DEPTH = 10;
 
   /** the current object. */
   protected transient Object m_Object;
@@ -93,67 +84,38 @@ public class Tree
   /** filechooser for exporting objects. */
   protected ObjectExporterFileChooser m_FileChooser;
 
-  /** the maximum depth to use. */
-  protected int m_MaxDepth;
-
-  /** caching the class / extractors relation. */
-  protected static Map<Class,List<AbstractPropertyExtractor>> m_ExtractorCache;
-
-  /** caching the class / inspection handler relation. */
-  protected static Map<Class,List<AbstractInspectionHandler>> m_InspectionHandlerCache;
-
   /**
    * Initializes the tree.
    */
   public Tree() {
     super();
 
-    if (m_ExtractorCache == null) {
-      m_ExtractorCache         = new HashMap<>();
-      m_InspectionHandlerCache = new HashMap<>();
-    }
-
     m_SearchString  = null;
     m_SearchPattern = null;
     m_IsRegExp      = false;
     m_FileChooser   = null;
-    m_MaxDepth      = MAX_DEPTH;
     setShowsRootHandles(true);
     setRootVisible(true);
     setCellRenderer(new Renderer());
-    buildTree(null);
 
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-	TreePath path = getPathForLocation(e.getX(), e.getY());
+        TreePath path = getPathForLocation(e.getX(), e.getY());
         if ((path != null) && MouseUtils.isRightClick(e)) {
-	  showPopup(e);
-	  e.consume();
-	}
+          showPopup(e);
+          e.consume();
+        }
 
-	if (!e.isConsumed())
-	  super.mouseClicked(e);
+        if (!e.isConsumed())
+          super.mouseClicked(e);
       }
     });
-  }
 
-  /**
-   * Sets the maximum depth to use.
-   *
-   * @param value	the depth
-   */
-  public void setMaxDepth(int value) {
-    m_MaxDepth = value;
-  }
+    addTreeWillExpandListener(this);
+    addTreeExpansionListener(this);
 
-  /**
-   * Returns the current maximum depth.
-   *
-   * @return		the depth
-   */
-  public int getMaxDepth() {
-    return m_MaxDepth;
+    buildTree(null);
   }
 
   /**
@@ -162,48 +124,22 @@ public class Tree
    * @param root	the object to build the tree from, null for empty tree
    */
   protected void buildTree(Object root) {
-    DefaultTreeModel		model;
+    DefaultTreeModel 	model;
     Node		rootNode;
 
     if (root == null) {
-      model = new DefaultTreeModel(null);
+      rootNode = null;
+      model    = new DefaultTreeModel(null);
     }
     else {
-      rootNode = buildTree(null, null, root, NodeType.NORMAL, 0);
+      rootNode = new Node(this, null, null, root, NodeType.NORMAL);
       model    = new DefaultTreeModel(rootNode);
     }
 
     setModel(model);
-  }
 
-  /**
-   * Adds the array below the parent.
-   *
-   * @param parent	the parent to add the array to
-   * @param obj		the array to add
-   * @param depth	the current depth
-   */
-  protected void addArray(Node parent, Object obj, int depth) {
-    int		len;
-    int		i;
-    Object	value;
-    Node	child;
-
-    len = Array.getLength(obj);
-    for (i = 0; (i < len) && (i < MAX_ITEMS); i++) {
-      value = Array.get(obj, i);
-      if (value != null) {
-	buildTree(parent, "[" + (i+1) + "]", value, NodeType.ARRAY_ELEMENT, depth + 1);
-      }
-      else {
-	child = new Node("[" + (i+1) + "]", null, NodeType.ARRAY_ELEMENT);
-	parent.add(child);
-      }
-    }
-    if (len > MAX_ITEMS) {
-      child = new Node("[" + MAX_ITEMS + "-" + len + "]", "skipped", NodeType.ARRAY_ELEMENT);
-      parent.add(child);
-    }
+    if (rootNode != null)
+      rootNode.expandIfNecessary();
   }
 
   /**
@@ -219,105 +155,9 @@ public class Tree
 
     if (m_SearchString != null) {
       if (m_SearchPattern != null)
-	result = m_SearchPattern.matcher(label).matches();
+        result = m_SearchPattern.matcher(label).matches();
       else
-	result = label.contains(m_SearchString);
-    }
-
-    return result;
-  }
-
-  /**
-   * Builds the tree recursively.
-   *
-   * @param parent	the parent to add the object to (null == root)
-   * @param property	the name of the property the object belongs to (null == root)
-   * @param obj		the object to add
-   * @param type	the type of node
-   * @param depth	the current depth
-   * @return		the generated node
-   */
-  protected Node buildTree(Node parent, String property, Object obj, NodeType type, int depth) {
-    Node				result;
-    List<AbstractPropertyExtractor>	extractors;
-    List<AbstractInspectionHandler>	handlers;
-    Hashtable<String,Object>		additional;
-    Object				current;
-    String				label;
-    HashSet<String>			labels;
-    int					i;
-    boolean				add;
-
-    // too deep?
-    if (depth >= m_MaxDepth) {
-      result = new Node(property, "...", type);
-      if (parent != null)
-	parent.add(result);
-      return result;
-    }
-
-    result = new Node(property, obj, type);
-    if (parent != null)
-      parent.add(result);
-
-    // Object's hashcode
-    if (!Utils.isPrimitive(obj) && matches(LABEL_HASHCODE))
-      result.add(new Node(LABEL_HASHCODE, obj.hashCode(), NodeType.HASHCODE));
-
-    // array?
-    if (obj.getClass().isArray())
-      addArray(result, obj, depth);
-
-    labels = new HashSet<>();
-
-    // child properties
-    try {
-      if (m_ExtractorCache.containsKey(obj.getClass())) {
-	extractors = m_ExtractorCache.get(obj.getClass());
-      }
-      else {
-	extractors = AbstractPropertyExtractor.getExtractors(obj);
-	m_ExtractorCache.put(obj.getClass(), extractors);
-      }
-      for (AbstractPropertyExtractor extractor: extractors) {
-	extractor.setCurrent(obj);
-	for (i = 0; i < extractor.size(); i++) {
-	  current = extractor.getValue(i);
-	  if (current != null) {
-	    label = extractor.getLabel(i);
-	    add = matches(label)
-	      || (current instanceof OptionHandler)
-	      || (current.getClass().isArray());
-	    add = add && !labels.contains(label);
-	    if (add) {
-	      labels.add(label);
-	      buildTree(result, label, current, NodeType.NORMAL, depth + 1);
-	    }
-	  }
-	}
-      }
-    }
-    catch (Exception e) {
-      System.err.println("Failed to obtain property descriptors for: " + obj);
-      e.printStackTrace();
-    }
-
-    // additional values obtained through inspection handlers
-    if (m_InspectionHandlerCache.containsKey(obj.getClass())) {
-      handlers = m_InspectionHandlerCache.get(obj.getClass());
-    }
-    else {
-      handlers = AbstractInspectionHandler.getHandler(obj);
-      m_InspectionHandlerCache.put(obj.getClass(), handlers);
-    }
-    for (AbstractInspectionHandler handler: handlers) {
-      additional = handler.inspect(obj);
-      for (String key: additional.keySet()) {
-	if (matches(key) && !labels.contains(key)) {
-	  labels.add(key);
-	  buildTree(result, key, additional.get(key), NodeType.NORMAL, depth + 1);
-	}
-      }
+        result = label.contains(m_SearchString);
     }
 
     return result;
@@ -360,16 +200,18 @@ public class Tree
 
     result = false;
 
+    parent.expandIfNecessary();
+
     for (i = 0; i < parent.getChildCount(); i++) {
       child = (Node) parent.getChildAt(i);
       if (child.getProperty().equals(path[index])) {
-	if (index < path.length - 1) {
-	  result = selectPropertyPath(child, path, index + 1);
-	}
-	else {
-	  result = true;
-	  setSelectionPath(new TreePath(child.getPath()));
-	}
+        if (index < path.length - 1) {
+          result = selectPropertyPath(child, path, index + 1);
+        }
+        else {
+          result = true;
+          setSelectionPath(new TreePath(child.getPath()));
+        }
       }
     }
 
@@ -403,10 +245,10 @@ public class Tree
 
     if ((m_SearchString != null) && m_IsRegExp) {
       try {
-	m_SearchPattern = Pattern.compile(m_SearchString);
+        m_SearchPattern = Pattern.compile(m_SearchString);
       }
       catch (Exception e) {
-	m_SearchPattern = null;
+        m_SearchPattern = null;
       }
     }
     else {
@@ -450,7 +292,7 @@ public class Tree
    */
   protected void showPopup(MouseEvent e) {
     BasePopupMenu menu;
-    JMenuItem				menuitem;
+    JMenuItem menuitem;
     TreePath 				path;
     final Node 				node;
     final Object			obj;
@@ -466,32 +308,17 @@ public class Tree
 
     menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
     menuitem.setEnabled(obj != null);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        copyToClipboard(obj);
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> copyToClipboard(obj));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Export...", ImageManager.getIcon("save.gif"));
     menuitem.setEnabled(obj != null);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	export(obj);
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> export(obj));
     menu.add(menuitem);
 
     menuitem = new JMenuItem("Inspect...", ImageManager.getIcon("object.gif"));
     menuitem.setEnabled(obj != null);
-    menuitem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-	inspect(node.getPropertyPath(), obj);
-      }
-    });
+    menuitem.addActionListener((ActionEvent ae) -> inspect(node.getPropertyPath(), obj));
     menu.add(menuitem);
 
     menu.showAbsolute(this, e);
@@ -514,8 +341,8 @@ public class Tree
   protected void export(Object obj) {
     ObjectExporterFileChooser	fileChooser;
     int 			retVal;
-    File 			file;
-    AbstractObjectExporter 	exporter;
+    File file;
+    AbstractObjectExporter exporter;
     String 			msg;
 
     fileChooser = getFileChooser(obj.getClass());
@@ -528,7 +355,7 @@ public class Tree
     msg      = exporter.export(obj, file);
     if (msg != null)
       GUIHelper.showErrorMessage(
-	Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
+        Tree.this, "Failed to export object to '" + file + "'!\n" + msg);
   }
 
   /**
@@ -538,14 +365,14 @@ public class Tree
    * @param obj		the object to inspect
    */
   protected void inspect(String[] path, Object obj) {
-    ApprovalDialog	dialog;
-    InspectionPanel	panel;
+    ApprovalDialog dialog;
+    InspectionPanel panel;
 
     panel = new InspectionPanel();
     panel.setCurrent(obj);
 
     if (getParentDialog() != null)
-      dialog = new ApprovalDialog(getParentDialog(), ModalityType.MODELESS);
+      dialog = new ApprovalDialog(getParentDialog(), Dialog.ModalityType.MODELESS);
     else
       dialog = new ApprovalDialog(getParentFrame(), false);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
@@ -559,5 +386,54 @@ public class Tree
     dialog.setSize(GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
     dialog.setLocationRelativeTo(dialog.getParent());
     dialog.setVisible(true);
+  }
+
+  /**
+   * Invoked whenever a node in the tree is about to be expanded.
+   *
+   * @param event a {@code TreeExpansionEvent} containing a {@code TreePath}
+   *              object for the node
+   * @throws ExpandVetoException to signify expansion has been canceled
+   */
+  @Override
+  public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+    Node   node;
+
+    if ((event.getPath() != null) && (event.getPath().getLastPathComponent() instanceof Node)) {
+      setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      node = (Node) event.getPath().getLastPathComponent();
+      node.expandIfNecessary();
+    }
+  }
+
+  /**
+   * Invoked whenever a node in the tree is about to be collapsed.
+   *
+   * @param event a {@code TreeExpansionEvent} containing a {@code TreePath}
+   *              object for the node
+   * @throws ExpandVetoException to signify collapse has been canceled
+   */
+  @Override
+  public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
+    // nothing to do
+  }
+  /**
+   * Called whenever an item in the tree has been expanded.
+   *
+   * @param event a {@code TreeExpansionEvent} containing a {@code TreePath}
+   *              object for the expanded node
+   */
+  public void treeExpanded(TreeExpansionEvent event) {
+    setCursor(Cursor.getDefaultCursor());
+  }
+
+  /**
+   * Called whenever an item in the tree has been collapsed.
+   *
+   * @param event a {@code TreeExpansionEvent} containing a {@code TreePath}
+   *              object for the collapsed node
+   */
+  public void treeCollapsed(TreeExpansionEvent event) {
+    // nothing to do
   }
 }
