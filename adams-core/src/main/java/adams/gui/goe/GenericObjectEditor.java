@@ -36,11 +36,13 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -158,8 +160,6 @@ public class GenericObjectEditor
 
   /**
    * Handles the GUI side of editing values.
-   *
-   * @version $Revision$
    */
   public class GOEPanel
     extends JPanel {
@@ -214,6 +214,21 @@ public class GenericObjectEditor
 
     /** the top panel with the classname and choose button. */
     protected JPanel m_TopPanel;
+
+    /** the panel for the log and buttons. */
+    protected JPanel m_PanelLogAndButtons;
+
+    /** the panel for the log messages. */
+    protected JPanel m_PanelLog;
+
+    /** the text area for the log message. */
+    protected BaseTextAreaWithButtons m_TextLog;
+
+    /** the button for clearing the log message. */
+    protected BaseButton m_ButtonLogClear;
+
+    /** the button for copying the log message. */
+    protected BaseButton m_ButtonLogCopy;
 
     /** the panel with the buttons. */
     protected JPanel m_PanelButtons;
@@ -375,6 +390,25 @@ public class GenericObjectEditor
       childPanel.add(m_PropertySheetChild, BorderLayout.CENTER);
       m_PanelRight.add(childPanel, BorderLayout.CENTER);
 
+      m_PanelLogAndButtons = new JPanel(new BorderLayout());
+      add(m_PanelLogAndButtons, BorderLayout.SOUTH);
+
+      m_PanelLog = new JPanel(new BorderLayout());
+      m_PanelLog.setVisible(false);
+      m_PanelLogAndButtons.add(m_PanelLog, BorderLayout.CENTER);
+      m_TextLog = new BaseTextAreaWithButtons(4, 40);
+      m_TextLog.setLineWrap(true);
+      m_TextLog.setWrapStyleWord(true);
+      m_PanelLog.add(m_TextLog, BorderLayout.CENTER);
+      m_ButtonLogClear = new BaseButton(ImageManager.getIcon("new.gif"));
+      m_ButtonLogClear.setToolTipText("Clears the log message");
+      m_ButtonLogClear.addActionListener((ActionEvent e) -> clearLogMessage());
+      m_TextLog.addToButtonsPanel(m_ButtonLogClear);
+      m_ButtonLogCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
+      m_ButtonLogCopy.addActionListener((ActionEvent e) -> copyLogMessage());
+      m_ButtonLogCopy.setToolTipText("Copies the log message to the clipboard");
+      m_TextLog.addToButtonsPanel(m_ButtonLogCopy);
+
       m_PanelButtons = new JPanel(new GridLayout(1, 2));
       JPanel leftButs = new JPanel();
       JPanel rightButs = new JPanel();
@@ -388,7 +422,7 @@ public class GenericObjectEditor
       rightButs.setLayout(new FlowLayout(FlowLayout.RIGHT));
       rightButs.add(m_ButtonOK);
       rightButs.add(m_ButtonCancel);
-      add(m_PanelButtons, BorderLayout.SOUTH);
+      m_PanelLogAndButtons.add(m_PanelButtons, BorderLayout.SOUTH);
 
       if (m_ClassType != null) {
 	m_ObjectNames = getClasses();
@@ -675,6 +709,71 @@ public class GenericObjectEditor
     public boolean isReadOnly() {
       return !m_ButtonOK.isEnabled();
     }
+
+    /**
+     * For logging messages.
+     *
+     * @param level	the logging level
+     * @param msg		the message
+     */
+    public void log(Level level, String msg) {
+      log(level, msg, null);
+    }
+
+    /**
+     * For logging messages.
+     *
+     * @param level	the logging level
+     * @param msg		the message
+     * @param t		the optional exception (if one occurred), can be null
+     */
+    public void log(Level level, String msg, Throwable t) {
+      String	text;
+
+      text = level.getName() + ": " + msg;
+      if (t != null)
+        text += "\n" + LoggingHelper.throwableToString(t, 10);
+
+      m_TextLog.setText(text);
+      m_TextLog.setCaretPosition(0);
+      m_PanelLog.setVisible(true);
+    }
+
+    /**
+     * Removes the message and hides the panel.
+     */
+    public void clearLogMessage() {
+      m_TextLog.setText("");
+      m_PanelLog.setVisible(false);
+    }
+
+    /**
+     * Copies the message to the clipboard.
+     */
+    public void copyLogMessage() {
+      ClipboardHelper.copyToClipboard(m_TextLog.getText());
+    }
+
+    /**
+     * Returns whether a message is currently being displayed.
+     *
+     * @return		true if message displayed
+     */
+    public boolean hasLogMessage() {
+      return m_PanelLog.isVisible();
+    }
+
+    /**
+     * Returns the current log message.
+     *
+     * @return		the log message, null if none displayed
+     */
+    public String getLogMessage() {
+      if (!hasLogMessage())
+        return null;
+      else
+	return m_TextLog.getText();
+    }
   }
 
   /**
@@ -878,7 +977,7 @@ public class GenericObjectEditor
 	  m_DefaultValue = ObjectCopyHelper.newInstance(defaultValue);
       }
       catch (Exception e) {
-	LOGGER.log(Level.SEVERE, "Problem loading the first class: " + defaultValue, e);
+        log(Level.SEVERE, "Problem loading the first class: " + defaultValue, e);
 	m_DefaultValue = null;
       }
     }
@@ -906,19 +1005,19 @@ public class GenericObjectEditor
     
     superclasses = ClassLister.getSingleton().getSuperclasses(obj.getClass());
     if (superclasses.length == 0) {
-      LOGGER.log(Level.SEVERE, "No class type set up for GenericObjectEditor and unable to determine one!");
+      log(Level.SEVERE, "No class type set up for GenericObjectEditor and unable to determine one!");
       return false;
     }
     
     if (superclasses.length > 1)
-      LOGGER.log(Level.SEVERE, "No class type set up for GenericObjectEditor and more than one superclass found, defaulting to: " + superclasses[0]);
+      log(Level.SEVERE, "No class type set up for GenericObjectEditor and more than one superclass found, defaulting to: " + superclasses[0]);
     
     try {
       m_ClassType              = ClassManager.getSingleton().forName(superclasses[0]);
       m_canChangeClassInDialog = true;
     }
     catch (Exception e) {
-      LOGGER.log(Level.SEVERE, "Failed to initialize class type: " + superclasses[0], e);
+      log(Level.SEVERE, "Failed to initialize class type: " + superclasses[0], e);
       return false;
     }
     
@@ -933,7 +1032,7 @@ public class GenericObjectEditor
     Object	defaultValue;
 
     if (m_ClassType == null) {
-      LOGGER.log(Level.SEVERE, "setDefaultValue: No class type set up for GenericObjectEditor!");
+      log(Level.SEVERE, "setDefaultValue: No class type set up for GenericObjectEditor!");
       return;
     }
 
@@ -954,7 +1053,7 @@ public class GenericObjectEditor
       return;
 
     if (!m_ClassType.isAssignableFrom(o.getClass())) {
-      LOGGER.log(Level.SEVERE, "setValue object not of correct type: " + m_ClassType.getName() + " != " + o.getClass().getName());
+      log(Level.SEVERE, "setValue object not of correct type: " + m_ClassType.getName() + " != " + o.getClass().getName());
       return;
     }
 
@@ -1296,7 +1395,7 @@ public class GenericObjectEditor
 	  setDefaultValue();
       }
       catch(Exception e) {
-	LOGGER.log(Level.SEVERE, ex.getMessage(), e);
+	log(Level.SEVERE, ex.getMessage(), e);
       }
     }
   }
@@ -1391,21 +1490,81 @@ public class GenericObjectEditor
     return ((GOEPanel) getCustomEditor()).getUpdateSize();
   }
 
-    /**
-     * Sets whether to display the buttons.
-     *
-     * @param value	true if to display
-     */
-    public void setButtonsVisible(boolean value) {
-      ((GOEPanel) getCustomEditor()).setButtonsVisible(value);
-    }
+  /**
+   * Sets whether to display the buttons.
+   *
+   * @param value	true if to display
+   */
+  public void setButtonsVisible(boolean value) {
+    ((GOEPanel) getCustomEditor()).setButtonsVisible(value);
+  }
 
-    /**
-     * Returns whether the buttons are visible.
-     *
-     * @return		true if displayed
-     */
-    public boolean getButtonsVisible() {
-      return ((GOEPanel) getCustomEditor()).getButtonsVisible();
+  /**
+   * Returns whether the buttons are visible.
+   *
+   * @return		true if displayed
+   */
+  public boolean getButtonsVisible() {
+    return ((GOEPanel) getCustomEditor()).getButtonsVisible();
+  }
+
+  /**
+   * For logging messages.
+   *
+   * @param level	the logging level
+   * @param msg		the message
+   */
+  public void log(Level level, String msg) {
+    log(level, msg, null);
+  }
+
+  /**
+   * For logging messages.
+   *
+   * @param level	the logging level
+   * @param msg		the message
+   * @param t		the optional exception (if one occurred), can be null
+   */
+  public void log(Level level, String msg, Throwable t) {
+    if (t != null) {
+      LOGGER.log(level, msg, t);
+      ((GOEPanel) getCustomEditor()).log(level, msg, t);
     }
+    else {
+      LOGGER.log(level, msg);
+      ((GOEPanel) getCustomEditor()).log(level, msg);
+    }
+  }
+
+  /**
+   * Removes the message and hides the panel.
+   */
+  public void clearLogMessage() {
+    ((GOEPanel) getCustomEditor()).clearLogMessage();
+  }
+
+  /**
+   * Copies the message to the clipboard.
+   */
+  public void copyLogMessage() {
+    ((GOEPanel) getCustomEditor()).copyLogMessage();
+  }
+
+  /**
+   * Returns whether a message is currently being displayed.
+   *
+   * @return		true if message displayed
+   */
+  public boolean hasLogMessage() {
+    return ((GOEPanel) getCustomEditor()).hasLogMessage();
+  }
+
+  /**
+   * Returns the current log message.
+   *
+   * @return		the log message, null if none displayed
+   */
+  public String getLogMessage() {
+    return ((GOEPanel) getCustomEditor()).getLogMessage();
+  }
 }
