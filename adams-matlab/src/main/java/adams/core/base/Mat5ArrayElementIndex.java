@@ -97,7 +97,7 @@ public class Mat5ArrayElementIndex
   /**
    * Returns the value as dimensional index. Uses -1 for unspecified/empty dimensions (eg for iterating).
    *
-   * @return		the array of positions, empty array if nothing specified
+   * @return		the array of positions (1-based indices), empty array if nothing specified
    */
   public int[] indexValue() {
     return indexValue(false);
