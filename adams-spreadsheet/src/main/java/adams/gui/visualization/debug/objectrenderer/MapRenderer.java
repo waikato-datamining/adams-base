@@ -15,7 +15,7 @@
 
 /*
  * MapRenderer.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.debug.objectrenderer;
@@ -28,6 +28,9 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,12 +78,33 @@ public class MapRenderer
   protected SpreadSheet mapToSheet(Map map) {
     SpreadSheet 	result;
     Row			row;
+    List		keysObj;
+    List<Comparable> 	keysComp;
+    boolean 		allComp;
 
     result = new DefaultSpreadSheet();
     row   = result.getHeaderRow();
     row.addCell("K").setContentAsString("Key");
     row.addCell("V").setContentAsString("Value");
-    for (Object key: map.keySet()) {
+
+    // check whether we have comparable keys and can sort them
+    keysObj = new ArrayList<>(map.keySet());
+    allComp = true;
+    for (Object key: keysObj) {
+      if (!(key instanceof Comparable)) {
+        allComp = false;
+        break;
+      }
+    }
+    if (allComp) {
+      keysComp = new ArrayList<>();
+      for (Object key: keysObj)
+        keysComp.add((Comparable) key);
+      Collections.sort(keysComp);
+      keysObj = keysComp;
+    }
+
+    for (Object key: keysObj) {
       row = result.addRow();
       row.addCell("K").setNative(key);
       row.addCell("V").setNative(map.get(key));
