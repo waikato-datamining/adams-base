@@ -255,7 +255,7 @@ public class Mat5StructToMap
 	  for (x = rangeX[0]; x < rangeX[1]; x++) {
 	    for (String field: struct.getFieldNames()) {
 	      obj = struct.get(field, y, x);
-	      if ((dims[0] > 1) || (dims[1] > 1))
+	      if (((dims[0] > 1) || (dims[1] > 1)) && (index == null))
 		suffix = "[" + y + "," + x + "]";
 	      if (obj instanceof Struct) {
 		submap = new HashMap();
