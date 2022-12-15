@@ -387,10 +387,8 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
 
     result = new ArrayList<>();
     for (i = 0; i < size(); i++) {
-      if (get(i).getClass().equals(actor) && !get(i).getSkip()) {
+      if (get(i).getClass().equals(actor) && !get(i).getSkip())
         result.add((A) get(i));
-        // TODO was: break;
-      }
     }
 
     return result;
