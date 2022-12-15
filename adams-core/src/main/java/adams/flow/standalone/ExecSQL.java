@@ -15,7 +15,7 @@
 
 /*
  * ExecSQL.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -27,6 +27,7 @@ import adams.db.SQLF;
 import adams.db.SQLIntf;
 import adams.db.SQLStatement;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.DryRunSupporter;
 
 import java.util.logging.Level;
 
@@ -79,7 +80,8 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ExecSQL
-  extends AbstractDbStandalone {
+  extends AbstractDbStandalone
+  implements DryRunSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -2766505525494708760L;
