@@ -155,12 +155,6 @@
         <artifactId>java-cup-runtime</artifactId>
         <version>11b-20160615</version>
       </dependency>
-
-      <dependency>
-        <groupId>com.github.fracpete</groupId>
-        <artifactId>parsergen-maven-plugin</artifactId>
-        <version>0.0.1</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

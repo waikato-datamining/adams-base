@@ -113,6 +113,7 @@
       <plugin>
         <groupId>com.github.fracpete</groupId>
         <artifactId>parsergen-maven-plugin</artifactId>
+        <version>0.0.1</version>
         <configuration>
           <directories>
             <directory>${project.basedir}/src/main/resources/adams/parser/lookupupdate</directory>
