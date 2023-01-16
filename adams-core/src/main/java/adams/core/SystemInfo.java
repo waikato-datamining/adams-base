@@ -15,13 +15,14 @@
 
 /*
  * SystemInfo.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 import adams.core.management.Java;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
+import adams.core.management.User;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -91,6 +92,12 @@ public class SystemInfo
   /** the key for the is android?. */
   public final static String OS_ISANDROID = "os.isAndroid";
 
+  /** the key for the user's ID (*nix only). */
+  public final static String USER_UID = "user.uid";
+
+  /** the key for the user's group ID (*nix only). */
+  public final static String USER_GID = "user.gid";
+
   /**
    * Initializes the object.
    */
@@ -150,6 +157,10 @@ public class SystemInfo
     m_Info.put(OS_ISLINUX, "" + OS.isLinux());
     m_Info.put(OS_ISANDROID, "" + OS.isAndroid());
     m_Info.put(ADAMS_STARTUP, DateUtils.getTimestampFormatterMsecs().format(Environment.getInstance().getInstantiationTimestamp()));
+    if (!m_Info.containsKey(USER_UID)) {
+      m_Info.put(USER_UID, "" + User.getUserID());
+      m_Info.put(USER_GID, "" + User.getGroupID());
+    }
   }
 
   /**
