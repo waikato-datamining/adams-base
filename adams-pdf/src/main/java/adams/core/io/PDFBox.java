@@ -15,7 +15,7 @@
 
 /*
  * PDFBox.java
- * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -283,7 +283,7 @@ public class PDFBox {
    * Extracts images from PDF resources.
    *
    * @param resources		the resources to extract the images from
-   * @return			the list of extracted iamges
+   * @return			the list of extracted images
    * @throws IOException	if extraction fails
    */
   @MixedCopyright(
@@ -315,7 +315,7 @@ public class PDFBox {
    * Extracts images from a PDF document.
    *
    * @param document		the document to extract the images from
-   * @return			the list of extracted iamges
+   * @return			the list of extracted images
    * @throws IOException	if extraction fails
    */
   @MixedCopyright(
@@ -347,7 +347,7 @@ public class PDFBox {
    * Extracts images from a PDF document.
    *
    * @param file		the file to extract the images from
-   * @return			the list of extracted iamges
+   * @return			the list of extracted images
    * @throws IOException	if extraction fails
    */
   public static List<BufferedImage> extractImages(File file) throws IOException {
