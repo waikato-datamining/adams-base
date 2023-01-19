@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleScriptEditor.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -34,6 +34,7 @@ import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.StyledTextEditorPanel;
+import adams.gui.core.UISettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -312,11 +313,12 @@ public class AbstractSimpleScriptEditor
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
-    menuitem.setSelected(m_TextStatement.getWordWrap());
+    menuitem.setSelected(UISettings.get(getClass(), "LineWrap", m_TextStatement.getWordWrap()));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_TextStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected());
+        UISettings.set(AbstractSimpleScriptEditor.this.getClass(), "LineWrap", m_TextStatement.getWordWrap());
       }
     });
     result.addSeparator();

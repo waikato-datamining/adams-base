@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleLogPanel.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -32,7 +32,6 @@ import java.awt.event.ActionEvent;
  * Simple log panel.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleLogPanel
   extends BasePanel
@@ -97,8 +96,11 @@ public class SimpleLogPanel
     m_TextLog.addToButtonsPanel(m_ButtonSave);
 
     m_CheckBoxLineWrap = new BaseCheckBox("Line wrap");
-    m_CheckBoxLineWrap.setSelected(false);
-    m_CheckBoxLineWrap.addActionListener((ActionEvent e) -> setLineWrap(m_CheckBoxLineWrap.isSelected()));
+    m_CheckBoxLineWrap.setSelected(UISettings.get(getClass(), "LineWrap", false));
+    m_CheckBoxLineWrap.addActionListener((ActionEvent e) -> {
+      setLineWrap(m_CheckBoxLineWrap.isSelected());
+      UISettings.set(SimpleLogPanel.this.getClass(), "LineWrap", getLineWrap());
+    });
     m_TextLog.addToButtonsPanel(m_CheckBoxLineWrap);
   }
 

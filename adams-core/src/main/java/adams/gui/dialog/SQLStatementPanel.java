@@ -15,7 +15,7 @@
 
 /*
  * SQLStatementPanel.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -27,6 +27,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
 import adams.gui.core.RecentSQLStatementsHandler;
 import adams.gui.core.SQLSyntaxEditorPanel;
+import adams.gui.core.UISettings;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.help.HelpFrame;
@@ -153,8 +154,11 @@ public class SQLStatementPanel
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setIcon(ImageManager.getEmptyIcon());
-    menuitem.setSelected(m_PanelStatement.getWordWrap());
-    menuitem.addActionListener((ActionEvent e) -> m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected()));
+    menuitem.setSelected(UISettings.get(getClass(), "LineWrap", m_PanelStatement.getWordWrap()));
+    menuitem.addActionListener((ActionEvent e) -> {
+      m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected());
+      UISettings.set(SQLStatementPanel.this.getClass(), "LineWrap", m_PanelStatement.getWordWrap());
+    });
     m_ButtonOptions.addSeparatorToMenu();
     m_ButtonOptions.addToMenu(menuitem);
     m_PanelButtonsLeft.add(m_ButtonOptions);

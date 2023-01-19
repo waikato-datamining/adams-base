@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextEditorPanel.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -52,7 +52,6 @@ import java.util.List;
  * A panel that allows the editing of text, including undo/redo support.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
   copyright = "Patrick Chan and Addision Wesley, Java Developers Almanac 2000",
@@ -236,6 +235,7 @@ public class TextEditorPanel
 
     // text
     m_TextArea = new TextEditorArea();
+    m_TextArea.setLineWrap(UISettings.get(getClass(), "LineWrap", false));
     m_TextArea.setWrapStyleWord(true);
     m_TextArea.addSetTextListener((ChangeEvent e) -> {
       m_TextArea.setCaretPosition(0);
@@ -458,6 +458,7 @@ public class TextEditorPanel
    */
   public void setLineWrap(boolean value) {
     m_TextArea.setLineWrap(value);
+    UISettings.set(getClass(), "LineWrap", value);
   }
 
   /**

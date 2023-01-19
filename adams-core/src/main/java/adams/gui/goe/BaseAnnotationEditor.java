@@ -165,7 +165,7 @@ public class BaseAnnotationEditor
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_TextValue.setLineWrap(checkLineWrap.isSelected());
-        UISettings.set(BaseAnnotationEditor.this.getClass(), "LineWrap", checkLineWrap.isSelected());
+        UISettings.set(BaseAnnotationEditor.this.getClass(), "LineWrap", m_TextValue.getLineWrap());
       }
     });
     panel.add(checkLineWrap);
