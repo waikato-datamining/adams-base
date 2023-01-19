@@ -36,6 +36,7 @@ import adams.gui.core.DefaultTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.UISettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
@@ -308,11 +309,12 @@ public class AbstractAdvancedScriptEditor
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
-    menuitem.setSelected(m_TextStatement.getLineWrap());
+    menuitem.setSelected(UISettings.get(getClass(), "LineWrap", false));
     menuitem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_TextStatement.setLineWrap(((JMenuItem) e.getSource()).isSelected());
+        UISettings.set(AbstractAdvancedScriptEditor.this.getClass(), "LineWrap", ((JMenuItem) e.getSource()).isSelected());
       }
     });
     result.addSeparator();

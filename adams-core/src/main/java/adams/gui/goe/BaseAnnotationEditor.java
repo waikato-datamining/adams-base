@@ -15,7 +15,7 @@
 
 /*
  * BaseAnnotationEditor.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -35,6 +35,7 @@ import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.TextAreaComponent;
+import adams.gui.core.UISettings;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -129,7 +130,6 @@ public class BaseAnnotationEditor
     BaseButton 		buttonClose;
     BaseButton 		buttonOK;
     BaseButton		buttonClear;
-    BaseButton		buttonHelp;
     JPanel		panel;
     final BaseCheckBox	checkLineWrap;
     JPanel		panelTabbedPane;
@@ -160,10 +160,12 @@ public class BaseAnnotationEditor
     panel.add(buttonClear);
 
     checkLineWrap = new BaseCheckBox("Line wrap");
+    checkLineWrap.setSelected(UISettings.get(getClass(), "LineWrap", false));
     checkLineWrap.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
 	m_TextValue.setLineWrap(checkLineWrap.isSelected());
+        UISettings.set(BaseAnnotationEditor.this.getClass(), "LineWrap", checkLineWrap.isSelected());
       }
     });
     panel.add(checkLineWrap);
