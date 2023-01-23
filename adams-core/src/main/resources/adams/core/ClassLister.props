@@ -97,6 +97,18 @@ adams.core.discovery.AbstractDiscoveryHandler=\
 adams.core.discovery.genetic.AbstractGeneticDiscoveryHandler=\
   adams.core.discovery.genetic
 
+# the output formatters
+adams.core.command.output.OutputFormatter=\
+  adams.core.command.output
+
+# the processors for stdout output
+adams.core.command.stdout.StdOutProcessor=\
+  adams.core.command.stdout
+
+# the processors for stderr output
+adams.core.command.stderr.StdErrProcessor=\
+  adams.core.command.stderr
+
 # baseline correction schemes
 adams.data.baseline.AbstractBaselineCorrection=\
   adams.data.baseline
