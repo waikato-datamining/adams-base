@@ -627,6 +627,11 @@ public abstract class AbstractExternalCommand
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
+    m_FlowContext = null;
+    m_OutputFormatter.cleanUp();
+    m_StdOutProcessor.cleanUp();
+    m_StdErrProcessor.cleanUp();
   }
 }
