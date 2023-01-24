@@ -20,7 +20,9 @@
 
 package adams.core.command.stdout;
 
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
+import adams.flow.core.FlowContextHandler;
 
 /**
  * Outputs the data received from the command's stdout via its logger instance.
@@ -31,6 +33,16 @@ public class Log
   extends AbstractStdOutProcessor {
 
   private static final long serialVersionUID = -2194306680981658479L;
+
+  public final static String PH_FULLNAME = "{FULLNAME}";
+
+  public final static String PH_NAME = "{NAME}";
+
+  /** the logging prefix to use. */
+  protected String m_LoggingPrefixFormat;
+
+  /** the logging prefix. */
+  protected String m_LoggingPrefix;
 
   /**
    * Returns a string describing the object.
@@ -43,6 +55,18 @@ public class Log
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "logging-prefix-format", "loggingPrefixFormat",
+      PH_FULLNAME + ".stdout");
+  }
+
+  /**
    * Returns the default logging level to use.
    *
    * @return		the logging level
@@ -50,6 +74,66 @@ public class Log
   @Override
   protected LoggingLevel getDefaultLoggingLevel() {
     return LoggingLevel.INFO;
+  }
+
+  /**
+   * Initializes the logger.
+   */
+  @Override
+  protected void configureLogger() {
+    m_Logger = LoggingHelper.getLogger(m_LoggingPrefix);
+    m_Logger.setLevel(m_LoggingLevel.getLevel());
+  }
+
+  /**
+   * Sets the format for the logging prefix.
+   *
+   * @param value	the format
+   */
+  public void setLoggingPrefixFormat(String value) {
+    m_LoggingPrefixFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the format for the logging prefix.
+   *
+   * @return		the name
+   */
+  public String getLoggingPrefixFormat() {
+    return m_LoggingPrefixFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String loggingPrefixFormatTipText() {
+    return "The format for the logging prefix; supported placeholders: "
+      + PH_FULLNAME + ": owning actor's full name (incl tree path), " + PH_NAME + ": owning actor's name.";
+  }
+
+  /**
+   * Configures the handler.
+   *
+   * @param owner 	the owning command
+   * @return 		null if successfully setup, otherwise error message
+   */
+  public String setUp(FlowContextHandler owner) {
+    String	result;
+
+    result = super.setUp(owner);
+
+    if (result == null) {
+      m_LoggingPrefix = m_LoggingPrefixFormat;
+      m_LoggingPrefix = m_LoggingPrefix.replace(PH_FULLNAME, owner.getFlowContext().getFullName());
+      m_LoggingPrefix = m_LoggingPrefix.replace(PH_NAME, owner.getFlowContext().getName());
+      m_Logger        = null;
+    }
+
+    return result;
   }
 
   /**
