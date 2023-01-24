@@ -148,7 +148,7 @@ public class LineSplit
    * @param output   the output to format
    */
   @Override
-  public void formatOutput(ExternalCommand command, boolean stdout, boolean blocking, String output) {
+  protected void doFormatOutput(ExternalCommand command, boolean stdout, boolean blocking, String output) {
     List<String>	result;
     List<String>	lines;
     boolean		pass;

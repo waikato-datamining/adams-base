@@ -63,7 +63,7 @@ public class PassThrough
    * @param output   the output to format
    */
   @Override
-  public void formatOutput(ExternalCommand command, boolean stdout, boolean blocking, String output) {
+  protected void doFormatOutput(ExternalCommand command, boolean stdout, boolean blocking, String output) {
     command.addFormattedOutput(output);
   }
 }
