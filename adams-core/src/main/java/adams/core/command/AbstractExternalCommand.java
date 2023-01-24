@@ -208,7 +208,7 @@ public abstract class AbstractExternalCommand
    * @return		the handler
    */
   protected StdOutProcessor getDefaultStdOutProcessor() {
-    return new adams.core.command.stdout.Null();
+    return new adams.core.command.stdout.Log();
   }
 
   /**
@@ -249,7 +249,7 @@ public abstract class AbstractExternalCommand
    * @return		the handler
    */
   protected StdErrProcessor getDefaultStdErrProcessor() {
-    return new adams.core.command.stderr.Null();
+    return new adams.core.command.stderr.Log();
   }
 
   /**
