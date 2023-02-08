@@ -15,7 +15,7 @@
 
 /*
  * ProgressBar.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -23,8 +23,12 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.ConsoleHelper;
 import adams.data.DecimalFormatString;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.flow.core.Token;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ImageManager;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,6 +39,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
@@ -58,23 +63,23 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ProgressBar
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
@@ -94,10 +99,10 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in
- * &nbsp;&nbsp;&nbsp;a separate frame.
- * &nbsp;&nbsp;&nbsp;default: false
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
  *
  * <pre>-width &lt;int&gt; (property: width)
@@ -186,11 +191,15 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;The font to use for the title.
  * &nbsp;&nbsp;&nbsp;default: helvetica-PLAIN-12
  * </pre>
- * 
+ *
+ * <pre>-show-stop-button &lt;boolean&gt; (property: showStopButton)
+ * &nbsp;&nbsp;&nbsp;If enabled, a button to stop the flow is shown as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ProgressBar
   extends AbstractGraphicalDisplay {
@@ -202,26 +211,25 @@ public class ProgressBar
    * Panel for displaying a progress bar.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ProgressBarPanel
     extends BasePanel {
-    
+
     /** for serialization. */
     private static final long serialVersionUID = -8123047909195552460L;
 
     /** the owner. */
     protected ProgressBar m_Owner;
-    
+
     /** the current value. */
     protected double m_Current;
-    
+
     /** the decimal format. */
     protected transient DecimalFormat m_Format;
-    
+
     /**
      * Initializes the panel with the specified owner.
-     * 
+     *
      * @param owner	the owning actor
      */
     public ProgressBarPanel(ProgressBar owner) {
@@ -236,10 +244,10 @@ public class ProgressBar
       m_Current = m_Owner.getMinimum();
       repaint();
     }
-    
+
     /**
      * Updates the progress with the new current value.
-     * 
+     *
      * @param current	the current value of the progress bar
      */
     public void update(double current) {
@@ -247,10 +255,10 @@ public class ProgressBar
       setToolTipText(Utils.doubleToString(m_Current, 3) + " of " + Utils.doubleToString(m_Owner.getMaximum(), 3));
       repaint();
     }
-    
+
     /**
      * Paints the component.
-     * 
+     *
      * @param g		the graphics context
      */
     @Override
@@ -268,12 +276,12 @@ public class ProgressBar
       // background
       g.setColor(m_Owner.getBackground());
       g.fillRect(0, 0, getWidth(), getHeight());
-      
+
       // bar
       width = perc * getWidth();
       g.setColor(m_Owner.getBar());
       g.fillRect(0, 0, (int) width, getHeight());
-      
+
       // current value
       g.setFont(m_Owner.getFont());
       if (m_Format == null)
@@ -285,7 +293,7 @@ public class ProgressBar
       g.drawString(curr, (int) ((getWidth() - bounds.getWidth()) / 2), (int) ((getHeight() / 2 + bounds.getHeight() / 2)));
     }
   }
-  
+
   /** the minimum of the progress bar. */
   protected double m_Minimum;
 
@@ -319,6 +327,9 @@ public class ProgressBar
   /** the font to use for the title. */
   protected Font m_TitleFont;
 
+  /** whether to display a stop button. */
+  protected boolean m_ShowStopButton;
+
   /** the progress bar. */
   protected ProgressBarPanel m_PanelProgress;
 
@@ -331,8 +342,8 @@ public class ProgressBar
   public String globalInfo() {
     return
       "Displays a progress bar. The incoming token is used as 'current' value "
-        + "to be displayed. For convenience, the incoming token representing a "
-        + "number can also be in string format.";
+	+ "to be displayed. For convenience, the incoming token representing a "
+	+ "number can also be in string format.";
   }
 
   /**
@@ -385,6 +396,10 @@ public class ProgressBar
     m_OptionManager.add(
       "title-font", "titleFont",
       new Font("helvetica", Font.PLAIN, 12));
+
+    m_OptionManager.add(
+      "show-stop-button", "showStopButton",
+      false);
   }
 
   /**
@@ -396,7 +411,7 @@ public class ProgressBar
   protected int getDefaultX() {
     return -3;
   }
-  
+
   /**
    * Returns the default width for the dialog.
    *
@@ -406,7 +421,7 @@ public class ProgressBar
   protected int getDefaultWidth() {
     return 200;
   }
-  
+
   /**
    * Returns the default height for the dialog.
    *
@@ -416,7 +431,7 @@ public class ProgressBar
   protected int getDefaultHeight() {
     return 100;
   }
-  
+
   /**
    * Sets the minimum.
    *
@@ -737,6 +752,35 @@ public class ProgressBar
   }
 
   /**
+   * Sets whether to show a stop button.
+   *
+   * @param value	true if to show
+   */
+  public void setShowStopButton(boolean value) {
+    m_ShowStopButton = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a stop button.
+   *
+   * @return		true if to show
+   */
+  public boolean getShowStopButton() {
+    return m_ShowStopButton;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showStopButtonTipText() {
+    return "If enabled, a button to stop the flow is shown as well.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -748,13 +792,13 @@ public class ProgressBar
     result  = QuickInfoHelper.toString(this, "minimum", m_Minimum, "min: ");
     result += QuickInfoHelper.toString(this, "maximum", m_Maximum, ", max: ");
     result += QuickInfoHelper.toString(this, "format", m_Format, ", format: ");
-    
+
     return result;
   }
 
   /**
    * Returns the class that the consumer accepts.
-   * 
+   *
    * @return		the Class of objects that can be processed
    */
   @Override
@@ -769,18 +813,18 @@ public class ProgressBar
    */
   @Override
   protected BasePanel newPanel() {
-    BasePanel	result;
-    JLabel	label;
-    JPanel	panel;
+    BasePanel		result;
+    JLabel		label;
+    JPanel		panel;
+    final BaseButton	buttonStop;
 
     m_PanelProgress = new ProgressBarPanel(this);
-    if (m_Title.isEmpty()) {
-      result = m_PanelProgress;
-    }
-    else {
-      result = new BasePanel();
-      result.setLayout(new BorderLayout());
-      result.add(m_PanelProgress, BorderLayout.CENTER);
+
+    result = new BasePanel();
+    result.setLayout(new BorderLayout());
+    result.add(m_PanelProgress, BorderLayout.CENTER);
+
+    if (!m_Title.isEmpty()) {
       label = new JLabel(m_Title);
       label.setToolTipText(m_Title);
       label.setFont(m_TitleFont);
@@ -788,6 +832,18 @@ public class ProgressBar
       panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
       panel.add(label);
       result.add(panel, BorderLayout.NORTH);
+    }
+
+    if (m_ShowStopButton) {
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      panel.add(new JLabel("Stop flow"));
+      buttonStop = new BaseButton(ImageManager.getIcon("stop_blue.gif"));
+      buttonStop.addActionListener((ActionEvent e) -> {
+	StopHelper.stop(ProgressBar.this, StopMode.GLOBAL, null);
+	buttonStop.setEnabled(false);
+      });
+      panel.add(buttonStop);
+      result.add(panel, BorderLayout.SOUTH);
     }
 
     return result;
@@ -842,7 +898,7 @@ public class ProgressBar
       perc = (current - getMinimum()) / (getMaximum()- getMinimum());
       curr = getPrefix() + format.format(perc) + getSuffix();
       if (!m_Title.isEmpty())
-        text.append(m_Title).append(": ");
+	text.append(m_Title).append(": ");
       text.append(m_InputToken.getPayload().toString());
       text.append(curr);
       ConsoleHelper.printlnOut(text.toString());
