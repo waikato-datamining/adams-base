@@ -15,7 +15,7 @@
 
 /*
  * SetTextRenderer.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.textrenderer;
@@ -129,7 +129,7 @@ public class SetTextRenderer
       if (count > getActualLimit())
         break;
       if (m_OutputLineNumbers) {
-	result.append((count + 1));
+	result.append(count);
 	result.append(": ");
       }
       result.append(AbstractTextRenderer.renderObject(o));
