@@ -15,7 +15,7 @@
 
 /*
  * TransferableNestedList.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -37,7 +37,7 @@ public class TransferableNestedList
   /** for serialization. */
   private static final long serialVersionUID = -4291529156857201031L;
 
-  public static DataFlavor Flavour = new DataFlavor(List.class, "Nested list");
+  public static DataFlavor FlavorNestedList = new DataFlavor(List.class, "Nested list");
 
   /** the nodes to transfer. */
   protected List[] m_Data;
@@ -67,28 +67,6 @@ public class TransferableNestedList
   }
 
   /**
-   * Initializes the container.
-   *
-   * @param data	the nested list to transfer
-   */
-  public TransferableNestedList(List data) {
-    super();
-
-    m_Data = new List[]{data};
-  }
-
-  /**
-   * Initializes the container.
-   *
-   * @param data	the nested lists to transfer
-   */
-  public TransferableNestedList(List[] data) {
-    super();
-
-    m_Data = data;
-  }
-
-  /**
    * Returns an array of DataFlavor objects indicating the flavors the data
    * can be provided in.  The array should be ordered according to preference
    * for providing the data (from most richly descriptive to least descriptive).
@@ -96,7 +74,10 @@ public class TransferableNestedList
    * @return 		an array of data flavors in which this data can be transferred
    */
   public DataFlavor[] getTransferDataFlavors() {
-    return new DataFlavor[]{Flavour};
+    if (m_Data.length != 1)
+      return new DataFlavor[]{FlavorNestedList};
+    else
+      return new DataFlavor[]{FlavorNestedList, DataFlavor.stringFlavor};
   }
 
   /**
@@ -107,7 +88,8 @@ public class TransferableNestedList
    * @return 		boolean indicating whether or not the data flavor is supported
    */
   public boolean isDataFlavorSupported(DataFlavor flavor) {
-    return (flavor.equals(Flavour));
+    return ((m_Data.length == 1) && (flavor.equals(DataFlavor.stringFlavor)))
+      || flavor.equals(FlavorNestedList);
   }
 
   /**
@@ -123,8 +105,10 @@ public class TransferableNestedList
    * @see DataFlavor#getRepresentationClass
    */
   public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-    if (flavor.equals(Flavour))
+    if (flavor.equals(FlavorNestedList))
       return m_Data;
+    else if (flavor.equals(DataFlavor.stringFlavor))
+      return TreeHelper.buildTree(m_Data[0]).getFullActor().toCommandLine();
     else
       throw new UnsupportedFlavorException(flavor);
   }

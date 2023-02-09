@@ -15,7 +15,7 @@
 
 /*
  * TreeOperations.java
- * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -2400,8 +2400,8 @@ public class TreeOperations
     result = null;
 
     try {
-      if (ClipboardHelper.canPasteFromClipboard(TransferableNestedList.Flavour))
-        result = (List[]) ClipboardHelper.pasteFromClipboard(TransferableNestedList.Flavour);
+      if (ClipboardHelper.canPasteFromClipboard(TransferableNestedList.FlavorNestedList))
+        result = (List[]) ClipboardHelper.pasteFromClipboard(TransferableNestedList.FlavorNestedList);
     }
     catch (Exception ex) {
       result = null;
