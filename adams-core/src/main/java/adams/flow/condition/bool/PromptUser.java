@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -174,7 +174,7 @@ public class PromptUser
    * 			displaying in the GUI or for listing the options.
    */
   public String messageTipText() {
-    return "The message to prompt the user with.";
+    return "The message to prompt the user with; variables get expanded automatically.";
   }
 
   /**
