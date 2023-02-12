@@ -133,7 +133,7 @@ goto end
 
 :javaerror
 echo You can download Java from:
-echo   https://adoptopenjdk.net/
+echo   https://adoptium.net/
 echo And configure the JAVA_HOME environment variable to point to your Java installation
 echo (use the directory above the "bin" directory for the environment variable):
 echo   https://www.alphr.com/environment-variables-windows-10/
