@@ -22,6 +22,7 @@ package adams.flow.source.valuedefinition;
 
 import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.core.io.AbsolutePathSupporter;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
@@ -39,7 +40,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  */
 public class FileValueDefinition
   extends AbstractValueDefinition
-  implements ForwardSlashSupporter {
+  implements ForwardSlashSupporter, AbsolutePathSupporter {
 
   private static final long serialVersionUID = 4140213467241294682L;
 
@@ -57,6 +58,9 @@ public class FileValueDefinition
 
   /** whether to output forward slashes. */
   protected boolean m_UseForwardSlashes;
+
+  /** whether to use absolute path rather than placeholders. */
+  protected boolean m_UseAbsolutePath;
 
   /** whether to allow the "All files" filter. */
   protected boolean m_AcceptAllFileFilter;
@@ -98,6 +102,10 @@ public class FileValueDefinition
 
     m_OptionManager.add(
       "use-forward-slashes", "useForwardSlashes",
+      false);
+
+    m_OptionManager.add(
+      "use-absolute-path", "useAbsolutePath",
       false);
 
     m_OptionManager.add(
@@ -253,6 +261,37 @@ public class FileValueDefinition
   }
 
   /**
+   * Sets whether to use absolute paths.
+   *
+   * @param value	if true if absolute paths
+   */
+  @Override
+  public void setUseAbsolutePath(boolean value) {
+    m_UseAbsolutePath = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use absolute paths.
+   *
+   * @return		true if absolute paths
+   */
+  @Override
+  public boolean getUseAbsolutePath() {
+    return m_UseAbsolutePath;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsolutePathTipText() {
+    return "If enabled, absolute paths output used.";
+  }
+
+  /**
    * Sets whether to show the 'All files' filter.
    *
    * @param value	true if to show
@@ -341,6 +380,7 @@ public class FileValueDefinition
     chooserPanel.setCurrentDirectory(m_InitialDirectory);
     chooserPanel.setAcceptAllFileFilterUsed(m_AcceptAllFileFilter);
     chooserPanel.setFileChooserTitle(m_FileChooserTitle);
+    chooserPanel.setUseAbsolutePath(m_UseAbsolutePath);
 
     panel.addPropertyType(getName(), PropertyType.CUSTOM_COMPONENT);
     panel.addProperty(getName(), getDisplay(), chooserPanel);

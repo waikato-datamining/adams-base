@@ -15,13 +15,14 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.PlaceholderFileHistory;
 import adams.core.Placeholders;
+import adams.core.io.AbsolutePathSupporter;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.gui.core.BasePopupMenu;
@@ -42,7 +43,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FileChooserPanel
-  extends AbstractChooserPanel<File> {
+  extends AbstractChooserPanel<File>
+  implements AbsolutePathSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8755020252465094120L;
@@ -61,6 +63,9 @@ public class FileChooserPanel
 
   /** the default filechooser title. */
   protected String m_FileChooserTitleDefault;
+
+  /** whether to use absolute path rather than placeholders. */
+  protected boolean m_UseAbsolutePath;
 
   /**
    * Initializes the panel with no file.
@@ -99,6 +104,7 @@ public class FileChooserPanel
     m_FileChooser             = new BaseFileChooser();
     m_FileChooserTitleDefault = m_FileChooser.getDialogTitle();
     m_FileChooserTitle        = "";
+    m_UseAbsolutePath = false;
     m_UseSaveDialog           = false;
 
     if (m_History == null)
@@ -106,8 +112,8 @@ public class FileChooserPanel
     if (!m_History.containsKey(getClass())) {
       m_History.put(getClass(), new PlaceholderFileHistory());
       m_History.get(getClass()).setHistoryFile(
-        new PlaceholderFile(
-          Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+	new PlaceholderFile(
+	  Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
     }
   }
 
@@ -147,19 +153,19 @@ public class FileChooserPanel
     if (m_UseSaveDialog) {
       if (m_FileChooser.showSaveDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
 	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
-        return m_FileChooser.getSelectedFile();
+	return m_FileChooser.getSelectedFile();
       }
       else {
-        return null;
+	return null;
       }
     }
     else {
       if (m_FileChooser.showOpenDialog(m_Self) == BaseFileChooser.APPROVE_OPTION) {
 	m_History.get(getClass()).add(new PlaceholderFile(m_FileChooser.getSelectedFile()));
-        return m_FileChooser.getSelectedFile();
+	return m_FileChooser.getSelectedFile();
       }
       else {
-        return null;
+	return null;
       }
     }
   }
@@ -198,7 +204,10 @@ public class FileChooserPanel
    */
   @Override
   protected String toString(File value) {
-    return Placeholders.collapseStr(value.getAbsolutePath());
+    if (m_UseAbsolutePath)
+      return value.getAbsolutePath();
+    else
+      return Placeholders.collapseStr(value.getAbsolutePath());
   }
 
   /**
@@ -209,7 +218,14 @@ public class FileChooserPanel
    */
   @Override
   protected File fromString(String value) {
-    return new PlaceholderFile(value.trim());
+    File	result;
+
+    result = new PlaceholderFile(value.trim());
+
+    if (m_UseAbsolutePath)
+      return result.getAbsoluteFile();
+    else
+      return result;
   }
 
   /**
@@ -221,6 +237,26 @@ public class FileChooserPanel
   @Override
   protected boolean isValid(String value) {
     return (value != null) && PlaceholderFile.isValid(value.trim());
+  }
+
+  /**
+   * Sets whether to use absolute paths.
+   *
+   * @param value	if true if absolute paths
+   */
+  @Override
+  public void setUseAbsolutePath(boolean value) {
+    m_UseAbsolutePath = value;
+  }
+
+  /**
+   * Returns whether to use absolute paths.
+   *
+   * @return		true if absolute paths
+   */
+  @Override
+  public boolean getUseAbsolutePath() {
+    return m_UseAbsolutePath;
   }
 
   /**

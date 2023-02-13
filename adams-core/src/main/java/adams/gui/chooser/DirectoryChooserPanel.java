@@ -15,13 +15,14 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.PlaceholderDirectoryHistory;
 import adams.core.Placeholders;
+import adams.core.io.AbsolutePathSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.fileoperations.FileOperations;
@@ -45,7 +46,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class DirectoryChooserPanel
-  extends AbstractChooserPanelWithIOSupport<File> {
+  extends AbstractChooserPanelWithIOSupport<File>
+  implements AbsolutePathSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
@@ -61,6 +63,9 @@ public class DirectoryChooserPanel
 
   /** the default dirchooser title. */
   protected String m_DirectoryChooserTitleDefault;
+
+  /** whether to use absolute path rather than placeholders. */
+  protected boolean m_UseAbsolutePath;
 
   /**
    * Initializes the panel with no file.
@@ -98,14 +103,15 @@ public class DirectoryChooserPanel
     m_DirectoryChooser             = DirectoryChooserFactory.createChooser();
     m_DirectoryChooserTitleDefault = m_DirectoryChooser.getDialogTitle();
     m_DirectoryChooserTitle        = "";
+    m_UseAbsolutePath = false;
 
     if (m_History == null)
       m_History = new HashMap<>();
     if (!m_History.containsKey(getClass())) {
       m_History.put(getClass(), new PlaceholderDirectoryHistory());
       m_History.get(getClass()).setHistoryFile(
-        new PlaceholderFile(
-          Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
+	new PlaceholderFile(
+	  Environment.getInstance().getHome() + File.separator + getClass().getName() + ".txt"));
     }
   }
 
@@ -182,7 +188,10 @@ public class DirectoryChooserPanel
    * @return		the generated string
    */
   protected String toString(File value) {
-    return Placeholders.collapseStr(value.getAbsolutePath());
+    if (m_UseAbsolutePath)
+      return value.getAbsolutePath();
+    else
+      return Placeholders.collapseStr(value.getAbsolutePath());
   }
 
   /**
@@ -192,12 +201,19 @@ public class DirectoryChooserPanel
    * @return		the generated object
    */
   protected File fromString(String value) {
+    File 	result;
+
     try {
-      return new PlaceholderFile(value.trim()).getCanonicalFile();
+      result = new PlaceholderFile(value.trim()).getCanonicalFile();
     }
     catch (Exception e) {
-      return new PlaceholderFile(value);
+      result = new PlaceholderFile(value);
     }
+
+    if (m_UseAbsolutePath)
+      return result.getAbsoluteFile();
+    else
+      return result;
   }
 
   /**
@@ -209,6 +225,26 @@ public class DirectoryChooserPanel
   @Override
   protected boolean isValid(String value) {
     return (value != null) && PlaceholderFile.isValid(value.trim());
+  }
+
+  /**
+   * Sets whether to use absolute paths.
+   *
+   * @param value	if true if absolute paths
+   */
+  @Override
+  public void setUseAbsolutePath(boolean value) {
+    m_UseAbsolutePath = value;
+  }
+
+  /**
+   * Returns whether to use absolute paths.
+   *
+   * @return		true if absolute paths
+   */
+  @Override
+  public boolean getUseAbsolutePath() {
+    return m_UseAbsolutePath;
   }
 
   /**

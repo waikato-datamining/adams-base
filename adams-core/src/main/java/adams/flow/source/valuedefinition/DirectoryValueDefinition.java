@@ -15,12 +15,13 @@
 
 /*
  * DirectoryValueDefinition.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
 
 import adams.core.Utils;
+import adams.core.io.AbsolutePathSupporter;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
@@ -36,7 +37,7 @@ import adams.gui.core.PropertiesParameterPanel.PropertyType;
  */
 public class DirectoryValueDefinition
   extends AbstractValueDefinition
-  implements ForwardSlashSupporter {
+  implements ForwardSlashSupporter, AbsolutePathSupporter {
 
   private static final long serialVersionUID = 4140213467241294682L;
 
@@ -48,6 +49,9 @@ public class DirectoryValueDefinition
 
   /** whether to output forward slashes. */
   protected boolean m_UseForwardSlashes;
+
+  /** whether to use absolute path rather than placeholders. */
+  protected boolean m_UseAbsolutePath;
 
   /**
    * Returns a string describing the object.
@@ -78,6 +82,10 @@ public class DirectoryValueDefinition
 
     m_OptionManager.add(
       "use-forward-slashes", "useForwardSlashes",
+      false);
+
+    m_OptionManager.add(
+      "use-absolute-path", "useAbsolutePath",
       false);
   }
 
@@ -171,6 +179,37 @@ public class DirectoryValueDefinition
   }
 
   /**
+   * Sets whether to use absolute paths.
+   *
+   * @param value	if true if absolute paths
+   */
+  @Override
+  public void setUseAbsolutePath(boolean value) {
+    m_UseAbsolutePath = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use absolute paths.
+   *
+   * @return		true if absolute paths
+   */
+  @Override
+  public boolean getUseAbsolutePath() {
+    return m_UseAbsolutePath;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsolutePathTipText() {
+    return "If enabled, absolute paths output used.";
+  }
+
+  /**
    * Returns whether flow context is required.
    *
    * @return		true if required
@@ -227,6 +266,7 @@ public class DirectoryValueDefinition
     chooserPanel.setPrefix("");
     chooserPanel.setCurrent(m_DefaultValue);
     chooserPanel.setDirectoryChooserTitle(m_FileChooserTitle);
+    chooserPanel.setUseAbsolutePath(m_UseAbsolutePath);
 
     panel.addPropertyType(getName(), PropertyType.CUSTOM_COMPONENT);
     panel.addProperty(getName(), getDisplay(), chooserPanel);
