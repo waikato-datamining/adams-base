@@ -15,7 +15,7 @@
 
 /*
  * AbstractWorkspaceManagerPanel.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2032 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
@@ -262,7 +262,10 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
    * @return		the panel, null if none available
    */
   public T getCurrentPanel() {
-    return m_History.getEntry(m_History.getSelectedEntry());
+    if (m_History.getSelectedEntry() == null)
+      return null;
+    else
+      return m_History.getEntry(m_History.getSelectedEntry());
   }
 
   /**
