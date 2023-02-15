@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -958,6 +958,20 @@ public class PreviewBrowserPanel
       menu.add(menuitem);
       menuitem.setMnemonic('N');
       menuitem.addActionListener((ActionEvent e) -> newWindow());
+
+      menu.addSeparator();
+
+      // Window/Half width
+      menuitem = new JMenuItem("Half width");
+      menu.add(menuitem);
+      menuitem.setMnemonic('i');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenWidth(PreviewBrowserPanel.this));
+
+      // Window/Half height
+      menuitem = new JMenuItem("Half height");
+      menu.add(menuitem);
+      menuitem.setMnemonic('g');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenHeight(PreviewBrowserPanel.this));
 
       // update menu
       m_MenuBar = result;
