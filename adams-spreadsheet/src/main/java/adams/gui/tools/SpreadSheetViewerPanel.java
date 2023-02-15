@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -32,6 +32,7 @@ import adams.data.io.output.SpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
+import adams.gui.application.ChildFrame;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
@@ -88,8 +89,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -125,10 +128,10 @@ public class SpreadSheetViewerPanel
 
   /** the split pane. */
   protected BaseSplitPane m_SplitPane;
-  
+
   /** the multi-page pane for displaying the spreadsheets. */
   protected MultiPagePane m_MultiPagePane;
-  
+
   /** the viewer tabs. */
   protected ViewerTabManager m_ViewerTabs;
 
@@ -256,15 +259,15 @@ public class SpreadSheetViewerPanel
     m_SplitPane.setResizeWeight(1.0);
     m_SplitPane.setUISettingsParameters(getClass(), "TabsDivider");
     add(m_SplitPane, BorderLayout.CENTER);
-    
+
     m_MultiPagePane = new MultiPagePane(this);
     m_MultiPagePane.setDividerLocation(UISettings.get(getClass(), "SheetsDivider", 250));
     m_MultiPagePane.setUISettingsParameters(getClass(), "SheetsDivider");
     m_SplitPane.setLeftComponent(m_MultiPagePane);
-    
+
     m_ViewerTabs = new ViewerTabManager(this);
     m_ViewerTabs.addTabVisibilityChangeListener((TabVisibilityChangeEvent e) ->
-	m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0));
+      m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0));
     m_SplitPane.setRightComponent(m_ViewerTabs);
     m_SplitPane.setRightComponentHidden(m_ViewerTabs.getTabCount() == 0);
     if (!UISettings.has(getClass(), "TabsDivider"))
@@ -405,7 +408,7 @@ public class SpreadSheetViewerPanel
     addSeparator();
     addToToolBar(m_ActionViewDisplayedDecimals);
   }
-  
+
   /**
    * Creates a menu bar (singleton per panel object). Can be used in frames.
    *
@@ -451,12 +454,12 @@ public class SpreadSheetViewerPanel
       menu.addChangeListener(e -> updateMenu());
 
       menu.add(m_ActionFileOpen);
-      
+
       // File/Recent files
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(
-	  SESSION_FILE, getProperties().getInteger("MaxRecentFiles", 5), submenu);
+	SESSION_FILE, getProperties().getInteger("MaxRecentFiles", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	@Override
 	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
@@ -543,7 +546,7 @@ public class SpreadSheetViewerPanel
 
       // View/Tabs
       m_ViewerTabs.addTabsSubmenu(menu);
-      
+
       // View/Plugins
       classes = AbstractViewPlugin.getPlugins();
       if (classes.length > 0) {
@@ -569,6 +572,32 @@ public class SpreadSheetViewerPanel
 	}
       }
 
+      // Window
+      menu = new JMenu("Window");
+      menu.setMnemonic('W');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+      result.add(menu);
+
+      // Window/New window
+      menuitem = new JMenuItem("New window");
+      menu.add(menuitem);
+      menuitem.setMnemonic('N');
+      menuitem.addActionListener((ActionEvent e) -> newWindow());
+
+      menu.addSeparator();
+
+      // Window/Half width
+      menuitem = new JMenuItem("Half width");
+      menu.add(menuitem);
+      menuitem.setMnemonic('i');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenWidth(SpreadSheetViewerPanel.this));
+
+      // Window/Half height
+      menuitem = new JMenuItem("Half height");
+      menu.add(menuitem);
+      menuitem.setMnemonic('g');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenHeight(SpreadSheetViewerPanel.this));
+
       // Help
       menu = new JMenu("Help");
       result.add(menu);
@@ -591,22 +620,22 @@ public class SpreadSheetViewerPanel
 
   /**
    * Returns the spreadsheet tabbed pane.
-   * 
+   *
    * @return		the tabbed pane
    */
   public MultiPagePane getMultiPagePane() {
     return m_MultiPagePane;
   }
-  
+
   /**
    * Returns the viewer tabs.
-   * 
+   *
    * @return		the tabs
    */
   public ViewerTabManager getViewerTabs() {
     return m_ViewerTabs;
   }
-  
+
   /**
    * Alows the user to enter the number of decimals to display.
    *
@@ -621,7 +650,7 @@ public class SpreadSheetViewerPanel
     else
       decimals = m_MultiPagePane.getNumDecimalsAt(m_MultiPagePane.getSelectedIndex());
     valueStr = GUIHelper.showInputDialog(
-	this, "Please enter the number of decimals to display (-1 to display all):", "" + decimals);
+      this, "Please enter the number of decimals to display (-1 to display all):", "" + decimals);
     if (valueStr == null)
       return;
 
@@ -674,7 +703,7 @@ public class SpreadSheetViewerPanel
     for (SpreadSheetViewerAction action: m_Actions)
       action.update(this);
   }
-  
+
   /**
    * updates the enabled state of the menu items.
    */
@@ -690,20 +719,20 @@ public class SpreadSheetViewerPanel
     panel         = m_MultiPagePane.getCurrentPanel();
 
     updateActions();
-    
+
     // Data
     if (m_MenuItemDataPlugins != null) {
       for (i = 0; i < m_DataPlugins.size(); i++) {
 	m_MenuItemDataPlugins.get(i).setEnabled(
-	    sheetSelected && m_DataPlugins.get(i).canProcess(panel));
+	  sheetSelected && m_DataPlugins.get(i).canProcess(panel));
       }
     }
-    
+
     // View
     if (m_MenuItemViewPlugins != null) {
       for (i = 0; i < m_ViewPlugins.size(); i++) {
 	m_MenuItemViewPlugins.get(i).setEnabled(
-	    sheetSelected && m_ViewPlugins.get(i).canView(panel));
+	  sheetSelected && m_ViewPlugins.get(i).canView(panel));
       }
     }
   }
@@ -844,7 +873,7 @@ public class SpreadSheetViewerPanel
       @Override
       protected void done() {
 	super.done();
-        MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
+	MouseUtils.setDefaultCursor(SpreadSheetViewerPanel.this);
 	updateMenu();
       }
     };
@@ -1030,7 +1059,7 @@ public class SpreadSheetViewerPanel
   @Override
   public boolean hasSendToItem(Class[] cls) {
     return    (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JTable.class}, cls))
-           && (m_MultiPagePane.getSelectedIndex() != -1);
+      && (m_MultiPagePane.getSelectedIndex() != -1);
   }
 
   /**
@@ -1188,8 +1217,8 @@ public class SpreadSheetViewerPanel
     dialog.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        super.windowClosing(e);
-        plugin.setCurrentPanel(null);
+	super.windowClosing(e);
+	plugin.setCurrentPanel(null);
       }
     });
     dialog.setVisible(true);
@@ -1221,22 +1250,43 @@ public class SpreadSheetViewerPanel
 
   /**
    * Sets whether to apply settings to all tabs or just current one.
-   * 
+   *
    * @param value	true if to apply to all
    */
   public void setApplyToAll(boolean value) {
     m_ApplyToAll = value;
   }
-  
+
   /**
    * Returns whether to apply settings to all tabs or just current one.
-   * 
+   *
    * @return		true if to apply to all
    */
   public boolean getApplyToAll() {
     return m_ApplyToAll;
   }
-  
+
+  /**
+   * Displays a new preview window/frame.
+   *
+   * @return		the new panel
+   */
+  public SpreadSheetViewerPanel newWindow() {
+    SpreadSheetViewerPanel 	result;
+    ChildFrame 			oldFrame;
+    ChildFrame 			newFrame;
+
+    result   = null;
+    oldFrame = (ChildFrame) GUIHelper.getParent(this, ChildFrame.class);
+    if (oldFrame != null) {
+      newFrame = oldFrame.getNewWindow();
+      newFrame.setVisible(true);
+      result   = (SpreadSheetViewerPanel) newFrame.getContentPane().getComponent(0);
+    }
+
+    return result;
+  }
+
   /**
    * Returns the properties that define the editor.
    *
