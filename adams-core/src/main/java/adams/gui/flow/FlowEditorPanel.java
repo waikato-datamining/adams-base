@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -128,6 +128,8 @@ import adams.gui.flow.menu.ViewStatistics;
 import adams.gui.flow.menu.ViewZoom;
 import adams.gui.flow.menu.WindowDuplicateInTab;
 import adams.gui.flow.menu.WindowDuplicateInWindow;
+import adams.gui.flow.menu.WindowHalfHeight;
+import adams.gui.flow.menu.WindowHalfWidth;
 import adams.gui.flow.menu.WindowMoveToNewWindow;
 import adams.gui.flow.menu.WindowNew;
 import adams.gui.flow.tab.FlowTabManager;
@@ -430,6 +432,12 @@ public class FlowEditorPanel
 
   /** the "duplicate tab in new window" action. */
   protected FlowEditorAction m_ActionDuplicateTabInNewWindow;
+
+  /** the "half width" action. */
+  protected FlowEditorAction m_ActionHalfWidth;
+
+  /** the "half height" action. */
+  protected FlowEditorAction m_ActionHalfHeight;
 
   /** the "duplicate tab" action. */
   protected FlowEditorAction m_ActionDuplicateTab;
@@ -915,6 +923,16 @@ public class FlowEditorPanel
     m_ActionDuplicateTab = action;
     m_MenuItems.add(action);
 
+    // Window/Half width
+    action = new WindowHalfWidth();
+    m_ActionHalfWidth = action;
+    m_MenuItems.add(action);
+
+    // Window/Half height
+    action = new WindowHalfHeight();
+    m_ActionHalfHeight = action;
+    m_MenuItems.add(action);
+
     // Help/Variables
     action = new HelpActors();
     m_ActionHelpActors = action;
@@ -1260,6 +1278,8 @@ public class FlowEditorPanel
 	menu.addChangeListener((ChangeEvent e) -> updateActions());
 
 	menu.add(m_ActionNewWindow);
+        menu.add(m_ActionHalfWidth);
+        menu.add(m_ActionHalfHeight);
 	menu.add(m_ActionMoveToNewWindow);
 	menu.add(m_ActionDuplicateTabInNewWindow);
 	menu.add(m_ActionDuplicateTab);
