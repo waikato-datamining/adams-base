@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -143,7 +143,7 @@ public class GUIHelper {
    * @version $Revision$
    */
   public static class DialogCommunication
-      implements Serializable {
+    implements Serializable {
 
     private static final long serialVersionUID = -7319896279709161892L;
 
@@ -559,9 +559,9 @@ public class GUIHelper {
       result = new File(script);
       if (!result.exists()) {
 	LOGGER.severe(
-	    "Startup script '" + script
-		+ "' listed for component '" + c.getClass().getName()
-		+ "' does not exist - ignored!");
+	  "Startup script '" + script
+	    + "' listed for component '" + c.getClass().getName()
+	    + "' does not exist - ignored!");
 	result = null;
       }
     }
@@ -1200,8 +1200,8 @@ public class GUIHelper {
 
     dlg.pack();
     dlg.setSize(
-	getInteger("DefaultSmallDialog.Width", 600),
-	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+      getInteger("DefaultSmallDialog.Width", 600),
+      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     errorPanel.setErrorMessage(msg);
     dlg.setLocationRelativeTo(parent);
     dlg.getApproveButton().requestFocusInWindow();
@@ -1275,8 +1275,8 @@ public class GUIHelper {
     dlg.pack();
     if (size == null)
       dlg.setSize(
-	  getInteger("DefaultSmallDialog.Width", 600),
-	  Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+	getInteger("DefaultSmallDialog.Width", 600),
+	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     else
       dlg.setSize(size);
     dlg.setLocationRelativeTo(parent);
@@ -1413,8 +1413,8 @@ public class GUIHelper {
     dlg.getContentPane().add(editor, BorderLayout.CENTER);
     dlg.pack();
     dlg.setSize(
-	getInteger("DefaultSmallDialog.Width", 600),
-	Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
+      getInteger("DefaultSmallDialog.Width", 600),
+      Math.min(dlg.getHeight() + height, (int) (getScreenBounds(dlg).height * 0.5)));
     dlg.setLocationRelativeTo(pparent);
     editor.setContent(msg);
     dlg.getCancelButton().requestFocusInWindow();
@@ -2347,8 +2347,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultDialogDimension() {
     return scale(new Dimension(
-	getInteger("DefaultDialog.Width", 800),
-	getInteger("DefaultDialog.Height", 600)));
+      getInteger("DefaultDialog.Width", 800),
+      getInteger("DefaultDialog.Height", 600)));
   }
 
   /**
@@ -2358,8 +2358,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultSmallDialogDimension() {
     return scale(new Dimension(
-	getInteger("DefaultSmallDialog.Width", 600),
-	getInteger("DefaultSmallDialog.Height", 400)));
+      getInteger("DefaultSmallDialog.Width", 600),
+      getInteger("DefaultSmallDialog.Height", 400)));
   }
 
   /**
@@ -2369,8 +2369,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultTinyDialogDimension() {
     return scale(new Dimension(
-	getInteger("DefaultTinyDialog.Width", 400),
-	getInteger("DefaultTinyDialog.Height", 300)));
+      getInteger("DefaultTinyDialog.Width", 400),
+      getInteger("DefaultTinyDialog.Height", 300)));
   }
 
   /**
@@ -2380,8 +2380,8 @@ public class GUIHelper {
    */
   public static Dimension getDefaultLargeDialogDimension() {
     return scale(new Dimension(
-	getInteger("DefaultLargeDialog.Width", 1000),
-	getInteger("DefaultLargeDialog.Height", 800)));
+      getInteger("DefaultLargeDialog.Width", 1000),
+      getInteger("DefaultLargeDialog.Height", 800)));
   }
 
   /**
@@ -2508,7 +2508,6 @@ public class GUIHelper {
    * @return 		true if updated
    */
   public static boolean makeAtLeast(Component window, Dimension min) {
-    Dimension 	current;
     Dimension	updated;
 
     updated = makeAtLeast(window.getSize(), min);
@@ -2562,9 +2561,6 @@ public class GUIHelper {
    */
   public static boolean makeAtMost(Component window, Dimension max) {
     Dimension 	updated;
-    boolean	update;
-    int		width;
-    int		height;
 
     updated = makeAtMost(window.getSize(), max);
     if (updated != null) {
@@ -2616,16 +2612,11 @@ public class GUIHelper {
    */
   public static boolean pack(Window window, Dimension min, Dimension max) {
     Dimension	updated;
-    boolean	update;
     Dimension 	current;
     Dimension 	preferred;
     Dimension 	currentUpdated;
     Dimension 	preferredUpdated;
     Point 	position;
-    Dimension 	sizePack;
-    Point 	positionPack;
-    Dimension 	sizeUpdated;
-    Point 	positionUpdated;
     int		diffX;
     int		diffY;
 
@@ -2660,6 +2651,40 @@ public class GUIHelper {
     else {
       return false;
     }
+  }
+
+  /**
+   * Changes the width of the window to half of the screen width.
+   *
+   * @param c		the component whose window to adjust
+   */
+  public static void makeHalfScreenWidth(Component c) {
+    Rectangle		screen;
+    Dimension		current;
+    Dimension		updated;
+
+    c       = getParentComponent(c);
+    screen  = getScreenBounds(c);
+    current = c.getSize();
+    updated = new Dimension(screen.width / 2, current.height);
+    c.setSize(updated);
+  }
+
+  /**
+   * Changes the height of the window to half of the screen width.
+   *
+   * @param c		the component whose window to adjust
+   */
+  public static void makeHalfScreenHeight(Component c) {
+    Rectangle		screen;
+    Dimension		current;
+    Dimension		updated;
+
+    c       = getParentComponent(c);
+    screen  = getScreenBounds(c);
+    current = c.getSize();
+    updated = new Dimension(current.width, screen.height / 2);
+    c.setSize(updated);
   }
 
   /**
