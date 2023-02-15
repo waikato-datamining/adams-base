@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -40,6 +40,7 @@ import adams.env.WekaInvestigatorDefinition;
 import adams.env.WekaInvestigatorShortcutsDefinition;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.action.BaseAction;
+import adams.gui.application.ChildFrame;
 import adams.gui.chooser.WekaFileChooser;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BaseStatusBar;
@@ -212,7 +213,7 @@ public class InvestigatorPanel
     cmdline = getProperties().getProperty("General.ClassAttributeHeuristic", OptionUtils.getCommandLine(new LastAttribute()));
     try {
       m_ClassAttributeHeuristic = (AbstractClassAttributeHeuristic) OptionUtils.forAnyCommandLine(
-        AbstractClassAttributeHeuristic.class, cmdline);
+	AbstractClassAttributeHeuristic.class, cmdline);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
@@ -222,7 +223,7 @@ public class InvestigatorPanel
     cmdline = getProperties().getProperty("General.RelationNameHeuristic", OptionUtils.getCommandLine(new NoChange()));
     try {
       m_RelationNameHeuristic = (AbstractRelationNameHeuristic) OptionUtils.forAnyCommandLine(
-        AbstractRelationNameHeuristic.class, cmdline);
+	AbstractRelationNameHeuristic.class, cmdline);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to instantiate class attribute heuristic: " + cmdline, e);
@@ -345,7 +346,7 @@ public class InvestigatorPanel
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
       protected void doActionPerformed(ActionEvent e) {
-        m_TabbedPane.undoTabClose();
+	m_TabbedPane.undoTabClose();
 	updateMenu();
       }
     };
@@ -552,8 +553,8 @@ public class InvestigatorPanel
 	    menuitem.setIcon(ImageManager.getEmptyIcon());
 	  else
 	    menuitem.setIcon(ImageManager.getIcon(tab.getTabIcon()));
-          // shortcut?
-          if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
+	  // shortcut?
+	  if (getShortcutProperties().hasKey("Tab-" + cls.getName()))
 	    menuitem.setAccelerator(GUIHelper.getKeyStroke(getShortcutProperties().getProperty("Tab-" + cls.getName())));
 	  menuitem.addActionListener((ActionEvent e) -> {
 	    try {
@@ -578,6 +579,32 @@ public class InvestigatorPanel
       menu.add(m_ActionTabCloseTab);
       menu.add(m_ActionTabCloseAllTabs);
       menu.add(m_ActionTabUndoCloseTab);
+
+      // Window
+      menu = new JMenu("Window");
+      menu.setMnemonic('W');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+      result.add(menu);
+
+      // Window/New window
+      menuitem = new JMenuItem("New window");
+      menu.add(menuitem);
+      menuitem.setMnemonic('N');
+      menuitem.addActionListener((ActionEvent e) -> newWindow());
+
+      menu.addSeparator();
+
+      // Window/Half width
+      menuitem = new JMenuItem("Half width");
+      menu.add(menuitem);
+      menuitem.setMnemonic('i');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenWidth(InvestigatorPanel.this));
+
+      // Window/Half height
+      menuitem = new JMenuItem("Half height");
+      menu.add(menuitem);
+      menuitem.setMnemonic('g');
+      menuitem.addActionListener((ActionEvent e) -> GUIHelper.makeHalfScreenHeight(InvestigatorPanel.this));
 
       m_MenuBar = result;
     }
@@ -829,8 +856,8 @@ public class InvestigatorPanel
       getData().clear();
       logAndShowMessage("Removed all datasets");
       fireDataChange(
-        new WekaInvestigatorDataEvent(
-          InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_DELETED));
+	new WekaInvestigatorDataEvent(
+	  InvestigatorPanel.this, WekaInvestigatorDataEvent.ROWS_DELETED));
     });
   }
 
@@ -968,16 +995,16 @@ public class InvestigatorPanel
 
   /**
    * Sets the class attribute heuristic.
-   * 
+   *
    * @param value		the heuristic
    */
   public void setClassAttributeHeuristic(AbstractClassAttributeHeuristic value) {
     m_ClassAttributeHeuristic = value;
   }
-  
+
   /**
    * Returns the current class attribute heuristic.
-   * 
+   *
    * @return		the heuristic
    */
   public AbstractClassAttributeHeuristic getClassAttributeHeuristic() {
@@ -1009,22 +1036,22 @@ public class InvestigatorPanel
 
   /**
    * Sets the relation name heuristic.
-   * 
+   *
    * @param value		the heuristic
    */
   public void setRelationNameHeuristic(AbstractRelationNameHeuristic value) {
     m_RelationNameHeuristic = value;
   }
-  
+
   /**
    * Returns the current relation name heuristic.
-   * 
+   *
    * @return		the heuristic
    */
   public AbstractRelationNameHeuristic getRelationNameHeuristic() {
     return m_RelationNameHeuristic;
   }
-  
+
   /**
    * Returns whether undo is enabled.
    *
@@ -1106,6 +1133,27 @@ public class InvestigatorPanel
       this,
       getSortAttributeNames() ? WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED : WekaInvestigatorDataEvent.ATTRIBUTES_NAMES_UNSORTED);
     fireDataChange(event);
+  }
+
+  /**
+   * Displays a new preview window/frame.
+   *
+   * @return		the new panel
+   */
+  public InvestigatorManagerPanel newWindow() {
+    InvestigatorManagerPanel 	result;
+    ChildFrame 			oldFrame;
+    ChildFrame 			newFrame;
+
+    result   = null;
+    oldFrame = (ChildFrame) GUIHelper.getParent(this, ChildFrame.class);
+    if (oldFrame != null) {
+      newFrame = oldFrame.getNewWindow();
+      newFrame.setVisible(true);
+      result   = (InvestigatorManagerPanel) newFrame.getContentPane().getComponent(0);
+    }
+
+    return result;
   }
 
   /**
