@@ -15,7 +15,7 @@
 
 /*
  * ActiveValidateSetup.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -43,7 +43,7 @@ public class ActiveValidateSetup
    */
   @Override
   protected String getTitle() {
-    return "Validate setup";
+    return "Validate";
   }
 
   /**
@@ -85,7 +85,7 @@ public class ActiveValidateSetup
       }
       else {
 	m_State.getActivePanel().showStatus("The flow didn't pass validation!");
-	m_State.getActivePanel().showNotification("The flow setup failed validation:\n" + msg, NotificationType.ERROR);
+	m_State.getActivePanel().showNotification("The flow failed validation:\n" + msg, NotificationType.ERROR);
       }
     };
     m_State.getActivePanel().startBackgroundTask(runnable, "Validating flow...", false);

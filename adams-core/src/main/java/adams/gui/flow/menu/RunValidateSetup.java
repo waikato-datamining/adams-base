@@ -15,7 +15,7 @@
 
 /*
  * RunValidateSetup.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -50,7 +50,7 @@ public class RunValidateSetup
    */
   @Override
   protected String getTitle() {
-    return "Validate setup";
+    return "Validate";
   }
 
   /**
@@ -118,7 +118,7 @@ public class RunValidateSetup
 	}
 	else {
 	  currentPanel.showStatus("The flow didn't pass validation!");
-	  currentPanel.showNotification("The flow setup failed validation:\n" + msg, NotificationType.ERROR);
+	  currentPanel.showNotification("The flow failed validation:\n" + msg, NotificationType.ERROR);
 	}
       }
     };
