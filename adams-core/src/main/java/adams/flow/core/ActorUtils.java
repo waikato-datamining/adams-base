@@ -1850,11 +1850,13 @@ public class ActorUtils {
       for (i = 0; i < lines.length; i++) {
 	lines[i] = lines[i].trim();
 	// each reporting level has a ":" prefixing the next level -> remove
-	if (lines[i].endsWith(":"))
-	  lines[i] = lines[i].substring(0, lines[i].length() - 1);
-	// last line may have error message after ":" -> remove
-	else if (i == lines.length - 1)
-	  lines[i] = lines[i].substring(0, lines[i].lastIndexOf(":"));
+	if (lines[i].indexOf(':') > -1) {
+	  if (lines[i].endsWith(":"))
+	    lines[i] = lines[i].substring(0, lines[i].length() - 1);
+	    // last line may have error message after ":" -> remove
+	  else if (i == lines.length - 1)
+	    lines[i] = lines[i].substring(0, lines[i].lastIndexOf(":"));
+	}
 	if (i > 0)
 	  lines[i] = current.getName() + lines[i];
       }
