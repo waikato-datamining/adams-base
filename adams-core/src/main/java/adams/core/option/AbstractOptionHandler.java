@@ -15,7 +15,7 @@
 
 /*
  * AbstractOptionHandler.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -28,7 +28,6 @@ import adams.core.logging.LoggingLevel;
  * Abstract superclass for classes that handle options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractOptionHandler
   extends CustomLoggingLevelObject
@@ -90,7 +89,7 @@ public abstract class AbstractOptionHandler
 
     m_OptionManager.add(
 	"logging-level", "loggingLevel",
-	getDefaultLoggingLevel());
+	getDefaultLoggingLevel(), UserMode.EXPERT);
   }
 
   /**

@@ -15,13 +15,15 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
 import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
@@ -41,7 +43,7 @@ import java.beans.PropertyChangeListener;
  */
 public class GenericObjectEditorPanel
   extends AbstractChooserPanel
-  implements PropertyChangeListener {
+  implements PropertyChangeListener, UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8351558686664299781L;
@@ -330,5 +332,25 @@ public class GenericObjectEditorPanel
   public void propertyChange(PropertyChangeEvent evt) {
     setCurrent(m_Editor.getValue());
     notifyChangeListeners(new ChangeEvent(m_Self));
+  }
+
+  /**
+   * Sets the user mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    getEditor().setUserMode(value);
+  }
+
+  /**
+   * Returns the user mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return getEditor().getUserMode();
   }
 }

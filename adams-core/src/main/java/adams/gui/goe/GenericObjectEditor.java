@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2022 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -29,6 +29,8 @@ import adams.core.io.PlaceholderFile;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.gui.chooser.ObjectFileChooser;
@@ -86,7 +88,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class GenericObjectEditor
-  implements PropertyEditor, CustomPanelSupplier {
+  implements PropertyEditor, CustomPanelSupplier, UserModeSupporter {
 
   /** the action command for OK. */
   public final static String ACTION_CMD_OK = "ok";
@@ -158,11 +160,15 @@ public class GenericObjectEditor
   /** for post-processing objects. */
   protected PostProcessObjectHandler m_PostProcessObjectHandler;
 
+  /** the user mode to use. */
+  protected UserMode m_UserMode;
+
   /**
    * Handles the GUI side of editing values.
    */
   public class GOEPanel
-    extends JPanel {
+    extends JPanel
+    implements UserModeSupporter {
 
     /** for serialization. */
     static final long serialVersionUID = 3656028520876011335L;
@@ -298,7 +304,7 @@ public class GenericObjectEditor
 	}
       });
 
-      m_PropertySheetChild = new PropertySheetPanel();
+      m_PropertySheetChild = new PropertySheetPanel(m_UserMode);
       m_PropertySheetChild.addPropertyChangeListener((PropertyChangeEvent evt) -> {
         if (!m_IgnoreChanges)
 	  GenericObjectEditor.this.firePropertyChange();
@@ -433,6 +439,26 @@ public class GenericObjectEditor
       }
 
       m_PanelTree.focusSearch();
+    }
+
+    /**
+     * Sets the user mode.
+     *
+     * @param value	the mode
+     */
+    @Override
+    public void setUserMode(UserMode value) {
+      m_PropertySheetChild.setUserMode(value);
+    }
+
+    /**
+     * Returns the user mode.
+     *
+     * @return		the mode
+     */
+    @Override
+    public UserMode getUserMode() {
+      return m_PropertySheetChild.getUserMode();
     }
 
     /**
@@ -815,6 +841,7 @@ public class GenericObjectEditor
     m_DefaultValue             = null;
     m_MinimumChars             = 0;
     m_PostProcessObjectHandler = null;
+    m_UserMode                 = UserMode.HIGHEST;
 
     setCanChangeClassInDialog(canChangeClassInDialog);
   }
@@ -1105,6 +1132,30 @@ public class GenericObjectEditor
    */
   public Object getValue() {
     return ObjectCopyHelper.copyObject(m_Object);
+  }
+
+  /**
+   * Sets the user mode to use for displaying the properties.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    if (value != m_UserMode) {
+      m_UserMode = value;
+      if (m_EditorComponent != null)
+        m_EditorComponent.setUserMode(value);
+    }
+  }
+
+  /**
+   * Returns the user mode to use for displaying the properties.
+   *
+   * @return		the mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
   }
 
   /**

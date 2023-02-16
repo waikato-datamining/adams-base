@@ -162,12 +162,11 @@ import java.util.List;
  * A panel for setting up, modifying, saving and loading "simple" flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowEditorPanel
   extends ToolBarPanel
   implements MenuBarProvider, StatusMessageHandlerExt, SendToActionSupporter,
-             PopupMenuCustomizer {
+  PopupMenuCustomizer {
 
   /** for serialization. */
   private static final long serialVersionUID = -3579084888256133873L;
@@ -1110,37 +1109,37 @@ public class FlowEditorPanel
       actors = getPropertiesEditor().getProperty("NewList", Flow.class.getName()).split(",");
       prefixes = new ArrayList<>();
       for (i = 0; i < actors.length; i++) {
-        prefix = actors[i].trim().replaceAll("[ ].*", "");
+	prefix = actors[i].trim().replaceAll("[ ].*", "");
 	prefix = prefix.substring(0, prefix.lastIndexOf('.'));
 	if (!prefixes.contains(prefix))
 	  prefixes.add(prefix);
       }
       prefixPrev = "";
       for (i = 0; i < actors.length; i++) {
-        try {
-          final Actor actor = (Actor) OptionUtils.forAnyCommandLine(Actor.class, actors[i]);
+	try {
+	  final Actor actor = (Actor) OptionUtils.forAnyCommandLine(Actor.class, actors[i]);
 	  prefix = actors[i].trim().replaceAll("[ ].*", "");
 	  prefix = prefix.substring(0, prefix.lastIndexOf('.'));
-          if (!prefix.equals(prefixPrev)) {
-            menuitem = new JMenuItem(prefix);
-            menuitem.setEnabled(false);
-            if (prefixPrev.length() > 0)
-              submenu.addSeparator();
-            submenu.add(menuitem);
-            prefixPrev = prefix;
-          }
-          if (actor instanceof Flow) {
-            submenu.add(m_ActionFileNew);
-          }
-          else {
-            menuitem = new JMenuItem(actors[i].replaceAll("[ ].*", "").replaceAll(".*\\.", ""));
-            submenu.add(menuitem);
-            menuitem.addActionListener((ActionEvent e) -> newFlow(actor));
-          }
-        }
-        catch (Exception e) {
-          ConsolePanel.getSingleton().append(this, "Failed to instantiate actor: " + actors[i], e);
-        }
+	  if (!prefix.equals(prefixPrev)) {
+	    menuitem = new JMenuItem(prefix);
+	    menuitem.setEnabled(false);
+	    if (prefixPrev.length() > 0)
+	      submenu.addSeparator();
+	    submenu.add(menuitem);
+	    prefixPrev = prefix;
+	  }
+	  if (actor instanceof Flow) {
+	    submenu.add(m_ActionFileNew);
+	  }
+	  else {
+	    menuitem = new JMenuItem(actors[i].replaceAll("[ ].*", "").replaceAll(".*\\.", ""));
+	    submenu.add(menuitem);
+	    menuitem.addActionListener((ActionEvent e) -> newFlow(actor));
+	  }
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append(this, "Failed to instantiate actor: " + actors[i], e);
+	}
       }
 
       menu.add(m_ActionFileOpen);
@@ -1149,7 +1148,7 @@ public class FlowEditorPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandlerWithCommandline<>(
-	  SESSION_FILE, getPropertiesEditor().getInteger("MaxRecentFlows", 5), submenu);
+	SESSION_FILE, getPropertiesEditor().getInteger("MaxRecentFlows", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,Setup>() {
 	@Override
 	public void recentItemAdded(RecentItemEvent<JMenu,Setup> e) {
@@ -1278,8 +1277,8 @@ public class FlowEditorPanel
 	menu.addChangeListener((ChangeEvent e) -> updateActions());
 
 	menu.add(m_ActionNewWindow);
-        menu.add(m_ActionHalfWidth);
-        menu.add(m_ActionHalfHeight);
+	menu.add(m_ActionHalfWidth);
+	menu.add(m_ActionHalfHeight);
 	menu.add(m_ActionMoveToNewWindow);
 	menu.add(m_ActionDuplicateTabInNewWindow);
 	menu.add(m_ActionDuplicateTab);
@@ -1338,7 +1337,7 @@ public class FlowEditorPanel
     // regular menu items
     for (FlowEditorAction action: m_MenuItems)
       action.update(m_Self);
-    
+
     // additional menu items
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems)
       item.updateAction();
@@ -1421,13 +1420,13 @@ public class FlowEditorPanel
 
   /**
    * Returns the filechooser in use.
-   * 
+   *
    * @return		the filechooser
    */
   public FlowFileChooser getFileChooser() {
     return m_FileChooser;
   }
-  
+
   /**
    * Adds new panel with the specified actor.
    *
@@ -1719,21 +1718,21 @@ public class FlowEditorPanel
       protected Object doInBackground() throws Exception {
 	for (PlaceholderFile file: files) {
 	  if (file.exists()) {
-            FlowPanel panel = m_FlowPanels.newPanel();
-            panel.load(m_FileChooser.getReader(), file);
-          }
+	    FlowPanel panel = m_FlowPanels.newPanel();
+	    panel.load(m_FileChooser.getReader(), file);
+	  }
 	  else {
 	    errors.add("Flow does not exist: " + file.getAbsolutePath());
-          }
+	  }
 	}
 	return null;
       }
 
       @Override
       protected void done() {
-        super.done();
-        if (!errors.isEmpty())
-          GUIHelper.showErrorMessage(FlowEditorPanel.this, errors.toString());
+	super.done();
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(FlowEditorPanel.this, errors.toString());
       }
     };
     worker.execute();
@@ -2227,10 +2226,10 @@ public class FlowEditorPanel
       menu.add(menuitem);
     }
   }
-  
+
   /**
    * Returns the preferred toolbar location.
-   * 
+   *
    * @return		the location
    */
   public ToolBarLocation getPreferredToolBarLocation() {

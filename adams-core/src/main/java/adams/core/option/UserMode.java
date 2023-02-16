@@ -13,11 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * UserMode.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
-package adams.gui.application;
+package adams.core.option;
 
 import adams.core.EnumWithCustomDisplay;
 
@@ -25,22 +25,24 @@ import adams.core.EnumWithCustomDisplay;
  * The user mode, determines the knowledge level of the user.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum UserMode
   implements EnumWithCustomDisplay<UserMode> {
-  
+
   /** basic. */
   BASIC("Basic"),
-  
+
   /** expert. */
   EXPERT("Expert"),
-  
+
   /** developer. */
   DEVELOPER("Developer"),
-  
+
   /** for debugging purposes only. */
   DEBUGGER("Debugger");
+
+  public final static UserMode LOWEST = BASIC;
+  public final static UserMode HIGHEST = DEBUGGER;
 
   /** the display string. */
   private String m_Display;
@@ -107,14 +109,25 @@ public enum UserMode
 
     // try display
     if (result == null) {
-	for (UserMode dt: values()) {
-	  if (dt.toDisplay().equals(s)) {
-	    result = dt;
-	    break;
-	  }
+      for (UserMode dt: values()) {
+	if (dt.toDisplay().equals(s)) {
+	  result = dt;
+	  break;
 	}
+      }
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the given user mode is at least the specified minimum.
+   *
+   * @param mode	the mode to check
+   * @param minMode	the minimum mode that is required
+   * @return		true if mode is at least the specified minimum
+   */
+  public static boolean isAtLeast(UserMode mode, UserMode minMode) {
+    return (mode.compareTo(minMode) >= 0);
   }
 }

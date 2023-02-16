@@ -15,12 +15,13 @@
 
 /*
  * PropertySheetPanelPage.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
 import adams.core.Properties;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.gui.goe.PropertySheetPanel;
 
 import java.awt.BorderLayout;
@@ -68,7 +69,7 @@ public class PropertySheetPanelPage
   protected void initGUI() {
     super.initGUI();
     
-    m_PanelSheet = new PropertySheetPanel();
+    m_PanelSheet = new PropertySheetPanel(UserMode.BASIC);
     m_PanelSheet.setShowAboutBox(false);
     m_PanelSheet.addPropertyChangeListener((PropertyChangeEvent evt) -> updateButtons());
     add(m_PanelSheet, BorderLayout.CENTER);

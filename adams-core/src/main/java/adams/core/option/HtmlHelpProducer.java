@@ -15,7 +15,7 @@
 
 /*
  * GUIHelpProducer.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -48,6 +48,9 @@ public class HtmlHelpProducer
   /** whether to generate "fake" class cross reference links. */
   protected boolean m_ClassCrossRefLinks;
 
+  /** the user mode to generate the help for. */
+  protected UserMode m_UserMode;
+
   /**
    * Returns a string describing the object.
    *
@@ -78,6 +81,25 @@ public class HtmlHelpProducer
   }
 
   /**
+   * Sets the user mode to generate the help for.
+   *
+   * @param value	the user mode
+   */
+  public void setUserMode(UserMode value) {
+    m_UserMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the user mode to generate the help for.
+   *
+   * @return		the user mode
+   */
+  public UserMode getUserMode() {
+    return m_UserMode;
+  }
+
+  /**
    * Initializes the output data structure.
    *
    * @return		the created data structure
@@ -95,6 +117,7 @@ public class HtmlHelpProducer
     super.initialize();
 
     m_OutputBuffer = new StringBuilder();
+    m_UserMode     = UserMode.LOWEST;
   }
 
   /**
@@ -239,6 +262,10 @@ public class HtmlHelpProducer
 
     result = new StringBuilder();
 
+    // suppress?
+    if (!UserMode.isAtLeast(m_UserMode, option.getMinUserMode()))
+      return result;
+
     result.append("<li>\n");
     result.append("<b>" + toHTML(option.getProperty()) + "</b>\n");
     result.append("<br>\n");
@@ -300,6 +327,13 @@ public class HtmlHelpProducer
         result.append("<td><code>" + numeric.getUpperBound() + "</code></td>\n");
         result.append("</tr>\n");
       }
+    }
+
+    if (option.getMinUserMode() != UserMode.LOWEST) {
+      result.append("<tr>\n");
+      result.append("<td>min-user-mode</td>");
+      result.append("<td><code>" + option.getMinUserMode() + "</code></td>\n");
+      result.append("</tr>\n");
     }
 
     val = null;

@@ -21,10 +21,10 @@
 
 package adams.gui.menu;
 
-import adams.gui.core.MemoryMonitorPanel;
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
+import adams.gui.core.MemoryMonitorPanel;
 
 /**
  * Displays the infamous about box.

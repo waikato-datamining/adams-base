@@ -15,7 +15,7 @@
 
 /*
  * PropertyTraversal.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.logging.CustomLoggingLevelObject;
+import adams.core.option.UserMode;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.control.Tee;
@@ -81,7 +82,7 @@ public class PropertyTraversal
       getLogger().info("traverse: " + path.toString());
 
     try {
-      cont  = IntrospectionHelper.introspect(obj, false);
+      cont  = IntrospectionHelper.introspect(obj, false, UserMode.HIGHEST);
       props = cont.properties;
     }
     catch (Exception e) {

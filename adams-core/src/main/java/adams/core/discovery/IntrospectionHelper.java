@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IntrospectionHelper.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -23,6 +23,7 @@ package adams.core.discovery;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
+import adams.core.option.UserMode;
 import adams.gui.goe.Editors;
 
 import java.beans.BeanInfo;
@@ -37,7 +38,6 @@ import java.util.List;
  * Helper class for introspection.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IntrospectionHelper {
 
@@ -58,23 +58,25 @@ public class IntrospectionHelper {
   /**
    * Introspects the specified object. Uses the blacklist.
    *
-   * @param obj	the object to introspect
+   * @param obj		the object to introspect
+   * @param userMode	the user mode to use
    * @return		the information gathered
    * @throws Exception	if introspection fails
    */
-  public static IntrospectionContainer introspect(Object obj) throws Exception {
-    return introspect(obj, true);
+  public static IntrospectionContainer introspect(Object obj, UserMode userMode) throws Exception {
+    return introspect(obj, true, userMode);
   }
 
   /**
    * Introspects the specified class. Uses the blacklist.
    *
    * @param cls		the class to introspect
+   * @param userMode	the user mode to use
    * @return		the information gathered
    * @throws Exception	if introspection fails
    */
-  public static IntrospectionContainer introspect(Class cls) throws Exception {
-    return introspect(cls, true);
+  public static IntrospectionContainer introspect(Class cls, UserMode userMode) throws Exception {
+    return introspect(cls, true, userMode);
   }
 
   /**
@@ -82,10 +84,11 @@ public class IntrospectionHelper {
    *
    * @param obj			the object to introspect
    * @param useBlacklist	whether to apply the GOE blacklist
+   * @param userMode		the user mode to use
    * @return			the information gathered
    * @throws Exception		if introspection fails
    */
-  public static IntrospectionContainer introspect(Object obj, boolean useBlacklist) throws Exception {
+  public static IntrospectionContainer introspect(Object obj, boolean useBlacklist, UserMode userMode) throws Exception {
     IntrospectionContainer	result;
     BeanInfo 			bi;
     List<AbstractOption> 	optionsTmp;
@@ -104,13 +107,15 @@ public class IntrospectionHelper {
       propdesc   = new ArrayList<>();
       for (i = 0; i < optionsTmp.size(); i++) {
 	if (optionsTmp.get(i) instanceof AbstractArgumentOption) {
-          if (useBlacklist) {
-            opt = (AbstractArgumentOption) optionsTmp.get(i);
-            if (Editors.isBlacklisted(opt.getBaseClass(), opt.isMultiple()))
-              continue;
-            if (Editors.isBlacklisted(obj.getClass(), opt.getProperty()))
-              continue;
-          }
+	  if (useBlacklist) {
+	    opt = (AbstractArgumentOption) optionsTmp.get(i);
+	    if (Editors.isBlacklisted(opt.getBaseClass(), opt.isMultiple()))
+	      continue;
+	    if (Editors.isBlacklisted(obj.getClass(), opt.getProperty()))
+	      continue;
+	    if (!UserMode.isAtLeast(userMode, opt.getMinUserMode()))
+	      continue;
+	  }
 	}
 	propdesc.add(optionsTmp.get(i).getDescriptor());
 	options.add(optionsTmp.get(i));
@@ -126,7 +131,7 @@ public class IntrospectionHelper {
       return result;
     }
     else {
-      return introspect(obj.getClass());
+      return introspect(obj.getClass(), userMode);
     }
   }
 
@@ -151,7 +156,7 @@ public class IntrospectionHelper {
     propdesc   = new ArrayList<>();
     for (PropertyDescriptor desc: properties) {
       if ((desc == null) || (desc.getReadMethod() == null) || (desc.getWriteMethod() == null))
-        continue;
+	continue;
 
       // deprecated?
       method = desc.getReadMethod();
@@ -164,10 +169,10 @@ public class IntrospectionHelper {
       // blacklisted?
       cl = desc.getReadMethod().getReturnType();
       if (useBlacklist) {
-        if (Editors.isBlacklisted(cl, cl.isArray()))
-          continue;
-        if (Editors.isBlacklisted(cls, desc.getDisplayName()))
-          continue;
+	if (Editors.isBlacklisted(cl, cl.isArray()))
+	  continue;
+	if (Editors.isBlacklisted(cls, desc.getDisplayName()))
+	  continue;
       }
       propdesc.add(desc);
     }

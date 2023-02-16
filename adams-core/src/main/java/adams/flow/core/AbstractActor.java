@@ -32,6 +32,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.core.sizeof.ActorFilter;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
@@ -311,11 +312,11 @@ public abstract class AbstractActor
 
     m_OptionManager.add(
 	"stop-flow-on-error", "stopFlowOnError",
-	false);
+	false, UserMode.EXPERT);
 
     m_OptionManager.add(
 	"silent", "silent",
-	false);
+	false, UserMode.EXPERT);
   }
 
   /**

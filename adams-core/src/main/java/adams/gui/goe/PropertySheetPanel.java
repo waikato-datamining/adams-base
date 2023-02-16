@@ -29,6 +29,8 @@ import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
@@ -82,8 +84,9 @@ import java.util.List;
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class PropertySheetPanel extends BasePanel
-  implements PropertyChangeListener {
+public class PropertySheetPanel
+  extends BasePanel
+  implements PropertyChangeListener, UserModeSupporter {
 
   /** for serialization. */
   static final long serialVersionUID = -557854258929870536L;
@@ -146,6 +149,17 @@ public class PropertySheetPanel extends BasePanel
   /** whether to show/suppress the about box. */
   protected boolean m_ShowAboutBox;
 
+  /** the user mode to use. */
+  protected UserMode m_UserMode;
+
+  /**
+   * Default constructor.
+   */
+  public PropertySheetPanel(UserMode userMode) {
+    super();
+    m_UserMode = userMode;
+  }
+
   /**
    * For initializing members.
    */
@@ -154,6 +168,7 @@ public class PropertySheetPanel extends BasePanel
     super.initialize();
 
     m_ShowAboutBox = true;
+    m_UserMode     = UserMode.LOWEST;
   }
 
   /**
@@ -294,7 +309,7 @@ public class PropertySheetPanel extends BasePanel
     m_Properties = new PropertyDescriptor[0];
     m_Methods    = new MethodDescriptor[0];
     try {
-      cont         = IntrospectionHelper.introspect(m_Target);
+      cont = IntrospectionHelper.introspect(m_Target, m_UserMode);
       if (cont.options != null)
 	m_Options = new ArrayList<>(Arrays.asList(cont.options));
       m_Properties = cont.properties;
@@ -464,6 +479,9 @@ public class PropertySheetPanel extends BasePanel
 	if (m_Editors[i] == null)
 	  continue;
 
+	if (m_Editors[i] instanceof GenericObjectEditor)
+	  ((GenericObjectEditor) m_Editors[i]).setUserMode(m_UserMode);
+
 	handler = AbstractGenericObjectEditorHandler.getHandler(m_Editors[i]);
 	handler.setClassType(m_Editors[i], type);
 	handler.setCanChangeClassInDialog(m_Editors[i], canChangeClass);
@@ -606,12 +624,36 @@ public class PropertySheetPanel extends BasePanel
   }
 
   /**
+   * Sets the user mode to use for displaying the properties.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    if (value != m_UserMode) {
+      m_UserMode = value;
+      if (getTarget() != null)
+	setTarget(getTarget());
+    }
+  }
+
+  /**
+   * Returns the user mode to use for displaying the properties.
+   *
+   * @return		the mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
+  }
+
+  /**
    * Updates the content in the help panel.
    */
   protected void updateHelpPanel() {
     HelpContainer 	cont;
 
-    cont = AbstractHelpGenerator.generateHelp(getTarget());
+    cont = AbstractHelpGenerator.generateHelp(getTarget(), m_UserMode);
     m_PanelHelp.setContentType(cont.isHtml() ? "text/html" : "text/plain");
     m_PanelHelp.setText(cont.getHelp());
     m_PanelHelp.setCaretPosition(0);

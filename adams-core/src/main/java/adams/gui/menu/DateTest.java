@@ -23,10 +23,10 @@ package adams.gui.menu;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.option.UserMode;
 import adams.data.DateFormatString;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;

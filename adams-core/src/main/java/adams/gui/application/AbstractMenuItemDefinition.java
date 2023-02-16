@@ -24,6 +24,7 @@ package adams.gui.application;
 import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.gui.core.ImageManager;
 
 import javax.swing.ImageIcon;

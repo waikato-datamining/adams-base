@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassOption.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -30,7 +30,6 @@ import java.util.Arrays;
  * Option class for OptionHandler options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassOption
   extends AbstractArgumentOption {
@@ -46,11 +45,12 @@ public class ClassOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected ClassOption(OptionManager owner, String commandline, String property,
-      Object defValue) {
+      Object defValue, UserMode minUserMode) {
 
-    this(owner, commandline, property, defValue, true);
+    this(owner, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -62,11 +62,12 @@ public class ClassOption
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    * @param outputDefValue	whether to output the default value or not
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected ClassOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue) {
+      Object defValue, boolean outputDefValue, UserMode minUserMode) {
 
-    super(owner, commandline, property, defValue, outputDefValue);
+    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
   }
 
   /**
@@ -108,7 +109,6 @@ public class ClassOption
    * Sets the values obtained from the nested structure.
    *
    * @param values	the values to set
-   * @see		#fromNested(ArrayList)
    */
   protected void setNestedValues(ArrayList values) {
     String			classname;

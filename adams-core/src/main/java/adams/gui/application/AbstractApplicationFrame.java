@@ -35,6 +35,7 @@ import adams.core.net.InternetHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;

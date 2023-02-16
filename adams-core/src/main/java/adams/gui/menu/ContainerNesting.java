@@ -22,9 +22,9 @@
 package adams.gui.menu;
 
 import adams.core.classmanager.ClassManager;
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTree;

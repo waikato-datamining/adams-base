@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractNumericOption.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -25,7 +25,6 @@ import adams.core.logging.LoggingObject;
  * Handles options with numeric arguments.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of number
  */
 public abstract class AbstractNumericOption<T extends Number>
@@ -50,9 +49,9 @@ public abstract class AbstractNumericOption<T extends Number>
    * 				current state is used
    */
   protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue) {
+      Object defValue, UserMode minUserMode) {
 
-    this(owner, commandline, property, defValue, true);
+    this(owner, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -66,9 +65,9 @@ public abstract class AbstractNumericOption<T extends Number>
    * @param outputDefValue	whether to output the default value or not
    */
   protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue) {
+      Object defValue, boolean outputDefValue, UserMode minUserMode) {
 
-    this(owner, commandline, property, defValue, outputDefValue, null, null);
+    this(owner, commandline, property, defValue, outputDefValue, null, null, minUserMode);
   }
 
   /**
@@ -83,11 +82,12 @@ public abstract class AbstractNumericOption<T extends Number>
    * 				use null to use unbounded
    * @param upper		the upper bound (incl; only for numeric values),
    * 				use null to use unbounded
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, T lower, T upper) {
+      Object defValue, T lower, T upper, UserMode minUserMode) {
 
-    this(owner, commandline, property, defValue, true, lower, upper);
+    this(owner, commandline, property, defValue, true, lower, upper, minUserMode);
   }
 
   /**
@@ -103,11 +103,12 @@ public abstract class AbstractNumericOption<T extends Number>
    * 				use null to use unbounded
    * @param upper		the upper bound (incl; only for numeric values),
    * 				use null to use unbounded
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, T lower, T upper) {
+      Object defValue, boolean outputDefValue, T lower, T upper, UserMode minUserMode) {
 
-    super(owner, commandline, property, defValue, outputDefValue);
+    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
 
     m_LowerBound = lower;
     m_UpperBound = upper;

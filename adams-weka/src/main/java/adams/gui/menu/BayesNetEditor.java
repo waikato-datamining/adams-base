@@ -21,11 +21,11 @@
 
 package adams.gui.menu;
 
-import adams.gui.core.GUIHelper;
-import weka.classifiers.bayes.net.GUI;
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.UserMode;
+import adams.gui.core.GUIHelper;
+import weka.classifiers.bayes.net.GUI;
 
 /**
  * Opens the BayesNet Editor.

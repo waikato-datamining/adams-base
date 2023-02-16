@@ -15,7 +15,7 @@
 
 /*
  * BooleanOption.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -24,7 +24,6 @@ package adams.core.option;
  * Option for boolean flags.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BooleanOption
   extends AbstractArgumentOption {
@@ -40,9 +39,10 @@ public class BooleanOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
+   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected BooleanOption(OptionManager owner, String commandline, String property, Object defValue) {
-    this(owner, commandline, property, defValue, true);
+  protected BooleanOption(OptionManager owner, String commandline, String property, Object defValue, UserMode minUserMode) {
+    this(owner, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -54,9 +54,10 @@ public class BooleanOption
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    * @param outputDefValue	whether to output the default value or not
+   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected BooleanOption(OptionManager owner, String commandline, String property, Object defValue, boolean outputDefValue) {
-    super(owner, commandline, property, defValue, outputDefValue);
+  protected BooleanOption(OptionManager owner, String commandline, String property, Object defValue, boolean outputDefValue, UserMode minUserMode) {
+    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
   }
 
   /**

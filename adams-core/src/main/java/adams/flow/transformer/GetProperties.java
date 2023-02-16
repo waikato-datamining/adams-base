@@ -15,13 +15,14 @@
 
 /*
  * GetProperties.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
+import adams.core.option.UserMode;
 
 import java.beans.PropertyDescriptor;
 
@@ -148,7 +149,7 @@ public class GetProperties
     obj = m_InputToken.getPayload();
     m_Queue.clear();
     try {
-      cont  = IntrospectionHelper.introspect(obj, false);
+      cont  = IntrospectionHelper.introspect(obj, false, UserMode.HIGHEST);
       props = cont.properties;
       for (PropertyDescriptor prop: props)
         m_Queue.add(prop.getDisplayName());

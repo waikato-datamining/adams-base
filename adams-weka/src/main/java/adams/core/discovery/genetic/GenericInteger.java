@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GenericInteger.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery.genetic;
@@ -24,6 +24,7 @@ import adams.core.base.BaseClassname;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.option.UserMode;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.filters.supervised.attribute.PLSFilter;
 
@@ -35,7 +36,6 @@ import java.util.logging.Level;
  * Generic handler for integer properties.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericInteger
   extends AbstractGeneticIntegerDiscoveryHandler {
@@ -220,7 +220,7 @@ public class GenericInteger
 
     if (m_PropertyDescriptor == null) {
       try {
-	cont = IntrospectionHelper.introspect(getActualClass());
+	cont = IntrospectionHelper.introspect(getActualClass(), UserMode.HIGHEST);
 	for (PropertyDescriptor pd: cont.properties) {
 	  if (pd.getDisplayName().equals(m_Property)) {
 	    m_PropertyDescriptor = pd;

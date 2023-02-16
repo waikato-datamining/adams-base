@@ -15,7 +15,7 @@
 
 /*
  * GenericString.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery.genetic;
@@ -24,6 +24,7 @@ import adams.core.base.BaseClassname;
 import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.discovery.PropertyPath.PropertyContainer;
+import adams.core.option.UserMode;
 import nz.ac.waikato.cms.locator.ClassLocator;
 import weka.filters.unsupervised.attribute.Remove;
 
@@ -199,7 +200,7 @@ public class GenericString
 
     if (m_PropertyDescriptor == null) {
       try {
-	cont = IntrospectionHelper.introspect(getActualClass());
+	cont = IntrospectionHelper.introspect(getActualClass(), UserMode.HIGHEST);
 	for (PropertyDescriptor pd: cont.properties) {
 	  if (pd.getDisplayName().equals(m_Property)) {
 	    m_PropertyDescriptor = pd;

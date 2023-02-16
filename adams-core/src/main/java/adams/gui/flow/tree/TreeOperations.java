@@ -424,6 +424,7 @@ public class TreeOperations
 	case GOE_FORCED:
 	case GOE_FORCED_NO_TREE:
 	  dialog = GenericObjectEditorDialog.createDialog(getOwner());
+	  dialog.setUserMode(getOwner().getEditor().getUserMode());
 	  dialog.setUISettingsPrefix(Actor.class);
 	  if (position == InsertPosition.HERE)
 	    dialog.setTitle("Add here...");
@@ -851,6 +852,7 @@ public class TreeOperations
     getOwner().updateCurrentEditing((Node) currNode.getParent(), currNode);
     actorOld = currNode.getActor().shallowCopy();
     dialog   = GenericObjectEditorDialog.createDialog(getOwner());
+    dialog.setUserMode(getOwner().getEditor().getUserMode());
     dialog.setUISettingsPrefix(Actor.class);
     editable = getOwner().isEditable() && !getOwner().isDebug() && currNode.isEditable();
     if ((getOwner().getRootActor() instanceof Flow) && ((Flow) getOwner().getRootActor()).getReadOnly()) {
@@ -1395,6 +1397,7 @@ public class TreeOperations
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentDialog());
       else
         m_DialogProcessActors = new GenericObjectEditorDialog(getOwner().getParentFrame());
+      m_DialogProcessActors.setUserMode(getOwner().getEditor().getUserMode());
       m_DialogProcessActors.setUISettingsPrefix(ActorProcessor.class);
       m_DialogProcessActors.setModalityType(ModalityType.DOCUMENT_MODAL);
       m_DialogProcessActors.getGOEEditor().setCanChangeClassInDialog(true);
@@ -1877,6 +1880,7 @@ public class TreeOperations
       dialog = new GenericObjectEditorDialog(getOwner().getParentDialog());
     else
       dialog = new GenericObjectEditorDialog(getOwner().getParentFrame());
+    dialog.setUserMode(getOwner().getEditor().getUserMode());
     dialog.setUISettingsPrefix(BooleanCondition.class);
     dialog.setTitle("Conditions");
     dialog.setModalityType(ModalityType.DOCUMENT_MODAL);

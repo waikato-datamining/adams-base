@@ -23,10 +23,10 @@ package adams.gui.menu;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
 import adams.gui.chooser.DirectoryChooserFactory;
 import adams.gui.chooser.FileChooser;
 import adams.gui.core.BaseButton;

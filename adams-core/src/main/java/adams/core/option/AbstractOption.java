@@ -15,22 +15,21 @@
 
 /*
  * AbstractOption.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
+
+import adams.core.CleanUpHandler;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import adams.core.CleanUpHandler;
-
 /**
  * The ancestor of all option classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractOption
   implements Serializable, CleanUpHandler {
@@ -59,6 +58,9 @@ public abstract class AbstractOption
   /** whether debugging is enabled. */
   protected boolean m_Debug;
 
+  /** in what usermode to show this option. */
+  protected UserMode m_MinUserMode;
+
   /**
    * Initializes the option.
    *
@@ -68,9 +70,10 @@ public abstract class AbstractOption
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    * @param outputDefValue	whether to output the default value or not when listing the options
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected AbstractOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue) {
+			   Object defValue, boolean outputDefValue, UserMode minUserMode) {
 
     super();
 
@@ -81,6 +84,7 @@ public abstract class AbstractOption
     m_Property     	 = property;
     m_DefaultValue 	 = defValue;
     m_OutputDefaultValue = outputDefValue;
+    m_MinUserMode        = minUserMode;
     m_Debug              = OptionUtils.getDebug();
 
     // obtain default value if not provided
@@ -91,8 +95,8 @@ public abstract class AbstractOption
       catch (Exception e) {
 	if (!m_Owner.isQuiet())
 	  System.err.println(
-	      "Cannot determine default value: "
-		  + getOptionHandler().getClass().getName() + "." + getProperty());
+	    "Cannot determine default value: "
+	      + getOptionHandler().getClass().getName() + "." + getProperty());
       }
     }
   }
@@ -102,8 +106,17 @@ public abstract class AbstractOption
    *
    * @return		true if debugging output is enabled
    */
-  protected boolean getDebug() {
+  public boolean getDebug() {
     return m_Debug;
+  }
+
+  /**
+   * Returns the minimum user mode before this option is displayed.
+   *
+   * @return		the minimum user mode
+   */
+  public UserMode getMinUserMode() {
+    return m_MinUserMode;
   }
 
   /**
@@ -180,7 +193,7 @@ public abstract class AbstractOption
 
   /**
    * Sets the current value.
-   * 
+   *
    * @param value	the value to set
    * @return		true if successfully set
    */
@@ -200,10 +213,10 @@ public abstract class AbstractOption
       }
       result = false;
     }
-    
+
     return result;
   }
-  
+
   /**
    * Returns whether the default value is to be output or not in help
    * strings, etc.
@@ -235,14 +248,14 @@ public abstract class AbstractOption
 
     try {
       result = getOptionHandler().getClass().getMethod(
-	  getProperty() + TOOLTIP_SUFFIX, new Class[]{});
+	getProperty() + TOOLTIP_SUFFIX, new Class[]{});
     }
     catch (Exception e) {
       // ignored, means that there's no tooltip available
       result = null;
       if (!m_Owner.isQuiet())
 	System.err.println(
-	    "Missing tooltip: " + getOptionHandler().getClass().getName()
+	  "Missing tooltip: " + getOptionHandler().getClass().getName()
 	    + "." + getProperty() + TOOLTIP_SUFFIX);
     }
 

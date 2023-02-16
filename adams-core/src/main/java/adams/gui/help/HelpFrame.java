@@ -15,13 +15,14 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
 import adams.core.classmanager.ClassManager;
 import adams.core.net.HtmlUtils;
+import adams.core.option.UserMode;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BaseScrollPane;
@@ -276,7 +277,7 @@ public class HelpFrame
   public static void showHelp(Class cls) {
     HelpContainer	cont;
 
-    cont = AbstractHelpGenerator.generateHelp(cls);
+    cont = AbstractHelpGenerator.generateHelp(cls, UserMode.HIGHEST);
     showHelp(cls.getName(), cont.getHelp(), cont.isHtml());
   }
 
@@ -288,7 +289,7 @@ public class HelpFrame
   public static void showHelp(Object obj) {
     HelpContainer	cont;
 
-    cont = AbstractHelpGenerator.generateHelp(obj);
+    cont = AbstractHelpGenerator.generateHelp(obj, UserMode.HIGHEST);
     showHelp(obj.getClass().getName(), cont.getHelp(), cont.isHtml());
   }
 

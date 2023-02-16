@@ -21,9 +21,9 @@
 
 package adams.gui.menu;
 
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractMenuItemDefinition;
-import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 

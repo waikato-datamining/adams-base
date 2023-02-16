@@ -22,9 +22,9 @@
 package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.UserMode;
 import adams.gui.core.GUIHelper;
 import weka.gui.arffviewer.ArffViewerMainPanel;
 

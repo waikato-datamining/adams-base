@@ -15,7 +15,7 @@
 
 /*
  * AdamsOptionHandlerHelpGenerator.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
@@ -23,6 +23,8 @@ package adams.gui.help;
 import adams.core.Utils;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.gui.core.ConsolePanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -34,7 +36,40 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class AdamsOptionHandlerHelpGenerator
-  extends AbstractHelpGenerator {
+  extends AbstractHelpGenerator
+  implements UserModeSupporter {
+
+  /** the user mode to use. */
+  protected UserMode m_UserMode;
+
+  /**
+   * Hook method for initializing the generator.
+   */
+  @Override
+  public void initializeGenerator() {
+    super.initializeGenerator();
+    m_UserMode = UserMode.HIGHEST;
+  }
+
+  /**
+   * Sets the user mode to use for displaying the properties.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    m_UserMode = value;
+  }
+
+  /**
+   * Returns the user mode to use for displaying the properties.
+   *
+   * @return		the mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
+  }
 
   /**
    * Returns whether this class is handled by this generator.
@@ -88,6 +123,7 @@ public class AdamsOptionHandlerHelpGenerator
     HtmlHelpProducer 	producer;
 
     producer = new HtmlHelpProducer();
+    producer.setUserMode(m_UserMode);
     try {
       producer.produce((OptionHandler) obj);
       return producer.toString();

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseObjectOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -26,7 +26,6 @@ import adams.core.base.BaseString;
  * Option class for BaseObject derived classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseObjectOption
   extends CustomHooksOption {
@@ -42,11 +41,12 @@ public class BaseObjectOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected BaseObjectOption(OptionManager owner, String commandline, String property,
-      Object defValue) {
+      Object defValue, UserMode minUserMode) {
 
-    super(owner, commandline, property, defValue);
+    super(owner, commandline, property, defValue, minUserMode);
   }
 
   /**
@@ -58,11 +58,12 @@ public class BaseObjectOption
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    * @param outputDefValue	whether to output the default value or not
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected BaseObjectOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue) {
+      Object defValue, boolean outputDefValue, UserMode minUserMode) {
 
-    super(owner, commandline, property, defValue, outputDefValue);
+    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
 
     // since we don't list the class for handling the value as superclass
     // or in the string, the default value needs to declare it explicitly!

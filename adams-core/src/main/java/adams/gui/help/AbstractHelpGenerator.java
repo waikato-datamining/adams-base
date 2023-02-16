@@ -15,13 +15,15 @@
 
 /*
  * AbstractHelpGenerator.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;
 
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.gui.core.ConsolePanel;
 
 import java.util.ArrayList;
@@ -37,6 +39,19 @@ public abstract class AbstractHelpGenerator {
 
   /** the generators. */
   protected static List<AbstractHelpGenerator> m_Generators;
+
+  /**
+   * Default constructor.
+   */
+  protected AbstractHelpGenerator() {
+    initializeGenerator();
+  }
+
+  /**
+   * Hook method for initializing the generator.
+   */
+  public void initializeGenerator() {
+  }
 
   /**
    * Returns whether this class is handled by this generator.
@@ -121,13 +136,14 @@ public abstract class AbstractHelpGenerator {
    * Generates help for the specified class.
    *
    * @param clsName	the class to generate the help for
+   * @param userMode	the user mode to generate the help for
    * @return		the help container or null if failed to instantiate class
    */
-  public static synchronized HelpContainer generateHelp(String clsName) {
+  public static synchronized HelpContainer generateHelp(String clsName, UserMode userMode) {
     Class 			cls;
     try {
       cls = ClassManager.getSingleton().forName(clsName);
-      return generateHelp(cls);
+      return generateHelp(cls, userMode);
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
@@ -140,9 +156,10 @@ public abstract class AbstractHelpGenerator {
    * Generates help for the specified class.
    *
    * @param cls		the class to generate the help for
+   * @param userMode	the user mode to generate the help for
    * @return		the help container
    */
-  public static synchronized HelpContainer generateHelp(Class cls) {
+  public static synchronized HelpContainer generateHelp(Class cls, UserMode userMode) {
     String 			help;
     boolean 			html;
     AbstractHelpGenerator	generator;
@@ -165,9 +182,10 @@ public abstract class AbstractHelpGenerator {
    * Generates help for the specified object.
    *
    * @param obj		the object to generate the help for
+   * @param userMode	the user mode to generate the help for
    * @return		the help container
    */
-  public static synchronized HelpContainer generateHelp(Object obj) {
+  public static synchronized HelpContainer generateHelp(Object obj, UserMode userMode) {
     String 			help;
     boolean 			html;
     AbstractHelpGenerator	generator;
@@ -181,6 +199,10 @@ public abstract class AbstractHelpGenerator {
 	break;
       }
     }
+
+    if (generator instanceof UserModeSupporter)
+      ((UserModeSupporter) generator).setUserMode(userMode);
+
     help = generator.generate(obj);
     html = generator.isHtml(obj);
     return new HelpContainer(help, html);

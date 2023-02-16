@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -28,6 +28,7 @@ import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.FlowFile;
+import adams.core.option.UserMode;
 import adams.data.id.RuntimeIDGenerator;
 import adams.db.LogEntry;
 import adams.db.MutableLogEntryHandler;
@@ -303,27 +304,27 @@ public class Flow
 
     m_OptionManager.add(
       "log-errors", "logErrors",
-      false);
+      false, UserMode.EXPERT);
 
     m_OptionManager.add(
       "execute-on-error", "executeOnError",
-      new FlowFile("."));
+      new FlowFile("."), UserMode.EXPERT);
 
     m_OptionManager.add(
       "execute-on-finish", "executeOnFinish",
-      new FlowFile("."));
+      new FlowFile("."), UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-execution-listening-enabled", "flowExecutionListeningEnabled",
-      false);
+      false, UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-execution-listener", "flowExecutionListener",
-      new NullListener());
+      new NullListener(), UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-restart-manager", "flowRestartManager",
-      new NullManager());
+      new NullManager(), UserMode.EXPERT);
   }
 
   /**
@@ -438,7 +439,7 @@ public class Flow
    * 			displaying in the GUI or for listing the options.
    */
   public String readOnlyTipText() {
-    return "If set to true, the flow is marked as read-only and the user gets prompted whether to succeed before allowing it to be edited.";
+    return "If set to true, the flow is marked as read-only and the user gets prompted whether to proceed before allowing it to be edited.";
   }
 
   /**

@@ -23,6 +23,7 @@ import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
+import adams.core.option.UserMode;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JMenu;

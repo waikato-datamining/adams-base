@@ -15,7 +15,7 @@
 
 /*
  * CommandlineHelpProducer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -247,7 +247,10 @@ public class CommandlineHelpProducer
       if (numeric.hasUpperBound())
 	result.append("\tmaximum: " + numeric.getUpperBound() + "\n");
     }
-    
+
+    if (option.getMinUserMode() != UserMode.LOWEST)
+      result.append("\tmin-user-mode: " + option.getMinUserMode() + "\n");
+
     val = null;
     if (option.isMultiple()) {
       if (Array.getLength(defValue) > 0) {

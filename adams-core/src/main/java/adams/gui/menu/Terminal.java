@@ -21,11 +21,11 @@
 
 package adams.gui.menu;
 
-import java.io.File;
-
+import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
+
+import java.io.File;
 
 /**
  * Launches a terminal.

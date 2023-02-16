@@ -15,12 +15,13 @@
 
 /*
  * ClassHelpPanel.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
 
 import adams.core.ClassLister;
+import adams.core.option.UserMode;
 import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseSplitPane;
@@ -172,7 +173,7 @@ public class ClassHelpPanel
   protected void displayHelp(String clsName) {
     HelpContainer	cont;
 
-    cont = AbstractHelpGenerator.generateHelp(clsName);
+    cont = AbstractHelpGenerator.generateHelp(clsName, UserMode.HIGHEST);
     if (cont != null) {
       if (cont.isHtml())
 	m_TextPaneHelp.setContentType("text/html");

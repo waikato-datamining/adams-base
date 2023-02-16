@@ -23,11 +23,11 @@ package adams.gui.menu;
 
 import adams.core.DateFormat;
 import adams.core.logging.LoggingHelper;
+import adams.core.option.UserMode;
 import adams.data.image.BufferedImageContainer;
 import adams.data.io.output.AbstractImageWriter;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import adams.gui.application.UserMode;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.print.JComponentWriterFileChooser;

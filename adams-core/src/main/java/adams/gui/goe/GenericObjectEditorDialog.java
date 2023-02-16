@@ -15,11 +15,13 @@
 
 /*
  * GenericObjectEditorDialog.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
 
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
@@ -51,11 +53,10 @@ import java.beans.PropertyEditor;
  * </pre>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericObjectEditorDialog
   extends BaseDialog
-  implements ActionListener {
+  implements ActionListener, UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 450801082654308978L;
@@ -387,6 +388,26 @@ public class GenericObjectEditorDialog
    */
   public int getResultType() {
     return m_Result;
+  }
+
+  /**
+   * Sets the user mode.
+   *
+   * @param value	the mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    getGOEEditor().setUserMode(value);
+  }
+
+  /**
+   * Returns the user mode.
+   *
+   * @return		the mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return getGOEEditor().getUserMode();
   }
 
   /**

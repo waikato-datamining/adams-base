@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringOption.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -23,7 +23,6 @@ package adams.core.option;
  * Handles options with string arguments.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringOption
   extends AbstractArgumentOption {
@@ -39,11 +38,12 @@ public class StringOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected StringOption(OptionManager owner, String commandline, String property,
-      Object defValue) {
+      Object defValue, UserMode minUserMode) {
 
-    this(owner, commandline, property, defValue, true);
+    this(owner, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -55,11 +55,12 @@ public class StringOption
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    * @param outputDefValue	whether to output the default value or not
+   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected StringOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue) {
+      Object defValue, boolean outputDefValue, UserMode minUserMode) {
 
-    super(owner, commandline, property, defValue, outputDefValue);
+    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
   }
 
   /**

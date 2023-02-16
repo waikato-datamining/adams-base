@@ -15,7 +15,7 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -23,6 +23,7 @@ package adams.flow.control;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.UserMode;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
@@ -138,7 +139,7 @@ public abstract class AbstractTee
 
     m_OptionManager.add(
       "asynchronous", "asynchronous",
-      false);
+      false, UserMode.EXPERT);
 
     m_OptionManager.add(
       "tee", "actors",

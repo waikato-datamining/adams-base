@@ -21,11 +21,11 @@
 
 package adams.gui.menu;
 
+import adams.core.option.UserMode;
 import adams.gui.application.AboutBoxPanel;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
-import adams.gui.application.UserMode;
 
 /**
  * Displays the infamous about box.

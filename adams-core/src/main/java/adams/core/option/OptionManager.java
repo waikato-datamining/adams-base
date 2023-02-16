@@ -15,7 +15,7 @@
 
 /*
  * OptionManager.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -75,7 +75,7 @@ public class OptionManager
 
   /** the Variables instance to use for resolving variables. */
   protected transient Variables m_Variables;
-  
+
   /** whether to suppress error messages. */
   protected boolean m_Quiet;
 
@@ -124,7 +124,7 @@ public class OptionManager
   public synchronized Variables getVariables() {
     if (m_Variables == null) {
       if (m_DefaultVariablesInstance == null)
-        m_DefaultVariablesInstance = new Variables();
+	m_DefaultVariablesInstance = new Variables();
       m_Variables = m_DefaultVariablesInstance;
     }
     return m_Variables;
@@ -158,19 +158,19 @@ public class OptionManager
   public boolean getThrowExceptions() {
     return m_ThrowExceptions;
   }
-  
+
   /**
    * Sets whether to suppress error messages.
-   * 
+   *
    * @param value	true if to suppress error messages
    */
   public void setQuiet(boolean value) {
     m_Quiet = value;
   }
-  
+
   /**
    * Returns whether to suppress error messages.
-   * 
+   *
    * @return		true if to suppress error messages
    */
   public boolean isQuiet() {
@@ -201,7 +201,22 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue) {
-    return insert(-1, commandline, property, defValue, true);
+    return insert(-1, commandline, property, defValue, true, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * This call will always output the default value.
+   * Adds the option at the end.
+   *
+   * @param commandline	the commandline string (without the leading dash "-")
+   * @param property	the Java Beans property name
+   * @param defValue	the default value
+   * @param minUserMode the minimum user mode before showing this option
+   * @return		the generated option object
+   */
+  public AbstractOption add(String commandline, String property, Object defValue, UserMode minUserMode) {
+    return insert(-1, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -215,7 +230,22 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue) {
-    return insert(index, commandline, property, defValue, true);
+    return insert(index, commandline, property, defValue, true, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * This call will always output the default value.
+   *
+   * @param index	the position for the option, use -1 to add at the end
+   * @param commandline	the commandline string (without the leading dash "-")
+   * @param property	the Java Beans property name
+   * @param defValue	the default value
+   * @param minUserMode the minimum user mode before showing this option
+   * @return		the generated option object
+   */
+  public AbstractOption insert(int index, String commandline, String property, Object defValue, UserMode minUserMode) {
+    return insert(index, commandline, property, defValue, true, minUserMode);
   }
 
   /**
@@ -229,7 +259,22 @@ public class OptionManager
    * @return			the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue) {
-    return insert(-1, commandline, property, defValue, outputDefValue, null, null);
+    return insert(-1, commandline, property, defValue, outputDefValue, null, null, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * Adds the option at the end.
+   *
+   * @param commandline		the commandline string (without the leading dash "-")
+   * @param property		the Java Beans property name
+   * @param defValue		the default value
+   * @param outputDefValue	if true then the default value will be listed in the Javadoc
+   * @param minUserMode 	the minimum user mode before showing this option
+   * @return			the generated option object
+   */
+  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, UserMode minUserMode) {
+    return insert(-1, commandline, property, defValue, outputDefValue, null, null, minUserMode);
   }
 
   /**
@@ -243,7 +288,22 @@ public class OptionManager
    * @return			the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue) {
-    return insert(index, commandline, property, defValue, outputDefValue, null, null);
+    return insert(index, commandline, property, defValue, outputDefValue, null, null, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   *
+   * @param index		the position for the option, use -1 to add at the end
+   * @param commandline		the commandline string (without the leading dash "-")
+   * @param property		the Java Beans property name
+   * @param defValue		the default value
+   * @param outputDefValue	if true then the default value will be listed in the Javadoc
+   * @param minUserMode 	the minimum user mode before showing this option
+   * @return			the generated option object
+   */
+  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, UserMode minUserMode) {
+    return insert(index, commandline, property, defValue, outputDefValue, null, null, minUserMode);
   }
 
   /**
@@ -259,7 +319,24 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue, Number lower, Number upper) {
-    return insert(-1, commandline, property, defValue, true, lower, upper);
+    return insert(-1, commandline, property, defValue, true, lower, upper, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * This call will always output the default value.
+   * Adds the option at the end.
+   *
+   * @param commandline	the commandline string (without the leading dash "-")
+   * @param property	the Java Beans property name
+   * @param defValue	the default value
+   * @param lower	the lower bound
+   * @param upper	the upper bound
+   * @param minUserMode the minimum user mode before showing this option
+   * @return		the generated option object
+   */
+  public AbstractOption add(String commandline, String property, Object defValue, Number lower, Number upper, UserMode minUserMode) {
+    return insert(-1, commandline, property, defValue, true, lower, upper, minUserMode);
   }
 
   /**
@@ -275,7 +352,24 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue, Number lower, Number upper) {
-    return insert(index, commandline, property, defValue, true, lower, upper);
+    return insert(index, commandline, property, defValue, true, lower, upper, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * This call will always output the default value.
+   *
+   * @param index	the position for the option, use -1 to add at the end
+   * @param commandline	the commandline string (without the leading dash "-")
+   * @param property	the Java Beans property name
+   * @param defValue	the default value
+   * @param lower	the lower bound
+   * @param upper	the upper bound
+   * @param minUserMode the minimum user mode before showing this option
+   * @return		the generated option object
+   */
+  public AbstractOption insert(int index, String commandline, String property, Object defValue, Number lower, Number upper, UserMode minUserMode) {
+    return insert(index, commandline, property, defValue, true, lower, upper, minUserMode);
   }
 
   /**
@@ -291,7 +385,24 @@ public class OptionManager
    * @return			the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper) {
-    return insert(-1, commandline, property, defValue, outputDefValue, lower, upper);
+    return insert(-1, commandline, property, defValue, outputDefValue, lower, upper, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   * Adds the option at the end.
+   *
+   * @param commandline		the commandline string (without the leading dash "-")
+   * @param property		the Java Beans property name
+   * @param defValue		the default value
+   * @param lower		the lower bound
+   * @param upper		the upper bound
+   * @param outputDefValue	if true then the default value will be listed in the Javadoc
+   * @param minUserMode 	the minimum user mode before showing this option
+   * @return			the generated option object
+   */
+  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper, UserMode minUserMode) {
+    return insert(-1, commandline, property, defValue, outputDefValue, lower, upper, minUserMode);
   }
 
   /**
@@ -307,6 +418,23 @@ public class OptionManager
    * @return			the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper) {
+    return insert(index, commandline, property, defValue, outputDefValue, lower, upper, UserMode.LOWEST);
+  }
+
+  /**
+   * Determines the appropriate concrete option class, sets it up and returns it.
+   *
+   * @param index		the position for the option, use -1 to add at the end
+   * @param commandline		the commandline string (without the leading dash "-")
+   * @param property		the Java Beans property name
+   * @param defValue		the default value
+   * @param lower		the lower bound
+   * @param upper		the upper bound
+   * @param outputDefValue	if true then the default value will be listed in the Javadoc
+   * @param minUserMode 	the minimum user mode before showing this option
+   * @return			the generated option object
+   */
+  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper, UserMode minUserMode) {
     AbstractOption	result;
     PropertyDescriptor	descriptor;
     Class		baseclass;
@@ -347,46 +475,46 @@ public class OptionManager
 
     // boolean option
     if ((baseclass == Boolean.TYPE) || (baseclass == Boolean.class)) {
-      result = new BooleanOption(this, commandline, property, defValue, outputDefValue);
+      result = new BooleanOption(this, commandline, property, defValue, outputDefValue, minUserMode);
       m_Options.add(index, result);
       return result;
     }
 
     // string option
     if (baseclass == String.class) {
-      result = new StringOption(this, commandline, property, defValue, outputDefValue);
+      result = new StringOption(this, commandline, property, defValue, outputDefValue, minUserMode);
       m_Options.add(index, result);
       return result;
     }
 
     // numeric options
     if ((baseclass == Integer.TYPE) || (baseclass == Integer.class)) {
-      result = new IntegerOption(this, commandline, property, defValue, outputDefValue, (Integer) lower, (Integer) upper);
+      result = new IntegerOption(this, commandline, property, defValue, outputDefValue, (Integer) lower, (Integer) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Double.TYPE) || (baseclass == Double.class)) {
-      result = new DoubleOption(this, commandline, property, defValue, outputDefValue, (Double) lower, (Double) upper);
+      result = new DoubleOption(this, commandline, property, defValue, outputDefValue, (Double) lower, (Double) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Long.TYPE) || (baseclass == Long.class)) {
-      result = new LongOption(this, commandline, property, defValue, outputDefValue, (Long) lower, (Long) upper);
+      result = new LongOption(this, commandline, property, defValue, outputDefValue, (Long) lower, (Long) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Float.TYPE) || (baseclass == Float.class)) {
-      result = new FloatOption(this, commandline, property, defValue, outputDefValue, (Float) lower, (Float) upper);
+      result = new FloatOption(this, commandline, property, defValue, outputDefValue, (Float) lower, (Float) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Byte.TYPE) || (baseclass == Byte.class)) {
-      result = new ByteOption(this, commandline, property, defValue, outputDefValue, (Byte) lower, (Byte) upper);
+      result = new ByteOption(this, commandline, property, defValue, outputDefValue, (Byte) lower, (Byte) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Short.TYPE) || (baseclass == Short.class)) {
-      result = new ShortOption(this, commandline, property, defValue, outputDefValue, (Short) lower, (Short) upper);
+      result = new ShortOption(this, commandline, property, defValue, outputDefValue, (Short) lower, (Short) upper, minUserMode);
       m_Options.add(index, result);
       return result;
     }
@@ -399,28 +527,28 @@ public class OptionManager
 
       // base object
       if (ClassLocator.isSubclass(BaseObject.class, baseclass)) {
-	result = new BaseObjectOption(this, commandline, property, defValue, outputDefValue);
+	result = new BaseObjectOption(this, commandline, property, defValue, outputDefValue, minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
 
       // enums
       if (   ClassLocator.hasInterface(EnumWithCustomDisplay.class, baseclass)
-	  || ClassLocator.isSubclass(Enum.class, baseclass)) {
-	result = new EnumOption(this, commandline, property, defValue, outputDefValue);
+	|| ClassLocator.isSubclass(Enum.class, baseclass)) {
+	result = new EnumOption(this, commandline, property, defValue, outputDefValue, minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
 
       // custom hook
       if ((OptionUtils.getValueOfHook(baseclass) != null) || (OptionUtils.getToStringHook(baseclass) != null)) {
-	result = new CustomHooksOption(this, commandline, property, defValue, outputDefValue);
+	result = new CustomHooksOption(this, commandline, property, defValue, outputDefValue, minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
 
       // class option (default)
-      result = new ClassOption(this, commandline, property, defValue, outputDefValue);
+      result = new ClassOption(this, commandline, property, defValue, outputDefValue, minUserMode);
       m_Options.add(index, result);
       return result;
     }
@@ -450,7 +578,7 @@ public class OptionManager
     if (m_NoVariablesProperties != null) {
       m_NoVariablesProperties.remove(property);
       if (m_NoVariablesProperties.size() == 0)
-        m_NoVariablesProperties = null;
+	m_NoVariablesProperties = null;
     }
   }
 
@@ -539,8 +667,8 @@ public class OptionManager
 
     for (AbstractOption option: m_Options) {
       if (option.getReadMethod().getReturnType() == cls) {
-        result = option;
-        break;
+	result = option;
+	break;
       }
     }
 
@@ -599,22 +727,22 @@ public class OptionManager
       removeKey = null;
       for (String key: m_CommandlineIndex.keySet()) {
 	if (m_CommandlineIndex.get(key).intValue() == index) {
-          removeKey = key;
-          break;
-        }
+	  removeKey = key;
+	  break;
+	}
       }
       if (removeKey != null)
-        m_CommandlineIndex.remove(removeKey);
+	m_CommandlineIndex.remove(removeKey);
 
       removeKey = null;
       for (String key: m_PropertyIndex.keySet()) {
 	if (m_PropertyIndex.get(key).intValue() == index) {
-          removeKey = key;
+	  removeKey = key;
 	  break;
-        }
+	}
       }
       if (removeKey != null)
-        m_PropertyIndex.remove(removeKey);
+	m_PropertyIndex.remove(removeKey);
 
       // update indices
       for (String key: m_CommandlineIndex.keySet()) {
@@ -705,7 +833,7 @@ public class OptionManager
     var    = getVariableForProperty(property);
     if (var != null) {
       if (!getVariables().has(var))
-        result = "Variable " + Variables.padName(var) + " attached to property '" + property + "' does not exist!";
+	result = "Variable " + Variables.padName(var) + " attached to property '" + property + "' does not exist!";
     }
 
     return result;
@@ -724,7 +852,7 @@ public class OptionManager
     option = findOption(flag, true);
     if (option != null) {
       if (option instanceof AbstractArgumentOption)
-        return ((AbstractArgumentOption) option).isDefaultValue();
+	return ((AbstractArgumentOption) option).isDefaultValue();
     }
 
     return false;
@@ -743,7 +871,7 @@ public class OptionManager
     option = findOption(property, false);
     if (option != null) {
       if (option instanceof AbstractArgumentOption)
-        return ((AbstractArgumentOption) option).isDefaultValue();
+	return ((AbstractArgumentOption) option).isDefaultValue();
     }
 
     return false;
@@ -761,19 +889,19 @@ public class OptionManager
       option = m_Options.get(i);
       method = option.getWriteMethod();
       try {
-        method.invoke(option.getOptionHandler(), option.getDefaultValue());
+	method.invoke(option.getOptionHandler(), option.getDefaultValue());
       }
       catch (Exception e) {
 	if (!m_Quiet)
 	  System.err.println("Error setting default value for '" + m_Owner.getClass().getName() + "/" + option.getProperty() + "':");
-        handleError(e);
+	handleError(e);
       }
     }
   }
 
   /**
    * Updates the Variables instance recursively on all options.
-   * 
+   *
    * @param variables	the variables instance to use
    */
   public void updateVariablesInstance(final Variables variables) {
@@ -795,7 +923,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.hasInterface(Actor.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.hasInterface(Actor.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -829,7 +957,7 @@ public class OptionManager
    * Updates the variables, i.e., in case an option uses a variable and this
    * variable's value has changed (or update is enforced), the updated value 
    * will be set.
-   * 
+   *
    * @param forceUpdate	whether to force the update
    * @param log		optional logger for logging traversal, can be null
    * @return		null if all variables were successfully updated
@@ -850,9 +978,9 @@ public class OptionManager
 	handleArgumentOption(option, path);
       }
       public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
-	if (    option.isVariableModified() 
-	     || (option.isVariableAttached() && forceUpdate) 
-	     || option.isVariableReferencingObject() ) {
+	if (    option.isVariableModified()
+	  || (option.isVariableAttached() && forceUpdate)
+	  || option.isVariableReferencingObject() ) {
 	  String error = option.updateVariable(true, log);
 	  if (error != null) {
 	    if (m_Result.length() > 0)
@@ -868,16 +996,16 @@ public class OptionManager
 	}
       }
       public boolean canHandle(AbstractOption option) {
-        return true;
+	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
       }
       public StringBuilder getResult() {
-        return m_Result;
+	return m_Result;
       }
     };
     traverser.resetResult();
@@ -909,7 +1037,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -938,7 +1066,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -979,7 +1107,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-        return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -1007,7 +1135,7 @@ public class OptionManager
   public void traverse(OptionTraverser traverser, boolean nonAdams) {
     traverse(traverser, new OptionTraversalPath(), nonAdams);
   }
-  
+
   /**
    * Traverses all the options and lets the various options get handled by the
    * supplied object.
@@ -1024,7 +1152,7 @@ public class OptionManager
     Object			element;
     Object			current;
     boolean			isOptionHandler;
-    
+
     options = getOptionsList();
     for (AbstractOption opt: options) {
       cloption = null;
@@ -1091,7 +1219,7 @@ public class OptionManager
 
   /**
    * Traverses a non-ADAMS OptionHandler.
-   * 
+   *
    * @param traverser	the object to handled the traversed options
    * @param path	the path so far
    * @param obj	the non-ADAMS object to traverse
@@ -1100,7 +1228,7 @@ public class OptionManager
     BeanInfo 			bi;
     PropertyDescriptor[]	props;
     Object			current;
-    
+
     try {
       bi    = Introspector.getBeanInfo(obj.getClass());
       props = bi.getPropertyDescriptors();
