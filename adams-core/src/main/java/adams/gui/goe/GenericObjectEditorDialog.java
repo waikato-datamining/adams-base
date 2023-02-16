@@ -23,6 +23,8 @@ package adams.gui.goe;
 import adams.core.option.UserMode;
 import adams.core.option.UserModeSupporter;
 import adams.env.Environment;
+import adams.gui.application.AbstractApplicationFrame;
+import adams.gui.application.Child;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
@@ -297,6 +299,8 @@ public class GenericObjectEditorDialog
   protected void beforeShow() {
     super.beforeShow();
 
+    setUserMode(getUserMode(getParent()));
+
     m_Current = m_Editor.getValue();
     // only in case of GOEPanels can be determine whether OK or Cancel was
     // selected.
@@ -421,6 +425,42 @@ public class GenericObjectEditorDialog
       m_Result  = APPROVE_OPTION;
       setVisible(false);
     }
+  }
+
+  /**
+   * Determines the application frame.
+   *
+   * @return		the application frame, null if failed to determine
+   */
+  protected static AbstractApplicationFrame getApplicationFrame(Container parent) {
+    AbstractApplicationFrame	result;
+    Child child;
+
+    result = (AbstractApplicationFrame) GUIHelper.getParent(parent, AbstractApplicationFrame.class);
+    if (result == null) {
+      child = (Child) GUIHelper.getParent(parent, Child.class);
+      if (child != null)
+        result = child.getParentFrame();
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the user mode to apply.
+   *
+   * @return		the user mode
+   */
+  protected static UserMode getUserMode(Container parent) {
+    UserMode			result;
+    AbstractApplicationFrame	frame;
+
+    result = UserMode.HIGHEST;
+    frame = getApplicationFrame(parent);
+    if (frame != null)
+      result = frame.getUserMode();
+
+    return result;
   }
 
   /**

@@ -21,8 +21,6 @@
 package adams.gui.core;
 
 import adams.core.logging.LoggingLevel;
-import adams.core.option.UserMode;
-import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.Child;
 
 import javax.swing.JFrame;
@@ -39,7 +37,6 @@ import java.awt.LayoutManager;
  * A JPanel extended by a few useful methods.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BasePanel
   extends JPanel {
@@ -118,42 +115,6 @@ public class BasePanel
    */
   public JInternalFrame getParentInternalFrame() {
     return GUIHelper.getParentInternalFrame(this);
-  }
-
-  /**
-   * Determines the application frame.
-   *
-   * @return		the application frame, null if failed to determine
-   */
-  public AbstractApplicationFrame getApplicationFrame() {
-    AbstractApplicationFrame	result;
-    Child 			child;
-
-    result = (AbstractApplicationFrame) GUIHelper.getParent(this, AbstractApplicationFrame.class);
-    if (result == null) {
-      child = (Child) GUIHelper.getParent(this, Child.class);
-      if (child != null)
-        result = child.getParentFrame();
-    }
-
-    return result;
-  }
-
-  /**
-   * Returns the user mode to apply.
-   *
-   * @return		the user mode
-   */
-  public UserMode getUserMode() {
-    UserMode			result;
-    AbstractApplicationFrame	frame;
-
-    result = UserMode.HIGHEST;
-    frame = getApplicationFrame();
-    if (frame != null)
-      result = frame.getUserMode();
-
-    return result;
   }
 
   /**
