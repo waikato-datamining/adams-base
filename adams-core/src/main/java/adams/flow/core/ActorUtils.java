@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -1544,7 +1544,7 @@ public class ActorUtils {
     if (actor instanceof VariablesHandler)
       ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) actor, file);
     result = actor.setUp();
-    actor.destroy();
+    actor.cleanUp();  // .destroy() can get rid of variables, so only a .cleanUp() call
     
     if (result == null) {
       processor = new MultiProcessor();
@@ -1569,6 +1569,8 @@ public class ActorUtils {
       processor.process(actor);
       result = processor.getWarnings();
     }
+
+    actor.destroy();
 
     return result;
   }
