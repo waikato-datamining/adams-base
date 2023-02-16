@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2023-02-15 15:58:08
+# Date: 2023-02-16 14:33:17
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-annotator,adams-audio,adams-core,adams-docker,adams-event,adams-excel,adams-ffmpeg,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-json,adams-math,adams-meta,adams-ml,adams-net,adams-odf,adams-opencv,adams-pdf,adams-pyro4,adams-python,adams-random,adams-rats-core,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml,adams-yaml
@@ -14,7 +14,7 @@ adams.flow.control.Flow -annotation "Allows the comparison of image segmentation
   adams.flow.transformer.MapToVariables
  adams.flow.control.Trigger -name iterate
   adams.flow.standalone.SetVariable -name reset -var-name count -var-value 0
-  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{annotation_dir} -regexp .*\\\\.png -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{annotation_dir} -regexp .*\\\\.jpg -sorting SORT_BY_NAME" -use-forward-slashes true
   adams.flow.control.Tee -name "# files"
    adams.flow.transformer.ArrayLength
    adams.flow.transformer.SetVariable -var-name max
