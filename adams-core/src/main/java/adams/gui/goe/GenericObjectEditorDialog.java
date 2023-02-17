@@ -401,7 +401,8 @@ public class GenericObjectEditorDialog
    */
   @Override
   public void setUserMode(UserMode value) {
-    getGOEEditor().setUserMode(value);
+    if (getGOEEditor() != null)
+      getGOEEditor().setUserMode(value);
   }
 
   /**
@@ -411,7 +412,10 @@ public class GenericObjectEditorDialog
    */
   @Override
   public UserMode getUserMode() {
-    return getGOEEditor().getUserMode();
+    if (getGOEEditor() != null)
+      return getGOEEditor().getUserMode();
+    else
+      return UserMode.HIGHEST;
   }
 
   /**
