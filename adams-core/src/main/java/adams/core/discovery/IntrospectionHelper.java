@@ -143,7 +143,7 @@ public class IntrospectionHelper {
    * @return			the information gathered
    * @throws Exception		if introspection fails
    */
-  public static IntrospectionContainer introspect(Class cls, boolean useBlacklist) throws Exception{
+  public static IntrospectionContainer introspect(Class cls, boolean useBlacklist, UserMode userMode) throws Exception{
     IntrospectionContainer	result;
     BeanInfo 			bi;
     PropertyDescriptor[] 	properties;
