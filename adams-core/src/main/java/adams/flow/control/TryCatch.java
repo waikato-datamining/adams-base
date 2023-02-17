@@ -15,13 +15,14 @@
 
 /*
  * TryCatch.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
+import adams.core.option.UserMode;
 import adams.flow.control.errorpostprocessor.ErrorPostProcessor;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -231,7 +232,7 @@ public class TryCatch
 
     m_OptionManager.add(
       "error-post-processors", "errorPostProcessor",
-      new adams.flow.control.errorpostprocessor.Null());
+      new adams.flow.control.errorpostprocessor.Null(), UserMode.EXPERT);
   }
 
   /**

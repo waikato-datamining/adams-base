@@ -15,13 +15,14 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
+import adams.core.option.UserMode;
 import adams.flow.control.Flow;
 import adams.flow.core.displaytype.AbstractDisplayType;
 import adams.flow.core.displaytype.Default;
@@ -101,7 +102,7 @@ public abstract class AbstractDisplay
 
     m_OptionManager.add(
 	    "display-type", "displayType",
-	    getDefaultDisplayType());
+	    getDefaultDisplayType(), UserMode.EXPERT);
 
     m_OptionManager.add(
 	    "width", "width",

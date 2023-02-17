@@ -74,7 +74,7 @@ import adams.core.QuickInfoHelper;
  * &nbsp;&nbsp;&nbsp;All the actors that define this sequence.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- *
+ *ImageViewer
  * <pre>-container-value &lt;java.lang.String&gt; (property: containerValueName)
  * &nbsp;&nbsp;&nbsp;The name of the value to update.
  * &nbsp;&nbsp;&nbsp;default:

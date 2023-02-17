@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -26,6 +26,7 @@ import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.filechanged.FileChangeMonitor;
 import adams.core.io.filechanged.NoChange;
+import adams.core.option.UserMode;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 
@@ -68,7 +69,7 @@ public abstract class AbstractExternalActor
 
     m_OptionManager.add(
       "monitor", "monitor",
-      new NoChange());
+      new NoChange(), UserMode.EXPERT);
 
     m_OptionManager.add(
       "on-the-fly", "onTheFly",
