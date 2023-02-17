@@ -15,7 +15,7 @@
 
 /*
  * DisplayPanelManager.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -35,6 +35,7 @@ import adams.gui.core.AbstractNamedHistoryPanel.HistoryEntrySelectionListener;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -52,7 +53,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -76,7 +76,8 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
  * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageSupporter<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -84,6 +85,7 @@ import java.util.Hashtable;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -91,27 +93,42 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: DisplayPanelManager
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
  * </pre>
  *
  * <pre>-width &lt;int&gt; (property: width)
@@ -140,9 +157,15 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
  *
+ * <pre>-divider-location &lt;int&gt; (property: dividerLocation)
+ * &nbsp;&nbsp;&nbsp;The position for the divider in pixels.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  * <pre>-provider &lt;adams.flow.sink.DisplayPanelProvider&gt; (property: panelProvider)
  * &nbsp;&nbsp;&nbsp;The actor for generating the display panels.
- * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -image-overlay adams.gui.visualization.image.NullOverlay
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay
  * </pre>
  *
  * <pre>-num-tokens &lt;int&gt; (property: numTokens)
@@ -152,15 +175,15 @@ import java.util.Hashtable;
  * </pre>
  *
  * <pre>-entry-name-variable &lt;adams.core.VariableNameNoUpdate&gt; (property: entryNameVariable)
- * &nbsp;&nbsp;&nbsp;The variable to use for naming the entries; gets ignored if variable not 
- * &nbsp;&nbsp;&nbsp;available; an existing history entry gets replaced if a new one with the 
+ * &nbsp;&nbsp;&nbsp;The variable to use for naming the entries; gets ignored if variable not
+ * &nbsp;&nbsp;&nbsp;available; an existing history entry gets replaced if a new one with the
  * &nbsp;&nbsp;&nbsp;same name gets added.
  * &nbsp;&nbsp;&nbsp;default: entryNameVariable
  * </pre>
  *
  * <pre>-allow-merge &lt;boolean&gt; (property: allowMerge)
- * &nbsp;&nbsp;&nbsp;If enabled and the display panel is derived from adams.flow.sink.MergeableDisplayPanel 
- * &nbsp;&nbsp;&nbsp;then entries with the same name (ie when using 'entryNameVariable') get 
+ * &nbsp;&nbsp;&nbsp;If enabled and the display panel is derived from adams.flow.sink.MergeableDisplayPanel
+ * &nbsp;&nbsp;&nbsp;then entries with the same name (ie when using 'entryNameVariable') get
  * &nbsp;&nbsp;&nbsp;merged.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -173,7 +196,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DisplayPanelManager
   extends AbstractDisplay
@@ -187,7 +209,6 @@ public class DisplayPanelManager
    * containing experiments results.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class DisplayPanelHistoryPanel
     extends AbstractNamedHistoryPanel<DisplayPanel> {
@@ -262,7 +283,7 @@ public class DisplayPanelManager
       int	i;
 
       for (i = 0; i < count(); i++)
-        getEntry(i).wrapUp();
+	getEntry(i).wrapUp();
     }
   }
 
@@ -271,7 +292,6 @@ public class DisplayPanelManager
    * on the right.
    *
    * @author FracPete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class HistorySplitPanel
     extends BasePanel {
@@ -283,7 +303,7 @@ public class DisplayPanelManager
     protected DisplayPanelManager m_Owner;
 
     /** the split pane for the components. */
-    protected JSplitPane m_SplitPane;
+    protected BaseSplitPane m_SplitPane;
 
     /** the status bar. */
     protected BaseStatusBar m_StatusBar;
@@ -308,7 +328,7 @@ public class DisplayPanelManager
       m_Owner   = owner;
       m_Format  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-      m_SplitPane = new JSplitPane();
+      m_SplitPane = new BaseSplitPane();
       add(m_SplitPane, BorderLayout.CENTER);
 
       m_Panel = new BasePanel(new BorderLayout());
@@ -342,6 +362,15 @@ public class DisplayPanelManager
      */
     public DisplayPanelManager getOwner() {
       return m_Owner;
+    }
+
+    /**
+     * Returns the underlying split pane.
+     *
+     * @return		the split pane
+     */
+    public BaseSplitPane getSplitPane() {
+      return m_SplitPane;
     }
 
     /**
@@ -493,6 +522,9 @@ public class DisplayPanelManager
   /** the history panel. */
   protected HistorySplitPanel m_HistoryPanel;
 
+  /** the position for the left divider. */
+  protected int m_DividerLocation;
+
   /** the actor to use for generating panels. */
   protected DisplayPanelProvider m_PanelProvider;
 
@@ -551,6 +583,10 @@ public class DisplayPanelManager
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "divider-location", "dividerLocation",
+      -1, -1, null);
 
     m_OptionManager.add(
       "provider", "panelProvider",
@@ -670,6 +706,37 @@ public class DisplayPanelManager
   @Override
   protected int getDefaultHeight() {
     return 480;
+  }
+
+  /**
+   * Sets the position for the left divider in pixels.
+   *
+   * @param value 	the position
+   */
+  public void setDividerLocation(int value) {
+    if (getOptionManager().isValid("dividerLocation", value)) {
+      m_DividerLocation = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the position for the left divider in pixels.
+   *
+   * @return 		the position
+   */
+  public int getDividerLocation() {
+    return m_DividerLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String dividerLocationTipText() {
+    return "The position for the divider in pixels.";
   }
 
   /**
@@ -945,6 +1012,9 @@ public class DisplayPanelManager
 
     result         = new HistorySplitPanel(this);
     result.setAllowSearch(m_AllowSearch);
+    if (m_DividerLocation > -1)
+      result.getSplitPane().setDividerLocation(m_DividerLocation);
+
     m_HistoryPanel = result;
 
     return result;
@@ -1009,7 +1079,7 @@ public class DisplayPanelManager
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImageContainer.class, adams.data.image.BufferedImageSupporter.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     if (m_PanelProvider != null)
