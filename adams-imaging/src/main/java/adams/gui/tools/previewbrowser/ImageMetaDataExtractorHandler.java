@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageMetaDataExtractorHandler.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -47,7 +47,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10619 $
  */
 public class ImageMetaDataExtractorHandler
   extends AbstractContentHandler {
@@ -93,6 +92,8 @@ public class ImageMetaDataExtractorHandler
       panel = new JPanel(new BorderLayout(5, 5));
       sheet = ImageMetaDataHelper.metaDataExtractor(file);
       table = new SpreadSheetTable(sheet);
+      table.setUseSimpleHeader(true);
+      table.setShowRowColumn(false);
       panel.add(new BaseScrollPane(table));
 
       search = new SearchPanel(LayoutType.HORIZONTAL, true);
