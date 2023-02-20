@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageMetaDataHandler.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -93,6 +93,8 @@ public class ApacheCommonsImageMetaDataHandler
       panel = new JPanel(new BorderLayout(5, 5));
       sheet = ImageMetaDataHelper.commons(file);
       table = new SpreadSheetTable(sheet);
+      table.setUseSimpleHeader(true);
+      table.setShowRowColumn(false);
       panel.add(new BaseScrollPane(table));
 
       search = new SearchPanel(LayoutType.HORIZONTAL, true);
