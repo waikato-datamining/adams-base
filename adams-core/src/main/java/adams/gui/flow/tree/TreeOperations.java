@@ -895,7 +895,7 @@ public class TreeOperations
       changed = (actor.getClass() != actorOld.getClass());
       if (changed) {
         if ((actor instanceof MutableActorHandler) && (actorOld instanceof MutableActorHandler)) {
-          keepChildren = true;
+          keepChildren = ((currNode.getChildCount() > 0));
 	}
       }
       else if (actor instanceof ActorHandler) {
@@ -911,6 +911,8 @@ public class TreeOperations
 	  }
 	}
       }
+      if (keepChildren && (((MutableActorHandler) actor).size() > 0))
+        m_Owner.getOwner().showStatus("Sub-flow from pasted actor omitted due to existing sub-flow.");
 
       if (changed) {
 	expanded = null;
