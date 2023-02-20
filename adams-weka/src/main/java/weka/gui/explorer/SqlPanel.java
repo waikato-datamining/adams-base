@@ -15,7 +15,7 @@
 
 /*
  * SqlPanel.java
- * Copyright (C) 2007 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.explorer;
@@ -223,7 +223,8 @@ public class SqlPanel
    * @param l 		a value of type 'PropertyChangeListener'
    */
   public void addPropertyChangeListener(PropertyChangeListener l) {
-    m_Support.addPropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.addPropertyChangeListener(l);
   }
 
   /**
@@ -232,7 +233,8 @@ public class SqlPanel
    * @param l 		a value of type 'PropertyChangeListener'
    */
   public void removePropertyChangeListener(PropertyChangeListener l) {
-    m_Support.removePropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.removePropertyChangeListener(l);
   }
 
   /**

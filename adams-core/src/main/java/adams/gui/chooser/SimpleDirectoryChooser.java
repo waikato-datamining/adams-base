@@ -15,7 +15,7 @@
 
 /*
  * SimpleDirectoryChooser.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -99,7 +99,8 @@ public class SimpleDirectoryChooser
      */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener l) {
-      m_Chooser.addPropertyChangeListener(l);
+      if (m_Chooser != null)
+        m_Chooser.addPropertyChangeListener(l);
     }
 
     /**
@@ -109,7 +110,8 @@ public class SimpleDirectoryChooser
      */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener l) {
-      m_Chooser.removePropertyChangeListener(l);
+      if (m_Chooser != null)
+        m_Chooser.removePropertyChangeListener(l);
     }
   }
 
