@@ -16,7 +16,7 @@
 /*
  *    InlineEditor.java
  *
- *    Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -589,7 +589,8 @@ public class InlineEditor
    */
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     super.addPropertyChangeListener(listener);
-    m_PropertyChangeListeners.add(listener);
+    if (m_PropertyChangeListeners != null)
+      m_PropertyChangeListeners.add(listener);
   }
 
   /**
@@ -599,7 +600,8 @@ public class InlineEditor
    */
   public void removePropertyChangeListener(PropertyChangeListener listener) {
     super.removePropertyChangeListener(listener);
-    m_PropertyChangeListeners.remove(listener);
+    if (m_PropertyChangeListeners != null)
+      m_PropertyChangeListeners.remove(listener);
   }
 
   /**

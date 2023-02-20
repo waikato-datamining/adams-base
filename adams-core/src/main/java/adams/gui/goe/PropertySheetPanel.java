@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2022 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -144,7 +144,7 @@ public class PropertySheetPanel
   protected BaseTextAreaWithButtons m_PanelAbout;
 
   /** A support object for handling property change listeners. */
-  protected PropertyChangeSupport m_Support = new PropertyChangeSupport(this);
+  protected PropertyChangeSupport m_Support;
 
   /** whether to show/suppress the about box. */
   protected boolean m_ShowAboutBox;
@@ -169,6 +169,7 @@ public class PropertySheetPanel
 
     m_ShowAboutBox = true;
     m_UserMode     = UserMode.LOWEST;
+    m_Support      = new PropertyChangeSupport(this);
   }
 
   /**
@@ -254,7 +255,8 @@ public class PropertySheetPanel
    */
   @Override
   public void addPropertyChangeListener(PropertyChangeListener l) {
-    m_Support.addPropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.addPropertyChangeListener(l);
   }
 
   /**
@@ -264,7 +266,8 @@ public class PropertySheetPanel
    */
   @Override
   public void removePropertyChangeListener(PropertyChangeListener l) {
-    m_Support.removePropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.removePropertyChangeListener(l);
   }
 
   /**

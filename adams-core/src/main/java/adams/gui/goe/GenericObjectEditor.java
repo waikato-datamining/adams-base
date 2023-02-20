@@ -1310,7 +1310,8 @@ public class GenericObjectEditor
    * @param l 		a value of type 'PropertyChangeListener'
    */
   public void addPropertyChangeListener(PropertyChangeListener l) {
-    m_Support.addPropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.addPropertyChangeListener(l);
   }
 
   /**
@@ -1319,7 +1320,8 @@ public class GenericObjectEditor
    * @param l 		a value of type 'PropertyChangeListener'
    */
   public void removePropertyChangeListener(PropertyChangeListener l) {
-    m_Support.removePropertyChangeListener(l);
+    if (m_Support != null)
+      m_Support.removePropertyChangeListener(l);
   }
 
   /**
