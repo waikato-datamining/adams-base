@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -24,6 +24,7 @@ import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePopupMenu;
@@ -35,6 +36,7 @@ import adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -43,6 +45,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -54,7 +57,6 @@ import java.util.List;
  * Generic GOE popup menu, for copy/paste, etc.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GenericObjectEditorPopupMenu
   extends BasePopupMenu {
@@ -87,6 +89,7 @@ public class GenericObjectEditorPopupMenu
    */
   protected void initialize(final PropertyEditor editor, final JComponent comp) {
     JMenuItem 		item;
+    JMenu		menu;
     boolean 		hasNested;
     final boolean 	customStringRepresentation;
     final String 	itemText;
@@ -115,6 +118,33 @@ public class GenericObjectEditorPopupMenu
       }
       catch (Exception ex) {
         GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
+      }
+    });
+    add(item);
+
+    if (!(editor instanceof GenericArrayEditor)) {
+      menu = new JMenu("User mode");
+      menu.setIcon(ImageManager.getIcon("person.png"));
+      for (final UserMode um : UserMode.values()) {
+	item = new JMenuItem(um.toDisplay());
+	item.addActionListener(new ActionListener() {
+	  @Override
+	  public void actionPerformed(ActionEvent e) {
+	    ((GenericObjectEditor) editor).setUserMode(um);
+	  }
+	});
+	menu.add(item);
+      }
+      add(menu);
+    }
+
+    item.addActionListener((ActionEvent e) -> {
+      try {
+	editor.setValue(editor.getValue().getClass().getDeclaredConstructor().newInstance());
+	notifyChangeListeners();
+      }
+      catch (Exception ex) {
+	GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
       }
     });
     add(item);
