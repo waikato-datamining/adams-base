@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -125,7 +125,7 @@ public class SpreadSheetTableModel
    */
   public void setShowRowColumn(boolean value) {
     m_ShowRowColumn = value;
-    fireTableDataChanged();
+    fireTableStructureChanged();
   }
   
   /**
