@@ -15,10 +15,12 @@
 
 /*
  * FlatLafDarcula.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.laf;
+
+import adams.gui.core.ColorHelper;
 
 import javax.swing.UIManager;
 
@@ -62,5 +64,7 @@ public class FlatLafIntelliJ
     com.formdev.flatlaf.FlatIntelliJLaf.setup();
     UIManager.put("Table.showHorizontalLines", true);
     UIManager.put("Table.showVerticalLines", true);
+    UIManager.put("Tree.selectionBackground", ColorHelper.valueOf("#b8cfe5"));
+    UIManager.put("Tree.wideSelection", false);
   }
 }
