@@ -15,7 +15,7 @@
 
 /*
  * BaseDialog.java
- * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -39,7 +39,7 @@ import java.awt.Frame;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class BaseDialog
-    extends JDialog {
+  extends JDialog {
 
   /** for serialization. */
   private static final long serialVersionUID = 6155286585412623451L;
@@ -239,8 +239,8 @@ public class BaseDialog
       m_UISettingsApplied = true;
       size = getSize();
       setSize(new Dimension(
-	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".width", size.width),
-	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".height", size.height)));
+	UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".width", size.width),
+	UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".height", size.height)));
     }
 
     // position
@@ -249,8 +249,8 @@ public class BaseDialog
       x = getX();
       y = getY();
       setLocation(
-	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".x", x),
-	  UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".y", y));
+	UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".x", x),
+	UISettings.get(BaseDialog.class, m_UISettingsPrefix + ".y", y));
     }
 
     m_UISettingsStored = false;
@@ -341,5 +341,19 @@ public class BaseDialog
     super.setLocationRelativeTo(c);
     GUIHelper.adjustSize(this);
     GUIHelper.fixPosition(this);
+  }
+
+  /**
+   * Packs the dialog with optional min/max dimensions.
+   *
+   * @param min		the minimum dimensions, ignored if null
+   * @param max		the maximum dimensions, ignored if null
+   */
+  public void pack(Dimension min, Dimension max) {
+    super.pack();
+    if (min != null)
+      GUIHelper.makeAtLeast(this, min);
+    if (max != null)
+      GUIHelper.makeAtMost(this, max);
   }
 }
