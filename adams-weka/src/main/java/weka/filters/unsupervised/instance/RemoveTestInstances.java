@@ -15,7 +15,7 @@
 
 /*
  * RemoveTestInstances.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.instance;
@@ -35,9 +35,11 @@ import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -69,19 +71,19 @@ import java.util.Vector;
  * <pre> -id-test &lt;1-based index or name&gt;
  *  The index/name of ID attribute to use for identifying rows in the test set (if different from '-id').
  * </pre>
- * 
+ *
  * <pre> -invert
  *  Whether to invert the matching (ie keep rather than remove).
  * </pre>
- * 
+ *
  * <pre> -output-debug-info
  *  If set, filter is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, filter capabilities are not checked before filter is built
  *  (use with caution).</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -111,6 +113,9 @@ public class RemoveTestInstances
   /** whether to invert the matching. */
   protected boolean m_Invert = false;
 
+  /** the supplied test set, when using programmatically. */
+  protected Instances m_SuppliedTestSet;
+
   /**
    * Returns a string describing this classifier.
    *
@@ -120,7 +125,7 @@ public class RemoveTestInstances
   public String globalInfo() {
     return
       "Removes all instances of the provided test set from the data passing through.\n"
-      + "Requires an attribute in the data that uniquely identifies instances across datasets.";
+	+ "Requires an attribute in the data that uniquely identifies instances across datasets.";
   }
 
   /**
@@ -135,28 +140,28 @@ public class RemoveTestInstances
     result = new Vector();
 
     result.addElement(new Option(
-	"\tThe test set to load.\n",
-	"test-set", 1, "-test-set <file>"));
+      "\tThe test set to load.\n",
+      "test-set", 1, "-test-set <file>"));
 
     result.addElement(new Option(
-	"\tWhether to use a custom loader.\n",
-	"use-custom-loader", 0, "-use-custom-loader"));
+      "\tWhether to use a custom loader.\n",
+      "use-custom-loader", 0, "-use-custom-loader"));
 
     result.addElement(new Option(
       "\tThe custom loader to use.\n",
       "custom-loader", 1, "-custom-loader <classname + options>"));
 
     result.addElement(new Option(
-	"\tThe index/name of ID attribute to use for identifying rows.\n",
-	"id", 1, "-id <1-based index or name>"));
+      "\tThe index/name of ID attribute to use for identifying rows.\n",
+      "id", 1, "-id <1-based index or name>"));
 
     result.addElement(new Option(
-	"\tThe index/name of ID attribute to use for identifying rows in the test set (if different from '-id').\n",
-	"id-test", 1, "-id-test <1-based index or name>"));
+      "\tThe index/name of ID attribute to use for identifying rows in the test set (if different from '-id').\n",
+      "id-test", 1, "-id-test <1-based index or name>"));
 
     result.addElement(new Option(
-	"\tWhether to invert the matching (ie keep rather than remove).\n",
-	"invert", 0, "-invert"));
+      "\tWhether to invert the matching (ie keep rather than remove).\n",
+      "invert", 0, "-invert"));
 
     enm = super.listOptions();
     while (enm.hasMoreElements())
@@ -217,9 +222,9 @@ public class RemoveTestInstances
    * @return an array of strings suitable for passing to setOptions
    */
   public String[] getOptions() {
-    Vector<String>	result;
+    List<String> 	result;
 
-    result = new Vector<String>();
+    result = new ArrayList<>();
 
     result.add("-test-set");
     result.add("" + getTestSet());
@@ -243,7 +248,7 @@ public class RemoveTestInstances
 
     result.addAll(Arrays.asList(super.getOptions()));
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -421,6 +426,24 @@ public class RemoveTestInstances
   }
 
   /**
+   * Sets the test set to use instead of loading one from disk.
+   *
+   * @param value	the test set to use, null to remove
+   */
+  public void setSuppliedTestSet(Instances value) {
+    m_SuppliedTestSet = value;
+  }
+
+  /**
+   * Returns the manually set test set instead of loading one from disk.
+   *
+   * @return		the manually set test set to use, null if to load one from disk
+   */
+  public Instances getSuppliedTestSet() {
+    return m_SuppliedTestSet;
+  }
+
+  /**
    * Returns the Capabilities of this filter.
    *
    * @return            the capabilities of this object
@@ -455,22 +478,28 @@ public class RemoveTestInstances
     if (m_ID.getIntIndex() == -1)
       throw new IllegalStateException("Attribute name/index not found: " + m_ID);
 
-    if (!m_TestSet.exists())
-      throw new IllegalStateException("Test set does not exist: " + m_TestSet);
-    if (m_TestSet.isDirectory())
-      throw new IllegalStateException("Test set points to a directory: " + m_TestSet);
+    if (m_SuppliedTestSet == null) {
+      if (!m_TestSet.exists())
+	throw new IllegalStateException("Test set does not exist: " + m_TestSet);
+      if (m_TestSet.isDirectory())
+	throw new IllegalStateException("Test set points to a directory: " + m_TestSet);
+    }
 
     return new Instances(inputFormat, 0);
   }
 
   /**
-   * Loads the test set.
+   * Loads the test set from disk or returns the manually supplied one.
    *
    * @return		the dataset
    * @throws Exception	if loader fails
+   * @see		#getSuppliedTestSet()
    */
   protected Instances loadTestSet() throws Exception {
     Instances	result;
+
+    if (m_SuppliedTestSet != null)
+      return m_SuppliedTestSet;
 
     if (getUseCustomLoader()) {
       m_CustomLoader.setFile(getTestSet());
@@ -535,7 +564,7 @@ public class RemoveTestInstances
     index  = m_ID.getIntIndex();
     if (index == -1)
       throw new IllegalStateException(
-        "ID attribute not found in dataset: " + m_ID.getIndex() + "\n" + new Instances(instances, 0));
+	"ID attribute not found in dataset: " + m_ID.getIndex() + "\n" + new Instances(instances, 0));
 
     for (Instance inst: instances) {
       if (numeric)
