@@ -15,7 +15,7 @@
 
 /*
  * RangeTextField.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -23,7 +23,7 @@ package adams.gui.core;
 import adams.core.Range;
 
 /**
- * Text field designed for entering a single index, eg for attributes.
+ * Text field designed for entering a range, eg for attributes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
