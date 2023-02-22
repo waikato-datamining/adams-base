@@ -15,7 +15,7 @@
 
 /*
  * AbstractPropertiesCheckBoxMenuItemAction.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -44,10 +44,20 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dial
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     setSelected(isInitiallySelected());
   }
-  
+
+  /**
+   * Returns whether the icon (if available) can be used.
+   *
+   * @return		true if it can be used
+   */
+  @Override
+  protected boolean canUseIcon() {
+    return false;
+  }
+
   /**
    * Returns the initial selected state of the menu item.
    * 
@@ -70,7 +80,7 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dial
 	setSelected(!isSelected());
       }
     });
-    if (getIcon() != null)
+    if ((getIcon() != null) && canUseIcon())
       result.setIcon(getIcon());
 
     return result;

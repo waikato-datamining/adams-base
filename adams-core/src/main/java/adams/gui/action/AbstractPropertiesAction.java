@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowEditorAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -28,9 +28,8 @@ import java.awt.Dialog;
 /**
  * Ancestor for actions that use a Properties file as basis for shortcuts,
  * icons and mnemonics.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of state
  * @param <D> the type of dialog
  */
@@ -39,10 +38,10 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
 
   /** for serialization. */
   private static final long serialVersionUID = 9209507880496036402L;
-  
+
   /** the state. */
   protected T m_State;
-  
+
   /**
    * Initializes the action.
    */
@@ -50,32 +49,41 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
   protected void initialize() {
     String	shortcut;
     String	icon;
-    
+
     super.initialize();
-    
+
     m_State = null;
-    
+
     setName(getTitle());
 
     shortcut = getProperties().getProperty(getClass().getName() + "-Shortcut");
     if (shortcut != null)
       setAccelerator(shortcut);
-    
+
     icon = getProperties().getProperty(getClass().getName() + "-Icon");
-    if (icon != null)
+    if ((icon != null) && canUseIcon())
       setIcon(ImageManager.getIcon(icon));
   }
-  
+
+  /**
+   * Returns whether the icon (if available) can be used.
+   *
+   * @return		true if it can be used
+   */
+  protected boolean canUseIcon() {
+    return true;
+  }
+
   /**
    * Returns the underlying properties.
-   * 
+   *
    * @return		the properties
    */
   protected abstract Properties getProperties();
-  
+
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   protected abstract String getTitle();
@@ -84,7 +92,7 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
    * Creates a new menuitem.
    */
   public abstract JMenuItem getMenuItem();
-  
+
   /**
    * Performs the actual update of the state of the action.
    */
@@ -92,7 +100,7 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
 
   /**
    * Updates the state of the action.
-   * 
+   *
    * @param state	the current state
    */
   public void update(T state) {
