@@ -516,20 +516,17 @@ public class InvestigatorPanel
 
       // Options/Undo enabled
       m_MenuItemOptionsUndoEnabled = new JCheckBoxMenuItem("Undo enabled");
-      m_MenuItemOptionsUndoEnabled.setIcon(ImageManager.getIcon("undo.gif"));
       m_MenuItemOptionsUndoEnabled.setSelected(getProperties().getBoolean("General.UndoEnabled", true));
       m_MenuItemOptionsUndoEnabled.addActionListener((ActionEvent e) -> toggleUndo());
       menu.add(m_MenuItemOptionsUndoEnabled);
 
       // Options/Calculate model size
       m_MenuItemOptionsCalculateModelSize = new JCheckBoxMenuItem("Calculate model size");
-      m_MenuItemOptionsCalculateModelSize.setIcon(ImageManager.getIcon("object.gif"));
       m_MenuItemOptionsCalculateModelSize.setSelected(getProperties().getBoolean("General.CalculateModelSize", false));
       menu.add(m_MenuItemOptionsCalculateModelSize);
 
       // Options/Sort attribute names
       m_MenuItemOptionsSortAttributeNames = new JCheckBoxMenuItem("Sort attribute names");
-      m_MenuItemOptionsSortAttributeNames.setIcon(ImageManager.getIcon("sort-ascending.png"));
       m_MenuItemOptionsSortAttributeNames.setSelected(getProperties().getBoolean("General.SortAttributeNames", true));
       m_MenuItemOptionsSortAttributeNames.addActionListener((ActionEvent e) -> toggleSortAttributeNames());
       menu.add(m_MenuItemOptionsSortAttributeNames);

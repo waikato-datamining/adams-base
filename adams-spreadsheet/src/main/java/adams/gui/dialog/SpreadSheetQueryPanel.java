@@ -168,7 +168,6 @@ public class SpreadSheetQueryPanel
 	menu.add(menuitem);
 	// line wrap
 	menuitem = new JCheckBoxMenuItem("Line wrap");
-	menuitem.setIcon(ImageManager.getEmptyIcon());
 	menuitem.setSelected(m_PanelQuery.getWordWrap());
 	menuitem.addActionListener(new ActionListener() {
 	  @Override

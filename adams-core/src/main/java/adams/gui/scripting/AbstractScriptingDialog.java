@@ -510,7 +510,7 @@ public abstract class AbstractScriptingDialog
     m_Menu.add(menu);
 
     // View/Word wrap
-    menuitem = new JCheckBoxMenuItem("Word wrap", ImageManager.getEmptyIcon());
+    menuitem = new JCheckBoxMenuItem("Word wrap");
     menuitem.setMnemonic('W');
     menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed W"));
     menuitem.setSelected(m_TextScript.getWordWrap());

@@ -923,7 +923,7 @@ public class TextEditorPanel
     });
     menu.add(menuitem);
 
-    menuitem = new JCheckBoxMenuItem("Line wrap", ImageManager.getEmptyIcon());
+    menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(getLineWrap());
     menuitem.addActionListener((ActionEvent ae) -> setLineWrap(!getLineWrap()));
     menu.addSeparator();

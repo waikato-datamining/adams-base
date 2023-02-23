@@ -727,7 +727,6 @@ public class TimeseriesExplorer
       menu.add(menuitem);
       menuitem.setMnemonic('n');
       menuitem.setSelected(m_Undo.isEnabled());
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> {
         if (m_MenuItemEnableUndo.isSelected())
           getScriptingEngine().add(

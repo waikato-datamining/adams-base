@@ -614,7 +614,6 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Reset");
       menu.add(menuitem);
       menuitem.setMnemonic('R');
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemExecutionReset = menuitem;
 
@@ -622,7 +621,6 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Use file name");
       menu.add(menuitem);
       menuitem.setMnemonic('f');
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemUseFilename = menuitem;
 
@@ -630,7 +628,6 @@ public class ExperimenterPanel
       menuitem = new JCheckBoxMenuItem("Prefix datasets with index");
       menu.add(menuitem);
       menuitem.setMnemonic('i');
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener((ActionEvent e) -> m_PanelSetup.setModified(true));
       m_MenuItemPrefixDatasetsWithIndex = menuitem;
 

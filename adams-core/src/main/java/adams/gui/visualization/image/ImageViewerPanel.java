@@ -507,7 +507,6 @@ public class ImageViewerPanel
       menuitem = new JCheckBoxMenuItem("Undo enabled");
       menu.add(menuitem);
       menuitem.setMnemonic('n');
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().getUndo().setEnabled(!getCurrentPanel().getUndo().isEnabled());
@@ -741,7 +740,6 @@ public class ImageViewerPanel
       // View/Properties
       menuitem = new JCheckBoxMenuItem("Show properties");
       menu.add(menuitem);
-      menuitem.setIcon(ImageManager.getIcon("properties.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().setShowProperties(!getCurrentPanel().getShowProperties());
@@ -752,7 +750,6 @@ public class ImageViewerPanel
       // View/Log
       menuitem = new JCheckBoxMenuItem("Show log");
       menu.add(menuitem);
-      menuitem.setIcon(ImageManager.getIcon("log.gif"));
       menuitem.addActionListener(new ActionListener() {
 	public void actionPerformed(ActionEvent e) {
 	  getCurrentPanel().setShowLog(!getCurrentPanel().getShowLog());

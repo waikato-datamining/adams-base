@@ -745,7 +745,7 @@ public class ImagePanel
 	menu.addSeparator();
 
 	// show side pane
-	menuitem = new JCheckBoxMenuItem("Show side pane", ImageManager.getIcon("properties.gif"));
+	menuitem = new JCheckBoxMenuItem("Show side pane");
 	menuitem.setSelected(!getOwner().getSplitPane().isRightComponentHidden());
 	menuitem.addActionListener((ActionEvent ae) ->
 	  getOwner().getSplitPane().setRightComponentHidden(

@@ -144,7 +144,7 @@ public class ImageProcessorSubPanel
       menu.addSeparator();
 
       // show side pane
-      menuitem = new JCheckBoxMenuItem("Show side pane", ImageManager.getIcon("properties.gif"));
+      menuitem = new JCheckBoxMenuItem("Show side pane");
       menuitem.setSelected(getPanel().getShowProperties());
       menuitem.addActionListener((ActionEvent ae) ->
         getPanel().setShowProperties(!getPanel().getShowProperties()));
