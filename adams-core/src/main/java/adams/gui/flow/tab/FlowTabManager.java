@@ -15,7 +15,7 @@
 
 /*
  * FlowTabManager.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -116,6 +116,7 @@ public class FlowTabManager
     super.initialize();
 
     setCloseTabsWithMiddleMouseButton(false);
+    setTabLayoutPolicy(BaseTabbedPaneWithTabHiding.SCROLL_TAB_LAYOUT);
 
     tabs      = AbstractEditorTab.getTabs();
     m_TabList = new ArrayList<>();
