@@ -20,6 +20,7 @@
 
 package adams.gui.core;
 
+import adams.core.base.BasePassword;
 import adams.event.AnyChangeListenerSupporter;
 
 import javax.swing.JPasswordField;
@@ -167,5 +168,23 @@ public class BasePasswordField
     e = new ChangeEvent(this);
     for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
       l.stateChanged(e);
+  }
+
+  /**
+   * Sets the password.
+   *
+   * @param value	the password
+   */
+  public void setBasePassword(BasePassword value) {
+    setText(value.getValue());
+  }
+
+  /**
+   * Return the password.
+   *
+   * @return		the password
+   */
+  public BasePassword getBasePassword() {
+    return new BasePassword(getSelectedText());
   }
 }
