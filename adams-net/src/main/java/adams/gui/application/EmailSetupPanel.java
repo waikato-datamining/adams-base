@@ -15,7 +15,7 @@
 
 /*
  * EmailSetupPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -30,12 +30,12 @@ import adams.env.EmailDefinition;
 import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BasePasswordField;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 
-import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
@@ -83,7 +83,7 @@ public class EmailSetupPanel
   protected BaseTextField m_TextSmtpUser;
 
   /** the SMTP password. */
-  protected JPasswordField m_TextSmtpPassword;
+  protected BasePasswordField m_TextSmtpPassword;
 
   /** Whether to show the password. */
   protected BaseCheckBox m_CheckBoxShowPassword;
@@ -152,7 +152,7 @@ public class EmailSetupPanel
     m_TextSmtpUser.setText(EmailHelper.getSmtpUser());
     m_PanelParameters.addParameter("SMTP _User", m_TextSmtpUser);
 
-    m_TextSmtpPassword = new JPasswordField(20);
+    m_TextSmtpPassword = new BasePasswordField(20);
     m_TextSmtpPassword.setText(EmailHelper.getSmtpPassword().getValue());
     m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelParameters.addParameter("SMTP _Password", m_TextSmtpPassword);

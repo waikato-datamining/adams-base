@@ -15,7 +15,7 @@
 
 /*
  * ProxyPanel.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -29,12 +29,12 @@ import adams.env.ProxyDefinition;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePasswordField;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -76,7 +76,7 @@ public class ProxySettingsPanel
   protected BaseTextField m_TextHttpFtpUser;
 
   /** the http proxy password. */
-  protected JPasswordField m_TextHttpFtpPassword;
+  protected BasePasswordField m_TextHttpFtpPassword;
 
   /** Whether to show the http password. */
   protected BaseCheckBox m_CheckBoxShowHttpFtpPassword;
@@ -100,7 +100,7 @@ public class ProxySettingsPanel
   protected BaseTextField m_TextSocksUser;
 
   /** the socks proxy password. */
-  protected JPasswordField m_TextSocksPassword;
+  protected BasePasswordField m_TextSocksPassword;
 
   /** Whether to show the password. */
   protected BaseCheckBox m_CheckBoxShowSocksPassword;
@@ -165,7 +165,7 @@ public class ProxySettingsPanel
     m_TextHttpFtpUser.setEnabled(false);
     m_PanelHttpFtp.addParameter("User", m_TextHttpFtpUser);
 
-    m_TextHttpFtpPassword = new JPasswordField(15);
+    m_TextHttpFtpPassword = new BasePasswordField(15);
     m_TextHttpFtpPassword.setEnabled(false);
     m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelHttpFtp.addParameter("Password", m_TextHttpFtpPassword);
@@ -203,7 +203,7 @@ public class ProxySettingsPanel
     m_TextSocksUser.setEnabled(false);
     m_PanelSocks.addParameter("User", m_TextSocksUser);
 
-    m_TextSocksPassword = new JPasswordField(15);
+    m_TextSocksPassword = new BasePasswordField(15);
     m_TextSocksPassword.setEnabled(false);
     m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelSocks.addParameter("Password", m_TextSocksPassword);

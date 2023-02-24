@@ -15,7 +15,7 @@
 
 /*
  * SSHPanel.java
- * Copyright (C) 2015-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JCraft (original Shell example)
  */
 package adams.gui.tools;
@@ -30,6 +30,7 @@ import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePasswordField;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
@@ -45,7 +46,6 @@ import com.jcraft.jsch.Session;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.text.AttributeSet;
@@ -117,13 +117,13 @@ public class SSHPanel
   protected FileChooserPanel m_FileChooserPanelKey;
 
   /** the text field for the private key passphrase. */
-  protected JPasswordField m_TextKeyPassphrase;
+  protected BasePasswordField m_TextKeyPassphrase;
 
   /** the text field for the user. */
   protected BaseTextField m_TextUser;
 
   /** the text field for the password. */
-  protected JPasswordField m_TextPassword;
+  protected BasePasswordField m_TextPassword;
 
   /** text area for the output. */
   protected BaseTextPaneWithButtons m_TextOutput;
@@ -269,7 +269,7 @@ public class SSHPanel
 	  label.setLabelFor(m_TextUser);
 	  authPanel.add(label);
 	  authPanel.add(m_TextUser);
-	  m_TextPassword = new JPasswordField(8);
+	  m_TextPassword = new BasePasswordField(8);
 	  label = new JLabel("Password");
 	  label.setLabelFor(m_TextPassword);
 	  authPanel.add(label);
@@ -291,7 +291,7 @@ public class SSHPanel
 	  m_FileChooserPanelKey.setPrefix("Private key");
 	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, GUIHelper.getInteger("GOEDefaultHeight", 20)));
 	  authPanel.add(m_FileChooserPanelKey);
-	  m_TextKeyPassphrase = new JPasswordField(8);
+	  m_TextKeyPassphrase = new BasePasswordField(8);
 	  label = new JLabel("Passphrase");
 	  label.setLabelFor(m_TextKeyPassphrase);
 	  authPanel.add(label);

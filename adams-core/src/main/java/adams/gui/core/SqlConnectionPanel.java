@@ -15,7 +15,7 @@
 
 /*
  * SqlConnectionPanel.java
- * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -34,7 +34,6 @@ import adams.gui.dialog.ApprovalDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -180,7 +179,7 @@ public class SqlConnectionPanel
     ParameterPanel 		panelParameters;
     BaseTextField 		textURL;
     BaseTextField 		textUser;
-    JPasswordField 		textPassword;
+    BasePasswordField 		textPassword;
     BaseCheckBox checkBoxShowPassword;
     BaseComboBox<LoggingLevel> comboBoxLoggingLevel;
     String			error;
@@ -197,7 +196,7 @@ public class SqlConnectionPanel
     textUser.setText(getDatabaseConnection().getUser());
     panelParameters.addParameter("U_ser", textUser);
 
-    textPassword = new JPasswordField(20);
+    textPassword = new BasePasswordField(20);
     textPassword.setText(getDatabaseConnection().getPassword().getValue());
     textPassword.setEchoChar(Constants.PASSWORD_CHAR);
     panelParameters.addParameter("_Password", textPassword);

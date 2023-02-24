@@ -15,7 +15,7 @@
 
 /*
  * BasePasswordEditor.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -24,12 +24,12 @@ import adams.core.base.BasePassword;
 import adams.core.option.parsing.BasePasswordParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BasePasswordField;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -70,8 +70,8 @@ public class BasePasswordEditor
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.NORTH);
-    m_TextValue = new JPasswordField(20);
-    ((JPasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
+    m_TextValue = new BasePasswordField(20);
+    ((BasePasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
     m_TextValue.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -103,9 +103,9 @@ public class BasePasswordEditor
     m_CheckBoxShowPassword.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	if (m_CheckBoxShowPassword.isSelected())
-	  ((JPasswordField) m_TextValue).setEchoChar((char) 0);
+	  ((BasePasswordField) m_TextValue).setEchoChar((char) 0);
 	else
-	  ((JPasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
+	  ((BasePasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
       }
     });
     panelCheck.add(m_CheckBoxShowPassword);

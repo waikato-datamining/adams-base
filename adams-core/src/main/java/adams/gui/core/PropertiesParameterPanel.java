@@ -15,7 +15,7 @@
 
 /*
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -54,7 +54,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeListener;
@@ -1074,7 +1073,7 @@ public class PropertiesParameterPanel
 	    break;
 	  case PASSWORD:
 	  case PASSWORD_PLAIN:
-	    final JPasswordField pwfield = new JPasswordField(20);
+	    final BasePasswordField pwfield = new BasePasswordField(20);
 	    pwfield.setText(value.getPassword(key).getValue());
 	    if (help != null)
 	      pwfield.setToolTipText(help);
@@ -1311,7 +1310,7 @@ public class PropertiesParameterPanel
     Component			comp;
     PropertyType		type;
     JTextField 			textfield;
-    JPasswordField		pwfield;
+    BasePasswordField		pwfield;
     SQLSyntaxEditorPanel	query;
     JCheckBox 			checkbox;
     JSpinner			spinner;
@@ -1366,11 +1365,11 @@ public class PropertiesParameterPanel
 	  result.setProperty(key, textPanel.getCurrent().getValue());
 	  break;
 	case PASSWORD:
-	  pwfield = (JPasswordField) comp;
+	  pwfield = (BasePasswordField) comp;
 	  result.setPassword(key, new BasePassword(new String(pwfield.getPassword())));
 	  break;
 	case PASSWORD_PLAIN:
-	  pwfield = (JPasswordField) comp;
+	  pwfield = (BasePasswordField) comp;
 	  result.setProperty(key, new String(pwfield.getPassword()));
 	  break;
 	case SQL:

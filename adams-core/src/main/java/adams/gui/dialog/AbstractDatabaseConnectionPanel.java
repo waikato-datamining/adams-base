@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -31,6 +31,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePasswordField;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
@@ -39,7 +40,6 @@ import adams.gui.core.ParameterPanel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -76,7 +76,7 @@ public abstract class AbstractDatabaseConnectionPanel
   protected BaseTextField m_TextUser;
 
   /** the edit field for the database password. */
-  protected JPasswordField m_TextPassword;
+  protected BasePasswordField m_TextPassword;
 
   /** the checkbox for showing the password. */
   protected BaseCheckBox m_CheckBoxShowPassword;
@@ -158,7 +158,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_TextUser = new BaseTextField(20);
     m_PanelParameters.addParameter("U_ser", m_TextUser);
 
-    m_TextPassword = new JPasswordField(20);
+    m_TextPassword = new BasePasswordField(20);
     m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelParameters.addParameter("_Password", m_TextPassword);
 

@@ -15,7 +15,7 @@
 
 /*
  * PasswordDialog.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -23,10 +23,10 @@ import adams.core.Constants;
 import adams.core.base.BasePassword;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePasswordField;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -51,7 +51,7 @@ public class PasswordDialog
   protected JLabel m_LabelPassword;
 
   /** the text field for entering the password. */
-  protected JPasswordField m_TextPassword;
+  protected BasePasswordField m_TextPassword;
   
   /** whether to display the password or not. */
   protected BaseCheckBox m_CheckBoxShowPassword;
@@ -158,7 +158,7 @@ public class PasswordDialog
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     getContentPane().add(panel, BorderLayout.NORTH);
     
-    m_TextPassword = new JPasswordField(20);
+    m_TextPassword = new BasePasswordField(20);
     m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_TextPassword.addKeyListener(new KeyAdapter() {
       @Override
