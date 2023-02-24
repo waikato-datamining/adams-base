@@ -15,7 +15,7 @@
 
 /*
  * Filter.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -30,7 +30,6 @@ import adams.gui.core.ImageManager;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -154,7 +153,6 @@ public class Filter
     JPanel		panel2;
 
     result = new BasePanel();
-    result.setBorder(BorderFactory.createTitledBorder(getName()));
 
     m_ButtonApply = createApplyButton();
 

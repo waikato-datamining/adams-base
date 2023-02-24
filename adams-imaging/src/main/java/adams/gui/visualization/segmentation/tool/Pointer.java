@@ -15,7 +15,7 @@
 
 /*
  * BucketFill.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -23,7 +23,6 @@ package adams.gui.visualization.segmentation.tool;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -119,7 +118,6 @@ public class Pointer
     JPanel		panel;
 
     result = new BasePanel();
-    result.setBorder(BorderFactory.createTitledBorder(getName()));
     panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     panel.add(new JLabel("No options"));
     result.add(panel, BorderLayout.NORTH);

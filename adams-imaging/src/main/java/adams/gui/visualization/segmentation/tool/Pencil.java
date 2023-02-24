@@ -15,7 +15,7 @@
 
 /*
  * Pencil.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -29,7 +29,6 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -183,7 +182,6 @@ public class Pencil
     ButtonGroup 	group;
 
     result = new BasePanel();
-    result.setBorder(BorderFactory.createTitledBorder(getName()));
 
     m_ButtonApply = createApplyButton();
 

@@ -15,7 +15,7 @@
 
 /*
  * BucketFill.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -31,7 +31,6 @@ import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.visualization.segmentation.ImageUtils;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -214,7 +213,6 @@ public class BucketFill
     ButtonGroup		group;
 
     result = new BasePanel();
-    result.setBorder(BorderFactory.createTitledBorder(getName()));
 
     m_ButtonApply = createApplyButton();
 

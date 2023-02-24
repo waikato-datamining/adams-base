@@ -15,7 +15,7 @@
 
 /*
  * AbstractTool.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -383,9 +383,10 @@ public abstract class AbstractTool
 	textArea.setColumns(20);
 	textArea.setRows(4);
 	textArea.setText(globalInfo());
+	textArea.setCaretPosition(0);
 	m_PanelFullOptions.add(new BaseScrollPane(textArea), BorderLayout.NORTH);
-	m_PanelFullOptions.setBorder(BorderFactory.createTitledBorder("Description"));
       }
+      m_PanelFullOptions.setBorder(BorderFactory.createTitledBorder(getName()));
       m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
     }
     return m_PanelFullOptions;
