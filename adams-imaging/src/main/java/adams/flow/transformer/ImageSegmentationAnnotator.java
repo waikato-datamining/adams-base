@@ -15,7 +15,7 @@
 
 /*
  * ImageSegmentationAnnotator.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -35,7 +35,6 @@ import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
-import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -46,7 +45,6 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -931,8 +929,6 @@ public class ImageSegmentationAnnotator
     BufferedImage		img;
     AbstractImageContainer	imgcont;
     ImageSegmentationContainer	segcont;
-    Map<String,BufferedImage> 	layers;
-    OverlayLayer		layer;
 
     m_Accepted = false;
 
