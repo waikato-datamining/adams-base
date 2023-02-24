@@ -15,7 +15,7 @@
 
 /*
  * BaseTextField.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -32,7 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Custom BaseTextField component.
+ * Extended JTextField component.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
