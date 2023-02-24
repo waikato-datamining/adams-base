@@ -15,7 +15,7 @@
 
 /*
  * AbstractShapeTool.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -120,29 +120,26 @@ public abstract class AbstractShapeTool
    */
   @Override
   protected ToolMouseAdapter createMouseListener() {
-    if (m_Listener == null) {
-      m_Listener = new ToolMouseAdapter(this) {
-	@Override
-	public void mousePressed(MouseEvent e) {
-	  if (MouseUtils.isLeftClick(e)) {
-	    if (isAutomaticUndoEnabled())
-	      getCanvas().getOwner().addUndoPoint();
-	    drawShape(e.getPoint());
-	    m_LastPoint = e.getPoint();
-	    e.consume();
-	  }
-	  else {
-	    super.mouseClicked(e);
-	  }
+    return new ToolMouseAdapter(this) {
+      @Override
+      public void mousePressed(MouseEvent e) {
+	if (MouseUtils.isLeftClick(e)) {
+	  if (isAutomaticUndoEnabled())
+	    getCanvas().getOwner().addUndoPoint();
+	  drawShape(e.getPoint());
+	  m_LastPoint = e.getPoint();
+	  e.consume();
 	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	  super.mouseReleased(e);
-	  m_LastPoint = null;
+	else {
+	  super.mouseClicked(e);
 	}
-      };
-    }
-    return m_Listener;
+      }
+      @Override
+      public void mouseReleased(MouseEvent e) {
+	super.mouseReleased(e);
+	m_LastPoint = null;
+      }
+    };
   }
 
   /**
@@ -152,24 +149,21 @@ public abstract class AbstractShapeTool
    */
   @Override
   protected ToolMouseMotionAdapter createMouseMotionListener() {
-    if (m_MotionListener == null) {
-      m_MotionListener = new ToolMouseMotionAdapter(this) {
-	@Override
-	public void mouseDragged(MouseEvent e) {
-	  if (getOwner().getCanvas().isLeftMouseDown()) {
-	    if (m_LastPoint == null)
-	      drawShape(e.getPoint());
-	    else
-	      drawShape(m_LastPoint, e.getPoint());
-	    m_LastPoint = e.getPoint();
-	    e.consume();
-	  }
-	  else {
-	    super.mouseDragged(e);
-	  }
+    return new ToolMouseMotionAdapter(this) {
+      @Override
+      public void mouseDragged(MouseEvent e) {
+	if (getOwner().getCanvas().isLeftMouseDown()) {
+	  if (m_LastPoint == null)
+	    drawShape(e.getPoint());
+	  else
+	    drawShape(m_LastPoint, e.getPoint());
+	  m_LastPoint = e.getPoint();
+	  e.consume();
 	}
-      };
-    }
-    return m_MotionListener;
+	else {
+	  super.mouseDragged(e);
+	}
+      }
+    };
   }
 }
