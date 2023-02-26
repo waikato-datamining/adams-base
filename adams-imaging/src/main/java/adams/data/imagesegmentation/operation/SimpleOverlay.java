@@ -20,6 +20,7 @@
 
 package adams.data.imagesegmentation.operation;
 
+import adams.core.QuickInfoHelper;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.data.image.BufferedImageContainer;
@@ -243,6 +244,23 @@ public class SimpleOverlay
    */
   public String alphaTipText() {
     return "The alpha value to use for the overlay: 0=transparent, 255=opaque.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result  = QuickInfoHelper.toString(this, "includeBaseImage", m_IncludeBaseImage, (m_IncludeBaseImage ? "include base" : "no base"));
+    result += QuickInfoHelper.toString(this, "backgroundColor", m_BackgroundColor, ", background: ");
+    result += QuickInfoHelper.toString(this, "layers", m_Layers, ", layers: ");
+    result += QuickInfoHelper.toString(this, "alpha", m_Alpha, ", alpha: ");
+
+    return result;
   }
 
   /**
