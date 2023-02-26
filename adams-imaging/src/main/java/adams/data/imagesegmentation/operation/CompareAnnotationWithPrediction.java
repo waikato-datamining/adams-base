@@ -380,7 +380,7 @@ public class CompareAnnotationWithPrediction
     result = new HashMap<>();
     for (String label: labels) {
       result.put(label, generate(
-	predLayers.get(label).getWidth(), predLayers.get(label).getHeight(),
+	annoLayers.get(label).getWidth(), annoLayers.get(label).getHeight(),
 	predPixels.get(label), annoPixels.get(label)));
       result.get(label).getReport().setStringValue("Label", label);
     }
