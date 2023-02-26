@@ -15,7 +15,7 @@
 
 /*
  * Draw.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,6 +28,8 @@ import adams.flow.core.Token;
 import adams.flow.transformer.draw.AbstractDrawOperation;
 import adams.flow.transformer.draw.Pixel;
 
+import java.awt.image.BufferedImage;
+
 /**
  <!-- globalinfo-start -->
  * Performs a draw operation on an image.
@@ -37,58 +39,67 @@ import adams.flow.transformer.draw.Pixel;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;java.awt.image.BufferedImage<br>
  * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.jai.BufferedImageContainer<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.BufferedImageContainer<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Draw
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-operation &lt;adams.flow.transformer.draw.AbstractDrawOperation&gt; (property: operation)
  * &nbsp;&nbsp;&nbsp;The draw operation to perform.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.draw.Pixel
  * </pre>
- * 
- * <pre>-no-copy (property: noCopy)
- * &nbsp;&nbsp;&nbsp;If enabled, no copy of the spreadsheet is created before processing it.
+ *
+ * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
+ * &nbsp;&nbsp;&nbsp;If enabled, no copy of the image is created before processing it.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Draw
-  extends AbstractTransformer 
+  extends AbstractTransformer
   implements InPlaceProcessing {
 
   /** for serialization. */
@@ -96,10 +107,10 @@ public class Draw
 
   /** whether to skip creating a copy of the image. */
   protected boolean m_NoCopy;
-  
+
   /** the draw operation. */
   protected AbstractDrawOperation m_Operation;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -118,12 +129,12 @@ public class Draw
     super.defineOptions();
 
     m_OptionManager.add(
-	    "operation", "operation",
-	    new Pixel());
+      "operation", "operation",
+      new Pixel());
 
     m_OptionManager.add(
-	    "no-copy", "noCopy",
-	    false);
+      "no-copy", "noCopy",
+      false);
   }
 
   /**
@@ -205,7 +216,7 @@ public class Draw
    * @return		the Class of objects that can be processed
    */
   public Class[] accepts() {
-    return new Class[]{AbstractImageContainer.class};
+    return new Class[]{AbstractImageContainer.class, BufferedImage.class};
   }
 
   /**
@@ -229,16 +240,32 @@ public class Draw
     BufferedImageContainer 	contBuff;
     BufferedImageContainer 	contOut;
 
-    contIn = m_InputToken.getPayload(AbstractImageContainer.class);
-    if (!m_NoCopy)
-      contIn = (AbstractImageContainer) contIn.getClone();
-    contBuff = new BufferedImageContainer();
-    contBuff.setReport(contIn.getReport().getClone());
-    contBuff.setImage(contIn.toBufferedImage());
-    m_Operation.setOwner(this);
-    result = m_Operation.draw(contBuff);
-    
-    if (result == null) {
+    result   = null;
+    contIn   = null;
+    contBuff = null;
+
+    if (m_InputToken.hasPayload(AbstractImageContainer.class)) {
+      contIn = m_InputToken.getPayload(AbstractImageContainer.class);
+    }
+    else if (m_InputToken.hasPayload(BufferedImage.class)) {
+      contIn = new BufferedImageContainer();
+      contIn.setImage(m_InputToken.getPayload(BufferedImage.class));
+    }
+    else {
+      result = m_InputToken.unhandledData();
+    }
+
+    if ((result == null) && (contIn != null)) {
+      if (!m_NoCopy)
+        contIn = (AbstractImageContainer) contIn.getClone();
+      contBuff = new BufferedImageContainer();
+      contBuff.setReport(contIn.getReport().getClone());
+      contBuff.setImage(contIn.toBufferedImage());
+      m_Operation.setOwner(this);
+      result = m_Operation.draw(contBuff);
+    }
+
+    if ((result == null) && (contBuff != null)) {
       contOut = (BufferedImageContainer) contBuff.getHeader();
       contOut.setReport(contIn.getReport().getClone());
       contOut.setImage(contBuff.getImage());
