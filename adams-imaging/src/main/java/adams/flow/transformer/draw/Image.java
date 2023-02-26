@@ -15,7 +15,7 @@
 
 /*
  * Image.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -26,7 +26,9 @@ import adams.data.image.BufferedImageContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -39,25 +41,33 @@ import java.awt.image.BufferedImage;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The X position of the top-left corner of the image (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The Y position of the top-left corner of the image (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-image-actor &lt;adams.flow.core.CallableActorReference&gt; (property: imageActor)
  * &nbsp;&nbsp;&nbsp;The callable actor to use for obtaining the image from.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
+ * <pre>-alpha &lt;int&gt; (property: alpha)
+ * &nbsp;&nbsp;&nbsp;The alpha value to use for the overlay: 0=transparent, 255=opaque.
+ * &nbsp;&nbsp;&nbsp;default: 255
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;maximum: 255
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -77,6 +87,9 @@ public class Image
   /** the callable actor to get the image from. */
   protected CallableActorReference m_ImageActor;
 
+  /** the alpha value to use for the overlay (0: transparent, 255: opaque). */
+  protected int m_Alpha;
+
   /**
    * Returns a string describing the object.
    *
@@ -95,16 +108,20 @@ public class Image
     super.defineOptions();
 
     m_OptionManager.add(
-	    "x", "X",
-	    1, 1, null);
+      "x", "X",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "y", "Y",
-	    1, 1, null);
+      "y", "Y",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "image-actor", "imageActor",
-	    new CallableActorReference());
+      "image-actor", "imageActor",
+      new CallableActorReference());
+
+    m_OptionManager.add(
+      "alpha", "alpha",
+      255, 0, 255);
   }
 
   /**
@@ -119,7 +136,8 @@ public class Image
     result  = QuickInfoHelper.toString(this, "X", m_X, "X: ");
     result += QuickInfoHelper.toString(this, "Y", m_Y, ", Y: ");
     result += QuickInfoHelper.toString(this, "imageActor", m_ImageActor, ", Image: ");
-    
+    result += QuickInfoHelper.toString(this, "alpha", m_Alpha, ", alpha: ");
+
     return result;
   }
 
@@ -215,6 +233,37 @@ public class Image
   }
 
   /**
+   * Sets the alpha value to use for the overlay: 0=transparent, 255=opaque.
+   *
+   * @param value	the alphae value
+   */
+  public void setAlpha(int value) {
+    if (getOptionManager().isValid("alpha", value)) {
+      m_Alpha = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the alpha value to use for the overlay: 0=transparent, 255=opaque.
+   *
+   * @return		the alpha value
+   */
+  public int getAlpha() {
+    return m_Alpha;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String alphaTipText() {
+    return "The alpha value to use for the overlay: 0=transparent, 255=opaque.";
+  }
+
+  /**
    * Checks the image.
    *
    * @param image	the image to check
@@ -227,9 +276,9 @@ public class Image
 
     if (result == null) {
       if (m_X > image.getWidth())
-        result = "X is larger than image width: " + m_X + " > " + image.getWidth();
+	result = "X is larger than image width: " + m_X + " > " + image.getWidth();
       else if (m_Y > image.getHeight())
-        result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
+	result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
     }
 
     return result;
@@ -237,7 +286,7 @@ public class Image
 
   /**
    * Performs the actual draw operation.
-   * 
+   *
    * @param image	the image to draw on
    */
   @Override
@@ -265,12 +314,14 @@ public class Image
       else
 	result = "Unknown image class: " + obj.getClass().getName();
     }
-    
+
     if ((result == null) && (todraw != null)) {
       g = image.getImage().getGraphics();
+      if (m_Alpha < 255)
+	((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) m_Alpha / 255));
       g.drawImage(todraw, m_X - 1, m_Y - 1, null);
     }
-    
+
     return result;
   }
 }
