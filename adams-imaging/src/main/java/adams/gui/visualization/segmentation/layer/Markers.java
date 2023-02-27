@@ -117,6 +117,15 @@ public class Markers
   }
 
   /**
+   * Returns the currently store points.
+   *
+   * @return		the points
+   */
+  public List<Point> getPoints() {
+    return m_Points;
+  }
+
+  /**
    * Sets the shape to use for markers.
    *
    * @param value	the shape
