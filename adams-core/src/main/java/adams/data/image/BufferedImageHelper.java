@@ -19,6 +19,7 @@
  */
 package adams.data.image;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
@@ -38,6 +39,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Iterator;
@@ -68,7 +71,7 @@ public class BufferedImageHelper {
     ColorModel 		cm;
     boolean 		isAlphaPremultiplied;
     WritableRaster 	raster;
-    
+
     if (source.getType() == BufferedImage.TYPE_CUSTOM) {
       cm = source.getColorModel();
       isAlphaPremultiplied = cm.isAlphaPremultiplied();
@@ -119,34 +122,34 @@ public class BufferedImageHelper {
    */
   public static IntArrayMatrixView getPixelMatrix(BufferedImage img) {
     int[]	data;
-    
+
     data = new int[img.getWidth() * img.getHeight()];
     img.getRGB(0, 0, img.getWidth(), img.getHeight(), data, 0, img.getWidth());
-    
+
     return new IntArrayMatrixView(data, img.getWidth(), img.getHeight());
   }
 
   /**
    * Splits the RGBA value into R,G,B,A.
-   * 
+   *
    * @param pixel	the RGB value to split
    * @return		the array with R,G,B,A
    */
   public static int[] split(int pixel) {
     int[]	result;
-    
+
     result    = new int[4];
     result[0] = (pixel >> 16) & 0xFF;  // R
     result[1] = (pixel >>  8) & 0xFF;  // G
     result[2] = (pixel >>  0) & 0xFF;  // B
     result[3] = (pixel >> 24) & 0xFF;  // A
-    
+
     return result;
   }
 
   /**
    * Combines the R,G,B,A values back into single integer.
-   * 
+   *
    * @param rgba	the RGBA values
    * @return		the combined integer
    */
@@ -156,7 +159,7 @@ public class BufferedImageHelper {
 
   /**
    * Combines the R,G,B,A values back into single integer.
-   * 
+   *
    * @param r		the red value
    * @param g		the green value
    * @param b		the blue value
@@ -166,7 +169,7 @@ public class BufferedImageHelper {
   public static int combine(int r, int g, int b, int a) {
     return (r << 16) + (g << 8) + (b << 0) + (a << 24);
   }
-  
+
   /**
    * Returns all the pixels of the image as an int array (row-wise) with the 
    * RGB(A) components as second dimension.
@@ -218,11 +221,11 @@ public class BufferedImageHelper {
 
     return result;
   }
-  
+
   /**
    * Performs flood fill on the image.
    * Based on the <a href="http://en.wikipedia.org/wiki/Flood_fill" target="_blank">2nd alternative implementation</a>.
-   * 
+   *
    * @param img		the image to perform the floodfill on
    * @param startX	the starting point, x coordinate
    * @param startY	the starting point, y coordinate
@@ -233,11 +236,11 @@ public class BufferedImageHelper {
   public static boolean floodFill(BufferedImage img, int startX, int startY, Color targetColor, Color replacementColor) {
     return floodFill(img, startX, startY, targetColor.getRGB(), replacementColor.getRGB());
   }
-  
+
   /**
    * Performs flood fill on the image.
    * Based on the <a href="http://en.wikipedia.org/wiki/Flood_fill" target="_blank">2nd alternative implementation</a>.
-   * 
+   *
    * @param img		the image to perform the floodfill on
    * @param startX	the starting point, x coordinate
    * @param startY	the starting point, y coordinate
@@ -248,12 +251,12 @@ public class BufferedImageHelper {
   public static boolean floodFill(BufferedImage img, int startX, int startY, int targetColor, int replacementColor) {
     return floodFill(img, startX, startY, targetColor, replacementColor, new int[4]);
   }
-  
+
   /**
    * Performs flood fill on the image. Records the extent of the fill 
    * (bounding box). 
    * Based on the <a href="http://en.wikipedia.org/wiki/Flood_fill" target="_blank">2nd alternative implementation</a>.
-   * 
+   *
    * @param img		the image to perform the floodfill on
    * @param startX	the starting point, x coordinate
    * @param startY	the starting point, y coordinate
@@ -265,12 +268,12 @@ public class BufferedImageHelper {
   public static boolean floodFill(BufferedImage img, int startX, int startY, Color targetColor, Color replacementColor, int[] extent) {
     return floodFill(img, startX, startY, targetColor.getRGB(), replacementColor.getRGB(), extent);
   }
-  
+
   /**
    * Performs flood fill on the image. Records the extent of the fill 
    * (bounding box). 
    * Based on the <a href="http://en.wikipedia.org/wiki/Flood_fill" target="_blank">2nd alternative implementation</a>.
-   * 
+   *
    * @param img		the image to perform the floodfill on
    * @param startX	the starting point, x coordinate
    * @param startY	the starting point, y coordinate
@@ -287,7 +290,7 @@ public class BufferedImageHelper {
     int			width;
     int			height;
     int			i;
-    
+
     // can't fill?
     if (img.getRGB(startX, startY) != targetColor) {
       extent[0] = -1;
@@ -302,7 +305,7 @@ public class BufferedImageHelper {
     extent[1] = startY;
     extent[2] = startX;
     extent[3] = startY;
-    
+
     // init queue
     queue = new LinkedList<int[]>();
     queue.add(new int[]{startX, startY});
@@ -315,14 +318,14 @@ public class BufferedImageHelper {
 	if (img.getRGB(pos[0], pos[1]) == targetColor) {
 	  west = pos[0];
 	  east = west;
-	  
+
 	  // go west
 	  while ((west > 0) && img.getRGB(west - 1, pos[1]) == targetColor)
 	    west--;
 	  // go east
 	  while ((east < width - 1) && img.getRGB(east + 1, pos[1]) == targetColor)
 	    east++;
-	  
+
 	  // check pixels (north/south)
 	  for (i = west; i <= east; i++) {
 	    img.setRGB(i, pos[1], replacementColor);
@@ -333,7 +336,7 @@ public class BufferedImageHelper {
 	    if ((pos[1] < height - 1) && (img.getRGB(i, pos[1] + 1) == targetColor))
 	      queueNew.add(new int[]{i, pos[1] + 1});
 	  }
-	  
+
 	  // update bounding box
 	  if (extent[0] > west)
 	    extent[0] = west;
@@ -347,14 +350,14 @@ public class BufferedImageHelper {
       }
       queue = queueNew;
     }
-    
+
     return true;
   }
-  
+
   /**
    * Returns the first image reader that handles the extension of the specified
    * file.
-   * 
+   *
    * @param file	the file to get the reader for
    * @return		the reader, null if none found
    */
@@ -367,10 +370,10 @@ public class BufferedImageHelper {
 
     return result;
   }
-  
+
   /**
    * Returns the first image reader that handles the specified extension.
-   * 
+   *
    * @param ext		the extension to get the reader for
    * @return		the reader, null if none found
    */
@@ -385,11 +388,11 @@ public class BufferedImageHelper {
 
     return result;
   }
-  
+
   /**
    * Returns the first image writer that handles the extension of the specified
    * file.
-   * 
+   *
    * @param file	the file to get the writer for
    * @return		the writer, null if none found
    */
@@ -402,11 +405,11 @@ public class BufferedImageHelper {
 
     return result;
   }
-  
+
   /**
    * Returns the first image writer that handles the extension of the specified
    * file.
-   * 
+   *
    * @param ext		the extension to get the writer for
    * @return		the writer, null if none found
    */
@@ -434,7 +437,7 @@ public class BufferedImageHelper {
 
   /**
    * Reads an image, also fills in meta-data.
-   * 
+   *
    * @param file	the file to read
    * @param addMetaData whether to add the meta-data
    * @return		the image container, null if failed to read
@@ -463,15 +466,15 @@ public class BufferedImageHelper {
       }
       reader = (ImageReader) it.next();
       reader.setInput(iis);
-      
+
       // meta
       if (addMetaData) {
-        meta    = reader.getImageMetadata(0);
-        formats = meta.getMetadataFormatNames();
-        props   = new Properties();
-        for (String format : formats)
-          props.add(DOMUtils.toProperties(".", false, true, true, meta.getAsTree(format)));
-        result.setReport(Report.parseProperties(props));
+	meta    = reader.getImageMetadata(0);
+	formats = meta.getMetadataFormatNames();
+	props   = new Properties();
+	for (String format : formats)
+	  props.add(DOMUtils.toProperties(".", false, true, true, meta.getAsTree(format)));
+	result.setReport(Report.parseProperties(props));
       }
 
       // image
@@ -488,13 +491,13 @@ public class BufferedImageHelper {
     }
     finally {
       if (iis != null) {
-        try {
-          iis.close();
-          iis = null;
-        }
-        catch (Exception e) {
-          // ignored
-        }
+	try {
+	  iis.close();
+	  iis = null;
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
       FileUtils.closeQuietly(fis);
     }
@@ -517,7 +520,7 @@ public class BufferedImageHelper {
    * Writes the image to the specified file.
    * If the output file points to a JPG file (.jpg or .jpeg), then images
    * with alpha channel automatically get converted to RGB.
-   * 
+   *
    * @param img		the image to save
    * @param file	the file to write to
    * @return		null if successful, otherwise error message
@@ -532,18 +535,73 @@ public class BufferedImageHelper {
 
     try {
       if (!ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile()))
-        return "Failed to write image to: " + file;
+	return "Failed to write image to: " + file;
     }
     catch (Exception e) {
       return "Failed to write image to '" + file + "': " + LoggingHelper.throwableToString(e);
     }
-    
+
     return null;
   }
 
   /**
+   * Turns an image into a byte array.
+   *
+   * @param img		the image to convert
+   * @param format	the format of the image, e.g., PNG or JPG
+   * @return		the generated bytes, null if failed
+   */
+  public static byte[] toBytes(BufferedImage img, String format, MessageCollection errors) {
+    byte[]			result;
+    ByteArrayOutputStream	bytes;
+
+    result = null;
+
+    if (format.toLowerCase().equals("jpeg") || format.toLowerCase().equals("jpg"))
+      img = removeAlphaChannel(img);
+
+    bytes = new ByteArrayOutputStream();
+    try {
+      if (!ImageIO.write(img, format, bytes)) {
+        errors.add("Failed to turn image into bytes of type " + format + "!");
+      }
+      else {
+        result = bytes.toByteArray();
+      }
+    }
+    catch (Exception e) {
+      errors.add("Failed to turn image into bytes of type " + format + "!", e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the image bytes (eg JPG or PNG) into a BufferedImage.
+   *
+   * @param bytes	the bytes to convert
+   * @param errors	for collecting errors
+   * @return		the read image, null if failed to read
+   */
+  public static BufferedImage fromBytes(byte[] bytes, MessageCollection errors) {
+    BufferedImage		result;
+    ByteArrayInputStream	stream;
+
+    result = null;
+    stream = new ByteArrayInputStream(bytes);
+    try {
+      result = ImageIO.read(stream);
+    }
+    catch (Exception e) {
+      errors.add("Failed to read image from bytes array!", e);
+    }
+
+    return result;
+  }
+
+  /**
    * Converts the image, if necessary to the specified type.
-   * 
+   *
    * @param img		the image to convert
    * @param type	the required type
    * @return		the (potentially) converted image
@@ -551,7 +609,7 @@ public class BufferedImageHelper {
   public static BufferedImage convert(BufferedImage img, int type) {
     BufferedImage	result;
     Graphics2D		g2d;
-    
+
     if (img.getType() != type) {
       result = new BufferedImage(img.getWidth(), img.getHeight(), type);
       g2d   = result.createGraphics();
@@ -561,13 +619,13 @@ public class BufferedImageHelper {
     else {
       result = img;
     }
-    
+
     return result;
   }
-  
+
   /**
    * Generates a histogram for each of the R, G and B channels.
-   * 
+   *
    * @param img		the image to analyze
    * @param gray	whether to use (A)RGB or grayscale
    * @return		the histogram, if ARGB then 0 = R, 1 = G, 2 = B, 3 = A
@@ -581,7 +639,7 @@ public class BufferedImageHelper {
     int		y;
     int[]	split;
     int		i;
-    
+
     if (gray) {
       result = new int[1][256];
       img    = convert(img, BufferedImage.TYPE_BYTE_GRAY);
@@ -610,13 +668,13 @@ public class BufferedImageHelper {
 	}
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Returns the pixel depth in bits.
-   * 
+   *
    * @param img		the image to analyze
    * @return		the number of bits, -1 if unknown type
    */
