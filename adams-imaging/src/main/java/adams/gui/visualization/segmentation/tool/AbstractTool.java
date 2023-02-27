@@ -24,6 +24,7 @@ import adams.core.GlobalInfoSupporter;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
 import adams.gui.core.ImageManager;
@@ -60,6 +61,9 @@ public abstract class AbstractTool
   /** the mouse motion listener. */
   protected ToolMouseMotionAdapter m_MotionListener;
 
+  /** the key listener. */
+  protected ToolKeyAdapter m_KeyListener;
+
   /** the options panel. */
   protected BasePanel m_PanelOptions;
 
@@ -88,6 +92,7 @@ public abstract class AbstractTool
     m_PanelOptions   = null;
     m_Listener       = null;
     m_MotionListener = null;
+    m_KeyListener    = null;
   }
 
   /**
@@ -312,6 +317,28 @@ public abstract class AbstractTool
   }
 
   /**
+   * Creates the key listener to use.
+   * <br>
+   * Default implementation just returns null.
+   *
+   * @return		the listener, null if not applicable
+   */
+  protected ToolKeyAdapter createKeyListener() {
+    return null;
+  }
+
+  /**
+   * Returns the mouse listener to use.
+   *
+   * @return		the listener, null if not applicable
+   */
+  public ToolKeyAdapter getKeyListener() {
+    if (m_KeyListener == null)
+      m_KeyListener = createKeyListener();
+    return m_KeyListener;
+  }
+
+  /**
    * Applies the settings.
    */
   protected abstract void doApply();
@@ -370,6 +397,7 @@ public abstract class AbstractTool
   public BasePanel getOptionPanel() {
     BaseTextArea	textArea;
     String		info;
+    BaseSplitPane	splitPane;
 
     if (m_PanelOptions == null) {
       m_PanelOptions = createOptionPanel();
@@ -384,10 +412,15 @@ public abstract class AbstractTool
 	textArea.setRows(4);
 	textArea.setText(globalInfo());
 	textArea.setCaretPosition(0);
-	m_PanelFullOptions.add(new BaseScrollPane(textArea), BorderLayout.NORTH);
+	splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+	splitPane.setTopComponent(new BaseScrollPane(textArea));
+	splitPane.setBottomComponent(m_PanelOptions);
+	m_PanelFullOptions.add(splitPane, BorderLayout.CENTER);
+      }
+      else {
+	m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
       }
       m_PanelFullOptions.setBorder(BorderFactory.createTitledBorder(getName()));
-      m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
     }
     return m_PanelFullOptions;
   }

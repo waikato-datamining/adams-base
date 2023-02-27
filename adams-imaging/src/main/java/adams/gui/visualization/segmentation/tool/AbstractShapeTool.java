@@ -130,9 +130,7 @@ public abstract class AbstractShapeTool
 	  m_LastPoint = e.getPoint();
 	  e.consume();
 	}
-	else {
-	  super.mouseClicked(e);
-	}
+	super.mouseClicked(e);
       }
       @Override
       public void mouseReleased(MouseEvent e) {

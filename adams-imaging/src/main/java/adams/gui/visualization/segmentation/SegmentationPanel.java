@@ -15,7 +15,7 @@
 
 /*
  * SegmentationPanel.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -69,6 +69,7 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
@@ -201,6 +202,9 @@ public class SegmentationPanel
 
   /** the last mouse motion listener in use. */
   protected MouseMotionListener m_LastMouseMotionListener;
+
+  /** the last key listener in use. */
+  protected KeyListener m_LastKeyListener;
 
   /** the active tool. */
   protected AbstractTool m_ActiveTool;
@@ -348,6 +352,9 @@ public class SegmentationPanel
 	  m_LastMouseMotionListener = tool.getMouseMotionListener();
 	  if (m_LastMouseMotionListener != null)
 	    m_PanelCanvas.addMouseMotionListener(m_LastMouseMotionListener);
+          m_LastKeyListener = tool.getKeyListener();
+          if (m_LastKeyListener != null)
+            m_PanelCanvas.addKeyListener(m_LastKeyListener);
 	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
 	  m_ActiveTool = tool;
 	});

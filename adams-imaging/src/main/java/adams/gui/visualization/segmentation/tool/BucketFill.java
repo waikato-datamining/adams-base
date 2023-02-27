@@ -171,9 +171,7 @@ public class BucketFill
 	  fill(scaled);
 	  e.consume();
 	}
-	else {
-	  super.mouseClicked(e);
-	}
+        super.mouseClicked(e);
       }
     };
 
