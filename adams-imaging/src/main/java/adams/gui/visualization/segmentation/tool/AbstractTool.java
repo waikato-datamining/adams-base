@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.segmentation.tool;
 
+import adams.core.CleanUpHandler;
 import adams.core.GlobalInfoSupporter;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
@@ -49,7 +50,7 @@ import java.io.Serializable;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTool
-  implements Serializable, GlobalInfoSupporter {
+  implements Serializable, GlobalInfoSupporter, CleanUpHandler {
 
   private static final long serialVersionUID = -6782161796343153566L;
 
@@ -450,5 +451,11 @@ public abstract class AbstractTool
    * Hook method for when new annotations have been set.
    */
   public void annotationsChanged() {
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
   }
 }

@@ -21,6 +21,7 @@
 package adams.gui.visualization.segmentation;
 
 import adams.core.ClassLister;
+import adams.core.CleanUpHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingObject;
@@ -88,7 +89,7 @@ import java.util.Map;
  */
 public class SegmentationPanel
     extends BasePanel
-    implements ChangeListener, UndoListener {
+    implements ChangeListener, UndoListener, CleanUpHandler {
 
   private static final long serialVersionUID = -7354416525309860289L;
 
@@ -917,6 +918,14 @@ public class SegmentationPanel
     }
     panel.setToolButtonColumns(2);
     return panel;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    for (AbstractTool tool: m_Tools)
+      tool.cleanUp();
   }
 
   /**
