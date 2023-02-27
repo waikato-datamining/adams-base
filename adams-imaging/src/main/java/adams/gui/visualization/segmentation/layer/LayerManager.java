@@ -51,7 +51,7 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LayerManager
-    implements Serializable, UndoHandlerWithQuickAccess, UndoListener {
+  implements Serializable, UndoHandlerWithQuickAccess, UndoListener {
 
   private static final long serialVersionUID = 4462920156618724031L;
 
@@ -91,6 +91,9 @@ public class LayerManager
   /** whether to ignore updates. */
   protected boolean m_IgnoreUpdates;
 
+  /** the marker points to draw. */
+  protected Markers m_Markers;
+
   /**
    * Initializes the layer manager using split layers.
    *
@@ -113,6 +116,7 @@ public class LayerManager
     m_Undo            = new Undo(List.class, true);
     m_Undo.addUndoListener(this);
     m_Undo.setMaxUndo(20);
+    m_Markers         = new Markers(this);
   }
 
   /**
@@ -778,8 +782,9 @@ public class LayerManager
     }
     else {
       if (getCombinedLayer() != null)
-        getCombinedLayer().draw(g2d);
+	getCombinedLayer().draw(g2d);
     }
+    drawMarkers(g2d);
   }
 
   /**
@@ -840,5 +845,21 @@ public class LayerManager
     while (hasLayer(result));
 
     return result;
+  }
+
+  /**
+   * Returns the markers manager.
+   */
+  public Markers getMarkers() {
+    return m_Markers;
+  }
+
+  /**
+   * Draws the markers.
+   *
+   * @param g2d		the graphics context
+   */
+  protected void drawMarkers(Graphics2D g2d) {
+    m_Markers.drawMarkers(g2d);
   }
 }
