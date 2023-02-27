@@ -27,6 +27,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
@@ -339,16 +340,36 @@ public abstract class AbstractTool
   }
 
   /**
+   * Checks the parameters before applying them.
+   * <br>
+   * Default implementation just returns null.
+   *
+   * @return		null if checks passed, otherwise error message (gets displayed in GUI)
+   */
+  protected String checkBeforeApply() {
+    return null;
+  }
+
+  /**
    * Applies the settings.
    */
   protected abstract void doApply();
 
   /**
-   * Applies the settings.
+   * Applies the settings (if valid).
    *
    * @see		#doApply()
+   * @see		#checkBeforeApply()
    */
   public void apply(BaseFlatButton button) {
+    String		msg;
+
+    msg = checkBeforeApply();
+    if (msg != null) {
+      GUIHelper.showErrorMessage(getCanvas(), "Failed to apply settings:\n" + msg);
+      return;
+    }
+
     setApplyButtonState(button, false);
     doApply();
     getCanvas().setCursor(getCursor());
