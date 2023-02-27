@@ -22,6 +22,7 @@ package adams.gui.visualization.segmentation.tool;
 
 import adams.core.CleanUpHandler;
 import adams.core.GlobalInfoSupporter;
+import adams.core.logging.LoggingObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -50,6 +51,7 @@ import java.io.Serializable;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTool
+  extends LoggingObject
   implements Serializable, GlobalInfoSupporter, CleanUpHandler {
 
   private static final long serialVersionUID = -6782161796343153566L;
