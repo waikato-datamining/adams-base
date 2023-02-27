@@ -15,7 +15,7 @@
 
 /*
  * InetAddressHelper.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -261,11 +261,32 @@ public class InternetHelper {
    * @param base64	the encoded string
    * @return		the decoded string, null in case of an error
    */
-  public static String decodeBase64(String base64) {
+  public static String decodeBase64String(String base64) {
     String	result;
 
     try {
       result = new String(Base64.getDecoder().decode(base64));
+    }
+    catch (Exception e) {
+      System.err.println("Failed to decode base64 string: " + base64);
+      e.printStackTrace();
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the base64 encoded string into plain text.
+   *
+   * @param base64	the encoded string
+   * @return		the decoded string, null in case of an error
+   */
+  public static byte[] decodeBase64(String base64) {
+    byte[]	result;
+
+    try {
+      result = Base64.getDecoder().decode(base64);
     }
     catch (Exception e) {
       System.err.println("Failed to decode base64 string: " + base64);

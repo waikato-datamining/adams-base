@@ -15,7 +15,7 @@
 
 /*
  * BasePassword.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -78,7 +78,7 @@ public class BasePassword
   protected String decode(String base64) {
     String	result;
 
-    result = InternetHelper.decodeBase64(base64.substring(1, base64.length() - 1));
+    result = InternetHelper.decodeBase64String(base64.substring(1, base64.length() - 1));
     if (result == null)
       result = ERROR;
 
