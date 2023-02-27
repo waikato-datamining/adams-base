@@ -722,7 +722,7 @@ public class ImageSegmentationAnnotator
    * 			displaying in the GUI or for listing the options.
    */
   public String bestFitTipText() {
-    return "If enabled, the image gets fitted into the viewport.";
+    return "If enabled, the image gets fitted into the viewport (NB: under FlatLAF, this will hide the layers on the left for some reason).";
   }
 
   /**
