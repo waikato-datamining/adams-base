@@ -15,18 +15,15 @@
 
 /*
  * OpexObjectLocationsReader.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
 import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
-import adams.data.io.output.OpexObjectLocationsWriter;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
-import adams.env.Environment;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
@@ -36,7 +33,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
-import java.awt.*;
+import java.awt.Polygon;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -476,6 +473,13 @@ public class OpexObjectLocationsReader
 	    lobj.getMetaData().put(m_ScoreSuffix, score);
 	  if (label != null)
 	    lobj.getMetaData().put(m_LabelSuffix, label);
+	  // meta-data
+	  if (object.containsKey("meta")) {
+	    meta = (JSONObject) obj.get("meta");
+	    for (String key: meta.keySet())
+	      lobj.getMetaData().put(key, meta.get(key));
+	  }
+	  // add object
 	  lobjs.add(lobj);
 	}
       }

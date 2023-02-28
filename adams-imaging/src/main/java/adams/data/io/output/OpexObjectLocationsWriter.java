@@ -15,7 +15,7 @@
 
 /*
  * OpexObjectLocationsWriter.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
@@ -25,7 +25,6 @@ import adams.core.DateUtils;
 import adams.core.io.FileUtils;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.data.io.input.OpexObjectLocationsReader;
-import adams.data.io.input.ViaAnnotationsReportReader;
 import adams.data.json.JsonHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
@@ -480,6 +479,19 @@ public class OpexObjectLocationsWriter
       }
       polygon.put("points", points);
       object.put("polygon", polygon);
+      // meta-data
+      if (obj.getMetaData().size() > 0) {
+        meta = new JSONObject();
+        for (String key: obj.getMetaData().keySet()) {
+          if (key.equals(m_ScoreKey))
+            continue;
+          if (key.equals(m_LabelKey))
+            continue;
+          meta.put(key, "" + obj.getMetaData().get(key));
+        }
+        if (meta.size() > 0)
+          object.put("meta", meta);
+      }
     }
     all.put("objects", objects);
 
