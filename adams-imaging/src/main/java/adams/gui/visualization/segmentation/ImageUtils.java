@@ -15,7 +15,7 @@
 
 /*
  * ImageUtils.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -73,20 +73,19 @@ public class ImageUtils {
   /**
    * Replaces the old color with the new one.
    *
-   * @param image 	the image to process
+   * @param pixels 	the pixels to process
    * @param oldColor 	the old color to replace
    * @param newColor 	the replacement color
+   * @return		true if modified
    */
-  public static void replaceColor(BufferedImage image, Color oldColor, Color newColor) {
+  public static boolean replaceColor(int[] pixels, Color oldColor, Color newColor) {
     int		oldC;
     int		newC;
-    int[]	pixels;
     int		i;
     boolean	modified;
 
     oldC     = oldColor.getRGB();
     newC     = newColor.getRGB();
-    pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
     modified = false;
     for (i = 0; i < pixels.length; i++) {
       if (pixels[i] == oldC) {
@@ -94,8 +93,71 @@ public class ImageUtils {
 	modified  = true;
       }
     }
+    return modified;
+  }
+
+  /**
+   * Replaces the old color with the new one.
+   *
+   * @param image 	the image to process
+   * @param oldColor 	the old color to replace
+   * @param newColor 	the replacement color
+   * @return		true if modified
+   */
+  public static boolean replaceColor(BufferedImage image, Color oldColor, Color newColor) {
+    int[]	pixels;
+    boolean	modified;
+
+    pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    modified = replaceColor(pixels, oldColor, newColor);
     if (modified)
       image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+    return modified;
+  }
+
+  /**
+   * Replaces the old color with the new one.
+   *
+   * @param pixels 	the pixels to process
+   * @param width	the width of the image
+   * @param height 	the height of the image
+   * @param oldColor 	the old color to replace
+   * @param newColor 	the replacement color
+   * @param rangeX	the sub-range of x coordinates to work on (both incl)
+   * @param rangeY	the sub-range of y coordinates to work on (both incl)
+   * @return		true if modified
+   */
+  public static boolean replaceColor(int[] pixels, int width, int height, Color oldColor, Color newColor, int[] rangeX, int[] rangeY) {
+    int			oldC;
+    int			newC;
+    boolean		modified;
+    IntArrayMatrixView	view;
+    int			x;
+    int			y;
+
+    // ensure valid coordinates
+    if (rangeX[0] < 0)
+      rangeX[0] = 0;
+    if (rangeX[1] >= width)
+      rangeX[1] = width - 1;
+    if (rangeY[0] < 0)
+      rangeY[0] = 0;
+    if (rangeY[1] >= height)
+      rangeY[1] = height - 1;
+
+    oldC     = oldColor.getRGB();
+    newC     = newColor.getRGB();
+    view     = new IntArrayMatrixView(pixels, width, height);
+    modified = false;
+    for (y = rangeY[0]; y <= rangeY[1]; y++) {
+      for (x = rangeX[0]; x <= rangeX[1]; x++) {
+	if (view.get(x, y) == oldC) {
+	  view.set(x, y, newC);
+	  modified = true;
+	}
+      }
+    }
+    return modified;
   }
 
   /**
@@ -106,42 +168,17 @@ public class ImageUtils {
    * @param newColor 	the replacement color
    * @param rangeX	the sub-range of x coordinates to work on (both incl)
    * @param rangeY	the sub-range of y coordinates to work on (both incl)
+   * @return		true if modified
    */
-  public static void replaceColor(BufferedImage image, Color oldColor, Color newColor, int[] rangeX, int[] rangeY) {
-    int			oldC;
-    int			newC;
+  public static boolean replaceColor(BufferedImage image, Color oldColor, Color newColor, int[] rangeX, int[] rangeY) {
     int[]		pixels;
-    int			i;
     boolean		modified;
-    IntArrayMatrixView	view;
-    int			x;
-    int			y;
 
-    // ensure valid coordinates
-    if (rangeX[0] < 0)
-      rangeX[0] = 0;
-    if (rangeX[1] >= image.getWidth())
-      rangeX[1] = image.getWidth() - 1;
-    if (rangeY[0] < 0)
-      rangeY[0] = 0;
-    if (rangeY[1] >= image.getHeight())
-      rangeY[1] = image.getHeight() - 1;
-
-    oldC     = oldColor.getRGB();
-    newC     = newColor.getRGB();
     pixels   = image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
-    view     = new IntArrayMatrixView(pixels, image.getWidth(), image.getHeight());
-    modified = false;
-    for (y = rangeY[0]; y <= rangeY[1]; y++) {
-      for (x = rangeX[0]; x <= rangeX[1]; x++) {
-	if (view.get(x, y) == oldC) {
-	  view.set(x, y, newC);
-	  modified = true;
-	}
-      }
-    }
+    modified = replaceColor(pixels, image.getWidth(), image.getHeight(), oldColor, newColor, rangeX, rangeY);
     if (modified)
       image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+    return modified;
   }
 
   /**
