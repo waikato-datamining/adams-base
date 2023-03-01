@@ -475,7 +475,7 @@ public class OpexObjectLocationsReader
 	    lobj.getMetaData().put(m_LabelSuffix, label);
 	  // meta-data
 	  if (object.containsKey("meta")) {
-	    meta = (JSONObject) obj.get("meta");
+	    meta = (JSONObject) object.get("meta");
 	    for (String key: meta.keySet())
 	      lobj.getMetaData().put(key, meta.get(key));
 	  }
