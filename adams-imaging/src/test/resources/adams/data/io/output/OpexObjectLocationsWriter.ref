@@ -1,0 +1,71 @@
+--> two-girl-friends-871278530751FPYN-out0.report
+{
+  "objects": [
+    {
+      "polygon": {
+        "points": [
+          [
+            142,
+            30
+          ],
+          [
+            282,
+            30
+          ],
+          [
+            282,
+            200
+          ],
+          [
+            142,
+            200
+          ]
+        ]
+      },
+      "meta": {
+        "index": "0001"
+      },
+      "bbox": {
+        "top": 30,
+        "left": 142,
+        "bottom": 200,
+        "right": 282
+      },
+      "label": "object"
+    },
+    {
+      "polygon": {
+        "points": [
+          [
+            361,
+            37
+          ],
+          [
+            490,
+            37
+          ],
+          [
+            490,
+            212
+          ],
+          [
+            361,
+            212
+          ]
+        ]
+      },
+      "meta": {
+        "index": "0002"
+      },
+      "bbox": {
+        "top": 37,
+        "left": 361,
+        "bottom": 212,
+        "right": 490
+      },
+      "label": "object"
+    }
+  ],
+  "id": "fake_id"
+}
+
