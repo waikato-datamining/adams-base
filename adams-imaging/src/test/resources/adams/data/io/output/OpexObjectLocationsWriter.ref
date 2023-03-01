@@ -1,7 +1,15 @@
 --> two-girl-friends-871278530751FPYN-out0.report
 {
+  "id": "fake_id",
   "objects": [
     {
+      "label": "object",
+      "bbox": {
+        "top": 30,
+        "left": 142,
+        "bottom": 200,
+        "right": 282
+      },
       "polygon": {
         "points": [
           [
@@ -24,16 +32,16 @@
       },
       "meta": {
         "index": "0001"
-      },
-      "bbox": {
-        "top": 30,
-        "left": 142,
-        "bottom": 200,
-        "right": 282
-      },
-      "label": "object"
+      }
     },
     {
+      "label": "object",
+      "bbox": {
+        "top": 37,
+        "left": 361,
+        "bottom": 212,
+        "right": 490
+      },
       "polygon": {
         "points": [
           [
@@ -56,16 +64,8 @@
       },
       "meta": {
         "index": "0002"
-      },
-      "bbox": {
-        "top": 37,
-        "left": 361,
-        "bottom": 212,
-        "right": 490
-      },
-      "label": "object"
+      }
     }
-  ],
-  "id": "fake_id"
+  ]
 }
 

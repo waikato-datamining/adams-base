@@ -20,12 +20,9 @@
 
 package adams.data.io.output;
 
-import adams.core.DateFormat;
 import adams.core.DateUtils;
-import adams.core.io.FileUtils;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.data.io.input.OpexObjectLocationsReader;
-import adams.data.json.JsonHelper;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
 import adams.data.report.AbstractField;
@@ -34,10 +31,16 @@ import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+import opex4j.BBox;
+import opex4j.ObjectPrediction;
+import opex4j.ObjectPredictions;
+import opex4j.Polygon;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -98,8 +101,10 @@ import java.util.Date;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class OpexObjectLocationsWriter
-    extends AbstractReportWriter<Report>
-    implements PrettyPrintingSupporter {
+  extends AbstractReportWriter<Report>
+  implements PrettyPrintingSupporter {
+
+  private static final long serialVersionUID = 3152117801492456686L;
 
   /** the object finder to use. */
   protected ObjectFinder m_Finder;
@@ -130,8 +135,8 @@ public class OpexObjectLocationsWriter
   @Override
   public String globalInfo() {
     return "Writes polygon annotations in VGG Image Annotator JSON format.\n"
-	+ "For more information, see:\n"
-	+ "http://www.robots.ox.ac.uk/~vgg/software/via/";
+      + "For more information, see:\n"
+      + "http://www.robots.ox.ac.uk/~vgg/software/via/";
   }
 
   /**
@@ -142,32 +147,32 @@ public class OpexObjectLocationsWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	"finder", "finder",
-	new AllFinder());
+      "finder", "finder",
+      new AllFinder());
 
     m_OptionManager.add(
-	"id", "ID",
-	new Field("ID", DataType.STRING));
+      "id", "ID",
+      new Field("ID", DataType.STRING));
 
     m_OptionManager.add(
-	"timestamp", "timestamp",
-	new Field("Timestamp", DataType.STRING));
+      "timestamp", "timestamp",
+      new Field("Timestamp", DataType.STRING));
 
     m_OptionManager.add(
-	"label-key", "labelKey",
-	"type");
+      "label-key", "labelKey",
+      "type");
 
     m_OptionManager.add(
-	"score-key", "scoreKey",
-	"score");
+      "score-key", "scoreKey",
+      "score");
 
     m_OptionManager.add(
-	"meta-prefix", "metaPrefix",
-	"Meta.");
+      "meta-prefix", "metaPrefix",
+      "Meta.");
 
     m_OptionManager.add(
-	"pretty-printing", "prettyPrinting",
-	false);
+      "pretty-printing", "prettyPrinting",
+      false);
   }
 
   /**
@@ -402,104 +407,77 @@ public class OpexObjectLocationsWriter
    */
   @Override
   protected boolean writeData(Report data) {
-    LocatedObjects 	objs;
-    int			n;
-    JSONObject 		all;
-    JSONObject 		meta;
-    JSONArray 		objects;
-    JSONObject 		object;
-    JSONObject 		bbox;
-    JSONObject 		polygon;
-    JSONArray		points;
-    JSONArray		point;
-    int[]		x;
-    int[]		y;
-    DateFormat		dformat;
-    String		content;
+    LocatedObjects 		objs;
+    ObjectPredictions   	preds;
+    List<ObjectPrediction> 	objects;
+    ObjectPrediction    	pred;
+    BBox 			bbox;
+    Polygon			poly;
+    String			label;
+    Double			score;
+    String			id;
+    LocalDateTime 		timestamp;
 
-    dformat = DateUtils.getTimestampFormatterMsecs();
-    all     = new JSONObject();
-
-    // ID
+    // id
     if (data.hasValue(m_ID))
-      all.put("id", "" + data.getValue(m_ID));
+      id = "" + data.getValue(m_ID);
     else
-      all.put("id", dformat.format(new Date()));
+      id = DateUtils.getTimestampFormatterMsecs().format(new Date());
 
     // timestamp
+    timestamp = null;
     if (data.hasValue(m_Timestamp))
-      all.put("timestamp", "" + data.getValue(m_Timestamp));
-
-    // meta
-    meta = new JSONObject();
-    for (AbstractField field: data.getFields()) {
-      if (field.getName().startsWith(m_MetaPrefix))
-	meta.put(field.getName().substring(m_MetaPrefix.length()), "" + data.getValue(field));
-    }
-    if (meta.size() > 0)
-      all.put("meta", meta);
+      timestamp = LocalDateTime.parse("" + data.getValue(m_Timestamp), ObjectPredictions.TIMESTAMP_FORMATTER);
 
     // objects
+    objects = new ArrayList<>();
     objs    = m_Finder.findObjects(data);
-    objects = new JSONArray();
     for (LocatedObject obj: objs) {
-      object = new JSONObject();
-      objects.add(object);
-      // label
-      if (!m_LabelKey.isEmpty() && obj.getMetaData().containsKey(m_LabelKey))
-	object.put("label", "" + obj.getMetaData().get(m_LabelKey));
+      bbox = BBox.newInstance(obj.getRectangle());
+      if (obj.hasPolygon())
+        poly = Polygon.newInstance(obj.getPolygon());
       else
-	object.put("label", "-no-label-");
-      // score
-      if (!m_ScoreKey.isEmpty() && obj.getMetaData().containsKey(m_ScoreKey))
-	object.put("score", obj.getMetaData().get(m_ScoreKey));
-      // bbox
-      bbox = new JSONObject();
-      bbox.put("left", obj.getX());
-      bbox.put("top", obj.getY());
-      bbox.put("right", obj.getX() + obj.getWidth() - 1);
-      bbox.put("bottom", obj.getY() + obj.getHeight() - 1);
-      object.put("bbox", bbox);
-      // polygon
-      polygon = new JSONObject();
-      points  = new JSONArray();
-      if (obj.hasPolygon()) {
-	x = obj.getPolygonX();
-	y = obj.getPolygonY();
+        poly = bbox.toPolygon();
+      if (!m_LabelKey.isEmpty() && obj.getMetaData().containsKey(m_LabelKey))
+        label = "" + obj.getMetaData().get(m_LabelKey);
+      else
+        label = "-no-label-";
+      score = null;
+      if (!m_ScoreKey.isEmpty() && obj.getMetaData().containsKey(m_ScoreKey)) {
+        if (obj.getMetaData().get(m_ScoreKey) instanceof Number)
+          score = ((Number) obj.getMetaData().get(m_ScoreKey)).doubleValue();
+        else
+          score = Double.parseDouble("" + obj.getMetaData().get(m_ScoreKey));
       }
-      else {
-	x = new int[]{obj.getX(), obj.getX() + obj.getWidth() - 1, obj.getX() + obj.getWidth() - 1, obj.getX()};
-	y = new int[]{obj.getY(), obj.getY(), obj.getY() + obj.getHeight() - 1, obj.getY() + obj.getHeight() - 1};
-      }
-      for (n = 0; n < x.length; n++) {
-	point = new JSONArray();
-	point.add(x[n]);
-	point.add(y[n]);
-	points.add(point);
-      }
-      polygon.put("points", points);
-      object.put("polygon", polygon);
+      pred = new ObjectPrediction(label, score, bbox, poly, null);
       // meta-data
-      if (obj.getMetaData().size() > 0) {
-        meta = new JSONObject();
-        for (String key: obj.getMetaData().keySet()) {
-          if (key.equals(m_ScoreKey))
-            continue;
-          if (key.equals(m_LabelKey))
-            continue;
-          meta.put(key, "" + obj.getMetaData().get(key));
-        }
-        if (meta.size() > 0)
-          object.put("meta", meta);
+      for (String key: obj.getMetaData().keySet()) {
+        if (key.equals(m_LabelKey))
+          continue;
+        if (key.equals(m_ScoreKey))
+          continue;
+        pred.getMeta().put(key, "" + obj.getMetaData().get(key));
       }
+      // add prediction
+      objects.add(pred);
     }
-    all.put("objects", objects);
 
-    if (m_PrettyPrinting)
-      content = JsonHelper.prettyPrint(all.toString());
-    else
-      content = all.toString();
+    preds = new ObjectPredictions(timestamp, id, objects);
 
-    return FileUtils.writeToFile(m_Output.getAbsolutePath(), content, false);
+    // meta-data
+    for (AbstractField field: data.getFields()) {
+      if (field.getName().startsWith(m_MetaPrefix))
+        preds.getMeta().put(field.getName().substring(m_MetaPrefix.length()), "" + data.getValue(field));
+    }
+
+    // write
+    try {
+      preds.write(m_Output.getAbsoluteFile(), m_PrettyPrinting);
+      return true;
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write locations to: " + m_Output, e);
+      return false;
+    }
   }
 }
