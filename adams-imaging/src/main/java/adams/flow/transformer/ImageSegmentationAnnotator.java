@@ -22,7 +22,6 @@ package adams.flow.transformer;
 
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
-import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
@@ -37,8 +36,6 @@ import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -295,8 +292,8 @@ public class ImageSegmentationAnnotator
   /** whether best fit has been applied. */
   protected boolean m_BestFitApplied;
 
-  /** the change listener for when the best fit zoom got redone. */
-  protected ChangeListener m_BestFitRedoneListener;
+  /** for applying the best fit zoom. */
+  protected Runnable m_BeforeShowBestFit;
 
   /**
    * Returns a string describing the object.
@@ -381,10 +378,6 @@ public class ImageSegmentationAnnotator
 
     m_LastSettings = new ArrayList<>();
     m_BestFitApplied = false;
-    m_BestFitRedoneListener = (ChangeEvent e) -> {
-      m_PanelSegmentation.setZoom(RoundingUtils.round(m_PanelSegmentation.getManager().getZoom() * 100, 1));
-      m_PanelSegmentation.getManager().removeBestFitRedoneListener(m_BestFitRedoneListener);
-    };
   }
 
   /**
@@ -722,7 +715,7 @@ public class ImageSegmentationAnnotator
    * 			displaying in the GUI or for listing the options.
    */
   public String bestFitTipText() {
-    return "If enabled, the image gets fitted into the viewport (NB: under FlatLAF, this will hide the layers on the left for some reason).";
+    return "If enabled, the image gets fitted into the viewport.";
   }
 
   /**
@@ -917,6 +910,16 @@ public class ImageSegmentationAnnotator
       dialog.setVisible(false);
     });
     panelButtons.add(buttonCancel);
+
+    m_BeforeShowBestFit = new Runnable() {
+      @Override
+      public void run() {
+        if (m_BestFit && !m_BestFitApplied) {
+          m_BestFitApplied = true;
+          m_PanelSegmentation.bestFitZoom();
+        }
+      }
+    };
   }
 
   /**
@@ -931,6 +934,7 @@ public class ImageSegmentationAnnotator
     ImageSegmentationContainer	segcont;
 
     m_Accepted = false;
+    m_Dialog.removeBeforeShowAction(m_BeforeShowBestFit);
 
     if (m_InputToken.hasPayload(BufferedImage.class)) {
       img     = m_InputToken.getPayload(BufferedImage.class);
@@ -959,11 +963,8 @@ public class ImageSegmentationAnnotator
 	this);
 
     // best fit
-    if (m_BestFit && !m_BestFitApplied) {
-      m_PanelSegmentation.getManager().addBestFitRedoneListener(m_BestFitRedoneListener);
-      m_PanelSegmentation.bestFitZoom();
-      m_BestFitApplied = true;
-    }
+    if (m_BestFit && !m_BestFitApplied)
+      m_Dialog.addBeforeShowAction(m_BeforeShowBestFit);
 
     // add undo point (if not automatic)
     if (!m_PanelSegmentation.isAutomaticUndoEnabled())
