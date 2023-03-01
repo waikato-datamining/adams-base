@@ -21,10 +21,13 @@
 package adams.gui.core;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A dialog that loads the size and location from the props file automatically.
@@ -55,6 +58,18 @@ public class BaseDialog
 
   /** whether UI settings were applied. */
   protected boolean m_UISettingsApplied;
+
+  /** the actions to execute before the dialog is made visible. */
+  protected Set<Runnable> m_BeforeShowActions;
+
+  /** the actions to execute before the dialog is hidden. */
+  protected Set<Runnable> m_BeforeHideActions;
+
+  /** the actions to execute after the dialog has been made visible. */
+  protected Set<Runnable> m_AfterShowActions;
+
+  /** the actions to execute after the dialog has been hidden. */
+  protected Set<Runnable> m_AfterHideActions;
 
   /**
    * Creates a modeless dialog without a title and without a specified Frame
@@ -166,6 +181,10 @@ public class BaseDialog
     m_UISettingsPrefix  = "";
     m_UISettingsStored  = false;
     m_UISettingsApplied = false;
+    m_BeforeHideActions = new HashSet<>();
+    m_AfterHideActions  = new HashSet<>();
+    m_BeforeShowActions = new HashSet<>();
+    m_AfterShowActions  = new HashSet<>();
   }
 
   /**
@@ -277,12 +296,14 @@ public class BaseDialog
   protected void beforeShow() {
     if (!m_UISettingsPrefix.isEmpty())
       applyUISettings();
+    executeBeforeShowActions();
   }
 
   /**
    * Hook method just after the dialog was made visible.
    */
   protected void afterShow() {
+    executeAfterShowActions();
   }
 
   /**
@@ -290,12 +311,14 @@ public class BaseDialog
    */
   protected void beforeHide() {
     storeUISettings();
+    executeBeforeHideActions();
   }
 
   /**
    * Hook method just after the dialog was hidden.
    */
   protected void afterHide() {
+    executeAfterHideActions();
   }
 
   /**
@@ -355,5 +378,113 @@ public class BaseDialog
       GUIHelper.makeAtLeast(this, min);
     if (max != null)
       GUIHelper.makeAtMost(this, max);
+  }
+
+  /**
+   * Adds the specified action to the list of actions to execute after showing the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void addAfterShowAction(Runnable r) {
+    m_AfterShowActions.add(r);
+  }
+
+  /**
+   * Removes the specified action to the list of actions to execute after showing the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void removeAfterShowAction(Runnable r) {
+    m_AfterShowActions.remove(r);
+  }
+
+  /**
+   * Places the after show actions on the swing queue.
+   */
+  protected void executeAfterShowActions() {
+    for (Runnable r: m_AfterShowActions) {
+      SwingUtilities.invokeLater(r);
+    }
+  }
+
+  /**
+   * Adds the specified action to the list of actions to execute after hiding the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void addAfterHideAction(Runnable r) {
+    m_AfterHideActions.add(r);
+  }
+
+  /**
+   * Removes the specified action to the list of actions to execute after hiding the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void removeAfterHideAction(Runnable r) {
+    m_AfterHideActions.remove(r);
+  }
+
+  /**
+   * Places the after hide actions on the swing queue.
+   */
+  protected void executeAfterHideActions() {
+    for (Runnable r: m_AfterHideActions) {
+      SwingUtilities.invokeLater(r);
+    }
+  }
+
+  /**
+   * Adds the specified action to the list of actions to execute before showing the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void addBeforeShowAction(Runnable r) {
+    m_BeforeShowActions.add(r);
+  }
+
+  /**
+   * Removes the specified action to the list of actions to execute before showing the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void removeBeforeShowAction(Runnable r) {
+    m_BeforeShowActions.remove(r);
+  }
+
+  /**
+   * Places the before show actions on the swing queue.
+   */
+  protected void executeBeforeShowActions() {
+    for (Runnable r: m_BeforeShowActions) {
+      SwingUtilities.invokeLater(r);
+    }
+  }
+
+  /**
+   * Adds the specified action to the list of actions to execute before hiding the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void addBeforeHideAction(Runnable r) {
+    m_BeforeHideActions.add(r);
+  }
+
+  /**
+   * Removes the specified action to the list of actions to execute before hiding the dialog.
+   *
+   * @param r		the action to run
+   */
+  public void removeBeforeHideAction(Runnable r) {
+    m_BeforeHideActions.remove(r);
+  }
+
+  /**
+   * Places the before hide actions on the swing queue.
+   */
+  protected void executeBeforeHideActions() {
+    for (Runnable r: m_BeforeHideActions) {
+      SwingUtilities.invokeLater(r);
+    }
   }
 }
