@@ -1,0 +1,29 @@
+--> opex-out0.json
+#1:
+ID[S]: str
+Meta.key1[S]: value1
+Meta.key2[S]: value2
+Object.1.height[N]: 51.0
+Object.1.location[S]: 100.0 100.0 120.0 100.0 120.0 150.0 100.0 150.0
+Object.1.poly_x[S]: 100,150,150,100
+Object.1.poly_y[S]: 100,100,120,120
+Object.1.score[N]: 1.0
+Object.1.type[S]: person
+Object.1.width[N]: 21.0
+Object.1.x[N]: 100.0
+Object.1.y[N]: 100.0
+Object.2.height[N]: 101.0
+Object.2.location[S]: 100.0 100.0 200.0 100.0 200.0 200.0 100.0 200.0
+Object.2.poly_x[S]: 100,200,200,100
+Object.2.poly_y[S]: 100,100,200,200
+Object.2.price[S]: 500k
+Object.2.score[N]: 0.95
+Object.2.type[S]: house
+Object.2.width[N]: 101.0
+Object.2.x[N]: 100.0
+Object.2.y[N]: 100.0
+Object.count[N]: 2.0
+Timestamp[S]: 20230228_170312.123456
+
+
+

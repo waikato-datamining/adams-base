@@ -1,0 +1,49 @@
+{
+  "timestamp": "20230228_170312.123456",
+  "id": "str",
+  "objects": [
+    {
+      "score": 1.0,
+      "label": "person",
+      "bbox": {
+        "top": 100,
+        "left": 100,
+        "bottom": 150,
+        "right": 120
+      },
+      "polygon": {
+        "points": [
+          [100, 100],
+          [150, 100],
+          [150, 120],
+          [100, 120]
+        ]
+      }
+    },
+    {
+      "score": 0.95,
+      "label": "house",
+      "bbox": {
+        "top": 100,
+        "left": 100,
+        "bottom": 200,
+        "right": 200
+      },
+      "polygon": {
+        "points": [
+          [100, 100],
+          [200, 100],
+          [200, 200],
+          [100, 200]
+        ]
+      },
+      "meta": {
+        "price": "500k"
+      }
+    }
+  ],
+  "meta": {
+    "key1": "value1",
+    "key2": "value2"
+  }
+}
