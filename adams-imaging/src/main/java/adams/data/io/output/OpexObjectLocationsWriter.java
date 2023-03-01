@@ -421,13 +421,13 @@ public class OpexObjectLocationsWriter
     all     = new JSONObject();
 
     // ID
-    if (data.hasField(m_ID))
+    if (data.hasValue(m_ID))
       all.put("id", "" + data.getValue(m_ID));
     else
       all.put("id", dformat.format(new Date()));
 
     // timestamp
-    if (data.hasField(m_Timestamp))
+    if (data.hasValue(m_Timestamp))
       all.put("timestamp", "" + data.getValue(m_Timestamp));
 
     // meta
