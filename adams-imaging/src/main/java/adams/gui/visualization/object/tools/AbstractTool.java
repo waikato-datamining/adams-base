@@ -22,7 +22,7 @@ package adams.gui.visualization.object.tools;
 
 import adams.core.CleanUpHandler;
 import adams.core.GlobalInfoSupporter;
-import adams.core.logging.LoggingObject;
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -47,7 +47,7 @@ import java.io.Serializable;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTool
-  extends LoggingObject
+  extends CustomLoggingLevelObject
   implements Serializable, GlobalInfoSupporter, CleanUpHandler {
 
   private static final long serialVersionUID = -6782161796343153566L;
@@ -194,11 +194,14 @@ public abstract class AbstractTool
   /**
    * Returns the mouse listener to use.
    *
-   * @return		the listener, null if not applicable
+   * @return		the listener
    */
   public ToolMouseAdapter getMouseListener() {
-    if (m_Listener == null)
+    if (m_Listener == null) {
       m_Listener = createMouseListener();
+      if (m_Listener == null)
+        m_Listener = new ToolMouseAdapter(this);
+    }
     return m_Listener;
   }
 
@@ -212,11 +215,14 @@ public abstract class AbstractTool
   /**
    * Returns the mouse motion listener to use.
    *
-   * @return		the listener, null if not applicable
+   * @return		the listener
    */
   public ToolMouseMotionAdapter getMouseMotionListener() {
-    if (m_MotionListener == null)
+    if (m_MotionListener == null) {
       m_MotionListener = createMouseMotionListener();
+      if (m_MotionListener == null)
+        m_MotionListener = new ToolMouseMotionAdapter(this);
+    }
     return m_MotionListener;
   }
 
@@ -234,11 +240,14 @@ public abstract class AbstractTool
   /**
    * Returns the mouse listener to use.
    *
-   * @return		the listener, null if not applicable
+   * @return		the listener
    */
   public ToolKeyAdapter getKeyListener() {
-    if (m_KeyListener == null)
+    if (m_KeyListener == null) {
       m_KeyListener = createKeyListener();
+      if (m_KeyListener == null)
+        m_KeyListener = new ToolKeyAdapter(this);
+    }
     return m_KeyListener;
   }
 
