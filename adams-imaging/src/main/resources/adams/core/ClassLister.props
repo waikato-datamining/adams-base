@@ -213,3 +213,7 @@ adams.gui.visualization.object.objectannotations.shape.ShapePlotter=\
 # the object overlays
 adams.gui.visualization.object.overlay.Overlay=\
   adams.gui.visualization.object.overlay
+
+# the tools for object annotation
+adams.gui.visualization.object.tools.AbstractTool=\
+  adams.gui.visualization.object.tools

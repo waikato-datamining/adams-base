@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.object;
 
+import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.base.BaseString;
@@ -36,6 +37,8 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
+import adams.gui.core.BaseToggleButton;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
@@ -65,7 +68,11 @@ import adams.gui.visualization.object.overlay.NullOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.object.overlay.Overlay;
 import adams.gui.visualization.object.overlay.OverlayWithCustomAlphaSupport;
+import adams.gui.visualization.object.tools.AbstractTool;
+import adams.gui.visualization.object.tools.Annotator;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -74,10 +81,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
@@ -92,8 +103,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotationPanel
-    extends BasePanel
-    implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager, PopupMenuCustomizer {
+  extends BasePanel
+  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager, PopupMenuCustomizer {
 
   private static final long serialVersionUID = 2804494506168717754L;
 
@@ -101,7 +112,7 @@ public class ObjectAnnotationPanel
    * For undo/redo.
    */
   public static class AnnotationsState
-      implements Serializable {
+    implements Serializable {
 
     private static final long serialVersionUID = -578329279093068996L;
 
@@ -171,6 +182,24 @@ public class ObjectAnnotationPanel
   /** the JScrollPane that embeds the paint panel. */
   protected BaseScrollPane m_ScrollPane;
 
+  /** the annotations + tools panel. */
+  protected BasePanel m_PanelAnnotationsAndTools;
+
+  /** the split pane for annotations/tools. */
+  protected BaseSplitPane m_SplitPaneAnnotationsAndTools;
+
+  /** the tools panel. */
+  protected BasePanel m_PanelTools;
+
+  /** the split pane for the tools. */
+  protected BaseSplitPane m_SplitPaneTools;
+
+  /** the panel for displaying the tool options. */
+  protected BasePanel m_PanelToolOptions;
+
+  /** the panel with the buttons. */
+  protected JPanel m_PanelToolButtons;
+
   /** the annotations panel. */
   protected AbstractAnnotationsDisplayPanel m_PanelAnnotations;
 
@@ -201,6 +230,21 @@ public class ObjectAnnotationPanel
   /** the report from the previous session. */
   protected Report m_PreviousReport;
 
+  /** the tools. */
+  protected List<AbstractTool> m_Tools;
+
+  /** the last mouse listener in use. */
+  protected MouseListener m_LastMouseListener;
+
+  /** the last mouse motion listener in use. */
+  protected MouseMotionListener m_LastMouseMotionListener;
+
+  /** the last key listener in use. */
+  protected KeyListener m_LastKeyListener;
+
+  /** the active tool. */
+  protected AbstractTool m_ActiveTool;
+
   /**
    * Initializes the members.
    */
@@ -215,6 +259,7 @@ public class ObjectAnnotationPanel
     m_InteractionLog            = null;
     m_PreviousReport            = null;
     m_Undo                      = new Undo(List.class, false);
+    m_Tools                     = new ArrayList<>();
     m_Undo.addUndoListener(this);
     m_AnnotationChangeListeners = new HashSet<>();
     setAnnotator(new NullAnnotator());
@@ -225,8 +270,12 @@ public class ObjectAnnotationPanel
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
-    JLabel	label;
+    JPanel		panel;
+    JLabel		label;
+    Class[]		tools;
+    BaseToggleButton  	button;
+    ButtonGroup 	group;
+    BaseToggleButton buttonAnnotator;
 
     super.initGUI();
 
@@ -343,13 +392,77 @@ public class ObjectAnnotationPanel
     m_ScrollPane = new BaseScrollPane(m_PanelCanvas);
     m_SplitPaneRight.setLeftComponent(m_ScrollPane);
 
-    m_PanelAnnotations = new DefaultAnnotationsDisplayGenerator().generate();
-    m_PanelAnnotations.setOwner(this);
-    m_SplitPaneRight.setRightComponent(m_PanelAnnotations);
+    m_PanelAnnotationsAndTools = new BasePanel(new BorderLayout());
+    m_SplitPaneRight.setRightComponent(m_PanelAnnotationsAndTools);
+    m_SplitPaneAnnotationsAndTools = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPaneAnnotationsAndTools.setResizeWeight(0.3);
+    m_SplitPaneAnnotationsAndTools.setDividerLocation(200);
+    m_SplitPaneAnnotationsAndTools.setUISettingsParameters(getClass(), "AnnotationsAndToolsDivider");
+    m_PanelAnnotationsAndTools.add(m_SplitPaneAnnotationsAndTools);
+
+    setAnnotationsPanel(new DefaultAnnotationsDisplayGenerator().generate());
+
+    m_PanelTools = new BasePanel(new BorderLayout());
+    m_PanelTools.setBorder(BorderFactory.createTitledBorder("Tools"));
+    m_SplitPaneAnnotationsAndTools.setTopComponent(m_PanelTools);
+    m_SplitPaneTools = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_PanelTools.add(m_SplitPaneTools, BorderLayout.CENTER);
+    m_PanelToolButtons = new JPanel(new GridLayout(0, 4, 5, 5));
+    m_SplitPaneTools.setTopComponent(m_PanelToolButtons);
+    m_PanelToolOptions = new BasePanel(new BorderLayout());
+    m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
+    tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
+    group = new ButtonGroup();
+    buttonAnnotator = null;
+    for (Class t: tools) {
+      try {
+	final AbstractTool tool = (AbstractTool) t.getDeclaredConstructor().newInstance();
+	tool.setCanvas(m_PanelCanvas);
+	button = new BaseToggleButton(tool.getIcon());
+	button.setToolTipText(tool.getName());
+	button.addActionListener((ActionEvent e) -> {
+	  if (m_LastMouseListener != null)
+	    m_PanelCanvas.removeMouseListener(m_LastMouseListener);
+	  if (m_LastMouseMotionListener != null)
+	    m_PanelCanvas.removeMouseMotionListener(m_LastMouseMotionListener);
+	  m_PanelToolOptions.removeAll();
+	  tool.setCanvas(m_PanelCanvas);
+	  m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
+	  m_PanelCanvas.setCursor(tool.getCursor());
+	  m_LastMouseListener = tool.getMouseListener();
+	  if (m_LastMouseListener != null)
+	    m_PanelCanvas.addMouseListener(m_LastMouseListener);
+	  m_LastMouseMotionListener = tool.getMouseMotionListener();
+	  if (m_LastMouseMotionListener != null)
+	    m_PanelCanvas.addMouseMotionListener(m_LastMouseMotionListener);
+	  m_LastKeyListener = tool.getKeyListener();
+	  if (m_LastKeyListener != null)
+	    m_PanelCanvas.addKeyListener(m_LastKeyListener);
+	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
+	  m_ActiveTool = tool;
+	});
+	group.add(button);
+	if (t.equals(Annotator.class)) {
+	  m_PanelToolButtons.add(button, 0);
+	  buttonAnnotator = button;
+	}
+	else {
+	  m_PanelToolButtons.add(button);
+	}
+	m_Tools.add(tool);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
+      }
+    }
 
     // bottom
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
+
+    // select annotator button
+    if (buttonAnnotator != null)
+      buttonAnnotator.doClick();
   }
 
   /**
@@ -379,15 +492,15 @@ public class ObjectAnnotationPanel
       customAlpha = ((OverlayWithCustomAlphaSupport) m_Overlay).getCustomAlpha();
       menuitem = new JMenuItem("Set transparency...");
       menuitem.addActionListener((ActionEvent e) -> {
-        String alpha = GUIHelper.showInputDialog(ObjectAnnotationPanel.this, "Please enter alpha value (0: transparent, 255: opaque):", "" + customAlpha, "Transparency");
-        if (alpha == null)
-          return;
-        if (!Utils.isInteger(alpha)) {
-          GUIHelper.showErrorMessage(ObjectAnnotationPanel.this, "Please enter an integer value from 0-255 (provided: " + alpha + ")!");
-          return;
+	String alpha = GUIHelper.showInputDialog(ObjectAnnotationPanel.this, "Please enter alpha value (0: transparent, 255: opaque):", "" + customAlpha, "Transparency");
+	if (alpha == null)
+	  return;
+	if (!Utils.isInteger(alpha)) {
+	  GUIHelper.showErrorMessage(ObjectAnnotationPanel.this, "Please enter an integer value from 0-255 (provided: " + alpha + ")!");
+	  return;
 	}
-        int alphaInt = Integer.parseInt(alpha);
-        if ((alphaInt < 0) || (alphaInt > 255)) {
+	int alphaInt = Integer.parseInt(alpha);
+	if ((alphaInt < 0) || (alphaInt > 255)) {
 	  GUIHelper.showErrorMessage(ObjectAnnotationPanel.this, "Please enter an integer value from 0-255 (provided: " + alpha + ")!");
 	  return;
 	}
@@ -399,7 +512,7 @@ public class ObjectAnnotationPanel
 
       menuitem = new JMenuItem("Remove transparency");
       menuitem.addActionListener((ActionEvent e) -> {
-        ((OverlayWithCustomAlphaSupport) m_Overlay).setCustomAlphaEnabled(false);
+	((OverlayWithCustomAlphaSupport) m_Overlay).setCustomAlphaEnabled(false);
 	update();
       });
       menu.add(menuitem);
@@ -586,6 +699,7 @@ public class ObjectAnnotationPanel
    */
   public void setImage(BufferedImage value) {
     m_PanelCanvas.setImage(value);
+    notifyTools();
   }
 
   /**
@@ -604,6 +718,7 @@ public class ObjectAnnotationPanel
    */
   public void setReport(Report value) {
     m_PanelAnnotations.setReport(value);
+    notifyTools();
   }
 
   /**
@@ -855,9 +970,12 @@ public class ObjectAnnotationPanel
    * @param value	the panel to use
    */
   public void setAnnotationsPanel(AbstractAnnotationsDisplayPanel value) {
-    m_PanelAnnotations.cleanUp();
+    if (m_PanelAnnotations != null)
+      m_PanelAnnotations.cleanUp();
     m_PanelAnnotations = value;
-    m_SplitPaneRight.setRightComponent(m_PanelAnnotations);
+    m_PanelAnnotations.setOwner(this);
+    m_PanelAnnotations.setBorder(BorderFactory.createTitledBorder("Annotations"));
+    m_SplitPaneAnnotationsAndTools.setBottomComponent(m_PanelAnnotations);
   }
 
   /**
@@ -988,6 +1106,7 @@ public class ObjectAnnotationPanel
     if (source != m_Annotator)
       m_Annotator.annotationsChanged();
     notifyAnnotationChangeListeners();
+    notifyTools();
     update();
   }
 
@@ -1001,6 +1120,7 @@ public class ObjectAnnotationPanel
       m_PanelLabelSelector.setCurrentLabel(m_CurrentLabel);
     if ((m_Annotator != null) && (source != m_Annotator))
       m_Annotator.labelChanged();
+    notifyTools();
     update();
   }
 
@@ -1047,11 +1167,11 @@ public class ObjectAnnotationPanel
 
     loc = mouseToPixelLocation(pos);
     showStatus(
-	"X: " + (int) (loc.getX() + 1)
-	    + "   "
-	    + "Y: " + (int) (loc.getY() + 1)
-	    + "   "
-	    + "Zoom: " + Utils.doubleToString(getZoom() * 100, 1) + "%");
+      "X: " + (int) (loc.getX() + 1)
+	+ "   "
+	+ "Y: " + (int) (loc.getY() + 1)
+	+ "   "
+	+ "Zoom: " + Utils.doubleToString(getZoom() * 100, 1) + "%");
   }
 
   /**
@@ -1197,6 +1317,16 @@ public class ObjectAnnotationPanel
     e = new ChangeEvent(this);
     for (ChangeListener l: m_AnnotationChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Notifies all tools to update.
+   *
+   * @see		AbstractTool#update()
+   */
+  protected void notifyTools() {
+    for (AbstractTool tool: m_Tools)
+      tool.update();
   }
 
   /**
