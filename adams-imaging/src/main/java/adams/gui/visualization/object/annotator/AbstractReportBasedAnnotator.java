@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportBasedAnnotator.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -23,6 +23,7 @@ package adams.gui.visualization.object.annotator;
 import adams.core.base.BaseRegExp;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractReportBasedAnnotator
-  extends AbstractAnnotator {
+  extends AbstractAnnotator
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 3915632192147746710L;
 
