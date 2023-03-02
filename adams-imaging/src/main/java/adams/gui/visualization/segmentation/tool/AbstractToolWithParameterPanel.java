@@ -27,7 +27,6 @@ import adams.gui.core.ParameterPanel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 
 /**
  * Tool that uses a {@link ParameterPanel} for its parameters.
@@ -59,23 +58,27 @@ public abstract class AbstractToolWithParameterPanel
     BasePanel		result;
     JPanel 		panel;
     JPanel		panel2;
+    JPanel 		panelButton;
     ParameterPanel	paramPanel;
 
     result = new BasePanel();
 
     m_ButtonApply = createApplyButton();
 
-    panel = new JPanel(new GridLayout(0, 1));
+    panel = new JPanel(new BorderLayout());
     result.add(panel, BorderLayout.NORTH);
 
     paramPanel = new ParameterPanel();
     addOptions(paramPanel);
-    panel.add(paramPanel);
+    panel.add(paramPanel, BorderLayout.NORTH);
 
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel2.add(m_ButtonApply);
+    panel2 = new JPanel(new BorderLayout());
+    panel.add(panel2, BorderLayout.CENTER);
+
+    panelButton = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButton.add(m_ButtonApply);
     setApplyButtonState(m_ButtonApply, false);
-    result.add(panel2, BorderLayout.SOUTH);
+    panel2.add(panelButton, BorderLayout.SOUTH);
 
     return result;
   }
