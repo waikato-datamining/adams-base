@@ -63,6 +63,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -579,8 +580,10 @@ public class SegmentationPanel
    */
   public void bestFitZoom() {
     m_Manager.bestFitZoom();
-    m_TextZoom.setValue(RoundingUtils.round(m_Manager.getZoom() * 100, 1));
-    m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
+    SwingUtilities.invokeLater(() -> {
+      m_TextZoom.setValue(RoundingUtils.round(m_Manager.getZoom() * 100, 1));
+      m_ButtonZoom.setIcon(ImageManager.getIcon("validate.png"));
+    });
   }
 
   /**
