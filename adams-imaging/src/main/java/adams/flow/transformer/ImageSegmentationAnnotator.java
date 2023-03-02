@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
@@ -36,6 +37,8 @@ import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -233,8 +236,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationAnnotator
-    extends AbstractInteractiveTransformerDialog
-    implements ColorProviderHandler {
+  extends AbstractInteractiveTransformerDialog
+  implements ColorProviderHandler {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -292,8 +295,8 @@ public class ImageSegmentationAnnotator
   /** whether best fit has been applied. */
   protected boolean m_BestFitApplied;
 
-  /** for applying the best fit zoom. */
-  protected Runnable m_BeforeShowBestFit;
+  /** the change listener for when the best fit zoom got redone. */
+  protected ChangeListener m_BestFitRedoneListener;
 
   /**
    * Returns a string describing the object.
@@ -313,60 +316,60 @@ public class ImageSegmentationAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-	"label", "labels",
-	new BaseString[0]);
+      "label", "labels",
+      new BaseString[0]);
 
     m_OptionManager.add(
-	"color-provider", "colorProvider",
-	new DefaultColorProvider());
+      "color-provider", "colorProvider",
+      new DefaultColorProvider());
 
     m_OptionManager.add(
-	"alpha", "alpha",
-	0.5f, 0.0f, 1.0f);
+      "alpha", "alpha",
+      0.5f, 0.0f, 1.0f);
 
     m_OptionManager.add(
-	"left-divider-location", "leftDividerLocation",
-	280, 1, null);
+      "left-divider-location", "leftDividerLocation",
+      280, 1, null);
 
     m_OptionManager.add(
-	"right-divider-location", "rightDividerLocation",
-	650, 1, null);
+      "right-divider-location", "rightDividerLocation",
+      650, 1, null);
 
     m_OptionManager.add(
-	"tool-button-columns", "toolButtonColumns",
-	4, 1, null);
+      "tool-button-columns", "toolButtonColumns",
+      4, 1, null);
 
     m_OptionManager.add(
-	"automatic-undo", "automaticUndo",
-	true);
+      "automatic-undo", "automaticUndo",
+      true);
 
     m_OptionManager.add(
-	"max-undo", "maxUndo",
-	Undo.DEFAULT_MAX_UNDO, -1, null);
+      "max-undo", "maxUndo",
+      Undo.DEFAULT_MAX_UNDO, -1, null);
 
     m_OptionManager.add(
-	"zoom", "zoom",
-	100.0, 1.0, null);
+      "zoom", "zoom",
+      100.0, 1.0, null);
 
     m_OptionManager.add(
-	"best-fit", "bestFit",
-	false);
+      "best-fit", "bestFit",
+      false);
 
     m_OptionManager.add(
-	"use-separate-layers", "useSeparateLayers",
-	true);
+      "use-separate-layers", "useSeparateLayers",
+      true);
 
     m_OptionManager.add(
-	"layer-visibility", "layerVisibility",
-	SegmentationPanel.LayerVisibility.ALL);
+      "layer-visibility", "layerVisibility",
+      SegmentationPanel.LayerVisibility.ALL);
 
     m_OptionManager.add(
-	"allow-layer-remove", "allowLayerRemoval",
-	false);
+      "allow-layer-remove", "allowLayerRemoval",
+      false);
 
     m_OptionManager.add(
-	"allow-layer-actions", "allowLayerActions",
-	false);
+      "allow-layer-actions", "allowLayerActions",
+      false);
   }
 
   /**
@@ -378,6 +381,10 @@ public class ImageSegmentationAnnotator
 
     m_LastSettings = new ArrayList<>();
     m_BestFitApplied = false;
+    m_BestFitRedoneListener = (ChangeEvent e) -> {
+      m_PanelSegmentation.setZoom(RoundingUtils.round(m_PanelSegmentation.getManager().getZoom() * 100, 1));
+      m_PanelSegmentation.getManager().removeBestFitRedoneListener(m_BestFitRedoneListener);
+    };
   }
 
   /**
@@ -910,16 +917,6 @@ public class ImageSegmentationAnnotator
       dialog.setVisible(false);
     });
     panelButtons.add(buttonCancel);
-
-    m_BeforeShowBestFit = new Runnable() {
-      @Override
-      public void run() {
-        if (m_BestFit && !m_BestFitApplied) {
-          m_BestFitApplied = true;
-          m_PanelSegmentation.bestFitZoom();
-        }
-      }
-    };
   }
 
   /**
@@ -934,7 +931,6 @@ public class ImageSegmentationAnnotator
     ImageSegmentationContainer	segcont;
 
     m_Accepted = false;
-    m_Dialog.removeBeforeShowAction(m_BeforeShowBestFit);
 
     if (m_InputToken.hasPayload(BufferedImage.class)) {
       img     = m_InputToken.getPayload(BufferedImage.class);
@@ -951,20 +947,23 @@ public class ImageSegmentationAnnotator
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_PanelSegmentation.fromContainer(
-	segcont,
-	BaseObject.toStringArray(m_Labels),
-	m_UseSeparateLayers,
-	m_ColorProvider,
-	m_Alpha,
-	m_AllowLayerRemoval,
-	m_AllowLayerActions,
-	m_LayerVisibility,
-	m_LastSettings,
-	this);
+      segcont,
+      BaseObject.toStringArray(m_Labels),
+      m_UseSeparateLayers,
+      m_ColorProvider,
+      m_Alpha,
+      m_AllowLayerRemoval,
+      m_AllowLayerActions,
+      m_LayerVisibility,
+      m_LastSettings,
+      this);
 
     // best fit
-    if (m_BestFit && !m_BestFitApplied)
-      m_Dialog.addBeforeShowAction(m_BeforeShowBestFit);
+    if (m_BestFit && !m_BestFitApplied) {
+      m_PanelSegmentation.getManager().addBestFitRedoneListener(m_BestFitRedoneListener);
+      m_PanelSegmentation.bestFitZoom();
+      m_BestFitApplied = true;
+    }
 
     // add undo point (if not automatic)
     if (!m_PanelSegmentation.isAutomaticUndoEnabled())
