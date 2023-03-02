@@ -21,23 +21,16 @@
 package adams.gui.visualization.segmentation.tool;
 
 import adams.gui.core.BaseComboBox;
-import adams.gui.core.BaseFlatButton;
-import adams.gui.core.BasePanel;
-import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
+import adams.gui.core.ParameterPanel;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 /**
@@ -46,7 +39,7 @@ import java.awt.event.ActionEvent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SwitchLabel
-    extends AbstractTool {
+  extends AbstractToolWithParameterPanel {
 
   private static final long serialVersionUID = -3058489939334040466L;
 
@@ -55,9 +48,6 @@ public class SwitchLabel
 
   /** the text field for the new label. */
   protected BaseComboBox<String> m_ComboBoxNewLabel;
-
-  /** the apply button. */
-  protected BaseFlatButton m_ButtonApply;
 
   /** the available labels. */
   protected DefaultComboBoxModel<String> m_LabelsOld;
@@ -165,42 +155,21 @@ public class SwitchLabel
   }
 
   /**
-   * Creates the panel for setting the options.
+   * Fills the parameter panel with the options.
    *
-   * @return		the options panel
+   * @param paramPanel  for adding the options to
    */
   @Override
-  protected BasePanel createOptionPanel() {
-    BasePanel		result;
-    JPanel		panel;
-    JPanel		panel2;
-
-    result = new BasePanel();
-
-    m_ButtonApply = createApplyButton();
-
-    panel = new JPanel(new GridLayout(0, 1));
-    result.add(panel, BorderLayout.NORTH);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(Fonts.usePlain(new JLabel("Old label")));
+  protected void addOptions(ParameterPanel paramPanel) {
     m_ComboBoxOldLabel = new BaseComboBox<>();
     m_ComboBoxOldLabel.setToolTipText("The old label to replace");
     m_ComboBoxOldLabel.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
-    panel2.add(m_ComboBoxOldLabel);
+    paramPanel.addParameter("Old label", m_ComboBoxOldLabel);
 
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(Fonts.usePlain(new JLabel("New label")));
     m_ComboBoxNewLabel = new BaseComboBox<>();
     m_ComboBoxNewLabel.setToolTipText("The new label to replace with");
     m_ComboBoxNewLabel.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
-    panel2.add(m_ComboBoxNewLabel);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(m_ButtonApply);
+    paramPanel.addParameter("New label", m_ComboBoxNewLabel);
 
     m_ComboBoxOldLabel.setModel(m_LabelsOld);
     m_ComboBoxNewLabel.setModel(m_LabelsNew);
@@ -208,8 +177,6 @@ public class SwitchLabel
       m_ComboBoxOldLabel.setSelectedIndex(0);
       m_ComboBoxNewLabel.setSelectedIndex(0);
     }
-
-    return result;
   }
 
   /**

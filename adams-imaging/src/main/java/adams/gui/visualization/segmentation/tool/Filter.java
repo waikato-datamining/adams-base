@@ -23,37 +23,27 @@ package adams.gui.visualization.segmentation.tool;
 import adams.data.imagesegmentation.filter.AbstractImageSegmentationContainerFilter;
 import adams.data.imagesegmentation.filter.PassThrough;
 import adams.flow.container.ImageSegmentationContainer;
-import adams.gui.core.BaseFlatButton;
-import adams.gui.core.BasePanel;
-import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
+import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
 
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.List;
 
 /**
- * Filter.
+ * For applying filters.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Filter
-    extends AbstractTool {
+  extends AbstractToolWithParameterPanel {
 
   private static final long serialVersionUID = -1508997962532101115L;
 
   /** the filter to apply. */
   protected GenericObjectEditorPanel m_PanelFilter;
-
-  /** the apply button. */
-  protected BaseFlatButton m_ButtonApply;
 
   /** the current filter. */
   protected AbstractImageSegmentationContainerFilter m_Filter;
@@ -142,35 +132,15 @@ public class Filter
   }
 
   /**
-   * Creates the panel for setting the options.
+   * Fills the parameter panel with the options.
    *
-   * @return the options panel
+   * @param paramPanel  for adding the options to
    */
   @Override
-  protected BasePanel createOptionPanel() {
-    BasePanel		result;
-    JPanel		panel;
-    JPanel		panel2;
-
-    result = new BasePanel();
-
-    m_ButtonApply = createApplyButton();
-
-    panel = new JPanel(new GridLayout(0, 1));
-    result.add(panel, BorderLayout.NORTH);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(Fonts.usePlain(new JLabel("Filter")));
+  protected void addOptions(ParameterPanel paramPanel) {
     m_PanelFilter = new GenericObjectEditorPanel(AbstractImageSegmentationContainerFilter.class, m_Filter, true);
     m_PanelFilter.setTextColumns(10);
     m_PanelFilter.setToolTipText("The filter to apply");
-    panel2.add(m_PanelFilter);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(m_ButtonApply);
-
-    return result;
+    paramPanel.addParameter("Filter", m_PanelFilter);
   }
 }

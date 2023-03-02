@@ -20,20 +20,14 @@
 
 package adams.gui.visualization.object.tools;
 
-import adams.gui.core.BaseFlatButton;
-import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
-import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 
 /**
  * For switching between types of annotator tools.
@@ -41,7 +35,7 @@ import java.awt.GridLayout;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Annotator
-  extends AbstractTool {
+  extends AbstractToolWithParameterPanel {
 
   private static final long serialVersionUID = -3238804649373495561L;
 
@@ -50,9 +44,6 @@ public class Annotator
 
   /** the annotator to use. */
   protected AbstractAnnotator m_Annotator;
-
-  /** the apply button. */
-  protected BaseFlatButton m_ButtonApply;
 
   /**
    * Returns a string describing the object.
@@ -124,36 +115,15 @@ public class Annotator
   }
 
   /**
-   * Creates the panel for setting the options.
+   * Fills the parameter panel with the options.
    *
-   * @return the options panel
+   * @param paramPanel  for adding the options to
    */
   @Override
-  protected BasePanel createOptionPanel() {
-    BasePanel		result;
-    JPanel 		panel;
-    JPanel		panel2;
-    ParameterPanel	paramPanel;
-
-    result = new BasePanel();
-
-    m_ButtonApply = createApplyButton();
-
-    panel = new JPanel(new GridLayout(0, 1));
-    result.add(panel, BorderLayout.NORTH);
-
-    paramPanel = new ParameterPanel();
-    panel.add(paramPanel);
-
+  protected void addOptions(ParameterPanel paramPanel) {
     m_GOEAnnotator = new GenericObjectEditorPanel(AbstractAnnotator.class, getCanvas().getOwner().getAnnotator(), true);
     m_GOEAnnotator.addChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     paramPanel.addParameter("Annotator", m_GOEAnnotator);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(m_ButtonApply);
-
-    return result;
   }
 
   /**
