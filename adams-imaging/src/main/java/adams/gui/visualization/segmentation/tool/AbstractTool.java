@@ -439,6 +439,8 @@ public abstract class AbstractTool
 	splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
 	splitPane.setTopComponent(new BaseScrollPane(textArea));
 	splitPane.setBottomComponent(m_PanelOptions);
+        splitPane.setDividerLocation(50);
+        splitPane.setUISettingsParameters(getClass(), "GlobalInfoDivider");
 	m_PanelFullOptions.add(splitPane, BorderLayout.CENTER);
       }
       else {
