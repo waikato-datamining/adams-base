@@ -15,12 +15,12 @@
 
 /*
  * SMBConnection.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
-import adams.core.PasswordSupporter;
+import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
@@ -122,7 +122,7 @@ import java.util.List;
  */
 public class SMBConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt, SMBAuthenticationProvider, PasswordSupporter {
+  implements OptionalPasswordPrompt, SMBAuthenticationProvider, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;

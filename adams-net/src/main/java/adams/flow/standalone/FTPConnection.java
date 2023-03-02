@@ -15,12 +15,12 @@
 
 /*
  * FTPConnection.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
-import adams.core.PasswordSupporter;
+import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
@@ -122,7 +122,7 @@ import java.util.logging.Level;
  */
 public class FTPConnection
   extends AbstractStandalone
-  implements ProtocolCommandListener, OptionalPasswordPrompt, PasswordSupporter {
+  implements ProtocolCommandListener, OptionalPasswordPrompt, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;

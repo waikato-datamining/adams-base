@@ -20,7 +20,7 @@
 
 package adams.flow.standalone;
 
-import adams.core.PasswordSupporter;
+import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
@@ -138,7 +138,7 @@ import java.util.List;
  */
 public class SMTPConnection
     extends AbstractStandalone
-    implements OptionalPasswordPrompt, PasswordSupporter {
+    implements OptionalPasswordPrompt, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;

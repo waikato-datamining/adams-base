@@ -15,12 +15,12 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
-import adams.core.PasswordSupporter;
+import adams.core.PasswordPrompter;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
@@ -45,7 +45,7 @@ import java.awt.Dialog.ModalityType;
  */
 public abstract class AbstractDatabaseConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt, PasswordSupporter {
+  implements OptionalPasswordPrompt, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;
