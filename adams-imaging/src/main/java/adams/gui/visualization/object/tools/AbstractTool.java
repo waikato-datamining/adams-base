@@ -32,9 +32,6 @@ import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.visualization.object.CanvasPanel;
-import adams.gui.visualization.segmentation.tool.ToolKeyAdapter;
-import adams.gui.visualization.segmentation.tool.ToolMouseAdapter;
-import adams.gui.visualization.segmentation.tool.ToolMouseMotionAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;

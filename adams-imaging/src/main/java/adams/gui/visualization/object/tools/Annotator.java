@@ -26,8 +26,6 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
-import adams.gui.visualization.segmentation.tool.ToolMouseAdapter;
-import adams.gui.visualization.segmentation.tool.ToolMouseMotionAdapter;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
