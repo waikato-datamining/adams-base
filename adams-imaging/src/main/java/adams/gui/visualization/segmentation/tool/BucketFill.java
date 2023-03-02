@@ -20,28 +20,21 @@
 
 package adams.gui.visualization.segmentation.tool;
 
-import adams.gui.core.BaseFlatButton;
-import adams.gui.core.BasePanel;
 import adams.gui.core.Cursors;
-import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.core.ParameterPanel;
 import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -52,7 +45,7 @@ import java.awt.event.MouseEvent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BucketFill
-  extends AbstractTool {
+  extends AbstractToolWithParameterPanel {
 
   private static final long serialVersionUID = 2574859830274268039L;
 
@@ -67,9 +60,6 @@ public class BucketFill
 
   /** the text field for the size. */
   protected NumberTextField m_TextZoom;
-
-  /** the apply button. */
-  protected BaseFlatButton m_ButtonApply;
 
   /** whether to fill in foreground. */
   protected boolean m_Foreground;
@@ -199,50 +189,33 @@ public class BucketFill
   }
 
   /**
-   * Creates the panel for setting the options.
+   * Fills the parameter panel with the options.
    *
-   * @return		the options panel
+   * @param paramPanel  for adding the options to
    */
   @Override
-  protected BasePanel createOptionPanel() {
-    BasePanel		result;
-    JPanel		panel;
-    JPanel		panel2;
+  protected void addOptions(ParameterPanel paramPanel) {
     ButtonGroup		group;
 
-    result = new BasePanel();
-
-    m_ButtonApply = createApplyButton();
-
-    panel = new JPanel(new GridLayout(0, 1));
-    result.add(panel, BorderLayout.NORTH);
-
     group = new ButtonGroup();
-    m_RadioBackground = new JRadioButton("Background");
+
+    m_RadioBackground = new JRadioButton();
     m_RadioBackground.setSelected(!m_Foreground);
     m_RadioBackground.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioBackground);
-    panel.add(Fonts.usePlain(m_RadioBackground));
-    m_RadioForeground = new JRadioButton("Foreground");
+    paramPanel.addParameter("Background", m_RadioBackground);
+
+    m_RadioForeground = new JRadioButton();
     m_RadioForeground.setSelected(m_Foreground);
     m_RadioForeground.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioForeground);
-    panel.add(Fonts.usePlain(m_RadioForeground));
+    paramPanel.addParameter("Foreground", m_RadioForeground);
 
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(Fonts.usePlain(new JLabel("Cursor size (%)")));
     m_TextZoom = new NumberTextField(Type.DOUBLE, "" + m_Zoom);
     m_TextZoom.setColumns(5);
     m_TextZoom.setToolTipText("100 = original cursor size");
     m_TextZoom.setCheckModel(new BoundedNumberCheckModel(Type.DOUBLE, 1.0, null));
     m_TextZoom.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
-    panel2.add(m_TextZoom);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(m_ButtonApply);
-
-    return result;
+    paramPanel.addParameter("Cursor size (%)", m_TextZoom);
   }
 }

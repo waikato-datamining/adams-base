@@ -34,7 +34,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractShapeTool
-  extends AbstractTool {
+  extends AbstractToolWithParameterPanel {
 
   private static final long serialVersionUID = -4106386739843618810L;
 

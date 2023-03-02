@@ -20,35 +20,28 @@
 
 package adams.gui.visualization.segmentation.tool;
 
-import adams.gui.core.BaseFlatButton;
-import adams.gui.core.BasePanel;
 import adams.gui.core.Cursors;
-import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
+import adams.gui.core.ParameterPanel;
 import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
- * Eraser.
+ * Removes pixels using the background.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -68,9 +61,6 @@ public class Eraser
 
   /** the text field for the size. */
   protected NumberTextField m_TextSize;
-
-  /** the apply button. */
-  protected BaseFlatButton m_ButtonApply;
 
   /** whether the shape is currently round. */
   protected boolean m_Round;
@@ -180,50 +170,33 @@ public class Eraser
   }
 
   /**
-   * Creates the panel for setting the options.
+   * Fills the parameter panel with the options.
    *
-   * @return		the options panel
+   * @param paramPanel  for adding the options to
    */
   @Override
-  protected BasePanel createOptionPanel() {
-    BasePanel		result;
-    JPanel		panel;
-    JPanel		panel2;
+  protected void addOptions(ParameterPanel paramPanel) {
     ButtonGroup 	group;
 
-    result = new BasePanel();
-
-    m_ButtonApply = createApplyButton();
-
-    panel = new JPanel(new GridLayout(0, 1));
-    result.add(panel, BorderLayout.NORTH);
-
     group = new ButtonGroup();
-    m_RadioSquare = new JRadioButton("Square");
+
+    m_RadioSquare = new JRadioButton();
     m_RadioSquare.setSelected(!m_Round);
     m_RadioSquare.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioSquare);
-    panel.add(Fonts.usePlain(m_RadioSquare));
-    m_RadioRound = new JRadioButton("Round");
+    paramPanel.addParameter("Square", m_RadioSquare);
+
+    m_RadioRound = new JRadioButton();
     m_RadioRound.setSelected(m_Round);
     m_RadioRound.addActionListener((ActionEvent e) -> setApplyButtonState(m_ButtonApply, true));
     group.add(m_RadioRound);
-    panel.add(Fonts.usePlain(m_RadioRound));
+    paramPanel.addParameter("Round", m_RadioRound);
 
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(Fonts.usePlain(new JLabel("Size")));
     m_TextSize = new NumberTextField(Type.INTEGER, "" + m_Size);
     m_TextSize.setColumns(5);
     m_TextSize.setToolTipText("The size in on-screen pixels");
     m_TextSize.setCheckModel(new BoundedNumberCheckModel(Type.INTEGER, 1, null));
     m_TextSize.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
-    panel2.add(m_TextSize);
-
-    panel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(panel2);
-    panel2.add(m_ButtonApply);
-
-    return result;
+    paramPanel.addParameter("Size", m_TextSize);
   }
 }
