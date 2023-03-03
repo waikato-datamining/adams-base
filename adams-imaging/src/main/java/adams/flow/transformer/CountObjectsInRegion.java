@@ -15,7 +15,7 @@
 
 /*
  * CountObjectsInRegion.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -28,6 +28,7 @@ import adams.data.report.ReportHandler;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
@@ -145,7 +146,8 @@ import gnu.trove.set.hash.TIntHashSet;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class CountObjectsInRegion
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 9063650105550850888L;
 
@@ -226,7 +228,7 @@ public class CountObjectsInRegion
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "check-type", "checkType",

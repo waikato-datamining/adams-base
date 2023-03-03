@@ -15,7 +15,7 @@
 
 /*
  * ScaleReportObjects.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -32,6 +32,7 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -125,7 +126,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  */
 @DeprecatedClass(useInstead = {ImageObjectFilter.class, Scale.class})
 public class ScaleReportObjects
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 3910027464955482939L;
 
@@ -173,7 +175,7 @@ public class ScaleReportObjects
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "scale-x", "scaleX",

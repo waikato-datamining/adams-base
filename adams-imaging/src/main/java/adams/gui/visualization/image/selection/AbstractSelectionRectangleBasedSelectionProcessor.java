@@ -22,6 +22,7 @@ package adams.gui.visualization.image.selection;
 import adams.data.report.AnnotationHelper;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
@@ -35,7 +36,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractSelectionRectangleBasedSelectionProcessor
-  extends AbstractPaintingSelectionProcessor {
+  extends AbstractPaintingSelectionProcessor
+  implements ObjectPrefixHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5879410661391670242L;
@@ -99,7 +101,7 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
    * @return		the default
    */
   protected String getDefaultPrefix() {
-    return "Object.";
+    return LocatedObjects.DEFAULT_PREFIX;
   }
 
   /**

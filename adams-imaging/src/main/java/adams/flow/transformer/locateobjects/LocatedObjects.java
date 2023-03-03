@@ -76,6 +76,9 @@ public class LocatedObjects
   /** the key for the index of a group. */
   public final static String KEY_INDEX = "index";
 
+  /** the default prefix. */
+  public final static String DEFAULT_PREFIX = "Object.";
+
   /** the logger in use. */
   protected Logger m_Logger;
 

@@ -15,7 +15,7 @@
 
 /*
  * PascalVOCObjectLocationsReader.java
- * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -87,8 +87,8 @@ import java.util.logging.Level;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PascalVOCObjectLocationsReader
-    extends AbstractReportReader<Report>
-    implements ObjectPrefixHandler {
+  extends AbstractReportReader<Report>
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -7100893374030214070L;
 
@@ -115,8 +115,8 @@ public class PascalVOCObjectLocationsReader
   @Override
   public String globalInfo() {
     return "Reads object locations in Pascal VOC format.\n\n"
-	+ "See more:\n"
-	+ "https://github.com/WaikatoLink2020/objdet-predictions-exchange-format";
+      + "See more:\n"
+      + "https://github.com/WaikatoLink2020/objdet-predictions-exchange-format";
   }
 
   /**
@@ -127,24 +127,24 @@ public class PascalVOCObjectLocationsReader
     super.defineOptions();
 
     m_OptionManager.add(
-	"id", "ID",
-	new Field("ID", DataType.STRING));
+      "id", "ID",
+      new Field("ID", DataType.STRING));
 
     m_OptionManager.add(
-	"timestamp", "timestamp",
-	new Field("Timestamp", DataType.STRING));
+      "timestamp", "timestamp",
+      new Field("Timestamp", DataType.STRING));
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
-	"label-suffix", "labelSuffix",
-	"type");
+      "label-suffix", "labelSuffix",
+      "type");
 
     m_OptionManager.add(
-	"meta-prefix", "metaPrefix",
-	"Meta.");
+      "meta-prefix", "metaPrefix",
+      "Meta.");
   }
 
   /**
@@ -388,9 +388,9 @@ public class PascalVOCObjectLocationsReader
 
     for (i = 0; i < parent.getChildNodes().getLength(); i++) {
       if (parent.getChildNodes().item(i) instanceof Element) {
-	sub = (Element) parent.getChildNodes().item(i);
-	if (sub.getTagName().equals(tag))
-	  return sub;
+        sub = (Element) parent.getChildNodes().item(i);
+        if (sub.getTagName().equals(tag))
+          return sub;
       }
     }
 
@@ -413,9 +413,9 @@ public class PascalVOCObjectLocationsReader
 
     for (i = 0; i < parent.getChildNodes().getLength(); i++) {
       if (parent.getChildNodes().item(i) instanceof Element) {
-	sub = (Element) parent.getChildNodes().item(i);
-	if (sub.getTagName().equals(tag))
-	  result = sub.getTextContent();
+        sub = (Element) parent.getChildNodes().item(i);
+        if (sub.getTagName().equals(tag))
+          result = sub.getTextContent();
       }
     }
 
@@ -464,7 +464,7 @@ public class PascalVOCObjectLocationsReader
     }
     catch (Exception e) {
       if (isLoggingEnabled())
-	getLogger().warning("Failed to parse numeric value for field '" + name + "': " + value);
+        getLogger().warning("Failed to parse numeric value for field '" + name + "': " + value);
     }
 
     return false;
@@ -540,42 +540,42 @@ public class PascalVOCObjectLocationsReader
       // objects
       nodes = dom.getElementsByTagName("object");
       for (i = 0; i < nodes.getLength(); i++) {
-	if (!(nodes.item(i) instanceof Element))
-	  continue;
-	node = (Element) nodes.item(i);
-	bbox = getSubNode(node, "bndbox");
-	if (bbox == null)
-	  continue;
-	lobj = null;
-	try {
-	  xmin = Integer.parseInt(getSubNodeText(bbox, "xmin"));
-	  xmax = Integer.parseInt(getSubNodeText(bbox, "xmax"));
-	  ymin = Integer.parseInt(getSubNodeText(bbox, "ymin"));
-	  ymax = Integer.parseInt(getSubNodeText(bbox, "ymax"));
-	  lobj = new LocatedObject(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
-	  lobjs.add(lobj);
-	}
-	catch (Exception e) {
-	  getLogger().log(Level.SEVERE, "Failed to parse coordinates!", e);
-	  continue;
-	}
+        if (!(nodes.item(i) instanceof Element))
+          continue;
+        node = (Element) nodes.item(i);
+        bbox = getSubNode(node, "bndbox");
+        if (bbox == null)
+          continue;
+        lobj = null;
+        try {
+          xmin = Integer.parseInt(getSubNodeText(bbox, "xmin"));
+          xmax = Integer.parseInt(getSubNodeText(bbox, "xmax"));
+          ymin = Integer.parseInt(getSubNodeText(bbox, "ymin"));
+          ymax = Integer.parseInt(getSubNodeText(bbox, "ymax"));
+          lobj = new LocatedObject(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
+          lobjs.add(lobj);
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to parse coordinates!", e);
+          continue;
+        }
 
-	// meta
-	value = getSubNodeText(node, "name");
-	if (value != null)
-	  lobj.getMetaData().put(m_LabelSuffix, value);
-	value = getSubNodeText(node, "pose");
-	if (value != null)
-	  lobj.getMetaData().put("pose", value);
-	value = getSubNodeText(node, "truncated");
-	if (value != null)
-	  lobj.getMetaData().put("truncated", value.equalsIgnoreCase("1"));
-	value = getSubNodeText(node, "difficult");
-	if (value != null)
-	  lobj.getMetaData().put("difficult", value.equalsIgnoreCase("1"));
-	value = getSubNodeText(node, "occluded");
-	if (value != null)
-	  lobj.getMetaData().put("occluded", value.equalsIgnoreCase("1"));
+        // meta
+        value = getSubNodeText(node, "name");
+        if (value != null)
+          lobj.getMetaData().put(m_LabelSuffix, value);
+        value = getSubNodeText(node, "pose");
+        if (value != null)
+          lobj.getMetaData().put("pose", value);
+        value = getSubNodeText(node, "truncated");
+        if (value != null)
+          lobj.getMetaData().put("truncated", value.equalsIgnoreCase("1"));
+        value = getSubNodeText(node, "difficult");
+        if (value != null)
+          lobj.getMetaData().put("difficult", value.equalsIgnoreCase("1"));
+        value = getSubNodeText(node, "occluded");
+        if (value != null)
+          lobj.getMetaData().put("occluded", value.equalsIgnoreCase("1"));
       }
 
       report = lobjs.toReport(m_Prefix);

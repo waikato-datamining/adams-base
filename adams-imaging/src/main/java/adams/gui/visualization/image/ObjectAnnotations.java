@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotations.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.image;
@@ -372,7 +372,7 @@ public class ObjectAnnotations
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "cleaner", "cleaners",

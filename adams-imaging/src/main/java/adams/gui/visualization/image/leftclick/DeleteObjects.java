@@ -15,7 +15,7 @@
 
 /*
  * DeleteObjects.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.leftclick;
@@ -24,6 +24,7 @@ import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.visualization.image.ImagePanel;
@@ -37,7 +38,8 @@ import java.awt.Point;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class DeleteObjects
-  extends AbstractLeftClickProcessor {
+  extends AbstractLeftClickProcessor
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -5747047661002140048L;
 
@@ -72,7 +74,7 @@ public class DeleteObjects
    * @return		the default
    */
   protected String getDefaultPrefix() {
-    return "Object.";
+    return LocatedObjects.DEFAULT_PREFIX;
   }
 
   /**

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FixedBoundingBox.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.leftclick;
@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
@@ -70,7 +71,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FixedBoundingBox
   extends AbstractSelectionRectangleBasedLeftClickProcessor {
@@ -200,10 +200,10 @@ public class FixedBoundingBox
 	if (r.contains(x, y)) {
 	  modified  = true;
 	  current   = m_Prefix + (Utils.padLeft("" + r.getIndex(), '0', m_NumDigits));
-	  report.removeValue(new Field(current + KEY_X, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_Y, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_WIDTH, DataType.NUMERIC));
-	  report.removeValue(new Field(current + KEY_HEIGHT, DataType.NUMERIC));
+	  report.removeValue(new Field(current + LocatedObjects.KEY_X, DataType.NUMERIC));
+	  report.removeValue(new Field(current + LocatedObjects.KEY_Y, DataType.NUMERIC));
+	  report.removeValue(new Field(current + LocatedObjects.KEY_WIDTH, DataType.NUMERIC));
+	  report.removeValue(new Field(current + LocatedObjects.KEY_HEIGHT, DataType.NUMERIC));
 	  queue.add(r);
 	}
       }
@@ -215,10 +215,10 @@ public class FixedBoundingBox
 	modified  = true;
 	lastIndex = findLastIndex(report);
 	current   = m_Prefix + (Utils.padLeft("" + (lastIndex + 1), '0', m_NumDigits));
-	report.setNumericValue(current + KEY_X, rect.getX());
-	report.setNumericValue(current + KEY_Y, rect.getY());
-	report.setNumericValue(current + KEY_WIDTH, rect.getWidth());
-	report.setNumericValue(current + KEY_HEIGHT, rect.getHeight());
+	report.setNumericValue(current + LocatedObjects.KEY_X, rect.getX());
+	report.setNumericValue(current + LocatedObjects.KEY_Y, rect.getY());
+	report.setNumericValue(current + LocatedObjects.KEY_WIDTH, rect.getWidth());
+	report.setNumericValue(current + LocatedObjects.KEY_HEIGHT, rect.getHeight());
 	m_Locations.add(rect);
       }
     }

@@ -36,18 +36,6 @@ import java.util.Map;
  */
 public class AnnotationHelper {
 
-  /** the key for the X location. */
-  public final static String KEY_X = LocatedObjects.KEY_X;
-
-  /** the key for the Y location. */
-  public final static String KEY_Y = LocatedObjects.KEY_Y;
-
-  /** the key for the width. */
-  public final static String KEY_WIDTH = LocatedObjects.KEY_WIDTH;
-
-  /** the key for the height. */
-  public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
-
   /**
    * Removes the specified index from the report.
    *
@@ -156,10 +144,10 @@ public class AnnotationHelper {
 	  name = name.substring(0, name.indexOf('.'));
 	try {
 	  rect = new SelectionRectangle(
-	    report.getDoubleValue(prefix + name + KEY_X).intValue(),
-	    report.getDoubleValue(prefix + name + KEY_Y).intValue(),
-	    report.getDoubleValue(prefix + name + KEY_WIDTH).intValue(),
-	    report.getDoubleValue(prefix + name + KEY_HEIGHT).intValue(),
+	    report.getDoubleValue(prefix + name + LocatedObjects.KEY_X).intValue(),
+	    report.getDoubleValue(prefix + name + LocatedObjects.KEY_Y).intValue(),
+	    report.getDoubleValue(prefix + name + LocatedObjects.KEY_WIDTH).intValue(),
+	    report.getDoubleValue(prefix + name + LocatedObjects.KEY_HEIGHT).intValue(),
 	    Integer.parseInt(name));
 	  if (!result.contains(rect))
 	    result.add(rect);

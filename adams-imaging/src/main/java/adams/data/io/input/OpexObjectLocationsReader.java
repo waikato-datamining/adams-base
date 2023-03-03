@@ -140,7 +140,7 @@ public class OpexObjectLocationsReader
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "label-suffix", "labelSuffix",

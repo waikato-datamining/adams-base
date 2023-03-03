@@ -15,13 +15,14 @@
 
 /*
  * SimplePointAnnotator.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
 
 import adams.core.Utils;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.MouseUtils;
 import adams.gui.visualization.image.RectangleUtils;
 import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
@@ -420,8 +421,8 @@ public class SimplePointAnnotator
 	lastIndex = findLastIndex(report);
 	point.setIndex(lastIndex + 1);
 	current   = m_Prefix + (Utils.padLeft("" + point.getIndex(), '0', m_NumDigits));
-	report.setNumericValue(current + KEY_X, x);
-	report.setNumericValue(current + KEY_Y, y);
+	report.setNumericValue(current + LocatedObjects.KEY_X, x);
+	report.setNumericValue(current + LocatedObjects.KEY_Y, y);
 	if (hasCurrentLabel())
 	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(point);

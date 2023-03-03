@@ -15,7 +15,7 @@
 
 /*
  * MergeGrid.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.multiimageoperation;
@@ -27,6 +27,7 @@ import adams.data.image.transformer.subimages.Grid;
 import adams.data.objectfilter.Translate;
 import adams.flow.transformer.DeleteOverlappingImageObjects;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -86,7 +87,7 @@ import java.awt.image.BufferedImage;
  */
 public class MergeGrid
   extends AbstractBufferedImageMultiImageOperation
-  implements ClassCrossReference {
+  implements ClassCrossReference, ObjectPrefixHandler {
 
   private static final long serialVersionUID = 1888786897723421704L;
 
@@ -138,7 +139,7 @@ public class MergeGrid
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "num-cols", "numCols",

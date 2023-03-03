@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsSpreadSheetReader.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -309,7 +309,7 @@ public class ObjectLocationsSpreadSheetReader
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "label-suffix", "labelSuffix",

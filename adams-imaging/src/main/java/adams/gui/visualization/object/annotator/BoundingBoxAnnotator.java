@@ -15,13 +15,14 @@
 
 /*
  * BoundingBoxAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
 
 import adams.core.Utils;
 import adams.data.report.Report;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.RectangleUtils;
 import adams.gui.visualization.image.RectangleUtils.RectangleCorner;
 import adams.gui.visualization.image.SelectionRectangle;
@@ -372,10 +373,10 @@ public class BoundingBoxAnnotator
 	lastIndex = findLastIndex(report);
 	rect.setIndex(lastIndex + 1);
 	current   = m_Prefix + (Utils.padLeft("" + rect.getIndex(), '0', m_NumDigits));
-	report.setNumericValue(current + KEY_X, x);
-	report.setNumericValue(current + KEY_Y, y);
-	report.setNumericValue(current + KEY_WIDTH, w);
-	report.setNumericValue(current + KEY_HEIGHT, h);
+	report.setNumericValue(current + LocatedObjects.KEY_X, x);
+	report.setNumericValue(current + LocatedObjects.KEY_Y, y);
+	report.setNumericValue(current + LocatedObjects.KEY_WIDTH, w);
+	report.setNumericValue(current + LocatedObjects.KEY_HEIGHT, h);
 	if (hasCurrentLabel())
 	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(rect);

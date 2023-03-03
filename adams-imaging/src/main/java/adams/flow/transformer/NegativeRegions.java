@@ -15,7 +15,7 @@
 
 /*
  * NegativeRegions.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -181,7 +181,7 @@ public class NegativeRegions
 
     m_OptionManager.add(
       "object-prefix", "objectPrefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "object-type", "objectType",

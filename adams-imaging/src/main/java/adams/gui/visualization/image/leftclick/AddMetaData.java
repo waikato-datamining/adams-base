@@ -90,7 +90,7 @@ public class AddMetaData
    * @return		the default
    */
   protected String getDefaultPrefix() {
-    return "Object.";
+    return LocatedObjects.DEFAULT_PREFIX;
   }
 
   /**

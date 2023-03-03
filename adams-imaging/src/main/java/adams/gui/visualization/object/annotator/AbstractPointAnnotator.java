@@ -15,7 +15,7 @@
 
 /*
  * AbstractPointAnnotator.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -37,12 +37,6 @@ public abstract class AbstractPointAnnotator
   extends AbstractReportBasedAnnotator {
 
   private static final long serialVersionUID = 711225849711247916L;
-
-  /** the key for the X location. */
-  public final static String KEY_X = LocatedObjects.KEY_X;
-
-  /** the key for the Y location. */
-  public final static String KEY_Y = LocatedObjects.KEY_Y;
 
   /** the number of digits to use for left-padding the index. */
   protected int m_NumDigits;
@@ -151,8 +145,8 @@ public abstract class AbstractPointAnnotator
           name = name.substring(0, name.indexOf('.'));
         try {
           point = new SelectionPoint(
-            report.getDoubleValue(m_Prefix + name + KEY_X).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_Y).intValue(),
+            report.getDoubleValue(m_Prefix + name + LocatedObjects.KEY_X).intValue(),
+            report.getDoubleValue(m_Prefix + name + LocatedObjects.KEY_Y).intValue(),
             Integer.parseInt(name));
           if (!result.contains(point))
             result.add(point);

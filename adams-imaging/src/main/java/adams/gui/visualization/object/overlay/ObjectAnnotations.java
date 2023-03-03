@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotations.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.overlay;
@@ -54,8 +54,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotations
-    extends AbstractOverlay
-    implements ObjectPrefixHandler, OverlayWithCustomAlphaSupport {
+  extends AbstractOverlay
+  implements ObjectPrefixHandler, OverlayWithCustomAlphaSupport {
 
   private static final long serialVersionUID = 7620433880368599467L;
 
@@ -131,56 +131,56 @@ public class ObjectAnnotations
     super.defineOptions();
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
-	"cleaner", "cleaners",
-	new AnnotationCleaner[0]);
+      "cleaner", "cleaners",
+      new AnnotationCleaner[0]);
 
     m_OptionManager.add(
-	"shape-plotter", "shapePlotters",
-	new ShapePlotter[0]);
+      "shape-plotter", "shapePlotters",
+      new ShapePlotter[0]);
 
     m_OptionManager.add(
-	"shape-color", "shapeColors",
-	new AnnotationColors[0]);
+      "shape-color", "shapeColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-	"outline-plotter", "outlinePlotters",
-	new OutlinePlotter[0]);
+      "outline-plotter", "outlinePlotters",
+      new OutlinePlotter[0]);
 
     m_OptionManager.add(
-	"outline-color", "outlineColors",
-	new AnnotationColors[0]);
+      "outline-color", "outlineColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-	"label-plotter", "labelPlotters",
-	new LabelPlotter[0]);
+      "label-plotter", "labelPlotters",
+      new LabelPlotter[0]);
 
     m_OptionManager.add(
-	"label-color", "labelColors",
-	new AnnotationColors[0]);
+      "label-color", "labelColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-	"annotation-check", "annotationCheck",
-	new PassThrough());
+      "annotation-check", "annotationCheck",
+      new PassThrough());
 
     m_OptionManager.add(
-	"invalid-shape-plotter", "invalidShapePlotter",
-	new FilledPolygon());
+      "invalid-shape-plotter", "invalidShapePlotter",
+      new FilledPolygon());
 
     m_OptionManager.add(
-	"invalid-shape-color", "invalidShapeColor",
-	new FixedColor());
+      "invalid-shape-color", "invalidShapeColor",
+      new FixedColor());
 
     m_OptionManager.add(
-	"invalid-outline-plotter", "invalidOutlinePlotter",
-	new PolygonOutline());
+      "invalid-outline-plotter", "invalidOutlinePlotter",
+      new PolygonOutline());
 
     m_OptionManager.add(
-	"invalid-outline-color", "invalidOutlineColor",
-	new FixedColor());
+      "invalid-outline-color", "invalidOutlineColor",
+      new FixedColor());
   }
 
   /**
@@ -660,7 +660,7 @@ public class ObjectAnnotations
     for (AnnotationCleaner cleaner: m_Cleaners) {
       m_Annotations = cleaner.cleanAnnotations(m_Annotations, errors);
       if (!errors.isEmpty())
-	break;
+        break;
     }
     if (!errors.isEmpty()) {
       getLogger().severe(errors.toString());
@@ -675,7 +675,7 @@ public class ObjectAnnotations
     for (AnnotationColors colors: m_ShapeColors) {
       colors.initColors(m_Annotations, errors);
       if (!errors.isEmpty())
-	break;
+        break;
     }
     if (!errors.isEmpty()) {
       getLogger().severe(errors.toString());
@@ -686,7 +686,7 @@ public class ObjectAnnotations
     for (AnnotationColors colors: m_OutlineColors) {
       colors.initColors(m_Annotations, errors);
       if (!errors.isEmpty())
-	break;
+        break;
     }
     if (!errors.isEmpty()) {
       getLogger().severe(errors.toString());
@@ -697,7 +697,7 @@ public class ObjectAnnotations
     for (AnnotationColors colors: m_LabelColors) {
       colors.initColors(m_Annotations, errors);
       if (!errors.isEmpty())
-	break;
+        break;
     }
     if (!errors.isEmpty()) {
       getLogger().severe(errors.toString());
@@ -722,7 +722,7 @@ public class ObjectAnnotations
         m_CustomAlphaColorCache.put(c, result);
       }
       else {
-	result = m_CustomAlphaColorCache.get(c);
+        result = m_CustomAlphaColorCache.get(c);
       }
     }
 
@@ -748,16 +748,16 @@ public class ObjectAnnotations
     for (o = 0; o < m_Annotations.size(); o++) {
       object = m_Annotations.get(o);
       if (m_InvalidAnnotations.contains(o)) {
-	m_InvalidShapePlotter.plotShape(object, applyAlpha(m_InvalidShapeColor.getColor(object)), g2d);
-	m_InvalidOutlinePlotter.plotOutline(object, applyAlpha(m_InvalidOutlineColor.getColor(object)), g2d);
+        m_InvalidShapePlotter.plotShape(object, applyAlpha(m_InvalidShapeColor.getColor(object)), g2d);
+        m_InvalidOutlinePlotter.plotOutline(object, applyAlpha(m_InvalidOutlineColor.getColor(object)), g2d);
       }
       else {
-	for (i = 0; i < m_ShapePlotters.length; i++)
-	  m_ShapePlotters[i].plotShape(object, applyAlpha(m_ShapeColors[i].getColor(object)), g2d);
-	for (i = 0; i < m_OutlinePlotters.length; i++)
-	  m_OutlinePlotters[i].plotOutline(object, applyAlpha(m_OutlineColors[i].getColor(object)), g2d);
-	for (i = 0; i < m_LabelPlotters.length; i++)
-	  m_LabelPlotters[i].plotLabel(object, applyAlpha(m_LabelColors[i].getColor(object)), g2d);
+        for (i = 0; i < m_ShapePlotters.length; i++)
+          m_ShapePlotters[i].plotShape(object, applyAlpha(m_ShapeColors[i].getColor(object)), g2d);
+        for (i = 0; i < m_OutlinePlotters.length; i++)
+          m_OutlinePlotters[i].plotOutline(object, applyAlpha(m_OutlineColors[i].getColor(object)), g2d);
+        for (i = 0; i < m_LabelPlotters.length; i++)
+          m_LabelPlotters[i].plotLabel(object, applyAlpha(m_LabelColors[i].getColor(object)), g2d);
       }
     }
   }

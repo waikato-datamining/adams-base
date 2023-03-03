@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjectsToReport.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -48,8 +48,8 @@ import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LocatedObjectsToReport
-    extends AbstractConversion
-    implements ObjectPrefixHandler {
+  extends AbstractConversion
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 2077817492673201749L;
 
@@ -74,8 +74,8 @@ public class LocatedObjectsToReport
     super.defineOptions();
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      LocatedObjects.DEFAULT_PREFIX);
   }
 
   /**

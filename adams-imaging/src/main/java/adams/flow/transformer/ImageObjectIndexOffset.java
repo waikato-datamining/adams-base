@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectIndexOffset.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -26,6 +26,7 @@ import adams.data.report.MutableReportHandler;
 import adams.data.report.Report;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -94,7 +95,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectIndexOffset
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -1086186805796683098L;
 
@@ -123,7 +125,7 @@ public class ImageObjectIndexOffset
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "offset", "offset",

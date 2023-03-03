@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotationsHandler.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -30,6 +30,7 @@ import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.report.Report;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.image.ObjectAnnotations;
@@ -197,7 +198,7 @@ public class ObjectAnnotationsHandler
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "cleaner", "cleaners",

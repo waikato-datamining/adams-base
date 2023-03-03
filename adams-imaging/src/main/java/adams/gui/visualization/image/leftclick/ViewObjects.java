@@ -73,7 +73,7 @@ public class ViewObjects
    * @return		the default
    */
   protected BaseString[] getDefaultPrefixes() {
-    return new BaseString[]{new BaseString("Object.")};
+    return new BaseString[]{new BaseString(LocatedObjects.DEFAULT_PREFIX)};
   }
 
   /**

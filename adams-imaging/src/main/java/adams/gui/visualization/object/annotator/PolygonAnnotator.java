@@ -15,7 +15,7 @@
 
 /*
  * PolygonAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -23,6 +23,7 @@ package adams.gui.visualization.object.annotator;
 import adams.core.Utils;
 import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
+import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.SelectionRectangle;
 
 import java.awt.Color;
@@ -461,18 +462,18 @@ public class PolygonAnnotator
 	lastIndex = findLastIndex(report);
 	rect.setIndex(lastIndex + 1);
 	current   = m_Prefix + (Utils.padLeft("" + rect.getIndex(), '0', m_NumDigits));
-	report.setNumericValue(current + KEY_X, x);
-	report.setNumericValue(current + KEY_Y, y);
-	report.setNumericValue(current + KEY_WIDTH, w);
-	report.setNumericValue(current + KEY_HEIGHT, h);
+	report.setNumericValue(current + LocatedObjects.KEY_X, x);
+	report.setNumericValue(current + LocatedObjects.KEY_Y, y);
+	report.setNumericValue(current + LocatedObjects.KEY_WIDTH, w);
+	report.setNumericValue(current + LocatedObjects.KEY_HEIGHT, h);
 	poly_x = new int[m_SelectionTrace.size()];
 	poly_y = new int[m_SelectionTrace.size()];
 	for (i = 0; i < m_SelectionTrace.size(); i++) {
 	  poly_x[i] = (int) getOwner().mouseToPixelLocation(m_SelectionTrace.get(i)).getX();
 	  poly_y[i] = (int) getOwner().mouseToPixelLocation(m_SelectionTrace.get(i)).getY();
 	}
-	report.setStringValue(current + KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(poly_x), ","));
-	report.setStringValue(current + KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(poly_y), ","));
+	report.setStringValue(current + LocatedObjects.KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(poly_x), ","));
+	report.setStringValue(current + LocatedObjects.KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(poly_y), ","));
 	if (hasCurrentLabel())
 	  report.setStringValue(current + m_LabelSuffix, getCurrentLabel());
 	m_Locations.add(rect);

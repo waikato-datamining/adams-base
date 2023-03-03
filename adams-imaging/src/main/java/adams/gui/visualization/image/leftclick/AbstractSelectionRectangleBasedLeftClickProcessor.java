@@ -23,6 +23,7 @@ package adams.gui.visualization.image.leftclick;
 import adams.data.report.AnnotationHelper;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
@@ -34,21 +35,10 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractSelectionRectangleBasedLeftClickProcessor
-  extends AbstractLeftClickProcessor {
+  extends AbstractLeftClickProcessor
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 4069769951854697560L;
-
-  /** the key for the X location. */
-  public final static String KEY_X = LocatedObjects.KEY_X;
-
-  /** the key for the Y location. */
-  public final static String KEY_Y = LocatedObjects.KEY_Y;
-
-  /** the key for the width. */
-  public final static String KEY_WIDTH = LocatedObjects.KEY_WIDTH;
-
-  /** the key for the height. */
-  public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
 
   /** the prefix for the objects. */
   protected String m_Prefix;
@@ -91,7 +81,7 @@ public abstract class AbstractSelectionRectangleBasedLeftClickProcessor
    * @return		the default
    */
   protected String getDefaultPrefix() {
-    return "Object.";
+    return LocatedObjects.DEFAULT_PREFIX;
   }
 
   /**

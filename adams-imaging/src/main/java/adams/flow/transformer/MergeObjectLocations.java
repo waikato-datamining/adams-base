@@ -15,7 +15,7 @@
 
 /*
  * MergeObjectLocations.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -32,6 +32,7 @@ import adams.flow.control.StorageName;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -145,7 +146,8 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MergeObjectLocations
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = 8175397929496972306L;
 
@@ -226,7 +228,7 @@ public class MergeObjectLocations
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "overlap-action", "overlapAction",

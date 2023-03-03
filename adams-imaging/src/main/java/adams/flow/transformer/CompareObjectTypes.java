@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CompareObjectTypes.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -29,6 +29,7 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  <!-- globalinfo-start -->
@@ -113,10 +114,10 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CompareObjectTypes
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -2856574104135118360L;
 
@@ -156,7 +157,7 @@ public class CompareObjectTypes
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "type-suffix", "typeSuffix",

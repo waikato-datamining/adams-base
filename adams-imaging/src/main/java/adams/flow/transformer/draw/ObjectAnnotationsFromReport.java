@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotationsFromReport.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.draw;
@@ -45,8 +45,8 @@ import java.awt.Graphics2D;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotationsFromReport
-    extends AbstractDrawOperation
-    implements ObjectPrefixHandler {
+  extends AbstractDrawOperation
+  implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -3088909952142797917L;
 
@@ -95,36 +95,36 @@ public class ObjectAnnotationsFromReport
     super.defineOptions();
 
     m_OptionManager.add(
-        "prefix", "prefix",
-        "Object.");
+      "prefix", "prefix",
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
-        "cleaner", "cleaners",
-        new AnnotationCleaner[0]);
+      "cleaner", "cleaners",
+      new AnnotationCleaner[0]);
 
     m_OptionManager.add(
-        "shape-plotter", "shapePlotters",
-        new ShapePlotter[0]);
+      "shape-plotter", "shapePlotters",
+      new ShapePlotter[0]);
 
     m_OptionManager.add(
-        "shape-color", "shapeColors",
-        new AnnotationColors[0]);
+      "shape-color", "shapeColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-        "outline-plotter", "outlinePlotters",
-        new OutlinePlotter[0]);
+      "outline-plotter", "outlinePlotters",
+      new OutlinePlotter[0]);
 
     m_OptionManager.add(
-        "outline-color", "outlineColors",
-        new AnnotationColors[0]);
+      "outline-color", "outlineColors",
+      new AnnotationColors[0]);
 
     m_OptionManager.add(
-        "label-plotter", "labelPlotters",
-        new LabelPlotter[0]);
+      "label-plotter", "labelPlotters",
+      new LabelPlotter[0]);
 
     m_OptionManager.add(
-        "label-color", "labelColors",
-        new AnnotationColors[0]);
+      "label-color", "labelColors",
+      new AnnotationColors[0]);
   }
 
   /**

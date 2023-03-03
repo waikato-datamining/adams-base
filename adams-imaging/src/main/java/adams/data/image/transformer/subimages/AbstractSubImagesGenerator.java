@@ -15,7 +15,7 @@
 
 /*
  * AbstractSubImagesGenerator.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -29,6 +29,7 @@ import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 import java.awt.Rectangle;
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.List;
  */
 public abstract class AbstractSubImagesGenerator
   extends AbstractOptionHandler
-  implements QuickInfoSupporter {
+  implements QuickInfoSupporter, ObjectPrefixHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 2258244755943306047L;
@@ -63,7 +64,7 @@ public abstract class AbstractSubImagesGenerator
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "partial", "partial",

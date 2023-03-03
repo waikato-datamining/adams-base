@@ -15,7 +15,7 @@
 
 /*
  * CompareObjectLocations.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -278,7 +278,7 @@ public class CompareObjectLocations
 
     m_OptionManager.add(
       "annotations-prefix", "annotationsPrefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "annotations-label-suffix", "annotationsLabelSuffix",
@@ -290,7 +290,7 @@ public class CompareObjectLocations
 
     m_OptionManager.add(
       "predictions-prefix", "predictionsPrefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "predictions-label-suffix", "predictionsLabelSuffix",

@@ -348,7 +348,7 @@ public class ViaAnnotationsToReports
 	  if (label != null) object.getMetaData().put("type", label);
 	  objects.add(object);
 	}
-	report = objects.toReport("Object.");
+	report = objects.toReport(LocatedObjects.DEFAULT_PREFIX);
 	report.setStringValue("Filename", image.getAsString("filename"));
 
 	m_Queue.add(report);

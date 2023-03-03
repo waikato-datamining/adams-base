@@ -15,7 +15,7 @@
 
 /*
  * AbstractRectangleBasedAnnotator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -36,24 +36,6 @@ public abstract class AbstractRectangleBasedAnnotator
   extends AbstractReportBasedAnnotator {
 
   private static final long serialVersionUID = 3536654827455977474L;
-
-  /** the key for the X location. */
-  public final static String KEY_X = LocatedObjects.KEY_X;
-
-  /** the key for the Y location. */
-  public final static String KEY_Y = LocatedObjects.KEY_Y;
-
-  /** the key for the width. */
-  public final static String KEY_WIDTH = LocatedObjects.KEY_WIDTH;
-
-  /** the key for the height. */
-  public final static String KEY_HEIGHT = LocatedObjects.KEY_HEIGHT;
-
-  /** the key for the Xs of the polygon. */
-  public final static String KEY_POLY_X = LocatedObjects.KEY_POLY_X;
-
-  /** the key for the Ys of the polygon. */
-  public final static String KEY_POLY_Y = LocatedObjects.KEY_POLY_Y;
 
   /** the number of digits to use for left-padding the index. */
   protected int m_NumDigits;
@@ -90,7 +72,7 @@ public abstract class AbstractRectangleBasedAnnotator
    */
   @Override
   protected String getDefaultPrefix() {
-    return "Object.";
+    return LocatedObjects.DEFAULT_PREFIX;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectInfo.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -30,6 +30,7 @@ import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 import java.awt.Rectangle;
 import java.util.Map;
@@ -107,7 +108,7 @@ import java.util.Map;
  */
 public class ImageObjectInfo
   extends AbstractTransformer
-  implements DataInfoActor {
+  implements DataInfoActor, ObjectPrefixHandler {
 
   private static final long serialVersionUID = -5644432725273726622L;
 
@@ -158,7 +159,7 @@ public class ImageObjectInfo
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "index", "index",

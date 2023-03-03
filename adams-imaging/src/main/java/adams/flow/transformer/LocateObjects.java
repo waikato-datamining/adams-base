@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocateObjects.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -27,6 +27,7 @@ import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 import java.awt.image.BufferedImage;
 
@@ -51,57 +52,57 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: LocateObjects
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Outputs the images either one by one or as array.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-locator &lt;adams.flow.transformer.locateobjects.AbstractObjectLocator&gt; (property: locator)
  * &nbsp;&nbsp;&nbsp;The algorithm for locating the objects.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.locateobjects.PassThrough
  * </pre>
- * 
+ *
  * <pre>-generate-report &lt;boolean&gt; (property: generateReport)
  * &nbsp;&nbsp;&nbsp;If enabled, a report with all the locations is generated instead of separate 
  * &nbsp;&nbsp;&nbsp;image objects.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The report field prefix to use when generating a report.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 78 $
  */
 public class LocateObjects
-  extends AbstractArrayProvider {
+  extends AbstractArrayProvider
+  implements ObjectPrefixHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 2180810317840558011L;
@@ -129,10 +130,10 @@ public class LocateObjects
 
   /** whether to generate an annotated image rather than single image objects. */
   protected boolean m_GenerateReport;
-  
+
   /** the prefix to use when generating a report. */
   protected String m_Prefix;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -141,10 +142,10 @@ public class LocateObjects
   @Override
   public String globalInfo() {
     return
-        "Locates objects in an image and forwards an image per located object, "
-            + "cropped around the object.\n"
-            + "It is also possible to simply annotate the image by storing the "
-            + "locations of the located objects in the report.";
+      "Locates objects in an image and forwards an image per located object, "
+        + "cropped around the object.\n"
+        + "It is also possible to simply annotate the image by storing the "
+        + "locations of the located objects in the report.";
   }
 
   /**
@@ -155,16 +156,16 @@ public class LocateObjects
     super.defineOptions();
 
     m_OptionManager.add(
-	"locator", "locator",
-	new adams.flow.transformer.locateobjects.PassThrough());
+      "locator", "locator",
+      new adams.flow.transformer.locateobjects.PassThrough());
 
     m_OptionManager.add(
-	"generate-report", "generateReport",
-	false);
+      "generate-report", "generateReport",
+      false);
 
     m_OptionManager.add(
-	"prefix", "prefix",
-	"Object.");
+      "prefix", "prefix",
+      LocatedObjects.DEFAULT_PREFIX);
   }
 
   /**
@@ -289,7 +290,7 @@ public class LocateObjects
 
   /**
    * Returns the class that the consumer accepts.
-   * 
+   *
    * @return		the Class of objects that can be processed
    */
   @Override
@@ -342,7 +343,7 @@ public class LocateObjects
       cont = new BufferedImageContainer();
       cont.setImage(image);
       if (notes != null)
-	cont.setNotes(notes);
+        cont.setNotes(notes);
       m_OutputToken = new Token(cont);
       return result;
     }
@@ -354,40 +355,40 @@ public class LocateObjects
         objects = m_Locator.locate(image);
       // any errors encountered?
       if (m_Locator.hasErrors()) {
-	if (notes == null)
-	  notes = new Notes();
-	for (String error: m_Locator.getErrors())
-	  notes.addError(this.getClass(), error);
+        if (notes == null)
+          notes = new Notes();
+        for (String error: m_Locator.getErrors())
+          notes.addError(this.getClass(), error);
       }
       // any warnings encountered?
       if (m_Locator.hasWarnings()) {
-	if (notes == null)
-	  notes = new Notes();
-	for (String warning: m_Locator.getWarnings())
-	  notes.addWarning(this.getClass(), warning);
+        if (notes == null)
+          notes = new Notes();
+        for (String warning: m_Locator.getWarnings())
+          notes.addWarning(this.getClass(), warning);
       }
       m_Queue.clear();
       if (m_GenerateReport) {
         cont = new BufferedImageContainer();
         cont.setImage(image);
         cont.getReport().mergeWith(objects.toReport(m_Prefix));
-	m_Queue.add(cont);
+        m_Queue.add(cont);
       }
       else {
-	for (LocatedObject object: objects) {
-	  cont = new BufferedImageContainer();
-	  cont.setImage(object.getImage());
-	  cont.getNotes().mergeWith(notes);
-	  reportNew = new Report();
-	  reportNew.setNumericValue(FIELD_X, object.getX());
-	  reportNew.setNumericValue(FIELD_Y, object.getY());
-	  reportNew.setNumericValue(FIELD_WIDTH, object.getWidth());
-	  reportNew.setNumericValue(FIELD_HEIGHT, object.getHeight());
-	  reportNew.setStringValue(FIELD_LOCATION, object.getLocation().getValue());
-	  cont.setReport(reportNew);
-	  cont.getReport().mergeWith(report);
-	  m_Queue.add(cont);
-	}
+        for (LocatedObject object: objects) {
+          cont = new BufferedImageContainer();
+          cont.setImage(object.getImage());
+          cont.getNotes().mergeWith(notes);
+          reportNew = new Report();
+          reportNew.setNumericValue(FIELD_X, object.getX());
+          reportNew.setNumericValue(FIELD_Y, object.getY());
+          reportNew.setNumericValue(FIELD_WIDTH, object.getWidth());
+          reportNew.setNumericValue(FIELD_HEIGHT, object.getHeight());
+          reportNew.setStringValue(FIELD_LOCATION, object.getLocation().getValue());
+          cont.setReport(reportNew);
+          cont.getReport().mergeWith(report);
+          m_Queue.add(cont);
+        }
       }
       m_Locator.cleanUp();
     }

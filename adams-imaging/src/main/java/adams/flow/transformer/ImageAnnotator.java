@@ -15,7 +15,7 @@
 
 /*
  * ImageAnnotator.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -871,7 +871,7 @@ public class ImageAnnotator
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "suffix", "suffix",

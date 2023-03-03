@@ -15,7 +15,7 @@
 
 /*
  * AnnotateImage.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -32,6 +32,8 @@ import adams.data.io.output.AbstractReportWriter;
 import adams.data.io.output.DefaultSimpleReportWriter;
 import adams.data.report.Report;
 import adams.flow.transformer.ImageAnnotator.AnnotatorPanel;
+import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
@@ -58,7 +60,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class AnnotateImage
-  extends AbstractContentHandler {
+  extends AbstractContentHandler
+  implements ObjectPrefixHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -3962259305718630395L;
@@ -227,7 +230,7 @@ public class AnnotateImage
 
     m_OptionManager.add(
       "prefix", "prefix",
-      "Object.");
+      LocatedObjects.DEFAULT_PREFIX);
 
     m_OptionManager.add(
       "suffix", "suffix",

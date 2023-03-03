@@ -15,7 +15,7 @@
 
 /*
  * ImageClassificationGridSpreadSheetReader.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -339,7 +339,7 @@ public class ImageClassificationGridSpreadSheetReader
       }
     }
 
-    result.add(objects.toReport("Object."));
+    result.add(objects.toReport(LocatedObjects.DEFAULT_PREFIX));
 
     return result;
   }
