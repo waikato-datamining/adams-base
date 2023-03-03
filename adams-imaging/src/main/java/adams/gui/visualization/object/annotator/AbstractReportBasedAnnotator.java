@@ -20,14 +20,10 @@
 
 package adams.gui.visualization.object.annotator;
 
-import adams.core.base.BaseRegExp;
-import adams.data.report.AbstractField;
+import adams.data.report.AnnotationHelper;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -100,17 +96,7 @@ public abstract class AbstractReportBasedAnnotator
    * @return		the values
    */
   protected Map<String,Object> valuesForIndex(Report report, int index) {
-    Map<String,Object>  result;
-    BaseRegExp regexp;
-
-    result = new HashMap<>();
-    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
-    for (AbstractField field: report.getFields()) {
-      if (regexp.isMatch(field.getName()))
-        result.put(field.getName().replaceAll(regexp.getValue(), ""), report.getValue(field));
-    }
-
-    return result;
+    return AnnotationHelper.valuesForIndex(report, m_Prefix, index);
   }
 
   /**
@@ -119,54 +105,13 @@ public abstract class AbstractReportBasedAnnotator
    * @return		true if successfully removed
    */
   protected boolean removeIndex(Report report, int index) {
-    boolean		result;
-    BaseRegExp		regexp;
-    List<AbstractField> remove;
-
-    result = false;
-    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
-    remove = new ArrayList<>();
-    for (AbstractField field: report.getFields()) {
-      if (regexp.isMatch(field.getName()))
-        remove.add(field);
-    }
-    if (remove.size() > 0) {
-      result = true;
-      for (AbstractField field: remove)
-        report.removeValue(field);
-    }
-
-    return result;
+    return AnnotationHelper.removeIndex(report, m_Prefix, index);
   }
 
   /**
    * Determines the last index used with the given prefix.
    */
   protected int findLastIndex(Report report) {
-    int			result;
-    List<AbstractField>	fields;
-    String		name;
-    int			current;
-
-    result = 0;
-    fields = report.getFields();
-
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-        name = field.getName().substring(m_Prefix.length());
-        if (name.indexOf('.') > -1)
-          name = name.substring(0, name.indexOf('.'));
-        try {
-          current = Integer.parseInt(name);
-          if (current > result)
-            result = current;
-        }
-        catch (Exception e) {
-          // ignored
-        }
-      }
-    }
-
-    return result;
+    return AnnotationHelper.findLastIndex(report, m_Prefix);
   }
 }

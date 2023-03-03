@@ -20,12 +20,11 @@
 
 package adams.gui.visualization.object.annotator;
 
-import adams.data.report.AbstractField;
+import adams.data.report.AnnotationHelper;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.SelectionRectangle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -142,41 +141,12 @@ public abstract class AbstractRectangleBasedAnnotator
   }
 
   /**
-   * Retruns all currently stored locations.
+   * Returns all currently stored locations.
    *
    * @param report	the report to get the locations from
    * @return		the locations
    */
   protected List<SelectionRectangle> getLocations(Report report) {
-    List<SelectionRectangle>	result;
-    List<AbstractField>		fields;
-    String			name;
-    SelectionRectangle		rect;
-
-    result = new ArrayList<>();
-    fields = report.getFields();
-
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-        name = field.getName().substring(m_Prefix.length());
-        if (name.indexOf('.') > -1)
-          name = name.substring(0, name.indexOf('.'));
-        try {
-          rect = new SelectionRectangle(
-            report.getDoubleValue(m_Prefix + name + KEY_X).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_Y).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_WIDTH).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_HEIGHT).intValue(),
-            Integer.parseInt(name));
-          if (!result.contains(rect))
-            result.add(rect);
-        }
-        catch (Exception e) {
-          // ignored
-        }
-      }
-    }
-
-    return result;
+    return AnnotationHelper.getLocations(report, m_Prefix);
   }
 }

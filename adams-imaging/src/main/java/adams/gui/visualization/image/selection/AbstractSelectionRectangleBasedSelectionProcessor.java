@@ -15,19 +15,16 @@
 
 /*
  * AbstractSelectionRectangleBasedSelectionProcessor.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.selection;
 
-import adams.core.base.BaseRegExp;
-import adams.data.report.AbstractField;
+import adams.data.report.AnnotationHelper;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 import adams.gui.visualization.image.SelectionRectangle;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +33,6 @@ import java.util.Map;
  * class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 364 $
  */
 public abstract class AbstractSelectionRectangleBasedSelectionProcessor
   extends AbstractPaintingSelectionProcessor {
@@ -181,17 +177,7 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
    * @return		the values
    */
   protected Map<String,Object> valuesForIndex(Report report, int index) {
-    Map<String,Object>  result;
-    BaseRegExp		regexp;
-
-    result = new HashMap<>();
-    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
-    for (AbstractField field: report.getFields()) {
-      if (regexp.isMatch(field.getName()))
-        result.put(field.getName().replaceAll(regexp.getValue(), ""), report.getValue(field));
-    }
-
-    return result;
+    return AnnotationHelper.valuesForIndex(report, m_Prefix, index);
   }
 
   /**
@@ -200,94 +186,24 @@ public abstract class AbstractSelectionRectangleBasedSelectionProcessor
    * @return		true if successfully removed
    */
   protected boolean removeIndex(Report report, int index) {
-    boolean		result;
-    BaseRegExp		regexp;
-    List<AbstractField>	remove;
-
-    result = false;
-    regexp = new BaseRegExp(m_Prefix + "[0]*" + index + "\\..*");
-    remove = new ArrayList<>();
-    for (AbstractField field: report.getFields()) {
-      if (regexp.isMatch(field.getName()))
-        remove.add(field);
-    }
-    if (remove.size() > 0) {
-      result = true;
-      for (AbstractField field: remove)
-        report.removeValue(field);
-    }
-
-    return result;
+    return AnnotationHelper.removeIndex(report, m_Prefix, index);
   }
 
   /**
    * Determines the last index used with the given prefix.
    */
   protected int findLastIndex(Report report) {
-    int			result;
-    List<AbstractField>	fields;
-    String		name;
-    int			current;
-
-    result = 0;
-    fields = report.getFields();
-
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-        name = field.getName().substring(m_Prefix.length());
-        if (name.indexOf('.') > -1)
-          name = name.substring(0, name.indexOf('.'));
-        try {
-          current = Integer.parseInt(name);
-          if (current > result)
-            result = current;
-        }
-        catch (Exception e) {
-          // ignored
-        }
-      }
-    }
-
-    return result;
+    return AnnotationHelper.findLastIndex(report, m_Prefix);
   }
 
   /**
-   * Retruns all currently stored locations.
+   * Returns all currently stored locations.
    *
    * @param report	the report to get the locations from
    * @return		the locations
    */
   protected List<SelectionRectangle> getLocations(Report report) {
-    List<SelectionRectangle>	result;
-    List<AbstractField>		fields;
-    String			name;
-    SelectionRectangle		rect;
-
-    result = new ArrayList<>();
-    fields = report.getFields();
-
-    for (AbstractField field: fields) {
-      if (field.getName().startsWith(m_Prefix)) {
-        name = field.getName().substring(m_Prefix.length());
-        if (name.indexOf('.') > -1)
-          name = name.substring(0, name.indexOf('.'));
-        try {
-          rect = new SelectionRectangle(
-            report.getDoubleValue(m_Prefix + name + KEY_X).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_Y).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_WIDTH).intValue(),
-            report.getDoubleValue(m_Prefix + name + KEY_HEIGHT).intValue(),
-            Integer.parseInt(name));
-          if (!result.contains(rect))
-            result.add(rect);
-        }
-        catch (Exception e) {
-          // ignored
-        }
-      }
-    }
-
-    return result;
+    return AnnotationHelper.getLocations(report, m_Prefix);
   }
 
   /**
