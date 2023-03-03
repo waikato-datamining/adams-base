@@ -168,7 +168,7 @@ public class FileListWithButtons
   }
 
   /**
-   * Retruns the current title of the file dialog.
+   * Returns the current title of the file dialog.
    *
    * @return		the title
    */
@@ -318,7 +318,7 @@ public class FileListWithButtons
   }
 
   /**
-   * Retruns all currently selected files.
+   * Returns all currently selected files.
    *
    * @return		the selected files
    */
