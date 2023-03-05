@@ -864,7 +864,7 @@ public class ObjectAnnotationPanel
     AnnotationsState	result;
 
     result = new AnnotationsState();
-    result.report = getReport();
+    result.report = getReport().getClone();
 
     return result;
   }
