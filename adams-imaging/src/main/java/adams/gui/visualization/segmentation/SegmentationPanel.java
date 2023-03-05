@@ -343,6 +343,8 @@ public class SegmentationPanel
 	    m_PanelCanvas.removeMouseListener(m_LastMouseListener);
 	  if (m_LastMouseMotionListener != null)
 	    m_PanelCanvas.removeMouseMotionListener(m_LastMouseMotionListener);
+	  if (m_LastKeyListener != null)
+	    m_PanelCanvas.removeKeyListener(m_LastKeyListener);
 	  m_PanelToolOptions.removeAll();
 	  tool.setCanvas(m_PanelCanvas);
 	  m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
