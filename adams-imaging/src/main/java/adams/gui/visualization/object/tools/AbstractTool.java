@@ -77,13 +77,6 @@ public abstract class AbstractTool
   }
 
   /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
-   */
-  public abstract String globalInfo();
-
-  /**
    * Initializes the members.
    */
   protected void initialize() {
