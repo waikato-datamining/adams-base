@@ -15,7 +15,7 @@
 
 /*
  * FixedTabularSpreadSheetReader.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -47,9 +47,7 @@ import java.util.TimeZone;
 
 /**
  <!-- globalinfo-start -->
- * Reads CSV files.<br>
- * It is possible to force columns to be text. In that case no intelligent parsing is attempted to determine the type of data a cell has.<br>
- * For very large files, one can turn on chunking, which returns spreadsheet objects till all the data has been read.
+ * Reads simple tabular text files with fixed column widths, as used by dot matrix printers in days gone by.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -57,92 +55,95 @@ import java.util.TimeZone;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
- * 
+ *
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- * 
+ *
  * <pre>-missing &lt;adams.core.base.BaseRegExp&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-encoding &lt;adams.core.base.BaseCharset&gt; (property: encoding)
- * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading using a reader, leave empty for 
+ * &nbsp;&nbsp;&nbsp;The type of encoding to use when reading using a reader, leave empty for
  * &nbsp;&nbsp;&nbsp;default.
  * &nbsp;&nbsp;&nbsp;default: Default
  * </pre>
- * 
+ *
  * <pre>-column-width &lt;adams.core.base.BaseInteger&gt; [-column-width ...] (property: columnWidth)
- * &nbsp;&nbsp;&nbsp;The width in characters to use for the columns; if only one is specified 
+ * &nbsp;&nbsp;&nbsp;The width in characters to use for the columns; if only one is specified
  * &nbsp;&nbsp;&nbsp;then this is used for all columns.
  * &nbsp;&nbsp;&nbsp;default: 10
  * </pre>
- * 
+ *
  * <pre>-trim &lt;boolean&gt; (property: trim)
  * &nbsp;&nbsp;&nbsp;If enabled, the content of the cells gets trimmed before added.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-datetime-columns &lt;adams.core.Range&gt; (property: dateTimeColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as date&#47;time msec.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-datetime-format &lt;adams.data.DateFormatString&gt; (property: dateTimeFormat)
  * &nbsp;&nbsp;&nbsp;The format for date&#47;time msecs.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd HH:mm:ss
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  * <pre>-datetime-lenient &lt;boolean&gt; (property: dateTimeLenient)
  * &nbsp;&nbsp;&nbsp;Whether date&#47;time msec parsing is lenient or not.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-datetime-type &lt;TIME|TIME_MSEC|DATE|DATE_TIME|DATE_TIME_MSEC&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;How to interpret the date&#47;time data.
  * &nbsp;&nbsp;&nbsp;default: DATE_TIME
  * </pre>
- * 
+ *
  * <pre>-no-header &lt;boolean&gt; (property: noHeader)
  * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
  * &nbsp;&nbsp;&nbsp;inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
  * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
  * &nbsp;&nbsp;&nbsp; ignored if empty.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-first-row &lt;int&gt; (property: firstRow)
  * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-num-rows &lt;int&gt; (property: numRows)
  * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -150,7 +151,7 @@ import java.util.TimeZone;
 public class FixedTabularSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
   implements OptionHandlingLocaleSupporter, NoHeaderSpreadSheetReader,
-             WindowedSpreadSheetReader {
+  WindowedSpreadSheetReader {
 
   private static final long serialVersionUID = 2446979875221254720L;
 
@@ -204,12 +205,8 @@ public class FixedTabularSpreadSheetReader
   @Override
   public String globalInfo() {
     return
-      "Reads CSV files.\n"
-        + "It is possible to force columns to be text. In that case no "
-        + "intelligent parsing is attempted to determine the type of data a "
-        + "cell has.\n"
-        + "For very large files, one can turn on chunking, which returns "
-        + "spreadsheet objects till all the data has been read.";
+      "Reads simple tabular text files with fixed column widths"
+        + ", as used by dot matrix printers in days gone by.";
   }
 
   /**
@@ -768,13 +765,13 @@ public class FixedTabularSpreadSheetReader
     // do we have to determine the number of columns first?
     if (m_ColumnWidth.length == 1) {
       try {
-	m_FirstLine = reader.readLine();
+        m_FirstLine = reader.readLine();
         columnWidth = new BaseInteger[0];
         columnWidth = (BaseInteger[]) Utils.adjustArray(columnWidth, m_FirstLine.length() / m_ColumnWidth[0].intValue(), m_ColumnWidth[0]);
       }
       catch (Exception e) {
-	m_LastError = LoggingHelper.handleException(this, "Failed to read data!", e);
-	return null;
+        m_LastError = LoggingHelper.handleException(this, "Failed to read data!", e);
+        return null;
       }
     }
     else {
@@ -790,24 +787,24 @@ public class FixedTabularSpreadSheetReader
     row = result.getHeaderRow();
     if (m_NoHeader) {
       if (!m_CustomColumnHeaders.isEmpty()) {
-	custom = m_CustomColumnHeaders.split(",");
-	if (columnWidth.length != custom.length)
-	  throw new IllegalStateException(
-	    "Number of Column widths and custom headers differ: "
-	      + columnWidth.length + " != " + custom.length);
-	for (i = 0; i < columnWidth.length; i++)
-	  row.addCell("" + i).setContentAsString(custom[i]);
+        custom = m_CustomColumnHeaders.split(",");
+        if (columnWidth.length != custom.length)
+          throw new IllegalStateException(
+            "Number of Column widths and custom headers differ: "
+              + columnWidth.length + " != " + custom.length);
+        for (i = 0; i < columnWidth.length; i++)
+          row.addCell("" + i).setContentAsString(custom[i]);
       }
       else {
-	cells = SpreadSheetUtils.createHeader(columnWidth.length, "").toArray(new String[0]);
-	for (i = 0; i < cells.length; i++)
-	  row.addCell("" + i).setContentAsString(cells[i]);
+        cells = SpreadSheetUtils.createHeader(columnWidth.length, "").toArray(new String[0]);
+        for (i = 0; i < cells.length; i++)
+          row.addCell("" + i).setContentAsString(cells[i]);
       }
     }
     else {
       // actual headers will get filled in later
       for (i = 0; i < columnWidth.length; i++)
-	row.addCell("" + i);
+        row.addCell("" + i);
     }
 
     // types
@@ -853,37 +850,37 @@ public class FixedTabularSpreadSheetReader
       count    = -1;
       firstRow = m_FirstRow - 1;
       if (m_NumRows > 0)
-	lastRow = firstRow + m_NumRows - 1;
+        lastRow = firstRow + m_NumRows - 1;
       else
         lastRow = -1;
       while ((line = nextLine(reader)) != null) {
-	count++;
-	if (count < firstRow)
-	  continue;
-	if ((lastRow > -1) && (count > lastRow))
-	  break;
+        count++;
+        if (count < firstRow)
+          continue;
+        if ((lastRow > -1) && (count > lastRow))
+          break;
 
-	// split into cells
-	for (i = 0; i < cols.length - 1; i++) {
+        // split into cells
+        for (i = 0; i < cols.length - 1; i++) {
           cells[i] = line.substring(cols[i], cols[i + 1]);
           if (m_Trim)
             cells[i] = cells[i].trim();
         }
 
-	// header?
-	if (!m_NoHeader && first) {
-	  first = false;
-	  row   = result.getHeaderRow();
-	  for (i = 0; i < cells.length; i++)
-	    row.getCell(i).setContentAsString(cells[i]);
-	}
-	else {
-	  row = result.addRow();
-	  for (i = 0; i < cells.length; i++) {
-	    cell = row.addCell(i);
+        // header?
+        if (!m_NoHeader && first) {
+          first = false;
+          row   = result.getHeaderRow();
+          for (i = 0; i < cells.length; i++)
+            row.getCell(i).setContentAsString(cells[i]);
+        }
+        else {
+          row = result.addRow();
+          for (i = 0; i < cells.length; i++) {
+            cell = row.addCell(i);
             if (m_MissingValue.isMatch(cells[i]) || (cells[i].isEmpty() && m_MissingValue.isEmpty())) {
-	      cell.setMissing();
-	    }
+              cell.setMissing();
+            }
             else if (types[i] == null) {
               cell.setContent(cells[i]);
             }
@@ -893,18 +890,18 @@ public class FixedTabularSpreadSheetReader
                   cell.setContentAsString(cells[i]);
                   break;
                 case TIME:
-		case TIMEMSEC:
+                case TIMEMSEC:
                 case DATE:
-		case DATETIME:
-		case DATETIMEMSEC:
-		  cell.setNative(cell.parseContent(cells[i], types[i]));
+                case DATETIME:
+                case DATETIMEMSEC:
+                  cell.setNative(cell.parseContent(cells[i], types[i]));
                   break;
-		default:
-		  throw new IllegalStateException("Unhandled cell type: " + types[i]);
+                default:
+                  throw new IllegalStateException("Unhandled cell type: " + types[i]);
               }
             }
-	  }
-	}
+          }
+        }
       }
     }
     catch (Exception e) {
