@@ -360,6 +360,7 @@ public class SegmentationPanel
             m_PanelCanvas.addKeyListener(m_LastKeyListener);
 	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
 	  m_ActiveTool = tool;
+	  m_ActiveTool.activate();
 	});
 	group.add(button);
 	if (t.equals(Pointer.class)) {

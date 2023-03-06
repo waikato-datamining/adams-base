@@ -442,6 +442,7 @@ public class ObjectAnnotationPanel
 	    m_PanelCanvas.addKeyListener(m_LastKeyListener);
 	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
 	  m_ActiveTool = tool;
+	  m_ActiveTool.activate();
 	});
 	group.add(button);
 	if (t.equals(Annotator.class)) {

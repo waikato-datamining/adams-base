@@ -371,6 +371,14 @@ public abstract class AbstractTool
   }
 
   /**
+   * Gets called to activate the tool.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void activate() {
+  }
+
+  /**
    * Called when image or annotations change.
    */
   public void update() {

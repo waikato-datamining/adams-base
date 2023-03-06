@@ -461,6 +461,14 @@ public abstract class AbstractTool
   }
 
   /**
+   * Gets called to activate the tool.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void activate() {
+  }
+
+  /**
    * Hook method for when new annotations have been set.
    */
   public void annotationsChanged() {

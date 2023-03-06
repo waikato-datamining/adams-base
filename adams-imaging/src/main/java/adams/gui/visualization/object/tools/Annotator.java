@@ -24,6 +24,7 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.visualization.object.annotator.AbstractAnnotator;
+import adams.gui.visualization.object.annotator.NullAnnotator;
 
 import javax.swing.Icon;
 import javax.swing.event.ChangeEvent;
@@ -134,5 +135,23 @@ public class Annotator
     super.update();
     if ((m_GOEAnnotator != null) && !isModified())
       m_GOEAnnotator.setCurrent(getCanvas().getOwner().getAnnotator());
+  }
+
+  /**
+   * Gets called to activate the tool.
+   */
+  @Override
+  public void activate() {
+    AbstractAnnotator 	annotator;
+
+    super.activate();
+
+    annotator = m_Annotator;
+    if (annotator == null)
+      annotator = getCanvas().getOwner().getAnnotator();
+    if (annotator == null)
+      annotator = new NullAnnotator();
+
+    getCanvas().getOwner().setAnnotator(annotator);
   }
 }
