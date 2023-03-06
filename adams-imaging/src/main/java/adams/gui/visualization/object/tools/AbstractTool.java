@@ -363,6 +363,7 @@ public abstract class AbstractTool
    */
   @Override
   public void activate() {
+    getCanvas().repaint();
   }
 
   /**
