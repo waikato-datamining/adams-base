@@ -128,16 +128,6 @@ public class Annotator
   }
 
   /**
-   * Called when image or annotations change.
-   */
-  @Override
-  public void update() {
-    super.update();
-    if ((m_GOEAnnotator != null) && !isModified())
-      m_GOEAnnotator.setCurrent(getCanvas().getOwner().getAnnotator());
-  }
-
-  /**
    * Gets called to activate the tool.
    */
   @Override
@@ -147,8 +137,6 @@ public class Annotator
     super.activate();
 
     annotator = m_Annotator;
-    if (annotator == null)
-      annotator = getCanvas().getOwner().getAnnotator();
     if (annotator == null)
       annotator = new NullAnnotator();
 
