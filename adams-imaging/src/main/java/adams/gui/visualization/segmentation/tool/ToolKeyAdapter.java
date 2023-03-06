@@ -33,14 +33,14 @@ public class ToolKeyAdapter
   extends KeyAdapter {
 
   /** the owning tool. */
-  protected AbstractTool m_Owner;
+  protected Tool m_Owner;
 
   /**
    * Initializes the adapter.
    *
    * @param owner	the owning tool
    */
-  public ToolKeyAdapter(AbstractTool owner) {
+  public ToolKeyAdapter(Tool owner) {
     m_Owner = owner;
   }
 
@@ -49,7 +49,7 @@ public class ToolKeyAdapter
    *
    * @return		the owning tool
    */
-  public AbstractTool getOwner() {
+  public Tool getOwner() {
     return m_Owner;
   }
 }

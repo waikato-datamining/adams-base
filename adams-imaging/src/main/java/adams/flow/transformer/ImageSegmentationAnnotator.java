@@ -33,6 +33,7 @@ import adams.gui.core.Undo;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.DefaultColorProvider;
+import adams.gui.visualization.object.tools.CustomizableTool;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
 
@@ -297,6 +298,9 @@ public class ImageSegmentationAnnotator
 
   /** the change listener for when the best fit zoom got redone. */
   protected ChangeListener m_BestFitRedoneListener;
+
+  /** whether this is the first interaction. */
+  protected boolean m_FirstInteraction;
 
   /**
    * Returns a string describing the object.
@@ -879,6 +883,7 @@ public class ImageSegmentationAnnotator
    */
   @Override
   protected BasePanel newPanel() {
+    m_FirstInteraction  = true;
     m_PanelSegmentation = new SegmentationPanel();
     m_PanelSegmentation.setZoom(m_Zoom);
     m_PanelSegmentation.getManager().setSplitLayers(m_UseSeparateLayers);
@@ -968,6 +973,15 @@ public class ImageSegmentationAnnotator
     // add undo point (if not automatic)
     if (!m_PanelSegmentation.isAutomaticUndoEnabled())
       m_PanelSegmentation.addUndoPoint();
+
+    // ensure that tool is active and ready to use
+    if (m_FirstInteraction) {
+      if (m_PanelSegmentation.getActiveTool() != null) {
+        if (m_PanelSegmentation.getActiveTool() instanceof CustomizableTool)
+          ((CustomizableTool) m_PanelSegmentation.getActiveTool()).applyOptions();
+        m_PanelSegmentation.getActiveTool().activate();
+      }
+    }
 
     // display
     m_Dialog.setVisible(true);

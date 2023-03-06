@@ -14,40 +14,22 @@
  */
 
 /*
- * ToolMouseMotionAdapter.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * CustomizableTool.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.segmentation.tool;
 
-import java.awt.event.MouseMotionAdapter;
-
 /**
- * {@link MouseMotionAdapter} with an owning tool.
+ * Interface for tools with options.
  *
- * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ToolMouseMotionAdapter
-  extends MouseMotionAdapter {
-
-  /** the owning tool. */
-  protected Tool m_Owner;
+public interface CustomizableTool
+  extends Tool {
 
   /**
-   * Initializes the adapter.
-   *
-   * @param owner	the owning tool
+   * Applies the options.
    */
-  public ToolMouseMotionAdapter(Tool owner) {
-    m_Owner = owner;
-  }
-
-  /**
-   * Returns the owning tool.
-   *
-   * @return		the owning tool
-   */
-  public Tool getOwner() {
-    return m_Owner;
-  }
+  public void applyOptions();
 }

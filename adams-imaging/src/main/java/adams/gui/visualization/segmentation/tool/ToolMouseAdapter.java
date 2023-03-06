@@ -32,7 +32,7 @@ public class ToolMouseAdapter
   extends MouseAdapter {
 
   /** the owning tool. */
-  protected AbstractTool m_Owner;
+  protected Tool m_Owner;
 
   /** whether to automatically request focus when clicking on the canvas. */
   protected boolean m_AutomaticallyRequestFocus;
@@ -42,7 +42,7 @@ public class ToolMouseAdapter
    *
    * @param owner	the owning tool
    */
-  public ToolMouseAdapter(AbstractTool owner) {
+  public ToolMouseAdapter(Tool owner) {
     this(owner, true);
   }
 
@@ -52,7 +52,7 @@ public class ToolMouseAdapter
    * @param owner	the owning tool
    * @param automaticallyRequestFocus	automatically requests the focus when clicking on the canvas.
    */
-  public ToolMouseAdapter(AbstractTool owner, boolean automaticallyRequestFocus) {
+  public ToolMouseAdapter(Tool owner, boolean automaticallyRequestFocus) {
     m_Owner                     = owner;
     m_AutomaticallyRequestFocus = automaticallyRequestFocus;
   }
@@ -62,7 +62,7 @@ public class ToolMouseAdapter
    *
    * @return		the owning tool
    */
-  public AbstractTool getOwner() {
+  public Tool getOwner() {
     return m_Owner;
   }
 

@@ -20,8 +20,6 @@
 
 package adams.gui.visualization.segmentation.tool;
 
-import adams.core.CleanUpHandler;
-import adams.core.GlobalInfoSupporter;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
@@ -37,13 +35,11 @@ import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 
 /**
  * Ancestor for tools.
@@ -52,7 +48,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractTool
   extends CustomLoggingLevelObject
-  implements Serializable, GlobalInfoSupporter, CleanUpHandler {
+  implements Tool {
 
   private static final long serialVersionUID = -6782161796343153566L;
 
@@ -82,13 +78,6 @@ public abstract class AbstractTool
   }
 
   /**
-   * Returns a string describing the object.
-   *
-   * @return 			a description suitable for displaying in the gui
-   */
-  public abstract String globalInfo();
-
-  /**
    * Initializes the members.
    */
   protected void initialize() {
@@ -104,6 +93,7 @@ public abstract class AbstractTool
    *
    * @param value 	the panel
    */
+  @Override
   public void setCanvas(CanvasPanel value) {
     m_PanelCanvas = value;
   }
@@ -113,6 +103,7 @@ public abstract class AbstractTool
    *
    * @return		the panel, null if none set
    */
+  @Override
   public CanvasPanel getCanvas() {
     return m_PanelCanvas;
   }
@@ -122,6 +113,7 @@ public abstract class AbstractTool
    *
    * @return		the layer manager, null if not available
    */
+  @Override
   public LayerManager getLayerManager() {
     if (m_PanelCanvas == null)
       return null;
@@ -137,6 +129,7 @@ public abstract class AbstractTool
    * @see		#hasActiveOverlay()
    * @see		#hasActiveCombinedSubLayer()
    */
+  @Override
   public boolean hasAnyActive() {
     return hasActiveOverlay() || hasActiveCombinedSubLayer();
   }
@@ -146,6 +139,7 @@ public abstract class AbstractTool
    *
    * @return		true if available
    */
+  @Override
   public boolean hasActiveOverlay() {
     if (m_PanelCanvas == null)
       return false;
@@ -159,6 +153,7 @@ public abstract class AbstractTool
    *
    * @return		the layer, null if none available
    */
+  @Override
   public OverlayLayer getActiveOverlay() {
     if (m_PanelCanvas == null)
       return null;
@@ -172,6 +167,7 @@ public abstract class AbstractTool
    *
    * @return		true if available
    */
+  @Override
   public boolean hasActiveCombinedSubLayer() {
     if (m_PanelCanvas == null)
       return false;
@@ -187,6 +183,7 @@ public abstract class AbstractTool
    *
    * @return		the layer, null if none available
    */
+  @Override
   public CombinedSubLayer getActiveCombinedSubLayer() {
     if (m_PanelCanvas == null)
       return null;
@@ -202,6 +199,7 @@ public abstract class AbstractTool
    *
    * @return		the image or null if none active
    */
+  @Override
   public BufferedImage getActiveImage() {
     if (hasActiveOverlay())
       return getActiveOverlay().getImage();
@@ -216,6 +214,7 @@ public abstract class AbstractTool
    *
    * @return		the color or null if none active
    */
+  @Override
   public Color getActiveColor() {
     if (hasActiveOverlay())
       return getActiveOverlay().getColor();
@@ -230,6 +229,7 @@ public abstract class AbstractTool
    *
    * @return		the zoom (1.0 = 100%)
    */
+  @Override
   public double getZoom() {
     if (m_PanelCanvas == null)
       return 1.0;
@@ -243,6 +243,7 @@ public abstract class AbstractTool
    *
    * @return		true if enabled
    */
+  @Override
   public boolean isAutomaticUndoEnabled() {
     if (getCanvas() == null)
       return false;
@@ -250,20 +251,6 @@ public abstract class AbstractTool
       return false;
     return getCanvas().getOwner().isAutomaticUndoEnabled();
   }
-
-  /**
-   * The name of the tool.
-   *
-   * @return		the name
-   */
-  public abstract String getName();
-
-  /**
-   * The icon of the tool.
-   *
-   * @return		the icon
-   */
-  public abstract Icon getIcon();
 
   /**
    * Creates the mouse cursor to use.
@@ -277,6 +264,7 @@ public abstract class AbstractTool
    *
    * @return		the cursor
    */
+  @Override
   public Cursor getCursor() {
     if (!hasAnyActive())
       return Cursors.disabled();
@@ -296,6 +284,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolMouseAdapter getMouseListener() {
     if (m_Listener == null) {
       m_Listener = createMouseListener();
@@ -317,6 +306,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolMouseMotionAdapter getMouseMotionListener() {
     if (m_MotionListener == null) {
       m_MotionListener = createMouseMotionListener();
@@ -342,6 +332,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolKeyAdapter getKeyListener() {
     if (m_KeyListener == null) {
       m_KeyListener = createKeyListener();
@@ -427,6 +418,7 @@ public abstract class AbstractTool
    *
    * @return		the options panel
    */
+  @Override
   public BasePanel getOptionPanel() {
     BaseTextArea	textArea;
     String		info;
@@ -465,18 +457,21 @@ public abstract class AbstractTool
    * <br>
    * Default implementation does nothing.
    */
+  @Override
   public void activate() {
   }
 
   /**
    * Hook method for when new annotations have been set.
    */
+  @Override
   public void annotationsChanged() {
   }
 
   /**
    * Cleans up data structures, frees up memory.
    */
+  @Override
   public void cleanUp() {
   }
 }

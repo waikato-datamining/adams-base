@@ -55,8 +55,8 @@ import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
-import adams.gui.visualization.segmentation.tool.AbstractTool;
 import adams.gui.visualization.segmentation.tool.Pointer;
+import adams.gui.visualization.segmentation.tool.Tool;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -181,7 +181,7 @@ public class SegmentationPanel
   protected BasePanel m_PanelTools;
 
   /** the tools. */
-  protected List<AbstractTool> m_Tools;
+  protected List<Tool> m_Tools;
 
   /** the split pane for the tools. */
   protected BaseSplitPane m_SplitPaneTools;
@@ -208,7 +208,7 @@ public class SegmentationPanel
   protected KeyListener m_LastKeyListener;
 
   /** the active tool. */
-  protected AbstractTool m_ActiveTool;
+  protected Tool m_ActiveTool;
 
   /** the panel with the buttons. */
   protected JPanel m_PanelToolButtons;
@@ -329,12 +329,12 @@ public class SegmentationPanel
     m_SplitPaneTools.setTopComponent(m_PanelToolButtons);
     m_PanelToolOptions = new BasePanel(new BorderLayout());
     m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
-    tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
+    tools = ClassLister.getSingleton().getClasses(Tool.class);
     group = new ButtonGroup();
     buttonPointer = null;
     for (Class t: tools) {
       try {
-	final AbstractTool tool = (AbstractTool) t.getDeclaredConstructor().newInstance();
+	final Tool tool = (Tool) t.getDeclaredConstructor().newInstance();
 	tool.setCanvas(m_PanelCanvas);
 	button = new BaseToggleButton(tool.getIcon());
 	button.setToolTipText(tool.getName());
@@ -515,7 +515,7 @@ public class SegmentationPanel
    * Notifies the tools that annotations have changed.
    */
   protected void notifyTools() {
-    for (AbstractTool tool: m_Tools)
+    for (Tool tool: m_Tools)
       tool.annotationsChanged();
   }
 
@@ -882,6 +882,15 @@ public class SegmentationPanel
   }
 
   /**
+   * Returns the currently active tool.
+   *
+   * @return		the active tool, null if not available
+   */
+  public Tool getActiveTool() {
+    return m_ActiveTool;
+  }
+
+  /**
    * Generates a panel with separate overlay layers.
    *
    * @param args	the files to load
@@ -931,7 +940,7 @@ public class SegmentationPanel
    * Cleans up data structures, frees up memory.
    */
   public void cleanUp() {
-    for (AbstractTool tool: m_Tools)
+    for (Tool tool: m_Tools)
       tool.cleanUp();
   }
 
