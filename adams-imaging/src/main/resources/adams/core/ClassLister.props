@@ -215,5 +215,5 @@ adams.gui.visualization.object.overlay.Overlay=\
   adams.gui.visualization.object.overlay
 
 # the tools for object annotation
-adams.gui.visualization.object.tools.AbstractTool=\
+adams.gui.visualization.object.tools.Tool=\
   adams.gui.visualization.object.tools

@@ -34,7 +34,8 @@ import java.awt.FlowLayout;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractToolWithParameterPanel
-  extends AbstractTool {
+  extends AbstractTool
+  implements CustomizableTool {
 
   private static final long serialVersionUID = -3238804649373495561L;
 
@@ -81,5 +82,12 @@ public abstract class AbstractToolWithParameterPanel
     panel2.add(panelButton, BorderLayout.SOUTH);
 
     return result;
+  }
+
+  /**
+   * Applies the options.
+   */
+  public void applyOptions() {
+    apply(m_ButtonApply);
   }
 }

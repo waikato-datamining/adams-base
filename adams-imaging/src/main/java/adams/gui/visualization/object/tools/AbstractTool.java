@@ -20,8 +20,6 @@
 
 package adams.gui.visualization.object.tools;
 
-import adams.core.CleanUpHandler;
-import adams.core.GlobalInfoSupporter;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
@@ -34,12 +32,10 @@ import adams.gui.core.ImageManager;
 import adams.gui.visualization.object.CanvasPanel;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 
 /**
  * Ancestor for tools.
@@ -48,7 +44,7 @@ import java.io.Serializable;
  */
 public abstract class AbstractTool
   extends CustomLoggingLevelObject
-  implements Serializable, GlobalInfoSupporter, CleanUpHandler {
+  implements Tool {
 
   private static final long serialVersionUID = -6782161796343153566L;
 
@@ -104,6 +100,7 @@ public abstract class AbstractTool
    *
    * @param value 	the panel
    */
+  @Override
   public void setCanvas(CanvasPanel value) {
     m_CanvasPanel = value;
     update();
@@ -114,6 +111,7 @@ public abstract class AbstractTool
    *
    * @return		the panel, null if none set
    */
+  @Override
   public CanvasPanel getCanvas() {
     return m_CanvasPanel;
   }
@@ -123,6 +121,7 @@ public abstract class AbstractTool
    *
    * @return		true if available
    */
+  @Override
   public boolean hasImage() {
     return (getImage() != null);
   }
@@ -132,6 +131,7 @@ public abstract class AbstractTool
    *
    * @return		the image or null if none available
    */
+  @Override
   public BufferedImage getImage() {
     if (m_CanvasPanel != null)
       return m_CanvasPanel.getImage();
@@ -144,26 +144,13 @@ public abstract class AbstractTool
    *
    * @return		the zoom (1.0 = 100%)
    */
+  @Override
   public double getZoom() {
     if (m_CanvasPanel == null)
       return 1.0;
     else
       return m_CanvasPanel.getZoom();
   }
-
-  /**
-   * The name of the tool.
-   *
-   * @return		the name
-   */
-  public abstract String getName();
-
-  /**
-   * The icon of the tool.
-   *
-   * @return		the icon
-   */
-  public abstract Icon getIcon();
 
   /**
    * Creates the mouse cursor to use.
@@ -177,6 +164,7 @@ public abstract class AbstractTool
    *
    * @return		the cursor
    */
+  @Override
   public Cursor getCursor() {
     if (!hasImage())
       return Cursors.disabled();
@@ -196,6 +184,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolMouseAdapter getMouseListener() {
     if (m_Listener == null) {
       m_Listener = createMouseListener();
@@ -217,6 +206,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolMouseMotionAdapter getMouseMotionListener() {
     if (m_MotionListener == null) {
       m_MotionListener = createMouseMotionListener();
@@ -242,6 +232,7 @@ public abstract class AbstractTool
    *
    * @return		the listener
    */
+  @Override
   public ToolKeyAdapter getKeyListener() {
     if (m_KeyListener == null) {
       m_KeyListener = createKeyListener();
@@ -321,6 +312,7 @@ public abstract class AbstractTool
    *
    * @return		true if modified
    */
+  @Override
   public boolean isModified() {
     return m_Modified;
   }
@@ -337,6 +329,7 @@ public abstract class AbstractTool
    *
    * @return		the options panel
    */
+  @Override
   public BasePanel getOptionPanel() {
     BaseTextArea	textArea;
     String		info;
@@ -375,12 +368,14 @@ public abstract class AbstractTool
    * <br>
    * Default implementation does nothing.
    */
+  @Override
   public void activate() {
   }
 
   /**
    * Called when image or annotations change.
    */
+  @Override
   public void update() {
   }
 

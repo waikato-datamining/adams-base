@@ -53,6 +53,7 @@ import adams.gui.visualization.object.objectannotations.check.AnnotationCheck;
 import adams.gui.visualization.object.objectannotations.check.PassThrough;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.object.overlay.Overlay;
+import adams.gui.visualization.object.tools.CustomizableTool;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -312,6 +313,9 @@ public class ImageObjectAnnotator
 
   /** the change listener for updating the OK button. */
   protected ChangeListener m_ChangeListenerAnnotations;
+
+  /** whether this is the first interaction. */
+  protected boolean m_FirstInteraction;
 
   /**
    * Returns a string describing the object.
@@ -877,6 +881,7 @@ public class ImageObjectAnnotator
    */
   @Override
   protected BasePanel newPanel() {
+    m_FirstInteraction      = true;
     m_PanelObjectAnnotation = new ObjectAnnotationPanel();
     m_PanelObjectAnnotation.setAnnotationsPanel(m_AnnotationsDisplay.generate());
     m_PanelObjectAnnotation.setLabelSelectorPanel(m_LabelSelector.generate(m_PanelObjectAnnotation));
@@ -1060,6 +1065,14 @@ public class ImageObjectAnnotator
       m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
     }
     m_PanelObjectAnnotation.addAnnotationChangeListener(m_ChangeListenerAnnotations);
+    // ensure that tool is active and ready to use
+    if (m_FirstInteraction) {
+      if (m_PanelObjectAnnotation.getActiveTool() != null) {
+        if (m_PanelObjectAnnotation.getActiveTool() instanceof CustomizableTool)
+          ((CustomizableTool) m_PanelObjectAnnotation.getActiveTool()).applyOptions();
+        m_PanelObjectAnnotation.getActiveTool().activate();
+      }
+    }
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
     m_PanelObjectAnnotation.removeAnnotationChangeListener(m_ChangeListenerAnnotations);
@@ -1073,7 +1086,8 @@ public class ImageObjectAnnotator
       m_OutputToken = new Token(imgcont);
     }
 
-    m_PreviousLabel = m_PanelObjectAnnotation.getCurrentLabel();
+    m_PreviousLabel    = m_PanelObjectAnnotation.getCurrentLabel();
+    m_FirstInteraction = false;
 
     return m_Accepted;
   }

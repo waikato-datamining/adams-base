@@ -31,14 +31,14 @@ public class ToolMouseMotionAdapter
   extends MouseMotionAdapter {
 
   /** the owning tool. */
-  protected AbstractTool m_Owner;
+  protected Tool m_Owner;
 
   /**
    * Initializes the adapter.
    *
    * @param owner	the owning tool
    */
-  public ToolMouseMotionAdapter(AbstractTool owner) {
+  public ToolMouseMotionAdapter(Tool owner) {
     m_Owner = owner;
   }
 
@@ -47,7 +47,7 @@ public class ToolMouseMotionAdapter
    *
    * @return		the owning tool
    */
-  public AbstractTool getOwner() {
+  public Tool getOwner() {
     return m_Owner;
   }
 }

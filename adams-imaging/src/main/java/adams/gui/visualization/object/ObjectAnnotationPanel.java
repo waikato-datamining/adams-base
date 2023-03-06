@@ -68,8 +68,8 @@ import adams.gui.visualization.object.overlay.NullOverlay;
 import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.object.overlay.Overlay;
 import adams.gui.visualization.object.overlay.OverlayWithCustomAlphaSupport;
-import adams.gui.visualization.object.tools.AbstractTool;
 import adams.gui.visualization.object.tools.Annotator;
+import adams.gui.visualization.object.tools.Tool;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -231,7 +231,7 @@ public class ObjectAnnotationPanel
   protected Report m_PreviousReport;
 
   /** the tools. */
-  protected List<AbstractTool> m_Tools;
+  protected List<Tool> m_Tools;
 
   /** the last mouse listener in use. */
   protected MouseListener m_LastMouseListener;
@@ -243,7 +243,7 @@ public class ObjectAnnotationPanel
   protected KeyListener m_LastKeyListener;
 
   /** the active tool. */
-  protected AbstractTool m_ActiveTool;
+  protected Tool m_ActiveTool;
 
   /**
    * Initializes the members.
@@ -411,12 +411,12 @@ public class ObjectAnnotationPanel
     m_SplitPaneTools.setTopComponent(m_PanelToolButtons);
     m_PanelToolOptions = new BasePanel(new BorderLayout());
     m_SplitPaneTools.setBottomComponent(m_PanelToolOptions);
-    tools = ClassLister.getSingleton().getClasses(AbstractTool.class);
+    tools = ClassLister.getSingleton().getClasses(Tool.class);
     group = new ButtonGroup();
     buttonAnnotator = null;
     for (Class t: tools) {
       try {
-	final AbstractTool tool = (AbstractTool) t.getDeclaredConstructor().newInstance();
+	final Tool tool = (Tool) t.getDeclaredConstructor().newInstance();
 	tool.setCanvas(m_PanelCanvas);
 	button = new BaseToggleButton(tool.getIcon());
 	button.setToolTipText(tool.getName());
@@ -1128,6 +1128,15 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Returns the currently active tool.
+   *
+   * @return		the active tool, null if not available
+   */
+  public Tool getActiveTool() {
+    return m_ActiveTool;
+  }
+
+  /**
    * Sets and installs the annotator.
    *
    * @param value	the annotator
@@ -1138,6 +1147,13 @@ public class ObjectAnnotationPanel
     m_Annotator = value;
     m_Annotator.setOwner(this);
     m_Annotator.install();
+    // update tool
+    for (Tool tool: m_Tools) {
+      if (tool instanceof Annotator) {
+	((Annotator) tool).setAnnotator(value);
+	break;
+      }
+    }
   }
 
   /**
@@ -1325,10 +1341,10 @@ public class ObjectAnnotationPanel
   /**
    * Notifies all tools to update.
    *
-   * @see		AbstractTool#update()
+   * @see		Tool#update()
    */
   protected void notifyTools() {
-    for (AbstractTool tool: m_Tools)
+    for (Tool tool: m_Tools)
       tool.update();
   }
 

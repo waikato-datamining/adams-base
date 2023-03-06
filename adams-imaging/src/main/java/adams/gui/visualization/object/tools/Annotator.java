@@ -142,4 +142,26 @@ public class Annotator
 
     getCanvas().getOwner().setAnnotator(annotator);
   }
+
+  /**
+   * Sets the annotator to use.
+   *
+   * @param value	the annotator
+   */
+  public void setAnnotator(AbstractAnnotator value) {
+    if (m_GOEAnnotator != null)
+      m_GOEAnnotator.setCurrent(value);
+  }
+
+  /**
+   * Returns the annotator in use.
+   *
+   * @return		the annotator
+   */
+  public AbstractAnnotator getAnnotator() {
+    if (m_GOEAnnotator != null)
+      return (AbstractAnnotator) m_GOEAnnotator.getCurrent();
+    else
+      return new NullAnnotator();
+  }
 }

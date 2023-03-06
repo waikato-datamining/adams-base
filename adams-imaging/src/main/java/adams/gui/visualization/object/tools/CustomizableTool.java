@@ -14,42 +14,22 @@
  */
 
 /*
- * ToolKeyAdapter.java
- * Copyright (C) 2023 University of Waikato, Hamilton, NZ
+ * CustomizableTool.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.object.tools;
 
-import java.awt.event.KeyAdapter;
-
 /**
- * {@link KeyAdapter} with an owning tool. The {@link ToolMouseAdapter} in the tool must call
- * the {@link ToolMouseAdapter#requestFocus()} method, otherwise key input won't be recognized
- * (due to not focused).
+ * Interface for tools that can apply options.
  *
- * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ToolKeyAdapter
-  extends KeyAdapter {
-
-  /** the owning tool. */
-  protected Tool m_Owner;
+public interface CustomizableTool
+  extends Tool {
 
   /**
-   * Initializes the adapter.
-   *
-   * @param owner	the owning tool
+   * Applies the options.
    */
-  public ToolKeyAdapter(Tool owner) {
-    m_Owner = owner;
-  }
-
-  /**
-   * Returns the owning tool.
-   *
-   * @return		the owning tool
-   */
-  public Tool getOwner() {
-    return m_Owner;
-  }
+  public void applyOptions();
 }
