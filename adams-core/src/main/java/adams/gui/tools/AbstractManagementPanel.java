@@ -15,7 +15,7 @@
 
 /*
  * AbstractManagementPanel.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -58,6 +58,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -212,7 +213,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   @Override
   protected void finishInit() {
     super.finishInit();
-    
+
     clear();
     refresh();
   }
@@ -368,37 +369,37 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /**
    * Adds the appropriate document listener to the document.
-   * 
+   *
    * @param doc		the document to add the listener to
    * @see		#addListener(Component)
    */
   protected void addDocumentListener(Document doc) {
     doc.addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
-        update();
+	update();
       }
       public void insertUpdate(DocumentEvent e) {
-        update();
+	update();
       }
       public void removeUpdate(DocumentEvent e) {
-        update();
+	update();
       }
     });
   }
-  
+
   /**
    * Adds an action listener to the combobox.
-   * 
+   *
    * @param combo	the combobox to add the listener to
    * @see		#addListener(Component)
    */
   protected void addActionListener(JComboBox combo) {
     combo.addActionListener((ActionEvent e) -> update());
   }
-  
+
   /**
    * Adds a change listener to the chooser.
-   * 
+   *
    * @param chooser	the chooser to add the listener to
    * @see		#addListener(Component)
    */
@@ -408,7 +409,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /**
    * Adds the appropriate listener to the component.
-   * 
+   *
    * @param comp	the component to add a listener to
    */
   protected void addListener(Component comp) {
@@ -423,51 +424,51 @@ public abstract class AbstractManagementPanel<T extends Comparable>
       addDocumentListener(((JTextPane) comp).getDocument());
     else if (comp instanceof BaseTextPaneWithWordWrap)
       addDocumentListener(((BaseTextPaneWithWordWrap) comp).getDocument());
-    // action listeners
+      // action listeners
     else if (comp instanceof JComboBox)
       addActionListener((JComboBox) comp);
-    // change listeners
+      // change listeners
     else if (comp instanceof AbstractChooserPanel)
       addChangeListener((AbstractChooserPanel) comp);
   }
-  
+
   /**
    * For adding all the fields.
-   * 
+   *
    * @param panel	the panel to add the fields to
    */
   protected abstract void addFields(ParameterPanelWithButtons panel);
 
   /**
    * Returns an instance of a new table model.
-   * 
+   *
    * @return		the table model
    */
   protected abstract AbstractManagementTableModel<T> newTableModel();
-  
+
   /**
    * Returns the class that is being managed.
-   * 
+   *
    * @return		the class being managed
    */
   protected abstract Class getManagedClass();
-  
+
   /**
    * Returns a human-readable string describing the managed objects.
-   * 
+   *
    * @param multiple	true if to return the plural
    * @return		the name of the objects
    */
   protected String getItemName(boolean multiple) {
     String	result;
-    
+
     result = getManagedClass().getSimpleName();
     if (multiple)
       result += "s";
-    
+
     return result;
   }
-  
+
   /**
    * Resets the input fields.
    */
@@ -475,55 +476,55 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /**
    * Turns the fields into an object.
-   * 
+   *
    * @return		the generated object
    */
   protected abstract T fieldsToObject();
-  
+
   /**
    * Updates the field with the specified object.
-   * 
+   *
    * @param value	the object to display
    */
   protected abstract void objectToFields(T value);
-  
+
   /**
    * Loads all the objects.
-   * 
+   *
    * @return		all available Objects
    */
   protected abstract List<T> loadAll();
-  
+
   /**
    * Checks whether the object already exists.
-   * 
+   *
    * @param value	the value to look for
    * @return		true if already available
    */
   protected abstract boolean exists(T value);
-  
+
   /**
    * Stores the object.
-   * 
+   *
    * @param value	the value to store
    * @return		true if successfully stored
    */
   protected abstract boolean store(T value);
-  
+
   /**
    * Removes the object.
-   * 
+   *
    * @param value	the value to remove
    * @return		true if successfully removed
    */
   protected abstract boolean remove(T value);
-  
+
   /**
    * Returns the ID from the object.
    * <br><br>
    * Default implementation only returns and ID if the object implements 
    * {@link IDHandler}.
-   * 
+   *
    * @param value	the object to get the ID from
    * @return		the ID, null if it could not be retrieved
    */
@@ -533,7 +534,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     else
       return null;
   }
-  
+
   /**
    * Adds the object and refreshes the table.
    */
@@ -544,13 +545,13 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     if (exists(value)) {
       GUIHelper.showErrorMessage(
-	  this, getItemName(false) + " with ID '" + getID(value) + "' already exists!");
+	this, getItemName(false) + " with ID '" + getID(value) + "' already exists!");
       return;
     }
 
     if (!store(value))
       GUIHelper.showErrorMessage(
-	  this, "Couldn't add " + getItemName(false) + " with '" + getID(value) + "' - check console!");
+	this, "Couldn't add " + getItemName(false) + " with '" + getID(value) + "' - check console!");
 
     refresh();
   }
@@ -565,13 +566,13 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     if (!exists(value)) {
       GUIHelper.showErrorMessage(
-	  this, getItemName(false) + " with ID '" + getID(value) + "' doesn't exists - cannot update, use 'Add'!");
+	this, getItemName(false) + " with ID '" + getID(value) + "' doesn't exists - cannot update, use 'Add'!");
       return;
     }
 
     if (!store(value))
       GUIHelper.showErrorMessage(
-	  this, "Couldn't update " + getItemName(false) + " with ID '" + getID(value) + "' - check console!");
+	this, "Couldn't update " + getItemName(false) + " with ID '" + getID(value) + "' - check console!");
 
     refresh();
   }
@@ -597,10 +598,10 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     }
 
     retVal = GUIHelper.showConfirmMessage(
-	  this,
-	  "Do you really want to remove the following " + getItemName(indices.length != 1) + "?", 
-	  ids.toString(),
-	  "Confirm removal");
+      this,
+      "Do you really want to remove the following " + getItemName(indices.length != 1) + "?",
+      ids.toString(),
+      "Confirm removal");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -629,6 +630,23 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   }
 
   /**
+   * Returns the selected values.
+   *
+   * @return		the selected values
+   */
+  protected List<T> getSelectedValues() {
+    List<T>	result;
+    int[]	rows;
+
+    result = new ArrayList<>();
+    rows = m_TableValues.getSelectedRows();
+    for (int row: rows)
+      result.add(m_ModelValues.getItemAt(m_TableValues.getActualRow(row)));
+
+    return result;
+  }
+
+  /**
    * Refreshes the table.
    */
   protected void refresh() {
@@ -650,21 +668,21 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /**
    * Returns whether the fields can be cleared, i.e., if there is any input.
-   * 
+   *
    * @return		true if input can be cleared
    */
   protected abstract boolean canClearFields();
 
   /**
    * Returns whether modified data cannot be stored.
-   * 
+   *
    * @return		true if storing is not available
    */
   protected abstract boolean isReadOnly();
-  
+
   /**
    * Returns whether all the required fields are set to add the object.
-   * 
+   *
    * @return		true if required fields are filled in
    */
   protected abstract boolean canAddObject();
