@@ -15,7 +15,7 @@
 
 /*
  * AbstractLookAndFeel.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.laf;
@@ -132,7 +132,7 @@ public abstract class AbstractLookAndFeel
 
     // fall back on default?
     if (laf == null)
-      laf = new CrossPlatform();
+      laf = new FlatLafLight();
 
     laf.install();
   }
