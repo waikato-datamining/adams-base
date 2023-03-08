@@ -182,6 +182,7 @@ public class WekaExperimentExecutionTest
       crossvalidationexperiment.setClassAttribute(lastattribute);
 
       LocalJobRunner localjobrunner = new LocalJobRunner();
+      localjobrunner.setNumThreads(1);
       crossvalidationexperiment.setJobRunner(localjobrunner);
 
       wekanewexperiment.setExperiment(crossvalidationexperiment);
@@ -224,6 +225,7 @@ public class WekaExperimentExecutionTest
       // Flow.load/run.WekaExperimentExecution
       WekaExperimentExecution wekaexperimentexecution = new WekaExperimentExecution();
       LocalJobRunner localjobrunner2 = new LocalJobRunner();
+      localjobrunner2.setNumThreads(1);
       wekaexperimentexecution.setJobRunner(localjobrunner2);
 
       actors3.add(wekaexperimentexecution);
