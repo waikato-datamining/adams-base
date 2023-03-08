@@ -168,6 +168,11 @@ StatusBar.Width=600
 StatusBar.Height=400
 
 # The flow editor tree popup menu
+# - comma-separated list of menu item class names
+# - use "-" for a separator
+# - use "submenu:TITLE:ICON:classname1;classname2;..." for sub-menus
+#   ~ ICON can be empty
+#   ~ spaces in the TITLE need to be replaced with underscores (_)
 Tree.PopupMenu=\
   adams.gui.flow.tree.menu.EditActor,\
   -,\
@@ -177,11 +182,17 @@ Tree.PopupMenu=\
   -,\
   adams.gui.flow.tree.menu.CutActor,\
   adams.gui.flow.tree.menu.CopyActor,\
-  adams.gui.flow.tree.menu.CopyActorMore,\
-  adams.gui.flow.tree.menu.PasteActor,\
+  submenu:Copy (more)::\
+    adams.gui.flow.tree.menu.CopyActorPlainText;\
+    adams.gui.flow.tree.menu.CopyActorCommandline;\
+    adams.gui.flow.tree.menu.CopyActorPath,\
+  submenu:Paste:paste.gif:\
+    adams.gui.flow.tree.menu.PasteActorBeneath;\
+    -;\
+    adams.gui.flow.tree.menu.PasteActorHere;\
+    adams.gui.flow.tree.menu.PasteActorAfter,\
   -,\
   adams.gui.flow.tree.menu.ToggleState,\
-  adams.gui.flow.tree.menu.Bookmark,\
   adams.gui.flow.tree.menu.RenameActor,\
   adams.gui.flow.tree.menu.CleanUpActorName,\
   adams.gui.flow.tree.menu.FindUsages,\
@@ -189,8 +200,20 @@ Tree.PopupMenu=\
   -,\
   adams.gui.flow.tree.menu.RemoveActor,\
   -,\
-  adams.gui.flow.tree.menu.AddBreakpoint,\
-  adams.gui.flow.tree.menu.AddFromTemplate,\
+  submenu:Breakpoint:adams.flow.control.Breakpoint.gif:\
+    adams.gui.flow.tree.menu.AddBreakpointBeneath;\
+    -;\
+    adams.gui.flow.tree.menu.AddBreakpointHere;\
+    adams.gui.flow.tree.menu.AddBreakpointAfter;\
+    -;\
+    adams.gui.flow.tree.menu.AttachBreakpointHere;\
+    adams.gui.flow.tree.menu.RunToHere,\
+  submenu:Template::\
+    adams.gui.flow.tree.menu.AddFromTemplateBeneath;\
+    -;\
+    adams.gui.flow.tree.menu.AddFromTemplateHere;\
+    adams.gui.flow.tree.menu.AddFromTemplateAfter;\
+    adams.gui.flow.tree.menu.LastTemplate,\
   adams.gui.flow.tree.menu.EncloseActorCompact,\
   adams.gui.flow.tree.menu.PullUpActor,\
   adams.gui.flow.tree.menu.SwapActor,\
@@ -199,18 +222,21 @@ Tree.PopupMenu=\
   adams.gui.flow.tree.menu.MakeInteractive,\
   adams.gui.flow.tree.menu.MakeTimed,\
   -,\
-  adams.gui.flow.tree.menu.ExternalFlow,\
+  submenu:External_flow::\
+    adams.gui.flow.tree.menu.EditExternalFlow;\
+    adams.gui.flow.tree.menu.ExpandCollapseExternalFlow,\
   adams.gui.flow.tree.menu.ExternalizeActor,\
   adams.gui.flow.tree.menu.MaterializeExternalActor,\
   -,\
   adams.gui.flow.tree.menu.ExpandAll,\
   adams.gui.flow.tree.menu.CollapseAll,\
   -,\
-  adams.gui.flow.tree.menu.AnnotateActor,\
-  adams.gui.flow.tree.menu.CompareActors,\
-  adams.gui.flow.tree.menu.ExportActor,\
-  adams.gui.flow.tree.menu.InspectMemory,\
-  adams.gui.flow.tree.menu.Help
+  submenu:More::\
+    adams.gui.flow.tree.menu.AnnotateActor;\
+    adams.gui.flow.tree.menu.CompareActors;\
+    adams.gui.flow.tree.menu.ExportActor;\
+    adams.gui.flow.tree.menu.InspectMemory;\
+    adams.gui.flow.tree.menu.Help
 
 # The extensions for the tree menu (comma-separated list)
 # Format: {after|before}:<classname_of_anchor>:<classname_to_inject>

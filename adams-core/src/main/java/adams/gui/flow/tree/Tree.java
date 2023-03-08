@@ -60,7 +60,9 @@ import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
 import adams.gui.goe.FlowHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
@@ -107,6 +109,39 @@ public class Tree
     public File file;
     /** the full names of the currently selected actors. */
     public List<String> selection;
+  }
+
+  /**
+   * Container object for a custom submenu in the tree popup.
+   */
+  public static class TreePopupSubmenu {
+    /** the title. */
+    public String title;
+    /** the icon. */
+    public Icon icon;
+    /** the submenu classes. */
+    public List<Class> items;
+
+    /**
+     * Default constructor.
+     */
+    public TreePopupSubmenu() {
+      title = "";
+      icon  = null;
+      items = new ArrayList<>();
+    }
+
+    /**
+     * Initializes the container.
+     *
+     * @param title	the submenu title
+     * @param icon	the icon name, ignored if null or empty
+     */
+    public TreePopupSubmenu(String title, String icon) {
+      this();
+      this.title = title;
+      this.icon  = ((icon == null) || (icon.trim().isEmpty())) ? null : ImageManager.getIcon(icon);
+    }
   }
 
   /** the tree itself. */
@@ -212,7 +247,7 @@ public class Tree
   protected TreeOperations m_Operations;
 
   /** the classes for the tree popup. */
-  protected List<Class> m_NodePopupClasses;
+  protected List<Object> m_NodePopupCache;
 
   /** whether it is a debug flow (ie copy). */
   protected boolean m_Debug;
@@ -281,7 +316,7 @@ public class Tree
     m_AllowNodePopup              = true;
     m_AllowKeyboardShortcuts      = true;
     m_KeyboardActions             = new ArrayList<>();
-    m_NodePopupClasses            = null;
+    m_NodePopupCache = null;
     m_Debug                       = false;
 
     putClientProperty("JTree.lineStyle", "None");
@@ -1108,6 +1143,9 @@ public class Tree
     int			i;
     Class		ext;
     boolean		inserted;
+    String[]		submenuParts;
+    TreePopupSubmenu 	submenuCont;
+    JMenu		submenu;
 
     state = getTreeState(e);
     if (state == null)
@@ -1122,18 +1160,41 @@ public class Tree
     menu.addSeparator();
 
     // cache classes?
-    if (m_NodePopupClasses == null) {
-      m_NodePopupClasses = new ArrayList<>();
+    if (m_NodePopupCache == null) {
+      m_NodePopupCache = new ArrayList<>();
       items              = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
       for (String item : items) {
 	if (item.trim().length() == 0)
 	  continue;
 	if (item.equals("-")) {
-	  m_NodePopupClasses.add(Separator.class);
+	  m_NodePopupCache.add(Separator.class);
+	}
+	else if (item.startsWith("submenu:")) {
+	  submenuParts = item.split(":");
+	  if (submenuParts.length == 4) {
+	    submenuCont = new TreePopupSubmenu(submenuParts[1].replace("_", " "), submenuParts[2].trim());
+	    m_NodePopupCache.add(submenuCont);
+	    for (String cname: submenuParts[3].replace(" ", "").split(";")) {
+	      if (cname.equals("-")) {
+		submenuCont.items.add(Separator.class);
+	      }
+	      else {
+		try {
+		  submenuCont.items.add(ClassManager.getSingleton().forName(cname));
+		}
+		catch (Exception ex) {
+		  ConsolePanel.getSingleton().append(this, "Failed to instantiate submenu class '" + cname + "' from submenu: " + item, ex);
+		}
+	      }
+	    }
+	  }
+	  else {
+	    ConsolePanel.getSingleton().append(LoggingLevel.WARNING, "Incorrect format of Flow editor tree-submenu: submenu:TITLE:ICON:classname1,classname2,...\n" + item);
+	  }
 	}
 	else {
 	  try {
-	    m_NodePopupClasses.add(ClassManager.getSingleton().forName(item));
+	    m_NodePopupCache.add(ClassManager.getSingleton().forName(item));
 	  }
 	  catch (Exception ex) {
 	    ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item class '" + item + "':", ex);
@@ -1151,15 +1212,17 @@ public class Tree
           parts    = item.split(":");
           if (parts.length == 3) {
             ext = ClassManager.getSingleton().forName(parts[2]);
-            for (i = 0; i < m_NodePopupClasses.size(); i++) {
-              if (m_NodePopupClasses.get(i).getName().equals(parts[1])) {
+            for (i = 0; i < m_NodePopupCache.size(); i++) {
+              if (!(m_NodePopupCache.get(i) instanceof Class))
+                continue;
+              if (((Class) m_NodePopupCache.get(i)).getName().equals(parts[1])) {
                 switch (parts[0]) {
 		  case "before":
-		    m_NodePopupClasses.add(i, ext);
+		    m_NodePopupCache.add(i, ext);
 		    inserted = true;
 		    break;
 		  case "after":
-		    m_NodePopupClasses.add(i+1, ext);
+		    m_NodePopupCache.add(i+1, ext);
 		    inserted = true;
 		    break;
 		  default:
@@ -1171,7 +1234,7 @@ public class Tree
 	        break;
 	    }
 	    if (!inserted)
-	      m_NodePopupClasses.add(ext);
+	      m_NodePopupCache.add(ext);
 	  }
 	  else {
 	    ConsolePanel.getSingleton().append(this, LoggingLevel.WARNING, "Flow tree popup menu extension in wrong format ({after|before}:classname:classname): " + item);
@@ -1184,22 +1247,46 @@ public class Tree
     }
 
     first = true;
-    for (Class cls : m_NodePopupClasses) {
-      if (cls == MenuHeader.class)
+    for (Object obj : m_NodePopupCache) {
+      if (obj == MenuHeader.class)
         continue;
-      if (cls == Separator.class) {
+      if (obj == Separator.class) {
         if (!first)
 	  menu.addSeparator();
       }
-      else {
+      else if (obj instanceof TreePopupSubmenu) {
+        submenuCont = (TreePopupSubmenu) obj;
+        if (submenuCont.items.size() > 0) {
+	  submenu = new JMenu(submenuCont.title);
+	  menu.add(submenu);
+	  if (submenuCont.icon != null)
+	    submenu.setIcon(submenuCont.icon);
+	  for (Class cls: submenuCont.items) {
+	    if (cls == Separator.class) {
+	      submenu.addSeparator();
+	    }
+	    else {
+	      try {
+		action = (TreePopupAction) cls.getDeclaredConstructor().newInstance();
+		action.update(state);
+		submenu.add(action.getMenuItem());
+	      }
+	      catch (Exception ex2) {
+		ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + cls.getName() + "' (submenu):", ex2);
+	      }
+	    }
+	  }
+	}
+      }
+      else if (obj instanceof Class) {
 	try {
-	  action = (TreePopupAction) cls.getDeclaredConstructor().newInstance();
+	  action = (TreePopupAction) ((Class) obj).getDeclaredConstructor().newInstance();
 	  action.update(state);
 	  menu.add(action.getMenuItem());
 	  first = false;
 	}
 	catch (Exception ex) {
-	  ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + cls.getName() + "':", ex);
+	  ConsolePanel.getSingleton().append(this, "Failed to instantiate tree popup menu item '" + ((Class) obj).getName() + "':", ex);
 	}
       }
     }
