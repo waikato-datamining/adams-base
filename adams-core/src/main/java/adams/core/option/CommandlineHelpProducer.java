@@ -35,7 +35,8 @@ import java.lang.reflect.Method;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class CommandlineHelpProducer
-  extends AbstractOptionProducer<String,StringBuilder> {
+  extends AbstractOptionProducer<String,StringBuilder>
+  implements UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4154358361484863539L;
@@ -49,6 +50,9 @@ public class CommandlineHelpProducer
   /** the buffer for assembling the help. */
   protected StringBuilder m_OutputBuffer;
 
+  /** the user mode to generate the help for. */
+  protected UserMode m_UserMode;
+
   /**
    * Returns a string describing the object.
    *
@@ -57,6 +61,27 @@ public class CommandlineHelpProducer
   @Override
   public String globalInfo() {
     return "Generates help output, that is output on the command-line.";
+  }
+
+  /**
+   * Sets the user mode to generate the help for.
+   *
+   * @param value	the user mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    m_UserMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the user mode to generate the help for.
+   *
+   * @return		the user mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
   }
 
   /**
@@ -77,6 +102,7 @@ public class CommandlineHelpProducer
     super.initialize();
 
     m_OutputBuffer = new StringBuilder();
+    m_UserMode     = UserMode.LOWEST;
   }
 
   /**
@@ -200,6 +226,10 @@ public class CommandlineHelpProducer
     String[]			urls;
 
     result = new StringBuilder();
+
+    // suppress?
+    if (!UserMode.isAtLeast(m_UserMode, option.getMinUserMode()))
+      return result;
 
     result.append("-" + option.getCommandline());
 
