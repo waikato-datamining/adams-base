@@ -15,7 +15,7 @@
 
 /*
  * OptionHandlerJavadoc.java
- * Copyright (C) 2006 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
@@ -67,7 +67,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #OPTIONS_STARTTAG
  * @see #OPTIONS_ENDTAG
  * @see weka.core.OptionHandlerJavadoc
@@ -205,6 +204,7 @@ public class OptionHandlerJavadoc
       buffer = new StringBuilder();
       for (i = 0; i < options.size(); i++) {
 	help = new CommandlineHelpProducer();
+	help.setUserMode(m_UserMode);
 	buffer.append("<pre>");
 	buffer.append(generateJavadoc(help.doProduce(options.get(i)).toString()));
 	buffer.append("</pre>\n\n");

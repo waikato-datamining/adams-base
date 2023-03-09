@@ -15,7 +15,7 @@
 
 /*
  * Javadoc.java
- * Copyright (C) 2006-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.doc.javadoc;
@@ -30,6 +30,8 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionManager;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 import adams.env.Environment;
 
 import java.io.BufferedReader;
@@ -47,7 +49,7 @@ import java.util.logging.Level;
  */
 public abstract class Javadoc
   extends LoggingObject
-  implements OptionHandler {
+  implements OptionHandler, UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 4088919470813459046L;
@@ -76,6 +78,9 @@ public abstract class Javadoc
   /** the environment class (dummy option, happens all in runJavadoc method). */
   protected String m_Environment;
 
+  /** the user mode to generate the javadoc for. */
+  protected UserMode m_UserMode;
+
   /** for managing the available options. */
   protected OptionManager m_OptionManager;
 
@@ -100,6 +105,7 @@ public abstract class Javadoc
     m_UseStars  = true;
     m_Dir       = "";
     m_Silent    = false;
+    m_UserMode  = UserMode.LOWEST;
   }
 
   /**
@@ -120,24 +126,28 @@ public abstract class Javadoc
 
     // dummy option, is queried manually in runJavadoc method
     m_OptionManager.add(
-	"env", "environment",
-	Environment.class.getName());
+      "env", "environment",
+      Environment.class.getName());
 
     m_OptionManager.add(
-	"W", "classname",
-	AllJavadoc.class.getName());
+      "W", "classname",
+      AllJavadoc.class.getName());
 
     m_OptionManager.add(
-	"nostars", "useStars",
-	true);
+      "nostars", "useStars",
+      true);
 
     m_OptionManager.add(
-	"dir", "dir",
-        ".");
+      "dir", "dir",
+      ".");
 
     m_OptionManager.add(
-	"silent", "silent",
-	false);
+      "silent", "silent",
+      false);
+
+    m_OptionManager.add(
+      "user-mode", "userMode",
+      UserMode.EXPERT);
   }
 
   /**
@@ -316,6 +326,36 @@ public abstract class Javadoc
   }
 
   /**
+   * Sets the user mode to pass on to the producer if that supports it.
+   *
+   * @param value	the user mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    m_UserMode = value;
+  }
+
+  /**
+   * Returns the user mode to pass on to the producer if that supports it.
+   *
+   * @return		the user mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String userModeTipText() {
+    return "The user mode to pass on to the producer if that supports it.";
+  }
+
+  /**
    * prints the given object to System.err.
    *
    * @param o		the object to print
@@ -348,11 +388,11 @@ public abstract class Javadoc
 
     if (result) {
       try {
-	cls.getDeclaredConstructor().newInstance();
+        cls.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
-	result = false;
-	println("Cannot instantiate '" + getClassname() + "'! Missing default constructor?");
+        result = false;
+        println("Cannot instantiate '" + getClassname() + "'! Missing default constructor?");
       }
     }
 
@@ -416,8 +456,8 @@ public abstract class Javadoc
     result = "";
     while (tok.hasMoreTokens()) {
       if (result.endsWith("\n") || (result.length() == 0)) {
-	for (i = 0; i < count; i++)
-	  result += indentStr;
+        for (i = 0; i < count; i++)
+          result += indentStr;
       }
       result += tok.nextToken();
     }
@@ -448,7 +488,7 @@ public abstract class Javadoc
 
     for (i = 0; i < m_StartTag.length; i++) {
       if (i > 0)
-	result += "\n\n";
+        result += "\n\n";
       result += generateJavadoc(i).trim();
     }
 
@@ -469,7 +509,7 @@ public abstract class Javadoc
     // only spaces?
     if (str.replaceAll(" ", "").length() == 0)
       result = " ";
-    // only tabs?
+      // only tabs?
     else if (str.replaceAll("\t", "").length() == 0)
       result = "\t";
     else
@@ -491,7 +531,7 @@ public abstract class Javadoc
     // only spaces?
     if (str.replaceAll(" ", "").length() == 0)
       result = str.length();
-    // only tabs?
+      // only tabs?
     else if (str.replaceAll("\t", "").length() == 0)
       result = str.length();
     else
@@ -517,10 +557,10 @@ public abstract class Javadoc
 
     // start and end tag?
     if (    (content.indexOf(m_StartTag[index]) == -1)
-	   || (content.indexOf(m_EndTag[index]) == -1) ) {
+      || (content.indexOf(m_EndTag[index]) == -1) ) {
       println(
-	  "No start and/or end tags found: "
-	  + m_StartTag[index] + "/" + m_EndTag[index]);
+        "No start and/or end tags found: "
+          + m_StartTag[index] + "/" + m_EndTag[index]);
       return content;
     }
 
@@ -528,38 +568,38 @@ public abstract class Javadoc
     resultBuf = new StringBuilder();
     while (content.length() > 0) {
       if (content.indexOf(m_StartTag[index]) > -1) {
-	part = content.substring(0, content.indexOf(m_StartTag[index]));
-	// is it a Java constant? -> skip
-	if (part.endsWith("\"")) {
-	  resultBuf.append(part);
-	  resultBuf.append(m_StartTag[index]);
-	  content = content.substring(part.length() + m_StartTag[index].length());
-	}
-	else {
-	  tmpStr       = part.substring(part.lastIndexOf("\n") + 1);
-	  part         = part.substring(0, part.lastIndexOf("\n") + 1);
-	  indentionLen = getIndentionLength(tmpStr);
-	  indentionStr = getIndentionString(tmpStr);
+        part = content.substring(0, content.indexOf(m_StartTag[index]));
+        // is it a Java constant? -> skip
+        if (part.endsWith("\"")) {
+          resultBuf.append(part);
+          resultBuf.append(m_StartTag[index]);
+          content = content.substring(part.length() + m_StartTag[index].length());
+        }
+        else {
+          tmpStr       = part.substring(part.lastIndexOf("\n") + 1);
+          part         = part.substring(0, part.lastIndexOf("\n") + 1);
+          indentionLen = getIndentionLength(tmpStr);
+          indentionStr = getIndentionString(tmpStr);
 
-	  resultBuf.append(part);
-	  if (m_IsBlock[index]) {
-	    resultBuf.append(indent(m_StartTag[index], indentionLen, indentionStr));
-	    resultBuf.append("\n");
-	    resultBuf.append(indent(generateJavadoc(index), indentionLen, indentionStr));
-	    resultBuf.append(indent(m_EndTag[index], indentionLen, indentionStr));
-	  }
-	  else {
-	    resultBuf.append(indent(m_StartTag[index], indentionLen, indentionStr));
-	    resultBuf.append(indent(generateJavadoc(index), 0, ""));
-	    resultBuf.append(indent(m_EndTag[index], 0, ""));
-	  }
-	  content = content.substring(content.indexOf(m_EndTag[index]));
-	  content = content.substring(m_EndTag[index].length());
-	}
+          resultBuf.append(part);
+          if (m_IsBlock[index]) {
+            resultBuf.append(indent(m_StartTag[index], indentionLen, indentionStr));
+            resultBuf.append("\n");
+            resultBuf.append(indent(generateJavadoc(index), indentionLen, indentionStr));
+            resultBuf.append(indent(m_EndTag[index], indentionLen, indentionStr));
+          }
+          else {
+            resultBuf.append(indent(m_StartTag[index], indentionLen, indentionStr));
+            resultBuf.append(indent(generateJavadoc(index), 0, ""));
+            resultBuf.append(indent(m_EndTag[index], 0, ""));
+          }
+          content = content.substring(content.indexOf(m_EndTag[index]));
+          content = content.substring(m_EndTag[index].length());
+        }
       }
       else {
-	resultBuf.append(content);
-	content = "";
+        resultBuf.append(content);
+        content = "";
       }
     }
 
@@ -614,7 +654,7 @@ public abstract class Javadoc
       reader     = new BufferedReader(new FileReader(file));
       contentBuf = new StringBuilder();
       while ((line = reader.readLine()) != null) {
-	contentBuf.append(line + "\n");
+        contentBuf.append(line + "\n");
       }
       reader.close();
       result = updateJavadoc(contentBuf.toString());
@@ -720,18 +760,18 @@ public abstract class Javadoc
 
     try {
       try {
-	if (OptionUtils.helpRequested(options)) {
-	  System.out.println("Help requested...\n");
-	  javadocInst = forName(javadoc.getName(), new String[0]);
-	  System.out.println("\n" + OptionUtils.list(javadocInst));
-	  return;
-	}
-	else {
-	  javadocInst = forName(javadoc.getName(), options);
-	  // directory is necessary!
-	  if (javadocInst.getDir().length() == 0)
-	    throw new Exception("No directory provided!");
-	}
+        if (OptionUtils.helpRequested(options)) {
+          System.out.println("Help requested...\n");
+          javadocInst = forName(javadoc.getName(), new String[0]);
+          System.out.println("\n" + OptionUtils.list(javadocInst));
+          return;
+        }
+        else {
+          javadocInst = forName(javadoc.getName(), options);
+          // directory is necessary!
+          if (javadocInst.getDir().length() == 0)
+            throw new Exception("No directory provided!");
+        }
       }
       catch (Exception ex) {
         String result = "\n" + ex.getMessage() + "\n\n" + OptionUtils.list(forName(javadoc.getName(), new String[0]));
