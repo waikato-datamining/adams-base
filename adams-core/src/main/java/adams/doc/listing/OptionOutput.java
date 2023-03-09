@@ -15,7 +15,7 @@
 
 /*
  * OptionOutput.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.doc.listing;
@@ -31,6 +31,8 @@ import adams.core.logging.LoggingHelper;
 import adams.core.option.HtmlHelpProducer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
+import adams.core.option.UserMode;
+import adams.core.option.UserModeSupporter;
 
 import java.io.File;
 import java.util.List;
@@ -44,7 +46,7 @@ import java.util.Map;
  */
 public class OptionOutput
   extends AbstractListingOutput
-  implements EncodingSupporter {
+  implements EncodingSupporter, UserModeSupporter {
 
   private static final long serialVersionUID = -3904476399937843340L;
 
@@ -59,6 +61,9 @@ public class OptionOutput
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** the user mode to generate the help for. */
+  protected UserMode m_UserMode;
 
   /**
    * Returns a string describing the object.
@@ -85,6 +90,10 @@ public class OptionOutput
     m_OptionManager.add(
       "producer", "producer",
       new HtmlHelpProducer());
+
+    m_OptionManager.add(
+      "user-mode", "userMode",
+      UserMode.EXPERT);
 
     m_OptionManager.add(
       "extension", "extension",
@@ -151,6 +160,37 @@ public class OptionOutput
    */
   public String producerTipText() {
     return "The producer to use for generating the output for each class.";
+  }
+
+  /**
+   * Sets the user mode to pass on to the producer if that supports it.
+   *
+   * @param value	the user mode
+   */
+  @Override
+  public void setUserMode(UserMode value) {
+    m_UserMode = value;
+    reset();
+  }
+
+  /**
+   * Returns the user mode to pass on to the producer if that supports it.
+   *
+   * @return		the user mode
+   */
+  @Override
+  public UserMode getUserMode() {
+    return m_UserMode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String userModeTipText() {
+    return "The user mode to pass on to the producer if that supports it.";
   }
 
   /**
@@ -243,6 +283,9 @@ public class OptionOutput
     OptionHandler		handler;
 
     result = null;
+
+    if (m_Producer instanceof UserModeSupporter)
+      ((UserModeSupporter) m_Producer).setUserMode(m_UserMode);
 
     if (!m_OutputDir.exists()) {
       if (!m_OutputDir.mkdirs())
