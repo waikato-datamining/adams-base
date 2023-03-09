@@ -185,6 +185,7 @@
                     <show>protected</show>
                     <nohelp>true</nohelp>
                     <additionalparam>-Xdoclint:none</additionalparam>
+                    <additionalJOption>--no-module-directories</additionalJOption>
                   </configuration>
                 </plugin>
               </reportPlugins>
