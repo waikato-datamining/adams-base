@@ -37,7 +37,7 @@ import java.lang.reflect.Method;
  */
 public class HtmlHelpProducer
   extends AbstractOptionProducer<String,StringBuilder>
-  implements FileFormatHandler {
+  implements FileFormatHandler, UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 7520567844837662391L;
@@ -85,6 +85,7 @@ public class HtmlHelpProducer
    *
    * @param value	the user mode
    */
+  @Override
   public void setUserMode(UserMode value) {
     m_UserMode = value;
     reset();
@@ -95,6 +96,7 @@ public class HtmlHelpProducer
    *
    * @return		the user mode
    */
+  @Override
   public UserMode getUserMode() {
     return m_UserMode;
   }
