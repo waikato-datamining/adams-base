@@ -144,7 +144,10 @@ public class CanvasPanel
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    if (m_Owner != null)
+    if (m_Owner != null) {
       m_Owner.getManager().draw((Graphics2D) g);
+      if (m_Owner.getPaintOperation() != null)
+        m_Owner.getPaintOperation().performPaint((Graphics2D) g);
+    }
   }
 }

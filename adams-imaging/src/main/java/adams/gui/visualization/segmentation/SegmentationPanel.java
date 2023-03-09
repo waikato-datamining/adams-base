@@ -55,6 +55,7 @@ import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
+import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
 import adams.gui.visualization.segmentation.tool.Pointer;
 import adams.gui.visualization.segmentation.tool.Tool;
 
@@ -207,6 +208,9 @@ public class SegmentationPanel
   /** the last key listener in use. */
   protected KeyListener m_LastKeyListener;
 
+  /** the paint operation in use. */
+  protected PaintOperation m_PaintOperation;
+
   /** the active tool. */
   protected Tool m_ActiveTool;
 
@@ -227,6 +231,7 @@ public class SegmentationPanel
     m_LastMouseMotionListener = null;
     m_ActiveTool              = null;
     m_ContainerSettings       = null;
+    m_PaintOperation          = null;
     m_Tools                   = new ArrayList<>();
   }
 
@@ -347,6 +352,7 @@ public class SegmentationPanel
 	    m_PanelCanvas.removeKeyListener(m_LastKeyListener);
 	  m_PanelToolOptions.removeAll();
 	  tool.setCanvas(m_PanelCanvas);
+          m_PaintOperation = tool.getPaintOperation();
 	  m_PanelToolOptions.add(tool.getOptionPanel(), BorderLayout.CENTER);
 	  m_PanelCanvas.setCursor(tool.getCursor());
 	  m_LastMouseListener = tool.getMouseListener();
@@ -410,6 +416,15 @@ public class SegmentationPanel
    */
   public LayerManager getManager() {
     return m_Manager;
+  }
+
+  /**
+   * Returns the paint operation.
+   *
+   * @return      the operation
+   */
+  public PaintOperation getPaintOperation() {
+    return m_PaintOperation;
   }
 
   /**

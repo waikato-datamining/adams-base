@@ -33,6 +33,8 @@ import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.CombinedLayer.CombinedSubLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
+import adams.gui.visualization.segmentation.paintoperation.NullOperation;
+import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
 
 import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
@@ -64,6 +66,9 @@ public abstract class AbstractTool
   /** the key listener. */
   protected ToolKeyAdapter m_KeyListener;
 
+  /** the paint operation. */
+  protected PaintOperation m_PaintOperation;
+
   /** the options panel. */
   protected BasePanel m_PanelOptions;
 
@@ -86,6 +91,7 @@ public abstract class AbstractTool
     m_Listener       = null;
     m_MotionListener = null;
     m_KeyListener    = null;
+    m_PaintOperation = null;
   }
 
   /**
@@ -340,6 +346,31 @@ public abstract class AbstractTool
         m_KeyListener = new ToolKeyAdapter(this);
     }
     return m_KeyListener;
+  }
+
+  /**
+   * Creates the paint operation to use.
+   * <br>
+   * Default implementation just returns the {@link NullOperation}.
+   *
+   * @return		the operation
+   */
+  protected PaintOperation createPaintOperation() {
+    return new NullOperation();
+  }
+
+  /**
+   * Returns the paint operation for the tool.
+   *
+   * @return		the paint operation
+   */
+  @Override
+  public PaintOperation getPaintOperation() {
+    if (m_PaintOperation == null) {
+      m_PaintOperation = createPaintOperation();
+      m_PaintOperation.setOwner(this);
+    }
+    return m_PaintOperation;
   }
 
   /**

@@ -29,6 +29,7 @@ import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.layer.CombinedLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
+import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
 
 import javax.swing.Icon;
 import java.awt.Color;
@@ -171,6 +172,13 @@ public interface Tool
    * @return		the listener
    */
   public ToolKeyAdapter getKeyListener();
+
+  /**
+   * Returns the paint operation for the tool.
+   *
+   * @return		the paint operation
+   */
+  public PaintOperation getPaintOperation();
 
   /**
    * Returns the panel for setting the options.
