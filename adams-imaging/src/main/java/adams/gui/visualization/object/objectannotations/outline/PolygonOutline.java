@@ -75,6 +75,7 @@ public class PolygonOutline
    *
    * @param value 	true if to use
    */
+  @Override
   public void setFallback(boolean value) {
     m_Fallback = value;
     reset();
@@ -85,6 +86,7 @@ public class PolygonOutline
    *
    * @return 		true if to use
    */
+  @Override
   public boolean getFallback() {
     return m_Fallback;
   }
@@ -95,6 +97,7 @@ public class PolygonOutline
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String fallbackTipText() {
     return "Whether to fall back on the bounding box if no polygon available.";
   }
@@ -105,6 +108,7 @@ public class PolygonOutline
    *
    * @param value 	the ratio
    */
+  @Override
   public void setBoundingBoxFallbackRatio(double value) {
     if (getOptionManager().isValid("boundingBoxFallbackRatio", value)) {
       m_BoundingBoxFallbackRatio = value;
@@ -118,6 +122,7 @@ public class PolygonOutline
    *
    * @return 		the ratio
    */
+  @Override
   public double getBoundingBoxFallbackRatio() {
     return m_BoundingBoxFallbackRatio;
   }
@@ -128,6 +133,7 @@ public class PolygonOutline
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String boundingBoxFallbackRatioTipText() {
     return "The threshold for the ratio between the areas (shape / bbox), below which the bounding box is used over the polygon (ie bad masks/shapes).";
   }
