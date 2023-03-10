@@ -32,10 +32,16 @@ public enum VertexShape {
   NONE,
   /** a square box. */
   BOX,
+  /** a filled square box. */
+  BOX_FILLED,
   /** a circle. */
   CIRCLE,
+  /** a filled circle. */
+  CIRCLE_FILLED,
   /** a triangle. */
-  TRIANGLE;
+  TRIANGLE,
+  /** a filled triangle. */
+  TRIANGLE_FILLED;
 
   /**
    * Plots the shape at the specified position.
@@ -46,35 +52,42 @@ public enum VertexShape {
    * @param extent	the size of the marker
    */
   public void plot(Graphics2D g, int posX, int posY, int extent) {
+    int[] 	x;
+    int[] 	y;
+
     if (this == NONE)
       return;
 
-    if (this == BOX) {
-      g.drawRect(
-	posX - (extent / 2),
-	posY - (extent / 2),
-	extent - 1,
-	extent - 1);
-    }
-    else if (this == CIRCLE) {
-      g.drawArc(
-	posX - (extent / 2),
-	posY - (extent / 2),
-	extent - 1,
-	extent - 1,
-	0,
-	360);
-    }
-    else if (this == TRIANGLE) {
-      int[] x = new int[3];
-      int[] y = new int[3];
-      x[0] = posX - (extent / 2);
-      y[0] = posY + (extent / 2);
-      x[1] = x[0] + extent;
-      y[1] = y[0];
-      x[2] = posX;
-      y[2] = y[0] - extent;
-      g.drawPolygon(x, y, 3);
+    switch (this) {
+      case BOX:
+	g.drawRect(posX - (extent / 2), posY - (extent / 2), extent - 1, extent - 1);
+        break;
+      case BOX_FILLED:
+	g.fillRect(posX - (extent / 2), posY - (extent / 2), extent - 1, extent - 1);
+        break;
+      case CIRCLE:
+	g.drawArc(posX - (extent / 2), posY - (extent / 2), extent - 1, extent - 1, 0, 360);
+        break;
+      case CIRCLE_FILLED:
+	g.fillArc(posX - (extent / 2), posY - (extent / 2), extent - 1, extent - 1, 0, 360);
+	break;
+      case TRIANGLE:
+      case TRIANGLE_FILLED:
+	x = new int[3];
+	y = new int[3];
+	x[0] = posX - (extent / 2);
+	y[0] = posY + (extent / 2);
+	x[1] = x[0] + extent;
+	y[1] = y[0];
+	x[2] = posX;
+	y[2] = y[0] - extent;
+	if (this == TRIANGLE)
+	  g.drawPolygon(x, y, 3);
+	else
+	  g.fillPolygon(x, y, 3);
+        break;
+      default:
+        throw new IllegalStateException("Unhandled vertex shape: " + this);
     }
   }
 }
