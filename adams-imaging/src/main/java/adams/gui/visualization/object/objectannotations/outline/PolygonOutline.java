@@ -15,7 +15,7 @@
 
 /*
  * PolygonOutline.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.object.objectannotations.outline;
@@ -25,7 +25,6 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 
 /**
@@ -142,7 +141,6 @@ public class PolygonOutline
    */
   @Override
   protected void doPlot(LocatedObject object, Color color, Graphics2D g) {
-    Polygon   	poly;
     Rectangle	rect;
     int[]	x;
     int[]	y;
