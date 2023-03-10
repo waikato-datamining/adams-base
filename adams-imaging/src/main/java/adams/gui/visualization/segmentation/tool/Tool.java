@@ -193,6 +193,11 @@ public interface Tool
   public void activate();
 
   /**
+   * Gets called to deactivate the tool.
+   */
+  public void deactivate();
+
+  /**
    * Hook method for when new annotations have been set.
    */
   public void annotationsChanged();

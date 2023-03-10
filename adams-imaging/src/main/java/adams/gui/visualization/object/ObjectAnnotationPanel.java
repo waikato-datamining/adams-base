@@ -441,6 +441,8 @@ public class ObjectAnnotationPanel
 	  if (m_LastKeyListener != null)
 	    m_PanelCanvas.addKeyListener(m_LastKeyListener);
 	  m_SplitPaneTools.setDividerLocation(m_SplitPaneTools.getDividerLocation());
+	  if (m_ActiveTool != null)
+            m_ActiveTool.deactivate();
 	  m_ActiveTool = tool;
 	  m_ActiveTool.activate();
 	});

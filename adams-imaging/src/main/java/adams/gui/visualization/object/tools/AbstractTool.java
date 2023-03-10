@@ -359,11 +359,19 @@ public abstract class AbstractTool
   /**
    * Gets called to activate the tool.
    * <br>
-   * Default implementation does nothing.
+   * Default implementation repaints the canvas.
    */
   @Override
   public void activate() {
     getCanvas().repaint();
+  }
+
+  /**
+   * Gets called to deactivate the tool.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void deactivate() {
   }
 
   /**

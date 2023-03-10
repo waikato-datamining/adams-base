@@ -137,6 +137,11 @@ public interface Tool
   public void activate();
 
   /**
+   * Gets called to deactivate the tool.
+   */
+  public void deactivate();
+
+  /**
    * Called when image or annotations change.
    */
   public void update();

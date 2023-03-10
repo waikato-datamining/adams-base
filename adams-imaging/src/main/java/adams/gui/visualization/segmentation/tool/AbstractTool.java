@@ -494,6 +494,14 @@ public abstract class AbstractTool
   }
 
   /**
+   * Gets called to deactivate the tool.
+   * <br>
+   * Default implementation does nothing.
+   */
+  public void deactivate() {
+  }
+
+  /**
    * Hook method for when new annotations have been set.
    */
   @Override
