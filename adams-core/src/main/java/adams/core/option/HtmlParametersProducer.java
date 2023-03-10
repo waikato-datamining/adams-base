@@ -15,7 +15,7 @@
 
 /*
  * HtmlParametersProducer.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -29,6 +29,8 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Generates HTML output of the parameters of an object (non-recursive).
@@ -47,6 +49,12 @@ public class HtmlParametersProducer
 
   /** whether to generate "fake" class cross reference links. */
   protected boolean m_ClassCrossRefLinks;
+
+  /** blacklisted classes. */
+  protected Class[] m_BlackListedClasses;
+
+  /** the cache for checks. */
+  protected Map<Class,Boolean> m_BlackListed;
 
   /**
    * Returns a string describing the object.
@@ -78,6 +86,25 @@ public class HtmlParametersProducer
   }
 
   /**
+   * Sets the classes (interface or superclass) to prevent from being processed.
+   *
+   * @param value	the classes
+   */
+  public void setBlackListedClasses(Class[] value) {
+    m_BlackListedClasses = value;
+    reset();
+  }
+
+  /**
+   * Returns the classes (interface or superclass) to prevent from being processed.
+   *
+   * @return		the classes
+   */
+  public Class[] getBlackListedClasses() {
+    return m_BlackListedClasses;
+  }
+
+  /**
    * Initializes the output data structure.
    *
    * @return		the created data structure
@@ -94,7 +121,18 @@ public class HtmlParametersProducer
   protected void initialize() {
     super.initialize();
 
-    m_OutputBuffer = new StringBuilder();
+    m_OutputBuffer       = new StringBuilder();
+    m_BlackListedClasses = new Class[0];
+    m_BlackListed        = new HashMap<>();
+  }
+
+  /**
+   * Resets the members.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    m_BlackListed.clear();
   }
 
   /**
@@ -133,7 +171,7 @@ public class HtmlParametersProducer
    */
   protected String toHTML(String s, boolean nbsp) {
     String	result;
-    
+
     result = HtmlUtils.markUpURLs(s, true);
     result = HtmlUtils.convertLines(result, nbsp);
     result = HtmlUtils.hyperlinkClassnames(result, m_ClassCrossRefLinks);
@@ -192,7 +230,7 @@ public class HtmlParametersProducer
       text = option.getBaseClass().getName();
     }
 
-    buffer.append(" &lt;" + toHTML(text) + "&gt;");
+    buffer.append(" &lt;").append(toHTML(text)).append("&gt;");
   }
 
   /**
@@ -211,7 +249,7 @@ public class HtmlParametersProducer
     value = (Boolean) option.getCurrentValue();
     if (value.booleanValue() != ((Boolean) option.getDefaultValue()).booleanValue()) {
       result.append("<li>\n");
-      result.append("<b>" + toHTML(option.getProperty()) + "</b>\n");
+      result.append("<b>").append(toHTML(option.getProperty())).append("</b>\n");
       result.append("<br>\n");
 
       if (value)
@@ -240,6 +278,35 @@ public class HtmlParametersProducer
   }
 
   /**
+   * Checks whether the class is blacklisted.
+   *
+   * @param cls		the class to check
+   * @return		true if blacklisted
+   */
+  protected boolean isBlacklisted(Class cls) {
+    boolean	result;
+
+    result = false;
+
+    if (m_BlackListedClasses.length > 0) {
+      if (m_BlackListed.containsKey(cls)) {
+        result = m_BlackListed.get(cls);
+      }
+      else {
+        for (Class blacklisted: m_BlackListedClasses) {
+          if (ClassLocator.matches(blacklisted, cls)) {
+            result = true;
+            break;
+	  }
+	}
+        m_BlackListed.put(cls, result);
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Visits an argument option.
    *
    * @param option	the argument option
@@ -256,10 +323,13 @@ public class HtmlParametersProducer
 
     result = new StringBuilder();
 
+    if (isBlacklisted(option.getBaseClass()))
+      return result;
+
     value = option.getCurrentValue();
     if (!option.isDefaultValue(value)) {
       result.append("<li>\n");
-      result.append("<b>" + toHTML(option.getProperty()) + "</b>\n");
+      result.append("<b>").append(toHTML(option.getProperty())).append("</b>\n");
       result.append("<br>\n");
 
       script = (ClassLocator.isSubclass(AbstractSimpleScript.class, option.getBaseClass()))
@@ -274,14 +344,14 @@ public class HtmlParametersProducer
 	  for (n = 0; n < Array.getLength(value); n++) {
 	    bstring = (AbstractBaseString) Array.get(value, n);
 	    text += "<li>" + toHTML(Utils.backQuoteChars(bstring.getValue()), false) + "</li>\n";
-          }
-          text += "</ol>";
-        }
+	  }
+	  text += "</ol>";
+	}
 	else {
 	  bstring = (AbstractBaseString) value;
 	  text = toHTML(bstring.getValue());
 	}
-	result.append(text + "\n");
+	result.append(text).append("\n");
       }
       else {
 	if (value == null) {
@@ -292,12 +362,12 @@ public class HtmlParametersProducer
 	  for (n = 0; n < Array.getLength(value); n++) {
 	    text += "<li>" + toHTML(Utils.backQuoteChars(option.toString(Array.get(value, n))), false) + "</li>\n";
 	  }
-          text += "</ol>";
+	  text += "</ol>";
 	}
 	else {
 	  text = toHTML(option.toString(value), false);
 	}
-	result.append(text + "\n");
+	result.append(text).append("\n");
       }
       result.append("<br>\n");
       result.append("</li>\n");
@@ -332,12 +402,12 @@ public class HtmlParametersProducer
     m_OutputBuffer = new StringBuilder();
     m_OutputBuffer.append("<html>" + "\n");
     m_OutputBuffer.append("<head>\n");
-    m_OutputBuffer.append("<title>" + getInput().getClass().getName() + "<title>\n");
+    m_OutputBuffer.append("<title>").append(getInput().getClass().getName()).append("<title>\n");
     m_OutputBuffer.append("</head>\n");
     m_OutputBuffer.append("\n");
     m_OutputBuffer.append("<body>\n");
     m_OutputBuffer.append("<h3>Name</h3>\n");
-    m_OutputBuffer.append("<p><code>" + getInput().getClass().getName() + "</code></p>\n");
+    m_OutputBuffer.append("<p><code>").append(getInput().getClass().getName()).append("</code></p>\n");
     m_OutputBuffer.append("<br>\n");
     m_OutputBuffer.append("\n");
 
@@ -393,10 +463,10 @@ public class HtmlParametersProducer
   public String[] getFormatExtensions() {
     return new String[]{"html", "htm"};
   }
-  
+
   /**
    * Executes the producer from commandline.
-   * 
+   *
    * @param args	the commandline arguments, use -help for help
    */
   public static void main(String[] args) {
