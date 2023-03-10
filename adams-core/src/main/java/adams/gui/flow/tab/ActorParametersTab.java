@@ -15,7 +15,7 @@
 
 /*
  * ActorParametersTab.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -91,6 +91,7 @@ public class ActorParametersTab
     }
 
     producer = new HtmlParametersProducer();
+    producer.setBlackListedClasses(new Class[]{Actor.class});
     producer.produce(actors[0]);
 
     run = () -> {
