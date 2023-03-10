@@ -51,7 +51,45 @@ public class Markers
     /** a circle. */
     CIRCLE,
     /** a triangle. */
-    TRIANGLE
+    TRIANGLE;
+
+    /**
+     * Plots the marker at the specified position.
+     *
+     * @param g		the graphics context
+     * @param posX	the x position
+     * @param posY	the y position
+     * @param extent	the size of the marker
+     */
+    public void plot(Graphics2D g, int posX, int posY, int extent) {
+      if (this == BOX) {
+	g.drawRect(
+	  posX - (extent / 2),
+	  posY - (extent / 2),
+	  extent - 1,
+	  extent - 1);
+      }
+      else if (this == CIRCLE) {
+	g.drawArc(
+	  posX - (extent / 2),
+	  posY - (extent / 2),
+	  extent - 1,
+	  extent - 1,
+	  0,
+	  360);
+      }
+      else if (this == TRIANGLE) {
+	int[] x = new int[3];
+	int[] y = new int[3];
+	x[0] = posX - (extent / 2);
+	y[0] = posY + (extent / 2);
+	x[1] = x[0] + extent;
+	y[1] = y[0];
+	x[2] = posX;
+	y[2] = y[0] - extent;
+	g.drawPolygon(x, y, 3);
+      }
+    }
   }
 
   /** the owner. */
@@ -207,34 +245,7 @@ public class Markers
 
       if (m_Shape != Shape.NONE) {
 	if (Math.sqrt(Math.pow(currX - prevX, 2) + Math.pow(currY - prevY, 2)) > m_Extent * 2) {
-	  if (m_Shape == Shape.BOX) {
-	    g.drawRect(
-	      currX - (m_Extent / 2),
-	      currY - (m_Extent / 2),
-	      m_Extent - 1,
-	      m_Extent - 1);
-	  }
-	  else if (m_Shape == Shape.CIRCLE) {
-	    g.drawArc(
-	      currX - (m_Extent / 2),
-	      currY - (m_Extent / 2),
-	      m_Extent - 1,
-	      m_Extent - 1,
-	      0,
-	      360);
-	  }
-	  else if (m_Shape == Shape.TRIANGLE) {
-	    int[] x = new int[3];
-	    int[] y = new int[3];
-	    x[0] = currX - (m_Extent / 2);
-	    y[0] = currY + (m_Extent / 2);
-	    x[1] = x[0] + m_Extent;
-	    y[1] = y[0];
-	    x[2] = currX;
-	    y[2] = y[0] - m_Extent;
-	    g.drawPolygon(x, y, 3);
-	  }
-
+	  m_Shape.plot(g, currX, currY, m_Extent);
 	  prevX = currX;
 	  prevY = currY;
 	}
