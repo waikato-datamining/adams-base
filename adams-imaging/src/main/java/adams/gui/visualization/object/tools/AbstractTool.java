@@ -341,6 +341,7 @@ public abstract class AbstractTool
 	textArea.setRows(4);
 	textArea.setText(globalInfo());
 	textArea.setCaretPosition(0);
+	textArea.setToolTipText(GUIHelper.processTipText(globalInfo(), GUIHelper.getMaxTooltipWidth()));
 	splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
 	splitPane.setTopComponent(new BaseScrollPane(textArea));
 	splitPane.setBottomComponent(m_PanelOptions);
