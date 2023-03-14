@@ -56,6 +56,22 @@ public class PolygonUtils {
   }
 
   /**
+   * Turns the rectangle into a polygon.
+   *
+   * @param rect 	the polygon to convert
+   * @return		the polygon
+   */
+  public static Polygon toPolygon(Rectangle rect) {
+    int[]	x;
+    int[]	y;
+
+    x = new int[]{rect.x, rect.x + rect.width - 1, rect.x + rect.width - 1,  rect.x};
+    y = new int[]{rect.y, rect.y,                  rect.y + rect.height - 1, rect.y + rect.height - 1};
+
+    return new Polygon(x, y, x.length);
+  }
+
+  /**
    * Returns the bounding box for the polygon.
    *
    * @param points	the polygon points to calculate the bounding box for
