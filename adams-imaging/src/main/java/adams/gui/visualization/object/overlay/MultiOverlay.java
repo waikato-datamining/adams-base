@@ -99,6 +99,16 @@ public class MultiOverlay
   }
 
   /**
+   * Hook method for when annotations change.
+   */
+  @Override
+  public void annotationsChanged() {
+    super.annotationsChanged();
+    for (Overlay overlay: m_Overlays)
+      overlay.annotationsChanged();
+  }
+
+  /**
    * Paints the overlay.
    *
    * @param panel 	the owning panel
