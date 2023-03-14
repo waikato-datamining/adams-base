@@ -25,6 +25,10 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Plots the vertices of the bounding box.
@@ -32,7 +36,8 @@ import java.awt.Rectangle;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class RectangleVertices
-  extends AbstractStrokeOutlinePlotter {
+  extends AbstractStrokeOutlinePlotter
+  implements SubsetPlotSupporter {
 
   private static final long serialVersionUID = -2429218032837933149L;
 
@@ -41,6 +46,9 @@ public class RectangleVertices
 
   /** the maximum width/height of the shape to plot around the vertices. */
   protected int m_Extent;
+
+  /** the objects to limit the plotting to. */
+  protected Set<LocatedObject> m_PlotSubset;
 
   /**
    * Returns a string describing the object.
@@ -66,6 +74,16 @@ public class RectangleVertices
     m_OptionManager.add(
       "extend", "extent",
       7, 1, null);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_PlotSubset = null;
   }
 
   /**
@@ -127,6 +145,62 @@ public class RectangleVertices
   }
 
   /**
+   * Sets the object to limit the plotting to.
+   *
+   * @param obj		the object, can be null
+   */
+  @Override
+  public void setPlotSubset(LocatedObject obj) {
+    m_PlotSubset = new HashSet<>();
+    if (obj != null)
+      m_PlotSubset.add(obj);
+  }
+
+  /**
+   * Sets the objects to limit the plotting to.
+   *
+   * @param objs	the objects, can be null
+   */
+  @Override
+  public void setPlotSubset(LocatedObject[] objs) {
+    m_PlotSubset = new HashSet<>();
+    if (objs != null)
+      m_PlotSubset.addAll(Arrays.asList(objs));
+  }
+
+  /**
+   * Sets the objects to limit the plotting to.
+   *
+   * @param objs	the objects
+   */
+  public void setPlotSubset(List<LocatedObject> objs) {
+    m_PlotSubset = new HashSet<>();
+    if (objs != null)
+      m_PlotSubset.addAll(objs);
+  }
+
+  /**
+   * Returns the current subset to plot.
+   *
+   * @return		the objects, or null if none set
+   */
+  @Override
+  public LocatedObject[] getPlotSubset() {
+    if (m_PlotSubset == null)
+      return null;
+    else
+      return m_PlotSubset.toArray(new LocatedObject[0]);
+  }
+
+  /**
+   * Clears the objects to limit plotting to.
+   */
+  @Override
+  public void clearPlotSubset() {
+    m_PlotSubset = null;
+  }
+
+  /**
    * Plots the outline.
    *
    * @param object the object to plot
@@ -136,6 +210,11 @@ public class RectangleVertices
   @Override
   protected void doPlot(LocatedObject object, Color color, Graphics2D g) {
     Rectangle	rect;
+
+    if (m_PlotSubset != null) {
+      if (!m_PlotSubset.contains(object))
+        return;
+    }
 
     rect = object.getRectangle();
     g.setColor(color);
