@@ -91,6 +91,9 @@ GOECheckBoxHeight=20
 GOEComboBoxHeight=20
 GOEDefaultHeight=20
 
+# the maximum width to tool tips
+MaxToolTipWidth=60
+
 # Dimensions and location
 # - pack the window
 # <classname of component>.pack=true|false

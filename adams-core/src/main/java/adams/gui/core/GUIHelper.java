@@ -2843,4 +2843,13 @@ public class GUIHelper {
 
     return result;
   }
+
+  /**
+   * Returns the maximum width for tool tips.
+   *
+   * @return		the maximum
+   */
+  public static int getMaxTooltipWidth() {
+    return getInteger("MaxToolTipWidth", 40);
+  }
 }

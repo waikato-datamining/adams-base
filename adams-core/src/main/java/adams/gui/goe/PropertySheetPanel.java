@@ -91,9 +91,6 @@ public class PropertySheetPanel
   /** for serialization. */
   static final long serialVersionUID = -557854258929870536L;
 
-  /** the maximum characters per line for a tool tip. */
-  public final static int MAX_TOOLTIP_WIDTH = 40;
-
   /** whether to show an extra button for variable popup menu. */
   protected static Boolean SHOW_VARIABLE_POPUP_BUTTON;
 
@@ -597,7 +594,7 @@ public class PropertySheetPanel
 	}
       }
       if (m_TipTexts[i] != null)
-	m_Views[i].setToolTipText(GUIHelper.processTipText(m_TipTexts[i], MAX_TOOLTIP_WIDTH));
+	m_Views[i].setToolTipText(GUIHelper.processTipText(m_TipTexts[i], GUIHelper.getMaxTooltipWidth()));
     }
 
     if (m_ParameterPanel == null) {

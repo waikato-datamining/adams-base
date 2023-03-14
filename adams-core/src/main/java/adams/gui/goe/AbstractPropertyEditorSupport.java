@@ -53,9 +53,6 @@ public abstract class AbstractPropertyEditorSupport
   /** the user approved the dialog. */
   public final static int APPROVE_OPTION = 1;
 
-  /** the maximum characters per line for a tool tip. */
-  public final static int MAX_TOOLTIP_WIDTH = PropertySheetPanel.MAX_TOOLTIP_WIDTH;
-
   /** the string to use if there is null value to be display. */
   public final static String NULL = "[null]";
 
@@ -280,7 +277,7 @@ public abstract class AbstractPropertyEditorSupport
    * @return		the generated tip text string
    */
   public String createTipText(String help) {
-    return GUIHelper.processTipText(help, MAX_TOOLTIP_WIDTH);
+    return GUIHelper.processTipText(help, GUIHelper.getMaxTooltipWidth());
   }
 
   /**
