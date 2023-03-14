@@ -104,8 +104,10 @@ public class MultiOverlay
   @Override
   public void annotationsChanged() {
     super.annotationsChanged();
-    for (Overlay overlay: m_Overlays)
-      overlay.annotationsChanged();
+    for (Overlay overlay: m_Overlays) {
+      if (overlay.getEnabled())
+        overlay.annotationsChanged();
+    }
   }
 
   /**
@@ -116,10 +118,10 @@ public class MultiOverlay
    */
   @Override
   protected void doPaint(ObjectAnnotationPanel panel, Graphics g) {
-    int		i;
-
-    for (i = 0; i < m_Overlays.length; i++)
-      m_Overlays[i].paint(panel, g);
+    for (Overlay overlay: m_Overlays) {
+      if (overlay.getEnabled())
+        overlay.paint(panel, g);
+    }
   }
 
   /**
