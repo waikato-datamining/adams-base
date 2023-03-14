@@ -111,4 +111,14 @@ public class MultiOverlay
     for (i = 0; i < m_Overlays.length; i++)
       m_Overlays[i].paint(panel, g);
   }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  @Override
+  public void cleanUp() {
+    for (Overlay overlay: m_Overlays)
+      overlay.cleanUp();
+    super.cleanUp();
+  }
 }
