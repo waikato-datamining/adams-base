@@ -29,3 +29,12 @@ adams.flow.source.StorageForLoop=adams.flow.source.ForLoop
 adams.flow.source.StorageValue=adams.flow.transformer.SetStorageValue
 adams.flow.transformer.SetStorageValue=adams.flow.source.StorageValue,adams.flow.transformer.DeleteStorageValue
 adams.flow.transformer.DeleteStorageValue=adams.flow.transformer.SetStorageValue
+
+# SelectDirectory/EnterManyValues
+adams.flow.source.SelectDirectory=adams.flow.source.EnterManyValues
+
+# SelectFile/EnterManyValues
+adams.flow.source.SelectFile=adams.flow.source.EnterManyValues
+
+# EnterValue/EnterManyValues
+adams.flow.source.EnterValue=adams.flow.source.EnterManyValues
