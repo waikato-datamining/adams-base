@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InteractiveActorTransfer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.optiontransfer;
@@ -26,7 +26,6 @@ import adams.flow.core.InteractiveActor;
  * Transfers options between {@link InteractiveActor} objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InteractiveActorTransfer
   extends AbstractOptionTransfer {
@@ -60,9 +59,11 @@ public class InteractiveActorTransfer
 
     atarget.setStopFlowIfCanceled(asource.getStopFlowIfCanceled());
     atarget.setCustomStopMessage(asource.getCustomStopMessage());
+    atarget.setStopMode(asource.getStopMode());
 
     transferVariable(asource, atarget, "stopFlowIfCanceled");
     transferVariable(asource, atarget, "customStopMessage");
+    transferVariable(asource, atarget, "stopMode");
 
     return null;
   }
