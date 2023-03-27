@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SDR.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.evaluation;
@@ -34,7 +34,6 @@ import java.util.List;
  * http://cirpwiki.info/wiki/Statistics#Standard_Deviation_of_Residuals
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SDR
   extends AbstractSimpleRegressionMeasure {
@@ -119,5 +118,16 @@ public class SDR
   @Override
   public String toSummaryString() {
     return Utils.padRight(NAME, 41) + Utils.doubleToString(getStatistic(NAME), 4) + "\n";
+  }
+
+  /**
+   * True if the optimum value of the named metric is a maximum value; false if
+   * the optimim value is a minimum value. Subclasses should override this
+   * method to suit their statistic(s)
+   *
+   * @return true (default implementation)
+   */
+  public boolean statisticIsMaximisable(String statName) {
+    return false;
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Bias.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.evaluation;
@@ -30,7 +30,6 @@ import java.util.List;
  * Computes the bias (mean error) for regression models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Bias
   extends AbstractSimpleRegressionMeasure {
@@ -109,5 +108,16 @@ public class Bias
     if (bias >= 1.0)
       width -= Integer.toString((int) bias).length() + 1;
     return Utils.padRight(NAME, width) + Utils.doubleToString(bias, 4) + "\n";
+  }
+
+  /**
+   * True if the optimum value of the named metric is a maximum value; false if
+   * the optimim value is a minimum value. Subclasses should override this
+   * method to suit their statistic(s)
+   *
+   * @return true (default implementation)
+   */
+  public boolean statisticIsMaximisable(String statName) {
+    return false;
   }
 }

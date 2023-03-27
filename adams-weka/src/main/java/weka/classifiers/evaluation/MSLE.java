@@ -15,7 +15,7 @@
 
 /*
  * MSLE.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.evaluation;
@@ -128,5 +128,16 @@ public class MSLE
   @Override
   public String toSummaryString() {
     return Utils.padRight(NAME, 41) + Utils.doubleToString(getStatistic(NAME), 4) + "\n";
+  }
+
+  /**
+   * True if the optimum value of the named metric is a maximum value; false if
+   * the optimim value is a minimum value. Subclasses should override this
+   * method to suit their statistic(s)
+   *
+   * @return true (default implementation)
+   */
+  public boolean statisticIsMaximisable(String statName) {
+    return false;
   }
 }
