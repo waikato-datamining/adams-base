@@ -15,7 +15,7 @@
 
 /*
  * ProgramLookAndFeel.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,9 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.laf.AbstractLookAndFeel;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
 import java.awt.event.ActionEvent;
 import java.util.logging.Level;
 
@@ -126,25 +128,30 @@ public class ProgramLookAndFeel
    */
   @Override
   public JMenuItem getMenuItem() {
-    BaseMenu	result;
-    JMenuItem	menuitem;
+    BaseMenu			result;
+    JRadioButtonMenuItem 	menuitem;
+    ButtonGroup			group;
 
     result = new BaseMenu(getTitle());
     result.setIcon(ImageManager.getIcon(getIconName()));
+    group = new ButtonGroup();
 
     for (final Class cls: AbstractLookAndFeel.getLookAndFeels()) {
       try {
-        final AbstractLookAndFeel laf = (AbstractLookAndFeel) cls.getDeclaredConstructor().newInstance();
-        menuitem = new JMenuItem(laf.getName());
-        menuitem.setEnabled(laf.isAvailable());
-        menuitem.addActionListener((ActionEvent e) -> {
-          AbstractLookAndFeel.installLookAndFeel(laf);
-          GUIHelper.showInformationMessage(null, "Please restart the application for the look and feel to fully take effect.");
-        });
-        result.add(menuitem);
+	final AbstractLookAndFeel laf = (AbstractLookAndFeel) cls.getDeclaredConstructor().newInstance();
+	menuitem = new JRadioButtonMenuItem(laf.getName());
+	menuitem.setEnabled(laf.isAvailable());
+	group.add(menuitem);
+	if ((AbstractLookAndFeel.getCurrent() != null) && (laf.getName().equals(AbstractLookAndFeel.getCurrent().getName())))
+	  menuitem.setSelected(true);
+	menuitem.addActionListener((ActionEvent e) -> {
+	  AbstractLookAndFeel.installLookAndFeel(laf);
+	  GUIHelper.showInformationMessage(null, "Please restart the application for the look and feel to fully take effect.");
+	});
+	result.add(menuitem);
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate look and feel: " + Utils.classToString(cls));
+	getLogger().log(Level.SEVERE, "Failed to instantiate look and feel: " + Utils.classToString(cls));
       }
     }
 

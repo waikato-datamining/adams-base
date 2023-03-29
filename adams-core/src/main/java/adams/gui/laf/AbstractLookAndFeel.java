@@ -43,6 +43,9 @@ public abstract class AbstractLookAndFeel
 
   public static final String KEY_LOOKANDFEEL = "LookAndFeel";
 
+  /** the current look and feel. */
+  protected static AbstractLookAndFeel m_Current;
+
   /**
    * Returns the name for this look and feel.
    *
@@ -72,6 +75,7 @@ public abstract class AbstractLookAndFeel
   public boolean install() {
     try {
       doInstall();
+      m_Current = this;
       return true;
     }
     catch (Exception e) {
@@ -121,11 +125,11 @@ public abstract class AbstractLookAndFeel
       props.load(filename);
       if (props.hasKey(KEY_LOOKANDFEEL)) {
 	lafClassName = props.getProperty(KEY_LOOKANDFEEL);
-        try {
-          laf = (AbstractLookAndFeel) ClassManager.getSingleton().forName(lafClassName).getDeclaredConstructor().newInstance();
+	try {
+	  laf = (AbstractLookAndFeel) ClassManager.getSingleton().forName(lafClassName).getDeclaredConstructor().newInstance();
 	}
-        catch (Exception e){
-          System.err.println("Failed to instantiate look and feel: " + lafClassName);
+	catch (Exception e){
+	  System.err.println("Failed to instantiate look and feel: " + lafClassName);
 	}
       }
     }
@@ -144,5 +148,14 @@ public abstract class AbstractLookAndFeel
    */
   public static Class[] getLookAndFeels() {
     return ClassLister.getSingleton().getClasses(AbstractLookAndFeel.class);
+  }
+
+  /**
+   * Returns the currently installed look and feel.
+   *
+   * @return		the look and feel
+   */
+  public static AbstractLookAndFeel getCurrent() {
+    return m_Current;
   }
 }
