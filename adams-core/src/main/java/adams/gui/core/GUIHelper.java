@@ -127,6 +127,9 @@ public class GUIHelper {
   /** whether we are running in headless mode. */
   public static Boolean HeadlessMode = null;
 
+  /** the global horizontal offset for drawing text in boxes. */
+  protected static int m_DefaultHorizontalTextOffset = 2;
+
   /**
    * How showInputDialog should display the multiple values to choose from.
    */
@@ -2872,8 +2875,28 @@ public class GUIHelper {
 
     fm   = g.getFontMetrics();
     voff = fm.getAscent() + box.height - fm.getHeight() + 2;
-    hoff = 4;
+    hoff = m_DefaultHorizontalTextOffset;
 
     return new int[]{hoff, voff};
+  }
+
+  /**
+   * Sets the default horizontal offset for drawing strings in boxes.
+   *
+   * @param value	the offset
+   * @see		#calculateFontOffset(Graphics, Rectangle)
+   */
+  public static void setDefaultHorizontalTextOffset(int value) {
+    m_DefaultHorizontalTextOffset = value;
+  }
+
+  /**
+   * Returns the default horizontal offset for drawing strings in boxes.
+   *
+   * @return		the offset
+   * @see		#calculateFontOffset(Graphics, Rectangle)
+   */
+  public int getDefaultHorizontalTextOffset() {
+    return m_DefaultHorizontalTextOffset;
   }
 }

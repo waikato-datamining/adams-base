@@ -21,6 +21,7 @@
 package adams.gui.laf;
 
 import adams.gui.core.ColorHelper;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.UIManager;
 
@@ -61,6 +62,7 @@ public class FlatLafLight
    */
   @Override
   public void doInstall() throws Exception {
+    GUIHelper.setDefaultHorizontalTextOffset(8);
     com.formdev.flatlaf.FlatLightLaf.setup();
     UIManager.put("Table.showHorizontalLines", true);
     UIManager.put("Table.showVerticalLines", true);

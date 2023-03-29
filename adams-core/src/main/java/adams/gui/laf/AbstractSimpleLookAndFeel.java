@@ -20,6 +20,8 @@
 
 package adams.gui.laf;
 
+import adams.gui.core.GUIHelper;
+
 import javax.swing.UIManager;
 
 /**
@@ -62,6 +64,7 @@ public abstract class AbstractSimpleLookAndFeel
    */
   @Override
   public void doInstall() throws Exception{
+    GUIHelper.setDefaultHorizontalTextOffset(2);
     UIManager.setLookAndFeel(getLookAndFeelClassname());
   }
 }
