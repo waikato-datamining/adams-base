@@ -35,17 +35,18 @@ import adams.gui.goe.popupmenu.CustomizerComparator;
 import adams.gui.goe.popupmenu.GenericObjectEditorPopupMenuCustomizer;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -88,25 +89,37 @@ public class GenericObjectEditorPopupMenu
    * @param comp	the component to use as parent
    */
   protected void initialize(final PropertyEditor editor, final JComponent comp) {
-    JMenuItem 		item;
-    JMenu		menu;
-    boolean 		hasNested;
-    final boolean 	customStringRepresentation;
-    final String 	itemText;
-    final boolean	canChangeClass;
+    JMenuItem 			item;
+    JRadioButton		radio;
+    ButtonGroup			group;
+    JMenu			menu;
+    boolean 			hasNested;
+    final boolean 		customStringRepresentation;
+    final String 		itemText;
+    final boolean		canChangeClass;
+    final GenericObjectEditor 	goeEditor;
+    final GenericArrayEditor	gaeEditor;
 
     m_ChangeListeners = new HashSet<>();
     hasNested         = (editor.getValue() instanceof OptionHandler);
-
+    if (editor instanceof GenericObjectEditor)
+      goeEditor = (GenericObjectEditor) editor;
+    else
+      goeEditor = null;
     if (editor instanceof GenericArrayEditor)
-      customStringRepresentation = (((GenericArrayEditor) editor).getElementEditor() instanceof CustomStringRepresentationHandler);
+      gaeEditor = (GenericArrayEditor) editor;
+    else
+      gaeEditor = null;
+
+    if (gaeEditor != null)
+      customStringRepresentation = (gaeEditor.getElementEditor() instanceof CustomStringRepresentationHandler);
     else
       customStringRepresentation = (editor instanceof CustomStringRepresentationHandler);
 
     itemText = getMenuItemText(customStringRepresentation);
 
-    if (editor instanceof GenericArrayEditor)
-      canChangeClass = getCanChangeClassInDialog(((GenericArrayEditor) editor).getElementEditor());
+    if (gaeEditor != null)
+      canChangeClass = getCanChangeClassInDialog(gaeEditor.getElementEditor());
     else
       canChangeClass = getCanChangeClassInDialog(editor);
 
@@ -122,18 +135,17 @@ public class GenericObjectEditorPopupMenu
     });
     add(item);
 
-    if (!(editor instanceof GenericArrayEditor)) {
+    if (goeEditor != null) {
       menu = new JMenu("User mode");
       menu.setIcon(ImageManager.getIcon("person.png"));
+      group = new ButtonGroup();
       for (final UserMode um : UserMode.values()) {
-	item = new JMenuItem(um.toDisplay());
-	item.addActionListener(new ActionListener() {
-	  @Override
-	  public void actionPerformed(ActionEvent e) {
-	    ((GenericObjectEditor) editor).setUserMode(um);
-	  }
-	});
-	menu.add(item);
+	radio = new JRadioButton(um.toDisplay());
+	if (goeEditor.getUserMode() == um)
+	  radio.setSelected(true);
+	radio.addActionListener((ActionEvent e) -> goeEditor.setUserMode(um));
+	group.add(radio);
+	menu.add(radio);
       }
       add(menu);
     }
@@ -167,8 +179,8 @@ public class GenericObjectEditorPopupMenu
       Object current = editor.getValue();
       boolean isArray = current.getClass().isArray();
       PropertyEditor actualEditor = editor;
-      if (isArray)
-	actualEditor = ((GenericArrayEditor) editor).getElementEditor();
+      if (gaeEditor != null)
+	actualEditor = gaeEditor.getElementEditor();
       if (isArray) {
 	for (int i = 0; i < Array.getLength(current); i++) {
 	  if (i > 0)

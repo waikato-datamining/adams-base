@@ -15,7 +15,7 @@
 
 /*
  * ProgramUserMode.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,16 +26,16 @@ import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.core.ImageManager;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JRadioButton;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Allows the user to switch the user-mode from the GUI.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ProgramUserMode
   extends AbstractBasicMenuItemDefinition {
@@ -125,23 +125,22 @@ public class ProgramUserMode
    */
   @Override
   public JMenuItem getMenuItem() {
-    JMenu	result;
-    JMenuItem	menuitem;
-    
+    JMenu		result;
+    JRadioButton 	menuitem;
+    ButtonGroup		group;
+
     result = new JMenu(getTitle());
     result.setIcon(ImageManager.getIcon(getIconName()));
-
+    group = new ButtonGroup();
     for (final UserMode um: UserMode.values()) {
-      menuitem = new JMenuItem(um.toDisplay());
-      menuitem.addActionListener(new ActionListener() {
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	  m_Owner.setUserMode(um);
-	}
-      });
+      menuitem = new JRadioButton(um.toDisplay());
+      group.add(menuitem);
+      if (m_Owner.getUserMode() == um)
+        menuitem.setSelected(true);
+      menuitem.addActionListener((ActionEvent e) -> m_Owner.setUserMode(um));
       result.add(menuitem);
     }
-    
+
     return result;
   }
 }
