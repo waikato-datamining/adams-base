@@ -43,7 +43,6 @@ import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -175,12 +174,9 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
    * @param box 	the area we are allowed to paint into
    */
   public void paintValue(Graphics gfx, Rectangle box) {
-    FontMetrics 	fm;
-    int 		vpad;
+    int[] 		offset;
     String 		val;
 
-    fm   = gfx.getFontMetrics();
-    vpad = (box.height - fm.getHeight()) / 2;
     if (getValue() == null)
       val = AbstractPropertyEditorSupport.NULL;
     else
@@ -188,7 +184,8 @@ public abstract class AbstractBaseDateTypeEditor<B extends BaseObject & DateValu
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(val, 2, fm.getHeight() + vpad);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(val, offset[0], offset[1]);
   }
 
   /**

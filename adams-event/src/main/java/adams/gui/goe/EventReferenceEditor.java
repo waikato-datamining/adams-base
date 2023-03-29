@@ -44,7 +44,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -124,15 +123,13 @@ public class EventReferenceEditor
    */
   @Override
   public void paintValue(Graphics gfx, Rectangle box) {
-    FontMetrics 	fm;
-    int 		vpad;
+    int[] 		offset;
     String 		val;
 
-    fm   = gfx.getFontMetrics();
-    vpad = (box.height - fm.getHeight()) / 2;
     val  = getStringToPaint();
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(val, 2, fm.getHeight() + vpad);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(val, offset[0], offset[1]);
   }
 
   /**

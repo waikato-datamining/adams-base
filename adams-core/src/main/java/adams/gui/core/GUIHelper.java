@@ -58,6 +58,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -2855,5 +2856,24 @@ public class GUIHelper {
    */
   public static int getMaxTooltipWidth() {
     return getInteger("MaxToolTipWidth", 40);
+  }
+
+  /**
+   * Calculates the horizontal and vertical offsets for drawing text.
+   *
+   * @param g		the graphics context to get the font metrics from
+   * @param box		the rectangle to draw the text int
+   * @return		hoff=0, voff=1
+   */
+  public static int[] calculateFontOffset(Graphics g, Rectangle box) {
+    FontMetrics 	fm;
+    int 		voff;
+    int 		hoff;
+
+    fm   = g.getFontMetrics();
+    voff = fm.getAscent() + box.height - fm.getHeight() + 2;
+    hoff = 4;
+
+    return new int[]{hoff, voff};
   }
 }

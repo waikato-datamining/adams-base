@@ -840,8 +840,7 @@ public class GenericArrayEditor
    * @param box 	the area we are allowed to paint into
    */
   public void paintValue(Graphics gfx, Rectangle box) {
-    FontMetrics 		fm;
-    int 			vpad;
+    int[] 			offset;
     String 			rep;
     Object			obj;
     int				pos;
@@ -850,8 +849,6 @@ public class GenericArrayEditor
     PropertyEditor 		editor;
 
     editor = PropertyEditorManager.findEditor(m_ElementClass);
-    fm     = gfx.getFontMetrics();
-    vpad   = (box.height - fm.getHeight()) / 2;
     if ((m_ListModel == null) || (m_ListModel.size() == 0)) {
       rep = NONE;
     }
@@ -883,7 +880,8 @@ public class GenericArrayEditor
       rep = m_ListModel.getSize() + " " + m_ElementClass.getName().replaceAll(".*\\.", "");
     }
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(rep, 2, fm.getAscent() + vpad + 2);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(rep, offset[0], offset[1]);
   }
 
   /**

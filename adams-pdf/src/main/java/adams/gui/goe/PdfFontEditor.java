@@ -31,7 +31,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -148,14 +147,14 @@ public class PdfFontEditor
    * @param box 	the area we are allowed to paint into
    */
   public void paintValue(java.awt.Graphics gfx, java.awt.Rectangle box) {
-    FontMetrics fm = gfx.getFontMetrics();
-    int vpad = (box.height - fm.getHeight()) / 2 ;
+    int[] offset;
     PdfFont font = (PdfFont) getValue();
     String val = "No font";
     if (font != null)
       val = font.toString();
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(val, 2, fm.getHeight() + vpad);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(val, offset[0], offset[1]);
   }
 }
 

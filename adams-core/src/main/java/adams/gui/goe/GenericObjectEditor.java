@@ -58,7 +58,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -1191,8 +1190,7 @@ public class GenericObjectEditor
     int 			dotPos;
     Font 			originalFont;
     Color			originalColor;
-    FontMetrics			fm;
-    int 			vpad;
+    int[] 			offset;
     String			optionStr;
     AbstractCommandLineHandler	handler;
 
@@ -1223,9 +1221,8 @@ public class GenericObjectEditor
       gfx.setFont(originalFont.deriveFont(Font.PLAIN));
       gfx.setColor(Color.BLACK);
       GUIHelper.configureAntiAliasing(gfx, true);
-      fm   = gfx.getFontMetrics();
-      vpad = (box.height - fm.getHeight());
-      gfx.drawString(rep, 2, fm.getAscent() + vpad);
+      offset = GUIHelper.calculateFontOffset(gfx, box);
+      gfx.drawString(rep, offset[0], offset[1]);
 
       gfx.setFont(originalFont);
       gfx.setColor(originalColor);

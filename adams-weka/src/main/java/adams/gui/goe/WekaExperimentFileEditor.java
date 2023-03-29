@@ -45,7 +45,6 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -398,14 +397,14 @@ public class WekaExperimentFileEditor
    * @param box 	the area we are allowed to paint into
    */
   public void paintValue(java.awt.Graphics gfx, java.awt.Rectangle box) {
-    FontMetrics fm = gfx.getFontMetrics();
-    int vpad = (box.height - fm.getHeight()) / 2 ;
+    int[] offset;
     WekaExperimentFile f = (WekaExperimentFile) getValue();
     String val = "No file";
     if (f != null)
       val = f.toString();
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(val, 2, fm.getHeight() + vpad);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(val, offset[0], offset[1]);
   }
   
   /**

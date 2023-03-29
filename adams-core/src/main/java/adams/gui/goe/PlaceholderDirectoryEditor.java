@@ -42,7 +42,6 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.Container;
-import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -150,14 +149,14 @@ public class PlaceholderDirectoryEditor
    */
   @Override
   public void paintValue(java.awt.Graphics gfx, java.awt.Rectangle box) {
-    FontMetrics fm = gfx.getFontMetrics();
-    int vpad = (box.height - fm.getHeight()) / 2 ;
+    int[] offset;
     File f = (File) getValue();
     String val = "No directory";
     if (f != null)
       val = f.getPath();
     GUIHelper.configureAntiAliasing(gfx, true);
-    gfx.drawString(val, 2, fm.getHeight() + vpad);
+    offset = GUIHelper.calculateFontOffset(gfx, box);
+    gfx.drawString(val, offset[0], offset[1]);
   }
 
   /**
