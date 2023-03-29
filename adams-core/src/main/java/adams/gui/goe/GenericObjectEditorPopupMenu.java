@@ -40,7 +40,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -90,7 +90,7 @@ public class GenericObjectEditorPopupMenu
    */
   protected void initialize(final PropertyEditor editor, final JComponent comp) {
     JMenuItem 			item;
-    JRadioButton		radio;
+    JRadioButtonMenuItem 	radio;
     ButtonGroup			group;
     JMenu			menu;
     boolean 			hasNested;
@@ -140,7 +140,7 @@ public class GenericObjectEditorPopupMenu
       menu.setIcon(ImageManager.getIcon("person.png"));
       group = new ButtonGroup();
       for (final UserMode um : UserMode.values()) {
-	radio = new JRadioButton(um.toDisplay());
+	radio = new JRadioButtonMenuItem(um.toDisplay());
 	if (goeEditor.getUserMode() == um)
 	  radio.setSelected(true);
 	radio.addActionListener((ActionEvent e) -> goeEditor.setUserMode(um));

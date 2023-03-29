@@ -29,7 +29,7 @@ import adams.gui.core.ImageManager;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButton;
+import javax.swing.JRadioButtonMenuItem;
 import java.awt.event.ActionEvent;
 
 /**
@@ -125,18 +125,18 @@ public class ProgramUserMode
    */
   @Override
   public JMenuItem getMenuItem() {
-    JMenu		result;
-    JRadioButton 	menuitem;
-    ButtonGroup		group;
+    JMenu			result;
+    JRadioButtonMenuItem 	menuitem;
+    ButtonGroup			group;
 
     result = new JMenu(getTitle());
     result.setIcon(ImageManager.getIcon(getIconName()));
     group = new ButtonGroup();
     for (final UserMode um: UserMode.values()) {
-      menuitem = new JRadioButton(um.toDisplay());
+      menuitem = new JRadioButtonMenuItem(um.toDisplay());
       group.add(menuitem);
       if (m_Owner.getUserMode() == um)
-        menuitem.setSelected(true);
+	menuitem.setSelected(true);
       menuitem.addActionListener((ActionEvent e) -> m_Owner.setUserMode(um));
       result.add(menuitem);
     }
