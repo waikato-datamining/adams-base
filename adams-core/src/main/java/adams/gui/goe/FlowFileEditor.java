@@ -31,6 +31,7 @@ import adams.core.option.parsing.FlowFileParsing;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.dialog.PreviewBrowserDialog;
 import adams.gui.dialog.SimplePreviewBrowserDialog;
@@ -167,6 +168,7 @@ public class FlowFileEditor
     String val = "No file";
     if (f != null)
       val = f.getPath();
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
   

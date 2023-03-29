@@ -19,14 +19,15 @@
  */
 package adams.flow.transformer.pixelselector;
 
+import adams.data.report.AbstractField;
+import adams.data.report.Report;
+import adams.gui.core.GUIHelper;
+import adams.gui.visualization.image.ImagePanel.PaintPanel;
+
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.data.report.AbstractField;
-import adams.data.report.Report;
-import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 /**
  <!-- globalinfo-start -->
@@ -242,7 +243,9 @@ public class ClassificationOverlay
     indices = getClassificationIndices();
     if (indices.length == 0)
       return;
-    
+
+    GUIHelper.configureAntiAliasing(g, true);
+
     for (Integer index: indices) {
       loc = getPixelLocation(index);
       if (loc == null)

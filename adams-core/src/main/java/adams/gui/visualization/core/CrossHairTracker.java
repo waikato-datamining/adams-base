@@ -20,6 +20,7 @@
 package adams.gui.visualization.core;
 
 import adams.core.option.OptionHandler;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.ContentPanel;
@@ -190,6 +191,8 @@ public class CrossHairTracker
       return;
     x = (int) point.getX();
     y = (int) point.getY();
+
+    GUIHelper.configureAntiAliasing(g, true);
 
     // draw cross-hair
     g.setColor(m_Color);

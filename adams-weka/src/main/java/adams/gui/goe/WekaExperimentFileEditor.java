@@ -404,6 +404,7 @@ public class WekaExperimentFileEditor
     String val = "No file";
     if (f != null)
       val = f.toString();
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
   

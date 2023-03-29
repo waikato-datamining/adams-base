@@ -150,6 +150,7 @@ public class BaseObjectEditor
     val  = getStringToPaint();
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

@@ -882,6 +882,7 @@ public class GenericArrayEditor
     else {
       rep = m_ListModel.getSize() + " " + m_ElementClass.getName().replaceAll(".*\\.", "");
     }
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(rep, 2, fm.getAscent() + vpad + 2);
   }
 

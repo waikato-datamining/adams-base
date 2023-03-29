@@ -22,6 +22,7 @@ package adams.gui.visualization.stats.paintlet;
 
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 
 import java.awt.BasicStroke;
 import java.awt.Dimension;
@@ -266,6 +267,7 @@ public class ScatterPaintletMetaDataValue
     ascent  = metrics.getAscent();
 
     g2d = (Graphics2D)g;
+    GUIHelper.configureAntiAliasing(g, true);
     for(i = 0; i < m_XData.length; i++) {
       posX = m_AxisBottom.valueToPos(m_XData[i]);
       posY = m_AxisLeft.valueToPos(m_YData[i]);

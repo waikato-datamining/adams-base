@@ -30,6 +30,7 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjectFilter;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 
@@ -809,6 +810,8 @@ public abstract class AbstractReportBasedOverlayHelper
     offsetX = getLabelOffsetX();
     offsetY = getLabelOffsetY();
     dims    = calcStringDimenions(g, getLabelFont(), label);
+
+    GUIHelper.configureAntiAliasing(g, true);
 
     switch (offsetX) {
       case -1:

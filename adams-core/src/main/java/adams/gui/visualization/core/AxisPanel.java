@@ -1501,7 +1501,7 @@ public class AxisPanel
     lastTick = null;
 
     g.setColor(m_AxisColor);
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    GUIHelper.configureAntiAliasing(g, true);
 
     if (m_Direction == Direction.VERTICAL) {
       if (m_Orientation == Orientation.LEFT_TO_RIGHT) {
@@ -1691,6 +1691,8 @@ public class AxisPanel
       textLayoutName = null;
       textBoundsName = null;
     }
+
+    GUIHelper.configureAntiAliasing(g, true);
 
     if (m_Direction == Direction.VERTICAL) {
       if (m_Orientation == Orientation.LEFT_TO_RIGHT) {

@@ -29,6 +29,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTreeNode;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.flow.tree.Node;
 import adams.gui.goe.actorpathtree.ActorPathNode;
@@ -130,6 +131,7 @@ public class EventReferenceEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     val  = getStringToPaint();
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

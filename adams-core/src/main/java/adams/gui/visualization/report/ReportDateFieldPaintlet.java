@@ -20,12 +20,6 @@
 
 package adams.gui.visualization.report;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.logging.Level;
-
 import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.TechnicalInformation;
@@ -33,6 +27,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
@@ -44,6 +39,12 @@ import adams.gui.visualization.core.AbstractPaintlet;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -425,6 +426,7 @@ public class ReportDateFieldPaintlet
 	  if ((dateStr != null) && !dates.contains(dateStr)) {
 	    dates.add(dateStr);
 	    g.setColor(color);
+	    GUIHelper.configureAntiAliasing(g, true);
 	    g.drawLine(
 		axisX.valueToPos(date.getTime()),
 		0,

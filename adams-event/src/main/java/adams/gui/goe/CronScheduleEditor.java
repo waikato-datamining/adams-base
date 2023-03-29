@@ -134,6 +134,7 @@ public class CronScheduleEditor
       val = "null";
     else
       val = CronScheduleParsing.toString(null, getValue());
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

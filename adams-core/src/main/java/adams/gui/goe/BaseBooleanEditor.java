@@ -116,6 +116,7 @@ public class BaseBooleanEditor
     fm   = gfx.getFontMetrics();
     vpad = (box.height - fm.getHeight()) / 2;
     val  = getStringToPaint();
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

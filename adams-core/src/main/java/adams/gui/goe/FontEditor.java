@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.option.parsing.FontParsing;
 import adams.gui.chooser.FontChooserPanelWithPreview;
 import adams.gui.core.BaseButton;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -153,6 +154,7 @@ public class FontEditor
     String val = "No font";
     if (font != null)
       val = FontParsing.toString(null, font);
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 }

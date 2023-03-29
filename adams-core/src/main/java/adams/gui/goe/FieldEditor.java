@@ -184,6 +184,7 @@ public class FieldEditor
     val  = curr.toDisplayString();
     if (!(curr instanceof PrefixOnlyField))
       val += "[" + curr.getDataType().toDisplay() + "]";
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

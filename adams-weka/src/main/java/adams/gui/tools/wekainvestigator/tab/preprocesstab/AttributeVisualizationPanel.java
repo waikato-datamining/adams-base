@@ -22,6 +22,7 @@
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.GUIHelper;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
 import weka.core.Instances;
@@ -988,6 +989,7 @@ public class AttributeVisualizationPanel extends JPanel {
   @Override
   public void paintComponent(Graphics g) {
     g.clearRect(0, 0, this.getWidth(), this.getHeight());
+    GUIHelper.configureAntiAliasing(g, true);
 
     if (m_as != null) { // If calculations have been done and histogram/barplot
       if (!m_doneCurrentAttribute && !m_threadRun) {

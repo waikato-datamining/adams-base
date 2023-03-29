@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.data.image.ImageAnchor;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.GUIHelper;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -142,6 +143,8 @@ public class AnnotationUtils {
 
     if (label.isEmpty())
       return;
+
+    GUIHelper.configureAntiAliasing(g, true);
 
     dims = calcStringDimenions(g, font, label);
 

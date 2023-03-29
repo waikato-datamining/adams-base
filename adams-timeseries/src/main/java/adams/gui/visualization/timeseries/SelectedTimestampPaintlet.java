@@ -21,6 +21,7 @@
 package adams.gui.visualization.timeseries;
 
 import adams.data.timeseries.TimeseriesPoint;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
@@ -183,6 +184,7 @@ public class SelectedTimestampPaintlet
     if (point != null) {
       axisX = getPanel().getPlot().getAxis(Axis.BOTTOM);
       g.setColor(getColor());
+      GUIHelper.configureAntiAliasing(g, true);
       g.drawLine(
         axisX.valueToPos(point.getTimestamp().getTime()),
         0,

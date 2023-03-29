@@ -213,6 +213,7 @@ public class ColorEditor
     String val = "No color";
     if (color != null)
       val = ColorParsing.toString(null, color);
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

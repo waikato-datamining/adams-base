@@ -1222,6 +1222,7 @@ public class GenericObjectEditor
 
       gfx.setFont(originalFont.deriveFont(Font.PLAIN));
       gfx.setColor(Color.BLACK);
+      GUIHelper.configureAntiAliasing(gfx, true);
       fm   = gfx.getFontMetrics();
       vpad = (box.height - fm.getHeight());
       gfx.drawString(rep, 2, fm.getAscent() + vpad);

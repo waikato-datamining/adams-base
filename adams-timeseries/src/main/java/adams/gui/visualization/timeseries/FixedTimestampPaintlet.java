@@ -21,6 +21,7 @@
 package adams.gui.visualization.timeseries;
 
 import adams.core.base.BaseDateTime;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
@@ -318,6 +319,7 @@ public class FixedTimestampPaintlet
     axisX = getPanel().getPlot().getAxis(Axis.BOTTOM);
 
     g.setColor(m_Color);
+    GUIHelper.configureAntiAliasing(g, true);
     g.drawLine(
       axisX.valueToPos(date.getTime()),
       0,

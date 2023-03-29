@@ -189,6 +189,7 @@ public class EmailAddressEditor
       val = "";
     if (val.isEmpty())
       val = AbstractPropertyEditorSupport.EMPTY;
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

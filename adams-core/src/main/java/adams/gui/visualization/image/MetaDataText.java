@@ -21,6 +21,7 @@
 package adams.gui.visualization.image;
 
 import adams.data.report.Field;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
 
 import javax.swing.UIManager;
@@ -305,6 +306,7 @@ public class MetaDataText
     actualFont = m_Font.deriveFont((float) ((double) m_Font.getSize() / panel.getScale()));
     g.setColor(m_Color);
     g.setFont(actualFont);
+    GUIHelper.configureAntiAliasing(g, true);
     g.drawString(text, m_X, m_Y);
   }
 }

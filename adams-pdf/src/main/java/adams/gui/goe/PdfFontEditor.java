@@ -25,6 +25,7 @@ import adams.core.io.PdfFont;
 import adams.core.option.parsing.PdfFontParsing;
 import adams.gui.chooser.PdfFontChooserPanel;
 import adams.gui.core.BaseButton;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -153,6 +154,7 @@ public class PdfFontEditor
     String val = "No font";
     if (font != null)
       val = font.toString();
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 }

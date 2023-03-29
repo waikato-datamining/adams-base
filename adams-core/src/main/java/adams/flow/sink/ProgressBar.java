@@ -28,6 +28,7 @@ import adams.flow.core.StopMode;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 
 import javax.swing.JLabel;
@@ -290,6 +291,7 @@ public class ProgressBar
       layout = new TextLayout(curr, g.getFont(), g2d.getFontRenderContext());
       bounds = layout.getBounds();
       g.setColor(m_Owner.getForeground());
+      GUIHelper.configureAntiAliasing(g, true);
       g.drawString(curr, (int) ((getWidth() - bounds.getWidth()) / 2), (int) ((getHeight() / 2 + bounds.getHeight() / 2)));
     }
   }

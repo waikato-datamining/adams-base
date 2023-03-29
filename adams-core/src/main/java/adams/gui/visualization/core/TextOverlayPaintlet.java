@@ -22,6 +22,7 @@ package adams.gui.visualization.core;
 
 import adams.core.VariableName;
 import adams.flow.core.Actor;
+import adams.gui.core.GUIHelper;
 import adams.gui.event.PaintEvent.PaintMoment;
 
 import java.awt.Color;
@@ -299,6 +300,7 @@ public class TextOverlayPaintlet
       text = m_Text;
 
     g.setColor(m_Color);
+    GUIHelper.configureAntiAliasing(g, true);
     g.drawString(text, m_X, m_Y);
   }
 }

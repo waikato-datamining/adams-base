@@ -23,6 +23,7 @@ package adams.gui.visualization.object.overlay;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 import adams.gui.visualization.object.ObjectAnnotationPanel;
 
 import java.awt.Color;
@@ -322,6 +323,7 @@ public class ClassificationLabelTextOverlay
     if (label != null) {
       g.setColor(applyAlpha(m_Color));
       g.setFont(getLabelFont());
+      GUIHelper.configureAntiAliasing(g, true);
       g.drawString(label, getLabelOffsetX(), getLabelOffsetY());
     }
   }

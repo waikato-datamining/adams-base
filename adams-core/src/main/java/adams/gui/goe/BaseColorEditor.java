@@ -214,6 +214,7 @@ public class BaseColorEditor
     String val = "No color";
     if (color != null)
       val = BaseColorParsing.toString(null, color);
+    GUIHelper.configureAntiAliasing(gfx, true);
     gfx.drawString(val, 2, fm.getHeight() + vpad);
   }
 

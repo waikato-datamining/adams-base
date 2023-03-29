@@ -2212,10 +2212,14 @@ public class GUIHelper {
    * @param enable	if true anti-aliasing gets enabled, otherwise disabled
    */
   public static void configureAntiAliasing(Graphics g, boolean enable) {
-    if (enable && AntiAliasingEnabled)
-      ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    else
+    if (enable && AntiAliasingEnabled) {
+      ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,      RenderingHints.VALUE_ANTIALIAS_ON);
+      ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+    }
+    else {
       ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+      ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+    }
   }
 
   /**
