@@ -182,7 +182,7 @@ Tree.PopupMenu=\
   -,\
   adams.gui.flow.tree.menu.CutActor,\
   adams.gui.flow.tree.menu.CopyActor,\
-  submenu:Copy (more)::\
+  submenu:Copy_(more)::\
     adams.gui.flow.tree.menu.CopyActorPlainText;\
     adams.gui.flow.tree.menu.CopyActorCommandline;\
     adams.gui.flow.tree.menu.CopyActorPath,\
