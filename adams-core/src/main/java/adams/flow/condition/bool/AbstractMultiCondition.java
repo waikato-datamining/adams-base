@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiCondition.java
- * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -116,7 +116,7 @@ public abstract class AbstractMultiCondition
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "conditions", getClass().getSimpleName() + ": " + m_Conditions.length + " condition" + ((m_Conditions.length != 1) ? "s" : ""));
+    return QuickInfoHelper.toString(this, "conditions", m_Conditions.length + " condition" + ((m_Conditions.length != 1) ? "s" : ""));
   }
 
   /**
