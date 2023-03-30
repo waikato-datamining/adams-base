@@ -15,11 +15,12 @@
 
 /*
  * AbstractInteractiveTransformer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.option.UserMode;
 import adams.flow.control.Flow;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
@@ -90,11 +91,11 @@ public abstract class AbstractInteractiveTransformer
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
-      new CallableActorReference(CallableActorReference.UNKNOWN));
+      new CallableActorReference(CallableActorReference.UNKNOWN), UserMode.EXPERT);
 
     m_OptionManager.add(
       "use-outer-window", "useOuterWindow",
-      false);
+      false, UserMode.EXPERT);
   }
 
   /**

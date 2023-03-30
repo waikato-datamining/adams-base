@@ -15,7 +15,7 @@
 
 /*
  * WekaSelectDataset.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -220,11 +221,11 @@ public class WekaSelectDataset
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
-      new CallableActorReference(CallableActorReference.UNKNOWN));
+      new CallableActorReference(CallableActorReference.UNKNOWN), UserMode.EXPERT);
 
     m_OptionManager.add(
       "use-outer-window", "useOuterWindow",
-      false);
+      false, UserMode.EXPERT);
   }
 
   /**

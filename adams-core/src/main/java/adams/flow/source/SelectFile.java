@@ -15,7 +15,7 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -29,6 +29,7 @@ import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
+import adams.core.option.UserMode;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
@@ -297,11 +298,11 @@ public class SelectFile
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
-      new CallableActorReference(CallableActorReference.UNKNOWN));
+      new CallableActorReference(CallableActorReference.UNKNOWN), UserMode.EXPERT);
 
     m_OptionManager.add(
       "use-outer-window", "useOuterWindow",
-      false);
+      false, UserMode.EXPERT);
   }
 
   /**
