@@ -36,6 +36,7 @@ import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.Fonts;
@@ -58,7 +59,6 @@ import javax.swing.SwingConstants;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -116,7 +116,7 @@ public class PropertySheetPanel
   protected BaseTabbedPane m_TabbedPane;
 
   /** the panel with the content. */
-  protected JPanel m_PanelContent;
+  protected BaseSplitPane m_SplitPaneContent;
 
   /** the editor pane. */
   protected BaseHtmlEditorPane m_PanelHelp;
@@ -179,7 +179,15 @@ public class PropertySheetPanel
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-    m_PanelContent = new JPanel(new BorderLayout());
+    m_SplitPaneContent = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
+    m_SplitPaneContent.setDividerLocation(100);
+    m_SplitPaneContent.setUISettingsParameters(getClass(), "GlobalInfoPropertiesDivider");
+
+    m_PanelAbout = new BaseTextAreaWithButtons();
+    m_PanelAbout.setEditable(false);
+    m_PanelAbout.setLineWrap(true);
+    m_PanelAbout.setWrapStyleWord(true);
+    m_SplitPaneContent.setTopComponent(m_PanelAbout);
 
     m_PanelHelp = new BaseHtmlEditorPane();
     m_PanelHelp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -189,7 +197,7 @@ public class PropertySheetPanel
     m_PanelHelp.setFont(Fonts.getMonospacedFont());
 
     m_TabbedPane = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
-    m_TabbedPane.addTab("Options", m_PanelContent);
+    m_TabbedPane.addTab("Options", m_SplitPaneContent);
     m_TabbedPane.addTab("Help", new BaseScrollPane(m_PanelHelp));
     add(m_TabbedPane, BorderLayout.CENTER);
   }
@@ -341,7 +349,7 @@ public class PropertySheetPanel
     String 	mname;
     String 	example;
 
-    m_GlobalInfo   = null;
+    m_GlobalInfo = null;
 
     // Look for a globalInfo method that returns a string
     // describing the target
@@ -389,7 +397,6 @@ public class PropertySheetPanel
    * @param targ a value of type 'Object'
    */
   public synchronized void setTarget(Object targ) {
-    String 				summary;
     int 				i;
     String 				name;
     Class 				type;
@@ -406,32 +413,19 @@ public class PropertySheetPanel
     initSheet();
     initHelp();
 
-    // Close any child windows at this point
-    m_PanelContent.removeAll();
+    m_SplitPaneContent.setTopComponentHidden(true);
+    m_SplitPaneContent.setBottomComponentHidden(true);
 
-    m_PanelContent.setLayout(new BorderLayout());
     JPanel scrollablePanel = new JPanel(new BorderLayout());
     BaseScrollPane scrollPane = new BaseScrollPane(scrollablePanel);
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
-    m_PanelContent.add(scrollPane, BorderLayout.CENTER);
+    m_SplitPaneContent.setBottomComponent(scrollPane);
 
-    m_PanelContent.setVisible(false);
-
-    if (m_GlobalInfo != null) {
-      summary = extractFirstSentence(m_GlobalInfo, true);
-      m_PanelAbout = new BaseTextAreaWithButtons(summary);
-      m_PanelAbout.setColumns(30);
-      m_PanelAbout.setEditable(false);
-      m_PanelAbout.setLineWrap(true);
-      m_PanelAbout.setWrapStyleWord(true);
-      m_PanelAbout.setTextFont(new Font("SansSerif", Font.PLAIN,12));
-      m_PanelAbout.getScrollPane().setBorder(null);
-      m_PanelAbout.getComponent().setBackground(getBackground());
-      m_PanelAbout.setBorder(BorderFactory.createCompoundBorder(
-	  BorderFactory.createTitledBorder("About"),
-	  BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-      if (m_ShowAboutBox)
-	m_PanelContent.add(m_PanelAbout, BorderLayout.NORTH);
+    m_PanelAbout.setText("");
+    if ((m_GlobalInfo != null) && m_ShowAboutBox) {
+      m_PanelAbout.setText(m_GlobalInfo);
+      m_PanelAbout.setCaretPosition(0);
+      m_SplitPaneContent.setTopComponentHidden(false);
     }
 
     m_ParameterPanel = null;
@@ -446,7 +440,7 @@ public class PropertySheetPanel
       setter = m_Properties[i].getWriteMethod();
 
       // Only display read/write properties.
-      if (getter == null || setter == null)
+      if ((getter == null) || (setter == null))
 	continue;
 
       try {
@@ -602,9 +596,8 @@ public class PropertySheetPanel
       scrollablePanel.add(empty);
     }
 
-    m_PanelContent.validate();
-
-    m_PanelContent.setVisible(true);
+    m_SplitPaneContent.validate();
+    m_SplitPaneContent.setBottomComponentHidden(false);
     updateHelpPanel();
 
     // tabbedpane doesn't properly update itself, need to switch between pages to achieve that...
