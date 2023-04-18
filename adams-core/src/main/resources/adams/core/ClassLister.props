@@ -44,6 +44,10 @@ adams.core.io.fileuse.AbstractFileUseCheck=\
 adams.core.io.filechanged.FileChangeMonitor=\
   adams.core.io.filechanged
 
+# the file complete checks
+adams.core.io.filecomplete.AbstractFileCompleteCheck=\
+  adams.core.io.filecomplete
+
 # the classpath augmenters
 adams.core.management.ClassPathAugmenter=\
   adams.core.management

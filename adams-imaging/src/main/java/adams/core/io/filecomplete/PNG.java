@@ -14,16 +14,13 @@
  */
 
 /*
- * PngIsComplete.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * PNG.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, NZ
  */
 
-package adams.core.io.fileuse;
+package adams.core.io.filecomplete;
 
-import adams.core.Utils;
-import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileUtils;
-import adams.core.io.filecomplete.PNG;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -43,17 +40,27 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-strict &lt;boolean&gt; (property: strict)
+ * &nbsp;&nbsp;&nbsp;Whether to be strict or allow trailing junk data.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-check-size &lt;int&gt; (property: checkSize)
+ * &nbsp;&nbsp;&nbsp;The number of bytes to read from the back of the file (in non-strict mode
+ * &nbsp;&nbsp;&nbsp;) to check for EOF marker.
+ * &nbsp;&nbsp;&nbsp;default: 100
+ * &nbsp;&nbsp;&nbsp;minimum: 8
  * </pre>
  *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-@DeprecatedClass(
-  useInstead = PNG.class
-)
-public class PngIsComplete
-  extends AbstractFileUseCheck {
+public class PNG
+  extends AbstractStrictCheckSizeFileCompleteCheck {
 
   private static final long serialVersionUID = -3766862011655514895L;
 
@@ -66,10 +73,20 @@ public class PngIsComplete
   public String globalInfo() {
     return
       "Checks whether the PNG file ends with bytes IEND (EOF for PNGs).\n"
-      + "See also:\n"
-      + "https://en.wikipedia.org/wiki/Portable_Network_Graphics#Critical_chunks\n"
-      + "http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-layout\n"
-      + "http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html#C.IEND";
+	+ "See also:\n"
+	+ "https://en.wikipedia.org/wiki/Portable_Network_Graphics#Critical_chunks\n"
+	+ "http://www.libpng.org/pub/png/spec/1.2/PNG-Structure.html#Chunk-layout\n"
+	+ "http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html#C.IEND";
+  }
+
+  /**
+   * Returns the minimally allowed check size.
+   *
+   * @return the minimum
+   */
+  @Override
+  protected int getMinCheckSize() {
+    return 8;
   }
 
   /**
@@ -79,27 +96,46 @@ public class PngIsComplete
    * @return		true if in use
    */
   @Override
-  public boolean isInUse(File file) {
+  public boolean isComplete(File file) {
     boolean		result;
     RandomAccessFile	raf;
     byte[]		buffer;
+    int			bufLen;
+    long		fileLen;
+    int			i;
 
     raf = null;
     try {
-      buffer = new byte[8];
+      if (m_Strict)
+	bufLen = 8;
+      else
+	bufLen = m_CheckSize;
+      fileLen = file.length();
+      if (bufLen > fileLen)
+	bufLen = (int) fileLen;
+      buffer = new byte[bufLen];
       raf    = new RandomAccessFile(file.getAbsolutePath(), "r");
-      if (file.length() > 8) {
-	raf.seek(file.length() - 8);
-	raf.read(buffer, 0, 8);
-	result = !((buffer[0] == 73) && (buffer[1] == 69) && (buffer[2] == 78) && (buffer[3] == 68));  // IEND
+      if (file.length() > bufLen) {
+	raf.seek(file.length() - bufLen);
+	raf.read(buffer, 0, bufLen);
+	if (m_Strict) {
+	  result = ((buffer[0] == 73) && (buffer[1] == 69) && (buffer[2] == 78) && (buffer[3] == 68));  // IEND
+	}
+	else {
+	  result = false;
+	  for (i = 0; i <= buffer.length - 8; i++) {
+	    if ((buffer[i] == 73) && (buffer[i+1] == 69) && (buffer[i+2] == 78) && (buffer[i+3] == 68)) {  // IEND
+	      result = true;
+	      break;
+	    }
+	  }
+	}
 	if (isLoggingEnabled())
-	  getLogger().info("First four bytes of the last eight byte block: "
-	    + Utils.toHex(buffer[0]) + Utils.toHex(buffer[1])
-	    + Utils.toHex(buffer[2]) + Utils.toHex(buffer[3]) + " -> " + result);
+	  getLogger().info("EOF Marker found?" + result);
       }
       else {
-	// too small, must currently being written
-	result = true;
+	// too small
+	result = false;
       }
     }
     catch (Exception e) {

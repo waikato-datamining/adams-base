@@ -1,0 +1,29 @@
+# Project: adams
+# Date: 2023-04-18 13:01:07
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Checks whether JPG images are complete." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/complete.png -file ${EXAMPLE_FLOWS}/data/empty.png -file ${EXAMPLE_FLOWS}/data/incomplete.png -file ${EXAMPLE_FLOWS}/data/junk.png -use-forward-slashes true
+ adams.flow.transformer.SetVariable -var-name file
+ adams.flow.control.Tee -name file
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name strict
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.FileComplete -file @{file} -check adams.core.io.filecomplete.PNG"
+   adams.flow.control.Trigger -name then
+    adams.flow.source.CombineVariables -expression "  strict: passed" -conversion adams.data.conversion.StringToString
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name else
+    adams.flow.source.CombineVariables -expression "  strict: failed" -conversion adams.data.conversion.StringToString
+    adams.flow.sink.CallableSink -callable Display
+ adams.flow.control.Tee -name lenient
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.FileComplete -file @{file} -check \"adams.core.io.filecomplete.PNG -strict false\""
+   adams.flow.control.Trigger -name then
+    adams.flow.source.CombineVariables -expression "  lenient: passed" -conversion adams.data.conversion.StringToString
+    adams.flow.sink.CallableSink -callable Display
+   adams.flow.control.Trigger -name else
+    adams.flow.source.CombineVariables -expression "  lenient: failed" -conversion adams.data.conversion.StringToString
+    adams.flow.sink.CallableSink -callable Display
