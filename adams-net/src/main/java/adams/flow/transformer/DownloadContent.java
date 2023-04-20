@@ -15,7 +15,7 @@
 
 /*
  * DownloadContent.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -229,6 +229,8 @@ public class DownloadContent
       input  = new BufferedInputStream(conn.getInputStream());
       buffer = new byte[m_BufferSize];
       while ((len = input.read(buffer)) > 0) {
+        if (isStopped())
+          break;
 	if (len < m_BufferSize) {
 	  bufferSmall = new byte[len];
 	  System.arraycopy(buffer, 0, bufferSmall, 0, len);
@@ -239,9 +241,10 @@ public class DownloadContent
 	}
       }
 
-      m_OutputToken = new Token(content.toString());
-      content       = null;
-      result        = null;
+      if (!isStopped())
+        m_OutputToken = new Token(content.toString());
+
+      result = null;
     }
     catch (Exception e) {
       result = handleException("Problem downloading '" + m_InputToken.getPayload() + "': ", e);

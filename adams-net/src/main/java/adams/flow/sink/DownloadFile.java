@@ -15,7 +15,7 @@
 
 /*
  * DownloadFile.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -242,6 +242,8 @@ public class DownloadFile
       buffer = new byte[m_BufferSize];
       count  = 0;
       while ((len = input.read(buffer)) > 0) {
+        if (isStopped())
+          break;
 	count++;
 	output.write(buffer, 0, len);
 	if (count % 100 == 0)
@@ -259,6 +261,9 @@ public class DownloadFile
       FileUtils.closeQuietly(output);
       FileUtils.closeQuietly(fos);
     }
+
+    if (isStopped())
+      FileUtils.delete(m_OutputFile);
 
     return result;
   }
