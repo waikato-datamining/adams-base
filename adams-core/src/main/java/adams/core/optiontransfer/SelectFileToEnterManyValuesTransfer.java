@@ -20,6 +20,7 @@
 
 package adams.core.optiontransfer;
 
+import adams.core.ObjectCopyHelper;
 import adams.flow.source.EnterManyValues;
 import adams.flow.source.SelectFile;
 import adams.flow.source.valuedefinition.AbstractValueDefinition;
@@ -71,6 +72,10 @@ public class SelectFileToEnterManyValuesTransfer
       fvd.setDefaultValue(sf.getInitialFiles()[0]);
     if (sf.getOptionManager().hasVariableForProperty("initialFiles"))
       fvd.getOptionManager().setVariableForProperty("defaultValue", sf.getOptionManager().getVariableForProperty("initialFiles"));
+    if (sf.getExtensions().length > 0)
+      fvd.setExtensions(ObjectCopyHelper.copyObjects(sf.getExtensions()));
+    if (sf.getOptionManager().hasVariableForProperty("extensions"))
+      fvd.getOptionManager().setVariableForProperty("extensions", sf.getOptionManager().getVariableForProperty("extensions"));
     em.setValues(new AbstractValueDefinition[]{fvd});
 
     return null;
