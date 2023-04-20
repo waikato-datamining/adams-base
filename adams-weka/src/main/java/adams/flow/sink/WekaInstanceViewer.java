@@ -15,11 +15,12 @@
 
 /*
  * WekaInstanceViewer.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.Range;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.flow.core.Token;
@@ -445,8 +446,9 @@ public class WekaInstanceViewer
       inst  = new adams.data.instance.Instance();
       inst.set(winst);
       if (!m_ID.isEmpty()) {
-	att = winst.dataset().attribute(m_ID);
+        att = winst.dataset().attribute(m_ID);
 	if (att != null) {
+          inst.set(winst, -1, new int[0], new Range("inv(" + (att.index() + 1) + ")"), null);
 	  if (att.isNominal() || att.isString())
 	    id = winst.stringValue(att.index());
 	  else
