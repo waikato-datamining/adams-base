@@ -21,6 +21,7 @@
 package adams.flow.sink;
 
 import adams.core.BufferSupporter;
+import adams.core.ByteFormat;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
@@ -54,45 +55,45 @@ import java.util.Base64;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DownloadFile
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to save the downloaded content to.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
  * &nbsp;&nbsp;&nbsp;The size of byte-buffer used for reading&#47;writing the content.
  * &nbsp;&nbsp;&nbsp;default: 1024
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -116,8 +117,8 @@ public class DownloadFile
   public String globalInfo() {
     return
       "Downloads a file from a URL and saves it locally.\n"
-      + "Also handles basic authentication when using URLs like this:\n"
-      + "http://user:pass@domain.com/url";
+	+ "Also handles basic authentication when using URLs like this:\n"
+	+ "http://user:pass@domain.com/url";
   }
 
   /**
@@ -128,8 +129,8 @@ public class DownloadFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "buffer-size", "bufferSize",
-	    1024, 1, null);
+      "buffer-size", "bufferSize",
+      1024, 1, null);
   }
 
   /**
@@ -221,6 +222,7 @@ public class DownloadFile
     int				count;
     URLConnection 		conn;
     String 			basicAuth;
+    long			totalLen;
 
     input  = null;
     output = null;
@@ -236,18 +238,23 @@ public class DownloadFile
 	basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
 	conn.setRequestProperty("Authorization", basicAuth);
       }
-      input  = new BufferedInputStream(conn.getInputStream());
-      fos    = new FileOutputStream(m_OutputFile.getAbsoluteFile());
-      output = new BufferedOutputStream(fos);
-      buffer = new byte[m_BufferSize];
-      count  = 0;
+      input    = new BufferedInputStream(conn.getInputStream());
+      fos      = new FileOutputStream(m_OutputFile.getAbsoluteFile());
+      output   = new BufferedOutputStream(fos);
+      buffer   = new byte[m_BufferSize];
+      count    = 0;
+      totalLen = 0;
       while ((len = input.read(buffer)) > 0) {
-        if (isStopped())
-          break;
+	if (isStopped())
+	  break;
 	count++;
 	output.write(buffer, 0, len);
-	if (count % 100 == 0)
+	totalLen += len;
+	if (count % 100 == 0) {
 	  output.flush();
+	  if (isLoggingEnabled())
+	    getLogger().info("Downloaded: " + ByteFormat.toBestFitBytes(totalLen, 1));
+	}
       }
       output.flush();
 
@@ -262,8 +269,11 @@ public class DownloadFile
       FileUtils.closeQuietly(fos);
     }
 
-    if (isStopped())
+    if (isStopped()) {
+      if (isLoggingEnabled())
+	getLogger().info("Removing incomplete file: " + m_OutputFile);
       FileUtils.delete(m_OutputFile);
+    }
 
     return result;
   }

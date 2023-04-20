@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.BufferSupporter;
+import adams.core.ByteFormat;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.MixedCopyright;
@@ -210,6 +211,8 @@ public class DownloadContent
     StringBuilder		content;
     URLConnection 		conn;
     String 			basicAuth;
+    int				count;
+    long			totalLen;
 
     input   = null;
     content = new StringBuilder();
@@ -226,11 +229,15 @@ public class DownloadContent
 	basicAuth = "Basic " + new String(Base64.getEncoder().encode(url.getUserInfo().getBytes()));
 	conn.setRequestProperty("Authorization", basicAuth);
       }
-      input  = new BufferedInputStream(conn.getInputStream());
-      buffer = new byte[m_BufferSize];
+      input    = new BufferedInputStream(conn.getInputStream());
+      buffer   = new byte[m_BufferSize];
+      count    = 0;
+      totalLen = 0;
       while ((len = input.read(buffer)) > 0) {
         if (isStopped())
           break;
+        count++;
+        totalLen += len;
 	if (len < m_BufferSize) {
 	  bufferSmall = new byte[len];
 	  System.arraycopy(buffer, 0, bufferSmall, 0, len);
@@ -239,6 +246,10 @@ public class DownloadContent
 	else {
 	  content.append(new String(buffer));
 	}
+        if (count % 100 == 0) {
+          if (isLoggingEnabled())
+            getLogger().info("Downloaded: " + ByteFormat.toBestFitBytes(totalLen, 1));
+        }
       }
 
       if (!isStopped())
