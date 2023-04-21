@@ -20,11 +20,7 @@
 
 package adams.core.io.filecomplete;
 
-import adams.core.io.FileUtils;
-
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -86,63 +82,53 @@ public class JPEG
   }
 
   /**
-   * Checks whether the file is in use.
+   * Checks whether the byte buffer is complete.
    *
-   * @param file	the file to check
-   * @return		true if in use
+   * @param buffer	the buffer to check
+   * @return		true if complete
    */
   @Override
-  public boolean isComplete(File file) {
-    boolean		result;
-    RandomAccessFile	raf;
-    byte[]		buffer;
-    int			bufLen;
-    long		fileLen;
-    int			i;
+  public boolean isComplete(byte[] buffer) {
+    boolean	result;
+    int		i;
 
-    raf = null;
-    try {
-      if (m_Strict)
-	bufLen = 2;
-      else
-	bufLen = m_CheckSize;
-      fileLen = file.length();
-      if (bufLen > fileLen)
-	bufLen = (int) fileLen;
-      buffer = new byte[bufLen];
-      raf    = new RandomAccessFile(file.getAbsolutePath(), "r");
-      if (file.length() > bufLen) {
-	raf.seek(file.length() - bufLen);
-	raf.read(buffer, 0, bufLen);
-	if (m_Strict) {
-	  result = ((buffer[0] == -1) && (buffer[1] == -39));  // FF and D9
-	}
-	else {
-	  result = false;
-	  for (i = 0; i <= buffer.length - 2; i++) {
-	    if ((buffer[i] == -1) && (buffer[i+1] == -39)) {  // FF and D9
-	      result = true;
-	      break;
-	    }
-	  }
-	}
-	if (isLoggingEnabled())
-	  getLogger().info("EOF Marker found?" + result);
+    if (buffer.length >= getMinCheckSize()) {
+      if (m_Strict) {
+        i = buffer.length - 2;
+	result = ((buffer[i] == -1) && (buffer[i + 1] == -39));  // FF and D9
       }
       else {
-	// too small
 	result = false;
+	for (i = 0; i <= buffer.length - 2; i++) {
+	  if ((buffer[i] == -1) && (buffer[i + 1] == -39)) {  // FF and D9
+	    result = true;
+	    break;
+	  }
+	}
       }
-    }
-    catch (Exception e) {
       if (isLoggingEnabled())
-	getLogger().log(Level.SEVERE, "Failed to extract bytes from: " + file, e);
-      result = true;
+	getLogger().info("EOF Marker found?" + result);
     }
-    finally {
-      FileUtils.closeQuietly(raf);
+    else {
+      if (isLoggingEnabled())
+	getLogger().info("Buffer too small: " + buffer.length + " < " + getMinCheckSize());
+      result = false;
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the file is in use.
+   *
+   * @param file	the file to check
+   * @return		true if complete
+   */
+  @Override
+  public boolean isComplete(File file) {
+    if (m_Strict)
+      return isComplete(file, getMinCheckSize());
+    else
+      return isComplete(file, m_CheckSize);
   }
 }
