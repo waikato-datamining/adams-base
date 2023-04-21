@@ -54,6 +54,17 @@ public class NoCheck
   }
 
   /**
+   * Checks whether the byte buffer is complete.
+   *
+   * @param buffer the buffer to check
+   * @return true if complete
+   */
+  @Override
+  public boolean isComplete(byte[] buffer) {
+    return false;
+  }
+
+  /**
    * Checks whether the file is in use.
    *
    * @param file	the file to check
