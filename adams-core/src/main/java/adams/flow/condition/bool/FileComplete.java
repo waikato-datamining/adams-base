@@ -27,9 +27,11 @@ import adams.flow.core.Actor;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
+import java.io.File;
+
 /**
  <!-- globalinfo-start -->
- * Evaluates to 'true' if the file is considered complete.
+ * Evaluates to 'true' if the file (from option or token) is considered complete.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,7 +43,7 @@ import adams.flow.core.Unknown;
  * </pre>
  *
  * <pre>-file &lt;adams.core.io.PlaceholderFile&gt; (property: file)
- * &nbsp;&nbsp;&nbsp;The file to check.
+ * &nbsp;&nbsp;&nbsp;The file to check; overrides the String&#47;File object in the token.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
@@ -73,7 +75,7 @@ public class FileComplete
    */
   @Override
   public String globalInfo() {
-    return "Evaluates to 'true' if the file is considered complete.";
+    return "Evaluates to 'true' if the file (from option or token) is considered complete.";
   }
 
   /**
@@ -118,7 +120,7 @@ public class FileComplete
    * 			displaying in the GUI or for listing the options.
    */
   public String fileTipText() {
-    return "The file to check.";
+    return "The file to check; overrides the String/File object in the token.";
   }
 
   /**
@@ -189,7 +191,7 @@ public class FileComplete
 
     if (result == null) {
       if (m_File == null)
-        result = "No file provided!";
+	result = "No file provided!";
     }
 
     return result;
@@ -205,11 +207,18 @@ public class FileComplete
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
     boolean		result;
+    PlaceholderFile	file;
 
     result = false;
 
-    if (m_File.exists() && !m_File.isDirectory())
+    if (m_File.exists() && !m_File.isDirectory()) {
       result = m_Check.isComplete(m_File);
+    }
+    else if ((token.hasPayload(String.class)) || (token.hasPayload(File.class))) {
+      file = new PlaceholderFile("" + token.getPayload());
+      if (file.exists() && !file.isDirectory())
+	result = m_Check.isComplete(file);
+    }
 
     return result;
   }
