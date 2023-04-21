@@ -131,8 +131,8 @@ public class PNG
   @Override
   public boolean isComplete(File file) {
     if (m_Strict)
-      return isComplete(file, getMinCheckSize());
+      return isCompleteEOF(file, getMinCheckSize());
     else
-      return isComplete(file, m_CheckSize);
+      return isCompleteEOF(file, m_CheckSize);
   }
 }

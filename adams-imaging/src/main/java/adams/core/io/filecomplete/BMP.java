@@ -14,19 +14,22 @@
  */
 
 /*
- * JPEG.java
+ * BMP.java
  * Copyright (C) 2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filecomplete;
 
 import java.io.File;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Checks whether the JPEG file ends with bytes FFD9 (EOF for JPEGs).<br>
+ * Checks whether the BMP file has sufficient bytes according to its header.<br>
  * See also:<br>
- * http:&#47;&#47;en.wikipedia.org&#47;wiki&#47;JPEG#Syntax_and_structure
+ * https:&#47;&#47;en.wikipedia.org&#47;wiki&#47;BMP_file_format#File_structure
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,21 +45,16 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
- * <pre>-check-size &lt;int&gt; (property: checkSize)
- * &nbsp;&nbsp;&nbsp;The number of bytes to read from the back of the file (in non-strict mode
- * &nbsp;&nbsp;&nbsp;) to check for EOF marker.
- * &nbsp;&nbsp;&nbsp;default: 100
- * &nbsp;&nbsp;&nbsp;minimum: 2
- * </pre>
- *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class JPEG
-  extends AbstractStrictCheckSizeFileCompleteCheck {
+public class BMP
+  extends AbstractStrictFileCompleteCheck {
 
   private static final long serialVersionUID = -3766862011655514895L;
+
+  public final static int MIN_BYTES = 6;
 
   /**
    * Returns a string describing the object.
@@ -66,19 +64,39 @@ public class JPEG
   @Override
   public String globalInfo() {
     return
-      "Checks whether the JPEG file ends with bytes FFD9 (EOF for JPEGs).\n"
+      "Checks whether the BMP file has sufficient bytes according to its header.\n"
 	+ "See also:\n"
-	+ "http://en.wikipedia.org/wiki/JPEG#Syntax_and_structure";
+	+ "https://en.wikipedia.org/wiki/BMP_file_format#File_structure";
   }
 
   /**
-   * Returns the minimally allowed check size.
+   * Returns the tip text for this property.
    *
-   * @return the minimum
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
    */
   @Override
-  protected int getMinCheckSize() {
-    return 2;
+  public String strictTipText() {
+    return "Whether to be strict or allow trailing junk data.";
+  }
+
+  /**
+   * Checks whether the length in the header works with the actual data length.
+   *
+   * @param buffer	the header
+   * @param actLen	the actual amount of data
+   * @return		true if valid
+   */
+  protected boolean checkLength(byte[] buffer, long actLen) {
+    ByteBuffer	bb;
+    int 	expLen;
+
+    bb  = ByteBuffer.wrap(buffer, 2, 4).order(ByteOrder.LITTLE_ENDIAN);
+    expLen = bb.getInt();
+    if (m_Strict)
+      return (expLen == actLen);
+    else
+      return (expLen <= actLen);
   }
 
   /**
@@ -89,33 +107,13 @@ public class JPEG
    */
   @Override
   public boolean isComplete(byte[] buffer) {
-    boolean	result;
-    int		i;
-
-    if (buffer.length >= getMinCheckSize()) {
-      if (m_Strict) {
-        i = buffer.length - 2;
-	result = ((buffer[i] == -1) && (buffer[i + 1] == -39));  // FF and D9
-      }
-      else {
-	result = false;
-	for (i = 0; i <= buffer.length - 2; i++) {
-	  if ((buffer[i] == -1) && (buffer[i + 1] == -39)) {  // FF and D9
-	    result = true;
-	    break;
-	  }
-	}
-      }
+    if (buffer.length < MIN_BYTES) {
       if (isLoggingEnabled())
-	getLogger().info("EOF Marker found?" + result);
-    }
-    else {
-      if (isLoggingEnabled())
-	getLogger().info("Buffer too small: " + buffer.length + " < " + getMinCheckSize());
-      result = false;
+	getLogger().info("Not enough data in file: " + buffer.length + " <= " + MIN_BYTES);
+      return false;
     }
 
-    return result;
+    return checkLength(buffer, buffer.length);
   }
 
   /**
@@ -126,9 +124,20 @@ public class JPEG
    */
   @Override
   public boolean isComplete(File file) {
-    if (m_Strict)
-      return isCompleteEOF(file, getMinCheckSize());
-    else
-      return isCompleteEOF(file, m_CheckSize);
+    byte[]	buffer;
+
+    try {
+      buffer = read(file, 0, MIN_BYTES);
+      if (buffer.length < MIN_BYTES) {
+	if (isLoggingEnabled())
+	  getLogger().info("Not enough data in file: " + buffer.length + " <= " + MIN_BYTES);
+	return false;
+      }
+      return checkLength(buffer, file.length());
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to read data from: " + file, e);
+      return false;
+    }
   }
 }

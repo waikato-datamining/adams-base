@@ -24,8 +24,8 @@ import adams.core.io.FileUtils;
 import adams.core.option.AbstractOptionHandler;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.logging.Level;
 
 /**
  * Ancestor for classes that check whether a file is complete.
@@ -46,45 +46,37 @@ public abstract class AbstractFileCompleteCheck
   public abstract boolean isComplete(byte[] buffer);
 
   /**
-   * Checks whether the file is complete.
+   * Reads the specified number of bytes from the file.
    *
-   * @param file	the file to check
-   * @param bufLen 	the buffer length to use
-   * @return		true if complete
+   * @param file	the file to read from
+   * @param pos 	the starting position, -1 if from end of file
+   * @param num		the number of bytes to read
+   * @return		the bytes
+   * @throws IOException	if reading fails
    */
-  protected boolean isComplete(File file, int bufLen) {
-    boolean		result;
+  protected byte[] read(File file, int pos, int num) throws IOException {
     RandomAccessFile 	raf;
-    byte[]		buffer;
     long		fileLen;
+    byte[]		buffer;
 
-    raf = null;
+    fileLen = file.length();
+    if (num > fileLen)
+      num = (int) fileLen;
+    buffer = new byte[num];
+    raf    = null;
     try {
-      fileLen = file.length();
-      if (bufLen > fileLen)
-	bufLen = (int) fileLen;
-      buffer = new byte[bufLen];
-      raf    = new RandomAccessFile(file.getAbsolutePath(), "r");
-      if (file.length() > bufLen) {
-	raf.seek(file.length() - bufLen);
-	raf.read(buffer, 0, bufLen);
-	result = isComplete(buffer);
-      }
-      else {
-	// too small
-	result = false;
-      }
-    }
-    catch (Exception e) {
-      if (isLoggingEnabled())
-	getLogger().log(Level.SEVERE, "Failed to extract bytes from: " + file, e);
-      result = true;
+      raf = new RandomAccessFile(file.getAbsolutePath(), "r");
+      if (pos == -1)
+        raf.seek(fileLen - num);
+      else
+	raf.seek(pos);
+      raf.read(buffer, 0, num);
     }
     finally {
       FileUtils.closeQuietly(raf);
     }
 
-    return result;
+    return buffer;
   }
 
   /**

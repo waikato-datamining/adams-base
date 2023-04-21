@@ -20,6 +20,9 @@
 
 package adams.core.io.filecomplete;
 
+import java.io.File;
+import java.util.logging.Level;
+
 /**
  * Ancestor for checks that look for EOF markers that can limit the number of bytes to read from the end of the
  * file used to look for the EOF marker.
@@ -102,5 +105,27 @@ public abstract class AbstractStrictCheckSizeFileCompleteCheck
    */
   public String checkSizeTipText() {
     return "The number of bytes to read from the back of the file (in non-strict mode) to check for EOF marker.";
+  }
+
+  /**
+   * Checks whether the file is complete using the number of bytes from the end of the file.
+   *
+   * @param file	the file to check
+   * @param bufLen 	the buffer length to use
+   * @return		true if complete
+   */
+  protected boolean isCompleteEOF(File file, int bufLen) {
+    boolean		result;
+
+    try {
+      result = isComplete(read(file, -1, bufLen));
+    }
+    catch (Exception e) {
+      if (isLoggingEnabled())
+        getLogger().log(Level.SEVERE, "Failed to extract bytes from: " + file, e);
+      result = true;
+    }
+
+    return result;
   }
 }
