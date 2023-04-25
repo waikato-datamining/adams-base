@@ -23,8 +23,7 @@ package adams.gui.visualization.segmentation.tool;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
@@ -453,31 +452,28 @@ public abstract class AbstractTool
   public BasePanel getOptionPanel() {
     BaseTextArea	textArea;
     String		info;
-    BaseSplitPane	splitPane;
+    BaseTabbedPane tabbedPane;
 
     if (m_PanelOptions == null) {
       m_PanelOptions = createOptionPanel();
       m_PanelFullOptions = new BasePanel(new BorderLayout(5, 5));
       info = globalInfo();
       if (info != null) {
-	textArea = new BaseTextArea();
-	textArea.setEditable(false);
-	textArea.setLineWrap(true);
-	textArea.setWrapStyleWord(true);
-	textArea.setColumns(20);
-	textArea.setRows(4);
-	textArea.setText(globalInfo());
-	textArea.setCaretPosition(0);
-        textArea.setToolTipText(GUIHelper.processTipText(globalInfo(), GUIHelper.getMaxTooltipWidth()));
-	splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-	splitPane.setTopComponent(new BaseScrollPane(textArea));
-	splitPane.setBottomComponent(m_PanelOptions);
-        splitPane.setDividerLocation(50);
-        splitPane.setUISettingsParameters(getClass(), "GlobalInfoDivider");
-	m_PanelFullOptions.add(splitPane, BorderLayout.CENTER);
+        textArea = new BaseTextArea();
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setColumns(20);
+        textArea.setRows(4);
+        textArea.setText(globalInfo());
+        textArea.setCaretPosition(0);
+        tabbedPane = new BaseTabbedPane(BaseTabbedPane.SCROLL_TAB_LAYOUT);
+        tabbedPane.addTab("Options", m_PanelOptions);
+        tabbedPane.addTab("Help", textArea);
+        m_PanelFullOptions.add(tabbedPane, BorderLayout.CENTER);
       }
       else {
-	m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
+        m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
       }
       m_PanelFullOptions.setBorder(BorderFactory.createTitledBorder(getName()));
     }

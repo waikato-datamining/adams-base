@@ -23,8 +23,7 @@ package adams.gui.visualization.object.tools;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseSplitPane;
+import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Cursors;
 import adams.gui.core.GUIHelper;
@@ -182,7 +181,7 @@ public abstract class AbstractTool
     if (m_Listener == null) {
       m_Listener = createMouseListener();
       if (m_Listener == null)
-        m_Listener = new ToolMouseAdapter(this);
+	m_Listener = new ToolMouseAdapter(this);
     }
     return m_Listener;
   }
@@ -204,7 +203,7 @@ public abstract class AbstractTool
     if (m_MotionListener == null) {
       m_MotionListener = createMouseMotionListener();
       if (m_MotionListener == null)
-        m_MotionListener = new ToolMouseMotionAdapter(this);
+	m_MotionListener = new ToolMouseMotionAdapter(this);
     }
     return m_MotionListener;
   }
@@ -230,7 +229,7 @@ public abstract class AbstractTool
     if (m_KeyListener == null) {
       m_KeyListener = createKeyListener();
       if (m_KeyListener == null)
-        m_KeyListener = new ToolKeyAdapter(this);
+	m_KeyListener = new ToolKeyAdapter(this);
     }
     return m_KeyListener;
   }
@@ -326,7 +325,7 @@ public abstract class AbstractTool
   public BasePanel getOptionPanel() {
     BaseTextArea	textArea;
     String		info;
-    BaseSplitPane	splitPane;
+    BaseTabbedPane	tabbedPane;
 
     if (m_PanelOptions == null) {
       m_PanelOptions = createOptionPanel();
@@ -341,13 +340,10 @@ public abstract class AbstractTool
 	textArea.setRows(4);
 	textArea.setText(globalInfo());
 	textArea.setCaretPosition(0);
-	textArea.setToolTipText(GUIHelper.processTipText(globalInfo(), GUIHelper.getMaxTooltipWidth()));
-	splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
-	splitPane.setTopComponent(new BaseScrollPane(textArea));
-	splitPane.setBottomComponent(m_PanelOptions);
-	splitPane.setDividerLocation(50);
-	splitPane.setUISettingsParameters(getClass(), "GlobalInfoDivider");
-	m_PanelFullOptions.add(splitPane, BorderLayout.CENTER);
+	tabbedPane = new BaseTabbedPane(BaseTabbedPane.SCROLL_TAB_LAYOUT);
+	tabbedPane.addTab("Options", m_PanelOptions);
+	tabbedPane.addTab("Help", textArea);
+	m_PanelFullOptions.add(tabbedPane, BorderLayout.CENTER);
       }
       else {
 	m_PanelFullOptions.add(m_PanelOptions, BorderLayout.CENTER);
