@@ -1130,13 +1130,15 @@ public class ActorUtils {
       if (isLoggingEnabled())
 	LOGGER.info("No database connection found, using default: " + defCon + "\n" + LoggingHelper.getStackTrace(20));
     }
-    if (!result.isConnected() && result.getConnectOnStartUp()) {
-      try {
-	result.connect();
-      }
-      catch (Exception e) {
-	LOGGER.log(Level.SEVERE,
+    if (result != null) {
+      if (!result.isConnected() && result.getConnectOnStartUp()) {
+	try {
+	  result.connect();
+	}
+	catch (Exception e) {
+	  LOGGER.log(Level.SEVERE,
 	    "Failed to enable database connection (" + cls.getName() + ") for actor " + actor.getFullName() + ":", e);
+	}
       }
     }
 
