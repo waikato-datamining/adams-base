@@ -15,7 +15,7 @@
 
 /*
  * AbstractReportFileChooser.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -26,9 +26,7 @@ import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.output.AbstractReportWriter;
 import adams.data.report.Report;
-import adams.gui.goe.GenericObjectEditorDialog;
 
-import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -195,86 +193,6 @@ public abstract class AbstractReportFileChooser<T extends Report, R extends Abst
   @Override
   protected Class getWriterClass() {
     return AbstractReportWriter.class;
-  }
-
-  /**
-   * Pops up an "Open File" file chooser dialog.
-   *
-   * @param parent		the parent of this file chooser
-   * @return			the result of the user's action
-   */
-  @Override
-  public int showOpenDialog(Component parent) {
-    int result = super.showOpenDialog(parent);
-
-    if (result == APPROVE_OPTION) {
-      // bring up options dialog?
-      if (m_CheckBoxOptions.isSelected()) {
-	m_Editor.setValue(m_CurrentHandler);
-	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(dialog.getParent());
-	dialog.setVisible(true);
-	result = dialog.getResultType();
-	if (result == APPROVE_OPTION)
-	  m_CurrentHandler = m_Editor.getValue();
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Pops up an "Save File" file chooser dialog.
-   *
-   * @param parent		the parent of this file chooser
-   * @return			the result of the user's action
-   */
-  @Override
-  public int showSaveDialog(Component parent) {
-    int result = super.showSaveDialog(parent);
-
-    if (result == APPROVE_OPTION) {
-      // bring up options dialog?
-      if (m_CheckBoxOptions.isSelected()) {
-	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(dialog.getParent());
-	dialog.setVisible(true);
-	result = dialog.getResultType();
-	if (result == APPROVE_OPTION)
-	  m_CurrentHandler = m_Editor.getValue();
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * sets the current converter according to the current filefilter.
-   */
-  @Override
-  protected void updateCurrentHandlerHook() {
-    String	classname;
-    Object	newHandler;
-
-    try {
-      // determine current converter
-      classname  = ((ExtensionFileFilterWithClass) getFileFilter()).getClassname();
-      newHandler = ClassManager.getSingleton().forName(classname).getDeclaredConstructor().newInstance();
-
-      if (m_CurrentHandler == null) {
-	m_CurrentHandler = newHandler;
-      }
-      else {
-	if (!m_CurrentHandler.getClass().equals(newHandler.getClass()))
-	  m_CurrentHandler = newHandler;
-      }
-
-      setFileSelectionMode(FILES_ONLY);
-    }
-    catch (Exception e) {
-      m_CurrentHandler = null;
-      handleException("Failed to update current handler:", e);
-    }
   }
 
   /**
