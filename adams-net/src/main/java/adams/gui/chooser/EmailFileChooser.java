@@ -26,9 +26,7 @@ import adams.data.io.input.EmailFileReader;
 import adams.data.io.input.PropertiesEmailFileReader;
 import adams.data.io.output.EmailFileWriter;
 import adams.data.io.output.PropertiesEmailFileWriter;
-import adams.gui.goe.GenericObjectEditorDialog;
 
-import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -245,58 +243,6 @@ public class EmailFileChooser
   @Override
   protected EmailFileWriter getDefaultWriter() {
     return new PropertiesEmailFileWriter();
-  }
-
-  /**
-   * Pops up an "Open File" file chooser dialog.
-   *
-   * @param parent		the parent of this file chooser
-   * @return			the result of the user's action
-   */
-  @Override
-  public int showOpenDialog(Component parent) {
-    int result = super.showOpenDialog(parent);
-
-    if (result == APPROVE_OPTION) {
-      // bring up options dialog?
-      if (m_CheckBoxOptions.isSelected()) {
-	m_Editor.setValue(m_CurrentHandler);
-	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(dialog.getParent());
-	dialog.setVisible(true);
-	result = dialog.getResultType();
-	if (result == APPROVE_OPTION)
-	  m_CurrentHandler = m_Editor.getValue();
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * Pops up an "Save File" file chooser dialog.
-   *
-   * @param parent		the parent of this file chooser
-   * @return			the result of the user's action
-   */
-  @Override
-  public int showSaveDialog(Component parent) {
-    int result = super.showSaveDialog(parent);
-
-    if (result == APPROVE_OPTION) {
-      // bring up options dialog?
-      if (m_CheckBoxOptions.isSelected()) {
-	m_Editor.setValue(m_CurrentHandler);
-	GenericObjectEditorDialog dialog = GenericObjectEditorDialog.createDialog(this, m_Editor);
-	dialog.setLocationRelativeTo(dialog.getParent());
-	dialog.setVisible(true);
-	result = dialog.getResultType();
-	if (result == APPROVE_OPTION)
-	  m_CurrentHandler = m_Editor.getValue();
-      }
-    }
-
-    return result;
   }
 
   /**
