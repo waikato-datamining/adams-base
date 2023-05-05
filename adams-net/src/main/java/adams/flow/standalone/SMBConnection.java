@@ -342,7 +342,7 @@ public class SMBConnection
   public String promptForPasswordTipText() {
     return
       "If enabled, the user gets prompted "
-        + "for enter a password if none has been provided in the setup.";
+	+ "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -402,7 +402,7 @@ public class SMBConnection
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -440,10 +440,11 @@ public class SMBConnection
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean		result;
+  @Override
+  public String doInteract() {
+    String		result;
     PasswordDialog	dlg;
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -451,9 +452,12 @@ public class SMBConnection
     ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
     ((Flow) getRoot()).deregisterWindow(dlg);
-    result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
+    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
+      result = null;
+    else
+      result = INTERACTION_CANCELED;
 
-    if (result)
+    if (result == null)
       m_ActualPassword = dlg.getPassword();
 
     return result;
@@ -464,6 +468,7 @@ public class SMBConnection
    *
    * @return		true if interaction in headless environment is possible
    */
+  @Override
   public boolean supportsHeadlessInteraction() {
     return true;
   }
@@ -471,16 +476,17 @@ public class SMBConnection
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     BasePassword	password;
 
-    result   = false;
+    result   = INTERACTION_CANCELED;
     password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
     if (password != null) {
-      result           = true;
+      result           = null;
       m_ActualPassword = password;
     }
 
@@ -515,47 +521,50 @@ public class SMBConnection
   @Override
   protected String doExecute() {
     String	result;
+    String	msg;
 
     result = null;
 
     if (m_Session == null) {
       if (isLoggingEnabled())
-        getLogger().info("Starting new session");
+	getLogger().info("Starting new session");
 
       // password
       m_ActualPassword = m_Password;
 
       if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-        if (!isHeadless()) {
-          if (!doInteract()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
-        else if (supportsHeadlessInteraction()) {
-          if (!doInteractHeadless()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
+	if (!isHeadless()) {
+	  msg = doInteract();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
+	else if (supportsHeadlessInteraction()) {
+	  msg = doInteractHeadless();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
       }
 
       if (result == null)
-        m_Session = newAuthentication();
+	m_Session = newAuthentication();
     }
     else {
       if (isLoggingEnabled())
-        getLogger().info("Re-using current session");
+	getLogger().info("Re-using current session");
     }
 
     return result;
