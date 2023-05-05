@@ -615,10 +615,10 @@ public class EnterValue
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     String				value;
     String				msg;
     String				initial;
@@ -650,7 +650,7 @@ public class EnterValue
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(initial);
-      return true;
+      return null;
     }
 
     if (m_SelectionValues.length > 0)
@@ -676,7 +676,10 @@ public class EnterValue
 
     m_Comm = null;
 
-    return ((value != null) && (value.length() > 0));
+    if ((value != null) && (value.length() > 0))
+      return null;
+    else
+      return "Nothing entered!";
   }
 
   /**
@@ -691,9 +694,10 @@ public class EnterValue
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
+  @Override
+  public String doInteractHeadless() {
     String	value;
     String	msg;
     String	initial;
@@ -716,7 +720,7 @@ public class EnterValue
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(initial);
-      return true;
+      return null;
     }
 
     if (m_SelectionValues.length > 0)
@@ -735,7 +739,10 @@ public class EnterValue
       }
     }
 
-    return ((value != null) && (value.length() > 0));
+    if ((value != null) && (value.length() > 0))
+      return null;
+    else
+      return "Nothing entered!";
   }
 
   /**

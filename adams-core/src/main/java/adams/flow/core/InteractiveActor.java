@@ -15,7 +15,7 @@
 
 /*
  * InteractiveActor.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -23,10 +23,11 @@ package adams.flow.core;
  * Interface for actors that interact with the user.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface InteractiveActor 
   extends Actor, StopModeSupporter {
+
+  public final static String INTERACTION_CANCELED = "Interaction canceled!";
 
   /**
    * Sets whether to stop the flow if dialog canceled.
@@ -75,9 +76,9 @@ public interface InteractiveActor
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract();
+  public String doInteract();
 
   /**
    * Returns whether headless interaction is supported.
@@ -89,7 +90,7 @@ public interface InteractiveActor
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless();
+  public String doInteractHeadless();
 }

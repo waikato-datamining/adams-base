@@ -435,8 +435,9 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteract() {
-    boolean		result;
+  @Override
+  public String doInteract() {
+    String		result;
     PasswordDialog	dlg;
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -444,9 +445,12 @@ public abstract class AbstractDatabaseConnection
     ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
     ((Flow) getRoot()).deregisterWindow(dlg);
-    result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
+    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
+      result = null;
+    else
+      result = INTERACTION_CANCELED;
 
-    if (result)
+    if (result == null)
       m_ActualPassword = dlg.getPassword();
 
     return result;
@@ -466,14 +470,15 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     BasePassword	password;
 
-    result   = false;
+    result   = INTERACTION_CANCELED;
     password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
     if (password != null) {
-      result           = true;
+      result           = null;
       m_ActualPassword = password;
     }
 
@@ -498,7 +503,8 @@ public abstract class AbstractDatabaseConnection
 
     if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
-        if (!doInteract()) {
+        msg = doInteract();
+        if (msg != null) {
           if (m_StopFlowIfCanceled) {
             if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
               StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
@@ -509,7 +515,8 @@ public abstract class AbstractDatabaseConnection
         }
       }
       else if (supportsHeadlessInteraction()) {
-        if (!doInteractHeadless()) {
+        msg = doInteractHeadless();
+        if (msg != null) {
           if (m_StopFlowIfCanceled) {
             if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
               StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());

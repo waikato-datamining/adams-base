@@ -176,7 +176,7 @@ public abstract class AbstractInteractiveTransformer
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -270,7 +270,7 @@ public abstract class AbstractInteractiveTransformer
   public String useOuterWindowTipText() {
     return
       "If enabled, the outer window (dialog/frame) is used instead of the "
-        + "component of the callable actor.";
+	+ "component of the callable actor.";
   }
 
   /**
@@ -295,16 +295,16 @@ public abstract class AbstractInteractiveTransformer
 
     if (m_CallableActor == null) {
       if (!m_ParentComponentActorConfigured) {
-        m_CallableActor                  = findCallableActor();
-        m_ParentComponentActorConfigured = true;
+	m_CallableActor                  = findCallableActor();
+	m_ParentComponentActorConfigured = true;
       }
     }
 
     if (m_CallableActor != null) {
       if (m_CallableActor instanceof AbstractDisplay) {
-        panel = ((AbstractDisplay) m_CallableActor).getPanel();
-        if (panel != null)
-          result = panel;
+	panel = ((AbstractDisplay) m_CallableActor).getPanel();
+	if (panel != null)
+	  result = panel;
       }
     }
 
@@ -341,7 +341,7 @@ public abstract class AbstractInteractiveTransformer
    *
    * @return		true if successfully interacted
    */
-  public abstract boolean doInteract();
+  public abstract String doInteract();
 
   /**
    * Returns whether headless interaction is supported.
@@ -354,11 +354,14 @@ public abstract class AbstractInteractiveTransformer
 
   /**
    * Performs the interaction with the user in a headless environment.
+   * <br>
+   * Default implementation returns null.
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    return true;
+  @Override
+  public String doInteractHeadless() {
+    return null;
   }
 
   /**
@@ -368,24 +371,28 @@ public abstract class AbstractInteractiveTransformer
    */
   @Override
   protected String doExecute() {
+    String	msg;
+
     if (!isHeadless()) {
-      if (!doInteract()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg = doInteract();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
     else if (supportsHeadlessInteraction()) {
-      if (!doInteractHeadless()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg = doInteractHeadless();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
 

@@ -15,7 +15,7 @@
 
 /*
  * SelectDateTime.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -353,17 +353,17 @@ public class SelectDateTime
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     ApprovalDialog	dialog;
     BasePanel		panel;
     String		title;
 
     if (m_NonInteractive) {
       m_OutputToken = createToken(null);
-      return true;
+      return null;
     }
 
     switch (m_Type) {
@@ -395,10 +395,10 @@ public class SelectDateTime
     deregisterWindow(dialog);
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
       m_OutputToken = createToken(((DateProvider) panel).getDate());
-      return true;
+      return null;
     }
 
-    return false;
+    return INTERACTION_CANCELED;
   }
 
   /**
@@ -413,17 +413,18 @@ public class SelectDateTime
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    boolean	result;
+  @Override
+  public String doInteractHeadless() {
+    String	result;
     String 	msg;
     DateFormat 	formatter;
     String	value;
 
     if (m_NonInteractive) {
       m_OutputToken = createToken(null);
-      return true;
+      return null;
     }
 
     switch (m_Type) {
@@ -444,9 +445,9 @@ public class SelectDateTime
     }
     msg    = "Select " + msg + " (format: " + formatter.toPattern() + "):";
     value  = ConsoleHelper.enterValue(msg);
-    result = false;
+    result = "No valid selection!";
     if ((value != null) && formatter.parse(value) != null) {
-      result        = true;
+      result        = null;
       m_OutputToken = createToken(formatter.parse(value));
     }
 

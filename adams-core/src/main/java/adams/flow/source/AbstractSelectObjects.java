@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSelectObjects.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -32,7 +32,6 @@ import java.util.List;
  * be broadcasted as tokens.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSelectObjects
   extends AbstractInteractiveArrayProvider 
@@ -256,10 +255,10 @@ public abstract class AbstractSelectObjects
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     Object[]	selected;
     
     m_Queue.clear();
@@ -267,13 +266,13 @@ public abstract class AbstractSelectObjects
     initializeDialog();
     selected = showDialog();
     if (selected == null)
-      return false;
+      return "Nothing selected";
     if (isStopped())
-      return true;
+      return null;
     for (Object sel: selected)
       m_Queue.add(sel);
     
-    return true;
+    return null;
   }
 
   /**

@@ -127,7 +127,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaSelectDataset
   extends AbstractArrayProvider
@@ -181,7 +180,7 @@ public class WekaSelectDataset
   public String globalInfo() {
     return
       "Pops up a file chooser dialog, prompting the user to select one or "
-        + "more datasets. The filenames of the datasets then get forwarded as strings.";
+	+ "more datasets. The filenames of the datasets then get forwarded as strings.";
   }
 
   /**
@@ -424,7 +423,7 @@ public class WekaSelectDataset
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -547,7 +546,7 @@ public class WekaSelectDataset
   public String useOuterWindowTipText() {
     return
       "If enabled, the outer window (dialog/frame) is used instead of the "
-        + "component of the callable actor.";
+	+ "component of the callable actor.";
   }
 
   /**
@@ -572,16 +571,16 @@ public class WekaSelectDataset
 
     if (m_CallableActor == null) {
       if (!m_ParentComponentActorConfigured) {
-        m_CallableActor                  = findCallableActor();
-        m_ParentComponentActorConfigured = true;
+	m_CallableActor                  = findCallableActor();
+	m_ParentComponentActorConfigured = true;
       }
     }
 
     if (m_CallableActor != null) {
       if (m_CallableActor instanceof AbstractDisplay) {
-        panel = ((AbstractDisplay) m_CallableActor).getPanel();
-        if (panel != null)
-          result = panel;
+	panel = ((AbstractDisplay) m_CallableActor).getPanel();
+	if (panel != null)
+	  result = panel;
       }
     }
 
@@ -605,23 +604,24 @@ public class WekaSelectDataset
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean			result;
+  @Override
+  public String doInteract() {
+    String			result;
     int				retVal;
     File[]			files;
     WekaFileChooser 		fileChooser;
     int				i;
 
-    result = false;
+    result = INTERACTION_CANCELED;
 
     m_Queue.clear();
 
     if (m_NonInteractive) {
       for (File file: m_InitialFiles)
-        m_Queue.add(file.getAbsolutePath());
-      return true;
+	m_Queue.add(file.getAbsolutePath());
+      return null;
     }
 
     fileChooser = new WekaFileChooser();
@@ -639,10 +639,10 @@ public class WekaSelectDataset
     fileChooser.setSelectedFiles(files);
     retVal = fileChooser.showOpenDialog(getActualParentComponent());
     if (retVal == ConverterFileChooser.APPROVE_OPTION) {
-      result = true;
+      result = null;
       files  = fileChooser.getSelectedFiles();
       for (File file: files)
-        m_Queue.add(file.getAbsolutePath());
+	m_Queue.add(file.getAbsolutePath());
     }
 
     return result;
@@ -662,27 +662,28 @@ public class WekaSelectDataset
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     String[]		files;
     PlaceholderFile	filePh;
 
-    result = false;
+    result = INTERACTION_CANCELED;
 
     m_Queue.clear();
 
     if (m_NonInteractive) {
       for (File file: m_InitialFiles)
-        m_Queue.add(file.getAbsolutePath());
-      return true;
+	m_Queue.add(file.getAbsolutePath());
+      return null;
     }
 
     files = ConsoleHelper.enterMultipleValues(m_FileChooserTitle);
     if (files != null) {
-      result = true;
+      result = null;
       for (String fileStr : files) {
-        filePh = new PlaceholderFile(fileStr);
-        m_Queue.add(filePh.getAbsolutePath());
+	filePh = new PlaceholderFile(fileStr);
+	m_Queue.add(filePh.getAbsolutePath());
       }
     }
 
@@ -696,24 +697,28 @@ public class WekaSelectDataset
    */
   @Override
   protected String doExecute() {
+    String	msg;
+
     if (!isHeadless()) {
-      if (!doInteract()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg = doInteract();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
     else if (supportsHeadlessInteraction()) {
-      if (!doInteractHeadless()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg = doInteractHeadless();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
 

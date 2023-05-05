@@ -15,7 +15,7 @@
 
 /*
  * PixelSelector.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -358,11 +358,11 @@ public class PixelSelector
    * @return		true if successfully interacted
    */
   @Override
-  public boolean doInteract() {
-    boolean		result;
+  public String doInteract() {
+    String		result;
     PixelSelectorPanel	panel;
     
-    result = false;
+    result = INTERACTION_CANCELED;
     
     panel = (PixelSelectorPanel) m_Panel;
     panel.setImage((AbstractImageContainer) m_InputToken.getPayload());
@@ -376,7 +376,7 @@ public class PixelSelector
     deregisterWindow(m_Dialog);
 
     if ((m_Approved != null) && m_Approved) {
-      result = true;
+      result = null;
       m_OutputToken = new Token(panel.getImage());
     }
     

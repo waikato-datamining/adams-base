@@ -1305,10 +1305,10 @@ public class ImageAnnotator
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     AbstractImageContainer	cont;
 
     m_Accepted = false;
@@ -1337,6 +1337,9 @@ public class ImageAnnotator
       m_OutputToken = new Token(cont);
     }
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }

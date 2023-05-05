@@ -169,8 +169,8 @@ public class FTPConnection
   public String globalInfo() {
     return
       "Provides access to a FTP host.\n"
-        + "If debugging is enabled, the FTP commands issued by other actors will "
-        + "get printed as debug output of this actor.";
+	+ "If debugging is enabled, the FTP commands issued by other actors will "
+	+ "get printed as debug output of this actor.";
   }
 
   /**
@@ -431,7 +431,7 @@ public class FTPConnection
   public String promptForPasswordTipText() {
     return
       "If enabled, the user gets prompted "
-        + "for enter a password if none has been provided in the setup.";
+	+ "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -491,7 +491,7 @@ public class FTPConnection
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -529,10 +529,11 @@ public class FTPConnection
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean		result;
+  @Override
+  public String doInteract() {
+    String		result;
     PasswordDialog	dlg;
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -540,9 +541,12 @@ public class FTPConnection
     ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
     ((Flow) getRoot()).deregisterWindow(dlg);
-    result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
+    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
+      result = null;
+    else
+      result = INTERACTION_CANCELED;
 
-    if (result)
+    if (result == null)
       m_ActualPassword = dlg.getPassword();
 
     return result;
@@ -562,14 +566,15 @@ public class FTPConnection
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     BasePassword	password;
 
-    result   = false;
+    result   = INTERACTION_CANCELED;
     password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
     if (password != null) {
-      result           = true;
+      result           = null;
       m_ActualPassword = password;
     }
 
@@ -596,46 +601,49 @@ public class FTPConnection
   @Override
   protected String doExecute() {
     String	result;
+    String	msg;
 
     result = null;
 
     if (m_Client == null) {
       if (isLoggingEnabled())
-        getLogger().info("Starting new session");
+	getLogger().info("Starting new session");
 
       m_ActualPassword = m_Password;
 
       if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-        if (!isHeadless()) {
-          if (!doInteract()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
-        else if (supportsHeadlessInteraction()) {
-          if (!doInteractHeadless()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
+	if (!isHeadless()) {
+	  msg = doInteract();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
+	else if (supportsHeadlessInteraction()) {
+	  msg = doInteractHeadless();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
       }
 
       if (result == null)
-        result = connect();
+	result = connect();
     }
     else {
       if (isLoggingEnabled())
-        getLogger().info("Re-using current session");
+	getLogger().info("Re-using current session");
     }
 
     return result;
@@ -658,18 +666,18 @@ public class FTPConnection
       m_Client.connect(m_Host);
       reply = m_Client.getReplyCode();
       if (!FTPReply.isPositiveCompletion(reply)) {
-        result = "FTP server refused connection: " + reply;
+	result = "FTP server refused connection: " + reply;
       }
       else {
-        if (!m_Client.login(m_User, m_ActualPassword.getValue())) {
-          result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'";
-        }
-        else {
-          if (m_UsePassiveMode)
-            m_Client.enterLocalPassiveMode();
-          if (m_UseBinaryMode)
-            m_Client.setFileType(FTPClient.BINARY_FILE_TYPE);
-        }
+	if (!m_Client.login(m_User, m_ActualPassword.getValue())) {
+	  result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'";
+	}
+	else {
+	  if (m_UsePassiveMode)
+	    m_Client.enterLocalPassiveMode();
+	  if (m_UseBinaryMode)
+	    m_Client.setFileType(FTPClient.BINARY_FILE_TYPE);
+	}
       }
     }
     catch (Exception e) {
@@ -686,13 +694,13 @@ public class FTPConnection
   public void disconnect() {
     if (m_Client != null) {
       if (m_Client.isConnected()) {
-        try {
-          m_Client.disconnect();
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to disconnect from '" + m_Host + "':", e);
-        }
-        m_Client.removeProtocolCommandListener(this);
+	try {
+	  m_Client.disconnect();
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to disconnect from '" + m_Host + "':", e);
+	}
+	m_Client.removeProtocolCommandListener(this);
       }
     }
     m_Client = null;

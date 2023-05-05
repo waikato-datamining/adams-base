@@ -175,7 +175,7 @@ public abstract class AbstractInteractiveSource
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -269,7 +269,7 @@ public abstract class AbstractInteractiveSource
   public String useOuterWindowTipText() {
     return
       "If enabled, the outer window (dialog/frame) is used instead of the "
-        + "component of the callable actor.";
+	+ "component of the callable actor.";
   }
 
   /**
@@ -294,16 +294,16 @@ public abstract class AbstractInteractiveSource
 
     if (m_CallableActor == null) {
       if (!m_ParentComponentActorConfigured) {
-        m_CallableActor                  = findCallableActor();
-        m_ParentComponentActorConfigured = true;
+	m_CallableActor                  = findCallableActor();
+	m_ParentComponentActorConfigured = true;
       }
     }
 
     if (m_CallableActor != null) {
       if (m_CallableActor instanceof AbstractDisplay) {
-        panel = ((AbstractDisplay) m_CallableActor).getPanel();
-        if (panel != null)
-          result = panel;
+	panel = ((AbstractDisplay) m_CallableActor).getPanel();
+	if (panel != null)
+	  result = panel;
       }
     }
 
@@ -338,12 +338,14 @@ public abstract class AbstractInteractiveSource
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public abstract boolean doInteract();
+  public abstract String doInteract();
 
   /**
    * Returns whether headless interaction is supported.
+   * <br>
+   * Default implementation always returns false.
    *
    * @return		true if interaction in headless environment is possible
    */
@@ -353,11 +355,13 @@ public abstract class AbstractInteractiveSource
 
   /**
    * Performs the interaction with the user in a headless environment.
+   * <br>
+   * Default implementation always returns null.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    return true;
+  public String doInteractHeadless() {
+    return null;
   }
 
   /**
@@ -366,24 +370,28 @@ public abstract class AbstractInteractiveSource
    * @return		null if everything is fine, otherwise error message
    */
   protected String doExecute() {
+    String	msg;
+
     if (!isHeadless()) {
-      if (!doInteract()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg = doInteract();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
     else if (supportsHeadlessInteraction()) {
-      if (!doInteractHeadless()) {
-        if (m_StopFlowIfCanceled) {
-          if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-            StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-          else
-            StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-        }
+      msg =  doInteractHeadless();
+      if (msg != null) {
+	if (m_StopFlowIfCanceled) {
+	  if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	    StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	  else
+	    StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	}
       }
     }
 

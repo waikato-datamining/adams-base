@@ -15,7 +15,7 @@
 
 /*
  * Inspect.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -551,13 +551,13 @@ public class Inspect
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
-    boolean	result;
+  public String doInteract() {
+    String	result;
     
-    result = true;
+    result = null;
 
     if (!m_Dialog.isVisible())
       updateButtons(false);
@@ -593,7 +593,7 @@ public class Inspect
       m_OutputToken = null;
     }
     else {
-      result = false;
+      result = INTERACTION_CANCELED;
     }
 
     updateButtons(false);

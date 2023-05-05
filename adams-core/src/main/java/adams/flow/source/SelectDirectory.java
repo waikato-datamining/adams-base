@@ -15,7 +15,7 @@
 
 /*
  * SelectDirectory.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -599,11 +599,11 @@ public class SelectDirectory
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
-    boolean			result;
+  public String doInteract() {
+    String			result;
     int				retVal;
     File 			dir;
     File[]			dirs;
@@ -642,10 +642,10 @@ public class SelectDirectory
         m_OutputToken = new Token(convert(initial));
       else
         m_OutputToken = new Token(convert(initial[0]));
-      return true;
+      return null;
     }
 
-    result     = false;
+    result     = INTERACTION_CANCELED;
     dirChooser = DirectoryChooserFactory.createChooser();
     if (m_DirectoryChooserTitle.length() > 0)
       dirChooser.setDialogTitle(m_DirectoryChooserTitle);
@@ -660,7 +660,7 @@ public class SelectDirectory
     }
     retVal = dirChooser.showOpenDialog(getActualParentComponent());
     if (retVal == DirectoryChooserFactory.APPROVE_OPTION) {
-      result = true;
+      result = null;
       dir    = null;
       dirs   = null;
       if (m_MultiSelectionEnabled) {
@@ -700,8 +700,9 @@ public class SelectDirectory
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean			result;
+  @Override
+  public String doInteractHeadless() {
+    String			result;
     PlaceholderDirectory	dir;
     Properties			props;
     String			msg;
@@ -720,14 +721,15 @@ public class SelectDirectory
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(convert(initial));
-      return true;
+      return null;
     }
 
-    result = false;
+    result = INTERACTION_CANCELED;
     dir = ConsoleHelper.selectDirectory(m_DirectoryChooserTitle, initial);
     if (dir != null) {
-      result = dir.isDirectory();
-      if (result) {
+      if (dir.isDirectory())
+        result = "Not a directory: " + dir;
+      else {
         m_OutputToken = new Token(convert(dir));
         if (m_RestorationEnabled) {
           props = new Properties();

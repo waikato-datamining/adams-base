@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetCellSelector.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -756,11 +756,11 @@ public class SpreadSheetCellSelector
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
-    boolean		result;
+  public String doInteract() {
+    String		result;
     SpreadSheet		original;
     SpreadSheet		selected;
     SpreadSheet		subset;
@@ -770,7 +770,7 @@ public class SpreadSheetCellSelector
     int			col;
     CellRenderer	renderer;
 
-    result = true;
+    result = null;
 
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_Dialog.setVisible(true);
@@ -825,7 +825,7 @@ public class SpreadSheetCellSelector
       m_OutputToken = new Token(new SpreadSheetCellSelectionContainer(original, selected, subset));
     }
     else {
-      result = false;
+      result = INTERACTION_CANCELED;
     }
 
     return result;

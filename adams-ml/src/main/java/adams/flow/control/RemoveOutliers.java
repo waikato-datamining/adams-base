@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoveOutliers.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control;
@@ -176,7 +176,6 @@ import java.util.Set;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoveOutliers
   extends AbstractInteractiveTransformerDialog {
@@ -517,10 +516,10 @@ public class RemoveOutliers
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     SpreadSheet 		original;
     Set<Integer> 		outlierIndices;
     XYSequenceContainerManager 	manager;
@@ -598,6 +597,6 @@ public class RemoveOutliers
 	new OutlierContainer(original, clean, outliers));
     }
 
-    return true;
+    return null;
   }
 }

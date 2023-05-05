@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -706,10 +706,10 @@ public class EnterManyValues
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     Properties			props;
     ApprovalDialog		dialog;
     PropertiesParameterPanel	panel;
@@ -734,7 +734,7 @@ public class EnterManyValues
 
     if (m_NonInteractive) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
-      return true;
+      return null;
     }
 
     for (AbstractValueDefinition value: m_Values)
@@ -750,7 +750,7 @@ public class EnterManyValues
       order.add(val.getName());
       if (!val.addToPanel(panel)) {
 	getLogger().severe("Failed to add value definition: " + val.toCommandLine());
-	return false;
+	return "Failed to add value definition: " + val.toCommandLine();
       }
     }
     panel.setPropertyOrder(order);
@@ -812,10 +812,10 @@ public class EnterManyValues
 	if (msg != null)
 	  getLogger().warning(msg);
       }
-      return true;
+      return null;
     }
     else {
-      return false;
+      return INTERACTION_CANCELED;
     }
   }
 
@@ -831,10 +831,10 @@ public class EnterManyValues
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    boolean	result;
+  public String doInteractHeadless() {
+    String	result;
     String	value;
     Properties	props;
     String	msg;
@@ -850,10 +850,10 @@ public class EnterManyValues
 
     if (m_NonInteractive) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
-      return true;
+      return null;
     }
 
-    result = true;
+    result = null;
     for (AbstractValueDefinition valueDef: m_Values) {
       if (!valueDef.getEnabled())
         continue;
@@ -861,17 +861,17 @@ public class EnterManyValues
 	valueDef.setDefaultValueAsString(props.getProperty(valueDef.getName()));
       value = valueDef.headlessInteraction();
       if (value == null) {
-	result = false;
+	result = "Value definition cannot be run in headless mode: " + valueDef;
 	break;
       }
       props.setProperty(valueDef.getName(), value);
     }
-    if (result) {
+    if (result == null) {
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       if (m_RestorationEnabled) {
 	msg = RestorableActorHelper.write(props, m_RestorationFile);
 	if (msg != null)
-	  getLogger().warning(msg);
+          getLogger().warning(msg);
       }
     }
 

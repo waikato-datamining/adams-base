@@ -15,7 +15,7 @@
 
 /*
  * ConfirmationDialog.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -473,10 +473,10 @@ public class ConfirmationDialog
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     int		retVal;
     boolean	canceled;
     String	title;
@@ -511,7 +511,10 @@ public class ConfirmationDialog
 
     m_Comm = null;
 
-    return !canceled;
+    if (canceled)
+      return INTERACTION_CANCELED;
+    else
+      return null;
   }
 
   /**
@@ -526,9 +529,10 @@ public class ConfirmationDialog
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
+  @Override
+  public String doInteractHeadless() {
     boolean	canceled;
     String	value;
 
@@ -554,7 +558,10 @@ public class ConfirmationDialog
         m_OutputToken = new Token(m_CancelToken);
     }
 
-    return !canceled;
+    if (canceled)
+      return INTERACTION_CANCELED;
+    else
+      return null;
   }
 
   /**

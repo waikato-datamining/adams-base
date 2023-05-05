@@ -15,7 +15,7 @@
 
 /*
  * SelectCharset.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -101,7 +101,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SelectCharset
   extends AbstractInteractiveSource 
@@ -244,19 +243,19 @@ public class SelectCharset
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
-    boolean	result;
+  public String doInteract() {
+    String	result;
     String	charset;
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(m_InitialCharset.getValue());
-      return true;
+      return null;
     }
     
-    result  = false;
+    result  = "Nothing selected!";
     charset = GUIHelper.showInputDialog(
       getActualParentComponent(),
       "Please select character set",
@@ -264,7 +263,7 @@ public class SelectCharset
       CharsetHelper.getIDs(),
       getName());
     if (charset != null) {
-      result        = true;
+      result        = null;
       m_OutputToken = new Token(charset);
     }
 
@@ -285,19 +284,20 @@ public class SelectCharset
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean	result;
+  @Override
+  public String doInteractHeadless() {
+    String	result;
     String	charset;
 
     if (m_NonInteractive) {
       m_OutputToken = new Token(m_InitialCharset.getValue());
-      return true;
+      return null;
     }
 
-    result  = false;
+    result  = "Nothing entered!";
     charset = ConsoleHelper.enterValue("Please select character set:", m_InitialCharset.getValue());
     if ((charset != null) && !charset.isEmpty() && new BaseCharset().isValid(charset)) {
-      result        = true;
+      result        = null;
       m_OutputToken = new Token(charset);
     }
 

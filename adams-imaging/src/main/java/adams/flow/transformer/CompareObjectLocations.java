@@ -789,13 +789,11 @@ public class CompareObjectLocations
 
   /**
    * Performs the interaction with the user.
-   * <br><br>
-   * Default implementation simply displays the dialog and returns always true.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, error message otherwise
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     m_Accepted = false;
 
     registerWindow(m_Dialog, m_Dialog.getTitle());
@@ -807,6 +805,9 @@ public class CompareObjectLocations
     if (m_Accepted)
       m_OutputToken = new Token(m_InputToken.getPayload());
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -137,8 +137,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SMTPConnection
-    extends AbstractStandalone
-    implements OptionalPasswordPrompt, PasswordPrompter {
+  extends AbstractStandalone
+  implements OptionalPasswordPrompt, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
@@ -193,7 +193,7 @@ public class SMTPConnection
   @Override
   public String globalInfo() {
     return
-        "SMTP server setup for overriding default parameters.";
+      "SMTP server setup for overriding default parameters.";
   }
 
   /**
@@ -204,56 +204,56 @@ public class SMTPConnection
     super.defineOptions();
 
     m_OptionManager.add(
-        "server", "server",
-        EmailHelper.getSmtpServer());
+      "server", "server",
+      EmailHelper.getSmtpServer());
 
     m_OptionManager.add(
-        "port", "port",
-        EmailHelper.getSmtpPort(), 1, 65536);
+      "port", "port",
+      EmailHelper.getSmtpPort(), 1, 65536);
 
     m_OptionManager.add(
-        "use-tls", "useTLS",
-        EmailHelper.getSmtpStartTLS());
+      "use-tls", "useTLS",
+      EmailHelper.getSmtpStartTLS());
 
     m_OptionManager.add(
-        "protocols", "protocols",
-        EmailHelper.getSmtpProtocols());
+      "protocols", "protocols",
+      EmailHelper.getSmtpProtocols());
 
     m_OptionManager.add(
-        "use-ssl", "useSSL",
-        EmailHelper.getSmtpUseSSL());
+      "use-ssl", "useSSL",
+      EmailHelper.getSmtpUseSSL());
 
     m_OptionManager.add(
-        "timeout", "timeout",
-        EmailHelper.getSmtpTimeout(), 0, null);
+      "timeout", "timeout",
+      EmailHelper.getSmtpTimeout(), 0, null);
 
     m_OptionManager.add(
-        "requires-auth", "requiresAuthentication",
-        EmailHelper.getSmtpRequiresAuthentication());
+      "requires-auth", "requiresAuthentication",
+      EmailHelper.getSmtpRequiresAuthentication());
 
     m_OptionManager.add(
-        "user", "user",
-        EmailHelper.getSmtpUser(), false);
+      "user", "user",
+      EmailHelper.getSmtpUser(), false);
 
     m_OptionManager.add(
-        "password", "password",
-        EmailHelper.getSmtpPassword(), false);
+      "password", "password",
+      EmailHelper.getSmtpPassword(), false);
 
     m_OptionManager.add(
-        "prompt-for-password", "promptForPassword",
-        false);
+      "prompt-for-password", "promptForPassword",
+      false);
 
     m_OptionManager.add(
-        "stop-if-canceled", "stopFlowIfCanceled",
-        false);
+      "stop-if-canceled", "stopFlowIfCanceled",
+      false);
 
     m_OptionManager.add(
-        "custom-stop-message", "customStopMessage",
-        "");
+      "custom-stop-message", "customStopMessage",
+      "");
 
     m_OptionManager.add(
-        "stop-mode", "stopMode",
-        StopMode.GLOBAL);
+      "stop-mode", "stopMode",
+      StopMode.GLOBAL);
   }
 
   /**
@@ -273,7 +273,7 @@ public class SMTPConnection
       result += QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
-        result += ":" + value;
+	result += ":" + value;
       result += "@";
     }
 
@@ -285,7 +285,7 @@ public class SMTPConnection
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "protocols", m_Protocols));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useSSL", m_UseSSL, "SSL"));
     if (   (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
-        && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
+      && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow"));
     }
@@ -592,8 +592,8 @@ public class SMTPConnection
    */
   public String promptForPasswordTipText() {
     return
-        "If enabled and authentication is required, the user gets prompted "
-            + "for enter a password if none has been provided in the setup.";
+      "If enabled and authentication is required, the user gets prompted "
+	+ "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -652,8 +652,8 @@ public class SMTPConnection
    */
   public String customStopMessageTipText() {
     return
-        "The custom stop message to use in case a user cancelation stops the "
-            + "flow (default is the full name of the actor)";
+      "The custom stop message to use in case a user cancelation stops the "
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -691,10 +691,11 @@ public class SMTPConnection
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean		result;
+  @Override
+  public String doInteract() {
+    String		result;
     PasswordDialog	dlg;
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -702,9 +703,12 @@ public class SMTPConnection
     ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
     ((Flow) getRoot()).deregisterWindow(dlg);
-    result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
+    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
+      result = null;
+    else
+      result = INTERACTION_CANCELED;
 
-    if (result)
+    if (result == null)
       m_ActualPassword = dlg.getPassword();
 
     return result;
@@ -722,16 +726,17 @@ public class SMTPConnection
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     BasePassword	password;
 
-    result   = false;
+    result   = INTERACTION_CANCELED;
     password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
     if (password != null) {
-      result           = true;
+      result           = null;
       m_ActualPassword = password;
     }
 
@@ -746,15 +751,15 @@ public class SMTPConnection
    */
   public void initializeSmtpSession(AbstractSendEmail sendEmail) throws Exception {
     sendEmail.initializeSmtpSession(
-        m_Server,
-        m_Port,
-        m_UseTLS,
-        m_UseSSL,
-        m_Timeout,
-        m_RequiresAuthentication,
-        m_User,
-        m_ActualPassword,
-        m_Protocols);
+      m_Server,
+      m_Port,
+      m_UseTLS,
+      m_UseSSL,
+      m_Timeout,
+      m_RequiresAuthentication,
+      m_User,
+      m_ActualPassword,
+      m_Protocols);
   }
 
   /**
@@ -765,6 +770,7 @@ public class SMTPConnection
   @Override
   protected String doExecute() {
     String	result;
+    String	msg;
 
     result = null;
 
@@ -772,26 +778,28 @@ public class SMTPConnection
 
     if (m_RequiresAuthentication && m_PromptForPassword && (m_Password.getValue().length() == 0)) {
       if (!isHeadless()) {
-        if (!doInteract()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-            else
-              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-            result = getStopMessage();
-          }
-        }
+        msg = doInteract();
+	if (msg != null) {
+	  if (m_StopFlowIfCanceled) {
+	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	    else
+	      StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	    result = getStopMessage();
+	  }
+	}
       }
       else if (supportsHeadlessInteraction()) {
-        if (!doInteractHeadless()) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-            else
-              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-            result = getStopMessage();
-          }
-        }
+        msg = doInteractHeadless();
+	if (msg != null) {
+	  if (m_StopFlowIfCanceled) {
+	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	    else
+	      StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	    result = getStopMessage();
+	  }
+	}
       }
     }
 

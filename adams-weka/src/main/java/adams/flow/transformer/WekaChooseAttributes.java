@@ -15,7 +15,7 @@
 
 /*
  * WekaChooseAttributes.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -464,15 +464,15 @@ public class WekaChooseAttributes
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
-    boolean		result;
+  public String doInteract() {
+    String		result;
     List<Integer>	selected;
     Instances		inst;
 
-    result = true;
+    result = null;
     inst   = (Instances) m_InputToken.getPayload();
 
     // determine pre-selection
@@ -481,11 +481,16 @@ public class WekaChooseAttributes
     // interact with user
     if (!m_NonInteractive) {
       selected = selectAttributes(inst, selected);
-      result   = (selected != null);
+      if (selected != null)
+        result = null;
+      else
+        result = "Nothing selected!";
     }
     
-    if (result)
-      result = generateOutput(inst, selected);
+    if (result == null) {
+      if (!generateOutput(inst, selected))
+        result = "Failed to generate output!";
+    }
     
     return result;
   }

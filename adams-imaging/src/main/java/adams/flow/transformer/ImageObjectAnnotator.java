@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectAnnotator.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -1020,10 +1020,10 @@ public class ImageObjectAnnotator
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     BufferedImage		img;
     AbstractImageContainer	imgcont;
     boolean			resetLabel;
@@ -1089,6 +1089,9 @@ public class ImageObjectAnnotator
     m_PreviousLabel    = m_PanelObjectAnnotation.getCurrentLabel();
     m_FirstInteraction = false;
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }

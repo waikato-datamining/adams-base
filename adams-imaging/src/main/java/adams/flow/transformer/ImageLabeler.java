@@ -15,7 +15,7 @@
 
 /*
  * ImageLabeler.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -803,10 +803,10 @@ public class ImageLabeler
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     AbstractImageContainer	cont;
 
     m_Accepted = false;
@@ -836,6 +836,9 @@ public class ImageLabeler
       m_OutputToken = new Token(cont);
     }
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }

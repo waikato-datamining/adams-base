@@ -15,7 +15,7 @@
 
 /*
  * PasteFromClipboard.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -93,7 +93,6 @@ import javax.swing.JOptionPane;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PasteFromClipboard
   extends AbstractInteractiveSource {
@@ -233,17 +232,20 @@ public class PasteFromClipboard
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     int		retVal;
 
     retVal = JOptionPane.showConfirmDialog(getActualParentComponent(), m_Message, getName(), JOptionPane.OK_CANCEL_OPTION);
     if ((retVal == JOptionPane.OK_OPTION) && (m_ClipboardData.canPaste()))
       m_OutputToken = m_ClipboardData.pasteAsToken();
 
-    return (retVal == JOptionPane.OK_OPTION);
+    if (retVal == JOptionPane.OK_OPTION)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 
   /**
@@ -258,18 +260,19 @@ public class PasteFromClipboard
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
+  @Override
+  public String doInteractHeadless() {
     String	content;
 
     content = ConsoleHelper.enterMultiLineValue("Please paste content:");
     if (content == null)
-      return false;
+      return "Nothing entered or canceled!";
 
     m_OutputToken = new Token(content);
 
-    return true;
+    return null;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSelectSubset.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -530,10 +530,10 @@ public class SpreadSheetSelectSubset
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     SpreadSheet	selected;
 
     m_LabelMessage.setText(getVariables().expand(m_Message));
@@ -549,6 +549,9 @@ public class SpreadSheetSelectSubset
       m_OutputToken = new Token(selected);
     }
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }

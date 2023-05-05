@@ -67,114 +67,114 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SSHConnection
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-host &lt;java.lang.String&gt; (property: host)
  * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) to connect to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-port &lt;int&gt; (property: port)
  * &nbsp;&nbsp;&nbsp;The port to connect to.
  * &nbsp;&nbsp;&nbsp;default: 22
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * &nbsp;&nbsp;&nbsp;maximum: 65535
  * </pre>
- * 
+ *
  * <pre>-authentication-type &lt;CREDENTIALS|PUBLIC_KEY&gt; (property: authenticationType)
  * &nbsp;&nbsp;&nbsp;The type of authentication to use.
  * &nbsp;&nbsp;&nbsp;default: CREDENTIALS
  * </pre>
- * 
+ *
  * <pre>-user &lt;java.lang.String&gt; (property: user)
  * &nbsp;&nbsp;&nbsp;The SSH user to use for connecting.
  * </pre>
- * 
+ *
  * <pre>-password &lt;adams.core.base.BasePassword&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The password of the SSH user to use for connecting.
  * </pre>
- * 
+ *
  * <pre>-private-key-file &lt;adams.core.io.PlaceholderFile&gt; (property: privateKeyFile)
  * &nbsp;&nbsp;&nbsp;The location of the private key.
  * &nbsp;&nbsp;&nbsp;default: ${HOME}&#47;.ssh&#47;id_rsa
  * </pre>
- * 
+ *
  * <pre>-private-key-passphrase &lt;adams.core.base.BasePassword&gt; (property: privateKeyPassphrase)
  * &nbsp;&nbsp;&nbsp;The passphrase for the private key file, ignored if empty.
  * </pre>
- * 
+ *
  * <pre>-known-hosts &lt;adams.core.io.PlaceholderFile&gt; (property: knownHosts)
  * &nbsp;&nbsp;&nbsp;The file storing the known hosts.
  * &nbsp;&nbsp;&nbsp;default: ${HOME}&#47;.ssh&#47;known_hosts
  * </pre>
- * 
+ *
  * <pre>-strict-host-key-checking &lt;boolean&gt; (property: strictHostKeyChecking)
  * &nbsp;&nbsp;&nbsp;Enables&#47;disables strict host key checking - strict checking is the recommended 
  * &nbsp;&nbsp;&nbsp;setting, as disabling it is very insecure!
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-forward-x &lt;boolean&gt; (property: forwardX)
  * &nbsp;&nbsp;&nbsp;If set to true, then X is forwarded.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-x-host &lt;java.lang.String&gt; (property: XHost)
  * &nbsp;&nbsp;&nbsp;The xhost (name&#47;IP address) to connect to.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-x-port &lt;int&gt; (property: XPort)
  * &nbsp;&nbsp;&nbsp;The xport to connect to.
  * &nbsp;&nbsp;&nbsp;default: 6000
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * &nbsp;&nbsp;&nbsp;maximum: 65535
  * </pre>
- * 
+ *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been 
  * &nbsp;&nbsp;&nbsp;provided in the setup.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -187,7 +187,7 @@ import java.util.List;
 public class SSHConnection
   extends AbstractStandalone
   implements TechnicalInformationHandler, OptionalPasswordPrompt,
-             SSHSessionProvider, PasswordPrompter {
+  SSHSessionProvider, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -255,8 +255,8 @@ public class SSHConnection
   public String globalInfo() {
     return
       "Provides access to a remote host via SSH.\n\n"
-        + "For more information see:\n\n"
-        + getTechnicalInformation().toString();
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -307,11 +307,11 @@ public class SSHConnection
     m_OptionManager.add(
       "private-key-file", "privateKeyFile",
       new PlaceholderFile(
-        System.getProperty("user.home")
-          + File.separator
-          + ".ssh"
-          + File.separator
-          + "id_rsa"));
+	System.getProperty("user.home")
+	  + File.separator
+	  + ".ssh"
+	  + File.separator
+	  + "id_rsa"));
 
     m_OptionManager.add(
       "private-key-passphrase", "privateKeyPassphrase",
@@ -320,11 +320,11 @@ public class SSHConnection
     m_OptionManager.add(
       "known-hosts", "knownHosts",
       new PlaceholderFile(
-        System.getProperty("user.home")
-          + File.separator
-          + ".ssh"
-          + File.separator
-          + "known_hosts"));
+	System.getProperty("user.home")
+	  + File.separator
+	  + ".ssh"
+	  + File.separator
+	  + "known_hosts"));
 
     m_OptionManager.add(
       "strict-host-key-checking", "strictHostKeyChecking",
@@ -384,7 +384,7 @@ public class SSHConnection
       result = QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
-        result += ":" + value;
+	result += ":" + value;
     }
     else {
       result = QuickInfoHelper.toString(this, "privateKeyFile", m_PrivateKeyFile);
@@ -787,7 +787,7 @@ public class SSHConnection
   public String promptForPasswordTipText() {
     return
       "If enabled, the user gets prompted "
-        + "for enter a password if none has been provided in the setup.";
+	+ "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -847,7 +847,7 @@ public class SSHConnection
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -885,10 +885,11 @@ public class SSHConnection
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean		result;
+  @Override
+  public String doInteract() {
+    String		result;
     PasswordDialog	dlg;
 
     dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
@@ -896,9 +897,12 @@ public class SSHConnection
     ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
     dlg.setVisible(true);
     ((Flow) getRoot()).deregisterWindow(dlg);
-    result = (dlg.getOption() == PasswordDialog.APPROVE_OPTION);
+    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
+      result = null;
+    else
+      result = INTERACTION_CANCELED;
 
-    if (result)
+    if (result == null)
       m_ActualPassword = dlg.getPassword();
 
     return result;
@@ -916,16 +920,17 @@ public class SSHConnection
   /**
    * Performs the interaction with the user in a headless environment.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteractHeadless() {
-    boolean		result;
+  @Override
+  public String doInteractHeadless() {
+    String		result;
     BasePassword	password;
 
-    result   = false;
+    result   = INTERACTION_CANCELED;
     password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
     if (password != null) {
-      result           = true;
+      result           = null;
       m_ActualPassword = password;
     }
 
@@ -995,64 +1000,67 @@ public class SSHConnection
   @Override
   protected String doExecute() {
     String	result;
+    String	msg;
 
     result = null;
 
     if (m_Session == null) {
       if (isLoggingEnabled())
-        getLogger().info("Starting new session");
+	getLogger().info("Starting new session");
 
       // password
       switch (m_AuthenticationType) {
-        case CREDENTIALS:
-          m_ActualPassword = m_Password;
-          break;
-        case PUBLIC_KEY:
-          m_ActualPassword = m_PrivateKeyPassphrase;
-          break;
-        default:
-          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+	case CREDENTIALS:
+	  m_ActualPassword = m_Password;
+	  break;
+	case PUBLIC_KEY:
+	  m_ActualPassword = m_PrivateKeyPassphrase;
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
 
       if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-        if (!isHeadless()) {
-          if (!doInteract()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
-        else if (supportsHeadlessInteraction()) {
-          if (!doInteractHeadless()) {
-            if (m_StopFlowIfCanceled) {
-              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-              else
-                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-              result = getStopMessage();
-            }
-          }
-        }
+	if (!isHeadless()) {
+	  msg = doInteract();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
+	else if (supportsHeadlessInteraction()) {
+	  msg = doInteractHeadless();
+	  if (msg != null) {
+	    if (m_StopFlowIfCanceled) {
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+	      else
+		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+	      result = getStopMessage();
+	    }
+	  }
+	}
       }
 
       if (result == null) {
-        if (!m_Host.isEmpty()) {
-          m_Session = newSession();
-          if (m_Session == null)
-            result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
-        }
-        else {
-          getLogger().warning("No host supplied, not initiating session!");
-        }
+	if (!m_Host.isEmpty()) {
+	  m_Session = newSession();
+	  if (m_Session == null)
+	    result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+	}
+	else {
+	  getLogger().warning("No host supplied, not initiating session!");
+	}
       }
     }
     else {
       if (isLoggingEnabled())
-        getLogger().info("Re-using current session");
+	getLogger().info("Re-using current session");
     }
 
     return result;
@@ -1064,12 +1072,12 @@ public class SSHConnection
   protected void disconnect() {
     if (m_Session != null) {
       if (m_Session.isConnected()) {
-        try {
-          m_Session.disconnect();
-        }
-        catch (Exception e) {
-          handleException("Failed to disconnect from '" + m_Host + "':", e);
-        }
+	try {
+	  m_Session.disconnect();
+	}
+	catch (Exception e) {
+	  handleException("Failed to disconnect from '" + m_Host + "':", e);
+	}
       }
     }
     m_Session = null;

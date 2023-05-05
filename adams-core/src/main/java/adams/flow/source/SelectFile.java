@@ -859,10 +859,11 @@ public class SelectFile
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
-  public boolean doInteract() {
-    boolean			result;
+  @Override
+  public String doInteract() {
+    String			result;
     int				retVal;
     File[]			files;
     BaseFileChooser		fileChooser;
@@ -875,7 +876,7 @@ public class SelectFile
     String			msg;
     int				i;
 
-    result = false;
+    result = INTERACTION_CANCELED;
 
     m_Queue.clear();
 
@@ -912,7 +913,7 @@ public class SelectFile
     if (m_NonInteractive) {
       for (File file: initialFiles)
         m_Queue.add(convert(file));
-      return true;
+      return null;
     }
 
     fileChooser = new BaseFileChooser();
@@ -940,7 +941,7 @@ public class SelectFile
       fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
     retVal = fileChooser.showOpenDialog(getActualParentComponent());
     if (retVal == BaseFileChooser.APPROVE_OPTION) {
-      result = true;
+      result = null;
       files  = fileChooser.getSelectedFiles();
       initialDir = new PlaceholderDirectory(fileChooser.getCurrentDirectory());
       for (File file: files) {
@@ -977,8 +978,9 @@ public class SelectFile
    *
    * @return		true if successfully interacted
    */
-  public boolean doInteractHeadless() {
-    boolean			result;
+  @Override
+  public String doInteractHeadless() {
+    String			result;
     PlaceholderFile[]		files;
     String[]			filesStr;
     Properties			props;
@@ -988,7 +990,7 @@ public class SelectFile
     PlaceholderFile[]		initialFiles;
     String[]			initialFilesStr;
 
-    result = false;
+    result = INTERACTION_CANCELED;
 
     m_Queue.clear();
 
@@ -1025,12 +1027,12 @@ public class SelectFile
     if (m_NonInteractive) {
       for (File file: initialFiles)
         m_Queue.add(convert(file));
-      return true;
+      return null;
     }
 
     files = ConsoleHelper.selectFiles(m_FileChooserTitle);
     if (files != null) {
-      result   = true;
+      result   = null;
       filesStr = new String[files.length];
       for (i = 0; i < files.length; i++) {
         filesStr[i] = convert(files[i]);
@@ -1057,8 +1059,11 @@ public class SelectFile
    */
   @Override
   protected String doExecute() {
+    String    msg;
+
     if (!isHeadless()) {
-      if (!doInteract()) {
+      msg = doInteract();
+      if (msg != null) {
         if (m_StopFlowIfCanceled) {
           if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
             StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
@@ -1068,7 +1073,8 @@ public class SelectFile
       }
     }
     else if (supportsHeadlessInteraction()) {
-      if (!doInteractHeadless()) {
+      msg = doInteractHeadless();
+      if (msg != null) {
         if (m_StopFlowIfCanceled) {
           if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
             StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());

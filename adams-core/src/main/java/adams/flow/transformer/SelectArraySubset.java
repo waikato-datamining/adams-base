@@ -15,7 +15,7 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -505,10 +505,10 @@ public class SelectArraySubset
   /**
    * Performs the interaction with the user.
    *
-   * @return		true if successfully interacted
+   * @return		null if successfully interacted, otherwise error message
    */
   @Override
-  public boolean doInteract() {
+  public String doInteract() {
     Object	array;
     int[]	indices;
     int		i;
@@ -546,6 +546,9 @@ public class SelectArraySubset
       m_OutputToken = new Token(array);
     }
 
-    return m_Accepted;
+    if (m_Accepted)
+      return null;
+    else
+      return INTERACTION_CANCELED;
   }
 }
