@@ -20,22 +20,21 @@
 
 package adams.gui.tools;
 
+import adams.gui.core.ClearableModel;
+import adams.gui.core.CustomSearchTableModel;
+import adams.gui.core.SearchParameters;
+import adams.gui.selection.AbstractTableBasedSelectionPanel.AbstractSelectionTableModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import adams.gui.core.ClearableModel;
-import adams.gui.core.CustomSearchTableModel;
-import adams.gui.core.SearchParameters;
-import adams.gui.selection.AbstractTableBasedSelectionPanel.AbstractSelectionTableModel;
-
 /**
  * A table model for displaying the details of the database object.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractManagementTableModel<T extends Comparable>
   extends AbstractSelectionTableModel<T>
@@ -239,6 +238,8 @@ public abstract class AbstractManagementTableModel<T extends Comparable>
   public void addAll(List<T> values) {
     boolean	modified;
 
+    getLogger().info("Adding " + values.size() + " values...");
+
     modified = false;
     for (T value: values) {
       if (m_Values.contains(value))
@@ -249,8 +250,10 @@ public abstract class AbstractManagementTableModel<T extends Comparable>
     if (!modified)
       return;
 
-    if (m_Sorted)
+    if (m_Sorted) {
+      getLogger().info("Sorting " + m_Values.size() + " values...");
       Collections.sort(m_Values);
+    }
 
     fireTableDataChanged();
   }
