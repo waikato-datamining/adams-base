@@ -15,31 +15,112 @@
 
 /*
  * AbstractBaseTableModel.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.core.Utils;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingLevel;
+import adams.core.logging.LoggingLevelHandler;
+import adams.core.logging.LoggingSupporter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.logging.Level;
 
 /**
  * Abstract ancestor for table models. The models are automatically sortable.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractBaseTableModel
   extends AbstractTableModel 
-  implements SpreadSheetSupporter {
+  implements SpreadSheetSupporter, LoggingSupporter, LoggingLevelHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 1379439060928152100L;
+
+  /** the logging level. */
+  protected LoggingLevel m_LoggingLevel;
+
+  /** the logger in use. */
+  protected transient Logger m_Logger;
+
+  /** whether logging is enabled. */
+  protected transient Boolean m_LoggingIsEnabled;
+
+  /**
+   * Initializes the model.
+   */
+  protected AbstractBaseTableModel() {
+    super();
+    initializeLogging();
+  }
+
+  /**
+   * Pre-configures the logging.
+   */
+  protected void initializeLogging() {
+    m_LoggingLevel = LoggingHelper.getLoggingLevel(getClass(), LoggingLevel.INFO);
+  }
+
+  /**
+   * Initializes the logger.
+   * <br><br>
+   * Default implementation uses the class name.
+   */
+  protected void configureLogger() {
+    m_Logger = LoggingHelper.getLogger(getClass());
+    m_Logger.setLevel(m_LoggingLevel.getLevel());
+  }
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public synchronized Logger getLogger() {
+    if (m_Logger == null)
+      configureLogger();
+    return m_Logger;
+  }
+
+  /**
+   * Sets the logging level.
+   *
+   * @param value 	the level
+   */
+  public synchronized void setLoggingLevel(LoggingLevel value) {
+    m_LoggingLevel     = value;
+    m_Logger           = null;
+    m_LoggingIsEnabled = null;
+  }
+
+  /**
+   * Returns the logging level.
+   *
+   * @return 		the level
+   */
+  public LoggingLevel getLoggingLevel() {
+    return m_LoggingLevel;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    if (m_LoggingIsEnabled == null)
+      m_LoggingIsEnabled = LoggingHelper.isAtLeast(m_LoggingLevel.getLevel(), Level.INFO);
+    return m_LoggingIsEnabled;
+  }
 
   /**
    * Returns the content as spreadsheet.
