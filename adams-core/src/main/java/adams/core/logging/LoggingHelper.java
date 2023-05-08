@@ -15,7 +15,7 @@
 
 /*
  * LoggingHelper.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -65,10 +65,24 @@ public class LoggingHelper {
    * @return		the logging level
    */
   public static Level getLevel(Class cls) {
+    return getLevel(cls, Level.WARNING);
+  }
+
+  /**
+   * Returns the log level for the specified class. E.g., for the class
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
+   * returned.
+   *
+   * @param cls		the class to return the debug level for
+   * @param defLevel	the default level to use
+   * @return		the logging level
+   */
+  public static Level getLevel(Class cls, Level defLevel) {
     Level	result;
     String	level;
 
-    result = Level.WARNING;
+    result = defLevel;
 
     if (m_LogLevelCache.containsKey(cls)) {
       result = m_LogLevelCache.get(cls);
@@ -110,11 +124,25 @@ public class LoggingHelper {
    * @return		the logging level
    */
   public static LoggingLevel getLoggingLevel(Class cls) {
+    return getLoggingLevel(cls, LoggingLevel.WARNING);
+  }
+
+  /**
+   * Returns the logging level for the specified class. E.g., for the class
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
+   * returned.
+   *
+   * @param cls		the class to return the debug level for
+   * @param defLevel 	the default level
+   * @return		the logging level
+   */
+  public static LoggingLevel getLoggingLevel(Class cls, LoggingLevel defLevel) {
     LoggingLevel	result;
     Level		level;
 
-    result = LoggingLevel.WARNING;
-    level  = getLevel(cls);
+    result = defLevel;
+    level  = getLevel(cls, defLevel.getLevel());
     for (LoggingLevel l: LoggingLevel.values()) {
       if (l.getLevel() == level) {
 	result = l;
@@ -126,19 +154,33 @@ public class LoggingHelper {
   }
 
   /**
+   * Returns the a logger with the log level for the specified class.
+   * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
+   * returned. Default level is WARNING.
+   *
+   * @param cls		the class to return the logger for
+   * @return		the logger
+   */
+  public static Logger getLogger(Class cls) {
+    return getLogger(cls, Level.WARNING);
+  }
+
+  /**
    * Returns the a logger with the log level for the specified class. 
    * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
    * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned.
    *
    * @param cls		the class to return the logger for
+   * @param defLevel 	the default level
    * @return		the logger
    */
-  public static Logger getLogger(Class cls) {
+  public static Logger getLogger(Class cls, Level defLevel) {
     Logger	result;
 
     result = Logger.getLogger(cls.getName());
-    result.setLevel(getLevel(cls));
+    result.setLevel(getLevel(cls, defLevel));
     result.removeHandler(getDefaultHandler());
     result.addHandler(getDefaultHandler());
     result.setUseParentHandlers(false);
@@ -154,15 +196,39 @@ public class LoggingHelper {
    * @return		the logger
    */
   public static Logger getLogger(String name) {
+    return getLogger(name, Level.WARNING);
+  }
+
+  /**
+   * Returns the a logger with the specified name.
+   *
+   * @param name	the name of the class to return the logger for
+   * @param defLevel 	the default level
+   * @return		the logger
+   */
+  public static Logger getLogger(String name, Level defLevel) {
     Logger	result;
 
     result = Logger.getLogger(name);
-    result.setLevel(Level.WARNING);
+    result.setLevel(defLevel);
     result.removeHandler(getDefaultHandler());
     result.addHandler(getDefaultHandler());
     result.setUseParentHandlers(false);
 
     return result;
+  }
+
+  /**
+   * Returns a console logger with the log level for the specified class.
+   * E.g., for the class "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
+   * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
+   * returned. Default level is WARNING.
+   *
+   * @param cls		the class to return the logger for
+   * @return		the logger
+   */
+  public static Logger getConsoleLogger(Class cls) {
+    return getConsoleLogger(cls, Level.WARNING);
   }
 
   /**
@@ -172,13 +238,14 @@ public class LoggingHelper {
    * returned.
    *
    * @param cls		the class to return the logger for
+   * @param defLevel 	the default level
    * @return		the logger
    */
-  public static Logger getConsoleLogger(Class cls) {
+  public static Logger getConsoleLogger(Class cls, Level defLevel) {
     Logger	result;
 
     result = Logger.getLogger(cls.getName());
-    result.setLevel(getLevel(cls));
+    result.setLevel(getLevel(cls, defLevel));
     result.addHandler(new SimpleConsoleHandler());
     result.setUseParentHandlers(false);
 
@@ -193,10 +260,21 @@ public class LoggingHelper {
    * @return		the logger
    */
   public static Logger getConsoleLogger(String name) {
+    return getConsoleLogger(name, Level.WARNING);
+  }
+
+  /**
+   * Returns a console logger with the log level for the specified class.
+   *
+   * @param name	the name of the class to return the logger for
+   * @param defLevel 	the default level
+   * @return		the logger
+   */
+  public static Logger getConsoleLogger(String name, Level defLevel) {
     Logger	result;
 
     result = Logger.getLogger(name);
-    result.setLevel(Level.WARNING);
+    result.setLevel(defLevel);
     result.addHandler(new SimpleConsoleHandler());
     result.setUseParentHandlers(false);
 
@@ -792,9 +870,9 @@ public class LoggingHelper {
     result = msg.trim() + "\n" + throwableToString(t);
     if (!silent) {
       if (source != null)
-        source.getLogger().log(Level.SEVERE, msg, t);
+	source.getLogger().log(Level.SEVERE, msg, t);
       else
-        System.err.println(result);
+	System.err.println(result);
     }
 
     return result;
