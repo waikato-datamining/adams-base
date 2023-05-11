@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTab.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -35,7 +35,7 @@ import adams.gui.core.ImageManager;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.event.WekaInvestigatorDataListener;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.DataContainerList;
 import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 
 import javax.swing.JMenuItem;
@@ -183,7 +183,7 @@ public abstract class AbstractInvestigatorTab
    *
    * @return		the data
    */
-  public List<DataContainer> getData() {
+  public DataContainerList getData() {
     return getOwner().getData();
   }
 

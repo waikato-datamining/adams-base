@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEditableDataTableAction.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -26,16 +26,14 @@ import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.DataContainerList;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTabWithEditableDataTable;
-
-import java.util.List;
 
 /**
  * Ancestor for actions on the data displayed on a tab using a
  * {@link AbstractInvestigatorTabWithEditableDataTable}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractEditableDataTableAction
   extends AbstractBaseAction
@@ -110,7 +108,7 @@ public abstract class AbstractEditableDataTableAction
    *
    * @return		the data
    */
-  public List<DataContainer> getData() {
+  public DataContainerList getData() {
     return getOwner().getData();
   }
 

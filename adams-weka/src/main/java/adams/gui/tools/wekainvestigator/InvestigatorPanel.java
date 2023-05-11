@@ -53,7 +53,7 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.goe.GenericObjectEditorDialog;
-import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.DataContainerList;
 import adams.gui.tools.wekainvestigator.data.FileContainer;
 import adams.gui.tools.wekainvestigator.job.InvestigatorJob;
 import adams.gui.tools.wekainvestigator.source.AbstractSource;
@@ -74,9 +74,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -169,7 +167,7 @@ public class InvestigatorPanel
   protected StringBuilder m_Log;
 
   /** the data loaded. */
-  protected List<DataContainer> m_Data;
+  protected DataContainerList m_Data;
 
   /** the filechooser for datasets. */
   protected WekaFileChooser m_FileChooser;
@@ -202,7 +200,7 @@ public class InvestigatorPanel
     super.initialize();
 
     m_Log                 = new StringBuilder();
-    m_Data                = new ArrayList<>();
+    m_Data                = new DataContainerList();
     m_RecentFilesHandler  = null;
     m_Worker              = null;
     m_Job                 = null;
@@ -769,7 +767,7 @@ public class InvestigatorPanel
    *
    * @return		the data
    */
-  public List<DataContainer> getData() {
+  public DataContainerList getData() {
     return m_Data;
   }
 
@@ -943,7 +941,6 @@ public class InvestigatorPanel
       logError("Failed to determine file loader for the following file:\n" + e.getItem(), "Error reloading data");
       return;
     }
-
     job = new InvestigatorJob(this, "Loading: " + e.getItem()) {
       protected void doRun() {
 	try {
@@ -1077,8 +1074,7 @@ public class InvestigatorPanel
   protected void toggleUndo() {
     WekaInvestigatorDataEvent 	event;
 
-    for (DataContainer cont: getData())
-      cont.getUndo().setEnabled(isUndoEnabled());
+    m_Data.setUndoEnabled(isUndoEnabled());
 
     event = new WekaInvestigatorDataEvent(
       this,
