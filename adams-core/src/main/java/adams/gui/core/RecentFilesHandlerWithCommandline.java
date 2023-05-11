@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RecentFilesHandlerWithCommandline.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -25,12 +25,12 @@ import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Recent files handler that stores a commandline alongside the file.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RecentFilesHandlerWithCommandline<M>
   extends AbstractRecentItemsHandler<M, Setup> {
@@ -41,81 +41,80 @@ public class RecentFilesHandlerWithCommandline<M>
   /**
    * Container class for storing file and optionhandler alongside.
    * Format: file TAB commandline
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Setup {
-    
+
     /** the file. */
     protected File m_File = null;
-    
+
     /** the object. */
     protected Object m_Handler = null;
-    
+
     /**
      * Initializes the setup container.
-     * 
+     *
      * @param file	the file to store
      * @param handler	the object to store
      */
     public Setup(File file, Object handler) {
       m_File    = file;
-      m_Handler = handler;
+      m_Handler = OptionUtils.shallowCopy(handler);
     }
-    
+
     /**
      * Initializes the setup container using the string.
-     * 
+     *
      * @param s		the string to use
      */
     public Setup(String s) {
       String[]	parts;
-      
+
       parts = s.split("\t");
       if (parts.length != 2)
 	return;
-      
+
       m_File = new File(parts[0]);
-      
+
       try {
 	m_Handler = OptionUtils.forAnyCommandLine(Object.class, parts[1]);
       }
       catch (Exception e) {
-	return;
+	// ignored
       }
     }
-    
+
     /**
      * Returns the file.
-     * 
+     *
      * @return		the file
      */
     public File getFile() {
       return m_File;
     }
-    
+
     /**
      * Returns the handler.
-     * 
-     * @return		the handler
+     *
+     * @return		the handler (copy)
      */
     public Object getHandler() {
-      return m_Handler;
+      return OptionUtils.shallowCopy(m_Handler);
     }
-    
+
     /**
      * Performs a check whether this setup is valid.
-     * 
+     *
      * @return		true if valid setup
      */
     public boolean check() {
       return (m_File != null) && (m_Handler != null) && m_File.exists();
     }
-    
+
     /**
      * Returns the container setup as string.
-     * 
+     *
      * @return		the string
      */
     @Override
@@ -125,10 +124,10 @@ public class RecentFilesHandlerWithCommandline<M>
       else
 	return m_File.getAbsolutePath() + "\t";
     }
-    
+
     /**
      * Returns the hashCode of the file's absolute path.
-     * 
+     *
      * @return		the hashcode, -1 if no file set
      */
     @Override
@@ -138,11 +137,11 @@ public class RecentFilesHandlerWithCommandline<M>
       else
 	return -1;
     }
-    
+
     /**
      * Returns true if the other object is also a {@link Setup} instance and
      * contains the same file.
-     * 
+     *
      * @param obj	the other object to compare with
      * @return		true if exactly the same
      */
@@ -163,7 +162,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /** the minimum number of parent directories to use. */
   protected int m_MinNumParentDirs;
-  
+
   /**
    * Initializes the handler with a maximum of 5 items.
    *
@@ -201,7 +200,7 @@ public class RecentFilesHandlerWithCommandline<M>
    * Checks the item after obtaining from the props file.
    * <br><br>
    * File must exist and handler not null.
-   * 
+   *
    * @param item	the item to check
    * @return		true if checks passed
    * @see		Setup#check()
@@ -210,7 +209,7 @@ public class RecentFilesHandlerWithCommandline<M>
   protected boolean check(Setup item) {
     return item.check();
   }
-  
+
   /**
    * Determines the minimum number of parent directories that need to be
    * included in the filename to make the filenames in the menu distinguishable.
@@ -220,7 +219,7 @@ public class RecentFilesHandlerWithCommandline<M>
    */
   protected synchronized int determineMinimumNumberOfParentDirs() {
     int			result;
-    HashSet<String>	files;
+    Set<String> 	files;
     int			num;
     int			i;
     int			max;
@@ -233,7 +232,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
     num = 0;
     do {
-      files = new HashSet<String>();
+      files = new HashSet<>();
       for (i = 0; i < m_RecentItems.size(); i++)
 	files.add(FileUtils.createPartialFilename(m_RecentItems.get(i).getFile(), num));
       if (files.size() == m_RecentItems.size())
@@ -248,7 +247,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /**
    * Returns the key to use for the counts in the props file.
-   * 
+   *
    * @return		the key
    */
   @Override
@@ -258,7 +257,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /**
    * Returns the key prefix to use for the items in the props file.
-   * 
+   *
    * @return		the prefix
    */
   @Override
@@ -268,7 +267,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /**
    * Turns an object into a string for storing in the props.
-   * 
+   *
    * @param obj		the object to convert
    * @return		the string representation
    */
@@ -279,7 +278,7 @@ public class RecentFilesHandlerWithCommandline<M>
 
   /**
    * Turns the string obtained from the props into an object again.
-   * 
+   *
    * @param s		the string representation
    * @return		the parsed object
    */
@@ -294,13 +293,13 @@ public class RecentFilesHandlerWithCommandline<M>
   @Override
   protected void preUpdateMenu() {
     super.preUpdateMenu();
-    
+
     m_MinNumParentDirs = determineMinimumNumberOfParentDirs();
   }
 
   /**
    * Generates the text for the menuitem.
-   * 
+   *
    * @param index	the index of the item
    * @param item	the item itself
    * @return		the generated text
