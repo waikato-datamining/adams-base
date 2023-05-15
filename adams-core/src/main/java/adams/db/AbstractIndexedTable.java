@@ -15,7 +15,7 @@
 
 /*
  * AbstractIndexedTable.java
- * Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -53,9 +53,6 @@ public abstract class AbstractIndexedTable
 
   /** the debugging level. */
   private final static Logger LOGGER = LoggingHelper.getConsoleLogger(AbstractIndexedTable.class);
-
-  /** the name of the props file. */
-  public final static String FILENAME = "Table.props";
 
   /** has this object been initialised. */
   protected boolean m_init;

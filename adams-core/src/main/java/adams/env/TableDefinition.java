@@ -13,19 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TableDefinition.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
-import adams.db.AbstractIndexedTable;
+import adams.db.AbstractTable;
 
 /**
  * Definition for the Table props file.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TableDefinition
   extends AbstractPropertiesDefinition {
@@ -51,7 +50,7 @@ public class TableDefinition
    * @return		the key
    */
   public String getFile() {
-    return AbstractIndexedTable.FILENAME;
+    return AbstractTable.FILENAME;
   }
 
   /**

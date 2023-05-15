@@ -15,7 +15,7 @@
 
 /*
  * AbstractTable.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -41,6 +41,9 @@ public abstract class AbstractTable
 
   /** for serialization. */
   private static final long serialVersionUID = 4511302757992864994L;
+
+  /** the name of the props file. */
+  public final static String FILENAME = "Table.props";
 
   /** the properties file. */
   protected static Properties m_Properties;
