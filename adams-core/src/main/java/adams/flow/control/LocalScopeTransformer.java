@@ -15,7 +15,7 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -276,6 +276,10 @@ public class LocalScopeTransformer
     m_OptionManager.add(
       "stopping-timeout", "stoppingTimeout",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "stopping-warning-interval", "stoppingWarningInterval",
+      10000, -1, null);
   }
 
   /**
@@ -685,6 +689,35 @@ public class LocalScopeTransformer
    */
   public String stoppingTimeoutTipText() {
     return m_Actors.stoppingTimeoutTipText();
+  }
+
+  /**
+   * Sets the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @param value	interval in milliseconds (<= 0 no warning)
+   */
+  public void setStoppingWarningInterval(int value) {
+    m_Actors.setStoppingWarningInterval(value);
+    reset();
+  }
+
+  /**
+   * Returns the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @return		interval in milliseconds (<= 0 no warning)
+   */
+  public int getStoppingWarningInterval() {
+    return m_Actors.getStoppingWarningInterval();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingWarningIntervalTipText() {
+    return m_Actors.stoppingWarningIntervalTipText();
   }
 
   /**

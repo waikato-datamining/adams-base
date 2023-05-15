@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -138,6 +138,9 @@ public class Branch
   /** the timeout in milliseconds for stopping in case of atomic execution (<= 0 is infinity). */
   protected int m_StoppingTimeout;
 
+  /** the interval in msec to warn if actors haven't stopped yet (and not stopping timeout set). */
+  protected int m_StoppingWarningInterval;
+
   /** whether to collect the output of the branches. */
   protected boolean m_CollectOutput;
   
@@ -197,6 +200,10 @@ public class Branch
     m_OptionManager.add(
       "stopping-timeout", "stoppingTimeout",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "stopping-warning-interval", "stoppingWarningInterval",
+      10000, -1, null);
 
     m_OptionManager.add(
       "branch", "branches",
@@ -278,6 +285,35 @@ public class Branch
    */
   public String stoppingTimeoutTipText() {
     return "The timeout in milliseconds when waiting for actors to finish (<= 0 for infinity; see 'finishBeforeStopping').";
+  }
+
+  /**
+   * Sets the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @param value	interval in milliseconds (<= 0 no warning)
+   */
+  public void setStoppingWarningInterval(int value) {
+    m_StoppingWarningInterval = value;
+    reset();
+  }
+
+  /**
+   * Returns the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @return		interval in milliseconds (<= 0 no warning)
+   */
+  public int getStoppingWarningInterval() {
+    return m_StoppingWarningInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingWarningIntervalTipText() {
+    return "The interval in milliseconds to output logging warnings if the actors haven't stopped yet (and no stopping timeout set); no warning if <= 0.";
   }
 
   /**
@@ -966,14 +1002,21 @@ public class Branch
   @Override
   public void stopExecution() {
     int		i;
+    int		waited;
+    int		lastWarn;
 
     if (m_FinishBeforeStopping) {
-      int waited = 0;
+      waited   = 0;
+      lastWarn = 0;
       while (isExecuting()) {
 	synchronized(this)  {
           waited += 100;
 	  try {
 	    wait(100);
+            if ((m_StoppingWarningInterval > 0) && (m_StoppingTimeout <= 0) && (waited >= lastWarn + m_StoppingWarningInterval)) {
+              lastWarn = waited;
+              getLogger().warning("Waited already " + waited + " msec.");
+            }
 	  }
 	  catch (Exception e) {
 	    // ignored

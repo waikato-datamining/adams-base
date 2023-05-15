@@ -15,7 +15,7 @@
 
 /*
  * AbstractControlActor.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -26,7 +26,7 @@ package adams.flow.control;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractDirectedControlActor
-  extends AbstractControlActor 
+  extends AbstractControlActor
   implements AtomicExecution {
 
   /** for serialization. */
@@ -34,12 +34,15 @@ public abstract class AbstractDirectedControlActor
 
   /** the director used for executing. */
   protected AbstractDirector m_Director;
-  
+
   /** whether to finish execution first before stopping. */
   protected boolean m_FinishBeforeStopping;
 
   /** the timeout in milliseconds for stopping in case of atomic execution (<= 0 is infinity). */
   protected int m_StoppingTimeout;
+
+  /** the interval in msec to warn if actors haven't stopped yet (and not stopping timeout set). */
+  protected int m_StoppingWarningInterval;
 
   /**
    * Adds options to the internal list of options.
@@ -55,27 +58,31 @@ public abstract class AbstractDirectedControlActor
     m_OptionManager.add(
       "stopping-timeout", "stoppingTimeout",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "stopping-warning-interval", "stoppingWarningInterval",
+      10000, -1, null);
   }
 
   /**
    * Sets whether to finish processing before stopping execution.
-   * 
+   *
    * @param value	if true then actor finishes processing first 
    */
   public void setFinishBeforeStopping(boolean value) {
     m_FinishBeforeStopping = value;
     reset();
   }
-  
+
   /**
    * Returns whether to finish processing before stopping execution.
-   * 
+   *
    * @return		true if actor finishes processing first
    */
   public boolean getFinishBeforeStopping() {
     return m_FinishBeforeStopping;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -92,8 +99,10 @@ public abstract class AbstractDirectedControlActor
    * @param value	timeout in milliseconds (<= 0 for infinity)
    */
   public void setStoppingTimeout(int value) {
-    m_StoppingTimeout = value;
-    reset();
+    if (getOptionManager().isValid("stoppingTimeout", value)) {
+      m_StoppingTimeout = value;
+      reset();
+    }
   }
 
   /**
@@ -116,6 +125,35 @@ public abstract class AbstractDirectedControlActor
   }
 
   /**
+   * Sets the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @param value	interval in milliseconds (<= 0 no warning)
+   */
+  public void setStoppingWarningInterval(int value) {
+    m_StoppingWarningInterval = value;
+    reset();
+  }
+
+  /**
+   * Returns the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @return		interval in milliseconds (<= 0 no warning)
+   */
+  public int getStoppingWarningInterval() {
+    return m_StoppingWarningInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingWarningIntervalTipText() {
+    return "The interval in milliseconds to output logging warnings if the actors haven't stopped yet (and no stopping timeout set); no warning if <= 0.";
+  }
+
+  /**
    * Returns an instance of a director.
    *
    * @return		the director
@@ -123,10 +161,10 @@ public abstract class AbstractDirectedControlActor
   protected AbstractDirector newDirector() {
     return new SequentialDirector();
   }
-  
+
   /**
    * Returns the current director in use.
-   * 
+   *
    * @return		the director, null if none in use
    */
   public AbstractDirector getDirector() {
@@ -196,8 +234,6 @@ public abstract class AbstractDirectedControlActor
   protected String doExecute() {
     String	result;
 
-    result = null;
-
     try {
       result = m_Director.execute();
     }
@@ -207,7 +243,7 @@ public abstract class AbstractDirectedControlActor
 
     return result;
   }
-  
+
   /**
    * Stops the processing of tokens without stopping the flow.
    */
@@ -223,14 +259,22 @@ public abstract class AbstractDirectedControlActor
    */
   @Override
   public void stopExecution() {
+    int		waited;
+    int		lastWarn;
+
     if (m_Director != null) {
       if (m_FinishBeforeStopping) {
-        int waited = 0;
+	waited   = 0;
+	lastWarn = 0;
 	while (isExecuting()) {
 	  synchronized(this)  {
 	    waited += 100;
 	    try {
 	      wait(100);
+	      if ((m_StoppingWarningInterval > 0) && (m_StoppingTimeout <= 0) && (waited >= lastWarn + m_StoppingWarningInterval)) {
+	        lastWarn = waited;
+		getLogger().warning("Waited already " + waited + " msec.");
+	      }
 	    }
 	    catch (Exception e) {
 	    }
@@ -239,7 +283,7 @@ public abstract class AbstractDirectedControlActor
 	  }
 	}
       }
-      
+
       m_Director.stopExecution();
     }
 
