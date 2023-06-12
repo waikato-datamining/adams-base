@@ -26,6 +26,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.core.SpreadSheetTableModel;
 import adams.gui.event.SearchEvent;
 
 import javax.swing.JPanel;
@@ -101,6 +102,26 @@ public class ImageMetaDataExtractorHandler
       panel.add(search, BorderLayout.SOUTH);
 
       return new PreviewPanel(panel, table);
+    }
+    catch (Exception e) {
+      return new NoPreviewAvailablePanel();
+    }
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the preview
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel lastPreview) {
+    SpreadSheet			sheet;
+
+    try {
+      sheet = ImageMetaDataHelper.metaDataExtractor(file);
+      ((SpreadSheetTable) lastPreview.getContent()).setModel(new SpreadSheetTableModel(sheet));
+      return lastPreview;
     }
     catch (Exception e) {
       return new NoPreviewAvailablePanel();
