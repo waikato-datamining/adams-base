@@ -1,0 +1,11 @@
+# Project: adams
+# Date: 2023-06-16 10:08:10
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-net
+#
+adams.flow.control.Flow -annotation "Shows how to display HTML 4 content.\\nThe display can be influenced with CSS rules.\\nLinks open in the default system browser." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.CombineVariables -expression "<html>\\n  <head>\\n    <title>HTML 4 in ADAMS</title>\\n  </head>\\n  <body>\\n    <h2>ADAMS</h3>\\n    <p>Flow dir: @{flow_dir}</p>\\n    <p><a href=\\\"https://adams.cms.waikato.ac.nz\\\">ADAMS homepage</a></p>\\n  </body>\\n</html>" -conversion adams.data.conversion.StringToString
+ adams.flow.control.Tee -name "source code"
+  adams.flow.sink.Display -name "HTML Source" -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
+ adams.flow.sink.Html4Display -name Html -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -css "h2 {color: blue;}"
