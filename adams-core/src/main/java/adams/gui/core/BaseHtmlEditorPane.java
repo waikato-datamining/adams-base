@@ -15,13 +15,17 @@
 
 /*
  * BaseHtmlEditorPane.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.core.base.BaseObject;
+import adams.core.base.BaseString;
 import adams.gui.core.BrowserHelper.DefaultHyperlinkListener;
 
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import java.io.IOException;
 import java.net.URL;
 
@@ -83,7 +87,32 @@ public class BaseHtmlEditorPane
     setEditable(false);
     setAutoscrolls(true);
     setContentType("text/html");
+    setEditorKit(new HTMLEditorKit());
     m_DefaultHyperlinkListener = new DefaultHyperlinkListener();
+  }
+
+  /**
+   * Sets the CSS style sheet rules.
+   *
+   * @param rules	the rules
+   */
+  public void addCSS(BaseString[] rules) {
+    addCSS(BaseObject.toStringArray(rules));
+  }
+
+  /**
+   * Sets the CSS style sheet rules.
+   *
+   * @param rules	the rules
+   */
+  public void addCSS(String[] rules) {
+    HTMLEditorKit	kit;
+    StyleSheet 		styleSheet;
+
+    kit        = (HTMLEditorKit) getEditorKit();
+    styleSheet = kit.getStyleSheet();
+    for (String rule: rules)
+      styleSheet.addRule(rule);
   }
 
   /**
