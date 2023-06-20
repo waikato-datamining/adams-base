@@ -1167,6 +1167,8 @@ The following sources are available:
 \end{tight_itemize}
 The following transformers are available:
 \begin{tight_itemize}
+	\item \textit{DeletePropertyValue} -- removes all properties that match the
+	regular expression.
 	\item \textit{GetPropertyNames} -- outputs all property names.
 	\item \textit{GetPropertyValue} -- outputs the values of properties
 	which key matches a supplied regular expression.
@@ -1197,12 +1199,13 @@ The following conversion are available:
 Flows can process objects that implement the \textit{java.util.Map} interface.
 The following transformers are available:
 \begin{tight_itemize}
+	\item \textit{DeleteMapValue} -- deletes the specified key-value pair from the map.
 	\item \textit{FilterMap} -- for applying a filter to a map.
 	\item \textit{GetMapKeys} -- returns all keys from the key.
 	\item \textit{GetMapValue} -- extracts a value associated with the
 	specified key from a \textit{java.util.Map} object.
-  \item \textit{MapVariableIterator} -- iterates over key/value pairs of a map,
-  storing key and value in user-specified variables.
+    \item \textit{MapVariableIterator} -- iterates over key/value pairs of a map,
+    storing key and value in user-specified variables.
 	\item \textit{MapToStorageValues} -- transfers the key-value pairs of a
 	\textit{java.util.Map} into internal storage.
 	\item \textit{MapToVariables} -- turns the key-value pairs of a
