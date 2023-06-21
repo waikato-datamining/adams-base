@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceFileReader.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -72,7 +72,6 @@ import adams.data.io.input.InstanceReader;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstanceFileReader
   extends AbstractDataContainerFileReader<Instance> {
@@ -101,11 +100,12 @@ public class WekaInstanceFileReader
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Returns the base class of the items.
    *
-   * @return		the data type
+   * @return		the class
    */
-  public Class[] generates() {
-    return new Class[]{Instance.class};
+  @Override
+  protected Class getItemClass() {
+    return Instance.class;
   }
 }

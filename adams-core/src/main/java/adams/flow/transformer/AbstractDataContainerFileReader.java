@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileReader.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,8 +26,10 @@ import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.input.IncrementalDataContainerReader;
+import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -39,7 +41,8 @@ import java.util.List;
  * @param <T> the type of data that is read from disk
  */
 public abstract class AbstractDataContainerFileReader<T extends DataContainer>
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ArrayProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = 2136481673137019370L;
@@ -50,7 +53,10 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   /** the reader to use. */
   protected AbstractDataContainerReader<T> m_Reader;
 
-  /** the chromatograms that were read. */
+  /** whether to output an array instead of single items. */
+  protected boolean m_OutputArray;
+
+  /** the containers that were read. */
   protected List m_Containers;
 
   /**
@@ -61,8 +67,12 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "reader", "reader",
-	    getDefaultReader());
+      "reader", "reader",
+      getDefaultReader());
+
+    m_OptionManager.add(
+      "output-array", "outputArray",
+      false);
   }
 
   /**
@@ -102,13 +112,47 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   }
 
   /**
+   * Sets whether to output the items as array or as single strings.
+   *
+   * @param value	true if output is an array
+   */
+  public void setOutputArray(boolean value) {
+    m_OutputArray = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output the items as array or as single strings.
+   *
+   * @return		true if output is an array
+   */
+  public boolean getOutputArray() {
+    return m_OutputArray;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputArrayTipText() {
+    return "Whether to output the containers as an array or one-by-one.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "reader", m_Reader);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "reader", m_Reader);
+    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", ", ");
+
+    return result;
   }
 
   /**
@@ -121,11 +165,32 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   }
 
   /**
+   * Returns the base class of the items.
+   *
+   * @return		the class
+   */
+  protected abstract Class getItemClass();
+
+  /**
    * Returns the class of objects that it generates.
    *
-   * @return		the data type
+   * @return		the classes
    */
-  public abstract Class[] generates();
+  @Override
+  public Class[] generates() {
+    Class[]	result;
+    Object	array;
+
+    if (m_OutputArray) {
+      array  = Array.newInstance(getItemClass(), 0);
+      result = new Class[]{array.getClass()};
+    }
+    else {
+      result = new Class[]{getItemClass()};
+    }
+
+    return result;
+  }
 
   /**
    * Removes entries from the backup.
@@ -200,9 +265,13 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     // read data
     try {
       m_Containers = m_Reader.read();
+      if ((m_Reader instanceof IncrementalDataContainerReader) && m_OutputArray) {
+	while (((IncrementalDataContainerReader) m_Reader).hasMoreData())
+	  m_Containers.addAll(m_Reader.read());
+      }
       if (isLoggingEnabled())
 	getLogger().info(m_Containers.size() + " containers read");
-      if (!(m_Reader instanceof IncrementalDataContainerReader))
+      if (m_OutputArray || !(m_Reader instanceof IncrementalDataContainerReader))
 	m_Reader.cleanUp();
     }
     catch (Exception e) {
@@ -234,7 +303,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     Token	result;
 
     // read more data?
-    if (m_Reader instanceof IncrementalDataContainerReader) {
+    if ((m_Reader instanceof IncrementalDataContainerReader) && !m_OutputArray) {
       if (m_Containers.size() == 0)
 	m_Containers = m_Reader.read();
     }
