@@ -201,6 +201,7 @@ public class InvestigatorPanel
 
     m_Log                 = new StringBuilder();
     m_Data                = new DataContainerList();
+    m_Data.setUndoEnabled(getProperties().getBoolean("General.UndoEnabled", true));
     m_RecentFilesHandler  = null;
     m_Worker              = null;
     m_Job                 = null;
@@ -946,6 +947,7 @@ public class InvestigatorPanel
 	try {
 	  loader.setFile(e.getItem().getFile());
 	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
+          cont.getUndo().setEnabled(isUndoEnabled());
 	  updateClassAttribute(cont.getData());
 	  updateRelationName(e.getItem().getFile(), cont.getData());
 	  SwingUtilities.invokeLater(() -> {
@@ -1066,6 +1068,7 @@ public class InvestigatorPanel
     // make sure that the menu has been built
     getMenuBar();
     m_MenuItemOptionsUndoEnabled.setSelected(value);
+    m_Data.setUndoEnabled(value);
   }
 
   /**
