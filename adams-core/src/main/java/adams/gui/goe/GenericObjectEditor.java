@@ -290,7 +290,6 @@ public class GenericObjectEditor
 
       m_LabelClassname = new JLabel("None");
       m_ComboBoxClassname = new BaseComboBox<>(new String[]{"None"});
-      m_ComboBoxClassname.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
       m_ComboBoxClassname.addActionListener((ActionEvent e) -> {
 	if ((m_ComboBoxClassname.getSelectedIndex() == -1) || m_IgnoreChanges)
 	  return;
