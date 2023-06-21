@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Stoppable;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
 import adams.data.io.input.AbstractDataContainerReader;
@@ -33,6 +34,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Abstract ancestor for actors that read data containers from disk.
@@ -301,15 +303,41 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   @Override
   public Token output() {
     Token	result;
+    Object	array;
+    int		i;
+    boolean	error;
 
-    // read more data?
-    if ((m_Reader instanceof IncrementalDataContainerReader) && !m_OutputArray) {
-      if (m_Containers.size() == 0)
-	m_Containers = m_Reader.read();
+    if (m_OutputArray) {
+      error = false;
+      array = Array.newInstance(getItemClass(), m_Containers.size());
+      for (i = 0; i < m_Containers.size(); i++) {
+        try {
+          Array.set(array, i, m_Containers.get(i));
+        }
+        catch (Exception e) {
+          error = true;
+          getLogger().log(
+            Level.SEVERE,
+            "Failed to set array element #" + (i+1) + " '" + m_Containers.get(i) + "' "
+              + "(" + Utils.classToString(m_Containers.get(i)) + ") "
+              + "as " + Utils.classToString(getItemClass()), e);
+        }
+        if (isStopped() || error)
+          break;
+      }
+      result = new Token(array);
+      m_Containers.clear();
     }
+    else {
+      // read more data?
+      if ((m_Reader instanceof IncrementalDataContainerReader) && !m_OutputArray) {
+        if (m_Containers.size() == 0)
+          m_Containers = m_Reader.read();
+      }
 
-    result = new Token(m_Containers.get(0));
-    m_Containers.remove(0);
+      result = new Token(m_Containers.get(0));
+      m_Containers.remove(0);
+    }
 
     return result;
   }
