@@ -15,20 +15,11 @@
 
 /*
  * AbstractInstancesGenerator.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instances;
 
-import java.util.logging.Level;
-
-import weka.core.Attribute;
-import weka.core.DenseInstance;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.SelectedTag;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Add;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.ShallowCopySupporter;
@@ -42,19 +33,28 @@ import adams.data.report.ReportHandler;
 import adams.data.weka.ArffUtils;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
+import adams.db.OptionalDatabaseConnectionUser;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.SelectedTag;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Add;
+
+import java.util.logging.Level;
 
 /**
  * Abstract base class for schemes that turn temperature profiles into
  * weka.core.Instance objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * <T> the type of data to process
  */
 public abstract class AbstractInstanceGenerator<T extends DataContainer & ReportHandler>
   extends AbstractOptionHandler
   implements Comparable, CleanUpHandler, DatabaseConnectionHandler,
-             ShallowCopySupporter<AbstractInstanceGenerator> {
+             ShallowCopySupporter<AbstractInstanceGenerator>, OptionalDatabaseConnectionUser {
 
   /** for serialization. */
   private static final long serialVersionUID = 5543015283566767256L;
@@ -175,6 +175,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
    *
    * @param value 	true if to operate in offline mode
    */
+  @Override
   public void setOffline(boolean value) {
     m_Offline = value;
     reset();
@@ -185,6 +186,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
    *
    * @return 		true if operating in offline mode
    */
+  @Override
   public boolean getOffline() {
     return m_Offline;
   }
@@ -195,6 +197,7 @@ public abstract class AbstractInstanceGenerator<T extends DataContainer & Report
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String offlineTipText() {
     return "If set to true, the generator operates in offline mode, ie does not access database.";
   }
