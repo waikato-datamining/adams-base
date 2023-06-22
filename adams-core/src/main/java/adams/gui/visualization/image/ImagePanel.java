@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -363,6 +363,12 @@ public class ImagePanel
 	    super.mouseClicked(e);
 	  }
 	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	  super.mouseExited(e);
+	  updateStatus(null);
+	}
       });
 
       addMouseWheelListener(new MouseWheelListener() {
@@ -577,8 +583,7 @@ public class ImagePanel
       Point	pos;
 
       pos = getMousePosition();
-      if (pos != null)
-	updateStatus(pos.getLocation());
+      updateStatus(pos != null ? pos.getLocation() : null);
     }
 
     /**
@@ -651,17 +656,39 @@ public class ImagePanel
      */
     public void updateStatus(Point pos) {
       Point	loc;
+      String	msg;
+      String	zoom;
 
       if (getOwner() == null)
 	return;
 
-      loc = mouseToPixelLocation(pos);
-      getOwner().showStatus(
-	"X: " + (int) (loc.getX() + 1)
-	  + "   "
+      msg = "";
+
+      // image dimensions
+      if (getCurrentImage() != null) {
+	msg = "W: " + getCurrentImage().getWidth()
+	  + "  "
+	  + "H: " + getCurrentImage().getHeight()
+	  + "  ";
+      }
+
+      // mouse location
+      if (pos != null) {
+	loc = mouseToPixelLocation(pos);
+	msg += "X: " + (int) (loc.getX() + 1)
+	  + "  "
 	  + "Y: " + (int) (loc.getY() + 1)
-	  + "   "
-	  + "Zoom: " + Utils.doubleToString(getScale() * 100, 1) + "%");
+	  + "  ";
+      }
+
+      // zoom
+      if (getScale() == -1)
+        zoom = "best fit";
+      else
+	zoom = Utils.doubleToString(getScale() * 100, 1) + "%";
+      msg += "Zoom: " + zoom;
+
+      getOwner().showStatus(msg);
     }
 
     /**
@@ -825,12 +852,13 @@ public class ImagePanel
      * @param scale 	the scale to use
      */
     public void setCurrentImage(BufferedImage value, double scale) {
-      m_CurrentImage         = value;
+      m_CurrentImage  = value;
       m_SelectionFrom = null;
-      m_SelectionTo = null;
-      m_Dragged              = false;
-      m_Selecting            = false;
+      m_SelectionTo   = null;
+      m_Dragged       = false;
+      m_Selecting     = false;
       setScale(scale);
+      updateStatus(null);
     }
 
     /**
