@@ -25,6 +25,7 @@ import adams.flow.core.Token;
 import adams.gui.core.BaseHtmlEditorPane;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ExtensionFileFilter;
 
 import java.awt.BorderLayout;
 
@@ -133,7 +134,8 @@ import java.awt.BorderLayout;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Html4Display
-  extends AbstractGraphicalDisplay {
+  extends AbstractGraphicalDisplay
+  implements TextSupplier {
 
   private static final long serialVersionUID = -9623335130679482L;
 
@@ -244,5 +246,35 @@ public class Html4Display
   protected void display(Token token) {
     m_EditorPane.setDocument(m_EditorPane.getEditorKit().createDefaultDocument());
     m_EditorPane.setText(token.getPayload(String.class));
+  }
+
+  /**
+   * Returns the text for the menu item.
+   *
+   * @return		the menu item text, null for default
+   */
+  public String getCustomSupplyTextMenuItemCaption() {
+    return "Save html as...";
+  }
+
+  /**
+   * Returns a custom file filter for the file chooser.
+   *
+   * @return		the file filter, null if to use default one
+   */
+  public ExtensionFileFilter getCustomTextFileFilter() {
+    return new ExtensionFileFilter("HTML files", "html");
+  }
+
+  /**
+   * Supplies the text. May get called even if actor hasn't been executed yet.
+   *
+   * @return		the text, null if none available
+   */
+  public String supplyText() {
+    if (m_Panel == null)
+      return null;
+    else
+      return m_EditorPane.getText();
   }
 }
