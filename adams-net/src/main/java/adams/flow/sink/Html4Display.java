@@ -227,6 +227,24 @@ public class Html4Display
   }
 
   /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  protected boolean supportsClear() {
+    return true;
+  }
+
+  /**
+   * Clears the display.
+   */
+  @Override
+  protected void clear() {
+    clearPanel();
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return the Class of objects that can be processed
