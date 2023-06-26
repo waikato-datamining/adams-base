@@ -68,7 +68,7 @@ public class RangedThresholdTest
    * @return		the value
    */
   protected String getTypicalValue() {
-    return "0,100:10";
+    return RangedThreshold.DEFAULT;
   }
 
   /**
@@ -88,6 +88,14 @@ public class RangedThresholdTest
     String value = "0,100:10;100,200:20;200,300:30";
     assertTrue("Should be valid: " + value, t.isValid(value));
     assertEquals("Should be three specs: " + value, 3, new RangedThreshold(value).thresholdsValue().length);
+  }
+
+  /**
+   * Tests empty string.
+   */
+  public void testEmpty() {
+    RangedThreshold t = new RangedThreshold();
+    assertTrue("Emptry string should be valid", t.isValid(""));
   }
 
   /**

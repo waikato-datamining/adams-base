@@ -36,7 +36,7 @@ public class RangedThreshold
 
   private static final long serialVersionUID = 7276914469967286837L;
 
-  public final static String DEFAULT = "0-100:10";
+  public final static String DEFAULT = "0,100:10";
 
   /**
    * Container for storing min/max and threshold.
@@ -156,6 +156,8 @@ public class RangedThreshold
    */
   @Override
   public boolean isValid(String value) {
+    if (value.isEmpty())
+      return true;
     try {
       parse(value);
       return true;
@@ -171,6 +173,8 @@ public class RangedThreshold
    * @return		the specs
    */
   public ThresholdSpecification[] thresholdsValue() {
+    if (getValue().isEmpty())
+      return new ThresholdSpecification[0];
     try {
       return parse(getValue());
     }
