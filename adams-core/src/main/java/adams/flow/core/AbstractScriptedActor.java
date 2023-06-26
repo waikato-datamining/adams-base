@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptedActor.java
- *    Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -32,7 +32,6 @@ import java.util.Hashtable;
  * Abstract ancestor for actors that execute external scripts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractScriptedActor
   extends AbstractActor
@@ -61,12 +60,12 @@ public abstract class AbstractScriptedActor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "script", "scriptFile",
-	    new PlaceholderFile("."));
+      "script", "scriptFile",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "options", "scriptOptions",
-	    new BaseText());
+      "options", "scriptOptions",
+      new BaseText());
   }
 
   /**
@@ -76,7 +75,12 @@ public abstract class AbstractScriptedActor
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "scriptFile", new String(m_ScriptFile + " " + m_ScriptOptions).trim());
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "scriptFile", (m_ScriptFile + " " + m_ScriptOptions).trim());
+    result += QuickInfoHelper.toString(this, "scriptOptions", m_ScriptOptions, ", options: ");
+
+    return result;
   }
 
   /**
@@ -143,10 +147,10 @@ public abstract class AbstractScriptedActor
   @Override
   protected void pruneBackup() {
     super.pruneBackup();
-    
+
     pruneBackup(BACKUP_SCRIPTOBJECT);
   }
-  
+
   /**
    * Backs up the current state of the actor before update the variables.
    *
@@ -203,7 +207,7 @@ public abstract class AbstractScriptedActor
     String	result;
 
     result = null;
-    
+
     if (m_ScriptObject == null) {
       result = loadScriptObject();
       if (result == null)
@@ -246,10 +250,10 @@ public abstract class AbstractScriptedActor
       if (m_ScriptObject instanceof Actor)
 	((Actor) m_ScriptObject).stopExecution();;
     }
-    
+
     super.stopExecution();
   }
-  
+
   /**
    * Cleans up after the execution has finished.
    */

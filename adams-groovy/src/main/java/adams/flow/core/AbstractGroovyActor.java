@@ -15,7 +15,7 @@
 
 /*
  *    AbstractGroovyActor.java
- *    Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,7 +23,6 @@ package adams.flow.core;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
-import adams.core.Utils;
 import adams.core.scripting.Groovy;
 import adams.core.scripting.GroovyScript;
 
@@ -31,7 +30,6 @@ import adams.core.scripting.GroovyScript;
  * Abstract ancestor for actors that execute Groovy scripts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Groovy
  */
 public abstract class AbstractGroovyActor
@@ -75,10 +73,18 @@ public abstract class AbstractGroovyActor
    */
   @Override
   public String getQuickInfo() {
-    if (QuickInfoHelper.hasVariable(this, "scriptFile") || !m_ScriptFile.isDirectory())
-      return super.getQuickInfo();
-    else
-      return QuickInfoHelper.toString(this, "inlineScript", Shortening.shortenEnd(m_InlineScript.stringValue(), 50));
+    String	result;
+
+    if (QuickInfoHelper.hasVariable(this, "scriptFile") || !m_ScriptFile.isDirectory()) {
+      result = super.getQuickInfo();
+    }
+    else {
+      result = QuickInfoHelper.toString(this, "inlineScript", Shortening.shortenEnd(m_InlineScript.stringValue(), 50));
+      if (result != null)
+	result += QuickInfoHelper.toString(this, "scriptOptions", m_ScriptOptions, ", options: ");
+    }
+
+    return result;
   }
 
   /**
