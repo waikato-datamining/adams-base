@@ -389,3 +389,8 @@ adams.core.base.MavenArtifactExclusion#valueOf=adams.core.option.parsing.MavenAr
 adams.core.base.MavenRepository=true
 adams.core.base.MavenRepository#toString=adams.core.option.parsing.MavenRepositoryParsing#toString
 adams.core.base.MavenRepository#valueOf=adams.core.option.parsing.MavenRepositoryParsing#valueOf
+
+# RangedThreshold objects
+adams.core.base.RangedThreshold=true
+adams.core.base.RangedThreshold#toString=adams.core.option.parsing.BaseObjectParsing#toString
+adams.core.base.RangedThreshold#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf

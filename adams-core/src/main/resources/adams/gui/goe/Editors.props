@@ -84,3 +84,4 @@ adams.core.VariableNameValuePair=adams.gui.goe.VariableNameValuePairEditor
 adams.core.base.MavenArtifact=adams.gui.goe.MavenArtifactEditor
 adams.core.base.MavenArtifactExclusion=adams.gui.goe.MavenArtifactExclusionEditor
 adams.core.base.MavenRepository=adams.gui.goe.MavenRepositoryEditor
+adams.core.base.RangedThreshold=adams.gui.goe.BaseObjectEditor
