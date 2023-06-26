@@ -22,8 +22,10 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.flow.control.Flow;
 import adams.flow.core.AbstractDisplay;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
@@ -35,6 +37,8 @@ import adams.flow.core.ActorUtils;
 import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.flow.core.displaytype.NoDisplay;
 import adams.flow.sink.ComponentSupplier;
 import adams.flow.sink.SequencePlotter;
@@ -105,8 +109,8 @@ public abstract class AbstractMultiView
       super.defineOptions();
 
       m_OptionManager.add(
-        "wrapped", "wrapped",
-        new SequencePlotter());
+	"wrapped", "wrapped",
+	new SequencePlotter());
     }
 
     /**
@@ -184,18 +188,18 @@ public abstract class AbstractMultiView
       result = null;
 
       if (m_Panel == null) {
-        result = m_Wrapped.execute();
-        if (!isHeadless()) {
-          if (result == null) {
-            m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
-            ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
-          }
-        }
+	result = m_Wrapped.execute();
+	if (!isHeadless()) {
+	  if (result == null) {
+	    m_Panel = ((AbstractDisplay) m_Wrapped).getPanel();
+	    ((AbstractMultiView) getParent()).addPanel(m_Wrapped, m_Panel);
+	  }
+	}
       }
 
       if (result == null) {
-        m_Wrapped.input(m_InputToken);
-        result = m_Wrapped.execute();
+	m_Wrapped.input(m_InputToken);
+	result = m_Wrapped.execute();
       }
 
       return result;
@@ -206,7 +210,7 @@ public abstract class AbstractMultiView
      */
     public void flushExecution() {
       if (m_Wrapped instanceof ActorHandler)
-        ((ActorHandler) m_Wrapped).flushExecution();
+	((ActorHandler) m_Wrapped).flushExecution();
     }
 
     /**
@@ -215,7 +219,7 @@ public abstract class AbstractMultiView
     @Override
     public void wrapUp() {
       if (m_Wrapped != null)
-        m_Wrapped.wrapUp();
+	m_Wrapped.wrapUp();
 
       super.wrapUp();
     }
@@ -227,9 +231,9 @@ public abstract class AbstractMultiView
     @Override
     public void cleanUp() {
       if (m_Panel != null) {
-        m_Wrapped.clearPanel();
-        m_Wrapped.cleanUp();
-        m_Panel = null;
+	m_Wrapped.clearPanel();
+	m_Wrapped.cleanUp();
+	m_Panel = null;
       }
 
       super.cleanUp();
@@ -241,7 +245,7 @@ public abstract class AbstractMultiView
     @Override
     public void clearPanel() {
       if (m_Panel != null)
-        m_Wrapped.clearPanel();
+	m_Wrapped.clearPanel();
     }
 
     /**
@@ -251,11 +255,11 @@ public abstract class AbstractMultiView
      */
     public String getCustomSupplyTextMenuItemCaption() {
       if (getParent() instanceof AbstractMultiView)
-        ((AbstractMultiView) getParent()).makeVisible(this);
+	((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof TextSupplier)
-        return ((TextSupplier) getParent()).getCustomSupplyTextMenuItemCaption();
+	return ((TextSupplier) getParent()).getCustomSupplyTextMenuItemCaption();
       else
-        return null;
+	return null;
     }
 
     /**
@@ -266,11 +270,11 @@ public abstract class AbstractMultiView
     @Override
     public ExtensionFileFilter getCustomTextFileFilter() {
       if (getParent() instanceof AbstractMultiView)
-        ((AbstractMultiView) getParent()).makeVisible(this);
+	((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof TextSupplier)
-        return ((TextSupplier) getParent()).getCustomTextFileFilter();
+	return ((TextSupplier) getParent()).getCustomTextFileFilter();
       else
-        return null;
+	return null;
     }
 
     /**
@@ -281,11 +285,11 @@ public abstract class AbstractMultiView
     @Override
     public String supplyText() {
       if (getParent() instanceof AbstractMultiView)
-        ((AbstractMultiView) getParent()).makeVisible(this);
+	((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof TextSupplier)
-        return ((TextSupplier) getParent()).supplyText();
+	return ((TextSupplier) getParent()).supplyText();
       else
-        return null;
+	return null;
     }
 
     /**
@@ -296,11 +300,11 @@ public abstract class AbstractMultiView
     @Override
     public JComponent supplyComponent() {
       if (getParent() instanceof AbstractMultiView)
-        ((AbstractMultiView) getParent()).makeVisible(this);
+	((AbstractMultiView) getParent()).makeVisible(this);
       if (getParent() instanceof ComponentSupplier)
-        return ((ComponentSupplier) getParent()).supplyComponent();
+	return ((ComponentSupplier) getParent()).supplyComponent();
       else
-        return null;
+	return null;
     }
 
     /**
@@ -330,7 +334,7 @@ public abstract class AbstractMultiView
     @Override
     public void updatePlot() {
       if (getParent() instanceof DataPlotUpdaterSupporter)
-        ((DataPlotUpdaterSupporter) getParent()).updatePlot();
+	((DataPlotUpdaterSupporter) getParent()).updatePlot();
     }
   }
 
@@ -343,11 +347,20 @@ public abstract class AbstractMultiView
   /** the writer to use. */
   protected JComponentWriter m_Writer;
 
+  /** whether to show flow control sub-menu. */
+  protected boolean m_ShowFlowControlSubMenu;
+
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
 
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
+
+  /** the "pause/resume" menu item. */
+  protected JMenuItem m_MenuItemFlowPauseResume;
+
+  /** the "stop" menu item. */
+  protected JMenuItem m_MenuItemFlowStop;
 
   /**
    * Adds options to the internal list of options.
@@ -359,6 +372,10 @@ public abstract class AbstractMultiView
     m_OptionManager.add(
       "actor", "actors",
       new Actor[0]);
+
+    m_OptionManager.add(
+      "show-flow-control-submenu", "showFlowControlSubMenu",
+      false, UserMode.EXPERT);
   }
 
   /**
@@ -386,8 +403,8 @@ public abstract class AbstractMultiView
     for (i = 0; i < value.length; i++) {
       msg = check(value[i]);
       if (msg != null) {
-        getLogger().severe(msg);
-        return;
+	getLogger().severe(msg);
+	return;
       }
     }
 
@@ -415,6 +432,35 @@ public abstract class AbstractMultiView
    * 			displaying in the GUI or for listing the options.
    */
   public abstract String actorsTipText();
+
+  /**
+   * Sets whether to show a flow control sub-menu in the menubar.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowFlowControlSubMenu(boolean value) {
+    m_ShowFlowControlSubMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a flow control sub-menu in the menubar.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowFlowControlSubMenu() {
+    return m_ShowFlowControlSubMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showFlowControlSubMenuTipText() {
+    return "If enabled, adds a flow control sub-menu to the menubar.";
+  }
 
   /**
    * Checks whether the actor is valid.
@@ -566,7 +612,7 @@ public abstract class AbstractMultiView
     for (i = 0; i < m_Actors.size(); i++) {
       result = check(m_Actors.get(i));
       if (result != null)
-        break;
+	break;
     }
 
     if (result == null)
@@ -632,8 +678,8 @@ public abstract class AbstractMultiView
 
     for (i = 0; i < m_Actors.size(); i++) {
       if (m_Actors.get(i).getName().equals(actor)) {
-        result = i;
-        break;
+	result = i;
+	break;
       }
     }
 
@@ -653,8 +699,8 @@ public abstract class AbstractMultiView
     result = null;
     for (i = 0; i < size(); i++) {
       if (!get(i).getSkip()) {
-        result = get(i);
-        break;
+	result = get(i);
+	break;
       }
     }
 
@@ -674,8 +720,8 @@ public abstract class AbstractMultiView
     result = null;
     for (i = size() - 1; i >= 0; i--) {
       if (!get(i).getSkip()) {
-        result = get(i);
-        break;
+	result = get(i);
+	break;
       }
     }
 
@@ -697,7 +743,7 @@ public abstract class AbstractMultiView
   public void clearPanel() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-        wrapper.clearPanel();
+	wrapper.clearPanel();
     }
   }
 
@@ -721,12 +767,12 @@ public abstract class AbstractMultiView
 
     result = new Runnable() {
       public void run() {
-        if (getCreateFrame() && !m_Frame.isVisible())
-          m_Frame.setVisible(true);
-        synchronized(m_Self) {
-          m_Self.notifyAll();
-        }
-        m_Updating = false;
+	if (getCreateFrame() && !m_Frame.isVisible())
+	  m_Frame.setVisible(true);
+	synchronized(m_Self) {
+	  m_Self.notifyAll();
+	}
+	m_Updating = false;
       }
     };
 
@@ -748,7 +794,7 @@ public abstract class AbstractMultiView
 
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-        wrapper.setVariables(value);
+	wrapper.setVariables(value);
     }
   }
 
@@ -772,18 +818,18 @@ public abstract class AbstractMultiView
     if (result == null) {
       m_Wrappers = new ArrayList<ViewWrapper>();
       for (Actor actor: m_Actors) {
-        ((AbstractDisplay) actor).setCreateFrame(false);
-        ((AbstractDisplay) actor).setDisplayType(new NoDisplay());
-        wrapper = new ViewWrapper();
-        wrapper.setParent(this);
-        wrapper.setName(actor.getName());
-        wrapper.setWrapped(actor);
-        result = wrapper.setUp();
-        if (result != null) {
-          result = "Failed to wrap actor '" + actor.getName() + "': " + result;
-          break;
-        }
-        m_Wrappers.add(wrapper);
+	((AbstractDisplay) actor).setCreateFrame(false);
+	((AbstractDisplay) actor).setDisplayType(new NoDisplay());
+	wrapper = new ViewWrapper();
+	wrapper.setParent(this);
+	wrapper.setName(actor.getName());
+	wrapper.setWrapped(actor);
+	result = wrapper.setUp();
+	if (result != null) {
+	  result = "Failed to wrap actor '" + actor.getName() + "': " + result;
+	  break;
+	}
+	m_Wrappers.add(wrapper);
       }
     }
 
@@ -818,7 +864,7 @@ public abstract class AbstractMultiView
   public void flushExecution() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers) {
-        wrapper.flushExecution();
+	wrapper.flushExecution();
       }
     }
   }
@@ -830,7 +876,7 @@ public abstract class AbstractMultiView
   public void stopExecution() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-        wrapper.stopExecution();
+	wrapper.stopExecution();
     }
 
     super.stopExecution();
@@ -843,7 +889,7 @@ public abstract class AbstractMultiView
   public void wrapUp() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-        wrapper.wrapUp();
+	wrapper.wrapUp();
     }
 
     super.wrapUp();
@@ -857,7 +903,7 @@ public abstract class AbstractMultiView
   public void cleanUp() {
     if (m_Wrappers != null) {
       for (ViewWrapper wrapper: m_Wrappers)
-        wrapper.cleanUp();
+	wrapper.cleanUp();
       m_Wrappers.clear();
       m_Wrappers = null;
     }
@@ -883,7 +929,7 @@ public abstract class AbstractMultiView
     menu.setMnemonic('F');
     menu.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-        updateMenu();
+	updateMenu();
       }
     });
 
@@ -899,10 +945,34 @@ public abstract class AbstractMultiView
     menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        close();
+	close();
       }
     });
     m_MenuItemFileClose = menuitem;
+
+    if (m_ShowFlowControlSubMenu) {
+      // Flow
+      menu = new JMenu("Flow");
+      result.add(menu);
+      menu.setMnemonic('w');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // Flow/PauseResume
+      menuitem = new JMenuItem("Pause");
+      menu.add(menuitem);
+      menuitem.setMnemonic('u');
+      menuitem.setIcon(ImageManager.getIcon("pause.gif"));
+      menuitem.addActionListener((ActionEvent e) -> pauseResumeFlow());
+      m_MenuItemFlowPauseResume = menuitem;
+
+      // Flow/Stop
+      menuitem = new JMenuItem("Stop");
+      menu.add(menuitem);
+      menuitem.setMnemonic('p');
+      menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
+      menuitem.addActionListener((ActionEvent e) -> stopFlow());
+      m_MenuItemFlowStop = menuitem;
+    }
 
     return result;
   }
@@ -927,6 +997,18 @@ public abstract class AbstractMultiView
   protected void updateMenu() {
     if (m_MenuBar == null)
       return;
+
+    m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
+    if (m_MenuItemFlowPauseResume.isEnabled()) {
+      if (isPaused()) {
+	m_MenuItemFlowPauseResume.setText("Resume");
+	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+      }
+      else {
+	m_MenuItemFlowPauseResume.setText("Pause");
+	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+      }
+    }
   }
 
   /**
@@ -934,6 +1016,57 @@ public abstract class AbstractMultiView
    */
   protected void close() {
     m_Panel.closeParent();
+  }
+
+  /**
+   * Returns whether the flow can be paused/resumed.
+   *
+   * @return		true if pause/resume available
+   */
+  protected boolean canPauseOrResume() {
+    return (getRoot() instanceof Flow);
+  }
+
+  /**
+   * Returns whether the flow is currently paused.
+   *
+   * @return		true if currently paused
+   */
+  protected boolean isPaused() {
+    boolean	result;
+    Flow	root;
+
+    result = false;
+
+    if (getRoot() instanceof Flow) {
+      root   = (Flow) getRoot();
+      result = root.isPaused();
+    }
+
+    return result;
+  }
+
+  /**
+   * Pauses or resumes the flow.
+   */
+  protected void pauseResumeFlow() {
+    Flow	root;
+
+    if (getRoot() instanceof Flow) {
+      root = (Flow) getRoot();
+      if (root.isPaused())
+	root.resumeExecution();
+      else
+	root.pauseExecution();
+    }
+  }
+
+  /**
+   * Stops the flow.
+   */
+  protected void stopFlow() {
+    getLogger().warning("Flow stopped by user (" + getFullName() + ")");
+    StopHelper.stop(this, StopMode.GLOBAL, null);
   }
 
   /**
@@ -950,20 +1083,20 @@ public abstract class AbstractMultiView
     if (this instanceof SpreadSheetSupporter) {
       add = !isExecuted() || (isExecuted() && (((SpreadSheetSupporter) this).toSpreadSheet() != null));
       if (add)
-        result.add(SpreadSheet.class);
+	result.add(SpreadSheet.class);
     }
 
     if (this instanceof TextSupplier) {
       add = !isExecuted() || (isExecuted() && (((TextSupplier) this).supplyText() != null));
       if (add)
-        result.add(String.class);
+	result.add(String.class);
     }
 
     if (this instanceof ComponentSupplier) {
       add = !isExecuted() || (isExecuted() && (((ComponentSupplier) this).supplyComponent() != null));
       if (add) {
-        result.add(PlaceholderFile.class);
-        result.add(JComponent.class);
+	result.add(PlaceholderFile.class);
+	result.add(JComponent.class);
       }
     }
 
@@ -1017,22 +1150,22 @@ public abstract class AbstractMultiView
     else if (this instanceof ComponentSupplier) {
       comp = ((ComponentSupplier) this).supplyComponent();
       if (SendToActionUtils.isAvailable(PlaceholderFile.class, cls)) {
-        if (comp != null) {
-          result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
-          writer = new PNGWriter();
-          writer.setFile((PlaceholderFile) result);
-          writer.setComponent(comp);
-          try {
-            writer.generateOutput();
-          }
-          catch (Exception e) {
-            handleException("Failed to write image to " + result + ":", e);
-            result = null;
-          }
-        }
+	if (comp != null) {
+	  result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
+	  writer = new PNGWriter();
+	  writer.setFile((PlaceholderFile) result);
+	  writer.setComponent(comp);
+	  try {
+	    writer.generateOutput();
+	  }
+	  catch (Exception e) {
+	    handleException("Failed to write image to " + result + ":", e);
+	    result = null;
+	  }
+	}
       }
       else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
-        result = comp;
+	result = comp;
       }
     }
 

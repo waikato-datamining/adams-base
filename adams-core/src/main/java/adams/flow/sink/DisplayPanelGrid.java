@@ -15,13 +15,17 @@
 
 /*
  * DisplayPanelGrid.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableNameNoUpdate;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
+import adams.flow.control.Flow;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.flow.core.Token;
 import adams.gui.core.AdjustableGridPanel;
 import adams.gui.core.BasePanel;
@@ -66,92 +70,92 @@ import java.util.List;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DisplayPanelGrid
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
- * 
+ *
  * <pre>-short-title (property: shortTitle)
  * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
  * &nbsp;&nbsp;&nbsp;name.
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-provider &lt;adams.flow.sink.DisplayPanelProvider&gt; (property: panelProvider)
  * &nbsp;&nbsp;&nbsp;The actor for generating the display panels.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.sink.ImageViewer -writer adams.gui.print.NullWriter
  * </pre>
- * 
+ *
  * <pre>-num-columns &lt;int&gt; (property: numColumns)
  * &nbsp;&nbsp;&nbsp;The number of columns to use in the grid.
  * &nbsp;&nbsp;&nbsp;default: 2
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-panel-width &lt;int&gt; (property: panelWidth)
  * &nbsp;&nbsp;&nbsp;The width of the individual panels.
  * &nbsp;&nbsp;&nbsp;default: 400
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-panel-height &lt;int&gt; (property: panelHeight)
  * &nbsp;&nbsp;&nbsp;The height of the individual panels.
  * &nbsp;&nbsp;&nbsp;default: 300
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-title-variable &lt;adams.core.VariableNameNoUpdate&gt; (property: titleVariable)
  * &nbsp;&nbsp;&nbsp;The variable to use for the panel title; gets ignored if variable not available 
  * &nbsp;&nbsp;&nbsp;and the index of the panel is used instead.
  * &nbsp;&nbsp;&nbsp;default: titleVariable
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -168,7 +172,7 @@ public class DisplayPanelGrid
 
   /** the actor to use for generating panels. */
   protected DisplayPanelProvider m_PanelProvider;
-  
+
   /** the width of the individual panels. */
   protected int m_PanelWidth;
 
@@ -177,6 +181,9 @@ public class DisplayPanelGrid
 
   /** the variable to use for naming the entries. */
   protected VariableNameNoUpdate m_TitleVariable;
+
+  /** whether to show flow control sub-menu. */
+  protected boolean m_ShowFlowControlSubMenu;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -187,15 +194,21 @@ public class DisplayPanelGrid
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
 
+  /** the "pause/resume" menu item. */
+  protected JMenuItem m_MenuItemFlowPauseResume;
+
+  /** the "stop" menu item. */
+  protected JMenuItem m_MenuItemFlowStop;
+
   /** the filedialog for loading/saving flows. */
   protected transient JComponentWriterFileChooser m_ComponentFileChooser;
 
   /** for displaying the panels. */
   protected AdjustableGridPanel m_PanelGrid;
-  
+
   /** the panels to display. */
   protected List<DisplayPanel> m_DisplayPanels;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -203,9 +216,9 @@ public class DisplayPanelGrid
    */
   @Override
   public String globalInfo() {
-    return 
-	"Sink that places a panel in the grid for each each arriving token.\n"
-	+ "Uses the user-defined panel provider for creating the panels.";
+    return
+      "Sink that places a panel in the grid for each each arriving token.\n"
+        + "Uses the user-defined panel provider for creating the panels.";
   }
 
   /**
@@ -216,24 +229,28 @@ public class DisplayPanelGrid
     super.defineOptions();
 
     m_OptionManager.add(
-	    "provider", "panelProvider",
-	    new ImageViewer());
-    
+      "provider", "panelProvider",
+      new ImageViewer());
+
     m_OptionManager.add(
-	    "num-columns", "numColumns",
-	    2, 1, null);
-    
+      "num-columns", "numColumns",
+      2, 1, null);
+
     m_OptionManager.add(
-	    "panel-width", "panelWidth",
-	    400, 1, null);
-    
+      "panel-width", "panelWidth",
+      400, 1, null);
+
     m_OptionManager.add(
-	    "panel-height", "panelHeight",
-	    300, 1, null);
-    
+      "panel-height", "panelHeight",
+      300, 1, null);
+
     m_OptionManager.add(
-	    "title-variable", "titleVariable",
-	    new VariableNameNoUpdate("titleVariable"));
+      "title-variable", "titleVariable",
+      new VariableNameNoUpdate("titleVariable"));
+
+    m_OptionManager.add(
+      "show-flow-control-submenu", "showFlowControlSubMenu",
+      false, UserMode.EXPERT);
   }
 
   /**
@@ -242,10 +259,10 @@ public class DisplayPanelGrid
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_DisplayPanels = new ArrayList<>();
   }
-  
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -433,6 +450,35 @@ public class DisplayPanelGrid
   }
 
   /**
+   * Sets whether to show a flow control sub-menu in the menubar.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowFlowControlSubMenu(boolean value) {
+    m_ShowFlowControlSubMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a flow control sub-menu in the menubar.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowFlowControlSubMenu() {
+    return m_ShowFlowControlSubMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showFlowControlSubMenuTipText() {
+    return "If enabled, adds a flow control sub-menu to the menubar.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class, java.awt.image.BufferedImage.class, adams.data.image.AbstractImage.class<!-- flow-accepts-end -->
@@ -461,11 +507,11 @@ public class DisplayPanelGrid
   @Override
   protected BasePanel newPanel() {
     BasePanel	result;
-    
+
     m_PanelGrid = new AdjustableGridPanel(1, m_NumColumns);
     result      = new BasePanel(new BorderLayout());
     result.add(new BaseScrollPane(m_PanelGrid), BorderLayout.CENTER);
-    
+
     return result;
   }
 
@@ -481,31 +527,31 @@ public class DisplayPanelGrid
     DisplayPanel	dpanel;
     int			rows;
     String		title;
-    
+
     if (getVariables().has(m_TitleVariable.getValue()))
       title = getVariables().get(m_TitleVariable.getValue());
     else
       title = "" + (m_DisplayPanels.size() + 1);
-    
+
     panel = new BasePanel(new BorderLayout());
     panel.setPreferredSize(new Dimension(m_PanelWidth, m_PanelHeight));
     panel.setMinimumSize(new Dimension(m_PanelWidth, m_PanelHeight));
     panel.setBorder(BorderFactory.createTitledBorder(title));
-    
+
     // create panel
     dpanel = m_PanelProvider.createDisplayPanel(token);
     m_DisplayPanels.add(dpanel);
-    
+
     // increase rows?
     rows = (int) Math.ceil((double) m_DisplayPanels.size() / m_NumColumns) ;
     if (m_PanelGrid.getRows() < rows)
       m_PanelGrid.setRows(rows);
-    
+
     // add to grid
     //if (m_PanelProvider.displayPanelRequiresScrollPane())
     //  panel.add(new BaseScrollPane((JComponent) dpanel), BorderLayout.CENTER);
     //else
-      panel.add((JComponent) dpanel, BorderLayout.CENTER);
+    panel.add((JComponent) dpanel, BorderLayout.CENTER);
     m_PanelGrid.addItem(panel);
     m_PanelGrid.getParent().validate();
     m_PanelGrid.getParent().repaint();
@@ -552,6 +598,30 @@ public class DisplayPanelGrid
     menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 
+    if (m_ShowFlowControlSubMenu) {
+      // Flow
+      menu = new JMenu("Flow");
+      result.add(menu);
+      menu.setMnemonic('w');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // Flow/PauseResume
+      menuitem = new JMenuItem("Pause");
+      menu.add(menuitem);
+      menuitem.setMnemonic('u');
+      menuitem.setIcon(ImageManager.getIcon("pause.gif"));
+      menuitem.addActionListener((ActionEvent e) -> pauseResumeFlow());
+      m_MenuItemFlowPauseResume = menuitem;
+
+      // Flow/Stop
+      menuitem = new JMenuItem("Stop");
+      menu.add(menuitem);
+      menuitem.setMnemonic('p');
+      menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
+      menuitem.addActionListener((ActionEvent e) -> stopFlow());
+      m_MenuItemFlowStop = menuitem;
+    }
+
     return result;
   }
 
@@ -577,19 +647,19 @@ public class DisplayPanelGrid
       return;
 
     m_MenuItemFileSaveAs.setEnabled(
-          (m_PanelProvider instanceof ComponentSupplier)
-       || (m_PanelProvider instanceof TextSupplier) );
+      (m_PanelProvider instanceof ComponentSupplier)
+        || (m_PanelProvider instanceof TextSupplier) );
   }
 
   /**
    * Returns (and initializes if necessary) the file chooser for the components.
-   * 
+   *
    * @return		the file chooser
    */
   protected JComponentWriterFileChooser getComponentFileChooser() {
     if (m_ComponentFileChooser == null)
       m_ComponentFileChooser = new JComponentWriterFileChooser();
-    
+
     return m_ComponentFileChooser;
   }
 
@@ -622,6 +692,57 @@ public class DisplayPanelGrid
   }
 
   /**
+   * Returns whether the flow can be paused/resumed.
+   *
+   * @return		true if pause/resume available
+   */
+  protected boolean canPauseOrResume() {
+    return (getRoot() instanceof Flow);
+  }
+
+  /**
+   * Returns whether the flow is currently paused.
+   *
+   * @return		true if currently paused
+   */
+  protected boolean isPaused() {
+    boolean	result;
+    Flow	root;
+
+    result = false;
+
+    if (getRoot() instanceof Flow) {
+      root   = (Flow) getRoot();
+      result = root.isPaused();
+    }
+
+    return result;
+  }
+
+  /**
+   * Pauses or resumes the flow.
+   */
+  protected void pauseResumeFlow() {
+    Flow	root;
+
+    if (getRoot() instanceof Flow) {
+      root = (Flow) getRoot();
+      if (root.isPaused())
+        root.resumeExecution();
+      else
+        root.pauseExecution();
+    }
+  }
+
+  /**
+   * Stops the flow.
+   */
+  protected void stopFlow() {
+    getLogger().warning("Flow stopped by user (" + getFullName() + ")");
+    StopHelper.stop(this, StopMode.GLOBAL, null);
+  }
+
+  /**
    * Removes all graphical components.
    */
   @Override
@@ -630,7 +751,7 @@ public class DisplayPanelGrid
       m_PanelGrid.removeAll();
 
     m_DisplayPanels.clear();
-    
+
     m_MenuBar            = null;
     m_MenuItemFileSaveAs = null;
     m_MenuItemFileClose  = null;
@@ -668,16 +789,16 @@ public class DisplayPanelGrid
   public boolean hasSendToItem(Class[] cls) {
     if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	return (supplyComponent() != null);
+        return (supplyComponent() != null);
       else
-	return false;
+        return false;
     }
 
     if (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, String.class}, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	return (supplyComponent() != null);
+        return (supplyComponent() != null);
       else
-	return false;
+        return false;
     }
 
     return false;
@@ -698,25 +819,25 @@ public class DisplayPanelGrid
 
     if (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, String.class}, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier) {
-	comp = supplyComponent();
-	if (comp != null) {
-	  result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
-	  writer = new PNGWriter();
-	  writer.setFile((PlaceholderFile) result);
-	  writer.setComponent(comp);
-	  try {
-	    writer.generateOutput();
-	  }
-	  catch (Exception e) {
-	    handleException("Failed to write image to " + result + ":", e);
-	    result = null;
-	  }
-	}
+        comp = supplyComponent();
+        if (comp != null) {
+          result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
+          writer = new PNGWriter();
+          writer.setFile((PlaceholderFile) result);
+          writer.setComponent(comp);
+          try {
+            writer.generateOutput();
+          }
+          catch (Exception e) {
+            handleException("Failed to write image to " + result + ":", e);
+            result = null;
+          }
+        }
       }
     }
     else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	result = supplyComponent();
+        result = supplyComponent();
     }
 
     return result;

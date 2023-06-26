@@ -26,6 +26,10 @@ import adams.core.VariableNameNoUpdate;
 import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
+import adams.flow.control.Flow;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
@@ -248,13 +252,13 @@ public class DisplayPanelManager
       m_Panel.removeAll();
 
       if (name != null) {
-	// update panel
-	if (hasEntry(name)) {
-	  m_Panel.add((JPanel) getEntry(name));
-	  m_Panel.getParent().invalidate();
-	  m_Panel.getParent().validate();
-	  m_Panel.getParent().repaint();
-	}
+        // update panel
+        if (hasEntry(name)) {
+          m_Panel.add((JPanel) getEntry(name));
+          m_Panel.getParent().invalidate();
+          m_Panel.getParent().validate();
+          m_Panel.getParent().repaint();
+        }
       }
     }
 
@@ -271,7 +275,7 @@ public class DisplayPanelManager
 
       result = super.removeEntry(name);
       if (result != null)
-	result.cleanUp();
+        result.cleanUp();
 
       return result;
     }
@@ -283,7 +287,7 @@ public class DisplayPanelManager
       int	i;
 
       for (i = 0; i < count(); i++)
-	getEntry(i).wrapUp();
+        getEntry(i).wrapUp();
     }
   }
 
@@ -333,17 +337,17 @@ public class DisplayPanelManager
 
       m_Panel = new BasePanel(new BorderLayout());
       if (owner.getPanelProvider().displayPanelRequiresScrollPane())
-	m_SplitPane.setBottomComponent(new BaseScrollPane(m_Panel));
+        m_SplitPane.setBottomComponent(new BaseScrollPane(m_Panel));
       else
-	m_SplitPane.setBottomComponent(m_Panel);
+        m_SplitPane.setBottomComponent(m_Panel);
 
       m_History = new DisplayPanelHistoryPanel();
       m_History.setPanel(m_Panel);
       m_History.addHistoryEntrySelectionListener(new HistoryEntrySelectionListener() {
-	@Override
-	public void historyEntrySelected(HistoryEntrySelectionEvent e) {
-	  m_StatusBar.setStatus(Utils.flatten(e.getNames(), ", "));
-	}
+        @Override
+        public void historyEntrySelected(HistoryEntrySelectionEvent e) {
+          m_StatusBar.setStatus(Utils.flatten(e.getNames(), ", "));
+        }
       });
       m_SplitPane.setTopComponent(m_History);
 
@@ -412,13 +416,13 @@ public class DisplayPanelManager
 
       var = m_Owner.getEntryNameVariable().getValue();
       if (m_Owner.getVariables().has(var)) {
-	result = m_Owner.getVariables().get(var);
+        result = m_Owner.getVariables().get(var);
       }
       else {
-	synchronized(m_Format) {
-	  baseID = m_Format.format(new Date());
-	}
-	result = m_History.newEntryName(baseID);
+        synchronized(m_Format) {
+          baseID = m_Format.format(new Date());
+        }
+        result = m_History.newEntryName(baseID);
       }
 
       return result;
@@ -451,7 +455,7 @@ public class DisplayPanelManager
      */
     public synchronized void setSelectedResult(String id) {
       if (m_History.hasEntry(id))
-	m_History.setSelectedEntry(id);
+        m_History.setSelectedEntry(id);
     }
 
     /**
@@ -469,19 +473,19 @@ public class DisplayPanelManager
       // add result
       add = true;
       if (m_History.hasEntry(id) && m_Owner.getAllowMerge()) {
-	if (result instanceof MergeableDisplayPanel) {
-	  ((MergeableDisplayPanel) m_History.getEntry(id)).mergeWith((MergeableDisplayPanel) result);
-	  add = false;
-	}
-	else {
-	  m_Owner.getLogger().warning(
-	    result.getClass().getName() + " does not implement "
-	      + MergeableDisplayPanel.class.getName() + ", merging not possible!");
-	}
+        if (result instanceof MergeableDisplayPanel) {
+          ((MergeableDisplayPanel) m_History.getEntry(id)).mergeWith((MergeableDisplayPanel) result);
+          add = false;
+        }
+        else {
+          m_Owner.getLogger().warning(
+            result.getClass().getName() + " does not implement "
+              + MergeableDisplayPanel.class.getName() + ", merging not possible!");
+        }
       }
 
       if (add)
-	m_History.addEntry(id, result);
+        m_History.addEntry(id, result);
 
       // select this entry immediately
       m_History.setSelectedEntry(id);
@@ -534,6 +538,9 @@ public class DisplayPanelManager
   /** the number of tokens to accept for a single panel. */
   protected int m_NumTokens;
 
+  /** whether to show flow control sub-menu. */
+  protected boolean m_ShowFlowControlSubMenu;
+
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
 
@@ -545,6 +552,12 @@ public class DisplayPanelManager
 
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
+
+  /** the "pause/resume" menu item. */
+  protected JMenuItem m_MenuItemFlowPauseResume;
+
+  /** the "stop" menu item. */
+  protected JMenuItem m_MenuItemFlowStop;
 
   /** the filedialog for loading/saving flows. */
   protected transient JComponentWriterFileChooser m_ComponentFileChooser;
@@ -573,8 +586,8 @@ public class DisplayPanelManager
   public String globalInfo() {
     return
       "Actor that displays a 'history' of panels created by the selected "
-	+ "panel provider. The provider can be an actor that generates classifier "
-	+ "errors, for instance.";
+        + "panel provider. The provider can be an actor that generates classifier "
+        + "errors, for instance.";
   }
 
   /**
@@ -607,6 +620,10 @@ public class DisplayPanelManager
     m_OptionManager.add(
       "allow-search", "allowSearch",
       false);
+
+    m_OptionManager.add(
+      "show-flow-control-submenu", "showFlowControlSubMenu",
+      false, UserMode.EXPERT);
   }
 
   /**
@@ -863,8 +880,8 @@ public class DisplayPanelManager
   public String allowMergeTipText() {
     return
       "If enabled and the display panel is derived from "
-	+ MergeableDisplayPanel.class.getName() + " then entries with the "
-	+ "same name (ie when using 'entryNameVariable') get merged.";
+        + MergeableDisplayPanel.class.getName() + " then entries with the "
+        + "same name (ie when using 'entryNameVariable') get merged.";
   }
 
   /**
@@ -897,6 +914,35 @@ public class DisplayPanelManager
   }
 
   /**
+   * Sets whether to show a flow control sub-menu in the menubar.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowFlowControlSubMenu(boolean value) {
+    m_ShowFlowControlSubMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a flow control sub-menu in the menubar.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowFlowControlSubMenu() {
+    return m_ShowFlowControlSubMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showFlowControlSubMenuTipText() {
+    return "If enabled, adds a flow control sub-menu to the menubar.";
+  }
+
+  /**
    * Updates the Variables instance in use.
    * <br><br>
    * Use with caution!
@@ -922,7 +968,7 @@ public class DisplayPanelManager
     if (m_HistoryPanel != null) {
       index  = m_HistoryPanel.getHistory().getSelectedIndex();
       if (index != -1)
-	result = (JPanel) m_HistoryPanel.getHistory().getEntry(index);
+        result = (JPanel) m_HistoryPanel.getHistory().getEntry(index);
     }
 
     return result;
@@ -942,7 +988,7 @@ public class DisplayPanelManager
     if (m_PanelProvider instanceof ComponentSupplier) {
       panel = getSelectedPanel();
       if (panel != null)
-	result = ((ComponentSupplier) panel).supplyComponent();
+        result = ((ComponentSupplier) panel).supplyComponent();
     }
 
     return result;
@@ -986,7 +1032,7 @@ public class DisplayPanelManager
     if (m_PanelProvider instanceof TextSupplier) {
       panel = getSelectedPanel();
       if (panel != null)
-	result = ((TextSupplier) panel).supplyText();
+        result = ((TextSupplier) panel).supplyText();
     }
 
     return result;
@@ -1065,10 +1111,10 @@ public class DisplayPanelManager
       fileChooser = new TextFileChooser();
       filter      = getCustomTextFileFilter();
       if (filter != null) {
-	fileChooser.resetChoosableFileFilters();
-	fileChooser.addChoosableFileFilter(filter);
-	fileChooser.setFileFilter(filter);
-	fileChooser.setDefaultExtension(filter.getExtensions()[0]);
+        fileChooser.resetChoosableFileFilters();
+        fileChooser.addChoosableFileFilter(filter);
+        fileChooser.setFileFilter(filter);
+        fileChooser.setDefaultExtension(filter.getExtensions()[0]);
       }
       m_TextFileChooser = fileChooser;
     }
@@ -1113,13 +1159,13 @@ public class DisplayPanelManager
 
     synchronized(m_HistoryPanel) {
       if (newPanel) {
-	m_CurrentPanel = m_PanelProvider.createDisplayPanel(null);
-	m_HistoryPanel.addResult(m_CurrentPanel);
+        m_CurrentPanel = m_PanelProvider.createDisplayPanel(null);
+        m_HistoryPanel.addResult(m_CurrentPanel);
       }
       else {
-	id = m_HistoryPanel.newID();
-	if (m_HistoryPanel.hasResult(id))
-	  m_CurrentPanel = m_HistoryPanel.getResult(id);
+        id = m_HistoryPanel.newID();
+        if (m_HistoryPanel.hasResult(id))
+          m_CurrentPanel = m_HistoryPanel.getResult(id);
       }
     }
 
@@ -1149,7 +1195,7 @@ public class DisplayPanelManager
     menu.setMnemonic('F');
     menu.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
-	updateMenu();
+        updateMenu();
       }
     });
 
@@ -1161,7 +1207,7 @@ public class DisplayPanelManager
     menuitem.setIcon(ImageManager.getIcon("new.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	clear();
+        clear();
       }
     });
     m_MenuItemFileClear = menuitem;
@@ -1174,7 +1220,7 @@ public class DisplayPanelManager
     menuitem.setIcon(ImageManager.getIcon("save.gif"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	saveAs();
+        saveAs();
       }
     });
     m_MenuItemFileSaveAs = menuitem;
@@ -1192,10 +1238,34 @@ public class DisplayPanelManager
     menuitem.setIcon(ImageManager.getIcon("exit.png"));
     menuitem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-	close();
+        close();
       }
     });
     m_MenuItemFileClose = menuitem;
+
+    if (m_ShowFlowControlSubMenu) {
+      // Flow
+      menu = new JMenu("Flow");
+      result.add(menu);
+      menu.setMnemonic('w');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // Flow/PauseResume
+      menuitem = new JMenuItem("Pause");
+      menu.add(menuitem);
+      menuitem.setMnemonic('u');
+      menuitem.setIcon(ImageManager.getIcon("pause.gif"));
+      menuitem.addActionListener((ActionEvent e) -> pauseResumeFlow());
+      m_MenuItemFlowPauseResume = menuitem;
+
+      // Flow/Stop
+      menuitem = new JMenuItem("Stop");
+      menu.add(menuitem);
+      menuitem.setMnemonic('p');
+      menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
+      menuitem.addActionListener((ActionEvent e) -> stopFlow());
+      m_MenuItemFlowStop = menuitem;
+    }
 
     return result;
   }
@@ -1223,8 +1293,8 @@ public class DisplayPanelManager
 
     m_MenuItemFileSaveAs.setEnabled(
       (    (m_PanelProvider instanceof ComponentSupplier)
-	|| (m_PanelProvider instanceof TextSupplier) )
-	&& (getSelectedPanel() != null));
+        || (m_PanelProvider instanceof TextSupplier) )
+        && (getSelectedPanel() != null));
 
     m_MenuItemFileClear.setEnabled(m_HistoryPanel.count() > 0);
   }
@@ -1251,30 +1321,30 @@ public class DisplayPanelManager
       getTextFileChooser().setSelectedFile(new File(filename));
       retVal = getTextFileChooser().showSaveDialog(m_HistoryPanel);
       if (retVal != BaseFileChooser.APPROVE_OPTION)
-	return;
+        return;
 
       String msg = FileUtils.writeToFileMsg(
-	getTextFileChooser().getSelectedFile().getAbsolutePath(),
-	supplyText(),
-	false,
-	getTextFileChooser().getEncoding());
+        getTextFileChooser().getSelectedFile().getAbsolutePath(),
+        supplyText(),
+        false,
+        getTextFileChooser().getEncoding());
 
       if (msg != null)
-	getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
+        getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
     }
     else if (m_PanelProvider instanceof ComponentSupplier) {
       getComponentFileChooser().setSelectedFile(new File(filename));
       retVal = getComponentFileChooser().showSaveDialog(m_HistoryPanel);
       if (retVal != BaseFileChooser.APPROVE_OPTION)
-	return;
+        return;
 
       writer = getComponentFileChooser().getWriter();
       writer.setComponent(supplyComponent());
       try {
-	writer.toOutput();
+        writer.toOutput();
       }
       catch (Exception e) {
-	handleException("Error saving panel to '" + writer.getFile() + "': ", e);
+        handleException("Error saving panel to '" + writer.getFile() + "': ", e);
       }
     }
   }
@@ -1284,6 +1354,57 @@ public class DisplayPanelManager
    */
   protected void close() {
     m_HistoryPanel.closeParent();
+  }
+
+  /**
+   * Returns whether the flow can be paused/resumed.
+   *
+   * @return		true if pause/resume available
+   */
+  protected boolean canPauseOrResume() {
+    return (getRoot() instanceof Flow);
+  }
+
+  /**
+   * Returns whether the flow is currently paused.
+   *
+   * @return		true if currently paused
+   */
+  protected boolean isPaused() {
+    boolean	result;
+    Flow	root;
+
+    result = false;
+
+    if (getRoot() instanceof Flow) {
+      root   = (Flow) getRoot();
+      result = root.isPaused();
+    }
+
+    return result;
+  }
+
+  /**
+   * Pauses or resumes the flow.
+   */
+  protected void pauseResumeFlow() {
+    Flow	root;
+
+    if (getRoot() instanceof Flow) {
+      root = (Flow) getRoot();
+      if (root.isPaused())
+        root.resumeExecution();
+      else
+        root.pauseExecution();
+    }
+  }
+
+  /**
+   * Stops the flow.
+   */
+  protected void stopFlow() {
+    getLogger().warning("Flow stopped by user (" + getFullName() + ")");
+    StopHelper.stop(this, StopMode.GLOBAL, null);
   }
 
   /**
@@ -1325,16 +1446,16 @@ public class DisplayPanelManager
   public boolean hasSendToItem(Class[] cls) {
     if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	return (supplyComponent() != null);
+        return (supplyComponent() != null);
       else
-	return false;
+        return false;
     }
 
     if (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, String.class}, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	return (supplyComponent() != null);
+        return (supplyComponent() != null);
       else if (m_PanelProvider instanceof TextSupplier)
-	return ((supplyText() != null) && (supplyText().length() > 0));
+        return ((supplyText() != null) && (supplyText().length() > 0));
     }
 
     return false;
@@ -1355,28 +1476,28 @@ public class DisplayPanelManager
 
     if (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, String.class}, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier) {
-	comp = supplyComponent();
-	if (comp != null) {
-	  result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
-	  writer = new PNGWriter();
-	  writer.setFile((PlaceholderFile) result);
-	  writer.setComponent(comp);
-	  try {
-	    writer.generateOutput();
-	  }
-	  catch (Exception e) {
-	    handleException("Failed to write image to " + result + ":", e);
-	    result = null;
-	  }
-	}
+        comp = supplyComponent();
+        if (comp != null) {
+          result = SendToActionUtils.nextTmpFile("actor-" + getName(), "png");
+          writer = new PNGWriter();
+          writer.setFile((PlaceholderFile) result);
+          writer.setComponent(comp);
+          try {
+            writer.generateOutput();
+          }
+          catch (Exception e) {
+            handleException("Failed to write image to " + result + ":", e);
+            result = null;
+          }
+        }
       }
       if (m_PanelProvider instanceof TextSupplier) {
-	result = supplyText();
+        result = supplyText();
       }
     }
     else if (SendToActionUtils.isAvailable(JComponent.class, cls)) {
       if (m_PanelProvider instanceof ComponentSupplier)
-	result = supplyComponent();
+        result = supplyComponent();
     }
 
     return result;

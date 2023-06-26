@@ -15,7 +15,7 @@
 
 /*
  * AbstractTextualDisplay.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -24,9 +24,13 @@ import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.FileUtils;
+import adams.core.option.UserMode;
 import adams.core.option.parsing.FontParsing;
 import adams.data.io.output.AbstractTextWriter;
 import adams.data.io.output.NullWriter;
+import adams.flow.control.Flow;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.flow.core.Token;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
@@ -51,7 +55,6 @@ import java.util.Date;
  * Ancestor for actors that display textual stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTextualDisplay
   extends AbstractDisplay
@@ -62,7 +65,10 @@ public abstract class AbstractTextualDisplay
 
   /** the text writer to use. */
   protected AbstractTextWriter m_Writer;
-  
+
+  /** whether to show flow control sub-menu. */
+  protected boolean m_ShowFlowControlSubMenu;
+
   /** the font to use. */
   protected Font m_Font;
 
@@ -81,6 +87,12 @@ public abstract class AbstractTextualDisplay
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
 
+  /** the "pause/resume" menu item. */
+  protected JMenuItem m_MenuItemFlowPauseResume;
+
+  /** the "stop" menu item. */
+  protected JMenuItem m_MenuItemFlowStop;
+
   /** the filedialog for loading/saving flows. */
   protected transient TextFileChooser m_FileChooser;
 
@@ -92,14 +104,18 @@ public abstract class AbstractTextualDisplay
     super.defineOptions();
 
     m_OptionManager.add(
-	"font", "font",
-	getDefaultFont());
+      "font", "font",
+      getDefaultFont());
 
     if (supportsClear()) {
       m_OptionManager.add(
-	  "always-clear", "alwaysClear",
-	  false);
+	"always-clear", "alwaysClear",
+	false);
     }
+
+    m_OptionManager.add(
+      "show-flow-control-submenu", "showFlowControlSubMenu",
+      false, UserMode.EXPERT);
   }
 
   /**
@@ -108,19 +124,19 @@ public abstract class AbstractTextualDisplay
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Writer = new NullWriter();
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser.
-   * 
+   *
    * @return 		the file chooser
    */
   protected TextFileChooser getFileChooser() {
     TextFileChooser	fileChooser;
     ExtensionFileFilter	filter;
-    
+
     if (m_FileChooser == null) {
       fileChooser = new TextFileChooser();
       filter      = null;
@@ -134,7 +150,7 @@ public abstract class AbstractTextualDisplay
       }
       m_FileChooser = fileChooser;
     }
-    
+
     return m_FileChooser;
   }
 
@@ -175,6 +191,35 @@ public abstract class AbstractTextualDisplay
    */
   public String writerTipText() {
     return "The writer to use for storing the textual output.";
+  }
+
+  /**
+   * Sets whether to show a flow control sub-menu in the menubar.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowFlowControlSubMenu(boolean value) {
+    m_ShowFlowControlSubMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a flow control sub-menu in the menubar.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowFlowControlSubMenu() {
+    return m_ShowFlowControlSubMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showFlowControlSubMenuTipText() {
+    return "If enabled, adds a flow control sub-menu to the menubar.";
   }
 
   /**
@@ -299,6 +344,39 @@ public abstract class AbstractTextualDisplay
   }
 
   /**
+   * Creates the flow control sub-menu.
+   *
+   * @return		the menu
+   */
+  protected JMenu createFlowMenu() {
+    JMenu 	result;
+    JMenuItem	menuitem;
+
+    // Flow
+    result = new JMenu("Flow");
+    result.setMnemonic('w');
+    result.addChangeListener((ChangeEvent e) -> updateMenu());
+
+    // Flow/PauseResume
+    menuitem = new JMenuItem("Pause");
+    result.add(menuitem);
+    menuitem.setMnemonic('u');
+    menuitem.setIcon(ImageManager.getIcon("pause.gif"));
+    menuitem.addActionListener((ActionEvent e) -> pauseResumeFlow());
+    m_MenuItemFlowPauseResume = menuitem;
+
+    // Flow/Stop
+    menuitem = new JMenuItem("Stop");
+    result.add(menuitem);
+    menuitem.setMnemonic('p');
+    menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
+    menuitem.addActionListener((ActionEvent e) -> stopFlow());
+    m_MenuItemFlowStop = menuitem;
+
+    return result;
+  }
+
+  /**
    * Determines the index of the menu item in the specified menu.
    *
    * @param menu	the menu to search in
@@ -331,6 +409,8 @@ public abstract class AbstractTextualDisplay
 
     result = new JMenuBar();
     result.add(createFileMenu());
+    if (m_ShowFlowControlSubMenu)
+      result.add(createFlowMenu());
 
     return result;
   }
@@ -418,6 +498,57 @@ public abstract class AbstractTextualDisplay
   }
 
   /**
+   * Returns whether the flow can be paused/resumed.
+   *
+   * @return		true if pause/resume available
+   */
+  protected boolean canPauseOrResume() {
+    return (getRoot() instanceof Flow);
+  }
+
+  /**
+   * Returns whether the flow is currently paused.
+   *
+   * @return		true if currently paused
+   */
+  protected boolean isPaused() {
+    boolean	result;
+    Flow	root;
+
+    result = false;
+
+    if (getRoot() instanceof Flow) {
+      root   = (Flow) getRoot();
+      result = root.isPaused();
+    }
+
+    return result;
+  }
+
+  /**
+   * Pauses or resumes the flow.
+   */
+  protected void pauseResumeFlow() {
+    Flow	root;
+
+    if (getRoot() instanceof Flow) {
+      root = (Flow) getRoot();
+      if (root.isPaused())
+	root.resumeExecution();
+      else
+	root.pauseExecution();
+    }
+  }
+
+  /**
+   * Stops the flow.
+   */
+  protected void stopFlow() {
+    getLogger().warning("Flow stopped by user (" + getFullName() + ")");
+    StopHelper.stop(this, StopMode.GLOBAL, null);
+  }
+
+  /**
    * Returns the text for the menu item.
    *
    * @return		the menu item text, null for default
@@ -430,7 +561,7 @@ public abstract class AbstractTextualDisplay
    * Returns a custom file filter for the file chooser.
    * <br><br>
    * Default implementation returns null.
-   * 
+   *
    * @return		the file filter, null if to use default one
    */
   public ExtensionFileFilter getCustomTextFileFilter() {
@@ -465,9 +596,9 @@ public abstract class AbstractTextualDisplay
   @Override
   protected String doExecute() {
     String	result;
-    
+
     result = null;
-    
+
     if (isHeadless()) {
       ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
       ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
@@ -475,7 +606,7 @@ public abstract class AbstractTextualDisplay
     else {
       result = super.doExecute();
     }
-    
+
     return result;
   }
 
@@ -541,7 +672,7 @@ public abstract class AbstractTextualDisplay
 
     return result;
   }
-  
+
   /**
    * Cleans up after the execution has finished.
    */

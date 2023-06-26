@@ -15,13 +15,17 @@
 
 /*
  * AbstractGraphicalDisplay.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.UserMode;
+import adams.flow.control.Flow;
+import adams.flow.core.StopHelper;
+import adams.flow.core.StopMode;
 import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
@@ -46,7 +50,6 @@ import java.awt.event.ActionEvent;
  * Ancestor for actors that display stuff.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGraphicalDisplay
   extends AbstractDisplay
@@ -57,6 +60,9 @@ public abstract class AbstractGraphicalDisplay
 
   /** the writer to use. */
   protected JComponentWriter m_Writer;
+
+  /** whether to show flow control sub-menu. */
+  protected boolean m_ShowFlowControlSubMenu;
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
@@ -73,6 +79,12 @@ public abstract class AbstractGraphicalDisplay
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
 
+  /** the "pause/resume" menu item. */
+  protected JMenuItem m_MenuItemFlowPauseResume;
+
+  /** the "stop" menu item. */
+  protected JMenuItem m_MenuItemFlowStop;
+
   /** the filedialog for saving the panel as picture. */
   protected transient JComponentWriterFileChooser m_GraphicFileChooser;
 
@@ -87,8 +99,12 @@ public abstract class AbstractGraphicalDisplay
     super.defineOptions();
 
     m_OptionManager.add(
-	    "writer", "writer",
-	    new NullWriter());
+      "writer", "writer",
+      new NullWriter());
+
+    m_OptionManager.add(
+      "show-flow-control-submenu", "showFlowControlSubMenu",
+      false, UserMode.EXPERT);
   }
 
   /**
@@ -121,6 +137,35 @@ public abstract class AbstractGraphicalDisplay
   }
 
   /**
+   * Sets whether to show a flow control sub-menu in the menubar.
+   *
+   * @param value 	true if to show
+   */
+  public void setShowFlowControlSubMenu(boolean value) {
+    m_ShowFlowControlSubMenu = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show a flow control sub-menu in the menubar.
+   *
+   * @return 		true if to show
+   */
+  public boolean getShowFlowControlSubMenu() {
+    return m_ShowFlowControlSubMenu;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showFlowControlSubMenuTipText() {
+    return "If enabled, adds a flow control sub-menu to the menubar.";
+  }
+
+  /**
    * Checks whether a panel is available that can be saved.
    *
    * @return 		true if panel is available for saving
@@ -137,28 +182,28 @@ public abstract class AbstractGraphicalDisplay
   public JComponent supplyComponent() {
     return m_Panel;
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser for the images.
-   * 
+   *
    * @return		the file chooser
    */
   protected JComponentWriterFileChooser getGraphicFileChooser() {
     if (m_GraphicFileChooser == null)
       m_GraphicFileChooser = new JComponentWriterFileChooser();
-    
+
     return m_GraphicFileChooser;
   }
-  
+
   /**
    * Returns (and initializes if necessary) the file chooser for the text.
-   * 
+   *
    * @return		the file chooser
    */
   protected TextFileChooser getTextFileChooser() {
     TextFileChooser	fileChooser;
     ExtensionFileFilter	filter;
-    
+
     if (m_TextFileChooser == null) {
       fileChooser = new TextFileChooser();
       if (this instanceof TextSupplier) {
@@ -172,7 +217,7 @@ public abstract class AbstractGraphicalDisplay
       }
       m_TextFileChooser = fileChooser;
     }
-    
+
     return m_TextFileChooser;
   }
 
@@ -240,6 +285,30 @@ public abstract class AbstractGraphicalDisplay
     menuitem.addActionListener((ActionEvent e) -> close());
     m_MenuItemFileClose = menuitem;
 
+    if (m_ShowFlowControlSubMenu) {
+      // Flow
+      menu = new JMenu("Flow");
+      result.add(menu);
+      menu.setMnemonic('w');
+      menu.addChangeListener((ChangeEvent e) -> updateMenu());
+
+      // Flow/PauseResume
+      menuitem = new JMenuItem("Pause");
+      menu.add(menuitem);
+      menuitem.setMnemonic('u');
+      menuitem.setIcon(ImageManager.getIcon("pause.gif"));
+      menuitem.addActionListener((ActionEvent e) -> pauseResumeFlow());
+      m_MenuItemFlowPauseResume = menuitem;
+
+      // Flow/Stop
+      menuitem = new JMenuItem("Stop");
+      menu.add(menuitem);
+      menuitem.setMnemonic('p');
+      menuitem.setIcon(ImageManager.getIcon("stop_blue.gif"));
+      menuitem.addActionListener((ActionEvent e) -> stopFlow());
+      m_MenuItemFlowStop = menuitem;
+    }
+
     return result;
   }
 
@@ -267,6 +336,18 @@ public abstract class AbstractGraphicalDisplay
     m_MenuItemFileSaveAs.setEnabled(hasPanel());
     if (m_MenuItemFileSaveTextAs != null)
       m_MenuItemFileSaveTextAs.setEnabled(hasPanel());
+
+    m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
+    if (m_MenuItemFlowPauseResume.isEnabled()) {
+      if (isPaused()) {
+	m_MenuItemFlowPauseResume.setText("Resume");
+	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+      }
+      else {
+	m_MenuItemFlowPauseResume.setText("Pause");
+	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+      }
+    }
   }
 
   /**
@@ -321,10 +402,10 @@ public abstract class AbstractGraphicalDisplay
       return;
 
     msg = FileUtils.writeToFileMsg(
-	getTextFileChooser().getSelectedFile().getAbsolutePath(),
-	((TextSupplier) this).supplyText(),
-	false,
-	getTextFileChooser().getEncoding());
+      getTextFileChooser().getSelectedFile().getAbsolutePath(),
+      ((TextSupplier) this).supplyText(),
+      false,
+      getTextFileChooser().getEncoding());
 
     if (msg != null)
       getLogger().severe("Error saving text to '" + getTextFileChooser().getSelectedFile() + "':\n" + msg);
@@ -335,6 +416,57 @@ public abstract class AbstractGraphicalDisplay
    */
   protected void close() {
     m_Panel.closeParent();
+  }
+
+  /**
+   * Returns whether the flow can be paused/resumed.
+   *
+   * @return		true if pause/resume available
+   */
+  protected boolean canPauseOrResume() {
+    return (getRoot() instanceof Flow);
+  }
+
+  /**
+   * Returns whether the flow is currently paused.
+   *
+   * @return		true if currently paused
+   */
+  protected boolean isPaused() {
+    boolean	result;
+    Flow	root;
+
+    result = false;
+
+    if (getRoot() instanceof Flow) {
+      root   = (Flow) getRoot();
+      result = root.isPaused();
+    }
+
+    return result;
+  }
+
+  /**
+   * Pauses or resumes the flow.
+   */
+  protected void pauseResumeFlow() {
+    Flow	root;
+
+    if (getRoot() instanceof Flow) {
+      root = (Flow) getRoot();
+      if (root.isPaused())
+	root.resumeExecution();
+      else
+	root.pauseExecution();
+    }
+  }
+
+  /**
+   * Stops the flow.
+   */
+  protected void stopFlow() {
+    getLogger().warning("Flow stopped by user (" + getFullName() + ")");
+    StopHelper.stop(this, StopMode.GLOBAL, null);
   }
 
   /**
@@ -368,7 +500,7 @@ public abstract class AbstractGraphicalDisplay
    */
   public boolean hasSendToItem(Class[] cls) {
     return    (SendToActionUtils.isAvailable(new Class[]{PlaceholderFile.class, JComponent.class}, cls))
-           && (supplyComponent() != null);
+      && (supplyComponent() != null);
   }
 
   /**
@@ -406,7 +538,7 @@ public abstract class AbstractGraphicalDisplay
 
     return result;
   }
-  
+
   /**
    * Cleans up after the execution has finished.
    */
