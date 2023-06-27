@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesDisplay.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -117,7 +117,6 @@ import java.util.Properties;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesDisplay
   extends AbstractTextualDisplay
@@ -178,7 +177,17 @@ public class PropertiesDisplay
     m_Model = new PropertiesTableModel((Properties) token.getPayload());
     m_Table.setModel(m_Model);
   }
-  
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
+  }
+
   /**
    * Clears the content of the panel.
    */

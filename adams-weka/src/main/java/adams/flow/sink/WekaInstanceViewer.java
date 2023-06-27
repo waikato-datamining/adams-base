@@ -390,6 +390,16 @@ public class WekaInstanceViewer
   }
 
   /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
+  }
+
+  /**
    * Clears the content of the panel.
    */
   @Override

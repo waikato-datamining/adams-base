@@ -15,7 +15,7 @@
 
 /*
  * FilePreview.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -143,7 +143,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9700 $
  */
 public class FilePreview
   extends AbstractGraphicalDisplay
@@ -156,7 +155,6 @@ public class FilePreview
    * Custom {@link DisplayPanel}.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 9700 $
    */
   public static class FilePreviewDisplayPanel
     extends AbstractComponentDisplayPanel {
@@ -390,6 +388,16 @@ public class FilePreview
       result = "automatic";
  
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

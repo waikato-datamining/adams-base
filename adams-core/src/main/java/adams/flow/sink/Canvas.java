@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Canvas.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-23 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -129,7 +129,6 @@ import adams.gui.visualization.core.Paintlet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Canvas
   extends AbstractGraphicalDisplay {
@@ -300,6 +299,16 @@ public class Canvas
     ActorUtils.updateFlowAwarePaintlets(result, this);
     
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

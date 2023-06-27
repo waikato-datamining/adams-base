@@ -15,7 +15,7 @@
 
 /*
  * FlowDisplay.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -164,6 +164,16 @@ public class FlowDisplay
   @Override
   protected void display(Token token) {
     m_Tree.setActor((Actor) token.getPayload());
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

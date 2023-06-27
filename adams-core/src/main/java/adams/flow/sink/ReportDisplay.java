@@ -15,7 +15,7 @@
 
 /*
  * ReportDisplay.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -144,7 +144,6 @@ import java.util.ArrayList;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportDisplay
   extends AbstractTextualDisplay {
@@ -348,7 +347,7 @@ public class ReportDisplay
    * @return		always true
    */
   @Override
-  protected boolean supportsClear() {
+  public boolean supportsClear() {
     return true;
   }
 
@@ -356,7 +355,7 @@ public class ReportDisplay
    * Clears the display.
    */
   @Override
-  protected void clear() {
+  public void clear() {
     m_Panel.getContainerManager().clear();
   }
 

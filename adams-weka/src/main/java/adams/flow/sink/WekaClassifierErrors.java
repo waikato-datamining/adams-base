@@ -15,18 +15,19 @@
 
 /*
  * WekaClassifierErrors.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.logging.Level;
-
-import javax.swing.JComponent;
-
+import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
+import adams.core.option.OptionUtils;
+import adams.data.weka.predictions.AbstractErrorScaler;
+import adams.data.weka.predictions.AutoScaler;
+import adams.flow.container.WekaEvaluationContainer;
+import adams.flow.core.Token;
+import adams.gui.core.BasePanel;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
@@ -38,14 +39,11 @@ import weka.core.Instances;
 import weka.gui.visualize.Plot2D;
 import weka.gui.visualize.PlotData2D;
 import weka.gui.visualize.VisualizePanel;
-import adams.core.QuickInfoHelper;
-import adams.core.Utils;
-import adams.core.option.OptionUtils;
-import adams.data.weka.predictions.AbstractErrorScaler;
-import adams.data.weka.predictions.AutoScaler;
-import adams.flow.container.WekaEvaluationContainer;
-import adams.flow.core.Token;
-import adams.gui.core.BasePanel;
+
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -129,7 +127,6 @@ import adams.gui.core.BasePanel;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaClassifierErrors
   extends AbstractGraphicalDisplay
@@ -142,7 +139,6 @@ public class WekaClassifierErrors
    * Helper class for generating visualization data.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class DataGenerator {
 
@@ -412,6 +408,16 @@ public class WekaClassifierErrors
     result += QuickInfoHelper.toString(this, "errorScaler", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_ErrorScaler), 40), ", error scaler: ");
     
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

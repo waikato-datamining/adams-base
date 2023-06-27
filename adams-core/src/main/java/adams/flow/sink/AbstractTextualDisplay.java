@@ -29,6 +29,7 @@ import adams.core.option.parsing.FontParsing;
 import adams.data.io.output.AbstractTextWriter;
 import adams.data.io.output.NullWriter;
 import adams.flow.control.Flow;
+import adams.flow.core.ClearableDisplay;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.flow.core.Token;
@@ -58,7 +59,7 @@ import java.util.Date;
  */
 public abstract class AbstractTextualDisplay
   extends AbstractDisplay
-  implements MenuBarProvider, TextSupplier, SendToActionSupporter {
+  implements MenuBarProvider, TextSupplier, SendToActionSupporter, ClearableDisplay {
 
   /** for serialization. */
   private static final long serialVersionUID = 3852563073987265768L;
@@ -457,7 +458,8 @@ public abstract class AbstractTextualDisplay
    *
    * @return		true if supported
    */
-  protected boolean supportsClear() {
+  @Override
+  public boolean supportsClear() {
     return false;
   }
 
@@ -466,7 +468,8 @@ public abstract class AbstractTextualDisplay
    * <br><br>
    * Default implementation does nothing.
    */
-  protected void clear() {
+  @Override
+  public void clear() {
   }
 
   /**

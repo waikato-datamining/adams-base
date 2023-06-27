@@ -222,8 +222,10 @@ public class Html4Display
    */
   @Override
   public void clearPanel() {
-    m_EditorPane.setDocument(m_EditorPane.getEditorKit().createDefaultDocument());
-    m_EditorPane.setText("<html></html>");
+    if (m_EditorPane != null) {
+      m_EditorPane.setDocument(m_EditorPane.getEditorKit().createDefaultDocument());
+      m_EditorPane.setText("<html></html>");
+    }
   }
 
   /**
@@ -232,16 +234,8 @@ public class Html4Display
    * @return		true if supported
    */
   @Override
-  protected boolean supportsClear() {
+  public boolean supportsClear() {
     return true;
-  }
-
-  /**
-   * Clears the display.
-   */
-  @Override
-  protected void clear() {
-    clearPanel();
   }
 
   /**

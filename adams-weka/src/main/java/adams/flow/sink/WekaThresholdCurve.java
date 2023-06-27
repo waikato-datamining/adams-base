@@ -15,7 +15,7 @@
 
 /*
  * WekaThresholdCurve.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -139,7 +139,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaThresholdCurve
   extends AbstractGraphicalDisplay
@@ -152,7 +151,6 @@ public class WekaThresholdCurve
    * The type of the fields.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    * @see ThresholdCurve
    */
   public enum AttributeName
@@ -445,6 +443,16 @@ public class WekaThresholdCurve
     result += QuickInfoHelper.toString(this, "attributeY", m_AttributeY, ", y-axis: ");
     
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

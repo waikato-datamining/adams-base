@@ -15,7 +15,7 @@
 
 /*
  * ZScoreDisplay.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -129,7 +129,6 @@ import java.awt.Color;
  <!-- options-end -->
  *
  * @author msf8
- * @version $Revision$
  */
 public class ZScoreDisplay
   extends AbstractGraphicalDisplay
@@ -335,6 +334,16 @@ public class ZScoreDisplay
   @Override
   protected int getDefaultHeight() {
     return 500;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   @Override

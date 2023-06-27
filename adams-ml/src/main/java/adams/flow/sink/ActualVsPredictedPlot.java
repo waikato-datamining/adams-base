@@ -15,7 +15,7 @@
 
 /*
  * ActualVsPredictedPlot.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -1187,6 +1187,16 @@ public class ActualVsPredictedPlot
     result.getPlot().setTipTextCustomizer(null);
 
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * ImageViewer.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -198,7 +198,6 @@ public class ImageViewer
    * Custom {@link DisplayPanel}.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ImageViewerDisplayPanel
     extends AbstractComponentDisplayPanel
@@ -673,6 +672,16 @@ public class ImageViewer
    */
   public String imageOverlayTipText() {
     return "The image overlay to use.";
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

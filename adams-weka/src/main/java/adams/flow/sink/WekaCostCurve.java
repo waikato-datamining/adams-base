@@ -15,7 +15,7 @@
 
 /*
  * WekaCostCurve.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -127,7 +127,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaCostCurve
   extends AbstractGraphicalDisplay
@@ -236,6 +235,16 @@ public class WekaCostCurve
     result += QuickInfoHelper.toString(this, "classLabelRange", m_ClassLabelRange, ", class label: ");
     
     return result;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

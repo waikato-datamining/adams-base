@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageHistogram.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -120,7 +120,6 @@ import java.awt.BorderLayout;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageHistogram
   extends AbstractGraphicalDisplay
@@ -172,6 +171,16 @@ public class ImageHistogram
     cont  = (AbstractImageContainer) token.getPayload();
     panel = (HistogramPanel) m_Panel;
     panel.setImage(cont.toBufferedImage());
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

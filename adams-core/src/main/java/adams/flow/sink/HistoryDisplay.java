@@ -15,7 +15,7 @@
 
 /*
  * HistoryDisplay.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -161,7 +161,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HistoryDisplay
   extends AbstractTextualDisplay {
@@ -993,7 +992,7 @@ public class HistoryDisplay
    * @return		always true
    */
   @Override
-  protected boolean supportsClear() {
+  public boolean supportsClear() {
     return true;
   }
 
@@ -1001,7 +1000,7 @@ public class HistoryDisplay
    * Clears the display.
    */
   @Override
-  protected void clear() {
+  public void clear() {
     m_HistoryPanel.clear();
   }
 

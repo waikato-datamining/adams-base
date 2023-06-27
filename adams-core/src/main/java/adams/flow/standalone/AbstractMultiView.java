@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiView.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -34,6 +34,7 @@ import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorReferenceHandler;
 import adams.flow.core.ActorReferenceHandlerHelper;
 import adams.flow.core.ActorUtils;
+import adams.flow.core.ClearableDisplay;
 import adams.flow.core.DataPlotUpdaterSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
@@ -352,6 +353,9 @@ public abstract class AbstractMultiView
 
   /** the menu bar, if used. */
   protected JMenuBar m_MenuBar;
+
+  /** the "clear" menu item. */
+  protected JMenuItem m_MenuItemFileClear;
 
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileClose;
@@ -933,6 +937,15 @@ public abstract class AbstractMultiView
       }
     });
 
+    // File/Clear
+    menuitem = new JMenuItem("Clear");
+    menu.add(menuitem);
+    menuitem.setMnemonic('l');
+    menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl pressed N"));
+    menuitem.setIcon(ImageManager.getIcon("new.gif"));
+    menuitem.addActionListener((ActionEvent e) -> clear());
+    m_MenuItemFileClear = menuitem;
+
     // File/Send to
     if (SendToActionUtils.addSendToSubmenu(this, menu))
       menu.addSeparator();
@@ -998,15 +1011,58 @@ public abstract class AbstractMultiView
     if (m_MenuBar == null)
       return;
 
-    m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
-    if (m_MenuItemFlowPauseResume.isEnabled()) {
-      if (isPaused()) {
-	m_MenuItemFlowPauseResume.setText("Resume");
-	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+    m_MenuItemFileClear.setEnabled(supportsClear());
+
+    if (m_MenuItemFlowPauseResume != null) {
+      m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
+      if (m_MenuItemFlowPauseResume.isEnabled()) {
+        if (isPaused()) {
+          m_MenuItemFlowPauseResume.setText("Resume");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+        }
+        else {
+          m_MenuItemFlowPauseResume.setText("Pause");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+        }
       }
-      else {
-	m_MenuItemFlowPauseResume.setText("Pause");
-	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+    }
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported by at least one wrapped view
+   */
+  protected boolean supportsClear() {
+    boolean		result;
+    ClearableDisplay	clearable;
+
+    result = false;
+
+    for (ViewWrapper wrapper: m_Wrappers) {
+      if (wrapper.getWrapped() instanceof ClearableDisplay) {
+        clearable = (ClearableDisplay) wrapper.getWrapped();
+	if (clearable.supportsClear()) {
+	  result = true;
+	  break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Clears the display, if possible.
+   */
+  protected void clear() {
+    ClearableDisplay	clearable;
+
+    for (ViewWrapper wrapper: m_Wrappers) {
+      if (wrapper.getWrapped() instanceof ClearableDisplay) {
+	clearable = (ClearableDisplay) wrapper.getWrapped();
+	if (clearable.supportsClear())
+	  clearable.clear();
       }
     }
   }

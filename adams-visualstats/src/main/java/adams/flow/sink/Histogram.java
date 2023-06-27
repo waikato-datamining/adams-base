@@ -15,7 +15,7 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -280,6 +280,16 @@ public class Histogram
     }
     hist.setDataName(m_DataName);
     hist.update();
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

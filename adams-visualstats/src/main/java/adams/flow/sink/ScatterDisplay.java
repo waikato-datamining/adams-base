@@ -15,7 +15,7 @@
 
 /*
  * ScatterDisplay.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -536,6 +536,16 @@ public class ScatterDisplay
    */
   public Class[] accepts() {
     return new Class[]{SpreadSheet.class};
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

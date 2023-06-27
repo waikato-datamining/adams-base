@@ -15,7 +15,7 @@
 
 /*
  * MatrixPlot.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -172,6 +172,16 @@ public class MatrixPlot
     //percent of instances to work with
     m_OptionManager.add(
       "percent", "percent", 100);
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   @Override

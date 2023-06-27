@@ -15,7 +15,7 @@
 
 /*
  * SideBySideDiff.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -112,7 +112,6 @@ import java.awt.Dimension;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SideBySideDiff
   extends AbstractGraphicalDisplay
@@ -152,6 +151,16 @@ public class SideBySideDiff
   @Override
   protected int getDefaultHeight() {
     return 600;
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

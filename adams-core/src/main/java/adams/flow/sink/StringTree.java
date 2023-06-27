@@ -13,15 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringTree.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
-
-import java.awt.BorderLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
@@ -29,6 +25,10 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.dotnotationtree.DotNotationNode;
 import adams.gui.core.dotnotationtree.DotNotationTree;
+
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -122,7 +122,6 @@ import adams.gui.core.dotnotationtree.DotNotationTree;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringTree
   extends AbstractGraphicalDisplay {
@@ -134,7 +133,6 @@ public class StringTree
    * The custom node for the {@link HierarchicalStringTree}.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class HierarchicalStringNode
     extends DotNotationNode {
@@ -382,6 +380,16 @@ public class StringTree
 
     if (items != null)
       m_Tree.addItems(items);
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

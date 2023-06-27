@@ -15,7 +15,7 @@
 
 /*
  * Display.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -150,7 +150,6 @@ import java.awt.event.ActionEvent;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Display
   extends AbstractTextualDisplay 
@@ -574,7 +573,7 @@ public class Display
    * @return		always true
    */
   @Override
-  protected boolean supportsClear() {
+  public boolean supportsClear() {
     return true;
   }
 
@@ -582,7 +581,7 @@ public class Display
    * Clears the display.
    */
   @Override
-  protected void clear() {
+  public void clear() {
     ((TextEditorPanel) m_Panel).clear();
   }
 

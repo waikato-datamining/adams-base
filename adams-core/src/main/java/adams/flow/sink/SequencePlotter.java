@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotter.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -1097,6 +1097,16 @@ public class SequencePlotter
       "The file to write the plot containers to (in CSV format); does not "
 	+ "store the meta-data, as it can change from container to container; "
 	+ "ignored if pointing to a directory.";
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

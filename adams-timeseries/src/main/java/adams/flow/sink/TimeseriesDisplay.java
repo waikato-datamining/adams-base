@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesDisplay.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -665,6 +665,16 @@ public class TimeseriesDisplay
    */
   public String plotUpdaterTipText() {
     return "The updating strategy for the plot.";
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * JFreeChartPlot.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -473,6 +473,16 @@ public class JFreeChartPlot
     m_PlotPanel  = new ChartPanel(m_JFreeChart);
     m_Panel.removeAll();
     m_Panel.add(m_PlotPanel, BorderLayout.CENTER);
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

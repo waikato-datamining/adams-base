@@ -15,7 +15,7 @@
 
 /*
  * ObjectViewer.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -202,6 +202,16 @@ public class ObjectViewer
   @Override
   protected void display(Token token) {
     ((InspectionPanel) m_Panel).setCurrent(token.getPayload());
+  }
+
+  /**
+   * Whether "clear" is supported and shows up in the menu.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsClear() {
+    return true;
   }
 
   /**

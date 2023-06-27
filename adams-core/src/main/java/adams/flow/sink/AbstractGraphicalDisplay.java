@@ -24,6 +24,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.UserMode;
 import adams.flow.control.Flow;
+import adams.flow.core.ClearableDisplay;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.gui.chooser.TextFileChooser;
@@ -53,7 +54,7 @@ import java.awt.event.ActionEvent;
  */
 public abstract class AbstractGraphicalDisplay
   extends AbstractDisplay
-  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter {
+  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter, ClearableDisplay {
 
   /** for serialization. */
   private static final long serialVersionUID = -4882859296402745911L;
@@ -357,16 +358,17 @@ public abstract class AbstractGraphicalDisplay
    *
    * @return		true if supported
    */
-  protected boolean supportsClear() {
+  @Override
+  public boolean supportsClear() {
     return false;
   }
 
   /**
    * Clears the display.
-   * <br><br>
-   * Default implementation does nothing.
    */
-  protected void clear() {
+  @Override
+  public void clear() {
+    clearPanel();
   }
 
   /**
