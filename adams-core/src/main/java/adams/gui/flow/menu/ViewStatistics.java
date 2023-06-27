@@ -15,26 +15,17 @@
 
 /*
  * ViewStatistics.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
-import adams.data.statistics.InformativeStatistic;
-import adams.flow.core.ActorStatistic;
-import adams.gui.core.GUIHelper;
-import adams.gui.flow.tree.Node;
-import adams.gui.visualization.statistics.InformativeStatisticFactory;
+import adams.flow.processor.ActorStatistics;
 
-import javax.swing.tree.TreeNode;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  * Displays statistics about the flow.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ViewStatistics
@@ -45,51 +36,20 @@ public class ViewStatistics
 
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   @Override
   protected String getTitle() {
     return "Statistics...";
   }
-  
+
   /**
    * Invoked when an action occurs.
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    Runnable	runnable;
-
-    runnable = () -> {
-      Node node = null;
-      if (m_State.getCurrentTree().getSelectedNode() != null)
-	node = m_State.getCurrentTree().getSelectedNode();
-      else if (m_State.getCurrentRoot() != null)
-	node = m_State.getCurrentTree().getRootNode();
-      ActorStatistic stats = new ActorStatistic();
-      if (node != null) {
-        Enumeration<TreeNode> all = node.breadthFirstEnumeration();
-        while (all.hasMoreElements()) {
-          Node child = (Node) all.nextElement();
-          stats.update(child.getActor());
-        }
-      }
-      List<InformativeStatistic> statsList = new ArrayList<>();
-      statsList.add(stats);
-
-      InformativeStatisticFactory.Dialog dialog;
-      if (m_State.getParentDialog() != null)
-	dialog = InformativeStatisticFactory.getDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
-      else
-	dialog = InformativeStatisticFactory.getDialog(getParentFrame(), true);
-      dialog.setStatistics(statsList);
-      dialog.setTitle("Actor statistics");
-      dialog.setSize(GUIHelper.makeWider(GUIHelper.rotate(GUIHelper.getDefaultSmallDialogDimension())));
-      dialog.setLocationRelativeTo(m_State);
-      dialog.setVisible(true);
-    };
-
-    m_State.getCurrentPanel().startBackgroundTask(runnable, "Generating statistics...", true);
+    m_State.getCurrentPanel().processActors(new ActorStatistics());
   }
 
   /**
@@ -98,7 +58,7 @@ public class ViewStatistics
   @Override
   protected void doUpdate() {
     setEnabled(
-	   m_State.hasCurrentPanel()
+      m_State.hasCurrentPanel()
 	&& !m_State.isSwingWorkerRunning());
   }
 }
