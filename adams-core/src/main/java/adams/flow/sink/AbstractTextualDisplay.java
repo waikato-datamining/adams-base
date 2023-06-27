@@ -449,6 +449,20 @@ public abstract class AbstractTextualDisplay
     if (supportsClear())
       m_MenuItemFileClear.setEnabled(len > 0);
     m_MenuItemFileSaveAs.setEnabled(len > 0);
+
+    if (m_MenuItemFlowPauseResume != null) {
+      m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
+      if (m_MenuItemFlowPauseResume.isEnabled()) {
+        if (isPaused()) {
+          m_MenuItemFlowPauseResume.setText("Resume");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+        }
+        else {
+          m_MenuItemFlowPauseResume.setText("Pause");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+        }
+      }
+    }
   }
 
   /**

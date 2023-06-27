@@ -338,15 +338,17 @@ public abstract class AbstractGraphicalDisplay
     if (m_MenuItemFileSaveTextAs != null)
       m_MenuItemFileSaveTextAs.setEnabled(hasPanel());
 
-    m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
-    if (m_MenuItemFlowPauseResume.isEnabled()) {
-      if (isPaused()) {
-	m_MenuItemFlowPauseResume.setText("Resume");
-	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
-      }
-      else {
-	m_MenuItemFlowPauseResume.setText("Pause");
-	m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+    if (m_MenuItemFlowPauseResume != null) {
+      m_MenuItemFlowPauseResume.setEnabled(canPauseOrResume());
+      if (m_MenuItemFlowPauseResume.isEnabled()) {
+        if (isPaused()) {
+          m_MenuItemFlowPauseResume.setText("Resume");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("resume.gif"));
+        }
+        else {
+          m_MenuItemFlowPauseResume.setText("Pause");
+          m_MenuItemFlowPauseResume.setIcon(ImageManager.getIcon("pause.gif"));
+        }
       }
     }
   }
