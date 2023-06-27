@@ -15,7 +15,7 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -235,6 +235,17 @@ public class LoadBalancer
   public void setLoggingLevel(LoggingLevel value) {
     super.setLoggingLevel(value);
     m_Actors.setLoggingLevel(value);
+  }
+
+  /**
+   * Sets whether the transformation is skipped or not.
+   *
+   * @param value 	true if transformation is to be skipped
+   */
+  @Override
+  public void setSkip(boolean value) {
+    super.setSkip(value);
+    m_Actors.setSkip(value);
   }
 
   /**

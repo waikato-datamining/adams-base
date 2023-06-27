@@ -171,6 +171,17 @@ public abstract class AbstractTee
   }
 
   /**
+   * Sets whether the transformation is skipped or not.
+   *
+   * @param value 	true if transformation is to be skipped
+   */
+  @Override
+  public void setSkip(boolean value) {
+    super.setSkip(value);
+    m_Actors.setSkip(value);
+  }
+
+  /**
    * Performs checks on the "sub-actors".
    *
    * @return		null if checks passed or null in case of an error
