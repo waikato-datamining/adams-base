@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -556,6 +556,42 @@ public class SpreadSheetPanel
    */
   public boolean getShowColumnComboBox() {
     return m_PanelColumnComboBox.isVisible();
+  }
+
+  /**
+   * Whether to display a simple header or an HTML one with the column indices.
+   *
+   * @param value	true if to display simple header
+   */
+  public void setUseSimpleHeader(boolean value) {
+    m_Table.setUseSimpleHeader(value);
+  }
+
+  /**
+   * Returns whether to display a simple header or an HTML one with the column indices.
+   *
+   * @return		true if simple header displayed
+   */
+  public boolean getUseSimpleHeader() {
+    return m_Table.getUseSimpleHeader();
+  }
+
+  /**
+   * Whether to display the column with the row numbers.
+   *
+   * @param value	true if to display column
+   */
+  public void setShowRowColumn(boolean value) {
+    m_Table.setShowRowColumn(value);
+  }
+
+  /**
+   * Returns whether the column with the row numbers is displayed.
+   *
+   * @return		true if column displayed
+   */
+  public boolean getShowRowColumn() {
+    return m_Table.getShowRowColumn();
   }
 
   /**
