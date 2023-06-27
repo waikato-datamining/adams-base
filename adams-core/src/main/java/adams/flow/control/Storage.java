@@ -15,7 +15,7 @@
 
 /*
  * Storage.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -184,6 +185,49 @@ public class Storage
   }
 
   /**
+   * Returns the objects associated with the regexp matching their name.
+   *
+   * @param nameRegExp	the regexp for the names must match
+   * @return		the matching names with their associated values
+   */
+  public synchronized Map<String,Object> get(BaseRegExp nameRegExp) {
+    Map<String,Object> 	result;
+
+    result = new HashMap<>();
+
+    for (String name: m_Data.keySet()) {
+      if (nameRegExp.isMatch(name))
+        result.put(name, m_Data.get(name));
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the objects associated with the regexp matching the names from the specified LRU cache.
+   *
+   * @param cache	the LRU cache to access
+   * @param nameRegExp	the regexp that the names must match
+   * @return		the matching names with their associated values
+   */
+  public synchronized Map<String,Object> get(String cache, BaseRegExp nameRegExp) {
+    Map<String,Object> 		result;
+    LRUCache<String,Object>	lru;
+
+    result = new HashMap<>();
+
+    if (m_Caches.containsKey(cache)) {
+      lru = m_Caches.get(cache);
+      for (String name: lru.keySet()) {
+	if (nameRegExp.isMatch(name))
+	  result.put(name, lru.get(name));
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Removes the object associated with the name.
    *
    * @param name	the name of the value to remove
@@ -214,8 +258,8 @@ public class Storage
     keys   = new ArrayList<>(keySet());
     for (StorageName key: keys) {
       if (regexp.isMatch(key.getValue())) {
-        result = true;
-        if (remove(key) != null)
+	result = true;
+	if (remove(key) != null)
 	  notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, key.getValue()));
       }
     }
@@ -259,8 +303,8 @@ public class Storage
     keys   = new ArrayList<>(keySet(cache));
     for (StorageName key: keys) {
       if (regexp.isMatch(key.getValue())) {
-        result = true;
-        if (remove(cache, key) != null)
+	result = true;
+	if (remove(cache, key) != null)
 	  notifyChangeListeners(new StorageChangeEvent(this, Type.REMOVED, key.getValue(), cache));
       }
     }
@@ -447,8 +491,8 @@ public class Storage
     if (result) {
       for (i = 0; i < s.length(); i++) {
 	if (CHARS.indexOf(s.charAt(i)) > -1)
-          continue;
-        name.append(s.charAt(i));
+	  continue;
+	name.append(s.charAt(i));
       }
       result = (name.length() == 0);
     }
@@ -577,9 +621,9 @@ public class Storage
     for (i = 0; i < s.length(); i++) {
       chr = s.charAt(i);
       if (CHARS.indexOf(s.charAt(i)) > -1)
-        result.append(chr);
+	result.append(chr);
       else
-        result.append(replace);
+	result.append(replace);
     }
 
     return result.toString();
