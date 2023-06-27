@@ -15,7 +15,7 @@
 
 /*
  * ActorStatistic.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -56,7 +56,7 @@ public class ActorStatistic
   /** the sink count. */
   public static String COUNT_SINKS = "Sinks";
 
-  /** the skipped count. */
+  /** the skipped count (includes sub-flows). */
   public static String COUNT_SKIPPED = "Skipped";
 
   /** the statistics per actor type. */
@@ -110,13 +110,37 @@ public class ActorStatistic
   }
 
   /**
+   * Checks whether the actor itself or one of its parents is skipped.
+   *
+   * @param actor	the actor to check
+   * @return		if itself or a parent is skipped
+   */
+  protected boolean isSkipped(Actor actor) {
+    boolean	result;
+
+    result = actor.getSkip();
+
+    if (!result) {
+      while (actor.getParent() != null) {
+        actor = actor.getParent();
+        if (actor.getSkip()) {
+          result = true;
+          break;
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Updates the statistics with the specified actor.
    *
    * @param actor	the actor to use
    */
   public void update(Actor actor) {
     m_TypeStatistics.next(COUNT_ACTORS);
-    if (actor.getSkip())
+    if (isSkipped(actor))
       m_TypeStatistics.next(COUNT_SKIPPED);
     if (ActorUtils.isControlActor(actor))
       m_TypeStatistics.next(COUNT_CONTROLACTORS);
