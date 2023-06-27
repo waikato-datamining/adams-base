@@ -59,6 +59,9 @@ public class ActorStatistic
   /** the skipped count (includes sub-flows). */
   public static String COUNT_SKIPPED = "Skipped";
 
+  /** the skipped count (flag only). */
+  public static String COUNT_SKIPPED_FLAG_SET = "Skipped (flag set)";
+
   /** the statistics per actor type. */
   protected NamedCounter m_TypeStatistics;
 
@@ -142,6 +145,8 @@ public class ActorStatistic
     m_TypeStatistics.next(COUNT_ACTORS);
     if (isSkipped(actor))
       m_TypeStatistics.next(COUNT_SKIPPED);
+    if (actor.getSkip())
+      m_TypeStatistics.next(COUNT_SKIPPED_FLAG_SET);
     if (ActorUtils.isControlActor(actor))
       m_TypeStatistics.next(COUNT_CONTROLACTORS);
     if (ActorUtils.isStandalone(actor))
@@ -170,6 +175,7 @@ public class ActorStatistic
     m_TypeStatistics.clear(COUNT_TRANSFORMERS);
     m_TypeStatistics.clear(COUNT_SINKS);
     m_TypeStatistics.clear(COUNT_SKIPPED);
+    m_TypeStatistics.clear(COUNT_SKIPPED_FLAG_SET);
     m_ClassStatistics.clear();
 
     if (m_Actor == null)
