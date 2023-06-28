@@ -98,6 +98,7 @@ import adams.gui.flow.menu.FileSaveAs;
 import adams.gui.flow.menu.FlowEditorAction;
 import adams.gui.flow.menu.HelpActors;
 import adams.gui.flow.menu.HelpBooleanExpression;
+import adams.gui.flow.menu.HelpClasses;
 import adams.gui.flow.menu.HelpMathematicalExpression;
 import adams.gui.flow.menu.HelpStringExpression;
 import adams.gui.flow.menu.HelpVariables;
@@ -443,6 +444,9 @@ public class FlowEditorPanel
 
   /** the "help actors" action. */
   protected FlowEditorAction m_ActionHelpActors;
+
+  /** the "help classes" action. */
+  protected FlowEditorAction m_ActionHelpClasses;
 
   /** the "help variables" action. */
   protected FlowEditorAction m_ActionHelpVariables;
@@ -932,9 +936,14 @@ public class FlowEditorPanel
     m_ActionHalfHeight = action;
     m_MenuItems.add(action);
 
-    // Help/Variables
+    // Help/Actors
     action = new HelpActors();
     m_ActionHelpActors = action;
+    m_MenuItems.add(action);
+
+    // Help/Classes
+    action = new HelpClasses();
+    m_ActionHelpClasses = action;
     m_MenuItems.add(action);
 
     // Help/Variables
@@ -1291,6 +1300,7 @@ public class FlowEditorPanel
       menu.addChangeListener((ChangeEvent e) -> updateActions());
 
       menu.add(m_ActionHelpActors);
+      menu.add(m_ActionHelpClasses);
       menu.add(m_ActionHelpVariables);
       menu.add(m_ActionHelpBooleanExpression);
       menu.add(m_ActionHelpMathematicalExpression);
