@@ -1449,6 +1449,9 @@ public class TreeOperations
       processor = (ActorProcessor) procDialog.getCurrent();
     }
 
+    // add to recent list
+    getOwner().getEditor().addRecentActorProcessor(processor);
+
     if (processor instanceof ActorProcessorWithFlowPanelContext)
       ((ActorProcessorWithFlowPanelContext) processor).setContext(getOwner().getOwner());
 

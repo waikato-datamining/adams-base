@@ -35,6 +35,7 @@ import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
+import adams.flow.processor.ActorProcessor;
 import adams.gui.application.ChildFrame;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
@@ -205,6 +206,9 @@ public class FlowEditorPanel
   /** the file to store the recent files in. */
   public final static String SESSION_FILE = "FlowSession.props";
 
+  /** the file to store the recent actor processors in. */
+  public final static String ACTORPROCESSORS_SESSION_FILE = "FlowActorProcessorsSession.props";
+
   /** the default title for dialogs/frames. */
   public final static String DEFAULT_TITLE = "Flow editor";
 
@@ -312,6 +316,12 @@ public class FlowEditorPanel
 
   /** the "process actors" action. */
   protected FlowEditorAction m_ActionEditProcessActors;
+
+  /** recent actor processors menu. */
+  protected JMenu m_MenuEditRecentActorProcessors;
+
+  /** Recent file handler for actor processors */
+  protected RecentActorProcessorHandler<JMenu> m_RecentActorProcessorHandler;
 
   /** the "enable all breakpoints" action. */
   protected FlowEditorAction m_ActionRunEnableAllBreakpoints;
@@ -1210,6 +1220,19 @@ public class FlowEditorPanel
       menu.add(m_ActionEditListTODOs);
       menu.addSeparator();
       menu.add(m_ActionEditProcessActors);
+      submenu = new JMenu("Recent");
+      menu.add(submenu);
+      m_RecentActorProcessorHandler = new RecentActorProcessorHandler<>(ACTORPROCESSORS_SESSION_FILE, 5, submenu);
+      m_RecentActorProcessorHandler.addRecentItemListener(new RecentItemListener<JMenu, ActorProcessor>() {
+	@Override
+	public void recentItemAdded(RecentItemEvent<JMenu, ActorProcessor> e) {
+	  // ignored
+	}
+	@Override
+	public void recentItemSelected(RecentItemEvent<JMenu, ActorProcessor> e) {
+	  getCurrentPanel().processActorsPrompt(e.getItem());
+	}
+      });
 
       // Run
       menu = new BaseMenu(MENU_RUN);
@@ -2244,6 +2267,15 @@ public class FlowEditorPanel
    */
   public ToolBarLocation getPreferredToolBarLocation() {
     return m_PreferredToolBarLocation;
+  }
+
+  /**
+   * For adding an actor processor to the recent list.
+   *
+   * @param processor	the processor to add
+   */
+  public void addRecentActorProcessor(ActorProcessor processor) {
+    m_RecentActorProcessorHandler.addRecentItem(processor);
   }
 
   /**
