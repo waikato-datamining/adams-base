@@ -53,6 +53,7 @@ public class RecentActorProcessorHandler<M>
    */
   public RecentActorProcessorHandler(String propsFile, M menu) {
     super(propsFile, menu);
+    setAddShortcuts(false);
   }
 
   /**
@@ -64,6 +65,7 @@ public class RecentActorProcessorHandler<M>
    */
   public RecentActorProcessorHandler(String propsFile, int maxCount, M menu) {
     super(propsFile, maxCount, menu);
+    setAddShortcuts(false);
   }
 
   /**
@@ -76,6 +78,7 @@ public class RecentActorProcessorHandler<M>
    */
   public RecentActorProcessorHandler(String propsFile, String propPrefix, int maxCount, M menu) {
     super(propsFile, propPrefix, maxCount, menu);
+    setAddShortcuts(false);
   }
 
   /**
