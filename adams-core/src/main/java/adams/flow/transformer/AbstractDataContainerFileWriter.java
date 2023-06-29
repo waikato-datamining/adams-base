@@ -15,12 +15,13 @@
 
 /*
  * AbstractDataContainerFileWriter.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.CompressionSupporter;
@@ -40,7 +41,6 @@ import java.util.Arrays;
  * to disk.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to write to disk
  */
 public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
@@ -54,7 +54,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
     AUTOMATIC,
     /** Use the database ID. */
     DATABASE_ID,
-    /** use the container's ID. */
+    /** use the container's ID (but ensures that it is a valid filename). */
     ID,
     /** use the specified name (without path). */
     SUPPLIED
@@ -252,6 +252,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    *
    * @return		the data type
    */
+  @Override
   public Class[] accepts() {
     Class	cls;
 
@@ -265,6 +266,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    *
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
    */
+  @Override
   public Class[] generates() {
     return new Class[]{String.class};
   }
@@ -335,9 +337,9 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
 	break;
       case ID:
 	if (m_Writer.isOutputFile())
-	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + cont.getID() + actualExt);
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + FileUtils.createFilename(cont.getID(), "_") + actualExt);
 	else
-	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + cont.getID());
+	  file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + FileUtils.createFilename(cont.getID(), "_"));
 	break;
       case SUPPLIED:
 	file = new PlaceholderFile(m_OutputDir.getAbsolutePath() + File.separator + m_SuppliedFileName);
