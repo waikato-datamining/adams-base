@@ -13,27 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ToolBarPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import adams.gui.action.AbstractBaseAction;
 
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
-
-import adams.gui.action.AbstractBaseAction;
+import java.awt.BorderLayout;
+import java.awt.Component;
 
 /**
  * Specialized panel with a toolbar. The actual content panel is accessible
  * using <code>getContentPanel()</code>.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class ToolBarPanel
   extends BasePanel {
@@ -176,8 +175,8 @@ public abstract class ToolBarPanel
    *
    * @param action	the action to add
    */
-  public void addToToolBar(Action action) {
-    m_ToolBar.add(action);
+  public JButton addToToolBar(Action action) {
+    return m_ToolBar.add(action);
   }
 
   /**
@@ -185,8 +184,8 @@ public abstract class ToolBarPanel
    *
    * @param comp	the component to add
    */
-  public void addToToolBar(JComponent comp) {
-    m_ToolBar.add(comp);
+  public Component addToToolBar(JComponent comp) {
+    return m_ToolBar.add(comp);
   }
 
   /**
