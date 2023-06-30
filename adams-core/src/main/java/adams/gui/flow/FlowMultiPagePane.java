@@ -15,7 +15,7 @@
 
 /*
  * FlowTabbedPane.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -186,11 +186,11 @@ public class FlowMultiPagePane
     classes     = ClassLister.getSingleton().getClasses(AbstractMultiPageMenuItem.class);
     for (Class cls: classes) {
       try {
-        m_MenuItems.add((AbstractMultiPageMenuItem) cls.getDeclaredConstructor().newInstance());
+	m_MenuItems.add((AbstractMultiPageMenuItem) cls.getDeclaredConstructor().newInstance());
       }
       catch (Exception e) {
-        ConsolePanel.getSingleton().append(
-          "Failed to instantiate multi-page pane menu item for flow: " + cls.getName(), e);
+	ConsolePanel.getSingleton().append(
+	  "Failed to instantiate multi-page pane menu item for flow: " + cls.getName(), e);
       }
     }
     Collections.sort(m_MenuItems);
@@ -228,7 +228,7 @@ public class FlowMultiPagePane
       props   = FlowEditorPanel.getPropertiesEditor();
       clsname = props.getProperty("FlowPanelClass", FlowPanel.class.getName());
       try {
-        m_FlowPanelClass = ClassManager.getSingleton().forName(clsname);
+	m_FlowPanelClass = ClassManager.getSingleton().forName(clsname);
       }
       catch (Exception e) {
 	m_FlowPanelClass = FlowPanel.class;
@@ -266,6 +266,57 @@ public class FlowMultiPagePane
    * @param filters	the filters to apply
    * @return		the indices of the panels that matched
    */
+  public int[] getIndices(Map<FlowPanelFilter,Boolean> filters) {
+    TIntList	result;
+    FlowPanel	current;
+    boolean	match;
+    int 	i;
+
+    result = new TIntArrayList();
+
+    for (i = 0; i < getPanelCount(); i++) {
+      current = getPanelAt(i);
+      match   = true;
+      for (FlowPanelFilter filter: filters.keySet()) {
+	switch (filter) {
+	  case RUNNING:
+	    match = (current.isRunning() == filters.get(filter));
+	    break;
+	  case STOPPING:
+	    match = (current.isStopping() == filters.get(filter));
+	    break;
+	  case DEBUG:
+	    match = (current.getTree().isDebug() == filters.get(filter));
+	    break;
+	  case FLOW:
+	    match = (current.getTree().isFlow() == filters.get(filter));
+	    break;
+	  case SWINGWORKER:
+	    match = (current.isSwingWorkerRunning() == filters.get(filter));
+	    break;
+	  case HAS_LAST_FLOW:
+	    match = ((current.getLastFlow() != null) && filters.get(filter))
+	      || ((current.getLastFlow() == null) && !filters.get(filter));
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled panel filter: " + filter);
+	}
+	if (!match)
+	  break;
+      }
+      if (match)
+	result.add(i);
+    }
+
+    return result.toArray();
+  }
+
+  /**
+   * Returns the indices of the selected flow panels that match the filter.
+   *
+   * @param filters	the filters to apply
+   * @return		the indices of the panels that matched
+   */
   public int[] getSelectedIndices(Map<FlowPanelFilter,Boolean> filters) {
     TIntList	result;
     FlowPanel	current;
@@ -277,7 +328,7 @@ public class FlowMultiPagePane
       current = getPanelAt(index);
       match   = true;
       for (FlowPanelFilter filter: filters.keySet()) {
-        switch (filter) {
+	switch (filter) {
 	  case RUNNING:
 	    match = (current.isRunning() == filters.get(filter));
 	    break;
@@ -433,20 +484,20 @@ public class FlowMultiPagePane
 
   /**
    * Gets called when a tab gets selected.
-   * 
+   *
    * @param e		the event that triggered the action
    */
   protected void pageSelected(ChangeEvent e) {
     // actor tabs
     if ((getPanelCount() == 0) || (getSelectedIndex() == -1))
       m_Owner.getTabs().notifyTabs(
-	  new TreePath[0],
-	  new Actor[0]);
+	new TreePath[0],
+	new Actor[0]);
     else
       m_Owner.getTabs().notifyTabs(
-	  m_Owner.getCurrentPanel().getTree().getSelectionPaths(),
-	  m_Owner.getCurrentPanel().getTree().getSelectedActors());
-    
+	m_Owner.getCurrentPanel().getTree().getSelectionPaths(),
+	m_Owner.getCurrentPanel().getTree().getSelectedActors());
+
     // title
     updateOwnerTitle();
 
@@ -456,11 +507,11 @@ public class FlowMultiPagePane
     }
     else {
       if (getCurrentPanel().isRunning())
-        getOwner().showStatus("Running");
+	getOwner().showStatus("Running");
       if (getCurrentPanel().getTree().getSelectedFullName() != null)
-        getCurrentPanel().showStatus(false, getCurrentPanel().getTree().getSelectedFullName());
+	getCurrentPanel().showStatus(false, getCurrentPanel().getTree().getSelectedFullName());
       else
-        getCurrentPanel().showStatus(false, "");
+	getCurrentPanel().showStatus(false, "");
     }
 
     // ensure that tabs are visible
@@ -468,10 +519,10 @@ public class FlowMultiPagePane
       for (AbstractTabHandler handler: getCurrentPanel().getTabHandlers())
 	handler.display();
     }
-    
+
     // current directory
     updateCurrentDirectory();
-    
+
     // update in general
     m_Owner.update();
   }
@@ -518,14 +569,14 @@ public class FlowMultiPagePane
    */
   public void updateCurrentDirectory() {
     File	file;
-    
+
     if (!hasCurrentPanel())
       return;
-    
+
     file = getCurrentPanel().getCurrentFile();
     if (file == null)
       return;
-    
+
     getOwner().setCurrentDirectory(file.getParentFile());
   }
 

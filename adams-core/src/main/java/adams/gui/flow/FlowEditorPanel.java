@@ -115,7 +115,9 @@ import adams.gui.flow.menu.RunParseError;
 import adams.gui.flow.menu.RunPauseResume;
 import adams.gui.flow.menu.RunRemoveAllBreakpoints;
 import adams.gui.flow.menu.RunRun;
+import adams.gui.flow.menu.RunRunAll;
 import adams.gui.flow.menu.RunStop;
+import adams.gui.flow.menu.RunStopAll;
 import adams.gui.flow.menu.RunStorage;
 import adams.gui.flow.menu.RunValidateSetup;
 import adams.gui.flow.menu.RunVariables;
@@ -140,6 +142,7 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -350,6 +353,9 @@ public class FlowEditorPanel
   /** the "run" action. */
   protected FlowEditorAction m_ActionRunRun;
 
+  /** the "run all" action. */
+  protected FlowEditorAction m_ActionRunRunAll;
+
   /** the "run (debug)" action. */
   protected FlowEditorAction m_ActionRunDebug;
 
@@ -358,6 +364,9 @@ public class FlowEditorPanel
 
   /** the "stop" action. */
   protected FlowEditorAction m_ActionRunStop;
+
+  /** the "stop all" action. */
+  protected FlowEditorAction m_ActionRunStopAll;
 
   /** the "kill" action. */
   protected FlowEditorAction m_ActionRunKill;
@@ -370,6 +379,9 @@ public class FlowEditorPanel
 
   /** the "Clear graphical output" action. */
   protected FlowEditorAction m_ActionRunClearGraphicalOutput;
+
+  /** the "active" menu. */
+  protected JMenu m_MenuActive;
 
   /** the "variables" action. */
   protected FlowEditorAction m_ActionActiveVariables;
@@ -500,6 +512,9 @@ public class FlowEditorPanel
   /** the default toolbar location to use. */
   protected ToolBarLocation m_PreferredToolBarLocation;
 
+  /** the "active" buttons in the toolbar. */
+  protected List<JButton> m_ToolBarActiveButtons;
+
   /**
    * Initializes the members.
    */
@@ -510,16 +525,17 @@ public class FlowEditorPanel
 
     super.initialize();
 
-    m_Self                = this;
-    m_RecentFilesHandler  = null;
-    m_FileChooser         = new FlowFileChooser();
+    m_Self                 = this;
+    m_RecentFilesHandler   = null;
+    m_FileChooser          = new FlowFileChooser();
     m_FileChooser.setMultiSelectionEnabled(true);
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getPropertiesEditor().getPath("InitialDir", "%h")).getAbsoluteFile());
-    m_FilenameProposer    = new FilenameProposer(FlowPanel.PREFIX_NEW, Actor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
+    m_FilenameProposer     = new FilenameProposer(FlowPanel.PREFIX_NEW, Actor.FILE_EXTENSION, getPropertiesEditor().getPath("InitialDir", "%h"));
 
-    m_MenuItems           = new ArrayList<>();
-    m_AdditionalMenuItems = new ArrayList<>();
-    additionals           = AbstractFlowEditorMenuItem.getMenuItems();
+    m_ToolBarActiveButtons = new ArrayList<>();
+    m_MenuItems            = new ArrayList<>();
+    m_AdditionalMenuItems  = new ArrayList<>();
+    additionals            = AbstractFlowEditorMenuItem.getMenuItems();
     for (Class additional: additionals) {
       try {
 	item = (AbstractFlowEditorMenuItem) additional.getDeclaredConstructor().newInstance();
@@ -741,6 +757,11 @@ public class FlowEditorPanel
     m_ActionRunRun = action;
     m_MenuItems.add(action);
 
+    // Run/Run all
+    action = new RunRunAll();
+    m_ActionRunRunAll = action;
+    m_MenuItems.add(action);
+
     // Run/Run (debug)
     action = new RunDebug();
     m_ActionRunDebug = action;
@@ -754,6 +775,11 @@ public class FlowEditorPanel
     // Run/Stop
     action = new RunStop();
     m_ActionRunStop = action;
+    m_MenuItems.add(action);
+
+    // Run/Stop all
+    action = new RunStopAll();
+    m_ActionRunStopAll = action;
     m_MenuItems.add(action);
 
     // Run/Kill
@@ -998,15 +1024,17 @@ public class FlowEditorPanel
       addSeparator();
       addToToolBar(m_ActionRunValidateSetup);
       addToToolBar(m_ActionRunRun);
+      addToToolBar(m_ActionRunRunAll);
       addToToolBar(m_ActionRunDebug);
       addToToolBar(m_ActionRunPauseAndResume);
       addToToolBar(m_ActionRunStop);
+      addToToolBar(m_ActionRunStopAll);
       addSeparator();
-      addToToolBar(m_ActionActiveValidateSetup);
-      addToToolBar(m_ActionActiveRun);
-      addToToolBar(m_ActionActiveDebug);
-      addToToolBar(m_ActionActivePauseAndResume);
-      addToToolBar(m_ActionActiveStop);
+      m_ToolBarActiveButtons.add(addToToolBar(m_ActionActiveValidateSetup));
+      m_ToolBarActiveButtons.add(addToToolBar(m_ActionActiveRun));
+      m_ToolBarActiveButtons.add(addToToolBar(m_ActionActiveDebug));
+      m_ToolBarActiveButtons.add(addToToolBar(m_ActionActivePauseAndResume));
+      m_ToolBarActiveButtons.add(addToToolBar(m_ActionActiveStop));
     }
     else {
       items = props.getProperty("Toolbar.Actions").replaceAll(" ", "").split(",");
@@ -1017,7 +1045,10 @@ public class FlowEditorPanel
 	}
 	for (FlowEditorAction action: m_MenuItems) {
 	  if (action.getClass().getName().equals(item)) {
-	    addToToolBar(action);
+	    if (action.getClass().getSimpleName().startsWith("Active"))
+	      m_ToolBarActiveButtons.add(addToToolBar(action));
+	    else
+	      addToToolBar(action);
 	    break;
 	  }
 	}
@@ -1242,9 +1273,11 @@ public class FlowEditorPanel
 
       menu.add(m_ActionRunValidateSetup);
       menu.add(m_ActionRunRun);
+      menu.add(m_ActionRunRunAll);
       menu.add(m_ActionRunDebug);
       menu.add(m_ActionRunPauseAndResume);
       menu.add(m_ActionRunStop);
+      menu.add(m_ActionRunStopAll);
       menu.add(m_ActionRunKill);
       menu.addSeparator();
       menu.add(m_ActionRunEnableAllBreakpoints);
@@ -1265,6 +1298,7 @@ public class FlowEditorPanel
       result.add(menu);
       menu.setMnemonic('A');
       menu.addChangeListener((ChangeEvent e) -> updateActions());
+      m_MenuActive = menu;
 
       menu.add(m_ActionActiveValidateSetup);
       menu.add(m_ActionActiveRun);
@@ -1367,6 +1401,9 @@ public class FlowEditorPanel
    */
   @Override
   public void updateActions() {
+    boolean	hasActive;
+    boolean	stateChanged;
+
     // regular menu items
     for (FlowEditorAction action: m_MenuItems)
       action.update(m_Self);
@@ -1374,6 +1411,26 @@ public class FlowEditorPanel
     // additional menu items
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems)
       item.updateAction();
+
+    if (m_MenuActive != null) {
+      hasActive    = hasActivePanel();
+      stateChanged = (!hasActive && m_MenuActive.isVisible()) || (hasActive && !m_MenuActive.isVisible());
+      if (stateChanged) {
+	m_MenuActive.setVisible(hasActive);
+	if (!hasActive) {
+	  for (JButton button : m_ToolBarActiveButtons)
+	    removeFromToolBar(button);
+	}
+	else {
+	  for (JButton button : m_ToolBarActiveButtons)
+	    addToToolBar(button);
+	}
+	m_ToolBar.invalidate();
+	m_ToolBar.validate();
+	m_ToolBar.doLayout();
+	m_ToolBar.repaint();
+      }
+    }
   }
 
   /**
