@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
@@ -67,68 +67,76 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-home &lt;java.lang.String&gt; (property: home)
- * &nbsp;&nbsp;&nbsp;The directory to use as the project's home directory, overriding the automatically 
+ * &nbsp;&nbsp;&nbsp;The directory to use as the project's home directory, overriding the automatically
  * &nbsp;&nbsp;&nbsp;determined one.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-headless &lt;boolean&gt; (property: headless)
  * &nbsp;&nbsp;&nbsp;If set to true, the actor is run in headless mode without GUI components.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If set to true, interactive actors suppress their interaction with the user.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-register &lt;boolean&gt; (property: register)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets register with the 'running flows registry',
  * &nbsp;&nbsp;&nbsp; making it visible to remote commands.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
  * &nbsp;&nbsp;&nbsp;The file (or directory containing flows) to load the actor from.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-include &lt;adams.core.base.BaseRegExp&gt; (property: include)
- * &nbsp;&nbsp;&nbsp;The regular expression for including flows when traversing a directory rather 
+ * &nbsp;&nbsp;&nbsp;The regular expression for including flows when traversing a directory rather
  * &nbsp;&nbsp;&nbsp;than just executing a single flow.
  * &nbsp;&nbsp;&nbsp;default: .*\\\\.(flow|flow.gz)
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-clean-up &lt;boolean&gt; (property: cleanUp)
- * &nbsp;&nbsp;&nbsp;If set to true, then a clean up is performed after execution, removing any 
+ * &nbsp;&nbsp;&nbsp;If set to true, then a clean up is performed after execution, removing any
  * &nbsp;&nbsp;&nbsp;graphical output as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-no-execute &lt;boolean&gt; (property: noExecute)
- * &nbsp;&nbsp;&nbsp;If set to true, then flow execution is suppressed; flow is only loaded, 
+ * &nbsp;&nbsp;&nbsp;If set to true, then flow execution is suppressed; flow is only loaded,
  * &nbsp;&nbsp;&nbsp;set up and wrapped up.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-remote-scripting-engine-cmdline &lt;java.lang.String&gt; (property: remoteScriptingEngineCmdLine)
  * &nbsp;&nbsp;&nbsp;The command-line of the remote scripting engine to execute at startup time;
  * &nbsp;&nbsp;&nbsp; use empty string for disable scripting.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-shutdown-hook &lt;adams.core.shutdown.AbstractShutdownHook&gt; (property: shutdownHook)
  * &nbsp;&nbsp;&nbsp;The shutdown hook to use.
  * &nbsp;&nbsp;&nbsp;default: adams.core.shutdown.Null
  * </pre>
  *
+ * <pre>-force-exit &lt;boolean&gt; (property: forceExit)
+ * &nbsp;&nbsp;&nbsp;If set to true, then the runner will trigger a System.exit call to forcefully
+ * &nbsp;&nbsp;&nbsp;exit the process.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowRunner
   extends AbstractOptionHandler
@@ -174,6 +182,9 @@ public class FlowRunner
   /** the shutdown hook. */
   protected AbstractShutdownHook m_ShutdownHook;
 
+  /** whether the force an exit after the flows were stopped. */
+  protected boolean m_ForceExit;
+
   /** the listeners for changes to the remote scripting engine. */
   protected Set<RemoteScriptingEngineUpdateListener> m_RemoteScriptingEngineUpdateListeners;
 
@@ -195,10 +206,10 @@ public class FlowRunner
   public String globalInfo() {
     return
       "Executes flows from command-line.\n"
-	+ "It is also possible to traverse a directory and execute all flows within "
-	+ "that match a regular expression.\n"
-	+ "Using the 'no-execute' option, you can suppress the flow execution, but "
-	+ "still test whether the flow loads and can be fully set up and wrapped up.";
+        + "It is also possible to traverse a directory and execute all flows within "
+        + "that match a regular expression.\n"
+        + "Using the 'no-execute' option, you can suppress the flow execution, but "
+        + "still test whether the flow loads and can be fully set up and wrapped up.";
   }
 
   /**
@@ -247,6 +258,10 @@ public class FlowRunner
     m_OptionManager.add(
       "shutdown-hook", "shutdownHook",
       new Null());
+
+    m_OptionManager.add(
+      "force-exit", "forceExit",
+      false);
   }
 
   /**
@@ -444,7 +459,7 @@ public class FlowRunner
   public String includeTipText() {
     return
       "The regular expression for including flows when traversing a "
-	+ "directory rather than just executing a single flow.";
+        + "directory rather than just executing a single flow.";
   }
 
   /**
@@ -477,7 +492,7 @@ public class FlowRunner
   public String cleanUpTipText() {
     return
       "If set to true, then a clean up is performed after execution, "
-	+ "removing any graphical output as well.";
+        + "removing any graphical output as well.";
   }
 
   /**
@@ -508,7 +523,7 @@ public class FlowRunner
   public String noExecuteTipText() {
     return
       "If set to true, then flow execution is suppressed; flow is only "
-	+ "loaded, set up and wrapped up.";
+        + "loaded, set up and wrapped up.";
   }
 
   /**
@@ -538,8 +553,8 @@ public class FlowRunner
    */
   public String remoteScriptingEngineCmdLineTipText() {
     return
-        "The command-line of the remote scripting engine to execute at startup "
-	  + "time; use empty string for disable scripting.";
+      "The command-line of the remote scripting engine to execute at startup "
+        + "time; use empty string for disable scripting.";
   }
 
   /**
@@ -572,6 +587,36 @@ public class FlowRunner
   }
 
   /**
+   * Sets whether to force the process exit after flows were stopped.
+   *
+   * @param value	if true then force exit
+   */
+  public void setForceExit(boolean value) {
+    m_ForceExit = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to force the process exit after flows were stopped.
+   *
+   * @return		true if to force exit
+   */
+  public boolean getForceExit() {
+    return m_ForceExit;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String forceExitTipText() {
+    return
+      "If set to true, then the runner will trigger a System.exit call to forcefully exit the process.";
+  }
+
+  /**
    * Adds the scripting engine to execute. Doesn't stop any running engines.
    *
    * @param value	the engine to add
@@ -588,14 +633,14 @@ public class FlowRunner
     }
     else {
       if (m_RemoteScriptingEngine instanceof MultiScriptingEngine) {
-	((MultiScriptingEngine) m_RemoteScriptingEngine).addEngine(value);
+        ((MultiScriptingEngine) m_RemoteScriptingEngine).addEngine(value);
       }
       else {
-	multi = new MultiScriptingEngine();
-	new Thread(() -> multi.execute()).start();
-	multi.addEngine(m_RemoteScriptingEngine);
-	multi.addEngine(value);
-	m_RemoteScriptingEngine = multi;
+        multi = new MultiScriptingEngine();
+        new Thread(() -> multi.execute()).start();
+        multi.addEngine(m_RemoteScriptingEngine);
+        multi.addEngine(value);
+        m_RemoteScriptingEngine = multi;
       }
     }
     notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
@@ -618,7 +663,7 @@ public class FlowRunner
     }
     else {
       if (value.toCommandLine().equals(m_RemoteScriptingEngine.toCommandLine()))
-	setRemoteScriptingEngine(null);
+        setRemoteScriptingEngine(null);
     }
     notifyRemoteScriptingEngineUpdateListeners(new RemoteScriptingEngineUpdateEvent(this));
   }
@@ -719,18 +764,18 @@ public class FlowRunner
     // start scripting engine?
     if (!m_RemoteScriptingEngineCmdLine.isEmpty() && (getRemoteScriptingEngine() == null)) {
       try {
-	engine = (RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_RemoteScriptingEngineCmdLine);
+        engine = (RemoteScriptingEngine) OptionUtils.forAnyCommandLine(RemoteScriptingEngine.class, m_RemoteScriptingEngineCmdLine);
       }
       catch (Exception e) {
-	engine = null;
-	getLogger().log(
-	  Level.SEVERE,
-	  "Failed to instantiate remote scripting engine from commandline: '"
-	    + m_RemoteScriptingEngineCmdLine + "'",
-	  e);
+        engine = null;
+        getLogger().log(
+          Level.SEVERE,
+          "Failed to instantiate remote scripting engine from commandline: '"
+            + m_RemoteScriptingEngineCmdLine + "'",
+          e);
       }
       if (engine != null)
-	setRemoteScriptingEngine(engine);
+        setRemoteScriptingEngine(engine);
     }
 
     // clean up last run
@@ -742,12 +787,12 @@ public class FlowRunner
       errors = new MessageCollection();
       m_Actor = ActorUtils.read(m_Input.getAbsolutePath(), errors);
       if (!errors.isEmpty()) {
-	result = "Failed to load actor from '" + m_Input + "'!\n" + errors;
-	return result;
+        result = "Failed to load actor from '" + m_Input + "'!\n" + errors;
+        return result;
       }
       if (!(m_Actor instanceof Flow)) {
-	getLogger().warning("Root element is not a " + Flow.class.getName() + ": " + m_Input + ", skipping");
-	return null;
+        getLogger().warning("Root element is not a " + Flow.class.getName() + ": " + m_Input + ", skipping");
+        return null;
       }
     }
     else {
@@ -759,16 +804,16 @@ public class FlowRunner
       lister.setRegExp(m_Include);
       flows = lister.list();
       if (isLoggingEnabled())
-	getLogger().info("Found #" + flows.length + " flows");
+        getLogger().info("Found #" + flows.length + " flows");
       if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
-	getLogger().fine("Flows: " + Utils.arrayToString(flows));
+        getLogger().fine("Flows: " + Utils.arrayToString(flows));
       for (String flow: flows) {
-	if (isLoggingEnabled())
-	  getLogger().info("Running: " + flow);
-	setInput(new PlaceholderFile(flow));
-	result = execute();
-	if (result != null)
-	  break;
+        if (isLoggingEnabled())
+          getLogger().info("Running: " + flow);
+        setInput(new PlaceholderFile(flow));
+        result = execute();
+        if (result != null)
+          break;
       }
       return result;
     }
@@ -779,10 +824,10 @@ public class FlowRunner
       procInteractive.setEnable(false);
       procInteractive.process(m_Actor);
       if (procInteractive.isModified()) {
-	m_Actor.destroy();
-	m_Actor = procInteractive.getModifiedActor();
-	if (isLoggingEnabled())
-	  getLogger().info("Disabled interactive actors");
+        m_Actor.destroy();
+        m_Actor = procInteractive.getModifiedActor();
+        if (isLoggingEnabled())
+          getLogger().info("Disabled interactive actors");
       }
     }
 
@@ -793,57 +838,57 @@ public class FlowRunner
     try {
       // initialize actor
       if (m_Actor instanceof Flow) {
-	// headless?
-	((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
-	if (isLoggingEnabled() && m_Actor.isHeadless())
-	  getLogger().info("Running in headless mode");
-	// register?
-	((Flow) m_Actor).setRegister(m_Register);
-	if (isLoggingEnabled() && ((Flow) m_Actor).getRegister())
-	  getLogger().info("Flow added to running flow registry");
+        // headless?
+        ((Flow) m_Actor).setHeadless(isHeadless() || GUIHelper.isHeadless());
+        if (isLoggingEnabled() && m_Actor.isHeadless())
+          getLogger().info("Running in headless mode");
+        // register?
+        ((Flow) m_Actor).setRegister(m_Register);
+        if (isLoggingEnabled() && ((Flow) m_Actor).getRegister())
+          getLogger().info("Flow added to running flow registry");
       }
 
       ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_Actor, m_Input);
       result = m_Actor.setUp();
       ActorUtils.updateProgrammaticVariables((VariablesHandler & Actor) m_Actor, m_Input);
       if (isLoggingEnabled())
-	getLogger().info("setUp() result: " + result);
+        getLogger().info("setUp() result: " + result);
 
       // execute actor
       if (!m_NoExecute) {
-	if (result == null) {
-	  result = m_Actor.execute();
-	  if (isLoggingEnabled())
-	    getLogger().info("execute() result: " + result);
-	  if (m_Actor.hasStopMessage()) {
-	    getLogger().info("stop message: " + m_Actor.getStopMessage());
-	    if (result == null)
-	      result = m_Actor.getStopMessage();
-	  }
-	}
+        if (result == null) {
+          result = m_Actor.execute();
+          if (isLoggingEnabled())
+            getLogger().info("execute() result: " + result);
+          if (m_Actor.hasStopMessage()) {
+            getLogger().info("stop message: " + m_Actor.getStopMessage());
+            if (result == null)
+              result = m_Actor.getStopMessage();
+          }
+        }
       }
       else {
-	getLogger().info("execute suppressed");
+        getLogger().info("execute suppressed");
       }
 
       // finish up
       m_Actor.wrapUp();
       if (isLoggingEnabled())
-	getLogger().info("wrapUp() finished");
+        getLogger().info("wrapUp() finished");
 
       // clean up?
       if (m_CleanUp) {
-	m_Actor.cleanUp();
-	if (isLoggingEnabled())
-	  getLogger().info("cleanUp() finished");
+        m_Actor.cleanUp();
+        if (isLoggingEnabled())
+          getLogger().info("cleanUp() finished");
       }
 
       // any errors?
       if (result != null) {
-	if (!m_Input.isDirectory())
-	  result = "Error executing flow '" + m_Input + "': " + result;
-	else
-	  result = "Error executing actor: " + result;
+        if (!m_Input.isDirectory())
+          result = "Error executing flow '" + m_Input + "': " + result;
+        else
+          result = "Error executing actor: " + result;
       }
     }
     catch (Exception e) {
@@ -944,12 +989,12 @@ public class FlowRunner
 
     for (i = 0; i < engines.length; i++) {
       try {
-	method = engines[i].getMethod(METHOD_STOPALLENGINES, new Class[0]);
-	method.invoke(null, new Object[0]);
+        method = engines[i].getMethod(METHOD_STOPALLENGINES, new Class[0]);
+        method.invoke(null, new Object[0]);
       }
       catch (Exception e) {
-	System.err.println("Failed to call " + engines[i].getName() + "." + METHOD_STOPALLENGINES + ":");
-	e.printStackTrace();
+        System.err.println("Failed to call " + engines[i].getName() + "." + METHOD_STOPALLENGINES + ":");
+        e.printStackTrace();
       }
     }
   }
@@ -963,7 +1008,7 @@ public class FlowRunner
    * @param args	the commandline arguments, use -help to display all
    */
   public static void runFlow(Class env, Class flow, Class[] engines, String[] args) {
-    FlowRunner	flowInst;
+    FlowRunner  runner;
     String	result;
 
     Environment.setEnvironmentClass(env);
@@ -972,23 +1017,27 @@ public class FlowRunner
 
     try {
       if (OptionUtils.helpRequested(args)) {
-	System.out.println("Help requested...\n");
-	flowInst = forName(flow.getName(), new String[0]);
-	System.out.print("\n" + OptionUtils.list(flowInst));
-	LoggingHelper.outputHandlerOption();
+        System.out.println("Help requested...\n");
+        runner = forName(flow.getName(), new String[0]);
+        System.out.print("\n" + OptionUtils.list(runner));
+        LoggingHelper.outputHandlerOption();
       }
       else {
-	flowInst = forName(flow.getName(), args);
-	ArrayConsumer.setOptions(flowInst, args);
-	result = flowInst.execute();
-	stopAllEngines(engines);
-	if (result == null) {
-	  System.out.println("\nFinished execution!");
-	}
-	else {
-	  System.err.println("\n" + result);
-	  System.exit(1);
-	}
+        runner = forName(flow.getName(), args);
+        ArrayConsumer.setOptions(runner, args);
+        result = runner.execute();
+        stopAllEngines(engines);
+        if (result == null) {
+          System.out.println("\nFinished execution!");
+        }
+        else {
+          System.err.println("\n" + result);
+          System.exit(1);
+        }
+        if (runner.getForceExit()) {
+          System.out.println("Forcing exit now...");
+          System.exit(0);
+        }
       }
     }
     catch (Exception e) {
