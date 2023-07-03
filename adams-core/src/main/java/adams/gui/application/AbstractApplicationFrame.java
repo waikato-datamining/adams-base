@@ -15,12 +15,13 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.application;
 
+import adams.core.Shortening;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.ConsolePanelHandler;
@@ -849,6 +850,7 @@ public abstract class AbstractApplicationFrame
     List<AbstractDatabaseConnection>	conns;
     HashSet<String>			connsStr;
     List<String>			connsList;
+    int					i;
 
     newTitle = getApplicationTitle();
     name     = InternetHelper.getLocalHostName();
@@ -862,6 +864,8 @@ public abstract class AbstractApplicationFrame
 	connsStr.add(conn.toStringShort());
       connsList = new ArrayList<>(connsStr);
       Collections.sort(connsList);
+      for (i = 0; i < connsList.size(); i++)
+        connsList.set(i, Shortening.shortenEnd(connsList.get(i), 60));
       newTitle += " " + connsList;
     }
 
