@@ -109,6 +109,8 @@ public class RotatingFileOutput
 
     if (!m_Rotated && (m_NumLogFiles > 1)) {
       m_Rotated = true;
+      if (isLoggingEnabled())
+        getLogger().info("Rotating logs...");
       logs = new ArrayList<>();
       logs.add(m_OutputFile);
       for (i = 0; i < m_NumLogFiles; i++)
