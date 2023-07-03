@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2023-07-03 14:14:56
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Shows how to do simple logging." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.ForLoop
+ adams.flow.sink.SimpleLogging -custom-renderer adams.data.textrenderer.DefaultTextRenderer -format "adams.flow.sink.simplelogging.format.TimestampedFormat -message-indentation \"    \" -log-format [{T}]\\n{M}\\n" -output adams.flow.sink.simplelogging.output.ConsoleOutput

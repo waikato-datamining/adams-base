@@ -490,6 +490,14 @@ adams.flow.sink.canvas.DataPoolPaintlet=\
 adams.flow.sink.canvas.AbstractDataPoolPostProcessor=\
   adams.flow.sink.canvas
 
+# the formatting schemes for SimpleLogging
+adams.flow.sink.simplelogging.format.SimpleFormat=\
+  adams.flow.sink.simplelogging.format
+
+# the output schemes for SimpleLogging
+adams.flow.sink.simplelogging.output.SimpleOutput=\
+  adams.flow.sink.simplelogging.output
+
 # the file system search algorithms
 adams.flow.source.filesystemsearch.AbstractFileSystemSearchlet=\
   adams.flow.source.filesystemsearch
