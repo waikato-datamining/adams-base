@@ -23,6 +23,7 @@ package adams.gui.flow;
 import adams.core.ClassLister;
 import adams.core.MessageCollection;
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.StatusMessageHandlerExt;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
@@ -242,7 +243,7 @@ public class FlowPanel
     m_RecentFilesHandler    = null;
     m_CurrentWorker         = null;
     m_LastVariableSearch    = "";
-    m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true);
+    m_TitleGenerator        = new TitleGenerator(FlowEditorPanel.DEFAULT_TITLE, true, ShorteningType.START);
     m_Title                 = "";
     m_Status                = "";
     m_CheckOnSave           = getProperties().getBoolean("CheckOnSave", true);

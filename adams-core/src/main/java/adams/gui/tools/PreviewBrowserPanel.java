@@ -22,6 +22,7 @@ package adams.gui.tools;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.classmanager.ClassManager;
@@ -114,7 +115,6 @@ public class PreviewBrowserPanel
    * the path, for comparison. Also, ignores the case.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FileComparator
       implements Comparator<File> {
@@ -263,7 +263,7 @@ public class PreviewBrowserPanel
     m_IgnoreArchiveHandlerChanges = false;
     m_CurrentFiles                = null;
     m_RecentFilesHandler          = null;
-    m_TitleGenerator              = new TitleGenerator("Preview browser", false);
+    m_TitleGenerator              = new TitleGenerator("Preview browser", false, ShorteningType.START);
     m_FileChooser                 = new BaseFileChooser(PropertiesManager.getProperties().getPath("InitialDir", "%h"));
     m_ChangeMonitor               = new LastModified();
     m_Notes                       = new StringBuilder();
@@ -694,6 +694,8 @@ public class PreviewBrowserPanel
       m_ListArchiveFiles.setSelectedIndices(new int[0]);
       m_PanelContent.displayView(new NoPreviewAvailablePanel());
     }
+
+    update();
   }
 
   /**

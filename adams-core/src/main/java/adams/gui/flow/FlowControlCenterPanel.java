@@ -15,12 +15,13 @@
 
 /*
  * FlowControlCenterPanel.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
 
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.StatusMessageHandler;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FilenameProposer;
@@ -204,7 +205,7 @@ public class FlowControlCenterPanel
     m_Manager.setStatusMessageHandler(this);
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
-    m_TitleGenerator      = new TitleGenerator("Flow Control Center", true);
+    m_TitleGenerator      = new TitleGenerator("Flow Control Center", true, ShorteningType.START);
     m_FileChooser         = new BaseFileChooser();
     m_FileChooser.addChoosableFileFilter(new ExtensionFileFilter("Flow control center setups", FILE_EXTENSION));
     m_FileChooser.setCurrentDirectory(new File(m_Properties.getPath("InitialDir", "%h")));

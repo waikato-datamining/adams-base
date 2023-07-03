@@ -15,10 +15,11 @@
 
 /*
  * TextPanel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
+import adams.core.ShorteningType;
 import adams.gui.chooser.FontChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -142,7 +143,7 @@ public class TextPanel
   protected void initialize() {
     super.initialize();
 
-    m_TitleGenerator     = new TitleGenerator("Text editor", true);
+    m_TitleGenerator     = new TitleGenerator("Text editor", true, ShorteningType.START);
     m_RecentFilesHandler = null;
   }
 

@@ -15,13 +15,14 @@
 
 /*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
 import adams.core.MessageCollection;
 import adams.core.Pausable;
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.StatusMessageHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
@@ -215,7 +216,7 @@ public class FlowRunnerPanel
     m_CurrentFlow         = null;
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
-    m_TitleGenerator      = new TitleGenerator("Flow runner", true);
+    m_TitleGenerator      = new TitleGenerator("Flow runner", true, ShorteningType.START);
     m_CurrentSetVariables = new Vector<>();
     m_CurrentParameters   = new Vector<>();
     m_CurrentHelpButtons  = new Vector<>();

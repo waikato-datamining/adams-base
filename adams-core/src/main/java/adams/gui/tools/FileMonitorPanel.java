@@ -15,12 +15,13 @@
 
 /*
  * FileMonitorPanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
+import adams.core.ShorteningType;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
@@ -138,7 +139,7 @@ public class FileMonitorPanel
 
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
-    m_TitleGenerator      = new TitleGenerator("Flow runner", true);
+    m_TitleGenerator      = new TitleGenerator("Flow runner", true, ShorteningType.START);
     m_FileChooser         = new BaseFileChooser();
     m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getLogFileFilter());
     m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());

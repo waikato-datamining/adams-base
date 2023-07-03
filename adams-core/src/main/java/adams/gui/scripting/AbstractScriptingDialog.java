@@ -15,13 +15,14 @@
 
 /*
  * ScriptingDialog.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
 
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.FilenameProposer;
@@ -208,7 +209,7 @@ public abstract class AbstractScriptingDialog
     m_Modified           = false;
     m_Undo               = new UndoManager();
     m_RecentFilesHandler = null;
-    m_TitleGenerator     = new TitleGenerator("Scripting", true);
+    m_TitleGenerator     = new TitleGenerator("Scripting", true, ShorteningType.START);
     m_FileChooser        = new BaseFileChooser();
     m_FileChooser.setCurrentDirectory(new File(getScriptingEngine().getScriptsHome()));
     m_FilenameProposer   = new FilenameProposer("script", "", getScriptingEngine().getScriptsHome());

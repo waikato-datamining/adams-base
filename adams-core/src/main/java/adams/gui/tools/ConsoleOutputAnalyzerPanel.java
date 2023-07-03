@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ConsoleOutputAnalyzerPanel.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.Shortening;
+import adams.core.ShorteningType;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -81,7 +82,6 @@ import java.util.List;
  * Frontend for analyzing the {@link ConsoleWindow}'s output.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConsoleOutputAnalyzerPanel
   extends BasePanel
@@ -94,7 +94,6 @@ public class ConsoleOutputAnalyzerPanel
    * Represents a single line from the console output.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ConsoleOutputEntry
     implements Serializable, Comparable<ConsoleOutputEntry> {
@@ -267,7 +266,6 @@ public class ConsoleOutputAnalyzerPanel
    * Class for encapsulating a complete console output.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ConsoleOutput
     implements Serializable, SpreadSheetSupporter {
@@ -474,7 +472,6 @@ public class ConsoleOutputAnalyzerPanel
    * For filtering the console output.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ConsoleEntryFilter {
     
@@ -668,7 +665,7 @@ public class ConsoleOutputAnalyzerPanel
     m_CurrentFile        = null;
     m_CurrentEncoding    = null;
     m_RecentFilesHandler = null;
-    m_TitleGenerator     = new TitleGenerator("Console output analyzer", false);
+    m_TitleGenerator     = new TitleGenerator("Console output analyzer", false, ShorteningType.START);
   }
   
   /**

@@ -15,11 +15,12 @@
 
 /*
  * ImageViewerPanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
 import adams.core.Properties;
+import adams.core.ShorteningType;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -190,7 +191,7 @@ public class ImageViewerPanel
     m_FileChooser.setMultiSelectionEnabled(true);
     m_PopupMenuCustomizer  = null;
     m_RecentFilesHandler   = null;
-    m_TitleGenerator       = new TitleGenerator("Image viewer", true);
+    m_TitleGenerator       = new TitleGenerator("Image viewer", true, ShorteningType.START);
     m_PluginManager        = new ImageViewerPluginManager(this);
     m_PluginManager.setMenuUpdateListener(new ChangeListener() {
       @Override

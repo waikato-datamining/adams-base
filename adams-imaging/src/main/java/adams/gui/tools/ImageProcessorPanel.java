@@ -15,12 +15,13 @@
 
 /*
  * ImageProcessorPanel.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.core.MessageCollection;
+import adams.core.ShorteningType;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.io.input.AbstractImageReader;
@@ -175,7 +176,7 @@ public class ImageProcessorPanel
     super.initialize();
 
     m_RecentFilesHandler = null;
-    m_TitleGenerator     = new TitleGenerator("Image processor", true);
+    m_TitleGenerator     = new TitleGenerator("Image processor", true, ShorteningType.START);
     m_FileChooserImage = new ImageFileChooser();
     m_FileChooserImage.setCurrentDirectory(new File(ImageViewerPanel.getProperties().getPath("InitialDir", "%h")));
     m_FileChooserImage.setAutoAppendExtension(true);

@@ -15,11 +15,12 @@
 
 /*
  * ExplorerExt.java
- * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package weka.gui.explorer;
 
 import adams.core.Range;
+import adams.core.ShorteningType;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -150,7 +151,7 @@ public class ExplorerExt
     m_ButtonUndo         = null;
     m_ButtonEdit         = null;
     m_CurrentFile        = null;
-    m_TitleGenerator     = new TitleGenerator("Explorer", true);
+    m_TitleGenerator     = new TitleGenerator("Explorer", true, ShorteningType.START);
   }
   
   /**
