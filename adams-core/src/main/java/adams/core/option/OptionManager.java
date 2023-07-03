@@ -21,10 +21,13 @@ package adams.core.option;
 
 import adams.core.CleanUpHandler;
 import adams.core.EnumWithCustomDisplay;
+import adams.core.Properties;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
 import adams.core.logging.Logger;
+import adams.env.Environment;
+import adams.env.OptionManagerDefinition;
 import adams.flow.core.Actor;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -35,6 +38,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +56,16 @@ public class OptionManager
   /** for serialization. */
   private static final long serialVersionUID = 2383307592894383257L;
 
+  public final static String FILENAME = "OptionManager.props";
+
+  /** the properties in use. */
+  protected static Properties m_Properties;
+
   /** default instance (gets replaced at runtime). */
   protected static Variables m_DefaultVariablesInstance;
+
+  /** the blacklisted classes. */
+  protected static Set<String> m_BlacklistedClasses;
 
   /** the owner. */
   protected OptionHandler m_Owner;
@@ -999,7 +1011,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !isBlacklistedClass(cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -1037,7 +1049,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !isBlacklistedClass(cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -1066,7 +1078,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !isBlacklistedClass(cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
@@ -1107,10 +1119,10 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-	return !ClassLocator.hasInterface(VariablesHandler.class, cls);
+	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !isBlacklistedClass(cls);
       }
       public boolean canRecurse(Object obj) {
-	return (obj != null) && canRecurse(obj.getClass());
+	return (obj != null) && canRecurse(obj.getClass()) && !isBlacklistedClass(obj.getClass());
       }
     }, true);
   }
@@ -1140,7 +1152,7 @@ public class OptionManager
    * Traverses all the options and lets the various options get handled by the
    * supplied object.
    *
-   * @param traverser	the object to handled the traversed options
+   * @param traverser	the object to handle the traversed options
    * @param path	the path so far
    * @param nonAdams	whether to traverse non-ADAMS objects as well
    */
@@ -1171,7 +1183,7 @@ public class OptionManager
 	  traverser.handleArgumentOption((AbstractArgumentOption) opt, path);
       }
 
-      if ((cloption != null) && traverser.canRecurse(cloption.getBaseClass())) {
+      if ((cloption != null) && traverser.canRecurse(cloption.getBaseClass()) && !isBlacklistedClass(cloption.getBaseClass())) {
 	current = cloption.getCurrentValue();
 	if (current == null)
 	  continue;
@@ -1195,7 +1207,7 @@ public class OptionManager
 	  if (cloption.isMultiple()) {
 	    for (n = 0; n < Array.getLength(current); n++) {
 	      element = Array.get(current, n);
-	      if (traverser.canRecurse(element)) {
+	      if (traverser.canRecurse(element) && !isBlacklistedClass(element)) {
 		path.push(cloption.getProperty() + "[" + n + "]", element);
 		((OptionHandler) element).getOptionManager().traverse(traverser, path, nonAdams);
 		path.pop();
@@ -1203,7 +1215,7 @@ public class OptionManager
 	    }
 	  }
 	  else {
-	    if (traverser.canRecurse(current)) {
+	    if (traverser.canRecurse(current) && !isBlacklistedClass(current)) {
 	      path.push(cloption.getProperty(), current);
 	      ((OptionHandler) current).getOptionManager().traverse(traverser, path, nonAdams);
 	      path.pop();
@@ -1211,7 +1223,8 @@ public class OptionManager
 	  }
 	}
 	else if (nonAdams) {
-	  traverse(traverser, path, current);
+	  if (!isBlacklistedClass(current))
+	    traverse(traverser, path, current);
 	}
       }
     }
@@ -1220,7 +1233,7 @@ public class OptionManager
   /**
    * Traverses a non-ADAMS OptionHandler.
    *
-   * @param traverser	the object to handled the traversed options
+   * @param traverser	the object to handle the traversed options
    * @param path	the path so far
    * @param obj	the non-ADAMS object to traverse
    */
@@ -1239,7 +1252,7 @@ public class OptionManager
 	    path.push(prop.getName(), current);
 	    if (current instanceof OptionHandler)
 	      ((OptionHandler) current).getOptionManager().traverse(traverser, path, true);
-	    else
+	    else if (!isBlacklistedClass(current))
 	      traverse(traverser, path, current);
 	    path.pop();
 	  }
@@ -1247,8 +1260,9 @@ public class OptionManager
       }
     }
     catch (IllegalAccessException iae) {
-      // we ignore these starting with Java 17
+      // we notify about these starting with Java 17
       // https://www.infoq.com/news/2021/06/internals-encapsulated-jdk17/
+      System.err.println("Attempted illegal access to " + obj.getClass().getName() + ", please add to blacklisted classes in " + FILENAME + "!");
     }
     catch (Exception e) {
       if (!m_Quiet)
@@ -1303,5 +1317,57 @@ public class OptionManager
     if (m_NoVariablesProperties != null)
       m_NoVariablesProperties.clear();
     m_Variables = null;
+  }
+
+  /**
+   * Returns the properties file with the custom editors.
+   *
+   * @return		the props file
+   */
+  protected static synchronized Properties getProperties() {
+    if (m_Properties == null)
+      m_Properties = Environment.getInstance().read(OptionManagerDefinition.KEY);
+
+    return m_Properties;
+  }
+
+  /**
+   * Checks whether the object's class is blacklisted.
+   *
+   * @param obj		the object to check
+   * @return		true if blacklisted
+   */
+  protected static boolean isBlacklistedClass(Object obj) {
+    return (obj != null) && isBlacklistedClass(obj.getClass().getName());
+  }
+
+  /**
+   * Checks whether the class is blacklisted.
+   *
+   * @param cls		the class to check
+   * @return		true if blacklisted
+   */
+  protected static boolean isBlacklistedClass(Class cls) {
+    return (cls != null) && isBlacklistedClass(cls.getName());
+  }
+
+  /**
+   * Checks whether the class is blacklisted.
+   *
+   * @param cls		the class to check
+   * @return		true if blacklisted
+   */
+  protected static synchronized boolean isBlacklistedClass(String cls) {
+    String[]		items;
+
+    if ((cls == null) || cls.isEmpty())
+      return false;
+
+    if (m_BlacklistedClasses == null) {
+      items = getProperties().getProperty("BlacklistedClasses", "").replace(" ", "").split(",");
+      m_BlacklistedClasses = new HashSet<>(Arrays.asList(items));
+    }
+
+    return m_BlacklistedClasses.contains(cls);
   }
 }

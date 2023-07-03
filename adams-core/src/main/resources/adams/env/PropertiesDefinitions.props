@@ -37,6 +37,7 @@ Definitions=\
   adams.env.MemoryMonitorDefinition,\
   adams.env.NewInstanceDefinition,\
   adams.env.OptionsDefinition,\
+  adams.env.OptionManagerDefinition,\
   adams.env.PerformanceDefinition,\
   adams.env.PlaceholdersDefinition,\
   adams.env.PreviewBrowserPanelDefinition,\

@@ -1,0 +1,7 @@
+# Configuration file for OptionManager.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# blacklisted classes
+BlacklistedClasses=\
+  sun.util.calendar.ZoneInfo
