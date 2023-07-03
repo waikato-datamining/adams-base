@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * TODO: What this class does.
+ * Appends the log messages to the specified file, but also allows for rotating them.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -66,16 +66,6 @@ public class RotatingFileOutput
   }
 
   /**
-   * Resets the scheme.
-   */
-  @Override
-  protected void reset() {
-    super.reset();
-
-    m_Rotated = false;
-  }
-
-  /**
    * Sets the number of logs to use.
    *
    * @param value	the number of log files
@@ -104,6 +94,12 @@ public class RotatingFileOutput
     return "The number of log files to use for rotating.";
   }
 
+  /**
+   * Logs the (formatted) logging message.
+   *
+   * @param msg the message to log
+   * @return null if successful, otherwise error message
+   */
   @Override
   protected String doLogMessage(String msg) {
     int		i;
