@@ -1246,6 +1246,10 @@ public class OptionManager
 	}
       }
     }
+    catch (IllegalAccessException iae) {
+      // we ignore these starting with Java 17
+      // https://www.infoq.com/news/2021/06/internals-encapsulated-jdk17/
+    }
     catch (Exception e) {
       if (!m_Quiet)
 	System.err.println("Failed to traverse non-ADAMS object: path=" + path + ", class=" + obj.getClass() + ", object=" + obj + ", exeption=" + e);
