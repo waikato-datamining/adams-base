@@ -38,6 +38,9 @@ public class TitleGenerator
   /** for serialization. */
   private static final long serialVersionUID = 6278140781437652946L;
 
+  /** the default max chars. */
+  public final static int DEFAULT_MAX_CHARS = 60;
+
   /** the base title. */
   protected String m_Title;
 
@@ -60,7 +63,18 @@ public class TitleGenerator
    * @param split	whether to split the filename into path/name
    */
   public TitleGenerator(String title, boolean split) {
-    this(title, split, ShorteningType.NONE, 40);
+    this(title, split, ShorteningType.NONE);
+  }
+
+  /**
+   * Initializes the generator. Uses the specified shortening with {@link #DEFAULT_MAX_CHARS}.
+   *
+   * @param title	the base title.
+   * @param split	whether to split the filename into path/name
+   * @param shortening 	how to shorten the filename (if at all)
+   */
+  public TitleGenerator(String title, boolean split, ShorteningType shortening) {
+    this(title, split, ShorteningType.NONE, DEFAULT_MAX_CHARS);
   }
 
   /**
