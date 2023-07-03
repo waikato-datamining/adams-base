@@ -15,11 +15,13 @@
 
 /*
  * TitleGenerator.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.Shortening;
+import adams.core.ShorteningType;
 import adams.gui.application.AbstractApplicationFrame;
 
 import java.io.File;
@@ -42,21 +44,41 @@ public class TitleGenerator
   /** whether to split the full filename into path and filename. */
   protected boolean m_Split;
 
+  /** whether to shorten the file (or parent). */
+  protected ShorteningType m_Shortening;
+
+  /** the maximum chars for shortening. */
+  protected int m_MaxChars;
+
   /** whether the generator is enabled. */
   protected boolean m_Enabled;
-  
+
   /**
-   * Initializes the generator.
+   * Initializes the generator. Uses no shortening.
    *
    * @param title	the base title.
    * @param split	whether to split the filename into path/name
    */
   public TitleGenerator(String title, boolean split) {
+    this(title, split, ShorteningType.NONE, 40);
+  }
+
+  /**
+   * Initializes the generator.
+   *
+   * @param title	the base title.
+   * @param split	whether to split the filename into path/name
+   * @param shortening 	how to shorten the filename (if at all)
+   * @param maxChars 	the maximum number of characters for the shortened filename
+   */
+  public TitleGenerator(String title, boolean split, ShorteningType shortening, int maxChars) {
     super();
 
-    m_Title   = title;
-    m_Split   = split;
-    m_Enabled = true;
+    m_Title      = title;
+    m_Split      = split;
+    m_Shortening = shortening;
+    m_MaxChars   = maxChars;
+    m_Enabled    = true;
   }
 
   /**
@@ -87,23 +109,42 @@ public class TitleGenerator
   }
 
   /**
+   * Returns how the file is being shortened.
+   *
+   * @return		the shortening type
+   */
+  public ShorteningType getShortening() {
+    return m_Shortening;
+  }
+
+  /**
+   * Returns the maximum number of characters used for shortening the filename.
+   *
+   * @return		the max chars
+   * @see		#getShortening()
+   */
+  public int getMaxChars() {
+    return m_MaxChars;
+  }
+
+  /**
    * Sets whether the generator is enabled.
-   * 
+   *
    * @param value	true if enabled
    */
   public void setEnabled(boolean value) {
     m_Enabled = value;
   }
-  
+
   /**
    * Returns whether the generator is enabled.
-   * 
+   *
    * @return		true if enabled
    */
   public boolean isEnabled() {
     return m_Enabled;
   }
-  
+
   /**
    * Generates the default title.
    *
@@ -158,6 +199,29 @@ public class TitleGenerator
   }
 
   /**
+   * Shortens the string.
+   *
+   * @param s		the string to shorten
+   * @return		the processed string
+   * @see		#getShortening()
+   * @see		#getMaxChars()
+   */
+  protected String shorten(String s) {
+    switch (m_Shortening) {
+      case NONE:
+        return s;
+      case START:
+        return Shortening.shortenStart(s, m_MaxChars);
+      case MIDDLE:
+	return Shortening.shortenMiddle(s, m_MaxChars);
+      case END:
+	return Shortening.shortenEnd(s, m_MaxChars);
+      default:
+        throw new IllegalStateException("Unhandled shortening type: " + m_Shortening);
+    }
+  }
+
+  /**
    * Generates a title for the given file.
    *
    * @param file	the file to generate the title for, can be null
@@ -172,9 +236,9 @@ public class TitleGenerator
     if (file != null) {
       file = new File(file.getAbsolutePath());
       if (m_Split)
-	result += " [" + file.getName() + " -- " + file.getParent() + "]";
+	result += " [" + file.getName() + " -- " + shorten(file.getParent()) + "]";
       else
-	result += " [" + file.getAbsolutePath() + "]";
+	result += " [" + shorten(file.getAbsolutePath()) + "]";
     }
 
     if (modified)
