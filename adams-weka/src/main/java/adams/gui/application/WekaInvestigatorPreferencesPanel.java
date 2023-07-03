@@ -182,6 +182,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("AttributeSelection.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("AttributeSelection.NumFolds", PropertyType.INTEGER);
     addPropertyType("AttributeSelection.Seed", PropertyType.INTEGER);
+    addPropertyType("AttributeSelection.OutputGenerators", PropertyType.ARRAY_EDITOR);
     setChooser("AttributeSelection.OutputGenerators", new GenericArrayEditorPanel(
       new adams.gui.tools.wekainvestigator.tab.attseltab.output.AbstractOutputGenerator[0]));
     setArrayClass("AttributeSelection.OutputGenerators",

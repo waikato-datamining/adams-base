@@ -74,6 +74,8 @@ public class FlowPreferencesPanel
     addPropertyType("Tree.IgnoreNameChanges", PropertyType.BOOLEAN);
     addPropertyType("Tree.ScaleFactor", PropertyType.DOUBLE);
     addPropertyType("Tree.RecordActor", PropertyType.BOOLEAN);
+    addPropertyType("Tree.RecordAdd", PropertyType.BOOLEAN);
+    addPropertyType("Tree.RecordEnclose", PropertyType.BOOLEAN);
     addPropertyType("ClassTree.ShowGlobalInfo", PropertyType.BOOLEAN);
     addPropertyType("StatusBar.Width", PropertyType.INTEGER);
     addPropertyType("StatusBar.Height", PropertyType.INTEGER);
@@ -84,6 +86,7 @@ public class FlowPreferencesPanel
     addPropertyType("Tree.PopupMenuExtensions", PropertyType.COMMA_SEPARATED_LIST);
     addPropertyType("Tree.KeyboardActions", PropertyType.BLANK_SEPARATED_LIST);
     addPropertyType("Tree.InputOutput.Prefixes", PropertyType.COMMA_SEPARATED_LIST);
+    addPropertyType("FlowPanelClass", PropertyType.STRING);
     setPreferences(Environment.getInstance().read(FlowEditorPanelDefinition.KEY));
   }
   
