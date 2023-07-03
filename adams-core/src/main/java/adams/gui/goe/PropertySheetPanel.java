@@ -187,6 +187,7 @@ public class PropertySheetPanel
     m_PanelAbout.setEditable(false);
     m_PanelAbout.setLineWrap(true);
     m_PanelAbout.setWrapStyleWord(true);
+    m_PanelAbout.setPreferredSize(new Dimension(20, 20));
     m_SplitPaneContent.setTopComponent(m_PanelAbout);
 
     m_PanelHelp = new BaseHtmlEditorPane();
