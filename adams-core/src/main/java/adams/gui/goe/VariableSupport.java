@@ -15,7 +15,7 @@
 
 /*
  * VariableSupport.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -39,6 +39,7 @@ import adams.gui.core.MouseUtils;
 import adams.gui.flow.tree.Node;
 import adams.gui.goe.actorpathtree.ActorPathNode;
 import adams.gui.goe.callableactorstree.CallableActorsTree;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -460,6 +461,20 @@ public class VariableSupport {
 	  });
 	  result.add(item);
 	}
+
+	if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_CALLABLEACTOR))
+	  item = new JMenuItem("Copy callable actor '" + argoption.getVariableName().substring(FlowVariables.PREFIX_CALLABLEACTOR.length()) + "'", ImageManager.getIcon("copy.gif"));
+	else if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_STORAGE))
+	  item = new JMenuItem("Copy storage value '" + argoption.getVariableName().substring(FlowVariables.PREFIX_STORAGE.length()) + "'", ImageManager.getIcon("copy.gif"));
+	else
+	  item = new JMenuItem("Copy variable '" + argoption.getVariableName() + "'", ImageManager.getIcon("copy.gif"));
+	item.setEnabled(allowsVars);
+	item.addActionListener(new ActionListener() {
+	  public void actionPerformed(ActionEvent e) {
+	    ClipboardHelper.copyToClipboard(fArgOption.getVariableName());
+	  }
+	});
+	result.add(item);
 
 	if (fArgOption.getVariableName().startsWith(FlowVariables.PREFIX_CALLABLEACTOR))
 	  item = new JMenuItem("Detach callable actor '" + argoption.getVariableName().substring(FlowVariables.PREFIX_CALLABLEACTOR.length()) + "'", ImageManager.getIcon("delete.gif"));
