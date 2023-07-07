@@ -20,6 +20,7 @@
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteraction;
 import adams.flow.core.Token;
@@ -34,7 +35,8 @@ import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
  * The actor's name can be used in the message using the following placeholders:<br>
  * {SHORT} - the short name<br>
  * {FULL} - the full name (incl path)<br>
- * Variables get expanded as well.
+ * Variables get expanded as well.<br>
+ * Can be used in a headless environment as well.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -42,34 +44,35 @@ import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
- * &nbsp;&nbsp;&nbsp;The message to prompt the user with.
+ * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get expanded automatically.
  * &nbsp;&nbsp;&nbsp;default: Do you want to execute {SHORT}?
  * </pre>
- * 
+ *
  * <pre>-caption-positive &lt;java.lang.String&gt; (property: captionPositive)
  * &nbsp;&nbsp;&nbsp;The caption for the 'positive' button.
  * &nbsp;&nbsp;&nbsp;default: yes
  * </pre>
- * 
+ *
  * <pre>-caption-negative &lt;java.lang.String&gt; (property: captionNegative)
  * &nbsp;&nbsp;&nbsp;The caption for the 'negative' button.
  * &nbsp;&nbsp;&nbsp;default: no
  * </pre>
- * 
+ *
  * <pre>-initial-selection &lt;java.lang.String&gt; (property: initialSelection)
  * &nbsp;&nbsp;&nbsp;The initial selection to prompt the user with.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
- * &nbsp;&nbsp;&nbsp;If enabled, the condition automatically evaluates to the button that matches 
+ * &nbsp;&nbsp;&nbsp;If enabled, the condition automatically evaluates to the button that matches
  * &nbsp;&nbsp;&nbsp;the initial selection or, if that is left empty, to 'true'.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -114,10 +117,11 @@ public class PromptUser
   public String globalInfo() {
     return
       "Prompts the user to click on 'positive' or 'negative' button.\n"
-      + "The actor's name can be used in the message using the following placeholders:\n"
-      + PLACEHOLDER_SHORT + " - the short name\n"
-      + PLACEHOLDER_FULL + " - the full name (incl path)\n"
-      + "Variables get expanded as well.";
+	+ "The actor's name can be used in the message using the following placeholders:\n"
+	+ PLACEHOLDER_SHORT + " - the short name\n"
+	+ PLACEHOLDER_FULL + " - the full name (incl path)\n"
+	+ "Variables get expanded as well.\n"
+	+ "Can be used in a headless environment as well.";
   }
 
   /**
@@ -292,7 +296,7 @@ public class PromptUser
   public String nonInteractiveTipText() {
     return
       "If enabled, the condition automatically evaluates to the button that "
-        + "matches the initial selection or, if that is left empty, to 'true'.";
+	+ "matches the initial selection or, if that is left empty, to 'true'.";
   }
 
   /**
@@ -327,6 +331,7 @@ public class PromptUser
     String      message;
     String      answer;
     String      initial;
+    boolean	headless;
 
     message = m_Message;
     if (owner != null) {
@@ -334,18 +339,26 @@ public class PromptUser
       message = message.replace(PLACEHOLDER_SHORT, owner.getName()).replace(PLACEHOLDER_FULL, owner.getFullName());
     }
 
+    headless = ((owner != null) && (owner.isHeadless())) || GUIHelper.isHeadless();
+
     initial = m_InitialSelection.isEmpty() ? m_CaptionPositive : m_InitialSelection;
     if (!m_NonInteractive) {
       m_Communication = new DialogCommunication();
-      answer = GUIHelper.showInputDialog(
-        (owner == null) ? null : owner.getParentComponent(),
-        message,
-        initial,
-        new String[]{m_CaptionPositive, m_CaptionNegative},
-        InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
-        "Please choose",
-        m_Communication);
-      m_Communication = null;
+      if (headless) {
+	answer = ConsoleHelper.selectOption(
+	  message, new String[]{m_CaptionPositive, m_CaptionNegative}, initial);
+      }
+      else {
+	answer = GUIHelper.showInputDialog(
+	  (owner == null) ? null : owner.getParentComponent(),
+	  message,
+	  initial,
+	  new String[]{m_CaptionPositive, m_CaptionNegative},
+	  InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
+	  "Please choose",
+	  m_Communication);
+	m_Communication = null;
+      }
     }
     else {
       answer = initial;
