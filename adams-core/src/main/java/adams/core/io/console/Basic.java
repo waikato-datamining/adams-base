@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Basic.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.console;
@@ -34,7 +34,6 @@ import java.util.List;
  * Helper for input from stdin.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Basic
   implements Console {
@@ -120,7 +119,7 @@ public class Basic
    *
    * @param msg		the message to output before reading the input
    * @param initial	the initial value, ignored if empty or null
-   * @return		the entered value, null if cancelled or failed to read input
+   * @return		the entered value, null if cancelled or failed to read input (or initial value if empty string returned)
    */
   public String enterValue(String msg, String initial) {
     String	result;
@@ -132,8 +131,11 @@ public class Basic
     System.out.println(msg);
     result = readLine();
 
-    if (result != null)
+    if (result != null) {
       result = result.trim();
+      if (result.isEmpty() && (initial != null))
+        result = initial;
+    }
 
     return result;
   }
