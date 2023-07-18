@@ -23,7 +23,6 @@ package adams.core.io.fileuse;
 import adams.core.Utils;
 import adams.core.annotation.DeprecatedClass;
 import adams.core.io.FileUtils;
-import adams.core.io.filecomplete.PNG;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -50,7 +49,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 @DeprecatedClass(
-  useInstead = PNG.class
+  useInstead = FileIncomplete.class
 )
 public class PngIsComplete
   extends AbstractFileUseCheck {
