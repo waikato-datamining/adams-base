@@ -73,13 +73,16 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Regions
-    extends AbstractSubImagesGenerator {
+  extends AbstractSubImagesGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = 2488185528644078539L;
 
   /** the key for the region. */
   public final static String KEY_REGION = "Region";
+
+  /** the key for the coordinates. */
+  public final static String KEY_COORDINATES = "Coordinates";
 
   /** the regions to use. */
   protected BaseRectangle[] m_Regions;
@@ -95,9 +98,10 @@ public class Regions
   @Override
   public String globalInfo() {
     return
-	"Extracts the sub-images according to the region definitions.\n"
-	    + "Additional report values:\n"
-	    + "- " + KEY_REGION + " for the region";
+      "Extracts the sub-images according to the region definitions.\n"
+        + "Additional report values:\n"
+        + "- " + KEY_REGION + " for the region\n"
+        + "- " + KEY_COORDINATES + " for the coordinates (x,y,w,h)";
   }
 
   /**
@@ -108,12 +112,12 @@ public class Regions
     super.defineOptions();
 
     m_OptionManager.add(
-	"region", "regions",
-	new BaseRectangle[0]);
+      "region", "regions",
+      new BaseRectangle[0]);
 
     m_OptionManager.add(
-	"one-based-coords", "oneBasedCoords",
-	true);
+      "one-based-coords", "oneBasedCoords",
+      true);
   }
 
   /**
@@ -224,15 +228,16 @@ public class Regions
       height = rect.height;
 
       if (isLoggingEnabled()) {
-	getLogger().info(
-	    "region=" + i + ", x=" + x + ", y=" + y
-		+ ", width=" + width + ", height=" + height);
+        getLogger().info(
+          "region=" + i + ", x=" + x + ", y=" + y
+            + ", width=" + width + ", height=" + height);
       }
 
       cont = (BufferedImageContainer) image.getHeader();
       cont.setReport(transferObjects(cont.getReport(), x, y, width, height));
       cont.setImage(bimage.getSubimage(x, y, width, height));
       cont.getReport().setNumericValue(KEY_REGION, i);
+      cont.getReport().setStringValue(KEY_COORDINATES, "" + (x+1) + "," + (y+1) + "," + width + "," + height);
       result.add(cont);
     }
 
