@@ -27,6 +27,7 @@ import adams.data.io.output.ImageWriter;
 import adams.data.io.output.JAIImageWriter;
 
 import javax.imageio.ImageIO;
+import java.io.InputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -48,10 +49,10 @@ import javax.imageio.ImageIO;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JAIImageReader
-  extends AbstractImageReader<BufferedImageContainer> {
+  extends AbstractImageReader<BufferedImageContainer>
+  implements InputStreamImageReader<BufferedImageContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8416312222136406140L;
@@ -173,5 +174,16 @@ public class JAIImageReader
   @Override
   protected BufferedImageContainer doRead(PlaceholderFile file) {
     return BufferedImageHelper.read(file, m_AddMetaData);
+  }
+
+  /**
+   * Reads the image from the stream. Caller must close the stream.
+   *
+   * @param stream the stream to read from
+   * @return the image container, null if failed to read
+   */
+  @Override
+  public BufferedImageContainer read(InputStream stream) {
+    return BufferedImageHelper.read(stream, m_AddMetaData);
   }
 }

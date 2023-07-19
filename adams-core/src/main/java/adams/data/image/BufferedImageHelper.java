@@ -15,7 +15,7 @@
 
 /*
  * BufferedImageHelper.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image;
 
@@ -43,6 +43,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -504,6 +506,70 @@ public class BufferedImageHelper {
   }
 
   /**
+   * Reads an image, also fills in meta-data.
+   *
+   * @param stream	the stream to read from
+   * @param addMetaData whether to add the meta-data
+   * @return		the image container, null if failed to read
+   */
+  public static BufferedImageContainer read(InputStream stream, boolean addMetaData) {
+    BufferedImageContainer	result;
+    ImageInputStream 		iis;
+    Iterator 			it;
+    ImageReader 		reader;
+    IIOMetadata 		meta;
+    BufferedImage 		image;
+    String[]			formats;
+    Properties			props;
+
+    iis = null;
+    try {
+      result = new BufferedImageContainer();
+      iis    = ImageIO.createImageInputStream(stream);
+      it     = ImageIO.getImageReaders(iis);
+      if (!it.hasNext()) {
+	System.err.println("No reader for this format!");
+	return null;
+      }
+      reader = (ImageReader) it.next();
+      reader.setInput(iis);
+
+      // meta
+      if (addMetaData) {
+	meta    = reader.getImageMetadata(0);
+	formats = meta.getMetadataFormatNames();
+	props   = new Properties();
+	for (String format : formats)
+	  props.add(DOMUtils.toProperties(".", false, true, true, meta.getAsTree(format)));
+	result.setReport(Report.parseProperties(props));
+      }
+
+      // image
+      image = reader.read(0);
+      result.setImage(image);
+      reader = null;
+
+      return result;
+    }
+    catch (Exception e) {
+      System.err.println("Failed to read image from stream!");
+      e.printStackTrace();
+      return null;
+    }
+    finally {
+      if (iis != null) {
+	try {
+	  iis.close();
+	  iis = null;
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+    }
+  }
+
+  /**
    * Removes the alpha channel if present and turns it into RGB image.
    *
    * @param img		the image to convert
@@ -526,19 +592,51 @@ public class BufferedImageHelper {
    * @return		null if successful, otherwise error message
    */
   public static String write(BufferedImage img, File file) {
-    String	name;
+    return write(img, null, file);
+  }
+
+  /**
+   * Writes the image to the specified file. If format is null, uses the file extension as format.
+   * If the format is JPG, then images with alpha channel automatically get converted to RGB.
+   *
+   * @param img		the image to save
+   * @param format	the image format to use (eg jpg or png), if null uses extension as format
+   * @param file	the file to write to
+   * @return		null if successful, otherwise error message
+   */
+  public static String write(BufferedImage img, String format, File file) {
+    if (format == null)
+      format = FileUtils.getExtension(file);
 
     // remove alpha channel?
-    name = file.getName().toLowerCase();
-    if ((name.endsWith(".jpg") || name.endsWith("jpeg")))
+    if (format.equalsIgnoreCase("jpg") || format.equalsIgnoreCase("jpeg"))
       img = removeAlphaChannel(img);
 
     try {
-      if (!ImageIO.write(img, FileUtils.getExtension(file), file.getAbsoluteFile()))
+      if (!ImageIO.write(img, format, file.getAbsoluteFile()))
 	return "Failed to write image to: " + file;
     }
     catch (Exception e) {
       return "Failed to write image to '" + file + "': " + LoggingHelper.throwableToString(e);
+    }
+
+    return null;
+  }
+
+  /**
+   * Writes the image to the specified stream.
+   *
+   * @param img		the image to save
+   * @param stream	the stream to write to
+   * @return		null if successful, otherwise error message
+   */
+  public static String write(BufferedImage img, String format, OutputStream stream) {
+    try {
+      if (!ImageIO.write(img, format, stream))
+	return "Failed to write image to stream as: " + format;
+    }
+    catch (Exception e) {
+      return "Failed to write image to stream as: " + format + "\n" + LoggingHelper.throwableToString(e);
     }
 
     return null;
@@ -563,10 +661,10 @@ public class BufferedImageHelper {
     bytes = new ByteArrayOutputStream();
     try {
       if (!ImageIO.write(img, format, bytes)) {
-        errors.add("Failed to turn image into bytes of type " + format + "!");
+	errors.add("Failed to turn image into bytes of type " + format + "!");
       }
       else {
-        result = bytes.toByteArray();
+	result = bytes.toByteArray();
       }
     }
     catch (Exception e) {

@@ -27,6 +27,7 @@ import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 
 import javax.imageio.ImageIO;
+import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
@@ -43,13 +44,16 @@ import javax.imageio.ImageIO;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JAIImageWriter
-  extends AbstractImageWriter<BufferedImageContainer> {
+  extends AbstractImageWriter<BufferedImageContainer>
+  implements OutputStreamImageWriter<BufferedImageContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6385191315392140321L;
+
+  /** the image format to use (uses file extension to determine it if empty). */
+  protected String m_ImageFormat;
 
   /** the format extensions. */
   protected String[] m_FormatExtensions;
@@ -72,6 +76,49 @@ public class JAIImageWriter
     super.initialize();
     
     m_FormatExtensions = ImageIO.getWriterFileSuffixes();
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "image-format", "imageFormat",
+      "");
+  }
+
+  /**
+   * Sets the image format to use.
+   * Requires an explicit format (other than empty string) when writing to a stream.
+   *
+   * @param value 	the format
+   */
+  public void setImageFormat(String value) {
+    m_ImageFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the image format to use.
+   * Requires an explicit format (other than empty string) when writing to a stream.
+   *
+   * @return 		the format
+   */
+  public String getImageFormat() {
+    return m_ImageFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageFormatTipText() {
+    return "The image format to use; if empty string then it will use the file extension to determine the format automatically; when writing to an output stream requires explicit format.";
   }
 
   /**
@@ -124,6 +171,21 @@ public class JAIImageWriter
    */
   @Override
   protected String doWrite(PlaceholderFile file, BufferedImageContainer cont) {
-    return BufferedImageHelper.write(cont.getImage(), file);
+    return BufferedImageHelper.write(cont.getImage(), m_ImageFormat, file);
+  }
+
+  /**
+   * Writes the image to the stream. Callers must close the stream.
+   *
+   * @param stream the stream to write to
+   * @param cont   the image container to write
+   * @return null if successfully written, otherwise error message
+   */
+  @Override
+  public String write(OutputStream stream, BufferedImageContainer cont) {
+    if (m_ImageFormat.isEmpty())
+      return "Writing to a stream requires an explicit format, like jpg or png!";
+    else
+      return BufferedImageHelper.write(cont.getImage(), m_ImageFormat, stream);
   }
 }

@@ -36,6 +36,7 @@ import ar.com.hjg.pngj.PngReader;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -47,7 +48,7 @@ import java.util.logging.Level;
  */
 public class PNGImageReader
   extends AbstractImageReader<BufferedImageContainer>
-  implements ColorProviderHandler {
+  implements ColorProviderHandler, InputStreamImageReader<BufferedImageContainer> {
 
   private static final long serialVersionUID = -4360936418761836176L;
 
@@ -156,7 +157,7 @@ public class PNGImageReader
 
     if (!m_Colors.containsKey(index)) {
       for (i = m_LastColor + 1; i <= index; i++)
-        m_Colors.put(i, m_ColorProvider.next().getRGB());
+	m_Colors.put(i, m_ColorProvider.next().getRGB());
       m_LastColor = index;
     }
 
@@ -164,16 +165,15 @@ public class PNGImageReader
   }
 
   /**
-   * Performs the actual reading of the image file.
+   * Performs the actual reading of the image.
    *
-   * @param file	the file to read
+   * @param reader	the reader to use
    * @return		the image container, null if failed to read
+   * @throws Exception	if reading fails
    */
-  @Override
-  protected BufferedImageContainer doRead(PlaceholderFile file) {
+  protected BufferedImageContainer doRead(PngReader reader) throws Exception {
     BufferedImageContainer	result;
     BufferedImage		image;
-    PngReader 			reader;
     int				i;
     int				n;
     int				channels;
@@ -186,106 +186,141 @@ public class PNGImageReader
 
     result = new BufferedImageContainer();
 
+    m_ColorProvider.resetColors();
+    m_LastColor = -1;
+    m_Colors    = new HashMap<>();
+
+    if (isLoggingEnabled())
+      getLogger().info(reader.imgInfo.toString());
+
+    channels = reader.imgInfo.channels;
+    if (channels == 4) // RGBA
+      image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
+    else if (channels == 3)  // RGB
+      image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
+    else if (channels == 2)  // GrayA
+      image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
+    else if (reader.imgInfo.indexed)
+      image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_BYTE_INDEXED);
+    else
+      image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
+    pixels = new int[reader.imgInfo.cols * reader.imgInfo.rows];
+    for (n = 0; n < reader.imgInfo.rows; n++) {
+      line = reader.readRow();
+      if (line instanceof ImageLineByte) {
+	lineByte = (ImageLineByte) reader.readRow(n);
+	for (i = 0; i < reader.imgInfo.cols; i++) {
+	  if (channels == 4) {
+	    color = lineByte.getElem(i * channels + 3) << 24  // A
+	      | lineByte.getElem(i * channels) << 16          // R
+	      | lineByte.getElem(i * channels + 1) << 8       // G
+	      | lineByte.getElem(i * channels + 2);           // B
+	  }
+	  else if (channels == 3) {
+	    color = lineByte.getElem(i * channels) << 16      // R
+	      | lineByte.getElem(i * channels + 1) << 8       // G
+	      | lineByte.getElem(i * channels + 2);           // B
+	  }
+	  else if (channels == 2) {
+	    color = lineByte.getElem(i * channels + 1) << 24  // A
+	      | lineByte.getElem(i * channels) << 16          // gray
+	      | lineByte.getElem(i * channels) << 8           // gray
+	      | lineByte.getElem(i * channels);               // gray
+	  }
+	  else if (reader.imgInfo.indexed && (channels == 1)) {
+	    color = paletteToColor(lineByte.getElem(i));
+	  }
+	  else {
+	    color = lineByte.getElem(i) << 16      // gray
+	      | lineByte.getElem(i) << 8           // gray
+	      | lineByte.getElem(i);               // gray
+	  }
+	  pixels[i + n * reader.imgInfo.cols] = color;
+	}
+      }
+      else {
+	lineInt = (ImageLineInt) reader.readRow(n);
+	for (i = 0; i < reader.imgInfo.cols; i++) {
+	  if (channels == 4) {
+	    color = lineInt.getElem(i * channels + 3) << 24  // A
+	      | lineInt.getElem(i * channels) << 16          // R
+	      | lineInt.getElem(i * channels + 1) << 8       // G
+	      | lineInt.getElem(i * channels + 2);           // B
+	  }
+	  else if (channels == 3) {
+	    color = lineInt.getElem(i * channels) << 16      // R
+	      | lineInt.getElem(i * channels + 1) << 8       // G
+	      | lineInt.getElem(i * channels + 2);           // B
+	  }
+	  else if (channels == 2) {
+	    color = lineInt.getElem(i * channels + 1) << 24  // A
+	      | lineInt.getElem(i * channels) << 16          // gray
+	      | lineInt.getElem(i * channels) << 8           // gray
+	      | lineInt.getElem(i * channels);               // gray
+	  }
+	  else if (reader.imgInfo.indexed && (channels == 1)) {
+	    color = paletteToColor(lineInt.getElem(i));
+	  }
+	  else {
+	    color = lineInt.getElem(i) << 16      // gray
+	      | lineInt.getElem(i) << 8           // gray
+	      | lineInt.getElem(i);               // gray
+	  }
+	  pixels[i + n * reader.imgInfo.cols] = color;
+	}
+      }
+    }
+    image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+    result.setImage(image);
+    if (m_LastColor > -1) {
+      for (i = 0; i <= m_LastColor; i++) {
+	field = new Field("Color-" + i, DataType.STRING);
+	result.getReport().addField(field);
+	result.getReport().setValue(field, ColorHelper.toHex(new Color(m_Colors.get(i))));
+      }
+
+    }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading of the image file.
+   *
+   * @param file	the file to read
+   * @return		the image container, null if failed to read
+   */
+  @Override
+  protected BufferedImageContainer doRead(PlaceholderFile file) {
+    BufferedImageContainer	result;
+
     try {
-      m_ColorProvider.resetColors();
-      m_LastColor = -1;
-      m_Colors    = new HashMap<>();
-
-      reader = new PngReader(file.getAbsoluteFile());
-      if (isLoggingEnabled())
-	getLogger().info(reader.imgInfo.toString());
-
-      channels = reader.imgInfo.channels;
-      if (channels == 4) // RGBA
-	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
-      else if (channels == 3)  // RGB
-	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
-      else if (channels == 2)  // GrayA
-	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_ARGB);
-      else if (reader.imgInfo.indexed)
-	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_BYTE_INDEXED);
-      else
-	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
-      pixels = new int[reader.imgInfo.cols * reader.imgInfo.rows];
-      for (n = 0; n < reader.imgInfo.rows; n++) {
-        line = reader.readRow();
-	if (line instanceof ImageLineByte) {
-	  lineByte = (ImageLineByte) reader.readRow(n);
-	  for (i = 0; i < reader.imgInfo.cols; i++) {
-	    if (channels == 4) {
-	      color = lineByte.getElem(i * channels + 3) << 24  // A
-		| lineByte.getElem(i * channels) << 16          // R
-		| lineByte.getElem(i * channels + 1) << 8       // G
-		| lineByte.getElem(i * channels + 2);           // B
-	    }
-	    else if (channels == 3) {
-	      color = lineByte.getElem(i * channels) << 16      // R
-		| lineByte.getElem(i * channels + 1) << 8       // G
-		| lineByte.getElem(i * channels + 2);           // B
-	    }
-	    else if (channels == 2) {
-	      color = lineByte.getElem(i * channels + 1) << 24  // A
-		| lineByte.getElem(i * channels) << 16          // gray
-		| lineByte.getElem(i * channels) << 8           // gray
-		| lineByte.getElem(i * channels);               // gray
-	    }
-	    else if (reader.imgInfo.indexed && (channels == 1)) {
-	      color = paletteToColor(lineByte.getElem(i));
-	    }
-	    else {
-	      color = lineByte.getElem(i) << 16      // gray
-		| lineByte.getElem(i) << 8           // gray
-		| lineByte.getElem(i);               // gray
-	    }
-	    pixels[i + n * reader.imgInfo.cols] = color;
-	  }
-	}
-	else {
-	  lineInt = (ImageLineInt) reader.readRow(n);
-	  for (i = 0; i < reader.imgInfo.cols; i++) {
-	    if (channels == 4) {
-	      color = lineInt.getElem(i * channels + 3) << 24  // A
-		| lineInt.getElem(i * channels) << 16          // R
-		| lineInt.getElem(i * channels + 1) << 8       // G
-		| lineInt.getElem(i * channels + 2);           // B
-	    }
-	    else if (channels == 3) {
-	      color = lineInt.getElem(i * channels) << 16      // R
-		| lineInt.getElem(i * channels + 1) << 8       // G
-		| lineInt.getElem(i * channels + 2);           // B
-	    }
-	    else if (channels == 2) {
-	      color = lineInt.getElem(i * channels + 1) << 24  // A
-		| lineInt.getElem(i * channels) << 16          // gray
-		| lineInt.getElem(i * channels) << 8           // gray
-		| lineInt.getElem(i * channels);               // gray
-	    }
-	    else if (reader.imgInfo.indexed && (channels == 1)) {
-	      color = paletteToColor(lineInt.getElem(i));
-	    }
-	    else {
-	      color = lineInt.getElem(i) << 16      // gray
-		| lineInt.getElem(i) << 8           // gray
-		| lineInt.getElem(i);               // gray
-	    }
-	    pixels[i + n * reader.imgInfo.cols] = color;
-	  }
-	}
-      }
-      image.setRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
-      result.setImage(image);
-      if (m_LastColor > -1) {
-        for (i = 0; i <= m_LastColor; i++) {
-	  field = new Field("Color-" + i, DataType.STRING);
-	  result.getReport().addField(field);
-	  result.getReport().setValue(field, ColorHelper.toHex(new Color(m_Colors.get(i))));
-	}
-
-      }
+      result = doRead(new PngReader(file.getAbsoluteFile()));
     }
     catch (Exception e) {
       result = null;
       getLogger().log(Level.SEVERE, "Failed to read PNG: " + file, e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Reads the image from the stream. Caller must close the stream.
+   *
+   * @param stream the stream to read from
+   * @return the image container, null if failed to read
+   */
+  @Override
+  public BufferedImageContainer read(InputStream stream) {
+    BufferedImageContainer	result;
+
+    try {
+      result = doRead(new PngReader(stream));
+    }
+    catch (Exception e) {
+      result = null;
+      getLogger().log(Level.SEVERE, "Failed to read PNG from stream!", e);
     }
 
     return result;

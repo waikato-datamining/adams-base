@@ -27,6 +27,7 @@ import adams.data.io.output.ImageWriter;
 import org.apache.commons.imaging.Imaging;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.logging.Level;
 
 /**
@@ -46,7 +47,8 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ApacheCommonsImageReader
-  extends AbstractImageReader<BufferedImageContainer> {
+  extends AbstractImageReader<BufferedImageContainer>
+  implements InputStreamImageReader<BufferedImageContainer> {
   
   /** for serialization. */
   private static final long serialVersionUID = 5347100846354068540L;
@@ -118,6 +120,35 @@ public class ApacheCommonsImageReader
       result.setImage(image);
     }
     
+    return result;
+  }
+
+  /**
+   * Reads the image from the stream. Caller must close the stream.
+   *
+   * @param stream the stream to read from
+   * @return the image container, null if failed to read
+   */
+  @Override
+  public BufferedImageContainer read(InputStream stream) {
+    BufferedImageContainer	result;
+    BufferedImage		image;
+
+    result = null;
+
+    try {
+      image = Imaging.getBufferedImage(stream);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to load image from stream!", e);
+      image = null;
+    }
+
+    if (image != null) {
+      result = new BufferedImageContainer();
+      result.setImage(image);
+    }
+
     return result;
   }
 }

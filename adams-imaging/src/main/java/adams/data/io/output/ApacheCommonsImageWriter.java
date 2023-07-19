@@ -30,6 +30,7 @@ import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.Imaging;
 
+import java.io.OutputStream;
 import java.util.HashMap;
 
 /**
@@ -43,17 +44,21 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ApacheCommonsImageWriter
-  extends AbstractImageWriter<BufferedImageContainer> {
+  extends AbstractImageWriter<BufferedImageContainer>
+  implements OutputStreamImageWriter<BufferedImageContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = 6385191315392140321L;
-  
+
+  /** the image format to use (uses file extension to determine it if UNKNOWN). */
+  protected ImageFormats m_ImageFormat;
+
   /**
    * Returns a string describing the object.
    *
@@ -62,6 +67,49 @@ public class ApacheCommonsImageWriter
   @Override
   public String globalInfo() {
     return "Apache Commons Imaging writer for: " + Utils.flatten(getFormatExtensions(), ", ");
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "image-format", "imageFormat",
+      ImageFormats.UNKNOWN);
+  }
+
+  /**
+   * Sets the image format to use.
+   * Requires an explicit format (other than {@link ImageFormats#UNKNOWN}) when writing to a stream.
+   *
+   * @param value 	the format
+   */
+  public void setImageFormat(ImageFormats value) {
+    m_ImageFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the image format to use.
+   * Requires an explicit format (other than {@link ImageFormats#UNKNOWN}) when writing to a stream.
+   *
+   * @return 		the format
+   */
+  public ImageFormats getImageFormat() {
+    return m_ImageFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imageFormatTipText() {
+    return "The image format to use; if set to UNKNOWN it will use the file extension to determine the format automatically; when writing to an output stream requires explicit format.";
   }
 
   /**
@@ -87,7 +135,7 @@ public class ApacheCommonsImageWriter
 
   /**
    * Returns, if available, the corresponding reader.
-   * 
+   *
    * @return		the reader, null if none available
    */
   @Override
@@ -97,7 +145,7 @@ public class ApacheCommonsImageWriter
 
   /**
    * Performs the actual writing of the image file.
-   * 
+   *
    * @param file	the file to write to
    * @param cont	the image container to write
    * @return		null if successful, otherwise error message
@@ -109,59 +157,62 @@ public class ApacheCommonsImageWriter
     ImageFormat format;
 
     result = null;
-    
-    // determine file format
-    ext = FileUtils.getExtension(file);
-    switch (ext) {
-      case "bmp":
-        format = ImageFormats.BMP;
-        break;
-      case "gif":
-        format = ImageFormats.GIF;
-        break;
-      case "hdr":
-        format = ImageFormats.RGBE;
-        break;
-      case "ico":
-        format = ImageFormats.ICO;
-        break;
-      case "icns":
-        format = ImageFormats.ICNS;
-        break;
-      case "jpg":
-      case "jpeg":
-        format = ImageFormats.JPEG;
-        break;
-      case "pcx":
-        format = ImageFormats.PCX;
-        break;
-      case "png":
-        format = ImageFormats.PNG;
-        break;
-      case "pnm":
-        format = ImageFormats.PNM;
-        break;
-      case "psd":
-        format = ImageFormats.PSD;
-        break;
-      case "tif":
-      case "tiff":
-        format = ImageFormats.TIFF;
-        break;
-      case "wbmp":
-        format = ImageFormats.WBMP;
-        break;
-      case "xbm":
-        format = ImageFormats.XBM;
-        break;
-      case "xpm":
-        format = ImageFormats.XPM;
-        break;
-      default:
-        format = null;
+
+    // determine file format if necessary
+    format = m_ImageFormat;
+    if (m_ImageFormat == ImageFormats.UNKNOWN) {
+      ext = FileUtils.getExtension(file);
+      switch (ext) {
+	case "bmp":
+	  format = ImageFormats.BMP;
+	  break;
+	case "gif":
+	  format = ImageFormats.GIF;
+	  break;
+	case "hdr":
+	  format = ImageFormats.RGBE;
+	  break;
+	case "ico":
+	  format = ImageFormats.ICO;
+	  break;
+	case "icns":
+	  format = ImageFormats.ICNS;
+	  break;
+	case "jpg":
+	case "jpeg":
+	  format = ImageFormats.JPEG;
+	  break;
+	case "pcx":
+	  format = ImageFormats.PCX;
+	  break;
+	case "png":
+	  format = ImageFormats.PNG;
+	  break;
+	case "pnm":
+	  format = ImageFormats.PNM;
+	  break;
+	case "psd":
+	  format = ImageFormats.PSD;
+	  break;
+	case "tif":
+	case "tiff":
+	  format = ImageFormats.TIFF;
+	  break;
+	case "wbmp":
+	  format = ImageFormats.WBMP;
+	  break;
+	case "xbm":
+	  format = ImageFormats.XBM;
+	  break;
+	case "xpm":
+	  format = ImageFormats.XPM;
+	  break;
+	default:
+	  format = null;
+      }
+      if (format == null)
+	result = "Unhandled file extension: " + ext;
     }
-    if (format == null)
-      result = "Unhandled file extension: " + ext;
 
     if (result == null) {
       try {
@@ -171,7 +222,35 @@ public class ApacheCommonsImageWriter
 	result = LoggingHelper.handleException(this, "Failed to write image to: " + file, e);
       }
     }
-    
+
+    return result;
+  }
+
+  /**
+   * Writes the image to the stream. Callers must close the stream.
+   *
+   * @param stream the stream to write to
+   * @param cont   the image container to write
+   * @return null if successfully written, otherwise error message
+   */
+  @Override
+  public String write(OutputStream stream, BufferedImageContainer cont) {
+    String	result;
+
+    result = null;
+
+    if (m_ImageFormat == ImageFormats.UNKNOWN)
+      result = "Writing to a stream requires an explicit image format!";
+
+    if (result == null) {
+      try {
+	Imaging.writeImage(cont.toBufferedImage(), stream, m_ImageFormat, new HashMap<>());
+      }
+      catch (Exception e) {
+	result = LoggingHelper.handleException(this, "Failed to write image to stream!", e);
+      }
+    }
+
     return result;
   }
 }
