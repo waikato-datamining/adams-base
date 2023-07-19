@@ -15,7 +15,7 @@
 
 /*
  * Regions.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -204,14 +204,10 @@ public class Regions
     int					i;
     Rectangle				rect;
     int					dec;
-    int					w;
-    int					h;
     int					x;
     int					y;
     int					width;
     int					height;
-    int					overlapX;
-    int					overlapY;
 
     result = new ArrayList<>();
     bimage = image.getImage();
