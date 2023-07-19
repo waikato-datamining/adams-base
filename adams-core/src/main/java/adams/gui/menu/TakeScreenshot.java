@@ -25,7 +25,7 @@ import adams.core.DateFormat;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.UserMode;
 import adams.data.image.BufferedImageContainer;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.chooser.ImageFileChooser;
@@ -67,7 +67,7 @@ public class TakeScreenshot
   public TakeScreenshot(AbstractApplicationFrame owner) {
     super(owner);
   }
-  
+
   /**
    * Returns the file name of the icon.
    *
@@ -91,9 +91,9 @@ public class TakeScreenshot
     String			file;
     ImageFileChooser		filechooser;
     int				retVal;
-    AbstractImageWriter		writer;
+    ImageWriter 		writer;
     String			msg;
-    
+
     try {
       size  = Toolkit.getDefaultToolkit().getScreenSize();
       rect  = new Rectangle(size);
@@ -111,16 +111,16 @@ public class TakeScreenshot
       msg = writer.write(filechooser.getSelectedPlaceholderFile(), cont);
       if (msg != null)
 	GUIHelper.showErrorMessage(
-	    getOwner(), 
-	    "Failed to save screenshot to '" + filechooser.getSelectedPlaceholderFile() + "':\n" + msg);
+	  getOwner(),
+	  "Failed to save screenshot to '" + filechooser.getSelectedPlaceholderFile() + "':\n" + msg);
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
-	  getOwner(), 
-	  "Failed to take screenshot:\n" + LoggingHelper.throwableToString(e));
+	getOwner(),
+	"Failed to take screenshot:\n" + LoggingHelper.throwableToString(e));
     }
   }
-    
+
 
   /**
    * Returns the title of the window (and text of menuitem).

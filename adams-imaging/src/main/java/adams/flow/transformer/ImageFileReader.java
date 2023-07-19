@@ -15,7 +15,7 @@
 
 /*
  * ImageFileReader.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,9 +24,9 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.MetaDataFileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.report.Report;
 import adams.flow.core.Token;
@@ -117,7 +117,7 @@ public class ImageFileReader
   private static final long serialVersionUID = 7466006970025235243L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_Reader;
+  protected ImageReader m_Reader;
 
   /** whether to load the meta-data as well (if present). */
   protected boolean m_LoadMetaData;
@@ -169,7 +169,7 @@ public class ImageFileReader
    *
    * @param value 	the reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -179,7 +179,7 @@ public class ImageFileReader
    *
    * @return 		the reader
    */
-  public AbstractImageReader getReader() {
+  public ImageReader getReader() {
     return m_Reader;
   }
 

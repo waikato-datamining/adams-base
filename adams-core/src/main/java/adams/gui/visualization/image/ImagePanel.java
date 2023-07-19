@@ -28,10 +28,10 @@ import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.input.ImageReader;
 import adams.data.io.output.AbstractReportWriter;
+import adams.data.io.output.ImageWriter;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.flow.control.Flow;
@@ -1842,7 +1842,7 @@ public class ImagePanel
    * @param reader	the reader to use, null for auto-detection
    * @return		true if successfully read
    */
-  public boolean load(File file, AbstractImageReader reader) {
+  public boolean load(File file, ImageReader reader) {
     return load(file, reader, 1.0);
   }
 
@@ -1854,7 +1854,7 @@ public class ImagePanel
    * @param scale	the scale to use
    * @return		true if successfully read
    */
-  public boolean load(File file, AbstractImageReader reader, double scale) {
+  public boolean load(File file, ImageReader reader, double scale) {
     boolean			result;
     AbstractImageContainer	cont;
 
@@ -1909,7 +1909,7 @@ public class ImagePanel
    * @return		true if successfully written, false if not or no image
    * @see		#isModified()
    */
-  public boolean save(File file, AbstractImageWriter<AbstractImageContainer> writer) {
+  public boolean save(File file, ImageWriter<AbstractImageContainer> writer) {
     boolean			result;
     BufferedImageContainer	cont;
     String			msg;

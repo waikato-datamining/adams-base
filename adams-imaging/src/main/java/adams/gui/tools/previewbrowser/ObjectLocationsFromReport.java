@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromReport.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -28,9 +28,9 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.ImageAnchor;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.objectfinder.AllFinder;
 import adams.data.objectfinder.ObjectFinder;
@@ -370,7 +370,7 @@ public class ObjectLocationsFromReport
   }
 
   /** the image reader to use. */
-  protected AbstractImageReader m_ImageReader;
+  protected ImageReader m_ImageReader;
 
   /** the report reader to use. */
   protected AbstractReportReader m_Reader;
@@ -584,7 +584,7 @@ public class ObjectLocationsFromReport
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultImageReader() {
+  protected ImageReader getDefaultImageReader() {
     return new JAIImageReader();
   }
 
@@ -593,7 +593,7 @@ public class ObjectLocationsFromReport
    *
    * @param value	the reader
    */
-  public void setImageReader(AbstractImageReader value) {
+  public void setImageReader(ImageReader value) {
     m_ImageReader = value;
     reset();
   }
@@ -603,7 +603,7 @@ public class ObjectLocationsFromReport
    *
    * @return		the reader
    */
-  public AbstractImageReader getImageReader() {
+  public ImageReader getImageReader() {
     return m_ImageReader;
   }
 

@@ -20,7 +20,7 @@
 package adams.gui.tools;
 
 import adams.core.management.FileBrowser;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.GUIHelper;
@@ -159,7 +159,7 @@ public class ImageProcessorMultiPagePane
    * @param reader	the reader to use, null for auto-detection
    * @return		true if successfully read
    */
-  public boolean load(File file, AbstractImageReader reader) {
+  public boolean load(File file, ImageReader reader) {
     ImageProcessorSubPanel	panel;
 
     panel = new ImageProcessorSubPanel(this);

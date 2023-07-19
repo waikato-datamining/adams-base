@@ -24,8 +24,8 @@ import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.AbstractReportReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.report.Report;
@@ -135,7 +135,7 @@ public class ObjectAnnotationsHandler
   protected String m_FileSuffix;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_ImageReader;
+  protected ImageReader m_ImageReader;
 
   /** the reader to use. */
   protected AbstractReportReader m_Reader;
@@ -238,7 +238,7 @@ public class ObjectAnnotationsHandler
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultImageReader() {
+  protected ImageReader getDefaultImageReader() {
     return new JAIImageReader();
   }
 
@@ -247,7 +247,7 @@ public class ObjectAnnotationsHandler
    *
    * @param value	the reader
    */
-  public void setImageReader(AbstractImageReader value) {
+  public void setImageReader(ImageReader value) {
     m_ImageReader = value;
     reset();
   }
@@ -257,7 +257,7 @@ public class ObjectAnnotationsHandler
    *
    * @return		the reader
    */
-  public AbstractImageReader getImageReader() {
+  public ImageReader getImageReader() {
     return m_ImageReader;
   }
 

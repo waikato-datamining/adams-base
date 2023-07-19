@@ -15,7 +15,7 @@
 
 /*
  * GrayOrIndexedImageWriter.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -25,7 +25,7 @@ import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.GrayOrIndexedColorizer;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
@@ -170,7 +170,7 @@ public class GrayOrIndexedImageWriter
    * @return		the reader, null if none available
    */
   @Override
-  public AbstractImageReader getCorrespondingReader() {
+  public ImageReader getCorrespondingReader() {
     return null;
   }
 

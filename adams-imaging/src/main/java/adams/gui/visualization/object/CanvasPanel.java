@@ -23,7 +23,7 @@ package adams.gui.visualization.object;
 import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -153,9 +153,9 @@ public class CanvasPanel
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (MouseUtils.isRightClick(e) && MouseUtils.hasNoModifierKey(e)) {
-          JPopupMenu menu = createPopupMenu();
-          menu.show(CanvasPanel.this, e.getX(), e.getY());
+	if (MouseUtils.isRightClick(e) && MouseUtils.hasNoModifierKey(e)) {
+	  JPopupMenu menu = createPopupMenu();
+	  menu.show(CanvasPanel.this, e.getX(), e.getY());
 	}
       }
     });
@@ -343,7 +343,7 @@ public class CanvasPanel
    */
   public void saveAs() {
     int				retVal;
-    AbstractImageWriter		writer;
+    ImageWriter 		writer;
     BufferedImageContainer	cont;
     String			msg;
     int				width;

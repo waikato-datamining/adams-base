@@ -15,14 +15,14 @@
 
 /*
  * ImageFileWriter.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.data.io.output.JAIImageWriter;
 
 /**
@@ -87,7 +87,7 @@ public class ImageFileWriter
   private static final long serialVersionUID = 1824012225640852716L;
 
   /** the writer to use. */
-  protected AbstractImageWriter m_Writer;
+  protected ImageWriter m_Writer;
 
   /**
    * Returns a string describing the object.
@@ -142,7 +142,7 @@ public class ImageFileWriter
    *
    * @param value 	the writer
    */
-  public void setWriter(AbstractImageWriter value) {
+  public void setWriter(ImageWriter value) {
     m_Writer = value;
     reset();
   }
@@ -152,7 +152,7 @@ public class ImageFileWriter
    *
    * @return 		the writer
    */
-  public AbstractImageWriter getWriter() {
+  public ImageWriter getWriter() {
     return m_Writer;
   }
 

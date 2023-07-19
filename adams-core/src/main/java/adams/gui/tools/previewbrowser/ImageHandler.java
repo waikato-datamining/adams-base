@@ -15,13 +15,13 @@
 
 /*
  * ImageHandler.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.gui.visualization.image.ImagePanel;
 
@@ -55,7 +55,7 @@ public class ImageHandler
   private static final long serialVersionUID = -3962259305718630395L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_ImageReader;
+  protected ImageReader m_ImageReader;
 
   /**
    * Returns a string describing the object.
@@ -84,7 +84,7 @@ public class ImageHandler
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultImageReader() {
+  protected ImageReader getDefaultImageReader() {
     return new JAIImageReader();
   }
 
@@ -93,7 +93,7 @@ public class ImageHandler
    *
    * @param value	the reader
    */
-  public void setImageReader(AbstractImageReader value) {
+  public void setImageReader(ImageReader value) {
     m_ImageReader = value;
     reset();
   }
@@ -103,7 +103,7 @@ public class ImageHandler
    *
    * @return		the reader
    */
-  public AbstractImageReader getImageReader() {
+  public ImageReader getImageReader() {
     return m_ImageReader;
   }
 

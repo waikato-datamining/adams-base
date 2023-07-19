@@ -194,7 +194,11 @@ adams.data.io.input.AbstractTextReader=\
   adams.data.io.input
 
 # the image readers
-adams.data.io.input.AbstractImageReader=\
+adams.data.io.input.ImageReader=\
+  adams.data.io.input
+
+# the image readers (for input streams)
+adams.data.io.input.InputStreamImageReader=\
   adams.data.io.input
 
 # the object readers
@@ -230,7 +234,11 @@ adams.data.io.output.AbstractTextWriter=\
   adams.data.io.output
 
 # the image writers
-adams.data.io.output.AbstractImageWriter=\
+adams.data.io.output.ImageWriter=\
+  adams.data.io.output
+
+# the image writers (for output streams)
+adams.data.io.output.OutputStreamImageWriter=\
   adams.data.io.output
 
 # the object writers

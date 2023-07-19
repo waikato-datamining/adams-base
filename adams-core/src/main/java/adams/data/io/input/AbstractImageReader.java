@@ -13,18 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractImageReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import adams.core.ClassLister;
-import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.image.AbstractImageContainer;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -33,11 +32,10 @@ import adams.data.report.Report;
  * Ancestor for image readers.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractImageReader<T extends AbstractImageContainer>
   extends AbstractOptionHandler
-  implements FileFormatHandler {
+  implements ImageReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 2069846153567151035L;
@@ -48,6 +46,7 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    * @return 			a description suitable for displaying in the
    * 				file chooser
    */
+  @Override
   public abstract String getFormatDescription();
 
   /**
@@ -55,6 +54,7 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    *
    * @return 			the extension (without the dot!)
    */
+  @Override
   public abstract String[] getFormatExtensions();
 
   /**
@@ -62,6 +62,7 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    *
    * @return 			the default extension (without the dot!)
    */
+  @Override
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
   }
@@ -71,13 +72,15 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    * 
    * @return		the writer, null if none available
    */
-  public abstract AbstractImageWriter getCorrespondingWriter();
+  @Override
+  public abstract ImageWriter getCorrespondingWriter();
   
   /**
    * Returns whether the reader is actually available.
    * 
    * @return		true if available and ready to use
    */
+  @Override
   public boolean isAvailable() {
     return true;
   }
@@ -133,6 +136,7 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    * @param file	the file to read
    * @return		the image container, null if failed to read
    */
+  @Override
   public T read(PlaceholderFile file) {
     T		result;
     
@@ -150,6 +154,6 @@ public abstract class AbstractImageReader<T extends AbstractImageContainer>
    * @return		the reader classnames
    */
   public static String[] getReaders() {
-    return ClassLister.getSingleton().getClassnames(AbstractImageReader.class);
+    return ClassLister.getSingleton().getClassnames(ImageReader.class);
   }
 }

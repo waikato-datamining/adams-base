@@ -15,7 +15,7 @@
 
 /*
  * ObjectLocationsFromSpreadSheet.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -28,7 +28,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.ImageAnchor;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.input.ObjectLocationsSpreadSheetReader;
 import adams.data.objectfinder.AllFinder;
@@ -371,7 +371,7 @@ public class ObjectLocationsFromSpreadSheet
   }
 
   /** the image reader to use. */
-  protected AbstractImageReader m_ImageReader;
+  protected ImageReader m_ImageReader;
 
   /** the reader to use. */
   protected ObjectLocationsSpreadSheetReader m_Reader;
@@ -580,7 +580,7 @@ public class ObjectLocationsFromSpreadSheet
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultImageReader() {
+  protected ImageReader getDefaultImageReader() {
     return new JAIImageReader();
   }
 
@@ -589,7 +589,7 @@ public class ObjectLocationsFromSpreadSheet
    *
    * @param value	the reader
    */
-  public void setImageReader(AbstractImageReader value) {
+  public void setImageReader(ImageReader value) {
     m_ImageReader = value;
     reset();
   }
@@ -599,7 +599,7 @@ public class ObjectLocationsFromSpreadSheet
    *
    * @return		the reader
    */
-  public AbstractImageReader getImageReader() {
+  public ImageReader getImageReader() {
     return m_ImageReader;
   }
 

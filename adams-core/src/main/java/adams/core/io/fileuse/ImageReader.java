@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ImageReader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileuse;
 
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.JAIImageReader;
 
 import java.io.File;
@@ -39,7 +38,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
  * 
- * <pre>-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: reader)
+ * <pre>-reader &lt;adams.data.io.input.ImageReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The image reader to use for checking the 'in use' state.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
  * </pre>
@@ -55,7 +54,7 @@ public class ImageReader
   private static final long serialVersionUID = -3766862011655514895L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_Reader;
+  protected adams.data.io.input.ImageReader m_Reader;
 
   /**
    * Returns a string describing the object.
@@ -86,7 +85,7 @@ public class ImageReader
    *
    * @param value	the reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(adams.data.io.input.ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -96,7 +95,7 @@ public class ImageReader
    *
    * @return		the reader
    */
-  public AbstractImageReader getReader() {
+  public adams.data.io.input.ImageReader getReader() {
     return m_Reader;
   }
 

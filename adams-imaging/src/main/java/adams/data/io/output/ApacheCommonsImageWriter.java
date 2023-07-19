@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageWriter.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -24,8 +24,8 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.data.image.BufferedImageContainer;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.io.input.ImageReader;
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.Imaging;
@@ -91,7 +91,7 @@ public class ApacheCommonsImageWriter
    * @return		the reader, null if none available
    */
   @Override
-  public AbstractImageReader getCorrespondingReader() {
+  public ImageReader getCorrespondingReader() {
     return new ApacheCommonsImageReader();
   }
 

@@ -28,7 +28,7 @@ import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.AbstractImageTransformer;
 import adams.data.image.BufferedImageContainer;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.env.Environment;
 import adams.env.ImageViewerPanelDefinition;
 import adams.env.Modules;
@@ -446,7 +446,7 @@ public class ImageViewerPanel
 	  // ignored
 	}
 	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
-	  load(e.getItem().getFile(), (AbstractImageReader) e.getItem().getHandler());
+	  load(e.getItem().getFile(), (ImageReader) e.getItem().getHandler());
 	}
       });
       m_MenuItemFileLoadRecent = submenu;
@@ -802,7 +802,7 @@ public class ImageViewerPanel
    * @param file	the file to load
    * @param reader	the reader to use, null for auto-detection
    */
-  public void load(File file, AbstractImageReader reader) {
+  public void load(File file, ImageReader reader) {
     if (m_MultiPagePane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));

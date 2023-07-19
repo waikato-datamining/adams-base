@@ -39,7 +39,7 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class IndividualImageSegmentationLayerWriter
-    extends AbstractImageSegmentationAnnotationWriter {
+  extends AbstractImageSegmentationAnnotationWriter {
 
   private static final long serialVersionUID = 8630734382383387883L;
 
@@ -64,8 +64,8 @@ public class IndividualImageSegmentationLayerWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	"skip-empty-layers", "skipEmptyLayers",
-	false);
+      "skip-empty-layers", "skipEmptyLayers",
+      false);
   }
 
   /**
@@ -146,7 +146,7 @@ public class IndividualImageSegmentationLayerWriter
    * @return		null if successful, otherwise error message
    */
   protected String writeFile(BufferedImage image, PlaceholderFile file) {
-    AbstractImageWriter		writer;
+    ImageWriter			writer;
     BufferedImageContainer	cont;
 
     image  = BufferedImageHelper.convert(image, BufferedImage.TYPE_BYTE_BINARY);

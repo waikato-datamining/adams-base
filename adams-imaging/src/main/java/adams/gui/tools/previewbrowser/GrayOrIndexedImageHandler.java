@@ -15,7 +15,7 @@
 
 /*
  * GrayOrIndexedImageHandler.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -23,8 +23,8 @@ import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.transformer.GrayOrIndexedColorizer;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
@@ -67,7 +67,7 @@ public class GrayOrIndexedImageHandler
   private static final long serialVersionUID = -3962259305718630395L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_Reader;
+  protected ImageReader m_Reader;
 
   /** the color provider for generating the colors. */
   protected ColorProvider m_ColorProvider;
@@ -103,7 +103,7 @@ public class GrayOrIndexedImageHandler
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultReader() {
+  protected ImageReader getDefaultReader() {
     return new ApacheCommonsImageReader();
   }
 
@@ -112,7 +112,7 @@ public class GrayOrIndexedImageHandler
    *
    * @param value	the image reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -122,7 +122,7 @@ public class GrayOrIndexedImageHandler
    *
    * @return		the image reader
    */
-  public AbstractImageReader getReader() {
+  public ImageReader getReader() {
     return m_Reader;
   }
 

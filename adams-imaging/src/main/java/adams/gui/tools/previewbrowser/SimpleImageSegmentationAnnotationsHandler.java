@@ -15,7 +15,7 @@
 
 /*
  * SimpleImageSegmentationAnnotationsHandler.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -28,8 +28,8 @@ import adams.data.image.BufferedImageHelper;
 import adams.data.image.transformer.GrayOrIndexedColorizer;
 import adams.data.image.transformer.ImageColorizer;
 import adams.data.image.transformer.ImageColorizerWithColorProvider;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.image.ImagePanel;
 import adams.gui.visualization.segmentation.ImageUtils;
@@ -51,10 +51,10 @@ public class SimpleImageSegmentationAnnotationsHandler
   private static final long serialVersionUID = 3014911887476525380L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_Reader;
+  protected ImageReader m_Reader;
 
   /** the image reader to use for the overlay. */
-  protected AbstractImageReader m_OverlayReader;
+  protected ImageReader m_OverlayReader;
 
   /** the image colorizer to use. */
   protected ImageColorizer m_Colorizer;
@@ -101,7 +101,7 @@ public class SimpleImageSegmentationAnnotationsHandler
    *
    * @param value	the image reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -111,7 +111,7 @@ public class SimpleImageSegmentationAnnotationsHandler
    *
    * @return		the image reader
    */
-  public AbstractImageReader getReader() {
+  public ImageReader getReader() {
     return m_Reader;
   }
 
@@ -130,7 +130,7 @@ public class SimpleImageSegmentationAnnotationsHandler
    *
    * @param value	the image reader
    */
-  public void setOverlayReader(AbstractImageReader value) {
+  public void setOverlayReader(ImageReader value) {
     m_OverlayReader = value;
     reset();
   }
@@ -140,7 +140,7 @@ public class SimpleImageSegmentationAnnotationsHandler
    *
    * @return		the image reader
    */
-  public AbstractImageReader getOverlayReader() {
+  public ImageReader getOverlayReader() {
     return m_OverlayReader;
   }
 

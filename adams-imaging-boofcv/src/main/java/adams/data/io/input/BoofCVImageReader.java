@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVImageReader.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -23,8 +23,8 @@ import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
-import adams.data.io.output.AbstractImageWriter;
 import adams.data.io.output.BoofCVImageWriter;
+import adams.data.io.output.ImageWriter;
 import boofcv.io.image.UtilImageIO;
 
 import javax.imageio.ImageIO;
@@ -122,7 +122,7 @@ public class BoofCVImageReader
    * @return		the writer, null if none available
    */
   @Override
-  public AbstractImageWriter getCorrespondingWriter() {
+  public ImageWriter getCorrespondingWriter() {
     return new BoofCVImageWriter();
   }
 

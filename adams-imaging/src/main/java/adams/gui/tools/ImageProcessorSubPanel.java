@@ -15,14 +15,14 @@
 
 /*
  * ImageProcessorSubPanel.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.flow.control.SubProcess;
 import adams.flow.core.Token;
 import adams.flow.transformer.locateobjects.AbstractObjectLocator;
@@ -341,7 +341,7 @@ public class ImageProcessorSubPanel
    * @param reader	the reader to use, null for auto-detection
    * @return		true if successfully read
    */
-  public boolean load(File file, AbstractImageReader reader) {
+  public boolean load(File file, ImageReader reader) {
     boolean	result;
 
     result = m_PanelOriginal.load(file, reader);

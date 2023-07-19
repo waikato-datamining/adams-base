@@ -15,7 +15,7 @@
 
 /*
  * AbstractCustomPNGAnnotationImageSegmentationReader.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -35,7 +35,7 @@ public abstract class AbstractCustomPNGAnnotationImageSegmentationReader
   private static final long serialVersionUID = -5567473437385041915L;
 
   /** the image reader for the PNG. */
-  protected AbstractImageReader m_Reader;
+  protected ImageReader m_Reader;
 
   /**
    * Adds options to the internal list of options.
@@ -54,7 +54,7 @@ public abstract class AbstractCustomPNGAnnotationImageSegmentationReader
    *
    * @return		the default
    */
-  protected AbstractImageReader getDefaultReader() {
+  protected ImageReader getDefaultReader() {
     return new PNGImageReader();
   }
 
@@ -63,7 +63,7 @@ public abstract class AbstractCustomPNGAnnotationImageSegmentationReader
    *
    * @param value	the image reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -73,7 +73,7 @@ public abstract class AbstractCustomPNGAnnotationImageSegmentationReader
    *
    * @return		the image reader
    */
-  public AbstractImageReader getReader() {
+  public ImageReader getReader() {
     return m_Reader;
   }
 

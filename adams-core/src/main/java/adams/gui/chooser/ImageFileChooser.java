@@ -21,8 +21,10 @@ package adams.gui.chooser;
 
 import adams.core.classmanager.ClassManager;
 import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
 import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.data.io.output.JAIImageWriter;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.GUIHelper;
@@ -45,7 +47,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ImageFileChooser
-  extends AbstractConfigurableExtensionFileFilterFileChooser<AbstractImageReader,AbstractImageWriter> {
+  extends AbstractConfigurableExtensionFileFilterFileChooser<ImageReader, ImageWriter> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4519042048473978377L;
@@ -222,11 +224,11 @@ public class ImageFileChooser
    *
    * @return		the image reader, null if not applicable
    */
-  public AbstractImageReader getImageReader() {
+  public ImageReader getImageReader() {
     configureCurrentHandlerHook(OPEN_DIALOG);
 
-    if (m_CurrentHandler instanceof AbstractImageReader)
-      return (AbstractImageReader) m_CurrentHandler;
+    if (m_CurrentHandler instanceof ImageReader)
+      return (ImageReader) m_CurrentHandler;
     else
       return null;
   }
@@ -236,11 +238,11 @@ public class ImageFileChooser
    *
    * @return		the image writer, null if not applicable
    */
-  public AbstractImageWriter getImageWriter() {
+  public ImageWriter getImageWriter() {
     configureCurrentHandlerHook(SAVE_DIALOG);
 
-    if (m_CurrentHandler instanceof AbstractImageWriter)
-      return (AbstractImageWriter) m_CurrentHandler;
+    if (m_CurrentHandler instanceof ImageWriter)
+      return (ImageWriter) m_CurrentHandler;
     else
       return null;
   }
@@ -297,16 +299,16 @@ public class ImageFileChooser
 	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
-	  if (!((AbstractImageReader) converter).isAvailable())
+	  if (!((ImageReader) converter).isAvailable())
 	    continue;
-	  desc = ((AbstractImageReader) converter).getFormatDescription();
-	  ext  = ((AbstractImageReader) converter).getFormatExtensions();
+	  desc = ((ImageReader) converter).getFormatDescription();
+	  ext  = ((ImageReader) converter).getFormatExtensions();
 	}
 	else {
-	  if (!((AbstractImageWriter) converter).isAvailable())
+	  if (!((ImageWriter) converter).isAvailable())
 	    continue;
-	  desc = ((AbstractImageWriter) converter).getFormatDescription();
-	  ext  = ((AbstractImageWriter) converter).getFormatExtensions();
+	  desc = ((ImageWriter) converter).getFormatDescription();
+	  ext  = ((ImageWriter) converter).getFormatExtensions();
 	}
       }
       catch (Exception e) {
@@ -343,7 +345,7 @@ public class ImageFileChooser
    * @return		the default reader
    */
   @Override
-  protected AbstractImageReader getDefaultReader() {
+  protected ImageReader getDefaultReader() {
     return new JAIImageReader();
   }
 
@@ -353,7 +355,7 @@ public class ImageFileChooser
    * @return		the default writer
    */
   @Override
-  protected AbstractImageWriter getDefaultWriter() {
+  protected ImageWriter getDefaultWriter() {
     return new JAIImageWriter();
   }
 
@@ -363,17 +365,17 @@ public class ImageFileChooser
    * @param file	the file to determine a reader for
    * @return		the reader, null if none found
    */
-  public AbstractImageReader getReaderForFile(File file) {
+  public ImageReader getReaderForFile(File file) {
     return readerForFile(file);
   }
 
   /**
    * Returns the writer for the specified file.
    *
-   * @param file	the file to determine a reader for
+   * @param file        the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public AbstractImageWriter getWriterForFile(File file) {
+  public ImageWriter getWriterForFile(File file) {
     return writerForFile(file);
   }
 
@@ -384,7 +386,7 @@ public class ImageFileChooser
    */
   @Override
   protected Class getReaderClass() {
-    return AbstractImageReader.class;
+    return ImageReader.class;
   }
 
   /**
@@ -394,7 +396,7 @@ public class ImageFileChooser
    */
   @Override
   protected Class getWriterClass() {
-    return AbstractImageWriter.class;
+    return ImageWriter.class;
   }
 
   /**
@@ -403,8 +405,8 @@ public class ImageFileChooser
    * @param file	the file to determine a reader for
    * @return		the reader, null if none found
    */
-  public static AbstractImageReader readerForFile(File file) {
-    AbstractImageReader	result;
+  public static ImageReader readerForFile(File file) {
+    ImageReader result;
 
     result = null;
 
@@ -413,7 +415,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_ReaderFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
+	  result = (ImageReader) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate reader: " + filter.getClassname(), e);
@@ -430,8 +432,8 @@ public class ImageFileChooser
    * @param file	the file to determine a reader for
    * @return		the writer, null if none found
    */
-  public static AbstractImageWriter writerForFile(File file) {
-    AbstractImageWriter	result;
+  public static ImageWriter writerForFile(File file) {
+    ImageWriter	result;
 
     result = null;
 
@@ -440,7 +442,7 @@ public class ImageFileChooser
     for (ExtensionFileFilterWithClass filter: m_WriterFileFilters) {
       if (filter.accept(file)) {
 	try {
-	  result = (AbstractImageWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
+	  result = (ImageWriter) ClassManager.getSingleton().forName(filter.getClassname()).getDeclaredConstructor().newInstance();
 	}
 	catch (Exception e) {
           handleException("Failed to instantiate writer: " + filter.getClassname(), e);

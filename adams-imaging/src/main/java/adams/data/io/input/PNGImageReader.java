@@ -15,14 +15,14 @@
 
 /*
  * PNGImageReader.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
-import adams.data.io.output.AbstractImageWriter;
+import adams.data.io.output.ImageWriter;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.gui.core.ColorHelper;
@@ -141,7 +141,7 @@ public class PNGImageReader
    * @return		the writer, null if none available
    */
   @Override
-  public AbstractImageWriter getCorrespondingWriter() {
+  public ImageWriter getCorrespondingWriter() {
     return null;
   }
 

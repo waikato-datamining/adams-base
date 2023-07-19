@@ -28,7 +28,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
 
 package adams.gui.chooser;
 
@@ -37,7 +37,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.dialog.ApprovalDialog;
@@ -59,22 +59,22 @@ import java.io.File;
 
 /**
  * Preview component for a {@link JFileChooser}.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 @MixedCopyright(
-    copyright = "1995, 2008, Oracle and/or its affiliates",
-    license = License.BSD3,
-    url = "http://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemo2Project/src/components/ImagePreview.java"
+  copyright = "1995, 2008, Oracle and/or its affiliates",
+  license = License.BSD3,
+  url = "http://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemo2Project/src/components/ImagePreview.java"
 )
-public class ImagePreview 
+public class ImagePreview
   extends JComponent
   implements PropertyChangeListener {
 
   /** for serialization. */
   private static final long serialVersionUID = -2018506061088072140L;
-  
+
   /** the owning filechooser. */
   protected JFileChooser m_Owner;
 
@@ -83,16 +83,16 @@ public class ImagePreview
 
   /** the height of the preview. */
   protected int m_PreviewHeight;
-  
+
   /** the thumbnail. */
   protected ImageIcon m_Thumbnail;
-  
+
   /** the thumbnail. */
   protected File m_File;
-  
+
   /**
    * Initializes the preview panel with a default size of 100x50 pixels.
-   * 
+   *
    * @param owner	the owning file chooser
    */
   public ImagePreview(JFileChooser owner) {
@@ -101,7 +101,7 @@ public class ImagePreview
 
   /**
    * Initializes the preview panel with a default size of 100x50 pixels.
-   * 
+   *
    * @param owner	the owning file chooser
    * @param width	the width of the preview
    * @param height	the height of the preview
@@ -109,14 +109,14 @@ public class ImagePreview
   public ImagePreview(JFileChooser owner, int width, int height) {
     super();
     initialize();
-    
+
     m_Owner         = owner;
     m_PreviewWidth  = width;
     m_PreviewHeight = height;
-    
+
     setPreferredSize(new Dimension(m_PreviewWidth, m_PreviewHeight));
     owner.addPropertyChangeListener(this);
-    
+
     setToolTipText("Click for full size view");
     addMouseListener(new MouseAdapter() {
       @Override
@@ -141,26 +141,26 @@ public class ImagePreview
 
   /**
    * Returns the owning filechooser instance.
-   * 
+   *
    * @return		the owner
    */
   public JFileChooser getOwner() {
     return m_Owner;
   }
-  
+
   /**
    * Loads the image.
    */
   protected void loadImage() {
     AbstractImageContainer	cont;
-    AbstractImageReader		reader;
+    ImageReader 		reader;
     ImageIcon 			tmpIcon;
-    
+
     if (m_File == null) {
       m_Thumbnail = null;
       return;
     }
-    
+
     // fallback method
     tmpIcon = null;
     if (m_File.exists() && !m_File.isDirectory()) {
@@ -177,7 +177,7 @@ public class ImagePreview
       if (cont != null)
 	tmpIcon = new ImageIcon(cont.toBufferedImage());
     }
-    
+
     if (tmpIcon != null) {
       if (tmpIcon.getIconWidth() > m_PreviewWidth - 10)
 	m_Thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(m_PreviewWidth - 10, -1, Image.SCALE_DEFAULT));
@@ -188,7 +188,7 @@ public class ImagePreview
 
   /**
    * Gets called when a property in the file chooser changes.
-   * 
+   *
    * @param e		the event
    */
   public void propertyChange(PropertyChangeEvent e) {
@@ -199,7 +199,7 @@ public class ImagePreview
     if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
       m_File = null;
       update = true;
-    } 
+    }
     //If a file became selected, find out which one.
     else if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(prop)) {
       m_File = (File) e.getNewValue();
@@ -218,7 +218,7 @@ public class ImagePreview
 
   /**
    * Displays the image.
-   * 
+   *
    * @param g		the graphics context
    */
   @Override
@@ -234,21 +234,21 @@ public class ImagePreview
 	y = 0;
       if (x < 5)
 	x = 5;
-      
+
       m_Thumbnail.paintIcon(this, g, x, y);
     }
   }
-  
+
   /**
    * Shows the current thumbnail as full-size image in a new dialog.
    */
   protected void showImage() {
     ApprovalDialog	dialog;
     ImagePanel		panel;
-    
+
     if (m_Thumbnail == null)
       return;
-    
+
     if (GUIHelper.getParentDialog(this) != null)
       dialog = new ApprovalDialog(GUIHelper.getParentDialog(this), ModalityType.DOCUMENT_MODAL);
     else

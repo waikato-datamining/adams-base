@@ -20,7 +20,7 @@
 package adams.gui.visualization.image;
 
 import adams.core.Properties;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
 
@@ -262,7 +262,7 @@ public class ImageMultiPagePane
    * @param reader	the reader to use, null for auto-detection
    * @return		true if successfully loaded
    */
-  public boolean load(File file, AbstractImageReader reader) {
+  public boolean load(File file, ImageReader reader) {
     ImagePanel	panel;
     double	zoom;
     Properties	props;

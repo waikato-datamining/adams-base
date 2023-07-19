@@ -15,7 +15,7 @@
 
 /*
  * ColorDistributionHandler.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -23,8 +23,8 @@ import adams.core.io.PlaceholderFile;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.features.ColorCounts;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.ApacheCommonsImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.BaseScrollPane;
@@ -65,7 +65,7 @@ public class ColorDistributionHandler
   private static final long serialVersionUID = -3962259305718630395L;
 
   /** the image reader to use. */
-  protected AbstractImageReader m_Reader;
+  protected ImageReader m_Reader;
 
   /**
    * Returns a string describing the object.
@@ -94,7 +94,7 @@ public class ColorDistributionHandler
    *
    * @param value 	the reader
    */
-  public void setReader(AbstractImageReader value) {
+  public void setReader(ImageReader value) {
     m_Reader = value;
     reset();
   }
@@ -104,7 +104,7 @@ public class ColorDistributionHandler
    *
    * @return 		the reader
    */
-  public AbstractImageReader getReader() {
+  public ImageReader getReader() {
     return m_Reader;
   }
 

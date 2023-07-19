@@ -13,20 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JAIImageWriter.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import javax.imageio.ImageIO;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
+
+import javax.imageio.ImageIO;
 
 /**
  <!-- globalinfo-start -->
@@ -101,7 +101,7 @@ public class JAIImageWriter
    * @return		the reader, null if none available
    */
   @Override
-  public AbstractImageReader getCorrespondingReader() {
+  public ImageReader getCorrespondingReader() {
     return new JAIImageReader();
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * OpenCVImageWriter.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
@@ -23,7 +23,7 @@ package adams.data.io.output;
 import adams.core.Utils;
 import adams.core.base.BaseInteger;
 import adams.core.io.PlaceholderFile;
-import adams.data.io.input.AbstractImageReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.input.OpenCVImageReader;
 import adams.data.opencv.ImwriteFlag;
 import adams.data.opencv.OpenCVImageContainer;
@@ -186,7 +186,7 @@ public class OpenCVImageWriter
    * @return the reader, null if none available
    */
   @Override
-  public AbstractImageReader getCorrespondingReader() {
+  public ImageReader getCorrespondingReader() {
     return new OpenCVImageReader();
   }
 

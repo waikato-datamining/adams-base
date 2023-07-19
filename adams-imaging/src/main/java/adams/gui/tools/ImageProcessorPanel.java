@@ -24,8 +24,8 @@ import adams.core.MessageCollection;
 import adams.core.ShorteningType;
 import adams.core.Utils;
 import adams.data.image.AbstractImageContainer;
-import adams.data.io.input.AbstractImageReader;
 import adams.data.io.input.FlowReader;
+import adams.data.io.input.ImageReader;
 import adams.data.io.output.FlowWriter;
 import adams.flow.control.SubProcess;
 import adams.flow.core.Actor;
@@ -389,7 +389,7 @@ public class ImageProcessorPanel
 	  // ignored
 	}
 	public void recentItemSelected(RecentItemEvent<JMenu,Setup> e) {
-	  load(e.getItem().getFile(), (AbstractImageReader) e.getItem().getHandler());
+	  load(e.getItem().getFile(), (ImageReader) e.getItem().getHandler());
 	}
       });
       m_MenuItemFileLoadRecent = submenu;
@@ -703,7 +703,7 @@ public class ImageProcessorPanel
    * @param file	the file to load
    * @param reader      the reader to use
    */
-  public void load(File file, AbstractImageReader reader) {
+  public void load(File file, ImageReader reader) {
     if (m_MultiPagePane.load(file, reader)) {
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
