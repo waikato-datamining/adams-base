@@ -35,7 +35,7 @@ public interface InputStreamImageReader<T extends AbstractImageContainer>
   /**
    * Reads the image from the stream. Caller must close the stream.
    *
-   * @param stream	the stream to read frmo
+   * @param stream	the stream to read from
    * @return		the image container, null if failed to read
    */
   public T read(InputStream stream);
