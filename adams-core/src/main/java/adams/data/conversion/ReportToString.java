@@ -48,7 +48,7 @@ import adams.data.report.Report;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ReportToString
-  extends AbstractConversionFromString {
+  extends AbstractConversionToString {
 
   private static final long serialVersionUID = 1432694530645128111L;
 
@@ -112,8 +112,8 @@ public class ReportToString
    * @return the class
    */
   @Override
-  public Class generates() {
-    return Report[].class;
+  public Class accepts() {
+    return Report.class;
   }
 
   /**
