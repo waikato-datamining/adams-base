@@ -89,7 +89,7 @@ import java.util.logging.Level;
  */
 public class OpexObjectLocationsReader
   extends AbstractReportReader<Report>
-  implements ObjectPrefixHandler {
+  implements ObjectPrefixHandler, StringReportReader<Report> {
 
   private static final long serialVersionUID = -1069346880458474698L;
 
@@ -375,6 +375,48 @@ public class OpexObjectLocationsReader
   }
 
   /**
+   * Converts the predictions into a report.
+   *
+   * @param preds	the predictions to convert
+   * @return		the reports that were read
+   */
+  protected List<Report> readData(ObjectPredictions preds) {
+    List<Report> 	result;
+    LocatedObject 	lobj;
+    LocatedObjects 	lobjs;
+    Report		report;
+
+    result = new ArrayList<>();
+    report = newInstance();
+    report.addField(m_ID);
+    report.addField(m_Timestamp);
+
+    // meta-data
+    if (preds.getTimestamp() != null)
+      report.setStringValue(m_Timestamp.getName(), ObjectPredictions.TIMESTAMP_FORMATTER.format(preds.getTimestamp()));
+    report.setStringValue(m_ID.getName(), preds.getID());
+    for (String key: preds.getMeta().keySet())
+      report.setStringValue(m_MetaPrefix + key, "" + preds.getMeta().get(key));
+
+    // objects
+    lobjs = new LocatedObjects();
+    for (ObjectPrediction pred: preds.getObjects()) {
+      lobj = new LocatedObject(pred.getBBox().toRectangle());
+      lobj.setPolygon(pred.getPolygon().toPolygon());
+      lobj.getMetaData().put(m_LabelSuffix, pred.getLabel());
+      if (pred.getScore() != null)
+	lobj.getMetaData().put(m_ScoreSuffix, pred.getScore());
+      lobj.getMetaData().putAll(pred.getMeta());
+      lobjs.add(lobj);
+    }
+
+    report.mergeWith(lobjs.toReport(m_Prefix));
+    result.add(report);
+
+    return result;
+  }
+
+  /**
    * Performs the actual reading.
    *
    * @return		the reports that were read
@@ -382,42 +424,34 @@ public class OpexObjectLocationsReader
   @Override
   protected List<Report> readData() {
     List<Report> 	result;
-    LocatedObject 	lobj;
-    LocatedObjects 	lobjs;
-    ObjectPredictions	preds;
-    Report		report;
 
     result = new ArrayList<>();
     try {
-      preds  = ObjectPredictions.newInstance(m_Input.getAbsoluteFile());
-      report = newInstance();
-      report.addField(m_ID);
-      report.addField(m_Timestamp);
-
-      // meta-data
-      if (preds.getTimestamp() != null)
-	report.setStringValue(m_Timestamp.getName(), ObjectPredictions.TIMESTAMP_FORMATTER.format(preds.getTimestamp()));
-      report.setStringValue(m_ID.getName(), preds.getID());
-      for (String key: preds.getMeta().keySet())
-	report.setStringValue(m_MetaPrefix + key, "" + preds.getMeta().get(key));
-
-      // objects
-      lobjs = new LocatedObjects();
-      for (ObjectPrediction pred: preds.getObjects()) {
-	lobj = new LocatedObject(pred.getBBox().toRectangle());
-	lobj.setPolygon(pred.getPolygon().toPolygon());
-	lobj.getMetaData().put(m_LabelSuffix, pred.getLabel());
-	if (pred.getScore() != null)
-	  lobj.getMetaData().put(m_ScoreSuffix, pred.getScore());
-	lobj.getMetaData().putAll(pred.getMeta());
-	lobjs.add(lobj);
-      }
-
-      report.mergeWith(lobjs.toReport(m_Prefix));
-      result.add(report);
+      result = readData(ObjectPredictions.newInstance(m_Input.getAbsoluteFile()));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read JSON file: " + m_Input, e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Reads the data.
+   *
+   * @param s the string to read from
+   * @return the report loaded from the string
+   */
+  @Override
+  public List<Report> read(String s) {
+    List<Report> 	result;
+
+    result = new ArrayList<>();
+    try {
+      result = readData(ObjectPredictions.newInstance(s));
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to read JSON string: " + s, e);
     }
 
     return result;

@@ -15,11 +15,12 @@
 
 /*
  * AbstractSimpleReportWriter.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
 
+import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -39,11 +40,11 @@ import java.util.zip.GZIPOutputStream;
  * Abstract ancestor for writing reports in properties format.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to handle
  */
 public abstract class AbstractSimpleReportWriter<T extends Report>
-  extends AbstractReportWriter<T> {
+  extends AbstractReportWriter<T>
+  implements StringReportWriter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 1281189381638349284L;
@@ -80,22 +81,18 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
   }
 
   /**
-   * Performs the actual writing.
+   * Turns the data into an array of strings (sorted field names).
    *
-   * @param data	the data to write
-   * @return		true if successfully written
+   * @param data 	the data to convert
+   * @return		the generated string array
+   * @throws Exception	if conversion fails
    */
-  @Override
-  protected boolean writeData(T data) {
-    boolean		result;
+  protected String[] toLines(T data) throws Exception {
+    String[] 		result;
     Properties		props;
-    FileWriter		writer;
     List<AbstractField>	fields;
     int			i;
     StringWriter	swriter;
-    FileOutputStream	fos;
-    GZIPOutputStream	gos;
-    String[]		lines;
 
     props = new Properties();
 
@@ -109,15 +106,34 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
       props.setProperty(fields.get(i).toString() + Report.DATATYPE_SUFFIX, fields.get(i).getDataType().toString());
     }
 
+    swriter = new StringWriter();
+    props.store(swriter, "Simple report format (= Java properties file format)");
+    result = swriter.toString().split("\n");
+    Arrays.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Performs the actual writing.
+   *
+   * @param data	the data to write
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean writeData(T data) {
+    boolean		result;
+    FileWriter		writer;
+    FileOutputStream	fos;
+    GZIPOutputStream	gos;
+    String[]		lines;
+
     // write props file
     fos    = null;
     gos    = null;
     writer = null;
     try {
-      swriter = new StringWriter();
-      props.store(swriter, "Simple report format (= Java properties file format)");
-      lines = swriter.toString().split("\n");
-      Arrays.sort(lines);
+      lines = toLines(data);
       if (m_Output.getName().endsWith(".gz")) {
 	fos = new FileOutputStream(m_Output.getAbsolutePath());
 	gos = new GZIPOutputStream(fos);
@@ -142,5 +158,24 @@ public abstract class AbstractSimpleReportWriter<T extends Report>
     }
 
     return result;
+  }
+  /**
+   * Performs checks and converts the report to a string.
+   *
+   * @param data	the data to write
+   * @param errors 	for collecting errors
+   * @return		the generated data, null in case of failure
+   */
+  public String write(T data, MessageCollection errors) {
+    String[]	lines;
+
+    try {
+      lines = toLines(data);
+      return Utils.flatten(lines, "\n");
+    }
+    catch (Exception e) {
+      errors.add("Failed to generate a string!", e);
+      return null;
+    }
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleReportReader.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -23,6 +23,7 @@ package adams.data.io.input;
 import adams.core.Properties;
 import adams.data.report.Report;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,11 +32,11 @@ import java.util.logging.Level;
  * Abstract ancestor for reports to be written in properties format.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of report to use
  */
 public abstract class AbstractSimpleReportReader<T extends Report>
-  extends AbstractReportReader<T> {
+  extends AbstractReportReader<T>
+  implements StringReportReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -196559365684130179L;
@@ -107,6 +108,35 @@ public abstract class AbstractSimpleReportReader<T extends Report>
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read data from " + m_Input, e);
+      props = new Properties();
+    }
+
+    // transfer properties into report
+    result.add((T) Report.parseProperties(props));
+
+    return result;
+  }
+
+  /**
+   * Reads the data.
+   *
+   * @param s the string to read from
+   * @return the report loaded from the string
+   */
+  @Override
+  public List<T> read(String s) {
+    List<T>		result;
+    Properties		props;
+
+    result = new ArrayList<>();
+
+    // loads properties
+    try {
+      props  = new Properties();
+      props.load(new StringReader(s));
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to read data from string: " + s, e);
       props = new Properties();
     }
 

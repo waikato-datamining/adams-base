@@ -177,6 +177,10 @@ adams.data.io.input.AbstractDataContainerReader=\
 adams.data.io.input.AbstractReportReader=\
   adams.data.io.input
 
+# the report readers (from strings)
+adams.data.io.input.StringReportReader=\
+  adams.data.io.input
+
 # the spreadsheet readers
 adams.data.io.input.SpreadSheetReader=\
   adams.data.io.input
@@ -215,6 +219,10 @@ adams.data.io.output.AbstractDataContainerWriter=\
 
 # the report writers
 adams.data.io.output.AbstractReportWriter=\
+  adams.data.io.output
+
+# the report writers (to strings)
+adams.data.io.output.StringReportWriter=\
   adams.data.io.output
 
 # the spreadsheet writers

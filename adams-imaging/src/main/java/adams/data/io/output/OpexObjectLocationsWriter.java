@@ -21,6 +21,7 @@
 package adams.data.io.output;
 
 import adams.core.DateUtils;
+import adams.core.MessageCollection;
 import adams.core.io.PrettyPrintingSupporter;
 import adams.data.io.input.OpexObjectLocationsReader;
 import adams.data.objectfinder.AllFinder;
@@ -102,7 +103,7 @@ import java.util.logging.Level;
  */
 public class OpexObjectLocationsWriter
   extends AbstractReportWriter<Report>
-  implements PrettyPrintingSupporter {
+  implements PrettyPrintingSupporter, StringReportWriter<Report> {
 
   private static final long serialVersionUID = 3152117801492456686L;
 
@@ -400,15 +401,14 @@ public class OpexObjectLocationsWriter
   }
 
   /**
-   * Performs the actual writing.
+   * Converts the report into OPEX format.
    *
-   * @param data	the data to write
-   * @return		true if successfully written
+   * @param data	the report to convert
+   * @return		the generated OPEX data
    */
-  @Override
-  protected boolean writeData(Report data) {
+  protected ObjectPredictions convert(Report data) {
+    ObjectPredictions 		result;
     LocatedObjects 		objs;
-    ObjectPredictions   	preds;
     List<ObjectPrediction> 	objects;
     ObjectPrediction    	pred;
     BBox 			bbox;
@@ -435,40 +435,55 @@ public class OpexObjectLocationsWriter
     for (LocatedObject obj: objs) {
       bbox = BBox.newInstance(obj.getRectangle());
       if (obj.hasPolygon())
-        poly = Polygon.newInstance(obj.getPolygon());
+	poly = Polygon.newInstance(obj.getPolygon());
       else
-        poly = bbox.toPolygon();
+	poly = bbox.toPolygon();
       if (!m_LabelKey.isEmpty() && obj.getMetaData().containsKey(m_LabelKey))
-        label = "" + obj.getMetaData().get(m_LabelKey);
+	label = "" + obj.getMetaData().get(m_LabelKey);
       else
-        label = "-no-label-";
+	label = "-no-label-";
       score = null;
       if (!m_ScoreKey.isEmpty() && obj.getMetaData().containsKey(m_ScoreKey)) {
-        if (obj.getMetaData().get(m_ScoreKey) instanceof Number)
-          score = ((Number) obj.getMetaData().get(m_ScoreKey)).doubleValue();
-        else
-          score = Double.parseDouble("" + obj.getMetaData().get(m_ScoreKey));
+	if (obj.getMetaData().get(m_ScoreKey) instanceof Number)
+	  score = ((Number) obj.getMetaData().get(m_ScoreKey)).doubleValue();
+	else
+	  score = Double.parseDouble("" + obj.getMetaData().get(m_ScoreKey));
       }
       pred = new ObjectPrediction(label, score, bbox, poly, null);
       // meta-data
       for (String key: obj.getMetaData().keySet()) {
-        if (key.equals(m_LabelKey))
-          continue;
-        if (key.equals(m_ScoreKey))
-          continue;
-        pred.getMeta().put(key, "" + obj.getMetaData().get(key));
+	if (key.equals(m_LabelKey))
+	  continue;
+	if (key.equals(m_ScoreKey))
+	  continue;
+	pred.getMeta().put(key, "" + obj.getMetaData().get(key));
       }
       // add prediction
       objects.add(pred);
     }
 
-    preds = new ObjectPredictions(timestamp, id, objects);
+    result = new ObjectPredictions(timestamp, id, objects);
 
     // meta-data
     for (AbstractField field: data.getFields()) {
       if (field.getName().startsWith(m_MetaPrefix))
-        preds.getMeta().put(field.getName().substring(m_MetaPrefix.length()), "" + data.getValue(field));
+	result.getMeta().put(field.getName().substring(m_MetaPrefix.length()), "" + data.getValue(field));
     }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual writing.
+   *
+   * @param data	the data to write
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean writeData(Report data) {
+    ObjectPredictions   	preds;
+
+    preds = convert(data);
 
     // write
     try {
@@ -479,5 +494,24 @@ public class OpexObjectLocationsWriter
       getLogger().log(Level.SEVERE, "Failed to write locations to: " + m_Output, e);
       return false;
     }
+  }
+
+  /**
+   * Performs checks and converts the report to a string.
+   *
+   * @param data   the data to write
+   * @param errors for collecting errors
+   * @return the generated data, null in case of failure
+   */
+  @Override
+  public String write(Report data, MessageCollection errors) {
+    StringBuilder		result;
+    ObjectPredictions   	preds;
+
+    result = new StringBuilder();
+    preds  = convert(data);
+    preds.write(result, m_PrettyPrinting);
+
+    return result.toString();
   }
 }
