@@ -101,7 +101,7 @@ public class Regions
       "Extracts the sub-images according to the region definitions.\n"
         + "Additional report values:\n"
         + "- " + KEY_REGION + " for the region\n"
-        + "- " + KEY_COORDINATES + " for the coordinates (x,y,w,h)";
+        + "- " + KEY_COORDINATES + " for the 1-based coordinates (x,y,w,h)";
   }
 
   /**
