@@ -15,7 +15,7 @@
 
 /*
  * Grid.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -32,6 +32,7 @@ import java.util.List;
  * Additional report values:<br>
  * - Row for the row<br>
  * - Column for the column<br>
+ * - Coordinates for the 1-based coordinates (x,y,w,h)<br>
  * It is possible to generate overlapping images (all but last row and last column) by defining overlaps. In case of overlaps, the following report values are then available:<br>
  * - OverlapX on the x axis<br>
  * - OverlapY on the y axis
@@ -42,6 +43,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -106,6 +108,9 @@ public class Grid
   /** the key for the Y overlap. */
   public final static String KEY_OVERLAP_Y = "OverlapY";
 
+  /** the key for the coordinates. */
+  public final static String KEY_COORDINATES = "Coordinates";
+
   /** the number of columns to use. */
   protected int m_NumCols;
 
@@ -130,9 +135,10 @@ public class Grid
 	+ "Additional report values:\n"
 	+ "- " + KEY_ROW + " for the row\n"
 	+ "- " + KEY_COLUMN + " for the column\n"
+	+ "- " + KEY_COORDINATES + " for the 1-based coordinates (x,y,w,h)\n"
 	+ "It is possible to generate overlapping images (all but last row and "
 	+ "last column) by defining overlaps. In case of overlaps, the following "
-        + "report values are then available:\n"
+	+ "report values are then available:\n"
 	+ "- " + KEY_OVERLAP_X + " on the x axis\n"
 	+ "- " + KEY_OVERLAP_Y + " on the y axis";
   }
@@ -337,11 +343,11 @@ public class Grid
     for (w = 0; w < m_NumCols; w++) {
       x = w * dw;
       if (w == m_NumCols - 1) {
-        overlapX = 0;
+	overlapX = 0;
 	width    = bimage.getWidth() - x;
       }
       else {
-        overlapX = m_OverlapX;
+	overlapX = m_OverlapX;
 	if (x + dw - 1 + overlapX >= bimage.getWidth())
 	  overlapX = bimage.getWidth() - (x + dw - 1);
 	width = dw + overlapX;
@@ -372,6 +378,7 @@ public class Grid
 	cont.setImage(bimage.getSubimage(x, y, width, height));
 	cont.getReport().setNumericValue(KEY_COLUMN, w);
 	cont.getReport().setNumericValue(KEY_ROW,    h);
+	cont.getReport().setStringValue(KEY_COORDINATES, "" + (x+1) + "," + (y+1) + "," + width + "," + height);
 	if ((m_OverlapX != 0) || (m_OverlapY != 0)) {
 	  cont.getReport().setNumericValue(KEY_OVERLAP_X, overlapX);
 	  cont.getReport().setNumericValue(KEY_OVERLAP_Y, overlapY);
