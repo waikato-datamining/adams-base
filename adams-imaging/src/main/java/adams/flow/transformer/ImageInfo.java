@@ -15,13 +15,15 @@
 
 /*
  * ImageInfo.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
+import adams.data.image.BufferedImageHelper;
+import adams.data.image.transformer.ImageType;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
 
@@ -34,51 +36,58 @@ import adams.flow.core.Token;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImage<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.image.AbstractImageContainer<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ImageInfo
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-type &lt;WIDTH|HEIGHT&gt; (property: type)
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-type &lt;WIDTH|HEIGHT|WIDTH_HEIGHT|IMAGE_TYPE|PIXEL_DEPTH&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: WIDTH
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ImageInfo
   extends AbstractTransformer
@@ -91,18 +100,23 @@ public class ImageInfo
    * The type of information to retrieve.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum InfoType {
     /** the width of the image. */
     WIDTH,
     /** the height of the image. */
-    HEIGHT
+    HEIGHT,
+    /** the width and height of the image as array. */
+    WIDTH_HEIGHT,
+    /** the image type. */
+    IMAGE_TYPE,
+    /** the pixel depth. */
+    PIXEL_DEPTH,
   }
 
   /** the type of information to generate. */
   protected InfoType m_Type;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -121,8 +135,8 @@ public class ImageInfo
     super.defineOptions();
 
     m_OptionManager.add(
-	    "type", "type",
-	    InfoType.WIDTH);
+      "type", "type",
+      InfoType.WIDTH);
   }
 
   /**
@@ -182,7 +196,14 @@ public class ImageInfo
     switch (m_Type) {
       case WIDTH:
       case HEIGHT:
+      case PIXEL_DEPTH:
 	return new Class[]{Integer.class};
+
+      case WIDTH_HEIGHT:
+	return new Class[]{Integer[].class};
+
+      case IMAGE_TYPE:
+	return new Class[]{String.class};
 
       default:
 	throw new IllegalStateException("Unhandled info type: " + m_Type);
@@ -196,22 +217,39 @@ public class ImageInfo
    */
   @Override
   protected String doExecute() {
-    String		result;
+    String			result;
     AbstractImageContainer	image;
+    ImageType.Type 		type;
 
     result = null;
 
     image = (AbstractImageContainer) m_InputToken.getPayload();
-    
+
     switch (m_Type) {
       case WIDTH:
 	m_OutputToken = new Token(image.getWidth());
 	break;
-	
+
       case HEIGHT:
 	m_OutputToken = new Token(image.getHeight());
 	break;
-	
+
+      case WIDTH_HEIGHT:
+	m_OutputToken = new Token(new Integer[]{image.getWidth(), image.getHeight()});
+	break;
+
+      case IMAGE_TYPE:
+	type = ImageType.Type.type(image.toBufferedImage().getType());
+	if (type == null)
+	  m_OutputToken = new Token("unknown");
+	else
+	  m_OutputToken = new Token(type.toDisplay());
+	break;
+
+      case PIXEL_DEPTH:
+	m_OutputToken = new Token(BufferedImageHelper.getPixelDepth(image.toBufferedImage()));
+	break;
+
       default:
 	throw new IllegalStateException("Unhandled info type: " + m_Type);
     }
