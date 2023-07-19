@@ -36,6 +36,7 @@ import adams.gui.visualization.image.ObjectLocationsOverlayFromReport;
 
 import java.awt.Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,7 @@ import java.util.logging.Level;
  */
 public class YoloAnnotationsReportReader
   extends AbstractReportReader<Report>
-  implements ObjectPrefixHandler {
+  implements ObjectPrefixHandler, StringReportReader<Report> {
 
   private static final long serialVersionUID = 5716807404370681434L;
 
@@ -487,16 +488,15 @@ public class YoloAnnotationsReportReader
   }
 
   /**
-   * Performs the actual reading.
+   * Converts the Yolo lines into a report.
    *
-   * @return		the reports that were read
+   * @param lines	the yolo annotations to convert
+   * @return		the generated report(s)
    */
-  @Override
-  protected List<Report> readData() {
+  protected List<Report> convert(List<String> lines) {
     List<Report>	result;
     LocatedObject	lobj;
     LocatedObjects 	lobjs;
-    List<String>	lines;
     int			lineNo;
     String[]		parts;
     String		labelStr;
@@ -520,78 +520,110 @@ public class YoloAnnotationsReportReader
     if ((m_LabelDefinitions.exists() && !m_LabelDefinitions.isDirectory())) {
       loadLabels = (m_Labels == null);
       if (m_LabelDefinitionsMonitor == null)
-        m_LabelDefinitionsMonitor = new LastModified();
+	m_LabelDefinitionsMonitor = new LastModified();
       if (!loadLabels)
-        loadLabels = m_LabelDefinitionsMonitor.hasChanged(m_LabelDefinitions);
+	loadLabels = m_LabelDefinitionsMonitor.hasChanged(m_LabelDefinitions);
       m_LabelDefinitionsMonitor.update(m_LabelDefinitions);
     }
     if (loadLabels)
       m_Labels = readLabelDefinitions(m_LabelDefinitions, m_LabelReader, m_ColIndex, m_ColLabel);
 
     // annotations
-    lines  = FileUtils.loadFromFile(m_Input);
     lobjs  = new LocatedObjects();
     lineNo = 0;
     for (String line: lines) {
       lineNo++;
       try {
-        line = line.replace("\t", " ");
-        line = line.replaceAll("[ ][ ]+", " ");
-        parts = line.split(" ");
-        if (parts.length == 5) {
-          if (m_Labels != null)
-            labelStr = m_Labels.get(Integer.parseInt(parts[0]));
-          else
-            labelStr = parts[0];
-          xN = Double.parseDouble(parts[1]);
-          yN = Double.parseDouble(parts[2]);
-          wN = Double.parseDouble(parts[3]);
-          hN = Double.parseDouble(parts[4]);
+	line = line.replace("\t", " ");
+	line = line.replaceAll("[ ][ ]+", " ");
+	parts = line.split(" ");
+	if (parts.length == 5) {
+	  if (m_Labels != null)
+	    labelStr = m_Labels.get(Integer.parseInt(parts[0]));
+	  else
+	    labelStr = parts[0];
+	  xN = Double.parseDouble(parts[1]);
+	  yN = Double.parseDouble(parts[2]);
+	  wN = Double.parseDouble(parts[3]);
+	  hN = Double.parseDouble(parts[4]);
 
-          w = (int) Math.round(m_Width * wN);
-          h = (int) Math.round(m_Height * hN);
-          x = (int) Math.round(xN * m_Width - w / 2.0);
-          y = (int) Math.round(yN * m_Height - h / 2.0);
+	  w = (int) Math.round(m_Width * wN);
+	  h = (int) Math.round(m_Height * hN);
+	  x = (int) Math.round(xN * m_Width - w / 2.0);
+	  y = (int) Math.round(yN * m_Height - h / 2.0);
 
-          lobj = new LocatedObject(x, y, w, h);
-          lobj.getMetaData().put(m_LabelSuffix, labelStr);
-          lobjs.add(lobj);
-        }
-        else if ((parts.length > 5) && (parts.length % 2 == 1)) {
-          if (m_Labels != null)
-            labelStr = m_Labels.get(Integer.parseInt(parts[0]));
-          else
-            labelStr = parts[0];
-          polyX  = new int[(parts.length - 1) / 2];
-          polyY  = new int[(parts.length - 1) / 2];
-          for (i = 1; i < parts.length - 1; i += 2) {
-            xN = Double.parseDouble(parts[i]);
-            yN = Double.parseDouble(parts[i + 1]);
-            x  = (int) Math.round(xN * m_Width);
-            y  = (int) Math.round(yN * m_Height);
-            polyX[(i - 1) / 2] = x;
-            polyY[(i - 1) / 2] = y;
-          }
-          w = StatUtils.max(polyX) - StatUtils.min(polyX) + 1;
-          h = StatUtils.max(polyY) - StatUtils.min(polyY) + 1;
-          x = StatUtils.min(polyX);
-          y = StatUtils.min(polyY);
+	  lobj = new LocatedObject(x, y, w, h);
+	  lobj.getMetaData().put(m_LabelSuffix, labelStr);
+	  lobjs.add(lobj);
+	}
+	else if ((parts.length > 5) && (parts.length % 2 == 1)) {
+	  if (m_Labels != null)
+	    labelStr = m_Labels.get(Integer.parseInt(parts[0]));
+	  else
+	    labelStr = parts[0];
+	  polyX  = new int[(parts.length - 1) / 2];
+	  polyY  = new int[(parts.length - 1) / 2];
+	  for (i = 1; i < parts.length - 1; i += 2) {
+	    xN = Double.parseDouble(parts[i]);
+	    yN = Double.parseDouble(parts[i + 1]);
+	    x  = (int) Math.round(xN * m_Width);
+	    y  = (int) Math.round(yN * m_Height);
+	    polyX[(i - 1) / 2] = x;
+	    polyY[(i - 1) / 2] = y;
+	  }
+	  w = StatUtils.max(polyX) - StatUtils.min(polyX) + 1;
+	  h = StatUtils.max(polyY) - StatUtils.min(polyY) + 1;
+	  x = StatUtils.min(polyX);
+	  y = StatUtils.min(polyY);
 
-          lobj = new LocatedObject(x, y, w, h);
-          lobj.getMetaData().put(m_LabelSuffix, labelStr);
-          lobj.setPolygon(new Polygon(polyX, polyY, polyX.length));
-          lobjs.add(lobj);
-        }
-        else {
-          getLogger().warning("Invalid format in line #" + lineNo + ": " + line);
-        }
+	  lobj = new LocatedObject(x, y, w, h);
+	  lobj.getMetaData().put(m_LabelSuffix, labelStr);
+	  lobj.setPolygon(new Polygon(polyX, polyY, polyX.length));
+	  lobjs.add(lobj);
+	}
+	else {
+	  getLogger().warning("Invalid format in line #" + lineNo + ": " + line);
+	}
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to parse line #" + lineNo + ": " + line, e);
+	getLogger().log(Level.SEVERE, "Failed to parse line #" + lineNo + ": " + line, e);
       }
     }
 
     result.add(lobjs.toReport(m_Prefix));
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @return		the reports that were read
+   */
+  @Override
+  protected List<Report> readData() {
+    List<Report>	result;
+    List<String>	lines;
+
+    lines  = FileUtils.loadFromFile(m_Input);
+    result = convert(lines);
+
+    return result;
+  }
+
+  /**
+   * Reads the data.
+   *
+   * @param s the string to read from
+   * @return the report loaded from the string
+   */
+  @Override
+  public List<Report> read(String s) {
+    List<Report>	result;
+    List<String>	lines;
+
+    lines  = Arrays.asList(s.split("\n"));
+    result = convert(lines);
 
     return result;
   }
@@ -617,14 +649,14 @@ public class YoloAnnotationsReportReader
       index.setSpreadSheet(sheet);
       colIndex = index.getIntIndex();
       if (colIndex == -1)
-        throw new IllegalStateException("Column with label indices not found: " + index.getIndex());
+	throw new IllegalStateException("Column with label indices not found: " + index.getIndex());
       label.setSpreadSheet(sheet);
       colLabel = label.getIntIndex();
       if (colLabel == -1)
-        throw new IllegalStateException("Column with label strings not found: " + label.getIndex());
+	throw new IllegalStateException("Column with label strings not found: " + label.getIndex());
       result = new HashMap<>();
       for (Row row: sheet.rows())
-        result.put(row.getCell(colIndex).toLong().intValue(), row.getCell(colLabel).getContent());
+	result.put(row.getCell(colIndex).toLong().intValue(), row.getCell(colLabel).getContent());
     }
 
     return result;

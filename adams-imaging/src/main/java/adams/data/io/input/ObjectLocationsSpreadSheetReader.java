@@ -36,6 +36,7 @@ import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -168,7 +169,7 @@ import java.util.logging.Level;
  */
 public class ObjectLocationsSpreadSheetReader
   extends AbstractReportReader<Report>
-  implements ObjectPrefixHandler {
+  implements ObjectPrefixHandler, StringReportReader<Report> {
 
   private static final long serialVersionUID = -45890668031870078L;
 
@@ -869,7 +870,7 @@ public class ObjectLocationsSpreadSheetReader
     result = new TDoubleArrayList();
     try {
       for (String coord: coords.split(","))
-        result.add(Double.parseDouble(coord));
+	result.add(Double.parseDouble(coord));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to parse coordinates '" + coords + "'!", e);
@@ -908,7 +909,7 @@ public class ObjectLocationsSpreadSheetReader
     result = new StringBuilder();
     for (i = 0; i < coords.length; i++) {
       if (i > 0)
-        result.append(",");
+	result.append(",");
       result.append("" + coords[i]);
     }
 
@@ -916,14 +917,13 @@ public class ObjectLocationsSpreadSheetReader
   }
 
   /**
-   * Performs the actual reading.
+   * Converts the spreadsheet into report(s).
    *
+   * @param sheet	the spreadsheet to convert
    * @return		the reports that were read
    */
-  @Override
-  protected List<Report> readData() {
+  protected List<Report> convert(SpreadSheet sheet) {
     List<Report> 	result;
-    SpreadSheet		sheet;
     int			left;
     int			top;
     int			right;
@@ -939,7 +939,6 @@ public class ObjectLocationsSpreadSheetReader
     LocatedObject	object;
 
     result = new ArrayList<>();
-    sheet  = m_Reader.read(m_Input);
 
     // create subset?
     if (!(m_RowFinder instanceof AllFinder))
@@ -1065,13 +1064,46 @@ public class ObjectLocationsSpreadSheetReader
 	    coordsToList(parseCoords(row.getCell(polyY).getContent())));
       }
       for (int m: meta)
-        object.getMetaData().put(sheet.getColumnName(m), row.getCell(m).getNative());
+	object.getMetaData().put(sheet.getColumnName(m), row.getCell(m).getNative());
       if (type != -1)
-        object.getMetaData().put(m_LabelSuffix, row.getCell(type).getContent());
+	object.getMetaData().put(m_LabelSuffix, row.getCell(type).getContent());
       objects.add(object);
     }
 
     result.add(objects.toReport(m_Prefix));
+
+    return result;
+  }
+
+  /**
+   * Performs the actual reading.
+   *
+   * @return		the reports that were read
+   */
+  @Override
+  protected List<Report> readData() {
+    List<Report>	result;
+    SpreadSheet		sheet;
+
+    sheet  = m_Reader.read(m_Input);
+    result = convert(sheet);
+
+    return result;
+  }
+
+  /**
+   * Reads the data.
+   *
+   * @param s the string to read from
+   * @return the report loaded from the string
+   */
+  @Override
+  public List<Report> read(String s) {
+    List<Report>	result;
+    SpreadSheet		sheet;
+
+    sheet  = m_Reader.read(new StringReader(s));
+    result = convert(sheet);
 
     return result;
   }

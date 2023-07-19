@@ -15,11 +15,12 @@
 
 /*
  * ObjectLocationsSpreadSheetWriter.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.data.objectfinder.AllFinder;
@@ -32,6 +33,7 @@ import adams.data.statistics.StatUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
+import java.io.StringWriter;
 import java.util.Arrays;
 
 /**
@@ -143,7 +145,8 @@ import java.util.Arrays;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectLocationsSpreadSheetWriter
-  extends AbstractReportWriter<Report> {
+  extends AbstractReportWriter<Report>
+  implements StringReportWriter<Report> {
 
   private static final long serialVersionUID = -199610824853876294L;
 
@@ -823,15 +826,14 @@ public class ObjectLocationsSpreadSheetWriter
   }
 
   /**
-   * Performs the actual writing.
+   * Converts the report into a spreadsheet.
    *
-   * @param data	the data to write
-   * @return		true if successfully written
+   * @param data	the report to convert
+   * @return		the generated spreadsheet
    */
-  @Override
-  protected boolean writeData(Report data) {
+  protected SpreadSheet convert(Report data) {
+    SpreadSheet 	result;
     LocatedObjects	objects;
-    SpreadSheet		sheet;
     Row			row;
     int			colLeft;
     int			colTop;
@@ -855,28 +857,28 @@ public class ObjectLocationsSpreadSheetWriter
     Object		value;
 
     objects = m_Finder.findObjects(data);
-    sheet   = new DefaultSpreadSheet();
+    result  = new DefaultSpreadSheet();
 
     // header
-    row = sheet.getHeaderRow();
-    colLeft = -1;
-    colTop = -1;
-    colRight = -1;
-    colBottom = -1;
-    colWidth = -1;
-    colHeight = -1;
-    colPolygonX = -1;
-    colPolygonY = -1;
-    colType = -1;
-    colLeftN = -1;
-    colTopN = -1;
-    colRightN = -1;
-    colBottomN = -1;
-    colWidthN = -1;
-    colHeightN = -1;
+    row          = result.getHeaderRow();
+    colLeft      = -1;
+    colTop       = -1;
+    colRight     = -1;
+    colBottom    = -1;
+    colWidth     = -1;
+    colHeight    = -1;
+    colPolygonX  = -1;
+    colPolygonY  = -1;
+    colType      = -1;
+    colLeftN     = -1;
+    colTopN      = -1;
+    colRightN    = -1;
+    colBottomN   = -1;
+    colWidthN    = -1;
+    colHeightN   = -1;
     colPolygonXN = -1;
     colPolygonYN = -1;
-    metaData = new int[m_MetaDataKeys.length];
+    metaData     = new int[m_MetaDataKeys.length];
     Arrays.fill(metaData, -1);
 
     if (!m_ColLeft.trim().isEmpty()) {
@@ -957,35 +959,35 @@ public class ObjectLocationsSpreadSheetWriter
 
     // data
     for (LocatedObject object: objects) {
-      row = sheet.addRow();
+      row = result.addRow();
       if (colLeft > -1)
-        row.addCell("L").setContent(object.getX());
+	row.addCell("L").setContent(object.getX());
       if (colTop > -1)
-        row.addCell("T").setContent(object.getY());
+	row.addCell("T").setContent(object.getY());
       if (colRight > -1)
-        row.addCell("R").setContent(object.getX() + object.getWidth() - 1);
+	row.addCell("R").setContent(object.getX() + object.getWidth() - 1);
       if (colBottom > -1)
-        row.addCell("B").setContent(object.getY() + object.getHeight() - 1);
+	row.addCell("B").setContent(object.getY() + object.getHeight() - 1);
       if (colWidth > -1)
-        row.addCell("W").setContent(object.getWidth());
+	row.addCell("W").setContent(object.getWidth());
       if (colHeight > -1)
-        row.addCell("H").setContent(object.getHeight());
+	row.addCell("H").setContent(object.getHeight());
       if (object.hasPolygon()) {
-        if (colPolygonX > -1)
+	if (colPolygonX > -1)
 	  row.addCell("PX").setContentAsString(Utils.flatten(StatUtils.toNumberArray(object.getPolygonX()), ","));
-        if (colPolygonY > -1)
+	if (colPolygonY > -1)
 	  row.addCell("PY").setContentAsString(Utils.flatten(StatUtils.toNumberArray(object.getPolygonY()), ","));
       }
       if ((colType > -1) && object.getMetaData().containsKey(m_MetaDataKeyType))
-        row.addCell("TYPE").setContentAsString("" + object.getMetaData().get(m_MetaDataKeyType));
+	row.addCell("TYPE").setContentAsString("" + object.getMetaData().get(m_MetaDataKeyType));
       for (i = 0; i < metaData.length; i++) {
-        if (object.getMetaData().containsKey(m_MetaDataKeys[i].getValue())) {
-          value = object.getMetaData().get(m_MetaDataKeys[i].getValue());
-          if (value instanceof String)
+	if (object.getMetaData().containsKey(m_MetaDataKeys[i].getValue())) {
+	  value = object.getMetaData().get(m_MetaDataKeys[i].getValue());
+	  if (value instanceof String)
 	    row.addCell("MD-" + i).setContentAsString((String) value);
-          else
+	  else
 	    row.addCell("MD-" + i).setContent("" + value);
-        }
+	}
       }
 
       if (m_OutputNormalized) {
@@ -1010,6 +1012,45 @@ public class ObjectLocationsSpreadSheetWriter
       }
     }
 
+    return result;
+  }
+
+  /**
+   * Performs the actual writing.
+   *
+   * @param data	the data to write
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean writeData(Report data) {
+    SpreadSheet		sheet;
+
+    sheet = convert(data);
     return m_Writer.write(sheet, m_Output);
+  }
+
+  /**
+   * Performs checks and converts the report to a string.
+   *
+   * @param data   the data to write
+   * @param errors for collecting errors
+   * @return the generated data, null in case of failure
+   */
+  @Override
+  public String write(Report data, MessageCollection errors) {
+    boolean		success;
+    StringWriter	swriter;
+    SpreadSheet		sheet;
+
+    sheet   = convert(data);
+    swriter = new StringWriter();
+    success = m_Writer.write(sheet, swriter);
+    if (success) {
+      return swriter.toString();
+    }
+    else {
+      errors.add("Failed to generate spreadsheet!");
+      return null;
+    }
   }
 }

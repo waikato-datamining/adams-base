@@ -15,11 +15,13 @@
 
 /*
  * YoloAnnotationsReportWriter.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
 
+import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.filechanged.FileChangeMonitor;
@@ -120,7 +122,8 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class YoloAnnotationsReportWriter
-  extends AbstractReportWriter<Report> {
+  extends AbstractReportWriter<Report>
+  implements StringReportWriter<Report> {
 
   private static final long serialVersionUID = -7250784020894287952L;
 
@@ -504,16 +507,15 @@ public class YoloAnnotationsReportWriter
   }
 
   /**
-   * Performs the actual writing.
+   * Converts the report into yolo format lines.
    *
-   * @param data	the data to write
-   * @return		true if successfully written
+   * @param data	the report to convert
+   * @return		the generated yolo data
    */
-  @Override
-  protected boolean writeData(Report data) {
+  protected List<String> convert(Report data) {
+    List<String> 	result;
     LocatedObjects 	objs;
     StringBuilder	line;
-    List<String>	lines;
     Map<String,Integer>	revLabels;
     String		label;
     int			index;
@@ -544,7 +546,7 @@ public class YoloAnnotationsReportWriter
 	revLabels.put(entry.getValue(), entry.getKey());
     }
 
-    lines = new ArrayList<>();
+    result = new ArrayList<>();
     objs = m_Finder.findObjects(data);
     for (LocatedObject obj: objs) {
       index = -1;
@@ -587,8 +589,23 @@ public class YoloAnnotationsReportWriter
 	  .append(" ").append(wN)
 	  .append(" ").append(hN);
       }
-      lines.add(line.toString());
+      result.add(line.toString());
     }
+
+    return result;
+  }
+
+  /**
+   * Performs the actual writing.
+   *
+   * @param data	the data to write
+   * @return		true if successfully written
+   */
+  @Override
+  protected boolean writeData(Report data) {
+    List<String>	lines;
+
+    lines = convert(data);
 
     if (lines.size() > 0) {
       return FileUtils.saveToFile(lines, m_Output);
@@ -597,5 +614,20 @@ public class YoloAnnotationsReportWriter
       getLogger().warning("No annotations in report, skipping output file: " + m_Output);
       return true;
     }
+  }
+
+  /**
+   * Performs checks and converts the report to a string.
+   *
+   * @param data   the data to write
+   * @param errors for collecting errors
+   * @return the generated data, null in case of failure
+   */
+  @Override
+  public String write(Report data, MessageCollection errors) {
+    List<String>	lines;
+
+    lines = convert(data);
+    return Utils.flatten(lines, "\n");
   }
 }
