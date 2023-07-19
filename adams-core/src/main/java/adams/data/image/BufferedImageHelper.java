@@ -600,12 +600,12 @@ public class BufferedImageHelper {
    * If the format is JPG, then images with alpha channel automatically get converted to RGB.
    *
    * @param img		the image to save
-   * @param format	the image format to use (eg jpg or png), if null uses extension as format
+   * @param format	the image format to use (eg jpg or png), if null or empty uses extension as format
    * @param file	the file to write to
    * @return		null if successful, otherwise error message
    */
   public static String write(BufferedImage img, String format, File file) {
-    if (format == null)
+    if ((format == null) || format.isEmpty())
       format = FileUtils.getExtension(file);
 
     // remove alpha channel?
