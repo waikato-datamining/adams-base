@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTabWithEditableDataTable.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -111,21 +111,26 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     super.initGUI();
 
     m_ButtonActivate = new BaseFlatButton("Activate", ImageManager.getIcon("location.png"));
+    m_ButtonActivate.setBorderPainted(true);
     m_ButtonActivate.addActionListener((ActionEvent e) -> activate(m_Table.getSelectedRow()));
     m_Table.addToButtonsPanel(m_ButtonActivate);
 
     m_ButtonRemove = new BaseFlatButton("Remove", ImageManager.getIcon("delete.gif"));
+    m_ButtonRemove.setBorderPainted(true);
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeData(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonRemove);
 
     m_ButtonUndo = new BaseFlatButton("Undo", ImageManager.getIcon("undo.gif"));
+    m_ButtonUndo.setBorderPainted(true);
     m_ButtonUndo.addActionListener((ActionEvent e) -> undo(m_Table.getSelectedRows()));
     m_Table.addToButtonsPanel(m_ButtonUndo);
 
     m_ButtonSave = new BaseFlatButton("Save", ImageManager.getIcon("save.gif"));
+    m_ButtonSave.setBorderPainted(true);
     m_Table.addToButtonsPanel(m_ButtonSave);
 
     m_ButtonAction = new BaseFlatSplitButton("...", ImageManager.getEmptyIcon());
+    m_ButtonAction.setBorderPainted(true);
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractEditableDataTableAction action: m_Actions) {
       if (action instanceof Save)
