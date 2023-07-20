@@ -15,14 +15,18 @@
 
 /*
  * BaseFlatButton.java
- * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
+import adams.gui.laf.AbstractFlatLaf;
+import adams.gui.laf.AbstractLookAndFeel;
+
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
@@ -43,6 +47,12 @@ public class BaseFlatButton
 
   /** the active border. */
   protected Border m_BorderActive;
+
+  /** the unfocused background color. */
+  protected Color m_BackgroundUnfocused;
+
+  /** the focused background color. */
+  protected Color m_BackgroundFocused;
 
   /**
    * Creates a button with no set text or icon.
@@ -96,27 +106,54 @@ public class BaseFlatButton
   protected void initButton() {
     super.initButton();
 
-    m_BorderActive   = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY.darker()), BorderFactory.createEmptyBorder(2, 2, 2, 2));
-    m_BorderInactive = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    if (AbstractLookAndFeel.getCurrent() instanceof AbstractFlatLaf) {
+      m_BackgroundUnfocused = (Color) UIManager.get("Panel.background");
+      m_BackgroundFocused   = (Color) UIManager.get("Button.selectedBackground");
 
-    setBorderPainted(true);
-    setFocusPainted(true);
-    setFocusable(true);
-    setContentAreaFilled(false);
-    setRolloverEnabled(true);
-    setBorder(m_BorderInactive);
+      setBackground(m_BackgroundUnfocused);
+      setBorderPainted(false);
+      setFocusPainted(true);
+      setFocusable(true);
+      setContentAreaFilled(true);
+      setRolloverEnabled(true);
 
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        super.mouseEntered(e);
-        setBorder(m_BorderActive);
-      }
-      @Override
-      public void mouseExited(MouseEvent e) {
-        super.mouseExited(e);
-        setBorder(m_BorderInactive);
-      }
-    });
+      addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+          super.mouseEntered(e);
+          setBackground(m_BackgroundFocused);
+        }
+        @Override
+        public void mouseExited(MouseEvent e) {
+          super.mouseExited(e);
+          setBackground(m_BackgroundUnfocused);
+        }
+      });
+    }
+    else {
+      m_BorderActive = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY.darker()), BorderFactory.createEmptyBorder(2, 2, 2, 2));
+      m_BorderInactive = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
+      setBorderPainted(true);
+      setFocusPainted(true);
+      setFocusable(true);
+      setContentAreaFilled(false);
+      setRolloverEnabled(true);
+      setBorder(m_BorderInactive);
+
+      addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseEntered(MouseEvent e) {
+          super.mouseEntered(e);
+          setBorder(m_BorderActive);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+          super.mouseExited(e);
+          setBorder(m_BorderInactive);
+        }
+      });
+    }
   }
 }
