@@ -531,7 +531,8 @@ public class MultiPagePane
     });
     m_LeftPanel.add(new BaseScrollPane(m_PageList), BorderLayout.CENTER);
 
-    m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
+    m_PanelListButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    m_PanelListButtons.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
     m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));

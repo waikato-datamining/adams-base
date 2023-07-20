@@ -97,7 +97,8 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     m_PanelHistory = new BasePanel(new BorderLayout());
     m_PanelHistory.setMinimumSize(new Dimension(100, 0));
     m_PanelHistory.add(m_History, BorderLayout.CENTER);
-    m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT));
+    m_PanelButtons = new BasePanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    m_PanelButtons.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
     m_PanelHistory.add(m_PanelButtons, BorderLayout.SOUTH);
     m_SplitPane.setTopComponent(m_PanelHistory);
 
