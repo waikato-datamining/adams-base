@@ -158,6 +158,7 @@ public class FlowPanelNotificationArea
     panelRight.add(m_PanelButtons, BorderLayout.NORTH);
 
     m_ButtonAction = new BaseFlatSplitButton();
+    m_ButtonAction.setBorderPainted(true);
     m_ButtonAction.setButtonEnabled(true);
     for (AbstractNotificationAreaAction action: m_Actions) {
       if (action instanceof CloseAndCleanUp)
@@ -168,6 +169,7 @@ public class FlowPanelNotificationArea
     m_PanelButtons.add(m_ButtonAction);
 
     m_ButtonClose = new BaseFlatButton("Close");
+    m_ButtonClose.setBorderPainted(true);
     m_ButtonClose.setIcon(ImageManager.getIcon("delete.gif"));
     m_ButtonClose.addActionListener((ActionEvent e) -> {
       clearNotification();

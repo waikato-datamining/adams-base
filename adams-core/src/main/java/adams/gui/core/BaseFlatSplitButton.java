@@ -15,7 +15,7 @@
 
 /*
  * BaseFlatSplitButton.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -32,7 +32,7 @@ import java.awt.BorderLayout;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class BaseFlatSplitButton
-    extends BasePanel {
+  extends BasePanel {
 
   /** the main button. */
   protected BaseFlatButton m_ButtonMain;
@@ -236,5 +236,24 @@ public class BaseFlatSplitButton
    */
   public void removeChangeListener(ChangeListener l) {
     m_ButtonMenu.removeChangeListener(l);
+  }
+
+  /**
+   * Sets whether the buttons' borders are painted.
+   *
+   * @param value	true if to be painted
+   */
+  public void setBorderPainted(boolean value) {
+    m_ButtonMain.setBorderPainted(value);
+    m_ButtonMenu.setBorderPainted(value);
+  }
+
+  /**
+   * Returns whether the buttons' borders are painted.
+   *
+   * @return		true if painted
+   */
+  public boolean isBorderPainted() {
+    return m_ButtonMain.isBorderPainted();
   }
 }
