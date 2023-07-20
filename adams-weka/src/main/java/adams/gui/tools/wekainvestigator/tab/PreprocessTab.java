@@ -220,7 +220,7 @@ public class PreprocessTab
     m_PanelGOE.moveChooseButton(true);
     m_PanelGOE.addChangeListener((ChangeEvent e) -> updateButtons());
     panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     panel.add(m_PanelGOE, BorderLayout.CENTER);
     m_PanelTop.add(panel, BorderLayout.CENTER);
 
@@ -259,7 +259,7 @@ public class PreprocessTab
 
     // main
     m_PanelMain = new JPanel(new GridLayout(1, 2));
-    m_PanelMain.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_PanelMain.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     m_PanelData.add(m_PanelMain, BorderLayout.CENTER);
 
     // main-left
