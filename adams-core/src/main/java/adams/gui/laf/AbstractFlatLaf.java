@@ -14,8 +14,8 @@
  */
 
 /*
- * FlatLafLight.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * AbstractFlatLaf.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.laf;
@@ -26,23 +26,23 @@ import adams.gui.core.GUIHelper;
 import javax.swing.UIManager;
 
 /**
- * FlatLaf light look and feel.
+ * Ancestor for FlatLaf look and feel plugins.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class FlatLafLight
-  extends AbstractFlatLaf {
+public abstract class AbstractFlatLaf
+  extends AbstractLookAndFeel {
 
   private static final long serialVersionUID = 2394913538898207432L;
 
   /**
-   * Returns the name for this look and feel.
+   * Checks whether the look and feel is available.
    *
-   * @return the name
+   * @return true if available
    */
   @Override
-  public String getName() {
-    return "FlatLaf Light";
+  public boolean isAvailable() {
+    return true;
   }
 
   /**

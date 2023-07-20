@@ -14,7 +14,7 @@
  */
 
 /*
- * FlatLafDarcula.java
+ * FlatLafIntelliJ.java
  * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
@@ -31,7 +31,7 @@ import javax.swing.UIManager;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FlatLafIntelliJ
-  extends AbstractLookAndFeel {
+  extends AbstractFlatLaf {
 
   private static final long serialVersionUID = 2394913538898207432L;
 
@@ -43,16 +43,6 @@ public class FlatLafIntelliJ
   @Override
   public String getName() {
     return "FlatLaf IntelliJ";
-  }
-
-  /**
-   * Checks whether the look and feel is available.
-   *
-   * @return true if available
-   */
-  @Override
-  public boolean isAvailable() {
-    return true;
   }
 
   /**
