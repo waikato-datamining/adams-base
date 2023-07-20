@@ -330,9 +330,9 @@ public class DateTimeTypeDifference
   protected String doExecute() {
     String		result;
     Object		array;
-    double[]		in;
+    long[]		in;
     int			i;
-    double		diff;
+    Long		diff;
 
     result = null;
 
@@ -342,18 +342,18 @@ public class DateTimeTypeDifference
       m_ConversionInput.setOutputDateTimeType(DateTimeType.MSECS_LONG);
     }
 
-    diff  = Double.NaN;
+    diff  = null;
     array = m_InputToken.getPayload();
     if (Array.getLength(array) != 2)
       result = "Input array must have length 2, received: " + Array.getLength(array);
 
     if (result == null) {
-      in = new double[2];
+      in = new long[2];
       for (i = 0; i < 2; i++) {
 	m_ConversionInput.setInput(Array.get(array, i));
 	result = m_ConversionInput.convert();
 	if (result == null)
-	  in[i] = (Double) m_ConversionInput.getOutput();
+	  in[i] = (Long) m_ConversionInput.getOutput();
 	else
 	  break;
       }
