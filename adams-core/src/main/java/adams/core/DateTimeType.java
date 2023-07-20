@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DateType.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -23,13 +23,16 @@ package adams.core;
  * Lists various date/time types.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum DateTimeType {
   /** msecs since 1970. */
   MSECS,
+  /** msecs since 1970. */
+  MSECS_LONG,
   /** seconds since 1970. */
   SECONDS,
+  /** seconds since 1970. */
+  SECONDS_LONG,
   /** java's Date. */
   DATE,
   /** adams' DateTime. */
@@ -52,6 +55,10 @@ public enum DateTimeType {
   BASETIMEMSEC,
   /** Julian date. */
   JULIANDATE,
+  /** Julian date. */
+  JULIANDATE_LONG,
   /** days since 0-jan-1900 date (Excel). */
   SERIAL_DATETIME,
+  /** days since 0-jan-1900 date (Excel). */
+  SERIAL_DATETIME_LONG,
 }

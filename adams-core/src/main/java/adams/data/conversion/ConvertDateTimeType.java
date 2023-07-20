@@ -15,7 +15,7 @@
 
 /*
  * ConvertDateTimeType.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -45,22 +45,22 @@ import java.util.Date;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: inputDateTimeType)
+ *
+ * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
- * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: outputDateTimeType)
+ *
+ * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ConvertDateTimeType
   extends AbstractConversion {
@@ -73,7 +73,7 @@ public class ConvertDateTimeType
 
   /** the output datetime type. */
   protected DateTimeType m_OutputDateTimeType;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -92,14 +92,14 @@ public class ConvertDateTimeType
     super.defineOptions();
 
     m_OptionManager.add(
-	    "input-datetime-type", "inputDateTimeType",
-	    DateTimeType.DATE);
+      "input-datetime-type", "inputDateTimeType",
+      DateTimeType.DATE);
 
     m_OptionManager.add(
-	    "output-datetime-type", "outputDateTimeType",
-	    DateTimeType.MSECS);
+      "output-datetime-type", "outputDateTimeType",
+      DateTimeType.MSECS);
   }
-  
+
   /**
    * Sets the input date/time type.
    *
@@ -128,7 +128,7 @@ public class ConvertDateTimeType
   public String inputDateTimeTypeTipText() {
     return "The date/time type of the input data.";
   }
-  
+
   /**
    * Sets the output date/time type.
    *
@@ -166,14 +166,14 @@ public class ConvertDateTimeType
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result  = QuickInfoHelper.toString(this, "inputDateType", m_InputDateTimeType);
     result += " -> ";
     result += QuickInfoHelper.toString(this, "outputDateType", m_OutputDateTimeType);
-    
+
     return result;
   }
-  
+
   /**
    * Returns the class that is accepted as input.
    *
@@ -183,9 +183,15 @@ public class ConvertDateTimeType
   public Class accepts() {
     switch (m_InputDateTimeType) {
       case MSECS:
-	return Double.class;
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return Double.class;
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return Long.class;
       case DATE:
 	return Date.class;
       case DATETIME:
@@ -206,10 +212,6 @@ public class ConvertDateTimeType
 	return BaseTime.class;
       case BASETIMEMSEC:
 	return BaseTimeMsec.class;
-      case JULIANDATE:
-	return Double.class;
-      case SERIAL_DATETIME:
-	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -224,9 +226,15 @@ public class ConvertDateTimeType
   public Class generates() {
     switch (m_OutputDateTimeType) {
       case MSECS:
-	return Double.class;
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return Double.class;
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return Long.class;
       case DATE:
 	return Date.class;
       case DATETIME:
@@ -247,10 +255,6 @@ public class ConvertDateTimeType
 	return BaseTime.class;
       case BASETIMEMSEC:
 	return BaseTimeMsec.class;
-      case JULIANDATE:
-	return Double.class;
-      case SERIAL_DATETIME:
-	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }
@@ -265,17 +269,23 @@ public class ConvertDateTimeType
   @Override
   protected Object doConvert() throws Exception {
     long	msecs;
-    
+
     // no conversion necessary?
     if (m_InputDateTimeType == m_OutputDateTimeType)
       return m_Input;
-    
+
     switch (m_InputDateTimeType) {
       case MSECS:
 	msecs = ((Double) m_Input).longValue();
 	break;
+      case MSECS_LONG:
+	msecs = (Long) m_Input;
+	break;
       case SECONDS:
 	msecs = ((Double) m_Input).longValue() * 1000;
+	break;
+      case SECONDS_LONG:
+	msecs = ((Long) m_Input) * 1000;
 	break;
       case DATE:
 	msecs = ((Date) m_Input).getTime();
@@ -310,18 +320,28 @@ public class ConvertDateTimeType
       case JULIANDATE:
 	msecs = new JDateTime((Double) m_Input).convertToDate().getTime();
 	break;
+      case JULIANDATE_LONG:
+	msecs = new JDateTime((Long) m_Input).convertToDate().getTime();
+	break;
       case SERIAL_DATETIME:
-        msecs = DateUtils.serialDateToMsec((Double) m_Input);
+	msecs = DateUtils.serialDateToMsec((Double) m_Input);
+	break;
+      case SERIAL_DATETIME_LONG:
+	msecs = DateUtils.serialDateToMsec((Long) m_Input);
 	break;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
-    
+
     switch (m_OutputDateTimeType) {
       case MSECS:
-	return new Double(msecs);
+	return (double) (msecs);
+      case MSECS_LONG:
+	return msecs;
       case SECONDS:
-	return new Double(msecs / 1000);
+	return (double) (msecs / 1000);
+      case SECONDS_LONG:
+	return (msecs / 1000);
       case DATE:
 	return new Date(msecs);
       case DATETIME:
@@ -344,8 +364,12 @@ public class ConvertDateTimeType
 	return new BaseTimeMsec(new TimeMsec(msecs));
       case JULIANDATE:
 	return new JDateTime(new Date(msecs)).getJulianDateDouble();
+      case JULIANDATE_LONG:
+	return new JDateTime(new Date(msecs)).getTimeInMillis();
       case SERIAL_DATETIME:
-        return DateUtils.msecToSerialDate(msecs);
+	return DateUtils.msecToSerialDate(msecs);
+      case SERIAL_DATETIME_LONG:
+	return (long) DateUtils.msecToSerialDate(msecs);
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }

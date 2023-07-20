@@ -15,7 +15,7 @@
 
 /*
  * ExtractDateTimeField.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -51,19 +51,20 @@ import java.util.GregorianCalendar;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to extract the field from.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  *
- * <pre>-field &lt;YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MSEC|DAY_OF_YEAR|DAY_OF_MONTH|DAY_OF_WEEK|DAY_OF_WEEK_STR_EN|DAY_OF_WEEK_STR_LOCALE|WEEK_OF_YEAR|WEEK_OF_MONTH|BUSINESSDAY_INDICATOR|CUSTOM&gt; (property: field)
+ * <pre>-field &lt;YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|MSEC|DAY_OF_YEAR|DAY_OF_MONTH|DAY_OF_WEEK|DAY_OF_WEEK_STR_EN|DAY_OF_WEEK_STR_LOCALE|WEEK_OF_YEAR|WEEK_OF_MONTH|BUSINESS_DAY_INDICATOR|CUSTOM&gt; (property: field)
  * &nbsp;&nbsp;&nbsp;The field to extract.
  * &nbsp;&nbsp;&nbsp;default: YEAR
  * </pre>
  *
- * <pre>-business-days &lt;MONDAY_TO_FRIDAY&gt; (property: businessDays)
+ * <pre>-business-days &lt;MONDAY_TO_FRIDAY|MONDAY_TO_SATURDAY|SATURDAY_TO_THURSDAY|SUNDAY_TO_THURSDAY|SUNDAY_TO_FRIDAY&gt; (property: businessDays)
  * &nbsp;&nbsp;&nbsp;How to interpret business days.
  * &nbsp;&nbsp;&nbsp;default: MONDAY_TO_FRIDAY
  * </pre>
@@ -72,13 +73,12 @@ import java.util.GregorianCalendar;
  * &nbsp;&nbsp;&nbsp;The format for turning the date&#47;time type into a string in case of field
  * &nbsp;&nbsp;&nbsp;CUSTOM
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExtractDateTimeField
   extends AbstractConversion {
@@ -90,7 +90,6 @@ public class ExtractDateTimeField
    * The field to extract.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum DateTimeField {
     /** year. */
@@ -351,9 +350,15 @@ public class ExtractDateTimeField
   public Class accepts() {
     switch (m_DateTimeType) {
       case MSECS:
-	return Double.class;
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return Double.class;
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return Long.class;
       case DATE:
 	return Date.class;
       case DATETIME:
@@ -374,10 +379,6 @@ public class ExtractDateTimeField
 	return BaseTime.class;
       case BASETIMEMSEC:
 	return BaseTimeMsec.class;
-      case JULIANDATE:
-	return Double.class;
-      case SERIAL_DATETIME:
-	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -409,7 +410,7 @@ public class ExtractDateTimeField
       case CUSTOM:
 	return String.class;
       case BUSINESS_DAY_INDICATOR:
-        return Boolean.class;
+	return Boolean.class;
       default:
 	throw new IllegalStateException("Unhandled field: " + m_Field);
     }
@@ -430,8 +431,14 @@ public class ExtractDateTimeField
       case MSECS:
 	m_Calendar.setTime(new Date(((Double) m_Input).longValue()));
 	break;
+      case MSECS_LONG:
+	m_Calendar.setTime(new Date((Long) m_Input));
+	break;
       case SECONDS:
 	m_Calendar.setTime(new Date(((Double) m_Input).longValue() * 1000));
+	break;
+      case SECONDS_LONG:
+	m_Calendar.setTime(new Date(((Long) m_Input) * 1000));
 	break;
       case DATE:
 	m_Calendar.setTime((Date) m_Input);
@@ -465,8 +472,16 @@ public class ExtractDateTimeField
 	break;
       case JULIANDATE:
 	m_Calendar.setTime(new JDateTime((Double) m_Input).convertToDate());
+	break;
+      case JULIANDATE_LONG:
+	m_Calendar.setTime(new JDateTime((Long) m_Input).convertToDate());
+	break;
       case SERIAL_DATETIME:
 	m_Calendar.setTime(new Date(DateUtils.serialDateToMsec((Double) m_Input)));
+	break;
+      case SERIAL_DATETIME_LONG:
+	m_Calendar.setTime(new Date(DateUtils.serialDateToMsec((Long) m_Input)));
+	break;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -519,7 +534,7 @@ public class ExtractDateTimeField
       case DAY_OF_WEEK_STR_LOCALE:
 	return m_FormatterDayOfWeek.format(m_Calendar.getTime());
       case BUSINESS_DAY_INDICATOR:
-        return m_BusinessDays.isBusinessDay(m_Calendar.getTime());
+	return m_BusinessDays.isBusinessDay(m_Calendar.getTime());
       case CUSTOM:
 	if (m_FormatterCustom == null)
 	  m_FormatterCustom = m_FormatCustom.toDateFormat();

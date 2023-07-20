@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DateTimeTypeDifference.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -55,49 +55,53 @@ import java.util.Date;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DateTimeTypeDifference
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-input-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: inputDateTimeType)
+ *
+ * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
- * 
- * <pre>-output-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: outputDateTimeType)
+ *
+ * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DateTimeTypeDifference
   extends AbstractTransformer {
@@ -110,7 +114,7 @@ public class DateTimeTypeDifference
 
   /** the datetime type of the output. */
   protected DateTimeType m_OutputDateTimeType;
-  
+
   /** the conversion in use for the input. */
   protected ConvertDateTimeType	m_ConversionInput;
 
@@ -124,8 +128,8 @@ public class DateTimeTypeDifference
    */
   @Override
   public String globalInfo() {
-    return 
-	"Computes the difference between the two date/time types of the "
+    return
+      "Computes the difference between the two date/time types of the "
 	+ "incoming array (of length 2) by subtracting the second element "
 	+ "from the first one.";
   }
@@ -138,12 +142,12 @@ public class DateTimeTypeDifference
     super.defineOptions();
 
     m_OptionManager.add(
-	    "input-datetime-type", "inputDateTimeType",
-	    DateTimeType.DATE);
+      "input-datetime-type", "inputDateTimeType",
+      DateTimeType.DATE);
 
     m_OptionManager.add(
-	    "output-datetime-type", "outputDateTimeType",
-	    DateTimeType.MSECS);
+      "output-datetime-type", "outputDateTimeType",
+      DateTimeType.MSECS);
   }
 
   /**
@@ -152,11 +156,11 @@ public class DateTimeTypeDifference
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_ConversionInput  = null;
     m_ConversionOutput = null;
   }
-  
+
   /**
    * Sets the input date/time type.
    *
@@ -185,7 +189,7 @@ public class DateTimeTypeDifference
   public String inputDateTimeTypeTipText() {
     return "The date/time type of the input data.";
   }
-  
+
   /**
    * Sets the output date/time type.
    *
@@ -223,26 +227,32 @@ public class DateTimeTypeDifference
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result  = QuickInfoHelper.toString(this, "inputDateType", m_InputDateTimeType);
     result += "[] -> ";
     result += QuickInfoHelper.toString(this, "outputDateType", m_OutputDateTimeType);
-    
+
     return result;
   }
 
   /**
    * Returns the class that the consumer accepts.
-   * 
+   *
    * @return		the Class of objects that can be processed
    */
   @Override
   public Class[] accepts() {
     switch (m_InputDateTimeType) {
       case MSECS:
-	return new Class[]{Double[].class};
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return new Class[]{Double[].class};
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return new Class[]{Long[].class};
       case DATE:
 	return new Class[]{Date[].class};
       case DATETIME:
@@ -263,10 +273,6 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseTime[].class};
       case BASETIMEMSEC:
 	return new Class[]{BaseTimeMsec[].class};
-      case JULIANDATE:
-	return new Class[]{Double[].class};
-      case SERIAL_DATETIME:
-	return new Class[]{Double[].class};
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
@@ -281,9 +287,15 @@ public class DateTimeTypeDifference
   public Class[] generates() {
     switch (m_OutputDateTimeType) {
       case MSECS:
-	return new Class[]{Double.class};
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return new Class[]{Double.class};
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return new Class[]{Long.class};
       case DATE:
 	return new Class[]{Date.class};
       case DATETIME:
@@ -304,10 +316,6 @@ public class DateTimeTypeDifference
 	return new Class[]{BaseTime.class};
       case BASETIMEMSEC:
 	return new Class[]{BaseTimeMsec.class};
-      case JULIANDATE:
-	return new Class[]{Double.class};
-      case SERIAL_DATETIME:
-	return new Class[]{Double.class};
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }
@@ -325,20 +333,20 @@ public class DateTimeTypeDifference
     double[]		in;
     int			i;
     double		diff;
-    
+
     result = null;
-    
+
     if (m_ConversionInput == null) {
       m_ConversionInput = new ConvertDateTimeType();
       m_ConversionInput.setInputDateTimeType(m_InputDateTimeType);
-      m_ConversionInput.setOutputDateTimeType(DateTimeType.MSECS);
+      m_ConversionInput.setOutputDateTimeType(DateTimeType.MSECS_LONG);
     }
-    
+
     diff  = Double.NaN;
     array = m_InputToken.getPayload();
     if (Array.getLength(array) != 2)
       result = "Input array must have length 2, received: " + Array.getLength(array);
-    
+
     if (result == null) {
       in = new double[2];
       for (i = 0; i < 2; i++) {
@@ -353,11 +361,11 @@ public class DateTimeTypeDifference
 	diff = in[0] - in[1];
       m_ConversionInput.cleanUp();
     }
-    
+
     if (result == null) {
       if (m_ConversionOutput == null) {
 	m_ConversionOutput = new ConvertDateTimeType();
-	m_ConversionOutput.setInputDateTimeType(DateTimeType.MSECS);
+	m_ConversionOutput.setInputDateTimeType(DateTimeType.MSECS_LONG);
 	m_ConversionOutput.setOutputDateTimeType(m_OutputDateTimeType);
       }
       m_ConversionOutput.setInput(diff);

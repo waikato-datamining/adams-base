@@ -15,7 +15,7 @@
 
 /*
  * DateTimeTypeToString.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -47,23 +47,23 @@ import java.util.Date;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
+ *
+ * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to convert into a string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
- * 
+ *
  * <pre>-format &lt;adams.data.DateFormatString&gt; (property: format)
  * &nbsp;&nbsp;&nbsp;The format for turning the date&#47;time type into a string.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DateTimeTypeToString
   extends AbstractConversionToString {
@@ -73,13 +73,13 @@ public class DateTimeTypeToString
 
   /** the datetime type to convert. */
   protected DateTimeType m_DateTimeType;
-  
+
   /** the format string to use. */
   protected DateFormatString m_Format;
 
   /** the formatter. */
   protected transient DateFormat m_Formatter;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -98,12 +98,12 @@ public class DateTimeTypeToString
     super.defineOptions();
 
     m_OptionManager.add(
-	    "datetime-type", "dateTimeType",
-	    DateTimeType.DATE);
+      "datetime-type", "dateTimeType",
+      DateTimeType.DATE);
 
     m_OptionManager.add(
-	    "format", "format",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "format", "format",
+      new DateFormatString(Constants.DATE_FORMAT));
   }
 
   /**
@@ -112,10 +112,10 @@ public class DateTimeTypeToString
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_Formatter = null;
   }
-  
+
   /**
    * Sets the date/time type to convert.
    *
@@ -183,9 +183,15 @@ public class DateTimeTypeToString
   public Class accepts() {
     switch (m_DateTimeType) {
       case MSECS:
-	return Double.class;
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return Double.class;
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return Long.class;
       case DATE:
 	return Date.class;
       case DATETIME:
@@ -206,10 +212,6 @@ public class DateTimeTypeToString
 	return BaseTime.class;
       case BASETIMEMSEC:
 	return BaseTimeMsec.class;
-      case JULIANDATE:
-	return Double.class;
-      case SERIAL_DATETIME:
-        return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -225,12 +227,16 @@ public class DateTimeTypeToString
   protected Object doConvert() throws Exception {
     if (m_Formatter == null)
       m_Formatter = m_Format.toDateFormat();
-    
+
     switch (m_DateTimeType) {
       case MSECS:
 	return m_Formatter.format(new Date(((Double) m_Input).longValue()));
+      case MSECS_LONG:
+	return m_Formatter.format(new Date((Long) m_Input));
       case SECONDS:
 	return m_Formatter.format(new Date(((Double) m_Input).longValue() * 1000));
+      case SECONDS_LONG:
+	return m_Formatter.format(new Date(((Long) m_Input) * 1000));
       case DATE:
 	return m_Formatter.format((Date) m_Input);
       case DATETIME:
@@ -253,8 +259,12 @@ public class DateTimeTypeToString
 	return m_Formatter.format(((BaseTimeMsec) m_Input).dateValue());
       case JULIANDATE:
 	return m_Formatter.format(new JDateTime((Double) m_Input).convertToDate());
+      case JULIANDATE_LONG:
+	return m_Formatter.format(new JDateTime((Long) m_Input).convertToDate());
       case SERIAL_DATETIME:
-        return m_Formatter.format(new Date(DateUtils.serialDateToMsec((Double) m_Input)));
+	return m_Formatter.format(new Date(DateUtils.serialDateToMsec((Double) m_Input)));
+      case SERIAL_DATETIME_LONG:
+	return m_Formatter.format(new Date(DateUtils.serialDateToMsec((Long) m_Input)));
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }

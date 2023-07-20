@@ -15,7 +15,7 @@
 
 /*
  * StringToDateTimeType.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -47,26 +47,27 @@ import java.util.Date;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-format &lt;adams.data.DateFormatString&gt; (property: format)
  * &nbsp;&nbsp;&nbsp;The format for parsing the date&#47;time string.
  * &nbsp;&nbsp;&nbsp;default: yyyy-MM-dd
- * &nbsp;&nbsp;&nbsp;more: http:&#47;&#47;docs.oracle.com&#47;javase&#47;6&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
- * 
- * <pre>-datetime-type &lt;MSECS|SECONDS|DATE|DATETIME|DATETIMEMSEC|TIME|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|JULIANDATE|SERIAL_DATETIME&gt; (property: dateTimeType)
+ *
+ * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to generate from the string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
- * 
+ *
  * <pre>-use-base-parsing &lt;boolean&gt; (property: useBaseParsing)
  * &nbsp;&nbsp;&nbsp;If enabled, uses the parsing capability of the BaseTime, BaseDate, BaseDateTime 
  * &nbsp;&nbsp;&nbsp;classes to parse the string rather than the specified format string (string 
  * &nbsp;&nbsp;&nbsp;must be in the appropriate format).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -79,16 +80,16 @@ public class StringToDateTimeType
 
   /** the datetime type to convert. */
   protected DateTimeType m_DateTimeType;
-  
+
   /** the format string to use. */
   protected DateFormatString m_Format;
 
   /** whether to use the base* class's parsing. */
   protected boolean m_UseBaseParsing;
-  
+
   /** the formatter. */
   protected transient DateFormat m_Formatter;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -96,8 +97,8 @@ public class StringToDateTimeType
    */
   @Override
   public String globalInfo() {
-    return 
-	"Parses a string and turns it into an instance of the specified "
+    return
+      "Parses a string and turns it into an instance of the specified "
 	+ "date/time type. The string may contain variables, which get expanded "
 	+ "at conversion time.";
   }
@@ -110,16 +111,16 @@ public class StringToDateTimeType
     super.defineOptions();
 
     m_OptionManager.add(
-	    "format", "format",
-	    new DateFormatString(Constants.DATE_FORMAT));
+      "format", "format",
+      new DateFormatString(Constants.DATE_FORMAT));
 
     m_OptionManager.add(
-	    "datetime-type", "dateTimeType",
-	    DateTimeType.DATE);
+      "datetime-type", "dateTimeType",
+      DateTimeType.DATE);
 
     m_OptionManager.add(
-	    "use-base-parsing", "useBaseParsing",
-	    false);
+      "use-base-parsing", "useBaseParsing",
+      false);
   }
 
   /**
@@ -128,7 +129,7 @@ public class StringToDateTimeType
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_Formatter = null;
   }
 
@@ -160,7 +161,7 @@ public class StringToDateTimeType
   public String formatTipText() {
     return "The format for parsing the date/time string.";
   }
-  
+
   /**
    * Sets the date/time type to generate.
    *
@@ -189,7 +190,7 @@ public class StringToDateTimeType
   public String dateTimeTypeTipText() {
     return "The date/time type to generate from the string.";
   }
-  
+
   /**
    * Sets the date/time type to generate.
    *
@@ -216,8 +217,8 @@ public class StringToDateTimeType
    * 			displaying in the GUI or for listing the options.
    */
   public String useBaseParsingTipText() {
-    return 
-	"If enabled, uses the parsing capability of the BaseTime, BaseDate, "
+    return
+      "If enabled, uses the parsing capability of the BaseTime, BaseDate, "
 	+ "BaseDateTime classes to parse the string rather than the specified "
 	+ "format string (string must be in the appropriate format).";
   }
@@ -231,9 +232,15 @@ public class StringToDateTimeType
   public Class generates() {
     switch (m_DateTimeType) {
       case MSECS:
-	return Double.class;
       case SECONDS:
+      case JULIANDATE:
+      case SERIAL_DATETIME:
 	return Double.class;
+      case MSECS_LONG:
+      case SECONDS_LONG:
+      case JULIANDATE_LONG:
+      case SERIAL_DATETIME_LONG:
+	return Long.class;
       case DATE:
 	return Date.class;
       case DATETIME:
@@ -254,10 +261,6 @@ public class StringToDateTimeType
 	return BaseTime.class;
       case BASETIMEMSEC:
 	return BaseTimeMsec.class;
-      case JULIANDATE:
-	return Double.class;
-      case SERIAL_DATETIME:
-	return Double.class;
       default:
 	throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
     }
@@ -287,7 +290,7 @@ public class StringToDateTimeType
 	  case BASEDATETIME:
 	    date = new BaseDateTime(input).dateValue();
 	    break;
-          case BASEDATETIMEMSEC:
+	  case BASEDATETIMEMSEC:
 	    date = new BaseDateTimeMsec(input).dateValue();
 	    break;
 	  case BASETIME:
@@ -309,9 +312,13 @@ public class StringToDateTimeType
 
       switch (m_DateTimeType) {
 	case MSECS:
-	  return new Double(date.getTime());
+	  return (double) date.getTime();
+	case MSECS_LONG:
+	  return date.getTime();
 	case SECONDS:
-	  return new Double(date.getTime() / 1000);
+	  return (double) (date.getTime() / 1000);
+	case SECONDS_LONG:
+	  return date.getTime() / 1000;
 	case DATE:
 	  return date;
 	case DATETIME:
@@ -326,7 +333,7 @@ public class StringToDateTimeType
 	  return new BaseDate(date);
 	case BASEDATETIME:
 	  return new BaseDateTime(date);
-        case BASEDATETIMEMSEC:
+	case BASEDATETIMEMSEC:
 	  return new BaseDateTimeMsec(date);
 	case BASETIME:
 	  return new BaseTime(date);
@@ -334,8 +341,12 @@ public class StringToDateTimeType
 	  return new BaseTimeMsec(date);
 	case JULIANDATE:
 	  return new JDateTime(date).getJulianDateDouble();
-        case SERIAL_DATETIME:
-          return new Double(DateUtils.msecToSerialDate(date.getTime()));
+	case JULIANDATE_LONG:
+	  return new JDateTime(date).getTimeInMillis();
+	case SERIAL_DATETIME:
+	  return (DateUtils.msecToSerialDate(date.getTime()));
+	case SERIAL_DATETIME_LONG:
+	  return (long) (DateUtils.msecToSerialDate(date.getTime()));
 	default:
 	  throw new IllegalStateException("Unhandled data/time type: " + m_DateTimeType);
       }
