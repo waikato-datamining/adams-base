@@ -15,66 +15,32 @@
 
 /*
  * TextRenderer.java
- * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.flow.transformer;
+package adams.data.conversion;
 
 import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.data.textrenderer.AbstractTextRenderer;
 import adams.data.textrenderer.LimitedTextRenderer;
-import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Turns incoming objects into their textual representation, either automatic detection based on their data type or by explicitly specifying a renderer.
+ * Turns incoming objects into their textual representation, either automatic detection based on their data type or by explicitly specifying a renderer.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.TextRenderer
  * <br><br>
  <!-- globalinfo-end -->
- *
- <!-- flow-summary-start -->
- * Input&#47;output:<br>
- * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.Object<br>
- * - generates:<br>
- * &nbsp;&nbsp;&nbsp;java.lang.String<br>
- * <br><br>
- <!-- flow-summary-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
- * </pre>
- *
- * <pre>-name &lt;java.lang.String&gt; (property: name)
- * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: TextRenderer
- * </pre>
- *
- * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
- * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
- * &nbsp;&nbsp;&nbsp;as it is.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
- * &nbsp;&nbsp;&nbsp;actors.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
- * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
- * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-use-custom-renderer &lt;boolean&gt; (property: useCustomRenderer)
@@ -95,13 +61,13 @@ import adams.flow.core.Token;
  *
  <!-- options-end -->
  *
- * @author FracPete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class TextRenderer
-  extends AbstractTransformer
+  extends AbstractConversionToString
   implements ClassCrossReference {
 
-  private static final long serialVersionUID = 965553206055540848L;
+  private static final long serialVersionUID = 7863092682380867268L;
 
   /** whether to use a custom renderer. */
   protected boolean m_UseCustomRenderer;
@@ -115,7 +81,7 @@ public class TextRenderer
   /**
    * Returns a string describing the object.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @return a description suitable for displaying in the gui
    */
   @Override
   public String globalInfo() {
@@ -131,7 +97,7 @@ public class TextRenderer
    */
   @Override
   public Class[] getClassCrossReferences() {
-    return new Class[]{adams.data.conversion.TextRenderer.class};
+    return new Class[]{adams.flow.transformer.TextRenderer.class};
   }
 
   /**
@@ -258,71 +224,62 @@ public class TextRenderer
   }
 
   /**
-   * Returns the class that the consumer accepts.
+   * Returns the class that is accepted as input.
    *
-   * @return		the Class of objects that can be processed
+   * @return the class
    */
   @Override
-  public Class[] accepts() {
-    return new Class[]{Object.class};
+  public Class accepts() {
+    return Object.class;
   }
 
   /**
-   * Returns the class of objects that it generates.
+   * Performs the actual conversion.
    *
-   * @return		the Class of the generated tokens
+   * @throws Exception if something goes wrong with the conversion
+   * @return the converted data
    */
   @Override
-  public Class[] generates() {
-    return new Class[]{String.class};
-  }
-
-  /**
-   * Executes the flow item.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  protected String doExecute() {
-    String					result;
+  protected Object doConvert() throws Exception {
+    String 					result;
+    String 					msg;
     Object					obj;
-    String					text;
     adams.data.textrenderer.TextRenderer	renderer;
 
     result = null;
-    obj    = m_InputToken.getPayload();
-    text   = null;
+    msg    = null;
+    obj    = m_Input;
 
     try {
       if (m_UseCustomRenderer) {
-        if (m_CustomRenderer.handles(obj)) {
+	if (m_CustomRenderer.handles(obj)) {
 	  if (m_UnlimitedRendering && (m_CustomRenderer instanceof LimitedTextRenderer))
-	    text = ((LimitedTextRenderer) m_CustomRenderer).renderUnlimited(obj);
+	    result = ((LimitedTextRenderer) m_CustomRenderer).renderUnlimited(obj);
 	  else
-	    text = m_CustomRenderer.render(obj);
-	  if (text == null)
-	    result = "Renderer " + Utils.classToString(m_CustomRenderer) + " failed to render: " + Utils.classToString(obj);
+	    result = m_CustomRenderer.render(obj);
+	  if (result == null)
+	    msg = "Renderer " + Utils.classToString(m_CustomRenderer) + " failed to render: " + Utils.classToString(obj);
 	}
-        else {
-	  result = "Renderer " + Utils.classToString(m_CustomRenderer) + " does not handle: " + Utils.classToString(obj);
+	else {
+	  msg = "Renderer " + Utils.classToString(m_CustomRenderer) + " does not handle: " + Utils.classToString(obj);
 	}
       }
       else {
-        renderer = AbstractTextRenderer.getRenderer(obj);
-        if (m_UnlimitedRendering && (renderer instanceof LimitedTextRenderer))
-	  text = ((LimitedTextRenderer) renderer).renderUnlimited(obj);
+	renderer = AbstractTextRenderer.getRenderer(obj);
+	if (m_UnlimitedRendering && (renderer instanceof LimitedTextRenderer))
+	  result = ((LimitedTextRenderer) renderer).renderUnlimited(obj);
 	else
-	  text = renderer.render(obj);
-	if (text == null)
-	  result = "Failed to automatically render: " + Utils.classToString(obj);
+	  result = renderer.render(obj);
+	if (result == null)
+	  msg = "Failed to automatically render: " + Utils.classToString(obj);
       }
-
-      if (text != null)
-        m_OutputToken = new Token(text);
     }
     catch (Exception e) {
-      result = handleException("Failed to render object!", e);
+      msg = LoggingHelper.handleException(this, "Failed to render object!", e);
     }
+
+    if (msg != null)
+      throw new Exception(msg);
 
     return result;
   }
