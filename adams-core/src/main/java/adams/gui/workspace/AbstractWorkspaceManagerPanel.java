@@ -15,7 +15,7 @@
 
 /*
  * AbstractWorkspaceManagerPanel.java
- * Copyright (C) 2016-2032 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.workspace;
 
@@ -28,6 +28,7 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 
+import javax.swing.BorderFactory;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -80,6 +81,7 @@ public abstract class AbstractWorkspaceManagerPanel<T extends AbstractWorkspaceP
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane();
+    m_SplitPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(m_SplitPane, BorderLayout.CENTER);
 
     // right
