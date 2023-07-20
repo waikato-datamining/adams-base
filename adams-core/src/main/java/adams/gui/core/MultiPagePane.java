@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -491,6 +491,7 @@ public class MultiPagePane
     setLayout(new BorderLayout());
 
     m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
+    m_SplitPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     m_SplitPane.setDividerLocation(200);
     m_SplitPane.setResizeWeight(0.0);
     m_SplitPane.setOneTouchExpandable(true);
