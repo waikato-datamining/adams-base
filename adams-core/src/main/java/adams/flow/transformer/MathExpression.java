@@ -15,7 +15,7 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -481,16 +481,16 @@ public class MathExpression
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.Integer.class, java.lang.Long.class, java.lang.Double.class, adams.data.report.Report.class, adams.data.report.ReportHandler.class<!-- flow-accepts-end -->
+   * @return		the accepted classes
    */
   public Class[] accepts() {
-    return new Class[]{Integer.class, Long.class, Double.class, Report.class, ReportHandler.class};
+    return new Class[]{Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class, Number.class, Report.class, ReportHandler.class};
   }
 
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.lang.Double.class<!-- flow-generates-end -->
+   * @return		the generated classes
    */
   public Class[] generates() {
     if (m_OutputValuePair)
