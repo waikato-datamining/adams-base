@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SSHSessionProvider.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.net;
@@ -26,12 +26,11 @@ import com.jcraft.jsch.Session;
  * Interface for classes that provide SSH sessions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface SSHSessionProvider {
 
   /**
-   * Returns the SSH session.
+   * Returns the SSH session. Attempts to reconnect when necessary or create new session when none present.
    *
    * @return		the SSH session, null if not connected
    */

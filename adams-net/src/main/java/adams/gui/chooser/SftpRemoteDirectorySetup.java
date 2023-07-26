@@ -15,7 +15,7 @@
 
 /*
  * SftpRemoteDirectory.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
@@ -447,10 +447,8 @@ public class SftpRemoteDirectorySetup
    *
    * @return		the SSH session, null if not connected
    */
+  @Override
   public synchronized Session getSession() {
-    if (m_Session == null)
-      m_Session = newSession();
-
     if (m_Session != null) {
       if (!m_Session.isConnected()) {
         try {
@@ -461,6 +459,9 @@ public class SftpRemoteDirectorySetup
         }
       }
     }
+    else {
+      m_Session = newSession();
+    }
 
     return m_Session;
   }
@@ -470,6 +471,7 @@ public class SftpRemoteDirectorySetup
    *
    * @return		the session
    */
+  @Override
   public Session newSession() {
     return newSession(m_Host, m_Port);
   }
@@ -480,6 +482,7 @@ public class SftpRemoteDirectorySetup
    * @param host	the host to create the session for
    * @return		the session
    */
+  @Override
   public Session newSession(String host, int port) {
     Session 	result;
     JSch 	jsch;

@@ -530,7 +530,7 @@ public abstract class AbstractSSHConnection
   }
 
   /**
-   * Returns the SSH session. Attempts to reconnect when necessary.
+   * Returns the SSH session. Attempts to reconnect when necessary or create new session when none present.
    *
    * @return		the SSH session, null if not connected
    */
@@ -545,6 +545,9 @@ public abstract class AbstractSSHConnection
           getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
         }
       }
+    }
+    else {
+      m_Session = newSession();
     }
 
     return m_Session;

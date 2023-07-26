@@ -983,10 +983,11 @@ public class SSHConnection
   }
 
   /**
-   * Returns the SSH session. Attempts to reconnect when necessary.
+   * Returns the SSH session. Attempts to reconnect when necessary or create new session when none present.
    *
    * @return		the SSH session, null if not connected
    */
+  @Override
   public synchronized Session getSession() {
     if (m_Session != null) {
       if (!m_Session.isConnected()) {
@@ -998,6 +999,10 @@ public class SSHConnection
         }
       }
     }
+    else {
+      m_Session = newSession();
+    }
+
     return m_Session;
   }
 
@@ -1006,6 +1011,7 @@ public class SSHConnection
    *
    * @return		the session
    */
+  @Override
   public Session newSession() {
     return newSession(m_Host, m_Port);
   }
@@ -1016,6 +1022,7 @@ public class SSHConnection
    * @param host	the host to create the session for
    * @return		the session
    */
+  @Override
   public Session newSession(String host, int port) {
     Session 	result;
     JSch	jsch;
