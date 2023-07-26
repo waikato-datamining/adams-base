@@ -13,15 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JSchUtils.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  * Copyright (C) JSch
  */
 
 package adams.core.net;
 
 import adams.core.License;
+import adams.core.TechnicalInformation;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -34,7 +35,6 @@ import java.io.File;
  * Helper class for SSH connections using {@link JSch}.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
   copyright = "JCraft",
@@ -153,5 +153,23 @@ public class JSchUtils {
   public static void configureX11(Session session, String host, int port) {
     session.setX11Host(host);
     session.setX11Port(port);
+  }
+
+  /**
+   * Returns an instance of a TechnicalInformation object, containing
+   * detailed information about the technical background of this class,
+   * e.g., paper reference or book this class is based on.
+   *
+   * @return 		the technical information about this class
+   */
+  public static TechnicalInformation getTechnicalInformation() {
+    TechnicalInformation 	result;
+
+    result = new TechnicalInformation(TechnicalInformation.Type.MISC);
+    result.setValue(TechnicalInformation.Field.YEAR, "2011");
+    result.setValue(TechnicalInformation.Field.TITLE, "JSch - JSch is a pure Java implementation of SSH2.");
+    result.setValue(TechnicalInformation.Field.HTTP, "http://www.jcraft.com/jsch/");
+
+    return result;
   }
 }

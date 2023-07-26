@@ -15,7 +15,7 @@
 
 /*
  * ScpTo.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JSch
  */
 
@@ -24,11 +24,10 @@ package adams.flow.transformer;
 import adams.core.License;
 import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
+import adams.core.net.JSchUtils;
 import adams.core.net.Scp;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
@@ -94,7 +93,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     copyright = "JCraft",
@@ -136,14 +134,7 @@ public class ScpTo
    * @return 		the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.YEAR, "2011");
-    result.setValue(Field.TITLE, "JSch - JSch is a pure Java implementation of SSH2.");
-    result.setValue(Field.HTTP, "http://www.jcraft.com/jsch/");
-
-    return result;
+    return JSchUtils.getTechnicalInformation();
   }
 
   /**

@@ -25,8 +25,6 @@ import adams.core.License;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.TechnicalInformation;
-import adams.core.TechnicalInformation.Field;
-import adams.core.TechnicalInformation.Type;
 import adams.core.TechnicalInformationHandler;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
@@ -268,14 +266,7 @@ public class SSHConnection
    * @return 		the technical information about this class
    */
   public TechnicalInformation getTechnicalInformation() {
-    TechnicalInformation 	result;
-
-    result = new TechnicalInformation(Type.MISC);
-    result.setValue(Field.YEAR, "2011");
-    result.setValue(Field.TITLE, "JSch - JSch is a pure Java implementation of SSH2.");
-    result.setValue(Field.HTTP, "http://www.jcraft.com/jsch/");
-
-    return result;
+    return JSchUtils.getTechnicalInformation();
   }
 
   /**
