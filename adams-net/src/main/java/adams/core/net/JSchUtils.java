@@ -39,7 +39,7 @@ import java.io.File;
 @MixedCopyright(
   copyright = "JCraft",
   license = License.BSD3,
-  url = "http://www.jcraft.com/jsch/"
+  url = "https://github.com/mwiede/jsch"
 )
 public class JSchUtils {
 
@@ -168,7 +168,7 @@ public class JSchUtils {
     result = new TechnicalInformation(TechnicalInformation.Type.MISC);
     result.setValue(TechnicalInformation.Field.YEAR, "2011");
     result.setValue(TechnicalInformation.Field.TITLE, "JSch - JSch is a pure Java implementation of SSH2.");
-    result.setValue(TechnicalInformation.Field.HTTP, "http://www.jcraft.com/jsch/");
+    result.setValue(TechnicalInformation.Field.HTTP, "https://github.com/mwiede/jsch");
 
     return result;
   }

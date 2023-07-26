@@ -106,7 +106,7 @@ import java.io.File;
 @MixedCopyright(
     copyright = "JCraft",
     license = License.BSD3,
-    url = "http://www.jcraft.com/jsch/"
+    url = "https://github.com/mwiede/jsch"
 )
 public class SFTPGet
   extends AbstractTransformer

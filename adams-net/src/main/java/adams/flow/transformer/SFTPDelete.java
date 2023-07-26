@@ -98,7 +98,7 @@ import adams.flow.standalone.SSHConnection;
 @MixedCopyright(
     copyright = "JCraft",
     license = License.BSD3,
-    url = "http://www.jcraft.com/jsch/"
+    url = "https://github.com/mwiede/jsch"
 )
 public class SFTPDelete
   extends AbstractTransformer
