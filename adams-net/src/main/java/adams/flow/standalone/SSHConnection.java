@@ -65,6 +65,7 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -74,30 +75,33 @@ import java.util.logging.Level;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-host &lt;java.lang.String&gt; (property: host)
  * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) to connect to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-port &lt;int&gt; (property: port)
@@ -135,7 +139,7 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-strict-host-key-checking &lt;boolean&gt; (property: strictHostKeyChecking)
- * &nbsp;&nbsp;&nbsp;Enables&#47;disables strict host key checking - strict checking is the recommended 
+ * &nbsp;&nbsp;&nbsp;Enables&#47;disables strict host key checking - strict checking is the recommended
  * &nbsp;&nbsp;&nbsp;setting, as disabling it is very insecure!
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
@@ -147,7 +151,7 @@ import java.util.logging.Level;
  *
  * <pre>-x-host &lt;java.lang.String&gt; (property: XHost)
  * &nbsp;&nbsp;&nbsp;The xhost (name&#47;IP address) to connect to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-x-port &lt;int&gt; (property: XPort)
@@ -158,9 +162,15 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
- * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been 
+ * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been
  * &nbsp;&nbsp;&nbsp;provided in the setup.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-timeout &lt;int&gt; (property: timeout)
+ * &nbsp;&nbsp;&nbsp;The timeout in milliseconds.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
@@ -169,9 +179,14 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
  <!-- options-end -->
@@ -233,6 +248,9 @@ public class SSHConnection
   /** whether to prompt the user for a password if none provided. */
   protected boolean m_PromptForPassword;
 
+  /** the timeout to use (milliseconds). */
+  protected int m_Timeout;
+
   /** whether to stop the flow if canceled. */
   protected boolean m_StopFlowIfCanceled;
 
@@ -254,8 +272,8 @@ public class SSHConnection
   public String globalInfo() {
     return
       "Provides access to a remote host via SSH.\n\n"
-	+ "For more information see:\n\n"
-	+ getTechnicalInformation().toString();
+        + "For more information see:\n\n"
+        + getTechnicalInformation().toString();
   }
 
   /**
@@ -299,11 +317,11 @@ public class SSHConnection
     m_OptionManager.add(
       "private-key-file", "privateKeyFile",
       new PlaceholderFile(
-	System.getProperty("user.home")
-	  + File.separator
-	  + ".ssh"
-	  + File.separator
-	  + "id_rsa"));
+        System.getProperty("user.home")
+          + File.separator
+          + ".ssh"
+          + File.separator
+          + "id_rsa"));
 
     m_OptionManager.add(
       "private-key-passphrase", "privateKeyPassphrase",
@@ -312,11 +330,11 @@ public class SSHConnection
     m_OptionManager.add(
       "known-hosts", "knownHosts",
       new PlaceholderFile(
-	System.getProperty("user.home")
-	  + File.separator
-	  + ".ssh"
-	  + File.separator
-	  + "known_hosts"));
+        System.getProperty("user.home")
+          + File.separator
+          + ".ssh"
+          + File.separator
+          + "known_hosts"));
 
     m_OptionManager.add(
       "strict-host-key-checking", "strictHostKeyChecking",
@@ -337,6 +355,10 @@ public class SSHConnection
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",
       false);
+
+    m_OptionManager.add(
+      "timeout", "timeout",
+      0, 0, null);
 
     m_OptionManager.add(
       "stop-if-canceled", "stopFlowIfCanceled",
@@ -376,7 +398,7 @@ public class SSHConnection
       result = QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
-	result += ":" + value;
+        result += ":" + value;
     }
     else {
       result = QuickInfoHelper.toString(this, "privateKeyFile", m_PrivateKeyFile);
@@ -659,7 +681,7 @@ public class SSHConnection
   public String strictHostKeyCheckingTipText() {
     return
       "Enables/disables strict host key checking - strict checking is the "
-	+ "recommended setting, as disabling it is very insecure!";
+        + "recommended setting, as disabling it is very insecure!";
   }
 
   /**
@@ -779,7 +801,38 @@ public class SSHConnection
   public String promptForPasswordTipText() {
     return
       "If enabled, the user gets prompted "
-	+ "for enter a password if none has been provided in the setup.";
+        + "for enter a password if none has been provided in the setup.";
+  }
+
+  /**
+   * Sets the timeout in milliseconds.
+   *
+   * @param value	the timeout
+   */
+  public void setTimeout(int value) {
+    if (getOptionManager().isValid("timeout", value)) {
+      m_Timeout = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the timeout in milliseconds.
+   *
+   * @return 		the timeout
+   */
+  public int getTimeout() {
+    return m_Timeout;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String timeoutTipText() {
+    return "The timeout in milliseconds.";
   }
 
   /**
@@ -839,7 +892,7 @@ public class SSHConnection
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-	+ "flow (default is the full name of the actor)";
+        + "flow (default is the full name of the actor)";
   }
 
   /**
@@ -972,18 +1025,19 @@ public class SSHConnection
     try {
       jsch = JSchUtils.newJsch(m_KnownHosts);
       switch (m_AuthenticationType) {
-	case CREDENTIALS:
-	  result = JSchUtils.newSession(jsch, m_User, password, host, port);
-	  break;
-	case PUBLIC_KEY:
-	  result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+        case CREDENTIALS:
+          result = JSchUtils.newSession(jsch, m_User, password, host, port);
+          break;
+        case PUBLIC_KEY:
+          result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
+          break;
+        default:
+          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
       JSchUtils.configureStrictHostKeyChecking(result, m_StrictHostKeyChecking);
       if (m_ForwardX)
-	JSchUtils.configureX11(result, m_XHost, m_XPort);
+        JSchUtils.configureX11(result, m_XHost, m_XPort);
+      result.setTimeout(m_Timeout);
       result.connect();
     }
     catch (Exception e) {
@@ -1008,61 +1062,61 @@ public class SSHConnection
 
     if (m_Session == null) {
       if (isLoggingEnabled())
-	getLogger().info("Starting new session");
+        getLogger().info("Starting new session");
 
       // password
       switch (m_AuthenticationType) {
-	case CREDENTIALS:
-	  m_ActualPassword = m_Password;
-	  break;
-	case PUBLIC_KEY:
-	  m_ActualPassword = m_PrivateKeyPassphrase;
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+        case CREDENTIALS:
+          m_ActualPassword = m_Password;
+          break;
+        case PUBLIC_KEY:
+          m_ActualPassword = m_PrivateKeyPassphrase;
+          break;
+        default:
+          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
 
       if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-	if (!isHeadless()) {
-	  msg = doInteract();
-	  if (msg != null) {
-	    if (m_StopFlowIfCanceled) {
-	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-	      else
-		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-	      result = getStopMessage();
-	    }
-	  }
-	}
-	else if (supportsHeadlessInteraction()) {
-	  msg = doInteractHeadless();
-	  if (msg != null) {
-	    if (m_StopFlowIfCanceled) {
-	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-	      else
-		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-	      result = getStopMessage();
-	    }
-	  }
-	}
+        if (!isHeadless()) {
+          msg = doInteract();
+          if (msg != null) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+              else
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
+        else if (supportsHeadlessInteraction()) {
+          msg = doInteractHeadless();
+          if (msg != null) {
+            if (m_StopFlowIfCanceled) {
+              if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+                StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
+              else
+                StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
+              result = getStopMessage();
+            }
+          }
+        }
       }
 
       if (result == null) {
-	if (!m_Host.isEmpty()) {
-	  m_Session = newSession();
-	  if (m_Session == null)
-	    result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
-	}
-	else {
-	  getLogger().warning("No host supplied, not initiating session!");
-	}
+        if (!m_Host.isEmpty()) {
+          m_Session = newSession();
+          if (m_Session == null)
+            result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+        }
+        else {
+          getLogger().warning("No host supplied, not initiating session!");
+        }
       }
     }
     else {
       if (isLoggingEnabled())
-	getLogger().info("Re-using current session");
+        getLogger().info("Re-using current session");
     }
 
     return result;
@@ -1074,12 +1128,12 @@ public class SSHConnection
   protected void disconnect() {
     if (m_Session != null) {
       if (m_Session.isConnected()) {
-	try {
-	  m_Session.disconnect();
-	}
-	catch (Exception e) {
-	  handleException("Failed to disconnect from '" + m_Host + "':", e);
-	}
+        try {
+          m_Session.disconnect();
+        }
+        catch (Exception e) {
+          handleException("Failed to disconnect from '" + m_Host + "':", e);
+        }
       }
     }
     m_Session = null;
