@@ -48,6 +48,7 @@ import java.awt.Dialog.ModalityType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -938,11 +939,21 @@ public class SSHConnection
   }
 
   /**
-   * Returns the SSH session.
+   * Returns the SSH session. Attempts to reconnect when necessary.
    *
    * @return		the SSH session, null if not connected
    */
   public synchronized Session getSession() {
+    if (m_Session != null) {
+      if (!m_Session.isConnected()) {
+        try {
+          m_Session.connect();
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
+        }
+      }
+    }
     return m_Session;
   }
 

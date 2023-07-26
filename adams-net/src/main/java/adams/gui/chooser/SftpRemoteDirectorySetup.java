@@ -32,6 +32,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * For configuring an SSH connection and remote directory.
@@ -442,13 +443,25 @@ public class SftpRemoteDirectorySetup
   }
 
   /**
-   * Returns the SSH session.
+   * Returns the SSH session. Attempts to reconnect when necessary.
    *
    * @return		the SSH session, null if not connected
    */
   public synchronized Session getSession() {
     if (m_Session == null)
       m_Session = newSession();
+
+    if (m_Session != null) {
+      if (!m_Session.isConnected()) {
+        try {
+          m_Session.connect();
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
+        }
+      }
+    }
+
     return m_Session;
   }
 

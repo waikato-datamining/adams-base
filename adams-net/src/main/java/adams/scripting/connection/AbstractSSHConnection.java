@@ -15,7 +15,7 @@
 
 /*
  * AbstractSSHConnection.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.connection;
@@ -35,6 +35,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Ancestor of connection schemes that use an SSH tunnel to connect to the remote scripting engine.
@@ -529,12 +530,23 @@ public abstract class AbstractSSHConnection
   }
 
   /**
-   * Returns the SSH session.
+   * Returns the SSH session. Attempts to reconnect when necessary.
    *
    * @return		the SSH session, null if not connected
    */
   @Override
   public Session getSession() {
+    if (m_Session != null) {
+      if (!m_Session.isConnected()) {
+        try {
+          m_Session.connect();
+        }
+        catch (Exception e) {
+          getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
+        }
+      }
+    }
+
     return m_Session;
   }
 
