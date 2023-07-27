@@ -142,6 +142,7 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -591,6 +592,7 @@ public class FlowEditorPanel
 
     // the status
     m_StatusBar = new BaseStatusBar();
+    m_StatusBar.setBorder(BorderFactory.createEmptyBorder(0, 5, 5, 5));
     m_StatusBar.setDialogSize(new Dimension(props.getInteger("StatusBar.Width", 600), props.getInteger("StatusBar.Height", 400)));
     m_StatusBar.setMouseListenerActive(true);
     m_StatusBar.setPopupMenuCustomizer(this);
