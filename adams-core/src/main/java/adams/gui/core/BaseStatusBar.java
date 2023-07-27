@@ -15,7 +15,7 @@
 
 /*
  * BaseStatusBar.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -70,14 +70,14 @@ public class BaseStatusBar
      */
     public String process(String msg);
   }
-  
+
   /**
    * Interface for classes that modify the statusbar's popup menu.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static interface PopupMenuCustomizer {
-    
+
     /**
      * For customizing the popup menu.
      *
@@ -109,10 +109,10 @@ public class BaseStatusBar
 
   /** the popup menu customizer to use. */
   protected PopupMenuCustomizer m_PopupMenuCustomizer;
-  
+
   /** the default dimension for displaying the status. */
   protected Dimension m_DialogSize;
-  
+
   /** the current status (left). */
   protected String m_StatusLeft;
 
@@ -168,20 +168,27 @@ public class BaseStatusBar
   @Override
   protected void initGUI() {
     JPanel	panel;
+    JPanel	inner;
 
     super.initGUI();
 
     setLayout(new BorderLayout());
-    setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+
+    inner = new JPanel(new BorderLayout());
+    inner.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    add(inner, BorderLayout.CENTER);
+
+    // left
     panel             = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_LabelStatusLeft = new JLabel(EMPTY_STATUS);
     panel.add(m_LabelStatusLeft, BorderLayout.WEST);
-    add(panel, BorderLayout.WEST);
+    inner.add(panel, BorderLayout.WEST);
 
+    // right
     panel              = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     m_LabelStatusRight = new JLabel("");
     panel.add(m_LabelStatusRight);
-    add(panel, BorderLayout.EAST);
+    inner.add(panel, BorderLayout.EAST);
   }
 
   /**
@@ -415,36 +422,36 @@ public class BaseStatusBar
 	  @Override
 	  public void mouseClicked(MouseEvent e) {
 	    if (e.getComponent() == m_LabelStatusLeft) {
-              if (MouseUtils.isDoubleClick(e) && (m_StatusLeft.length() > 0)) {
-                e.consume();
-                displayStatus(true);
-              }
-              else if (MouseUtils.isRightClick(e)) {
-                e.consume();
-                BasePopupMenu menu = getPopup(true);
-                menu.showAbsolute(m_LabelStatusLeft, e);
-              }
-              else {
-                super.mouseClicked(e);
-              }
-            }
-            else if (e.getComponent() == m_LabelStatusRight) {
-              if (MouseUtils.isDoubleClick(e) && (m_StatusRight.length() > 0)) {
-                e.consume();
-                displayStatus(false);
-              }
-              else if (MouseUtils.isRightClick(e)) {
-                e.consume();
-                BasePopupMenu menu = getPopup(false);
-                menu.showAbsolute(m_LabelStatusRight, e);
-              }
-              else {
-                super.mouseClicked(e);
-              }
-            }
-            else {
-              super.mouseClicked(e);
-            }
+	      if (MouseUtils.isDoubleClick(e) && (m_StatusLeft.length() > 0)) {
+		e.consume();
+		displayStatus(true);
+	      }
+	      else if (MouseUtils.isRightClick(e)) {
+		e.consume();
+		BasePopupMenu menu = getPopup(true);
+		menu.showAbsolute(m_LabelStatusLeft, e);
+	      }
+	      else {
+		super.mouseClicked(e);
+	      }
+	    }
+	    else if (e.getComponent() == m_LabelStatusRight) {
+	      if (MouseUtils.isDoubleClick(e) && (m_StatusRight.length() > 0)) {
+		e.consume();
+		displayStatus(false);
+	      }
+	      else if (MouseUtils.isRightClick(e)) {
+		e.consume();
+		BasePopupMenu menu = getPopup(false);
+		menu.showAbsolute(m_LabelStatusRight, e);
+	      }
+	      else {
+		super.mouseClicked(e);
+	      }
+	    }
+	    else {
+	      super.mouseClicked(e);
+	    }
 	  }
 	};
 	addMouseListener(m_MouseListener);
@@ -487,7 +494,7 @@ public class BaseStatusBar
     menuitem.setEnabled(m_StatusLeft.length() > 0);
     menuitem.addActionListener((ActionEvent e) -> clearStatus(left));
     result.add(menuitem);
-    
+
     if (m_PopupMenuCustomizer != null)
       m_PopupMenuCustomizer.customizePopupMenu(this, left, result);
 
@@ -551,19 +558,19 @@ public class BaseStatusBar
   public Dimension getDialogSize() {
     return m_DialogSize;
   }
-  
+
   /**
    * Sets the popup menu customizer to use.
-   * 
+   *
    * @param value	the customizer, null to unset
    */
   public void setPopupMenuCustomizer(PopupMenuCustomizer value) {
     m_PopupMenuCustomizer = value;
   }
-  
+
   /**
    * Returns the current popup customizer in use.
-   * 
+   *
    * @return		the customizer, null if none set
    */
   public PopupMenuCustomizer getPopupMenuCustomizer() {
