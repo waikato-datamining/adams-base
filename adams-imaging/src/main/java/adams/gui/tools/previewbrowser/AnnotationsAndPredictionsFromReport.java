@@ -334,7 +334,7 @@ public class AnnotationsAndPredictionsFromReport
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     ImagePanel 				panel;
     MultiImageOverlay			multi;
     ObjectLocationsOverlayFromReport 	annotations;

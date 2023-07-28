@@ -19,17 +19,17 @@
  */
 package adams.gui.tools.previewbrowser;
 
+import adams.data.instance.Instance;
+import adams.gui.visualization.instance.InstanceContainer;
+import adams.gui.visualization.instance.InstancePanel;
+import weka.core.Instances;
+import weka.core.Utils;
+import weka.core.converters.ConverterUtils.DataSource;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
-import weka.core.Instances;
-import weka.core.Utils;
-import weka.core.converters.ConverterUtils.DataSource;
-import adams.data.instance.Instance;
-import adams.gui.visualization.instance.InstanceContainer;
-import adams.gui.visualization.instance.InstancePanel;
 
 /**
  <!-- globalinfo-start -->
@@ -86,7 +86,7 @@ public class InstanceExplorerHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     InstancePanel		result;
     Instances			dataset;
     int				i;

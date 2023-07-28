@@ -83,7 +83,7 @@ public class PDFHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     m_PDFPanel = new PDFPanel();
     m_PDFPanel.setDocument(file);
     return new PreviewPanel(m_PDFPanel);

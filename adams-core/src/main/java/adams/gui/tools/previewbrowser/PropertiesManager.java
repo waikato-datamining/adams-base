@@ -15,7 +15,7 @@
 
 /*
  * PropertiesManager.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -65,12 +65,12 @@ public class PropertiesManager {
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  public static synchronized AbstractContentHandler getPreferredContentHandler(File file) {
-    AbstractContentHandler	result;
-    Properties			props;
-    String			ext;
-    String			handler;
-    MessageCollection		errors;
+  public static synchronized ContentHandler getPreferredContentHandler(File file) {
+    ContentHandler	result;
+    Properties		props;
+    String		ext;
+    String		handler;
+    MessageCollection	errors;
 
     result = null;
 
@@ -86,7 +86,7 @@ public class PropertiesManager {
         return null;
       try {
         errors = new MessageCollection();
-	result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, handler, null, errors, true);
+	result = (ContentHandler) OptionUtils.forCommandLine(ContentHandler.class, handler, null, errors, true);
         if (!errors.isEmpty())
 	  m_Blacklisted.add(handler);
       }
@@ -109,7 +109,7 @@ public class PropertiesManager {
    * @param handler	the preferred handler
    * @return		true if successfully updated
    */
-  public static synchronized boolean updatePreferredContentHandler(String[] ext, AbstractContentHandler handler) {
+  public static synchronized boolean updatePreferredContentHandler(String[] ext, ContentHandler handler) {
     int		i;
     Properties	props;
 
@@ -131,11 +131,11 @@ public class PropertiesManager {
    * @param file	the file to get the preferred handler for
    * @return		the preferred handler
    */
-  public static synchronized AbstractArchiveHandler getPreferredArchiveHandler(File file) {
-    AbstractArchiveHandler	result;
-    Properties			props;
-    String			ext;
-    String			handler;
+  public static synchronized ArchiveHandler getPreferredArchiveHandler(File file) {
+    ArchiveHandler	result;
+    Properties		props;
+    String		ext;
+    String		handler;
 
     result = null;
 
@@ -150,7 +150,7 @@ public class PropertiesManager {
       if (m_Blacklisted.contains(handler))
         return null;
       try {
-	result = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handler).getDeclaredConstructor().newInstance();
+	result = (ArchiveHandler) ClassManager.getSingleton().forName(handler).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
         m_Blacklisted.add(handler);
@@ -192,9 +192,9 @@ public class PropertiesManager {
    * @param cls		the handler class to get the custom setup for
    * @return		the custom setup (or just an instance of the class), null if failed to instantiate
    */
-  public static AbstractContentHandler getCustomContentHandler(Class cls) {
+  public static ContentHandler getCustomContentHandler(Class cls) {
     try {
-      return getCustomContentHandler((AbstractContentHandler) cls.getDeclaredConstructor().newInstance());
+      return getCustomContentHandler((ContentHandler) cls.getDeclaredConstructor().newInstance());
     }
     catch (Exception e) {
       ConsolePanel.getSingleton().append(
@@ -211,10 +211,10 @@ public class PropertiesManager {
    * @param handler	the handler to get the custom setup for
    * @return		the custom setup (or just the input)
    */
-  public static AbstractContentHandler getCustomContentHandler(AbstractContentHandler handler) {
-    AbstractContentHandler	result;
-    String 			custom;
-    MessageCollection		errors;
+  public static ContentHandler getCustomContentHandler(ContentHandler handler) {
+    ContentHandler	result;
+    String 		custom;
+    MessageCollection	errors;
 
     result = handler;
     custom = getProperties().getProperty(PREFIX_CUSTOM_CONTENT_HANDLER + handler.getClass().getName());
@@ -223,7 +223,7 @@ public class PropertiesManager {
         return result;
       try {
         errors = new MessageCollection();
-        result = (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, custom, null, errors, true);
+        result = (ContentHandler) OptionUtils.forCommandLine(ContentHandler.class, custom, null, errors, true);
         if (!errors.isEmpty())
 	  m_Blacklisted.add(custom);
       }
@@ -245,7 +245,7 @@ public class PropertiesManager {
    * @param handler	the custom handler to update in props file
    * @return		true if updated
    */
-  public static boolean setCustomContentHandler(AbstractContentHandler handler) {
+  public static boolean setCustomContentHandler(ContentHandler handler) {
     String	key;
     String	cmdline;
     String	cmdlineDefault;

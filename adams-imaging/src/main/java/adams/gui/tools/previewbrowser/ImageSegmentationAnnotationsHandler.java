@@ -357,7 +357,7 @@ public class ImageSegmentationAnnotationsHandler
    * @return the preview
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     SegmentationPanel		panel;
     ImageSegmentationContainer  cont;
     String[]			labels;

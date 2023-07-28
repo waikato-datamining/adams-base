@@ -29,7 +29,7 @@ import adams.data.image.AbstractImageContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BasePanel;
 import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
-import adams.gui.tools.previewbrowser.AbstractContentHandler;
+import adams.gui.tools.previewbrowser.ContentHandler;
 import adams.gui.tools.previewbrowser.NoDataToPreviewPanel;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PlainTextHandler;
@@ -196,9 +196,9 @@ public class FilePreview
      */
     @Override
     public void display(Token token) {
-      File			file;
-      JPanel			parent;
-      AbstractContentHandler	preview;
+      File		file;
+      JPanel		parent;
+      ContentHandler	preview;
       
       if (token.getPayload() instanceof String)
 	file = new PlaceholderFile((String) token.getPayload());
@@ -261,7 +261,7 @@ public class FilePreview
   protected boolean m_UseCustomPreview;
 
   /** the width of the image properties. */
-  protected AbstractContentHandler m_Preview;
+  protected ContentHandler m_Preview;
   
   /**
    * Returns a string describing the object.
@@ -347,7 +347,7 @@ public class FilePreview
    *
    * @param value 	the preview handler
    */
-  public void setPreview(AbstractContentHandler value) {
+  public void setPreview(ContentHandler value) {
     m_Preview = value;
     reset();
   }
@@ -357,7 +357,7 @@ public class FilePreview
    *
    * @return 		the preview handler
    */
-  public AbstractContentHandler getPreview() {
+  public ContentHandler getPreview() {
     return m_Preview;
   }
 
@@ -441,9 +441,9 @@ public class FilePreview
    */
   @Override
   protected void display(Token token) {
-    File			file;
-    JPanel			parent;
-    AbstractContentHandler	preview;
+    File		file;
+    JPanel		parent;
+    ContentHandler	preview;
 
     if (token.getPayload() instanceof String)
       file = new PlaceholderFile((String) token.getPayload());

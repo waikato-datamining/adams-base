@@ -78,7 +78,7 @@ public class PDFTextHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     TextEditorPanel	result;
 
     result = new TextEditorPanel();

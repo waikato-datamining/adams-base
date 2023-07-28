@@ -795,11 +795,11 @@ adams.gui.tools.findinfiles.AbstractFindInFilesAction=\
   adams.gui.tools.findinfiles
 
 # the archive handlers for the preview browser
-adams.gui.tools.previewbrowser.AbstractArchiveHandler=\
+adams.gui.tools.previewbrowser.ArchiveHandler=\
   adams.gui.tools.previewbrowser
 
 # the content handlers for the preview browser
-adams.gui.tools.previewbrowser.AbstractContentHandler=\
+adams.gui.tools.previewbrowser.ContentHandler=\
   adams.gui.tools.previewbrowser
 
 # the viewers for serialized objects

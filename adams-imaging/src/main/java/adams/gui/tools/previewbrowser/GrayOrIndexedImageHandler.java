@@ -195,7 +195,7 @@ public class GrayOrIndexedImageHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     ImagePanel				panel;
     BufferedImageContainer		cont;
     GrayOrIndexedColorizer		colorizer;

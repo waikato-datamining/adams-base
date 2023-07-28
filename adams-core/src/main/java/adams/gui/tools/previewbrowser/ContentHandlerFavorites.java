@@ -15,7 +15,7 @@
 
 /*
  * ContentHandlerFavorites.java
- * Copyright (C) 2021-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -74,7 +74,7 @@ public class ContentHandlerFavorites
      * @param name	the name
      * @param handler	the handler
      */
-    public ContentHandlerFavorite(String ext, String name, AbstractContentHandler handler) {
+    public ContentHandlerFavorite(String ext, String name, ContentHandler handler) {
       this(ext, name, OptionUtils.getCommandLine(handler));
     }
 
@@ -123,12 +123,12 @@ public class ContentHandlerFavorites
      *
      * @return		the instance, null if failed to instantiate
      */
-    public AbstractContentHandler getHandler() {
+    public ContentHandler getHandler() {
       if (m_Commandline.trim().isEmpty())
 	return null;
 
       try {
-	return (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, m_Commandline);
+	return (ContentHandler) OptionUtils.forCommandLine(ContentHandler.class, m_Commandline);
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to parse command-line: " + m_Commandline, e);
@@ -307,7 +307,7 @@ public class ContentHandlerFavorites
               }
               continue;
             }
-	    favorite = new ContentHandlerFavorite(ext, name, (AbstractContentHandler) OptionUtils.forCommandLine(AbstractContentHandler.class, cmdline));
+	    favorite = new ContentHandlerFavorite(ext, name, (ContentHandler) OptionUtils.forCommandLine(ContentHandler.class, cmdline));
 	    favorites.add(favorite);
 	  }
 	  catch (Exception e) {
@@ -379,7 +379,7 @@ public class ContentHandlerFavorites
    * @param handler	the handler
    * @return		the generated favorite
    */
-  public synchronized ContentHandlerFavorite addFavorite(String ext, String name, AbstractContentHandler handler) {
+  public synchronized ContentHandlerFavorite addFavorite(String ext, String name, ContentHandler handler) {
     ContentHandlerFavorite result;
 
     result = new ContentHandlerFavorite(ext, name, handler);
@@ -398,7 +398,7 @@ public class ContentHandlerFavorites
    * @param handler	the handler
    * @return		the generated favorite
    */
-  public synchronized boolean updateFavorite(String ext, String name, AbstractContentHandler handler) {
+  public synchronized boolean updateFavorite(String ext, String name, ContentHandler handler) {
     boolean		 	result;
     ContentHandlerFavorite 	updated;
 
@@ -528,7 +528,7 @@ public class ContentHandlerFavorites
     // for adding a favorite
     item = new JMenuItem("Add to favorites...");
     item.addActionListener((ActionEvent e) -> {
-      AbstractContentHandler current = display.getActualContentHandler();
+      ContentHandler current = display.getActualContentHandler();
       String name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
       if (name == null)
 	return;
@@ -550,7 +550,7 @@ public class ContentHandlerFavorites
 	  int retVal = GUIHelper.showConfirmMessage(display.getParent(), "Do you want to update favorite '" + f.getName() + "'?");
 	  if (retVal != ApprovalDialog.APPROVE_OPTION)
 	    return;
-	  AbstractContentHandler current = display.getActualContentHandler();
+	  ContentHandler current = display.getActualContentHandler();
 	  ContentHandlerFavorites.getSingleton().updateFavorite(ext, f.getName(), current);
 	  customizeDropDownButton(button, ext, display);
 	});

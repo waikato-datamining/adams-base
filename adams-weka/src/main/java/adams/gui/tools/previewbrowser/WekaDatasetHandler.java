@@ -19,10 +19,10 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
-import weka.gui.arffviewer.ArffPanel;
 import adams.core.Utils;
+import weka.gui.arffviewer.ArffPanel;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -79,7 +79,7 @@ public class WekaDatasetHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     ArffPanel	panel;
     
     panel = new ArffPanel(file.getAbsolutePath());

@@ -19,10 +19,10 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
 import adams.core.io.FileUtils;
 import adams.gui.core.TextEditorPanel;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -75,7 +75,7 @@ public class HexaDecimalHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     TextEditorPanel	panel;
 
     panel = new TextEditorPanel();

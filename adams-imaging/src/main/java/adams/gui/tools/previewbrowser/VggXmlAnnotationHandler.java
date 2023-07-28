@@ -84,7 +84,7 @@ public class VggXmlAnnotationHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     final BasePanel			result;
     final Table 			table;
     File				reportFile;

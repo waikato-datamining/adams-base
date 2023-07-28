@@ -81,7 +81,7 @@ public class JsonTreeViewHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     PreviewPanel	result;
     TextEditorPanel	textPanel;
     JSONParser		parser;

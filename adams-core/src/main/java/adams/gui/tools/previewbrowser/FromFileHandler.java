@@ -128,12 +128,12 @@ public class FromFileHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
-    JPanel 			panel;
-    List<String> 		lines;
-    String			setup;
-    AbstractContentHandler	handler;
-    String			msg;
+  public PreviewPanel createPreview(File file) {
+    JPanel 		panel;
+    List<String> 	lines;
+    String		setup;
+    ContentHandler	handler;
+    String		msg;
 
     msg = checkFile(m_Configuration);
     if (msg != null) {
@@ -144,7 +144,7 @@ public class FromFileHandler
     try {
       lines = FileUtils.loadFromFile(m_Configuration, null, true);
       setup = Utils.flatten(lines, "\n");
-      handler = (AbstractContentHandler) OptionUtils.forString(AbstractContentHandler.class, setup);
+      handler = (ContentHandler) OptionUtils.forString(ContentHandler.class, setup);
       panel = handler.createPreview(file);
       return new PreviewPanel(panel, panel);
     }

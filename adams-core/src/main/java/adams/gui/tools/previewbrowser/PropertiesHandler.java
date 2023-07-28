@@ -84,7 +84,7 @@ public class PropertiesHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     BasePanel			result;
     Properties			props;
     PropertiesTableModel	model;

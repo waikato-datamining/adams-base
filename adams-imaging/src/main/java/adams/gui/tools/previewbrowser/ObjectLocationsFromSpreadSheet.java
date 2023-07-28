@@ -1480,7 +1480,7 @@ public class ObjectLocationsFromSpreadSheet
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     CombinedPanel 	panel;
     Report		report;
 

@@ -19,16 +19,15 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-import java.util.List;
-
-import javax.swing.SwingUtilities;
-
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.AbstractReportReader;
 import adams.data.report.Report;
 import adams.gui.visualization.report.ReportFactory;
+
+import javax.swing.SwingUtilities;
+import java.io.File;
+import java.util.List;
 
 /**
  * Ancestor for handlers that display reports.
@@ -68,7 +67,7 @@ public abstract class AbstractReportHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     final ReportFactory.Panel	panel;
     AbstractReportReader	reader;
     List			reports;

@@ -63,6 +63,7 @@ import adams.gui.event.SearchEvent;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 import adams.gui.tools.previewbrowser.AbstractArchiveHandler;
+import adams.gui.tools.previewbrowser.ArchiveHandler;
 import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 import adams.gui.tools.previewbrowser.PropertiesManager;
@@ -648,7 +649,7 @@ public class PreviewBrowserPanel
       for (Class cls: handlers)
 	m_ModelArchiveHandlers.addElement(cls.getName());
       m_PanelArchiveHandlers.setVisible(m_ModelArchiveHandlers.getSize() > 1);
-      AbstractArchiveHandler preferred = PropertiesManager.getPreferredArchiveHandler(localFiles[0]);
+      ArchiveHandler preferred = PropertiesManager.getPreferredArchiveHandler(localFiles[0]);
       // set preferred one
       m_ComboBoxArchiveHandlers.setSelectedIndex(0);
       if (preferred != null) {

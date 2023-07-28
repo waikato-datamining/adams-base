@@ -212,7 +212,7 @@ public class PlainTextHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     JPanel 		panel;
     List<String> 	lines;
 

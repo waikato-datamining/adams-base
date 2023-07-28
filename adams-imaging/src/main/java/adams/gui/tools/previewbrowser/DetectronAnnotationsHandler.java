@@ -394,7 +394,7 @@ public class DetectronAnnotationsHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     ImagePanel 				panel;
     ObjectLocationsOverlayFromReport	overlay;
     File				reportFile;

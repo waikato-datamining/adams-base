@@ -134,7 +134,7 @@ public class ReportHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     BasePanel			result;
     List<Report> 		reports;
     ReportFactory.Table		table;

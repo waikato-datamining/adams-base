@@ -19,10 +19,10 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-
 import adams.core.Utils;
 import adams.gui.tools.ConsoleOutputAnalyzerPanel;
+
+import java.io.File;
 
 /**
  <!-- globalinfo-start -->
@@ -79,7 +79,7 @@ public class ConsoleOutputHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     ConsoleOutputAnalyzerPanel	panel;
 
     panel = new ConsoleOutputAnalyzerPanel();

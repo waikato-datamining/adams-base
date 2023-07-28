@@ -19,10 +19,6 @@
  */
 package adams.gui.tools.previewbrowser;
 
-import java.awt.BorderLayout;
-import java.io.File;
-import java.util.List;
-
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
@@ -32,6 +28,10 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
 import adams.gui.scripting.SyntaxDocument;
+
+import java.awt.BorderLayout;
+import java.io.File;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +88,7 @@ public class ScriptHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     BasePanel		result;
     BaseTextPane	textPane;
     Properties		props;

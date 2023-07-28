@@ -15,7 +15,7 @@
 
 /*
  * AbstractArchiveHandler.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -26,8 +26,10 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ancestor of all archive handlers.
@@ -35,7 +37,8 @@ import java.util.Vector;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractArchiveHandler
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ArchiveHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 3774402480647722078L;
@@ -44,32 +47,26 @@ public abstract class AbstractArchiveHandler
   protected PlaceholderFile m_Archive;
 
   /** the extenstion archive handlers relation. */
-  protected static Hashtable<String,Vector<Class>> m_Relation;
+  protected static Map<String,List<Class>> m_Relation;
 
   /**
    * Adds options to the internal list of options.
    */
+  @Override
   public void defineOptions() {
     super.defineOptions();
 
     m_OptionManager.add(
-	"archive", "archive",
-	new PlaceholderFile("."));
+      "archive", "archive",
+      new PlaceholderFile("."));
   }
-
-  /**
-   * Returns the list of extensions (without dot) that this handler can
-   * take care of.
-   *
-   * @return		the list of extensions (no dot)
-   */
-  public abstract String[] getExtensions();
 
   /**
    * Sets the archive to get the files from.
    *
    * @param value	the archive
    */
+  @Override
   public void setArchive(PlaceholderFile value) {
     m_Archive = value;
     reset();
@@ -80,6 +77,7 @@ public abstract class AbstractArchiveHandler
    *
    * @return		the archive
    */
+  @Override
   public PlaceholderFile getArchive() {
     return m_Archive;
   }
@@ -90,6 +88,7 @@ public abstract class AbstractArchiveHandler
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String archiveTipText() {
     return "The archive to obtain the files from.";
   }
@@ -117,6 +116,7 @@ public abstract class AbstractArchiveHandler
    * @return		the files
    * @see		#extract(String, File)
    */
+  @Override
   public String[] getFiles() {
     checkArchive();
     return listFiles();
@@ -140,6 +140,7 @@ public abstract class AbstractArchiveHandler
    * @return		true if successfully extracted
    * @see		#listFiles()
    */
+  @Override
   public boolean extract(String archiveFile, File outFile) {
     checkArchive();
     return doExtract(archiveFile, outFile);
@@ -151,7 +152,7 @@ public abstract class AbstractArchiveHandler
    * @return		the handler classnames
    */
   public static String[] getHandlers() {
-    return ClassLister.getSingleton().getClassnames(AbstractArchiveHandler.class);
+    return ClassLister.getSingleton().getClassnames(ArchiveHandler.class);
   }
 
   /**
@@ -159,24 +160,24 @@ public abstract class AbstractArchiveHandler
    *
    * @return		the relation
    */
-  protected static synchronized Hashtable<String,Vector<Class>> getRelation() {
-    String[]			handlers;
-    int				i;
-    int				n;
-    AbstractArchiveHandler	handler;
-    String[]			extensions;
-    Vector<Class>		classes;
+  protected static synchronized Map<String, List<Class>> getRelation() {
+    String[]		handlers;
+    int			i;
+    int			n;
+    ArchiveHandler	handler;
+    String[]		extensions;
+    List<Class>		classes;
 
     if (m_Relation == null) {
-      m_Relation = new Hashtable<String,Vector<Class>>();
+      m_Relation = new Hashtable<>();
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  handler    = (AbstractArchiveHandler) ClassManager.getSingleton().forName(handlers[i]).getDeclaredConstructor().newInstance();
+	  handler    = (ArchiveHandler) ClassManager.getSingleton().forName(handlers[i]).getDeclaredConstructor().newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    if (!m_Relation.containsKey(extensions[n]))
-	      m_Relation.put(extensions[n], new Vector<Class>());
+	      m_Relation.put(extensions[n], new ArrayList<>());
 	    classes = m_Relation.get(extensions[n]);
 	    classes.add(handler.getClass());
 	  }
@@ -226,7 +227,7 @@ public abstract class AbstractArchiveHandler
    * @param file	the file to get the handlers for
    * @return		the handlers, null if none available
    */
-  public static Vector<Class> getHandlersForFile(File file) {
+  public static List<Class> getHandlersForFile(File file) {
     return getHandlersForFile(file.getAbsolutePath());
   }
 
@@ -236,8 +237,8 @@ public abstract class AbstractArchiveHandler
    * @param filename	the file to get the handlers for
    * @return		the handlers, null if none available
    */
-  public static Vector<Class> getHandlersForFile(String filename) {
-    Vector<Class>	result;
+  public static List<Class> getHandlersForFile(String filename) {
+    List<Class>		result;
     String		extension;
 
     extension = FileUtils.getExtension(filename);

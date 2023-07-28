@@ -15,7 +15,7 @@
 
 /*
  * PreviewDisplay.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -78,7 +78,7 @@ public class PreviewDisplay
   protected DefaultComboBoxModel<String> m_ModelContentHandlers;
 
   /** the list of content handler objects (aligned with combobox). */
-  protected List<AbstractContentHandler> m_ListContentHandlers;
+  protected List<ContentHandler> m_ListContentHandlers;
 
   /** the button with the favorites. */
   protected BaseButtonWithDropDownMenu m_ButtonFavorites;
@@ -117,7 +117,7 @@ public class PreviewDisplay
   protected boolean m_UseFixedContentHandler;
 
   /** the last content handler. */
-  protected AbstractContentHandler m_LastContentHandler;
+  protected ContentHandler m_LastContentHandler;
 
   /**
    * Initializes the members.
@@ -135,7 +135,7 @@ public class PreviewDisplay
     m_ReusePreviews               = true;
     m_Favorites                   = new HashMap<>();
     m_CurrentFavorite             = null;
-    m_UseFixedContentHandler = false;
+    m_UseFixedContentHandler      = false;
     m_LastContentHandler          = null;
   }
 
@@ -217,7 +217,7 @@ public class PreviewDisplay
    *
    * @return		the handler in use
    */
-  public AbstractContentHandler getActualContentHandler() {
+  public ContentHandler getActualContentHandler() {
     if (m_CurrentFavorite != null)
       return m_CurrentFavorite.getHandler();
     else
@@ -229,7 +229,7 @@ public class PreviewDisplay
    *
    * @return    the handler, null if a favorite was selected
    */
-  public AbstractContentHandler getContentHandler() {
+  public ContentHandler getContentHandler() {
     int				index;
 
     if (m_ComboBoxContentHandlers.getSelectedIndex() < 1)
@@ -246,7 +246,7 @@ public class PreviewDisplay
   protected void editContentHandler() {
     GenericObjectEditorDialog				dialog;
     int							index;
-    AbstractContentHandler				handler;
+    ContentHandler					handler;
     ContentHandlerFavorites.ContentHandlerFavorite  	favorite;
     int							i;
 
@@ -270,9 +270,9 @@ public class PreviewDisplay
       dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
     else
       dialog = new GenericObjectEditorDialog(getParentFrame(), true);
-    dialog.setUISettingsPrefix(AbstractContentHandler.class);
+    dialog.setUISettingsPrefix(ContentHandler.class);
     dialog.getGOEEditor().setCanChangeClassInDialog(true);
-    dialog.getGOEEditor().setClassType(AbstractContentHandler.class);
+    dialog.getGOEEditor().setClassType(ContentHandler.class);
     dialog.setCurrent(handler);
     dialog.setLocationRelativeTo(getParent());
     dialog.setVisible(true);
@@ -282,11 +282,11 @@ public class PreviewDisplay
     m_PreviewCache.remove(handler.toCommandLine());
 
     if (index == -1) {
-      favorite = new ContentHandlerFavorites.ContentHandlerFavorite(m_CurrentExtension, m_CurrentFavorite.m_Name, (AbstractContentHandler) dialog.getCurrent());
+      favorite = new ContentHandlerFavorites.ContentHandlerFavorite(m_CurrentExtension, m_CurrentFavorite.m_Name, (ContentHandler) dialog.getCurrent());
       updateFavorite(m_CurrentExtension, favorite);
     }
     else {
-      handler = (AbstractContentHandler) dialog.getCurrent();
+      handler = (ContentHandler) dialog.getCurrent();
       PropertiesManager.setCustomContentHandler(handler);
       index = -1;
       for (i = 0; i < m_ListContentHandlers.size(); i++) {
@@ -354,13 +354,13 @@ public class PreviewDisplay
    * @return		the preview
    */
   protected JPanel createPreview(final File[] localFiles) {
-    PreviewPanel 		result;
-    List<Class> 		handlers;
-    AbstractContentHandler 	preferred;
-    int				i;
-    AbstractContentHandler 	contentHandler;
-    int 			prefIndex;
-    String			ext;
+    PreviewPanel 	result;
+    List<Class> 	handlers;
+    ContentHandler 	preferred;
+    int			i;
+    ContentHandler 	contentHandler;
+    int 		prefIndex;
+    String		ext;
 
     result = null;
     ext    = determineExtension(localFiles);
@@ -530,10 +530,10 @@ public class PreviewDisplay
    * Updates the preferred handler.
    */
   protected void updatePreferredContentHandler() {
-    String			ext;
-    AbstractContentHandler handler;
-    int				index;
-    List<String>		exts;
+    String		ext;
+    ContentHandler 	handler;
+    int			index;
+    List<String>	exts;
 
     if (m_CurrentFiles == null)
       return;

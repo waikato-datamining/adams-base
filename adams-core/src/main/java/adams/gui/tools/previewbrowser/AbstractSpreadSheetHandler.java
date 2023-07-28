@@ -114,7 +114,7 @@ public abstract class AbstractSpreadSheetHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     BasePanel		result;
     BaseTabbedPane	tabbedPane;
     SpreadSheetPanel 	panel;

@@ -15,7 +15,7 @@
 
 /*
  * AbstractContentHandler.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -40,24 +40,14 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractContentHandler
-  extends AbstractOptionHandler {
+  extends AbstractOptionHandler
+  implements ContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 2722977281064051787L;
 
-  /** the match-all extension. */
-  public final static String MATCH_ALL = "*";
-
   /** the extenstion archive handlers relation. */
   protected static Hashtable<String,List<Class>> m_Relation;
-
-  /**
-   * Returns the list of extensions (without dot) that this handler can
-   * take care of.
-   *
-   * @return		the list of extensions (no dot)
-   */
-  public abstract String[] getExtensions();
 
   /**
    * Performs some checks on the file.
@@ -83,6 +73,7 @@ public abstract class AbstractContentHandler
    * @param file	the file to create the view for
    * @return		the preview
    */
+  @Override
   public PreviewPanel reusePreview(File file, PreviewPanel lastPreview) {
     return createPreview(file);
   }
@@ -93,7 +84,7 @@ public abstract class AbstractContentHandler
    * @param file	the file to create the view for
    * @return		the preview
    */
-  protected abstract PreviewPanel createPreview(File file);
+  public abstract PreviewPanel createPreview(File file);
 
   /**
    * Returns the preview for the specified file.
@@ -102,6 +93,7 @@ public abstract class AbstractContentHandler
    * @return		the preview, NoPreviewAvailablePanel in case of an error
    * @see		NoPreviewAvailablePanel
    */
+  @Override
   public PreviewPanel getPreview(File file) {
     String	msg;
 
@@ -124,7 +116,7 @@ public abstract class AbstractContentHandler
    * @return		the handler classnames
    */
   public static String[] getHandlers() {
-    return ClassLister.getSingleton().getClassnames(AbstractContentHandler.class);
+    return ClassLister.getSingleton().getClassnames(ContentHandler.class);
   }
 
   /**
@@ -133,20 +125,20 @@ public abstract class AbstractContentHandler
    * @return		the relation
    */
   protected static synchronized Hashtable<String,List<Class>> getRelation() {
-    String[]			handlers;
-    int				i;
-    int				n;
-    AbstractContentHandler	handler;
-    String[]			extensions;
-    String			ext;
-    List<Class>			classes;
+    String[]		handlers;
+    int			i;
+    int			n;
+    ContentHandler	handler;
+    String[]		extensions;
+    String		ext;
+    List<Class>		classes;
 
     if (m_Relation == null) {
       m_Relation = new Hashtable<>();
       handlers   = getHandlers();
       for (i = 0; i < handlers.length; i++) {
 	try {
-	  handler    = (AbstractContentHandler) ClassManager.getSingleton().forName(handlers[i]).getDeclaredConstructor().newInstance();
+	  handler    = (ContentHandler) ClassManager.getSingleton().forName(handlers[i]).getDeclaredConstructor().newInstance();
 	  extensions = handler.getExtensions();
 	  for (n = 0; n < extensions.length; n++) {
 	    ext = extensions[n];

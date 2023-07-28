@@ -83,7 +83,7 @@ public class ApacheCommonsImageMetaDataHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     JPanel panel;
     final SpreadSheetTable 	table;
     SpreadSheet			sheet;

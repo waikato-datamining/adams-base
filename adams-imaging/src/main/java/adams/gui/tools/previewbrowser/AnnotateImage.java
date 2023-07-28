@@ -662,7 +662,7 @@ public class AnnotateImage
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(final File file) {
+  public PreviewPanel createPreview(final File file) {
     BufferedImageContainer	cont;
     CombinedPanel		combined;
 

@@ -84,7 +84,7 @@ public class FileInfoHandler
    * @return		the view
    */
   @Override
-  protected PreviewPanel createPreview(File file) {
+  public PreviewPanel createPreview(File file) {
     BasePanel			result;
     KeyValuePairTableModel	model;
     SortableAndSearchableTable	table;
