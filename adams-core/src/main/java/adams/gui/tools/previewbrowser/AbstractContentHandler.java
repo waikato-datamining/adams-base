@@ -22,8 +22,8 @@ package adams.gui.tools.previewbrowser;
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
-import com.googlecode.jfilechooserbookmarks.core.Utils;
 import nz.ac.waikato.cms.locator.ClassCompare;
 
 import java.io.File;
@@ -103,7 +103,7 @@ public abstract class AbstractContentHandler
         return createPreview(file);
       }
       catch (Exception e) {
-        msg = "Failed to create preview with " + getClass().getName() + ":\n\n" + Utils.throwableToString(e);
+        msg = "Failed to create preview with " + getClass().getName() + ":\n\n" + LoggingHelper.throwableToString(e);
         getLogger().log(Level.SEVERE, msg);
       }
     }

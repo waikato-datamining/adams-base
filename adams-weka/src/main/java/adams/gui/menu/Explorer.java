@@ -22,10 +22,10 @@
 package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
-import com.googlecode.jfilechooserbookmarks.core.Utils;
 import weka.core.converters.AbstractFileLoader;
 import weka.core.converters.ConverterUtils;
 
@@ -74,7 +74,7 @@ public class Explorer
 	explorer.getPreprocessPanel().setInstancesFromFile(loader);
       }
       catch (Exception e) {
-	GUIHelper.showErrorMessage(getOwner(), "Failed to load: " + files[0] + "\n" + Utils.throwableToString(e));
+	GUIHelper.showErrorMessage(getOwner(), "Failed to load: " + files[0] + "\n" + LoggingHelper.throwableToString(e));
       }
     }
   }
