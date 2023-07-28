@@ -802,6 +802,10 @@ adams.gui.tools.previewbrowser.ArchiveHandler=\
 adams.gui.tools.previewbrowser.ContentHandler=\
   adams.gui.tools.previewbrowser
 
+# the content handlers for the preview browser (objects only)
+adams.gui.tools.previewbrowser.ObjectContentHandler=\
+  adams.gui.tools.previewbrowser
+
 # the viewers for serialized objects
 adams.gui.tools.previewbrowser.SerializedObjectViewer=\
   adams.gui.tools.previewbrowser

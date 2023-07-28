@@ -14,8 +14,8 @@
  */
 
 /*
- * ObjectAnnotationsHandler.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * ObjectAnnotationsReportHandler.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -42,6 +42,7 @@ import adams.gui.visualization.object.objectannotations.outline.OutlinePlotter;
 import adams.gui.visualization.object.objectannotations.outline.RectangleOutline;
 import adams.gui.visualization.object.objectannotations.shape.NoShape;
 import adams.gui.visualization.object.objectannotations.shape.ShapePlotter;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -51,15 +52,92 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
+ * Overlays the annotations onto the image.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-image-width &lt;int&gt; (property: imageWidth)
+ * &nbsp;&nbsp;&nbsp;The image width to use; use &lt;= 0 for automatically determining minimal bbox
+ * &nbsp;&nbsp;&nbsp;around annotations.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-image-height &lt;int&gt; (property: imageHeight)
+ * &nbsp;&nbsp;&nbsp;The image height to use; use &lt;= 0 for automatically determining minimal
+ * &nbsp;&nbsp;&nbsp;bbox around annotations.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-image-background &lt;java.awt.Color&gt; (property: imageBackground)
+ * &nbsp;&nbsp;&nbsp;The background color to use for the image.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ *
+ * <pre>-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The reader setup to use for reading the object locations from the spreadsheet.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.ObjectLocationsSpreadSheetReader -reader \"adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\" -row-finder adams.data.spreadsheet.rowfinder.AllFinder -col-left x0 -col-top y0 -col-right x1 -col-bottom y1 -col-type label_str
+ * </pre>
+ *
+ * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
+ * &nbsp;&nbsp;&nbsp;The report field prefix used for objects.
+ * &nbsp;&nbsp;&nbsp;default: Object.
+ * </pre>
+ *
+ * <pre>-cleaner &lt;adams.gui.visualization.object.objectannotations.cleaning.AnnotationCleaner&gt; [-cleaner ...] (property: cleaners)
+ * &nbsp;&nbsp;&nbsp;The cleaners to apply to the annotations.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-shape-plotter &lt;adams.gui.visualization.object.objectannotations.shape.ShapePlotter&gt; [-shape-plotter ...] (property: shapePlotters)
+ * &nbsp;&nbsp;&nbsp;The plotters to use for drawing the shapes.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-shape-color &lt;adams.gui.visualization.object.objectannotations.colors.AnnotationColors&gt; [-shape-color ...] (property: shapeColors)
+ * &nbsp;&nbsp;&nbsp;The colorizers for the corresponding shape plotters.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-outline-plotter &lt;adams.gui.visualization.object.objectannotations.outline.OutlinePlotter&gt; [-outline-plotter ...] (property: outlinePlotters)
+ * &nbsp;&nbsp;&nbsp;The plotters to use for drawing the outlines.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.objectannotations.outline.RectangleOutline
+ * </pre>
+ *
+ * <pre>-outline-color &lt;adams.gui.visualization.object.objectannotations.colors.AnnotationColors&gt; [-outline-color ...] (property: outlineColors)
+ * &nbsp;&nbsp;&nbsp;The colorizers for the corresponding outline plotters.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.object.objectannotations.colors.FixedColor
+ * </pre>
+ *
+ * <pre>-label-plotter &lt;adams.gui.visualization.object.objectannotations.label.LabelPlotter&gt; [-label-plotter ...] (property: labelPlotters)
+ * &nbsp;&nbsp;&nbsp;The plotters to use for drawing the labels.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-label-color &lt;adams.gui.visualization.object.objectannotations.colors.AnnotationColors&gt; [-label-color ...] (property: labelColors)
+ * &nbsp;&nbsp;&nbsp;The colorizers for the corresponding label plotters.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-show-object-panel &lt;boolean&gt; (property: showObjectPanel)
+ * &nbsp;&nbsp;&nbsp;If enabled, the panel for selecting located objects is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ObjectAnnotationsReportHandler
-  extends AbstractContentHandler
+  extends AbstractObjectContentHandler
   implements ObjectPrefixHandler {
 
   private static final long serialVersionUID = -6655562227841341465L;
@@ -626,11 +704,10 @@ public class ObjectAnnotationsReportHandler
   /**
    * Loads the report associated with the image.
    *
-   * @param panel 	the context panel
    * @param file	the image file
    * @return		the report, null if failed to load report data or none available
    */
-  protected Report loadAnnotations(ImagePanel panel, File file) {
+  protected Report loadAnnotations(File file) {
     Report 		result;
     List<Report> 	reports;
 
@@ -639,7 +716,7 @@ public class ObjectAnnotationsReportHandler
       m_Reader.setInput(new PlaceholderFile(file));
       reports = m_Reader.read();
       if (reports.size() > 0)
-	result = reports.get(0);
+        result = reports.get(0);
     }
 
     return result;
@@ -676,27 +753,27 @@ public class ObjectAnnotationsReportHandler
       maxHeight = -1;
 
       if ((width <= 0) || (height <= 0)) {
-	objs      = LocatedObjects.fromReport(report, m_Prefix);
-	for (LocatedObject obj: objs) {
-	  right     = obj.getX() + obj.getWidth() - 1;
-	  bottom    = obj.getY() + obj.getHeight() - 1;
-	  maxWidth  = Math.max(maxWidth, right);
-	  maxHeight = Math.max(maxHeight, bottom);
-	}
+        objs      = LocatedObjects.fromReport(report, m_Prefix);
+        for (LocatedObject obj: objs) {
+          right     = obj.getX() + obj.getWidth() - 1;
+          bottom    = obj.getY() + obj.getHeight() - 1;
+          maxWidth  = Math.max(maxWidth, right);
+          maxHeight = Math.max(maxHeight, bottom);
+        }
       }
 
       if (width <= 0) {
-	if (maxWidth > -1)
-	  width = maxWidth + 10;
-	else
-	  width = MISSING_WIDTH;
+        if (maxWidth > -1)
+          width = maxWidth + 10;
+        else
+          width = MISSING_WIDTH;
       }
 
       if (height <= 0) {
-	if (maxHeight > -1)
-	  height = maxHeight + 10;
-	else
-	  height = MISSING_HEIGHT;
+        if (maxHeight > -1)
+          height = maxHeight + 10;
+        else
+          height = MISSING_HEIGHT;
       }
     }
 
@@ -718,8 +795,57 @@ public class ObjectAnnotationsReportHandler
    */
   @Override
   public PreviewPanel createPreview(File file) {
+    return createPreview(loadAnnotations(file));
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param file	the file to create the view for
+   * @return		the view
+   */
+  @Override
+  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
+    return reusePreview(loadAnnotations(file), previewPanel);
+  }
+
+  /**
+   * Checks whether the class is handled by this content handler.
+   *
+   * @param cls		the class to check
+   * @return		true if handled
+   */
+  @Override
+  public boolean canHandle(Class cls) {
+    return ClassLocator.isSubclass(Report.class, cls);
+  }
+
+  /**
+   * Reuses the last preview, if possible.
+   *
+   * @param obj		the object to create the view for
+   * @return		the preview
+   */
+  @Override
+  public PreviewPanel reusePreview(Object obj, PreviewPanel lastPreview) {
+    ImagePanel 	panel;
+
+    panel  = (ImagePanel) lastPreview.getComponent();
+    panel.setCurrentImage(createImage((Report) obj));
+    panel.setAdditionalProperties((Report) obj);
+
+    return lastPreview;
+  }
+
+  /**
+   * Creates the actual preview.
+   *
+   * @param obj		the object to create the view for
+   * @return		the preview
+   */
+  @Override
+  public PreviewPanel createPreview(Object obj) {
     ImagePanel 		panel;
-    Report 		report;
     ObjectAnnotations 	overlay;
 
     overlay = new ObjectAnnotations();
@@ -735,29 +861,9 @@ public class ObjectAnnotationsReportHandler
     panel  = new ImagePanel();
     panel.getUndo().setEnabled(false);
     panel.addImageOverlay(overlay);
-    report = loadAnnotations(panel, file);
-    panel.setCurrentImage(createImage(report));
-    panel.setAdditionalProperties(report);
+    panel.setCurrentImage(createImage((Report) obj));
+    panel.setAdditionalProperties((Report) obj);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
-  }
-
-  /**
-   * Reuses the last preview, if possible.
-   *
-   * @param file	the file to create the view for
-   * @return		the view
-   */
-  @Override
-  public PreviewPanel reusePreview(File file, PreviewPanel previewPanel) {
-    ImagePanel 	panel;
-    Report	report;
-
-    panel  = (ImagePanel) previewPanel.getComponent();
-    report = loadAnnotations(panel, file);
-    panel.setCurrentImage(createImage(report));
-    panel.setAdditionalProperties(report);
-
-    return previewPanel;
   }
 }

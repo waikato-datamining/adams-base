@@ -15,7 +15,7 @@
 
 /*
  * PlainTextHandler.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -25,6 +25,7 @@ import adams.gui.core.TextEditorPanel;
 
 import javax.swing.JPanel;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -34,13 +35,26 @@ import java.util.List;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
  *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
+ * <pre>-tab-size &lt;int&gt; (property: tabSize)
+ * &nbsp;&nbsp;&nbsp;The number of characters to use for a tab.
+ * &nbsp;&nbsp;&nbsp;default: 8
  * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-line-wrap &lt;boolean&gt; (property: lineWrap)
+ * &nbsp;&nbsp;&nbsp;Whether to wrap lines or not.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-wrap-style-word &lt;boolean&gt; (property: wrapStyleWord)
+ * &nbsp;&nbsp;&nbsp;Whether to wrap lines at word boundaries or characters.
+ * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
  <!-- options-end -->
@@ -48,7 +62,7 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PlainTextHandler
-  extends AbstractContentHandler {
+  extends AbstractObjectContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 4859255638148506547L;
@@ -219,21 +233,71 @@ public class PlainTextHandler
     try {
       lines = FileUtils.loadFromFile(file, null, true);
       if (lines == null) {
-        panel = new FailedToCreatePreviewPanel();
-        return new PreviewPanel(panel, panel);
+	panel = new FailedToCreatePreviewPanel();
+	return new PreviewPanel(panel, panel);
       }
       else {
-        panel = new TextEditorPanel();
-        ((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
-        ((TextEditorPanel) panel).setEditable(false);
-        ((TextEditorPanel) panel).setTabSize(m_TabSize);
-        ((TextEditorPanel) panel).setLineWrap(m_LineWrap);
-        ((TextEditorPanel) panel).setWrapStyleWord(m_WrapStyleWord);
-        return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
+	panel = new TextEditorPanel();
+	((TextEditorPanel) panel).setContent(Utils.flatten(lines, "\n"));
+	((TextEditorPanel) panel).setEditable(false);
+	((TextEditorPanel) panel).setTabSize(m_TabSize);
+	((TextEditorPanel) panel).setLineWrap(m_LineWrap);
+	((TextEditorPanel) panel).setWrapStyleWord(m_WrapStyleWord);
+	return new PreviewPanel(panel, ((TextEditorPanel) panel).getTextArea());
       }
     }
     catch (Exception e) {
       return new NoPreviewAvailablePanel();
     }
+  }
+
+  /**
+   * Checks whether the class is handled by this content handler.
+   *
+   * @param cls the class to check
+   * @return true if handled
+   */
+  @Override
+  public boolean canHandle(Class cls) {
+    return true;
+  }
+
+  /**
+   * Creates the actual preview.
+   *
+   * @param obj the object to create the view for
+   * @return the preview
+   */
+  @Override
+  public PreviewPanel createPreview(Object obj) {
+    TextEditorPanel 	panel;
+    StringBuilder 	text;
+    int			i;
+    Object		item;
+
+    text = new StringBuilder();
+    if (obj.getClass().isArray()) {
+      for (i = 0; i < Array.getLength(obj); i++) {
+	if (i > 0)
+	  text.append("\n");
+	item = Array.get(obj, i);
+	if (item == null)
+	  text.append("<null>");
+	else
+	  text.append(item.toString());
+      }
+    }
+    else {
+      text.append(obj.toString());
+    }
+
+    panel = new TextEditorPanel();
+    panel.setContent(text.toString());
+    panel.setEditable(false);
+    panel.setTabSize(m_TabSize);
+    panel.setLineWrap(m_LineWrap);
+    panel.setWrapStyleWord(m_WrapStyleWord);
+
+    return new PreviewPanel(panel, panel.getTextArea());
   }
 }
