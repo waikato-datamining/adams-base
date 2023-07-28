@@ -831,7 +831,7 @@ public class ObjectAnnotationsReportHandler
     ImagePanel 	panel;
 
     panel  = (ImagePanel) lastPreview.getComponent();
-    panel.setCurrentImage(createImage((Report) obj));
+    panel.setCurrentImage(createImage((Report) obj), panel.getScale());
     panel.setAdditionalProperties((Report) obj);
 
     return lastPreview;
@@ -861,7 +861,7 @@ public class ObjectAnnotationsReportHandler
     panel  = new ImagePanel();
     panel.getUndo().setEnabled(false);
     panel.addImageOverlay(overlay);
-    panel.setCurrentImage(createImage((Report) obj));
+    panel.setCurrentImage(createImage((Report) obj), -1);
     panel.setAdditionalProperties((Report) obj);
 
     return new PreviewPanel(panel, panel.getPaintPanel());
