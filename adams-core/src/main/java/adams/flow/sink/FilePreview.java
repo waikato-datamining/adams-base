@@ -253,8 +253,11 @@ public class FilePreview
       return m_PreviewPanel;
     }
   }
-  
-  /** the panel with the image. */
+
+  /** the wrapper panel. */
+  protected BasePanel m_WrapperPanel;
+
+  /** the panel with the preview. */
   protected PreviewPanel m_PreviewPanel;
 
   /** whether to use a custom preview. */
@@ -405,11 +408,11 @@ public class FilePreview
    */
   @Override
   public void clearPanel() {
-    if (m_PreviewPanel != null) {
-      m_PreviewPanel.removeAll();
-      m_PreviewPanel.getParent().invalidate();
-      m_PreviewPanel.getParent().validate();
-      m_PreviewPanel.repaint();
+    if (m_WrapperPanel != null) {
+      m_WrapperPanel.removeAll();
+      m_WrapperPanel.getParent().invalidate();
+      m_WrapperPanel.getParent().validate();
+      m_WrapperPanel.repaint();
     }
   }
 
@@ -420,8 +423,10 @@ public class FilePreview
    */
   @Override
   protected BasePanel newPanel() {
+    m_WrapperPanel = new BasePanel(new BorderLayout());
     m_PreviewPanel = new PreviewPanel(new NoPreviewAvailablePanel());
-    return m_PreviewPanel;
+    m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
+    return m_WrapperPanel;
   }
 
   /**
@@ -452,13 +457,12 @@ public class FilePreview
     else
       throw new IllegalStateException("Unhandled data type: " + Utils.classToString(token.getPayload()));
 
-    parent = (JPanel) m_PreviewPanel.getParent();
-    parent.remove(m_PreviewPanel);
+    m_WrapperPanel.remove(m_PreviewPanel);
     m_PreviewPanel = null;
     if (!AbstractArchiveHandler.hasHandler(file)) {
       if (getUseCustomPreview()) {
 	m_PreviewPanel = new PreviewPanel(getPreview().getPreview(file));
-	parent.add(m_PreviewPanel, BorderLayout.CENTER);
+        m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
       }
       else {
 	preview = PropertiesManager.getPreferredContentHandler(file);
@@ -467,7 +471,7 @@ public class FilePreview
       }
     }
     if (m_PreviewPanel != null)
-      parent.add(m_PreviewPanel, BorderLayout.CENTER);
+      m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
   }
 
   /**

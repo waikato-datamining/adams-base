@@ -271,7 +271,10 @@ public class ObjectPreview
     }
   }
 
-  /** the panel with the image. */
+  /** the wrapper panel. */
+  protected BasePanel m_WrapperPanel;
+
+  /** the panel with the preview. */
   protected PreviewPanel m_PreviewPanel;
 
   /** whether to use a custom preview. */
@@ -422,11 +425,11 @@ public class ObjectPreview
    */
   @Override
   public void clearPanel() {
-    if (m_PreviewPanel != null) {
-      m_PreviewPanel.removeAll();
-      m_PreviewPanel.getParent().invalidate();
-      m_PreviewPanel.getParent().validate();
-      m_PreviewPanel.repaint();
+    if (m_WrapperPanel != null) {
+      m_WrapperPanel.removeAll();
+      m_WrapperPanel.getParent().invalidate();
+      m_WrapperPanel.getParent().validate();
+      m_WrapperPanel.repaint();
     }
   }
 
@@ -437,8 +440,10 @@ public class ObjectPreview
    */
   @Override
   protected BasePanel newPanel() {
+    m_WrapperPanel = new BasePanel(new BorderLayout());
     m_PreviewPanel = new PreviewPanel(new NoPreviewAvailablePanel());
-    return m_PreviewPanel;
+    m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
+    return m_WrapperPanel;
   }
 
   /**
@@ -466,12 +471,11 @@ public class ObjectPreview
 
     obj = token.getPayload();
 
-    parent = (JPanel) m_PreviewPanel.getParent();
-    parent.remove(m_PreviewPanel);
+    m_WrapperPanel.remove(m_PreviewPanel);
     m_PreviewPanel = null;
     if (getUseCustomPreview()) {
       m_PreviewPanel = new PreviewPanel(getPreview().getPreview(obj));
-      parent.add(m_PreviewPanel, BorderLayout.CENTER);
+      m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
     }
     else {
       handlers = AbstractObjectContentHandler.getObjectHandlersFor(obj);
@@ -490,7 +494,7 @@ public class ObjectPreview
       }
     }
     if (m_PreviewPanel != null)
-      parent.add(m_PreviewPanel, BorderLayout.CENTER);
+      m_WrapperPanel.add(m_PreviewPanel, BorderLayout.CENTER);
   }
 
   /**
