@@ -163,6 +163,7 @@ public abstract class AbstractObjectContentHandler
   public static synchronized List<Class<? extends ObjectContentHandler>> getObjectHandlersFor(Class cls) {
     List<Class<? extends ObjectContentHandler>>	handlers;
     ObjectContentHandler			handler;
+    Class					handlerCls;
 
     if (m_ObjectHandlerMapping == null)
       m_ObjectHandlerMapping = new HashMap<>();
@@ -171,7 +172,11 @@ public abstract class AbstractObjectContentHandler
       handlers = new ArrayList<>();
       for (String clsname : getObjectHandlers()) {
 	try {
-	  handler = (ObjectContentHandler) ClassManager.getSingleton().forName(clsname).getDeclaredConstructor().newInstance();
+	  handlerCls = ClassManager.getSingleton().forName(clsname);
+	  // skip default handler, gets added at the end
+	  if (handlerCls.equals(PlainTextHandler.class))
+	    continue;
+	  handler = (ObjectContentHandler) handlerCls.getDeclaredConstructor().newInstance();
 	  if (handler.canHandle(cls))
 	    handlers.add(handler.getClass());
 	}
@@ -180,6 +185,9 @@ public abstract class AbstractObjectContentHandler
 	  e.printStackTrace();
 	}
       }
+      // add default handler
+      handlers.add(PlainTextHandler.class);
+      // add to cache
       m_ObjectHandlerMapping.put(cls, handlers);
     }
 
