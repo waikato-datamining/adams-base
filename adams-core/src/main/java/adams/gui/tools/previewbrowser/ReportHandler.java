@@ -15,7 +15,7 @@
 
 /*
  * ReportHandler.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
@@ -27,13 +27,14 @@ import adams.data.report.Report;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.visualization.report.ReportFactory;
+import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.File;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays report files: *
+ * Displays report files (depends on selected reader): *
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -41,14 +42,20 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The reader to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ReportHandler
-  extends AbstractContentHandler {
+  extends AbstractObjectContentHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 8930638838922218410L;
@@ -135,16 +142,39 @@ public class ReportHandler
    */
   @Override
   public PreviewPanel createPreview(File file) {
-    BasePanel			result;
     List<Report> 		reports;
-    ReportFactory.Table		table;
 
     m_Reader.setInput(new PlaceholderFile(file));
     reports = m_Reader.read();
     if (reports.size() == 0)
       return new PreviewPanel(new NoPreviewAvailablePanel());
 
-    result = ReportFactory.getPanel(reports.get(0), true);
+    return createPreview(reports.get(0));
+  }
+
+  /**
+   * Checks whether the class is handled by this content handler.
+   *
+   * @param cls the class to check
+   * @return true if handled
+   */
+  @Override
+  public boolean canHandle(Class cls) {
+    return ClassLocator.isSubclass(Report.class, cls);
+  }
+
+  /**
+   * Creates the actual preview.
+   *
+   * @param obj the object to create the view for
+   * @return the preview
+   */
+  @Override
+  public PreviewPanel createPreview(Object obj) {
+    BasePanel			result;
+    ReportFactory.Table		table;
+
+    result = ReportFactory.getPanel((Report) obj, true);
     table  = (ReportFactory.Table) GUIHelper.findFirstComponent(result, ReportFactory.Table.class, true, true);
 
     return new PreviewPanel(result, table);
