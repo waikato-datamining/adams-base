@@ -15,13 +15,14 @@
 
 /*
  * AbstractJavaCodeProducer.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.NamedCounter;
 import adams.core.Utils;
 import adams.core.classmanager.ClassManager;
+import adams.core.management.User;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
@@ -868,7 +869,7 @@ public abstract class AbstractJavaCodeProducer
     m_OutputBuffer.append("/**\n");
     m_OutputBuffer.append(" * Code generated for " + m_SimpleName + "." + "\n");
     m_OutputBuffer.append(" *\n");
-    m_OutputBuffer.append(" * @author " + System.getProperty("user.name") + "\n");
+    m_OutputBuffer.append(" * @author " + User.getName() + "\n");
     m_OutputBuffer.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
     m_OutputBuffer.append(" */\n");
   }

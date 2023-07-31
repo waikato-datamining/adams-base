@@ -265,7 +265,7 @@ public class SSHPanel
       switch (type) {
 	case CREDENTIALS:
 	  m_TextUser = new BaseTextField(8);
-	  m_TextUser.setText(System.getProperty("user.name"));
+	  m_TextUser.setText(User.getName());
 	  label = new JLabel("User");
 	  label.setLabelFor(m_TextUser);
 	  authPanel.add(label);
@@ -278,7 +278,7 @@ public class SSHPanel
 	  break;
 	case PUBLIC_KEY:
 	  m_TextUser = new BaseTextField(8);
-	  m_TextUser.setText(System.getProperty("user.name"));
+	  m_TextUser.setText(User.getName());
 	  label = new JLabel("User");
 	  label.setLabelFor(m_TextUser);
 	  authPanel.add(label);

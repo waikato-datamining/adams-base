@@ -15,7 +15,7 @@
 
 /*
  * PDFMerge.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.env.Environment;
 import adams.flow.core.Token;
 import com.itextpdf.text.Document;
@@ -87,7 +88,6 @@ import java.io.FileOutputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PDFMerge
   extends AbstractTransformer {
@@ -211,7 +211,7 @@ public class PDFMerge
       document.open();
       document.addCreationDate();
       document.addCreator(Environment.getInstance().getProject());
-      document.addAuthor(System.getProperty("user.name"));
+      document.addAuthor(User.getName());
       for (i = 0; i < files.length; i++) {
 	if (isLoggingEnabled())
 	  getLogger().info("Adding file: " + files[i]);

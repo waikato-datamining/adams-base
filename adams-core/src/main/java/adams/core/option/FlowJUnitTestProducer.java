@@ -15,12 +15,13 @@
 
 /*
  * FlowJUnitTestProducer.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.base.BaseClassname;
 import adams.core.base.BaseString;
+import adams.core.management.User;
 import adams.env.Environment;
 
 import java.text.SimpleDateFormat;
@@ -236,7 +237,7 @@ public class FlowJUnitTestProducer
     m_OutputBuffer.append("/**\n");
     m_OutputBuffer.append(" * Test for " + m_SimpleName + " actor." + "\n");
     m_OutputBuffer.append(" *\n");
-    m_OutputBuffer.append(" * @author " + System.getProperty("user.name") + "\n");
+    m_OutputBuffer.append(" * @author " + User.getName() + "\n");
     m_OutputBuffer.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
     m_OutputBuffer.append(" */\n");
   }

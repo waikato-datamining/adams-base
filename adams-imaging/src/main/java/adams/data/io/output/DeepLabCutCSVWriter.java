@@ -15,7 +15,7 @@
 
 /*
  * DeepLabCutCSVWriter.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -23,6 +23,7 @@ package adams.data.io.output;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.data.io.input.DeepLabCutCSVReader;
 import adams.data.report.Report;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -314,7 +315,7 @@ public class DeepLabCutCSVWriter
     row = sheet.getHeaderRow();
     row.addCell("" + 0).setContentAsString("scorer");
     for (i = 0; i < numIndividuals * m_Labels.length * 2; i++)
-      row.addCell("" + (i+1)).setContentAsString(System.getProperty("user.name"));
+      row.addCell("" + (i+1)).setContentAsString(User.getName());
 
     // data
     // individuals

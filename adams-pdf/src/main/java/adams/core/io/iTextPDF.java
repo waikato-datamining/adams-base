@@ -15,7 +15,7 @@
 
 /*
  * iTextPDF.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -23,6 +23,7 @@ package adams.core.io;
 import adams.core.UnorderedRange;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
+import adams.core.management.User;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfCopy;
@@ -70,7 +71,7 @@ public class iTextPDF {
       document.open();
       document.addCreationDate();
       document.addCreator(Environment.getInstance().getProject());
-      document.addAuthor(System.getProperty("user.name"));
+      document.addAuthor(User.getName());
       reader = new PdfReader(input.getAbsolutePath());
       if ((logging != null) && logging.isLoggingEnabled())
 	logging.getLogger().info("- #pages: " + reader.getNumberOfPages());

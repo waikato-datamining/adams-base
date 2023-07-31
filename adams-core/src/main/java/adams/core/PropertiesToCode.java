@@ -15,11 +15,12 @@
 
 /*
  * PropertiesToCode.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
 
+import adams.core.management.User;
 import adams.core.option.AbstractOptionHandler;
 
 import java.io.Serializable;
@@ -349,7 +350,7 @@ public class PropertiesToCode
     else
       output.append(" * ").append(m_Comment).append("\n");
     output.append(" *\n");
-    output.append(" * @author " + System.getProperty("user.name") + "\n");
+    output.append(" * @author " + User.getName() + "\n");
     output.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
     output.append(" */\n");
   }

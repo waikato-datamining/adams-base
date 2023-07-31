@@ -24,6 +24,7 @@ import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
+import adams.core.management.User;
 import adams.core.net.SMBAuthenticationProvider;
 import adams.flow.control.Flow;
 import adams.flow.core.OptionalPasswordPrompt;
@@ -177,7 +178,7 @@ public class SMBConnection
 
     m_OptionManager.add(
       "user", "user",
-      System.getProperty("user.name"), false);
+      User.getName(), false);
 
     m_OptionManager.add(
       "password", "password",

@@ -22,6 +22,7 @@ package adams.gui.chooser;
 
 import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
+import adams.core.management.User;
 import adams.core.net.SMBAuthenticationProvider;
 import adams.core.option.AbstractOptionHandler;
 import jcifs.smb.NtlmPasswordAuthentication;
@@ -78,7 +79,7 @@ public class SmbRemoteDirectorySetup
 
     m_OptionManager.add(
       "user", "user",
-      System.getProperty("user.name"), false);
+      User.getName(), false);
 
     m_OptionManager.add(
       "password", "password",

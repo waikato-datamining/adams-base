@@ -15,7 +15,7 @@
 
 /*
  * CompactFlowProducer.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option;
@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.management.Java;
+import adams.core.management.User;
 import adams.core.option.NestedFormatHelper.Line;
 import adams.env.Environment;
 import adams.env.Modules;
@@ -443,7 +444,7 @@ public class CompactFlowProducer
     if (m_OutputProlog) {
       result.append(COMMENT + " " + PROJECT + ": " + Environment.getInstance().getProject() + "\n");
       result.append(COMMENT + " " + DATE + ": " + getDateFormat().format(new Date()) + "\n");
-      result.append(COMMENT + " " + USER + ": " + System.getProperty("user.name") + "\n");
+      result.append(COMMENT + " " + USER + ": " + User.getName() + "\n");
       result.append(COMMENT + " " + CHARSET + ": " + m_Encoding.charsetValue().name() + "\n");
       result.append(COMMENT + " " + MODULES + ": " + Utils.flatten(Modules.getSingleton().getModules(), ",") + "\n");
       if (m_OutputClasspath)

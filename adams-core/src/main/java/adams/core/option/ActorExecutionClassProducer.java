@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorExecutionClassProducer.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import adams.core.management.User;
 import adams.env.Environment;
 import adams.flow.core.AbstractActor;
-import adams.flow.core.ActorHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates a wrapper class for executing an actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorExecutionClassProducer
   extends AbstractActorJavaCodeProducer {
@@ -166,7 +165,7 @@ public class ActorExecutionClassProducer
     m_OutputBuffer.append("/**\n");
     m_OutputBuffer.append(" * Wrapper class for executing an actor." + "\n");
     m_OutputBuffer.append(" *\n");
-    m_OutputBuffer.append(" * @author " + System.getProperty("user.name") + "\n");
+    m_OutputBuffer.append(" * @author " + User.getName() + "\n");
     m_OutputBuffer.append(" * @author " + getClass().getName() + " (code generator)" + "\n");
     m_OutputBuffer.append(" * @version $" + "Revision" + "$\n");
     m_OutputBuffer.append(" */\n");

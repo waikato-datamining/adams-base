@@ -142,7 +142,7 @@ public abstract class AbstractSSHConnection
 
     m_OptionManager.add(
       "user", "user",
-      System.getProperty("user.name"), false);
+      User.getName(), false);
 
     m_OptionManager.add(
       "password", "password",

@@ -15,7 +15,7 @@
 
 /*
  * PDFGenerator.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
@@ -23,6 +23,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.logging.CustomLoggingLevelObject;
+import adams.core.management.User;
 import adams.data.PageOrientation;
 import adams.env.Environment;
 import com.itextpdf.text.Document;
@@ -398,7 +399,7 @@ public class PDFGenerator
     m_Document.open();
     m_Document.addCreationDate();
     m_Document.addCreator(Environment.getInstance().getProject());
-    m_Document.addAuthor(System.getProperty("user.name"));
+    m_Document.addAuthor(User.getName());
     m_State = new DocumentState();
 
     if (isLoggingEnabled())
@@ -445,7 +446,7 @@ public class PDFGenerator
     m_Document.open();
     m_Document.addCreationDate();
     m_Document.addCreator(Environment.getInstance().getProject());
-    m_Document.addAuthor(System.getProperty("user.name"));
+    m_Document.addAuthor(User.getName());
     m_State = new DocumentState();
     cb      = m_Writer.getDirectContent();
     for (i = 0; i < reader.getNumberOfPages(); i++) {
