@@ -25,6 +25,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
+import adams.core.management.User;
 import adams.core.net.SSHAuthenticationType;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
@@ -248,7 +249,7 @@ public class SSHPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     topPanels.add(panel);
     m_FileChooserPanelKnownHosts = new FileChooserPanel(
-      System.getProperty("user.home")
+      User.getHomeDir()
 	+ File.separator
 	+ ".ssh"
 	+ File.separator
@@ -283,7 +284,7 @@ public class SSHPanel
 	  authPanel.add(label);
 	  authPanel.add(m_TextUser);
 	  m_FileChooserPanelKey = new FileChooserPanel(
-	    System.getProperty("user.home")
+	    User.getHomeDir()
 	      + File.separator
 	      + ".ssh"
 	      + File.separator

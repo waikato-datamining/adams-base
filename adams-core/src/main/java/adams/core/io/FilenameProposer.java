@@ -15,11 +15,12 @@
 
 /*
  * FilenameProposer.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
 import adams.core.logging.LoggingObject;
+import adams.core.management.User;
 import adams.env.Environment;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class FilenameProposer
    * @param suffix	the suffix to use
    */
   public FilenameProposer(String prefix, String suffix) {
-    this(prefix, suffix, System.getProperty("user.home"));
+    this(prefix, suffix, User.getHomeDir());
   }
 
   /**

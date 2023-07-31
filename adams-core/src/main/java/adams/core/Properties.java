@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -27,6 +27,7 @@ import adams.core.io.TempUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.management.OS;
+import adams.core.management.User;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.ColorHelper;
@@ -382,9 +383,9 @@ public class Properties
     if ((s.indexOf('%') > -1) || (s.indexOf('$') > -1)) {
       result = result.replace("%t", TempUtils.getTempDirectoryStr());
       result = result.replace("%p", Environment.getInstance().getHome());
-      result = result.replace("%h", System.getProperty("user.home"));
-      result = result.replace("$HOME", System.getProperty("user.home"));
-      result = result.replace("%USERHOME%", System.getProperty("user.home"));
+      result = result.replace("%h", User.getHomeDir());
+      result = result.replace("$HOME", User.getHomeDir());
+      result = result.replace("%USERHOME%", User.getHomeDir());
       result = result.replace("%c", System.getProperty("user.dir"));
       result = result.replace("%%", "%");
     }
@@ -427,10 +428,10 @@ public class Properties
     result = s;
 
     find = new String[]{
-	System.getProperty("user.dir"),
-	Environment.getInstance().getHome(),
-	System.getProperty("user.home"),
-	TempUtils.getTempDirectoryStr()
+      System.getProperty("user.dir"),
+      Environment.getInstance().getHome(),
+      User.getHomeDir(),
+      TempUtils.getTempDirectoryStr()
     };
     replace = new String[]{
 	"%c",

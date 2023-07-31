@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileBrowser.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.management;
@@ -42,7 +42,7 @@ public class FileBrowser {
    * @return		true if successfully launched
    */
   public static boolean launch() {
-    return launch(new File(System.getProperty("user.home")));
+    return launch(new File(User.getHomeDir()));
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
@@ -25,6 +25,7 @@ import adams.core.StaticClassLister;
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
 import adams.core.management.OS;
+import adams.core.management.User;
 import adams.core.option.OptionUtils;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.terminal.application.AbstractTerminalApplication;
@@ -203,9 +204,9 @@ public abstract class AbstractEnvironment
    */
   public String getDefaultHome(String project) {
     if (OS.isWindows())
-      return System.getProperty("user.home") + "/_" + project;
+      return User.getHomeDir() + "/_" + project;
     else
-      return System.getProperty("user.home") + "/." + project;
+      return User.getHomeDir() + "/." + project;
   }
 
   /**

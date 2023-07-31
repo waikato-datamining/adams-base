@@ -30,6 +30,7 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.core.net.JSchUtils;
 import adams.core.net.SSHAuthenticationType;
 import adams.core.net.SSHSessionProvider;
@@ -317,7 +318,7 @@ public class SSHConnection
     m_OptionManager.add(
       "private-key-file", "privateKeyFile",
       new PlaceholderFile(
-        System.getProperty("user.home")
+        User.getHomeDir()
           + File.separator
           + ".ssh"
           + File.separator
@@ -330,7 +331,7 @@ public class SSHConnection
     m_OptionManager.add(
       "known-hosts", "knownHosts",
       new PlaceholderFile(
-        System.getProperty("user.home")
+        User.getHomeDir()
           + File.separator
           + ".ssh"
           + File.separator
