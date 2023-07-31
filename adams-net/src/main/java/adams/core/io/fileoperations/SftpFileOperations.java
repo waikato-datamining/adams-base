@@ -15,7 +15,7 @@
 
 /*
  * SftpFileOperations.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -93,11 +93,16 @@ public class SftpFileOperations
     switch (m_Direction) {
       case LOCAL_TO_REMOTE:
 	try {
-	  channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
-	  channel.connect();
-	  if (isLoggingEnabled())
-	    getLogger().info("Uploading " + source + " to " + target);
-	  channel.put(new PlaceholderFile(source).getAbsolutePath(), target);
+	  if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	    channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	    channel.connect();
+	    if (isLoggingEnabled())
+	      getLogger().info("Uploading " + source + " to " + target);
+	    channel.put(new PlaceholderFile(source).getAbsolutePath(), target);
+	  }
+	  else {
+	    getLogger().severe("No active connection (copy/" + m_Direction + ")!");
+	  }
 	}
 	catch (Exception e) {
 	  result = LoggingHelper.handleException(this, "Failed to upload file '" + source + "' to '" + target + "': ", e);
@@ -111,12 +116,17 @@ public class SftpFileOperations
 
       case REMOTE_TO_LOCAL:
 	try {
-	  channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
-	  channel.connect();
-	  if (isLoggingEnabled())
-	    getLogger().info("Downloading " + source);
-	  channel.get(source, new PlaceholderFile(target).getAbsolutePath());
-	  channel.disconnect();
+	  if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	    channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	    channel.connect();
+	    if (isLoggingEnabled())
+	      getLogger().info("Downloading " + source);
+	    channel.get(source, new PlaceholderFile(target).getAbsolutePath());
+	    channel.disconnect();
+	  }
+	  else {
+	    getLogger().severe("No active connection (copy/" + m_Direction + ")!");
+	  }
 	}
 	catch (Exception e) {
 	  result = LoggingHelper.handleException(this, "Failed to download file '" + source + "' to '" + target + "': ", e);
@@ -178,12 +188,17 @@ public class SftpFileOperations
 
     channel = null;
     try {
-      channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
-      channel.connect();
-      if (isLoggingEnabled())
-	getLogger().info("Renaming " + source + " to " + target);
-      channel.rename(source, target);
-      channel.disconnect();
+      if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	channel.connect();
+	if (isLoggingEnabled())
+	  getLogger().info("Renaming " + source + " to " + target);
+	channel.rename(source, target);
+	channel.disconnect();
+      }
+      else {
+        getLogger().severe("No active connection (renameRemote)!");
+      }
     }
     catch (Exception e) {
       return LoggingHelper.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
@@ -208,12 +223,17 @@ public class SftpFileOperations
 
     channel = null;
     try {
-      channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
-      channel.connect();
-      if (isLoggingEnabled())
-	getLogger().info("Deleting " + file);
-      channel.rm(file);
-      channel.disconnect();
+      if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	channel.connect();
+	if (isLoggingEnabled())
+	  getLogger().info("Deleting " + file);
+	channel.rm(file);
+	channel.disconnect();
+      }
+      else {
+        getLogger().severe("No active connection (deleteRemote)!");
+      }
     }
     catch (Exception e) {
       return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
@@ -238,12 +258,17 @@ public class SftpFileOperations
 
     channel = null;
     try {
-      channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
-      channel.connect();
-      if (isLoggingEnabled())
-	getLogger().info("Creating directory " + dir);
-      channel.mkdir(dir);
-      channel.disconnect();
+      if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	channel.connect();
+	if (isLoggingEnabled())
+	  getLogger().info("Creating directory " + dir);
+	channel.mkdir(dir);
+	channel.disconnect();
+      }
+      else {
+        getLogger().severe("No active connection (mkdirRemote)!");
+      }
     }
     catch (Exception e) {
       return LoggingHelper.handleException(this, "Failed to create directory: " + dir, e);

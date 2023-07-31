@@ -231,37 +231,42 @@ public class SSHExec
     result = null;
 
     try {
-      channel = m_Connection.getSession().openChannel("exec");
-      ((ChannelExec) channel).setCommand(m_Command);
-      channel.setXForwarding(m_Connection.getForwardX());
-      channel.setInputStream(null);
-      ((ChannelExec)channel).setErrStream(System.err);
-      in     = channel.getInputStream();
-      buffer = new byte[1024];
-      output = new StringBuilder();
-      channel.connect();
-      while (true) {
-        while (in.available() > 0) {
-          read = in.read(buffer, 0, buffer.length);
-          if (read < 0)
+      if ((m_Connection.getSession() != null) && m_Connection.getSession().isConnected()) {
+        channel = m_Connection.getSession().openChannel("exec");
+        ((ChannelExec) channel).setCommand(m_Command);
+        channel.setXForwarding(m_Connection.getForwardX());
+        channel.setInputStream(null);
+        ((ChannelExec) channel).setErrStream(System.err);
+        in = channel.getInputStream();
+        buffer = new byte[1024];
+        output = new StringBuilder();
+        channel.connect();
+        while (true) {
+          while (in.available() > 0) {
+            read = in.read(buffer, 0, buffer.length);
+            if (read < 0)
+              break;
+            output.append(new String(buffer, 0, read));
+          }
+          if (channel.isClosed()) {
+            if (channel.getExitStatus() != 0)
+              result = "Exit code: " + channel.getExitStatus();
             break;
-          output.append(new String(buffer, 0, read));
+          }
+          try {
+            Thread.sleep(200);
+          }
+          catch (Exception ee) {
+            handleException("Failed to sleep", ee);
+          }
         }
-        if (channel.isClosed()) {
-          if (channel.getExitStatus() != 0)
-            result = "Exit code: " + channel.getExitStatus();
-          break;
-        }
-        try {
-          Thread.sleep(200);
-        }
-        catch (Exception ee) {
-          handleException("Failed to sleep", ee);
-        }
+        channel.disconnect();
+        if (result == null)
+          m_OutputToken = new Token(output.toString());
       }
-      channel.disconnect();
-      if (result == null)
-	m_OutputToken = new Token(output.toString());
+      else {
+        result = "No active connection!";
+      }
     }
     catch (Exception e) {
       result = handleException("Failed to execute remote command: " + m_Command, e);
