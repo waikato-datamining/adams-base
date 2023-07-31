@@ -15,7 +15,7 @@
 
 /*
  * MarginCurve.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.User;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.ChildFrame;
@@ -39,7 +40,6 @@ import java.io.File;
  * Displays a margin curve.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MarginCurve
   extends AbstractParameterHandlingWekaMenuItemDefinition {
@@ -73,7 +73,7 @@ public class MarginCurve
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser = new ConverterFileChooser(new File(System.getProperty("user.dir")));
+    m_FileChooser = new ConverterFileChooser(new File(User.getCWD()));
   }
 
   /**

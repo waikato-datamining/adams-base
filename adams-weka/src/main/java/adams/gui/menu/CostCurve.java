@@ -15,13 +15,14 @@
 
 /*
  * CostCurve.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
@@ -67,7 +68,7 @@ public class CostCurve
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser = new ConverterFileChooser(new File(System.getProperty("user.dir")));
+    m_FileChooser = new ConverterFileChooser(new File(User.getCWD()));
   }
 
   /**

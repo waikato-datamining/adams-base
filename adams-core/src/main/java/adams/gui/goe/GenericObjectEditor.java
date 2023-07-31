@@ -28,6 +28,7 @@ import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.User;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.UserMode;
 import adams.core.option.UserModeSupporter;
@@ -568,7 +569,7 @@ public class GenericObjectEditor
       ObjectFileChooser		fileChooser;
 
       if (m_FileChooser == null) {
-	fileChooser   = new ObjectFileChooser(new File(System.getProperty("user.dir")));
+	fileChooser   = new ObjectFileChooser(new File(User.getCWD()));
 	m_FileChooser = fileChooser;
       }
       

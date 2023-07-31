@@ -15,13 +15,14 @@
 
 /*
  * Basejava
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.FilterPanel;
@@ -636,7 +637,7 @@ public class BaseFileChooser
       if (dir.exists() && dir.isDirectory())
 	return dir.getAbsoluteFile();
     }
-    return new File(System.getProperty("user.dir"));
+    return new File(User.getCWD());
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  *    FlowFileEditor.java
- *    Copyright (C) 1999-2022 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,6 +27,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
+import adams.core.management.User;
 import adams.core.option.parsing.FlowFileParsing;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
@@ -106,7 +107,7 @@ public class FlowFileEditor
       currentFile = (FlowFile) getValue();
       fileChooser = new FlowFileChooser();
       if (currentFile == null)
-	fileChooser.setCurrentDirectory(new FlowFile(System.getProperty("user.dir")).getAbsoluteFile());
+	fileChooser.setCurrentDirectory(new FlowFile(User.getCWD()).getAbsoluteFile());
       fileChooser.setApproveButtonText("Select");
       fileChooser.setApproveButtonMnemonic('S');
       fileChooser.addActionListener(new ActionListener() {

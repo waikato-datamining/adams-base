@@ -15,12 +15,13 @@
 
 /*
  * BoundaryVisualizer.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.management.User;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.core.GUIHelper;
@@ -32,7 +33,6 @@ import java.io.File;
  * Displays data in the boundary visualizer.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.gui.boundaryvisualizer.BoundaryVisualizer
  */
 public class BoundaryVisualizer
@@ -66,7 +66,7 @@ public class BoundaryVisualizer
   protected void initialize() {
     super.initialize();
 
-    m_FileChooser = new JFileChooser(new File(System.getProperty("user.dir")));
+    m_FileChooser = new JFileChooser(new File(User.getCWD()));
   }
 
   /**

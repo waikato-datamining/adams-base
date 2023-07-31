@@ -15,12 +15,13 @@
 
 /*
  * Terminal.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.management.User;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
@@ -70,7 +71,7 @@ public class Terminal
    */
   @Override
   public void launch() {
-    adams.core.management.Terminal.launch(new File(System.getProperty("user.dir")));
+    adams.core.management.Terminal.launch(new File(User.getCWD()));
   }
 
   /**

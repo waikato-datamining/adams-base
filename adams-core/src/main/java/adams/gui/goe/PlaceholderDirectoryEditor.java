@@ -15,7 +15,7 @@
 
 /*
  *    PlaceholderDirectoryEditor.java
- *    Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
+import adams.core.management.User;
 import adams.core.option.parsing.PlaceholderDirectoryParsing;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserFactory;
@@ -109,7 +110,7 @@ public class PlaceholderDirectoryEditor
     if (currentDir != null)
       m_DirChooser = DirectoryChooserFactory.createChooser();
     else
-      m_DirChooser = DirectoryChooserFactory.createChooser(new File(System.getProperty("user.dir")));
+      m_DirChooser = DirectoryChooserFactory.createChooser(new File(User.getCWD()));
     m_DirChooser.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
 	String cmdString = e.getActionCommand();
@@ -211,7 +212,7 @@ public class PlaceholderDirectoryEditor
     int				retVal;
     int				i;
 
-    chooser = DirectoryChooserFactory.createChooser(new PlaceholderFile(System.getProperty("user.dir")));
+    chooser = DirectoryChooserFactory.createChooser(new PlaceholderFile(User.getCWD()));
     chooser.setApproveButtonText("Select");
     chooser.setApproveButtonMnemonic('S');
     chooser.setMultiSelectionEnabled(true);

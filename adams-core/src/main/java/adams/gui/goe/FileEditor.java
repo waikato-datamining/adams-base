@@ -15,7 +15,7 @@
 
 /*
  *    FileEditor.java
- *    Copyright (C) 1999-2018 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.management.FileBrowser;
 import adams.core.management.Terminal;
+import adams.core.management.User;
 import adams.core.option.parsing.FileParsing;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseDialog;
@@ -106,7 +107,7 @@ public class FileEditor
       if (currentFile != null)
 	fileChooser = new BaseFileChooser();
       else
-	fileChooser = new BaseFileChooser(new File(System.getProperty("user.dir")));
+	fileChooser = new BaseFileChooser(new File(User.getCWD()));
       fileChooser.setApproveButtonText("Select");
       fileChooser.setApproveButtonMnemonic('S');
       fileChooser.setFileSelectionMode(BaseFileChooser.FILES_AND_DIRECTORIES);
@@ -227,7 +228,7 @@ public class FileEditor
     BaseFileChooser	chooser;
     int			retVal;
     
-    chooser = new BaseFileChooser(new PlaceholderFile(System.getProperty("user.dir")));
+    chooser = new BaseFileChooser(new PlaceholderFile(User.getCWD()));
     chooser.setApproveButtonText("Select");
     chooser.setApproveButtonMnemonic('S');
     chooser.setMultiSelectionEnabled(true);

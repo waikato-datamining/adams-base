@@ -15,7 +15,7 @@
 
 /*
  * WekaExperimentFileEditor.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.gui.goe;
 
 import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.User;
 import adams.core.option.parsing.WekaExperimentFileParsing;
 import adams.data.WekaExperimentFile;
 import adams.gui.chooser.FileChooserPanel;
@@ -293,7 +294,7 @@ public class WekaExperimentFileEditor
     m_PanelFile = new FileChooserPanel();
     currentFile = (WekaExperimentFile) getValue();
     if (currentFile == null)
-      currentFile = new WekaExperimentFile(System.getProperty("user.dir"));
+      currentFile = new WekaExperimentFile(User.getCWD());
     m_PanelFile.setCurrent(currentFile);
     m_PanelFile.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -385,7 +386,7 @@ public class WekaExperimentFileEditor
 
     currentFile = (WekaExperimentFile) getValue();
     if (currentFile == null)
-      currentFile = new WekaExperimentFile(System.getProperty("user.dir"));
+      currentFile = new WekaExperimentFile(User.getCWD());
     m_PanelFile.setCurrent(currentFile);
     m_ButtonEdit.setEnabled(!currentFile.isDirectory());
   }

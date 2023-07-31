@@ -15,12 +15,13 @@
 
 /*
  * SpreadSheetLoader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.core.converters;
 
+import adams.core.management.User;
 import adams.core.option.OptionUtils;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.SpreadSheetToWekaInstances;
@@ -64,7 +65,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Loader
  */
 public class SpreadSheetLoader
@@ -81,7 +81,7 @@ public class SpreadSheetLoader
   protected Instances m_Data = null;
   
   /** Holds the source of the data set. */
-  protected File m_sourceFile = new File(System.getProperty("user.dir"));
+  protected File m_sourceFile = new File(User.getCWD());
   
   /** whether to print some debug information */
   protected boolean m_Debug = false;

@@ -127,7 +127,7 @@ public abstract class AbstractEnvironment
 
     if (!file.exists()) {
       if (!file.mkdir()) {
-	m_HomeDirectory = new File(System.getProperty("user.dir"));
+	m_HomeDirectory = new File(User.getCWD());
 	System.err.println(getClass().getName() + ": Failed to create project home directory '" + getDefaultHome() + "'");
       }
       else {
@@ -271,7 +271,7 @@ public abstract class AbstractEnvironment
     result.add(propsfile.replaceAll("\\/[^/]*$", ""));
     if (home != null)
       result.add(home);
-    result.add(System.getProperty("user.dir"));
+    result.add(User.getCWD());
 
     return result;
   }

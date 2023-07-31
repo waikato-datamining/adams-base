@@ -217,8 +217,8 @@ public class Properties
     dirs = new ArrayList<>();
     dirs.add(name.replaceAll("\\/[^\\/]*$", ""));
     dirs.add(Environment.getInstance().getHome());
-    if (!dirs.contains(System.getProperty("user.dir")))
-      dirs.add(System.getProperty("user.dir"));
+    if (!dirs.contains(User.getCWD()))
+      dirs.add(User.getCWD());
 
     return read(name, dirs);
   }
@@ -386,7 +386,7 @@ public class Properties
       result = result.replace("%h", User.getHomeDir());
       result = result.replace("$HOME", User.getHomeDir());
       result = result.replace("%USERHOME%", User.getHomeDir());
-      result = result.replace("%c", System.getProperty("user.dir"));
+      result = result.replace("%c", User.getCWD());
       result = result.replace("%%", "%");
     }
 
@@ -428,7 +428,7 @@ public class Properties
     result = s;
 
     find = new String[]{
-      System.getProperty("user.dir"),
+      User.getCWD(),
       Environment.getInstance().getHome(),
       User.getHomeDir(),
       TempUtils.getTempDirectoryStr()
