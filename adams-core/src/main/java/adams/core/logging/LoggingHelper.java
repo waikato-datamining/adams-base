@@ -56,10 +56,49 @@ public class LoggingHelper {
   protected static DateFormat m_DateFormat;
 
   /**
+   * Gets the level for the specified environment variable as is and with dots replaced by
+   * underscores if the former isn't present.
+   *
+   * @param env		the environment variable to get the level for, if possible
+   * @return		the determined level or null if nothing found or parsable
+   */
+  protected static Level getLevel(String env) {
+    Level	result;
+    String	level;
+
+    result = null;
+    level  = System.getenv(env);
+    if (level != null) {
+      try {
+	result = LoggingLevel.valueOf(level).getLevel();
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+    else {
+      env   = env.replace(".", "_");
+      level = System.getenv(env);
+      if (level != null) {
+	try {
+	  result = LoggingLevel.valueOf(level).getLevel();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Returns the log level for the specified class. E.g., for the class
    * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
    * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned. Default is WARNING.
+   * Instead of dots, environment variables with underscores are inspected as well, i.e.,
+   * "hello_world_App_LOGLEVEL" and "App_LOGLEVEL".
    *
    * @param cls		the class to return the debug level for
    * @return		the logging level
@@ -73,6 +112,8 @@ public class LoggingHelper {
    * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
    * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned.
+   * Instead of dots, environment variables with underscores are inspected as well, i.e.,
+   * "hello_world_App_LOGLEVEL" and "App_LOGLEVEL".
    *
    * @param cls		the class to return the debug level for
    * @param defLevel	the default level to use
@@ -80,34 +121,16 @@ public class LoggingHelper {
    */
   public static Level getLevel(Class cls, Level defLevel) {
     Level	result;
-    String	level;
-
-    result = defLevel;
 
     if (m_LogLevelCache.containsKey(cls)) {
       result = m_LogLevelCache.get(cls);
     }
     else {
-      level = System.getenv(cls.getName() + LOGLEVEL_SUFFIX);
-      if (level != null) {
-	try {
-	  result = LoggingLevel.valueOf(level).getLevel();
-	}
-	catch (Exception e) {
-	  result = Level.WARNING;
-	}
-      }
-      else {
-	level = System.getenv(cls.getSimpleName() + LOGLEVEL_SUFFIX);
-	if (level != null) {
-	  try {
-	    result = LoggingLevel.valueOf(level).getLevel();
-	  }
-	  catch (Exception e) {
-	    result = Level.WARNING;
-	  }
-	}
-      }
+      result = getLevel(cls.getName() + LOGLEVEL_SUFFIX);
+      if (result == null)
+	result = getLevel(cls.getSimpleName() + LOGLEVEL_SUFFIX);
+      if (result == null)
+	result = defLevel;
       m_LogLevelCache.put(cls, result);
     }
 
