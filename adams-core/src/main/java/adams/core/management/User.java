@@ -31,6 +31,21 @@ import java.util.Arrays;
  */
 public class User {
 
+  public static final String ADAMS_USERNAME = "ADAMS_USERNAME";
+
+  public static final String ADAMS_USERHOME = "ADAMS_USERHOME";
+
+  public static final String ADAMS_USERDIR = "ADAMS_USERDIR";
+
+  /** the user name. */
+  protected static String m_UserName;
+
+  /** the user home. */
+  protected static String m_UserHome;
+
+  /** the user dir (CWD). */
+  protected static String m_UserDir;
+
   /** the user ID. */
   protected static Integer m_UserID;
 
@@ -40,28 +55,106 @@ public class User {
   /**
    * Returns the user name.
    *
+   * Can be overridden with {@link #ADAMS_USERNAME} environment variable.
+   *
    * @return		the name
+   * @see		#ADAMS_USERHOME
    */
   public static String getName() {
-    return System.getProperty("user.name");
+    String	result;
+
+    if (m_UserName != null)
+      return m_UserName;
+
+    result = null;
+
+    try {
+      result = System.getenv(ADAMS_USERNAME);
+      if ((result != null) && result.isEmpty())
+        result = null;
+    }
+    catch (Exception e) {
+      // ignored
+    }
+
+    if (result == null)
+      result = System.getProperty("user.name");
+    else
+      System.out.println("Using " + ADAMS_USERNAME + "=" + result);
+
+    m_UserName = result;
+
+    return result;
   }
 
   /**
    * Returns the user's home directory.
    *
+   * Can be overridden with {@link #ADAMS_USERHOME} environment variable.
+   *
    * @return		the directory
+   * @see		#ADAMS_USERHOME
    */
   public static String getHomeDir() {
-    return System.getProperty("user.home");
+    String	result;
+
+    if (m_UserHome != null)
+      return m_UserHome;
+
+    result = null;
+
+    try {
+      result = System.getenv(ADAMS_USERHOME);
+      if ((result != null) && result.isEmpty())
+	result = null;
+    }
+    catch (Exception e) {
+      // ignored
+    }
+
+    if (result == null)
+      result = System.getProperty("user.home");
+    else
+      System.out.println("Using " + ADAMS_USERHOME + "=" + result);
+
+    m_UserHome = result;
+
+    return result;
   }
 
   /**
    * Returns the user's current working directory.
    *
+   * Can be overridden with {@link #ADAMS_USERDIR} environment variable.
+   *
    * @return		the directory
+   * @see		#ADAMS_USERDIR
    */
   public static String getCWD() {
-    return System.getProperty("user.dir");
+    String	result;
+
+    if (m_UserDir != null)
+      return m_UserDir;
+
+    result = null;
+
+    try {
+      result = System.getenv(ADAMS_USERDIR);
+      if ((result != null) && result.isEmpty())
+	result = null;
+    }
+    catch (Exception e) {
+      // ignored
+    }
+
+    if (result == null)
+      result = System.getProperty("user.dir");
+    else
+      System.out.println("Using " + ADAMS_USERDIR + "=" + result);
+
+    m_UserDir = result;
+
+    return result;
   }
 
   /**
