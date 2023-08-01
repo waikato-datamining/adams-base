@@ -161,6 +161,14 @@ public class SystemInfo
       m_Info.put(USER_UID, "" + User.getUserID());
       m_Info.put(USER_GID, "" + User.getGroupID());
     }
+
+    // potential overrides
+    if (!System.getProperty("user.name").equals(User.getName()))
+      m_Info.put("adams.user.name", User.getName());
+    if (!System.getProperty("user.home").equals(User.getHomeDir()))
+      m_Info.put("adams.user.home", User.getHomeDir());
+    if (!System.getProperty("user.dir").equals(User.getCWD()))
+      m_Info.put("adams.user.dir", User.getCWD());
   }
 
   /**
