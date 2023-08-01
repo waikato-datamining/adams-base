@@ -31,10 +31,13 @@ import java.util.Arrays;
  */
 public class User {
 
+  /** environment variable for overriding the user name (user.name). */
   public static final String ADAMS_USERNAME = "ADAMS_USERNAME";
 
+  /** environment variable for overriding the user home dir (user.home). */
   public static final String ADAMS_USERHOME = "ADAMS_USERHOME";
 
+  /** environment variable for overriding the current working dir (user.dir). */
   public static final String ADAMS_USERDIR = "ADAMS_USERDIR";
 
   /** the user name. */
