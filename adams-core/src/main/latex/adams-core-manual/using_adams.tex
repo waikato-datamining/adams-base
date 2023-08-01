@@ -3221,6 +3221,37 @@ This override can be used on all platforms.
 
 \chapter{Miscellaneous}
 
+\section{Environment variables}
+ADAMS recognizes the following environment variables:
+\begin{tight_itemize}
+    \item \texttt{ADAMS\_HOME} - the directory to store ADAMS config files in, typically
+    \texttt{\$USER/.adams} or \texttt{\%USERPROFILE\%\\.adams}.
+    \item \texttt{ADAMS\_USERNAME} - the user's name, if necessary to set or override
+    (default: \texttt{System.getProperty("user.name")})
+    \item \texttt{ADAMS\_USERHOME} - the user's home directory, if necessary to set or override
+    (default: \texttt{System.getProperty("user.home")})
+    \item \texttt{ADAMS\_USERDIR} - the user's current working directory, if necessary to set or override
+    (default: \texttt{System.getProperty("user.dir")})
+\end{tight_itemize}
+
+\heading{Launching}
+\noindent The \texttt{Launcher} (package: \texttt{adams.core.management}) supports these
+environment variables:
+\begin{tight_itemize}
+    \item \texttt{ADAMS\_LIBRARY\_PATH} - adds \texttt{-Djava.library.path=} to the command-line
+    \item \texttt{ADAMS\_OPTS} - gets appended to the generated command-line
+\end{tight_itemize}
+
+\noindent The \texttt{launcher.sh} shell script supports the \texttt{ADAMS\_PRIORITY} environment variable and
+inserts the value via the \texttt{-priority} argument of the \texttt{Launcher} class.
+
+\heading{Logging}
+\noindent When using \texttt{FileHandler} or \texttt{RotatingFileHandler} (package: \texttt{adams.core.logging})
+for managing the logging output (e.g., via the `-logging-handler` command-line option), then the
+\texttt{ADAMS\_LOGFILE\_PREFIX} environment variable can be used to prefix the files. This is useful for separating
+the log files when running multiple ADAMS processes on the same machine (e.g., as Linux daemon or Windows service).
+
+
 \section{Troubleshooting}
 \begin{tight_itemize}
   \item ADAMS is unusable on Linux after coming back from sleep, due to a
