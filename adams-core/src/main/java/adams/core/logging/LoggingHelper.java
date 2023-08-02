@@ -89,8 +89,8 @@ public class LoggingHelper {
    * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
    * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned. Default is WARNING.
-   * Instead of dots, environment variables with underscores are inspected as well, i.e.,
-   * "hello_world_App_LOGLEVEL" and "App_LOGLEVEL".
+   * Instead of dots, environment variables with underscores are inspected as well (and uppercase), i.e.,
+   * "hello_world_App_LOGLEVEL", "App_LOGLEVEL", "HELLO_WORLD_APP_LOGLEVEL", "APP_LOGLEVEL".
    *
    * @param cls		the class to return the debug level for
    * @return		the logging level
@@ -104,8 +104,8 @@ public class LoggingHelper {
    * "hello.world.App" the environment variables "hello.world.App.LOGLEVEL"
    * and "App.LOGLEVEL" are inspected and "{OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST}"
    * returned.
-   * Instead of dots, environment variables with underscores are inspected as well, i.e.,
-   * "hello_world_App_LOGLEVEL" and "App_LOGLEVEL".
+   * Instead of dots, environment variables with underscores are inspected as well (and uppercase), i.e.,
+   * "hello_world_App_LOGLEVEL", "App_LOGLEVEL", "HELLO_WORLD_APP_LOGLEVEL", "APP_LOGLEVEL".
    *
    * @param cls		the class to return the debug level for
    * @param defLevel	the default level to use
