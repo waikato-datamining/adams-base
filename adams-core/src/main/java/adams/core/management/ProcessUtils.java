@@ -15,7 +15,7 @@
 
 /*
  * ProcessUtils.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.management;
@@ -349,7 +349,7 @@ public class ProcessUtils {
   public static HashMap<String, String> getEnvironment() {
     HashMap<String, String> result;
 
-    result = new HashMap<>(System.getenv());
+    result = new HashMap<>(EnvVar.get());
 
     return result;
   }

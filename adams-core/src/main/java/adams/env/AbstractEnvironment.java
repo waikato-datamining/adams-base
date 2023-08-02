@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.StaticClassLister;
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
+import adams.core.management.EnvVar;
 import adams.core.management.OS;
 import adams.core.management.User;
 import adams.core.option.OptionUtils;
@@ -120,8 +121,8 @@ public abstract class AbstractEnvironment
 
     if (m_HomeDirectory != null)
       file = m_HomeDirectory.getAbsoluteFile();
-    else if (System.getenv(ADAMS_HOME) != null)
-      file = new File(System.getenv(ADAMS_HOME));
+    else if (EnvVar.get(ADAMS_HOME) != null)
+      file = new File(EnvVar.get(ADAMS_HOME));
     else
       file = new File(getDefaultHome());
 

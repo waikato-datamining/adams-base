@@ -15,11 +15,13 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.logging.LoggingObject;
+import adams.core.management.EnvVar;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.env.PlaceholdersDefinition;
@@ -37,7 +39,10 @@ import java.util.Set;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class Placeholders {
+public class Placeholders
+  extends LoggingObject {
+
+  private static final long serialVersionUID = 2057418242713301148L;
 
   /** the filename. */
   public final static String FILENAME = "Placeholders.props";
@@ -63,7 +68,11 @@ public class Placeholders {
   /** the separator for key-value pairs. */
   public final static String SEPARATOR = "=";
 
+  /** the list of placeholders only to expand, but not collapse. */
   public static final String NO_COLLAPSE = "no_collapse";
+
+  /** the environment variable to obtain placeholders from (semi-colon separated placeholder=path pairs). */
+  public final static String ADAMS_PLACEHOLDERS = "ADAMS_PLACEHOLDERS";
 
   /** the singleton. */
   protected static Placeholders m_Singleton;
@@ -92,6 +101,9 @@ public class Placeholders {
   protected void initialize() {
     Enumeration<String>	enm;
     String		key;
+    String		env;
+    String[]		pairs;
+    String[]		parts;
 
     if (m_Properties == null) {
       try {
@@ -113,6 +125,23 @@ public class Placeholders {
           continue;
         m_Placeholders.put(key, m_Properties.getPath(key));
       }
+
+      // environment variable
+      env = EnvVar.get(ADAMS_PLACEHOLDERS);
+      if (env != null) {
+        System.out.println("Applying " + ADAMS_PLACEHOLDERS + "...");
+        pairs = env.split(";");
+        for (String pair: pairs) {
+          parts = pair.split("=");
+          if (parts.length == 2)
+            m_Placeholders.put(parts[0], parts[1]);
+          else
+            System.err.println("Invalid placeholder=path pair from environment variable: " + pair);
+	}
+      }
+
+      if (isLoggingEnabled())
+        getLogger().info("Placeholders: " + m_Placeholders);
     }
   }
 

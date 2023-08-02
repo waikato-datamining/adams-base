@@ -15,13 +15,14 @@
 
 /*
  * FileHandler.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.EnvVar;
 import adams.env.Environment;
 
 import java.io.File;
@@ -60,10 +61,7 @@ public class FileHandler
 
     super.initialize();
 
-    env = System.getenv(ADAMS_LOGFILE_PREFIX);
-    if (env == null)
-      env = "";
-
+    env    = EnvVar.get(ADAMS_LOGFILE_PREFIX, "");
     logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
     setLogFile(new PlaceholderFile(logDir.getAbsolutePath() + File.separator + env + "console.log"));
   }

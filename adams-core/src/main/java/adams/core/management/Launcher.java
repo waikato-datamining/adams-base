@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -147,8 +147,8 @@ public class Launcher {
     m_EnvironmentModifiers     = new ArrayList<>();
     m_PriorityJars             = new ArrayList<>();
     m_EnvVars                  = new ArrayList<>();
-    for (String key: System.getenv().keySet())
-      m_EnvVars.add(key + "=" + System.getenv(key));
+    for (String key: EnvVar.get().keySet())
+      m_EnvVars.add(key + "=" + EnvVar.get(key));
     m_CollapseClassPath        = false;
     m_DebugLevel               = 0;
     m_IgnoreEnvironmentOptions = false;
@@ -613,8 +613,8 @@ public class Launcher {
       cmd.add("-javaagent:" + m_JavaAgentJar);
 
     if (!m_IgnoreEnvironmentOptions) {
-      if (System.getenv(ENV_ADAMS_LIBRARY_PATH) != null)
-        cmd.add("-Djava.library.path=" + System.getenv(ENV_ADAMS_LIBRARY_PATH));
+      if (EnvVar.get(ENV_ADAMS_LIBRARY_PATH) != null)
+        cmd.add("-Djava.library.path=" + EnvVar.get(ENV_ADAMS_LIBRARY_PATH));
     }
 
     cmd.add(m_MainClass);
@@ -623,9 +623,9 @@ public class Launcher {
     cmd.addAll(Arrays.asList(m_Arguments));
 
     if (!m_IgnoreEnvironmentOptions) {
-      if (System.getenv(ENV_ADAMS_OPTS) != null) {
+      if (EnvVar.get(ENV_ADAMS_OPTS) != null) {
         try {
-          cmd.addAll(Arrays.asList(OptionUtils.splitOptions(System.getenv(ENV_ADAMS_OPTS))));
+          cmd.addAll(Arrays.asList(OptionUtils.splitOptions(EnvVar.get(ENV_ADAMS_OPTS))));
         }
         catch (Exception e) {
           System.err.println("Error parsing environment variable '" + ENV_ADAMS_OPTS + "':");

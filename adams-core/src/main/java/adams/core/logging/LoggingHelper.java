@@ -20,6 +20,7 @@
 package adams.core.logging;
 
 import adams.core.DateFormat;
+import adams.core.management.EnvVar;
 import adams.core.option.OptionUtils;
 
 import java.io.PrintWriter;
@@ -56,8 +57,11 @@ public class LoggingHelper {
   protected static DateFormat m_DateFormat;
 
   /**
-   * Gets the level for the specified environment variable as is and with dots replaced by
-   * underscores if the former isn't present.
+   * Gets the level for the specified environment variable. Checks:
+   * - as is
+   * - dots -> underscores
+   * - uppercase
+   * - dots -> underscores + uppercase
    *
    * @param env		the environment variable to get the level for, if possible
    * @return		the determined level or null if nothing found or parsable
@@ -67,25 +71,13 @@ public class LoggingHelper {
     String	level;
 
     result = null;
-    level  = System.getenv(env);
+    level  = EnvVar.get(env, null, true, true);
     if (level != null) {
       try {
 	result = LoggingLevel.valueOf(level).getLevel();
       }
       catch (Exception e) {
         // ignored
-      }
-    }
-    else {
-      env   = env.replace(".", "_");
-      level = System.getenv(env);
-      if (level != null) {
-	try {
-	  result = LoggingLevel.valueOf(level).getLevel();
-	}
-	catch (Exception e) {
-	  // ignored
-	}
       }
     }
 

@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -27,6 +27,7 @@ import adams.core.VariableUpdater;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.EnvVar;
 import adams.flow.core.VariableValueType;
 import adams.parser.BooleanExpression;
 import adams.parser.MathematicalExpression;
@@ -951,7 +952,7 @@ public class SetVariable
 	  result = "No environment variable specified!";
 	}
 	else {
-	  value = System.getenv(m_EnvVariable);
+	  value = EnvVar.get(m_EnvVariable);
 	  if (value == null) {
 	    if (!m_EnvVarOptional)
 	      result = "Environment variable '" + m_EnvVariable + "' not set!";

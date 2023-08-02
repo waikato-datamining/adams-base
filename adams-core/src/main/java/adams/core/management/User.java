@@ -72,7 +72,7 @@ public class User {
     result = null;
 
     try {
-      result = System.getenv(ADAMS_USERNAME);
+      result = EnvVar.get(ADAMS_USERNAME);
       if ((result != null) && result.isEmpty())
         result = null;
     }
@@ -107,7 +107,7 @@ public class User {
     result = null;
 
     try {
-      result = System.getenv(ADAMS_USERHOME);
+      result = EnvVar.get(ADAMS_USERHOME);
       if ((result != null) && result.isEmpty())
 	result = null;
     }
@@ -142,7 +142,7 @@ public class User {
     result = null;
 
     try {
-      result = System.getenv(ADAMS_USERDIR);
+      result = EnvVar.get(ADAMS_USERDIR);
       if ((result != null) && result.isEmpty())
 	result = null;
     }

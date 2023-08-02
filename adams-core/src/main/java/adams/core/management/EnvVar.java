@@ -1,0 +1,94 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * EnvVar.java
+ * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ */
+
+package adams.core.management;
+
+import java.util.Map;
+
+/**
+ * Helper class for environment variables. Uses {@link System#getenv(String)} under the hood.
+ *
+ * @author fracpete (fracpete at waikato dot ac dot nz)
+ */
+public class EnvVar {
+
+  /**
+   * Returns the current mapping of environment variables.
+   *
+   * @return		the mapping
+   * @see		System#getenv()
+   */
+  public static Map<String,String> get() {
+    return System.getenv();
+  }
+
+  /**
+   * Returns the value of the specified environment variable.
+   *
+   * @param name	the env var to retrieve
+   * @return		the associated value or null if not present
+   * @see		System#getenv(String)
+   */
+  public static String get(String name) {
+    return get(name, null);
+  }
+
+  /**
+   * Returns the value of the specified environment variable.
+   *
+   * @param name	the env var to retrieve
+   * @param defValue 	the default value to use if not set
+   * @return		the associated value or the default value if not present
+   * @see		System#getenv(String)
+   */
+  public static String get(String name, String defValue) {
+    return get(name, defValue, false, false);
+  }
+
+  /**
+   * Returns the value of the specified environment variable.
+   *
+   * @param name	the env var to retrieve
+   * @param defValue 	the default value to use if not set
+   * @param dotsToUnderscores 	whether to convert check presence of name with underscores replacing dots
+   * @param checkUppercase 	whether to convert check presence of uppercased name
+   * @return		the associated value or the default value if not present
+   * @see		System#getenv(String)
+   */
+  public static String get(String name, String defValue, boolean dotsToUnderscores, boolean checkUppercase) {
+    String	result;
+
+    result = System.getenv(name);
+
+    if ((result == null) && dotsToUnderscores && checkUppercase)
+      result = System.getenv(name.replace(".", "_").toUpperCase());
+
+    if ((result == null) && dotsToUnderscores && !checkUppercase)
+      result = System.getenv(name.replace(".", "_"));
+
+    if ((result == null) && !dotsToUnderscores && checkUppercase)
+      result = System.getenv(name.toUpperCase());
+
+    if (result == null)
+      result = defValue;
+
+    return result;
+  }
+}

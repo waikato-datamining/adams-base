@@ -15,12 +15,13 @@
 
 /*
  * GetEnvironmentVariable.java.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
 import adams.core.QuickInfoHelper;
+import adams.core.management.EnvVar;
 import adams.flow.core.Token;
 
 /**
@@ -74,7 +75,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetEnvironmentVariable
   extends AbstractSimpleSource {
@@ -175,7 +175,7 @@ public class GetEnvironmentVariable
    */
   @Override
   protected String doExecute() {
-    m_Value = System.getenv(m_Variable);
+    m_Value = EnvVar.get(m_Variable);
     if (m_Value != null)
       m_OutputToken = new Token(m_Value);
     return null;

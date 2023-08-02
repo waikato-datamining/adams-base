@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Variables.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingObject;
+import adams.core.management.EnvVar;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.event.VariableChangeListener;
@@ -48,7 +49,6 @@ import java.util.logging.Level;
  * Examples: system.os.name, env.PATH
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see #ENVIRONMENT_VARIABLE_PREFIX
  * @see #SYSTEM_PROPERTY_PREFIX
  */
@@ -97,7 +97,7 @@ public class Variables
 
     // environment variables
     m_EnvironmentVariables = new Hashtable<>();
-    Map<String,String> env = System.getenv();
+    Map<String,String> env = EnvVar.get();
     for (String key: env.keySet())
       m_EnvironmentVariables.put(ENVIRONMENT_VARIABLE_PREFIX + key, env.get(key));
 

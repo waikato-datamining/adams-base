@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractJDKMenuItemDefinition.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.menu;
 
+import adams.core.management.EnvVar;
 import adams.core.management.Java;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
@@ -77,7 +78,7 @@ public abstract class AbstractJDKMenuItemDefinition
       GUIHelper.showErrorMessage(
 	  m_Owner, 
 	  "No JDK installed or JAVA_HOME does not point to it!\n"
-	  + "JAVA_HOME: " + System.getenv("JAVA_HOME"));
+	  + "JAVA_HOME: " + EnvVar.get("JAVA_HOME"));
       return;
     }
     

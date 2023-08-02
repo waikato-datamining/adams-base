@@ -30,6 +30,7 @@ import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.EnvVar;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.BooleanOption;
@@ -2081,8 +2082,8 @@ public class ActorUtils {
    */
   protected static synchronized boolean checkInvalidVariablesLenient() {
     if (m_InvalidVariablesLenient == null) {
-      m_InvalidVariablesLenient = (System.getenv(ENV_INVALID_VARIABLES_LENIENT) != null)
-	&& System.getenv(ENV_INVALID_VARIABLES_LENIENT).equalsIgnoreCase("true");
+      m_InvalidVariablesLenient = (EnvVar.get(ENV_INVALID_VARIABLES_LENIENT) != null)
+	&& EnvVar.get(ENV_INVALID_VARIABLES_LENIENT).equalsIgnoreCase("true");
       System.out.println(ActorUtils.class.getName() + ": lenient handling of invalid variables is " + (m_InvalidVariablesLenient ? "ON" : "OFF"));
     }
     return m_InvalidVariablesLenient;

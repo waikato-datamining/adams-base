@@ -13,18 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Env.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.plugin;
 
+
+import adams.core.management.EnvVar;
 
 /**
  * Example function that simply outputs the parameters on the command-line.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Env
   extends AbstractParserFunction {
@@ -86,6 +87,6 @@ public class Env
    */
   @Override
   protected Object doCallFunction(Object[] params) {
-    return System.getenv().get(params[0]);
+    return EnvVar.get().get(params[0]);
   }
 }

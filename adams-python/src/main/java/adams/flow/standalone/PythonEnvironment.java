@@ -15,7 +15,7 @@
 
 /*
  * PythonEnvironment.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseString;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.EnvVar;
 
 import java.io.File;
 import java.util.Map;
@@ -440,7 +441,7 @@ public class PythonEnvironment
       path = Utils.flatten(m_PythonPathEnvVar, File.pathSeparator);
     else
       path = "";
-    currPath = System.getenv(PYTHONPATH);
+    currPath = EnvVar.get(PYTHONPATH);
     switch (m_PythonPathUpdateType) {
       case NO_UPDATE:
         m_ActualPythonPath = null;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SystemClassPathAugmenter.java
- * Copyright (C) 2012-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -23,7 +23,6 @@ package adams.core.management;
  * Simply returns the CLASSPATH environment variable.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SystemClassPathAugmenter
   extends AbstractClassPathAugmenter {
@@ -50,7 +49,7 @@ public class SystemClassPathAugmenter
     String[]	result;
     String	env;
     
-    env = System.getenv("CLASSPATH");
+    env = EnvVar.get("CLASSPATH");
     if (env == null)
       result = new String[0];
     else

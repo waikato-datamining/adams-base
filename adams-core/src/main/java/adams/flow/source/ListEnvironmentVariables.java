@@ -15,17 +15,18 @@
 
 /*
  * ListEnvironmentVariables.java.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.QuickInfoHelper;
+import adams.core.base.BaseRegExp;
+import adams.core.management.EnvVar;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import adams.core.QuickInfoHelper;
-import adams.core.base.BaseRegExp;
 
 /**
  <!-- globalinfo-start -->
@@ -86,7 +87,6 @@ import adams.core.base.BaseRegExp;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ListEnvironmentVariables
   extends AbstractArrayProvider {
@@ -237,10 +237,10 @@ public class ListEnvironmentVariables
     
     if (m_RegExp.isMatchAll()) {
       if (!m_Invert)
-	m_Queue.addAll(System.getenv().keySet());
+	m_Queue.addAll(EnvVar.get().keySet());
     }
     else {
-      for (String name: System.getenv().keySet()) {
+      for (String name: EnvVar.get().keySet()) {
 	if (m_Invert && !m_RegExp.isMatch(name))
 	  m_Queue.add(name);
 	else if (!m_Invert && m_RegExp.isMatch(name))

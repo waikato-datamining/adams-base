@@ -19,6 +19,7 @@
  */
 package adams.core;
 
+import adams.core.management.EnvVar;
 import adams.core.management.Java;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
@@ -139,8 +140,8 @@ public class SystemInfo
     m_Info.put(MEMORY_PREFIX + "max",     ByteFormat.toMegaBytes(Memory.getSingleton().getMax(), 1));
 
     // environment
-    for (String key: System.getenv().keySet())
-      m_Info.put(ENV_PREFIX + key, System.getenv(key));
+    for (String key: EnvVar.get().keySet())
+      m_Info.put(ENV_PREFIX + key, EnvVar.get(key));
 
     // modules
     for (Module module: Modules.getSingleton().getModules()) {
