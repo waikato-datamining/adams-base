@@ -41,6 +41,17 @@ public class EnvVar {
   }
 
   /**
+   * Returns whether the specified environment variable is present.
+   *
+   * @param name	the env var to check
+   * @return		true if present
+   * @see		System#getenv(String)
+   */
+  public static boolean has(String name) {
+    return (System.getenv(name) != null);
+  }
+
+  /**
    * Returns the value of the specified environment variable.
    *
    * @param name	the env var to retrieve
