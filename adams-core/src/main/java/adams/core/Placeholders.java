@@ -126,19 +126,8 @@ public class Placeholders
         m_Placeholders.put(key, m_Properties.getPath(key));
       }
 
-      // environment variable
-      env = EnvVar.get(ADAMS_PLACEHOLDERS);
-      if (env != null) {
-        System.out.println("Applying " + ADAMS_PLACEHOLDERS + "...");
-        pairs = env.split(";");
-        for (String pair: pairs) {
-          parts = pair.split("=");
-          if (parts.length == 2)
-            m_Placeholders.put(parts[0], parts[1]);
-          else
-            System.err.println("Invalid placeholder=path pair from environment variable: " + pair);
-	}
-      }
+      // environment variable overrides
+      m_Placeholders.putAll(EnvVar.getKeyValuePairs(ADAMS_PLACEHOLDERS));
 
       if (isLoggingEnabled())
         getLogger().info("Placeholders: " + m_Placeholders);

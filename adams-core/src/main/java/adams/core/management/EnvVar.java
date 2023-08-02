@@ -20,6 +20,7 @@
 
 package adams.core.management;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -88,6 +89,52 @@ public class EnvVar {
 
     if (result == null)
       result = defValue;
+
+    return result;
+  }
+
+  /**
+   * Obtains key=value pairs from the specified environment variable.
+   * Uses semi-colon (;) as list separator and equals (=) as pair separator.
+   *
+   * @param name	the environment variable to check
+   * @return		the generated mapping of key=value pairs
+   */
+  public static Map<String,String> getKeyValuePairs(String name) {
+    return getKeyValuePairs(name, ";", "=", true);
+  }
+
+  /**
+   * Obtains key=value pairs from the specified environment variable.
+   *
+   * @param name	the environment variable to check
+   * @param listSep 	the separator to use for splitting the list of pairs
+   * @param pairSep	the separator to use for splitting a pair into key and value
+   * @param info 	whether to output some info in the console on stdout
+   * @return		the generated mapping of key=value pairs
+   */
+  public static Map<String,String> getKeyValuePairs(String name, String listSep, String pairSep, boolean info) {
+    Map<String,String>	result;
+    String		env;
+    String[]		pairs;
+    String[]		parts;
+
+    result = new HashMap<>();
+    env    = get(name);
+    if (env != null) {
+      if (info)
+	System.out.println("Applying " + name + "...");
+      pairs = env.split(listSep);
+      for (String pair: pairs) {
+	parts = pair.split(pairSep);
+	if (parts.length == 2)
+	  result.put(parts[0], parts[1]);
+	else
+	  System.err.println(
+	    "Invalid key-value pair in environment variable (list separator is '" + listSep + "' "
+	      + "and pair separator is '" + pairSep + "'): " + pair);
+      }
+    }
 
     return result;
   }
