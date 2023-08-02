@@ -3253,6 +3253,31 @@ for managing the logging output (e.g., via the `-logging-handler` command-line o
 \texttt{ADAMS\_LOGFILE\_PREFIX} environment variable can be used to prefix the files. This is useful for separating
 the log files when running multiple ADAMS processes on the same machine (e.g., as Linux daemon or Windows service).
 
+Classes, when implementing the \texttt{adams.core.logging.LoggingSupporter} interface,
+allow setting their logging level via environment variables, consisting of their class name and the
+\texttt{.LOGLEVEL} suffix. Dots can be replaced with underscores and uppercase can be used as well.
+For instance, for class \texttt{hello.world.App}, you could use:
+\begin{tight_itemize}
+    \item \texttt{hello.world.App.LOGLEVEL}
+    \item \texttt{hello\_world\_App\_LOGLEVEL}
+    \item \texttt{HELLO.WORLD.APP.LOGLEVEL}
+    \item \texttt{HELLO\_WORLD\_APP\_LOGLEVEL}
+\end{tight_itemize}
+You can even use the simple class name, i.e., dropping the package name (\texttt{hello.world}). However,
+that may have unexpected side-effects if the simple class name is not unique.
+
+\noindent As for the actual logging level, you can choose from:
+\begin{tight_itemize}
+    \item \texttt{OFF}
+    \item \texttt{SEVERE}
+    \item \texttt{WARNING}
+    \item \texttt{INFO}
+    \item \texttt{CONFIG}
+    \item \texttt{FINE}
+    \item \texttt{FINER}
+    \item \texttt{FINEST}
+\end{tight_itemize}
+\texttt{WARNING} is typically the default level, to avoid unnecessary output.
 
 \section{Troubleshooting}
 \begin{tight_itemize}
