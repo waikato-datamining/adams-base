@@ -26,6 +26,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.EnvVar;
 import adams.core.management.OS;
 import adams.core.management.User;
 import adams.core.option.OptionUtils;
@@ -51,6 +52,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -96,7 +98,6 @@ import java.util.zip.GZIPOutputStream;
  * {@link #EXT_WINDOWS}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Properties
   extends java.util.Properties
@@ -203,6 +204,11 @@ public class Properties
    * are first defined in the system resource location (i.e. in the
    * CLASSPATH).  These default properties must exist.
    * Not to be confused with <code>load(String)</code>.
+   * Also looks for environment variables with a semi-colon separated
+   * list of key=value pairs to override the values loaded from the .props
+   * file(s). E.g., for "adams/core/io/FileUtils.props" the environment
+   * variables "adams_core_io_FileUtils" or "ADAMS_CORE_IO_FILEUTILS" can
+   * be used.
    *
    * @param name 	the location of the resource that should be
    * 			loaded.  e.g.: "adams/gui/Something.props".
@@ -301,8 +307,13 @@ public class Properties
   /**
    * Reads properties that inherit from several locations. Properties
    * are first defined in the system resource location (i.e. in the
-   * CLASSPATH).  These default properties must exist.
+   * CLASSPATH). These default properties must exist.
    * Not to be confused with <code>load(String)</code>.
+   * Also looks for environment variables with a semi-colon separated
+   * list of key=value pairs to override the values loaded from the .props
+   * file(s). E.g., for "adams/core/io/FileUtils.props" the environment
+   * variables "adams_core_io_FileUtils" or "ADAMS_CORE_IO_FILEUTILS" can
+   * be used.
    *
    * @param name 	the location of the resource that should be
    * 			loaded.  e.g.: "adams/gui/Something.props".
@@ -317,13 +328,17 @@ public class Properties
     Properties		props;
     int			i;
     String		ext;
+    String		fullName;
     String		nameAlt;
     int			index;
+    String		env;
+    Map<String,String> 	overrides;
 
     LOGGER.log(Level.INFO, "read: name=" + name + ", dirs=" + dirs);
 
-    name   = name.replaceAll(".*\\/", "");
-    result = null;
+    fullName = name;
+    name     = name.replaceAll(".*\\/", "");
+    result   = null;
 
     // platform-specific extension to look for as well?
     nameAlt = null;
@@ -358,6 +373,13 @@ public class Properties
 	LOGGER.log(Level.FINER, "props=" + result.toStringSimple());
       }
     }
+
+    // environment variable overrides
+    env = fullName.replace(".props", "").replace(".properties", "");
+    env = env.replace("/", "_").replace("\\", "_");
+    overrides = EnvVar.getKeyValuePairs(env, false, true);
+    for (String key: overrides.keySet())
+      result.setProperty(key, overrides.get(key));
 
     return result;
   }
@@ -395,7 +417,7 @@ public class Properties
 
   /**
    * Ensures that the directory ends with a separator, e.g. "/".
-   * 
+   *
    * @param dir		the directory to fix
    * @return		the fixed directory
    */
@@ -405,7 +427,7 @@ public class Properties
     else
       return dir;
   }
-  
+
   /**
    * Collapses the paths to placeholders in the string. Supported placeholders
    * (from highest precedence to lowest):
@@ -434,12 +456,12 @@ public class Properties
       TempUtils.getTempDirectoryStr()
     };
     replace = new String[]{
-	"%c",
-	"%p",
-	"%h",
-	"%t"
+      "%c",
+      "%p",
+      "%h",
+      "%t"
     };
-    
+
     for (i = 0; i < find.length; i++) {
       find[i]    = fixDir(find[i]);
       replace[i] = fixDir(replace[i]);
@@ -565,10 +587,10 @@ public class Properties
       file = new File(filename);
       if (file.exists()) {
 	fis = new FileInputStream(filename);
-        if (filename.endsWith(".gz"))
-          stream = new BufferedInputStream(new GZIPInputStream(fis));
-        else
-          stream = new BufferedInputStream(fis);
+	if (filename.endsWith(".gz"))
+	  stream = new BufferedInputStream(new GZIPInputStream(fis));
+	else
+	  stream = new BufferedInputStream(fis);
 	load(stream);
       }
       else {
@@ -884,8 +906,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse integer value of property '" + key + " (" + getProperty(key) + ")'! "
+	Level.SEVERE,
+	"Cannot parse integer value of property '" + key + " (" + getProperty(key) + ")'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -937,8 +959,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse long value of property '" + key + " (" + getProperty(key) + ")'! "
+	Level.SEVERE,
+	"Cannot parse long value of property '" + key + " (" + getProperty(key) + ")'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -990,8 +1012,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse double value of property '" + key + "'! "
+	Level.SEVERE,
+	"Cannot parse double value of property '" + key + "'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -1043,8 +1065,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse boolean value of property '" + key + "'! "
+	Level.SEVERE,
+	"Cannot parse boolean value of property '" + key + "'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -1097,8 +1119,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse time value of property '" + key + "'! "
+	Level.SEVERE,
+	"Cannot parse time value of property '" + key + "'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -1151,8 +1173,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse date value of property '" + key + "'! "
+	Level.SEVERE,
+	"Cannot parse date value of property '" + key + "'! "
 	  + "Using default: " + defValue, e);
     }
 
@@ -1205,8 +1227,8 @@ public class Properties
     }
     catch (Exception e) {
       LOGGER.log(
-        Level.SEVERE,
-	  "Cannot parse date/time value of property '" + key + "'! "
+	Level.SEVERE,
+	"Cannot parse date/time value of property '" + key + "'! "
 	  + "Using default: " + defValue, e);
     }
 

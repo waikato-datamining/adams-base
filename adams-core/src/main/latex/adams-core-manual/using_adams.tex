@@ -3279,6 +3279,16 @@ that may have unexpected side-effects if the simple class name is not unique.
 \end{tight_itemize}
 \texttt{WARNING} is typically the default level, to avoid unnecessary output.
 
+\heading{Properties files}
+For configurations managed by ADAMS and stored in properties files (\texttt{.props}),
+you can override values from these with environment variables as well.
+E.g., for properties file \texttt{adams/core/io/FileUtils.props} ADAMS checks for
+the environment variables \texttt{adams\_core\_io\_FileUtils} and \texttt{ADAMS\_CORE\_IO\_FILEUTILS}.
+The content of such a variable is a semi-colon separated list of property=value pairs:
+\begin{verbatim}
+MaxExtensionLength=7;IgnoredExtensionSuffixes=7z,bz2,gz,z
+\end{verbatim}
+
 \section{Troubleshooting}
 \begin{tight_itemize}
   \item ADAMS is unusable on Linux after coming back from sleep, due to a
