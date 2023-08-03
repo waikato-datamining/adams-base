@@ -15,7 +15,7 @@
 
 /*
  * PlaceholdersTest.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -83,6 +83,15 @@ public class PlaceholdersTest
     String path = "/some/where.else/completely";
     assertEquals("shouldn't do a partial collapse", path, Placeholders.getSingleton().collapse(path));
     Placeholders.getSingleton().remove("BLAH");
+  }
+
+  /**
+   * For classes (with default constructor) that are serializable, are tested
+   * whether they are truly serializable.
+   */
+  @Override
+  public void testSerializable() {
+    // singleton, so irrelevant; serializable only due to superclass LoggingObject
   }
 
   /**
