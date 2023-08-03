@@ -497,6 +497,10 @@ public class SftpRemoteDirectorySetup
 	  result = JSchUtils.newSession(jsch, m_User, password, host, port);
 	  break;
 	case PUBLIC_KEY:
+          if (!m_PrivateKeyFile.exists())
+            throw new IllegalStateException("Private key does not exist: " + m_PrivateKeyFile);
+          if (m_PrivateKeyFile.isDirectory())
+            throw new IllegalStateException("Private key points to directory: " + m_PrivateKeyFile);
 	  result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
 	  break;
 	default:
