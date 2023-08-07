@@ -38,6 +38,7 @@ import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -186,6 +187,444 @@ public class GUIHelper {
     @Override
     public String toString() {
       return "closeDialog=" + m_CloseDialogRequested;
+    }
+  }
+
+  /**
+   * Ancestor for panels that allow the user to enter/select a value.
+   */
+  public static abstract class AbstractInputPanel
+    extends BasePanel {
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg	the message to display
+     * @param initial	the initial value to use for the input value
+     */
+    protected AbstractInputPanel(String msg, String initial) {
+      super();
+    }
+
+    /**
+     * Sets the message to display.
+     *
+     * @param msg	the message
+     */
+    public abstract void setMessage(String msg);
+
+    /**
+     * Sets the value to use.
+     *
+     * @param value	the value
+     */
+    public abstract void setValue(String value);
+
+    /**
+     * Returns the value that the user entered (if any).
+     *
+     * @return		the entered/initial value
+     */
+    public abstract String getValue();
+  }
+
+  /**
+   * Panel that uses a textarea for the value that the user can enter.
+   */
+  public static class InputPanelWithTextArea
+    extends AbstractInputPanel {
+
+    /** the label for the message. */
+    protected JLabel m_LabelMessage;
+
+    /** the text area. */
+    protected BaseTextArea m_TextArea;
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg 	the message to display
+     * @param initial 	the initial value to use for the input value
+     * @param minCols 	the minimum number of columns in the text box
+     * @param minRows 	the minimum number of rows in the text box
+     */
+    public InputPanelWithTextArea(String msg, String initial, int minCols, int minRows) {
+      super(msg, initial);
+      applyDimensions(initial, minCols, minRows);
+      setMessage(msg);
+      setValue(initial);
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      JPanel 	panelText;
+      JPanel	panel;
+
+      super.initGUI();
+
+      m_TextArea = new BaseTextArea();
+      m_TextArea.setLineWrap(true);
+      panelText = new JPanel(new BorderLayout());
+      panelText.add(new BaseScrollPane(m_TextArea), BorderLayout.NORTH);
+
+      setLayout(new BorderLayout(5, 5));
+      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+      m_LabelMessage = new JLabel();
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      panel.add(m_LabelMessage);
+      add(panel, BorderLayout.NORTH);
+
+      panel = new JPanel(new BorderLayout());
+      panel.add(panelText, BorderLayout.CENTER);
+      panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      add(panel, BorderLayout.CENTER);
+    }
+
+    /**
+     * Gives access to the underlying textarea.
+     *
+     * @return		the textarea in use
+     */
+    public BaseTextArea getTextArea() {
+      return m_TextArea;
+    }
+
+    /**
+     * Sets the message to display.
+     *
+     * @param msg	the message
+     */
+    @Override
+    public void setMessage(String msg) {
+      if ((msg == null) || (msg.isEmpty()))
+	msg = "Enter value";
+      m_LabelMessage.setText(msg);
+    }
+
+    /**
+     * Applies the required dimensions.
+     *
+     * @param initial	the initial text
+     * @param minCols	the minimum number of columns to use
+     * @param minRows	the minimum number of rows to use
+     */
+    protected void applyDimensions(String initial, int minCols, int minRows) {
+      int	rows;
+      int	cols;
+      String[]	lines;
+
+      rows = 1;
+      cols = 20;
+      if (!initial.isEmpty()) {
+	lines = initial.split("\n");
+	// rows
+	if (lines.length > 1)
+	  rows = lines.length;
+	if (rows > 5)
+	  rows = 5;
+	// cols
+	for (String line: lines) {
+	  if (line.length() > cols)
+	    cols = line.length();
+	}
+	if (cols > 40)
+	  cols = 40;
+      }
+      if (cols < minCols)
+	cols = minCols;
+      if (rows < minRows)
+	rows = minRows;
+
+      m_TextArea.setColumns(cols);
+      m_TextArea.setRows(rows);
+    }
+
+    /**
+     * Sets the value to use.
+     *
+     * @param value the value
+     */
+    @Override
+    public void setValue(String value) {
+      if (value != null) {
+	m_TextArea.setText(value);
+	if (!value.isEmpty()) {
+	  m_TextArea.setSelectionStart(0);
+	  m_TextArea.setSelectionEnd(value.length());
+	}
+      }
+    }
+
+    /**
+     * Returns the value that the user entered (if any).
+     *
+     * @return the entered/initial value
+     */
+    @Override
+    public String getValue() {
+      return m_TextArea.getText();
+    }
+  }
+
+  /**
+   * Panel that uses a combobox for the values that the user can enter.
+   */
+  public static class InputPanelWithComboBox
+    extends AbstractInputPanel {
+
+    /** the label for the message. */
+    protected JLabel m_LabelMessage;
+
+    /** the combobox. */
+    protected BaseComboBox<String> m_ComboBox;
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg 	the message to display
+     * @param initial 	the initial value to use for the input value
+     * @param options 	the options to display
+     */
+    public InputPanelWithComboBox(String msg, String initial, String[] options) {
+      super(msg, initial);
+      setMessage(msg);
+      setOptions(options);
+      setValue(initial);
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      JPanel	panelCombo;
+      JPanel	panel;
+
+      super.initGUI();
+
+      m_ComboBox = new BaseComboBox<>();
+      panelCombo = new JPanel(new BorderLayout());
+      panelCombo.add(m_ComboBox, BorderLayout.NORTH);
+
+      setLayout(new BorderLayout(5, 0));
+      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+      m_LabelMessage = new JLabel();
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      panel.add(m_LabelMessage);
+      add(panel, BorderLayout.NORTH);
+
+      panel = new JPanel(new BorderLayout());
+      panel.add(panelCombo, BorderLayout.CENTER);
+      panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      add(panel, BorderLayout.CENTER);
+    }
+
+    /**
+     * Gives access to the underlying combobox.
+     *
+     * @return		the combobox in use
+     */
+    public BaseComboBox<String> getComboBox() {
+      return m_ComboBox;
+    }
+
+    /**
+     * Sets the message to display.
+     *
+     * @param msg	the message
+     */
+    @Override
+    public void setMessage(String msg) {
+      if ((msg == null) || (msg.isEmpty()))
+	msg = "Select value";
+      m_LabelMessage.setText(msg);
+    }
+
+    /**
+     * Sets the options to display.
+     *
+     * @param options	the options
+     */
+    public void setOptions(String[] options) {
+      DefaultComboBoxModel<String>	model;
+
+      model = new DefaultComboBoxModel<>(options);
+      m_ComboBox.setModel(model);
+      m_ComboBox.setSelectedIndex(0);
+    }
+
+    /**
+     * Sets the value to use.
+     *
+     * @param value the value
+     */
+    @Override
+    public void setValue(String value) {
+      if ((value != null) && !value.isEmpty())
+	m_ComboBox.setSelectedItem(value);
+    }
+
+    /**
+     * Returns the value that the user entered (if any).
+     *
+     * @return the entered/initial value
+     */
+    @Override
+    public String getValue() {
+      return m_ComboBox.getSelectedItem();
+    }
+  }
+
+  /**
+   * Panel that uses buttons for the values that the user can enter.
+   */
+  public static class InputPanelWithButtons
+    extends AbstractInputPanel {
+
+    /** the selected value. */
+    protected String m_Value;
+
+    /** the label for the message. */
+    protected JLabel m_LabelMessage;
+
+    /** the panel with the buttons. */
+    protected JPanel m_PanelButtons;
+
+    /** the buttons. */
+    protected List<BaseButton> m_Buttons;
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg		the message to display
+     * @param initial 		the initial value to use for the input value
+     * @param options 		the options to select from
+     * @param horizontal 	whether to use horizontal or vertical buttons
+     */
+    public InputPanelWithButtons(String msg, String initial, String[] options, boolean horizontal) {
+      super(msg, initial);
+      setMessage(msg);
+      setOptions(options, horizontal);
+      setValue(initial);
+    }
+
+    /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+
+      m_Buttons = new ArrayList<>();
+      m_Value   = null;
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      JPanel	panel;
+
+      super.initGUI();
+
+      setLayout(new BorderLayout(5, 0));
+      setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+      m_LabelMessage = new JLabel();
+      panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      panel.add(m_LabelMessage);
+      add(panel, BorderLayout.NORTH);
+
+      m_PanelButtons = new JPanel(new BorderLayout());
+      add(m_PanelButtons, BorderLayout.CENTER);
+    }
+
+    /**
+     * Gives access to the underlying buttons.
+     *
+     * @return		the buttons in use
+     */
+    public List<BaseButton> getButtons() {
+      return m_Buttons;
+    }
+
+    /**
+     * Sets the message to display.
+     *
+     * @param msg	the message
+     */
+    @Override
+    public void setMessage(String msg) {
+      if ((msg == null) || (msg.isEmpty()))
+	msg = "Select value";
+      m_LabelMessage.setText(msg);
+    }
+
+    /**
+     * Sets the options to display.
+     *
+     * @param options		the options
+     * @param horizontal 	whether to use horizontal or vertical buttons
+     */
+    public void setOptions(String[] options, boolean horizontal) {
+      if (horizontal)
+	m_PanelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+      else
+	m_PanelButtons.setLayout(new GridLayout(options.length, 1, 0, 5));
+
+      for (String option: options) {
+	final BaseButton button = new BaseButton(option);
+	button.addActionListener((ActionEvent e) -> {
+	  m_Value = button.getText();
+	});
+	m_PanelButtons.add(button);
+	m_Buttons.add(button);
+      }
+    }
+
+    /**
+     * Sets the value to use.
+     *
+     * @param value the value
+     */
+    @Override
+    public void setValue(String value) {
+      m_Value = value;
+    }
+
+    public BaseButton getInitialButton(String initial) {
+      BaseButton  result;
+
+      result = null;
+      if (m_Buttons.size() > 0)
+	result = m_Buttons.get(0);
+
+      if ((initial != null) && !initial.isEmpty()) {
+	for (BaseButton button: m_Buttons) {
+	  if (button.getText().equals(initial)) {
+	    result = button;
+	    break;
+	  }
+	}
+      }
+
+      return result;
+    }
+
+    /**
+     * Returns the value that the user entered (if any).
+     *
+     * @return the entered/initial value
+     */
+    @Override
+    public String getValue() {
+      return m_Value;
     }
   }
 
@@ -1523,23 +1962,13 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm, int minCols, int minRows) {
-    JPanel			panelAll;
-    JPanel			panel;
-    JLabel			label;
-    final BaseTextArea		textValue;
+    InputPanelWithTextArea	panelInput;
     final ApprovalDialog	dialog;
     Component			pparent;
     Long                        sync;
-    int				rows;
-    int				cols;
-    String[]			lines;
 
-    if (initial == null)
-      initial = "";
     if ((title == null) || (title.isEmpty()))
       title = "Enter value";
-    if ((msg == null) || (msg.isEmpty()))
-      msg = "Enter value";
 
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
@@ -1557,36 +1986,9 @@ public class GUIHelper {
     dialog.setTitle(title);
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
 
-    rows = 1;
-    cols = 20;
-    if (!initial.isEmpty()) {
-      lines = initial.split("\n");
-      // rows
-      if (lines.length > 1)
-	rows = lines.length;
-      if (rows > 5)
-	rows = 5;
-      // cols
-      for (String line: lines) {
-	if (line.length() > cols)
-	  cols = line.length();
-      }
-      if (cols > 40)
-	cols = 40;
-    }
-    if (cols < minCols)
-      cols = minCols;
-    if (rows < minRows)
-      rows = minRows;
-    textValue = new BaseTextArea(rows, cols);
-    textValue.setToolTipText("Use <Ctrl-Enter> for adding a new line");
-    textValue.setText(initial);
-    if (!initial.isEmpty()) {
-      textValue.setSelectionStart(0);
-      textValue.setSelectionEnd(initial.length());
-    }
-    textValue.setLineWrap(true);
-    textValue.addKeyListener(new KeyAdapter() {
+    panelInput = new InputPanelWithTextArea(msg, initial, minCols, minRows);
+    panelInput.getTextArea().setToolTipText("Use <Ctrl-Enter> for adding a new line");
+    panelInput.getTextArea().addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -1596,7 +1998,7 @@ public class GUIHelper {
 	  }
 	  else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
 	    e.consume();
-	    textValue.append("\n");
+	    panelInput.getTextArea().append("\n");
 	  }
 	}
 	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -1608,17 +2010,7 @@ public class GUIHelper {
       }
     });
 
-    panelAll = new JPanel(new BorderLayout(5, 5));
-    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    label = new JLabel(msg);
-    panelAll.add(label, BorderLayout.NORTH);
-
-    panel = new JPanel(new BorderLayout());
-    panel.add(new BaseScrollPane(textValue), BorderLayout.CENTER);
-    panelAll.add(panel, BorderLayout.CENTER);
-
-    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog.getContentPane().add(panelInput, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
@@ -1653,7 +2045,7 @@ public class GUIHelper {
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
-      return textValue.getText();
+      return panelInput.getValue();
     else
       return null;
   }
@@ -1699,21 +2091,13 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   protected static String showInputDialogComboBox(Component parent, String msg, String initial, String[] options, String title, DialogCommunication comm) {
-    JPanel			panelAll;
-    JPanel			panelCombo;
-    JPanel			panel;
-    JLabel			label;
-    BaseComboBox<String>	combobox;
+    InputPanelWithComboBox	panelInput;
     final ApprovalDialog	dialog;
     Component			pparent;
     Long                        sync;
 
-    if (initial == null)
-      initial = "";
     if ((title == null) || (title.isEmpty()))
       title = "Select value";
-    if ((msg == null) || (msg.isEmpty()))
-      msg = "Select value";
 
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
@@ -1730,12 +2114,8 @@ public class GUIHelper {
     }
     dialog.setTitle(title);
 
-    combobox = new BaseComboBox<>(options);
-    if (!initial.isEmpty())
-      combobox.setSelectedItem(initial);
-    else
-      combobox.setSelectedIndex(0);
-    combobox.addKeyListener(new KeyAdapter() {
+    panelInput = new InputPanelWithComboBox(msg, initial, options);
+    panelInput.getComboBox().addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -1751,23 +2131,8 @@ public class GUIHelper {
 	}
       }
     });
-    panelCombo = new JPanel(new BorderLayout());
-    panelCombo.add(combobox, BorderLayout.NORTH);
 
-    panelAll = new JPanel(new BorderLayout(5, 0));
-    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    label = new JLabel(msg);
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(label);
-    panelAll.add(panel, BorderLayout.NORTH);
-
-    panel = new JPanel(new BorderLayout());
-    panel.add(panelCombo, BorderLayout.CENTER);
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    panelAll.add(panel, BorderLayout.CENTER);
-
-    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog.getContentPane().add(panelInput, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     dialog.setVisible(true);
@@ -1802,7 +2167,7 @@ public class GUIHelper {
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
-      return (String) combobox.getSelectedItem();
+      return panelInput.getValue();
     else
       return null;
   }
@@ -1822,22 +2187,14 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   protected static String showInputDialogButtons(Component parent, String msg, String initial, String[] options, String title, boolean horizontal, DialogCommunication comm) {
-    Component		pparent;
-    final BaseDialog	dialog;
-    JPanel		panelButtons;
-    JPanel		panel;
-    JPanel		panelAll;
-    JLabel		label;
-    final StringBuilder	result;
-    Long                sync;
-    BaseButton          initialFocus;
+    InputPanelWithButtons	panelInput;
+    BaseButton			initialFocus;
+    Component			pparent;
+    final BaseDialog		dialog;
+    Long                	sync;
 
-    if (initial == null)
-      initial = "";
     if ((title == null) || (title.isEmpty()))
       title = "Select value";
-    if ((msg == null) || (msg.isEmpty()))
-      msg = "Select alue";
 
     pparent = GUIHelper.getParentComponent(parent);
     if (comm == null) {
@@ -1854,35 +2211,13 @@ public class GUIHelper {
     }
     dialog.setTitle(title);
 
-    panelAll = new JPanel(new BorderLayout(5, 5));
-    panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    label = new JLabel(msg);
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(label);
-    panelAll.add(panel, BorderLayout.NORTH);
-
-    result = new StringBuilder();
-
-    if (horizontal)
-      panelButtons = new JPanel(new FlowLayout(FlowLayout.CENTER));
-    else
-      panelButtons = new JPanel(new GridLayout(options.length, 1, 0, 5));
-    initialFocus = null;
-    for (String option: options) {
-      final BaseButton button = new BaseButton(option);
-      button.addActionListener((ActionEvent e) -> {
-	result.append(button.getText());
-	dialog.setVisible(false);
-      });
-      if (option.equals(initial))
-	initialFocus = button;
-      panelButtons.add(button);
-    }
-    panelAll.add(panelButtons, BorderLayout.CENTER);
+    panelInput = new InputPanelWithButtons(msg, initial, options, horizontal);
+    for (BaseButton button: panelInput.getButtons())
+      button.addActionListener((ActionEvent e) -> dialog.setVisible(false));
+    initialFocus = panelInput.getInitialButton(initial);
 
     dialog.getContentPane().setLayout(new BorderLayout());
-    dialog.getContentPane().add(panelAll, BorderLayout.CENTER);
+    dialog.getContentPane().add(panelInput, BorderLayout.CENTER);
     dialog.pack();
     dialog.setLocationRelativeTo(parent);
     if (initialFocus != null)
@@ -1918,10 +2253,7 @@ public class GUIHelper {
 	dialog.setVisible(false);
     }
 
-    if (result.length() == 0)
-      return null;
-    else
-      return result.toString();
+    return panelInput.getValue();
   }
 
   /**
