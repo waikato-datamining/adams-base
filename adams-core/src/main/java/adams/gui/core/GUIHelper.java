@@ -402,13 +402,16 @@ public class GUIHelper {
     @Override
     protected void initGUI() {
       JPanel	panelCombo;
+      JPanel	panelComboInner;
       JPanel	panel;
 
       super.initGUI();
 
       m_ComboBox = new BaseComboBox<>();
+      panelComboInner = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      panelComboInner.add(m_ComboBox);
       panelCombo = new JPanel(new BorderLayout());
-      panelCombo.add(m_ComboBox, BorderLayout.NORTH);
+      panelCombo.add(panelComboInner, BorderLayout.NORTH);
 
       setLayout(new BorderLayout(5, 0));
       setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -499,7 +502,7 @@ public class GUIHelper {
     protected List<BaseButton> m_Buttons;
 
     /**
-     * Initializes the panel.
+     * Initializes the panel. Uses {@link FlowLayout#CENTER} as justification.
      *
      * @param msg		the message to display
      * @param initial 		the initial value to use for the input value
@@ -507,9 +510,22 @@ public class GUIHelper {
      * @param horizontal 	whether to use horizontal or vertical buttons
      */
     public InputPanelWithButtons(String msg, String initial, String[] options, boolean horizontal) {
+      this(msg, initial, options, horizontal, FlowLayout.CENTER);
+    }
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg		the message to display
+     * @param initial 		the initial value to use for the input value
+     * @param options 		the options to select from
+     * @param horizontal 	whether to use horizontal or vertical buttons
+     * @param btnJustification  the justification of the buttons for horizontal layout (see {@link FlowLayout})
+     */
+    public InputPanelWithButtons(String msg, String initial, String[] options, boolean horizontal, int btnJustification) {
       super(msg, initial);
       setMessage(msg);
-      setOptions(options, horizontal);
+      setOptions(options, horizontal, btnJustification);
       setValue(initial);
     }
 
@@ -530,6 +546,7 @@ public class GUIHelper {
     @Override
     protected void initGUI() {
       JPanel	panel;
+      JPanel	panelButtonsOuter;
 
       super.initGUI();
 
@@ -541,8 +558,11 @@ public class GUIHelper {
       panel.add(m_LabelMessage);
       add(panel, BorderLayout.NORTH);
 
+      panelButtonsOuter = new JPanel(new BorderLayout());
+      add(panelButtonsOuter, BorderLayout.CENTER);
+
       m_PanelButtons = new JPanel(new BorderLayout());
-      add(m_PanelButtons, BorderLayout.CENTER);
+      panelButtonsOuter.add(m_PanelButtons, BorderLayout.WEST);
     }
 
     /**
@@ -571,10 +591,11 @@ public class GUIHelper {
      *
      * @param options		the options
      * @param horizontal 	whether to use horizontal or vertical buttons
+     * @param btnJustification  the justification of the buttons for horizontal layout (see {@link FlowLayout})
      */
-    public void setOptions(String[] options, boolean horizontal) {
+    public void setOptions(String[] options, boolean horizontal, int btnJustification) {
       if (horizontal)
-	m_PanelButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+	m_PanelButtons.setLayout(new FlowLayout(btnJustification));
       else
 	m_PanelButtons.setLayout(new GridLayout(options.length, 1, 0, 5));
 

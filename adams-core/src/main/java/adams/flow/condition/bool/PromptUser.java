@@ -23,11 +23,16 @@ import adams.core.QuickInfoHelper;
 import adams.core.io.ConsoleHelper;
 import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteraction;
+import adams.flow.core.InteractionDisplayLocation;
+import adams.flow.core.InteractionDisplayLocationHelper;
+import adams.flow.core.InteractionDisplayLocationSupporter;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
+
+import java.awt.FlowLayout;
 
 /**
  <!-- globalinfo-start -->
@@ -73,13 +78,18 @@ import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-display-location &lt;DIALOG|NOTIFICATION_AREA&gt; (property: displayLocation)
+ * &nbsp;&nbsp;&nbsp;Determines where the interaction is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: DIALOG
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PromptUser
   extends AbstractBooleanCondition
-  implements AutomatableInteraction {
+  implements AutomatableInteraction, InteractionDisplayLocationSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3278345095591806425L;
@@ -105,7 +115,10 @@ public class PromptUser
   /** whether the prompt is non-interactive. */
   protected boolean m_NonInteractive;
 
-  /** for cancelation. */
+  /** where to display the prompt. */
+  protected InteractionDisplayLocation m_DisplayLocation;
+
+  /** for cancellation. */
   protected DialogCommunication m_Communication;
 
   /**
@@ -150,6 +163,10 @@ public class PromptUser
     m_OptionManager.add(
       "non-interactive", "nonInteractive",
       false);
+
+    m_OptionManager.add(
+      "display-location", "displayLocation",
+      InteractionDisplayLocation.DIALOG);
   }
 
   /**
@@ -300,6 +317,38 @@ public class PromptUser
   }
 
   /**
+   * Sets where the interaction is being displayed.
+   *
+   * @param value	the location
+   */
+  @Override
+  public void setDisplayLocation(InteractionDisplayLocation value) {
+    m_DisplayLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where the interaction is being displayed.
+   *
+   * @return 		the location
+   */
+  @Override
+  public InteractionDisplayLocation getDisplayLocation() {
+    return m_DisplayLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String displayLocationTipText() {
+    return "Determines where the interaction is being displayed.";
+  }
+
+  /**
    * Returns the quick info string to be displayed in the flow editor.
    *
    * @return		always 'true'
@@ -328,10 +377,11 @@ public class PromptUser
    */
   @Override
   protected boolean doEvaluate(Actor owner, Token token) {
-    String      message;
-    String      answer;
-    String      initial;
-    boolean	headless;
+    String      			message;
+    String      			answer;
+    String      			initial;
+    boolean				headless;
+    GUIHelper.InputPanelWithButtons 	panelInput;
 
     message = m_Message;
     if (owner != null) {
@@ -349,14 +399,26 @@ public class PromptUser
 	  message, new String[]{m_CaptionPositive, m_CaptionNegative}, initial);
       }
       else {
-	answer = GUIHelper.showInputDialog(
-	  (owner == null) ? null : owner.getParentComponent(),
-	  message,
-	  initial,
-	  new String[]{m_CaptionPositive, m_CaptionNegative},
-	  InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
-	  "Please choose",
-	  m_Communication);
+	switch (m_DisplayLocation) {
+	  case DIALOG:
+	    answer = GUIHelper.showInputDialog(
+	      (owner == null) ? null : owner.getParentComponent(),
+	      message,
+	      initial,
+	      new String[]{m_CaptionPositive, m_CaptionNegative},
+	      InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
+	      "Please choose",
+	      m_Communication);
+	    break;
+
+	  case NOTIFICATION_AREA:
+	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT);
+	    answer     = InteractionDisplayLocationHelper.display(owner, m_Communication, panelInput);
+	    break;
+
+	  default:
+	    throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
+	}
 	m_Communication = null;
       }
     }

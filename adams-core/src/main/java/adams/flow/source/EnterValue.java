@@ -15,7 +15,7 @@
 
 /*
  * EnterValue.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -27,12 +27,17 @@ import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.InteractionDisplayLocation;
+import adams.flow.core.InteractionDisplayLocationHelper;
+import adams.flow.core.InteractionDisplayLocationSupporter;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
 
+import javax.swing.JPanel;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,47 +59,47 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: EnterValue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
  * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
  * &nbsp;&nbsp;&nbsp;The stop mode to use.
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
@@ -140,36 +145,36 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-use-buttons &lt;boolean&gt; (property: useButtons)
  * &nbsp;&nbsp;&nbsp;If enabled and selection values are available, then instead of a dropdown 
  * &nbsp;&nbsp;&nbsp;list a button per selection value is displayed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
  * &nbsp;&nbsp;&nbsp;If enabled, the initial value is forwarded without user interaction.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-restoration-file &lt;adams.core.io.PlaceholderFile&gt; (property: restorationFile)
  * &nbsp;&nbsp;&nbsp;The file to store the restoration information in.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class EnterValue
   extends AbstractInteractiveSource
-  implements AutomatableInteractiveActor, RestorableActor {
+  implements AutomatableInteractiveActor, RestorableActor, InteractionDisplayLocationSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -200,6 +205,9 @@ public class EnterValue
   /** whether to use vertical buttons instead of a horizontal ones. */
   protected boolean m_VerticalButtons;
 
+  /** where to display the prompt. */
+  protected InteractionDisplayLocation m_DisplayLocation;
+
   /** whether restoration is enabled. */
   protected boolean m_RestorationEnabled;
 
@@ -220,7 +228,7 @@ public class EnterValue
   @Override
   public String globalInfo() {
     return
-        "Pops up a dialog, prompting the user to enter a value.";
+      "Pops up a dialog, prompting the user to enter a value.";
   }
 
   /**
@@ -257,6 +265,10 @@ public class EnterValue
     m_OptionManager.add(
       "vertical-buttons", "verticalButtons",
       false);
+
+    m_OptionManager.add(
+      "display-location", "displayLocation",
+      InteractionDisplayLocation.DIALOG);
 
     m_OptionManager.add(
       "non-interactive", "nonInteractive",
@@ -475,8 +487,8 @@ public class EnterValue
    *             	displaying in the GUI or for listing the options.
    */
   public String useButtonsTipText() {
-    return 
-	"If enabled and selection values are available, then instead of a "
+    return
+      "If enabled and selection values are available, then instead of a "
 	+ "dropdown list a button per selection value is displayed.";
   }
 
@@ -507,7 +519,39 @@ public class EnterValue
    */
   public String verticalButtonsTipText() {
     return
-	"If enabled and buttons are used, they get displayed vertically rather than horizontally.";
+      "If enabled and buttons are used, they get displayed vertically rather than horizontally.";
+  }
+
+  /**
+   * Sets where the interaction is being displayed.
+   *
+   * @param value	the location
+   */
+  @Override
+  public void setDisplayLocation(InteractionDisplayLocation value) {
+    m_DisplayLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where the interaction is being displayed.
+   *
+   * @return 		the location
+   */
+  @Override
+  public InteractionDisplayLocation getDisplayLocation() {
+    return m_DisplayLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String displayLocationTipText() {
+    return "Determines where the interaction is being displayed.";
   }
 
   /**
@@ -624,6 +668,11 @@ public class EnterValue
     String				initial;
     Properties				props;
     InputDialogMultiValueSelection 	view;
+    GUIHelper.InputPanelWithComboBox	panelInputCombobox;
+    GUIHelper.InputPanelWithButtons	panelInputButtons;
+    GUIHelper.InputPanelWithTextArea	panelInputText;
+    JPanel				panelButtons;
+    JPanel				panelAll;
 
     msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
@@ -633,9 +682,9 @@ public class EnterValue
     view    = InputDialogMultiValueSelection.COMBOBOX;
     if (m_UseButtons) {
       if (m_VerticalButtons)
-        view = InputDialogMultiValueSelection.BUTTONS_VERTICAL;
+	view = InputDialogMultiValueSelection.BUTTONS_VERTICAL;
       else
-        view = InputDialogMultiValueSelection.BUTTONS_HORIZONTAL;
+	view = InputDialogMultiValueSelection.BUTTONS_HORIZONTAL;
     }
 
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
@@ -653,15 +702,39 @@ public class EnterValue
       return null;
     }
 
-    if (m_SelectionValues.length > 0)
-      value = GUIHelper.showInputDialog(
-        getActualParentComponent(),
-        msg, initial, BaseObject.toStringArray(m_SelectionValues),
-        view, getName(), m_Comm);
-    else
-      value = GUIHelper.showInputDialog(
-        getActualParentComponent(),
-        msg, initial, getName(), m_Comm, m_NumCols, m_NumRows);
+    switch (m_DisplayLocation) {
+      case DIALOG:
+	if (m_SelectionValues.length > 0)
+	  value = GUIHelper.showInputDialog(
+	    getActualParentComponent(),
+	    msg, initial, BaseObject.toStringArray(m_SelectionValues),
+	    view, getName(), m_Comm);
+	else
+	  value = GUIHelper.showInputDialog(
+	    getActualParentComponent(),
+	    msg, initial, getName(), m_Comm, m_NumCols, m_NumRows);
+	break;
+
+      case NOTIFICATION_AREA:
+	if (m_SelectionValues.length > 0) {
+	  if (m_UseButtons) {
+	    panelInputButtons = new GUIHelper.InputPanelWithButtons(msg, initial, BaseObject.toStringArray(m_SelectionValues), !m_VerticalButtons, FlowLayout.LEFT);
+            value             = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputButtons);
+	  }
+	  else {
+	    panelInputCombobox = new GUIHelper.InputPanelWithComboBox(msg, initial, BaseObject.toStringArray(m_SelectionValues));
+            value              = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputCombobox, FlowLayout.LEFT);
+	  }
+	}
+	else {
+	  panelInputText = new GUIHelper.InputPanelWithTextArea(msg, initial, m_NumCols, m_NumRows);
+          value          = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputText, FlowLayout.LEFT);
+	}
+	break;
+
+      default:
+	throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
+    }
 
     if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
@@ -776,7 +849,7 @@ public class EnterValue
   public void stopExecution() {
     if (m_Comm != null) {
       synchronized(m_Comm) {
-        m_Comm.requestClose();
+	m_Comm.requestClose();
       }
     }
     super.stopExecution();
