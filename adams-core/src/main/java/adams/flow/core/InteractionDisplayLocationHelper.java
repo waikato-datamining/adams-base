@@ -27,7 +27,6 @@ import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.GUIHelper.InputPanelWithButtons;
 import adams.gui.core.GUIHelper.InputPanelWithComboBox;
 import adams.gui.core.GUIHelper.InputPanelWithTextArea;
-import adams.gui.flow.FlowPanelNotificationArea;
 import adams.gui.flow.FlowWorkerHandler;
 
 import javax.swing.BorderFactory;
@@ -92,7 +91,7 @@ public class InteractionDisplayLocationHelper {
       }
     }
 
-    FlowPanelNotificationArea.clearIcon(getFlowWorkerHandler(context));
+    getFlowWorkerHandler(context).clearNotification();
 
     if (comm.isCloseRequested())
       return null;
@@ -151,7 +150,7 @@ public class InteractionDisplayLocationHelper {
       }
     }
 
-    FlowPanelNotificationArea.clearIcon(getFlowWorkerHandler(context));
+    getFlowWorkerHandler(context).clearNotification();
 
     if (comm.isCloseRequested())
       return null;
@@ -210,7 +209,7 @@ public class InteractionDisplayLocationHelper {
       }
     }
 
-    FlowPanelNotificationArea.clearIcon(getFlowWorkerHandler(context));
+    getFlowWorkerHandler(context).clearNotification();
 
     if (comm.isCloseRequested())
       return null;
@@ -283,7 +282,7 @@ public class InteractionDisplayLocationHelper {
       }
     }
 
-    FlowPanelNotificationArea.clearIcon(getFlowWorkerHandler(context));
+    getFlowWorkerHandler(context).clearNotification();
 
     if (comm.isCloseRequested())
       return null;
