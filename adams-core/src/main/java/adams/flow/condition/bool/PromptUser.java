@@ -412,7 +412,7 @@ public class PromptUser
 	    break;
 
 	  case NOTIFICATION_AREA:
-	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT);
+	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT, "question.png");
 	    answer     = InteractionDisplayLocationHelper.display(owner, m_Communication, panelInput);
 	    break;
 

@@ -196,6 +196,12 @@ public class GUIHelper {
   public static abstract class AbstractInputPanel
     extends BasePanel {
 
+    /** the default icon. */
+    public final static String DEFAULT_ICON = "input.png";
+
+    /** the icon. */
+    protected String m_Icon;
+
     /**
      * Initializes the panel.
      *
@@ -204,6 +210,7 @@ public class GUIHelper {
      */
     protected AbstractInputPanel(String msg, String initial) {
       super();
+      setIcon(DEFAULT_ICON);
     }
 
     /**
@@ -228,12 +235,21 @@ public class GUIHelper {
     public abstract String getValue();
 
     /**
+     * Sets the icon to use.
+     *
+     * @param value	the icon name
+     */
+    public void setIcon(String value) {
+      m_Icon = value;
+    }
+
+    /**
      * Returns the icon to use.
      *
      * @return		the icon name
      */
     public String getIcon() {
-      return "input.png";
+      return m_Icon;
     }
   }
 
@@ -258,10 +274,24 @@ public class GUIHelper {
      * @param minRows 	the minimum number of rows in the text box
      */
     public InputPanelWithTextArea(String msg, String initial, int minCols, int minRows) {
+      this(msg, initial, minCols, minRows, DEFAULT_ICON);
+    }
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg 	the message to display
+     * @param initial 	the initial value to use for the input value
+     * @param minCols 	the minimum number of columns in the text box
+     * @param minRows 	the minimum number of rows in the text box
+     * @param icon	the icon to use, null for none
+     */
+    public InputPanelWithTextArea(String msg, String initial, int minCols, int minRows, String icon) {
       super(msg, initial);
       applyDimensions(initial, minCols, minRows);
       setMessage(msg);
       setValue(initial);
+      setIcon(icon);
     }
 
     /**
@@ -399,10 +429,23 @@ public class GUIHelper {
      * @param options 	the options to display
      */
     public InputPanelWithComboBox(String msg, String initial, String[] options) {
+      this(msg, initial, options, DEFAULT_ICON);
+    }
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg 	the message to display
+     * @param initial 	the initial value to use for the input value
+     * @param options 	the options to display
+     * @param icon 	the icon to use, null for none
+     */
+    public InputPanelWithComboBox(String msg, String initial, String[] options, String icon) {
       super(msg, initial);
       setMessage(msg);
       setOptions(options);
       setValue(initial);
+      setIcon(icon);
     }
 
     /**
@@ -532,10 +575,25 @@ public class GUIHelper {
      * @param btnJustification  the justification of the buttons for horizontal layout (see {@link FlowLayout})
      */
     public InputPanelWithButtons(String msg, String initial, String[] options, boolean horizontal, int btnJustification) {
+      this(msg, initial, options, horizontal, btnJustification, DEFAULT_ICON);
+    }
+
+    /**
+     * Initializes the panel.
+     *
+     * @param msg		the message to display
+     * @param initial 		the initial value to use for the input value
+     * @param options 		the options to select from
+     * @param horizontal 	whether to use horizontal or vertical buttons
+     * @param btnJustification  the justification of the buttons for horizontal layout (see {@link FlowLayout})
+     * @param icon 		the icon to use, null for none
+     */
+    public InputPanelWithButtons(String msg, String initial, String[] options, boolean horizontal, int btnJustification, String icon) {
       super(msg, initial);
       setMessage(msg);
       setOptions(options, horizontal, btnJustification);
       setValue(initial);
+      setIcon(icon);
     }
 
     /**

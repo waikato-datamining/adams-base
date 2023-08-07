@@ -381,4 +381,13 @@ public class FlowPanelNotificationArea
     if (handler instanceof TabIconSupporter)
       ((TabIconSupporter) handler).setTabIcon(icon);
   }
+
+  /**
+   * Clears any icon.
+   *
+   * @param handler	the handler to display the icon with
+   */
+  public static void clearIcon(FlowWorkerHandler handler) {
+    displayIcon(handler, (String) null);
+  }
 }
