@@ -58,6 +58,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -67,26 +68,28 @@ import java.util.List;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
@@ -95,9 +98,9 @@ import java.util.List;
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
@@ -109,12 +112,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
  * &nbsp;&nbsp;&nbsp;flow panel.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
  * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
  * &nbsp;&nbsp;&nbsp;of the callable actor.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-message &lt;adams.core.base.BaseString&gt; (property: message)
@@ -147,9 +152,20 @@ import java.util.List;
  * </pre>
  *
  * <pre>-use-buttons &lt;boolean&gt; (property: useButtons)
- * &nbsp;&nbsp;&nbsp;If enabled and selection values are available, then instead of a dropdown 
+ * &nbsp;&nbsp;&nbsp;If enabled and selection values are available, then instead of a dropdown
  * &nbsp;&nbsp;&nbsp;list a button per selection value is displayed.
  * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-vertical-buttons &lt;boolean&gt; (property: verticalButtons)
+ * &nbsp;&nbsp;&nbsp;If enabled and buttons are used, they get displayed vertically rather than
+ * &nbsp;&nbsp;&nbsp;horizontally.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-display-location &lt;DIALOG|NOTIFICATION_AREA&gt; (property: displayLocation)
+ * &nbsp;&nbsp;&nbsp;Determines where the interaction is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: DIALOG
  * </pre>
  *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
@@ -158,7 +174,7 @@ import java.util.List;
  * </pre>
  *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
- * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -489,7 +505,7 @@ public class EnterValue
   public String useButtonsTipText() {
     return
       "If enabled and selection values are available, then instead of a "
-	+ "dropdown list a button per selection value is displayed.";
+        + "dropdown list a button per selection value is displayed.";
   }
 
   /**
@@ -682,9 +698,9 @@ public class EnterValue
     view    = InputDialogMultiValueSelection.COMBOBOX;
     if (m_UseButtons) {
       if (m_VerticalButtons)
-	view = InputDialogMultiValueSelection.BUTTONS_VERTICAL;
+        view = InputDialogMultiValueSelection.BUTTONS_VERTICAL;
       else
-	view = InputDialogMultiValueSelection.BUTTONS_HORIZONTAL;
+        view = InputDialogMultiValueSelection.BUTTONS_HORIZONTAL;
     }
 
     if (m_RestorationEnabled && RestorableActorHelper.canRead(m_RestorationFile)) {
@@ -692,9 +708,9 @@ public class EnterValue
       props.setProperty(KEY_INITIAL, initial);
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
-	initial = props.getProperty(KEY_INITIAL);
+        initial = props.getProperty(KEY_INITIAL);
     }
 
     if (m_NonInteractive) {
@@ -704,46 +720,46 @@ public class EnterValue
 
     switch (m_DisplayLocation) {
       case DIALOG:
-	if (m_SelectionValues.length > 0)
-	  value = GUIHelper.showInputDialog(
-	    getActualParentComponent(),
-	    msg, initial, BaseObject.toStringArray(m_SelectionValues),
-	    view, getName(), m_Comm);
-	else
-	  value = GUIHelper.showInputDialog(
-	    getActualParentComponent(),
-	    msg, initial, getName(), m_Comm, m_NumCols, m_NumRows);
-	break;
+        if (m_SelectionValues.length > 0)
+          value = GUIHelper.showInputDialog(
+            getActualParentComponent(),
+            msg, initial, BaseObject.toStringArray(m_SelectionValues),
+            view, getName(), m_Comm);
+        else
+          value = GUIHelper.showInputDialog(
+            getActualParentComponent(),
+            msg, initial, getName(), m_Comm, m_NumCols, m_NumRows);
+        break;
 
       case NOTIFICATION_AREA:
-	if (m_SelectionValues.length > 0) {
-	  if (m_UseButtons) {
-	    panelInputButtons = new GUIHelper.InputPanelWithButtons(msg, initial, BaseObject.toStringArray(m_SelectionValues), !m_VerticalButtons, FlowLayout.LEFT);
+        if (m_SelectionValues.length > 0) {
+          if (m_UseButtons) {
+            panelInputButtons = new GUIHelper.InputPanelWithButtons(msg, initial, BaseObject.toStringArray(m_SelectionValues), !m_VerticalButtons, FlowLayout.LEFT);
             value             = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputButtons);
-	  }
-	  else {
-	    panelInputCombobox = new GUIHelper.InputPanelWithComboBox(msg, initial, BaseObject.toStringArray(m_SelectionValues));
+          }
+          else {
+            panelInputCombobox = new GUIHelper.InputPanelWithComboBox(msg, initial, BaseObject.toStringArray(m_SelectionValues));
             value              = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputCombobox, FlowLayout.LEFT);
-	  }
-	}
-	else {
-	  panelInputText = new GUIHelper.InputPanelWithTextArea(msg, initial, m_NumCols, m_NumRows);
+          }
+        }
+        else {
+          panelInputText = new GUIHelper.InputPanelWithTextArea(msg, initial, m_NumCols, m_NumRows);
           value          = InteractionDisplayLocationHelper.display(this, m_Comm, panelInputText, FlowLayout.LEFT);
-	}
-	break;
+        }
+        break;
 
       default:
-	throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
+        throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
     }
 
     if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
       if (m_RestorationEnabled) {
-	props = new Properties();
-	props.setProperty(KEY_INITIAL, value);
-	msg = RestorableActorHelper.write(props, m_RestorationFile);
-	if (msg != null)
-	  getLogger().warning(msg);
+        props = new Properties();
+        props.setProperty(KEY_INITIAL, value);
+        msg = RestorableActorHelper.write(props, m_RestorationFile);
+        if (msg != null)
+          getLogger().warning(msg);
       }
     }
 
@@ -786,9 +802,9 @@ public class EnterValue
       props.setProperty(KEY_INITIAL, initial);
       msg = RestorableActorHelper.read(m_RestorationFile, props);
       if (msg != null)
-	getLogger().warning(msg);
+        getLogger().warning(msg);
       else if (props.hasKey(KEY_INITIAL))
-	initial = props.getProperty(KEY_INITIAL);
+        initial = props.getProperty(KEY_INITIAL);
     }
 
     if (m_NonInteractive) {
@@ -804,11 +820,11 @@ public class EnterValue
     if ((value != null) && (value.length() > 0)) {
       m_OutputToken = new Token(value);
       if (m_RestorationEnabled) {
-	props = new Properties();
-	props.setProperty(KEY_INITIAL, value);
-	msg = RestorableActorHelper.write(props, m_RestorationFile);
-	if (msg != null)
-	  getLogger().warning(msg);
+        props = new Properties();
+        props.setProperty(KEY_INITIAL, value);
+        msg = RestorableActorHelper.write(props, m_RestorationFile);
+        if (msg != null)
+          getLogger().warning(msg);
       }
     }
 
@@ -849,7 +865,7 @@ public class EnterValue
   public void stopExecution() {
     if (m_Comm != null) {
       synchronized(m_Comm) {
-	m_Comm.requestClose();
+        m_Comm.requestClose();
       }
     }
     super.stopExecution();
