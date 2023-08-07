@@ -44,6 +44,7 @@ import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseStatusBar;
@@ -94,7 +95,6 @@ import java.util.Vector;
  * Panel that allows the execution of flows.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowRunnerPanel
   extends ToolBarPanel
@@ -199,6 +199,9 @@ public class FlowRunnerPanel
   /** the last flow that was run. */
   protected Actor m_LastFlow;
 
+  /** the panel at the bottom. */
+  protected BasePanel m_PanelBottom;
+
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
 
@@ -265,11 +268,13 @@ public class FlowRunnerPanel
     });
     add(m_StatusBar, BorderLayout.SOUTH);
 
+    m_PanelBottom = new BasePanel(new BorderLayout());
+    m_SplitPane.setBottomComponent(m_PanelBottom);
+    m_SplitPane.setBottomComponentHidden(true);
+
     m_PanelNotification = new FlowPanelNotificationArea();
     m_PanelNotification.setOwner(this);
     m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
-    m_SplitPane.setBottomComponent(m_PanelNotification);
-    m_SplitPane.setBottomComponentHidden(true);
 
     reset();
   }
@@ -1234,7 +1239,21 @@ public class FlowRunnerPanel
    */
   @Override
   public void showNotification(String msg, NotificationType type) {
+    m_PanelBottom.removeAll();
+    m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
     m_PanelNotification.showNotification(msg, type);
+  }
+
+  /**
+   * Displays the notification panel.
+   *
+   * @param panel	the panel to display
+   */
+  @Override
+  public void showNotification(JPanel panel) {
+    m_PanelBottom.removeAll();
+    m_PanelBottom.add(panel, BorderLayout.CENTER);
+    m_SplitPane.setBottomComponentHidden(false);
   }
 
   /**
@@ -1242,6 +1261,7 @@ public class FlowRunnerPanel
    */
   @Override
   public void clearNotification() {
+    m_PanelBottom.removeAll();
     m_PanelNotification.clearNotification();
   }
 

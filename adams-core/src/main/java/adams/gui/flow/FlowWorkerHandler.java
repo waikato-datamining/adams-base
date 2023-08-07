@@ -15,7 +15,7 @@
 
 /*
  * FlowWorkerHandler.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -27,6 +27,8 @@ import adams.gui.core.BaseSplitPane;
 import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
+
+import javax.swing.JPanel;
 
 /**
  * Interface for classes that can make use of the {@link FlowWorker} worker
@@ -94,6 +96,13 @@ public interface FlowWorkerHandler
    * @param type	the type of notification (info/warning/error)
    */
   public void showNotification(String msg, NotificationType type);
+
+  /**
+   * Displays the notification panel.
+   *
+   * @param panel	the panel to display
+   */
+  public void showNotification(JPanel panel);
 
   /**
    * Returns the split pane.

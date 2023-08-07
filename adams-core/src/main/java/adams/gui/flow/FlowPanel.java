@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -54,6 +54,7 @@ import adams.flow.core.ActorUtils;
 import adams.flow.processor.ActorProcessor;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.BaseDialog;
+import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.ConsolePanel;
@@ -193,6 +194,9 @@ public class FlowPanel
 
   /** the tab handlers. */
   protected List<AbstractTabHandler> m_TabHandlers;
+
+  /** the bottom panel. */
+  protected BasePanel m_PanelBottom;
 
   /** the panel for showing notifications. */
   protected FlowPanelNotificationArea m_PanelNotification;
@@ -351,11 +355,13 @@ public class FlowPanel
 	getEditor().getTabs().notifyTabs(m_Tree.getSelectionPaths(), m_Tree.getSelectedActors());
     });
 
+    m_PanelBottom = new BasePanel(new BorderLayout());
+    m_SplitPaneEditor.setBottomComponent(m_PanelBottom);
+    m_SplitPaneEditor.setBottomComponentHidden(true);
+
     m_PanelNotification = new FlowPanelNotificationArea();
     m_PanelNotification.setOwner(this);
     m_PanelNotification.addCloseListener((ActionEvent e) -> clearNotification());
-    m_SplitPaneEditor.setBottomComponent(m_PanelNotification);
-    m_SplitPaneEditor.setBottomComponentHidden(true);
   }
 
   /**
@@ -1787,6 +1793,8 @@ public class FlowPanel
    */
   @Override
   public void showNotification(String msg, NotificationType type) {
+    m_PanelBottom.removeAll();
+    m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
     m_PanelNotification.showNotification(msg, type);
     SwingUtilities.invokeLater(() -> {
       if (isDebugTreeVisible()) {
@@ -1799,10 +1807,23 @@ public class FlowPanel
   }
 
   /**
+   * Displays the notification panel.
+   *
+   * @param panel	the panel to display
+   */
+  @Override
+  public void showNotification(JPanel panel) {
+    m_PanelBottom.removeAll();
+    m_PanelBottom.add(panel, BorderLayout.CENTER);
+    m_SplitPaneEditor.setBottomComponentHidden(false);
+  }
+
+  /**
    * Removes the notification.
    */
   @Override
   public void clearNotification() {
+    m_PanelBottom.removeAll();
     m_PanelNotification.clearNotification();
   }
 
