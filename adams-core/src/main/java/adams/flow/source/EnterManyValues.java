@@ -29,13 +29,19 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.InteractionDisplayLocation;
+import adams.flow.core.InteractionDisplayLocationHelper;
+import adams.flow.core.InteractionDisplayLocationSupporter;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.source.valuedefinition.AbstractValueDefinition;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -65,48 +71,51 @@ import java.util.Map;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: EnterManyValues
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
  * &nbsp;&nbsp;&nbsp;The stop mode to use.
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
@@ -116,16 +125,18 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
  * &nbsp;&nbsp;&nbsp;flow panel.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
  * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
  * &nbsp;&nbsp;&nbsp;of the callable actor.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-message &lt;java.lang.String&gt; (property: message)
- * &nbsp;&nbsp;&nbsp;The message to prompt the user with.
+ * &nbsp;&nbsp;&nbsp;The message to prompt the user with; variables get automatically expanded.
  * &nbsp;&nbsp;&nbsp;default: Please enter values
  * </pre>
  *
@@ -138,6 +149,11 @@ import java.util.Map;
  * <pre>-output-type &lt;SPREADSHEET|KEY_VALUE_PAIRS|KEY_VALUE_PAIRS_ARRAY|MAP&gt; (property: outputType)
  * &nbsp;&nbsp;&nbsp;How to output the entered data.
  * &nbsp;&nbsp;&nbsp;default: SPREADSHEET
+ * </pre>
+ *
+ * <pre>-display-location &lt;DIALOG|NOTIFICATION_AREA&gt; (property: displayLocation)
+ * &nbsp;&nbsp;&nbsp;Determines where the interaction is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: DIALOG
  * </pre>
  *
  * <pre>-non-interactive &lt;boolean&gt; (property: nonInteractive)
@@ -161,14 +177,14 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class EnterManyValues
   extends AbstractInteractiveSource
-  implements AutomatableInteractiveActor, RestorableActor {
+  implements AutomatableInteractiveActor, RestorableActor, InteractionDisplayLocationSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -204,8 +220,14 @@ public class EnterManyValues
   /** the width of the dialog. */
   protected int m_Width;
 
+  /** where to display the prompt. */
+  protected InteractionDisplayLocation m_DisplayLocation;
+
   /** the list of tokens to output. */
   protected List m_Queue;
+
+  /** for communicating with the input dialog. */
+  protected GUIHelper.DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
@@ -225,32 +247,36 @@ public class EnterManyValues
     super.defineOptions();
 
     m_OptionManager.add(
-	    "message", "message",
-	    "Please enter values");
+      "message", "message",
+      "Please enter values");
 
     m_OptionManager.add(
-	    "value", "values",
-	    new AbstractValueDefinition[0]);
+      "value", "values",
+      new AbstractValueDefinition[0]);
 
     m_OptionManager.add(
-	    "output-type", "outputType",
-	    OutputType.SPREADSHEET);
+      "output-type", "outputType",
+      OutputType.SPREADSHEET);
 
     m_OptionManager.add(
-	    "non-interactive", "nonInteractive",
-	    false);
+      "display-location", "displayLocation",
+      InteractionDisplayLocation.DIALOG);
 
     m_OptionManager.add(
-	    "restoration-enabled", "restorationEnabled",
-	    false);
+      "non-interactive", "nonInteractive",
+      false);
 
     m_OptionManager.add(
-	    "restoration-file", "restorationFile",
-	    new PlaceholderFile());
+      "restoration-enabled", "restorationEnabled",
+      false);
 
     m_OptionManager.add(
-	    "width", "width",
-	    -1, -1, null);
+      "restoration-file", "restorationFile",
+      new PlaceholderFile());
+
+    m_OptionManager.add(
+      "width", "width",
+      -1, -1, null);
   }
 
   /**
@@ -399,6 +425,38 @@ public class EnterManyValues
    */
   public String outputTypeTipText() {
     return "How to output the entered data.";
+  }
+
+  /**
+   * Sets where the interaction is being displayed.
+   *
+   * @param value	the location
+   */
+  @Override
+  public void setDisplayLocation(InteractionDisplayLocation value) {
+    m_DisplayLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where the interaction is being displayed.
+   *
+   * @return 		the location
+   */
+  @Override
+  public InteractionDisplayLocation getDisplayLocation() {
+    return m_DisplayLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String displayLocationTipText() {
+    return "Determines where the interaction is being displayed.";
   }
 
   /**
@@ -551,59 +609,59 @@ public class EnterManyValues
   @Override
   public String setUp() {
     String	result;
-    
+
     result = super.setUp();
-    
+
     if (result == null) {
       if (m_Values.length == 0)
 	result = "No values defined!";
     }
-    
+
     return result;
   }
-  
+
   /**
    * Returns the default properties.
-   * 
+   *
    * @return		the default properties
    */
   protected Properties getDefaultProperties() {
     Properties	result;
-    
+
     result = new Properties();
     for (AbstractValueDefinition val: m_Values) {
       if (val.getEnabled())
-        result.setProperty(val.getName(), getVariables().expand(val.getDefaultValueAsString()));
+	result.setProperty(val.getName(), getVariables().expand(val.getDefaultValueAsString()));
     }
-    
+
     return result;
   }
-  
+
   /**
    * Converts the properties into a spreadsheet (single row, with property 
    * names for column names).
-   * 
+   *
    * @param props	the properties to convert
    * @return		the generated spreadsheet in a token
    */
   protected SpreadSheet propertiesToSpreadSheet(Properties props) {
     SpreadSheet	result;
     Row		row;
-    
+
     result = new DefaultSpreadSheet();
-    
+
     // header
     row   = result.getHeaderRow();
     for (AbstractValueDefinition val: m_Values) {
       if (val.getEnabled())
-        row.addCell(val.getName()).setContent(val.getName());
+	row.addCell(val.getName()).setContent(val.getName());
     }
-    
+
     // data
     row = result.addRow();
     for (AbstractValueDefinition val: m_Values) {
       if (!val.getEnabled())
-        continue;
+	continue;
       switch (val.getType()) {
 	case INTEGER:
 	  row.addCell(val.getName()).setContent(props.getInteger(val.getName()));
@@ -631,7 +689,7 @@ public class EnterManyValues
 	  break;
       }
     }
-    
+
     return result;
   }
 
@@ -704,19 +762,100 @@ public class EnterManyValues
   }
 
   /**
+   * Performs the interaction using a dialog.
+   *
+   * @param panel	the panel with the parameters
+   * @param panelMsg 	the panel with the message for the user
+   * @return		null if successfully interacted, otherwise error message
+   */
+  protected String doInteractInDialog(PropertiesParameterPanel panel, JPanel panelMsg) {
+    ApprovalDialog	dialog;
+    Long                sync;
+
+    dialog = new ApprovalDialog(null, ModalityType.MODELESS);
+    dialog.setTitle(getName());
+    registerWindow(dialog, dialog.getTitle());
+    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
+    dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.pack();
+    if (m_Width != -1)
+      dialog.setSize(new Dimension(m_Width, dialog.getPreferredSize().height));
+    dialog.setLocationRelativeTo(getActualParentComponent());
+    dialog.setVisible(true);
+
+    sync = UniqueIDs.nextLong();
+    // wait till dialog visible
+    while (!dialog.isVisible()) {
+      try {
+	synchronized (sync) {
+	  sync.wait(10);
+	}
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+    // wait till dialog closed
+    while (dialog.isVisible() && !isStopped()) {
+      try {
+	synchronized (sync) {
+	  sync.wait(100);
+	}
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+
+    if (isStopped())
+      dialog.setVisible(false);
+    deregisterWindow(dialog);
+
+    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
+      return null;
+    else
+      return INTERACTION_CANCELED;
+  }
+
+  /**
+   * Performs the interaction using the notification area.
+   *
+   * @param panel	the panel with the parameters
+   * @param panelMsg 	the panel with the message for the user
+   * @return		null if successfully interacted, otherwise error message
+   */
+  protected String doInteractInNotificationArea(PropertiesParameterPanel panel, JPanel panelMsg) {
+    JPanel		panelAll;
+    Boolean		result;
+
+    panelAll = new JPanel(new BorderLayout());
+    panelAll.add(panelMsg, BorderLayout.NORTH);
+    panelAll.add(panel, BorderLayout.CENTER);
+    panelAll.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+
+    m_Comm = new DialogCommunication();
+    result = InteractionDisplayLocationHelper.display(this, m_Comm, panelAll, FlowLayout.LEFT);
+    m_Comm = null;
+    if ((result == null) || !result)
+      return INTERACTION_CANCELED;
+    else
+      return null;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
    */
   @Override
   public String doInteract() {
+    String			result;
     Properties			props;
-    ApprovalDialog		dialog;
     PropertiesParameterPanel	panel;
     JPanel			panelMsg;
-    List<String>		order;
-    Long                        sync;
     String			msg;
+    List<String>		order;
 
     m_Queue.clear();
 
@@ -740,13 +879,13 @@ public class EnterManyValues
     for (AbstractValueDefinition value: m_Values)
       value.setFlowContext(this);
 
-    // show dialog
+    // assemble panel
     panel = new PropertiesParameterPanel();
     panel.setButtonPanelVisible(true);
     order = new ArrayList<>();
     for (AbstractValueDefinition val: m_Values) {
       if (!val.getEnabled())
-        continue;
+	continue;
       order.add(val.getName());
       if (!val.addToPanel(panel)) {
 	getLogger().severe("Failed to add value definition: " + val.toCommandLine());
@@ -755,55 +894,31 @@ public class EnterManyValues
     }
     panel.setPropertyOrder(order);
     panel.setProperties(props);
+
     panelMsg = new JPanel(new FlowLayout(FlowLayout.LEFT));
     msg = m_Message;
     msg = getVariables().expand(msg);
     panelMsg.add(new JLabel(msg));
-    dialog = new ApprovalDialog(null, ModalityType.MODELESS);
-    dialog.setTitle(getName());
-    registerWindow(dialog, dialog.getTitle());
-    dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
-    dialog.getContentPane().add(panelMsg, BorderLayout.NORTH);
-    dialog.getContentPane().add(panel, BorderLayout.CENTER);
-    dialog.pack();
-    if (m_Width != -1)
-      dialog.setSize(new Dimension(m_Width, dialog.getPreferredSize().height));
-    dialog.setLocationRelativeTo(getActualParentComponent());
-    dialog.setVisible(true);
 
-    sync = UniqueIDs.nextLong();
-    // wait till dialog visible
-    while (!dialog.isVisible()) {
-      try {
-        synchronized (sync) {
-          sync.wait(10);
-        }
-      }
-      catch (Exception e) {
-        // ignored
-      }
-    }
-    // wait till dialog closed
-    while (dialog.isVisible() && !isStopped()) {
-      try {
-        synchronized (sync) {
-          sync.wait(100);
-        }
-      }
-      catch (Exception e) {
-        // ignored
-      }
+
+    // display panel
+    switch (m_DisplayLocation) {
+      case DIALOG:
+	result = doInteractInDialog(panel, panelMsg);
+	break;
+      case NOTIFICATION_AREA:
+	result = doInteractInNotificationArea(panel, panelMsg);
+	break;
+      default:
+	throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
     }
 
-    if (isStopped())
-      dialog.setVisible(false);
-    deregisterWindow(dialog);
-
-    if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION) {
+    // if accepted, obtain parameters
+    if (result == null) {
       props = panel.getProperties();
       m_Queue.addAll(Arrays.asList(propertiesToOutputType(props)));
       if (m_RestorationEnabled) {
-        props = panel.getProperties();
+	props = panel.getProperties();
 	for (AbstractValueDefinition val: m_Values) {
 	  if (!val.canBeRestored() || !val.getEnabled())
 	    props.removeKey(val.getName());
@@ -812,11 +927,9 @@ public class EnterManyValues
 	if (msg != null)
 	  getLogger().warning(msg);
       }
-      return null;
     }
-    else {
-      return INTERACTION_CANCELED;
-    }
+
+    return result;
   }
 
   /**
@@ -856,7 +969,7 @@ public class EnterManyValues
     result = null;
     for (AbstractValueDefinition valueDef: m_Values) {
       if (!valueDef.getEnabled())
-        continue;
+	continue;
       if (props.hasKey(valueDef.getName()))
 	valueDef.setDefaultValueAsString(props.getProperty(valueDef.getName()));
       value = valueDef.headlessInteraction();
@@ -871,7 +984,7 @@ public class EnterManyValues
       if (m_RestorationEnabled) {
 	msg = RestorableActorHelper.write(props, m_RestorationFile);
 	if (msg != null)
-          getLogger().warning(msg);
+	  getLogger().warning(msg);
       }
     }
 
@@ -901,6 +1014,19 @@ public class EnterManyValues
    */
   public boolean hasPendingOutput() {
     return (m_Queue.size() > 0);
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Comm != null) {
+      synchronized(m_Comm) {
+	m_Comm.requestClose();
+      }
+    }
+    super.stopExecution();
   }
 
   /**

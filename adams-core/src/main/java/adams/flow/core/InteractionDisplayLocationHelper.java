@@ -133,7 +133,7 @@ public class InteractionDisplayLocationHelper {
     buttonCancel.addActionListener((ActionEvent e) -> comm.requestClose());
     panelButtons.add(buttonCancel);
 
-    getFlowWorkerHandler(context).showNotification(panel);
+    getFlowWorkerHandler(context).showNotification(panelAll);
 
     // wait till answer provided
     sync = UniqueIDs.nextLong();
@@ -209,5 +209,62 @@ public class InteractionDisplayLocationHelper {
       return null;
     else
       return answer.toString();
+  }
+
+  /**
+   * Displays the panel in the notification area.
+   *
+   * @param context		the flow context to use
+   * @param comm		the interaction communication
+   * @param panel		the panel to display
+   * @param btnJustification 	the justification of the OK/Cancel buttons (see {@link FlowLayout})
+   * @return			whether OK (true) or Cancel (false) was selected, null if stopped
+   */
+  public static Boolean display(Actor context, DialogCommunication comm, JPanel panel, int btnJustification) {
+    Long		sync;
+    JPanel		panelTop;
+    JPanel		panelAll;
+    JPanel		panelButtons;
+    final BaseButton	buttonOK;
+    final BaseButton	buttonCancel;
+    final StringBuilder	answer;
+
+    answer = new StringBuilder();
+
+    panelTop = new JPanel(new BorderLayout());
+    panelTop.add(panel, BorderLayout.NORTH);
+
+    panelAll = new JPanel(new BorderLayout());
+    panelAll.add(panelTop, BorderLayout.NORTH);
+
+    panelButtons = new JPanel(new FlowLayout(btnJustification));
+    panelButtons.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+    panelTop.add(panelButtons, BorderLayout.CENTER);
+    buttonOK = new BaseButton("OK");
+    buttonOK.addActionListener((ActionEvent e) -> answer.append("OK"));
+    panelButtons.add(buttonOK);
+    buttonCancel = new BaseButton("Cancel");
+    buttonCancel.addActionListener((ActionEvent e) -> comm.requestClose());
+    panelButtons.add(buttonCancel);
+
+    getFlowWorkerHandler(context).showNotification(panelAll);
+
+    // wait till answer provided
+    sync = UniqueIDs.nextLong();
+    while ((answer.length() == 0) && !comm.isCloseRequested()) {
+      try {
+	synchronized (sync) {
+	  sync.wait(100);
+	}
+      }
+      catch (Exception e) {
+	// ignored
+      }
+    }
+
+    if (comm.isCloseRequested())
+      return null;
+    else
+      return answer.toString().equalsIgnoreCase("OK");
   }
 }

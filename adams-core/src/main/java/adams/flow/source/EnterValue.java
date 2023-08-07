@@ -34,9 +34,9 @@ import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
 
-import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -687,14 +687,12 @@ public class EnterValue
     GUIHelper.InputPanelWithComboBox	panelInputCombobox;
     GUIHelper.InputPanelWithButtons	panelInputButtons;
     GUIHelper.InputPanelWithTextArea	panelInputText;
-    JPanel				panelButtons;
-    JPanel				panelAll;
 
     msg     = m_Message.getValue();
     msg     = getVariables().expand(msg);
     initial = m_InitialValue.getValue();
     initial = getVariables().expand(initial);
-    m_Comm  = new GUIHelper.DialogCommunication();
+    m_Comm  = new DialogCommunication();
     view    = InputDialogMultiValueSelection.COMBOBOX;
     if (m_UseButtons) {
       if (m_VerticalButtons)
