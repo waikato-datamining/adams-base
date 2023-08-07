@@ -598,6 +598,12 @@ public class GUIHelper {
       m_Value = value;
     }
 
+    /**
+     * Returns the initial button to focus.
+     *
+     * @param initial	the initial selection
+     * @return		the initial button, null if not found
+     */
     public BaseButton getInitialButton(String initial) {
       BaseButton  result;
 
