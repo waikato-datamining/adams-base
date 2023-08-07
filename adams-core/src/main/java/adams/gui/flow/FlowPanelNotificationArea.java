@@ -15,7 +15,7 @@
 
 /*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -54,7 +54,7 @@ import java.util.List;
 
 /**
  * Shows textual notifications. 
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FlowPanelNotificationArea
@@ -68,15 +68,37 @@ public class FlowPanelNotificationArea
    * The type of notification.
    */
   public enum NotificationType {
-    PLAIN,
-    INFO,
-    WARNING,
-    ERROR,
+    PLAIN(null),
+    INFO("validate_blue.png"),
+    WARNING("stop_blue.gif"),
+    ERROR("stop_red.gif"),
+    QUESTION("question.png");
+
+    /** the icon to use. */
+    private String m_Icon;
+
+    /**
+     * Initializes the enumeration item.
+     *
+     * @param icon	the icon name to associate, null for none
+     */
+    private NotificationType(String icon) {
+      m_Icon = icon;
+    }
+
+    /**
+     * Returns the icon associated with the type.
+     *
+     * @return		the icon name, null if none
+     */
+    public String getIcon() {
+      return m_Icon;
+    }
   }
 
   /** the owner. */
   protected FlowWorkerHandler m_Owner;
-  
+
   /** for displaying the text. */
   protected TextPanel m_TextNotification;
 
@@ -85,7 +107,7 @@ public class FlowPanelNotificationArea
 
   /** the close button. */
   protected BaseFlatButton m_ButtonClose;
-  
+
   /** the action button. */
   protected BaseFlatSplitButton m_ButtonAction;
 
@@ -94,16 +116,16 @@ public class FlowPanelNotificationArea
 
   /** the close listeners. */
   protected HashSet<ActionListener> m_CloseListeners;
-  
+
   /** the notification string. */
   protected String m_Notification;
-  
+
   /** the type of notification. */
   protected NotificationType m_Type;
 
   /** the available actions. */
   protected List<AbstractNotificationAreaAction> m_Actions;
-  
+
   /**
    * Initializes the members.
    */
@@ -113,7 +135,7 @@ public class FlowPanelNotificationArea
     AbstractNotificationAreaAction	action;
 
     super.initialize();
-    
+
     m_Owner          = null;
     m_CloseListeners = new HashSet<>();
     m_Notification   = null;
@@ -131,7 +153,7 @@ public class FlowPanelNotificationArea
       }
     }
   }
-  
+
   /**
    * Initializes the widgets.
    */
@@ -140,20 +162,20 @@ public class FlowPanelNotificationArea
     JPanel		panelRight;
 
     super.initGUI();
-    
+
     setLayout(new BorderLayout());
-    
+
     m_TextNotification = new TextPanel();
     m_TextNotification.setUpdateParentTitle(false);
     m_TextNotification.setEditable(false);
     m_TextNotification.setLineWrap(true);
     m_TextNotification.setPopupMenuCustomizer(this);
     add(m_TextNotification, BorderLayout.CENTER);
-    
+
     panelRight = new JPanel(new BorderLayout());
     panelRight.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     add(panelRight, BorderLayout.EAST);
-    
+
     m_PanelButtons = new JPanel(new GridLayout(0, 1, 5, 5));
     panelRight.add(m_PanelButtons, BorderLayout.NORTH);
 
@@ -185,53 +207,53 @@ public class FlowPanelNotificationArea
 
   /**
    * Sets the owning panel.
-   * 
+   *
    * @param value	the owner
    */
   public void setOwner(FlowWorkerHandler value) {
     m_Owner = value;
   }
-  
+
   /**
    * Returns the current owner.
-   * 
+   *
    * @return		the owner, null if none set
    */
   public FlowWorkerHandler getOwner() {
     return m_Owner;
   }
-  
+
   /**
    * Adds the listener to the list of listeners waiting for the "Close"
    * button to be pressed.
-   * 
+   *
    * @param l		the listener to add
    */
   public void addCloseListener(ActionListener l) {
     m_CloseListeners.add(l);
   }
-  
+
   /**
    * Removes the listener from the list of listeners waiting for the "Close"
    * button to be pressed.
-   * 
+   *
    * @param l		the listener to remove
    */
   public void removeCloseListener(ActionListener l) {
     m_CloseListeners.remove(l);
   }
-  
+
   /**
    * Notifies all the listeners that the close button was pressed.
    */
   public synchronized void notifyCloseListeners() {
     ActionEvent	event;
-    
+
     event = new ActionEvent(this, ActionEvent.ACTION_FIRST, "close");
     for (ActionListener l: m_CloseListeners)
       l.actionPerformed(event);
   }
-  
+
   /**
    * Updates the notification area.
    */
@@ -240,39 +262,22 @@ public class FlowPanelNotificationArea
 
     run = () -> {
       if (m_Notification == null) {
-        m_TextNotification.setContent("");
+	m_TextNotification.setContent("");
       }
       else {
-        String msg = m_Notification;
-        if (m_CheckBoxConsole.isSelected()) {
-          msg += "\n\n--- Console output ---\n\n"
-            + ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
-        }
-        String[] lines = msg.split("\n");
-        setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
-        m_TextNotification.setContent(msg);
+	String msg = m_Notification;
+	if (m_CheckBoxConsole.isSelected()) {
+	  msg += "\n\n--- Console output ---\n\n"
+	    + ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
+	}
+	String[] lines = msg.split("\n");
+	setPreferredSize(new Dimension(0, Math.min(300, (lines.length + 1) * 20) + 25));
+	m_TextNotification.setContent(msg);
       }
 
       if (getOwner() != null) {
-        String icon;
-	switch (m_Type) {
-	  case INFO:
-	    icon = "validate_blue.png";
-	    break;
-	  case WARNING:
-	    icon = "stop_blue.gif";
-	    break;
-	  case ERROR:
-	    icon = "stop_red.gif";
-	    break;
-	  default:
-	    icon = null;
-	}
-        if (getOwner() instanceof MultiPageIconSupporter)
-          ((MultiPageIconSupporter) getOwner()).setPageIcon(icon);
-        if (getOwner() instanceof TabIconSupporter)
-          ((TabIconSupporter) getOwner()).setTabIcon(icon);
-        getOwner().getSplitPane().setBottomComponentHidden(m_Notification == null);
+        displayIcon(getOwner(), m_Type);
+	getOwner().getSplitPane().setBottomComponentHidden(m_Notification == null);
       }
 
       for (AbstractNotificationAreaAction action: m_Actions)
@@ -280,10 +285,10 @@ public class FlowPanelNotificationArea
     };
     SwingUtilities.invokeLater(run);
   }
-  
+
   /**
    * Displays the notification text.
-   * 
+   *
    * @param msg		the text to display
    * @param type	the type of notification (info/warning/error)
    */
@@ -292,7 +297,7 @@ public class FlowPanelNotificationArea
     m_Type         = type;
     update();
   }
-  
+
   /**
    * Removes the notification.
    */
@@ -319,21 +324,21 @@ public class FlowPanelNotificationArea
       flowpanel = (FlowPanel) getOwner();
       paths = ActorUtils.extractActorNames(flowpanel.getCurrentFlow(), source.getContent());
       if (paths.size() > 0) {
-        submenu = new BaseMenu("Jump to");
-        menu.add(submenu);
-        for (final String path : paths) {
-          menuitem = new JMenuItem(path);
-          menuitem.addActionListener((ActionEvent e) -> flowpanel.getTree().locateAndDisplay(path, true));
-          submenu.add(menuitem);
-        }
+	submenu = new BaseMenu("Jump to");
+	menu.add(submenu);
+	for (final String path : paths) {
+	  menuitem = new JMenuItem(path);
+	  menuitem.addActionListener((ActionEvent e) -> flowpanel.getTree().locateAndDisplay(path, true));
+	  submenu.add(menuitem);
+	}
 
-        submenu = new BaseMenu("Copy location");
-        menu.add(submenu);
-        for (final String path : paths) {
-          menuitem = new JMenuItem(path);
-          menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(path));
-          submenu.add(menuitem);
-        }
+	submenu = new BaseMenu("Copy location");
+	menu.add(submenu);
+	for (final String path : paths) {
+	  menuitem = new JMenuItem(path);
+	  menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(path));
+	  submenu.add(menuitem);
+	}
       }
     }
   }
@@ -352,5 +357,28 @@ public class FlowPanelNotificationArea
    */
   public void printText() {
     m_TextNotification.printText();
+  }
+
+  /**
+   * Displays the icon associated with the notification type.
+   *
+   * @param handler	the handler to display the icon with
+   * @param type	the type of icon to display
+   */
+  public static void displayIcon(FlowWorkerHandler handler, NotificationType type) {
+    displayIcon(handler, type.getIcon());
+  }
+
+  /**
+   * Displays the icon.
+   *
+   * @param handler	the handler to display the icon with
+   * @param icon	the name of the icon to display
+   */
+  public static void displayIcon(FlowWorkerHandler handler, String icon) {
+    if (handler instanceof MultiPageIconSupporter)
+      ((MultiPageIconSupporter) handler).setPageIcon(icon);
+    if (handler instanceof TabIconSupporter)
+      ((TabIconSupporter) handler).setTabIcon(icon);
   }
 }

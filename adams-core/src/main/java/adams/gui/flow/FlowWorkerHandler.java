@@ -101,8 +101,9 @@ public interface FlowWorkerHandler
    * Displays the notification panel.
    *
    * @param panel	the panel to display
+   * @param icon	the icon to display, null for none
    */
-  public void showNotification(JPanel panel);
+  public void showNotification(JPanel panel, String icon);
 
   /**
    * Returns the split pane.

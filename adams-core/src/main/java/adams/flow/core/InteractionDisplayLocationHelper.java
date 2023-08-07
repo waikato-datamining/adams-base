@@ -69,7 +69,7 @@ public class InteractionDisplayLocationHelper {
     Long		sync;
     final StringBuilder answer;
 
-    getFlowWorkerHandler(context).showNotification(panel);
+    getFlowWorkerHandler(context).showNotification(panel, panel.getIcon());
 
     answer = new StringBuilder();
     for (BaseButton button: panel.getButtons()) {
@@ -133,7 +133,7 @@ public class InteractionDisplayLocationHelper {
     buttonCancel.addActionListener((ActionEvent e) -> comm.requestClose());
     panelButtons.add(buttonCancel);
 
-    getFlowWorkerHandler(context).showNotification(panelAll);
+    getFlowWorkerHandler(context).showNotification(panelAll, panel.getIcon());
 
     // wait till answer provided
     sync = UniqueIDs.nextLong();
@@ -190,7 +190,7 @@ public class InteractionDisplayLocationHelper {
     buttonCancel.addActionListener((ActionEvent e) -> comm.requestClose());
     panelButtons.add(buttonCancel);
 
-    getFlowWorkerHandler(context).showNotification(panelAll);
+    getFlowWorkerHandler(context).showNotification(panelAll, panel.getIcon());
 
     // wait till answer provided
     sync = UniqueIDs.nextLong();
@@ -221,6 +221,20 @@ public class InteractionDisplayLocationHelper {
    * @return			whether OK (true) or Cancel (false) was selected, null if stopped
    */
   public static Boolean display(Actor context, DialogCommunication comm, JPanel panel, int btnJustification) {
+    return display(context, comm, panel, btnJustification, null);
+  }
+
+  /**
+   * Displays the panel in the notification area.
+   *
+   * @param context		the flow context to use
+   * @param comm		the interaction communication
+   * @param panel		the panel to display
+   * @param btnJustification 	the justification of the OK/Cancel buttons (see {@link FlowLayout})
+   * @param icon		the icon to display, null for none
+   * @return			whether OK (true) or Cancel (false) was selected, null if stopped
+   */
+  public static Boolean display(Actor context, DialogCommunication comm, JPanel panel, int btnJustification, String icon) {
     Long		sync;
     JPanel		panelTop;
     JPanel		panelAll;
@@ -247,7 +261,7 @@ public class InteractionDisplayLocationHelper {
     buttonCancel.addActionListener((ActionEvent e) -> comm.requestClose());
     panelButtons.add(buttonCancel);
 
-    getFlowWorkerHandler(context).showNotification(panelAll);
+    getFlowWorkerHandler(context).showNotification(panelAll, icon);
 
     // wait till answer provided
     sync = UniqueIDs.nextLong();

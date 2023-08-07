@@ -835,7 +835,7 @@ public class EnterManyValues
     panelAll.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
 
     m_Comm = new DialogCommunication();
-    result = InteractionDisplayLocationHelper.display(this, m_Comm, panelAll, FlowLayout.LEFT);
+    result = InteractionDisplayLocationHelper.display(this, m_Comm, panelAll, FlowLayout.LEFT, "input.png");
     m_Comm = null;
     if ((result == null) || !result)
       return INTERACTION_CANCELED;

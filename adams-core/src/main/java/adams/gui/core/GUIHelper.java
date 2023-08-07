@@ -226,6 +226,15 @@ public class GUIHelper {
      * @return		the entered/initial value
      */
     public abstract String getValue();
+
+    /**
+     * Returns the icon to use.
+     *
+     * @return		the icon name
+     */
+    public String getIcon() {
+      return "input.png";
+    }
   }
 
   /**
