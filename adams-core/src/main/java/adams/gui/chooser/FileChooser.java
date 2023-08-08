@@ -836,4 +836,12 @@ public interface FileChooser {
    * @since 1.4
    */
   public ActionListener[] getActionListeners();
+
+  /**
+   * Returns whether the file chooser is a JComponent and can be embedded in
+   * other components.
+   *
+   * @return		true if JComponent-derived
+   */
+  public boolean isJComponent();
 }

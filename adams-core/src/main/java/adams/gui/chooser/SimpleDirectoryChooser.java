@@ -196,4 +196,15 @@ public class SimpleDirectoryChooser
     else
       return null;
   }
+
+  /**
+   * Returns whether the file chooser is a JComponent and can be embedded in
+   * other components.
+   *
+   * @return		true if JComponent-derived
+   */
+  @Override
+  public boolean isJComponent() {
+    return true;
+  }
 }

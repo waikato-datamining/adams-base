@@ -14,7 +14,7 @@
  */
 
 /*
- * Basejava
+ * BaseFileChooser.java
  * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 
@@ -662,6 +662,17 @@ public class BaseFileChooser
       return f.getName().toLowerCase().contains(filter) && super.accept(f);
     else
       return super.accept(f);
+  }
+
+  /**
+   * Returns whether the file chooser is a JComponent and can be embedded in
+   * other components.
+   *
+   * @return		true if JComponent-derived
+   */
+  @Override
+  public boolean isJComponent() {
+    return true;
   }
 
   /**
