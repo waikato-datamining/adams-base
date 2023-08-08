@@ -76,6 +76,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -1240,9 +1241,16 @@ public class FlowRunnerPanel
    */
   @Override
   public void showNotification(String msg, NotificationType type) {
-    m_PanelBottom.removeAll();
-    m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
-    m_PanelNotification.showNotification(msg, type);
+    SwingUtilities.invokeLater(() -> {
+      m_PanelBottom.removeAll();
+      m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
+      if (m_PanelBottom.getParent() != null) {
+        m_PanelBottom.getParent().invalidate();
+        m_PanelBottom.getParent().revalidate();
+        m_PanelBottom.getParent().doLayout();
+      }
+      m_PanelNotification.showNotification(msg, type);
+    });
   }
 
   /**
@@ -1253,10 +1261,17 @@ public class FlowRunnerPanel
    */
   @Override
   public void showNotification(JComponent comp, String icon) {
-    m_PanelBottom.removeAll();
-    m_PanelBottom.add(comp, BorderLayout.CENTER);
-    m_SplitPane.setBottomComponentHidden(false);
-    FlowPanelNotificationArea.displayIcon(this, icon);
+    SwingUtilities.invokeLater(() -> {
+      m_PanelBottom.removeAll();
+      m_PanelBottom.add(comp, BorderLayout.CENTER);
+      if (m_PanelBottom.getParent() != null) {
+        m_PanelBottom.getParent().invalidate();
+        m_PanelBottom.getParent().revalidate();
+        m_PanelBottom.getParent().doLayout();
+      }
+      m_SplitPane.setBottomComponentHidden(false);
+      FlowPanelNotificationArea.displayIcon(this, icon);
+    });
   }
 
   /**
