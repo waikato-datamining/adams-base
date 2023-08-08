@@ -1807,15 +1807,15 @@ public class FlowPanel
   }
 
   /**
-   * Displays the notification panel.
+   * Displays the notification component.
    *
-   * @param panel	the panel to display
+   * @param comp	the component to display
    * @param icon	the icon to display, null for none
    */
   @Override
-  public void showNotification(JPanel panel, String icon) {
+  public void showNotification(JComponent comp, String icon) {
     m_PanelBottom.removeAll();
-    m_PanelBottom.add(panel, BorderLayout.CENTER);
+    m_PanelBottom.add(comp, BorderLayout.CENTER);
     m_SplitPaneEditor.setBottomComponentHidden(false);
     FlowPanelNotificationArea.displayIcon(this, icon);
   }

@@ -68,6 +68,7 @@ import adams.gui.visualization.debug.StoragePanel;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -1245,15 +1246,15 @@ public class FlowRunnerPanel
   }
 
   /**
-   * Displays the notification panel.
+   * Displays the notification component.
    *
-   * @param panel	the panel to display
+   * @param comp	the component to display
    * @param icon	the icon to display, null for none
    */
   @Override
-  public void showNotification(JPanel panel, String icon) {
+  public void showNotification(JComponent comp, String icon) {
     m_PanelBottom.removeAll();
-    m_PanelBottom.add(panel, BorderLayout.CENTER);
+    m_PanelBottom.add(comp, BorderLayout.CENTER);
     m_SplitPane.setBottomComponentHidden(false);
     FlowPanelNotificationArea.displayIcon(this, icon);
   }

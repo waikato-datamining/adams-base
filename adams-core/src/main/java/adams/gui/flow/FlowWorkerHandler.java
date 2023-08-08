@@ -28,7 +28,7 @@ import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import adams.gui.tools.VariableManagementPanel;
 import adams.gui.visualization.debug.StoragePanel;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 /**
  * Interface for classes that can make use of the {@link FlowWorker} worker
@@ -98,12 +98,12 @@ public interface FlowWorkerHandler
   public void showNotification(String msg, NotificationType type);
 
   /**
-   * Displays the notification panel.
+   * Displays the notification component.
    *
-   * @param panel	the panel to display
+   * @param comp	the component to display
    * @param icon	the icon to display, null for none
    */
-  public void showNotification(JPanel panel, String icon);
+  public void showNotification(JComponent comp, String icon);
 
   /**
    * Returns the split pane.
