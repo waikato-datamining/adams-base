@@ -22,6 +22,7 @@ package adams.flow.source;
 
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.base.BaseString;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.FileUtils;
@@ -35,6 +36,9 @@ import adams.flow.core.Actor;
 import adams.flow.core.AutomatableInteractiveActor;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.InteractionDisplayLocation;
+import adams.flow.core.InteractionDisplayLocationHelper;
+import adams.flow.core.InteractionDisplayLocationSupporter;
 import adams.flow.core.InteractiveActorWithCustomParentComponent;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
@@ -43,8 +47,10 @@ import adams.flow.core.StopMode;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.GUIHelper.DialogCommunication;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +73,7 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -76,26 +83,28 @@ import java.util.logging.Level;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-output-array &lt;boolean&gt; (property: outputArray)
@@ -109,14 +118,19 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
  * <pre>-file-chooser-title &lt;java.lang.String&gt; (property: fileChooserTitle)
  * &nbsp;&nbsp;&nbsp;The title for the file chooser dialog.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-initial-dir &lt;adams.core.io.PlaceholderDirectory&gt; (property: initialDirectory)
@@ -125,14 +139,14 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
- * &nbsp;&nbsp;&nbsp;The extensions available through the file chooser (no dot; use comma to 
+ * &nbsp;&nbsp;&nbsp;The extensions available through the file chooser (no dot; use comma to
  * &nbsp;&nbsp;&nbsp;use multiple extensions per file filter).
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-initial-file &lt;adams.core.io.PlaceholderFile&gt; [-initial-file ...] (property: initialFiles)
  * &nbsp;&nbsp;&nbsp;The initial files for the file chooser.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-absolute &lt;boolean&gt; (property: absoluteFileNames)
@@ -141,7 +155,7 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-use-forward-slashes &lt;boolean&gt; (property: useForwardSlashes)
- * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix 
+ * &nbsp;&nbsp;&nbsp;If enabled, forward slashes are used in the output (but the '\\' prefix
  * &nbsp;&nbsp;&nbsp;of UNC paths is not converted).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -152,7 +166,7 @@ import java.util.logging.Level;
  * </pre>
  *
  * <pre>-restoration-enabled &lt;boolean&gt; (property: restorationEnabled)
- * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read 
+ * &nbsp;&nbsp;&nbsp;If enabled, the state of the actor is being preserved and attempted to read
  * &nbsp;&nbsp;&nbsp;in again next time this actor is executed.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -162,6 +176,25 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
+ * <pre>-display-location &lt;DIALOG|NOTIFICATION_AREA&gt; (property: displayLocation)
+ * &nbsp;&nbsp;&nbsp;Determines where the interaction is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: DIALOG
+ * </pre>
+ *
+ * <pre>-parent-component-actor &lt;adams.flow.core.CallableActorReference&gt; (property: parentComponentActor)
+ * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
+ * &nbsp;&nbsp;&nbsp;flow panel.
+ * &nbsp;&nbsp;&nbsp;default: unknown
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
+ * &nbsp;&nbsp;&nbsp;of the callable actor.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -169,7 +202,7 @@ import java.util.logging.Level;
 public class SelectFile
   extends AbstractArrayProvider
   implements InteractiveActorWithCustomParentComponent, AutomatableInteractiveActor,
-  RestorableActor, ForwardSlashSupporter {
+  RestorableActor, ForwardSlashSupporter, InteractionDisplayLocationSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8200691218381875131L;
@@ -214,6 +247,9 @@ public class SelectFile
   /** the file to store the restoration state in. */
   protected PlaceholderFile m_RestorationFile;
 
+  /** where to display the prompt. */
+  protected InteractionDisplayLocation m_DisplayLocation;
+
   /** the (optional) parent component to use. */
   protected CallableActorReference m_ParentComponentActor;
 
@@ -228,6 +264,9 @@ public class SelectFile
 
   /** whether to use the outer window as parent. */
   protected boolean m_UseOuterWindow;
+
+  /** for communicating with the input dialog. */
+  protected DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
@@ -295,6 +334,10 @@ public class SelectFile
     m_OptionManager.add(
       "restoration-file", "restorationFile",
       new PlaceholderFile());
+
+    m_OptionManager.add(
+      "display-location", "displayLocation",
+      InteractionDisplayLocation.DIALOG);
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
@@ -721,6 +764,38 @@ public class SelectFile
   }
 
   /**
+   * Sets where the interaction is being displayed.
+   *
+   * @param value	the location
+   */
+  @Override
+  public void setDisplayLocation(InteractionDisplayLocation value) {
+    m_DisplayLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where the interaction is being displayed.
+   *
+   * @return 		the location
+   */
+  @Override
+  public InteractionDisplayLocation getDisplayLocation() {
+    return m_DisplayLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String displayLocationTipText() {
+    return "Determines where the interaction is being displayed.";
+  }
+
+  /**
    * Sets the (optional) callable actor to use as parent component instead of
    * the flow panel.
    *
@@ -857,6 +932,70 @@ public class SelectFile
   }
 
   /**
+   * Performs the interaction with the user in a dialog.
+   *
+   * @param fileChooser	the file chooser instance to use
+   * @return		the files, null if dialog cancelled
+   */
+  protected File[] doInteractInDialog(BaseFileChooser fileChooser) {
+    File[] 	result;
+    int		retVal;
+
+    result = null;
+    retVal = fileChooser.showOpenDialog(getActualParentComponent());
+    if (retVal == BaseFileChooser.APPROVE_OPTION)
+      result = fileChooser.getSelectedFiles();
+
+    return result;
+  }
+
+  /**
+   * Performs the interaction with the user in the notification area.
+   *
+   * @param fileChooser	the file chooser instance to use
+   * @return		the files, null if cancelled or flow stopped
+   */
+  protected File[] doInteractInNotificationArea(BaseFileChooser fileChooser) {
+    Long		sync;
+    final StringBuilder	answer;
+
+    answer = new StringBuilder();
+
+    fileChooser.addActionListener((ActionEvent e) -> {
+      if (e.getActionCommand().equals(BaseFileChooser.CANCEL_SELECTION)) {
+        m_Comm.requestClose();
+      }
+      else if (e.getActionCommand().equals(BaseFileChooser.APPROVE_SELECTION)) {
+        answer.append("OK");
+      }
+    });
+
+    InteractionDisplayLocationHelper.getFlowWorkerHandler(this).showNotification(fileChooser, "input.png");
+    m_Comm = new DialogCommunication();
+
+    // wait till answer provided
+    sync = UniqueIDs.nextLong();
+    while ((answer.length() == 0) && !m_Comm.isCloseRequested()) {
+      try {
+        synchronized (sync) {
+          sync.wait(100);
+        }
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+
+    m_Comm = null;
+    InteractionDisplayLocationHelper.getFlowWorkerHandler(this).clearNotification();
+
+    if (answer.length() > 0)
+      return fileChooser.getSelectedFiles();
+    else
+      return null;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -864,7 +1003,6 @@ public class SelectFile
   @Override
   public String doInteract() {
     String			result;
-    int				retVal;
     File[]			files;
     BaseFileChooser		fileChooser;
     ExtensionFileFilter		filter;
@@ -939,14 +1077,24 @@ public class SelectFile
       fileChooser.setFileFilter(activeFilter);
     else
       fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
-    retVal = fileChooser.showOpenDialog(getActualParentComponent());
-    if (retVal == BaseFileChooser.APPROVE_OPTION) {
-      result = null;
-      files  = fileChooser.getSelectedFiles();
+
+    switch (m_DisplayLocation) {
+      case DIALOG:
+        files = doInteractInDialog(fileChooser);
+        break;
+      case NOTIFICATION_AREA:
+        files = doInteractInNotificationArea(fileChooser);
+        break;
+      default:
+        throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
+    }
+
+    if (files != null) {
+      result     = null;
       initialDir = new PlaceholderDirectory(fileChooser.getCurrentDirectory());
       for (File file: files) {
         initialDir = new PlaceholderDirectory(file.getParentFile());
-	m_Queue.add(convert(file));
+        m_Queue.add(convert(file));
       }
       if (m_RestorationEnabled) {
         initialFilesStr = new String[files.length];
@@ -1085,5 +1233,18 @@ public class SelectFile
     }
 
     return m_StopMessage;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Comm != null) {
+      synchronized(m_Comm) {
+        m_Comm.requestClose();
+      }
+    }
+    super.stopExecution();
   }
 }
