@@ -22,6 +22,8 @@ package adams.flow.source;
 
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
+import adams.core.Utils;
 import adams.core.io.ConsoleHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.ForwardSlashSupporter;
@@ -29,12 +31,18 @@ import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.InteractionDisplayLocation;
+import adams.flow.core.InteractionDisplayLocationHelper;
+import adams.flow.core.InteractionDisplayLocationSupporter;
 import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.gui.chooser.DirectoryChooserFactory;
 import adams.gui.chooser.FileChooser;
+import adams.gui.core.GUIHelper.DialogCommunication;
 
+import javax.swing.JComponent;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +64,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -79,12 +88,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
@@ -107,12 +118,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The (optional) callable actor to use as parent component instead of the
  * &nbsp;&nbsp;&nbsp;flow panel.
  * &nbsp;&nbsp;&nbsp;default: unknown
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-use-outer-window &lt;boolean&gt; (property: useOuterWindow)
  * &nbsp;&nbsp;&nbsp;If enabled, the outer window (dialog&#47;frame) is used instead of the component
  * &nbsp;&nbsp;&nbsp;of the callable actor.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-dir-chooser-title &lt;java.lang.String&gt; (property: directoryChooserTitle)
@@ -158,13 +171,19 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
+ * <pre>-display-location &lt;DIALOG|NOTIFICATION_AREA&gt; (property: displayLocation)
+ * &nbsp;&nbsp;&nbsp;Determines where the interaction is being displayed.
+ * &nbsp;&nbsp;&nbsp;default: DIALOG
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SelectDirectory
-    extends AbstractInteractiveSource
-    implements AutomatableInteractiveActor, RestorableActor, ForwardSlashSupporter {
+  extends AbstractInteractiveSource
+  implements AutomatableInteractiveActor, RestorableActor, ForwardSlashSupporter,
+  InteractionDisplayLocationSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3223325917850709883L;
@@ -195,8 +214,14 @@ public class SelectDirectory
   /** the file to store the restoration state in. */
   protected PlaceholderFile m_RestorationFile;
 
+  /** where to display the prompt. */
+  protected InteractionDisplayLocation m_DisplayLocation;
+
   /** for the chosen directory. */
   protected Token m_OutputToken;
+
+  /** for communicating with the input dialog. */
+  protected DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
@@ -206,8 +231,8 @@ public class SelectDirectory
   @Override
   public String globalInfo() {
     return
-        "Pops up a directory chooser dialog, prompting the user to select a "
-            + "directory. The directory then gets forwarded as string.";
+      "Pops up a directory chooser dialog, prompting the user to select a "
+        + "directory. The directory then gets forwarded as string.";
   }
 
   /**
@@ -218,36 +243,40 @@ public class SelectDirectory
     super.defineOptions();
 
     m_OptionManager.add(
-        "dir-chooser-title", "directoryChooserTitle",
-        "");
+      "dir-chooser-title", "directoryChooserTitle",
+      "");
 
     m_OptionManager.add(
-        "initial-dir", "initialDirectory",
-        new PlaceholderDirectory("."));
+      "initial-dir", "initialDirectory",
+      new PlaceholderDirectory("."));
 
     m_OptionManager.add(
-        "absolute", "absoluteDirectoryName",
-        false);
+      "absolute", "absoluteDirectoryName",
+      false);
 
     m_OptionManager.add(
-        "use-forward-slashes", "useForwardSlashes",
-        false);
+      "use-forward-slashes", "useForwardSlashes",
+      false);
 
     m_OptionManager.add(
-        "multi-selection-enabled", "multiSelectionEnabled",
-        false);
+      "multi-selection-enabled", "multiSelectionEnabled",
+      false);
 
     m_OptionManager.add(
-        "non-interactive", "nonInteractive",
-        false);
+      "non-interactive", "nonInteractive",
+      false);
 
     m_OptionManager.add(
-        "restoration-enabled", "restorationEnabled",
-        false);
+      "restoration-enabled", "restorationEnabled",
+      false);
 
     m_OptionManager.add(
-        "restoration-file", "restorationFile",
-        new PlaceholderFile());
+      "restoration-file", "restorationFile",
+      new PlaceholderFile());
+
+    m_OptionManager.add(
+      "display-location", "displayLocation",
+      InteractionDisplayLocation.DIALOG);
   }
 
   /**
@@ -396,8 +425,8 @@ public class SelectDirectory
    */
   public String useForwardSlashesTipText() {
     return
-        "If enabled, forward slashes are used in the output (but "
-            + "the '\\\\' prefix of UNC paths is not converted).";
+      "If enabled, forward slashes are used in the output (but "
+        + "the '\\\\' prefix of UNC paths is not converted).";
   }
 
   /**
@@ -523,6 +552,38 @@ public class SelectDirectory
   }
 
   /**
+   * Sets where the interaction is being displayed.
+   *
+   * @param value	the location
+   */
+  @Override
+  public void setDisplayLocation(InteractionDisplayLocation value) {
+    m_DisplayLocation = value;
+    reset();
+  }
+
+  /**
+   * Returns where the interaction is being displayed.
+   *
+   * @return 		the location
+   */
+  @Override
+  public InteractionDisplayLocation getDisplayLocation() {
+    return m_DisplayLocation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String displayLocationTipText() {
+    return "Determines where the interaction is being displayed.";
+  }
+
+  /**
    * Returns the base class of the items.
    *
    * @return		the class
@@ -597,6 +658,73 @@ public class SelectDirectory
   }
 
   /**
+   * Performs the interaction with the user in a dialog.
+   *
+   * @param dirChooser	the directory chooser instance to use
+   * @return		the dirs, null if dialog cancelled
+   */
+  protected File[] doInteractInDialog(FileChooser dirChooser) {
+    File[] 	result;
+    int		retVal;
+
+    result = null;
+    retVal = dirChooser.showOpenDialog(getActualParentComponent());
+    if (retVal == DirectoryChooserFactory.APPROVE_OPTION)
+      result = dirChooser.getSelectedFiles();
+
+    return result;
+  }
+
+  /**
+   * Performs the interaction with the user in the notification area.
+   *
+   * @param dirChooser	the directory chooser instance to use
+   * @return		the dirs, null if cancelled or flow stopped
+   */
+  protected File[] doInteractInNotificationArea(FileChooser dirChooser) {
+    Long		sync;
+    final StringBuilder	answer;
+
+    if (!dirChooser.isJComponent())
+      throw new IllegalStateException("File chooser is not JComponent and cannot be embedded: " + Utils.classToString(dirChooser));
+
+    answer = new StringBuilder();
+
+    dirChooser.addActionListener((ActionEvent e) -> {
+      if (e.getActionCommand().equals(DirectoryChooserFactory.CANCEL_SELECTION)) {
+        m_Comm.requestClose();
+      }
+      else if (e.getActionCommand().equals(DirectoryChooserFactory.APPROVE_SELECTION)) {
+        answer.append("OK");
+      }
+    });
+
+    InteractionDisplayLocationHelper.getFlowWorkerHandler(this).showNotification((JComponent) dirChooser, "input.png");
+    m_Comm = new DialogCommunication();
+
+    // wait till answer provided
+    sync = UniqueIDs.nextLong();
+    while ((answer.length() == 0) && !m_Comm.isCloseRequested()) {
+      try {
+        synchronized (sync) {
+          sync.wait(100);
+        }
+      }
+      catch (Exception e) {
+        // ignored
+      }
+    }
+
+    m_Comm = null;
+    InteractionDisplayLocationHelper.getFlowWorkerHandler(this).clearNotification();
+
+    if (answer.length() > 0)
+      return dirChooser.getSelectedFiles();
+    else
+      return null;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -604,7 +732,6 @@ public class SelectDirectory
   @Override
   public String doInteract() {
     String			result;
-    int				retVal;
     File 			dir;
     File[]			dirs;
     String[]			dirsStr;
@@ -658,18 +785,30 @@ public class SelectDirectory
       dirChooser.setCurrentDirectory(initial[0]);
       dirChooser.setSelectedFile(initial[0]);
     }
-    retVal = dirChooser.showOpenDialog(getActualParentComponent());
-    if (retVal == DirectoryChooserFactory.APPROVE_OPTION) {
+
+    switch (m_DisplayLocation) {
+      case DIALOG:
+        dirs = doInteractInDialog(dirChooser);
+        break;
+      case NOTIFICATION_AREA:
+        dirs = doInteractInNotificationArea(dirChooser);
+        break;
+      default:
+        throw new IllegalStateException("Unsupported display location: " + m_DisplayLocation);
+    }
+
+    if (dirs != null) {
       result = null;
       dir    = null;
-      dirs   = null;
       if (m_MultiSelectionEnabled) {
-        dirs = dirChooser.getSelectedFiles();
         m_OutputToken = new Token(convert(dirs));
       }
       else {
-        dir = dirChooser.getSelectedFile();
-        m_OutputToken = new Token(convert(dir));
+        if (dirs.length > 0) {
+          dir  = dirs[0];
+          dirs = null;
+          m_OutputToken = new Token(convert(dir));
+        }
       }
       if (m_RestorationEnabled) {
         props = new Properties();
@@ -778,5 +917,18 @@ public class SelectDirectory
    */
   public boolean hasPendingOutput() {
     return (m_OutputToken != null);
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Comm != null) {
+      synchronized(m_Comm) {
+        m_Comm.requestClose();
+      }
+    }
+    super.stopExecution();
   }
 }
