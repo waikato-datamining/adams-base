@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjects.java
- * Copyright (C) 2014-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -34,8 +34,10 @@ import gnu.trove.set.hash.TIntHashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Container for located objects.
@@ -207,12 +209,12 @@ public class LocatedObjects
     set    = new TIntHashSet(indices);
     for (i = 0; i < size(); i++) {
       if (invert) {
-        if (!set.contains(i))
-          result.add(get(i));
+	if (!set.contains(i))
+	  result.add(get(i));
       }
       else {
-        if (set.contains(i))
-          result.add(get(i));
+	if (set.contains(i))
+	  result.add(get(i));
       }
     }
 
@@ -232,9 +234,9 @@ public class LocatedObjects
     i   = 0;
     while (i < size()) {
       if (set.contains(get(i).getIndex()))
-        remove(i);
+	remove(i);
       else
-        i++;
+	i++;
     }
   }
 
@@ -320,7 +322,7 @@ public class LocatedObjects
 
     for (i = 0; i < size(); i++) {
       if (get(i).renameMetaDataKey(oldKey, newKey))
-        result++;
+	result++;
     }
 
     return result;
@@ -345,6 +347,55 @@ public class LocatedObjects
 
     for (i = 0; i < size(); i++)
       get(i).getMetaData().put(LocatedObjects.KEY_INDEX, (i+1+offset));
+  }
+
+  /**
+   * Resets the index value of all the objects (starts at 1) in the meta-data
+   * using the current order in the list, but only if necessary (eg missing or duplicate indices).
+   */
+  public void resetIndexIfNecessary() {
+    resetIndexIfNecessary(0);
+  }
+
+  /**
+   * Resets the index value of all the objects (starts at 1) in the meta-data
+   * using the current order in the list, but only if necessary (eg missing or duplicate indices).
+   *
+   * @param offset 	the offset to add to the index
+   */
+  public void resetIndexIfNecessary(int offset) {
+    if (!checkIndices())
+      resetIndex(offset);
+  }
+
+  /**
+   * Checks whether the indices are valid, i.e., no missing or duplicate ones.
+   *
+   * @return		true if valid
+   */
+  public boolean checkIndices() {
+    boolean		result;
+    int			i;
+    Set<String>		indices;
+    LocatedObject	obj;
+
+    result  = true;
+    indices = new HashSet<>();
+    for (i = 0; i < size(); i++) {
+      obj = get(i);
+      if (!obj.getMetaData().containsKey(KEY_INDEX)) {
+        result = false;
+        break;
+      }
+      else {
+        indices.add("" + obj.getMetaData().get(KEY_INDEX));
+      }
+    }
+
+    if (result)
+      result = (size() == indices.size());
+
+    return result;
   }
 
   /**
@@ -478,7 +529,7 @@ public class LocatedObjects
       result.setValue(field, obj.getLocation().getValue());
       // polygon
       if (obj.hasPolygon()) {
-        // poly_x
+	// poly_x
 	field = new Field(prefix + countStr + KEY_POLY_X, DataType.STRING);
 	result.addField(field);
 	result.setValue(field, Utils.flatten(StatUtils.toNumberArray(obj.getPolygonX()), ","));
@@ -560,9 +611,9 @@ public class LocatedObjects
     for (AbstractField field: fields) {
       match = false;
       for (String prefix: prefixes) {
-        if (field.getName().startsWith(prefix)) {
-          match = true;
-          break;
+	if (field.getName().startsWith(prefix)) {
+	  match = true;
+	  break;
 	}
       }
       if (match) {
@@ -577,13 +628,13 @@ public class LocatedObjects
     for (String group: groups.keySet()) {
       actPrefix = null;
       for (String prefix: prefixes) {
-        if (group.startsWith(prefix)) {
-          actPrefix = prefix;
-          break;
+	if (group.startsWith(prefix)) {
+	  actPrefix = prefix;
+	  break;
 	}
       }
       if (actPrefix == null)
-        continue;
+	continue;
       // meta-data
       meta = new HashMap<>();
       if (group.length() <= actPrefix.length())

@@ -15,7 +15,7 @@
 
 /*
  * ObjectFinder.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -27,7 +27,7 @@ import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
 
 /**
  * Interface for finders that locate objects in the report of an image.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public interface ObjectFinder
@@ -54,6 +54,30 @@ public interface ObjectFinder
    * 			displaying in the GUI or for listing the options.
    */
   public String prefixTipText();
+
+  /**
+   * Sets whether to reset the indices of the objects if necessary,
+   * e.g., when missing or duplicates.
+   *
+   * @param value	true if to reset
+   */
+  public void setResetIndicesIfNecessary(boolean value);
+
+  /**
+   * Returns whether to reset the indices of the objects if necessary,
+   * e.g., when missing or duplicates.
+   *
+   * @return		true if to reset
+   */
+  public boolean getResetIndicesIfNecessary();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String resetIndicesIfNecessaryTipText();
 
   /**
    * Finds the objects in the list of objects.

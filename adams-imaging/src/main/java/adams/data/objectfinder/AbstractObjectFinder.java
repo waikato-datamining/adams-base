@@ -42,6 +42,9 @@ public abstract class AbstractObjectFinder
   /** the prefix of the objects in the report. */
   protected String m_Prefix;
 
+  /** whether to reset indices if necessary. */
+  protected boolean m_ResetIndicesIfNecessary;
+
   /** boolean lenient. */
   protected boolean m_Lenient;
 
@@ -55,6 +58,10 @@ public abstract class AbstractObjectFinder
     m_OptionManager.add(
       "prefix", "prefix",
       LocatedObjects.DEFAULT_PREFIX);
+
+    m_OptionManager.add(
+      "reset-indices-if-necessary", "resetIndicesIfNecessary",
+      false);
 
     m_OptionManager.add(
       "lenient", "lenient",
@@ -88,6 +95,37 @@ public abstract class AbstractObjectFinder
    */
   public String prefixTipText() {
     return "The report field prefix used in the report.";
+  }
+
+  /**
+   * Sets whether to reset the indices of the objects if necessary,
+   * e.g., when missing or duplicates.
+   *
+   * @param value	true if to reset
+   */
+  public void setResetIndicesIfNecessary(boolean value) {
+    m_ResetIndicesIfNecessary = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to reset the indices of the objects if necessary,
+   * e.g., when missing or duplicates.
+   *
+   * @return		true if to reset
+   */
+  public boolean getResetIndicesIfNecessary() {
+    return m_ResetIndicesIfNecessary;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String resetIndicesIfNecessaryTipText() {
+    return "If enabled, automatically resets the indices if some are missing or duplicates are located.";
   }
 
   /**
@@ -164,6 +202,12 @@ public abstract class AbstractObjectFinder
     int[]	result;
     String	msg;
     int		count;
+
+    if (m_ResetIndicesIfNecessary && !objects.checkIndices()) {
+      if (isLoggingEnabled())
+        getLogger().info("Indices invalid, resetting...");
+      objects.resetIndex();
+    }
 
     msg = check(objects);
     if (msg != null)
