@@ -36,7 +36,6 @@ import adams.flow.core.RestorableActor;
 import adams.flow.core.RestorableActorHelper;
 import adams.flow.core.Token;
 import adams.flow.source.valuedefinition.AbstractValueDefinition;
-import adams.gui.core.GUIHelper;
 import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -227,7 +226,7 @@ public class EnterManyValues
   protected List m_Queue;
 
   /** for communicating with the input dialog. */
-  protected GUIHelper.DialogCommunication m_Comm;
+  protected DialogCommunication m_Comm;
 
   /**
    * Returns a string describing the object.
