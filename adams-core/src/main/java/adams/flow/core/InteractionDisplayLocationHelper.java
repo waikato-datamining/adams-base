@@ -49,7 +49,7 @@ public class InteractionDisplayLocationHelper {
    * @return		the handler
    * @throws IllegalStateException	if no context or not a {@link FlowWorkerHandler}
    */
-  protected static FlowWorkerHandler getFlowWorkerHandler(Actor context) {
+  public static FlowWorkerHandler getFlowWorkerHandler(Actor context) {
     if (context == null)
       throw new IllegalStateException("No owner!");
     if (!(context.getParentComponent() instanceof FlowWorkerHandler))
