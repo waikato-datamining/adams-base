@@ -91,7 +91,7 @@ public class Anchored
 
     m_OptionManager.add(
 	"format", "format",
-	"#. $");
+	"$");
 
     m_OptionManager.add(
 	"font", "font",

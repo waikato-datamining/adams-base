@@ -144,7 +144,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;'BLAH'; for instance: '# &#64;' or '# {BLAH}'; in case of numeric values, use
  * &nbsp;&nbsp;&nbsp;'|.X' to limit the number of decimals, eg '{BLAH|.2}' for a maximum of decimals
  * &nbsp;&nbsp;&nbsp;after the decimal point.
- * &nbsp;&nbsp;&nbsp;default: #. $
+ * &nbsp;&nbsp;&nbsp;default: $
  * </pre>
  *
  * <pre>-label-font &lt;java.awt.Font&gt; (property: labelFont)
@@ -516,7 +516,7 @@ public class ObjectLocationsFromSpreadSheet
 
     m_OptionManager.add(
       "label-format", "labelFormat",
-      "#. $");
+      "$");
 
     m_OptionManager.add(
       "label-font", "labelFont",

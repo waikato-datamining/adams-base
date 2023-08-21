@@ -130,7 +130,7 @@ public class AnnotationsAndPredictionsFromReport
 
     m_OptionManager.add(
       "label-format", "labelFormat",
-      "#. $");
+      "$");
 
     m_OptionManager.add(
       "label-font", "labelFont",

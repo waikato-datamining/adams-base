@@ -97,7 +97,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;The label format string to use for the rectangles; '#' for index, '&#64;' for
  * &nbsp;&nbsp;&nbsp;type and '$' for short type (type suffix must be defined for '&#64;' and '$'
  * &nbsp;&nbsp;&nbsp;); for instance: '# &#64;'.
- * &nbsp;&nbsp;&nbsp;default: #. $
+ * &nbsp;&nbsp;&nbsp;default: $
  * </pre>
  *
  * <pre>-label-font &lt;java.awt.Font&gt; (property: labelFont)
@@ -361,7 +361,7 @@ public class CocoAnnotationsHandler
 
     m_OptionManager.add(
       "label-format", "labelFormat",
-      "#. $");
+      "$");
 
     m_OptionManager.add(
       "label-font", "labelFont",

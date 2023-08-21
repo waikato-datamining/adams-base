@@ -15,7 +15,7 @@
 
 /*
  * AbstractDrawObjectsFromReport.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -80,7 +80,7 @@ public abstract class AbstractDrawObjectsFromReport
 
     m_OptionManager.add(
 	"label-format", "labelFormat",
-	"#");
+	"$");
 
     m_OptionManager.add(
 	"label-font", "labelFont",
