@@ -1,0 +1,11 @@
+# Project: adams
+# Date: 2023-08-30 11:13:23
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-opencv,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Generates a histogram from the incoming image." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/3267694739_4981d2f944_z.jpg -use-forward-slashes true
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.OpenCVImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.transformer.OpenCVFeatureGenerator -algorithm "adams.data.opencv.features.Histogram -converter \"adams.data.featureconverter.SpreadSheet -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\""
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
