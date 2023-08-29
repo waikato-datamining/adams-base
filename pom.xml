@@ -100,7 +100,7 @@
     <gson.version>2.10.1</gson.version>
     <debianmavenplugin.version>1.0.22</debianmavenplugin.version>
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
-    <javacv.version>1.5.8</javacv.version>
+    <javacv.version>1.5.9</javacv.version>
   </properties>
 
   <scm>
