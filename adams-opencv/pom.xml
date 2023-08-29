@@ -86,13 +86,13 @@
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>openblas-platform</artifactId>
-      <version>0.3.21-${javacv.version}</version>
+      <version>0.3.23-${javacv.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.bytedeco</groupId>
       <artifactId>opencv-platform</artifactId>
-      <version>4.6.0-${javacv.version}</version>
+      <version>4.7.0-${javacv.version}</version>
     </dependency>
   </dependencies>
 
