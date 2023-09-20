@@ -358,7 +358,7 @@ public class GUIHelper {
 
       rows = 1;
       cols = 20;
-      if (!initial.isEmpty()) {
+      if ((initial != null) && !initial.isEmpty()) {
 	lines = initial.split("\n");
 	// rows
 	if (lines.length > 1)
