@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataTableModel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable;
@@ -32,7 +32,6 @@ import java.util.List;
  * Model for displaying the loaded data.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DataTableModel
   extends AbstractMoveableTableModel {
@@ -138,9 +137,9 @@ public class DataTableModel
       case 1:
 	return cont.isModified();
       case 2:
-	return cont.getData().relationName();
+        return (cont.getData() != null) ? cont.getData().relationName() : "";
       case 3:
-	return (cont.getData().classIndex() == -1) ? "<none>" : cont.getData().classAttribute().name();
+        return ((cont.getData() == null) || (cont.getData().classIndex() == -1)) ? "<none>" : cont.getData().classAttribute().name();
       case 4:
 	return cont.getSource();
       default:
