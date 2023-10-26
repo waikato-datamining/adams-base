@@ -1,10 +1,10 @@
 # Project: adams
-# Date: 2023-02-27 16:18:11
+# Date: 2023-10-26 14:28:58
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
 #
-adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images for image segmentation.\\nSeveral file formats are available:\\n- bluechannel\\n- grayscale\\n- indexed PNG\\n- individual layers (as is or replacing the dominant color with black)\\nWhereas the first two store all layers in a single PNG file, the latter \\nstores them as binary PNGs with the label name as suffix.\\n" -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images for image segmentation.\\nSeveral file formats are available:\\n- bluechannel\\n- grayscale\\n- indexed PNG\\n- individual layers (as is or replacing the dominant color with black)\\nWhereas the first two store all layers in a single PNG file, the latter \\nstores them as binary PNGs with the label name as suffix.\\n\\nWhen outputting indexed PNG files, the indices may not be consecutive.\\nThis can be fixed with the \\\"indexed-png-remap\\\" tool of this library:\\nhttps://github.com/waikato-datamining/indexed-png-stats" -error-handling ACTORS_DECIDE_TO_STOP_ON_ERROR -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
   adams.flow.sink.ProgressBar -writer adams.gui.print.NullWriter -max @{max}
   adams.flow.source.SequenceSource -name "load report"

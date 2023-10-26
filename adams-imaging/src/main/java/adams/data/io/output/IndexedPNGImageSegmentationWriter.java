@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelImageSegmentationWriter.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -55,7 +55,10 @@ public class IndexedPNGImageSegmentationWriter
    */
   @Override
   public String globalInfo() {
-    return "Each layer gets stored with a separate color in the palette.";
+    return "Each layer gets stored with a separate color in the palette.\n"
+      + "NB: The indices may not start at 0 and increase consecutively. "
+      + "The 'indexed-png-remap' tool of the https://github.com/waikato-datamining/indexed-png-stats "
+      + "library can be used to adjust that.";
   }
 
   /**
