@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFormula.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -129,6 +129,9 @@ import java.util.logging.Level;
  *               | upper[case] ( expr )<br>
  *               | trim ( expr )<br>
  *               | matches ( expr , regexp )<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
+ *               | startswith ( str , find ) (checks whether 'str' string starts with 'find' string)<br>
+ *               | endswith ( str , find ) (checks whether 'str' string ends with 'find' string)<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] )<br>
@@ -197,38 +200,38 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
  * &nbsp;&nbsp;&nbsp;default: adams.env.Environment
  * </pre>
- * 
+ *
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The spreadsheet formula to evaluate (must evaluate to a double).
  * &nbsp;&nbsp;&nbsp;default: = 42
  * </pre>
- * 
+ *
  * <pre>-symbol &lt;adams.core.base.BaseString&gt; [-symbol ...] (property: symbols)
  * &nbsp;&nbsp;&nbsp;The symbols to initialize the parser with, key-value pairs: name=value.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-reader &lt;adams.data.io.input.SpreadSheetReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The spreadsheet reader for loading the spreadsheet to work on.
- * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- * 
+ *
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
  * &nbsp;&nbsp;&nbsp;The input file to load with the specified reader; ignored if pointing to 
  * &nbsp;&nbsp;&nbsp;directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetFormula
   extends AbstractSymbolEvaluator<Object> {
@@ -238,13 +241,13 @@ public class SpreadSheetFormula
 
   /** the spreadsheet to use. */
   protected SpreadSheet m_Sheet;
-  
+
   /** the spreadsheet reader for loading the spreadsheet. */
   protected SpreadSheetReader m_Reader;
-  
+
   /** the spreadsheet file to read. */
   protected PlaceholderFile m_Input;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -253,9 +256,9 @@ public class SpreadSheetFormula
   @Override
   public String globalInfo() {
     return
-        "Evaluates mathematical expressions.\n\n"
-    + "The following grammar is used:\n\n"
-    + getGrammar();
+      "Evaluates mathematical expressions.\n\n"
+        + "The following grammar is used:\n\n"
+        + getGrammar();
   }
 
   /**
@@ -266,12 +269,12 @@ public class SpreadSheetFormula
     super.defineOptions();
 
     m_OptionManager.add(
-	    "reader", "reader",
-	    new CsvSpreadSheetReader());
+      "reader", "reader",
+      new CsvSpreadSheetReader());
 
     m_OptionManager.add(
-	    "input", "input",
-	    new PlaceholderFile("."));
+      "input", "input",
+      new PlaceholderFile("."));
   }
 
   /**
@@ -281,129 +284,132 @@ public class SpreadSheetFormula
    */
   public String getGrammar() {
     return
-        "expr_list ::= '=' expr_list expr_part | expr_part ;\n"
-      + "expr_part ::=  expr ;\n"
-      + "\n"
-      + "expr      ::=   ( expr )\n"
-      + "\n"
-      + "# data types\n"
-      + "              | number\n"
-      + "              | string\n"
-      + "              | boolean\n"
-      + "              | date\n"
-      + "              | cell\n"
-      + "\n"
-      + "# constants\n"
-      + "              | true\n"
-      + "              | false\n"
-      + "              | pi\n"
-      + "              | e\n"
-      + "              | now()\n"
-      + "              | today()\n"
-      + "\n"
-      + "# negating numeric value\n"
-      + "              | -expr\n"
-      + "\n"
-      + "# comparisons\n"
-      + "              | expr < expr\n"
-      + "              | expr <= expr\n"
-      + "              | expr > expr\n"
-      + "              | expr >= expr\n"
-      + "              | expr = expr\n"
-      + "              | expr != expr (or: expr <> expr)\n"
-      + "\n"
-      + "# boolean operations\n"
-      + "              | ! expr (or: not expr)\n"
-      + "              | expr & expr (or: expr and expr)\n"
-      + "              | expr | expr (or: expr or expr)\n"
-      + "              | if[else] ( expr , expr (if true) , expr (if false) )\n"
-      + "\n"
-      + "# arithmetics\n"
-      + "              | expr + expr\n"
-      + "              | expr - expr\n"
-      + "              | expr * expr\n"
-      + "              | expr / expr\n"
-      + "              | expr ^ expr (power of)\n"
-      + "              | expr % expr (modulo)\n"
-      + "              ;\n"
-      + "\n"
-      + "# numeric functions\n"
-      + "              | abs ( expr | cell )\n"
-      + "              | sqrt ( expr | cell )\n"
-      + "              | log ( expr | cell )\n"
-      + "              | exp ( expr | cell )\n"
-      + "              | sin ( expr | cell )\n"
-      + "              | cos ( expr | cell )\n"
-      + "              | tan ( expr | cell )\n"
-      + "              | rint ( expr | cell )\n"
-      + "              | floor ( expr | cell )\n"
-      + "              | pow[er] ( expr | cell , expr | cell )\n"
-      + "              | ceil ( expr | cell )\n"
-      + "              | sum ( cell1 : cell2 )\n"
-      + "              | min ( cell1 : cell2 )\n"
-      + "              | max ( cell1 : cell2 )\n"
-      + "              | average ( cell1 : cell2 )\n"
-      + "              | stdev ( cell1 : cell2 )\n"
-      + "              | stdevp ( cell1 : cell2 )\n"
-      + "              | countif ( cell1 : cell2 ; expr )\n"
-      + "              | sumif ( cell1 : cell2 ; expr )\n"
-      + "              | sumif ( cell1 : cell2 ; expr : sumCell1 : sumCell2 )\n"
-      + "              | intercept ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
-      + "              | slope ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
-      + "              | countblank ( cell1 : cell2 )\n"
-      + "              | year ( expr | cell )\n"
-      + "              | month ( expr | cell )\n"
-      + "              | day ( expr | cell )\n"
-      + "              | hour ( expr | cell )\n"
-      + "              | minute ( expr | cell )\n"
-      + "              | second ( expr | cell )\n"
-      + "              | weekday ( expr | cell )\n"
-      + "              | weeknum ( expr | cell )\n"
-      + "\n"
-      + "# string functions\n"
-      + "              | substr ( expr , start [, end] )\n"
-      + "              | left ( expr , len )\n"
-      + "              | mid ( expr , start , len )\n"
-      + "              | right ( expr , len )\n"
-      + "              | rept ( expr , count )\n"
-      + "              | concatenate ( expr1 , expr2 [, expr3-5] )\n"
-      + "              | lower[case] ( expr )\n"
-      + "              | upper[case] ( expr )\n"
-      + "              | trim ( expr )\n"
-      + "              | matches ( expr , regexp )\n"
-      + "              | trim ( expr )\n"
-      + "              | len[gth] ( str )\n"
-      + "              | find ( search , expr [, pos] )\n"
-      + "              | replace ( str , pos , len , newstr )\n"
-      + "              | substitute ( str , find , replace [, occurrences] )\n"
-      + "              ;\n"
-      + "\n"
-      + "# obtaining native cell content\n"
-      + "              | cellobj ( cell )\n"
-      + "\n"
-      + "# obtaining cell content as string\n"
-      + "              | cellstr ( cell )\n"
-      + "\n"
-      + "Notes:\n"
-      + "- Cells are denoted by column in letter and row in digit, e.g., 'C12'.\n"
-      + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
-      + "- Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)\n"
-      + "- Line comments start with '#'.\n"
-      + "- Semi-colons (';') or commas (',') can be used as separator in the formulas,\n"
-      + "  e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'\n"
-      + "- dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'\n"
-      + "- times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'\n"
-      + "- the characters in square brackets in function names are optional:\n"
-      + "  e.g. 'len(\"abc\")' is the same as 'length(\"abc\")'\n"
-      + "\n"
-      + "A lot of the functions have been modeled after LibreOffice:\n"
-      + "  https://help.libreoffice.org/Calc/Functions_by_Category\n"
-      + "\n"
-      + "Additional functions:\n"
-      + ParserHelper.getFunctionOverview() + "\n"
-      + "\n"
-      + "Additional procedures:\n"
-      + ParserHelper.getProcedureOverview() + "\n"
+      "expr_list ::= '=' expr_list expr_part | expr_part ;\n"
+        + "expr_part ::=  expr ;\n"
+        + "\n"
+        + "expr      ::=   ( expr )\n"
+        + "\n"
+        + "# data types\n"
+        + "              | number\n"
+        + "              | string\n"
+        + "              | boolean\n"
+        + "              | date\n"
+        + "              | cell\n"
+        + "\n"
+        + "# constants\n"
+        + "              | true\n"
+        + "              | false\n"
+        + "              | pi\n"
+        + "              | e\n"
+        + "              | now()\n"
+        + "              | today()\n"
+        + "\n"
+        + "# negating numeric value\n"
+        + "              | -expr\n"
+        + "\n"
+        + "# comparisons\n"
+        + "              | expr < expr\n"
+        + "              | expr <= expr\n"
+        + "              | expr > expr\n"
+        + "              | expr >= expr\n"
+        + "              | expr = expr\n"
+        + "              | expr != expr (or: expr <> expr)\n"
+        + "\n"
+        + "# boolean operations\n"
+        + "              | ! expr (or: not expr)\n"
+        + "              | expr & expr (or: expr and expr)\n"
+        + "              | expr | expr (or: expr or expr)\n"
+        + "              | if[else] ( expr , expr (if true) , expr (if false) )\n"
+        + "\n"
+        + "# arithmetics\n"
+        + "              | expr + expr\n"
+        + "              | expr - expr\n"
+        + "              | expr * expr\n"
+        + "              | expr / expr\n"
+        + "              | expr ^ expr (power of)\n"
+        + "              | expr % expr (modulo)\n"
+        + "              ;\n"
+        + "\n"
+        + "# numeric functions\n"
+        + "              | abs ( expr | cell )\n"
+        + "              | sqrt ( expr | cell )\n"
+        + "              | log ( expr | cell )\n"
+        + "              | exp ( expr | cell )\n"
+        + "              | sin ( expr | cell )\n"
+        + "              | cos ( expr | cell )\n"
+        + "              | tan ( expr | cell )\n"
+        + "              | rint ( expr | cell )\n"
+        + "              | floor ( expr | cell )\n"
+        + "              | pow[er] ( expr | cell , expr | cell )\n"
+        + "              | ceil ( expr | cell )\n"
+        + "              | sum ( cell1 : cell2 )\n"
+        + "              | min ( cell1 : cell2 )\n"
+        + "              | max ( cell1 : cell2 )\n"
+        + "              | average ( cell1 : cell2 )\n"
+        + "              | stdev ( cell1 : cell2 )\n"
+        + "              | stdevp ( cell1 : cell2 )\n"
+        + "              | countif ( cell1 : cell2 ; expr )\n"
+        + "              | sumif ( cell1 : cell2 ; expr )\n"
+        + "              | sumif ( cell1 : cell2 ; expr : sumCell1 : sumCell2 )\n"
+        + "              | intercept ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
+        + "              | slope ( cellY1 : cellY2 ; cellX1 : cellX2 )\n"
+        + "              | countblank ( cell1 : cell2 )\n"
+        + "              | year ( expr | cell )\n"
+        + "              | month ( expr | cell )\n"
+        + "              | day ( expr | cell )\n"
+        + "              | hour ( expr | cell )\n"
+        + "              | minute ( expr | cell )\n"
+        + "              | second ( expr | cell )\n"
+        + "              | weekday ( expr | cell )\n"
+        + "              | weeknum ( expr | cell )\n"
+        + "\n"
+        + "# string functions\n"
+        + "              | substr ( expr , start [, end] )\n"
+        + "              | left ( expr , len )\n"
+        + "              | mid ( expr , start , len )\n"
+        + "              | right ( expr , len )\n"
+        + "              | rept ( expr , count )\n"
+        + "              | concatenate ( expr1 , expr2 [, expr3-5] )\n"
+        + "              | lower[case] ( expr )\n"
+        + "              | upper[case] ( expr )\n"
+        + "              | trim ( expr )\n"
+        + "              | matches ( expr , regexp )\n"
+        + "              | contains ( str , find ) (checks whether 'str' string contains 'find' string)\n"
+        + "              | startswith ( str , find ) (checks whether 'str' string starts with 'find' string)\n"
+        + "              | endswith ( str , find ) (checks whether 'str' string ends with 'find' string)\n"
+        + "              | trim ( expr )\n"
+        + "              | len[gth] ( str )\n"
+        + "              | find ( search , expr [, pos] )\n"
+        + "              | replace ( str , pos , len , newstr )\n"
+        + "              | substitute ( str , find , replace [, occurrences] )\n"
+        + "              ;\n"
+        + "\n"
+        + "# obtaining native cell content\n"
+        + "              | cellobj ( cell )\n"
+        + "\n"
+        + "# obtaining cell content as string\n"
+        + "              | cellstr ( cell )\n"
+        + "\n"
+        + "Notes:\n"
+        + "- Cells are denoted by column in letter and row in digit, e.g., 'C12'.\n"
+        + "- 'start' and 'end' for function 'substr' are indices that start at 1.\n"
+        + "- Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)\n"
+        + "- Line comments start with '#'.\n"
+        + "- Semi-colons (';') or commas (',') can be used as separator in the formulas,\n"
+        + "  e.g., 'pow(2,2)' is equivalent to 'pow(2;2)'\n"
+        + "- dates have to be of format 'yyyy-MM-dd' or 'yyyy-MM-dd HH:mm:ss'\n"
+        + "- times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'\n"
+        + "- the characters in square brackets in function names are optional:\n"
+        + "  e.g. 'len(\"abc\")' is the same as 'length(\"abc\")'\n"
+        + "\n"
+        + "A lot of the functions have been modeled after LibreOffice:\n"
+        + "  https://help.libreoffice.org/Calc/Functions_by_Category\n"
+        + "\n"
+        + "Additional functions:\n"
+        + ParserHelper.getFunctionOverview() + "\n"
+        + "\n"
+        + "Additional procedures:\n"
+        + ParserHelper.getProcedureOverview() + "\n"
       ;
   }
 
@@ -486,22 +492,22 @@ public class SpreadSheetFormula
 
   /**
    * Sets the underlying spreadsheet.
-   * 
+   *
    * @param value	the spreadsheet
    */
   public void setSheet(SpreadSheet value) {
     m_Sheet = value;
   }
-  
+
   /**
    * Returns the underlying spreadsheet.
-   * 
+   *
    * @return		the spreadsheet
    */
   public SpreadSheet getSheet() {
     return m_Sheet;
   }
-  
+
   /**
    * Initializes the symbol.
    *
@@ -543,7 +549,7 @@ public class SpreadSheetFormula
     if (m_Input.exists() && !m_Input.isDirectory())
       m_Sheet = m_Reader.read(m_Input);
   }
-  
+
   /**
    * Performs the evaluation.
    *
@@ -575,7 +581,7 @@ public class SpreadSheetFormula
     expr = expr.trim();
     if (expr.startsWith("="))
       expr = expr.substring(1);
-    
+
     sf          = new DefaultSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);

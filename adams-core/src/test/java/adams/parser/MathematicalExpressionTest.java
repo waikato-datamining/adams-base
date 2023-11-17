@@ -15,7 +15,7 @@
 
 /*
  * MathematicalExpressionTest.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
  * java adams.parser.MathematicalExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MathematicalExpressionTest
   extends AbstractSymbolEvaluatorTestCase<Double, MathematicalExpression> {
@@ -149,6 +148,10 @@ public class MathematicalExpressionTest
 	  {/* no symbols necessary */},		// 95
 	  {/* no symbols necessary */},		// 96
 	  {/* no symbols necessary */},		// 97
+	  {/* no symbols necessary */},		// 98
+	  {/* no symbols necessary */},		// 99
+	  {/* no symbols necessary */},		// 100
+	  {/* no symbols necessary */},		// 101
 	}
     };
   }
@@ -259,6 +262,10 @@ public class MathematicalExpressionTest
 	  "rand(42)", 	// 95
 	  "randint(1, 10)", 	// 96
 	  "randint(42, 10)", 	// 97
+	  "if(startswith(\"998877665544\"; \"99\"), 1, 0)",				// 98
+	  "if(startswith(\"998877665544\"; \"77\"), 1, 0)",				// 99
+	  "if(endswith(\"998877665544\"; \"544\"), 1, 0)",					// 100
+	  "if(endswith(\"998877665544\"; \"554\"), 1, 0)",				// 101
 	}
     };
   }

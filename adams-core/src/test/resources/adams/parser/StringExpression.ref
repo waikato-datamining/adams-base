@@ -31,4 +31,8 @@
 'str(contains("998877665544"; "777")): false
 'replaceall("hello_world.txt", "l", "L"): heLLo_worLd.txt
 'replaceall("hello_world.txt", ".*l", ""): d.txt
+'str(startswith("998877665544"; "99")): true
+'str(startswith("998877665544"; "98")): false
+'str(endswith("998877665544"; "44")): true
+'str(endswith("998877665544"; "43")): false
 

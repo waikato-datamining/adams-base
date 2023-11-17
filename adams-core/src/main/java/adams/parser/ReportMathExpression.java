@@ -15,7 +15,7 @@
 
 /*
  * ReportMathExpression.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -64,6 +64,7 @@ import adams.data.report.Report;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -78,15 +79,30 @@ import adams.data.report.Report;
  * # numeric functions<br>
  *               | abs ( expr )<br>
  *               | sqrt ( expr )<br>
+ *               | cbrt ( expr )<br>
  *               | log ( expr )<br>
+ *               | log10 ( expr )<br>
  *               | exp ( expr )<br>
  *               | sin ( expr )<br>
+ *               | sinh ( expr )<br>
  *               | cos ( expr )<br>
+ *               | cosh ( expr )<br>
  *               | tan ( expr )<br>
+ *               | tanh ( expr )<br>
+ *               | atan ( expr )<br>
+ *               | atan2 ( exprY , exprX )<br>
+ *               | hypot ( exprX , exprY )<br>
+ *               | signum ( expr )<br>
  *               | rint ( expr )<br>
  *               | floor ( expr )<br>
  *               | pow[er] ( expr , expr )<br>
  *               | ceil ( expr )<br>
+ *               | min ( expr1 , expr2 )<br>
+ *               | max ( expr1 , expr2 )<br>
+ *               | rand () (unseeded double, 0-1)<br>
+ *               | rand ( seed ) (seeded double, 0-1)<br>
+ *               | randint ( bound ) (unseeded int from 0 to bound-1)<br>
+ *               | randint ( seed, bound ) (seeded int from 0 to bound-1)<br>
  *               | year ( expr )<br>
  *               | month ( expr )<br>
  *               | day ( expr )<br>
@@ -109,13 +125,24 @@ import adams.data.report.Report;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
+ *               | startswith ( str , find ) (checks whether 'str' string starts with 'find' string)<br>
+ *               | endswith ( str , find ) (checks whether 'str' string ends with 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
  * - Line comments start with '#'.<br>
@@ -125,6 +152,7 @@ import adams.data.report.Report;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -141,7 +169,7 @@ import adams.data.report.Report;
  * <br><br>
  <!-- globalinfo-end -->
  *
- * Variables are either all upper case letters (e.g., "ABC") or any character 
+ * Variables are either all upper case letters (e.g., "ABC") or any character
  * apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").
  * <br><br>
  * Code example 1:
@@ -172,23 +200,23 @@ import adams.data.report.Report;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-env &lt;java.lang.String&gt; (property: environment)
  * &nbsp;&nbsp;&nbsp;The class to use for determining the environment.
  * &nbsp;&nbsp;&nbsp;default: adams.env.Environment
  * </pre>
- * 
+ *
  * <pre>-expression &lt;java.lang.String&gt; (property: expression)
  * &nbsp;&nbsp;&nbsp;The mathematical expression, including report fields, to evaluate (must 
  * &nbsp;&nbsp;&nbsp;evaluate to a double).
  * &nbsp;&nbsp;&nbsp;default: 42
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportMathExpression
   extends AbstractExpressionEvaluator<Double>
@@ -199,7 +227,7 @@ public class ReportMathExpression
 
   /** the report to use as basis. */
   protected Report m_Report;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -208,9 +236,9 @@ public class ReportMathExpression
   @Override
   public String globalInfo() {
     return
-        "Evaluates mathematical expressions on report values.\n\n"
-    + "The following grammar is used:\n\n"
-    + getGrammar();
+      "Evaluates mathematical expressions on report values.\n\n"
+        + "The following grammar is used:\n\n"
+        + getGrammar();
   }
 
   /**
@@ -230,7 +258,7 @@ public class ReportMathExpression
    */
   public String getGrammar() {
     return
-	new MathematicalExpression().getGrammar();
+      new MathematicalExpression().getGrammar();
   }
 
   /**

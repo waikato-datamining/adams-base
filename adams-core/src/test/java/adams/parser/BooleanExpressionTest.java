@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpressionTest.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -172,6 +172,10 @@ public class BooleanExpressionTest
 	  {/* no symbols necessary */},		// 119
 	  {/* no symbols necessary */},		// 120
 	  {/* no symbols necessary */},		// 121
+	  {/* no symbols necessary */},		// 122
+	  {/* no symbols necessary */},		// 123
+	  {/* no symbols necessary */},		// 124
+	  {/* no symbols necessary */},		// 125
 	}
     };
   }
@@ -306,6 +310,10 @@ public class BooleanExpressionTest
 	  "rand(42) > 0.73", 	// 119
 	  "randint(1, 10) > 0", 	// 120
 	  "randint(42, 10) > 0", 	// 121
+	  "startswith(\"998877665544\"; \"99\") = true",				// 122
+	  "startswith(\"998877665544\"; \"77\") = false",				// 123
+	  "endswith(\"998877665544\"; \"544\") = true",					// 124
+	  "endswith(\"998877665544\"; \"554\") = false",				// 125
 	}
     };
   }

@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ReportMathExpressionTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.parser.ReportMathExpression class. Run from commandline with: <br><br>
  * java adams.parser.ReportMathExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ReportMathExpressionTest
   extends AbstractExpressionEvaluatorTestCase<Double, ReportMathExpression> {
@@ -98,6 +97,12 @@ public class ReportMathExpressionTest
 	  "if(isnan(NaN), 1.0, 0.0)", 		// 41
 	  "if(isnan(1.0), 1.0, 0.0)", 		// 42
 	  "if(isnan(0.0 / 0.0), 1.0, 0.0)", 	// 43
+	  "if(contains(\"12345\", \"12\"); 1; 0)",	// 44
+	  "if(contains(\"12345\", \"13\"); 1; 0)",	// 45
+	  "if(startswith(\"12345\", \"12\"); 1; 0)",	// 46
+	  "if(startswith(\"12345\", \"13\"); 1; 0)",	// 47
+	  "if(endswith(\"12345\", \"45\"); 1; 0)",	// 48
+	  "if(endswith(\"12345\", \"55\"); 1; 0)",	// 49
 	}
     };
   }

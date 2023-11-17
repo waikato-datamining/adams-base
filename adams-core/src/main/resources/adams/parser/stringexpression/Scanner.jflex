@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.stringexpression;
@@ -37,7 +37,6 @@ import java.io.*;
 %class Scanner
 %{
   // Author: FracPete (fracpete at waikato dot ac dot nz)
-  // Version: $Revision: 10484 $
   protected SymbolFactory sf;
 
   public Scanner(InputStream r, SymbolFactory sf){
@@ -129,6 +128,8 @@ import java.io.*;
   "matches" { return sf.newSymbol("Matches", sym.MATCHES); }
   "find" { return sf.newSymbol("Find", sym.FIND); }
   "contains" { return sf.newSymbol("Contains", sym.CONTAINS); }
+  "startswith" { return sf.newSymbol("StartsWith", sym.STARTSWITH); }
+  "endswith" { return sf.newSymbol("EndsWith", sym.ENDSWITH); }
   "concatenate" { return sf.newSymbol("Concantenate", sym.CONCATENATE); }
   "rept" { return sf.newSymbol("repeat", sym.REPEAT); }
   "str" { return sf.newSymbol("str", sym.STR); }

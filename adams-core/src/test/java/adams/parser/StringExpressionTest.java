@@ -51,38 +51,42 @@ public class StringExpressionTest
   protected BaseString[][][] getRegressionSymbols() {
     return new BaseString[][][]{
 	{
-	  {/** no symbols necessary */},		// 1
-	  {/** no symbols necessary */},		// 2
-	  {/** no symbols necessary */},		// 3
-	  {/** no symbols necessary */},		// 4
-	  {/** no symbols necessary */},		// 5
-	  {/** no symbols necessary */},		// 6
-	  {/** no symbols necessary */},		// 7
-	  {/** no symbols necessary */},		// 8
-	  {/** no symbols necessary */},		// 9
-	  {/** no symbols necessary */},		// 10
-	  {/** no symbols necessary */},		// 11
-	  {/** no symbols necessary */},		// 12
-	  {/** no symbols necessary */},		// 13
-	  {/** no symbols necessary */},		// 14
-	  {/** no symbols necessary */},		// 15
-	  {/** no symbols necessary */},		// 16
-	  {/** no symbols necessary */},		// 17
-	  {/** no symbols necessary */},		// 18
-	  {/** no symbols necessary */},		// 19
-	  {/** no symbols necessary */},		// 20
-	  {/** no symbols necessary */},		// 21
-	  {/** no symbols necessary */},		// 22
-	  {/** no symbols necessary */},		// 23
-	  {/** no symbols necessary */},		// 24
-	  {/** no symbols necessary */},		// 25
+	  {/* no symbols necessary */},		// 1
+	  {/* no symbols necessary */},		// 2
+	  {/* no symbols necessary */},		// 3
+	  {/* no symbols necessary */},		// 4
+	  {/* no symbols necessary */},		// 5
+	  {/* no symbols necessary */},		// 6
+	  {/* no symbols necessary */},		// 7
+	  {/* no symbols necessary */},		// 8
+	  {/* no symbols necessary */},		// 9
+	  {/* no symbols necessary */},		// 10
+	  {/* no symbols necessary */},		// 11
+	  {/* no symbols necessary */},		// 12
+	  {/* no symbols necessary */},		// 13
+	  {/* no symbols necessary */},		// 14
+	  {/* no symbols necessary */},		// 15
+	  {/* no symbols necessary */},		// 16
+	  {/* no symbols necessary */},		// 17
+	  {/* no symbols necessary */},		// 18
+	  {/* no symbols necessary */},		// 19
+	  {/* no symbols necessary */},		// 20
+	  {/* no symbols necessary */},		// 21
+	  {/* no symbols necessary */},		// 22
+	  {/* no symbols necessary */},		// 23
+	  {/* no symbols necessary */},		// 24
+	  {/* no symbols necessary */},		// 25
 	  {new BaseString("hello world=1")},		// 26
 	  {new BaseString("hello world=1")},		// 27
 	  {new BaseString("Ab_c0=1")},			// 28
-	  {/** no symbols necessary */},		// 29
-	  {/** no symbols necessary */},		// 30
-	  {/** no symbols necessary */},		// 31
-	  {/** no symbols necessary */},		// 32
+	  {/* no symbols necessary */},		// 29
+	  {/* no symbols necessary */},		// 30
+	  {/* no symbols necessary */},		// 31
+	  {/* no symbols necessary */},		// 32
+	  {/* no symbols necessary */},		// 33
+	  {/* no symbols necessary */},		// 34
+	  {/* no symbols necessary */},		// 35
+	  {/* no symbols necessary */},		// 36
 	}
     };
   }
@@ -128,6 +132,10 @@ public class StringExpressionTest
 	  "str(contains(\"998877665544\"; \"777\"))",			// 30
 	  "replaceall(\"hello_world.txt\", \"l\", \"L\")", 		// 31
 	  "replaceall(\"hello_world.txt\", \".*l\", \"\")", 		// 32
+	  "str(startswith(\"998877665544\"; \"99\"))",			// 33
+	  "str(startswith(\"998877665544\"; \"98\"))",			// 34
+	  "str(endswith(\"998877665544\"; \"44\"))",			// 35
+	  "str(endswith(\"998877665544\"; \"43\"))",			// 36
 	}
     };
   }

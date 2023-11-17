@@ -120,4 +120,8 @@
 'rand(42) > 0.73: false
 'randint(1, 10) > 0: true
 'randint(42, 10) > 0: false
+'startswith("998877665544"; "99") = true: true
+'startswith("998877665544"; "77") = false: true
+'endswith("998877665544"; "544") = true: true
+'endswith("998877665544"; "554") = false: true
 
