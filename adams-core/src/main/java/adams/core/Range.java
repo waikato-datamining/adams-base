@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Range.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -833,11 +833,11 @@ public class Range
     indicesThis  = getIntIndices();
     indicesOther = o.getIntIndices();
 
-    result = new Integer(indicesThis.length).compareTo(indicesOther.length);
+    result = Integer.compare(indicesThis.length, indicesOther.length);
 
     if (result == 0) {
       for (i = 0; i < indicesThis.length; i++) {
-	result = new Integer(indicesThis[i]).compareTo(indicesOther[i]);
+	result = Integer.compare(indicesThis[i], indicesOther[i]);
 	if (result != 0)
 	  break;
       }
