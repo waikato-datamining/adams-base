@@ -7,7 +7,6 @@
 # 'Keywords2', 'KeywordColor2'; 'Keywords3', KeywordColor3'; etc.
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 ########
 # Font #
@@ -136,6 +135,9 @@ Keywords=\
 	replace,\
 	substitute,\
 	rept,\
+	contains,\
+	startswith,\
+	endswith,\
 	concatenate,\
 	lower,\
 	lowercase,\
