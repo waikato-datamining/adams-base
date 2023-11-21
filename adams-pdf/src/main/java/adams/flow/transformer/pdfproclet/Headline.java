@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Headline.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
@@ -37,59 +37,61 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
  * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-page-break-before &lt;boolean&gt; (property: pageBreakBefore)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added before the content of the file is inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-page-break-after &lt;boolean&gt; (property: pageBreakAfter)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added after the content of the file is inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-num-files &lt;int&gt; (property: numFilesPerPage)
  * &nbsp;&nbsp;&nbsp;The number of files to put on a page before adding an automatic page break;
  * &nbsp;&nbsp;&nbsp; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-headline &lt;adams.core.base.BaseText&gt; (property: headline)
- * &nbsp;&nbsp;&nbsp;The headline to add, can be multi-line.
+ * &nbsp;&nbsp;&nbsp;The headline to add, can be multi-line; variables get expanded automatically.
  * &nbsp;&nbsp;&nbsp;default: Fill in headline
  * </pre>
- * 
+ *
  * <pre>-font-headline &lt;adams.core.io.PdfFont&gt; (property: fontHeadline)
  * &nbsp;&nbsp;&nbsp;The font to use for the headline.
  * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-14
  * </pre>
- * 
+ *
  * <pre>-color-headline &lt;java.awt.Color&gt; (property: colorHeadline)
  * &nbsp;&nbsp;&nbsp;The color to use for the headline.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
- * 
+ *
  * <pre>-extension &lt;adams.core.base.BaseString&gt; [-extension ...] (property: extensions)
  * &nbsp;&nbsp;&nbsp;The file extension(s) that the processor will be used for.
  * &nbsp;&nbsp;&nbsp;default: *
  * </pre>
- * 
+ *
  * <pre>-first-page-only &lt;boolean&gt; (property: firstPageOnly)
  * &nbsp;&nbsp;&nbsp;If set to true, then the headline is only added to the first page.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Headline
   extends AbstractPdfProclet
@@ -289,7 +291,7 @@ public class Headline
    * 			displaying in the GUI or for listing the options.
    */
   public String headlineTipText() {
-    return "The headline to add, can be multi-line.";
+    return "The headline to add, can be multi-line; variables get expanded automatically.";
   }
 
   /**
@@ -418,9 +420,9 @@ public class Headline
   public boolean canProcess(PDFGenerator generator, File file) {
     if (m_FirstPageOnly) {
       if (generator.getState().numTotalFiles() == 0)
-	return super.canProcess(generator, file);
+        return super.canProcess(generator, file);
       else
-	return false;
+        return false;
     }
     else {
       return super.canProcess(generator, file);
@@ -442,7 +444,7 @@ public class Headline
 
     if (result) {
       if (m_PageBreakBefore)
-	result = generator.newPage();
+        result = generator.newPage();
     }
 
     return result;
@@ -457,7 +459,11 @@ public class Headline
    * @throws Exception	if something goes wrong
    */
   protected boolean doProcess(PDFGenerator generator, File file) throws Exception {
-    return addElement(generator, new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
+    return addElement(
+      generator,
+      new Paragraph(
+        m_OptionManager.getVariables().expand(m_Headline.getValue()),
+        m_FontHeadline.toFont(m_ColorHeadline)));
   }
 
   /**
@@ -509,7 +515,7 @@ public class Headline
 
     if (result) {
       if (m_PageBreakBefore)
-	result = generator.newPage();
+        result = generator.newPage();
     }
 
     return result;
@@ -524,7 +530,11 @@ public class Headline
    * @throws Exception	if something goes wrong
    */
   protected boolean doProcess(PDFGenerator generator, Object obj) throws Exception {
-    return addElement(generator, new Paragraph(m_Headline.getValue(), m_FontHeadline.toFont(m_ColorHeadline)));
+    return addElement(
+      generator,
+      new Paragraph(
+        m_OptionManager.getVariables().expand(m_Headline.getValue()),
+        m_FontHeadline.toFont(m_ColorHeadline)));
   }
 
   /**
