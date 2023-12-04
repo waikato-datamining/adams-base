@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTable.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -537,14 +537,12 @@ public class SpreadSheetTable
     menu.addSeparator();
 
     menuitem = new JCheckBoxMenuItem("Show formulas");
-    menuitem.setIcon(ImageManager.getIcon("formula.png"));
     menuitem.setEnabled(getRowCount() > 0);
     menuitem.setSelected(getShowFormulas());
     menuitem.addActionListener((ActionEvent ae) -> setShowFormulas(!getShowFormulas()));
     menu.add(menuitem);
 
     menuitem = new JCheckBoxMenuItem("Show cell types");
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setEnabled(getRowCount() > 0);
     menuitem.setSelected(getShowCellTypes());
     menuitem.addActionListener((ActionEvent ae) -> setShowCellTypes(!getShowCellTypes()));

@@ -608,7 +608,6 @@ public class TextPanel
       // View/Line wrap
       menuitem = new JCheckBoxMenuItem("Line wrap");
       menuitem.setMnemonic('L');
-      menuitem.setIcon(ImageManager.getEmptyIcon());
       menuitem.setSelected(getLineWrap());
       menuitem.addActionListener((ActionEvent e) ->
 	  m_TextPanel.setLineWrap(m_MenuItemViewLineWrap.isSelected())

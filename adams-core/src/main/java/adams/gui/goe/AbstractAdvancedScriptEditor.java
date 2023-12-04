@@ -306,7 +306,6 @@ public class AbstractAdvancedScriptEditor
 
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(ImageManager.getIcon("linewrap.png"));
     menuitem.setSelected(UISettings.get(getClass(), "LineWrap", false));
     menuitem.addActionListener(new ActionListener() {
       @Override

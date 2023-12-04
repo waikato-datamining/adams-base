@@ -932,7 +932,6 @@ public class HistoryDisplay
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(m_HistoryPanel.getHistory().getLineWrap());
     result.add(menuitem);
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('L');
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setLineWrap(!m_HistoryPanel.getHistory().getLineWrap()));
     m_MenuItemViewLineWrap = menuitem;
@@ -941,7 +940,6 @@ public class HistoryDisplay
     menuitem = new JCheckBoxMenuItem("Word wrap style");
     menuitem.setSelected(m_HistoryPanel.getHistory().getWrapStyleWord());
     result.add(menuitem);
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('W');
     menuitem.addActionListener((ActionEvent e) -> m_HistoryPanel.getHistory().setWrapStyleWord(!m_HistoryPanel.getHistory().getWrapStyleWord()));
     m_MenuItemViewWrapStyleWord = menuitem;

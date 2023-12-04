@@ -153,7 +153,6 @@ public class SQLStatementPanel
     m_ButtonOptions.addToMenu(menuitem);
     // line wrap
     menuitem = new JCheckBoxMenuItem("Line wrap");
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setSelected(UISettings.get(getClass(), "LineWrap", m_PanelStatement.getWordWrap()));
     menuitem.addActionListener((ActionEvent e) -> {
       m_PanelStatement.setWordWrap(((JMenuItem) e.getSource()).isSelected());

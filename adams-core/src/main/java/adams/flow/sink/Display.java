@@ -464,7 +464,6 @@ public class Display
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(((TextEditorPanel) m_Panel).getLineWrap());
     result.add(menuitem);
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('L');
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setLineWrap(!((TextEditorPanel) m_Panel).getLineWrap()));
     m_MenuItemViewLineWrap = menuitem;
@@ -473,7 +472,6 @@ public class Display
     menuitem = new JCheckBoxMenuItem("Word wrap style");
     menuitem.setSelected(((TextEditorPanel) m_Panel).getWrapStyleWord());
     result.add(menuitem);
-    menuitem.setIcon(ImageManager.getEmptyIcon());
     menuitem.setMnemonic('W');
     menuitem.addActionListener((ActionEvent e) -> ((TextEditorPanel) m_Panel).setWrapStyleWord(!((TextEditorPanel) m_Panel).getWrapStyleWord()));
     m_MenuItemViewWrapStyleWord = menuitem;

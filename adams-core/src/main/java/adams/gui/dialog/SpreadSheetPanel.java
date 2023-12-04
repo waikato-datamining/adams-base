@@ -269,7 +269,6 @@ public class SpreadSheetPanel
       menuitem = new JCheckBoxMenuItem("Show formulas");
       menu.add(menuitem);
       menuitem.setMnemonic('f');
-      menuitem.setIcon(ImageManager.getIcon("formula.png"));
       menuitem.addActionListener(new ActionListener() {
 	@Override
 	public void actionPerformed(ActionEvent e) {
