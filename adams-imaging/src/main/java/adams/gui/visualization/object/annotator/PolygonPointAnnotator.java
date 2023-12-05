@@ -253,6 +253,7 @@ public class PolygonPointAnnotator
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           m_Selecting = false;
           processSelection();
+          m_Points.clear();
           e.consume();
 	}
         else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
