@@ -112,8 +112,8 @@ public class PolygonUtils {
 
     for (Point p: points) {
       minx = Math.min(minx, p.x);
-      maxx = Math.max(maxx, p.y);
-      miny = Math.min(miny, p.x);
+      maxx = Math.max(maxx, p.x);
+      miny = Math.min(miny, p.y);
       maxy = Math.max(maxy, p.y);
     }
 
