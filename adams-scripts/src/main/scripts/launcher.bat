@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2022 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2023 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -127,7 +127,7 @@ goto endInit
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %ENVVARS% %COLLAPSE% -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
+%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %ENVVARS% %COLLAPSE% -jvm --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
