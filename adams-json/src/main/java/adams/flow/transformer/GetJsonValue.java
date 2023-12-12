@@ -15,7 +15,7 @@
 
 /*
  * GetJsonValue.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -338,7 +338,7 @@ public class GetJsonValue
   protected String doExecute() {
     String	result;
     Object	obj;
-    JSONObject	json;
+    JSONAware	json;
     Object	val;
 
     result = null;
@@ -352,20 +352,26 @@ public class GetJsonValue
     else {
       obj = m_InputToken.getPayload();
     }
-    if (!(obj instanceof JSONObject))
-      result = "Input is not of type " + JSONObject.class.getName() + "!";
+    if (!(obj instanceof JSONAware))
+      result = "Input is not of type " + JSONAware.class.getName() + "!";
     else
-      json = (JSONObject) obj;
+      json = (JSONAware) obj;
     
     if (result == null) {
       if (!m_PathCompiled) {
-        m_ActualPath   = m_Path.toJsonPath();
+        m_ActualPath = m_Path.toJsonPath();
         m_PathCompiled = true;
       }
-
       if (m_Path.isSimpleKey() || (m_ActualPath == null)) {
-	if (json.containsKey(m_Path.getValue())) {
-	  val = json.get(m_Path.getValue());
+        if (!(obj instanceof JSONObject))
+          result = "Input is not of type " + JSONObject.class.getName() + "!";
+      }
+    }
+
+    if (result == null) {
+      if (m_Path.isSimpleKey() || (m_ActualPath == null)) {
+	if (((JSONObject) json).containsKey(m_Path.getValue())) {
+	  val = ((JSONObject) json).get(m_Path.getValue());
 	  if (isLoggingEnabled())
 	    getLogger().info("Found value for '" + m_Path.getValue() + "': " + val);
 	  if (val instanceof Number)
