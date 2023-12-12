@@ -624,9 +624,9 @@ public class Display
 	super.initGUI();
 	setLayout(new BorderLayout());
 	m_TextEditorPanel = new TextEditorPanel();
-	m_TextEditorPanel.setTextFont(getFont());
-	m_TextEditorPanel.setLineWrap(getLineWrap());
-	m_TextEditorPanel.setWrapStyleWord(getWrapStyleWord());
+	m_TextEditorPanel.setTextFont(Display.this.getFont());
+	m_TextEditorPanel.setLineWrap(Display.this.getLineWrap());
+	m_TextEditorPanel.setWrapStyleWord(Display.this.getWrapStyleWord());
 	add(m_TextEditorPanel, BorderLayout.CENTER);
       }
       @Override
