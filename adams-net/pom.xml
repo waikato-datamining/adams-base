@@ -64,8 +64,8 @@
 
     <dependency>
       <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
-      <version>1.5.6</version>
+      <artifactId>jakarta.mail</artifactId>
+      <version>1.6.5</version>
       <type>jar</type>
     </dependency>
 
