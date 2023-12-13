@@ -15,13 +15,14 @@
 
 /*
  * ApacheSendEmail.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
 
 import adams.core.License;
 import adams.core.Utils;
+import adams.core.annotation.DeprecatedClass;
 import adams.core.annotation.MixedCopyright;
 import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
@@ -49,6 +50,9 @@ import java.io.Writer;
     url = "http://commons.apache.org/proper/commons-net/examples/mail/SMTPMail.java",
     note = "Code adapted from SMTPMail"
   )
+@DeprecatedClass(
+  useInstead = SimpleApacheSendEmail.class
+)
 public class ApacheSendEmail
   extends AbstractSendEmail {
 
