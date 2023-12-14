@@ -33,7 +33,6 @@ import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.core.base.BaseTimeMsec;
 import adams.data.DateFormatString;
-import jodd.datetime.JDateTime;
 
 import java.util.Date;
 
@@ -56,14 +55,14 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;text&#47;SimpleDateFormat.html
  * </pre>
  *
- * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to generate from the string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  *
  * <pre>-use-base-parsing &lt;boolean&gt; (property: useBaseParsing)
- * &nbsp;&nbsp;&nbsp;If enabled, uses the parsing capability of the BaseTime, BaseDate, BaseDateTime 
- * &nbsp;&nbsp;&nbsp;classes to parse the string rather than the specified format string (string 
+ * &nbsp;&nbsp;&nbsp;If enabled, uses the parsing capability of the BaseTime, BaseDate, BaseDateTime
+ * &nbsp;&nbsp;&nbsp;classes to parse the string rather than the specified format string (string
  * &nbsp;&nbsp;&nbsp;must be in the appropriate format).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -233,12 +232,10 @@ public class StringToDateTimeType
     switch (m_DateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return Double.class;
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return Long.class;
       case DATE:
@@ -339,10 +336,6 @@ public class StringToDateTimeType
 	  return new BaseTime(date);
 	case BASETIMEMSEC:
 	  return new BaseTimeMsec(date);
-	case JULIANDATE:
-	  return new JDateTime(date).getJulianDateDouble();
-	case JULIANDATE_LONG:
-	  return new JDateTime(date).getTimeInMillis();
 	case SERIAL_DATETIME:
 	  return (DateUtils.msecToSerialDate(date.getTime()));
 	case SERIAL_DATETIME_LONG:

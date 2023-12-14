@@ -53,10 +53,6 @@ public enum DateTimeType {
   BASETIME,
   /** BaseTime. */
   BASETIMEMSEC,
-  /** Julian date. */
-  JULIANDATE,
-  /** Julian date. */
-  JULIANDATE_LONG,
   /** days since 0-jan-1900 date (Excel). */
   SERIAL_DATETIME,
   /** days since 0-jan-1900 date (Excel). */

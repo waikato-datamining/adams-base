@@ -33,7 +33,6 @@ import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.core.base.BaseTimeMsec;
 import adams.data.DateFormatString;
-import jodd.datetime.JDateTime;
 
 import java.util.Date;
 
@@ -50,7 +49,7 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
+ * <pre>-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: dateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type to convert into a string.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
@@ -184,12 +183,10 @@ public class DateTimeTypeToString
     switch (m_DateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return Double.class;
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return Long.class;
       case DATE:
@@ -257,10 +254,6 @@ public class DateTimeTypeToString
 	return m_Formatter.format(((BaseTime) m_Input).dateValue());
       case BASETIMEMSEC:
 	return m_Formatter.format(((BaseTimeMsec) m_Input).dateValue());
-      case JULIANDATE:
-	return m_Formatter.format(new JDateTime((Double) m_Input).convertToDate());
-      case JULIANDATE_LONG:
-	return m_Formatter.format(new JDateTime((Long) m_Input).convertToDate());
       case SERIAL_DATETIME:
 	return m_Formatter.format(new Date(DateUtils.serialDateToMsec((Double) m_Input)));
       case SERIAL_DATETIME_LONG:

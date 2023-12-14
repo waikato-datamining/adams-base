@@ -89,12 +89,12 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
+ * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  *
- * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -245,12 +245,10 @@ public class DateTimeTypeDifference
     switch (m_InputDateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return new Class[]{Double[].class};
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return new Class[]{Long[].class};
       case DATE:
@@ -288,12 +286,10 @@ public class DateTimeTypeDifference
     switch (m_OutputDateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return new Class[]{Double.class};
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return new Class[]{Long.class};
       case DATE:

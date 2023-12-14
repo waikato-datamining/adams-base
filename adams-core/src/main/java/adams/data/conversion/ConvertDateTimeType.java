@@ -31,7 +31,6 @@ import adams.core.base.BaseDateTime;
 import adams.core.base.BaseDateTimeMsec;
 import adams.core.base.BaseTime;
 import adams.core.base.BaseTimeMsec;
-import jodd.datetime.JDateTime;
 
 import java.util.Date;
 
@@ -48,12 +47,12 @@ import java.util.Date;
  * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
+ * <pre>-input-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: inputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the input data.
  * &nbsp;&nbsp;&nbsp;default: DATE
  * </pre>
  *
- * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|JULIANDATE|JULIANDATE_LONG|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
+ * <pre>-output-datetime-type &lt;MSECS|MSECS_LONG|SECONDS|SECONDS_LONG|DATE|DATETIME|DATETIMEMSEC|TIME|TIMEMSEC|BASEDATE|BASEDATETIME|BASEDATETIMEMSEC|BASETIME|BASETIMEMSEC|SERIAL_DATETIME|SERIAL_DATETIME_LONG&gt; (property: outputDateTimeType)
  * &nbsp;&nbsp;&nbsp;The date&#47;time type of the output data.
  * &nbsp;&nbsp;&nbsp;default: MSECS
  * </pre>
@@ -184,12 +183,10 @@ public class ConvertDateTimeType
     switch (m_InputDateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return Double.class;
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return Long.class;
       case DATE:
@@ -227,12 +224,10 @@ public class ConvertDateTimeType
     switch (m_OutputDateTimeType) {
       case MSECS:
       case SECONDS:
-      case JULIANDATE:
       case SERIAL_DATETIME:
 	return Double.class;
       case MSECS_LONG:
       case SECONDS_LONG:
-      case JULIANDATE_LONG:
       case SERIAL_DATETIME_LONG:
 	return Long.class;
       case DATE:
@@ -317,12 +312,6 @@ public class ConvertDateTimeType
       case BASETIMEMSEC:
 	msecs = ((BaseTimeMsec) m_Input).dateValue().getTime();
 	break;
-      case JULIANDATE:
-	msecs = new JDateTime((Double) m_Input).convertToDate().getTime();
-	break;
-      case JULIANDATE_LONG:
-	msecs = new JDateTime((Long) m_Input).convertToDate().getTime();
-	break;
       case SERIAL_DATETIME:
 	msecs = DateUtils.serialDateToMsec((Double) m_Input);
 	break;
@@ -362,10 +351,6 @@ public class ConvertDateTimeType
 	return new BaseTime(new Time(msecs));
       case BASETIMEMSEC:
 	return new BaseTimeMsec(new TimeMsec(msecs));
-      case JULIANDATE:
-	return new JDateTime(new Date(msecs)).getJulianDateDouble();
-      case JULIANDATE_LONG:
-	return new JDateTime(new Date(msecs)).getTimeInMillis();
       case SERIAL_DATETIME:
 	return DateUtils.msecToSerialDate(msecs);
       case SERIAL_DATETIME_LONG:
