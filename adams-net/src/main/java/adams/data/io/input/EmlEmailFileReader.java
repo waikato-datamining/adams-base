@@ -13,21 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmlEmailFileReader.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.net.Email;
+import adams.core.net.EmailAddress;
+import jodd.mail.EMLParser;
+import jodd.mail.EmailMessage;
+import jodd.mail.ReceivedEmail;
 
 import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
-
-import jodd.mail.EmailMessage;
-import jodd.mail.EmailUtil;
-import jodd.mail.ReceivedEmail;
-import adams.core.net.Email;
-import adams.core.net.EmailAddress;
 
 /**
  <!-- globalinfo-start -->
@@ -49,7 +49,6 @@ import adams.core.net.EmailAddress;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8291 $
  */
 public class EmlEmailFileReader
   extends AbstractEmailFileReader {
@@ -84,7 +83,24 @@ public class EmlEmailFileReader
   public String[] getFormatExtensions() {
     return new String[]{"eml"};
   }
-  
+
+  /**
+   * Turns the jodd email address arrays into string ones.
+   *
+   * @param addresses	the array to convert
+   * @return		the converted array
+   */
+  protected String[] toString(jodd.mail.EmailAddress[] addresses) {
+    String[]	result;
+    int		i;
+
+    result = new String[addresses.length];
+    for (i = 0; i < addresses.length; i++)
+      result[i] = addresses[i].getEmail();
+
+    return result;
+  }
+
   /**
    * Performs the actual reading.
    * 
@@ -101,8 +117,8 @@ public class EmlEmailFileReader
     result = null;
 
     try {
-      email = EmailUtil.parseEML(m_Input.getAbsoluteFile());
-      msgs  = email.getAllMessages();
+      email = new EMLParser().parse(m_Input.getAbsoluteFile());
+      msgs  = email.messages();
       body  = new StringBuilder();
       for (i = 0; i < msgs.size(); i++) {
 	if (msgs.size() > 1)
@@ -111,11 +127,11 @@ public class EmlEmailFileReader
 	body.append("\n");
       }
       result = new Email(
-	  new EmailAddress(email.getFrom()), 
-	  (EmailAddress[]) EmailAddress.toObjectArray(email.getTo(), EmailAddress.class),
-	  (EmailAddress[]) EmailAddress.toObjectArray(email.getCc(), EmailAddress.class),
-	  (EmailAddress[]) EmailAddress.toObjectArray(email.getBcc(), EmailAddress.class),
-	  email.getSubject(),
+	  new EmailAddress(email.from().getEmail()),
+	  (EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class),
+	  (EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class),
+	  new EmailAddress[0],
+	  email.subject(),
 	  body.toString(),
 	  new File[0]);
       
