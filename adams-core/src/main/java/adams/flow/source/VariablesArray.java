@@ -15,11 +15,12 @@
 
 /*
  * VariablesArray.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.VariableName;
@@ -51,52 +52,52 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: VariablesArray
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-var-name &lt;adams.core.VariableName&gt; [-var-name ...] (property: variableNames)
  * &nbsp;&nbsp;&nbsp;The names of the variables to retrieve as array.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-conversion &lt;adams.data.conversion.Conversion&gt; (property: conversion)
  * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
  * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class VariablesArray
-  extends AbstractSource 
+  extends AbstractSource
   implements VariableUser {
 
   /** for serialization. */
@@ -146,8 +147,8 @@ public class VariablesArray
   @Override
   public String globalInfo() {
     return
-        "Outputs the values associated with the specified variable names "
-      + "as a string array.";
+      "Outputs the values associated with the specified variable names "
+        + "as a string array.";
   }
 
   /**
@@ -158,12 +159,12 @@ public class VariablesArray
     super.defineOptions();
 
     m_OptionManager.add(
-	    "var-name", "variableNames",
-	    new VariableName[0]);
+      "var-name", "variableNames",
+      new VariableName[0]);
 
     m_OptionManager.add(
-	    "conversion", "conversion",
-	    new StringToString());
+      "conversion", "conversion",
+      new StringToString());
   }
 
   /**
@@ -246,7 +247,7 @@ public class VariablesArray
 
   /**
    * Returns whether variables are being used.
-   * 
+   *
    * @return		true if variables are used
    */
   public boolean isUsingVariables() {
@@ -303,8 +304,8 @@ public class VariablesArray
 
     if (result == null) {
       if (canPerformSetUpCheck(fromSetUp, "variableNames")) {
-	if ((m_VariableNames == null) || (m_VariableNames.length == 0))
-	  result = "No names specified for variables!";
+        if ((m_VariableNames == null) || (m_VariableNames.length == 0))
+          result = "No names specified for variables!";
       }
     }
 
@@ -318,44 +319,49 @@ public class VariablesArray
    */
   @Override
   protected String doExecute() {
-    String	result;
-    int		i;
-    String[]	values;
-    List 	objects;
-    
+    String		result;
+    MessageCollection	errors;
+    int			i;
+    String[]		values;
+    List 		objects;
+
     result = null;
+    errors = new MessageCollection();
 
     // get variables
     values = new String[m_VariableNames.length];
     for (i = 0; i < m_VariableNames.length; i++) {
       if (getVariables().has(m_VariableNames[i].getValue()))
-	values[i] = getVariables().get(m_VariableNames[i].getValue());
+        values[i] = getVariables().get(m_VariableNames[i].getValue());
       else
-	result = "Variable #" + (i+1) + " (" + m_VariableNames[i] + ") not set!";
-      if (result != null)
-	break;
+        errors.add("Variable #" + (i+1) + " (" + m_VariableNames[i] + ") not set!");
+      if (!errors.isEmpty())
+        break;
     }
-    
-    if ((result == null) && (values.length > 0)) {
+
+    if (errors.isEmpty() && (values.length > 0)) {
       objects = new ArrayList();
       for (i = 0; i < values.length; i++) {
-	m_Conversion.setInput(values[i]);
-	result = m_Conversion.convert();
-	if (result != null)
-	  result = getFullName() + ": " + result;
-	if ((result == null) && (m_Conversion.getOutput() != null))
-	  objects.add(m_Conversion.getOutput());
-	m_Conversion.cleanUp();
+        m_Conversion.setInput(values[i]);
+        result = m_Conversion.convert();
+        if (result != null)
+          errors.add(getFullName() + ": " + result);
+        if ((result == null) && (m_Conversion.getOutput() != null))
+          objects.add(m_Conversion.getOutput());
+        m_Conversion.cleanUp();
       }
       m_StoredValue = Array.newInstance(objects.get(0).getClass(), objects.size());
       for (i = 0; i < objects.size(); i++)
-	Array.set(m_StoredValue, i, objects.get(i));
+        Array.set(m_StoredValue, i, objects.get(i));
     }
     else {
       m_StoredValue = null;
     }
 
-    return result;
+    if (errors.isEmpty())
+      return null;
+    else
+      return errors.toString();
   }
 
   /**

@@ -15,11 +15,12 @@
 
 /*
  * StorageValuesArray.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
@@ -364,11 +365,13 @@ public class StorageValuesArray
    */
   @Override
   protected String doExecute() {
-    String	result;
-    int		i;
-    Object[]	values;
+    String		result;
+    MessageCollection	errors;
+    int			i;
+    Object[]		values;
     
     result = null;
+    errors = new MessageCollection();
 
     // get storage items
     values = new Object[m_StorageNames.length];
@@ -376,14 +379,14 @@ public class StorageValuesArray
       if (getStorageHandler().getStorage().has(m_StorageNames[i]))
 	values[i] = getStorageHandler().getStorage().get(m_StorageNames[i]);
       else
-	result = "Storage item #" + (i+1) + " (" + m_StorageNames[i] + ") not found!";
-      if (result != null)
+	errors.add("Storage item #" + (i+1) + " (" + m_StorageNames[i] + ") not found!");
+      if (!errors.isEmpty())
 	break;
     }
     
-    if (result == null) {
+    if (errors.isEmpty()) {
       try {
-	if (m_ArrayClass.trim().length() == 0)
+	if (m_ArrayClass.trim().isEmpty())
 	  m_StoredValue = Array.newInstance(values[0].getClass(), values.length);
 	else
 	  m_StoredValue = Utils.newArray(m_ArrayClass, values.length);
@@ -391,18 +394,21 @@ public class StorageValuesArray
           m_Conversion.setInput(values[i]);
           result = m_Conversion.convert();
           if (result != null)
-            result = getFullName() + ": " + result;
+            errors.add(getFullName() + ": " + result);
           if ((result == null) && (m_Conversion.getOutput() != null))
             Array.set(m_StoredValue, i, m_Conversion.getOutput());
           m_Conversion.cleanUp();
         }
       }
       catch (Exception e) {
-	result = handleException("Failed to generate array:", e);
+	errors.add("Failed to generate array:", e);
       }
     }
 
-    return result;
+    if (errors.isEmpty())
+      return null;
+    else
+      return errors.toString();
   }
 
   /**
