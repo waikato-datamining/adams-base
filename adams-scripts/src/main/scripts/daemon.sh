@@ -38,6 +38,9 @@ then
   "$JCMD" \
     -classpath "$CLASSPATH" \
     -Xmx$2 \
+    --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
+    --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
+    --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
     adams.flow.FlowRunner \
     -input "$3" \
     -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port $4" \

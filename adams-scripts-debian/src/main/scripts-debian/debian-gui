@@ -75,6 +75,9 @@ done
 "$JCMD" \
   -classpath "$CLASSPATH" \
   -Xmx$MEMORY \
+  --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
+  --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
+  --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
   $HEADLESS \
   $MAIN \
   -doc-dir /usr/share/doc/$APPNAME \

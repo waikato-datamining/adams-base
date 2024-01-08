@@ -52,7 +52,12 @@ goto wrongcmd
 
 @REM Start the daemon
 :startdaemon
-%JCMD% -classpath %CLASSPATH% -Xmx%2 adams.flow.FlowRunner^
+%JCMD% -classpath %CLASSPATH% -Xmx%2^
+ --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED^
+ --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED^
+ --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED^
+ --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED^
+ adams.flow.FlowRunner^
  -input "%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^
  -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"^
