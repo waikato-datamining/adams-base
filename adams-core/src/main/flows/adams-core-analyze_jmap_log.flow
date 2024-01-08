@@ -1,15 +1,15 @@
 # Project: adams
-# Date: 2019-12-17 09:08:04
+# Date: 2024-01-08 15:29:24
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core
 #
-adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outputs." -flow-execution-listener adams.flow.execution.NullListener
- adams.flow.standalone.GridView -width 1400 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
-  adams.flow.sink.SequencePlotter -name instances -width 700 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title jmap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label index -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label instances -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 1000" -post-processor adams.flow.sink.sequenceplotter.PassThrough
-  adams.flow.sink.SequencePlotter -name bytes -width 700 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title jmap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label index -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label bytes -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 60 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 1000" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outputs." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.GridView -display-type adams.flow.core.displaytype.Default -width 1400 -num-cols 2 -add-headers true -writer adams.gui.print.NullWriter
+  adams.flow.sink.SequencePlotter -name instances -display-type adams.flow.core.displaytype.Default -width 700 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title jmap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label index -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label \"# instances\" -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 70 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 1000" -post-processor adams.flow.sink.sequenceplotter.PassThrough
+  adams.flow.sink.SequencePlotter -name kilobytes -display-type adams.flow.core.displaytype.Default -width 700 -writer adams.gui.print.NullWriter -paintlet adams.gui.visualization.sequence.LinePaintlet -overlay-paintlet adams.gui.visualization.sequence.NullPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet adams.flow.sink.sequenceplotter.NoErrorPaintlet -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -title jmap -axis-x "adams.gui.visualization.core.AxisPanelOptions -label index -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 40\" -nth-value 2 -width 40 -custom-format 0" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label kilobytes -tick-generator \"adams.gui.visualization.core.axis.FancyTickGenerator -num-ticks 20\" -nth-value 2 -width 70 -custom-format 0.0" -plot-updater "adams.flow.sink.sequenceplotter.SimplePlotUpdater -update-interval 1000" -post-processor adams.flow.sink.sequenceplotter.PassThrough
  adams.flow.standalone.CallableActors
-  adams.flow.sink.Display -name Raw -short-title true -x -3 -y -3 -writer adams.data.io.output.NullWriter
+  adams.flow.sink.Display -name Raw -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -y -3 -writer adams.data.io.output.NullWriter
  adams.flow.standalone.SetVariable -var-name count -var-value 0
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
@@ -23,7 +23,7 @@ adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outp
    adams.flow.transformer.StringJoin -glue \n
    adams.flow.sink.CallableSink -callable Raw
   adams.flow.transformer.ArrayToSequence
-  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"matches(\\\\\\\"X\\\\\\\", \\\\\\\".*----.*\\\\\\\")\"" -then "adams.flow.control.Sequence -name then" -else "adams.flow.control.Sequence -name else"
+  adams.flow.control.IfThenElse -condition "adams.flow.condition.bool.Expression -expression \"matches(\\\\\\\"X\\\\\\\", \\\\\\\".*----.*\\\\\\\")\""
    adams.flow.control.Sequence -name then
     adams.flow.transformer.IncVariable -var-name count
    adams.flow.control.Sequence -name else
@@ -36,16 +36,19 @@ adams.flow.control.Flow -annotation "Analyzes a log file with multiple JMap outp
     adams.flow.control.Tee -name instances
      adams.flow.transformer.GetArrayElement
      adams.flow.transformer.SetVariable -var-name instances
-    adams.flow.control.Tee -name bytes
+    adams.flow.control.Tee -name kilobytes
      adams.flow.transformer.GetArrayElement -index 2
-     adams.flow.transformer.SetVariable -var-name bytes
+     adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name bytes
+     adams.flow.transformer.Convert -conversion adams.data.conversion.StringToDouble
+     adams.flow.transformer.MathExpression -expression X/1024 -round-output true -num-decimals 1
+     adams.flow.transformer.SetVariable -var-name kilobytes
     adams.flow.control.ConditionalTrigger -name plot -condition "adams.flow.condition.bool.Expression -expression \"(@{instances} > @{min_instances}) and (@{bytes} > @{min_bytes})\""
      adams.flow.source.Start
      adams.flow.control.Trigger -name "plot instances"
       adams.flow.source.VariablesArray -var-name count -var-name instances -conversion adams.data.conversion.StringToDouble
       adams.flow.transformer.MakePlotContainer -plot-name @{name}
       adams.flow.sink.CallableSink -callable instances
-     adams.flow.control.Trigger -name "plot bytes"
-      adams.flow.source.VariablesArray -var-name count -var-name bytes -conversion adams.data.conversion.StringToDouble
+     adams.flow.control.Trigger -name "plot kilobytes"
+      adams.flow.source.VariablesArray -var-name count -var-name kilobytes -conversion adams.data.conversion.StringToDouble
       adams.flow.transformer.MakePlotContainer -plot-name @{name}
-      adams.flow.sink.CallableSink -callable bytes
+      adams.flow.sink.CallableSink -callable kilobytes
