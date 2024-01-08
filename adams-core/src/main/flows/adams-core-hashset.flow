@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2016-02-15 11:30:45
+# Date: 2024-01-08 15:36:25
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core
+#
 adams.flow.control.Flow -annotation "This flow shows how to initialize a hashset in internal storage\\nand use it for tests in conditional Tee control actors, redirecting\\nthe flow of tokens." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.HashSetInit
  adams.flow.source.Start
@@ -10,7 +12,7 @@ adams.flow.control.Flow -annotation "This flow shows how to initialize a hashset
   adams.flow.transformer.HashSetAdd
  adams.flow.control.Trigger -name "use hashset for tests"
   adams.flow.source.ForLoop -upper 15
-  adams.flow.control.ConditionalTee -condition adams.flow.condition.bool.HashSet
+  adams.flow.control.ConditionalTee -name "part of hashset" -condition "adams.flow.condition.bool.HashSet -conversion adams.data.conversion.ObjectToObject"
    adams.flow.sink.Display -name contained -short-title true -writer adams.data.io.output.NullWriter
-  adams.flow.control.ConditionalTee -name ConditionalTee-1 -condition "adams.flow.condition.bool.Not -condition adams.flow.condition.bool.HashSet"
+  adams.flow.control.ConditionalTee -name "not part of hashset" -condition "adams.flow.condition.bool.Not -condition \"adams.flow.condition.bool.HashSet -conversion adams.data.conversion.ObjectToObject\""
    adams.flow.sink.Display -name "not contained" -short-title true -x -3 -writer adams.data.io.output.NullWriter
