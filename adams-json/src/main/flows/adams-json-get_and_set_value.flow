@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2019-10-08 16:29:22
+# Date: 2024-01-09 08:59:07
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-json
@@ -8,18 +8,22 @@ adams.flow.control.Flow -annotation "Gets and sets a value specified by a path.\
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -name Values -short-title true -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.data.io.output.NullWriter
   adams.flow.sink.JsonDisplay -name Input -short-title true -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -preview true -expand true -sort-keys true
+ adams.flow.standalone.SetVariable -name json_path -var-name json_path -var-value $.web-app.servlet[0].init-param.useJSP
  adams.flow.source.FileSupplier -file ${FLOWS}/data/webapp.json
  adams.flow.transformer.JsonFileReader -type OBJECT
- adams.flow.control.Tee
+ adams.flow.control.Tee -name input
   adams.flow.sink.CallableSink -callable Input
+ adams.flow.control.Trigger -name "json path"
+  adams.flow.source.CombineVariables -expression "JSON path: @{json_path}" -conversion adams.data.conversion.StringToString
+  adams.flow.sink.CallableSink -callable Values
  adams.flow.control.Tee -name before
-  adams.flow.transformer.GetJsonValue -path $.web-app.servlet[0].init-param.useJSP -data-type BOOLEAN
+  adams.flow.transformer.GetJsonValue -path @{json_path} -data-type BOOLEAN
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
   adams.flow.transformer.StringInsert -position first -value "before: "
   adams.flow.sink.CallableSink -callable Values
- adams.flow.transformer.SetJsonValue -path $.web-app.servlet[0].init-param.useJSP -value true -conversion adams.data.conversion.StringToBoolean
+ adams.flow.transformer.SetJsonValue -path @{json_path} -value true -conversion adams.data.conversion.StringToBoolean
  adams.flow.control.Tee -name after
-  adams.flow.transformer.GetJsonValue -path $.web-app.servlet[0].init-param.useJSP -data-type BOOLEAN
+  adams.flow.transformer.GetJsonValue -path @{json_path} -data-type BOOLEAN
   adams.flow.transformer.Convert -conversion adams.data.conversion.AnyToString
   adams.flow.transformer.StringInsert -position first -value "after: "
   adams.flow.sink.CallableSink -callable Values
