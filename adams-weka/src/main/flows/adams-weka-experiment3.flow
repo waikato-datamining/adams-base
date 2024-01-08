@@ -1,18 +1,20 @@
 # Project: adams
-# Date: 2017-03-07 16:07:34
+# Date: 2024-01-09 10:24:31
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
 adams.flow.control.Flow -annotation "Generates an experiment setup, saves it, loads it again, \\nexecutes it and finally displays the results.\\nThe datasets get attached via a variable.\\nUses the ADAMS experiment framework for Weka experiments\\nrather than the native Weka experiment framework, which\\nenables faster execution through parallelization." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.source.Start
  adams.flow.control.Trigger -name "datasets in variable"
-  adams.flow.source.StringConstants -output-array true -string ${HOME}/development/datasets/uci/nominal/anneal.arff -string ${HOME}/development/datasets/uci/nominal/iris.arff
+  adams.flow.source.StringConstants -output-array true -string ${EXAMPLE_FLOWS}/data/anneal.arff -string ${EXAMPLE_FLOWS}/data/iris.arff -conversion adams.data.conversion.StringToString
   adams.flow.transformer.Convert -conversion adams.data.conversion.JoinOptions
   adams.flow.transformer.SetVariable -var-name datasets
  adams.flow.control.Trigger -name create/save
   adams.flow.source.WekaNewExperiment -experiment "adams.gui.tools.wekamultiexperimenter.experiment.CrossValidationExperiment -results-handler \"adams.gui.tools.wekamultiexperimenter.experiment.FileResultsHandler -reader \\\"adams.data.io.input.ArffSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet\\\" -writer adams.data.io.output.ArffSpreadSheetWriter\" -classifier \"weka.classifiers.trees.J48 -C 0.25 -M 2\" -classifier weka.classifiers.rules.ZeroR -dataset @{datasets} -class-attribute adams.data.weka.classattribute.LastAttribute -jobrunner adams.multiprocess.LocalJobRunner"
-  adams.flow.sink.WekaExperimentFileWriter -output ${HOME}/temp/blah.expser -handler adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO
+  adams.flow.sink.WekaExperimentFileWriter -output ${TMP}/blah.expser -handler adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO
  adams.flow.control.Trigger -name load/run
-  adams.flow.source.FileSupplier -file ${HOME}/temp/blah.expser
+  adams.flow.source.FileSupplier -file ${TMP}/blah.expser
   adams.flow.transformer.WekaExperimentFileReader -handler adams.gui.tools.wekamultiexperimenter.io.DefaultAdamsExperimentIO
   adams.flow.transformer.WekaExperimentExecution -jobrunner adams.multiprocess.LocalJobRunner
   adams.flow.control.ContainerValuePicker -value Instances -switch-outputs true
