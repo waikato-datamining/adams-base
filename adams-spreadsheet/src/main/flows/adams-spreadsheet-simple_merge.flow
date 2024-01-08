@@ -1,18 +1,26 @@
 # Project: adams
-# Date: 2016-02-15 15:00:39
+# Date: 2024-01-09 09:41:23
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
 adams.flow.control.Flow -annotation "Shows how to merge two spreadsheets from storage\\nsimply by putting them side-by-side." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.GridView -display-type adams.flow.core.displaytype.Default -width 1200 -writer adams.gui.print.NullWriter
+  adams.flow.sink.SpreadSheetDisplay -name first -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name second -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name merged -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
  adams.flow.source.FileSupplier -file ${FLOWS}/data/iris.csv
  adams.flow.control.Tee -name "create first spreadsheet"
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.transformer.SpreadSheetRemoveColumn -annotation "only leave first 3 columns" -position inv(1-3)
   adams.flow.transformer.SetStorageValue -storage-name first
+  adams.flow.sink.CallableSink -callable first
  adams.flow.control.Tee -name "create second spreadsheet"
   adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.SpreadSheet"
   adams.flow.transformer.SpreadSheetRemoveColumn -annotation "remove first 3 columns" -position 1-3
   adams.flow.transformer.SetStorageValue -storage-name second
+  adams.flow.sink.CallableSink -callable second
  adams.flow.control.Trigger -name "merge spreadsheets"
   adams.flow.source.StorageValuesArray -storage-name first -storage-name second
   adams.flow.transformer.SpreadSheetMerge
-  adams.flow.sink.SpreadSheetDisplay -writer adams.data.io.output.NullWriter
+  adams.flow.sink.CallableSink -callable merged
