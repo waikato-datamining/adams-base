@@ -127,7 +127,7 @@ goto endInit
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %ENVVARS% %COLLAPSE% -jvm --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
+%JCMD% %JAVA_OPTS% -classpath %CLASSPATH_PREFIX%;%CLASSPATH% -Dbasedir="%BASEDIR%" adams.core.management.Launcher -memory %MEMORY% -javaagent %AGENT% %JVM% %CPA% %PRIORITY% %ENVVARS% %COLLAPSE% -jvm --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED -jvm --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED -main %MAIN% -doc-dir "%BASEDIR%\docs" %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

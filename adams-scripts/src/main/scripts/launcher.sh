@@ -124,6 +124,7 @@ done
   $PRIORITY \
   $ENVVARS \
   $COLLAPSE \
+  -jvm --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
   $ARGS
