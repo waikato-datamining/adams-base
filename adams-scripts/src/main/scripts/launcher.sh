@@ -125,6 +125,7 @@ done
   $ENVVARS \
   $COLLAPSE \
   -jvm --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
+  -jvm --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
   $ARGS

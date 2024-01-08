@@ -209,6 +209,8 @@
             <compilerArgs>
               <arg>--add-exports</arg>
               <arg>java.base/jdk.internal.misc=ALL-UNNAMED</arg>
+              <arg>--add-exports</arg>
+              <arg>java.desktop/sun.awt.image=ALL-UNNAMED</arg>
             </compilerArgs>
           </configuration>
         </plugin>
