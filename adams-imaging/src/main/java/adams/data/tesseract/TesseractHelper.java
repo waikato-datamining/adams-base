@@ -13,14 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TesseractHelper.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.tesseract;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
@@ -30,11 +27,13 @@ import adams.env.TesseractDefinition;
 import adams.flow.core.TesseractLanguage;
 import adams.flow.core.TesseractPageSegmentation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Helper class for locale setup (see <a href="http://en.wikipedia.org/wiki/ISO_639" target="_blank">ISO 639</a>).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TesseractHelper {
 
@@ -175,20 +174,20 @@ public class TesseractHelper {
     if (seg == null)
       seg = TesseractPageSegmentation.FULL_AUTO_NO_OSD;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     result.add(exe);
     result.add(input);
     result.add(outputbase);
     result.add("-l");
     result.add(lang.toCode());
-    result.add("-psm");
+    result.add("--psm");
     result.add("" + seg.toCode());
     if ((config != null) && config.exists() && !config.isDirectory())
       result.add(config.getAbsolutePath());
     if (hocr)
       result.add("hocr");
     
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
