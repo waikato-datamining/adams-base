@@ -61,23 +61,6 @@ Commands
   * increment version of `adams.version` property and add -SNAPSHOT
   * commit/push changes
 
-* adams-libraries
-  
-  * change parent pom version to just released adams-pom one (remove -SNAPSHOT)
-  * change `adams.version` property to just released adams-pom one (remove -SNAPSHOT)
-  * commit/push changes
-  * `mvn --batch-mode release:prepare release:perform`
-  * increment version of parent pom and add -SNAPSHOT
-  * increment version of `adams.version` property and add -SNAPSHOT
-  * commit/push changes
-
-* adams-incubator
-
-  * increment parent pom version (including -SNAPSHOT)
-  * increment version (including -SNAPSHOT)
-  * increment `adams.version` property (including -SNAPSHOT)
-  * commit/push changes
-
 * adams-spectral-base
   
   * change parent pom version to just released adams-pom one (remove -SNAPSHOT)
@@ -110,7 +93,6 @@ Commands
   * adams-annotator
   * adams-base-all
   * adams-basic-app
-  * adams-deeplearning-spectral-app
   * adams-ml-app
   * adams-spectral-app
   
@@ -133,8 +115,13 @@ Commands
 * removal commands
 
   ```
-  sudo apt-get remove -y adams-base-all adams-ml-app adams-basic-app adams-addons-all adams-annotator adams-dex-app adams-spectral-app adams-deeplearning-spectral-app
+  sudo apt-get remove -y adams-base-all adams-ml-app adams-basic-app adams-addons-all adams-annotator adams-spectral-app
   ```
+
+* enable all local Weka packages, renaming directories back to original ones:
+
+    * $HOME/wekafiles
+    * $HOME/.adams/wekafiles
 
 
 
@@ -179,13 +166,11 @@ Uploads/updates
   via [SFTP](sftp://frs.sourceforge.net/home/frs/project/theadamsflow):
 
   * adams-addons-all
+  * adams-annotator
   * adams-base-all
   * adams-basic-app
-  * adams-dex-app
   * adams-ml-app
   * adams-spectral-app
-  * multiway-algorithms-cuda-8.0
-  * multiway-algorithms-cuda-9.2
 
 * create a README.md (markdown style) and upload this to the sf.net directory
   as well
@@ -216,11 +201,5 @@ Uploads/updates
   https://groups.google.com/forum/#!forum/theadamsflow-dev
   ```
 
-* update entry on mloss.org
-
-  ```
-  https://mloss.org/software/view/425/
-  ```
-
-* publish release on Twitter, LinkedIn, blog
+* publish release on Mastodon, LinkedIn, blog
 
