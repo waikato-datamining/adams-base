@@ -15,7 +15,7 @@
 
 /*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -69,10 +69,10 @@ public class FlowPanelNotificationArea
    */
   public enum NotificationType {
     PLAIN(null),
-    INFO("validate_blue.png"),
-    WARNING("stop_blue.gif"),
-    ERROR("stop_red.gif"),
-    QUESTION("question.png");
+    INFO("flow_ok.png"),
+    WARNING("flow_warning.gif"),
+    ERROR("flow_error.png"),
+    QUESTION("flow_question.png");
 
     /** the icon to use. */
     private String m_Icon;
