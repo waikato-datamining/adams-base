@@ -15,7 +15,7 @@
 
 /*
  * ImageManager.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -161,9 +161,7 @@ public class ImageManager {
    */
   public static String getImageFilename(String name) {
     String	result;
-    String[]	dirs;
     int		i;
-    URL 	url;
 
     name = removeExtension(name);
 
@@ -180,7 +178,9 @@ public class ImageManager {
     // locate image
     result = null;
     for (i = 0; i < m_ImageDirs.size(); i++) {
-      result = checkImageFilename(m_ImageDirs.get(i), name + ".gif");
+      result = checkImageFilename(m_ImageDirs.get(i), name);
+      if (result == null)
+	result = checkImageFilename(m_ImageDirs.get(i), name + ".gif");
       if (result == null)
 	result = checkImageFilename(m_ImageDirs.get(i), name + ".png");
       if (result == null)
