@@ -22,10 +22,11 @@ Requirements
 Commands
 --------
 
-* adams-applications
+* adams-applications (licenses)
 
   * build all (`mvn clean install -DskipTests=true`)
-  * fix all missing licenses in `src/license/THIRD-PARTY.properties`
+  * fix all missing licenses in `src/license/THIRD-PARTY.properties`, e.g., 
+    using [licensee](https://github.com/licensee/licensee) ([docker image](https://github.com/fuglede/licensee-docker/blob/master/README.md))
   * commit/push changes
 
 * for skipping unit tests, e.g., for a follow-up release, use the `MAVEN_OPTS`
