@@ -70,7 +70,7 @@ public class FlowPanelNotificationArea
   public enum NotificationType {
     PLAIN(null),
     INFO("flow_ok.png"),
-    WARNING("flow_warning.gif"),
+    WARNING("flow_warning.png"),
     ERROR("flow_error.png"),
     QUESTION("flow_question.png");
 
