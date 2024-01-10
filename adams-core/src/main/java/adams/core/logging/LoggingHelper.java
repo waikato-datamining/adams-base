@@ -15,7 +15,7 @@
 
 /*
  * LoggingHelper.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -358,7 +358,7 @@ public class LoggingHelper {
     if (old instanceof AbstractLogHandler)
       listeners.addAll(((AbstractLogHandler) old).loggingListeners());
     m_DefaultHandler = value;
-    if (listeners.size() > 0) {
+    if (!listeners.isEmpty()) {
       if (m_DefaultHandler instanceof AbstractLogHandler) {
 	for (LoggingListener l: listeners)
 	  ((AbstractLogHandler) m_DefaultHandler).addLoggingListener(l);
@@ -475,7 +475,7 @@ public class LoggingHelper {
 
   /**
    * Wraps the default handler in the provided handler, but only if not already wrapped.
-   *
+   * <br/>
    * From:
    * <pre>
    * MultiHandler
@@ -531,7 +531,7 @@ public class LoggingHelper {
 
   /**
    * Removes the layer introduced by the provided handler in the default handler, but only if wrapped.
-   *
+   * <br/>
    * From:
    * <pre>
    * MultiHandler
@@ -673,7 +673,7 @@ public class LoggingHelper {
     prefix = record.getLoggerName();
 
     // any prefix to print?
-    if ((prefix != null) && prefix.length() > 0)
+    if ((prefix != null) && !prefix.isEmpty())
       actualPrefix = "[" + prefix + suffix + "/" + getDateFormat().format(new Date()) + "] ";
     else
       actualPrefix = "";
