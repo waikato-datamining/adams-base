@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Launches a new JVM process with the specified memory
@@ -131,6 +133,9 @@ public class Launcher {
   /** the console object that calls the launcher (if any). */
   protected LoggingObject m_ConsoleObject;
 
+  /** for logging. */
+  protected Logger m_Logger;
+
   /**
    * Initializes the launcher.
    */
@@ -155,6 +160,7 @@ public class Launcher {
     m_SuppressErrorDialog      = false;
     m_OutputPrinter            = DefaultOutputPrinter.class;
     m_ConsoleObject            = null;
+    m_Logger                   = Logger.getLogger(getClass().getName());
 
     addClassPathAugmentations(new ImplicitClassPathAugmenter());
   }
@@ -225,7 +231,7 @@ public class Launcher {
     }
     amount = m_Memory.substring(0, m_Memory.length() - suffix.length());
     factor = 1.5;
-    if (suffix.toLowerCase().equals("g")) {
+    if (suffix.equalsIgnoreCase("g")) {
       suffix = "m";
       factor = 1500;
     }
@@ -304,8 +310,7 @@ public class Launcher {
       m_ClassPathAugmentations.addAll(Arrays.asList(augmentations));
     }
     catch (Exception e) {
-      System.err.println("Error using classpath augmenter '" + cmdline + "':");
-      e.printStackTrace();
+      m_Logger.log(Level.SEVERE, "Error using classpath augmenter '" + cmdline + "'!", e);
     }
   }
 
@@ -323,8 +328,7 @@ public class Launcher {
       m_EnvironmentModifiers.add(modifier);
     }
     catch (Exception e) {
-      System.err.println("Error instantiating environment modifier '" + cmdline + "':");
-      e.printStackTrace();
+      m_Logger.log(Level.SEVERE, "Error instantiating environment modifier '" + cmdline + "'!", e);
     }
   }
 
@@ -464,7 +468,7 @@ public class Launcher {
           jars.get(path).add(file.getName());
         }
         else {
-          System.err.println("Failed to determine parent path for '" + file + "', skipping!");
+          m_Logger.warning("Failed to determine parent path for '" + file + "', skipping!");
         }
       }
       else {
@@ -534,8 +538,7 @@ public class Launcher {
     }
 
     // add augmentations
-    for (String augmentation: m_ClassPathAugmentations)
-      cpath.add(augmentation);
+    cpath.addAll(m_ClassPathAugmentations);
 
     // collapse?
     if (m_CollapseClassPath)
@@ -599,8 +602,7 @@ public class Launcher {
         enableRestart = true;
     }
     catch (Exception e) {
-      System.err.println("Failed to instantiate class '" + m_MainClass + "'!");
-      e.printStackTrace();
+      m_Logger.log(Level.SEVERE, "Failed to instantiate class '" + m_MainClass + "'!", e);
     }
 
     cmd = new ArrayList<>();
@@ -609,7 +611,7 @@ public class Launcher {
     cmd.addAll(m_JVMOptions);
     cmd.add("-classpath");
     cmd.add(getClassPath());
-    if (m_JavaAgentJar.length() > 0)
+    if (!m_JavaAgentJar.isEmpty())
       cmd.add("-javaagent:" + m_JavaAgentJar);
 
     if (!m_IgnoreEnvironmentOptions) {
@@ -628,8 +630,7 @@ public class Launcher {
           cmd.addAll(Arrays.asList(OptionUtils.splitOptions(EnvVar.get(ENV_ADAMS_OPTS))));
         }
         catch (Exception e) {
-          System.err.println("Error parsing environment variable '" + ENV_ADAMS_OPTS + "':");
-          e.printStackTrace();
+	  m_Logger.log(Level.SEVERE, "Error parsing environment variable '" + ENV_ADAMS_OPTS + "'!", e);
         }
       }
     }
@@ -645,8 +646,8 @@ public class Launcher {
       }
 
       m_Process = m_Runtime.exec(
-          cmd.toArray(new String[cmd.size()]),
-          m_EnvVars.toArray(new String[m_EnvVars.size()]),
+          cmd.toArray(new String[0]),
+          m_EnvVars.toArray(new String[0]),
           new File(System.getProperty("basedir", ".")));
       m_StdOut  = new OutputProcessStream(m_Process, m_OutputPrinter, true);
       m_StdErr  = new OutputProcessStream(m_Process, m_OutputPrinter, false);
@@ -710,8 +711,7 @@ public class Launcher {
     }
     catch (Exception e) {
       result = "Exception occurred launching " + m_MainClass + ": ";
-      System.err.println(result);
-      e.printStackTrace();
+      m_Logger.log(Level.SEVERE, result, e);
       result += e;
     }
 
@@ -793,7 +793,7 @@ public class Launcher {
     }
 
     if (result == null)
-      result = launcher.setArguments(options.toArray(new String[options.size()]));
+      result = launcher.setArguments(options.toArray(new String[0]));
 
     return result;
   }
