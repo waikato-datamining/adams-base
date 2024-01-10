@@ -243,7 +243,7 @@ public abstract class AbstractReportReaderTestCase<A extends AbstractReportReade
     cleanUpAfterRegression();
 
     // connect to default database
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties();
   }
 

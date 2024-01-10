@@ -181,7 +181,7 @@ public abstract class AbstractToolTestCase<A extends AbstractTool>
     cleanUpAfterRegression();
 
     // connect to default database
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties();
   }
 

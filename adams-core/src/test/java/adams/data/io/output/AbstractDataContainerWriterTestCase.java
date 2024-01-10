@@ -219,7 +219,7 @@ public abstract class AbstractDataContainerWriterTestCase<A extends AbstractData
     cleanUpAfterRegression();
 
     // connect to default database
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties();
   }
 

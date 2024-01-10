@@ -15,7 +15,7 @@
 
 /*
  * AbstractActorProcessorTest.java
- * Copyright (C) 2011-2020 University of Waikato
+ * Copyright (C) 2011-2024 University of Waikato
  */
 
 package adams.flow.processor;
@@ -171,12 +171,12 @@ public abstract class AbstractActorProcessorTestCase
     if (m_NoRegressionTest)
       return;
 
-    append     = Boolean.getBoolean(PROPERTY_APPEND);
-    filenameIn = System.getProperty(PROPERTY_DUMPFILE_INPUT);
-    if ((filenameIn != null) && (filenameIn.length() == 0) && filenameIn.startsWith("$"))
+    append     = getBooleanProperty(PROPERTY_APPEND);
+    filenameIn = getProperty(PROPERTY_DUMPFILE_INPUT);
+    if ((filenameIn != null) && (filenameIn.isEmpty() || filenameIn.startsWith("$")))
       filenameIn = null;
-    filenameOut = System.getProperty(PROPERTY_DUMPFILE_OUTPUT);
-    if ((filenameOut != null) && (filenameOut.length() == 0) && filenameOut.startsWith("$"))
+    filenameOut = getProperty(PROPERTY_DUMPFILE_OUTPUT);
+    if ((filenameOut != null) && (filenameOut.isEmpty() || filenameOut.startsWith("$")))
       filenameOut = null;
 
     setups = getRegressionSetups();
@@ -254,15 +254,14 @@ public abstract class AbstractActorProcessorTestCase
     String		format;
     OptionProducer	producer;
 
-    format   = System.getProperty(PROPERTY_FORMAT);
+    format   = getProperty(PROPERTY_FORMAT);
     producer = null;
-    if ((format != null) && (format.length() >= 0)) {
+    if ((format != null) && !format.isEmpty()) {
       try {
 	producer = (OptionProducer) ClassManager.getSingleton().forName(format).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate option producer '" + format + "': " + e);
-	producer = null;
       }
     }
 

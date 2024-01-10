@@ -15,11 +15,12 @@
 
 /*
  * AdamsTestCase.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
 import adams.core.DateUtils;
+import adams.core.Properties;
 import adams.core.QuickInfoSupporter;
 import adams.core.classmanager.ClassManager;
 import adams.core.management.CharsetHelper;
@@ -39,6 +40,7 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -56,13 +58,22 @@ import java.util.TimeZone;
  * Headless environment can be indicated as follows: <br>
  *   <code>-Dadams.test.headless=true</code>
  * <br><br>
- * Individual tests can be skipped as follows (comma-separated lost): <br>
+ * Individual tests can be skipped as follows (comma-separated list): <br>
  *   <code>-Dadams.test.skip=adams.some.where.Class1Test,adams.some.where.else.Class2Test</code>
+ * <br><br>
+ * For skipping all ADAMS-derived tests use: <br>
+ *   <code>-Dadams.test.skip_all=true</code>
+ * <br><br>
+ * Instead of using -D options to set these properties, you can also set them in the {@link #getPropertiesFile()}
+ * properties file (default: Test.props).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class AdamsTestCase
   extends TestCase {
+
+  /** property for an alternative test props file. */
+  public final static String PROPERTY_TESTPROPS = "adams.test.props";
 
   /** property indicating whether tests should be run in headless mode. */
   public final static String PROPERTY_HEADLESS = "adams.test.headless";
@@ -78,6 +89,9 @@ public class AdamsTestCase
 
   /** property listing all test classes that should not get executed. */
   public final static String PROPERTY_SKIP = "adams.test.skip";
+
+  /** property indicating whether all tests are to be skipped. */
+  public final static String PROPERTY_SKIP_ALL = "adams.test.skip_all";
 
   /** whether to execute any regression test. */
   protected boolean m_NoRegressionTest;
@@ -98,7 +112,16 @@ public class AdamsTestCase
   protected boolean m_Headless;
   
   /** the classnames of tests to skip. */
-  protected HashSet<String> m_SkipTests;
+  protected Set<String> m_SkipTests;
+
+  /** whether to skip all tests. */
+  protected boolean m_SkipAll;
+
+  /** whether the skip all tests message has been output already. */
+  protected static boolean m_SkipAllMsgDisplayed;
+
+  /** the properties. */
+  protected Properties m_Properties;
 
   /**
    * Constructs the test case. Called by subclasses.
@@ -107,6 +130,104 @@ public class AdamsTestCase
    */
   public AdamsTestCase(String name) {
     super(name);
+  }
+
+  /**
+   * Returns the name of the database properties file to use.
+   *
+   * @return		the filename
+   */
+  protected String getPropertiesFile() {
+    return "adams/test/Test.props";
+  }
+
+  /**
+   * Returns the properties for the flow tests.
+   * If {@link #PROPERTY_TESTPROPS} is defined and points to a valid
+   * properties file, then the "file" parameter gets ignored.
+   *
+   * @param file	the file to load from the classpath, eg "adams/test/Test.props"
+   * @return		the properties
+   * @see		Properties#read(String)
+   */
+  protected synchronized Properties getProperties(String file) {
+    String	props;
+    boolean	useDefault;
+
+    if (m_Properties == null) {
+      useDefault = true;
+      props      = System.getProperty(PROPERTY_TESTPROPS);
+      if (props != null) {
+	try {
+	  useDefault = false;
+	  m_Properties = new Properties();
+	  m_Properties.load(props);
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to read properties defined in " + PROPERTY_TESTPROPS + ": " + props);
+	  e.printStackTrace();
+	}
+      }
+
+      if (useDefault) {
+	try {
+	  m_Properties = Properties.read(file);
+	}
+	catch (Exception e) {
+	  e.printStackTrace();
+	  m_Properties = new Properties();
+	}
+      }
+    }
+
+    return m_Properties;
+  }
+
+  /**
+   * Returns the properties for the flow tests.
+   *
+   * @return		the properties
+   */
+  public synchronized Properties getProperties() {
+    return getProperties(getPropertiesFile());
+  }
+
+  /**
+   * Returns the value of the property, either from {@link #PROPERTY_TESTPROPS} or the system property.
+   * The system property overrides any from the props file.
+   *
+   * @param property	the name of the property to retrieve
+   * @return		the value, null if not set
+   */
+  protected String getProperty(String property) {
+    String	result;
+
+    result = System.getProperty(property);
+    if (result == null)
+      result = getProperties().getProperty(property);
+
+    return result;
+  }
+
+  /**
+   * Returns the value of the boolean property, either from {@link #PROPERTY_TESTPROPS} or the system property.
+   * The system property overrides any from the props file.
+   *
+   * @param property	the name of the property to retrieve
+   * @return		the value; false if not set
+   */
+  protected Boolean getBooleanProperty(String property) {
+    Boolean	result;
+
+    result = null;
+    if (System.getProperty(property) != null)
+      result = Boolean.getBoolean(property);
+    if (result == null)
+      result = getProperties().getBoolean(property);
+    if (result == null)
+      result = false;
+
+    return result;
   }
 
   /**
@@ -138,7 +259,7 @@ public class AdamsTestCase
    * @return		the platforms
    */
   protected HashSet<Platform> getPlatforms() {
-    return new HashSet<Platform>(Arrays.asList(new Platform[]{Platform.ALL}));
+    return new HashSet<>(Arrays.asList(Platform.ALL));
   }
   
   /**
@@ -169,15 +290,15 @@ public class AdamsTestCase
     System.setProperty("jsse.enableSNIExtension", "false");
     
     // set up the correct environment
-    clsname = System.getProperty(PROPERTY_ENV_CLASS);
+    clsname = getProperty(PROPERTY_ENV_CLASS);
     if (clsname != null)
       adams.env.Environment.setEnvironmentClass(ClassManager.getSingleton().forName(clsname));
     if (adams.env.Environment.getEnvironmentClass() == null)
       throw new IllegalStateException("No environment class set!");
 
     // any tests that are skipped?
-    m_SkipTests = new HashSet<String>();
-    skipped     = System.getProperty(PROPERTY_SKIP);
+    m_SkipTests = new HashSet<>();
+    skipped     = getProperty(PROPERTY_SKIP);
     if ((skipped != null) && !skipped.trim().isEmpty()) {
       parts = skipped.trim().replace(" ", "").split(",");
       for (String part: parts) {
@@ -202,9 +323,10 @@ public class AdamsTestCase
     }
 
     m_TestHelper                = newTestHelper();
-    m_Headless                  = Boolean.getBoolean(PROPERTY_HEADLESS);
-    m_NoRegressionTest          = Boolean.getBoolean(PROPERTY_NOREGRESSION);
-    m_NoQuickInfoRegressionTest = Boolean.getBoolean(PROPERTY_NOQUICKINFOREGRESSION);
+    m_Headless                  = getBooleanProperty(PROPERTY_HEADLESS);
+    m_NoRegressionTest          = getBooleanProperty(PROPERTY_NOREGRESSION);
+    m_NoQuickInfoRegressionTest = getBooleanProperty(PROPERTY_NOQUICKINFOREGRESSION);
+    m_SkipAll                   = getBooleanProperty(PROPERTY_SKIP_ALL);
   }
 
   /**
@@ -370,9 +492,13 @@ public class AdamsTestCase
   protected void runTest() throws Throwable {
     String		msg;
     HashSet<Platform>	platforms;
-    
+
+    msg = null;
+
+    if (m_SkipAll)
+      msg = "All tests to be skipped";
+
     platforms = getPlatforms();
-    msg       = null;
     if (!platforms.contains(Platform.ALL)) {
       if ((msg == null) && OS.isMac() && !platforms.contains(Platform.MAC))
 	msg = "Cannot run test on Mac";
@@ -389,11 +515,16 @@ public class AdamsTestCase
     
     if ((msg == null) && m_SkipTests.contains(getClass().getName()))
       msg = "Test excluded from being run (" + getClass().getName() + ")";
-    
-    if (msg == null)
+
+    if (msg == null) {
       super.runTest();
-    else
-      System.out.println("Skipped: " + msg);
+    }
+    else {
+      if (!m_SkipAll || !m_SkipAllMsgDisplayed)
+	System.out.println("Skipped: " + msg);
+      if (m_SkipAll)
+	m_SkipAllMsgDisplayed = true;
+    }
   }
 
   /**
@@ -436,7 +567,7 @@ public class AdamsTestCase
     // default constructor?
     constr = null;
     try {
-      constr = cls.getConstructor(new Class[0]);
+      constr = cls.getConstructor();
     }
     catch (NoSuchMethodException e) {
       if (fail)

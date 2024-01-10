@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataProcessorTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -35,9 +35,11 @@ import adams.test.TmpFile;
  * <br><br>
  * The regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.data.noregression=true</code>
+ * <br><br>
+ * Instead of using -D options to set these properties, you can also set them in the {@link #getPropertiesFile()}
+ * properties file (default: Test.props).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <A> the type of algorithm to use
  * @param <I> the type of data to process (input)
  * @param <O> the type of data to process (output)
@@ -69,7 +71,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
   protected void setUp() throws Exception {
     super.setUp();
 
-    m_NoDataRegressionTest = Boolean.getBoolean(PROPERTY_NODATAREGRESSION);
+    m_NoDataRegressionTest = getBooleanProperty(PROPERTY_NODATAREGRESSION);
   }
   
   /**
@@ -234,7 +236,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
     }
 
     // connect to default database
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties();
   }
 
@@ -318,7 +320,7 @@ public abstract class AbstractDataProcessorTestCase<A, I extends DataContainer, 
     cleanUpAfterRegression();
 
     // connect to default database
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties();
   }
   

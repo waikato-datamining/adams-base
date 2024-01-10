@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseTest.java
- * Copyright (C) 2009-2019 University of Waikato
+ * Copyright (C) 2009-2024 University of Waikato
  */
 
 package adams.test;
@@ -39,7 +39,7 @@ public abstract class AbstractDatabaseTestCase
   public final static String PROPERTY_TESTDBPROPS = "adams.test.db.props";
 
   /** the properties. */
-  protected Properties m_Properties;
+  protected Properties m_DatabaseProperties;
 
   /** whether the "database disabled" message was output already. */
   protected static boolean m_DatabaseDisableMessageDisplayed;
@@ -47,7 +47,7 @@ public abstract class AbstractDatabaseTestCase
   /** whether the tables got already initialized (JDBC URL &lt-&gt; true|false). */
   protected static Hashtable<String,Boolean> m_TablesInitialized;
   static {
-    m_TablesInitialized = new Hashtable<String,Boolean>();
+    m_TablesInitialized = new Hashtable<>();
   }
 
   /**
@@ -81,14 +81,14 @@ public abstract class AbstractDatabaseTestCase
     String	props;
     boolean	useDefault;
     
-    if (m_Properties == null) {
+    if (m_DatabaseProperties == null) {
       useDefault = true;
       props      = System.getProperty(PROPERTY_TESTDBPROPS);
       if (props != null) {
 	try {
 	  useDefault = false;
-	  m_Properties = new Properties();
-	  m_Properties.load(props);
+	  m_DatabaseProperties = new Properties();
+	  m_DatabaseProperties.load(props);
 	}
 	catch (Exception e) {
 	  System.err.println("Failed to read properties defined in " + PROPERTY_TESTDBPROPS + ": " + props);
@@ -98,16 +98,16 @@ public abstract class AbstractDatabaseTestCase
       
       if (useDefault) {
 	try {
-	  m_Properties = Properties.read(file);
+	  m_DatabaseProperties = Properties.read(file);
 	}
 	catch (Exception e) {
 	  e.printStackTrace();
-	  m_Properties = new Properties();
+	  m_DatabaseProperties = new Properties();
 	}
       }
     }
 
-    return m_Properties;
+    return m_DatabaseProperties;
   }
 
   /**
@@ -200,7 +200,7 @@ public abstract class AbstractDatabaseTestCase
    * @param file	the props file with the database connection setup
    */
   protected synchronized void reconnect(String file) {
-    m_Properties = null;
+    m_DatabaseProperties = null;
     getDatabaseProperties(file);
     connect();
   }
@@ -233,11 +233,6 @@ public abstract class AbstractDatabaseTestCase
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-
     connect();
-
-    // FIXME
-    //GlobalDataContainerFilter.setFilter(
-	//(AbstractFilter) OptionUtils.forCommandLine(AbstractFilter.class, getDatabaseProperties().getString("GlobalFilter")));
   }
 }

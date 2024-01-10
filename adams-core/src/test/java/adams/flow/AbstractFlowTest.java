@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowTest.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow;
@@ -56,6 +56,9 @@ import java.io.File;
  * </ul>
  * The regression test can be skipped as follows: <br>
  *   <code>-Dadams.test.flow.noregression=true</code>
+ * <br><br>
+ * Instead of using -D options to set these properties, you can also set them in the {@link #getPropertiesFile()}
+ * properties file (default: Test.props).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
@@ -106,7 +109,7 @@ public abstract class AbstractFlowTest
     if (m_Actor instanceof Flow)
       ((Flow) m_Actor).setErrorHandling(ErrorHandling.ACTORS_ALWAYS_STOP_ON_ERROR);
 
-    m_NoFlowRegressionTest = Boolean.getBoolean(PROPERTY_NOFLOWREGRESSION);
+    m_NoFlowRegressionTest = getBooleanProperty(PROPERTY_NOFLOWREGRESSION);
   }
 
   /**
@@ -217,15 +220,14 @@ public abstract class AbstractFlowTest
     String		format;
     OptionProducer	producer;
 
-    format   = System.getProperty(PROPERTY_FORMAT);
+    format   = getProperty(PROPERTY_FORMAT);
     producer = null;
-    if ((format != null) && (format.length() >= 0)) {
+    if ((format != null) && !format.isEmpty()) {
       try {
 	producer = (OptionProducer) ClassManager.getSingleton().forName(format).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
 	System.err.println("Failed to instantiate option producer '" + format + "': " + e);
-	producer = null;
       }
     }
 
@@ -297,9 +299,9 @@ public abstract class AbstractFlowTest
     boolean	written;
 
     // dump the test flow to a file?
-    filename = System.getProperty(PROPERTY_DUMPFILE);
-    if ((filename != null) && (filename.length() > 0) && !filename.startsWith("$")) {
-      append  = Boolean.getBoolean(PROPERTY_APPEND);
+    filename = getProperty(PROPERTY_DUMPFILE);
+    if ((filename != null) && !filename.isEmpty() && !filename.startsWith("$")) {
+      append  = getBooleanProperty(PROPERTY_APPEND);
       written = FileUtils.writeToFile(filename, dumpActor(m_Actor), append);
       if (written)
 	System.out.println(

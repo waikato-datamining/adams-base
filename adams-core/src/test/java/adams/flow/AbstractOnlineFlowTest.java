@@ -27,6 +27,9 @@ package adams.flow;
  * It is possible to disable the execution of the test, in case no internet
  * connection is available, using the "adams.test.flow.offline" property.
  * E.g.: <code>-Dadams.test.flow.offline=true</code>.
+ * <br><br>
+ * Instead of using -D options to set these properties, you can also set them in the {@link #getPropertiesFile()}
+ * properties file (default: Test.props).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
@@ -53,7 +56,7 @@ public abstract class AbstractOnlineFlowTest
   public AbstractOnlineFlowTest(String name) {
     super(name);
 
-    m_Offline = Boolean.getBoolean(PROPERTY_OFFLINE);
+    m_Offline = getBooleanProperty(PROPERTY_OFFLINE);
   }
 
   /**
