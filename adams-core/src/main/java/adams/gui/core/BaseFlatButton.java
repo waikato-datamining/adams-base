@@ -15,7 +15,7 @@
 
 /*
  * BaseFlatButton.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -155,5 +155,41 @@ public class BaseFlatButton
         }
       });
     }
+  }
+
+  /**
+   * Sets the background color when focused.
+   *
+   * @param value	the color
+   */
+  public void setBackgroundFocused(Color value) {
+    m_BackgroundFocused = value;
+  }
+
+  /**
+   * Returns the background color when focused.
+   *
+   * @return		the color
+   */
+  public Color getBackgroundFocused() {
+    return m_BackgroundFocused;
+  }
+
+  /**
+   * Sets the background color when unfocused.
+   *
+   * @param value	the color
+   */
+  public void setBackgroundUnfocused(Color value) {
+    m_BackgroundUnfocused = value;
+  }
+
+  /**
+   * Returns the background color when unfocused.
+   *
+   * @return		the color
+   */
+  public Color getBackgroundUnfocused() {
+    return m_BackgroundUnfocused;
   }
 }
