@@ -15,13 +15,15 @@
 
 /*
  * BaseColorTextField.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
 import adams.core.base.BaseColor;
 import adams.event.AnyChangeListenerSupporter;
+import adams.gui.laf.AbstractFlatLaf;
+import adams.gui.laf.AbstractLookAndFeel;
 
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
@@ -153,7 +155,6 @@ public class BaseColorTextField
     add(m_TextField, BorderLayout.CENTER);
 
     m_Button = new BaseFlatButton();
-    m_Button.setOpaque(true);
     m_Button.addActionListener((ActionEvent e) -> m_TextField.chooseColor());
     m_Button.setToolTipText("Open color picker dialog");
     m_Button.setPreferredSize(new Dimension((int) m_TextField.getPreferredSize().getHeight(), (int) m_TextField.getPreferredSize().getHeight()));
@@ -176,7 +177,14 @@ public class BaseColorTextField
    * @param color	the color to use
    */
   protected void updateButtonColor(Color color) {
-    setBackground(color);
+    if (AbstractLookAndFeel.getCurrent() instanceof AbstractFlatLaf) {
+      m_Button.setBackground(color);
+      m_Button.setBackgroundFocused(color.darker());
+      m_Button.setBackgroundUnfocused(color);
+    }
+    else {
+      setBackground(color);
+    }
   }
 
   /**
