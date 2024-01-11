@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractCopyrightProcessor.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
@@ -53,13 +53,13 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    * If the processor class is annotated with {@link
    * SupportedSourceVersion}, return the source version in the
    * annotation.  If the class is not so annotated, {@link
-   * SourceVersion#RELEASE_6} is returned.
+   * SourceVersion#RELEASE_11} is returned.
    *
    * @return the latest source version supported by this processor
    */
   @Override
   public SourceVersion getSupportedSourceVersion() {
-    return SourceVersion.RELEASE_8;
+    return SourceVersion.RELEASE_11;
   }
 
   /**
