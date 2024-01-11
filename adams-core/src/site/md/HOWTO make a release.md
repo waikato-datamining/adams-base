@@ -7,6 +7,11 @@ Requirements
 * has the java-cup dependency changed? If so, change env.sh and
   *.bat files (search for "java-cup-")
 
+* ensure that source code version `maven.compiler.source` in top-level `pom.xml` is 
+  the same with this one:
+  
+  `adams.core.annotation.AbstractCopyrightProcessor/getSupportedSourceVersion()`
+
 * execute/check all flows
 
 * all files need to be up-to-date and committed
