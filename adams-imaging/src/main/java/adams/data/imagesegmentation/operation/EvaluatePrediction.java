@@ -15,7 +15,7 @@
 
 /*
  * EvaluatePrediction.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.imagesegmentation.operation;
@@ -309,11 +309,14 @@ public class EvaluatePrediction
       total = stats.get(KEY_ANNOTATION);
 
       row.getCell("O").setContent(stats.get(KEY_OVERLAP));
-      row.getCell("OP").setContent((double) stats.get(KEY_OVERLAP) / total);
+      if (total > 0)
+	row.getCell("OP").setContent((double) stats.get(KEY_OVERLAP) / total);
       row.getCell("M").setContent(stats.get(KEY_MISSED));
-      row.getCell("MP").setContent((double) stats.get(KEY_MISSED) / total);
+      if (total > 0)
+	row.getCell("MP").setContent((double) stats.get(KEY_MISSED) / total);
       row.getCell("A").setContent(stats.get(KEY_ADDITIONAL));
-      row.getCell("AP").setContent((double) stats.get(KEY_ADDITIONAL) / total);
+      if (total > 0)
+	row.getCell("AP").setContent((double) stats.get(KEY_ADDITIONAL) / total);
 
       if (m_AddMisclassification) {
 	for (String other : labels) {
