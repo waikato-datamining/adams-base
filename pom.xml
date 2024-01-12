@@ -101,6 +101,7 @@
     <debianmavenplugin.version>1.0.22</debianmavenplugin.version>
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
     <javacv.version>1.5.9</javacv.version>
+    <owasp.dependency.check.skip>false</owasp.dependency.check.skip>
   </properties>
 
   <scm>
@@ -487,6 +488,21 @@
                 <outputDirectory>${project.build.directory}/sources</outputDirectory>
                 <includeGroupIds>${project.groupId}</includeGroupIds>
               </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>9.0.8</version>
+          <configuration>
+            <skip>${owasp.dependency.check.skip}</skip>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
             </execution>
           </executions>
         </plugin>
