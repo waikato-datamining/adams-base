@@ -237,7 +237,10 @@ public class EvaluatePrediction
       if (annoOtherPixels[i] != black)
         annoTotal++;
     }
-    result.value2 = (double) result.value1 / annoTotal;
+    if (annoTotal > 0)
+      result.value2 = (double) result.value1 / annoTotal;
+    else
+      result.value2 = Double.NaN;
 
     return result;
   }
