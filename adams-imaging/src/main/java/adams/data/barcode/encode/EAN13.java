@@ -15,7 +15,7 @@
 
 /*
  * EAN13.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.barcode.encode;
@@ -23,7 +23,6 @@ package adams.data.barcode.encode;
 import adams.data.image.BufferedImageContainer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.EAN13Writer;
 
@@ -80,7 +79,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author lx51 (lx51 at students dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EAN13 extends AbstractBarcodeEncoder {
 
@@ -210,7 +208,7 @@ public class EAN13 extends AbstractBarcodeEncoder {
           image.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
-    catch (WriterException e) {
+    catch (Exception e) {
       result = e.getMessage();
     }
 
