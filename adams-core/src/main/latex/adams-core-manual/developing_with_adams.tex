@@ -1506,3 +1506,34 @@ simply outputs the tokens to stdout.
     flow.cleanUp();
   }
 \end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Security vulnerabilities %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Security vulnerabilities}
+ADAMS has a built-in check at build time for artifacts that have been reported as having security vulnerabilities.
+It uses the \textit{OWASP Dependency-Check}\footnote{\url{https://owasp.org/www-project-dependency-check/}{}}
+Maven plugin for that. By default, this plugin is disabled, as it requires the download of a large vulnerabilities
+database, which will slow down the build process considerably. Using the following flag on the command-line,
+you can enable this check:
+
+\begin{verbatim}
+-Dowasp.dependency.check.skip=false
+\end{verbatim}
+
+\noindent If you have a custom \texttt{pom.xml}, then add the following snippet to your \texttt{build} plugins:
+
+\begin{verbatim}
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+      </plugin>
+\end{verbatim}
+
+\noindent Once the build has finished, you will find the following file in your \texttt{target} directory,
+containing a table of vulnerable artifacts (if any):
+
+\begin{verbatim}
+dependency-check-report.html
+\end{verbatim}
