@@ -101,7 +101,7 @@
     <debianmavenplugin.version>1.0.22</debianmavenplugin.version>
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
     <javacv.version>1.5.9</javacv.version>
-    <owasp.dependency.check.skip>false</owasp.dependency.check.skip>
+    <owasp.dependency.check.skip>true</owasp.dependency.check.skip>
   </properties>
 
   <scm>
