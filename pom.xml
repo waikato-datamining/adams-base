@@ -103,6 +103,7 @@
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
     <javacv.version>1.5.9</javacv.version>
     <commons-codec.version>1.16.0</commons-codec.version>
+    <woodstox-core.version>6.5.1</woodstox-core.version>
     <owasp.dependency.check.skip>true</owasp.dependency.check.skip>
   </properties>
 
