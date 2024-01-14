@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OutOfMemory.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.errorpostprocessor;
@@ -53,7 +53,6 @@ import java.util.Date;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OutOfMemory
   extends AbstractErrorPostProcessor {
@@ -166,8 +165,10 @@ public class OutOfMemory
       m_LogActorSetup = true;
       m_LogActor      = m_Helper.findCallableActorRecursive(source, getLog());
       if (m_LogActor == null) {
-        msg = "Couldn't find callable log actor '" + getLog() + "' - logging disabled!";
-        getLogger().warning(msg);
+	if (!m_Log.getValue().equals(CallableActorReference.UNKNOWN)) {
+	  msg = "Couldn't find callable log actor '" + getLog() + "' - logging disabled!";
+	  getLogger().warning(msg);
+	}
       }
       else {
 	comp = new Compatibility();
