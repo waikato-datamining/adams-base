@@ -85,7 +85,7 @@
     <moa.version>2023.04.0</moa.version>
     <weka.version>3.9.6-fork-0.0.2</weka.version>
     <weka-lts.version>3.9.0-fork-0.0.13</weka-lts.version>
-    <postgresql.version>42.0.0</postgresql.version>
+    <postgresql.version>42.7.1</postgresql.version>
     <postgis.version>2.2.1</postgis.version>
     <jodd.version>5.1.6</jodd.version>
     <boofcv.version>0.18</boofcv.version>
