@@ -75,7 +75,7 @@
     <class.adams.flowsetuprunner>adams.flow.FlowSetupRunner</class.adams.flowsetuprunner>
     <!-- module-dependent -->
     <cxf.version>3.5.3</cxf.version>
-    <xercesimpl.version>2.12.1</xercesimpl.version>
+    <xercesimpl.version>2.12.2</xercesimpl.version>
     <xjc.version>3.3.1</xjc.version>
     <sun.jaxb.version>3.0.2</sun.jaxb.version>
     <javax.jaxb.version>2.3.1</javax.jaxb.version>
