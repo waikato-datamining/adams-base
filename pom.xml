@@ -105,6 +105,7 @@
     <commons-codec.version>1.16.0</commons-codec.version>
     <woodstox-core.version>6.5.1</woodstox-core.version>
     <owasp.dependency.check.skip>true</owasp.dependency.check.skip>
+    <relaxngDatatype.version>20030807</relaxngDatatype.version>
   </properties>
 
   <scm>
