@@ -15,7 +15,7 @@
 
 /*
  * Binary.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -29,8 +29,8 @@ import boofcv.alg.filter.binary.BinaryImageOps;
 import boofcv.alg.filter.binary.GThresholdImageOps;
 import boofcv.alg.filter.binary.ThresholdImageOps;
 import boofcv.alg.misc.ImageStatistics;
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -43,54 +43,53 @@ import boofcv.struct.image.ImageUInt8;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-threshold-type &lt;MANUAL|MEAN|ADAPTIVE_GAUSSIAN|ADAPTIVE_SQUARE|OTSU&gt; (property: thresholdType)
  * &nbsp;&nbsp;&nbsp;The type of threshold to apply.
  * &nbsp;&nbsp;&nbsp;default: MANUAL
  * </pre>
- * 
+ *
  * <pre>-threshold &lt;float&gt; (property: threshold)
  * &nbsp;&nbsp;&nbsp;The manual threshold to use.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
- * 
+ *
  * <pre>-gaussian-radius &lt;int&gt; (property: gaussianRadius)
  * &nbsp;&nbsp;&nbsp;The Gaussian radius to use.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-square-radius &lt;int&gt; (property: squareRadius)
  * &nbsp;&nbsp;&nbsp;The radius of the square region to use.
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-bias &lt;float&gt; (property: bias)
  * &nbsp;&nbsp;&nbsp;The bias to use (for adaptive methods).
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * </pre>
- * 
+ *
  * <pre>-threshold-down &lt;boolean&gt; (property: thresholdDown)
  * &nbsp;&nbsp;&nbsp;Whether to threshold down or up.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-remove-small-blobs &lt;boolean&gt; (property: removeSmallBlobs)
  * &nbsp;&nbsp;&nbsp;If enabled, small blobs are removed using erode8&#47;dilate8.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
-    author = "Peter Abeles",
-    license = License.APACHE2,
-    url = "http://boofcv.org/index.php?title=Tutorial_Binary_Image",
-    note = "Example code taken from this URL"
+  author = "Peter Abeles",
+  license = License.APACHE2,
+  url = "http://boofcv.org/index.php?title=Tutorial_Binary_Image",
+  note = "Example code taken from this URL"
 )
 public class Binary
   extends AbstractBoofCVTransformer {
@@ -102,17 +101,12 @@ public class Binary
    * The treshold type to apply.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum ThresholdType {
     /** manually supplied threshold. */
     MANUAL,
     /** using the mean. */
     MEAN,
-    /** using adaptive gaussian. */
-    ADAPTIVE_GAUSSIAN,
-    /** using adaptive square. */
-    ADAPTIVE_SQUARE,
     /** using Otsu's method. */
     OTSU
   }
@@ -156,32 +150,32 @@ public class Binary
     super.defineOptions();
 
     m_OptionManager.add(
-	    "threshold-type", "thresholdType",
-	    ThresholdType.MANUAL);
+      "threshold-type", "thresholdType",
+      ThresholdType.MANUAL);
 
     m_OptionManager.add(
-	    "threshold", "threshold",
-	    0.0f);
+      "threshold", "threshold",
+      0.0f);
 
     m_OptionManager.add(
-	    "gaussian-radius", "gaussianRadius",
-	    1, 1, null);
+      "gaussian-radius", "gaussianRadius",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "square-radius", "squareRadius",
-	    1, 1, null);
+      "square-radius", "squareRadius",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "bias", "bias",
-	    0.0f);
+      "bias", "bias",
+      0.0f);
 
     m_OptionManager.add(
-	    "threshold-down", "thresholdDown",
-	    false);
+      "threshold-down", "thresholdDown",
+      false);
 
     m_OptionManager.add(
-	    "remove-small-blobs", "removeSmallBlobs",
-	    false);
+      "remove-small-blobs", "removeSmallBlobs",
+      false);
   }
 
   /**
@@ -406,13 +400,13 @@ public class Binary
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageFloat32 		input;
-    ImageUInt8 			binary;
+    GrayF32 			input;
+    GrayU8 			binary;
     double 			threshold;
-    ImageUInt8 			filtered;
+    GrayU8 			filtered;
 
-    input  = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    binary = new ImageUInt8(input.width,input.height);
+    input  = (GrayF32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.GRAYF32);
+    binary = new GrayU8(input.width,input.height);
 
     switch (m_ThresholdType) {
       case MANUAL:
@@ -423,14 +417,8 @@ public class Binary
 	getLogger().info("mean: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);
 	break;
-      case ADAPTIVE_GAUSSIAN:
-	ThresholdImageOps.adaptiveGaussian(input, binary, m_GaussianRadius, m_Bias, m_ThresholdDown, null, null);
-	break;
-      case ADAPTIVE_SQUARE:
-	ThresholdImageOps.adaptiveSquare(input, binary, m_SquareRadius, m_Bias, m_ThresholdDown, null, null);
-	break;
       case OTSU:
-	binary    = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+	binary    = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.GRAYU8);
 	threshold = GThresholdImageOps.computeOtsu(binary, 0, 256);
 	getLogger().info("otsu: " + threshold);
 	ThresholdImageOps.threshold(input, binary, (float) threshold, m_ThresholdDown);

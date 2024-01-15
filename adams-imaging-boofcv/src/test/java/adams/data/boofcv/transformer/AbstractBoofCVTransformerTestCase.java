@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBoofCVTransformerTestCase.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.transformer;
 
@@ -36,8 +36,8 @@ import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
-import boofcv.core.image.ConvertBufferedImage;
-import boofcv.struct.image.ImageSInt16;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayS16;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,6 @@ import java.util.List;
  * Ancestor for test cases tailored for BoofCV transformers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 10815 $
  */
 public abstract class AbstractBoofCVTransformerTestCase
   extends AdamsTestCase {
@@ -88,7 +87,7 @@ public abstract class AbstractBoofCVTransformerTestCase
     cont   = reader.read(new TmpFile(filename));
     if (cont != null) {
       result = new BoofCVImageContainer();
-      result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, ImageSInt16.class));
+      result.setImage(ConvertBufferedImage.convertFromSingle(cont.toBufferedImage(), null, GrayS16.class));
       result.getReport().setStringValue(BoofCVImageContainer.FIELD_FILENAME, new PlaceholderFile(filename).getName());
     }
     m_TestHelper.deleteFileFromTmp(filename);

@@ -13,47 +13,67 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVImageType.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
 
-import boofcv.struct.image.ImageFloat32;
-import boofcv.struct.image.ImageFloat64;
-import boofcv.struct.image.ImageMultiBand;
-import boofcv.struct.image.ImageSInt16;
-import boofcv.struct.image.ImageSInt32;
-import boofcv.struct.image.ImageSInt64;
-import boofcv.struct.image.ImageSInt8;
-import boofcv.struct.image.ImageUInt16;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayF64;
+import boofcv.struct.image.GrayS16;
+import boofcv.struct.image.GrayS32;
+import boofcv.struct.image.GrayS64;
+import boofcv.struct.image.GrayS8;
+import boofcv.struct.image.GrayU16;
+import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.InterleavedF32;
+import boofcv.struct.image.InterleavedF64;
+import boofcv.struct.image.InterleavedS16;
+import boofcv.struct.image.InterleavedS32;
+import boofcv.struct.image.InterleavedS64;
+import boofcv.struct.image.InterleavedS8;
+import boofcv.struct.image.InterleavedU16;
+import boofcv.struct.image.InterleavedU8;
 
 /**
  * The different image types that are available.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum BoofCVImageType {
   /** float 32bit. */
-  FLOAT_32(ImageFloat32.class),
+  GRAYF32(GrayF32.class),
   /** float 64bit. */
-  FLOAT_64(ImageFloat64.class),
+  GRAYF64(GrayF64.class),
   /** signed int 8 bit. */
-  SIGNED_INT_8(ImageSInt8.class),
+  GRAYS8(GrayS8.class),
   /** unsigned int 8 bit. */
-  UNSIGNED_INT_8(ImageUInt8.class),
+  GRAYU8(GrayU8.class),
   /** signed int 16 bit. */
-  SIGNED_INT_16(ImageSInt16.class),
+  GRAYS16(GrayS16.class),
   /** unsigned int 16 bit. */
-  UNSIGNED_INT_16(ImageUInt16.class),
+  GRAYU16(GrayU16.class),
   /** signed int 32 bit. */
-  SIGNED_INT_32(ImageSInt32.class),
+  GRAYS32(GrayS32.class),
   /** signed int 64 bit. */
-  SIGNED_INT_64(ImageSInt64.class),
-  /** multiband image */
-  MULTIBAND(ImageMultiBand.class);
+  GRAYS64(GrayS64.class),
+  /** interleaved/multiband float 32 bit */
+  INTERLEAVEDF32(InterleavedF32.class),
+  /** interleaved/multiband float 32 bit */
+  INTERLEAVEDF64(InterleavedF64.class),
+  /** interleaved/multiband signed 8 bit */
+  INTERLEAVEDS8(InterleavedS8.class),
+  /** interleaved/multiband unsigned 8 bit */
+  INTERLEAVEDU8(InterleavedU8.class),
+  /** interleaved/multiband signed 16 bit */
+  INTERLEAVEDS16(InterleavedS16.class),
+  /** interleaved/multiband unsigned 16 bit */
+  INTERLEAVEDU16(InterleavedU16.class),
+  /** interleaved/multiband signed 32 bit */
+  INTERLEAVEDS32(InterleavedS32.class),
+  /** interleaved/multiband signed 64 bit */
+  INTERLEAVEDS64(InterleavedS64.class);
   
   /** the associated image class. */
   private Class m_ImageClass;

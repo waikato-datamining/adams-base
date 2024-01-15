@@ -15,7 +15,7 @@
 
 /*
  * ImageType.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -46,7 +46,6 @@ import boofcv.struct.image.ImageBase;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8954 $
  */
 public class ImageType
   extends AbstractBoofCVTransformer {
@@ -76,7 +75,7 @@ public class ImageType
 
     m_OptionManager.add(
 	    "type", "type",
-	    BoofCVImageType.FLOAT_32);
+	    BoofCVImageType.GRAYF32);
   }
 
   /**

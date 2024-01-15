@@ -1,0 +1,17 @@
+# Project: adams
+# Date: 2024-01-15 16:00:42
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-imaging-boofcv,adams-json,adams-spreadsheet,adams-xml
+#
+adams.flow.control.Flow -annotation "Uses a wavelet to denoise the image." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.GridView -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter
+  adams.flow.sink.ImageViewer -name noisy -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay
+  adams.flow.sink.ImageViewer -name denoised -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/6486290583_633d994a25_z-noisy.jpg -use-forward-slashes true
+ adams.flow.transformer.ImageFileReader -reader adams.data.io.input.BoofCVImageReader -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
+ adams.flow.control.Tee -name noisy
+  adams.flow.transformer.BoofCVTransformer -transformer adams.data.boofcv.transformer.ImageType
+  adams.flow.sink.CallableSink -callable noisy
+ adams.flow.transformer.BoofCVTransformer -transformer adams.data.boofcv.transformer.WaveletDenoise
+ adams.flow.sink.CallableSink -callable denoised

@@ -15,7 +15,7 @@
 
 /*
  * BoofCVMultiImageOperation.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -292,7 +292,7 @@ public class BoofCVMultiImageOperation
    */
   @Override
   public boolean hasPendingOutput() {
-    return (m_CurrentImages.size() > 0);
+    return !m_CurrentImages.isEmpty();
   }
 
   /**

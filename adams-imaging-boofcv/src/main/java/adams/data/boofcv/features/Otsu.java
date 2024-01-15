@@ -15,7 +15,7 @@
 
 /*
  * Otsu.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.features;
@@ -30,15 +30,16 @@ import adams.data.boofcv.BoofCVImageType;
 import adams.data.featureconverter.HeaderDefinition;
 import adams.data.report.DataType;
 import boofcv.alg.filter.binary.GThresholdImageOps;
+import boofcv.struct.image.GrayF32;
+import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageBase;
-import boofcv.struct.image.ImageUInt8;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.ImageUInt8).<br>
+ * Computes the variance based threshold using Otsu's method from an input image (gray scale; boofcv.struct.image.GrayU8).<br>
  * <br>
  * For more information see:<br>
  * WikiPedia. Otsu's method.
@@ -118,7 +119,7 @@ public class Otsu
   public String globalInfo() {
     return 
 	"Computes the variance based threshold using Otsu's method from "
-	+ "an input image (gray scale; " + ImageUInt8.class.getName() + ").\n\n"
+	+ "an input image (gray scale; " + GrayU8.class.getName() + ").\n\n"
 	+ "For more information see:\n"
 	+ getTechnicalInformation();
   }
@@ -148,13 +149,16 @@ public class Otsu
   public void defineOptions() {
     super.defineOptions();
 
+    // TODO currently (boofcv 1.1.2) broken with range other than 0-255
+    /*
     m_OptionManager.add(
 	    "min", "min",
 	    0, 0, null);
 
     m_OptionManager.add(
 	    "max", "max",
-	    256, 1, null);
+	    255, 1, null);
+     */
   }
 
   /**
@@ -243,10 +247,14 @@ public class Otsu
     ImageBase		gray;
 
     result    = new List[1];
-    result[0] = new ArrayList<Object>();
+    result[0] = new ArrayList<>();
 
-    gray = BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
-    result[0].add(GThresholdImageOps.computeOtsu((ImageUInt8) gray, m_Min, m_Max));
+    // TODO see defineOptions()
+    m_Min = 0;
+    m_Max = 255;
+
+    gray = BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.GRAYF32);
+    result[0].add(GThresholdImageOps.computeOtsu((GrayF32) gray, m_Min, m_Max));
 
     return result;
   }

@@ -153,7 +153,7 @@ public class BoofCVMultiImageOperationTest
       argOption = (AbstractArgumentOption) convert15.getOptionManager().findByProperty("conversion");
       adams.data.conversion.BufferedImageToBoofCV bufferedimagetoboofcv17 = new adams.data.conversion.BufferedImageToBoofCV();
       argOption = (AbstractArgumentOption) bufferedimagetoboofcv17.getOptionManager().findByProperty("imageType");
-      bufferedimagetoboofcv17.setImageType((adams.data.boofcv.BoofCVImageType) argOption.valueOf("UNSIGNED_INT_8"));
+      bufferedimagetoboofcv17.setImageType(adams.data.boofcv.BoofCVImageType.GRAYU8);
       convert15.setConversion(bufferedimagetoboofcv17);
 
       actors5[2] = convert15;

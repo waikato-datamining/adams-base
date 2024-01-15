@@ -15,7 +15,7 @@
 
 /*
  * WaveletDenoise.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.boofcv.transformer;
@@ -27,7 +27,7 @@ import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.abst.denoise.FactoryImageDenoise;
 import boofcv.abst.denoise.WaveletDenoiseFilter;
-import boofcv.struct.image.ImageFloat32;
+import boofcv.struct.image.GrayF32;
 
 /**
  <!-- globalinfo-start -->
@@ -50,7 +50,6 @@ import boofcv.struct.image.ImageFloat32;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
     author = "Peter Abeles",
@@ -126,21 +125,20 @@ public class WaveletDenoise
    */
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
-    BoofCVImageContainer[]		result;
-    ImageFloat32 			input;
-    ImageFloat32 			denoised;
-    WaveletDenoiseFilter<ImageFloat32> 	denoiser;
-    
-    input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.FLOAT_32);
-    denoised = new ImageFloat32(input.width,input.height);
-    denoiser = FactoryImageDenoise.waveletBayes(ImageFloat32.class, m_NumLevels, 0, 255);
-
-    denoiser.process(input, denoised);
+    BoofCVImageContainer[]	result;
+    GrayF32 			input;
+    GrayF32 			denoised;
+    WaveletDenoiseFilter 	denoiser;
 
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();
+
+    input = (GrayF32) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.GRAYF32);
+    denoised = new GrayF32(input.width, input.height);
+    denoiser = FactoryImageDenoise.waveletBayes(GrayF32.class, m_NumLevels, 0, 255);
+    denoiser.process(input, denoised);
     result[0].setImage(denoised);
-    
+
     return result;
   }
 }

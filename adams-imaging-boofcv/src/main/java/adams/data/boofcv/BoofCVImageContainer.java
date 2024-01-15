@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVImageContainer.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
 
 import adams.data.image.AbstractImageContainer;
 import boofcv.struct.image.ImageBase;
-import boofcv.struct.image.ImageSingleBand;
+import boofcv.struct.image.ImageGray;
 
 import java.awt.image.BufferedImage;
 
@@ -29,7 +29,6 @@ import java.awt.image.BufferedImage;
  * Image wrapper around a {@link ImageBase} used by BoofCV.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BoofCVImageContainer
   extends AbstractImageContainer<ImageBase> {
@@ -64,7 +63,7 @@ public class BoofCVImageContainer
   }
   
   /**
-   * Returns a clone of the image. Actually, only for {@link ImageSingleBand}
+   * Returns a clone of the image. Actually, only for {@link ImageGray}
    * a clone is returned, all other types are a "subimage" with the same
    * size as the original.
    * 

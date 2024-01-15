@@ -13,21 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVHelper.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv;
 
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
-import boofcv.core.image.ConvertBufferedImage;
 import boofcv.gui.binary.VisualizeBinaryData;
+import boofcv.io.image.ConvertBufferedImage;
+import boofcv.struct.image.GrayU8;
 import boofcv.struct.image.ImageBase;
+import boofcv.struct.image.ImageGray;
 import boofcv.struct.image.ImageMultiBand;
-import boofcv.struct.image.ImageSingleBand;
-import boofcv.struct.image.ImageUInt8;
 
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -37,7 +37,6 @@ import java.util.Set;
  * Helper class for BoofCV operations.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BoofCVHelper {
 
@@ -49,8 +48,8 @@ public class BoofCVHelper {
    */
   public static BufferedImage toBufferedImage(ImageBase img) {
     BufferedImage dst = null;
-    if (ImageUInt8.class == img.getClass())
-      return VisualizeBinaryData.renderBinary((ImageUInt8) img, null);
+    if (GrayU8.class == img.getClass())
+      return VisualizeBinaryData.renderBinary((GrayU8) img, false, null);
     else {
       if(img instanceof ImageMultiBand){
         int numBands = ((ImageMultiBand) img).getNumBands();
@@ -79,8 +78,8 @@ public class BoofCVHelper {
    * @return		the clone
    */
   public static ImageBase clone(ImageBase img) {
-    if (img instanceof ImageSingleBand)
-      return ((ImageSingleBand) img).clone();
+    if (img instanceof ImageGray)
+      return ((ImageGray) img).clone();
     else
       return img.subimage(0, 0, img.getWidth(), img.getHeight(), null);
   }
@@ -108,9 +107,9 @@ public class BoofCVHelper {
   public static ImageBase toBoofCVImage(BufferedImage img) {
     switch (img.getType()) {
       case BufferedImage.TYPE_BYTE_BINARY:
-	return toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+	return toBoofCVImage(img, BoofCVImageType.GRAYU8);
       case BufferedImage.TYPE_BYTE_GRAY:
-	return toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+	return toBoofCVImage(img, BoofCVImageType.GRAYU8);
       case BufferedImage.TYPE_3BYTE_BGR:
       case BufferedImage.TYPE_4BYTE_ABGR:
       case BufferedImage.TYPE_4BYTE_ABGR_PRE:
@@ -120,7 +119,7 @@ public class BoofCVHelper {
       case BufferedImage.TYPE_INT_RGB:
         return toBoofCVMultiBandImage(img);
       default:
-	return toBoofCVImage(img, BoofCVImageType.FLOAT_32);
+	return toBoofCVImage(img, BoofCVImageType.GRAYF32);
     }
   }
 
@@ -131,7 +130,7 @@ public class BoofCVHelper {
    * @return		the converted image
    */
   public static ImageBase toBoofCVMultiBandImage(BufferedImage img) {
-    return ConvertBufferedImage.convertFromMulti(img, null, true, ImageUInt8.class);
+    return ConvertBufferedImage.convertFromPlanar(img, null, true, GrayU8.class);
   }
 
   /**
@@ -161,7 +160,7 @@ public class BoofCVHelper {
   
   /**
    * Creates a {@link BoofCVImageContainer} container if necessary, using 
-   * {@link BoofCVImageType#FLOAT_32}, otherwise it just casts the object.
+   * {@link BoofCVImageType#GRAYF32}, otherwise it just casts the object.
    * 
    * @param cont	the cont to cast/convert
    * @return		the casted/converted container
@@ -222,7 +221,7 @@ public class BoofCVHelper {
    */
   public static boolean isBinary(BoofCVImageContainer img) {
     boolean result = true;
-    ImageUInt8 greyscale = (ImageUInt8) toBoofCVImage(img, BoofCVImageType.UNSIGNED_INT_8);
+    GrayU8 greyscale = (GrayU8) toBoofCVImage(img, BoofCVImageType.GRAYU8);
     Set<Byte> values = new HashSet<>();
     for(byte pixel : greyscale.getData()) {
       values.add(pixel);

@@ -23,7 +23,7 @@ package adams.data.boofcv.multiimageoperation;
 import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -57,7 +57,7 @@ public class Or
   public String globalInfo() {
     return
       "Performs a logical OR on the binary pixels of the images.\n"
-	+ "Converts images automatically to type " + BoofCVImageType.UNSIGNED_INT_8 + ".";
+	+ "Converts images automatically to type " + BoofCVImageType.GRAYU8 + ".";
   }
 
   /**
@@ -107,14 +107,14 @@ public class Or
     int				x;
     int				y;
     int 			or;
-    ImageUInt8			img0;
-    ImageUInt8			img1;
-    ImageUInt8			output;
+    GrayU8			img0;
+    GrayU8			img1;
+    GrayU8			output;
 
     result    = new BoofCVImageContainer[1];
-    img0      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.UNSIGNED_INT_8);
-    img1      = (ImageUInt8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.UNSIGNED_INT_8);
-    output    = (ImageUInt8) BoofCVHelper.clone(img0);
+    img0      = (GrayU8) BoofCVHelper.toBoofCVImage(images[0], BoofCVImageType.GRAYU8);
+    img1      = (GrayU8) BoofCVHelper.toBoofCVImage(images[1], BoofCVImageType.GRAYU8);
+    output    = (GrayU8) BoofCVHelper.clone(img0);
     for (y = 0; y < images[0].getHeight(); y++) {
       for (x = 0; x < images[0].getWidth(); x++) {
 	or = (img0.get(x, y) == 0) || (img1.get(x, y) == 0) ? 0 : 1;

@@ -40,7 +40,6 @@ import junit.framework.TestSuite;
  * Tests the BoofCVFeatureGenerator actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BoofCVFeatureGeneratorTest
   extends AbstractFlowTest {
@@ -105,7 +104,7 @@ public class BoofCVFeatureGeneratorTest
     trans.setTransformAlgorithm(res);
 
     BufferedImageToBoofCV bi2bcv = new BufferedImageToBoofCV();
-    bi2bcv.setImageType(BoofCVImageType.SIGNED_INT_16);
+    bi2bcv.setImageType(BoofCVImageType.GRAYS16);
     Convert con = new Convert();
     con.setConversion(bi2bcv);
     

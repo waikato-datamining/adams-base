@@ -15,12 +15,13 @@
 
 /*
  * BoofCVDetectLineSegmentsTest.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.option.AbstractArgumentOption;
+import adams.data.boofcv.BoofCVImageType;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Flow;
@@ -36,7 +37,6 @@ import junit.framework.TestSuite;
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision: 7819 $
  */
 public class BoofCVDetectLineSegmentsTest
   extends AbstractFlowTest {
@@ -128,7 +128,7 @@ public class BoofCVDetectLineSegmentsTest
       argOption = (AbstractArgumentOption) convert5.getOptionManager().findByProperty("conversion");
       adams.data.conversion.BufferedImageToBoofCV bufferedimagetoboofcv7 = new adams.data.conversion.BufferedImageToBoofCV();
       argOption = (AbstractArgumentOption) bufferedimagetoboofcv7.getOptionManager().findByProperty("imageType");
-      bufferedimagetoboofcv7.setImageType((adams.data.boofcv.BoofCVImageType) argOption.valueOf("FLOAT_32"));
+      bufferedimagetoboofcv7.setImageType(BoofCVImageType.GRAYF32);
       convert5.setConversion(bufferedimagetoboofcv7);
 
       actors1[2] = convert5;

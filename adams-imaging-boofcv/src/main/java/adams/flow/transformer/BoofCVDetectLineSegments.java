@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVDetectLineSegments.java
- * Copyright (C) 2014-201 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -29,8 +29,9 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
 import boofcv.abst.feature.detect.line.DetectLineSegmentsGridRansac;
+import boofcv.factory.feature.detect.line.ConfigLineRansac;
 import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
-import boofcv.struct.image.ImageFloat32;
+import boofcv.struct.image.GrayF32;
 import georegression.struct.line.LineSegment2D_F32;
 
 import java.util.List;
@@ -103,10 +104,9 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7819 $
  */
 @MixedCopyright(
-    copyright = "2011-2012 Peter Abeles",
+    copyright = "2011-2024 Peter Abeles",
     license = License.APACHE2,
     note = "Example code taken from here http://boofcv.org/index.php?title=Example_Detect_Lines"
 )
@@ -316,7 +316,8 @@ public class BoofCVDetectLineSegments
   protected String doExecute() {
     String				result;
     AbstractImageContainer	 	cont;
-    ImageFloat32 				input;
+    GrayF32 				input;
+    ConfigLineRansac 			config;
     DetectLineSegmentsGridRansac 	detector;
     List<LineSegment2D_F32> 		found;
     SpreadSheet  			sheet;
@@ -326,8 +327,9 @@ public class BoofCVDetectLineSegments
     
     try {
       cont     = (AbstractImageContainer) m_InputToken.getPayload();
-      input    = (ImageFloat32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.FLOAT_32);
-      detector = FactoryDetectLineAlgs.lineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines, ImageFloat32.class, ImageFloat32.class);
+      input    = (GrayF32) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.GRAYF32);
+      config   = new ConfigLineRansac(m_RegionSize, m_ThresholdEdge, m_ThresholdAngle, m_ConnectLines);
+      detector = FactoryDetectLineAlgs.lineRansac(config, GrayF32.class, GrayF32.class);
       found    = detector.detect(input);
       
       sheet = new DefaultSpreadSheet();

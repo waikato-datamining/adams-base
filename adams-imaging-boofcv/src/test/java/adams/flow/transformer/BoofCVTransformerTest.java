@@ -106,7 +106,7 @@ public class BoofCVTransformerTest
     itr.setTransformAlgorithm(res);
 
     BufferedImageToBoofCV bi2bcv = new BufferedImageToBoofCV();
-    bi2bcv.setImageType(BoofCVImageType.SIGNED_INT_16);
+    bi2bcv.setImageType(BoofCVImageType.GRAYS16);
     Convert con = new Convert();
     con.setConversion(bi2bcv);
 

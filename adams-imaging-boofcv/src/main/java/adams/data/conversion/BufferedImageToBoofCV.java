@@ -77,7 +77,7 @@ public class BufferedImageToBoofCV
 
     m_OptionManager.add(
 	    "image-type", "imageType",
-	    BoofCVImageType.FLOAT_32);
+	    BoofCVImageType.GRAYF32);
   }
 
   /**

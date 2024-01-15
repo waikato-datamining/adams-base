@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Erode8.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.boofcv.transformer;
 
@@ -23,7 +23,7 @@ import adams.data.boofcv.BoofCVHelper;
 import adams.data.boofcv.BoofCVImageContainer;
 import adams.data.boofcv.BoofCVImageType;
 import boofcv.alg.filter.binary.BinaryImageOps;
-import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.GrayU8;
 
 /**
  <!-- globalinfo-start -->
@@ -46,7 +46,6 @@ import boofcv.struct.image.ImageUInt8;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 78 $
  */
 public class Erode8
   extends AbstractBoofCVTransformer {
@@ -117,10 +116,10 @@ public class Erode8
   @Override
   protected BoofCVImageContainer[] doTransform(BoofCVImageContainer img) {
     BoofCVImageContainer[]	result;
-    ImageUInt8	 		input;
-    ImageUInt8 			filtered;
+    GrayU8	 		input;
+    GrayU8 			filtered;
     
-    input     = (ImageUInt8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.UNSIGNED_INT_8);
+    input     = (GrayU8) BoofCVHelper.toBoofCVImage(img.getImage(), BoofCVImageType.GRAYU8);
     filtered  = BinaryImageOps.erode8(input, m_NumTimes, null);
     result    = new BoofCVImageContainer[1];
     result[0] = (BoofCVImageContainer) img.getHeader();

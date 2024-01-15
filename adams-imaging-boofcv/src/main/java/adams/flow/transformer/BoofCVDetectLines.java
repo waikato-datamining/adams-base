@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BoofCVDetectLines.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -28,10 +28,11 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
-import boofcv.abst.feature.detect.line.DetectLineHoughPolar;
-import boofcv.factory.feature.detect.line.ConfigHoughPolar;
-import boofcv.factory.feature.detect.line.FactoryDetectLineAlgs;
-import boofcv.struct.image.ImageSInt16;
+import boofcv.abst.feature.detect.line.DetectLine;
+import boofcv.factory.feature.detect.line.ConfigHoughGradient;
+import boofcv.factory.feature.detect.line.ConfigParamPolar;
+import boofcv.factory.feature.detect.line.FactoryDetectLine;
+import boofcv.struct.image.GrayU8;
 import georegression.struct.line.LineParametric2D_F32;
 
 import java.util.List;
@@ -53,79 +54,78 @@ import java.util.List;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: BoofCVDetectLines
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-local-max-radius &lt;int&gt; (property: localMaxRadius)
  * &nbsp;&nbsp;&nbsp;The Radius for local maximum suppression.
  * &nbsp;&nbsp;&nbsp;default: 3
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-min-counts &lt;int&gt; (property: minCounts)
  * &nbsp;&nbsp;&nbsp;The Minimum number of counts for detected line.
  * &nbsp;&nbsp;&nbsp;default: 30
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-resolution-range &lt;double&gt; (property: resolutionRange)
  * &nbsp;&nbsp;&nbsp;The Resolution of line range in pixels.
  * &nbsp;&nbsp;&nbsp;default: 2.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-resolution-angle &lt;double&gt; (property: resolutionAngle)
  * &nbsp;&nbsp;&nbsp;The Resolution of line angle in radius.
  * &nbsp;&nbsp;&nbsp;default: 0.017453292519943295
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-edge-threshold &lt;float&gt; (property: edgeThreshold)
  * &nbsp;&nbsp;&nbsp;The edge threshold to use.
  * &nbsp;&nbsp;&nbsp;default: 25.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-max-lines &lt;int&gt; (property: maxLines)
  * &nbsp;&nbsp;&nbsp;The maximum number of lines to detect.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @MixedCopyright(
-    copyright = "2011-2012 Peter Abeles",
-    license = License.APACHE2,
-    note = "Example code taken from here http://boofcv.org/index.php?title=Example_Detect_Lines"
+  copyright = "2011-2024 Peter Abeles",
+  license = License.APACHE2,
+  note = "Example code taken from here http://boofcv.org/index.php?title=Example_Detect_Lines"
 )
 public class BoofCVDetectLines
   extends AbstractTransformer {
@@ -135,19 +135,22 @@ public class BoofCVDetectLines
 
   /** Radius for local maximum suppression. */
   protected int m_LocalMaxRadius;
-  
+
   /** Minimum number of counts for detected line. */
   protected int m_MinCounts;
-  
+
+  /** the minimum distance from the origin. */
+  protected int m_MinDistanceFromOrigin;
+
   /** Resolution of line range in pixels. */
   protected double m_ResolutionRange;
-  
-  /** Resolution of line angle in radius. */
-  protected double m_ResolutionAngle;
-  
+
+  /** Resolution of line angle in degrees. */
+  protected int m_ResolutionAngle;
+
   /** the edge threshold to use. */
   protected float m_EdgeThreshold;
-  
+
   /** the maximum number of lines to detec. */
   protected int m_MaxLines;
 
@@ -169,28 +172,32 @@ public class BoofCVDetectLines
     super.defineOptions();
 
     m_OptionManager.add(
-	    "local-max-radius", "localMaxRadius",
-	    3, 0, null);
+      "local-max-radius", "localMaxRadius",
+      3, 0, null);
 
     m_OptionManager.add(
-	    "min-counts", "minCounts",
-	    30, 1, null);
+      "min-counts", "minCounts",
+      30, 1, null);
 
     m_OptionManager.add(
-	    "resolution-range", "resolutionRange",
-	    2.0, 0.0, null);
+      "min-dist-origin", "minDistanceFromOrigin",
+      5, 0, null);
 
     m_OptionManager.add(
-	    "resolution-angle", "resolutionAngle",
-	    Math.PI / 180, 0.0, null);
+      "resolution-range", "resolutionRange",
+      2.0, 0.0, null);
 
     m_OptionManager.add(
-	    "edge-threshold", "edgeThreshold",
-	    25.0f, 0.0f, null);
+      "resolution-angle", "resolutionAngle",
+      180, 0, 360);
 
     m_OptionManager.add(
-	    "max-lines", "maxLines",
-	    10, 1, null);
+      "edge-threshold", "edgeThreshold",
+      25.0f, 0.0f, null);
+
+    m_OptionManager.add(
+      "max-lines", "maxLines",
+      10, 1, null);
   }
 
   /**
@@ -199,12 +206,9 @@ public class BoofCVDetectLines
    * @param value	the radius
    */
   public void setLocalMaxRadius(int value) {
-    if (value >= 0) {
+    if (getOptionManager().isValid("localMaxRadius", value)) {
       m_LocalMaxRadius = value;
       reset();
-    }
-    else {
-      getLogger().warning("Local max radius must be at least 0, provided: " + value);
     }
   }
 
@@ -233,12 +237,9 @@ public class BoofCVDetectLines
    * @param value	the minimum
    */
   public void setMinCounts(int value) {
-    if (value >= 0) {
+    if (getOptionManager().isValid("minCounts", value)) {
       m_MinCounts = value;
       reset();
-    }
-    else {
-      getLogger().warning("Min counts must be at least 0, provided: " + value);
     }
   }
 
@@ -267,12 +268,9 @@ public class BoofCVDetectLines
    * @param value	the range
    */
   public void setResolutionRange(double value) {
-    if (value >= 0.0) {
+    if (getOptionManager().isValid("resolutionRange", value)) {
       m_ResolutionRange = value;
       reset();
-    }
-    else {
-      getLogger().warning("Edge threshold must be at least 0, provided: " + value);
     }
   }
 
@@ -296,26 +294,23 @@ public class BoofCVDetectLines
   }
 
   /**
-   * Sets the Resolution of line angle in radius.
+   * Sets the Resolution of line angle in degrees.
    *
    * @param value	the angle
    */
-  public void setResolutionAngle(double value) {
-    if (value >= 0.0) {
+  public void setResolutionAngle(int value) {
+    if (getOptionManager().isValid("resolutionAngle", value)) {
       m_ResolutionAngle = value;
       reset();
-    }
-    else {
-      getLogger().warning("Edge threshold must be at least 0, provided: " + value);
     }
   }
 
   /**
-   * Returns the Resolution of line angle in radius.
+   * Returns the Resolution of line angle in degrees.
    *
    * @return		the angle
    */
-  public double getResolutionAngle() {
+  public int getResolutionAngle() {
     return m_ResolutionAngle;
   }
 
@@ -326,7 +321,7 @@ public class BoofCVDetectLines
    * 			displaying in the GUI or for listing the options.
    */
   public String resolutionAngleTipText() {
-    return "The Resolution of line angle in radius.";
+    return "The Resolution of line angle in degrees.";
   }
 
   /**
@@ -335,12 +330,9 @@ public class BoofCVDetectLines
    * @param value	the threshold
    */
   public void setEdgeThreshold(float value) {
-    if (value >= 0.0f) {
+    if (getOptionManager().isValid("edgeThreshold", value)) {
       m_EdgeThreshold = value;
       reset();
-    }
-    else {
-      getLogger().warning("Edge threshold must be at least 0, provided: " + value);
     }
   }
 
@@ -369,8 +361,10 @@ public class BoofCVDetectLines
    * @param value	the maximum
    */
   public void setMaxLines(int value) {
-    m_MaxLines = value;
-    reset();
+    if (getOptionManager().isValid("maxLines", value)) {
+      m_MaxLines = value;
+      reset();
+    }
   }
 
   /**
@@ -390,6 +384,37 @@ public class BoofCVDetectLines
    */
   public String maxLinesTipText() {
     return "The maximum number of lines to detect.";
+  }
+
+  /**
+   * Sets the Radius for local maximum suppression.
+   *
+   * @param value	the radius
+   */
+  public void setMinDistanceFromOrigin(int value) {
+    if (getOptionManager().isValid("minDistanceFromOrigin", value)) {
+      m_MinDistanceFromOrigin = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the Radius for local maximum suppression.
+   *
+   * @return		the radius
+   */
+  public int getMinDistanceFromOrigin() {
+    return m_MinDistanceFromOrigin;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String minDistanceFromOriginTipText() {
+    return "The minimum distance from the origin.";
   }
 
   /**
@@ -419,32 +444,32 @@ public class BoofCVDetectLines
   @Override
   protected String doExecute() {
     String			result;
-    AbstractImageContainer	 	cont;
-    ImageSInt16 			input;
-    ConfigHoughPolar		config;
-    DetectLineHoughPolar 	detector;
+    AbstractImageContainer	cont;
+    GrayU8 			input;
+    ConfigHoughGradient 	config;
+    DetectLine<GrayU8> 		detector;
     List<LineParametric2D_F32> 	found;
     SpreadSheet  		sheet;
     Row				row;
-    
+
     result = null;
-    
+
     try {
       cont   = (AbstractImageContainer) m_InputToken.getPayload();
-      input  = (ImageSInt16) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.SIGNED_INT_16);
-      config = new ConfigHoughPolar(
-	  m_LocalMaxRadius, 
-	  m_MinCounts, 
-	  m_ResolutionRange, 
-	  m_ResolutionAngle, 
-	  m_EdgeThreshold, 
-	  m_MaxLines);
-      detector = FactoryDetectLineAlgs.houghPolar(
-	  config, 
-	  ImageSInt16.class,
-	  ImageSInt16.class);
+      input  = (GrayU8) BoofCVHelper.toBoofCVImage(cont, BoofCVImageType.GRAYU8);
+      ConfigParamPolar polar = new ConfigParamPolar(m_ResolutionRange, m_ResolutionAngle);
+      config = new ConfigHoughGradient(
+	m_LocalMaxRadius,
+	m_MinCounts,
+	m_MinDistanceFromOrigin,
+	m_EdgeThreshold,
+	m_MaxLines);
+      detector = FactoryDetectLine.houghLinePolar(
+	config,
+	polar,
+	GrayU8.class);
       found = detector.detect(input);
-      
+
       sheet = new DefaultSpreadSheet();
       row   = sheet.getHeaderRow();
       row.addCell("I").setContent("Index");
@@ -467,7 +492,7 @@ public class BoofCVDetectLines
     catch (Exception e) {
       result = handleException("Failed to detect lines", e);
     }
-    
+
     return result;
   }
 }
