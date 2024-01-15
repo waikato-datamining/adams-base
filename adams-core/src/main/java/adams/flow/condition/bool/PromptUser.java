@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -412,7 +412,7 @@ public class PromptUser
 	    break;
 
 	  case NOTIFICATION_AREA:
-	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT, "question.png");
+	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT, "flow_question.png");
 	    answer     = InteractionDisplayLocationHelper.display(owner, m_Communication, panelInput);
 	    break;
 
