@@ -15,7 +15,7 @@
 
 /*
  * WekaInstancesInfo.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -739,6 +739,9 @@ public class WekaInstancesInfo
       default:
 	result = "Unhandled info type: " + m_Type;
     }
+
+    m_AttributeIndex.setData(null);
+    m_LabelIndex.setData(null);
 
     return result;
   }
