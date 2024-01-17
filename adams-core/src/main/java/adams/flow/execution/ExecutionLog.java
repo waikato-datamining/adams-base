@@ -243,6 +243,7 @@ public class ExecutionLog
 	  m_Writer.write("Token");
 	}
 	m_Writer.newLine();
+	m_Writer.flush();
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to open log file: " + m_LogFile, e);
@@ -290,6 +291,7 @@ public class ExecutionLog
 	    m_Writer.write("" + token.getPayload());
 	}
 	m_Writer.newLine();
+	m_Writer.flush();
       }
       catch (Exception e) {
 	// ignored
@@ -305,7 +307,7 @@ public class ExecutionLog
    */
   @Override
   public void preInput(Actor actor, Token token) {
-    if (m_StagesSet.contains(ExecutionStage.PRE_INPUT))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.PRE_INPUT))
       add("preInput", actor, "#" + token.hashCode(), token);
   }
 
@@ -316,7 +318,7 @@ public class ExecutionLog
    */
   @Override
   public void postInput(Actor actor) {
-    if (m_StagesSet.contains(ExecutionStage.POST_INPUT))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.POST_INPUT))
       add("postInput", actor, "", null);
   }
 
@@ -327,7 +329,7 @@ public class ExecutionLog
    */
   @Override
   public void preExecute(Actor actor) {
-    if (m_StagesSet.contains(ExecutionStage.PRE_EXECUTE))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.PRE_EXECUTE))
       add("preExecute", actor, "", null);
   }
 
@@ -338,7 +340,7 @@ public class ExecutionLog
    */
   @Override
   public void postExecute(Actor actor) {
-    if (m_StagesSet.contains(ExecutionStage.POST_EXECUTE))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.POST_EXECUTE))
       add("postExecute", actor, "", null);
   }
 
@@ -349,7 +351,7 @@ public class ExecutionLog
    */
   @Override
   public void preOutput(Actor actor) {
-    if (m_StagesSet.contains(ExecutionStage.PRE_OUTPUT))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.PRE_OUTPUT))
       add("preOutput", actor, "", null);
   }
 
@@ -361,7 +363,7 @@ public class ExecutionLog
    */
   @Override
   public void postOutput(Actor actor, Token token) {
-    if (m_StagesSet.contains(ExecutionStage.POST_OUTPUT))
+    if ((m_StagesSet != null) && m_StagesSet.contains(ExecutionStage.POST_OUTPUT))
       add("postOutput", actor, "#" + token.hashCode(), token);
   }
 
