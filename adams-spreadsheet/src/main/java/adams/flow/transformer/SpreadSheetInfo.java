@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetInfo.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -127,7 +127,6 @@ public class SpreadSheetInfo
    * The type of information to generate.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum InfoType {
     /** the name. */
@@ -540,6 +539,8 @@ public class SpreadSheetInfo
       default:
 	result = "Unhandled info type: " + m_Type;
     }
+
+    m_ColumnIndex.setData(null);
 
     return result;
   }
