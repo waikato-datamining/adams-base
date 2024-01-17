@@ -15,7 +15,7 @@
 
 /*
  * ExecutionLog.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -247,7 +247,6 @@ public class ExecutionLog
    * Gets called after the actor received the token.
    * 
    * @param actor	the actor that received the token
-   * @param token	the token that the actor received
    */
   @Override
   public void postInput(Actor actor) {
