@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Index.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -28,7 +28,6 @@ import java.io.Serializable;
  * Numeric indices can be forced by using a "#" at start (eg "#12").
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Index
   implements Serializable, CustomDisplayStringProvider, Comparable<Index>, 
@@ -350,14 +349,10 @@ public class Index
   public int compareTo(Index o) {
     int		result;
 
-    if ((getMax() != -1) && (getMax() != -1)) {
-      result = new Integer(getIntIndex()).compareTo(
-	  new Integer(o.getIntIndex()));
-    }
-    else {
-      result = new Integer(parse(getIndex(), Integer.MAX_VALUE)).compareTo(
-	  new Integer(parse(o.getIndex(), Integer.MAX_VALUE)));
-    }
+    if ((getMax() != -1) && (o.getMax() != -1))
+      result = Integer.compare(getIntIndex(), o.getIntIndex());
+    else
+      result = Integer.compare(parse(getIndex(), Integer.MAX_VALUE), parse(o.getIndex(), Integer.MAX_VALUE));
 
     return result;
   }
