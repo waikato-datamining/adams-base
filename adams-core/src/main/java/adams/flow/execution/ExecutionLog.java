@@ -27,12 +27,15 @@ import adams.flow.core.Token;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
- * Generates a trace file with all activity logged.
+ * Generates a trace file with all activity logged, uses stdout when the log file is pointing to a directory.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -40,10 +43,16 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-stage &lt;PreInput|PostInput|PreExecute|PostExecute|PreOutput|PostOutput&gt; [-stage ...] (property: stages)
+ * &nbsp;&nbsp;&nbsp;The execution stages to log.
+ * &nbsp;&nbsp;&nbsp;default: PRE_EXECUTE
  * </pre>
  *
  * <pre>-log-file &lt;adams.core.io.PlaceholderFile&gt; (property: logFile)
- * &nbsp;&nbsp;&nbsp;The log file to write to; writing is disabled if pointing to a directory.
+ * &nbsp;&nbsp;&nbsp;The log file to write to; uses stdout if pointing to a directory.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
@@ -51,7 +60,7 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;If enabled, a string representation of input tokens are output as well.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -62,6 +71,9 @@ public class ExecutionLog
   /** for serialization. */
   private static final long serialVersionUID = 3877868695922876920L;
 
+  /** the stages to output. */
+  protected ExecutionStage[] m_Stages;
+
   /** the file to write to. */
   protected PlaceholderFile m_LogFile;
 
@@ -70,10 +82,13 @@ public class ExecutionLog
 
   /** the file writer. */
   protected BufferedWriter m_Writer;
-  
+
   /** the date formatter to use. */
   protected transient DateFormat m_DateFormat;
-  
+
+  /** the actual stages. */
+  protected transient Set<ExecutionStage> m_StagesSet;
+
   /**
    * Returns a string describing the object.
    *
@@ -81,7 +96,7 @@ public class ExecutionLog
    */
   @Override
   public String globalInfo() {
-    return "Generates a trace file with all activity logged.";
+    return "Generates a trace file with all activity logged, uses stdout when the log file is pointing to a directory.";
   }
 
   /**
@@ -92,12 +107,45 @@ public class ExecutionLog
     super.defineOptions();
 
     m_OptionManager.add(
+      "stage", "stages",
+      new ExecutionStage[]{ExecutionStage.PRE_EXECUTE});
+
+    m_OptionManager.add(
       "log-file", "logFile",
       new PlaceholderFile("."));
 
     m_OptionManager.add(
       "output-tokens", "outputTokens",
       false);
+  }
+
+  /**
+   * Sets the stages to log.
+   *
+   * @param value	the stages
+   */
+  public void setStages(ExecutionStage[] value) {
+    m_Stages = value;
+    reset();
+  }
+
+  /**
+   * Returns the stages to log.
+   *
+   * @return		the stages
+   */
+  public ExecutionStage[] getStages() {
+    return m_Stages;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stagesTipText() {
+    return "The execution stages to log.";
   }
 
   /**
@@ -113,7 +161,7 @@ public class ExecutionLog
   /**
    * Returns the log file.
    *
-   * @return		the condition
+   * @return		the file
    */
   public PlaceholderFile getLogFile() {
     return m_LogFile;
@@ -126,7 +174,7 @@ public class ExecutionLog
    * 			displaying in the GUI or for listing the options.
    */
   public String logFileTipText() {
-    return "The log file to write to; writing is disabled if pointing to a directory.";
+    return "The log file to write to; uses stdout if pointing to a directory.";
   }
 
   /**
@@ -164,19 +212,22 @@ public class ExecutionLog
   @Override
   protected void initialize() {
     super.initialize();
-    
-    m_Writer = null;
+
+    m_Writer    = null;
+    m_StagesSet = null;
   }
-  
+
   /**
    * Gets called when the flow execution starts.
    */
   @Override
   public void startListening() {
     super.startListening();
-    
+
+    m_StagesSet = new HashSet<>(Arrays.asList(m_Stages));
+
     m_DateFormat = DateUtils.getTimestampFormatterMsecs();
-    
+
     if (!m_LogFile.isDirectory()) {
       try {
 	m_Writer = new BufferedWriter(new FileWriter(m_LogFile.getAbsolutePath()));
@@ -199,110 +250,131 @@ public class ExecutionLog
       }
     }
   }
-  
+
   /**
    * Writes a message to the log file.
-   * 
+   *
    * @param origin	the origin, e.g., preInput
    * @param actor	the actor this message is for
    * @param msg		the actual message
    * @param token	the token, can be null
    */
   protected void add(String origin, Actor actor, String msg, Token token) {
-    if (m_Writer == null)
-      return;
-    
-    try {
-      m_Writer.write(m_DateFormat.format(new Date()));
-      m_Writer.write("\t");
-      m_Writer.write(actor.getFullName());
-      m_Writer.write("\t");
-      m_Writer.write(origin);
-      m_Writer.write("\t");
-      m_Writer.write(msg);
+    if (m_Writer == null) {
+      System.out.print(m_DateFormat.format(new Date()));
+      System.out.print("\t");
+      System.out.print(actor.getFullName());
+      System.out.print("\t");
+      System.out.print(origin);
+      System.out.print("\t");
+      System.out.print(msg);
       if (m_OutputTokens) {
-	m_Writer.write("\t");
+	System.out.print("\t");
 	if (token != null)
-	  m_Writer.write("" + token.getPayload());
+	  System.out.print("" + token.getPayload());
       }
-      m_Writer.newLine();
+      System.out.println();
     }
-    catch (Exception e) {
-      // ignored
+    else {
+      try {
+	m_Writer.write(m_DateFormat.format(new Date()));
+	m_Writer.write("\t");
+	m_Writer.write(actor.getFullName());
+	m_Writer.write("\t");
+	m_Writer.write(origin);
+	m_Writer.write("\t");
+	m_Writer.write(msg);
+	if (m_OutputTokens) {
+	  m_Writer.write("\t");
+	  if (token != null)
+	    m_Writer.write("" + token.getPayload());
+	}
+	m_Writer.newLine();
+      }
+      catch (Exception e) {
+	// ignored
+      }
     }
   }
-  
+
   /**
    * Gets called before the actor receives the token.
-   * 
+   *
    * @param actor	the actor that will receive the token
    * @param token	the token that the actor will receive
    */
   @Override
   public void preInput(Actor actor, Token token) {
-    add("preInput", actor, "#" + token.hashCode(), token);
+    if (m_StagesSet.contains(ExecutionStage.PRE_INPUT))
+      add("preInput", actor, "#" + token.hashCode(), token);
   }
-  
+
   /**
    * Gets called after the actor received the token.
-   * 
+   *
    * @param actor	the actor that received the token
    */
   @Override
   public void postInput(Actor actor) {
-    add("postInput", actor, "", null);
+    if (m_StagesSet.contains(ExecutionStage.POST_INPUT))
+      add("postInput", actor, "", null);
   }
-  
+
   /**
    * Gets called before the actor gets executed.
-   * 
+   *
    * @param actor	the actor that will get executed
    */
   @Override
   public void preExecute(Actor actor) {
-    add("preExecute", actor, "", null);
+    if (m_StagesSet.contains(ExecutionStage.PRE_EXECUTE))
+      add("preExecute", actor, "", null);
   }
 
   /**
    * Gets called after the actor was executed.
-   * 
+   *
    * @param actor	the actor that was executed
    */
   @Override
   public void postExecute(Actor actor) {
-    add("postExecute", actor, "", null);
+    if (m_StagesSet.contains(ExecutionStage.POST_EXECUTE))
+      add("postExecute", actor, "", null);
   }
-  
+
   /**
    * Gets called before a token gets obtained from the actor.
-   * 
+   *
    * @param actor	the actor the token gets obtained from
    */
   @Override
   public void preOutput(Actor actor) {
-    add("preOutput", actor, "", null);
+    if (m_StagesSet.contains(ExecutionStage.PRE_OUTPUT))
+      add("preOutput", actor, "", null);
   }
-  
+
   /**
    * Gets called after a token was acquired from the actor.
-   * 
+   *
    * @param actor	the actor that the token was acquired from
    * @param token	the token that was acquired from the actor
    */
   @Override
   public void postOutput(Actor actor, Token token) {
-    add("postOutput", actor, "#" + token.hashCode(), token);
+    if (m_StagesSet.contains(ExecutionStage.POST_OUTPUT))
+      add("postOutput", actor, "#" + token.hashCode(), token);
   }
-  
+
   /**
    * Gets called when the flow execution ends.
    */
   @Override
   public void finishListening() {
     super.finishListening();
-    
+
     m_DateFormat = null;
-    
+    m_StagesSet  = null;
+
     if (m_Writer != null) {
       try {
 	m_Writer.flush();
