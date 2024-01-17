@@ -15,7 +15,7 @@
 
 /*
  * Groovy.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -201,6 +201,8 @@ public class Groovy
     ((InputConsumer) m_ActorObject).input(m_InputToken);
       result = m_ActorObject.execute();
     }
+
+    m_InputToken = null;
 
     return result;
   }

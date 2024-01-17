@@ -15,7 +15,7 @@
 
 /*
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -612,6 +612,8 @@ public class CallableActorScreenshot
     
     if (m_Skip)
       m_OutputToken = m_InputToken;
+
+    m_InputToken = null;
     
     return result;
   }

@@ -15,7 +15,7 @@
 
 /*
  * CloseCallableDisplay.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -241,6 +241,7 @@ public class CloseCallableDisplay
 
     result        = super.execute();
     m_OutputToken = m_InputToken;
+    m_InputToken  = null;
     
     return result;
   }

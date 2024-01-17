@@ -15,7 +15,7 @@
 
 /*
  * SetProperty.java
- * Copyright (C) 2010-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -274,6 +274,8 @@ public class SetProperty
     
     if (m_Skip)
       m_OutputToken = m_InputToken;
+
+    m_InputToken = null;
     
     return result;
   }

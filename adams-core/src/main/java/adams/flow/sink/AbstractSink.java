@@ -105,6 +105,22 @@ public abstract class AbstractSink
   }
 
   /**
+   * Post-execute hook.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String postExecute() {
+    String	result;
+
+    result = super.postExecute();
+
+    m_InputToken = null;
+
+    return result;
+  }
+
+  /**
    * Cleans up after the execution has finished.
    */
   public void wrapUp() {

@@ -15,7 +15,7 @@
 
 /*
  * SetProperty.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -357,6 +357,8 @@ public class UpdateProperty
 
     if (isStopped())
       m_OutputToken = null;
+
+    m_InputToken = null;
 
     return result;
   }

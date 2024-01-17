@@ -15,7 +15,7 @@
 
 /*
  * LoadBalancer.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -752,6 +752,8 @@ public class LoadBalancer
     synchronized(m_Executor) {
       m_Executor.submit(job);
     }
+
+    m_CurrentToken = null;
 
     return result;
   }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CallableActorScreenshot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -93,7 +93,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class UpdateCallableDisplay
   extends AbstractActor
@@ -370,6 +369,8 @@ public class UpdateCallableDisplay
     
     if (m_Skip)
       m_OutputToken = m_InputToken;
+
+    m_InputToken = null;
     
     return result;
   }

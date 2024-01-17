@@ -15,7 +15,7 @@
 
 /*
  * Switch.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -794,6 +794,22 @@ public class Switch
    */
   public Token currentInput() {
     return m_InputToken;
+  }
+
+  /**
+   * Post-execute hook.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String postExecute() {
+    String	result;
+
+    result = super.postExecute();
+
+    m_InputToken = null;
+
+    return result;
   }
 
   /**

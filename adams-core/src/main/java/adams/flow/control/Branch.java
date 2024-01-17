@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -973,13 +973,19 @@ public class Branch
    */
   @Override
   protected String doExecute() {
+    String	result;
+
     if (m_CollectOutput)
       m_CollectedOutput.clear();
     
     if (m_ActualNumThreads == 0)
-      return executeSequential();
+      result = executeSequential();
     else
-      return executeParallel();
+      result = executeParallel();
+
+    m_CurrentToken = null;
+
+    return result;
   }
   
   /**
