@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataBackedUnorderedRange.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -138,6 +138,45 @@ public abstract class AbstractDataBackedUnorderedRange<T>
    */
   public T getData() {
     return m_Data;
+  }
+
+  /**
+   * Returns the integer indices. Gets always generated on-the-fly!
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @return		the indices, 0-length array if not possible
+   */
+  public int[] getIntIndices(T data) {
+    int[]				result;
+    AbstractDataBackedUnorderedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.getIntIndices();
+    range.setData(null);
+
+    return result;
+  }
+
+  /**
+   * Checks whether the provided 0-based index is within the range.
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @param index	the index to check
+   * @return		true if in range
+   */
+  public boolean isInRange(T data, int index) {
+    boolean				result;
+    AbstractDataBackedUnorderedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.isInRange(index);
+    range.setData(data);
+
+    return result;
   }
 
   /**

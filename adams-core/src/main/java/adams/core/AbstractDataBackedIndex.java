@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataBackedIndex.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -31,9 +31,7 @@ import java.util.List;
  * Names can be surrounded by double quotes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of the underlying data
- *           #
  */
 public abstract class AbstractDataBackedIndex<T>
   extends Index {
@@ -110,6 +108,25 @@ public abstract class AbstractDataBackedIndex<T>
    */
   public T getData() {
     return m_Data;
+  }
+
+  /**
+   * Returns the integer representation of the index.
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for determining the index
+   * @return		the integer index, -1 if not possible
+   */
+  public int getIntIndex(T data) {
+    int				result;
+    AbstractDataBackedIndex<T>	index;
+
+    index = getClone();
+    index.setData(data);
+    result = index.getIntIndex();
+    index.setData(null);
+
+    return result;
   }
 
   /**

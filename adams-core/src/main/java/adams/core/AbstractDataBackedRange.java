@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataBackedRange.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -34,7 +34,6 @@ import java.util.List;
  * "-" or "," then they need to be surrounded by double-quotes.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of the underlying data
  */
 public abstract class AbstractDataBackedRange<T>
@@ -48,12 +47,11 @@ public abstract class AbstractDataBackedRange<T>
    * lower.
    * 
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class InvertedStringLengthComparator
     implements Comparator<String>, Serializable {
 
-    /** for serializastion. */
+    /** for serialization. */
     private static final long serialVersionUID = -3821875620058964511L;
 
     /**
@@ -66,7 +64,7 @@ public abstract class AbstractDataBackedRange<T>
      */
     @Override
     public int compare(String o1, String o2) {
-      return -(new Integer(o1.length()).compareTo(o2.length()));
+      return -Integer.compare(o1.length(), o2.length());
     }
   }
   
@@ -168,6 +166,86 @@ public abstract class AbstractDataBackedRange<T>
   }
 
   /**
+   * Returns the indices in use.
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @return		the indices
+   */
+  public HashMap<String,Integer> getIndices(T data) {
+    HashMap<String,Integer>	result;
+    AbstractDataBackedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.getIndices();
+    range.setData(null);
+
+    return result;
+  }
+
+  /**
+   * Returns the integer indices. Gets always generated on-the-fly!
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @return		the indices, 0-length array if not possible
+   */
+  public int[] getIntIndices(T data) {
+    int[]			result;
+    AbstractDataBackedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.getIntIndices();
+    range.setData(null);
+
+    return result;
+  }
+
+  /**
+   * Turns the range into a list of from-to segements. The indices are 0-based.
+   * In case a subrange consists only of a single index, the second one is the
+   * same.
+   * NB: Does not check for inverted flag!
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @return		the segments
+   */
+  public int[][] getIntSegments(T data) {
+    int[][]			result;
+    AbstractDataBackedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.getIntSegments();
+    range.setData(data);
+
+    return result;
+  }
+
+  /**
+   * Checks whether the provided 0-based index is within the range.
+   * Uses on a clone of itself as not to keep a reference to the data.
+   *
+   * @param data 	the data to use for the indices
+   * @param index	the index to check
+   * @return		true if in range
+   */
+  public boolean isInRange(T data, int index) {
+    boolean			result;
+    AbstractDataBackedRange<T>	range;
+
+    range = getClone();
+    range.setData(data);
+    result = range.isInRange(index);
+    range.setData(data);
+
+    return result;
+  }
+
+  /**
    * Returns the number of names the data has.
    * 
    * @param data	the data to retrieve the number of names
@@ -194,8 +272,8 @@ public abstract class AbstractDataBackedRange<T>
     HashMap<String,Integer>	indices;
     
     if (m_Names == null) {
-      names   = new ArrayList<String>();
-      indices = new HashMap<String,Integer>();
+      names   = new ArrayList<>();
+      indices = new HashMap<>();
       if (m_Data != null) {
 	for (i = 0; i < getNumNames(m_Data); i++) {
 	  name = getName(m_Data, i);
