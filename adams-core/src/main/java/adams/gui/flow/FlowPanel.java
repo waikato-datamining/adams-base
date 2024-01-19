@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -1028,7 +1028,7 @@ public class FlowPanel
 	    if (retVal != ApprovalDialog.APPROVE_OPTION) {
 	      showStatus("Cancelled saving!");
 	      m_Cancelled = true;
-	      SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
+	      SwingUtilities.invokeLater(() -> setPageIcon("flow_error.png"));
 	      return null;
 	    }
 	  }
@@ -1055,13 +1055,13 @@ public class FlowPanel
 	  getTree().requestFocus();
 	}
 	else if (!m_Result) {
-	  SwingUtilities.invokeLater(() -> setPageIcon("error_blue.png"));
+	  SwingUtilities.invokeLater(() -> setPageIcon("flow_error.png"));
 	  GUIHelper.showErrorMessage(
 	    m_Owner, "Error saving flow to '" + file.getAbsolutePath() + "'!");
 	  getTree().requestFocus();
 	}
 	else {
-	  SwingUtilities.invokeLater(() -> setPageIcon("validate_blue.gif"));
+	  SwingUtilities.invokeLater(() -> setPageIcon("flow_ok.png"));
 	  showStatus("");
 	  getTree().setModified(false);
 	  if (m_RecentFilesHandler != null)
