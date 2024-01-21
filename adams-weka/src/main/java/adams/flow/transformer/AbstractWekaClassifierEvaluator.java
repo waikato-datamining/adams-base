@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWekaClassifierEvaluator.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
 import adams.core.option.OptionUtils;
+import adams.flow.container.WekaEvaluationContainer;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.classifiers.evaluation.output.prediction.Null;
-import adams.flow.container.WekaEvaluationContainer;
 
 /**
  * Ancestor for transformers that evaluate classifiers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWekaClassifierEvaluator
   extends AbstractTransformer {
@@ -162,13 +161,19 @@ public abstract class AbstractWekaClassifierEvaluator
   }
 
   /**
+   * Cleans up the output buffer.
+   */
+  protected void cleanOutputBuffer() {
+    m_Output.setBuffer(null);
+    m_OutputBuffer = null;
+  }
+
+  /**
    * Cleans up after the execution has finished.
    */
   @Override
   public void wrapUp() {
-    m_Output.setBuffer(null);
-    m_OutputBuffer = null;
-
+    cleanOutputBuffer();
     super.wrapUp();
   }
 }

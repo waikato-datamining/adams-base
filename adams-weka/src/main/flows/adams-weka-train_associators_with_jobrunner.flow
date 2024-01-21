@@ -1,0 +1,48 @@
+# Project: adams
+# Date: 2024-01-19 16:45:41
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "In this flow the parallel associator builds are managed through a JobRunnerInstance \\nwhich uses only 2 cores as defined in the JobRunnerSetup. This approach avoids\\noverloading the machine when performing lots of builds in parallel." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaAssociatorSetup -associator "weka.associations.Apriori -N 10 -T 0 -C 0.9 -D 0.05 -U 1.0 -M 0.1 -S -1.0 -c -1"
+  adams.flow.sink.HistoryDisplay -display-type adams.flow.core.displaytype.Default -line-wrap true -wrap-style-word true
+ adams.flow.standalone.JobRunnerSetup -job-runner "adams.multiprocess.LocalJobRunner -num-threads 2"
+ adams.flow.standalone.JobRunnerInstance
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/supermarket.arff
+ adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.control.Branch
+  adams.flow.control.Sequence -name "Sequence (1)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (2)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (3)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (4)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (5)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (6)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (7)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay
+  adams.flow.control.Sequence -name "Sequence (8)"
+   adams.flow.transformer.WekaTrainAssociator -prefer-jobrunner true
+   adams.flow.control.ContainerValuePicker -value Rules -switch-outputs true
+   adams.flow.sink.CallableSink -callable HistoryDisplay

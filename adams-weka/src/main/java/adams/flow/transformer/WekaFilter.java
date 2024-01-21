@@ -15,7 +15,7 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
+import adams.core.Utils;
 import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
@@ -39,15 +40,20 @@ import adams.flow.core.ModelLoaderSupporter;
 import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
 import adams.flow.core.WekaFilterModelLoader;
+import adams.flow.standalone.JobRunnerInstance;
+import adams.multiprocess.AbstractJob;
+import adams.multiprocess.JobRunnerSupporter;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.AllFilter;
+import weka.filters.Filter;
 
 import java.util.Hashtable;
 
 /**
  <!-- globalinfo-start -->
  * Filters Instances&#47;Instance objects using the specified filter.<br>
+ * When re-using a trained filter, ensure that 'initializeOnce' is checked.<br>
  * <br>
  * The following order is used to obtain the model (when using AUTO):<br>
  * 1. model file present?<br>
@@ -74,6 +80,7 @@ import java.util.Hashtable;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -97,12 +104,14 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-property &lt;adams.core.base.BaseString&gt; [-property ...] (property: properties)
@@ -155,6 +164,12 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-prefer-jobrunner &lt;boolean&gt; (property: preferJobRunner)
+ * &nbsp;&nbsp;&nbsp;If enabled, tries to offload the processing onto a adams.flow.standalone.JobRunnerInstance;
+ * &nbsp;&nbsp;&nbsp; applies only to batch filtering.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-output-container &lt;boolean&gt; (property: outputContainer)
  * &nbsp;&nbsp;&nbsp;If enabled, a adams.flow.container.WekaFilterContainer is output with the
  * &nbsp;&nbsp;&nbsp;filter and the filtered data (Instance or Instances).
@@ -168,7 +183,101 @@ import java.util.Hashtable;
 public class WekaFilter
   extends AbstractTransformerWithPropertiesUpdating
   implements OptionalContainerOutput, ModelFileHandler,
-             StorageUser, ModelLoaderSupporter, OptionalOneTimeInitializer {
+	       StorageUser, ModelLoaderSupporter, OptionalOneTimeInitializer,
+	       JobRunnerSupporter {
+
+  public static class BatchFilterJob
+    extends AbstractJob {
+
+    private static final long serialVersionUID = 6406892820872772446L;
+
+    /** the filter to use. */
+    protected Filter m_Filter;
+
+    /** the data to use for training. */
+    protected Instances m_Data;
+
+    /** the filtered data. */
+    protected Instances m_FilteredData;
+
+    /**
+     * Initializes the job.
+     *
+     * @param filter	the filter to use
+     * @param data	the training data
+     */
+    public BatchFilterJob(Filter filter, Instances data) {
+      super();
+      m_Filter       = filter;
+      m_Data         = data;
+      m_FilteredData = null;
+    }
+
+    /**
+     * Returns the filtered data.
+     *
+     * @return		the data, null if not available
+     */
+    public Instances getFilteredData() {
+      return m_FilteredData;
+    }
+
+    /**
+     * Checks whether all pre-conditions have been met.
+     *
+     * @return		null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String preProcessCheck() {
+      if (m_Filter == null)
+	return "No filter to use!";
+      if (m_Data == null)
+	return "No data to process!";
+      return null;
+    }
+
+    /**
+     * Does the actual execution of the job.
+     *
+     * @throws Exception if fails to execute job
+     */
+    @Override
+    protected void process() throws Exception {
+      m_FilteredData = Filter.useFilter(m_Data, m_Filter);
+    }
+
+    /**
+     * Checks whether all post-conditions have been met.
+     *
+     * @return		null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String postProcessCheck() {
+      return null;
+    }
+
+    /**
+     * Returns a string representation of this job.
+     *
+     * @return		the job as string
+     */
+    @Override
+    public String toString() {
+      return OptionUtils.getCommandLine(m_Filter) + "\n" + m_Data.relationName();
+    }
+
+    /**
+     * Cleans up data structures, frees up memory.
+     * Removes dependencies and job parameters.
+     */
+    @Override
+    public void cleanUp() {
+      m_Filter       = null;
+      m_Data         = null;
+      m_FilteredData = null;
+      super.cleanUp();
+    }
+  }
 
   /** for serialization. */
   private static final long serialVersionUID = 9078845385089445202L;
@@ -199,6 +308,12 @@ public class WekaFilter
 
   /** the model loader. */
   protected WekaFilterModelLoader m_ModelLoader;
+
+  /** whether to offload filtering into a JobRunnerInstance. */
+  protected boolean m_PreferJobRunner;
+
+  /** the JobRunnerInstance to use. */
+  protected transient JobRunnerInstance m_JobRunnerInstance;
 
   /**
    * Returns a string describing the object.
@@ -247,6 +362,10 @@ public class WekaFilter
 
     m_OptionManager.add(
       "keep", "keepRelationName",
+      false);
+
+    m_OptionManager.add(
+      "prefer-jobrunner", "preferJobRunner",
       false);
 
     m_OptionManager.add(
@@ -488,6 +607,36 @@ public class WekaFilter
   }
 
   /**
+   * Sets whether to offload processing to a JobRunner instance if available.
+   *
+   * @param value	if true try to find/use a JobRunner instance
+   */
+  public void setPreferJobRunner(boolean value) {
+    m_PreferJobRunner = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to offload processing to a JobRunner instance if available.
+   *
+   * @return		if true try to find/use a JobRunner instance
+   */
+  public boolean getPreferJobRunner() {
+    return m_PreferJobRunner;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String preferJobRunnerTipText() {
+    return "If enabled, tries to offload the processing onto a " + Utils.classToString(JobRunnerInstance.class) + "; applies only to batch filtering.";
+  }
+
+  /**
    * Sets whether to output a container with the filter alongside the
    * filtered data or just the filtered data.
    *
@@ -558,6 +707,7 @@ public class WekaFilter
     result += QuickInfoHelper.toString(this, "modelSource", getModelActor(), ", source: ");
     result += QuickInfoHelper.toString(this, "modelStorage", getModelStorage(), ", storage: ");
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
+    result += QuickInfoHelper.toString(this, "preferJobRunner", m_PreferJobRunner, ", jobrunner");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
     info    = super.getQuickInfo();
     if (!info.isEmpty())
@@ -690,6 +840,25 @@ public class WekaFilter
   }
 
   /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+
+    result = super.setUp();
+
+    if (result == null) {
+      if (m_PreferJobRunner)
+	m_JobRunnerInstance = JobRunnerInstance.locate(this, true);
+    }
+
+    return result;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -703,6 +872,7 @@ public class WekaFilter
     adams.data.instance.Instance	instA;
     weka.core.Instance			filteredInst;
     String				relation;
+    BatchFilterJob			job;
 
     result = null;
 
@@ -719,54 +889,65 @@ public class WekaFilter
 
     if (result == null) {
       try {
-        // initialize filter?
-        if (!m_Initialized || !m_InitializeOnce) {
-          if (data == null) {
-            data = new weka.core.Instances(inst.dataset(), 0);
-            data.add(inst);
-          }
-          result = initActualFilter(data);
-        }
+	// initialize filter?
+	if (!m_Initialized || !m_InitializeOnce) {
+	  if (data == null) {
+	    data = new weka.core.Instances(inst.dataset(), 0);
+	    data.add(inst);
+	  }
+	  result = initActualFilter(data);
+	}
       }
       catch (Exception e) {
-        result = handleException("Failed to initialize filter!", e);
+	result = handleException("Failed to initialize filter!", e);
       }
     }
 
     if (result == null) {
       try {
 	synchronized(m_ActualFilter) {
-          if (!m_FlowContextUpdated) {
-            m_FlowContextUpdated = true;
-            if (m_ActualFilter instanceof FlowContextHandler)
-              ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
-          }
+	  if (!m_FlowContextUpdated) {
+	    m_FlowContextUpdated = true;
+	    if (m_ActualFilter instanceof FlowContextHandler)
+	      ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
+	  }
 
-          // filter data
-          filteredData = null;
-          filteredInst = null;
-          if (data != null) {
-            relation = data.relationName();
-            filteredData = weka.filters.Filter.useFilter(data, m_ActualFilter);
-            if (m_KeepRelationName) {
-              filteredData.setRelationName(relation);
-              if (isLoggingEnabled())
-                getLogger().info("Setting relation name: " + relation);
-            }
-            m_Initialized = true;
-          }
-          else {
-            relation = inst.dataset().relationName();
-            m_ActualFilter.input(inst);
-            m_ActualFilter.batchFinished();
-            filteredInst = m_ActualFilter.output();
-            if (m_KeepRelationName) {
-              filteredInst.dataset().setRelationName(relation);
-              if (isLoggingEnabled())
-                getLogger().info("Setting relation name: " + relation);
-            }
-          }
-        }
+	  // filter data
+	  filteredData = null;
+	  filteredInst = null;
+	  if (data != null) {
+	    relation = data.relationName();
+	    if (m_JobRunnerInstance != null) {
+	      job = new BatchFilterJob(m_ActualFilter, data);
+	      result = m_JobRunnerInstance.executeJob(job);
+	      if (result == null)
+		filteredData = job.getFilteredData();
+	      job.cleanUp();
+	      if (result != null)
+		throw new Exception(result);
+	    }
+	    else {
+	      filteredData = weka.filters.Filter.useFilter(data, m_ActualFilter);
+	    }
+	    if (m_KeepRelationName) {
+	      filteredData.setRelationName(relation);
+	      if (isLoggingEnabled())
+		getLogger().info("Setting relation name: " + relation);
+	    }
+	    m_Initialized = true;
+	  }
+	  else {
+	    relation = inst.dataset().relationName();
+	    m_ActualFilter.input(inst);
+	    m_ActualFilter.batchFinished();
+	    filteredInst = m_ActualFilter.output();
+	    if (m_KeepRelationName) {
+	      filteredInst.dataset().setRelationName(relation);
+	      if (isLoggingEnabled())
+		getLogger().info("Setting relation name: " + relation);
+	    }
+	  }
+	}
 
 	// build output token
 	if (inst != null) {

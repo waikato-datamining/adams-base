@@ -558,7 +558,11 @@ There are basically two reasons for sequential execution:
   \item \textit{Resources} -- If the branch is located deeper in the flow with
   other parallel execution happening, spawning too many threads can slow down
   the system more than it could help in the optimal case. In such a scenario, it
-  is advised to turn off parallel execution.
+  is advised to turn off parallel execution.\footnote{Actors that implement the
+  \textt{adams.multiprocess.JobRunnerSupporter} interface can queue their
+  processing intense tasks in a \textit{JobRunner} that has utilizes a specified
+  number of cores. The standalones \texttt{JobRunnerSetup} and \texttt{JobRunnerInstance}
+  need to be present and the actor their \texttt{preferJobRunner} option ticked.}
   \item \textit{Ordering} -- In certain cases, the same data needs to be
   processed several times, but the order of the in which this occurs is
   important. For instance, an integer token could be used to create a

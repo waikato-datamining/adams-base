@@ -15,18 +15,24 @@
 
 /*
  * WekaTrainClassifier.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
+import adams.core.option.OptionUtils;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.Token;
 import adams.flow.source.WekaClassifierSetup;
+import adams.flow.standalone.JobRunnerInstance;
+import adams.multiprocess.AbstractJob;
+import adams.multiprocess.JobRunnerSupporter;
+import weka.classifiers.Classifier;
 import weka.classifiers.UpdateableClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -59,41 +65,159 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaTrainClassifier
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-classifier &lt;adams.flow.core.CallableActorReference&gt; (property: classifier)
  * &nbsp;&nbsp;&nbsp;The Weka classifier to train on the input data.
  * &nbsp;&nbsp;&nbsp;default: WekaClassifierSetup
  * </pre>
- * 
+ *
+ * <pre>-skip-build &lt;boolean&gt; (property: skipBuild)
+ * &nbsp;&nbsp;&nbsp;If enabled, the buildClassifier call gets skipped in case of incremental
+ * &nbsp;&nbsp;&nbsp;classifiers, eg, if the model only needs updating after being loaded from
+ * &nbsp;&nbsp;&nbsp;disk.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-prefer-jobrunner &lt;boolean&gt; (property: preferJobRunner)
+ * &nbsp;&nbsp;&nbsp;If enabled, tries to offload the processing onto a adams.flow.standalone.JobRunnerInstance.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaTrainClassifier
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements JobRunnerSupporter {
+
+  public static class BatchTrainJob
+    extends AbstractJob {
+
+    private static final long serialVersionUID = 6406892820872772446L;
+
+    /** the classifier to train. */
+    protected Classifier m_Classifier;
+
+    /** the data to use for training. */
+    protected Instances m_Data;
+
+    /** the model container. */
+    protected WekaModelContainer m_Container;
+
+    /**
+     * Initializes the job.
+     *
+     * @param cls	the classifier to train
+     * @param data	the training data
+     */
+    public BatchTrainJob(Classifier cls, Instances data) {
+      super();
+      m_Classifier = cls;
+      m_Data       = data;
+      m_Container  = null;
+    }
+
+    /**
+     * Returns the generated model container.
+     *
+     * @return		the container, null if none available
+     */
+    public WekaModelContainer getContainer() {
+      return m_Container;
+    }
+
+    /**
+     * Checks whether all pre-conditions have been met.
+     *
+     * @return		null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String preProcessCheck() {
+      if (m_Classifier == null)
+	return "No classifier to train!";
+      if (m_Data == null)
+	return "No training data!";
+      if (m_Data.classIndex() == -1)
+	return "No class attribute set!";
+      return null;
+    }
+
+    /**
+     * Does the actual execution of the job.
+     *
+     * @throws Exception if fails to execute job
+     */
+    @Override
+    protected void process() throws Exception {
+      m_Classifier.buildClassifier(m_Data);
+      m_Container = new WekaModelContainer(m_Classifier, new Instances(m_Data, 0), m_Data);
+    }
+
+    /**
+     * Checks whether all post-conditions have been met.
+     *
+     * @return		null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String postProcessCheck() {
+      return null;
+    }
+
+    /**
+     * Returns a string representation of this job.
+     *
+     * @return		the job as string
+     */
+    @Override
+    public String toString() {
+      return OptionUtils.getCommandLine(m_Classifier) + "\n" + m_Data.relationName();
+    }
+
+    /**
+     * Cleans up data structures, frees up memory.
+     * Removes dependencies and job parameters.
+     */
+    @Override
+    public void cleanUp() {
+      m_Classifier = null;
+      m_Data       = null;
+      super.cleanUp();
+    }
+  }
 
   /** for serialization. */
   private static final long serialVersionUID = -3019442578354930841L;
@@ -110,6 +234,12 @@ public class WekaTrainClassifier
   /** whether to skip the buildClassifier call for incremental classifiers. */
   protected boolean m_SkipBuild;
 
+  /** whether to offload training into a JobRunnerInstance. */
+  protected boolean m_PreferJobRunner;
+
+  /** the JobRunnerInstance to use. */
+  protected transient JobRunnerInstance m_JobRunnerInstance;
+
   /**
    * Returns a string describing the object.
    *
@@ -118,10 +248,10 @@ public class WekaTrainClassifier
   @Override
   public String globalInfo() {
     return
-        "Trains a classifier based on the incoming dataset and outputs the "
-      + "built classifier alongside the training header (in a model container).\n"
-      + "Incremental training is performed, if the input are weka.core.Instance "
-      + "objects and the classifier implements " + UpdateableClassifier.class.getName() + ".";
+      "Trains a classifier based on the incoming dataset and outputs the "
+	+ "built classifier alongside the training header (in a model container).\n"
+	+ "Incremental training is performed, if the input are weka.core.Instance "
+	+ "objects and the classifier implements " + UpdateableClassifier.class.getName() + ".";
   }
 
   /**
@@ -132,12 +262,16 @@ public class WekaTrainClassifier
     super.defineOptions();
 
     m_OptionManager.add(
-	    "classifier", "classifier",
-	    new CallableActorReference(WekaClassifierSetup.class.getSimpleName()));
+      "classifier", "classifier",
+      new CallableActorReference(WekaClassifierSetup.class.getSimpleName()));
 
     m_OptionManager.add(
-	    "skip-build", "skipBuild",
-	    false);
+      "skip-build", "skipBuild",
+      false);
+
+    m_OptionManager.add(
+      "prefer-jobrunner", "preferJobRunner",
+      false);
   }
 
   /**
@@ -199,6 +333,36 @@ public class WekaTrainClassifier
   }
 
   /**
+   * Sets whether to offload processing to a JobRunner instance if available.
+   *
+   * @param value	if true try to find/use a JobRunner instance
+   */
+  public void setPreferJobRunner(boolean value) {
+    m_PreferJobRunner = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to offload processing to a JobRunner instance if available.
+   *
+   * @return		if true try to find/use a JobRunner instance
+   */
+  public boolean getPreferJobRunner() {
+    return m_PreferJobRunner;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String preferJobRunnerTipText() {
+    return "If enabled, tries to offload the processing onto a " + Utils.classToString(JobRunnerInstance.class) + "; applies only to batch training.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -209,8 +373,9 @@ public class WekaTrainClassifier
     List<String>	options;
 
     result = QuickInfoHelper.toString(this, "classifier", m_Classifier);
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "skipBuild", m_SkipBuild, "skip build"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "preferJobRunner", m_PreferJobRunner, "jobrunner"));
     result += QuickInfoHelper.flatten(options);
 
     return result;
@@ -309,6 +474,25 @@ public class WekaTrainClassifier
   }
 
   /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+
+    result = super.setUp();
+
+    if (result == null) {
+      if (m_PreferJobRunner)
+	m_JobRunnerInstance = JobRunnerInstance.locate(this, true);
+    }
+
+    return result;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -319,6 +503,7 @@ public class WekaTrainClassifier
     Instances			data;
     Instance			inst;
     weka.classifiers.Classifier	cls;
+    BatchTrainJob		job;
 
     result = null;
 
@@ -327,8 +512,17 @@ public class WekaTrainClassifier
       if ((m_InputToken != null) && (m_InputToken.getPayload() instanceof Instances)) {
 	cls  = getClassifierInstance();
 	data = (Instances) m_InputToken.getPayload();
-	cls.buildClassifier(data);
-	m_OutputToken = new Token(new WekaModelContainer(cls, new Instances(data, 0), data));
+	if (m_JobRunnerInstance != null) {
+	  job    = new BatchTrainJob(cls, data);
+	  result = m_JobRunnerInstance.executeJob(job);
+	  if (result == null)
+	    m_OutputToken = new Token(job.getContainer());
+	  job.cleanUp();
+	}
+	else {
+	  cls.buildClassifier(data);
+	  m_OutputToken = new Token(new WekaModelContainer(cls, new Instances(data, 0), data));
+	}
       }
       else if ((m_InputToken != null) && (m_InputToken.getPayload() instanceof Instance)) {
 	if (m_IncrementalClassifier == null) {
@@ -340,14 +534,14 @@ public class WekaTrainClassifier
 	  inst = (Instance) m_InputToken.getPayload();
 	  if (m_IncrementalClassifier == null) {
 	    m_IncrementalClassifier = cls;
-            if (m_SkipBuild) {
+	    if (m_SkipBuild) {
 	      ((UpdateableClassifier) m_IncrementalClassifier).updateClassifier(inst);
-            }
-            else {
-              data = new Instances(inst.dataset(), 1);
-              data.add((Instance) inst.copy());
-              m_IncrementalClassifier.buildClassifier(data);
-            }
+	    }
+	    else {
+	      data = new Instances(inst.dataset(), 1);
+	      data.add((Instance) inst.copy());
+	      m_IncrementalClassifier.buildClassifier(data);
+	    }
 	  }
 	  else {
 	    ((UpdateableClassifier) m_IncrementalClassifier).updateClassifier(inst);
@@ -372,5 +566,6 @@ public class WekaTrainClassifier
     super.wrapUp();
 
     m_IncrementalClassifier = null;
+    m_JobRunnerInstance     = null;
   }
 }
