@@ -200,6 +200,7 @@ public class JobRunnerInstance
   public void stopExecution() {
     if (m_JobRunner != null) {
       m_JobRunner.terminate();
+      m_JobRunner.cleanUp();
       m_JobRunner = null;
     }
     super.stopExecution();
@@ -213,6 +214,7 @@ public class JobRunnerInstance
   public void wrapUp() {
     if (m_JobRunner != null) {
       m_JobRunner.terminate();
+      m_JobRunner.cleanUp();
       m_JobRunner = null;
     }
     super.wrapUp();
