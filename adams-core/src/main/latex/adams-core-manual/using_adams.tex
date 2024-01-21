@@ -559,7 +559,7 @@ There are basically two reasons for sequential execution:
   other parallel execution happening, spawning too many threads can slow down
   the system more than it could help in the optimal case. In such a scenario, it
   is advised to turn off parallel execution.\footnote{Actors that implement the
-  \textt{adams.multiprocess.JobRunnerSupporter} interface can queue their
+  \texttt{adams.multiprocess.JobRunnerSupporter} interface can queue their
   processing intense tasks in a \textit{JobRunner} that has utilizes a specified
   number of cores. The standalones \texttt{JobRunnerSetup} and \texttt{JobRunnerInstance}
   need to be present and the actor their \texttt{preferJobRunner} option ticked.}
