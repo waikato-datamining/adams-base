@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BaseAnnotation.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.base;
 
@@ -28,7 +28,6 @@ import java.util.List;
  * Class used for annotating actors in the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseAnnotation
   extends BaseMarkdown {
@@ -114,7 +113,7 @@ public class BaseAnnotation
       
       result = m_Name.compareTo(o.getName());
       if (result == 0)
-	result = new Integer(m_Options.size()).compareTo(o.getOptions().size());
+	result = Integer.compare(m_Options.size(), o.getOptions().size());
       if (result == 0) {
 	// this
 	for (String key: m_Options.keySet()) {
