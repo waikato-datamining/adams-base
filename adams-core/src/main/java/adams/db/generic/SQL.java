@@ -498,7 +498,7 @@ public class SQL
       query += " FROM " + tables;
 
     // where
-    if ((where != null) && (where.length() > 0)) {
+    if ((where != null) && !where.isEmpty()) {
       if (   !where.trim().toUpperCase().startsWith("LIMIT ")
 	  && !where.trim().toUpperCase().startsWith("ORDER ") )
 	query += " WHERE";
@@ -720,11 +720,11 @@ public class SQL
 
     Statement stmt = null;
     try {
-      stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+      stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
     catch (SQLException e) {
       // try again
-      stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+      stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
     return(stmt.executeQuery(query));
   }
