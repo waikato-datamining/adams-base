@@ -29,6 +29,8 @@ import javax.swing.Icon;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import java.awt.Color;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -128,6 +130,18 @@ public class BaseFlatButton
           super.mouseExited(e);
           setBackground(m_BackgroundUnfocused);
         }
+      });
+      addFocusListener(new FocusAdapter() {
+	@Override
+	public void focusGained(FocusEvent e) {
+	  super.focusGained(e);
+	  setBackground(m_BackgroundFocused);
+	}
+	@Override
+	public void focusLost(FocusEvent e) {
+	  super.focusLost(e);
+	  setBackground(m_BackgroundUnfocused);
+	}
       });
     }
     else {
