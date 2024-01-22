@@ -15,7 +15,7 @@
 
 /*
  * ClassRangeBasedClassifierErrors.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.visualize.plugins;
@@ -98,13 +98,13 @@ public class ClassRangeBasedClassifierErrors
 	  double predicted = predInst.instance(i).value(predInst.classIndex() - 1);
 	  if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
 	    // missing shape if actual class not present or prediction is missing
-	    plotShape.addElement(new Integer(Plot2D.MISSING_SHAPE));
-	    plotSize.addElement(new Integer(1));
+	    plotShape.addElement(Plot2D.MISSING_SHAPE);
+	    plotSize.addElement(1);
 	  }
 	  else {
 	    int size = (int) (Math.abs(actual - predicted) / refClass * REFERENCE_SIZE);
-	    plotShape.addElement(new Integer(Plot2D.CONST_AUTOMATIC_SHAPE));
-	    plotSize.addElement(new Integer(size));
+	    plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
+	    plotSize.addElement(size);
 	  }
 	}
 	try {
