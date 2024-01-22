@@ -15,7 +15,7 @@
 
 /*
  *    WeightedEuclideanDistance.java
- *    Copyright (C) 1999-2007 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -75,7 +75,6 @@ import java.util.Vector;
  <!-- options-end --> 
  *
  * @author dale (dale at waikato dot ac dot nz)
- * @version $Revision: 12763 $
  */
 public class WeightedEuclideanDistanceRidge
   extends NormalizableDistance
@@ -122,7 +121,6 @@ public class WeightedEuclideanDistanceRidge
       //Instances in=Filter.useFilter(m_Data, m_norm);   
       m_LR.buildClassifier(m_Data);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     //System.out.println("**\n"+m_Data.toString());
@@ -198,7 +196,7 @@ public class WeightedEuclideanDistanceRidge
    */
   @Override
   public String[] getOptions() {
-    Vector<String> result = new Vector<String>();
+    Vector<String> result = new Vector<>();
 
 
     result.add("-R");
@@ -206,7 +204,7 @@ public class WeightedEuclideanDistanceRidge
 
     Collections.addAll(result, super.getOptions());
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -266,8 +264,8 @@ public class WeightedEuclideanDistanceRidge
 
 
     String ridgeString = Utils.getOption('R', options);
-    if (ridgeString.length() != 0) {
-      setRidge(new Double(ridgeString).doubleValue());
+    if (!ridgeString.isEmpty()) {
+      setRidge(Double.parseDouble(ridgeString));
     } else {
       setRidge(1.0e-8);
     }
@@ -396,7 +394,7 @@ public class WeightedEuclideanDistanceRidge
    * @param distances	the distances to post-process
    */
   @Override
-  public void postProcessDistances(double distances[]) {
+  public void postProcessDistances(double[] distances) {
     for(int i = 0; i < distances.length; i++) {
       distances[i] = Math.sqrt(distances[i]);
     }
@@ -423,8 +421,7 @@ public class WeightedEuclideanDistanceRidge
    */
   public double getMiddle(double[] ranges) {
 
-    double middle = ranges[R_MIN] + ranges[R_WIDTH] * 0.5;
-    return middle;
+    return ranges[R_MIN] + ranges[R_WIDTH] * 0.5;
   }
 
   protected Instance transform(Instance i) {
