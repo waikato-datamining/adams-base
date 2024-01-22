@@ -15,7 +15,7 @@
 
 /*
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -503,10 +503,10 @@ public class ExcelStreamingSpreadSheetReader
 		  cell.setContent(new Time(DateUtil.getJavaDate(Double.parseDouble(content))));
 		  break;
 		case LONG:
-		  cell.setContent(new Long(content));
+		  cell.setContent(Long.parseLong(content));
 		  break;
 		case DOUBLE:
-		  cell.setContent(new Double(content));
+		  cell.setContent(Double.parseDouble(content));
 		  break;
 		default:
 		  cell.setContentAsString(content);
