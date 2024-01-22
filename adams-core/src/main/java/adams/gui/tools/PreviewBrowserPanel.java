@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -304,6 +304,8 @@ public class PreviewBrowserPanel
       refreshLocalFiles();
       if (m_RecentFilesHandler != null)
 	m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
+      if (!m_ModelLocalFiles.isEmpty())
+	m_ListLocalFiles.setSelectedIndex(0);
     });
     m_PanelDir.setPopupMenuCustomizer(new PopupMenuCustomizer() {
       @Override
