@@ -196,6 +196,11 @@
           <groupId>nz.ac.waikato.cms.weka</groupId>
           <artifactId>weka-dev</artifactId>
         </exclusion>
+        <!-- newer version used by adams-core -->
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
