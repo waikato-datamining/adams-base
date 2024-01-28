@@ -74,6 +74,7 @@ Menu-Help=\
   adams.gui.menu.SystemPerformance,\
   adams.gui.menu.MemoryMonitor,\
   adams.gui.menu.TakeScreenshot,\
+  adams.gui.menu.AdamsHomeDir,\
   -,\
   adams.gui.menu.JDeps,\
   adams.gui.menu.JMap,\
