@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2016 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -26,7 +26,7 @@ BASEDIR=`(cd "$BASEDIR"; pwd)`
 . "$BASEDIR"/bin/env.sh
 
 CLASSPATH="$RESOURCES":"$REPO/*"
-AGENT="$REPO/sizeofag-1.0.3.jar"
+AGENT="$REPO/sizeofag-1.1.0.jar"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

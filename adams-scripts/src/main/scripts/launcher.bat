@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2023 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -121,7 +121,7 @@ echo Using: %JCMD%
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\*"
-set AGENT=%REPO%\sizeofag-1.0.3.jar
+set AGENT=%REPO%\sizeofag-1.1.0.jar
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
