@@ -15,7 +15,7 @@
 
 /*
  * YoloAnnotationsReportReader.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -62,6 +62,7 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-input &lt;adams.core.io.PlaceholderFile&gt; (property: input)
@@ -113,6 +114,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: type
  * </pre>
  *
+ * <pre>-use-polygon-format &lt;boolean&gt; (property: usePolygonFormat)
+ * &nbsp;&nbsp;&nbsp;If enabled, assumes that the data is in polygon format rather than auto-detecting
+ * &nbsp;&nbsp;&nbsp;bbox&#47;polygon format.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -147,6 +154,9 @@ public class YoloAnnotationsReportReader
   /** the label suffix to use. */
   protected String m_LabelSuffix;
 
+  /** output polygon format rather than bbox format. */
+  protected boolean m_UsePolygonFormat;
+
   /** the label mapping. */
   protected transient Map<Integer,String> m_Labels;
 
@@ -161,16 +171,16 @@ public class YoloAnnotationsReportReader
   @Override
   public String globalInfo() {
     return "Reads text files with YOLO object annotations, one object definition per line:\n"
-      + "BBox format:\n"
-      + "- format: <object-class> <x> <y> <width> <height>\n"
-      + "- object-class: 0-based index\n"
-      + "- x/y: normalized center of annotation\n"
-      + "- width/height: normalized width/height\n"
-      + "- Normalization uses image width/height\n"
-      + "Polygon format:\n"
-      + "- format: <object-class> <x0> <y0> <x1> <y1>...\n"
-      + "- object-class: 0-based index\n"
-      + "- x/y: normalized polygon point";
+	     + "BBox format:\n"
+	     + "- format: <object-class> <x> <y> <width> <height>\n"
+	     + "- object-class: 0-based index\n"
+	     + "- x/y: normalized center of annotation\n"
+	     + "- width/height: normalized width/height\n"
+	     + "- Normalization uses image width/height\n"
+	     + "Polygon format:\n"
+	     + "- format: <object-class> <x0> <y0> <x1> <y1>...\n"
+	     + "- object-class: 0-based index\n"
+	     + "- x/y: normalized polygon point";
   }
 
   /**
@@ -211,6 +221,10 @@ public class YoloAnnotationsReportReader
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
       "type");
+
+    m_OptionManager.add(
+      "use-polygon-format", "usePolygonFormat",
+      false);
   }
 
   /**
@@ -446,6 +460,35 @@ public class YoloAnnotationsReportReader
   }
 
   /**
+   * Sets whether to use polygon format or bbox format.
+   *
+   * @param value 	true if to use
+   */
+  public void setUsePolygonFormat(boolean value) {
+    m_UsePolygonFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use polygon format or bbox format.
+   *
+   * @return 		true if to use
+   */
+  public boolean getUsePolygonFormat() {
+    return m_UsePolygonFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String usePolygonFormatTipText() {
+    return "If enabled, assumes that the data is in polygon format rather than auto-detecting bbox/polygon format.";
+  }
+
+  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -537,26 +580,7 @@ public class YoloAnnotationsReportReader
 	line = line.replace("\t", " ");
 	line = line.replaceAll("[ ][ ]+", " ");
 	parts = line.split(" ");
-	if (parts.length == 5) {
-	  if (m_Labels != null)
-	    labelStr = m_Labels.get(Integer.parseInt(parts[0]));
-	  else
-	    labelStr = parts[0];
-	  xN = Double.parseDouble(parts[1]);
-	  yN = Double.parseDouble(parts[2]);
-	  wN = Double.parseDouble(parts[3]);
-	  hN = Double.parseDouble(parts[4]);
-
-	  w = (int) Math.round(m_Width * wN);
-	  h = (int) Math.round(m_Height * hN);
-	  x = (int) Math.round(xN * m_Width - w / 2.0);
-	  y = (int) Math.round(yN * m_Height - h / 2.0);
-
-	  lobj = new LocatedObject(x, y, w, h);
-	  lobj.getMetaData().put(m_LabelSuffix, labelStr);
-	  lobjs.add(lobj);
-	}
-	else if ((parts.length > 5) && (parts.length % 2 == 1)) {
+	if ((m_UsePolygonFormat || (parts.length > 5)) && (parts.length % 2 == 1)) {
 	  if (m_Labels != null)
 	    labelStr = m_Labels.get(Integer.parseInt(parts[0]));
 	  else
@@ -579,6 +603,25 @@ public class YoloAnnotationsReportReader
 	  lobj = new LocatedObject(x, y, w, h);
 	  lobj.getMetaData().put(m_LabelSuffix, labelStr);
 	  lobj.setPolygon(new Polygon(polyX, polyY, polyX.length));
+	  lobjs.add(lobj);
+	}
+	else if (parts.length == 5) {
+	  if (m_Labels != null)
+	    labelStr = m_Labels.get(Integer.parseInt(parts[0]));
+	  else
+	    labelStr = parts[0];
+	  xN = Double.parseDouble(parts[1]);
+	  yN = Double.parseDouble(parts[2]);
+	  wN = Double.parseDouble(parts[3]);
+	  hN = Double.parseDouble(parts[4]);
+
+	  w = (int) Math.round(m_Width * wN);
+	  h = (int) Math.round(m_Height * hN);
+	  x = (int) Math.round(xN * m_Width - w / 2.0);
+	  y = (int) Math.round(yN * m_Height - h / 2.0);
+
+	  lobj = new LocatedObject(x, y, w, h);
+	  lobj.getMetaData().put(m_LabelSuffix, labelStr);
 	  lobjs.add(lobj);
 	}
 	else {
