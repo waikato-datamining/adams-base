@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -582,7 +582,7 @@ public class ConfusionMatrix
     int			predIndex;
     int			i;
     int			n;
-    int			sum;
+    double		sum;
     boolean		same;
 
     result = null;
@@ -610,16 +610,16 @@ public class ConfusionMatrix
         // add missing labels
         labels = sheet.getCellValues(actCol);
         for (String label: labels) {
-          if (actLabels.indexOf(label) == -1)
+          if (!actLabels.contains(label))
             actLabels.add(label);
-          if (predLabels.indexOf(label) == -1)
+          if (!predLabels.contains(label))
             predLabels.add(label);
         }
         labels = sheet.getCellValues(predCol);
         for (String label: labels) {
-          if (actLabels.indexOf(label) == -1)
+          if (!actLabels.contains(label))
             actLabels.add(label);
-          if (predLabels.indexOf(label) == -1)
+          if (!predLabels.contains(label))
             predLabels.add(label);
         }
       }
@@ -696,7 +696,7 @@ public class ConfusionMatrix
           sum = 0;
           for (i = 0; i < matrix.getRowCount(); i++) {
             for (n = 1; n < matrix.getColumnCount(); n++) {
-              sum += matrix.getCell(i, n).toLong();
+              sum += matrix.getCell(i, n).toDouble();
             }
           }
           if (sum > 0) {
@@ -712,7 +712,7 @@ public class ConfusionMatrix
           for (i = 0; i < matrix.getRowCount(); i++) {
             sum = 0;
             for (n = 1; n < matrix.getColumnCount(); n++) {
-              sum += matrix.getCell(i, n).toLong();
+              sum += matrix.getCell(i, n).toDouble();
             }
             if (sum > 0) {
               for (n = 1; n < matrix.getColumnCount(); n++) {
