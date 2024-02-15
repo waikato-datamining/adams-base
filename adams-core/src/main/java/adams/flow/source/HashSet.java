@@ -15,7 +15,7 @@
 
 /*
  * HashSet.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -36,7 +36,7 @@ import java.util.Collections;
 
 /**
  <!-- globalinfo-start -->
- * Outputs the specified hashset as spreadsheet, with one column called 'Value'.
+ * Outputs the specified hashset as spreadsheet, with one column called 'Value' by default.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -51,6 +51,7 @@ import java.util.Collections;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -74,12 +75,14 @@ import java.util.Collections;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
@@ -92,13 +95,18 @@ import java.util.Collections;
  * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.AnyToString
  * </pre>
  *
+ * <pre>-column-name &lt;java.lang.String&gt; (property: columnName)
+ * &nbsp;&nbsp;&nbsp;The name of the column in the generated spreadsheet.
+ * &nbsp;&nbsp;&nbsp;default: Value
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class HashSet
-    extends AbstractSimpleSource
-    implements StorageUser {
+  extends AbstractSimpleSource
+  implements StorageUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -4888807180866059350L;
@@ -112,6 +120,9 @@ public class HashSet
   /** the type of conversion. */
   protected Conversion m_Conversion;
 
+  /** the column name to use. */
+  protected String m_ColumnName;
+
   /**
    * Returns a string describing the object.
    *
@@ -120,7 +131,7 @@ public class HashSet
   @Override
   public String globalInfo() {
     return
-	"Outputs the specified hashset as spreadsheet, with one column called '" + COLUMN_VALUE + "'.";
+      "Outputs the specified hashset as spreadsheet, with a single column using the specified column name.";
   }
 
   /**
@@ -131,12 +142,16 @@ public class HashSet
     super.defineOptions();
 
     m_OptionManager.add(
-	"storage-name", "storageName",
-	new StorageName("hashset"));
+      "storage-name", "storageName",
+      new StorageName("hashset"));
 
     m_OptionManager.add(
-	"conversion", "conversion",
-	new AnyToString());
+      "conversion", "conversion",
+      new AnyToString());
+
+    m_OptionManager.add(
+      "column-name", "columnName",
+      COLUMN_VALUE);
   }
 
   /**
@@ -150,6 +165,7 @@ public class HashSet
 
     result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
     result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+    result += QuickInfoHelper.toString(this, "columnName", m_ColumnName, ", column: ");
 
     return result;
   }
@@ -214,6 +230,35 @@ public class HashSet
   }
 
   /**
+   * Sets the name of the column in the generated spreadsheet.
+   *
+   * @param value	the name
+   */
+  public void setColumnName(String value) {
+    m_ColumnName = value;
+    reset();
+  }
+
+  /**
+   * Returns the name of the column in the generated spreadsheet.
+   *
+   * @return		the name
+   */
+  public String getColumnName() {
+    return m_ColumnName;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String columnNameTipText() {
+    return "The name of the column in the generated spreadsheet.";
+  }
+
+  /**
    * Returns whether storage items are being used.
    *
    * @return		true if storage items are used
@@ -255,7 +300,7 @@ public class HashSet
       hashset = (java.util.HashSet) getStorageHandler().getStorage().get(m_StorageName);
       sheet  = new DefaultSpreadSheet();
       sheet.setName(m_StorageName.getValue());
-      sheet.getHeaderRow().addCell("v").setContent(COLUMN_VALUE);
+      sheet.getHeaderRow().addCell("v").setContent(m_ColumnName);
       values = new ArrayList(hashset);
       Collections.sort(values);
       for (Object value: values) {
