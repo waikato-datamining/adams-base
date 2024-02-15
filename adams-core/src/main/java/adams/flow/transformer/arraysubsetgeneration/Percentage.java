@@ -15,7 +15,7 @@
 
 /*
  * Percentage.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.arraysubsetgeneration;
@@ -66,7 +66,7 @@ public class Percentage
 
     m_OptionManager.add(
       "percentage", "percentage",
-      100.0, 0.0, 100.0);
+      100.0, 0.0, null);
   }
 
   /**
@@ -103,7 +103,7 @@ public class Percentage
   /**
    * Sets the percentage to pick.
    *
-   * @param value	the percentage to pick (0-100)
+   * @param value	the percentage to pick (100 = same as input)
    */
   public void setPercentage(double value) {
     if (getOptionManager().isValid("percentage", value)) {
@@ -115,7 +115,7 @@ public class Percentage
   /**
    * Returns the percentage to pick.
    *
-   * @return		the percentage to pick (0-100)
+   * @return		the percentage to pick (100 = same as input)
    */
   public double getPercentage() {
     return m_Percentage;
@@ -127,8 +127,8 @@ public class Percentage
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String nthTipText() {
-    return "The percentage of elements to pick.";
+  public String percentageTipText() {
+    return "The percentage of elements to pick; percentages larger than 100 will duplicate array elements.";
   }
 
   /**
@@ -160,15 +160,17 @@ public class Percentage
     int			i;
     int			len;
     double 		inc;
+    double		curr;
 
     values = new ArrayList<>();
     len    = Array.getLength(array);
-    inc    = (double) len / (len * m_Percentage);
-    i      = (int) Math.floor(m_Offset - 1 + inc);
-    while (i < len) {
+    inc    = (double) len / (len * m_Percentage / 100);
+    curr   = m_Offset - 1 + inc;
+    while (curr + inc <= len) {
+      i    = (int) Math.floor(curr);
       if (i >= 0)
 	values.add(Array.get(array, i));
-      i = (int) Math.floor(i + inc);
+      curr += inc;
     }
 
     result = newArray(array, values.size());
