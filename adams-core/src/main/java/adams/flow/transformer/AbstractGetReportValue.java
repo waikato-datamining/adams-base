@@ -15,12 +15,14 @@
 
 /*
  * AbstractGetReportValue.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.data.conversion.Conversion;
+import adams.data.conversion.ObjectToObject;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
@@ -30,8 +32,6 @@ import adams.flow.core.Token;
  * Ancestor for transformers that retrieve a value from a report.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
- * @param <T> the type of field to handle
  */
 public abstract class AbstractGetReportValue
   extends AbstractTransformer {
@@ -41,6 +41,9 @@ public abstract class AbstractGetReportValue
 
   /** the field to get from the report. */
   protected AbstractField m_Field;
+
+  /** the type of conversion. */
+  protected Conversion m_Conversion;
 
   /**
    * Returns a string describing the object.
@@ -58,8 +61,12 @@ public abstract class AbstractGetReportValue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "field", "field",
-	    getDefaultField());
+      "field", "field",
+      getDefaultField());
+
+    m_OptionManager.add(
+      "conversion", "conversion",
+      new ObjectToObject());
   }
 
   /**
@@ -69,7 +76,12 @@ public abstract class AbstractGetReportValue
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "field", m_Field.toParseableString());
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "field", m_Field.toParseableString());
+    result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
+
+    return result;
   }
 
   /**
@@ -86,6 +98,36 @@ public abstract class AbstractGetReportValue
    * 			displaying in the GUI or for listing the options.
    */
   public abstract String fieldTipText();
+
+  /**
+   * Sets the type of conversion to perform.
+   *
+   * @param value	the type of conversion
+   */
+  public void setConversion(Conversion value) {
+    m_Conversion = value;
+    m_Conversion.setOwner(this);
+    reset();
+  }
+
+  /**
+   * Returns the type of conversion to perform.
+   *
+   * @return		the type of conversion
+   */
+  public Conversion getConversion() {
+    return m_Conversion;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String conversionTipText() {
+    return "The type of conversion to apply to the report value before forwarding it.";
+  }
 
   /**
    * Returns the class that the consumer accepts.
@@ -154,17 +196,32 @@ public abstract class AbstractGetReportValue
     if (obj != null) {
       switch (m_Field.getDataType()) {
 	case NUMERIC:
-	  m_OutputToken = new Token(new Double(obj.toString()));
+	  obj = Double.parseDouble(obj.toString());
 	  break;
 	case BOOLEAN:
-	  m_OutputToken = new Token(new Boolean(obj.toString()));
+	  obj = Boolean.parseBoolean(obj.toString());
 	  break;
 	case STRING:
-	  m_OutputToken = new Token(obj.toString());
+	  obj = obj.toString();
 	  break;
 	default:
-	  m_OutputToken = new Token(obj.toString());
+	  obj = obj.toString();
       }
+
+      if (!(m_Conversion instanceof ObjectToObject)) {
+	m_Conversion.setInput(obj);
+	result = m_Conversion.convert();
+	if (result != null)
+	  result = getFullName() + ": " + result;
+	if ((result == null) && (m_Conversion.getOutput() != null))
+	  obj = m_Conversion.getOutput();
+	else
+	  obj = null;
+	m_Conversion.cleanUp();
+      }
+
+      if (obj != null)
+	m_OutputToken = new Token(obj);
     }
 
     return result;
