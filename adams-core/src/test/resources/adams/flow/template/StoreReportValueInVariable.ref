@@ -4,6 +4,8 @@ adams.flow.control.Tee
 	Setting blah
 	-tee
 		adams.flow.transformer.GetReportValue
+			-conversion
+				adams.data.conversion.ObjectToObject
 	-tee
 		adams.flow.transformer.SetVariable
 			-var-name
