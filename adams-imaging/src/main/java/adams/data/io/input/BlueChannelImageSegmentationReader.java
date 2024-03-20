@@ -15,7 +15,7 @@
 
 /*
  * BlueChannelImageSegmentationReader.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -134,7 +134,7 @@ public class BlueChannelImageSegmentationReader
       if (n < m_LayerNames.length)
         layerName = m_LayerNames[n].getValue();
       else
-        layerName = "layer-" + (n+1);
+        layerName = "layer-" + Utils.padLeft("" + (n+1), '0', 3);
       if (uniqueBlueSet.contains(i)) {
 	layerImages.put(layerName, new BufferedImage(baseImage.getWidth(), baseImage.getHeight(), BufferedImage.TYPE_INT_RGB));
 	layerImages.get(layerName).setRGB(0, 0, baseImage.getWidth(), baseImage.getHeight(), layerPixels[i], 0, baseImage.getWidth());

@@ -15,11 +15,12 @@
 
 /*
  * IndexedPNGImageSegmentationReader.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
@@ -159,7 +160,7 @@ public class IndexedPNGImageSegmentationReader
 	image = new BufferedImage(reader.imgInfo.cols, reader.imgInfo.rows, BufferedImage.TYPE_INT_RGB);
 	image.setRGB(0, 0, image.getWidth(), image.getHeight(), layerPixels, 0, image.getWidth());
 	if (idx >= m_LayerNames.length)
-	  result.put("layer-" + (idx+1), image);
+	  result.put("layer-" + Utils.padLeft("" + (idx + 1), '0', 3), image);
 	else
 	  result.put(m_LayerNames[idx].getValue(), image);
 	idx++;
