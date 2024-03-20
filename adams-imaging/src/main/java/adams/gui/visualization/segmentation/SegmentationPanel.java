@@ -489,6 +489,19 @@ public class SegmentationPanel
   }
 
   /**
+   * Updates information about layers.
+   */
+  protected void updateLayerInfo() {
+    String	title;
+
+    title = "Layers";
+    if (getManager().getCombinedLayer() == null)
+      title += " (" + getManager().getOverlays().size() + ")";
+
+    m_PanelLayers.setBorder(BorderFactory.createTitledBorder(title));
+  }
+
+  /**
    * Returns the underlying undo handler.
    *
    * @return		the Undo
@@ -544,6 +557,7 @@ public class SegmentationPanel
     doLayout();
     repaint();
     updateButtons();
+    updateLayerInfo();
     getManager().update();
   }
 
