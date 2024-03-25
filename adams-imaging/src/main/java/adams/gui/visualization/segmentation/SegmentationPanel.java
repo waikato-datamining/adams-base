@@ -15,7 +15,7 @@
 
 /*
  * SegmentationPanel.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -30,6 +30,7 @@ import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.PNGImageReader;
 import adams.env.Environment;
 import adams.flow.container.ImageSegmentationContainer;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -178,6 +179,15 @@ public class SegmentationPanel
   /** the layers panel. */
   protected BasePanel m_PanelLayers;
 
+  /** the buttons for enabling all layers. */
+  protected BaseButton m_ButtonLayersAll;
+
+  /** the buttons for disabling all layers. */
+  protected BaseButton m_ButtonLayersNone;
+
+  /** the buttons for inverting selected layers. */
+  protected BaseButton m_ButtonLayersInvert;
+
   /** the tools panel. */
   protected BasePanel m_PanelTools;
 
@@ -318,6 +328,19 @@ public class SegmentationPanel
     m_PanelLayers = new BasePanel();
     m_PanelLayers.setBorder(BorderFactory.createTitledBorder("Layers"));
     m_PanelLeft.add(new BaseScrollPane(m_PanelLayers), BorderLayout.CENTER);
+
+    panel = new JPanel();
+    panel.setLayout(new FlowLayout(FlowLayout.LEFT));
+    m_ButtonLayersAll = new BaseButton("All");
+    m_ButtonLayersAll.addActionListener((ActionEvent e) -> getManager().showAllLayers());
+    panel.add(m_ButtonLayersAll);
+    m_ButtonLayersNone = new BaseButton("None");
+    m_ButtonLayersNone.addActionListener((ActionEvent e) -> getManager().hideAllLayers());
+    panel.add(m_ButtonLayersNone);
+    m_ButtonLayersInvert = new BaseButton("Invert");
+    m_ButtonLayersInvert.addActionListener((ActionEvent e) -> getManager().invertLayers());
+    panel.add(m_ButtonLayersInvert);
+    m_PanelLeft.add(new BaseScrollPane(panel), BorderLayout.SOUTH);
 
     // right
     m_SplitPaneRight = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
@@ -482,10 +505,16 @@ public class SegmentationPanel
    * Updates the state of the buttons.
    */
   protected void updateButtons() {
-    m_ButtonZoom.setEnabled(getManager().getImageLayer().getImage() != null);
+    boolean	imagePresent;
+
+    imagePresent = getManager().getImageLayer().getImage() != null;
+    m_ButtonZoom.setEnabled(imagePresent);
     m_ButtonAddUndo.setEnabled(getManager().isUndoSupported());
     m_ButtonUndo.setEnabled(getManager().getUndo().canUndo());
     m_ButtonRedo.setEnabled(getManager().getUndo().canRedo());
+    m_ButtonLayersAll.setEnabled(imagePresent);
+    m_ButtonLayersNone.setEnabled(imagePresent);
+    m_ButtonLayersInvert.setEnabled(imagePresent);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * LayerManager.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -861,5 +861,50 @@ public class LayerManager
    */
   protected void drawMarkers(Graphics2D g2d) {
     m_Markers.drawMarkers(g2d);
+  }
+
+  /**
+   * Shows all layers (excl image/background).
+   */
+  public void showAllLayers() {
+    startUpdate();
+    if (m_CombinedLayer != null) {
+      m_CombinedLayer.setEnabled(true);
+    }
+    else {
+      for (OverlayLayer layer : getOverlays())
+	layer.setEnabled(true);
+    }
+    finishUpdate(true);
+  }
+
+  /**
+   * Hides all layers (excl image/background).
+   */
+  public void hideAllLayers() {
+    startUpdate();
+    if (m_CombinedLayer != null) {
+      m_CombinedLayer.setEnabled(false);
+    }
+    else {
+      for (OverlayLayer layer : getOverlays())
+	layer.setEnabled(false);
+    }
+    finishUpdate(true);
+  }
+
+  /**
+   * Inverts the visibility state of all layers (excl image/background).
+   */
+  public void invertLayers() {
+    startUpdate();
+    if (m_CombinedLayer != null) {
+      m_CombinedLayer.setEnabled(!m_CombinedLayer.isEnabled());
+    }
+    else {
+      for (OverlayLayer layer : getOverlays())
+	layer.setEnabled(!layer.isEnabled());
+    }
+    finishUpdate(true);
   }
 }
