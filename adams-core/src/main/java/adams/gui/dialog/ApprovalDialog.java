@@ -15,7 +15,7 @@
 
 /*
  * ApprovalDialog.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -324,6 +324,21 @@ public class ApprovalDialog
   }
 
   /**
+   * Clicks the approve button (if enabled and visible).
+   *
+   * @return		true if clicked
+   */
+  public boolean approveDialog() {
+    if (isApproveEnabled() && isApproveVisible()) {
+      getApproveButton().doClick();
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
    * Returns the discard button.
    * 
    * @return		the button
@@ -405,6 +420,21 @@ public class ApprovalDialog
   }
 
   /**
+   * Clicks the discard button (if enabled and visible).
+   *
+   * @return		true if clicked
+   */
+  public boolean discardDialog() {
+    if (isDiscardEnabled() && isDiscardVisible()) {
+      getDiscardButton().doClick();
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  /**
    * Returns the cancel button.
    * 
    * @return		the button
@@ -483,6 +513,21 @@ public class ApprovalDialog
    */
   public int getCancelMnemonic() {
     return m_ButtonCancel.getMnemonic();
+  }
+
+  /**
+   * Clicks the cancel button (if enabled and visible).
+   *
+   * @return		true if clicked
+   */
+  public boolean cancelDialog() {
+    if (isCancelEnabled() && isCancelVisible()) {
+      getCancelButton().doClick();
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   /**
