@@ -15,7 +15,7 @@
 
 /*
  * IntrospectionHelper.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -32,7 +32,9 @@ import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for introspection.
@@ -54,6 +56,9 @@ public class IntrospectionHelper {
     /** the method descriptors. */
     public MethodDescriptor[] methods;
   }
+
+  /** the cache for "has property" checks. */
+  protected static Map<String,Boolean> PROPERTY_CHECK_CACHE = new HashMap<>();
 
   /**
    * Introspects the specified object. Uses the blacklist.
@@ -182,6 +187,57 @@ public class IntrospectionHelper {
     result            = new IntrospectionContainer();
     result.properties = properties;
     result.methods    = bi.getMethodDescriptors();
+
+    return result;
+  }
+
+  /**
+   * Checks whether the class has a property with the given name and type.
+   *
+   * @param cls		the class to inspect
+   * @param name	the name of the property to look for
+   * @param type 	the type that the property must have, can be null
+   * @param userMode 	the user mode to apply
+   * @return		true if the class has that property
+   */
+  public static boolean hasProperty(Class cls, String name, Class type, UserMode userMode) {
+    return hasProperty(cls, name, type, true, userMode);
+  }
+
+  /**
+   * Checks whether the class has a property with the given name and type.
+   *
+   * @param cls		the class to inspect
+   * @param name	the name of the property to look for
+   * @param type 	the type that the property must have, can be null
+   * @param useBlacklist	whether to apply the blacklist
+   * @param userMode 	the user mode to apply
+   * @return		true if the class has that property
+   */
+  public static boolean hasProperty(Class cls, String name, Class type, boolean useBlacklist, UserMode userMode) {
+    Boolean			result;
+    String			key;
+    IntrospectionContainer	cont;
+
+    key    = cls.getName() + "-" + name + "-" + (type == null ? "*" : type.getName());
+    result = PROPERTY_CHECK_CACHE.get(key);
+    if (result == null) {
+      try {
+	cont = introspect(cls, useBlacklist, userMode);
+	for (PropertyDescriptor desc: cont.properties) {
+	  if (desc.getName().equals(name)) {
+	    if ((type == null) || (desc.getPropertyType().equals(type)))
+	      result = true;
+	  }
+	}
+      }
+      catch (Exception e) {
+	System.err.println("Failed to introspect: " + cls);
+      }
+      if (result == null)
+	result = false;
+      PROPERTY_CHECK_CACHE.put(key, result);
+    }
 
     return result;
   }
