@@ -1,0 +1,11 @@
+# Configuration file for the Flow Editor quick action menu.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# Format:
+# <action-classname>-Icon=<empty or image filename without path>
+
+adams.gui.flow.tree.quickaction.RenameActor-Icon=rename.png
+adams.gui.flow.tree.quickaction.ChangeCallableActor-Icon=
+adams.gui.flow.tree.quickaction.ChangeVariableName-Icon=variable.gif
+adams.gui.flow.tree.quickaction.ChangeVariableValue-Icon=input.png

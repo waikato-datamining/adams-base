@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -33,6 +33,7 @@ import adams.env.Environment;
 import adams.env.FlowEditorPanelDefinition;
 import adams.env.FlowEditorPanelMenuDefinition;
 import adams.env.FlowEditorTreePopupMenuDefinition;
+import adams.env.FlowEditorTreeQuickActionMenuDefinition;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.processor.ActorProcessor;
@@ -207,6 +208,9 @@ public class FlowEditorPanel
   /** the name of the props file with the tree menu. */
   public final static String FILENAME_TREEPOPUPMENU = "FlowEditorTreePopupMenu.props";
 
+  /** the name of the props file with the tree quick action menu. */
+  public final static String FILENAME_TREEQUICKACTIONMENU = "FlowEditorTreeQuickActionMenu.props";
+
   /** the file to store the recent files in. */
   public final static String SESSION_FILE = "FlowSession.props";
 
@@ -224,6 +228,9 @@ public class FlowEditorPanel
 
   /** the tree popup menu properties. */
   protected static Properties m_PropertiesTreePopup;
+
+  /** the tree quick action menu properties. */
+  protected static Properties m_PropertiesTreeQuickAction;
 
   /** the panel itself. */
   protected FlowEditorPanel m_Self;
@@ -2371,5 +2378,17 @@ public class FlowEditorPanel
       m_PropertiesTreePopup = Environment.getInstance().read(FlowEditorTreePopupMenuDefinition.KEY);
 
     return m_PropertiesTreePopup;
+  }
+
+  /**
+   * Returns the properties for the tree quick action menu.
+   *
+   * @return		the properties
+   */
+  public static synchronized Properties getPropertiesTreeQuickAction() {
+    if (m_PropertiesTreeQuickAction == null)
+      m_PropertiesTreeQuickAction = Environment.getInstance().read(FlowEditorTreeQuickActionMenuDefinition.KEY);
+
+    return m_PropertiesTreeQuickAction;
   }
 }

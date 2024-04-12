@@ -742,6 +742,10 @@ adams.gui.flow.notificationareaaction.AbstractNotificationAreaAction=\
 adams.gui.flow.tree.menu.TreePopupAction=\
   adams.gui.flow.tree.menu
 
+# the quick action menu actions in the flow editor tree
+adams.gui.flow.tree.quickaction.TreeQuickAction=\
+  adams.gui.flow.tree.quickaction
+
 # the handlers for GenericObjectEditors
 adams.gui.goe.AbstractGenericObjectEditorHandler=\
   adams.gui.goe

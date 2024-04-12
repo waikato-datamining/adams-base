@@ -22,6 +22,7 @@ Definitions=\
   adams.env.FlowEditorPanelDefinition,\
   adams.env.FlowEditorPanelMenuDefinition,\
   adams.env.FlowEditorTreePopupMenuDefinition,\
+  adams.env.  FlowEditorTreeQuickActionMenuDefinition,\
   adams.env.FlowRunnerPanelDefinition,\
   adams.env.GOEBlacklistDefinition,\
   adams.env.GOEEditorsDefinition,\

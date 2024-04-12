@@ -43,6 +43,7 @@ import adams.gui.core.DragAndDropTree;
 import adams.gui.core.DragAndDropTreeNodeCollection;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import adams.gui.event.ActorChangeEvent;
 import adams.gui.event.ActorChangeEvent.Type;
@@ -56,6 +57,7 @@ import adams.gui.flow.tree.menu.EditActor;
 import adams.gui.flow.tree.menu.MenuHeader;
 import adams.gui.flow.tree.menu.Separator;
 import adams.gui.flow.tree.menu.TreePopupAction;
+import adams.gui.flow.tree.quickaction.TreeQuickAction;
 import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
 import adams.gui.goe.FlowHelper;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
@@ -240,6 +242,9 @@ public class Tree
   /** whether to allow the popup menu. */
   protected boolean m_AllowNodePopup;
 
+  /** whether to allow the quick action menu. */
+  protected boolean m_AllowNodeQuickAction;
+
   /** whether to allow keyboard shortcuts. */
   protected boolean m_AllowKeyboardShortcuts;
 
@@ -314,6 +319,7 @@ public class Tree
     m_IgnoreNameChanges           = false;
     m_RecordAdd                   = false;
     m_AllowNodePopup              = true;
+    m_AllowNodeQuickAction        = true;
     m_AllowKeyboardShortcuts      = true;
     m_KeyboardActions             = new ArrayList<>();
     m_NodePopupCache = null;
@@ -332,7 +338,10 @@ public class Tree
       public void mousePressed(MouseEvent e) {
         if (m_Self.isEnabled() && MouseUtils.isRightClick(e)) {
           e.consume();
-          showNodePopupMenu(e);
+	  if (KeyUtils.isNoneDown(e.getModifiersEx()))
+	    showNodePopupMenu(e);
+	  else if (KeyUtils.isOnlyShiftDown(e.getModifiersEx()))
+	    showNodeQuickActionMenu(e);
         }
         else if (m_Self.isEnabled() && MouseUtils.isDoubleClick(e)) {
           e.consume();
@@ -677,6 +686,24 @@ public class Tree
    */
   public boolean getAllowNodePopup() {
     return m_AllowNodePopup;
+  }
+
+  /**
+   * Sets whether to allow the node quick action menu.
+   *
+   * @param value	true if to allow
+   */
+  public void setAllowNodeQuickAction(boolean value) {
+    m_AllowNodeQuickAction = value;
+  }
+
+  /**
+   * Returns whether the node quick action menu is allowed.
+   *
+   * @return		true if allowed
+   */
+  public boolean getAllowNodeQuickAction() {
+    return m_AllowNodeQuickAction;
   }
 
   /**
@@ -1290,6 +1317,68 @@ public class Tree
 	}
       }
     }
+
+    return menu;
+  }
+
+  /**
+   * Shows a quick action popup if possible for the given mouse event.
+   *
+   * @param e		the event
+   */
+  public void showNodeQuickActionMenu(MouseEvent e) {
+    BasePopupMenu 	menu;
+
+    if (m_AllowNodeQuickAction) {
+      menu = createNodeQuickActionMenu(e);
+      if (menu != null)
+	menu.showAbsolute(this, e);
+    }
+  }
+
+  /**
+   * Generates a quick action popup if possible for the given mouse event.
+   *
+   * @param e		the event
+   * @return		the popup menu, null if not possible
+   */
+  public BasePopupMenu createNodeQuickActionMenu(MouseEvent e) {
+    BasePopupMenu	menu;
+    StateContainer	state;
+    MenuHeader		header;
+    TreeQuickAction 	action;
+    boolean		any;
+
+    state = getTreeState(e);
+    if (state == null)
+      return null;
+
+    menu = new BasePopupMenu();
+
+    // header
+    header = new MenuHeader();
+    header.update(state);
+    menu.add(header.getMenuItem());
+    menu.addSeparator();
+
+    any = false;
+    for (Class cls: ClassLister.getSingleton().getClasses(TreeQuickAction.class)) {
+      try {
+	action = (TreeQuickAction) cls.getDeclaredConstructor().newInstance();
+	action.update(state);
+	if (action.isEnabled()) {
+	  menu.add(action.getMenuItem());
+	  any = true;
+	}
+      }
+      catch (Exception ex) {
+	ConsolePanel.getSingleton().append(this, "Failed to instantiate tree quick action menu item '" + cls.getName() + "':", ex);
+      }
+    }
+
+    // no quick actions available?
+    if (!any)
+      menu = null;
 
     return menu;
   }
