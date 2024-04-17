@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -137,20 +137,35 @@ public class SQL
    * @return true if the table exists.
    */
   public boolean tableExists(String table) {
-    boolean tableExists = false;
-    ResultSet rs = null;
-    Connection connection = m_DatabaseConnection.getConnection(true);
-    try{
-      DatabaseMetaData dbmd = connection.getMetaData();
-      rs = dbmd.getTables (null, null, table, null);
-      tableExists = rs.next();
+    boolean 		result;
+    Connection 		connection;
+    ResultSet 		rs;
+    DatabaseMetaData 	dbmd;
+
+    result     = false;
+    rs         = null;
+    connection = m_DatabaseConnection.getConnection(true);
+    try {
+      dbmd = connection.getMetaData();
+      rs   = dbmd.getTables(null, connection.getCatalog(), table, null);
+      while (rs.next()) {
+	if (rs.getString(1).equals(connection.getCatalog())) {
+	  result = true;
+	  break;
+	}
+      }
     }
     catch (SQLException e) {
       // try again
       try {
-	DatabaseMetaData dbmd = connection.getMetaData();
-	rs = dbmd.getTables (null, null, table, null);
-	tableExists = rs.next();
+	dbmd = connection.getMetaData();
+	rs   = dbmd.getTables(null, connection.getCatalog(), table, null);
+	while (rs.next()) {
+	  if (rs.getString(1).equals(connection.getCatalog())) {
+	    result = true;
+	    break;
+	  }
+	}
       }
       catch (Exception ex) {
 	// ignored?
@@ -162,7 +177,8 @@ public class SQL
     finally{
       SQLUtils.closeAll(rs);
     }
-    return tableExists;
+
+    return result;
   }
 
   /**
