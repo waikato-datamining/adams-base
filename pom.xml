@@ -99,7 +99,7 @@
     <gson.version>2.10.1</gson.version>
     <debianmavenplugin.version>1.0.22</debianmavenplugin.version>
     <rpmmavenplugin.version>1.4.0</rpmmavenplugin.version>
-    <javacv.version>1.5.9</javacv.version>
+    <javacv.version>1.5.10</javacv.version>
     <commons-codec.version>1.16.1</commons-codec.version>
     <woodstox-core.version>6.5.1</woodstox-core.version>
     <owasp.dependency.check.skip>true</owasp.dependency.check.skip>
