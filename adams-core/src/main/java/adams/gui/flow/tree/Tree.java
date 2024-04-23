@@ -65,6 +65,7 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
@@ -72,6 +73,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -1344,6 +1346,7 @@ public class Tree
    */
   public BasePopupMenu createNodeQuickActionMenu(MouseEvent e) {
     BasePopupMenu	menu;
+    JMenuItem		menuitem;
     StateContainer	state;
     MenuHeader		header;
     TreeQuickAction 	action;
@@ -1376,9 +1379,12 @@ public class Tree
       }
     }
 
-    // no quick actions available?
-    if (!any)
-      menu = null;
+    if (any)
+      menu.addSeparator();
+    menuitem = new JMenuItem("Edit...", ImageManager.getIcon("properties.gif"));
+    menuitem.setEnabled(state.numSel == 1);
+    menuitem.addActionListener((ActionEvent ae) -> getOperations().editActor(state.selPath));
+    menu.add(menuitem);
 
     return menu;
   }
