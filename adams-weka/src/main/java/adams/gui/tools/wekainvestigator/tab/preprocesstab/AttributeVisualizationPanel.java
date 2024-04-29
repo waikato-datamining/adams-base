@@ -15,31 +15,39 @@
 
 /*
  *    AttributeVisualizationPanel.java
- *    Copyright (C) 2003-2017 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2003-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
 import adams.gui.core.BaseComboBox;
+import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
+import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.CustomColorProvider;
 import weka.core.Attribute;
 import weka.core.AttributeStats;
 import weka.core.Instances;
 import weka.core.SparseInstance;
 import weka.core.Utils;
 
-import javax.swing.JPanel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates a panel that shows a visualization of an attribute in a dataset. For
@@ -53,9 +61,9 @@ import java.util.ArrayList;
  * intervals = max(1, Math.round(Range/intervalWidth);
  *
  * @author Ashraf M. Kibriya (amk14@cs.waikato.ac.nz)
- * @version $Revision: 10216 $
+ * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class AttributeVisualizationPanel extends JPanel {
+public class AttributeVisualizationPanel extends BasePanel {
 
   /** for serialization */
   private static final long serialVersionUID = -8650490488825371193L;
@@ -122,7 +130,7 @@ public class AttributeVisualizationPanel extends JPanel {
    * NOTE: The values of this array are only calculated if the class attribute
    * is set and it is nominal.
    */
-  SparseInstance m_histBarClassCounts[];
+  protected SparseInstance[] m_histBarClassCounts;
 
   /**
    * Contains the range of each bar in a histogram. It is used to work out the
@@ -170,12 +178,22 @@ public class AttributeVisualizationPanel extends JPanel {
    * Contains discrete colours for colouring of subbars of histograms and bar
    * plots when the class attribute is set and is nominal
    */
-  protected final ArrayList<Color> m_colorList = new ArrayList<Color>();
+  protected final List<Color> m_colorList = new ArrayList<>();
 
   /** default colour list */
-  protected static final Color[] m_defaultColors = { Color.blue, Color.red,
-    Color.cyan, new Color(75, 123, 130), Color.pink, Color.green, Color.orange,
-    new Color(255, 0, 255), new Color(255, 0, 0), new Color(0, 255, 0), };
+  protected static final Color[] m_defaultColors = {
+    Color.blue,
+    Color.red,
+    Color.cyan,
+    new Color(75, 123, 130),
+    Color.pink,
+    Color.green,
+    Color.orange,
+    Color.magenta,
+  };
+
+  /** the color provider. */
+  protected static ColorProvider m_ColorProvider;
 
   /**
    * Constructor - If used then the class will not show the class selection
@@ -194,21 +212,13 @@ public class AttributeVisualizationPanel extends JPanel {
    *          shown if showColouringOption is false.
    */
   public AttributeVisualizationPanel(boolean showColouringOption) {
-    this.setFont(new Font("Default", Font.PLAIN, 9));
-    m_fm = this.getFontMetrics(this.getFont());
-    this.setToolTipText("");
+    setFont(new Font("Default", Font.PLAIN, 9));
+    m_fm = getFontMetrics(this.getFont());
+    setToolTipText("");
     FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
-    this.setLayout(fl);
-    this.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentResized(ComponentEvent ce) {
-	if (m_data != null) {
-	  // calcGraph();
-	}
-      }
-    });
+    setLayout(fl);
 
-    m_colorAttrib = new BaseComboBox<String>();
+    m_colorAttrib = new BaseComboBox<>();
     m_colorAttrib.addItemListener((ItemEvent ie) -> {
       if (ie.getStateChange() == ItemEvent.SELECTED) {
 	m_classIndex = m_colorAttrib.getSelectedIndex() - 1;
@@ -218,10 +228,80 @@ public class AttributeVisualizationPanel extends JPanel {
     });
 
     if (showColouringOption) {
-      // m_colorAttrib.setVisible(false);
-      this.add(m_colorAttrib);
+      add(m_colorAttrib);
       validate();
     }
+
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  JPopupMenu menu = getPopupMenu();
+	  menu.show(AttributeVisualizationPanel.this, e.getX(), e.getY());
+	  e.consume();
+	}
+	else {
+	  super.mouseClicked(e);
+	}
+      }
+    });
+  }
+
+  /**
+   * Creates and returns the popup menu.
+   *
+   * @return		the menu
+   */
+  protected JPopupMenu getPopupMenu() {
+    JPopupMenu	result;
+    JMenuItem	menuitem;
+
+    result = new JPopupMenu();
+
+    menuitem = new JMenuItem("Change color provider...");
+    menuitem.addActionListener((ActionEvent e) -> changeColorProvider());
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Reset color provider");
+    menuitem.addActionListener((ActionEvent e) -> resetColorProvider());
+    result.add(menuitem);
+
+    return result;
+  }
+
+  /**
+   * Lets the user choose another color provider.
+   */
+  protected void changeColorProvider() {
+    GenericObjectEditorDialog	dialog;
+
+    if (getParentDialog() != null)
+      dialog = new GenericObjectEditorDialog(getParentDialog(), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new GenericObjectEditorDialog(getParentFrame(), true);
+    dialog.setTitle("Color provider");
+    dialog.getGOEEditor().setCanChangeClassInDialog(true);
+    dialog.getGOEEditor().setClassType(ColorProvider.class);
+    dialog.setCurrent(getColorProvider());
+    dialog.pack();
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
+    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+      return;
+
+    m_ColorProvider = (ColorProvider) dialog.getCurrent();
+    m_ColorProvider.resetColors();
+    m_colorList.clear();
+    repaint();
+  }
+
+  /**
+   * Resets the color provider to the default one.
+   */
+  protected void resetColorProvider() {
+    m_ColorProvider = null;
+    m_colorList.clear();
+    repaint();
   }
 
   /**
@@ -268,6 +348,32 @@ public class AttributeVisualizationPanel extends JPanel {
    */
   public Instances getInstances() {
     return m_data;
+  }
+
+  /**
+   * Returns the color provider to use.
+   *
+   * @return		the color provider
+   */
+  protected ColorProvider getColorProvider() {
+    if (m_ColorProvider == null)
+      m_ColorProvider = new CustomColorProvider(m_defaultColors);
+    return m_ColorProvider;
+  }
+
+  /**
+   * Returns the list of colors to use.
+   *
+   * @return		the list
+   */
+  protected List<Color> getColorList() {
+    if (m_colorList.isEmpty()) {
+      m_colorList.add(Color.black);
+      getColorProvider().resetColors();
+    }
+    for (int i = m_colorList.size(); i < m_data.attribute(m_classIndex).numValues() + 1; i++)
+      m_colorList.add(getColorProvider().next());
+    return m_colorList;
   }
 
   /**
@@ -390,7 +496,7 @@ public class AttributeVisualizationPanel extends JPanel {
 	}
 
 	if ((m_classIndex >= 0) && (m_data.attribute(m_classIndex).isNominal())) {
-	  SparseInstance histClassCounts[];
+	  SparseInstance[] histClassCounts;
 	  histClassCounts = new SparseInstance[m_data.attribute(m_attribIndex)
 	    .numValues()];
 	  // [m_data.attribute(m_classIndex).numValues()+1];
@@ -405,22 +511,6 @@ public class AttributeVisualizationPanel extends JPanel {
 	  }
 	  else {
 	    m_maxValue = 0;
-	  }
-
-	  if (m_colorList.size() == 0) {
-	    m_colorList.add(Color.black);
-	  }
-	  for (int i = m_colorList.size(); i < m_data.attribute(m_classIndex)
-	    .numValues() + 1; i++) {
-	    Color pc = m_defaultColors[(i - 1) % 10];
-	    int ija = (i - 1) / 10;
-	    ija *= 2;
-
-	    for (int j = 0; j < ija; j++) {
-	      pc = pc.darker();
-	    }
-
-	    m_colorList.add(pc);
 	  }
 
 	  // first sort data on attribute values
@@ -494,7 +584,7 @@ public class AttributeVisualizationPanel extends JPanel {
 	  AttributeVisualizationPanel.this.repaint();
 	}
 	else {
-	  double histCounts[];
+	  double[] histCounts;
 	  histCounts = new double[m_data.attribute(m_attribIndex).numValues()];
 
 	  if (m_as.nominalWeights.length > 0) {
@@ -536,7 +626,7 @@ public class AttributeVisualizationPanel extends JPanel {
 	if ((m_classIndex >= 0) && (m_data.attribute(m_classIndex).isNominal())) {
 
 	  int intervals;
-	  double intervalWidth = 0.0;
+	  double intervalWidth;
 
 	  // This uses the M.P.Wand's method to calculate the histogram's
 	  // interval width. See "Data-Based Choice of Histogram Bin Width", in
@@ -567,24 +657,11 @@ public class AttributeVisualizationPanel extends JPanel {
 	    if (intervals < 1)
 	      intervals = 1;
 	  }
-	  double histClassCounts[][] = new double[intervals][m_data.attribute(m_classIndex).numValues() + 1];
+	  double[][] histClassCounts = new double[intervals][m_data.attribute(m_classIndex).numValues() + 1];
 
 	  double barRange = (m_as.numericStats.max - m_as.numericStats.min) / histClassCounts.length;
 
 	  m_maxValue = 0;
-
-	  if (m_colorList.size() == 0)
-	    m_colorList.add(Color.black);
-
-	  for (int i = m_colorList.size(); i < m_data.attribute(m_classIndex)
-	    .numValues() + 1; i++) {
-	    Color pc = m_defaultColors[(i - 1) % 10];
-	    int ija = (i - 1) / 10;
-	    ija *= 2;
-	    for (int j = 0; j < ija; j++)
-	      pc = pc.darker();
-	    m_colorList.add(pc);
-	  }
 
 	  for (int k = 0; k < m_data.numInstances(); k++) {
 	    int t = 0; // This holds the interval that the attibute value of the
@@ -762,15 +839,11 @@ public class AttributeVisualizationPanel extends JPanel {
 	m_threadRun = false;
 	m_displayCurrentAttribute = true;
 	m_doneCurrentAttribute = true;
-	// Image tmpImg = new BufferedImage(getWidth(), getHeight(),
-	// BufferedImage.TYPE_INT_RGB);
-	// drawGraph( tmpImg.getGraphics() );
-	// img = tmpImg;
 	AttributeVisualizationPanel.this.repaint();
       }
     }
 
-    /****
+    /*
      * Code for M.P.Wand's method of histogram bin width selection. There is
      * some problem with it. It always comes up -ve value which is raised to the
      * power 1/3 and gives an NAN. protected static final int M=400; protected
@@ -1076,7 +1149,7 @@ public class AttributeVisualizationPanel extends JPanel {
 		  y = (int) (y - Math.round(m_histBarClassCount.value(j)
 		    * heightRatio));
 		  // selecting the colour corresponding to the current class.
-		  g.setColor(m_colorList.get(j));
+		  g.setColor(getColorList().get(j));
 		  g.fillRect(x, y, barWidth, (int) Math
 		    .round(m_histBarClassCount.value(j) * heightRatio));
 		  g.setColor(Color.black);
@@ -1156,7 +1229,7 @@ public class AttributeVisualizationPanel extends JPanel {
 	  && (m_histBarClassCounts != null || m_histBarCounts != null)) {
 
 	  double heightRatio;
-	  int x = 0, y = 0, barWidth;
+	  int x, y, barWidth;
 
 	  // If the class attribute is set and is not numeric then draw coloured
 	  // subbars for the histogram bars
@@ -1201,7 +1274,7 @@ public class AttributeVisualizationPanel extends JPanel {
 		  y = (int) (y - Math.round(m_histBarClassCount.valueSparse(j)
 		    * heightRatio));
 		  // selecting the color corresponding to our class
-		  g.setColor(m_colorList.get(m_histBarClassCount.index(j)));
+		  g.setColor(getColorList().get(m_histBarClassCount.index(j)));
 		  // drawing the bar if its width is greater than 1
 		  if (barWidth > 1) {
 		    g.fillRect(
@@ -1411,7 +1484,7 @@ public class AttributeVisualizationPanel extends JPanel {
  * we specifically handle t=0 separately.
  */
 
-/**
+/*
  * (barWidth==1)?x+barWidth*m_histBarClassCounts.length-1 :
  * x+barWidth*m_histBarClassCounts.length 2. In the case barWidth==1 we subtract
  * 1 otherwise the line become one pixel longer than the actual size of the
