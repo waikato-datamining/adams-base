@@ -21,11 +21,15 @@
 
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
+import adams.core.Properties;
+import adams.core.option.OptionUtils;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.tools.wekainvestigator.InvestigatorPanel;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.CustomColorProvider;
 import weka.core.Attribute;
@@ -351,13 +355,38 @@ public class AttributeVisualizationPanel extends BasePanel {
   }
 
   /**
+   * Returns the default color provider to use.
+   *
+   * @return		the default
+   */
+  public static ColorProvider getDefaultColorProvider() {
+    return new CustomColorProvider(m_defaultColors);
+  }
+
+  /**
    * Returns the color provider to use.
    *
    * @return		the color provider
    */
   protected ColorProvider getColorProvider() {
-    if (m_ColorProvider == null)
-      m_ColorProvider = new CustomColorProvider(m_defaultColors);
+    Properties	props;
+    String 	providerCommandline;
+
+    if (m_ColorProvider == null) {
+      props = InvestigatorPanel.getProperties();
+      providerCommandline = props.getProperty("Preprocess.AttributeSummaryColorProvider", "");
+      if (!providerCommandline.trim().isEmpty()) {
+	try {
+	  m_ColorProvider = (ColorProvider) OptionUtils.forCommandLine(ColorProvider.class, providerCommandline);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append(
+	    "Failed to instantiate color provider for attribute summary panel: " + providerCommandline, e);
+	}
+      }
+      if (m_ColorProvider == null)
+	m_ColorProvider = getDefaultColorProvider();
+    }
     return m_ColorProvider;
   }
 

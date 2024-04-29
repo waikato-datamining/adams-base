@@ -15,7 +15,7 @@
 
 /*
  * WekaInvestigatorPreferencesPanel.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -31,12 +31,14 @@ import adams.gui.goe.GenericArrayEditorPanel;
 import adams.gui.goe.GenericObjectEditorPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.AbstractFinalModelGenerator;
 import adams.gui.tools.wekainvestigator.tab.classifytab.evaluation.finalmodel.Simple;
+import adams.gui.tools.wekainvestigator.tab.preprocesstab.AttributeVisualizationPanel;
+import adams.gui.visualization.core.ColorProvider;
 import adams.multiprocess.JobRunner;
 import adams.multiprocess.LocalJobRunner;
 
 /**
  * Preferences for the WEKA Investigator.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaInvestigatorPreferencesPanel
@@ -44,7 +46,7 @@ public class WekaInvestigatorPreferencesPanel
 
   /** for serialization. */
   private static final long serialVersionUID = 3895159356677639564L;
-  
+
   @Override
   protected void initGUI() {
     super.initGUI();
@@ -81,6 +83,9 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Preprocess.Serialize", PropertyType.BOOLEAN);
     addPropertyType("Preprocess.SerializeFile", PropertyType.FILE_ABSOLUTE);
     addPropertyType("Preprocess.MaxAttributesToVisualize", PropertyType.INTEGER);
+    addPropertyType("Preprocess.AttributeSummaryColorProvider", PropertyType.OBJECT_EDITOR);
+    setChooser("Preprocess.AttributeSummaryColorProvider", new GenericObjectEditorPanel(
+      ColorProvider.class, AttributeVisualizationPanel.getDefaultColorProvider(), true));
 
     // associate
     addPropertyType("Associate.Associator", PropertyType.OBJECT_EDITOR);

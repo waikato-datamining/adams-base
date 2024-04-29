@@ -80,6 +80,10 @@ Preprocess.SerializeFile=.
 # (int)
 Preprocess.MaxAttributesToVisualize=5
 
+# The color provider to use for the attribute summary panel (histogram/bar chart)
+# ColorProvider class + options (empty for default)
+Preprocess.AttributeSummaryColorProvider=
+
 # The default maximum width for data columns.
 # (integer)
 Data.MaxColWidth=100
