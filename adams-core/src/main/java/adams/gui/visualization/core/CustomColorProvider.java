@@ -15,7 +15,7 @@
 
 /*
  * CustomColorProvider.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.core;
 
@@ -55,6 +55,23 @@ public class CustomColorProvider
 
   /** for serialization. */
   private static final long serialVersionUID = -6184352647827352221L;
+
+  /**
+   * Default constructors.
+   */
+  public CustomColorProvider() {
+    super();
+  }
+
+  /**
+   * Allows setting the colors immediately.
+   *
+   * @param colors	the colors to use
+   */
+  public CustomColorProvider(Color[] colors) {
+    this();
+    setColors(colors);
+  }
 
   /**
    * Returns a string describing the object.
