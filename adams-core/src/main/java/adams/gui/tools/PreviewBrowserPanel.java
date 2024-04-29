@@ -192,10 +192,14 @@ public class PreviewBrowserPanel
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       File file = new File(m_Owner.getDirPanel().getCurrentDirectory() + File.separator + value);
-      if (m_Owner.hasNote(file))
+      if (m_Owner.hasNote(file)) {
 	setIcon(ImageManager.getIcon("editor.gif"));
-      else
+	setToolTipText(GUIHelper.processTipText(m_Owner.getNote(file)));
+      }
+      else {
 	setIcon(ImageManager.getEmptyIcon());
+	setToolTipText(null);
+      }
       return this;
     }
   }
