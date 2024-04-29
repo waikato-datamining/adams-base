@@ -76,19 +76,23 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -150,6 +154,52 @@ public class PreviewBrowserPanel
     }
   }
 
+  /**
+   * Renderer for the local files, which indicates whether a note is present or not.
+   */
+  public static class LocalFilesListCellRenderer
+    extends DefaultListCellRenderer {
+
+    /** the owner. */
+    protected PreviewBrowserPanel m_Owner;
+
+    /**
+     * Initializes the renderer.
+     *
+     * @param owner	the owning preview browser
+     */
+    public LocalFilesListCellRenderer(PreviewBrowserPanel owner) {
+      super();
+      m_Owner = owner;
+    }
+
+    /**
+     * Return a component that has been configured to display the specified
+     * value. That component's <code>paint</code> method is then called to
+     * "render" the cell.  If it is necessary to compute the dimensions
+     * of a list because the list cells do not have a fixed size, this method
+     * is called to generate a component on which <code>getPreferredSize</code>
+     * can be invoked.
+     *
+     * @param list         The JList we're painting.
+     * @param value        The value returned by list.getModel().getElementAt(index).
+     * @param index        The cells index.
+     * @param isSelected   True if the specified cell was selected.
+     * @param cellHasFocus True if the specified cell has the focus.
+     * @return A component whose paint() method will render the specified value.
+     */
+    @Override
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      File file = new File(m_Owner.getDirPanel().getCurrentDirectory() + File.separator + value);
+      if (m_Owner.hasNote(file))
+	setIcon(ImageManager.getIcon("editor.gif"));
+      else
+	setIcon(ImageManager.getEmptyIcon());
+      return this;
+    }
+  }
+
   /** the file to store the recent directories. */
   public final static String SESSION_FILE = "PreviewBrowserSession.props";
 
@@ -164,6 +214,9 @@ public class PreviewBrowserPanel
 
   /** the panel with the local files. */
   protected BasePanel m_PanelLocalFiles;
+
+  /** the renderer for the local files. */
+  protected ListCellRenderer m_ListLocalFilesRenderer;
 
   /** the list with the local files. */
   protected SearchableBaseList m_ListLocalFiles;
@@ -322,8 +375,10 @@ public class PreviewBrowserPanel
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
 
-    m_ModelLocalFiles = new DefaultListModel<>();
-    m_ListLocalFiles  = new SearchableBaseList(m_ModelLocalFiles);
+    m_ModelLocalFiles        = new DefaultListModel<>();
+    m_ListLocalFilesRenderer = new LocalFilesListCellRenderer(this);
+    m_ListLocalFiles         = new SearchableBaseList(m_ModelLocalFiles);
+    m_ListLocalFiles.setCellRenderer(m_ListLocalFilesRenderer);
     m_ListLocalFiles.addListSelectionListener((ListSelectionEvent e) -> {
       if (e.getValueIsAdjusting())
 	return;
