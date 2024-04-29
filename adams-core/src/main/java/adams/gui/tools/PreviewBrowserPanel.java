@@ -56,6 +56,7 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SearchableBaseList;
 import adams.gui.core.TitleGenerator;
 import adams.gui.core.UISettings;
+import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
@@ -68,6 +69,9 @@ import adams.gui.tools.previewbrowser.NoPreviewAvailablePanel;
 import adams.gui.tools.previewbrowser.PreviewDisplay;
 import adams.gui.tools.previewbrowser.PropertiesManager;
 import adams.gui.tools.previewbrowser.localfiles.AbstractLocalFilesAction;
+import adams.gui.tools.previewbrowser.notes.AbstractNotesWriter;
+import adams.gui.tools.previewbrowser.notes.NotesFileChooser;
+import adams.gui.tools.previewbrowser.notes.NotesManager;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
@@ -97,6 +101,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows the browsing of files and previewing the content.
@@ -226,8 +231,11 @@ public class PreviewBrowserPanel
   /** the "show temp files" menu item. */
   protected JMenuItem m_MenuItemShowTempFiles;
 
-  /** the "clear notes" menu item. */
-  protected JMenuItem m_MenuItemClearNotes;
+  /** the "clear notes (global)" menu item. */
+  protected JMenuItem m_MenuItemClearNotesAll;
+
+  /** the "clear notes (current dir)" menu item. */
+  protected JMenuItem m_MenuItemClearNotesDir;
 
   /** the "show notes" menu item. */
   protected JMenuItem m_MenuItemViewNotes;
@@ -244,14 +252,11 @@ public class PreviewBrowserPanel
   /** the file change monitor. */
   protected FileChangeMonitor m_ChangeMonitor;
 
-  /** the current notes. */
-  protected StringBuilder m_Notes;
-
-  /** the dialog for saving notes. */
-  protected TextFileChooser m_FileChooserNotes;
-
   /** the actions for local files. */
   protected List<AbstractLocalFilesAction> m_LocalFilesActions;
+
+  /** the file chooser for the notes. */
+  protected NotesFileChooser m_FileChooserNotes;
 
   /**
    * Initializes the members.
@@ -267,9 +272,8 @@ public class PreviewBrowserPanel
     m_TitleGenerator              = new TitleGenerator("Preview browser", false, ShorteningType.START);
     m_FileChooser                 = new BaseFileChooser(PropertiesManager.getProperties().getPath("InitialDir", "%h"));
     m_ChangeMonitor               = new LastModified();
-    m_Notes                       = new StringBuilder();
-    m_FileChooserNotes            = null;
     m_LocalFilesActions           = null;
+    m_FileChooserNotes            = null;
   }
 
   /**
@@ -800,13 +804,14 @@ public class PreviewBrowserPanel
    * Updates the menu.
    */
   protected void updateMenu() {
-    boolean	hasNotes;
+    boolean hasNotesForDir;
 
-    hasNotes = (m_Notes.length() > 0);
+    hasNotesForDir = (NotesManager.getSingleton().hasNotes(m_PanelDir.getCurrentDirectory()));
 
-    m_MenuItemClearNotes.setEnabled(hasNotes);
-    m_MenuItemViewNotes.setEnabled(hasNotes);
-    m_MenuItemSaveNotes.setEnabled(hasNotes);
+    m_MenuItemClearNotesAll.setEnabled(NotesManager.getSingleton().hasNotes());
+    m_MenuItemClearNotesDir.setEnabled(hasNotesForDir);
+    m_MenuItemViewNotes.setEnabled(hasNotesForDir);
+    m_MenuItemSaveNotes.setEnabled(hasNotesForDir);
   }
 
   /**
@@ -925,14 +930,21 @@ public class PreviewBrowserPanel
       menu.setMnemonic('N');
       menu.addChangeListener((ChangeEvent e) -> updateMenu());
 
-      // Notes/Clear
-      menuitem = new JMenuItem("Clear");
+      // Notes/Clear all
+      menuitem = new JMenuItem("Clear all");
+      menu.add(menuitem);
+      menuitem.setMnemonic('g');
+      menuitem.addActionListener((ActionEvent e) -> clearNotes(null));
+      m_MenuItemClearNotesAll = menuitem;
+
+      // Notes/Clear (current dir)
+      menuitem = new JMenuItem("Clear directory");
       menu.add(menuitem);
       menuitem.setMnemonic('l');
       menuitem.setAccelerator(GUIHelper.getKeyStroke("ctrl shift pressed N"));
       menuitem.setIcon(ImageManager.getIcon("new.gif"));
-      menuitem.addActionListener((ActionEvent e) -> clearNotes());
-      m_MenuItemClearNotes = menuitem;
+      menuitem.addActionListener((ActionEvent e) -> clearNotes(m_PanelDir.getCurrentDirectory()));
+      m_MenuItemClearNotesDir = menuitem;
 
       // Notes/View
       menuitem = new JMenuItem("View...");
@@ -1000,47 +1012,50 @@ public class PreviewBrowserPanel
     JMenuItem			menuitem;
     Class[]			classes;
     AbstractLocalFilesAction	local;
+    final Object 		obj;
+    final File 			file;
 
     result = new JPopupMenu();
 
+    if (m_ListLocalFiles.getSelectedIndices().length == 1)
+      obj = m_ListLocalFiles.getSelectedValue();
+    else
+      obj = null;
+    file = new PlaceholderFile(m_PanelDir.getCurrent() + File.separator + obj);
+
     menuitem = new JMenuItem("Copy name");
-    menuitem.addActionListener((ActionEvent ae) -> {
-      Object obj = m_ListLocalFiles.getSelectedValue();
-      if (obj == null)
-	return;
-      ClipboardHelper.copyToClipboard(obj.toString());
-    });
+    menuitem.setEnabled(obj != null);
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard("" + obj));
     result.add(menuitem);
 
     menuitem = new JMenuItem("Copy path");
-    menuitem.addActionListener((ActionEvent ae) -> {
-      Object obj = m_ListLocalFiles.getSelectedValue();
-      if (obj == null)
-	return;
-      ClipboardHelper.copyToClipboard(m_PanelDir.getCurrent() + File.separator + obj.toString());
-    });
+    menuitem.setEnabled(obj != null);
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(file.getAbsolutePath()));
     result.add(menuitem);
 
     result.addSeparator();
 
-    menuitem = new JMenuItem("Add to notes");
+    menuitem = new JMenuItem("Edit note...");
+    menuitem.setEnabled(obj != null);
     menuitem.addActionListener((ActionEvent ae) -> {
-      Object obj = m_ListLocalFiles.getSelectedValue();
-      if (obj == null)
+      String initial = "";
+      if (hasNote(file))
+	initial = getNote(file);
+      String comment = GUIHelper.showInputDialog(this, "Please enter note for '" + obj + "': ", initial, "Edit note", null, 30, 4);
+      if (comment == null)
 	return;
-      addToNotes(m_PanelDir.getCurrent() + File.separator + obj.toString());
+      setNote(file, comment);
     });
     result.add(menuitem);
 
-    menuitem = new JMenuItem("Add to notes (with comment)...");
+    menuitem = new JMenuItem("Remove note");
+    menuitem.setEnabled((obj != null) && hasNote(file));
     menuitem.addActionListener((ActionEvent ae) -> {
-      Object obj = m_ListLocalFiles.getSelectedValue();
-      if (obj == null)
+      String note = getNote(file);
+      int retVal = GUIHelper.showConfirmMessage(this, "Do you want to remove the note for '" + obj + "'?\n" + note);
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
 	return;
-      String comment = GUIHelper.showInputDialog(this, "Please enter comment: ", "");
-      if (comment == null)
-	return;
-      addToNotes(comment + "\n" + m_PanelDir.getCurrent() + File.separator + obj.toString());
+      removeNote(file);
     });
     result.add(menuitem);
 
@@ -1346,28 +1361,83 @@ public class PreviewBrowserPanel
   }
 
   /**
-   * Appends the string to the notes.
+   * Sets the note for the file.
    *
-   * @param str		the string to add
+   * @param file	the file to set the note for
+   * @param note	the note to set
    */
-  protected void addToNotes(String str) {
-    if (m_Notes.length() > 0)
-      m_Notes.append("\n");
-    m_Notes.append(str);
+  protected void setNote(File file, String note) {
+    NotesManager.getSingleton().addNote(file.getParentFile().getAbsolutePath(), file.getName(), note);
   }
 
   /**
-   * Clears the notes.
+   * Returns the note for the file.
+   *
+   * @param file	the file to set the note for
+   * @return		the note, null if none available
    */
-  protected void clearNotes() {
-    m_Notes = new StringBuilder();
+  protected String getNote(File file) {
+    return NotesManager.getSingleton().getNote(file.getParentFile().getAbsolutePath(), file.getName());
+  }
+
+  /**
+   * Removes the note for the file.
+   *
+   * @param file	the file to remove the note for
+   */
+  protected void removeNote(File file) {
+    NotesManager.getSingleton().removeNote(file.getParentFile().getAbsolutePath(), file.getName());
+  }
+
+  /**
+   * Checks whether a note is present for the file.
+   *
+   * @param file	the file to check
+   * @return		true if note present
+   */
+  protected boolean hasNote(File file) {
+    return NotesManager.getSingleton().hasNote(file.getParentFile().getAbsolutePath(), file.getName());
+  }
+
+  /**
+   * Clears the notes for the dir or global if dir is null.
+   *
+   * @param dir		the dir to clear the notes for, null for global
+   */
+  protected void clearNotes(String dir) {
+    int 	retVal;
+
+    if (dir == null) {
+      retVal = GUIHelper.showConfirmMessage(this, "Do you want to remove the notes for ALL directories?");
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
+	return;
+      NotesManager.getSingleton().clear();
+    }
+    else {
+      retVal = GUIHelper.showConfirmMessage(this, "Do you want to remove the notes for " + m_PanelDir.getCurrentDirectory() + "?");
+      if (retVal != ApprovalDialog.APPROVE_OPTION)
+	return;
+      NotesManager.getSingleton().clear(dir);
+    }
   }
 
   /**
    * Displays the notes.
    */
   protected void viewNotes() {
-    TextDialog	dialog;
+    TextDialog		dialog;
+    Map<String,String> 	notes;
+    StringBuilder	notesStr;
+    List<String>	keys;
+
+    notes = NotesManager.getSingleton().getNotes(m_PanelDir.getCurrentDirectory());
+    notesStr = new StringBuilder();
+    keys = new ArrayList<>(notes.keySet());
+    Collections.sort(keys);
+    for (String key: keys) {
+      notesStr.append(key).append("\n");
+      notesStr.append(Utils.indent(notes.get(key), 4)).append("\n\n");
+    }
 
     if (getParentDialog() != null)
       dialog = new TextDialog(getParentDialog(), ModalityType.MODELESS);
@@ -1377,7 +1447,7 @@ public class PreviewBrowserPanel
     dialog.setUpdateParentTitle(false);
     dialog.setDialogTitle("Notes");
     dialog.setTitle("Notes");
-    dialog.setContent(m_Notes.toString());
+    dialog.setContent(notesStr.toString());
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
   }
@@ -1386,19 +1456,21 @@ public class PreviewBrowserPanel
    * Allows the user to save the current notes.
    */
   protected void saveNotes() {
-    int		retVal;
-    String	msg;
+    int			retVal;
+    String		msg;
+    AbstractNotesWriter	writer;
 
     if (m_FileChooserNotes == null)
-      m_FileChooserNotes = new TextFileChooser();
+      m_FileChooserNotes = new NotesFileChooser();
 
     retVal = m_FileChooserNotes.showSaveDialog(this);
     if (retVal != TextFileChooser.APPROVE_OPTION)
       return;
 
-    msg = FileUtils.writeToFileMsg(
-	m_FileChooserNotes.getSelectedFile().getAbsolutePath(),
-	m_Notes.toString(), false, null);
+    writer = m_FileChooserNotes.getWriter();
+    msg = writer.write(
+      NotesManager.getSingleton().getNotes(m_PanelDir.getCurrentDirectory()),
+      m_FileChooserNotes.getSelectedPlaceholderFile());
     if (msg != null)
       GUIHelper.showErrorMessage(this, "Failed to save notes to: " + m_FileChooserNotes.getSelectedFile() + "\n" + msg);
   }

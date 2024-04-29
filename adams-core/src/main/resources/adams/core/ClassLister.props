@@ -818,6 +818,14 @@ adams.gui.tools.previewbrowser.SerializedObjectViewer=\
 adams.gui.tools.previewbrowser.localfiles.AbstractLocalFilesAction=\
   adams.gui.tools.previewbrowser.localfiles
 
+# the notes readers
+adams.gui.tools.previewbrowser.notes.AbstractNotesReader=\
+  adams.gui.tools.previewbrowser.notes
+
+# the notes writers
+adams.gui.tools.previewbrowser.notes.AbstractNotesWriter=\
+  adams.gui.tools.previewbrowser.notes
+
 # the tabs for the remote control center
 adams.gui.tools.remotecontrolcenter.panels.AbstractRemoteControlCenterTab=\
   adams.gui.tools.remotecontrolcenter.panels
