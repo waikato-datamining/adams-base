@@ -15,13 +15,14 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.application;
 
 import adams.core.Shortening;
+import adams.core.SimpleTimer;
 import adams.core.base.BaseString;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.logging.ConsolePanelHandler;
@@ -1376,9 +1377,8 @@ public abstract class AbstractApplicationFrame
    */
   public static AbstractApplicationFrame runApplication(Class env, Class app, String[] options) {
     AbstractApplicationFrame	result;
-    long			start;
 
-    start = System.currentTimeMillis();
+    SimpleTimer.getSingleton().reset();
 
     Environment.setEnvironmentClass(env);
     LoggingHelper.useHandlerFromOptions(options);
@@ -1396,8 +1396,11 @@ public abstract class AbstractApplicationFrame
       else {
 	result = forName(app.getName(), options);
 	Environment.getInstance().setApplicationFrame(result);
-	if (result.getDatabaseConnection().isConnected())
+	if (result.getDatabaseConnection().isConnected()) {
+	  SimpleTimer timerTables = new SimpleTimer();
 	  AbstractIndexedTable.initTables(result.getDatabaseConnection());
+	  timerTables.println(app.getName() + ": Initializing tables took " + SimpleTimer.PH_MSECS_UNIT);
+	}
 	result.getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 	result.setVisible(true);
 	result.startUpMenuItems();
@@ -1408,7 +1411,7 @@ public abstract class AbstractApplicationFrame
       result = null;
     }
 
-    System.out.println(app.getName() + ": Time taken for startup " + (System.currentTimeMillis() - start) + " msec");
+    SimpleTimer.getSingleton().println(app.getName() + ": Startup took " + SimpleTimer.PH_MSECS_UNIT);
 
     return result;
   }

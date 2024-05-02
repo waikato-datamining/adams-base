@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -109,7 +109,7 @@ public class ClassLister
   protected ClassLister() {
     super(new ClassPathTraversal());
 
-    long start = System.currentTimeMillis();
+    SimpleTimer timer = new SimpleTimer();
 
     // blacklist dirs/files/file patterns
     if (m_ClassTraversal instanceof ClassTraversalWithBlacklister) {
@@ -167,8 +167,7 @@ public class ClassLister
 
     initialize();
 
-    long end = System.currentTimeMillis();
-    System.out.println(getClass().getName() + ": Time taken to initialize classes " + (end - start) + " msec");
+    timer.println(getClass(), "Initializing classes took " + SimpleTimer.PH_MSECS_UNIT);
   }
 
   /**
