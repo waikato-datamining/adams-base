@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaPluginManagerExtensions.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.application;
@@ -27,7 +27,6 @@ import weka.core.PluginManager;
  * Enables further extensions through Weka's PluginManager.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaPluginManagerExtensions
   extends AbstractInitialization {
@@ -53,7 +52,7 @@ public class WekaPluginManagerExtensions
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     Properties		props;
 
     try {

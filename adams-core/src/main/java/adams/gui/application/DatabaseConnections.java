@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseConnections.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -26,7 +26,6 @@ import adams.gui.dialog.DatabaseConnectionsPanel;
  * Initializes the database connections.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnections
   extends AbstractInitialization {
@@ -51,7 +50,7 @@ public class DatabaseConnections
    * @return		true if successful
    */
   @Override
-  public boolean initialize(final AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     if (!GUIHelper.isHeadless())
       new DatabaseConnectionsPanel();
     else

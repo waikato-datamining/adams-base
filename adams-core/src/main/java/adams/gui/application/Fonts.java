@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Fonts.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -25,7 +25,6 @@ import adams.gui.core.GUIHelper;
  * Initializes the fonts.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Fonts
   extends AbstractInitialization {
@@ -51,7 +50,7 @@ public class Fonts
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     if (!GUIHelper.isHeadless())
       adams.gui.core.Fonts.initFonts();
     return true;

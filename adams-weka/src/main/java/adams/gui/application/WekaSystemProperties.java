@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaSystemProperties.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.application;
@@ -24,7 +24,6 @@ package adams.gui.application;
  * Sets some Weka-specific system properties to improve performance.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaSystemProperties
   extends AbstractInitialization {
@@ -48,7 +47,7 @@ public class WekaSystemProperties
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     System.setProperty("weka.test.maventest", "true");
     return true;
   }

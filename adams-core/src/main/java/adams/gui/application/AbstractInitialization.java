@@ -15,11 +15,12 @@
 
 /*
  * AbstractInitialization.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.ClassLister;
+import adams.core.SimpleTimer;
 import adams.core.classmanager.ClassManager;
 import adams.core.option.OptionUtils;
 
@@ -40,14 +41,31 @@ public abstract class AbstractInitialization
    * @return		the title
    */
   public abstract String getTitle();
-  
+
+  /**
+   * Performs the initialization.
+   *
+   * @param parent	the application this initialization is for
+   * @return		true if successful
+   */
+  protected abstract boolean doInitialize(AbstractApplicationFrame parent);
+
   /**
    * Performs the initialization.
    * 
    * @param parent	the application this initialization is for
    * @return		true if successful
    */
-  public abstract boolean initialize(AbstractApplicationFrame parent);
+  public boolean initialize(AbstractApplicationFrame parent) {
+    boolean	result;
+    SimpleTimer	timer;
+
+    timer = new SimpleTimer();
+    result = doInitialize(parent);
+    timer.println(getClass(), SimpleTimer.PH_MSECS_UNIT);
+
+    return result;
+  }
 
   /**
    * Runs all the initialization applets.

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocaleHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -23,7 +23,6 @@ package adams.gui.application;
  * Initializes the locale settings.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocaleHelper
   extends AbstractInitialization {
@@ -49,7 +48,7 @@ public class LocaleHelper
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     adams.core.management.LocaleHelper.getSingleton().initializeLocale();
     return true;
   }

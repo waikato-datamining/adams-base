@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SSLHelper.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -23,7 +23,6 @@ package adams.gui.application;
  * Initializes the SSL context.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SSLHelper
   extends AbstractInitialization {
@@ -49,7 +48,7 @@ public class SSLHelper
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     return adams.core.net.SSLHelper.initialize();
   }
 }

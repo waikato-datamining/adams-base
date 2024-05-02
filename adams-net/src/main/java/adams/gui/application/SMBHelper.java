@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SMBHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -23,7 +23,6 @@ package adams.gui.application;
  * Initializes the Wins Host.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SMBHelper
   extends AbstractInitialization {
@@ -49,7 +48,7 @@ public class SMBHelper
    * @return		true if successful
    */
   @Override
-  public boolean initialize(AbstractApplicationFrame parent) {
+  protected boolean doInitialize(final AbstractApplicationFrame parent) {
     adams.core.net.SMBHelper.initialize();
     return true;
   }
