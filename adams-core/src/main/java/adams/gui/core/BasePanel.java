@@ -15,13 +15,16 @@
 
 /*
  * BasePanel.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.gui.application.Child;
+import adams.gui.print.JComponentWriter;
+import adams.gui.print.JComponentWriterFileChooser;
 
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -32,6 +35,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.LayoutManager;
+import java.io.File;
 
 /**
  * A JPanel extended by a few useful methods.
@@ -43,6 +47,9 @@ public class BasePanel
 
   /** for serialization. */
   private static final long serialVersionUID = -6780889707840400801L;
+
+  /** the filechooser for saving the panel. */
+  protected static JComponentWriterFileChooser m_FileChooser;
 
   /**
    * Initializes the panel.
@@ -79,6 +86,18 @@ public class BasePanel
    * finishes the initialization.
    */
   protected void finishInit() {
+  }
+
+  /**
+   * initializes the filechooser, i.e. locates all the available writers in
+   * the current package
+   */
+  protected synchronized void initFileChooser() {
+    // already initialized?
+    if (m_FileChooser != null)
+      return;
+
+    m_FileChooser = new JComponentWriterFileChooser();
   }
 
   /**
@@ -245,6 +264,34 @@ public class BasePanel
   public void printException(String msg, Exception e) {
     ConsolePanel.getSingleton().append(this, msg, e);
     System.err.println(msg + "\nException: " + e);
+  }
+
+  /**
+   * displays a save dialog for saving the panel to a file.
+   */
+  public void saveComponent() {
+    int			result;
+    JComponentWriter 	writer;
+    File 		file;
+
+    initFileChooser();
+
+    // display save dialog
+    result = m_FileChooser.showSaveDialog(this);
+    if (result != JComponentWriterFileChooser.APPROVE_OPTION)
+      return;
+
+    // save the file
+    try {
+      file   = m_FileChooser.getSelectedFile().getAbsoluteFile();
+      writer = m_FileChooser.getWriter();
+      writer.setComponent(this);
+      writer.setFile(new PlaceholderFile(file));
+      writer.toOutput();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   /**
