@@ -27,6 +27,7 @@ import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.tools.wekainvestigator.InvestigatorPanel;
@@ -46,6 +47,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
@@ -262,12 +264,16 @@ public class AttributeVisualizationPanel extends BasePanel {
 
     result = new JPopupMenu();
 
-    menuitem = new JMenuItem("Change color provider...");
+    menuitem = new JMenuItem("Change color provider...", ImageManager.getIcon("properties.gif"));
     menuitem.addActionListener((ActionEvent e) -> changeColorProvider());
     result.add(menuitem);
 
     menuitem = new JMenuItem("Reset color provider");
     menuitem.addActionListener((ActionEvent e) -> resetColorProvider());
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Save plot...", ImageManager.getIcon("save.gif"));
+    menuitem.addActionListener((ActionEvent e) -> saveComponent());
     result.add(menuitem);
 
     return result;
@@ -1090,6 +1096,7 @@ public class AttributeVisualizationPanel extends BasePanel {
    */
   @Override
   public void paintComponent(Graphics g) {
+    ((Graphics2D) g).setBackground(Color.WHITE);
     g.clearRect(0, 0, this.getWidth(), this.getHeight());
     GUIHelper.configureAntiAliasing(g, true);
 
