@@ -1,0 +1,9 @@
+# Project: adams
+# Date: 2024-05-13 15:11:10
+# User: fracpete
+# Charset: UTF-8
+#
+adams.flow.control.Flow -annotation "Generates a QR code from user input and displays it." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.EnterValue -stop-if-canceled true -message "Please enter a QR code payload" -initial-value foobar
+ adams.flow.transformer.EncodeBarcode -encoder "adams.data.barcode.encode.QRCode -width 250 -height 250"
+ adams.flow.sink.ImageViewer -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -selection-processor adams.gui.visualization.image.selection.NullProcessor -left-click-processor adams.gui.visualization.image.leftclick.NullProcessor -selection-shape-painter adams.gui.visualization.image.selectionshape.RectanglePainter -image-overlay adams.gui.visualization.image.NullOverlay

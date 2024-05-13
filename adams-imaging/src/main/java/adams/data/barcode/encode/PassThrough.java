@@ -20,6 +20,7 @@
 
 package adams.data.barcode.encode;
 
+import adams.core.MessageCollection;
 import adams.data.image.BufferedImageContainer;
 
 /**
@@ -87,13 +88,36 @@ public class PassThrough extends AbstractBarcodeEncoder {
   }
 
   /**
-   * Dummy barcode encoder, does no encoding.
+   * Returns the payload to use for generating the barcode.
    *
-   * @param image the image to draw on
-   * @return the image to draw on
+   * @return		the payload
    */
   @Override
-  protected String doDraw(BufferedImageContainer image) {
+  protected String getPayload() {
     return null;
+  }
+
+  /**
+   * Checks whether the payload can be processed.
+   *
+   * @param payload	the code to check
+   * @return        	null if valid, otherwise error message
+   */
+  @Override
+  protected String isValid(String payload) {
+    return null;
+  }
+
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  @Override
+  protected BufferedImageContainer doEncode(String payload, BufferedImageContainer cont, MessageCollection errors) {
+    return cont;
   }
 }

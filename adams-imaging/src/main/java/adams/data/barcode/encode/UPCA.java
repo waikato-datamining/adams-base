@@ -20,6 +20,7 @@
 
 package adams.data.barcode.encode;
 
+import adams.core.MessageCollection;
 import adams.data.image.BufferedImageContainer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -130,33 +131,33 @@ public class UPCA extends AbstractBarcodeEncoder {
    * See also <a href="https://en.wikipedia.org/wiki/Universal_Product_Code#Check_digits"
    * target="_blank">Universal Product Code</a>.
    *
-   * @param code     the code to check
+   * @param payload     the code to check
    * @return        null if valid, otherwise error message
    */
-  protected String isValidCode(String code) {
+  protected String isValid(String payload) {
     int       sum;
     int       i;
     int       c;
     int       check;
 
-    if ((code == null) || code.isEmpty())
+    if ((payload == null) || payload.isEmpty())
       return "Digits must not be null or empty.";
-    if (!code.matches("\\d+"))
-      return "Value must not contain non-numeric characters, provided: " + code;
+    if (!payload.matches("\\d+"))
+      return "Value must not contain non-numeric characters, provided: " + payload;
     // do we compute checksum automatically?
-    if (code.length() == 11)
+    if (payload.length() == 11)
       return null;
-    if (code.length() != 12)
-      return "11 or 12 digits must be present: " + code + " (=" + code.length() + ")";
+    if (payload.length() != 12)
+      return "11 or 12 digits must be present: " + payload + " (=" + payload.length() + ")";
 
     sum = 0;
     for (i = 0; i < 11; i++) {
-      c = Integer.parseInt(code.substring(i, i+1));
+      c = Integer.parseInt(payload.substring(i, i+1));
       sum += c * ((i % 2 == 0) ? 1 : 3);
     }
     check = 10 - (sum % 10);
-    if (check != Integer.parseInt(code.substring(11, 12)))
-      return "Checksum digits differ: expected=" + check + ", found=" + code.substring(11, 12);
+    if (check != Integer.parseInt(payload.substring(11, 12)))
+      return "Checksum digits differ: expected=" + check + ", found=" + payload.substring(11, 12);
 
     return null;
   }
@@ -169,7 +170,7 @@ public class UPCA extends AbstractBarcodeEncoder {
   public void setDigits(String value) {
     String      check;
 
-    check = isValidCode(value);
+    check = isValid(value);
 
     if (check == null) {
       m_Digits = value;
@@ -190,29 +191,41 @@ public class UPCA extends AbstractBarcodeEncoder {
   }
 
   /**
-   * Performs the actual draw operation.
+   * Returns the payload to use for generating the barcode.
    *
-   * @param image the image to draw on
+   * @return		the payload
    */
   @Override
-  protected String doDraw(BufferedImageContainer image) {
-    String result = null;
+  protected String getPayload() {
+    return getDigits();
+  }
 
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  @Override
+  protected BufferedImageContainer doEncode(String payload, BufferedImageContainer cont, MessageCollection errors) {
     try {
       UPCAWriter writer = new UPCAWriter();
       Map<EncodeHintType, Object> hints = new HashMap<>();
       hints.put(EncodeHintType.MARGIN, m_Margin);
-      BitMatrix matrix = writer.encode(m_Digits, BarcodeFormat.UPC_A, m_Width, m_Height, hints);
-
+      BitMatrix matrix = writer.encode(payload, BarcodeFormat.UPC_A, m_Width, m_Height, hints);
+      // TODO: MatrixToImageWriter.toBufferedImage(bitMatrix);
       for (int y = m_Y; y < m_Height; y++) {
         for (int x = m_X; x < m_Width; x++)
-          image.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
+          cont.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
     catch (Exception e) {
-      result = e.getMessage();
+      errors.add("Failed to generate UPCA using '" + payload + "'!", e);
+      cont = null;
     }
 
-    return result;
+    return cont;
   }
 }

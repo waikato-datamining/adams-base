@@ -15,13 +15,16 @@
 
 /*
  * AbstractBarcodeEncoder.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.barcode.encode;
 
+import adams.core.MessageCollection;
 import adams.data.image.BufferedImageContainer;
 import adams.flow.transformer.draw.AbstractDrawOperation;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Ancestor for barcode encoders, i.e., classes that generated barcode images.
@@ -245,5 +248,104 @@ public abstract class AbstractBarcodeEncoder extends AbstractDrawOperation {
    */
   public String marginTipText() {
     return "White margin surrounding the barcode.";
+  }
+
+  /**
+   * Checks whether the payload can be processed.
+   *
+   * @param payload	the code to check
+   * @return        	null if valid, otherwise error message
+   */
+  protected abstract String isValid(String payload);
+
+  /**
+   * Generates a new image according to the specified dimensions.
+   *
+   * @return		the new image
+   */
+  protected BufferedImage newImage() {
+    return new BufferedImage(m_Width, m_Height, BufferedImage.TYPE_INT_RGB);
+  }
+
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param errors 	for collecting error messages
+   * @return		the generated barcode, null if failed to generate
+   */
+  public BufferedImageContainer encode(String payload, MessageCollection errors) {
+    return encode(payload, null, errors);
+  }
+
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  protected abstract BufferedImageContainer doEncode(String payload, BufferedImageContainer cont, MessageCollection errors);
+
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  public BufferedImageContainer encode(String payload, BufferedImageContainer cont, MessageCollection errors) {
+    String		error;
+
+    // check payload
+    error = isValid(payload);
+    if (error != null) {
+      errors.add(error);
+      return null;
+    }
+
+    if (cont == null) {
+      cont = new BufferedImageContainer();
+      cont.setImage(newImage());
+    }
+
+    cont = doEncode(payload, cont, errors);
+
+    return cont;
+  }
+
+  /**
+   * Returns the payload to use for generating the barcode.
+   *
+   * @return		the payload
+   */
+  protected abstract String getPayload();
+
+  /**
+   * Performs the actual draw operation.
+   *
+   * @param image	the image to draw on
+   * @return		null if OK, otherwise error message
+   */
+  @Override
+  protected String doDraw(BufferedImageContainer image) {
+    String		payload;
+    MessageCollection	errors;
+
+    payload = getPayload();
+
+    // nothing to do?
+    if ((payload == null) || payload.isEmpty())
+      return null;
+
+    errors = new MessageCollection();
+    encode(payload, image, errors);
+
+    if (errors.isEmpty())
+      return null;
+    else
+      return errors.toString();
   }
 }

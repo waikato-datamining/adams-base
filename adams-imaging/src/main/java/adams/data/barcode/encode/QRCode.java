@@ -20,6 +20,7 @@
 
 package adams.data.barcode.encode;
 
+import adams.core.MessageCollection;
 import adams.data.image.BufferedImageContainer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -193,30 +194,53 @@ public class QRCode extends AbstractBarcodeEncoder {
   }
 
   /**
-   * Performs the actual draw operation.
+   * Returns the payload to use for generating the barcode.
    *
-   * @param image the image to draw on
+   * @return		the payload
    */
   @Override
-  protected String doDraw(BufferedImageContainer image) {
-    String result = null;
+  protected String getPayload() {
+    return getText();
+  }
 
+  /**
+   * Checks whether the payload can be processed.
+   *
+   * @param payload	the code to check
+   * @return        	null if valid, otherwise error message
+   */
+  @Override
+  protected String isValid(String payload) {
+    return null;
+  }
+
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  @Override
+  protected BufferedImageContainer doEncode(String payload, BufferedImageContainer cont, MessageCollection errors) {
     try {
       QRCodeWriter writer = new QRCodeWriter();
       Map<EncodeHintType, Object> hints = new HashMap<>();
       hints.put(EncodeHintType.ERROR_CORRECTION, m_ErrorCorrectionLevel);
       hints.put(EncodeHintType.MARGIN, m_Margin);
-      BitMatrix matrix = writer.encode(m_Text, BarcodeFormat.QR_CODE, m_Width, m_Height, hints);
-
+      BitMatrix matrix = writer.encode(payload, BarcodeFormat.QR_CODE, m_Width, m_Height, hints);
+      // TODO: MatrixToImageWriter.toBufferedImage(bitMatrix);
       for (int y = m_Y; y < m_Height; y++) {
         for (int x = m_X; x < m_Width; x++)
-          image.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
+          cont.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
     catch (WriterException e) {
-      result = e.getMessage();
+      errors.add("Failed to generate QR code using '" + payload + "'!", e);
+      cont = null;
     }
 
-    return result;
+    return cont;
   }
 }

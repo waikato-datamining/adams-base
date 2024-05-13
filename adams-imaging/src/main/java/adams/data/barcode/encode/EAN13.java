@@ -20,6 +20,7 @@
 
 package adams.data.barcode.encode;
 
+import adams.core.MessageCollection;
 import adams.data.image.BufferedImageContainer;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -129,33 +130,33 @@ public class EAN13 extends AbstractBarcodeEncoder {
    * See also <a href="https://en.wikipedia.org/wiki/International_Article_Number_%28EAN%29#Calculation"
    * target="_blank">International Article Number (EAN)</a>.
    *
-   * @param ean     the code to check
+   * @param payload     the code to check
    * @return        null if valid, otherwise error message
    */
-  protected String isValidCode(String ean) {
+  protected String isValid(String payload) {
     int       sum;
     int       i;
     int       c;
     int       check;
 
-    if ((ean == null) || ean.isEmpty())
+    if ((payload == null) || payload.isEmpty())
       return "Digits must not be null or empty.";
-    if (!ean.matches("\\d+"))
-      return "Value must not contain non-numeric characters, provided: " + ean;
-    if (ean.length() != 13)
-      return "13 digits must be present: " + ean + " (=" + ean.length() + ")";
+    if (!payload.matches("\\d+"))
+      return "Value must not contain non-numeric characters, provided: " + payload;
+    if (payload.length() != 13)
+      return "13 digits must be present: " + payload + " (=" + payload.length() + ")";
 
     sum = 0;
     for (i = 0; i < 12; i++) {
-      c = Integer.parseInt(ean.substring(i, i+1));
+      c = Integer.parseInt(payload.substring(i, i+1));
       sum += c * ((i % 2 == 0) ? 1 : 3);
     }
     check = sum;
     while (check > 0)
       check -= 10;
     check = Math.abs(check);
-    if (check != Integer.parseInt(ean.substring(12, 13)))
-      return "Checksum digits differ: expected=" + check + ", found=" + ean.substring(12, 13);
+    if (check != Integer.parseInt(payload.substring(12, 13)))
+      return "Checksum digits differ: expected=" + check + ", found=" + payload.substring(12, 13);
 
     return null;
   }
@@ -168,7 +169,7 @@ public class EAN13 extends AbstractBarcodeEncoder {
   public void setDigits(String value) {
     String      check;
 
-    check = isValidCode(value);
+    check = isValid(value);
 
     if (check == null) {
       m_Digits = value;
@@ -189,29 +190,41 @@ public class EAN13 extends AbstractBarcodeEncoder {
   }
 
   /**
-   * Performs the actual draw operation.
+   * Returns the payload to use for generating the barcode.
    *
-   * @param image the image to draw on
+   * @return		the payload
    */
   @Override
-  protected String doDraw(BufferedImageContainer image) {
-    String result = null;
+  protected String getPayload() {
+    return getDigits();
+  }
 
+  /**
+   * Encodes the supplied payload.
+   *
+   * @param payload	the payload to encode
+   * @param cont	the container to add the barcode; creates a new one if null
+   * @param errors 	for collecting error messages
+   * @return		the updated/generated container, null if failed to generate
+   */
+  @Override
+  protected BufferedImageContainer doEncode(String payload, BufferedImageContainer cont, MessageCollection errors) {
     try {
       EAN13Writer writer = new EAN13Writer();
       Map<EncodeHintType, Object> hints = new HashMap<>();
       hints.put(EncodeHintType.MARGIN, m_Margin);
-      BitMatrix matrix = writer.encode(m_Digits, BarcodeFormat.EAN_13, m_Width, m_Height, hints);
-
+      BitMatrix matrix = writer.encode(payload, BarcodeFormat.EAN_13, m_Width, m_Height, hints);
+      // TODO: MatrixToImageWriter.toBufferedImage(bitMatrix);
       for (int y = m_Y; y < m_Height; y++) {
-        for (int x = m_X; x < m_Width; x++)
-          image.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
+	for (int x = m_X; x < m_Width; x++)
+	  cont.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
     catch (Exception e) {
-      result = e.getMessage();
+      errors.add("Failed to generate EAN13 code using '" + payload + "'!", e);
+      cont = null;
     }
 
-    return result;
+    return cont;
   }
 }

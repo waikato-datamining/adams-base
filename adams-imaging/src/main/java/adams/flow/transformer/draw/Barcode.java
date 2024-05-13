@@ -15,7 +15,7 @@
 
 /*
  * Barcode.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.draw;
@@ -112,6 +112,7 @@ public class Barcode extends AbstractDrawOperation {
    */
   @Override
   protected String doDraw(BufferedImageContainer image) {
-    return m_Encoder.doDraw(image);
+    m_Encoder.setOwner(getOwner());
+    return m_Encoder.draw(image);
   }
 }
