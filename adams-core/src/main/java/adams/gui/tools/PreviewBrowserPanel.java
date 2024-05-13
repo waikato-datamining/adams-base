@@ -1100,7 +1100,7 @@ public class PreviewBrowserPanel
       String initial = "";
       if (hasNote(file))
 	initial = getNote(file);
-      String comment = GUIHelper.showInputDialog(this, "Please enter note for '" + obj + "': ", initial, "Edit note", null, 30, 4);
+      String comment = GUIHelper.showInputDialog(this, "Please enter note for '" + obj + "' (Ctrl+Enter for new line): ", initial, "Edit note", null, 30, 4);
       if (comment == null)
 	return;
       setNote(file, comment);
