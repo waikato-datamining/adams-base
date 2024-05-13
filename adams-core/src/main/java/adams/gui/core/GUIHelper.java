@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -2092,7 +2092,7 @@ public class GUIHelper {
 	  }
 	  else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
 	    e.consume();
-	    panelInput.getTextArea().append("\n");
+	    panelInput.getTextArea().insert("\n", panelInput.getTextArea().getCaretPosition());
 	  }
 	}
 	else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
