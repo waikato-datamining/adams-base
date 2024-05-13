@@ -216,8 +216,8 @@ public class UPCA extends AbstractBarcodeEncoder {
       hints.put(EncodeHintType.MARGIN, m_Margin);
       BitMatrix matrix = writer.encode(payload, BarcodeFormat.UPC_A, m_Width, m_Height, hints);
       // TODO: MatrixToImageWriter.toBufferedImage(bitMatrix);
-      for (int y = m_Y; y < m_Height; y++) {
-        for (int x = m_X; x < m_Width; x++)
+      for (int y = m_Y - 1; y < m_Height; y++) {
+        for (int x = m_X - 1; x < m_Width; x++)
           cont.getImage().setRGB(x, y, matrix.get(x, y) ? 0 : 0xFFFFFF);
       }
     }
