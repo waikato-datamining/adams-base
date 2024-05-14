@@ -40,8 +40,6 @@ public class EditCombineXExpression
 
   private static final long serialVersionUID = -6455846796708144253L;
 
-  public static final String VARIABLE_VALUE = "variableValue";
-
   /**
    * Returns the caption of this action.
    *
