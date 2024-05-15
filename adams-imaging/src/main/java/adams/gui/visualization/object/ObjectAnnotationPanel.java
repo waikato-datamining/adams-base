@@ -15,7 +15,7 @@
 
 /*
  * ObjectAnnotationPanel.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -167,6 +167,9 @@ public class ObjectAnnotationPanel
   /** the button for using the last report. */
   protected BaseFlatButton m_ButtonUsePreviousReport;
 
+  /** for toggling the visibility of the annotations. */
+  protected BaseToggleButton m_ButtonShowAnnotations;
+
   /** the left split panel (label selector | rest). */
   protected BaseSplitPane m_SplitPaneLeft;
 
@@ -245,6 +248,9 @@ public class ObjectAnnotationPanel
   /** the active tool. */
   protected Tool m_ActiveTool;
 
+  /** whether to show the annotations. */
+  protected boolean m_ShowAnnotations;
+
   /**
    * Initializes the members.
    */
@@ -260,6 +266,7 @@ public class ObjectAnnotationPanel
     m_PreviousReport            = null;
     m_Undo                      = new Undo(List.class, false);
     m_Tools                     = new ArrayList<>();
+    m_ShowAnnotations           = true;
     m_Undo.addUndoListener(this);
     m_AnnotationChangeListeners = new HashSet<>();
     setAnnotator(new NullAnnotator());
@@ -367,6 +374,12 @@ public class ObjectAnnotationPanel
     });
     m_PanelUsePreviousReport.add(m_ButtonUsePreviousReport);
     m_PanelUsePreviousReport.setVisible(false);
+
+    m_ButtonShowAnnotations = new BaseToggleButton(ImageManager.getIcon("locateobjects.gif"));
+    m_ButtonShowAnnotations.setToolTipText("Toggles visibility of annotations");
+    m_ButtonShowAnnotations.setSelected(true);
+    m_ButtonShowAnnotations.addActionListener((ActionEvent e) -> setShowAnnotations(m_ButtonShowAnnotations.isSelected()));
+    panel.add(m_ButtonShowAnnotations);
 
     // left split pane
     m_SplitPaneLeft = new BaseSplitPane();
@@ -1348,6 +1361,25 @@ public class ObjectAnnotationPanel
   protected void notifyTools() {
     for (Tool tool: m_Tools)
       tool.update();
+  }
+
+  /**
+   * Sets whether the annotations are to be shown.
+   *
+   * @param value	true if to show the annotations
+   */
+  public void setShowAnnotations(boolean value) {
+    m_ShowAnnotations = value;
+    update();
+  }
+
+  /**
+   * Returns whether the annotations are shown.
+   *
+   * @return		true if shown
+   */
+  public boolean getShowAnnotations() {
+    return m_ShowAnnotations;
   }
 
   /**

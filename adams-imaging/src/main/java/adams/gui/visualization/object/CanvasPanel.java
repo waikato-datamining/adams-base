@@ -15,7 +15,7 @@
 
 /*
  * CanvasPanel.java
- * Copyright (C) 2020-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -635,7 +635,9 @@ public class CanvasPanel
       g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
     }
 
-    getOwner().getOverlay().paint(getOwner(), g);
-    getOwner().getAnnotator().paintSelection(g);
+    if (getOwner().getShowAnnotations()) {
+      getOwner().getOverlay().paint(getOwner(), g);
+      getOwner().getAnnotator().paintSelection(g);
+    }
   }
 }
