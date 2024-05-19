@@ -78,6 +78,7 @@ public class CopyFileTo
     if (m_LastDir == null)
       m_LastDir = new PlaceholderFile(".");
     chooser = DirectoryChooserFactory.createChooser(m_LastDir);
+    chooser.setApproveButtonText("Select");
     retVal  = chooser.showOpenDialog(getOwner());
     if (retVal != DirectoryChooserFactory.APPROVE_OPTION)
       return;
