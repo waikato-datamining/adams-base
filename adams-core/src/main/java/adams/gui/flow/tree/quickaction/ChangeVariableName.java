@@ -116,7 +116,7 @@ public class ChangeVariableName
       GUIHelper.showErrorMessage(parent, "Failed to update variable name!");
       return;
     }
-    addUndoPoint("Changed variable name to :" + nameNew);
+    addUndoPoint("Changed variable name to:" + nameNew);
     m_State.selNode.setActor(actorNew);
     if (!m_State.tree.getIgnoreNameChanges()) {
       if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(m_State.tree), "Propagate changes throughout the tree?") == JOptionPane.YES_OPTION) {
