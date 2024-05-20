@@ -1345,14 +1345,22 @@ public class Tree
    * @return		the popup menu, null if not possible
    */
   public BasePopupMenu createNodeQuickActionMenu(MouseEvent e) {
+    return createNodeQuickActionMenu(getTreeState(e));
+  }
+
+  /**
+   * Generates a quick action popup if possible for the given mouse event.
+   *
+   * @param e		the event
+   * @return		the popup menu, null if not possible
+   */
+  public BasePopupMenu createNodeQuickActionMenu(StateContainer state) {
     BasePopupMenu	menu;
     JMenuItem		menuitem;
-    StateContainer	state;
     MenuHeader		header;
     TreeQuickAction 	action;
     boolean		any;
 
-    state = getTreeState(e);
     if (state == null)
       return null;
 
