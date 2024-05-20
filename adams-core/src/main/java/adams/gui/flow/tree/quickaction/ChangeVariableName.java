@@ -31,6 +31,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.UserModeUtils;
 import adams.gui.flow.tree.postprocessor.VariableRenamed;
 
+import javax.swing.JOptionPane;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 
@@ -118,8 +119,10 @@ public class ChangeVariableName
     addUndoPoint("Changed variable name to :" + nameNew);
     m_State.selNode.setActor(actorNew);
     if (!m_State.tree.getIgnoreNameChanges()) {
-      varRenamed = new VariableRenamed();
-      varRenamed.postProcess(m_State.tree, m_State.parent.getActor(), actorOld, actorNew);
+      if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(m_State.tree), "Propagate changes throughout the tree?") == JOptionPane.YES_OPTION) {
+	varRenamed = new VariableRenamed();
+	varRenamed.postProcess(m_State.tree, m_State.parent.getActor(), actorOld, actorNew);
+      }
     }
   }
 }
