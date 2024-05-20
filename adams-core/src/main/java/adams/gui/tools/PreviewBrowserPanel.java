@@ -1094,6 +1094,9 @@ public class PreviewBrowserPanel
 
     result.addSeparator();
 
+    if (SendToActionUtils.addSendToSubmenu(this, result))
+      result.addSeparator();
+
     menuitem = new JMenuItem("Edit note...");
     menuitem.setEnabled(obj != null);
     menuitem.addActionListener((ActionEvent ae) -> {
