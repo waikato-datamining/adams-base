@@ -23,6 +23,8 @@ package weka.filters.unsupervised.instance;
 import adams.core.base.BaseRegExp;
 import adams.data.weka.WekaAttributeIndex;
 import weka.core.Attribute;
+import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -288,6 +290,26 @@ public class RemoveWithLabels
    */
   public String updateHeaderTipText() {
     return "If enabled, the labels also get removed from the attribute definition.";
+  }
+
+  /**
+   * Returns the Capabilities of this filter.
+   *
+   * @return            the capabilities of this object
+   * @see               Capabilities
+   */
+  public Capabilities getCapabilities() {
+    Capabilities 	result;
+
+    result = new Capabilities(this);
+    result.enableAll();
+    result.enable(Capability.NO_CLASS);
+    result.enable(Capability.MISSING_VALUES);
+    result.enable(Capability.MISSING_CLASS_VALUES);
+
+    result.setMinimumNumberInstances(0);
+
+    return result;
   }
 
   /**
