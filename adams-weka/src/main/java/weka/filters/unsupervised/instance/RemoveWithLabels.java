@@ -414,6 +414,7 @@ public class RemoveWithLabels
 	else {
 	  newInst = (Instance) oldInst.copy();
 	}
+	copyValues(newInst, false, oldInst.dataset(), outputFormatPeek());
 	result.add(newInst);
       }
     }
