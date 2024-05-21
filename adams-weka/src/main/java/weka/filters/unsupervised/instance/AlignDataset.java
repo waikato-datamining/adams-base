@@ -393,7 +393,7 @@ public class AlignDataset
    *
    * @param reference	the reference dataset
    * @param current	the dataset to align
-   * @return		the multi filter for aligning the datasets
+   * @return		the multi filter for aligning the datasets, null if nothing needs to be done
    * @throws Exception	if the datasets cannot be aligned
    */
   protected MultiFilter checkCompatibility(Instances reference, Instances current) throws Exception {
@@ -457,11 +457,17 @@ public class AlignDataset
       filters.add(anyToString);
     }
 
-    result = new MultiFilter();
-    result.setFilters(filters.toArray(new Filter[0]));
-
-    if (getDebug())
-      System.out.println("Compatibility filter: " + OptionUtils.getCommandLine(result));
+    if (!filters.isEmpty()) {
+      result = new MultiFilter();
+      result.setFilters(filters.toArray(new Filter[0]));
+      if (getDebug())
+	System.out.println("Compatibility filter: " + OptionUtils.getCommandLine(result));
+    }
+    else {
+      result = null;
+      if (getDebug())
+	System.out.println("Datasets already compatible!");
+    }
 
     return result;
   }
@@ -488,8 +494,13 @@ public class AlignDataset
 
     // are datasets compatible?
     multi = checkCompatibility(m_ActualReferenceDataset, instances);
-    multi.setInputFormat(instances);
-    filtered = Filter.useFilter(instances, multi);
+    if (multi != null) {
+      multi.setInputFormat(instances);
+      filtered = Filter.useFilter(instances, multi);
+    }
+    else {
+      filtered = instances;
+    }
 
     // generate output data
     result = new Instances(getOutputFormat(), filtered.numInstances());
