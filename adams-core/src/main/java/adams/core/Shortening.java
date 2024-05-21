@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Shortening.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -24,7 +24,6 @@ package adams.core;
  * Helper class for shortening operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Shortening {
 
@@ -37,7 +36,10 @@ public class Shortening {
    * @return		the processed string
    */
   public static String shortenStart(String s, int max) {
-    return (s.length() > max ? ("..." + s.substring(s.length() - max, s.length())) : s);
+    if (s == null)
+      return null;
+    else
+      return (s.length() > max ? ("..." + s.substring(s.length() - max, s.length())) : s);
   }
 
   /**
@@ -51,6 +53,9 @@ public class Shortening {
   public static String shortenMiddle(String s, int max) {
     String	result;
     int		len;
+
+    if (s == null)
+      return null;
 
     if (s.length() > max) {
       len    = max / 2;
@@ -72,6 +77,9 @@ public class Shortening {
    * @return		the processed string
    */
   public static String shortenEnd(String s, int max) {
+    if (s == null)
+      return null;
+
     if (s.length() > max)
       return s.substring(0, max) + "...";
     else
@@ -87,6 +95,9 @@ public class Shortening {
    * @return		the processed string
    */
   public static String shorten(String s, int max, ShorteningType type) {
+    if (s == null)
+      return null;
+
     switch (type) {
       case NONE:
 	return s;
