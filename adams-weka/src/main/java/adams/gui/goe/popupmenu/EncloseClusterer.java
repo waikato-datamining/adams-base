@@ -14,8 +14,8 @@
  */
 
 /*
- * EncloseClassifier.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * EncloseClusterer.java
+ * Copyright (C) 2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -24,8 +24,8 @@ import adams.core.ClassLister;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.ConsolePanel;
 import adams.gui.goe.GenericObjectEditorPopupMenu;
-import weka.classifiers.Classifier;
-import weka.classifiers.SingleClassifierEnhancer;
+import weka.clusterers.Clusterer;
+import weka.clusterers.SingleClustererEnhancer;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -36,11 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * For enclosing classifiers in SingleClassifierEnhancer wrappers.
+ * For enclosing clusterers in SingleClustererEnhancer wrappers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class EncloseClassifier
+public class EncloseClusterer
   extends AbstractGenericObjectEditorPopupMenuCustomizer {
 
   private static final long serialVersionUID = 7573235626494111377L;
@@ -64,7 +64,7 @@ public class EncloseClassifier
    */
   @Override
   protected boolean handles(GenericObjectEditorPopupMenu menu, PropertyEditor editor, JComponent comp) {
-    return (editor.getValue() instanceof Classifier);
+    return (editor.getValue() instanceof Clusterer);
   }
 
   /**
@@ -81,7 +81,7 @@ public class EncloseClassifier
     JMenuItem		item;
     Class[] 		classes;
 
-    classes = ClassLister.getSingleton().getClasses(SingleClassifierEnhancer.class);
+    classes = ClassLister.getSingleton().getClasses(SingleClustererEnhancer.class);
     if (classes.length > 0) {
       items = new ArrayList<>();
       for (Class cls: classes) {
@@ -89,13 +89,13 @@ public class EncloseClassifier
 	item = new JMenuItem(cls.getName());
 	item.addActionListener((ActionEvent e) -> {
 	  try {
-	    SingleClassifierEnhancer wrapper = (SingleClassifierEnhancer) fCls.getDeclaredConstructor().newInstance();
-	    Classifier base = (Classifier) editor.getValue();
-	    wrapper.setClassifier(base);
+	    SingleClustererEnhancer wrapper = (SingleClustererEnhancer) fCls.getDeclaredConstructor().newInstance();
+	    Clusterer base = (Clusterer) editor.getValue();
+	    wrapper.setClusterer(base);
 	    editor.setValue(wrapper);
 	  }
 	  catch (Exception ex) {
-	    ConsolePanel.getSingleton().append("Failed to wrap classifier in " + fCls.getName() + "!", ex);
+	    ConsolePanel.getSingleton().append("Failed to wrap clusterer in " + fCls.getName() + "!", ex);
 	  }
 	});
 	items.add(item);

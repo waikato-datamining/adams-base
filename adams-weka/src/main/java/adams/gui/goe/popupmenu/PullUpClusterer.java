@@ -14,33 +14,27 @@
  */
 
 /*
- * EncloseClassifier.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * PullUpClusterer.java
+ * Copyright (C) 2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
 
-import adams.core.ClassLister;
-import adams.gui.core.BaseMenu;
-import adams.gui.core.ConsolePanel;
 import adams.gui.goe.GenericObjectEditorPopupMenu;
-import weka.classifiers.Classifier;
-import weka.classifiers.SingleClassifierEnhancer;
+import weka.clusterers.Clusterer;
+import weka.clusterers.SingleClustererEnhancer;
 
 import javax.swing.JComponent;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyEditor;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * For enclosing classifiers in SingleClassifierEnhancer wrappers.
+ * For pulling up clusterers from SingleClustererEnhancer wrappers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class EncloseClassifier
+public class PullUpClusterer
   extends AbstractGenericObjectEditorPopupMenuCustomizer {
 
   private static final long serialVersionUID = 7573235626494111377L;
@@ -52,7 +46,7 @@ public class EncloseClassifier
    */
   @Override
   public String getName() {
-    return "Enclose";
+    return "Pull up";
   }
 
   /**
@@ -64,7 +58,7 @@ public class EncloseClassifier
    */
   @Override
   protected boolean handles(GenericObjectEditorPopupMenu menu, PropertyEditor editor, JComponent comp) {
-    return (editor.getValue() instanceof Classifier);
+    return (editor.getValue() instanceof SingleClustererEnhancer);
   }
 
   /**
@@ -76,33 +70,14 @@ public class EncloseClassifier
    */
   @Override
   protected void doCustomize(GenericObjectEditorPopupMenu menu, final PropertyEditor editor, JComponent comp) {
-    JMenu 		submenu;
-    List<JMenuItem> 	items;
     JMenuItem		item;
-    Class[] 		classes;
 
-    classes = ClassLister.getSingleton().getClasses(SingleClassifierEnhancer.class);
-    if (classes.length > 0) {
-      items = new ArrayList<>();
-      for (Class cls: classes) {
-	final Class fCls = cls;
-	item = new JMenuItem(cls.getName());
-	item.addActionListener((ActionEvent e) -> {
-	  try {
-	    SingleClassifierEnhancer wrapper = (SingleClassifierEnhancer) fCls.getDeclaredConstructor().newInstance();
-	    Classifier base = (Classifier) editor.getValue();
-	    wrapper.setClassifier(base);
-	    editor.setValue(wrapper);
-	  }
-	  catch (Exception ex) {
-	    ConsolePanel.getSingleton().append("Failed to wrap classifier in " + fCls.getName() + "!", ex);
-	  }
-	});
-	items.add(item);
-      }
-      submenu = BaseMenu.createCascadingMenu(items, -1, "More...");
-      submenu.setText("Enclose");
-      menu.add(submenu);
-    }
+    item = new JMenuItem(getName());
+    item.addActionListener((ActionEvent e) -> {
+      SingleClustererEnhancer wrapper = (SingleClustererEnhancer) editor.getValue();
+      Clusterer base = wrapper.getClusterer();
+      editor.setValue(base);
+    });
+    menu.add(item);
   }
 }
