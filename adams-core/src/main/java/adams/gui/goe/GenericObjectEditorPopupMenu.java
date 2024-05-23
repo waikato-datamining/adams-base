@@ -15,11 +15,12 @@
 
 /*
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
 import adams.core.ClassLister;
+import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
 import adams.core.option.OptionHandler;
@@ -99,6 +100,14 @@ public class GenericObjectEditorPopupMenu
     final boolean		canChangeClass;
     final GenericObjectEditor 	goeEditor;
     final GenericArrayEditor	gaeEditor;
+    PropertySheetPanel		parent;
+    final AbstractOption 	option;
+
+    parent = (PropertySheetPanel) GUIHelper.getParent(comp, PropertySheetPanel.class);
+    if (parent != null)
+      option = parent.findOption(editor);
+    else
+      option = null;
 
     m_ChangeListeners = new HashSet<>();
     hasNested         = (editor.getValue() instanceof OptionHandler);
@@ -123,18 +132,6 @@ public class GenericObjectEditorPopupMenu
     else
       canChangeClass = getCanChangeClassInDialog(editor);
 
-    item = new JMenuItem("Use default", ImageManager.getIcon("undo.gif"));
-    item.addActionListener((ActionEvent e) -> {
-      try {
-	editor.setValue(editor.getValue().getClass().getDeclaredConstructor().newInstance());
-	notifyChangeListeners();
-      }
-      catch (Exception ex) {
-        GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
-      }
-    });
-    add(item);
-
     if (goeEditor != null) {
       menu = new JMenu("User mode");
       menu.setIcon(ImageManager.getIcon("person.png"));
@@ -150,22 +147,37 @@ public class GenericObjectEditorPopupMenu
       add(menu);
     }
 
-    item.addActionListener((ActionEvent e) -> {
-      try {
-	editor.setValue(editor.getValue().getClass().getDeclaredConstructor().newInstance());
-	notifyChangeListeners();
-      }
-      catch (Exception ex) {
-	GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
-      }
-    });
-    add(item);
+    // only add "Use default" it not a native ADAMS OptionHandler
+    // for ADAMS OptionHandlers, the VariableSupport.updatePopup method will add
+    // a "Use default" menu item
+    if (option == null) {
+      item = new JMenuItem("Use default", ImageManager.getIcon("undo.gif"));
+      item.addActionListener((ActionEvent e) -> {
+	try {
+	  Class cls = editor.getValue().getClass();
+	  Object obj;
+	  if (cls.isArray()) {
+	    cls = cls.getComponentType();
+	    obj = Array.newInstance(cls, 0);
+	  }
+	  else {
+	    obj = cls.getDeclaredConstructor().newInstance();
+	  }
+	  editor.setValue(obj);
+	  notifyChangeListeners();
+	}
+	catch (Exception ex) {
+	  GUIHelper.showErrorMessage(GUIHelper.getParentDialog(comp), "Failed to use default!", ex, "Error");
+	}
+      });
+      add(item);
+    }
 
     // copy nested
     if (hasNested) {
       item = new JMenuItem("Copy nested setup", ImageManager.getIcon("copy.gif"));
-      item.addActionListener((ActionEvent e) ->
-	ClipboardHelper.copyToClipboard(AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue())));
+      item.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(
+	AbstractOptionProducer.toString(NestedProducer.class, (OptionHandler) editor.getValue())));
       add(item);
     }
 
@@ -205,8 +217,8 @@ public class GenericObjectEditorPopupMenu
     // paste
     item = new JMenuItem("Paste " + itemText, ImageManager.getIcon("paste.gif"));
     item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
-    item.addActionListener((ActionEvent e) ->
-      updateEditor(editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard()));
+    item.addActionListener((ActionEvent e) -> updateEditor(
+      editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard()));
     add(item);
 
     // enter setup
