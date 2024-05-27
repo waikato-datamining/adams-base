@@ -25,6 +25,8 @@ import adams.gui.core.BaseShortcut;
 import adams.gui.flow.tree.StateContainer;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.Rectangle;
 
 /**
@@ -97,7 +99,22 @@ public class QuickAction
     if (state.selNode != null) {
       rect = state.tree.getPathBounds(state.selPath);
       if (rect != null)
-	SwingUtilities.invokeLater(() -> menu.show(state.tree, rect.x, rect.y));
+	SwingUtilities.invokeLater(() -> {
+	  menu.addPopupMenuListener(new PopupMenuListener() {
+	    @Override
+	    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+	    }
+	    @Override
+	    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+	      state.tree.requestFocus();
+	    }
+	    @Override
+	    public void popupMenuCanceled(PopupMenuEvent e) {
+	      state.tree.requestFocus();
+	    }
+	  });
+	  menu.show(state.tree, rect.x, rect.y);
+	});
     }
 
     return null;

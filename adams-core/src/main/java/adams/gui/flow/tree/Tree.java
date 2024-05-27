@@ -68,6 +68,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -1150,8 +1152,22 @@ public class Tree
 
     if (m_AllowNodePopup) {
       menu = createNodePopupMenu(e);
-      if (menu != null)
-        menu.showAbsolute(this, e);
+      if (menu != null) {
+	menu.addPopupMenuListener(new PopupMenuListener() {
+	  @Override
+	  public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+	  }
+	  @Override
+	  public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+	    Tree.this.requestFocus();
+	  }
+	  @Override
+	  public void popupMenuCanceled(PopupMenuEvent e) {
+	    Tree.this.requestFocus();
+	  }
+	});
+	menu.showAbsolute(this, e);
+      }
     }
   }
 
@@ -1333,8 +1349,22 @@ public class Tree
 
     if (m_AllowNodeQuickAction) {
       menu = createNodeQuickActionMenu(e);
-      if (menu != null)
+      if (menu != null) {
+	menu.addPopupMenuListener(new PopupMenuListener() {
+	  @Override
+	  public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+	  }
+	  @Override
+	  public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+	    Tree.this.requestFocus();
+	  }
+	  @Override
+	  public void popupMenuCanceled(PopupMenuEvent e) {
+	    Tree.this.requestFocus();
+	  }
+	});
 	menu.showAbsolute(this, e);
+      }
     }
   }
 
@@ -1349,9 +1379,9 @@ public class Tree
   }
 
   /**
-   * Generates a quick action popup if possible for the given mouse event.
+   * Generates a quick action popup if possible for the given state.
    *
-   * @param e		the event
+   * @param state	the state container
    * @return		the popup menu, null if not possible
    */
   public BasePopupMenu createNodeQuickActionMenu(StateContainer state) {
