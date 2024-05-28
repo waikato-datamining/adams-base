@@ -15,7 +15,7 @@
 
 /*
  * AbstractCallableActor.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -384,30 +384,11 @@ public abstract class AbstractCallableActor
   }
 
   /**
-   * Cleans up after the execution has finished. Graphical output is left
-   * untouched.
-   */
-  @Override
-  public void wrapUp() {
-    if (m_CallableActor != null) {
-      synchronized(m_CallableActor) {
-	m_CallableActor.wrapUp();
-      }
-    }
-
-    super.wrapUp();
-  }
-
-  /**
    * Cleans up after the execution has finished.
    */
   @Override
   public void cleanUp() {
     super.cleanUp();
-
-    if (m_CallableActor != null) {
-      m_CallableActor.cleanUp();
-      m_CallableActor = null;
-    }
+    m_CallableActor = null;
   }
 }
