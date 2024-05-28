@@ -15,11 +15,12 @@
 
 /*
  * FlowWorker.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
 
+import adams.core.DateUtils;
 import adams.core.Pausable;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
@@ -73,6 +74,9 @@ public class FlowWorker
   /** whether the flow is being stopped. */
   protected boolean m_Stopping;
 
+  /** the start time. */
+  protected long m_StartTime;
+
   /**
    * Initializes the worker.
    */
@@ -84,6 +88,7 @@ public class FlowWorker
     m_Debug            = debug;
     m_Running          = false;
     m_Stopping         = false;
+    m_StartTime        = 0;
   }
 
   /**
@@ -105,6 +110,7 @@ public class FlowWorker
     m_Owner.update();
 
     try {
+      m_StartTime = System.currentTimeMillis();
       showStatus("Initializing");
       m_Flow = ActorUtils.removeDisabledActors(m_Flow);
       if (m_Flow instanceof Flow) {
@@ -182,7 +188,8 @@ public class FlowWorker
   protected void done() {
     String	msg;
     String	errors;
-    int	countErrors;
+    int		countErrors;
+    long	time;
 
     showStatus("Finishing up");
     m_Flow.wrapUp();
@@ -209,10 +216,13 @@ public class FlowWorker
 	showNotification(m_Output, NotificationType.ERROR);
     }
     else {
-      if (m_Running)
-	msg = "Flow finished.";
-      else
+      if (m_Running) {
+	time = System.currentTimeMillis() - m_StartTime;
+	msg = "Flow finished (" + DateUtils.msecToString(time) + ").";
+      }
+      else {
 	msg = "User stopped flow.";
+      }
       if (errors != null)
 	msg += " " + errors + ".";
       showStatus(msg);
