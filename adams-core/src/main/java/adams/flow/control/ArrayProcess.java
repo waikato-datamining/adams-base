@@ -15,7 +15,7 @@
 
 /*
  * ArrayProcess.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -171,7 +171,7 @@ public class ArrayProcess
   public String getQuickInfo() {
     String	result;
 
-    result = QuickInfoHelper.toString(this, "arrayClass", (m_ArrayClass.length() != 0) ? m_ArrayClass : "-from 1st element-", "Class: ");
+    result = QuickInfoHelper.toString(this, "arrayClass", !m_ArrayClass.isEmpty() ? m_ArrayClass : "-from 1st element-", "Class: ");
     
     if (super.getQuickInfo() != null)
       result += ", " + super.getQuickInfo();
@@ -351,7 +351,7 @@ public class ArrayProcess
     Class[]	sub;
     int		i;
 
-    if (m_ArrayClass.length() > 0) {
+    if (!m_ArrayClass.isEmpty()) {
       try {
 	result = new Class[]{Utils.newArray(m_ArrayClass.getValue(), 0).getClass()};
       }
@@ -404,7 +404,7 @@ public class ArrayProcess
     if (isLoggingEnabled())
       getLogger().info("first active actor: " + first.getFullName());
 
-    if ((first != null) && (first instanceof InputConsumer)) {
+    if (first instanceof InputConsumer) {
       len = Array.getLength(m_CurrentToken.getPayload());
       for (i = 0; i < len; i++) {
         if (m_StoreElementIndex) {
@@ -429,9 +429,9 @@ public class ArrayProcess
       }
     }
 
-    if (!isStopped() && (result == null) && (getOutputTokens().size() > 0)) {
+    if (!isStopped() && (result == null) && !getOutputTokens().isEmpty()) {
       try {
-	if (m_ArrayClass.length() == 0)
+	if (m_ArrayClass.isEmpty())
 	  output = Array.newInstance(getOutputTokens().get(0).getPayload().getClass(), getOutputTokens().size());
 	else
 	  output = Utils.newArray(m_ArrayClass.getValue(), getOutputTokens().size());
