@@ -1549,6 +1549,7 @@ public class TreeOperations
 	dialog.setVisible(true);
       }
 
+      getOwner().getOwner().showStatus("");
       if (after != null)
 	SwingUtilities.invokeLater(after);
     };
