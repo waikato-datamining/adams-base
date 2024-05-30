@@ -15,7 +15,7 @@
 
 /*
  * EnQueue.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -45,34 +45,34 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: EnQueue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the queue in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: queue
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -86,6 +86,9 @@ public class EnQueue
 
   /** the name of the queue in the internal storage. */
   protected StorageName m_StorageName;
+
+  /** the retrieval delay in msecs. */
+  protected long m_RetrievalDelay;
 
   /**
    * Default constructor.
@@ -123,7 +126,7 @@ public class EnQueue
   public String globalInfo() {
     return "Enqueues the incoming data in the specified queue in internal storage.";
   }
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -132,13 +135,17 @@ public class EnQueue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName("queue"));
+      "storage-name", "storageName",
+      new StorageName("queue"));
+
+    m_OptionManager.add(
+      "retrieval-delay", "retrievalDelay",
+      0L, 0L, null);
   }
 
   /**
    * Returns whether storage items are being updated.
-   * 
+   *
    * @return		true if storage items are updated
    */
   public boolean isUpdatingStorage() {
@@ -155,6 +162,7 @@ public class EnQueue
     String	result;
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "retrievalDelay", m_RetrievalDelay, ", retrieval delay: ");
 
     return result;
   }
@@ -198,6 +206,35 @@ public class EnQueue
   }
 
   /**
+   * Sets the delay to enforce on the retrieval of objects from the queue.
+   *
+   * @param value	the delay
+   */
+  public void setRetrievalDelay(long value) {
+    m_RetrievalDelay = value;
+    reset();
+  }
+
+  /**
+   * Returns the delay to enforce on the retrieval of objects from the queue.
+   *
+   * @return		the delay
+   */
+  public long getRetrievalDelay() {
+    return m_RetrievalDelay;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String retrievalDelayTipText() {
+    return "The delay to enforce for the retrieval of objects from the queue.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
@@ -213,8 +250,12 @@ public class EnQueue
    */
   @Override
   public void input(Token token) {
-    if (QueueHelper.hasQueue(this, m_StorageName))
-      QueueHelper.enqueue(this, m_StorageName, token.getPayload());
+    if (QueueHelper.hasQueue(this, m_StorageName)) {
+      if (m_RetrievalDelay > 0)
+	QueueHelper.enqueueDelayedBy(this, m_StorageName, token.getPayload(), m_RetrievalDelay);
+      else
+	QueueHelper.enqueue(this, m_StorageName, token.getPayload());
+    }
   }
 
   /**

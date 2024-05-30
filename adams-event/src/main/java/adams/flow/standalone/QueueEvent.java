@@ -15,7 +15,7 @@
 
 /*
  * QueueEvent.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -131,7 +131,7 @@ public class QueueEvent
       if (queue != null) {
 	while (!m_Stopped) {
 	  try {
-	    if (queue.size() > 0) {
+	    if (queue.canRemove()) {
 	      token = new Token(queue.remove());
 	      getOwner().getInternalActors().input(token);
 	      getOwner().getInternalActors().execute();

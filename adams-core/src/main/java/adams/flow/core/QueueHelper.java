@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * QueueHelper.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -26,7 +26,6 @@ import adams.flow.control.StorageQueueHandler;
  * Helper class for queue handling.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class QueueHelper {
 
@@ -66,9 +65,41 @@ public class QueueHelper {
    * @return		true if successfully queued
    */
   public static boolean enqueue(Actor actor, StorageName queue, Object payload) {
-    if (!hasQueue(actor, queue))
-      return false;
-    else
-      return getQueue(actor, queue).add(payload);
+    StorageQueueHandler		handler;
+
+    handler = getQueue(actor, queue);
+    return (handler != null) && handler.add(payload);
+  }
+
+  /**
+   * Queues the payload in the specified queue, applying the specified retrieval delay.
+   *
+   * @param actor		the actor to obtain the queue for
+   * @param queue		the name of the queue
+   * @param payload		the data to queue
+   * @param retrievalDelay 	the delay to enforce on this object
+   * @return			true if successfully queued
+   */
+  public static boolean enqueueDelayedBy(Actor actor, StorageName queue, Object payload, long retrievalDelay) {
+    StorageQueueHandler		handler;
+
+    handler = getQueue(actor, queue);
+    return (handler != null) && handler.addDelayedBy(payload, retrievalDelay);
+  }
+
+  /**
+   * Queues the payload in the specified queue, applying the specified retrieval timestamp.
+   *
+   * @param actor		the actor to obtain the queue for
+   * @param queue		the name of the queue
+   * @param payload		the data to queue
+   * @param retrievalAt 	the delay to enforce on this object
+   * @return			true if successfully queued
+   */
+  public static boolean enqueueDelayedAt(Actor actor, StorageName queue, Object payload, long retrievalAt) {
+    StorageQueueHandler		handler;
+
+    handler = getQueue(actor, queue);
+    return (handler != null) && handler.addDelayedAt(payload, retrievalAt);
   }
 }
