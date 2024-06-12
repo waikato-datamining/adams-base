@@ -45,8 +45,8 @@ public class ViewObjects
   /** the prefixes for the objects. */
   protected BaseString[] m_Prefixes;
 
-  /** the label key in the meta-data. */
-  protected String m_LabelKey;
+  /** the keys in the meta-data. */
+  protected BaseString[] m_MetaDataKeys;
 
   /**
    * Returns a string describing the object.
@@ -70,8 +70,8 @@ public class ViewObjects
       getDefaultPrefixes());
 
     m_OptionManager.add(
-      "label-key", "labelKey",
-      getDefaultLabelKey());
+      "meta-data-key", "metaDataKeys",
+      getDefaultMetaDataKeys());
   }
 
   /**
@@ -113,31 +113,31 @@ public class ViewObjects
   }
 
   /**
-   * Returns the default key for the label.
+   * Returns the default meta-data keys.
    *
    * @return		the default
    */
-  protected String getDefaultLabelKey() {
-    return "type";
+  protected BaseString[] getDefaultMetaDataKeys() {
+    return new BaseString[]{new BaseString("type")};
   }
 
   /**
-   * Sets the meta-data key that holds the label.
+   * Sets the meta-data keys to display in separate columns.
    *
-   * @param value 	the key
+   * @param value 	the keys
    */
-  public void setLabelKey(String value) {
-    m_LabelKey = value;
+  public void setMetaDataKeys(BaseString[] value) {
+    m_MetaDataKeys = value;
     reset();
   }
 
   /**
-   * Returns the meta-data key that holds the label.
+   * Returns the meta-data keys to display in separate columns.
    *
-   * @return 		the key
+   * @return 		the keys
    */
-  public String getLabelKey() {
-    return m_LabelKey;
+  public BaseString[] getMetaDataKeys() {
+    return m_MetaDataKeys;
   }
 
   /**
@@ -146,8 +146,8 @@ public class ViewObjects
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String labelKeyTipText() {
-    return "The key in the meta-data that stores the label.";
+  public String metaDataKeysTipText() {
+    return "The keys in the meta-data to display as separate columns.";
   }
 
   /**
@@ -182,10 +182,7 @@ public class ViewObjects
     if (!hits.isEmpty()) {
       sheet = null;
       for (LocatedObject hit: hits) {
-	if (m_LabelKey.isEmpty())
-	  sheetHit = hit.toSpreadSheet();
-	else
-	  sheetHit = hit.toSpreadSheet(new String[]{m_LabelKey});
+	sheetHit = hit.toSpreadSheet(BaseObject.toStringArray(m_MetaDataKeys));
 	if (sheet == null)
 	  sheet = sheetHit;
 	else
