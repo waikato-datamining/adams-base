@@ -15,7 +15,7 @@
 
 /*
  * MultiProcessor.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.mouseclick;
@@ -102,6 +102,16 @@ public class MultiProcessor
    */
   public AbstractMouseClickProcessor[] getProcessors() {
     return m_Processors;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String processorsTipText() {
+    return "The mouse-click processors to combine.";
   }
 
   /**
