@@ -15,7 +15,7 @@
 
 /*
  * LocatedObject.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.locateobjects;
 
@@ -838,6 +838,16 @@ public class LocatedObject
    * @return		the content
    */
   public SpreadSheet toSpreadSheet() {
+    return toSpreadSheet(null);
+  }
+
+  /**
+   * Returns the content as spreadsheet.
+   *
+   * @param metaDataKeys 	the additional meta-data keys to display as separate columns, can be null
+   * @return			the content
+   */
+  public SpreadSheet toSpreadSheet(String[] metaDataKeys) {
     SpreadSheet		result;
     Row			row;
 
@@ -850,6 +860,10 @@ public class LocatedObject
     row.addCell("Y").setContentAsString("Y");
     row.addCell("W").setContentAsString("Width");
     row.addCell("H").setContentAsString("Height");
+    if (metaDataKeys != null) {
+      for (String metaDataKey: metaDataKeys)
+	row.addCell("meta-" + metaDataKey).setContentAsString(metaDataKey);
+    }
     row.addCell("P").setContentAsString("Polygon");
     row.addCell("M").setContentAsString("Meta-data");
 
@@ -860,6 +874,10 @@ public class LocatedObject
     row.addCell("Y").setContent(getY());
     row.addCell("W").setContent(getWidth());
     row.addCell("H").setContent(getHeight());
+    if (metaDataKeys != null) {
+      for (String metaDataKey: metaDataKeys)
+	row.addCell("meta-" + metaDataKey).setContent("" + getMetaData().getOrDefault(metaDataKey, ""));
+    }
     row.addCell("P").setContent(hasPolygon());
     row.addCell("M").setContent(getMetaData().toString());
 

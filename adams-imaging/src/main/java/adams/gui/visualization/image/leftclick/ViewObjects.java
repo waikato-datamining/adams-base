@@ -15,7 +15,7 @@
 
 /*
  * ViewObjects.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.image.leftclick;
@@ -45,6 +45,9 @@ public class ViewObjects
   /** the prefixes for the objects. */
   protected BaseString[] m_Prefixes;
 
+  /** the label key in the meta-data. */
+  protected String m_LabelKey;
+
   /**
    * Returns a string describing the object.
    *
@@ -65,6 +68,10 @@ public class ViewObjects
     m_OptionManager.add(
       "prefix", "prefixes",
       getDefaultPrefixes());
+
+    m_OptionManager.add(
+      "label-key", "labelKey",
+      getDefaultLabelKey());
   }
 
   /**
@@ -106,6 +113,44 @@ public class ViewObjects
   }
 
   /**
+   * Returns the default key for the label.
+   *
+   * @return		the default
+   */
+  protected String getDefaultLabelKey() {
+    return "type";
+  }
+
+  /**
+   * Sets the meta-data key that holds the label.
+   *
+   * @param value 	the key
+   */
+  public void setLabelKey(String value) {
+    m_LabelKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the meta-data key that holds the label.
+   *
+   * @return 		the key
+   */
+  public String getLabelKey() {
+    return m_LabelKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelKeyTipText() {
+    return "The key in the meta-data that stores the label.";
+  }
+
+  /**
    * Process the click that occurred in the image panel.
    *
    * @param panel	the origin
@@ -134,10 +179,13 @@ public class ViewObjects
 	hits.add(object);
     }
 
-    if (hits.size() > 0) {
+    if (!hits.isEmpty()) {
       sheet = null;
       for (LocatedObject hit: hits) {
-	sheetHit = hit.toSpreadSheet();
+	if (m_LabelKey.isEmpty())
+	  sheetHit = hit.toSpreadSheet();
+	else
+	  sheetHit = hit.toSpreadSheet(new String[]{m_LabelKey});
 	if (sheet == null)
 	  sheet = sheetHit;
 	else
