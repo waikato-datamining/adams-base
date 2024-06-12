@@ -15,7 +15,7 @@
 
 /*
  * AbstractMouseClickProcessor.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 202002924 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.mouseclick;
@@ -130,7 +130,7 @@ public abstract class AbstractMouseClickProcessor
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String prefixTipText() {
+  public String enabledTipText() {
     return "Determines whether the click processor is enabled or not.";
   }
 
