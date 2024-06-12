@@ -498,7 +498,7 @@ public class ObjectAnnotations
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String invalidShapeColorsTipText() {
+  public String invalidShapeColorTipText() {
     return "The colorizer for the corresponding shape plotter for invalid annotations.";
   }
 
@@ -527,7 +527,7 @@ public class ObjectAnnotations
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String invalidShapePlottersTipText() {
+  public String invalidShapePlotterTipText() {
     return "The plotter to use for drawing the shapes of invalid annotations.";
   }
 
