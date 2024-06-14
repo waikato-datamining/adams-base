@@ -15,7 +15,7 @@
 
 /*
  * DefaultAnnotationsDisplayPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotationsdisplay;
@@ -30,9 +30,12 @@ import adams.gui.event.SearchEvent;
 import adams.gui.visualization.report.ReportFactory;
 import adams.gui.visualization.report.ReportFactory.Model;
 
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.Collections;
 
 /**
@@ -44,6 +47,8 @@ public class DefaultAnnotationsDisplayPanel
   extends AbstractAnnotationsDisplayPanel {
 
   private static final long serialVersionUID = 5734548445819737031L;
+
+  public static final String OBJECT_COUNT = "Object count: ";
 
   /** the table model with the report. */
   protected ReportFactory.Model m_ModelReport;
@@ -57,14 +62,24 @@ public class DefaultAnnotationsDisplayPanel
   /** the search panel. */
   protected SearchPanel m_PanelSearch;
 
+  /** the label with the number of objects. */
+  protected JLabel m_LabelCount;
+
   /**
    * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+
     super.initGUI();
 
     setLayout(new BorderLayout());
+
+    m_LabelCount = new JLabel(OBJECT_COUNT);
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panel.add(m_LabelCount);
+    add(panel, BorderLayout.NORTH);
 
     m_ModelReport = new ReportFactory.Model();
     m_TableReport = new ReportFactory.Table(m_ModelReport);
@@ -93,6 +108,7 @@ public class DefaultAnnotationsDisplayPanel
     m_ModelReport = new Model(value);
     m_TableReport.setModel(m_ModelReport);
     m_LocatedObjects = null;
+    m_LabelCount.setText(OBJECT_COUNT + getObjects().size());
   }
 
   /**
