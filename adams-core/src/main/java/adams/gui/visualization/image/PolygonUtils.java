@@ -15,7 +15,7 @@
 
 /*
  * PolygonUtils.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.image;
@@ -237,5 +237,88 @@ public class PolygonUtils {
     // create new polygon
     result = new Polygon(x.toArray(), y.toArray(), x.size());
     return result;
+  }
+
+  /**
+   * Determines the number of x/y pairs of the inner polygon that fall inside the outer polygon.
+   *
+   * @param outer	the outer polygon
+   * @param inner	the inner polygon
+   * @return		the number of pairs that fall inside
+   */
+  public static int inside(Polygon outer, Polygon inner) {
+    int 	result;
+    int		i;
+
+    if (inner.xpoints.length != inner.ypoints.length)
+      throw new IllegalArgumentException("Different number of X and Y coordinates: " + inner.xpoints.length + " != " + inner.ypoints.length);
+    if (inner.xpoints.length < 3)
+      throw new IllegalArgumentException("Inner polygon must have at least 3 coordinates, provided: " + inner.xpoints.length);
+
+    result = 0;
+    for (i = 0; i < inner.xpoints.length; i++) {
+      if (outer.contains(new Point(inner.xpoints[i], inner.ypoints[i])))
+	result++;
+    }
+
+    return result;
+  }
+
+  /**
+   * Checks whether the polygons overlap.
+   *
+   * @param p1		the first polygon
+   * @param p2		the second polygon
+   * @param fully	whether one polygon must be fully contained by the other
+   * @return		true if they overlap
+   */
+  public static boolean overlap(Polygon p1, Polygon p2, boolean fully) {
+    int 	inside1;
+    boolean	overlap1;
+    int		inside2;
+    boolean	overlap2;
+
+    inside1 = inside(p1, p2);
+    if (fully)
+      overlap1 = (inside1 == p2.npoints);
+    else
+      overlap1 = (inside1 > 0);
+
+    overlap2 = false;
+    if (!overlap1) {
+      inside2 = inside(p2, p1);
+      if (fully)
+	overlap2 = (inside2 == p1.npoints);
+      else
+	overlap2 = (inside2 > 0);
+    }
+
+    return overlap1 || overlap2;
+  }
+
+  /**
+   * Increments/decrements the x/y coordinates of the polygon.
+   *
+   * @param p		the polygon to update
+   * @param incX	the X increment/decrement
+   * @param incY 	the Y increment/decrement
+   * @return 		the new polygon
+   */
+  public static Polygon inc(Polygon p, int incX, int incY) {
+    int[]	x;
+    int[]	y;
+    int		i;
+
+    if ((incX == 0) && (incY == 0))
+      return p;
+
+    x = p.xpoints.clone();
+    y = p.ypoints.clone();
+    for (i = 0; i < x.length; i++) {
+      x[i] += incX;
+      y[i] += incY;
+    }
+
+    return new Polygon(x, y, x.length);
   }
 }
