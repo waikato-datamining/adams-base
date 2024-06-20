@@ -39,7 +39,7 @@ public class RenameActor
    */
   @Override
   protected String getTitle() {
-    return "Rename...";
+    return "Rename actor...";
   }
 
   /**
