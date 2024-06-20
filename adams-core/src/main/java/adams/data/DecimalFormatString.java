@@ -15,10 +15,11 @@
 
 /*
  * DecimalFormatString.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
+import adams.core.HelpProvider;
 import adams.core.base.AbstractBaseString;
 import adams.core.net.HtmlUtils;
 
@@ -30,7 +31,8 @@ import java.text.DecimalFormat;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class DecimalFormatString
-  extends AbstractBaseString {
+  extends AbstractBaseString
+  implements HelpProvider {
 
   /** for serialization. */
   private static final long serialVersionUID = -7134897961930112280L;
