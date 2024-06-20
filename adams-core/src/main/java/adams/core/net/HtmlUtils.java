@@ -15,7 +15,7 @@
 
 /*
  * HtmlUtils.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -40,7 +40,7 @@ public class HtmlUtils {
   public final static String CROSSREF_PREFIX = "classcrossref-";
 
   /** the URL prefix for the Java Javadoc. */
-  public static final String JAVA_API_URL = "https://docs.oracle.com/javase/8/docs/api/";
+  public static final String JAVA_API_URL = "https://docs.oracle.com/en/java/javase/11/docs/api/java.base/";
 
   /**
    * Converts the given String into HTML, i.e., replacing some char entities
@@ -252,7 +252,7 @@ public class HtmlUtils {
 
     result = s;
     classnames = Utils.extractClassnames(result, false);
-    if (classnames.size() > 0) {
+    if (!classnames.isEmpty()) {
       clister = ClassLister.getSingleton();
       for (String classname: classnames) {
         if (!clister.isManaged(classname) && (classname.startsWith("java.") || classname.startsWith("javax.")))
