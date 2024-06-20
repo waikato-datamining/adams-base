@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.spreadsheetformula;
@@ -123,6 +123,7 @@ import java.io.*;
   "min" { return sf.newSymbol("Min", sym.MIN); }
   "max" { return sf.newSymbol("Max", sym.MAX); }
   "average" { return sf.newSymbol("Average", sym.AVERAGE); }
+  "median" { return sf.newSymbol("Median", sym.MEDIAN); }
   "stdev" { return sf.newSymbol("Stdev", sym.STDEV); }
   "stdevp" { return sf.newSymbol("StdevP", sym.STDEVP); }
   "countif" { return sf.newSymbol("CountIf", sym.COUNTIF); }

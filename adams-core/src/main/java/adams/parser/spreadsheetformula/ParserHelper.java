@@ -15,7 +15,7 @@
 
 /*
  * ParserHelper.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser.spreadsheetformula;
 
@@ -133,7 +133,7 @@ public class ParserHelper
    * @throws Exception 	if cell location cannot be parsed
    */
   public Double getDateFieldFromCell(String loc, int field) throws Exception {
-    Double 	result;
+    double 	result;
     Cell 	cell;
     
     result = Double.NaN;
@@ -141,13 +141,13 @@ public class ParserHelper
     cell = getCell(loc);
     if (cell != null) {
       if (cell.isDate())
-        result = new Double(getCalendar(cell.toDate()).get(field));
+        result = getCalendar(cell.toDate()).get(field);
       else if (cell.isDateTime())
-        result = new Double(getCalendar(cell.toDateTime()).get(field));
+        result = getCalendar(cell.toDateTime()).get(field);
       else if (cell.isTime())
-        result = new Double(getCalendar(cell.toTime()).get(field));
+        result = getCalendar(cell.toTime()).get(field);
       else
-        result = new Double(getCalendar(toDate(cell.getContent())).get(field));
+        result = getCalendar(toDate(cell.getContent())).get(field);
     }
       
     return result;
@@ -304,6 +304,18 @@ public class ParserHelper
   }
 
   /**
+   * Calculates the median for a range of cells.
+   *
+   * @param fromCell 	the top-left cell
+   * @param toCell 	the bottom-right cell
+   * @return 		the median
+   * @throws Exception 	if cell location cannot be parsed
+   */
+  public Double median(String fromCell, String toCell) throws Exception {
+    return StatUtils.median(rangeToDoubleArray(fromCell, toCell));
+  }
+
+  /**
    * Calculates the standard deviation (sample) for a range of cells.
    *
    * @param fromCell 	the top-left cell
@@ -337,7 +349,7 @@ public class ParserHelper
    * @throws Exception 	if cell location cannot be parsed
    */
   public Double countif(String fromCell, String toCell, Double value) throws Exception {
-    Double 	result;
+    double 	result;
     List<Cell> 	cells;
     
     result = 0.0;
@@ -363,7 +375,7 @@ public class ParserHelper
    * @throws Exception 	if cell location cannot be parsed
    */
   public Double countif(String fromCell, String toCell, String value) throws Exception {
-    Double 	result;
+    double 	result;
     List<Cell> 	cells;
     String	expr;
     Object	eval;
@@ -397,8 +409,8 @@ public class ParserHelper
    * @throws Exception if cell location cannot be parsed
    */
   public Double countif(String fromCell, String toCell, Boolean value) throws Exception {
-    Double result;
-    List<Cell> cells;
+    double 	result;
+    List<Cell> 	cells;
     
     result = 0.0;
     
@@ -505,11 +517,9 @@ public class ParserHelper
    * Sums up the numbers of a range of cells if they match the value or the
    * expression evaluates to true.
    *
-   * @param fromCell 	the top-left cell
-   * @param toCell 	the bottom-right cell
-   * @param value 	the expression to evaluate or value to look for
    * @param fromCell 	the top-left cell to sum up
    * @param toCell 	the bottom-right cell to sum up
+   * @param value 	the expression to evaluate or value to look for
    * @return 		the sum
    * @throws Exception 	if cell location cannot be parsed
    */

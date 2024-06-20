@@ -45,7 +45,6 @@ import adams.parser.spreadsheetformula.ParserHelper;
  * A parser for spreadsheet formulas.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 parser code {:
@@ -126,7 +125,7 @@ parser code {:
 terminal COMMA, SEMICOLON, LPAREN, RPAREN;
 terminal MINUS, UMINUS, PLUS, TIMES, DIVISION, EXPONENT, MODULO;
 terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE;
-terminal LENGTH, SUM, MIN, MAX, AVERAGE, STDEV, STDEVP, TRIM, COUNTIF, COUNTBLANK, SUMIF, SLOPE, INTERCEPT;
+terminal LENGTH, SUM, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, TRIM, COUNTIF, COUNTBLANK, SUMIF, SLOPE, INTERCEPT;
 terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONTAINS, STARTSWITH, ENDSWITH, CONCATENATE, REPEAT;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
 terminal CELL_OBJECT, CELL_STRING;
@@ -261,6 +260,8 @@ expr      ::=
                 {: RESULT = parser.getHelper().max(c1, c2); :}
               | AVERAGE LPAREN CELL:c1 COLON CELL:c2 RPAREN
                 {: RESULT = parser.getHelper().average(c1, c2); :}
+              | MEDIAN LPAREN CELL:c1 COLON CELL:c2 RPAREN
+                {: RESULT = parser.getHelper().median(c1, c2); :}
               | STDEV LPAREN CELL:c1 COLON CELL:c2 RPAREN
                 {: RESULT = parser.getHelper().stdev(c1, c2); :}
               | STDEVP LPAREN CELL:c1 COLON CELL:c2 RPAREN
