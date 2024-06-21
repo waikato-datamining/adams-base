@@ -34,6 +34,10 @@ adams.flow.transformer.DeleteStorageValue=adams.flow.transformer.SetStorageValue
 adams.flow.transformer.DeleteStorageValue=adams.flow.standalone.DeleteStorageValue
 adams.flow.standalone.DeleteStorageValue=adams.flow.transformer.DeleteStorageValue
 
+# DeleteVariable
+adams.flow.transformer.DeleteVariable=adams.flow.standalone.DeleteVariable
+adams.flow.standalone.DeleteVariable=adams.flow.transformer.DeleteVariable
+
 # SelectDirectory/EnterManyValues
 adams.flow.source.SelectDirectory=adams.flow.source.EnterManyValues
 
