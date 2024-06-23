@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersFromReport.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.previewbrowser;
@@ -26,6 +26,7 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.data.io.input.AbstractReportReader;
 import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.io.input.ImageReader;
 import adams.data.io.input.JAIImageReader;
@@ -57,7 +58,7 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,jpeg,wbmp
+ * Displays the following image types with an overlay for the objects stored in the report with the same name (using object prefix 'Object.'): jpg,tif,tiff,bmp,gif,png,wbmp,jpeg
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -65,11 +66,23 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-image-reader &lt;adams.data.io.input.AbstractImageReader&gt; (property: imageReader)
+ * <pre>-image-reader &lt;adams.data.io.input.ImageReader&gt; (property: imageReader)
  * &nbsp;&nbsp;&nbsp;The image reader to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.JAIImageReader
+ * </pre>
+ *
+ * <pre>-reader &lt;adams.data.io.input.AbstractReportReader&gt; (property: reader)
+ * &nbsp;&nbsp;&nbsp;The reader to use for reading the report.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.DefaultSimpleReportReader
+ * </pre>
+ *
+ * <pre>-alternative-file-suffix &lt;java.lang.String&gt; (property: alternativeFileSuffix)
+ * &nbsp;&nbsp;&nbsp;The alternative file suffix to use for locating the associated spreadsheet,
+ * &nbsp;&nbsp;&nbsp; excluding the extension (eg '-rois').
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -110,7 +123,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;eg only plotting a subset).
  * &nbsp;&nbsp;&nbsp;default: .*
  * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;javase&#47;8&#47;docs&#47;api&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
  * <pre>-label-format &lt;java.lang.String&gt; (property: labelFormat)
@@ -232,7 +245,7 @@ public class ObjectCentersFromReport
      */
     protected void updateReport() {
       if (getImagePanel().getCurrentFile() != null)
-        getImagePanel().setAdditionalProperties(loadReport(this, getImagePanel().getCurrentFile()));
+	getImagePanel().setAdditionalProperties(loadReport(this, getImagePanel().getCurrentFile()));
     }
 
     /**
@@ -295,6 +308,12 @@ public class ObjectCentersFromReport
   /** the image reader to use. */
   protected ImageReader m_ImageReader;
 
+  /** the report reader to use. */
+  protected AbstractReportReader m_Reader;
+
+  /** the alternative file suffix to use. */
+  protected String m_AlternativeFileSuffix;
+
   /** the prefix for the objects in the report. */
   protected String m_Prefix;
 
@@ -349,8 +368,8 @@ public class ObjectCentersFromReport
   public String globalInfo() {
     return
       "Displays the following image types with an overlay for the objects "
-        + "stored in the report with the same name (using object prefix '" + ObjectCentersOverlayFromReport.PREFIX_DEFAULT + "'): "
-        + Utils.arrayToString(getExtensions());
+	+ "stored in the report with the same name (using object prefix '" + ObjectCentersOverlayFromReport.PREFIX_DEFAULT + "'): "
+	+ Utils.arrayToString(getExtensions());
   }
 
   /**
@@ -363,6 +382,14 @@ public class ObjectCentersFromReport
     m_OptionManager.add(
       "image-reader", "imageReader",
       getDefaultImageReader());
+
+    m_OptionManager.add(
+      "reader", "reader",
+      getDefaultReader());
+
+    m_OptionManager.add(
+      "alternative-file-suffix", "alternativeFileSuffix",
+      "");
 
     m_OptionManager.add(
       "prefix", "prefix",
@@ -461,6 +488,73 @@ public class ObjectCentersFromReport
    */
   public String imageReaderTipText() {
     return "The image reader to use.";
+  }
+
+  /**
+   * Returns the default reader.
+   *
+   * @return		the reader
+   */
+  protected AbstractReportReader getDefaultReader() {
+    return new DefaultSimpleReportReader();
+  }
+
+  /**
+   * Sets the reader to use for reading the report.
+   *
+   * @param value 	the reader
+   */
+  public void setReader(AbstractReportReader value) {
+    m_Reader = value;
+    reset();
+  }
+
+  /**
+   * Returns the reader to use for reading the report.
+   *
+   * @return 		the reader
+   */
+  public AbstractReportReader getReader() {
+    return m_Reader;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String readerTipText() {
+    return "The reader to use for reading the report.";
+  }
+
+  /**
+   * Sets the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
+   *
+   * @param value 	the suffix
+   */
+  public void setAlternativeFileSuffix(String value) {
+    m_AlternativeFileSuffix = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').
+   *
+   * @return 		the suffix
+   */
+  public String getAlternativeFileSuffix() {
+    return m_AlternativeFileSuffix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeFileSuffixTipText() {
+    return "The alternative file suffix to use for locating the associated spreadsheet, excluding the extension (eg '-rois').";
   }
 
   /**
@@ -955,13 +1049,12 @@ public class ObjectCentersFromReport
       baseFile = new PlaceholderFile(panel.getAlternativeLocation().getAbsolutePath() + File.separator + file.getName());
     else
       baseFile = file;
-    reportFile = FileUtils.replaceExtension(baseFile, ".report");
+    reportFile = FileUtils.replaceExtension(baseFile, m_AlternativeFileSuffix + "." + m_Reader.getDefaultFormatExtension());
     if (reportFile.exists() && reportFile.isFile()) {
-      reportReader = new DefaultSimpleReportReader();
-      reportReader.setInput(new PlaceholderFile(reportFile));
-      reports = reportReader.read();
+      m_Reader.setInput(new PlaceholderFile(reportFile));
+      reports = m_Reader.read();
       if (reports.size() > 0)
-        result = filterReport(reports.get(0));
+	result = filterReport(reports.get(0));
     }
 
     return result;
