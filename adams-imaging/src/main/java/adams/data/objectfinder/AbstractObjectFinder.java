@@ -15,7 +15,7 @@
 
 /*
  * AbstractObjectFinder.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.objectfinder;
 
@@ -45,8 +45,11 @@ public abstract class AbstractObjectFinder
   /** whether to reset indices if necessary. */
   protected boolean m_ResetIndicesIfNecessary;
 
-  /** boolean lenient. */
+  /** whether to be lenient with indices. */
   protected boolean m_Lenient;
+
+  /** whether to suppress warning messages. */
+  protected boolean m_Quiet;
 
   /**
    * Adds options to the internal list of options.
@@ -65,6 +68,10 @@ public abstract class AbstractObjectFinder
 
     m_OptionManager.add(
       "lenient", "lenient",
+      false);
+
+    m_OptionManager.add(
+      "quiet", "quiet",
       false);
   }
 
@@ -158,6 +165,35 @@ public abstract class AbstractObjectFinder
   }
 
   /**
+   * Sets whether to suppress warning messages if -1 indices found.
+   *
+   * @param value	true if to suppress
+   */
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress warning messages if -1 indices found.
+   *
+   * @return		true if to suppress
+   */
+  public boolean getQuiet() {
+    return m_Quiet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String quietTipText() {
+    return "If enabled, then no warning messages are generated if -1 indices are returned.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -168,6 +204,7 @@ public abstract class AbstractObjectFinder
 
     result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
     result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
+    result += QuickInfoHelper.toString(this, "quiet", m_Quiet, "quiet", ", ");
 
     return result;
   }
@@ -221,10 +258,10 @@ public abstract class AbstractObjectFinder
         count++;
     }
     if (count > 0) {
-      if (m_Lenient)
+      if (!m_Lenient)
+	throw new IllegalStateException("Number of indices returned as -1: " + count);
+      if (!m_Quiet)
 	getLogger().warning("Number of indices returned as -1: " + count);
-      else
-        throw new IllegalStateException("Number of indices returned as -1: " + count);
     }
 
     return result;
