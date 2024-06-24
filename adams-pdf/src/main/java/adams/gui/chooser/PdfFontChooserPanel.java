@@ -1,6 +1,6 @@
 /*
  * Copyright (c) Ian F. Darwin, http://www.darwinsys.com/, 1996-2002.
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  *
  * All rights reserved. Software written by Ian F. Darwin and others.
  * $Id: LICENSE,v 1.8 2004/02/09 03:33:38 ian Exp $
@@ -48,6 +48,8 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextArea;
 import com.itextpdf.text.Font;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -62,7 +64,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -87,13 +88,13 @@ public class PdfFontChooserPanel
   private static final long serialVersionUID = 4228582248866956387L;
 
   /** The list of font sizes. */
-  public final static Integer FONT_SIZES[] = {8, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 40, 48, 60, 72};
+  public final static Integer[] FONT_SIZES = {8, 10, 11, 12, 14, 16, 18, 20, 24, 30, 36, 40, 48, 60, 72};
 
   /** The list of font families. */
-  public final static String FONT_FAMILIES[] = {PdfFont.COURIER, PdfFont.HELVETICA, PdfFont.SYMBOL, PdfFont.TIMES_ROMAN, PdfFont.ZAPFDINGBATS};
+  public final static String[] FONT_FAMILIES = {PdfFont.COURIER, PdfFont.HELVETICA, PdfFont.SYMBOL, PdfFont.TIMES_ROMAN, PdfFont.ZAPFDINGBATS};
 
   /** The list of font faces. */
-  public final static String FONT_FACES[] = {PdfFont.ITALIC, PdfFont.BOLD, PdfFont.UNDERLINE, PdfFont.STRIKETHRU};
+  public final static String[] FONT_FACES = {PdfFont.ITALIC, PdfFont.BOLD, PdfFont.UNDERLINE, PdfFont.STRIKETHRU};
 
   /** the default font. */
   public final static String DEFAULT_FONT = PdfFont.HELVETICA;
@@ -206,7 +207,7 @@ public class PdfFontChooserPanel
     m_TextSample.setEditable(false);
     add(new BaseScrollPane(m_TextSample), BorderLayout.CENTER);
 
-    previewFont(); // ensure view is up to date!
+    previewFont(); // ensure view is up-to-date!
   }
 
   /**
@@ -246,8 +247,10 @@ public class PdfFontChooserPanel
    */
   public void setCurrent(PdfFont value) {
     String[]	styles;
-    int[]	indices;
+    TIntList 	indices;
     int		i;
+    int		n;
+    int		index;
 
     m_IgnoreUpdates = true;
 
@@ -258,16 +261,22 @@ public class PdfFontChooserPanel
     if (m_ListFontName.getSelectedIndex() == -1)
       m_ListFontName.setSelectedValue(DEFAULT_FONT, true);
 
+    indices = new TIntArrayList();
     if ((value.getFontFace() != Font.NORMAL) && (value.getFontFace() != Font.UNDEFINED)) {
       styles  = value.getFontFaces();
-      indices = new int[styles.length];
-      for (i = 0; i < styles.length; i++)
-	indices[i] = Arrays.binarySearch(FONT_FACES, styles[i]);
+      for (i = 0; i < styles.length; i++) {
+	index = -1;
+	for (n = 0; n < FONT_FACES.length; n++) {
+	  if (styles[i].equals(FONT_FACES[n])) {
+	    index = n;
+	    break;
+	  }
+	}
+	if (index >= 0)
+	  indices.add(index);
+      }
     }
-    else {
-      indices = new int[0];
-    }
-    m_ListFontFace.setSelectedIndices(indices);
+    m_ListFontFace.setSelectedIndices(indices.toArray());
 
     m_ListFontSize.setSelectedValue((int) value.getSize(), true);
     if (m_ListFontSize.getSelectedIndex() == -1)
