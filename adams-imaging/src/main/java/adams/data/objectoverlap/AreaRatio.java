@@ -15,7 +15,7 @@
 
 /*
  * AreaRatio.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -307,7 +307,7 @@ public class AreaRatio
     double		ratio2;
 
     result = new LocatedObjects();
-    if (annotations.size() == 0) {
+    if (annotations.isEmpty()) {
       result = annotations;
     }
     else {

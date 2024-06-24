@@ -15,7 +15,7 @@
 
 /*
  * IntersectOverUnionRatio.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectoverlap;
@@ -268,7 +268,7 @@ public class IntersectOverUnionRatio
   /**
    * Returns the geometry type to use for the calculations.
    *
-   * @return 		true if to use
+   * @return 		the type
    */
   public GeometryType getGeometry() {
     return m_Geometry;
@@ -442,10 +442,6 @@ public class IntersectOverUnionRatio
     LocatedObject 	actObj;
     LocatedObject	tmpObj;
     LocatedObject	otherObjectHighest;
-    double		ratio;
-    double		thisObjArea;
-    double		intersectArea;
-    double		otherObjArea;
     double		iou;
 
     if (isLoggingEnabled()) {
@@ -454,7 +450,7 @@ public class IntersectOverUnionRatio
     }
 
     result = new LocatedObjects();
-    if (annotations.size() == 0) {
+    if (annotations.isEmpty()) {
       result = predictions;
     }
     else {
