@@ -15,7 +15,7 @@
 
 /*
  * PdfFont.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -201,12 +201,12 @@ public class PdfFont
   /**
    * Generates a list of font faces.
    *
-   * @return		the list of font faces
+   * @return		the array of font faces
    */
   public String[] getFontFaces() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     if ((m_FontFace & Font.BOLD) == Font.BOLD)
       result.add(BOLD);
     if ((m_FontFace & Font.ITALIC) == Font.ITALIC)
@@ -215,10 +215,10 @@ public class PdfFont
       result.add(STRIKETHRU);
     if ((m_FontFace & Font.UNDERLINE) == Font.UNDERLINE)
       result.add(UNDERLINE);
-    if (result.size() == 0)
+    if (result.isEmpty())
       result.add(NORMAL);
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -251,8 +251,8 @@ public class PdfFont
 
     font   = toFont();
     result = font.getFamilyname();
-    result += "" + SEPARATOR + Utils.flatten(getFontFaces(font), ",");
-    result += "" + SEPARATOR + Float.valueOf(font.getSize()).intValue();
+    result += SEPARATOR + Utils.flatten(getFontFaces(font), ",");
+    result += SEPARATOR + "" + Float.valueOf(font.getSize()).intValue();
 
     return result;
   }
@@ -317,22 +317,18 @@ public class PdfFont
    * @return		the font family identifier
    */
   public static int getFontFamily(String name) {
-    int		result;
-
     if (name.equals(COURIER))
-      result = Font.FontFamily.COURIER.ordinal();
-    else if (name.equals(HELVETICA))
-      result = Font.FontFamily.HELVETICA.ordinal();
-    else if (name.equals(SYMBOL))
-      result = Font.FontFamily.SYMBOL.ordinal();
-    else if (name.equals(TIMES_ROMAN))
-      result = Font.FontFamily.TIMES_ROMAN.ordinal();
-    else if (name.equals(ZAPFDINGBATS))
-      result = Font.FontFamily.ZAPFDINGBATS.ordinal();
-    else
-      result = 0;
+      return Font.FontFamily.COURIER.ordinal();
+    if (name.equals(HELVETICA))
+      return Font.FontFamily.HELVETICA.ordinal();
+    if (name.equals(SYMBOL))
+      return Font.FontFamily.SYMBOL.ordinal();
+    if (name.equals(TIMES_ROMAN))
+      return Font.FontFamily.TIMES_ROMAN.ordinal();
+    if (name.equals(ZAPFDINGBATS))
+      return Font.FontFamily.ZAPFDINGBATS.ordinal();
 
-    return result;
+    return 0;
   }
 
   /**
@@ -394,32 +390,28 @@ public class PdfFont
    * @return		the font style identifier
    */
   public static int getFontFace(String name) {
-    int		result;
-
     if (name.equals(BOLD))
-      result = Font.BOLD;
-    else if (name.equals(ITALIC))
-      result = Font.ITALIC;
-    else if (name.equals(STRIKETHRU))
-      result = Font.STRIKETHRU;
-    else if (name.equals(UNDERLINE))
-      result = Font.UNDERLINE;
-    else
-      result = 0;
+      return Font.BOLD;
+    if (name.equals(ITALIC))
+      return Font.ITALIC;
+    if (name.equals(STRIKETHRU))
+      return Font.STRIKETHRU;
+    if (name.equals(UNDERLINE))
+      return Font.UNDERLINE;
 
-    return result;
+    return 0;
   }
 
   /**
    * Generates a list of font style names from the given font setup.
    *
    * @param font	the font to analyze
-   * @return		the list of font names
+   * @return		the array of font names
    */
   public static String[] getFontFaces(Font font) {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     if (font.isBold())
       result.add(BOLD);
     if (font.isItalic())
@@ -428,9 +420,9 @@ public class PdfFont
       result.add(STRIKETHRU);
     if (font.isUnderlined())
       result.add(UNDERLINE);
-    if (result.size() == 0)
+    if (result.isEmpty())
       result.add(NORMAL);
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 }
