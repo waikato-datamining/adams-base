@@ -15,7 +15,7 @@
 
 /*
  * ObjectCentersOverlayFromReport.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -106,7 +106,7 @@ public class ObjectCentersOverlayFromReport
   private static final long serialVersionUID = 6356419097401574024L;
 
   /** the diameter of the circle. */
-  protected int m_Diameter;
+  protected double m_Diameter;
 
   /**
    * Returns a string describing the object.
@@ -137,16 +137,15 @@ public class ObjectCentersOverlayFromReport
 
     m_OptionManager.add(
       "diameter", "diameter",
-      10, -1, null);
+      10.0, -1.0, null);
   }
 
   /**
-   * Sets the diameter to use for drawing the circle
-   * (if < 1 to draw an ellipse using the rectangle's dimensions).
+   * Sets the diameter to use for drawing the circle.
    *
-   * @param value 	the diameter, < 1 if using the rectangle's dimensions
+   * @param value 	the diameter, -1 if using the rectangle's dimensions, (0-1) for fraction of bbox width
    */
-  public void setDiameter(int value) {
+  public void setDiameter(double value) {
     if (getOptionManager().isValid("diameter", value)) {
       m_Diameter = value;
       reset();
@@ -154,12 +153,11 @@ public class ObjectCentersOverlayFromReport
   }
 
   /**
-   * Returns the diameter to use for drawing the circle
-   * (if < 1 to draw an ellipse using the rectangle's dimensions).
+   * Returns the diameter to use for drawing the circle.
    *
-   * @return 		the diameter, < 1 if using the rectangle's dimensions
+   * @return 		the diameter, -1 if using the rectangle's dimensions, (0-1) for fraction of bbox width
    */
-  public int getDiameter() {
+  public double getDiameter() {
     return m_Diameter;
   }
 
@@ -170,7 +168,7 @@ public class ObjectCentersOverlayFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String diameterTipText() {
-    return "The diameter of the circle that is drawn; < 1 to use the rectangle's dimensions to draw an ellipse.";
+    return "The diameter of the circle that is drawn; (0-1) to use as fraction of the bbox width as diameter; -1 to use the rectangle's dimensions to draw an ellipse.";
   }
 
   /**
@@ -185,6 +183,7 @@ public class ObjectCentersOverlayFromReport
     Rectangle	rect;
     Color	labelColor;
     Color	shapeColor;
+    int 	diameter;
 
     labelColor = getColor();
     g.setFont(getLabelFont());
@@ -192,9 +191,10 @@ public class ObjectCentersOverlayFromReport
       if (poly == null)
         continue;
       if (getUseColorsPerType()) {
-        if (m_Overlays.hasColor(poly))
+        if (m_Overlays.hasColor(poly)) {
 	  labelColor = getColor();
-          g.setColor(m_Overlays.getColor(poly));
+	  g.setColor(m_Overlays.getColor(poly));
+	}
       }
       shapeColor = null;
       if (getVaryShapeColor()) {
@@ -204,10 +204,22 @@ public class ObjectCentersOverlayFromReport
 
       rect = poly.getBounds();
       g.setColor(shapeColor == null ? labelColor : shapeColor);
-      if (m_Diameter < 1)
+      // ellipse
+      if (m_Diameter == -1) {
 	g.fillOval((int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
-      else
-        g.fillOval((int) (rect.getCenterX() - m_Diameter), (int) (rect.getCenterY() - m_Diameter), m_Diameter*2, m_Diameter*2);
+      }
+      // fraction of width
+      else if ((m_Diameter > 0) && (m_Diameter < 1)) {
+	diameter = (int) (rect.getWidth() * m_Diameter);
+	g.fillOval((int) (rect.getCenterX() - diameter / 2), (int) (rect.getCenterY() - diameter / 2), diameter, diameter);
+      }
+      // diameter in pixels
+      else if (m_Diameter >= 1) {
+	g.fillOval((int) (rect.getCenterX() - m_Diameter / 2), (int) (rect.getCenterY() - m_Diameter / 2), (int) m_Diameter, (int) m_Diameter);
+      }
+      else {
+	throw new IllegalStateException("Invalid diameter value: " + m_Diameter);
+      }
 
       if (m_Overlays.hasLabel(poly)) {
 	g.setColor(labelColor);

@@ -211,6 +211,7 @@ public class ObjectCentersFromReport
       m_PanelImage = new ImagePanel();
       m_PanelImage.getUndo().setEnabled(false);
       overlay = new ObjectCentersOverlayFromReport();
+      overlay.setDiameter(m_Diameter);
       overlay.setPrefix(m_Prefix);
       overlay.setColor(m_Color);
       overlay.setUseColorsPerType(m_UseColorsPerType);
@@ -318,7 +319,7 @@ public class ObjectCentersFromReport
   protected String m_Prefix;
 
   /** the diameter of the circle. */
-  protected int m_Diameter;
+  protected double m_Diameter;
 
   /** the color for the objects. */
   protected Color m_Color;
@@ -397,7 +398,7 @@ public class ObjectCentersFromReport
 
     m_OptionManager.add(
       "diameter", "diameter",
-      10, -1, null);
+      10.0, -1.0, null);
 
     m_OptionManager.add(
       "color", "color",
@@ -588,11 +589,10 @@ public class ObjectCentersFromReport
 
   /**
    * Sets the diameter to use for drawing the circle
-   * (if < 1 to draw an ellipse using the rectangle's dimensions).
    *
-   * @param value 	the diameter, < 1 if using the rectangle's dimensions
+   * @param value 	the diameter, -1 if using the rectangle's dimensions, (0-1) for fraction of bbox width
    */
-  public void setDiameter(int value) {
+  public void setDiameter(double value) {
     if (getOptionManager().isValid("diameter", value)) {
       m_Diameter = value;
       reset();
@@ -601,11 +601,10 @@ public class ObjectCentersFromReport
 
   /**
    * Returns the diameter to use for drawing the circle
-   * (if < 1 to draw an ellipse using the rectangle's dimensions).
    *
-   * @return 		the diameter, < 1 if using the rectangle's dimensions
+   * @return 		the diameter, -1 if using the rectangle's dimensions, (0-1) for fraction of bbox width
    */
-  public int getDiameter() {
+  public double getDiameter() {
     return m_Diameter;
   }
 
@@ -616,7 +615,7 @@ public class ObjectCentersFromReport
    * 			displaying in the GUI or for listing the options.
    */
   public String diameterTipText() {
-    return "The diameter of the circle that is drawn; < 1 to use the rectangle's dimensions to draw an ellipse.";
+    return "The diameter of the circle that is drawn; (0-1) to use as fraction of the bbox width as diameter; -1 to use the rectangle's dimensions to draw an ellipse.";
   }
 
   /**
