@@ -15,7 +15,7 @@
 
 /*
  * FilterPanel.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -57,6 +57,9 @@ public class FilterPanel
   /** the type of layout to use. */
   protected int m_Layout;
 
+  /** the text width in columns */
+  protected int m_TextColumns;
+
   /** the label for the filter. */
   protected JLabel m_LabelFilter;
 
@@ -77,12 +80,26 @@ public class FilterPanel
    * @see		#VERTICAL
    */
   public FilterPanel(int layout) {
+    this(layout, -1);
+  }
+
+  /**
+   * Initializes the component.
+   *
+   * @param layout	the type of layout
+   * @param textColumns the width of the text field, ignored if <=0
+   * @see		#HORIZONTAL
+   * @see		#VERTICAL
+   */
+  public FilterPanel(int layout, int textColumns) {
     super();
 
     if ((layout == HORIZONTAL) || (layout == VERTICAL))
       m_Layout = layout;
     else
       throw new IllegalArgumentException("Unknown layout: " + layout);
+
+    m_TextColumns = textColumns;
 
     initGUI();
     finishInit();
@@ -112,6 +129,8 @@ public class FilterPanel
     super.initGUI();
 
     m_TextFilter = new BaseTextField();
+    if (m_TextColumns > 0)
+      m_TextFilter.setColumns(m_TextColumns);
     m_TextFilter.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
@@ -292,5 +311,34 @@ public class FilterPanel
    */
   public boolean isEnabled() {
     return m_TextFilter.isEnabled();
+  }
+
+  /**
+   * For the text field to request the focus.
+   */
+  public void requestFocus() {
+    m_TextFilter.requestFocus();
+  }
+
+  /**
+   * Sets the width of the text field.
+   *
+   * @param value	the width in columns
+   */
+  public void setTextColumns(int value) {
+    m_TextColumns = value;
+    if (m_TextColumns <= 0)
+      m_TextFilter.setColumns(0);
+    else
+      m_TextFilter.setColumns(m_TextColumns);
+  }
+
+  /**
+   * Returns the width of the text field.
+   *
+   * @return		the width in columns
+   */
+  public int getTextColumns() {
+    return m_TextColumns;
   }
 }
