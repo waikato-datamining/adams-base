@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorClassTreePanel.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe;
@@ -24,18 +24,18 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextField;
+import adams.gui.core.FilterPanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.classtree.ClassTree;
 import adams.gui.goe.classtree.StrictClassTreeFilter;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -54,7 +54,7 @@ public class GenericObjectEditorClassTreePanel
   extends BasePanel {
 
   /** for serialization. */
-  static final long serialVersionUID = -3404546329655057387L;
+  private static final long serialVersionUID = -3404546329655057387L;
 
   /** the popup itself. */
   protected GenericObjectEditorClassTreePanel m_Self;
@@ -71,14 +71,14 @@ public class GenericObjectEditorClassTreePanel
   /** The scroll pane. */
   protected BaseScrollPane m_ScrollPane;
 
-  /** The search field. */
-  protected BaseTextField m_TextSearch;
-
   /** The button for closing the popup again. */
   protected BaseButton m_CloseButton;
 
   /** the panel for the filter. */
-  protected JPanel m_PanelFilter;
+  protected JPanel m_PanelFilterArea;
+
+  /** the filter text box. */
+  protected FilterPanel m_PanelFilter;
 
   /** The checkbox for enabling/disabling the class tree filter. */
   protected BaseCheckBox m_CheckBoxFilter;
@@ -132,35 +132,20 @@ public class GenericObjectEditorClassTreePanel
     add(bottomPanel, BorderLayout.SOUTH);
 
     // search
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    bottomPanel.add(panel, BorderLayout.WEST);
-    m_TextSearch = new BaseTextField(10);
-    m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
-	update();
-      }
-      public void insertUpdate(DocumentEvent e) {
-	update();
-      }
-      public void removeUpdate(DocumentEvent e) {
-	update();
-      }
-      protected void update() {
-	if (m_TextSearch.getText().length() >= getMinimumChars())
-	  m_Tree.setSearch(m_TextSearch.getText());
-	else
-	  m_Tree.setSearch("");
-      }
+    m_PanelFilter = new FilterPanel(FilterPanel.HORIZONTAL, 10);
+    m_PanelFilter.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    m_PanelFilter.setFilterLabel("_Search");
+    m_PanelFilter.addChangeListener((ChangeEvent e) -> {
+      if (m_PanelFilter.getFilter().length() >= getMinimumChars())
+	m_Tree.setSearch(m_PanelFilter.getFilter());
+      else
+	m_Tree.setSearch("");
     });
-    JLabel labelSearch = new JLabel("Search");
-    labelSearch.setDisplayedMnemonic('S');
-    labelSearch.setLabelFor(m_TextSearch);
-    panel.add(labelSearch);
-    panel.add(m_TextSearch);
+    bottomPanel.add(m_PanelFilter, BorderLayout.WEST);
 
     // filter
-    m_PanelFilter = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    bottomPanel.add(m_PanelFilter, BorderLayout.SOUTH);
+    m_PanelFilterArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    bottomPanel.add(m_PanelFilterArea, BorderLayout.SOUTH);
 
     m_CheckBoxFilter = new BaseCheckBox("Filtering");
     m_CheckBoxFilter.setMnemonic('F');
@@ -173,7 +158,7 @@ public class GenericObjectEditorClassTreePanel
 	  && m_CheckBoxFilter.isSelected()
 	  && (m_Tree.getFilter() instanceof StrictClassTreeFilter));
     });
-    m_PanelFilter.add(m_CheckBoxFilter);
+    m_PanelFilterArea.add(m_CheckBoxFilter);
 
     m_CheckBoxStrict = new BaseCheckBox("Strict mode");
     m_CheckBoxStrict.setMnemonic('m');
@@ -182,7 +167,7 @@ public class GenericObjectEditorClassTreePanel
 	!((StrictClassTreeFilter) m_Tree.getFilter()).isStrict());
       m_Tree.setFilter(m_Tree.getFilter());
     });
-    m_PanelFilter.add(m_CheckBoxStrict);
+    m_PanelFilterArea.add(m_CheckBoxStrict);
 
     // close
     panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -290,15 +275,15 @@ public class GenericObjectEditorClassTreePanel
    * Focus the search text field.
    */
   public void focusSearch() {
-    SwingUtilities.invokeLater(() -> m_TextSearch.requestFocus());
+    SwingUtilities.invokeLater(() -> m_PanelFilter.requestFocus());
   }
 
   /**
    * Updates whether the filter panel is visible.
    */
   public void updateFilterPanel() {
-    m_PanelFilter.setVisible((m_Tree != null) && (m_Tree.getFilter() != null));
-    if (m_PanelFilter.isVisible()) {
+    m_PanelFilterArea.setVisible((m_Tree != null) && (m_Tree.getFilter() != null));
+    if (m_PanelFilterArea.isVisible()) {
       m_CheckBoxFilter.setSelected(m_Tree.getFilter().isEnabled());
       m_CheckBoxStrict.setEnabled(
 	m_CheckBoxFilter.isEnabled()
@@ -317,7 +302,7 @@ public class GenericObjectEditorClassTreePanel
    */
   public void setReadOnly(boolean value) {
     m_Tree.setEditable(!value);
-    m_TextSearch.setEditable(!value);
+    m_PanelFilter.setEnabled(!value);
     m_CheckBoxFilter.setEnabled(!value);
     m_CheckBoxStrict.setEnabled(!value);
   }
@@ -328,6 +313,6 @@ public class GenericObjectEditorClassTreePanel
    * @return		true if readonly
    */
   public boolean isReadOnly() {
-    return m_TextSearch.isEditable();
+    return !m_PanelFilter.isEnabled();
   }
 }
