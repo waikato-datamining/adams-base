@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetAggregate.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -59,57 +59,61 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetAggregate
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-key-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: keyColumns)
- * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; if 
+ * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets; if
  * &nbsp;&nbsp;&nbsp;left empty, all rows are used.
- * &nbsp;&nbsp;&nbsp;default: 
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-aggregate-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: aggregateColumns)
  * &nbsp;&nbsp;&nbsp;The columns to aggregate (only numeric ones will be used).
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
- * <pre>-aggregate &lt;COUNT|SUM|MIN|MAX|RANGE|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE&gt; [-aggregate ...] (property: aggregates)
+ *
+ * <pre>-aggregate &lt;COUNT|SUM|MIN|MAX|RANGE|AVERAGE|MEDIAN|STDEV|STDEVP|INTERQUARTILE|QUARTILE25|QUARTILE75&gt; [-aggregate ...] (property: aggregates)
  * &nbsp;&nbsp;&nbsp;The aggregates to calculate and introduce as columns.
  * &nbsp;&nbsp;&nbsp;default: SUM
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8336 $
  */
 public class SpreadSheetAggregate
   extends AbstractSpreadSheetTransformer {
@@ -119,7 +123,7 @@ public class SpreadSheetAggregate
 
   /**
    * The types of aggregates to generate.
-   * 
+   *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    * @version $Revision: 10093 $
    */
@@ -144,6 +148,10 @@ public class SpreadSheetAggregate
     STDEVP,
     /** the interquartile (IQR3 - IQR1). */
     INTERQUARTILE,
+    /** 25th quartile. */
+    QUARTILE25,
+    /** 75th quartile. */
+    QUARTILE75,
   }
 
   /** the range of column indices to use as key for identifying a row. */
@@ -151,10 +159,10 @@ public class SpreadSheetAggregate
 
   /** the range of columns to aggregate. */
   protected SpreadSheetColumnRange m_AggregateColumns;
-  
+
   /** the aggregates to generate. */
   protected Aggregate[] m_Aggregates;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -164,12 +172,12 @@ public class SpreadSheetAggregate
   public String globalInfo() {
     return
       "Aggregates rows (min, max, avg, etc) in a spreadsheet using key "
-        + "columns.\n"
-        + "All numeric columns in the specified aggregrate range (excluding the "
-        + "key columns) get aggregated. For each of the specified aggregates a "
-        + "new column is generated.\n"
-        + "If no key column(s) provided, the complete spreadsheet is used for aggregation.\n"
-        + "Missing cells get ignored.\n"
+	+ "columns.\n"
+	+ "All numeric columns in the specified aggregrate range (excluding the "
+	+ "key columns) get aggregated. For each of the specified aggregates a "
+	+ "new column is generated.\n"
+	+ "If no key column(s) provided, the complete spreadsheet is used for aggregation.\n"
+	+ "Missing cells get ignored.\n"
 	+ "COUNT doesn't need any numeric columns.\n"
 	+ "Note: A single non-numeric cell makes a column a non-numeric one!";
   }
@@ -182,16 +190,16 @@ public class SpreadSheetAggregate
     super.defineOptions();
 
     m_OptionManager.add(
-	    "key-columns", "keyColumns",
-	    new SpreadSheetColumnRange());
+      "key-columns", "keyColumns",
+      new SpreadSheetColumnRange());
 
     m_OptionManager.add(
-	    "aggregate-columns", "aggregateColumns",
-	    new SpreadSheetColumnRange(Range.ALL));
+      "aggregate-columns", "aggregateColumns",
+      new SpreadSheetColumnRange(Range.ALL));
 
     m_OptionManager.add(
-	    "aggregate", "aggregates",
-	    new Aggregate[]{Aggregate.SUM});
+      "aggregate", "aggregates",
+      new Aggregate[]{Aggregate.SUM});
   }
 
   /**
@@ -221,7 +229,7 @@ public class SpreadSheetAggregate
    */
   public String keyColumnsTipText() {
     return
-        "The columns to use as keys for identifying rows in the spreadsheets; "
+      "The columns to use as keys for identifying rows in the spreadsheets; "
 	+ "if left empty, all rows are used.";
   }
 
@@ -301,7 +309,7 @@ public class SpreadSheetAggregate
 
   /**
    * Computes the aggregates.
-   * 
+   *
    * @param input	the original sheet
    * @param subset	the subset of rows to use for the computation, null if all rows
    * @param index	the column in the original spreadsheet
@@ -315,7 +323,7 @@ public class SpreadSheetAggregate
     Cell			cell;
     Number			max;
     Number			min;
-    
+
     result = new HashMap<>();
     for (Aggregate agg: m_Aggregates)
       result.put(agg, Double.NaN);
@@ -334,8 +342,8 @@ public class SpreadSheetAggregate
 	  list.add(cell.toDouble());
       }
     }
-    values = list.toArray(new Double[list.size()]);
-    
+    values = list.toArray(new Double[0]);
+
     if (values.length > 0) {
       for (Aggregate agg: m_Aggregates) {
 	switch (agg) {
@@ -374,12 +382,18 @@ public class SpreadSheetAggregate
 	  case INTERQUARTILE:
 	    result.put(agg, StatUtils.iqr(values));
 	    break;
+	  case QUARTILE25:
+	    result.put(agg, StatUtils.quartile(values, 0.25));
+	    break;
+	  case QUARTILE75:
+	    result.put(agg, StatUtils.quartile(values, 0.75));
+	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled aggregate: " + agg);
 	}
       }
     }
-    
+
     return result;
   }
 
@@ -402,12 +416,12 @@ public class SpreadSheetAggregate
     Row				rowNew;
     HashMap<Aggregate,Number>	aggs;
     boolean			onlyCount;
-    
+
     result     = null;
     input      = (SpreadSheet) m_InputToken.getPayload();
     aggregated = null;
     onlyCount  = (m_Aggregates.length == 1) && (m_Aggregates[0] == Aggregate.COUNT) && m_AggregateColumns.isEmpty();
-    
+
     // columns to use as key
     if (!m_KeyColumns.isEmpty()) {
       m_KeyColumns.setSpreadSheet(input);
@@ -450,7 +464,7 @@ public class SpreadSheetAggregate
       }
       for (int index : agg) {
 	for (Aggregate a : m_Aggregates) {
-	  row.addCell("" + index + "-" + a).setContentAsString(
+	  row.addCell(index + "-" + a).setContentAsString(
 	    input.getHeaderRow().getCell(index).getContent() + "-" + a);
 	}
       }
@@ -477,13 +491,13 @@ public class SpreadSheetAggregate
 	      aggs = computeAggregates(input, subset, index);
 	      for (Aggregate a : m_Aggregates) {
 		if (aggs.get(a) == null)
-		  rowNew.addCell("" + index + "-" + a).setMissing();
+		  rowNew.addCell(index + "-" + a).setMissing();
 		else if (aggs.get(a) instanceof Integer)
-		  rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+		  rowNew.addCell(index + "-" + a).setContent((Integer) aggs.get(a));
 		else if (aggs.get(a) instanceof Long)
-		  rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+		  rowNew.addCell(index + "-" + a).setContent((Long) aggs.get(a));
 		else
-		  rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+		  rowNew.addCell(index + "-" + a).setContent(aggs.get(a).doubleValue());
 	      }
 	    }
 	    if (onlyCount)
@@ -504,13 +518,13 @@ public class SpreadSheetAggregate
 	    aggs = computeAggregates(input, null, index);
 	    for (Aggregate a : m_Aggregates) {
 	      if (aggs.get(a) == null)
-		rowNew.addCell("" + index + "-" + a).setMissing();
+		rowNew.addCell(index + "-" + a).setMissing();
 	      else if (aggs.get(a) instanceof Integer)
-		rowNew.addCell("" + index + "-" + a).setContent((Integer) aggs.get(a));
+		rowNew.addCell(index + "-" + a).setContent((Integer) aggs.get(a));
 	      else if (aggs.get(a) instanceof Long)
-		rowNew.addCell("" + index + "-" + a).setContent((Long) aggs.get(a));
+		rowNew.addCell(index + "-" + a).setContent((Long) aggs.get(a));
 	      else
-		rowNew.addCell("" + index + "-" + a).setContent(aggs.get(a).doubleValue());
+		rowNew.addCell(index + "-" + a).setContent(aggs.get(a).doubleValue());
 	    }
 	    if (onlyCount)
 	      rowNew.addCell(Aggregate.COUNT.toString()).setContent(input.getRowCount());
@@ -521,7 +535,7 @@ public class SpreadSheetAggregate
 
     if (aggregated != null)
       m_OutputToken = new Token(aggregated);
-    
+
     return result;
   }
 }
