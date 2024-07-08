@@ -389,7 +389,7 @@ public class InstancesTable
       String newName = GUIHelper.showInputDialog(
 	InstancesTable.this, "Please enter new name", getInstances().attribute(state.actCol).name());
       if (newName != null) {
-	instModel.renameAttributeAt(state.selCol, newName);
+	instModel.renameAttributeAt(state.selCol, newName);  // selCol gets resolved automatically
 	afterTableLayoutChanged();
 	notifyChangeListeners();
       }
@@ -400,7 +400,7 @@ public class InstancesTable
     menuitem.addActionListener((ActionEvent ae) -> {
       int retVal = GUIHelper.showConfirmMessage(InstancesTable.this, "Delete attribute '" + getInstances().attribute(state.actCol).name() + "'?");
       if (retVal == ApprovalDialog.APPROVE_OPTION) {
-	instModel.deleteAttributeAt(state.actCol);
+	instModel.deleteAttributeAt(state.selCol);  // selCol gets resolved automatically
 	afterTableLayoutChanged();
 	notifyChangeListeners();
       }
