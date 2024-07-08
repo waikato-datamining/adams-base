@@ -15,22 +15,24 @@
 
 /*
  * XYSequence.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.sequence;
 
 import adams.data.container.AbstractDataContainer;
+import adams.data.container.DataContainerWithSpreadSheetSupport;
 import adams.data.container.DataPointComparator;
 import adams.data.sequence.XYSequencePointComparator.Comparison;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
+import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetSupporter;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.map.hash.TDoubleObjectHashMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,11 +40,10 @@ import java.util.List;
  * A sequence storing 2-dimensional points.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XYSequence
   extends AbstractDataContainer<XYSequencePoint> 
-  implements SpreadSheetSupporter {
+  implements DataContainerWithSpreadSheetSupport<XYSequencePoint> {
 
   /** for serialization. */
   private static final long serialVersionUID = -3742507986126404535L;
@@ -96,9 +97,9 @@ public class XYSequence
     super.assign(other);
 
     if (other.m_MappingX != null)
-      m_MappingX = new TDoubleObjectHashMap<String>(other.m_MappingX);
+      m_MappingX = new TDoubleObjectHashMap<>(other.m_MappingX);
     if (other.m_MappingY != null)
-      m_MappingY = new TDoubleObjectHashMap<String>(other.m_MappingY);
+      m_MappingY = new TDoubleObjectHashMap<>(other.m_MappingY);
   }
 
   /**
@@ -120,7 +121,7 @@ public class XYSequence
     double	result;
     
     if (m_MappingX == null)
-      m_MappingX = new TDoubleObjectHashMap<String>();
+      m_MappingX = new TDoubleObjectHashMap<>();
     
     result = m_MappingX.size() + 1;
     m_MappingX.put(result, s);
@@ -161,7 +162,7 @@ public class XYSequence
     TDoubleArrayList 	index;
     int			i;
     
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
     if (m_MappingX == null)
       return result;
     
@@ -202,7 +203,7 @@ public class XYSequence
     double	result;
     
     if (m_MappingY == null)
-      m_MappingY = new TDoubleObjectHashMap<String>();
+      m_MappingY = new TDoubleObjectHashMap<>();
 
     result = m_MappingY.size() + 1;
     m_MappingY.put(result, s);
@@ -406,7 +407,7 @@ public class XYSequence
 
     result = null;
 
-    points = new ArrayList<XYSequencePoint>(m_Points);  // TODO: inefficient
+    points = new ArrayList<>(m_Points);  // TODO: inefficient
     index  = XYSequenceUtils.findX(points, x);
     if (index > -1)
       result = m_Points.get(index);
@@ -427,10 +428,116 @@ public class XYSequence
 
     result = null;
 
-    points = new ArrayList<XYSequencePoint>(m_Points);  // TODO: inefficient
+    points = new ArrayList<>(m_Points);  // TODO: inefficient
     index  = XYSequenceUtils.findClosestX(points, x);
     if (index > -1)
       result = m_Points.get(index);
+
+    return result;
+  }
+
+  /**
+   * Returns the list of points as spreadsheet.
+   *
+   * @param points 	the points to convert
+   * @return		the content
+   */
+  public SpreadSheet toSpreadSheet(List<XYSequencePoint> points) {
+    Iterator<XYSequencePoint>	iter;
+    SpreadSheet			result;
+    Row				row;
+    XYSequencePoint		point;
+    XYSequencePointWithErrors 	epoint;
+    Double[]			error;
+    boolean			errorXLow;
+    boolean			errorXHigh;
+    boolean			errorYLow;
+    boolean			errorYHigh;
+    HashMap<String,Object> 	meta;
+
+    errorXLow  = false;
+    errorXHigh = false;
+    errorYLow  = false;
+    errorYHigh = false;
+    iter = points.iterator();
+    while (iter.hasNext()) {
+      point = iter.next();
+      if (point instanceof XYSequencePointWithErrors) {
+	epoint = (XYSequencePointWithErrors) point;
+	if (!errorXLow && epoint.hasErrorX()) {
+	  errorXLow = true;
+	  error     = epoint.getErrorX();
+	  if (error.length > 1)
+	    errorXHigh = true;
+	}
+	if (!errorYLow && epoint.hasErrorY()) {
+	  errorYLow = true;
+	  error     = epoint.getErrorY();
+	  if (error.length > 1)
+	    errorYHigh = true;
+	}
+      }
+    }
+
+    result = new DefaultSpreadSheet();
+    result.setDataRowClass(SparseDataRow.class);
+    result.setName(getID());
+    row    = result.getHeaderRow();
+    row.addCell("ID").setContent("ID");
+    row.addCell("X").setContent("X");
+    row.addCell("Y").setContent("Y");
+    if (errorXLow)
+      row.addCell("EX1").setContent("Error X (low/delta)");
+    if (errorXHigh)
+      row.addCell("EX2").setContent("Error X (high)");
+    if (errorYLow)
+      row.addCell("EY1").setContent("Error Y (low/delta)");
+    if (errorYHigh)
+      row.addCell("EY2").setContent("Error Y (high)");
+    iter = points.iterator();
+    while (iter.hasNext()) {
+      point = iter.next();
+      row   = result.addRow();
+      row.addCell("ID").setContent(point.getID());
+      if (hasMappingX())
+	row.addCell("X").setContent(getMappingX(point.getX()));
+      else
+	row.addCell("X").setContent(point.getX());
+      if (hasMappingY())
+	row.addCell("Y").setContent(getMappingY(point.getY()));
+      else
+	row.addCell("Y").setContent(point.getY());
+      if (errorXLow || errorXHigh || errorYLow || errorYHigh) {
+	if (point instanceof XYSequencePointWithErrors) {
+	  epoint = (XYSequencePointWithErrors) point;
+	  if (errorXLow || errorXHigh) {
+	    if (epoint.hasErrorX()) {
+	      error = epoint.getErrorX();
+	      row.addCell("EX1").setContent(error[0]);
+	      if (error.length > 1)
+		row.addCell("EX2").setContent(error[1]);
+	    }
+	  }
+	  if (errorYLow || errorYHigh) {
+	    if (epoint.hasErrorY()) {
+	      error = epoint.getErrorY();
+	      row.addCell("EY1").setContent(error[0]);
+	      if (error.length > 1)
+		row.addCell("EY2").setContent(error[1]);
+	    }
+	  }
+	}
+      }
+      if (point.hasMetaData()) {
+	meta = point.getMetaData();
+	for (String key: meta.keySet()) {
+	  // extend header?
+	  if (result.getHeaderRow().getCell("MetaData-" + key) == null)
+	    result.getHeaderRow().addCell("MetaData-" + key).setContent("MetaData-" + key);
+	  row.addCell("MetaData-" + key).setNative(meta.get(key));
+	}
+      }
+    }
 
     return result;
   }
@@ -441,32 +548,6 @@ public class XYSequence
    * @return		the content
    */
   public SpreadSheet toSpreadSheet() {
-    Iterator<XYSequencePoint>	iter;
-    SpreadSheet				result;
-    Row					row;
-    XYSequencePoint		point;
-
-    result = new DefaultSpreadSheet();
-    result.setName(getID());
-    row    = result.getHeaderRow();
-    row.addCell("ID").setContent("ID");
-    row.addCell("X").setContent("X");
-    row.addCell("Y").setContent("Y");
-    iter = iterator();
-    while (iter.hasNext()) {
-      point = iter.next();
-      row = result.addRow();
-      row.addCell("ID").setContent(point.getID());
-      if (hasMappingX())
-	row.addCell("X").setContent(getMappingX(point.getX()));
-      else
-	row.addCell("X").setContent(point.getX());
-      if (hasMappingY())
-	row.addCell("Y").setContent(getMappingY(point.getY()));
-      else
-	row.addCell("Y").setContent(point.getY());
-    }
-    
-    return result;
+    return toSpreadSheet(m_Points);
   }
 }

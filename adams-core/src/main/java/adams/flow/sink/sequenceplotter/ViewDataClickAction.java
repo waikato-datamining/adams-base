@@ -15,14 +15,13 @@
 
 /*
  * ViewDataClickAction.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
+import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.spreadsheet.DefaultSpreadSheet;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.SpreadSheetDialog;
@@ -31,9 +30,6 @@ import adams.gui.visualization.sequence.CircleHitDetector;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -112,47 +108,18 @@ public class ViewDataClickAction
     Object			located;
     List<XYSequencePoint> 	hits;
     SpreadSheet			sheet;
-    Row				header;
-    Row				row;
-    SequencePlotPoint		point;
-    HashMap<String,Object>	meta;
     SpreadSheetDialog		dialog;
-    List<String>		cols;
 
     if (m_HitDetector.getOwner() != panel.getDataPaintlet())
       m_HitDetector.setOwner(panel.getDataPaintlet());
     located = m_HitDetector.locate(e);
-    cols    = null;
     if (located instanceof List) {
       hits   = (List<XYSequencePoint>) located;
-      sheet  = new DefaultSpreadSheet();
-      sheet.setDataRowClass(SparseDataRow.class);
-      header = sheet.getHeaderRow();
-      for (XYSequencePoint hit: hits) {
-	header.addCell("x").setContent("X");
-	header.addCell("y").setContent("Y");
-	row = sheet.addRow();
-	row.addCell("x").setContent(hit.getX());
-	row.addCell("y").setContent(hit.getY());
-	if (hit instanceof SequencePlotPoint) {
-	  point = (SequencePlotPoint) hit;
-	  if (cols == null)
-	    cols = new ArrayList<>();
-	  else
-	    cols.clear();
-	  // TODO errors?
-	  if (point.hasMetaData()) {
-	    meta = point.getMetaData();
-	    cols.addAll(meta.keySet());
-	    Collections.sort(cols);
-	    for (String key: cols) {
-	      header.addCell(key).setContent(key);
-	      row.addCell(key).setNative(meta.get(key));
-	    }
-	  }
-	}
-      }
-      
+      if (hits.isEmpty())
+	sheet = new DefaultSpreadSheet();
+      else
+	sheet = ((XYSequence) hits.get(0).getParent()).toSpreadSheet(hits);
+
       if (sheet.getRowCount() > 0) {
 	if (panel.getParentDialog() != null)
 	  dialog = new SpreadSheetDialog(panel.getParentDialog(), ModalityType.MODELESS);

@@ -15,7 +15,7 @@
 
 /*
  * XYSequencePoint.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.sequence;
@@ -23,6 +23,7 @@ package adams.data.sequence;
 import adams.core.Utils;
 import adams.data.container.AbstractDataPoint;
 import adams.data.container.DataPoint;
+import adams.data.container.DataPointWithMetaData;
 
 import java.util.HashMap;
 
@@ -30,10 +31,10 @@ import java.util.HashMap;
  * A 2-dimensional point. With an optional ID string and meta-data attached to it.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XYSequencePoint
-  extends AbstractDataPoint {
+  extends AbstractDataPoint
+  implements DataPointWithMetaData {
 
   /** for serialization. */
   private static final long serialVersionUID = 2354312871454097142L;
@@ -200,7 +201,7 @@ public class XYSequencePoint
    * @return		true if an ID is available
    */
   public boolean hasID() {
-    return (m_ID.length() > 0);
+    return !m_ID.isEmpty();
   }
 
   /**
@@ -221,8 +222,6 @@ public class XYSequencePoint
 
     if (o == null)
       return 1;
-    else
-      result = 0;
 
     if (!(o instanceof XYSequencePoint))
       return -1;
@@ -232,10 +231,10 @@ public class XYSequencePoint
     result = getID().compareTo(other.getID());
 
     if (result == 0)
-      result = new Double(getX()).compareTo(other.getX());
+      result = Double.compare(getX(), other.getX());
 
     if (result == 0)
-      result = new Double(getY()).compareTo(other.getY());
+      result = Double.compare(getY(), other.getY());
 
     return result;
   }
@@ -256,8 +255,7 @@ public class XYSequencePoint
     setX(point.getX());
     setY(point.getY());
 
-    if (other instanceof XYSequencePoint)
-      m_MetaData = (HashMap<String, Object>) point.getMetaData().clone();
+    m_MetaData = (HashMap<String, Object>) point.getMetaData().clone();
   }
 
   /**
@@ -265,6 +263,7 @@ public class XYSequencePoint
    *
    * @param value	the meta-data
    */
+  @Override
   public void setMetaData(HashMap<String,Object> value) {
     m_MetaData = value;
   }
@@ -274,6 +273,7 @@ public class XYSequencePoint
    *
    * @return		the meta-data, null if none available
    */
+  @Override
   public HashMap<String,Object> getMetaData() {
     return m_MetaData;
   }
@@ -283,8 +283,9 @@ public class XYSequencePoint
    *
    * @return		true if meta-data available
    */
+  @Override
   public boolean hasMetaData() {
-    return (m_MetaData != null) && (m_MetaData.size() > 0);
+    return (m_MetaData != null) && !m_MetaData.isEmpty();
   }
 
   /**

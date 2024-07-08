@@ -13,24 +13,25 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SequencePlotPoint.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
 import adams.data.container.DataPoint;
 import adams.data.sequence.XYSequencePoint;
+import adams.data.sequence.XYSequencePointWithErrors;
 
 /**
  * Extended {@link XYSequencePoint} which can store X/Y error information
  * as well.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SequencePlotPoint
-  extends XYSequencePoint {
+  extends XYSequencePoint
+  implements XYSequencePointWithErrors {
 
   /** for serialization. */
   private static final long serialVersionUID = -6220735479438426204L;
@@ -119,6 +120,7 @@ public class SequencePlotPoint
    *
    * @return		the minimum
    */
+  @Override
   public double getMinX() {
     if (!hasErrorX())
       return m_X;
@@ -133,6 +135,7 @@ public class SequencePlotPoint
    *
    * @return		the maximum
    */
+  @Override
   public double getMaxX() {
     if (!hasErrorX())
       return m_X;
@@ -147,6 +150,7 @@ public class SequencePlotPoint
    * 
    * @return		true if available
    */
+  @Override
   public boolean hasErrorX() {
     return (m_ErrorX != null);
   }
@@ -156,6 +160,7 @@ public class SequencePlotPoint
    * 
    * @return		the error information, null if not available
    */
+  @Override
   public Double[] getErrorX() {
     return m_ErrorX;
   }
@@ -165,6 +170,7 @@ public class SequencePlotPoint
    *
    * @return		the minimum
    */
+  @Override
   public double getMinY() {
     if (!hasErrorY())
       return m_Y;
@@ -179,6 +185,7 @@ public class SequencePlotPoint
    *
    * @return		the maximum
    */
+  @Override
   public double getMaxY() {
     if (!hasErrorY())
       return m_Y;
@@ -193,6 +200,7 @@ public class SequencePlotPoint
    * 
    * @return		true if available
    */
+  @Override
   public boolean hasErrorY() {
     return (m_ErrorY != null);
   }
@@ -202,6 +210,7 @@ public class SequencePlotPoint
    * 
    * @return		the error information, null if not available
    */
+  @Override
   public Double[] getErrorY() {
     return m_ErrorY;
   }
