@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractExperiment.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
@@ -70,7 +70,6 @@ import java.util.logging.Level;
  * Ancestor for simple experiments.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractExperiment
   extends AbstractOptionHandler
@@ -929,6 +928,24 @@ public abstract class AbstractExperiment
   }
 
   /**
+   * Returns the rows for the classifier/dataset combination.
+   *
+   * @param run		the run
+   * @param cls		the classifier to check
+   * @param data	the dataset to check
+   * @return		the rows
+   */
+  protected synchronized int[] locateRows(int run, Classifier cls, Instances data) {
+    RowFinder		finder;
+
+    if (m_Results.getRowCount() == 0)
+      return new int[0];
+
+    finder = configureRowFinder(run, cls, data);
+    return finder.findRows(m_Results);
+  }
+
+  /**
    * Checks whether the classifier/dataset combination is required.
    *
    * @param currentRun	the current run
@@ -937,16 +954,7 @@ public abstract class AbstractExperiment
    * @return		true if required
    */
   protected synchronized boolean isRequired(int currentRun, Classifier cls, Instances data) {
-    RowFinder		finder;
-    int[]		rows;
-
-    if (m_Results.getRowCount() == 0)
-      return true;
-
-    finder = configureRowFinder(currentRun, cls, data);
-    rows = finder.findRows(m_Results);
-
-    return !isComplete(rows);
+    return !isComplete(locateRows(currentRun, cls, data));
   }
 
   /**
@@ -1096,6 +1104,37 @@ public abstract class AbstractExperiment
     return null;
   }
 
+  protected void sortResults() {
+    int		run;
+    SpreadSheet	results;
+    int[]	rows;
+    int		c;
+    int		d;
+    Instances	data;
+
+    if (m_Results.getRowCount() == 0)
+      return;
+
+    results = m_Results.getHeader();
+    for (run = 0; run < m_Runs; run++) {
+      for (d = 0; d < m_Datasets.length; d++) {
+	try {
+	  data = DataSource.read(m_Datasets[d].getAbsolutePath());
+	  for (c = 0; c < m_Classifiers.length; c++) {
+	    rows = locateRows(run, m_Classifiers[c], data);
+	    for (int row: rows)
+	      results.addRow().assign(m_Results.getRow(row));
+	  }
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.WARNING, "Failed to sort results, couldn't load dataset #" + (d+1) + ": " + m_Datasets[d], e);
+	  return;
+	}
+      }
+    }
+    m_Results = results;
+  }
+
   /**
    * Hook method just after the experiment was run.
    *
@@ -1111,6 +1150,9 @@ public abstract class AbstractExperiment
       else
 	SpreadSheetHelper.append(m_Results, m_Generated.get(i), true);
     }
+
+    // sort according to dataset/classifier
+    sortResults();
 
     if (m_Results.getRowCount() > 0) {
       msg = m_ResultsHandler.write(m_Results);
