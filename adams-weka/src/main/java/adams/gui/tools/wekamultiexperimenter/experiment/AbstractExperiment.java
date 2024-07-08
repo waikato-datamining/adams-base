@@ -1116,7 +1116,7 @@ public abstract class AbstractExperiment
       return;
 
     results = m_Results.getHeader();
-    for (run = 0; run < m_Runs; run++) {
+    for (run = 1; run <= m_Runs; run++) {
       for (d = 0; d < m_Datasets.length; d++) {
 	try {
 	  data = DataSource.read(m_Datasets[d].getAbsolutePath());
