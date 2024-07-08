@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -387,9 +387,9 @@ public class InstancesTable
     menuitem = new JMenuItem("Rename...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
       String newName = GUIHelper.showInputDialog(
-	InstancesTable.this, "Please enter new name", getInstances().attribute(state.selCol).name());
+	InstancesTable.this, "Please enter new name", getInstances().attribute(state.actCol).name());
       if (newName != null) {
-	instModel.renameAttributeAt(state.actCol, newName);
+	instModel.renameAttributeAt(state.selCol, newName);
 	afterTableLayoutChanged();
 	notifyChangeListeners();
       }
