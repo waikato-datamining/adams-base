@@ -15,12 +15,18 @@
 
 /*
  * WekaCrossValidationExecution.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
 
-import adams.core.*;
+import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
+import adams.core.Performance;
+import adams.core.StatusMessageHandler;
+import adams.core.Stoppable;
+import adams.core.ThreadLimiter;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
@@ -62,6 +68,9 @@ public class WekaCrossValidationExecution
 
   /** the number of folds. */
   protected int m_Folds;
+
+  /** the actual folds used. */
+  protected int m_ActualFolds;
 
   /** whether to separate folds. */
   protected boolean m_SeparateFolds;
@@ -133,6 +142,7 @@ public class WekaCrossValidationExecution
     m_WaitForJobs          = true;
     m_Generator            = new DefaultCrossValidationFoldGenerator();
     m_FlowContext          = null;
+    m_ActualFolds          = -1;
   }
 
   /**
@@ -201,7 +211,7 @@ public class WekaCrossValidationExecution
   /**
    * Returns whether to wait for jobs to finish when terminating.
    *
-   * @return		the JobRunnerSetup, null if none available
+   * @return		true if to wait
    */
   public boolean getWaitForJobs() {
     return m_WaitForJobs;
@@ -288,6 +298,15 @@ public class WekaCrossValidationExecution
    */
   public int getFolds() {
     return m_Folds;
+  }
+
+  /**
+   * Returns the actual number of folds used.
+   *
+   * @return		the actual folds, -1 if not yet determined
+   */
+  public int getActualFolds() {
+    return m_ActualFolds;
   }
 
   /**
@@ -495,7 +514,6 @@ public class WekaCrossValidationExecution
     MessageCollection 			result;
     Evaluation 				eval;
     AggregateEvaluations 		evalAgg;
-    int					folds;
     CrossValidationFoldGenerator 	generator;
     JobList<WekaCrossValidationJob>	list;
     WekaCrossValidationJob 		job;
@@ -530,7 +548,7 @@ public class WekaCrossValidationExecution
       generator.setStratify(true);
       generator.setUseViews(m_UseViews);
       generator.initializeIterator();
-      folds = generator.getActualNumFolds();
+      m_ActualFolds = generator.getActualNumFolds();
       if ((m_ActualNumThreads == 1) && !m_SeparateFolds) {
 	initOutputBuffer();
 	if (m_Output != null) {
@@ -544,7 +562,7 @@ public class WekaCrossValidationExecution
           if (isStopped())
             break;
 	  if (m_StatusMessageHandler != null)
-	    m_StatusMessageHandler.showStatus("Fold " + current + "/" + folds + ": '" + m_Data.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
+	    m_StatusMessageHandler.showStatus("Fold " + current + "/" + m_ActualFolds + ": '" + m_Data.relationName() + "' using " + OptionUtils.getCommandLine(m_Classifier));
 	  cont  = generator.next();
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
