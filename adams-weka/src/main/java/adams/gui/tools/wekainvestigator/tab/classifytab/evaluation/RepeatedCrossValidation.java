@@ -146,7 +146,7 @@ public class RepeatedCrossValidation
     m_ComboBoxDatasets.addActionListener((ActionEvent e) -> update());
     m_PanelParameters.addParameter("Dataset", m_ComboBoxDatasets);
 
-    // folds
+    // runs
     m_SpinnerRuns = new JSpinner();
     ((SpinnerNumberModel) m_SpinnerRuns.getModel()).setMinimum(-1);
     ((SpinnerNumberModel) m_SpinnerRuns.getModel()).setStepSize(1);
