@@ -313,7 +313,7 @@ public class RepeatedCrossValidation
       m_CrossValidation.setClassifier(classifier);
       m_CrossValidation.setData(data);
       m_CrossValidation.setFolds(folds);
-      m_CrossValidation.setSeed(run);
+      m_CrossValidation.setSeed(run + 1);
       m_CrossValidation.setJobRunner(jobrunner);
       m_CrossValidation.setGenerator(ObjectCopyHelper.copyObject(generator));
       m_CrossValidation.setStatusMessageHandler(this);
