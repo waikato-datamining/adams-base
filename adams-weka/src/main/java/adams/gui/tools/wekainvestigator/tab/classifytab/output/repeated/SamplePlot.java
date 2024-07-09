@@ -18,7 +18,7 @@
  * Copyright (C) 2024 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeatedCV;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeated;
 
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;

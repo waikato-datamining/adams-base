@@ -14,39 +14,42 @@
  */
 
 /*
- * Predictions.java
+ * Statistics.java
  * Copyright (C) 2024 University of Waikato, Hamilton, NZ
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeatedCV;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeated;
 
 import adams.core.MessageCollection;
-import adams.data.spreadsheet.SpreadSheet;
-import adams.gui.core.SpreadSheetTable;
+import adams.data.RoundingType;
+import adams.data.RoundingUtils;
+import adams.data.statistics.StatUtils;
+import adams.data.weka.WekaLabelIndex;
+import adams.flow.core.EvaluationHelper;
+import adams.flow.core.EvaluationStatistic;
+import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.AbstractOutputGenerator;
 
 import javax.swing.JComponent;
+import java.util.logging.Level;
 
 /**
- * Generates statistics for predictions from repeated cross-validation runs.
+ * Generates statistics for repeated cross-validation runs.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class Predictions
+public class Statistics
   extends AbstractOutputGenerator {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
-  /** the statistic to generate. */
-  protected CenterStatistic m_Statistic;
+  /** the statistics to output. */
+  protected EvaluationStatistic[] m_Statistics;
 
-  /** the lower value to compute. */
-  protected LowerStatistic m_Lower;
-
-  /** the upper value to compute. */
-  protected UpperStatistic m_Upper;
+  /** the index of the class label. */
+  protected WekaLabelIndex m_ClassIndex;
 
   /** the number of decimals to round to. */
   protected int m_NumDecimals;
@@ -58,7 +61,7 @@ public class Predictions
    */
   @Override
   public String globalInfo() {
-    return "Generates statistics for predictions from repeated cross-validation runs.";
+    return "Generates statistics for repeated cross-validation runs.";
   }
 
   /**
@@ -69,16 +72,12 @@ public class Predictions
     super.defineOptions();
 
     m_OptionManager.add(
-      "statistic", "statistic",
-      CenterStatistic.MEDIAN);
+      "statistic", "statistics",
+      new EvaluationStatistic[0]);
 
     m_OptionManager.add(
-      "lower", "lower",
-      LowerStatistic.QUARTILE25);
-
-    m_OptionManager.add(
-      "upper", "upper",
-      UpperStatistic.QUARTILE75);
+      "class-index", "classIndex",
+      new WekaLabelIndex(WekaLabelIndex.FIRST));
 
     m_OptionManager.add(
       "num-decimals", "numDecimals",
@@ -86,22 +85,22 @@ public class Predictions
   }
 
   /**
-   * Sets the statistic to output.
+   * Sets the statistics to output.
    *
-   * @param value	the statistic
+   * @param value	the statistics
    */
-  public void setStatistic(CenterStatistic value) {
-    m_Statistic = value;
+  public void setStatistics(EvaluationStatistic[] value) {
+    m_Statistics = value;
     reset();
   }
 
   /**
-   * Returns the statistic to output.
+   * Returns the statistics to output.
    *
-   * @return		the statistic
+   * @return		the statistics
    */
-  public CenterStatistic getStatistic() {
-    return m_Statistic;
+  public EvaluationStatistic[] getStatistics() {
+    return m_Statistics;
   }
 
   /**
@@ -110,27 +109,27 @@ public class Predictions
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String statisticTipText() {
-    return "The statistic to output.";
+  public String statisticsTipText() {
+    return "The statistics to output.";
   }
 
   /**
-   * Sets the lower value to output.
+   * Sets the index of class label index (1-based).
    *
-   * @param value	the lower value
+   * @param value	the label index
    */
-  public void setLower(LowerStatistic value) {
-    m_Lower = value;
+  public void setClassIndex(WekaLabelIndex value) {
+    m_ClassIndex = value;
     reset();
   }
 
   /**
-   * Returns the lower value to output.
+   * Returns the current index of class label (1-based).
    *
-   * @return		the lower value
+   * @return		the label index
    */
-  public LowerStatistic getLower() {
-    return m_Lower;
+  public WekaLabelIndex getClassIndex() {
+    return m_ClassIndex;
   }
 
   /**
@@ -139,37 +138,8 @@ public class Predictions
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String lowerTipText() {
-    return "The lower value to output.";
-  }
-
-  /**
-   * Sets the upper value to output.
-   *
-   * @param value	the upper value
-   */
-  public void setUpper(UpperStatistic value) {
-    m_Upper = value;
-    reset();
-  }
-
-  /**
-   * Returns the upper value to output.
-   *
-   * @return		the upper value
-   */
-  public UpperStatistic getUpper() {
-    return m_Upper;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String upperTipText() {
-    return "The upper value to output.";
+  public String classIndexTipText() {
+    return "The index of class label (eg used for AUC).";
   }
 
   /**
@@ -207,7 +177,7 @@ public class Predictions
    * @return		the title
    */
   public String getTitle() {
-    return "Predictions (RCV)";
+    return "Statistics (RCV)";
   }
 
   /**
@@ -217,10 +187,7 @@ public class Predictions
    * @return		true if output can be generated
    */
   public boolean canGenerateOutput(ResultItem item) {
-    return item.hasRunEvaluations()
-	     && item.hasRunOriginalIndices()
-	     && (item.getHeader().classIndex() > -1)
-	     && item.getHeader().classAttribute().isNumeric();
+    return item.hasRunEvaluations();
   }
 
   /**
@@ -231,12 +198,37 @@ public class Predictions
    * @return		the output component, null if failed to generate
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    SpreadSheetTable	table;
-    SpreadSheet		stats;
+    TableContentPanel 		result;
+    Object[][]			stats;
+    int				s;
+    int				r;
+    SortableAndSearchableTable	table;
+    double[]			values;
 
-    stats = PredictionUtils.calcStats(item, errors, m_Statistic, m_Lower, m_Upper, m_NumDecimals, getLogger(), null);
-    table = new SpreadSheetTable(stats);
+    stats = new Object[m_Statistics.length][3];
+    for (s = 0; s < m_Statistics.length; s++) {
+      values = new double[item.getRunEvaluations().length];
+      for (r = 0; r < item.getRunEvaluations().length; r++) {
+	m_ClassIndex.setData(item.getRunEvaluations()[r].getHeader().classAttribute());
+	try {
+	  values[r] = EvaluationHelper.getValue(item.getRunEvaluations()[r], m_Statistics[s], m_ClassIndex.getIntIndex());
+	}
+	catch (Exception e) {
+	  values[r] = Double.NaN;
+	  getLogger().log(Level.SEVERE, "Failed to evaluate statistic " + m_Statistics[s] + " for run #" + (r+1) + "!", e);
+	}
+      }
+      stats[s][0] = m_Statistics[s].toDisplayShort();
+      stats[s][1] = RoundingUtils.apply(RoundingType.ROUND, StatUtils.mean(values), m_NumDecimals);
+      stats[s][2] = RoundingUtils.apply(RoundingType.ROUND, StatUtils.stddev(values, true), m_NumDecimals);
+    }
 
-    return new TableContentPanel(table, true, true);
+    table  = new SortableAndSearchableTable(stats, new String[]{"Statistic", "Mean", "StdDev"});
+    table.setShowSimplePopupMenus(true);
+    table.setAutoResizeMode(SortableAndSearchableTable.AUTO_RESIZE_OFF);
+    table.setOptimalColumnWidth();
+    result = new TableContentPanel(table, true);
+
+    return result;
   }
 }

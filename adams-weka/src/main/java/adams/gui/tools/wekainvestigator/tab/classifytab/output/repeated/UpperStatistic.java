@@ -14,18 +14,18 @@
  */
 
 /*
- * Lower.java
+ * Upper.java
  * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeatedCV;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeated;
 
 /**
- * Enumeration of lower bound statistics to compute.
+ * Enumeration of upper statistics to compute.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public enum LowerStatistic {
-  MIN,
-  QUARTILE25,
+public enum UpperStatistic {
+  QUARTILE75,
+  MAX,
 }

@@ -18,7 +18,7 @@
  * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeatedCV;
+package adams.gui.tools.wekainvestigator.tab.classifytab.output.repeated;
 
 /**
  * Enumeration of available center statistics.
