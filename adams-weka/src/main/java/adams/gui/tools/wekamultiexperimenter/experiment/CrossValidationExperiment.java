@@ -15,7 +15,7 @@
 
 /*
  * CrossValidationExperiment.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekamultiexperimenter.experiment;
@@ -98,7 +98,7 @@ public class CrossValidationExperiment
 
       if (result == null) {
 	results = new DefaultSpreadSheet();
-	for (fold = 0; fold < m_Owner.getFolds(); fold++) {
+	for (fold = 0; fold < m_CrossValidation.getActualFolds(); fold++) {
 	  addMetrics(results, m_Run, m_Classifier, m_Data, m_CrossValidation.getEvaluations()[fold]);
 	  addMetric(results, "Key_Fold", fold);
 	}
