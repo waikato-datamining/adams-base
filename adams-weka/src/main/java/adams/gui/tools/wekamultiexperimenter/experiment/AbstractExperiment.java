@@ -1115,6 +1115,10 @@ public abstract class AbstractExperiment
     if (m_Results.getRowCount() == 0)
       return;
 
+    // nothing to sort?
+    if ((m_Classifiers.length == 1) && (m_Datasets.length == 1))
+      return;
+
     results = m_Results.getHeader();
     for (run = 1; run <= m_Runs; run++) {
       for (d = 0; d < m_Datasets.length; d++) {
