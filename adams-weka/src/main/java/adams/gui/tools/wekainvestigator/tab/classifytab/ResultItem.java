@@ -15,7 +15,7 @@
 
 /*
  * ResultItem.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -46,6 +46,9 @@ public class ResultItem
   /** the evaluation objects from the folds. */
   protected Evaluation[] m_FoldEvaluations;
 
+  /** the evaluation objects from the runs. */
+  protected Evaluation[] m_RunEvaluations;
+
   /** the template. */
   protected Classifier m_Template;
 
@@ -55,11 +58,17 @@ public class ResultItem
   /** the fold models. */
   protected Classifier[] m_FoldModels;
 
+  /** the run models. */
+  protected Classifier[] m_RunModels;
+
   /** the run information. */
   protected MetaData m_RunInformation;
 
   /** the original indices. */
   protected int[] m_OriginalIndices;
+
+  /** the original indices (runs). */
+  protected int[][] m_RunOriginalIndices;
 
   /** additional attributes. */
   protected SpreadSheet m_AdditionalAttributes;
@@ -146,12 +155,33 @@ public class ResultItem
    * @param additional 	the additional attributes, can be null
    */
   public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Classifier model, Classifier[] foldModels, MetaData runInfo, int[] original, SpreadSheet additional) {
+    update(evaluation, foldEvaluations, null, model, foldModels, null, runInfo, original, null, additional);
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation		the evaluation, can be null
+   * @param foldEvaluations 	the evaluations per fold, can be null
+   * @param runEvaluations 	the evaluations per run, can be null
+   * @param model		the model, can be null
+   * @param foldModels 		the models per fold, can be null
+   * @param runModels 		the models per run, can be null
+   * @param runInfo		the meta-data for the run
+   * @param original		the original indices, can be null
+   * @param runOriginals 	the original indices per run, can be null
+   * @param additional 		the additional attributes, can be null
+   */
+  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Evaluation[] runEvaluations, Classifier model, Classifier[] foldModels, Classifier[] runModels, MetaData runInfo, int[] original, int[][] runOriginals, SpreadSheet additional) {
     m_Evaluation           = evaluation;
     m_FoldEvaluations      = foldEvaluations;
     m_FoldModels           = foldModels;
+    m_RunEvaluations       = runEvaluations;
+    m_RunModels            = runModels;
     m_Model                = model;
     m_RunInformation       = runInfo;
     m_OriginalIndices      = original;
+    m_RunOriginalIndices   = runOriginals;
     m_AdditionalAttributes = additional;
 
     invalidateName();
@@ -191,6 +221,24 @@ public class ResultItem
    */
   public Evaluation[] getFoldEvaluations() {
     return m_FoldEvaluations;
+  }
+
+  /**
+   * Returns whether Evaluation objects per run are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasRunEvaluations() {
+    return (m_RunEvaluations != null);
+  }
+
+  /**
+   * Returns the stored Evaluation objects per run.
+   *
+   * @return		the evaluations per run, null if not present
+   */
+  public Evaluation[] getRunEvaluations() {
+    return m_RunEvaluations;
   }
 
   /**
@@ -257,6 +305,24 @@ public class ResultItem
   }
 
   /**
+   * Returns whether Classifier objects per run are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasRunModels() {
+    return (m_RunModels != null);
+  }
+
+  /**
+   * Returns the stored Classifier objects per run.
+   *
+   * @return		the classifiers per run, null if not present
+   */
+  public Classifier[] getRunModels() {
+    return m_RunModels;
+  }
+
+  /**
    * Returns whether run information is present.
    * 
    * @return		true if available
@@ -290,6 +356,24 @@ public class ResultItem
    */
   public int[] getOriginalIndices() {
     return m_OriginalIndices;
+  }
+
+  /**
+   * Returns whether the original indices per run are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasRunOriginalIndices() {
+    return (m_RunOriginalIndices != null);
+  }
+
+  /**
+   * Returns the stored original indices per run.
+   *
+   * @return		the indices, null if not present
+   */
+  public int[][] getRunOriginalIndices() {
+    return m_RunOriginalIndices;
   }
 
   /**

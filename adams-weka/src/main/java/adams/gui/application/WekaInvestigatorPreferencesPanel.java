@@ -114,6 +114,7 @@ public class WekaInvestigatorPreferencesPanel
     addPropertyType("Classify.LeftPanelWidth", PropertyType.INTEGER);
     addPropertyType("Classify.NumFolds", PropertyType.INTEGER);
     addPropertyType("Classify.PerFoldOutput", PropertyType.BOOLEAN);
+    addPropertyType("Classify.NumRuns", PropertyType.INTEGER);
     addPropertyType("Classify.CrossValidationFoldGenerator", PropertyType.OBJECT_EDITOR);
     setChooser("Classify.CrossValidationFoldGenerator", new GenericObjectEditorPanel(
       weka.classifiers.CrossValidationFoldGenerator.class, new weka.classifiers.DefaultCrossValidationFoldGenerator(), true));
