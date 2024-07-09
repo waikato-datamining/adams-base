@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSplit.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -360,9 +360,6 @@ public class TrainTestSplit
     model.buildClassifier(train);
     addObjectSize(runInfo, "Model size", model);
     getOwner().logMessage("Using remainder from '" + dataCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
-    eval = new Evaluation(train);
-    eval.setDiscardPredictions(discard);
-
     eval = new Evaluation(train);
     eval.setDiscardPredictions(discard);
     TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
