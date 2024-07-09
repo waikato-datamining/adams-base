@@ -430,7 +430,7 @@ public class RepeatedCrossValidation
     if (data.containsKey(KEY_DATASET))
       m_ComboBoxDatasets.setSelectedIndex(((Number) data.get(KEY_DATASET)).intValue());
     if (data.containsKey(KEY_RUNS))
-      m_SpinnerFolds.setValue(data.get(KEY_RUNS));
+      m_SpinnerRuns.setValue(data.get(KEY_RUNS));
     if (data.containsKey(KEY_FOLDS))
       m_SpinnerFolds.setValue(data.get(KEY_FOLDS));
     if (data.containsKey(KEY_JOBRUNNER)) {
