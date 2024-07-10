@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTab.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -416,7 +416,7 @@ public abstract class AbstractInvestigatorTab
    * @param msg		the log message
    */
   public void logMessage(String msg) {
-    if (!msg.isEmpty())
+    if ((msg != null) && !msg.isEmpty())
       getOwner().logMessage("[" + getTitle() + "] " + msg);
   }
 
