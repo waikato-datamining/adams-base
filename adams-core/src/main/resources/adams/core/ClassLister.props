@@ -934,6 +934,10 @@ adams.gui.visualization.sequence.XYSequencePaintlet=\
   adams.gui.visualization.sequence,\
   adams.flow.sink.sequenceplotter
 
+# the point preprocessors for XY sequences
+adams.gui.visualization.sequence.pointpreprocessor.PointPreprocessor=\
+  adams.gui.visualization.sequence.pointpreprocessor
+
 # paintlets for drawing custom data
 adams.gui.visualization.sequence.PaintletWithCustomDataSupport=\
   adams.gui.visualization.sequence
