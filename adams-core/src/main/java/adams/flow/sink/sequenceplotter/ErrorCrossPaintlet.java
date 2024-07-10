@@ -15,7 +15,7 @@
 
 /*
  * ErrorCrossPaintlet.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -65,7 +65,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8902 $
  */
 public class ErrorCrossPaintlet
   extends CrossPaintlet {
@@ -123,11 +122,10 @@ public class ErrorCrossPaintlet
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
-    currX = Integer.MIN_VALUE;
-    currY = Integer.MIN_VALUE;
+    m_PointPreprocessor.resetPreprocessor();
 
     for (i = 0; i < data.size(); i++) {
-      curr = (XYSequencePoint) points.get(i);
+      curr = m_PointPreprocessor.preprocess(points.get(i), axisX, axisY);
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
@@ -232,7 +230,7 @@ public class ErrorCrossPaintlet
         if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
           continue;
 	data = getActualContainerManager().get(i).getData();
-	if (data.size() == 0)
+	if (data.isEmpty())
 	  continue;
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));

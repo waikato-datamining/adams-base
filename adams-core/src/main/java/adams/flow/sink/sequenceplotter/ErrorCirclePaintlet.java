@@ -122,8 +122,10 @@ public class ErrorCirclePaintlet
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
+    m_PointPreprocessor.resetPreprocessor();
+
     for (i = 0; i < data.size(); i++) {
-      curr = points.get(i);
+      curr = m_PointPreprocessor.preprocess(points.get(i), axisX, axisY);
 
       // determine coordinates
       currX = axisX.valueToPos(XYSequencePoint.toDouble(curr.getX()));
@@ -228,7 +230,7 @@ public class ErrorCirclePaintlet
         if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
           continue;
 	data = getActualContainerManager().get(i).getData();
-	if (data.size() == 0)
+	if (data.isEmpty())
 	  continue;
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));

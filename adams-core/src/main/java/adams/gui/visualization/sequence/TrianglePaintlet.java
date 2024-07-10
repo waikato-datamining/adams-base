@@ -15,7 +15,7 @@
 
 /*
  * TrianglePaintlet.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -72,7 +72,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrianglePaintlet
   extends AbstractXYSequenceMetaDataColorPaintlet
@@ -216,10 +215,12 @@ public class TrianglePaintlet
     g.setColor(color);
     GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
 
+    m_PointPreprocessor.resetPreprocessor();
+
     x = new int[3];
     y = new int[3];
     for (i = 0; i < data.size(); i++) {
-      curr = points.get(i);
+      curr = m_PointPreprocessor.preprocess(points.get(i), axisX, axisY);
 
       if (metaColor != null)
 	g.setColor(metaColor.getColor(curr, color));
@@ -275,7 +276,7 @@ public class TrianglePaintlet
 	if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
 	  continue;
 	data = getActualContainerManager().get(i).getData();
-	if (data.size() == 0)
+	if (data.isEmpty())
 	  continue;
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));

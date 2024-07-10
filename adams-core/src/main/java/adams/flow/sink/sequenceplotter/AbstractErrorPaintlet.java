@@ -13,15 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractErrorPaintlet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
 import adams.data.sequence.XYSequence;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
+import adams.gui.visualization.sequence.PaintletWithOptionalPointPreprocessor;
+import adams.gui.visualization.sequence.pointpreprocessor.PassThrough;
+import adams.gui.visualization.sequence.pointpreprocessor.PointPreprocessor;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -30,13 +33,90 @@ import java.awt.Graphics;
  * Ancestor for error paintlets.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractErrorPaintlet
-  extends AbstractStrokePaintlet {
+  extends AbstractStrokePaintlet
+  implements PaintletWithOptionalPointPreprocessor {
 
   /** for serialization. */
   private static final long serialVersionUID = -4384114526759056961L;
+
+  /** the preprocessor. */
+  protected PointPreprocessor m_PointPreprocessor;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    if (supportsPointPreprocessor()) {
+      m_OptionManager.add(
+	"point-preprocessor", "pointPreprocessor",
+	newPointPreprocessor());
+    }
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_PointPreprocessor = newPointPreprocessor();
+  }
+
+  /**
+   * Returns the point preprocessor in use.
+   *
+   * @return		the preprocessor
+   */
+  public PointPreprocessor newPointPreprocessor() {
+    return new PassThrough();
+  }
+
+  /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return false;
+  }
+
+  /**
+   * Sets the point preprocessor to use.
+   *
+   * @param value	the preprocessor
+   */
+  @Override
+  public void setPointPreprocessor(PointPreprocessor value) {
+    m_PointPreprocessor = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the point preprocessor in use.
+   *
+   * @return		the preprocessor
+   */
+  @Override
+  public PointPreprocessor getPointPreprocessor() {
+    return m_PointPreprocessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String pointPreprocessorTipText() {
+    return "The point preprocessor to use.";
+  }
 
   /**
    * Returns when this paintlet is to be executed.

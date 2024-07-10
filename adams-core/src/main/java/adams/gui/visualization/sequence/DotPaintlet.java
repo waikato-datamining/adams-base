@@ -15,7 +15,7 @@
 
 /*
  * DotPaintlet.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -59,7 +59,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DotPaintlet
   extends AbstractXYSequenceMetaDataColorPaintlet
@@ -86,6 +85,16 @@ public class DotPaintlet
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
     return new DotHitDetector(this);
+  }
+
+  /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return true;
   }
 
   /**
@@ -120,8 +129,10 @@ public class DotPaintlet
     // paint all points
     g.setColor(color);
 
+    m_PointPreprocessor.resetPreprocessor();
+
     for (i = 0; i < data.size(); i++) {
-      curr = points.get(i);
+      curr = m_PointPreprocessor.preprocess(points.get(i), axisX, axisY);
 
       if (metaColor != null)
 	g.setColor(metaColor.getColor(curr, color));
@@ -171,7 +182,7 @@ public class DotPaintlet
         if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
           continue;
 	data = getActualContainerManager().get(i).getData();
-	if (data.size() == 0)
+	if (data.isEmpty())
 	  continue;
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));

@@ -15,13 +15,10 @@
 
 /*
  * AbstractXYSequencePaintlet.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
-
-import java.awt.Color;
-import java.util.logging.Level;
 
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -29,16 +26,22 @@ import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.visualization.core.AbstractStrokePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
+import adams.gui.visualization.sequence.pointpreprocessor.PassThrough;
+import adams.gui.visualization.sequence.pointpreprocessor.PointPreprocessor;
+
+import java.awt.Color;
+import java.util.logging.Level;
 
 /**
  * Abstract superclass for paintlets for X-Y sequences.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractXYSequencePaintlet
   extends AbstractStrokePaintlet
-  implements XYSequencePaintletWithCustomerContainerManager, HitDetectorSupporter<AbstractXYSequencePointHitDetector> {
+  implements XYSequencePaintletWithCustomerContainerManager,
+	       PaintletWithOptionalPointPreprocessor,
+	       HitDetectorSupporter<AbstractXYSequencePointHitDetector> {
 
   /** for serialization. */
   private static final long serialVersionUID = 1570802737796372715L;
@@ -48,7 +51,24 @@ public abstract class AbstractXYSequencePaintlet
 
   /** a custom container manager to obtain the sequences from. */
   protected XYSequenceContainerManager m_CustomerContainerManager;
-  
+
+  /** the preprocessor. */
+  protected PointPreprocessor m_PointPreprocessor;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    if (supportsPointPreprocessor()) {
+      m_OptionManager.add(
+	"point-preprocessor", "pointPreprocessor",
+	newPointPreprocessor());
+    }
+  }
+
   /**
    * Initializes the members.
    */
@@ -58,6 +78,7 @@ public abstract class AbstractXYSequencePaintlet
 
     m_HitDetector              = newHitDetector();
     m_CustomerContainerManager = null;
+    m_PointPreprocessor        = newPointPreprocessor();
   }
   
   /**
@@ -86,6 +107,56 @@ public abstract class AbstractXYSequencePaintlet
    * @return		the hit detector
    */
   public abstract AbstractXYSequencePointHitDetector newHitDetector();
+
+  /**
+   * Returns the point preprocessor in use.
+   *
+   * @return		the preprocessor
+   */
+  public PointPreprocessor newPointPreprocessor() {
+    return new PassThrough();
+  }
+
+  /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return false;
+  }
+
+  /**
+   * Sets the point preprocessor to use.
+   *
+   * @param value	the preprocessor
+   */
+  @Override
+  public void setPointPreprocessor(PointPreprocessor value) {
+    m_PointPreprocessor = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns the point preprocessor in use.
+   *
+   * @return		the preprocessor
+   */
+  @Override
+  public PointPreprocessor getPointPreprocessor() {
+    return m_PointPreprocessor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String pointPreprocessorTipText() {
+    return "The point preprocessor to use.";
+  }
 
   /**
    * Sets the logging level.

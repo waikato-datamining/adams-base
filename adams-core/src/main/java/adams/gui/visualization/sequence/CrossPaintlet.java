@@ -15,7 +15,7 @@
 
 /*
  * CrossPaintlet.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -182,6 +182,16 @@ public class CrossPaintlet
   }
 
   /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return true;
+  }
+
+  /**
    * Draws the custom data with the given color.
    *
    * @param g		the graphics context
@@ -217,8 +227,10 @@ public class CrossPaintlet
 
     radius = m_Diameter / 2;
 
+    m_PointPreprocessor.resetPreprocessor();
+
     for (i = 0; i < data.size(); i++) {
-      curr = points.get(i);
+      curr = m_PointPreprocessor.preprocess(points.get(i), axisX, axisY);
 
       if (metaColor != null)
 	g.setColor(metaColor.getColor(curr, color));
@@ -269,7 +281,7 @@ public class CrossPaintlet
 	if (getActualContainerManager().isFiltered() && !getActualContainerManager().isFiltered(i))
 	  continue;
 	data = getActualContainerManager().get(i).getData();
-	if (data.size() == 0)
+	if (data.isEmpty())
 	  continue;
 	synchronized(data) {
 	  drawCustomData(g, moment, data, getColor(i));

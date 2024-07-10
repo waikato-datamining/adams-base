@@ -13,23 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleErrorPaintlet.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
+import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
+
+import java.awt.Color;
+import java.awt.Graphics;
 
 /**
  * Simple error plots: line, errorbar, box.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see PlotType
  */
 public class SimpleErrorPaintlet
@@ -139,6 +139,16 @@ public class SimpleErrorPaintlet
    */
   public String markerLengthTipText() {
     return "The length in pixels for the markers in case of " + PlotType.BAR + ".";
+  }
+
+  /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return true;
   }
 
   /**
@@ -331,8 +341,11 @@ public class SimpleErrorPaintlet
     axisX = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY = getPanel().getPlot().getAxis(Axis.LEFT);
 
-    for (Object o: data.toList()) {
+    m_PointPreprocessor.resetPreprocessor();
+
+    for (XYSequencePoint o: data.toList()) {
       if (o instanceof SequencePlotPoint) {
+	o     = m_PointPreprocessor.preprocess(o, axisX, axisY);
 	point = (SequencePlotPoint) o;
 	type  = m_PlotType;
 	

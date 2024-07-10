@@ -15,10 +15,11 @@
 
 /*
  * ErrorBandPaintlet.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
+import adams.data.sequence.XYSequencePoint;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.plot.Axis;
 import gnu.trove.list.array.TIntArrayList;
@@ -32,7 +33,6 @@ import java.util.HashMap;
  * the band.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7793 $
  */
 public class ErrorBandPaintlet
   extends AbstractErrorPaintlet {
@@ -123,6 +123,16 @@ public class ErrorBandPaintlet
   }
 
   /**
+   * Returns whether point preprocessing is actually supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsPointPreprocessor() {
+    return true;
+  }
+
+  /**
    * Draws the error data with the given color.
    *
    * @param g		the graphics context
@@ -148,10 +158,13 @@ public class ErrorBandPaintlet
     axisX = getPanel().getPlot().getAxis(Axis.BOTTOM);
     axisY = getPanel().getPlot().getAxis(Axis.LEFT);
 
+    m_PointPreprocessor.resetPreprocessor();
+
     x = new TIntArrayList();
     y = new TIntArrayList();
-    for (Object o: data.toList()) {
+    for (XYSequencePoint o: data.toList()) {
       if (o instanceof SequencePlotPoint) {
+	o     = m_PointPreprocessor.preprocess(o, axisX, axisY);
 	point = (SequencePlotPoint) o;
 
 	// Y
