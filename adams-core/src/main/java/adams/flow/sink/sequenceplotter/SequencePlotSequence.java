@@ -73,4 +73,14 @@ public class SequencePlotSequence
   public String getMetaDataKey() {
     return m_MetaDataKey;
   }
+
+  /**
+   * Returns a new instance of a sequence point.
+   *
+   * @return		the new sequence point
+   */
+  @Override
+  public SequencePlotPoint newPoint() {
+    return new SequencePlotPoint();
+  }
 }
