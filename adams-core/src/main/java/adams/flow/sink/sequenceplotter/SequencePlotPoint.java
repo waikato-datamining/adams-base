@@ -110,8 +110,10 @@ public class SequencePlotPoint
     if (other instanceof SequencePlotPoint) {
       point = (SequencePlotPoint) other;
 
-      m_ErrorX   = point.getErrorX().clone();
-      m_ErrorY   = point.getErrorY().clone();
+      if (point.hasErrorX())
+	m_ErrorX = point.getErrorX().clone();
+      if (point.hasErrorY())
+	m_ErrorY = point.getErrorY().clone();
     }
   }
 
