@@ -15,7 +15,7 @@
 
 /*
  * AssociateTab.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -458,6 +458,11 @@ public class AssociateTab
 
       result.addSeparator();
 
+      menuitem = new JMenuItem("Use setup");
+      menuitem.setEnabled((indices.length == 1));
+      menuitem.addActionListener((ActionEvent ae) -> m_Owner.getPanelGOE().setCurrent(getEntry(indices[0]).getTemplate()));
+      result.add(menuitem);
+
       menuitem = new JMenuItem("Copy setup");
       menuitem.setEnabled((indices.length == 1));
       menuitem.addActionListener((ActionEvent ae) -> {
@@ -465,6 +470,8 @@ public class AssociateTab
         ClipboardHelper.copyToClipboard(setup);
       });
       result.add(menuitem);
+
+      result.addSeparator();
 
       menuitem = new JMenuItem("Save model...");
       menuitem.setEnabled((indices.length == 1) && getEntry(indices[0]).hasModel());
@@ -984,6 +991,15 @@ public class AssociateTab
    */
   public JPanel getPanelRight() {
     return m_PanelRight;
+  }
+
+  /**
+   * Returns the panel with the algorithm.
+   *
+   * @return		the panel
+   */
+  public GenericObjectEditorPanel getPanelGOE() {
+    return m_PanelGOE;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AttributeSelectionTab.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -465,12 +465,24 @@ public class AttributeSelectionTab
 
       result.addSeparator();
 
+      menuitem = new JMenuItem("Use evaluator");
+      menuitem.setEnabled((indices.length == 1));
+      menuitem.addActionListener((ActionEvent ae) -> m_Owner.getPanelEvaluator().setCurrent(getEntry(indices[0]).getEvaluator()));
+      result.add(menuitem);
+
       menuitem = new JMenuItem("Copy evaluator");
       menuitem.setEnabled((indices.length == 1));
       menuitem.addActionListener((ActionEvent ae) -> {
         String setup = OptionUtils.getCommandLine(getEntry(indices[0]).getEvaluator());
         ClipboardHelper.copyToClipboard(setup);
       });
+      result.add(menuitem);
+
+      result.addSeparator();
+
+      menuitem = new JMenuItem("Use search");
+      menuitem.setEnabled((indices.length == 1));
+      menuitem.addActionListener((ActionEvent ae) -> m_Owner.getPanelSearch().setCurrent(getEntry(indices[0]).getSearch()));
       result.add(menuitem);
 
       menuitem = new JMenuItem("Copy search");
@@ -480,6 +492,8 @@ public class AttributeSelectionTab
         ClipboardHelper.copyToClipboard(setup);
       });
       result.add(menuitem);
+
+      result.addSeparator();
 
       menuitem = new JMenuItem("Save reduced data...");
       menuitem.setEnabled((indices.length == 1) && !getEntry(indices[0]).isCrossValidation() && getEntry(indices[0]).hasFull());
@@ -1025,6 +1039,24 @@ public class AttributeSelectionTab
    */
   public JPanel getPanelRight() {
     return m_PanelRight;
+  }
+
+  /**
+   * Returns the panel with the evaluator.
+   *
+   * @return		the panel
+   */
+  public GenericObjectEditorPanel getPanelEvaluator() {
+    return m_PanelEvaluator;
+  }
+
+  /**
+   * Returns the panel with the search.
+   *
+   * @return		the panel
+   */
+  public GenericObjectEditorPanel getPanelSearch() {
+    return m_PanelSearch;
   }
 
   /**
