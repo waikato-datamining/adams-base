@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * ExperimentComparisonField.java
- * Copyright (C) 2009-2012 University of Waikato, Hamilton, New Zealand
+/*
+ * ExperimentStatistic.java
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -26,7 +26,6 @@ import adams.core.option.AbstractOption;
  * The enumeration for the comparison field.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum ExperimentStatistic
   implements EnumWithCustomDisplay<ExperimentStatistic> {
@@ -84,7 +83,12 @@ public enum ExperimentStatistic
   WEIGHTED_F_MEASURE("Weighted_avg_F_measure (nominal)"),
   WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT("Weighted_avg_matthews_correlation (nominal)"),
   WEIGHTED_AREA_UNDER_ROC("Weighted_avg_area_under_ROC (nominal)"),
-  WEIGHTED_AREA_UNDER_PRC("Weighted_avg_area_under_PRC (nominal)");
+  WEIGHTED_AREA_UNDER_PRC("Weighted_avg_area_under_PRC (nominal)"),
+  BIAS("Bias (numeric)"),
+  MSLE("Mean squared logarithmic error (numeric)"),
+  RSQUARED("R^2 (numeric)"),
+  SDR("Standard Deviation of Residuals (numeric)"),
+  RPD("Ratio of Performance to Deviation (numeric)");
 
   /** the display value. */
   private String m_Display;
