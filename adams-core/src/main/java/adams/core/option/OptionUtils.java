@@ -15,7 +15,7 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -421,6 +421,20 @@ public class OptionUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Applies the options to the supplied object.
+   *
+   * @param obj		the object to set the options for
+   * @param args	the options to set
+   * @return		true if successfully set
+   */
+  public boolean setOptions(Object obj, String[] args) {
+    AbstractCommandLineHandler	handler;
+
+    handler = AbstractCommandLineHandler.getHandler(obj);
+    return handler.setOptions(obj, args);
   }
 
   /**
