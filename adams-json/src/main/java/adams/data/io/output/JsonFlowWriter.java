@@ -15,7 +15,7 @@
 
 /*
  * JsonFlowWriter.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -91,6 +91,7 @@ public class JsonFlowWriter
     JsonProducer	producer;
 
     producer = new JsonProducer();
+    producer.setOutputFull(false);
     producer.produce(content);
     result = producer.write(file.getAbsolutePath());
 

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonProducer.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -32,7 +32,6 @@ import java.util.logging.Level;
  * Generates the JSON format.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonProducer
   extends AbstractRecursiveOptionProducer<JSONObject,Object>
@@ -46,6 +45,9 @@ public class JsonProducer
 
   /** the key for the options. */
   public final static String KEY_OPTIONS = "options";
+
+  /** whether to output all values, not just ones that differ from the default values. */
+  protected boolean m_OutputFull;
 
   /**
    * Returns a string describing the object.
@@ -68,6 +70,26 @@ public class JsonProducer
     super.initialize();
 
     m_UsePropertyNames = true;
+    m_OutputFull       = false;
+  }
+
+  /**
+   * Sets whether to output all values or just ones that differ from the default ones.
+   *
+   * @param value	true if all values are to be output
+   */
+  public void setOutputFull(boolean value) {
+    m_OutputFull = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to output all values or just ones that differ from the default ones.
+   *
+   * @return		true if all values are to be output
+   */
+  public boolean getOutputFull() {
+    return m_OutputFull;
   }
 
   /**
@@ -194,18 +216,7 @@ public class JsonProducer
    */
   @Override
   public Object processOption(BooleanOption option) {
-    Object	currValue;
-
-    try {
-      currValue = getCurrentValue(option);
-      addPair(getOptionIdentifier(option), currValue);
-    }
-    catch (Exception e) {
-      System.err.println("Error obtaining current value for '" + option.getProperty() + "':");
-      e.printStackTrace();
-    }
-
-    return null;
+    return processOption((AbstractArgumentOption) option);
   }
 
   /**
@@ -231,30 +242,12 @@ public class JsonProducer
       currValue  = getCurrentValue(option);
       currValues = null;
 
-      if (currValue != null) {
-	if (!option.isMultiple()) {
-	  value = currValue;
-	  obj   = newObject(currValue);
-	  addPair(getOptionIdentifier(option), obj);
-	  if (value instanceof OptionHandler) {
-	    m_Nesting.push(obj);
-	    doProduce(((OptionHandler) value).getOptionManager());
-	    m_Nesting.pop();
-	  }
-	  else {
-	    handler = AbstractCommandLineHandler.getHandler(value);
-	    addArray(obj, KEY_OPTIONS, handler.getOptions(value));
-	  }
-	}
-	else {
-	  currValues = currValue;
-	  array = new JSONArray();
-	  addPair(getOptionIdentifier(option), array);
-	  m_Nesting.push(array);
-	  for (i = 0; i < Array.getLength(currValues); i++) {
-	    value = Array.get(currValues, i);
-	    obj   = newObject(value);
-	    array.add(obj);
+      if (!isDefaultValue(option, currValue) || getOutputFull()) {
+	if (currValue != null) {
+	  if (!option.isMultiple()) {
+	    value = currValue;
+	    obj   = newObject(currValue);
+	    addPair(getOptionIdentifier(option), obj);
 	    if (value instanceof OptionHandler) {
 	      m_Nesting.push(obj);
 	      doProduce(((OptionHandler) value).getOptionManager());
@@ -265,7 +258,27 @@ public class JsonProducer
 	      addArray(obj, KEY_OPTIONS, handler.getOptions(value));
 	    }
 	  }
-	  m_Nesting.pop();
+	  else {
+	    currValues = currValue;
+	    array = new JSONArray();
+	    addPair(getOptionIdentifier(option), array);
+	    m_Nesting.push(array);
+	    for (i = 0; i < Array.getLength(currValues); i++) {
+	      value = Array.get(currValues, i);
+	      obj   = newObject(value);
+	      array.add(obj);
+	      if (value instanceof OptionHandler) {
+		m_Nesting.push(obj);
+		doProduce(((OptionHandler) value).getOptionManager());
+		m_Nesting.pop();
+	      }
+	      else {
+		handler = AbstractCommandLineHandler.getHandler(value);
+		addArray(obj, KEY_OPTIONS, handler.getOptions(value));
+	      }
+	    }
+	    m_Nesting.pop();
+	  }
 	}
       }
     }
@@ -288,14 +301,17 @@ public class JsonProducer
     }
     else {
       currValue = getCurrentValue(option);
-      if (currValue != null) {
-	if (!option.isMultiple()) {
-	  if (!(option instanceof AbstractNumericOption) && !(option instanceof BooleanOption))
-	    currValue = option.toString(currValue);
-	  addPair(getOptionIdentifier(option), currValue);
-	}
-	else {
-	  addArray(option, getOptionIdentifier(option), currValue);
+
+      if (!isDefaultValue(option, currValue) || getOutputFull()) {
+	if (currValue != null) {
+	  if (!option.isMultiple()) {
+	    if (!(option instanceof AbstractNumericOption) && !(option instanceof BooleanOption))
+	      currValue = option.toString(currValue);
+	    addPair(getOptionIdentifier(option), currValue);
+	  }
+	  else {
+	    addArray(option, getOptionIdentifier(option), currValue);
+	  }
 	}
       }
     }

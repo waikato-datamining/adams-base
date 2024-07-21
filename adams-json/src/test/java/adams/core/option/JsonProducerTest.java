@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonProducerTest.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -29,7 +29,6 @@ import junit.framework.TestSuite;
  * Tests the JsonProducer class.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonProducerTest
   extends AbstractOptionProducerTestCase {
@@ -53,6 +52,7 @@ public class JsonProducerTest
     handler.setAppend(true);
 
     JsonProducer producer = new JsonProducer();
+    producer.setOutputFull(true);
     producer.produce(handler);
 
     assertEquals(
@@ -63,6 +63,29 @@ public class JsonProducerTest
 	"toString() differs",
 	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
 	producer.toString());
+  }
+
+  /**
+   * Tests a simple option handler with only outputting options that differ from the default ones.
+   */
+  public void testNotFull() {
+    adams.flow.sink.DumpFile handler = new adams.flow.sink.DumpFile();
+    handler.setLoggingLevel(LoggingLevel.INFO);
+    handler.setOutputFile(new PlaceholderFile("${TMP}/dumpfile.arff"));
+    handler.setAppend(true);
+
+    JsonProducer producer = new JsonProducer();
+    producer.setOutputFull(false);
+    producer.produce(handler);
+
+    assertEquals(
+      "getOutput() differs",
+      "{\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
+      "" + producer.getOutput());
+    assertEquals(
+      "toString() differs",
+      "{\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true}",
+      producer.toString());
   }
 
   /**
@@ -79,6 +102,7 @@ public class JsonProducerTest
     handler.setSubFilters(filters);
 
     JsonProducer producer = new JsonProducer();
+    producer.setOutputFull(true);
     producer.produce(handler);
 
     assertEquals(
@@ -101,6 +125,7 @@ public class JsonProducerTest
     handler.setBaselineCorrection(baseline);
 
     JsonProducer producer = new JsonProducer();
+    producer.setOutputFull(true);
     producer.produce(handler);
 
     assertEquals(
