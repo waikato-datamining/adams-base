@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2023 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -44,6 +44,7 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.classtree.ClassTree;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -141,6 +142,9 @@ public class GenericObjectEditor
 
   /** the button for choosing a different class in the custom panel. */
   protected BaseButton m_CustomPanelChooseButton;
+
+  /** the button for showing the favorites menu in the custom panel. */
+  protected BaseButton m_CustomPanelFavoriteButton;
 
   /** The property panel created for the objects. */
   protected PropertyPanel m_ObjectPropertyPanel;
@@ -856,6 +860,8 @@ public class GenericObjectEditor
       m_EditorComponent.setCanChangeClassInDialog(value);
     if (m_CustomPanelChooseButton != null)
       m_CustomPanelChooseButton.setVisible(value);
+    if (m_CustomPanelFavoriteButton != null)
+      m_CustomPanelFavoriteButton.setVisible(value);
   }
 
   /**
@@ -1348,6 +1354,8 @@ public class GenericObjectEditor
       buttonPanel = new JPanel(new GridLayout(1, 1));
       m_CustomPanelChooseButton = createChooseClassButton();
       buttonPanel.add(m_CustomPanelChooseButton);
+      m_CustomPanelFavoriteButton = createFavoriteButton();
+      buttonPanel.add(m_CustomPanelFavoriteButton);
       m_CustomPanel.add(buttonPanel, BorderLayout.EAST);
       m_CustomPanel.add(m_ObjectPropertyPanel, BorderLayout.CENTER);
     }
@@ -1381,6 +1389,30 @@ public class GenericObjectEditor
     });
 
     return setButton;
+  }
+
+  /**
+   * Creates a button brings up the favorites popup menu.
+   *
+   * @return 		the choose button
+   */
+  protected BaseButton createFavoriteButton() {
+    final BaseButton favoriteButton = new BaseButton(ImageManager.getIcon("favorite.gif"));
+    favoriteButton.setToolTipText("Show favorites menu");
+
+    // anonymous action listener shows a JTree popup and allows the user
+    // to choose the class they want
+    favoriteButton.addActionListener((ActionEvent e) -> {
+      JPopupMenu menu = new JPopupMenu();
+      Favorites.getSingleton().customizePopupMenu(
+	menu,
+	getClassType(),
+	getValue(),
+	(FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
+      menu.show(favoriteButton, 0, favoriteButton.getHeight());
+    });
+
+    return favoriteButton;
   }
 
   /**

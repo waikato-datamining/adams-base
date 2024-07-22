@@ -35,6 +35,7 @@ import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.event.RemoveItemsEvent;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import gnu.trove.set.hash.TIntHashSet;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -44,6 +45,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
@@ -253,6 +255,9 @@ public class GenericArrayEditor
   /** Click to add multiple objects to the array. */
   protected BaseButton m_ButtonAddMultiple;
 
+  /** Click to set favorites. */
+  protected BaseButton m_ButtonSetFavorites;
+
   /** Click to copy the currently selected object in array into the edit field. */
   protected BaseButton m_ButtonCopy;
 
@@ -348,6 +353,10 @@ public class GenericArrayEditor
     m_ButtonAddMultiple = new BaseButton(ImageManager.getIcon("add_multiple.gif"));
     m_ButtonAddMultiple.setToolTipText("Add multiple items to the array");
     m_ButtonAddMultiple.addActionListener((ActionEvent e) -> addMultipleObjects());
+
+    m_ButtonSetFavorites = new BaseButton(ImageManager.getIcon("favorite.gif"));
+    m_ButtonSetFavorites.setToolTipText("Applying a favorite replaces the current array elements");
+    m_ButtonSetFavorites.addActionListener((ActionEvent e) -> setFavorites());
 
     m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
@@ -711,10 +720,12 @@ public class GenericArrayEditor
 	  panelAdd = new JPanel(new GridLayout(1, 2, 0, 0));
 	  panelAdd.add(m_ButtonAdd);
 	  panelAdd.add(m_ButtonAddMultiple);
+	  panelAdd.add(m_ButtonSetFavorites);
 	}
 	else {
 	  panelAdd = new JPanel(new GridLayout(1, 1, 0, 0));
 	  panelAdd.add(m_ButtonAdd);
+	  panelAdd.add(m_ButtonSetFavorites);
 	}
 
 	panelMove = new JPanel(new GridLayout(1, 2, 0, 0));
@@ -1044,7 +1055,7 @@ public class GenericArrayEditor
       return false;
     }
   }
-  
+
   /**
    * Adds multiple objects.
    * 
@@ -1086,7 +1097,28 @@ public class GenericArrayEditor
 
     return result;
   }
-  
+
+  /**
+   * Opens the favorites menu and replaces the current array elements when applying a favorite.
+   */
+  public void setFavorites() {
+    JPopupMenu 	menu;
+    Object	array;
+
+    if (m_IsPrimitive)
+      array = Array.newInstance(Utils.getPrimitiveClass(m_ElementClass), 0);
+    else
+      array = Array.newInstance(m_ElementClass, 0);
+
+    menu = new JPopupMenu();
+    Favorites.getSingleton().customizePopupMenu(
+      menu,
+      array.getClass(),
+      getValue(),
+      (FavoriteSelectionEvent fe) -> setValue(fe.getFavorite().getObject()));
+    menu.show(m_ButtonSetFavorites, 0, m_ButtonSetFavorites.getHeight());
+  }
+
   /**
    * Removes all elements.
    */
