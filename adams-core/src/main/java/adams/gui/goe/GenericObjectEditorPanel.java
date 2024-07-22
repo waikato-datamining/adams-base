@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPanel.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -190,6 +190,26 @@ public class GenericObjectEditorPanel
    */
   public boolean getCanChangeClass() {
     return m_CanChangeClass;
+  }
+
+  /**
+   * Whether the favorites button is shown or not.
+   *
+   * @return		true if to show
+   */
+  @Override
+  protected boolean supportsFavorites() {
+    return true;
+  }
+
+  /**
+   * The class to use for the favorites (can be array class).
+   *
+   * @return		the class
+   */
+  @Override
+  protected Class getFavoritesClass() {
+    return getClassType();
   }
 
   /**

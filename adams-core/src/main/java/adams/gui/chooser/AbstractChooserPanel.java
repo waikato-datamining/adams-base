@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -30,6 +30,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
+import adams.gui.goe.Favorites;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JLabel;
@@ -129,6 +131,9 @@ public abstract class AbstractChooserPanel<T>
 
   /** the button for bringing up the chooser dialog. */
   protected BaseButton m_ButtonSelection;
+
+  /** the button for the favorites. */
+  protected BaseButton m_ButtonFavorites;
 
   /** listeners that listen to changes of the selected value. */
   protected Set<ChangeListener> m_ChangeListeners;
@@ -277,7 +282,48 @@ public abstract class AbstractChooserPanel<T>
     m_ButtonSelection.addActionListener(e -> choose());
     m_PanelButtons.add(m_ButtonSelection);
 
+    if (supportsFavorites()) {
+      m_ButtonFavorites = new BaseButton(ImageManager.getIcon("favorite.gif"));
+      m_ButtonFavorites.addActionListener(e -> showFavoritesMenu());
+      m_PanelButtons.add(m_ButtonFavorites);
+    }
+
     updatePreferredSize();
+  }
+
+  /**
+   * Whether the favorites button is shown or not.
+   *
+   * @return		true if to show
+   */
+  protected boolean supportsFavorites() {
+    return false;
+  }
+
+  /**
+   * The class to use for the favorites (can be array class).
+   * <br>
+   * Subclasses must override this.
+   *
+   * @return		the class
+   */
+  protected Class getFavoritesClass() {
+    return Object.class;
+  }
+
+  /**
+   * Displays the favorites menu.
+   */
+  protected void showFavoritesMenu() {
+    JPopupMenu	menu;
+
+    menu = new JPopupMenu();
+    Favorites.getSingleton().addFavoritesMenuItems(
+      menu,
+      getFavoritesClass(),
+      getCurrent(),
+      (FavoriteSelectionEvent fe) -> setCurrent((T) fe.getFavorite().getObject()));
+    menu.show(m_ButtonFavorites, 0, m_ButtonFavorites.getHeight());
   }
 
   /**
