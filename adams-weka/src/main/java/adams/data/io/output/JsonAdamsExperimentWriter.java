@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonAdamsExperimentWriter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -30,7 +30,6 @@ import adams.gui.tools.wekamultiexperimenter.experiment.AbstractExperiment;
  * Writes ADAMS experiments in JSON format. Does not store the results.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonAdamsExperimentWriter
   extends AbstractAdamsExperimentWriter {
@@ -93,6 +92,7 @@ public class JsonAdamsExperimentWriter
     result = null;
 
     producer = new JsonProducer();
+    producer.setOutputFull(true);
     producer.produce(exp);
     if (!producer.write(file.getAbsolutePath()))
       result = "Failed to write experiment to: " + file;
