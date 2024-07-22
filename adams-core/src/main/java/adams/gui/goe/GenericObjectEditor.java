@@ -1404,7 +1404,7 @@ public class GenericObjectEditor
     // to choose the class they want
     favoriteButton.addActionListener((ActionEvent e) -> {
       JPopupMenu menu = new JPopupMenu();
-      Favorites.getSingleton().customizePopupMenu(
+      Favorites.getSingleton().addFavoritesMenuItems(
 	menu,
 	getClassType(),
 	getValue(),

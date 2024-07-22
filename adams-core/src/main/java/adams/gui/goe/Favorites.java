@@ -227,7 +227,7 @@ public class Favorites
     /**
      * Indicates whether some other object is "equal to" this one.
      *
-     * @param obj		the reference object with which to compare.
+     * @param obj	the reference object with which to compare.
      * @return		true if this object is the same as the obj argument;
      * 			false otherwise.
      */
@@ -440,23 +440,7 @@ public class Favorites
   /**
    * Returns the favorites for the specified class.
    *
-   * @param classname	the class to get the favorites for
-   * @return		the favorites
-   */
-  public List<Favorite> getFavorites(String classname) {
-    try {
-      return getFavorites(ClassManager.getSingleton().forName(classname));
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to retrieve favorites for: " + classname, e);
-      return new ArrayList<>();
-    }
-  }
-
-  /**
-   * Returns the favorites for the specified class.
-   *
-   * @param cls		the class to get the favorites for
+   * @param cls		the class to get the favorites for, can be array classes as well
    * @return		the favorites
    */
   public List<Favorite> getFavorites(Class cls) {
@@ -465,23 +449,14 @@ public class Favorites
     String		key;
     String		prefix;
     Favorite		favorite;
-    boolean		array;
 
     result = new ArrayList<>();
-
-    array = cls.isArray();
-    if (array) {
-      cls = cls.getComponentType();
-      prefix = cls.getName() + "[]" + SEPARATOR;
-    }
-    else {
-      prefix = cls.getName() + SEPARATOR;
-    }
-    enm = (Enumeration<String>) getProperties().propertyNames();
+    prefix = createKey(cls);
+    enm    = (Enumeration<String>) getProperties().propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
       if (key.startsWith(prefix)) {
-	favorite = new Favorite(key.substring(prefix.length()), getProperties().getProperty(key), array, cls);
+	favorite = new Favorite(key.substring(prefix.length()), getProperties().getProperty(key), cls.isArray(), cls.isArray() ? cls.getComponentType() : null);
 	result.add(favorite);
       }
     }
@@ -526,31 +501,59 @@ public class Favorites
   protected String fixName(String name) {
     return name.replace("|", "/");
   }
-  
+
+  /**
+   * Generates a properties key prefix for the class.
+   *
+   * @param cls		the class to generate the key for
+   * @return		the key
+   */
+  protected String createKey(Class cls) {
+    return createKey(cls, "");
+  }
+
+  /**
+   * Creates the class for the favorite.
+   *
+   * @param cls		the base class
+   * @param array	whether for an array
+   * @return		the favorites class
+   */
+  protected Class createFavoritesClass(Class cls, boolean array) {
+    if (array)
+      return Array.newInstance(cls, 0).getClass();
+    else
+      return cls;
+  }
+
+  /**
+   * Generates a properties key for the class/name.
+   *
+   * @param cls		the class to generate the key for
+   * @param name 	the name to generete the key for
+   * @return		the key
+   */
+  protected String createKey(Class cls, String name) {
+    if (cls.isArray())
+      return cls.getComponentType().getName() + "[]" + SEPARATOR + fixName(name);
+    else
+      return cls.getName() + SEPARATOR + fixName(name);
+  }
+
   /**
    * Returns the named favorite for the specified class.
    *
    * @param cls		the class to get the favorite for
+   * @param array 	whether for an array
    * @param name	the name of the favorite
    * @return		the favorite, null if not available
    */
-  public Favorite getFavorite(Class cls, String name) {
+  public Favorite getFavorite(Class cls, boolean array, String name) {
     String	key;
-    boolean	array;
-    Class	compClass;
 
-    array     = false;
-    compClass = null;
-    if (cls.isArray()) {
-      key       = cls.getComponentType().getName() + "[]" + SEPARATOR + fixName(name);
-      array     = true;
-      compClass = cls.getComponentType();
-    }
-    else {
-      key = cls.getName() + SEPARATOR + fixName(name);
-    }
+    key = createKey(createFavoritesClass(cls, array), name);
     if (getProperties().hasKey(key))
-      return new Favorite(name, getProperties().getProperty(key), array, compClass);
+      return new Favorite(name, getProperties().getProperty(key), array, array ? cls : null);
     else
       return null;
   }
@@ -558,22 +561,41 @@ public class Favorites
   /**
    * Adds a favorite for a class.
    *
-   * @param cls		the class to add the favorite for
+   * @param cls		the class to add the favorite for (array or not)
    * @param obj		the favorite
    * @param name	the name of the favorite
    */
   public void addFavorite(Class cls, Object obj, String name) {
+    if (cls.isArray())
+      addFavorite(cls.getComponentType(), true, obj, name);
+    else
+      addFavorite(cls, false, obj, name);
+  }
+
+  /**
+   * Adds a favorite for a class.
+   *
+   * @param cls		the class to add the favorite for, component type for arrays
+   * @param array 	whether for an array
+   * @param obj		the favorite
+   * @param name	the name of the favorite
+   */
+  public void addFavorite(Class cls, boolean array, Object obj, String name) {
     String[]	cmdLines;
     int		i;
+    String	key;
+    Class	favClass;
 
-    if (cls.isArray()) {
+    favClass = createFavoritesClass(cls, array);
+    key      = createKey(favClass, name);
+    if (array) {
       cmdLines = new String[Array.getLength(obj)];
       for (i = 0; i < Array.getLength(obj); i++)
 	cmdLines[i] = OptionUtils.getCommandLine(Array.get(obj, i));
-      getProperties().setProperty(cls.getComponentType().getName() + "[]" + SEPARATOR + fixName(name), OptionUtils.joinOptions(cmdLines));
+      getProperties().setProperty(key, OptionUtils.joinOptions(cmdLines));
     }
     else {
-      getProperties().setProperty(cls.getName() + SEPARATOR + fixName(name), OptionUtils.getCommandLine(obj));
+      getProperties().setProperty(key, OptionUtils.getCommandLine(obj));
     }
     m_Modified = true;
     if (m_AutoSave)
@@ -583,11 +605,17 @@ public class Favorites
   /**
    * Removes the favorites for the specified class.
    *
-   * @param classname	the class to remove the favorites for
+   * @param classname	the class to remove the favorites for, use [] suffix for arrays
    */
   public void removeFavorites(String classname) {
+    Class	cls;
+
     try {
-      removeFavorites(ClassManager.getSingleton().forName(classname));
+      if (classname.endsWith("[]"))
+	cls = ClassManager.getSingleton().forName(classname.substring(0, classname.length() - 2));
+      else
+	cls = ClassManager.getSingleton().forName(classname);
+      removeFavorites(cls, classname.endsWith("[]"));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to remove favorites for: " + classname, e);
@@ -598,14 +626,19 @@ public class Favorites
    * Removes the favorites for the specified class.
    *
    * @param cls		the class to remove the favorites for
+   * @param array 	whether for an array
    */
-  public void removeFavorites(Class cls) {
+  public void removeFavorites(Class cls, boolean array) {
     List<Favorite>	favorites;
     int			i;
+    String		key;
+    Class		favClass;
 
-    favorites = getFavorites(cls);
+    favClass  = createFavoritesClass(cls, array);
+    favorites = getFavorites(favClass);
+    key       = createKey(favClass);
     for (i = 0; i < favorites.size(); i++)
-      getProperties().removeKey(cls.getName() + SEPARATOR + favorites.get(i).getName());
+      getProperties().removeKey(key + favorites.get(i).getName());
 
     m_Modified = true;
 
@@ -616,26 +649,12 @@ public class Favorites
   /**
    * Removes a favorite for a class.
    *
-   * @param classname	the class to remove the favorite for
-   * @param name	the name of the favorite
-   */
-  public void removeFavorite(String classname, String name) {
-    try {
-      removeFavorite(ClassManager.getSingleton().forName(classname), fixName(name));
-    }
-    catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to remove favorite " + classname + "/" + name + "!", e);
-    }
-  }
-
-  /**
-   * Removes a favorite for a class.
-   *
    * @param cls		the class to remove the favorite for
+   * @param array 	whether an array or not
    * @param name	the name of the favorite
    */
-  public void removeFavorite(Class cls, String name) {
-    getProperties().removeKey(cls.getName() + SEPARATOR + fixName(name));
+  public void removeFavorite(Class cls, boolean array, String name) {
+    getProperties().removeKey(createKey(createFavoritesClass(cls, array), name));
     m_Modified = true;
     if (m_AutoSave)
       updateFavorites();
@@ -673,14 +692,43 @@ public class Favorites
   }
 
   /**
+   * Adds the menuitem to the menu.
+   *
+   * @param menu	the JMenu or JPopupMenu to add to
+   * @param menuitem	the item to add
+   */
+  protected void addMenuItem(Object menu, JMenuItem menuitem) {
+    if (menu instanceof JPopupMenu)
+      ((JPopupMenu) menu).add(menuitem);
+    else if (menu instanceof JMenu)
+      ((JMenu) menu).add(menuitem);
+    else
+      throw new IllegalArgumentException("Only JMenu and JPopupMenu are accepted!");
+  }
+
+  /**
+   * Adds a separator to the menu.
+   *
+   * @param menu	the JMenu or JPopupMenu to add to
+   */
+  protected void addSeparator(Object menu) {
+    if (menu instanceof JPopupMenu)
+      ((JPopupMenu) menu).addSeparator();
+    else if (menu instanceof JMenu)
+      ((JMenu) menu).addSeparator();
+    else
+      throw new IllegalArgumentException("Only JMenu and JPopupMenu are accepted!");
+  }
+
+  /**
    * Adds a menu item with the favorites to the menu.
    *
-   * @param menu	the menu to add the favorites to
-   * @param cls		the class the favorites are for
+   * @param menu	the menu (JMenu/JPopupMenu) to add the favorites to
+   * @param cls		the class the favorites are for, can be array class as well
    * @param current	the current object
    * @param listener	the listener to attach to the menu items' ActionListener
    */
-  public void customizeMenu(JMenu menu, Class cls, Object current, FavoriteSelectionListener listener) {
+  public void addFavoritesMenuItems(Object menu, Class cls, Object current, FavoriteSelectionListener listener) {
     JMenu		updatemenu;
     JMenuItem		item;
     List<Favorite>	favorites;
@@ -708,11 +756,11 @@ public class Favorites
       while (name == null);
       addFavorite(fCls, fCurrent, name);
     });
-    menu.add(item);
+    addMenuItem(menu, item);
 
     updatemenu = new JMenu("Update favorite");
     updatemenu.setEnabled(false);  // in case we have no favorites yet
-    menu.add(updatemenu);
+    addMenuItem(menu, updatemenu);
     for (i = 0; i < favorites.size(); i++) {
       final Favorite favorite = favorites.get(i);
       String name = favorite.getName();
@@ -726,39 +774,44 @@ public class Favorites
 
     item = new JMenuItem("Add as temporary favorite");
     item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, TEMPORARY));
-    menu.add(item);
+    addMenuItem(menu, item);
 
     // current favorites
     final FavoriteSelectionListener fListener = listener;
     for (i = 0; i < favorites.size(); i++) {
       if (i == 0)
-	menu.addSeparator();
+	addSeparator(menu);
       final Favorite favorite = favorites.get(i);
       String name = favorite.getName();
       if (name.equals(TEMPORARY))
 	name = "-Temp-";
       item = new JMenuItem(name);
       item.addActionListener((ActionEvent e) -> fListener.favoriteSelected(new FavoriteSelectionEvent(fListener, favorite)));
-      menu.add(item);
+      addMenuItem(menu, item);
     }
   }
 
   /**
    * Adds a menu item with the favorites submenu to the popup menu.
    *
-   * @param menu	the menu to add the favorites to
+   * @param menu	the menu (JMenu/JPopMenu) to add the favorites to
    * @param cls		the class the favorites are for
    * @param current	the current object
    * @param listener	the listener to attach to the menu items' ActionListener
    */
-  public void customizePopupMenu(JPopupMenu menu, Class cls, Object current, FavoriteSelectionListener listener) {
+  public void addFavoritesSubMenu(Object menu, Class cls, Object current, FavoriteSelectionListener listener) {
     JMenu		submenu;
 
     submenu = new JMenu("Favorites");
     submenu.setIcon(ImageManager.getIcon("favorite.gif"));
-    menu.add(submenu);
+    if (menu instanceof JPopupMenu)
+      ((JPopupMenu) menu).add(submenu);
+    else if (menu instanceof JMenu)
+      ((JMenu) menu).add(submenu);
+    else
+      throw new IllegalArgumentException("Only JMenu and JPopupMenu are accepted!");
 
-    customizeMenu(submenu, cls, current, listener);
+    addFavoritesMenuItems(submenu, cls, current, listener);
   }
 
   /**

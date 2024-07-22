@@ -161,7 +161,7 @@ public class BaseObjectTextField<T extends BaseObject>
     check = ((BaseObjectCheckModel<T>) m_CheckModel).getCheck();
     if (check.hasFavoritesSupport()) {
       result.addSeparator();
-      Favorites.getSingleton().customizePopupMenu(
+      Favorites.getSingleton().addFavoritesSubMenu(
 	result,
 	check.getClass(),
 	getObject(),

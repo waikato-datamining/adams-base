@@ -862,7 +862,7 @@ public class AssociateTab
     JPopupMenu menu;
 
     menu = new JPopupMenu();
-    Favorites.getSingleton().customizePopupMenu(
+    Favorites.getSingleton().addFavoritesMenuItems(
       menu,
       AbstractOutputGenerator[].class,
       getOutputGenerators(),

@@ -77,7 +77,7 @@ public class Favorites
   @Override
   protected void doCustomize(final GenericObjectEditorPopupMenu menu, final PropertyEditor editor, final JComponent comp) {
     addSeparator(menu);
-    adams.gui.goe.Favorites.getSingleton().customizePopupMenu(
+    adams.gui.goe.Favorites.getSingleton().addFavoritesSubMenu(
       menu,
       ((GenericObjectEditor) editor).getClassType(),
       editor.getValue(),

@@ -1111,7 +1111,7 @@ public class GenericArrayEditor
       array = Array.newInstance(m_ElementClass, 0);
 
     menu = new JPopupMenu();
-    Favorites.getSingleton().customizePopupMenu(
+    Favorites.getSingleton().addFavoritesMenuItems(
       menu,
       array.getClass(),
       getValue(),

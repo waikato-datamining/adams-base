@@ -15,13 +15,14 @@
 
 /*
  * FavoritesManagementPanel.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseListWithButtons;
@@ -31,6 +32,7 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.goe.Favorites;
 import adams.gui.goe.Favorites.Favorite;
+import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 
 import javax.swing.BorderFactory;
@@ -50,6 +52,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -189,6 +192,9 @@ public class FavoritesManagementPanel
     /** the superclass to display. */
     protected Class m_Superclass;
 
+    /** whether we are managing arrays. */
+    protected boolean m_Array;
+
     /**
      * Initializes the model with no favorites.
      */
@@ -204,7 +210,7 @@ public class FavoritesManagementPanel
     public FavoritesListModel(Favorites fav) {
       super(fav);
 
-      setSuperclass((Class) null);
+      setSuperclass((Class) null, false);
     }
 
     /**
@@ -212,21 +218,35 @@ public class FavoritesManagementPanel
      *
      * @param fav	the favorites to use
      * @param cls	the class to display
+     * @param array 	whether this is for arrays
      */
-    public FavoritesListModel(Favorites fav, Class cls) {
+    public FavoritesListModel(Favorites fav, Class cls, boolean array) {
       super(fav);
 
-      setSuperclass(cls);
+      setSuperclass(cls, array);
+    }
+
+    /**
+     * Sets the superclass to use.
+     *
+     * @param value	the superclass, can have trailing [] to denote arrays
+     */
+    public void setSuperclass(String value) {
+      if (value.endsWith("[]"))
+	setSuperclass(value.substring(0, value.length() - 2), true);
+      else
+	setSuperclass(value, false);
     }
 
     /**
      * Sets the superclass to use.
      *
      * @param value	the superclass
+     * @param array 	whether this is for arrays
      */
-    public void setSuperclass(String value) {
+    public void setSuperclass(String value, boolean array) {
       try {
-	setSuperclass(ClassManager.getSingleton().forName(value));
+	setSuperclass(ClassManager.getSingleton().forName(value), array);
       }
       catch (Exception e) {
 	e.printStackTrace();
@@ -237,19 +257,21 @@ public class FavoritesManagementPanel
      * Sets the superclass to use.
      *
      * @param value	the superclass
+     * @param array 	whether this is for arrays
      */
-    public void setSuperclass(Class value) {
+    public void setSuperclass(Class value, boolean array) {
       List<String>	classes;
 
       if (value == null) {
 	classes = m_Favorites.getSuperclasses();
-	if (classes.size() > 0) {
-	  setSuperclass(classes.get(0));
+	if (!classes.isEmpty()) {
+	  setSuperclass(classes.get(0), array);
 	  return;
 	}
       }
       else {
 	m_Superclass = value;
+	m_Array      = array;
       }
 
       update();
@@ -265,17 +287,31 @@ public class FavoritesManagementPanel
     }
 
     /**
+     * Returns whether this is for arrays.
+     *
+     * @return		true if for arrays
+     */
+    public boolean isArray() {
+      return m_Array;
+    }
+
+    /**
      * Updates the list.
      */
     @Override
     public void update() {
       List<Favorite>	favorites;
       int		i;
+      Class		favClass;
 
       clear();
 
       if (m_Superclass != null) {
-	favorites = m_Favorites.getFavorites(m_Superclass);
+	if (m_Array)
+	  favClass = Array.newInstance(m_Superclass, 0).getClass();
+	else
+	  favClass = m_Superclass;
+	favorites = m_Favorites.getFavorites(favClass);
 	for (i = 0; i < favorites.size(); i++)
 	  addElement(favorites.get(i).getName() + SEPARATOR + favorites.get(i).getCommandline());
       }
@@ -356,6 +392,9 @@ public class FavoritesManagementPanel
   /** the generic object editor for manipulating the favorites. */
   protected GenericObjectEditorDialog m_GOEDialog;
 
+  /** the generic array editor for manipulating the favorites. */
+  protected GenericArrayEditorDialog m_GAEDialog;
+
   /**
    * Initializes the members.
    */
@@ -411,7 +450,7 @@ public class FavoritesManagementPanel
     m_ButtonSuperclassRemoveAll = new BaseButton("Remove all");
     m_ButtonSuperclassRemoveAll.addActionListener((ActionEvent e) -> {
       m_Favorites.clear();
-      m_ListModelFavorites.setSuperclass((Class) null);
+      m_ListModelFavorites.setSuperclass((Class) null, false);
       m_ListModelSuperclass.update();
       update();
     });
@@ -426,14 +465,14 @@ public class FavoritesManagementPanel
 
     m_ButtonFavoriteAdd = new BaseButton("Add...");
     m_ButtonFavoriteAdd.addActionListener((ActionEvent e) -> {
-      addFavorite(m_ListModelFavorites.getSuperclass());
+      addFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray());
       update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteAdd);
 
     m_ButtonFavoriteEdit = new BaseButton("Edit...");
     m_ButtonFavoriteEdit.addActionListener((ActionEvent e) -> {
-      editFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
+      editFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray(), (String) m_PanelFavorites.getSelectedValue());
       update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteEdit);
@@ -441,7 +480,7 @@ public class FavoritesManagementPanel
 
     m_ButtonFavoriteRename = new BaseButton("Rename...");
     m_ButtonFavoriteRename.addActionListener((ActionEvent e) -> {
-      renameFavorite(m_ListModelFavorites.getSuperclass(), (String) m_PanelFavorites.getSelectedValue());
+      renameFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray(), (String) m_PanelFavorites.getSelectedValue());
       update();
     });
     m_PanelFavorites.addToButtonsPanel(m_ButtonFavoriteRename);
@@ -452,7 +491,7 @@ public class FavoritesManagementPanel
 	return;
       int[] indices = m_PanelFavorites.getSelectedIndices();
       for (int i = 0; i < indices.length; i++)
-	m_Favorites.removeFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.getName(indices[i]));
+	m_Favorites.removeFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray(), m_ListModelFavorites.getName(indices[i]));
       m_ListModelSuperclass.update();
       m_ListModelFavorites.update();
       update();
@@ -463,7 +502,7 @@ public class FavoritesManagementPanel
     m_ButtonFavoriteRemoveAll.addActionListener((ActionEvent e) -> {
       if (m_ListModelFavorites.getSuperclass() == null)
 	return;
-      m_Favorites.removeFavorites(m_ListModelFavorites.getSuperclass());
+      m_Favorites.removeFavorites(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray());
       m_ListModelSuperclass.update();
       m_ListModelFavorites.update();
       update();
@@ -492,18 +531,38 @@ public class FavoritesManagementPanel
   }
 
   /**
+   * Returns the GAE editor dialog to use.
+   *
+   * @return		the dialog
+   */
+  protected GenericArrayEditorDialog getGAEEditor() {
+    if (m_GAEDialog == null) {
+      if (getParentDialog() != null)
+	m_GAEDialog = new GenericArrayEditorDialog(getParentDialog());
+      else
+	m_GAEDialog = new GenericArrayEditorDialog(getParentFrame());
+      m_GAEDialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+    }
+
+    return m_GAEDialog;
+  }
+
+  /**
    * Adds a new superclass for favorites. Automatically pops up dialog for
    * adding a favorite.
    */
   protected void addSuperclass() {
     BaseDialog			dialog;
     BasePanel			panel;
-    BasePanel			panelBox;
+    BasePanel 			panelClasses;
+    BasePanel			panelArray;
+    BasePanel			panelParams;
     BaseButton			buttonOK;
     BaseButton			buttonCancel;
     JLabel			label;
     String[] 			superclasses;
-    final BaseComboBox<String> 	combobox;
+    final BaseComboBox<String> 	comboBoxClasses;
+    BaseCheckBox		checkBoxArray;
 
     if (getParentFrame() != null)
       dialog = new BaseDialog(getParentFrame(), true);
@@ -512,17 +571,30 @@ public class FavoritesManagementPanel
     dialog.setTitle("Add superclass");
     dialog.getContentPane().setLayout(new BorderLayout());
 
-    // combobox
+    panelParams = new BasePanel(new GridLayout(2, 1));
+    dialog.getContentPane().add(panelParams, BorderLayout.CENTER);
+
+    // classes
     superclasses = ClassLister.getSingleton().getSuperclasses();
     Arrays.sort(superclasses);
-    panelBox = new BasePanel(new FlowLayout(FlowLayout.LEFT));
-    combobox = new BaseComboBox<>(superclasses);
+    panelClasses = new BasePanel(new FlowLayout(FlowLayout.LEFT));
+    comboBoxClasses = new BaseComboBox<>(superclasses);
     label = new JLabel("Superclass");
     label.setDisplayedMnemonic('S');
-    label.setLabelFor(combobox);
-    panelBox.add(label);
-    panelBox.add(combobox);
-    dialog.getContentPane().add(panelBox, BorderLayout.CENTER);
+    label.setLabelFor(comboBoxClasses);
+    panelClasses.add(label);
+    panelClasses.add(comboBoxClasses);
+    panelParams.add(panelClasses, BorderLayout.CENTER);
+
+    // array?
+    panelArray = new BasePanel(new FlowLayout(FlowLayout.LEFT));
+    checkBoxArray = new BaseCheckBox();
+    label = new JLabel("Array?");
+    label.setDisplayedMnemonic('A');
+    label.setLabelFor(checkBoxArray);
+    panelArray.add(label);
+    panelArray.add(checkBoxArray);
+    panelParams.add(panelArray, BorderLayout.CENTER);
 
     // buttons
     final BaseDialog dialogF = dialog;
@@ -532,17 +604,16 @@ public class FavoritesManagementPanel
     buttonOK.setMnemonic('O');
     buttonOK.addActionListener((ActionEvent e) -> {
       try {
-	Class cls = ClassManager.getSingleton().forName((String) combobox.getSelectedItem());
-	m_ListModelFavorites.setSuperclass(cls);
+	m_ListModelFavorites.setSuperclass(comboBoxClasses.getSelectedItem(), checkBoxArray.isSelected());
 	dialogF.setVisible(false);
-	addFavorite(cls);
+	addFavorite(m_ListModelFavorites.getSuperclass(), m_ListModelFavorites.isArray());
       }
       catch (Exception ex) {
 	dialogF.setVisible(false);
 	ex.printStackTrace();
 	GUIHelper.showErrorMessage(
 	  FavoritesManagementPanel.this,
-	  "Error encountered:\n" + ex.toString());
+	  "Error encountered:\n" + ex);
       }
     });
     panel.add(buttonOK);
@@ -560,13 +631,16 @@ public class FavoritesManagementPanel
    * Pops up dialog for adding a new favorite.
    *
    * @param cls		the superclass the favorite is for
+   * @param array 	whether this for an array
    */
-  protected void addFavorite(Class cls) {
+  protected void addFavorite(Class cls, boolean array) {
     String			name;
-    GenericObjectEditorDialog	dialog;
+    GenericArrayEditorDialog	gae;
+    GenericObjectEditorDialog 	goe;
     Class			subcls;
     String[]			classes;
     Object			obj;
+    Object			current;
 
     // get all available classes
     classes = ClassLister.getSingleton().getClassnames(cls);
@@ -576,29 +650,41 @@ public class FavoritesManagementPanel
       return;
     }
 
-    // try to instantiate 1st class
-    obj = null;
-    try {
-      subcls = ClassManager.getSingleton().forName(classes[0]);
-      obj    = subcls.getDeclaredConstructor().newInstance();
+    if (array) {
+      obj = Array.newInstance(cls, 0);
+      gae = getGAEEditor();
+      gae.setTitle("Add Favorite (" + cls.getName() + ")");
+      gae.setCurrent(obj);
+      gae.pack();
+      gae.setLocationRelativeTo(this);
+      gae.setVisible(true);
+      if (gae.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+      current = gae.getCurrent();
     }
-    catch (Exception e) {
-      e.printStackTrace();
-      GUIHelper.showErrorMessage(
-	  this, "Failed to instantiate class " + classes[0] + ":\n" + e.toString());
-      return;
+    else {
+      // try to instantiate 1st class
+      try {
+	subcls = ClassManager.getSingleton().forName(classes[0]);
+	obj    = subcls.getDeclaredConstructor().newInstance();
+      }
+      catch (Exception e) {
+	e.printStackTrace();
+	GUIHelper.showErrorMessage(
+	  this, "Failed to instantiate class " + classes[0] + ":\n" + e);
+	return;
+      }
+      goe = getGOEEditor();
+      goe.setTitle("Add Favorite (" + cls.getName() + ")");
+      goe.getGOEEditor().setClassType(cls);
+      goe.getGOEEditor().setValue(obj);
+      goe.pack();
+      goe.setLocationRelativeTo(this);
+      goe.setVisible(true);
+      if (goe.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+      current = goe.getCurrent();
     }
-
-    // setup favorite
-    dialog = getGOEEditor();
-    dialog.setTitle("Add Favorite (" + cls.getName() + ")");
-    dialog.getGOEEditor().setClassType(cls);
-    dialog.getGOEEditor().setValue(obj);
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
 
     // name favorite
     name = GUIHelper.showInputDialog(this, "Please input name for favorite:");
@@ -606,7 +692,7 @@ public class FavoritesManagementPanel
       return;
 
     // add favorite
-    m_Favorites.addFavorite(cls, dialog.getCurrent(), name);
+    m_Favorites.addFavorite(cls, array, current, name);
     m_ListModelSuperclass.update();
     m_ListModelFavorites.update();
   }
@@ -615,31 +701,47 @@ public class FavoritesManagementPanel
    * Pops up a dialog for editing a favorite.
    *
    * @param cls		the superclass of the favorite
+   * @param array 	whether this for an array
    * @param entry	the entry in the list
    */
-  protected void editFavorite(Class cls, String entry) {
+  protected void editFavorite(Class cls, boolean array, String entry) {
     String			name;
     Favorite			favorite;
-    GenericObjectEditorDialog	dialog;
+    GenericObjectEditorDialog 	goe;
+    GenericArrayEditorDialog	gae;
+    Object			current;
 
     name     = entry.substring(0, entry.indexOf(SEPARATOR));
-    favorite = m_Favorites.getFavorite(cls, name);
+    favorite = m_Favorites.getFavorite(cls, array, name);
     if (favorite == null)
       return;
 
     // edit favorite
-    dialog = getGOEEditor();
-    dialog.setTitle("Edit Favorite (" + name + ")");
-    dialog.getGOEEditor().setClassType(cls);
-    dialog.setCurrent(favorite.getObject());
-    dialog.pack();
-    dialog.setLocationRelativeTo(this);
-    dialog.setVisible(true);
-    if (dialog.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
-      return;
+    if (array) {
+      gae = getGAEEditor();
+      gae.setCurrent(favorite.getObject());
+      gae.pack();
+      gae.setLocationRelativeTo(this);
+      gae.setVisible(true);
+      if (gae.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+      current = gae.getCurrent();
+    }
+    else {
+      goe = getGOEEditor();
+      goe.setTitle("Edit Favorite (" + name + ")");
+      goe.getGOEEditor().setClassType(cls);
+      goe.setCurrent(favorite.getObject());
+      goe.pack();
+      goe.setLocationRelativeTo(this);
+      goe.setVisible(true);
+      if (goe.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
+	return;
+      current = goe.getCurrent();
+    }
 
     // update favorite
-    m_Favorites.addFavorite(cls, dialog.getCurrent(), name);
+    m_Favorites.addFavorite(cls, array, current, name);
     m_ListModelSuperclass.update();
     m_ListModelFavorites.update();
   }
@@ -648,15 +750,16 @@ public class FavoritesManagementPanel
    * Pops up a dialog for renaming a favorite.
    *
    * @param cls		the superclass of the favorite
+   * @param array 	whether for an array
    * @param entry	the entry in the list
    */
-  protected void renameFavorite(Class cls, String entry) {
+  protected void renameFavorite(Class cls, boolean array, String entry) {
     String			name;
     String			newName;
     Favorite			favorite;
 
     name     = entry.substring(0, entry.indexOf(SEPARATOR));
-    favorite = m_Favorites.getFavorite(cls, name);
+    favorite = m_Favorites.getFavorite(cls, array, name);
 
     // input new name
     newName = GUIHelper.showInputDialog(this, "Please input new name:", name);
@@ -664,8 +767,8 @@ public class FavoritesManagementPanel
       return;
 
     // rename
-    m_Favorites.addFavorite(cls, favorite.getObject(), newName);
-    m_Favorites.removeFavorite(cls, name);
+    m_Favorites.addFavorite(cls, array, favorite.getObject(), newName);
+    m_Favorites.removeFavorite(cls, array, name);
     m_ListModelFavorites.update();
   }
 
