@@ -536,10 +536,21 @@ public class Favorites
    */
   public Favorite getFavorite(Class cls, String name) {
     String	key;
+    boolean	array;
+    Class	compClass;
 
-    key = cls.getName() + SEPARATOR + fixName(name);
+    array     = false;
+    compClass = null;
+    if (cls.isArray()) {
+      key       = cls.getComponentType().getName() + "[]" + SEPARATOR + fixName(name);
+      array     = true;
+      compClass = cls.getComponentType();
+    }
+    else {
+      key = cls.getName() + SEPARATOR + fixName(name);
+    }
     if (getProperties().hasKey(key))
-      return new Favorite(name, getProperties().getProperty(key));
+      return new Favorite(name, getProperties().getProperty(key), array, compClass);
     else
       return null;
   }
