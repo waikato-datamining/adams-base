@@ -43,6 +43,8 @@ import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.goe.Favorites;
+import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.GenericArrayEditorDialog;
 import adams.gui.goe.GenericObjectEditorDialog;
 import adams.gui.goe.GenericObjectEditorPanel;
@@ -69,6 +71,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
@@ -630,6 +633,9 @@ public class ClassifyTab
   /** the button for editing the output generators. */
   protected BaseButton m_ButtonOutputGenerators;
 
+  /** the button for the output generator favorites. */
+  protected BaseButton m_ButtonOutputGeneratorsFavorites;
+
   /** the panel with the buttons. */
   protected JPanel m_PanelExecutionButtons;
 
@@ -796,6 +802,10 @@ public class ClassifyTab
     panel.add(m_ButtonOutputGenerators);
     buttonsAll.add(panel);
 
+    m_ButtonOutputGeneratorsFavorites = new BaseButton(ImageManager.getIcon("favorite.gif"));
+    m_ButtonOutputGeneratorsFavorites.addActionListener((ActionEvent) -> showOutputGeneratorsFavorites());
+    panel.add(m_ButtonOutputGeneratorsFavorites);
+
     // start/stop buttons
     m_PanelExecutionButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     buttonsAll.add(m_PanelExecutionButtons);
@@ -901,6 +911,21 @@ public class ClassifyTab
     if (dialog.getResult() != GenericArrayEditorDialog.APPROVE_OPTION)
       return;
     m_OutputGenerators = (AbstractOutputGenerator[]) dialog.getCurrent();
+  }
+
+  /**
+   * Shows the favorites popup menu for the output generators.
+   */
+  protected void showOutputGeneratorsFavorites() {
+    JPopupMenu	menu;
+
+    menu = new JPopupMenu();
+    Favorites.getSingleton().customizePopupMenu(
+      menu,
+      AbstractOutputGenerator[].class,
+      getOutputGenerators(),
+      (FavoriteSelectionEvent fe) -> setOutputGenerators((AbstractOutputGenerator[]) fe.getFavorite().getObject()));
+    menu.show(m_ButtonOutputGeneratorsFavorites, 0, m_ButtonOutputGeneratorsFavorites.getHeight());
   }
 
   /**
@@ -1121,6 +1146,15 @@ public class ClassifyTab
    */
   public AbstractOutputGenerator[] getOutputGenerators() {
     return m_OutputGenerators;
+  }
+
+  /**
+   * Sets the output generators to use.
+   *
+   * @param value	the generators
+   */
+  public void setOutputGenerators(AbstractOutputGenerator[] value) {
+    m_OutputGenerators = value;
   }
 
   /**
