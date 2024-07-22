@@ -15,7 +15,7 @@
 
 /*
  * Favorites.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -34,6 +34,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -48,13 +49,15 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Favorites
+  extends LoggingObject
   implements Comparable, CloneHandler<Favorites> {
+
+  private static final long serialVersionUID = -6275908166147814829L;
 
   /**
    * Container class for a favorite setup.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class Favorite
     extends LoggingObject
@@ -69,6 +72,12 @@ public class Favorites
     /** the commandline of the favorite. */
     protected String m_Commandline;
 
+    /** whether it is an array. */
+    protected boolean m_Array;
+
+    /** the component class (in case of arrays). */
+    protected Class m_ComponentClass;
+
     /**
      * Initializes the favorite.
      *
@@ -76,15 +85,31 @@ public class Favorites
      * @param cmd	the commandline of the favorite
      */
     public Favorite(String name, String cmd) {
+      this(name, cmd, false, null);
+    }
+
+    /**
+     * Initializes the favorite.
+     *
+     * @param name	the name of the favorite
+     * @param cmd	the commandline of the favorite
+     * @param array 	whether this commandline represents an array
+     * @param componentClass 	the base class of the array
+     */
+    public Favorite(String name, String cmd, boolean array, Class componentClass) {
       super();
 
       if (name == null)
 	throw new IllegalArgumentException("Name of favorite cannot be null!");
       if (cmd == null)
 	throw new IllegalArgumentException("Command for favorite cannot be null!");
-      
-      m_Name        = name;
-      m_Commandline = cmd;
+      if (array && (componentClass == null))
+	throw new IllegalArgumentException("Arrays must define their component class!");
+
+      m_Name           = name;
+      m_Commandline    = cmd;
+      m_Array          = array;
+      m_ComponentClass = componentClass;
 
       configureLogger();
     }
@@ -108,19 +133,53 @@ public class Favorites
     }
 
     /**
+     * Returns whether the command-line represents an array.
+     *
+     * @return		true if array
+     */
+    public boolean isArray() {
+      return m_Array;
+    }
+
+    /**
+     * Returns the component class used by the array.
+     *
+     * @return		the class (null if not an array)
+     */
+    public Class getComponentClass() {
+      return m_ComponentClass;
+    }
+
+    /**
      * Turns the commandline into an object.
      *
      * @return		the generated object, or null in case of an error
      */
     public Object getObject() {
       Object	result;
+      String[]	items;
+      int	i;
 
-      try {
-	result = OptionUtils.forAnyCommandLine(Object.class, m_Commandline);
+      if (isArray()) {
+	try {
+	  items = OptionUtils.splitOptions(m_Commandline);
+	  result = Array.newInstance(m_ComponentClass, items.length);
+	  for (i = 0; i < items.length; i++)
+	    Array.set(result, i, OptionUtils.forAnyCommandLine(Object.class, items[i]));
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to turn command-line into objects: " + m_Commandline, e);
+	  result = null;
+	}
       }
-      catch (Exception e) {
-	getLogger().log(Level.SEVERE, "Failed to turn command-line into object: " + m_Commandline, e);
-	result = null;
+      else {
+	try {
+	  result = OptionUtils.forAnyCommandLine(Object.class, m_Commandline);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to turn command-line into object: " + m_Commandline, e);
+	  result = null;
+	}
       }
 
       return result;
@@ -132,7 +191,7 @@ public class Favorites
      * @return		the copy
      */
     public Favorite getClone() {
-      return new Favorite(m_Name, m_Commandline);
+      return new Favorite(m_Name, m_Commandline, m_Array, m_ComponentClass);
     }
 
     /**
@@ -389,7 +448,7 @@ public class Favorites
       return getFavorites(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to retrieve favorites for: " + classname, e);
       return new ArrayList<>();
     }
   }
@@ -406,15 +465,23 @@ public class Favorites
     String		key;
     String		prefix;
     Favorite		favorite;
+    boolean		array;
 
     result = new ArrayList<>();
 
-    prefix = cls.getName() + SEPARATOR;
-    enm    = (Enumeration<String>) getProperties().propertyNames();
+    array = cls.isArray();
+    if (array) {
+      cls = cls.getComponentType();
+      prefix = cls.getName() + "[]" + SEPARATOR;
+    }
+    else {
+      prefix = cls.getName() + SEPARATOR;
+    }
+    enm = (Enumeration<String>) getProperties().propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
       if (key.startsWith(prefix)) {
-	favorite = new Favorite(key.substring(prefix.length()), getProperties().getProperty(key));
+	favorite = new Favorite(key.substring(prefix.length()), getProperties().getProperty(key), array, cls);
 	result.add(favorite);
       }
     }
@@ -485,7 +552,18 @@ public class Favorites
    * @param name	the name of the favorite
    */
   public void addFavorite(Class cls, Object obj, String name) {
-    getProperties().setProperty(cls.getName() + SEPARATOR + fixName(name), OptionUtils.getCommandLine(obj));
+    String[]	cmdLines;
+    int		i;
+
+    if (cls.isArray()) {
+      cmdLines = new String[Array.getLength(obj)];
+      for (i = 0; i < Array.getLength(obj); i++)
+	cmdLines[i] = OptionUtils.getCommandLine(Array.get(obj, i));
+      getProperties().setProperty(cls.getComponentType().getName() + "[]" + SEPARATOR + fixName(name), OptionUtils.joinOptions(cmdLines));
+    }
+    else {
+      getProperties().setProperty(cls.getName() + SEPARATOR + fixName(name), OptionUtils.getCommandLine(obj));
+    }
     m_Modified = true;
     if (m_AutoSave)
       updateFavorites();
@@ -501,7 +579,7 @@ public class Favorites
       removeFavorites(ClassManager.getSingleton().forName(classname));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to remove favorites for: " + classname, e);
     }
   }
 
@@ -535,7 +613,7 @@ public class Favorites
       removeFavorite(ClassManager.getSingleton().forName(classname), fixName(name));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to remove favorite " + classname + "/" + name + "!", e);
     }
   }
 
@@ -584,25 +662,20 @@ public class Favorites
   }
 
   /**
-   * Adds a menu item with the favorites to the popup menu.
+   * Adds a menu item with the favorites to the menu.
    *
    * @param menu	the menu to add the favorites to
    * @param cls		the class the favorites are for
    * @param current	the current object
    * @param listener	the listener to attach to the menu items' ActionListener
    */
-  public void customizePopupMenu(JPopupMenu menu, Class cls, Object current, FavoriteSelectionListener listener) {
-    JMenu		submenu;
+  public void customizeMenu(JMenu menu, Class cls, Object current, FavoriteSelectionListener listener) {
     JMenu		updatemenu;
     JMenuItem		item;
     List<Favorite>	favorites;
     int			i;
 
     favorites = getFavorites(cls);
-
-    submenu = new JMenu("Favorites");
-    submenu.setIcon(ImageManager.getIcon("favorite.gif"));
-    menu.add(submenu);
 
     // for adding a favorite
     final Class fCls = cls;
@@ -611,24 +684,24 @@ public class Favorites
     item.addActionListener((ActionEvent e) -> {
       String name = null;
       do {
-        name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
-        if (name == null)
-          return;
-        name = name.trim();
-        if (name.startsWith("$")) {
-          GUIHelper.showErrorMessage(
-            null, "Name cannot start with '$'!");
-          name = null;
-        }
+	name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
+	if (name == null)
+	  return;
+	name = name.trim();
+	if (name.startsWith("$")) {
+	  GUIHelper.showErrorMessage(
+	    null, "Name cannot start with '$'!");
+	  name = null;
+	}
       }
       while (name == null);
       addFavorite(fCls, fCurrent, name);
     });
-    submenu.add(item);
-    
+    menu.add(item);
+
     updatemenu = new JMenu("Update favorite");
     updatemenu.setEnabled(false);  // in case we have no favorites yet
-    submenu.add(updatemenu);
+    menu.add(updatemenu);
     for (i = 0; i < favorites.size(); i++) {
       final Favorite favorite = favorites.get(i);
       String name = favorite.getName();
@@ -642,21 +715,39 @@ public class Favorites
 
     item = new JMenuItem("Add as temporary favorite");
     item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, TEMPORARY));
-    submenu.add(item);
+    menu.add(item);
 
     // current favorites
     final FavoriteSelectionListener fListener = listener;
     for (i = 0; i < favorites.size(); i++) {
       if (i == 0)
-	submenu.addSeparator();
+	menu.addSeparator();
       final Favorite favorite = favorites.get(i);
       String name = favorite.getName();
       if (name.equals(TEMPORARY))
 	name = "-Temp-";
       item = new JMenuItem(name);
       item.addActionListener((ActionEvent e) -> fListener.favoriteSelected(new FavoriteSelectionEvent(fListener, favorite)));
-      submenu.add(item);
+      menu.add(item);
     }
+  }
+
+  /**
+   * Adds a menu item with the favorites submenu to the popup menu.
+   *
+   * @param menu	the menu to add the favorites to
+   * @param cls		the class the favorites are for
+   * @param current	the current object
+   * @param listener	the listener to attach to the menu items' ActionListener
+   */
+  public void customizePopupMenu(JPopupMenu menu, Class cls, Object current, FavoriteSelectionListener listener) {
+    JMenu		submenu;
+
+    submenu = new JMenu("Favorites");
+    submenu.setIcon(ImageManager.getIcon("favorite.gif"));
+    menu.add(submenu);
+
+    customizeMenu(submenu, cls, current, listener);
   }
 
   /**
@@ -732,7 +823,7 @@ public class Favorites
       if (name.endsWith(SEPARATOR + TEMPORARY))
 	tmp.add(name);
     }
-    if (tmp.size() > 0) {
+    if (!tmp.isEmpty()) {
       result = true;
       for (i = 0; i < tmp.size(); i++)
 	m_Properties.removeKey(tmp.get(i));
