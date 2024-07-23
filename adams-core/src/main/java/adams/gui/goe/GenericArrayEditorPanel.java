@@ -15,7 +15,7 @@
 
 /*
  * GenericArrayEditorPanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -87,6 +87,26 @@ public class GenericArrayEditorPanel
     super.initGUI();
 
     m_TextSelection.setEditable(false);
+  }
+
+  /**
+   * Whether the favorites button is shown or not.
+   *
+   * @return		true if to show
+   */
+  @Override
+  protected boolean supportsFavorites() {
+    return (m_Default != null);
+  }
+
+  /**
+   * The class to use for the favorites (can be array class).
+   *
+   * @return		the class
+   */
+  @Override
+  protected Class getFavoritesClass() {
+    return m_Default.getClass();
   }
 
   /**
@@ -244,7 +264,7 @@ public class GenericArrayEditorPanel
   }
 
   /**
-   * Returns the maximum number of array items to disaply via toString().
+   * Returns the maximum number of array items to display via toString().
    *
    * @return		the maximum number
    */

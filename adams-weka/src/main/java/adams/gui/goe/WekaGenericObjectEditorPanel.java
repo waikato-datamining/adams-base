@@ -15,7 +15,7 @@
 
 /*
  * WekaGenericObjectEditorPanel.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -57,6 +57,9 @@ public class WekaGenericObjectEditorPanel
 
   /** the current object. */
   protected transient Object m_Current;
+
+  /** the class type. */
+  protected Class m_ClassType;
 
   /**
    * Initializes the panel with the given class and default value. Cannot
@@ -105,6 +108,35 @@ public class WekaGenericObjectEditorPanel
 
     m_Editor  = null;
     m_Current = null;
+  }
+
+  /**
+   * Returns the class type.
+   *
+   * @return		the type
+   */
+  public Class getClassType() {
+    return m_ClassType;
+  }
+
+  /**
+   * Whether the favorites button is shown or not.
+   *
+   * @return		true if to show
+   */
+  @Override
+  protected boolean supportsFavorites() {
+    return true;
+  }
+
+  /**
+   * The class to use for the favorites (can be array class).
+   *
+   * @return		the class
+   */
+  @Override
+  protected Class getFavoritesClass() {
+    return getClassType();
   }
 
   /**
