@@ -15,7 +15,7 @@
 
 /*
  * FileMonitorPanel.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -139,7 +139,7 @@ public class FileMonitorPanel
 
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
-    m_TitleGenerator      = new TitleGenerator("Flow runner", true, ShorteningType.START);
+    m_TitleGenerator      = new TitleGenerator("File monitor", true, ShorteningType.START);
     m_FileChooser         = new BaseFileChooser();
     m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getLogFileFilter());
     m_FileChooser.addChoosableFileFilter(ExtensionFileFilter.getTextFileFilter());
