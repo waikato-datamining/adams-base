@@ -559,7 +559,8 @@ public class FavoritesManagementPanel
     BasePanel			panelParams;
     BaseButton			buttonOK;
     BaseButton			buttonCancel;
-    JLabel			label;
+    JLabel 			labelSuperclass;
+    JLabel			labelArray;
     String[] 			superclasses;
     final BaseComboBox<String> 	comboBoxClasses;
     BaseCheckBox		checkBoxArray;
@@ -579,22 +580,23 @@ public class FavoritesManagementPanel
     Arrays.sort(superclasses);
     panelClasses = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     comboBoxClasses = new BaseComboBox<>(superclasses);
-    label = new JLabel("Superclass");
-    label.setDisplayedMnemonic('S');
-    label.setLabelFor(comboBoxClasses);
-    panelClasses.add(label);
+    labelSuperclass = new JLabel("Superclass");
+    labelSuperclass.setDisplayedMnemonic('S');
+    labelSuperclass.setLabelFor(comboBoxClasses);
+    panelClasses.add(labelSuperclass);
     panelClasses.add(comboBoxClasses);
     panelParams.add(panelClasses, BorderLayout.CENTER);
 
     // array?
     panelArray = new BasePanel(new FlowLayout(FlowLayout.LEFT));
     checkBoxArray = new BaseCheckBox();
-    label = new JLabel("Array?");
-    label.setDisplayedMnemonic('A');
-    label.setLabelFor(checkBoxArray);
-    panelArray.add(label);
+    labelArray = new JLabel("Use array class");
+    labelArray.setDisplayedMnemonic('a');
+    labelArray.setLabelFor(checkBoxArray);
+    panelArray.add(labelArray);
     panelArray.add(checkBoxArray);
     panelParams.add(panelArray, BorderLayout.CENTER);
+    labelSuperclass.setPreferredSize(labelArray.getPreferredSize());
 
     // buttons
     final BaseDialog dialogF = dialog;
