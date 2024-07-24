@@ -28,6 +28,7 @@ import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.dialog.ApprovalDialog;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -320,11 +321,11 @@ public class Favorites
   /** the separator between classname and favorite name. */
   public final static String SEPARATOR = "-";
 
-  /** for storing a temporary favorite. */
-  public final static String TEMPORARY = "$TMP$";
-
   /** the properties. */
   protected Properties m_Properties;
+
+  /** the temporary favorites. */
+  protected Properties m_TempProperties;
 
   /** whether the favorites were modified. */
   protected boolean m_Modified;
@@ -351,8 +352,9 @@ public class Favorites
   public Favorites(boolean autosave) {
     super();
 
-    m_AutoSave = autosave;
-    m_Modified = false;
+    m_AutoSave       = autosave;
+    m_Modified       = false;
+    m_TempProperties = new Properties();
   }
 
   /**
@@ -408,11 +410,20 @@ public class Favorites
   public synchronized Properties getProperties() {
     if (m_Properties == null) {
       load();
-      if (removeTemporaryFavorites() && m_AutoSave)
+      if (m_AutoSave)
 	updateFavorites();
     }
 
     return m_Properties;
+  }
+
+  /**
+   * Returns the properties of the temp favorites.
+   *
+   * @return		the properties
+   */
+  protected Properties getTempProperties() {
+    return m_TempProperties;
   }
 
   /**
@@ -440,10 +451,11 @@ public class Favorites
   /**
    * Returns the favorites for the specified class.
    *
+   * @param props 	the properties to extract the favorites from
    * @param cls		the class to get the favorites for, can be array classes as well
    * @return		the favorites
    */
-  public List<Favorite> getFavorites(Class cls) {
+  protected List<Favorite> getFavorites(Properties props, Class cls) {
     List<Favorite>	result;
     Enumeration<String>	enm;
     String		key;
@@ -452,11 +464,11 @@ public class Favorites
 
     result = new ArrayList<>();
     prefix = createKey(cls);
-    enm    = (Enumeration<String>) getProperties().propertyNames();
+    enm    = (Enumeration<String>) props.propertyNames();
     while (enm.hasMoreElements()) {
       key = enm.nextElement();
       if (key.startsWith(prefix)) {
-	favorite = new Favorite(key.substring(prefix.length()), getProperties().getProperty(key), cls.isArray(), cls.isArray() ? cls.getComponentType() : null);
+	favorite = new Favorite(key.substring(prefix.length()), props.getProperty(key), cls.isArray(), cls.isArray() ? cls.getComponentType() : null);
 	result.add(favorite);
       }
     }
@@ -464,6 +476,26 @@ public class Favorites
     Collections.sort(result);
 
     return result;
+  }
+
+  /**
+   * Returns the favorites for the specified class.
+   *
+   * @param cls		the class to get the favorites for, can be array classes as well
+   * @return		the favorites
+   */
+  public List<Favorite> getFavorites(Class cls) {
+    return getFavorites(getProperties(), cls);
+  }
+
+  /**
+   * Returns the temporary favorites for the specified class.
+   *
+   * @param cls		the class to get the favorites for, can be array classes as well
+   * @return		the favorites
+   */
+  public List<Favorite> getTempFavorites(Class cls) {
+    return getFavorites(getTempProperties(), cls);
   }
 
   /**
@@ -559,6 +591,24 @@ public class Favorites
   }
 
   /**
+   * Returns the named temporary favorite for the specified class.
+   *
+   * @param cls		the class to get the favorite for
+   * @param array 	whether for an array
+   * @param name	the name of the favorite
+   * @return		the favorite, null if not available
+   */
+  public Favorite getTempFavorite(Class cls, boolean array, String name) {
+    String	key;
+
+    key = createKey(createFavoritesClass(cls, array), name);
+    if (getTempProperties().hasKey(key))
+      return new Favorite(name, getTempProperties().getProperty(key), array, array ? cls : null);
+    else
+      return null;
+  }
+
+  /**
    * Adds a favorite for a class.
    *
    * @param cls		the class to add the favorite for (array or not)
@@ -573,6 +623,20 @@ public class Favorites
   }
 
   /**
+   * Adds a temporary favorite for a class.
+   *
+   * @param cls		the class to add the favorite for (array or not)
+   * @param obj		the favorite
+   * @param name	the name of the favorite
+   */
+  public void addTempFavorite(Class cls, Object obj, String name) {
+    if (cls.isArray())
+      addTempFavorite(cls.getComponentType(), true, obj, name);
+    else
+      addTempFavorite(cls, false, obj, name);
+  }
+
+  /**
    * Adds a favorite for a class.
    *
    * @param cls		the class to add the favorite for, component type for arrays
@@ -580,7 +644,7 @@ public class Favorites
    * @param obj		the favorite
    * @param name	the name of the favorite
    */
-  public void addFavorite(Class cls, boolean array, Object obj, String name) {
+  protected void addFavorite(Properties props, Class cls, boolean array, Object obj, String name) {
     String[]	cmdLines;
     int		i;
     String	key;
@@ -592,14 +656,41 @@ public class Favorites
       cmdLines = new String[Array.getLength(obj)];
       for (i = 0; i < Array.getLength(obj); i++)
 	cmdLines[i] = OptionUtils.getCommandLine(Array.get(obj, i));
-      getProperties().setProperty(key, OptionUtils.joinOptions(cmdLines));
+      props.setProperty(key, OptionUtils.joinOptions(cmdLines));
     }
     else {
-      getProperties().setProperty(key, OptionUtils.getCommandLine(obj));
+      props.setProperty(key, OptionUtils.getCommandLine(obj));
     }
     m_Modified = true;
     if (m_AutoSave)
       updateFavorites();
+  }
+
+  /**
+   * Adds a favorite for a class.
+   *
+   * @param cls		the class to add the favorite for, component type for arrays
+   * @param array 	whether for an array
+   * @param obj		the favorite
+   * @param name	the name of the favorite
+   */
+  public void addFavorite(Class cls, boolean array, Object obj, String name) {
+    addFavorite(getProperties(), cls, array, obj, name);
+    m_Modified = true;
+    if (m_AutoSave)
+      updateFavorites();
+  }
+
+  /**
+   * Adds a temporary favorite for a class.
+   *
+   * @param cls		the class to add the favorite for, component type for arrays
+   * @param array 	whether for an array
+   * @param obj		the favorite
+   * @param name	the name of the favorite
+   */
+  public void addTempFavorite(Class cls, boolean array, Object obj, String name) {
+    addFavorite(getTempProperties(), cls, array, obj, name);
   }
 
   /**
@@ -647,6 +738,32 @@ public class Favorites
   }
 
   /**
+   * Removes a favorite for a class (array or not).
+   *
+   * @param cls		the class to remove the favorite for
+   * @param name	the name of the favorite
+   */
+  public void removeFavorite(Class cls, String name) {
+    if (cls.isArray())
+      removeFavorite(cls.getComponentType(), true, name);
+    else
+      removeFavorite(cls, false, name);
+  }
+
+  /**
+   * Removes a temporary favorite for a class (array or not).
+   *
+   * @param cls		the class to remove the favorite for
+   * @param name	the name of the favorite
+   */
+  public void removeTempFavorite(Class cls, String name) {
+    if (cls.isArray())
+      removeTempFavorite(cls.getComponentType(), true, name);
+    else
+      removeTempFavorite(cls, false, name);
+  }
+
+  /**
    * Removes a favorite for a class.
    *
    * @param cls		the class to remove the favorite for
@@ -658,6 +775,17 @@ public class Favorites
     m_Modified = true;
     if (m_AutoSave)
       updateFavorites();
+  }
+
+  /**
+   * Removes a temporary favorite for a class.
+   *
+   * @param cls		the class to remove the favorite for
+   * @param array 	whether an array or not
+   * @param name	the name of the favorite
+   */
+  public void removeTempFavorite(Class cls, boolean array, String name) {
+    getTempProperties().removeKey(createKey(createFavoritesClass(cls, array), name));
   }
 
   /**
@@ -721,6 +849,110 @@ public class Favorites
   }
 
   /**
+   * Prompts the user whether to remove the favorite.
+   *
+   * @param temp	temporary or permanent favorites
+   * @param cls		the class of the favorite (array or not)
+   * @param name	the name of the favorite
+   */
+  protected void promptRemoval(boolean temp, Class cls, String name) {
+    int		retVal;
+
+    retVal = GUIHelper.showConfirmMessage(null, "Do you want to remove favorite '" + name + "'?");
+    if (retVal != ApprovalDialog.APPROVE_OPTION)
+      return;
+
+    if (temp)
+      removeTempFavorite(cls, name);
+    else
+      removeFavorite(cls, name);
+  }
+
+  /**
+   * Adds menu items with the favorites (permanent or temporary) to the menu.
+   *
+   * @param menu	the menu (JMenu/JPopupMenu) to add the favorites to
+   * @param cls		the class the favorites are for, can be array class as well
+   * @param current	the current object
+   * @param listener	the listener to attach to the menu items' ActionListener
+   */
+  protected void addFavoritesMenuItems(final boolean temp, Object menu, final Class cls, final Object current, final FavoriteSelectionListener listener) {
+    JMenu		managemenu;
+    JMenu 		updatemenu;
+    JMenu 		removemenu;
+    JMenuItem 		item;
+    List<Favorite> 	favorites;
+    int 		i;
+
+    // get favorites
+    if (temp)
+      favorites = getTempFavorites(cls);
+    else
+      favorites = getFavorites(cls);
+
+    // manage
+    if (temp)
+      managemenu = new JMenu("Manage temporary...");
+    else
+      managemenu = new JMenu("Manage...");
+    addMenuItem(menu, managemenu);
+
+    // add
+    item = new JMenuItem("Add...");
+    item.addActionListener((ActionEvent e) -> {
+      String name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
+      if (name == null)
+	return;
+      name = name.trim();
+      if (temp)
+	addTempFavorite(cls, current, name);
+      else
+	addFavorite(cls, current, name);
+    });
+    addMenuItem(managemenu, item);
+
+    // update
+    updatemenu = new JMenu("Update");
+    updatemenu.setEnabled(false);  // in case we have no favorites yet
+    addMenuItem(managemenu, updatemenu);
+    for (i = 0; i < favorites.size(); i++) {
+      final Favorite favorite = favorites.get(i);
+      String name = favorite.getName();
+      updatemenu.setEnabled(true);
+      item = new JMenuItem(name);
+      if (temp)
+	item.addActionListener((ActionEvent e) -> addTempFavorite(cls, current, favorite.getName()));
+      else
+	item.addActionListener((ActionEvent e) -> addFavorite(cls, current, favorite.getName()));
+      updatemenu.add(item);
+    }
+
+    // remove
+    removemenu = new JMenu("Remove");
+    removemenu.setEnabled(false);  // in case we have no favorites yet
+    addMenuItem(managemenu, removemenu);
+    for (i = 0; i < favorites.size(); i++) {
+      final Favorite favorite = favorites.get(i);
+      String name = favorite.getName();
+      removemenu.setEnabled(true);
+      item = new JMenuItem(name);
+      item.addActionListener((ActionEvent e) -> promptRemoval(temp, cls, favorite.getName()));
+      removemenu.add(item);
+    }
+
+    // current favorites
+    for (i = 0; i < favorites.size(); i++) {
+      if (i == 0)
+	addSeparator(menu);
+      final Favorite favorite = favorites.get(i);
+      String name = favorite.getName();
+      item = new JMenuItem(name);
+      item.addActionListener((ActionEvent e) -> listener.favoriteSelected(new FavoriteSelectionEvent(listener, favorite)));
+      addMenuItem(menu, item);
+    }
+  }
+
+  /**
    * Adds a menu item with the favorites to the menu.
    *
    * @param menu	the menu (JMenu/JPopupMenu) to add the favorites to
@@ -728,67 +960,13 @@ public class Favorites
    * @param current	the current object
    * @param listener	the listener to attach to the menu items' ActionListener
    */
-  public void addFavoritesMenuItems(Object menu, Class cls, Object current, FavoriteSelectionListener listener) {
-    JMenu		updatemenu;
-    JMenuItem		item;
-    List<Favorite>	favorites;
-    int			i;
-
-    favorites = getFavorites(cls);
-
-    // for adding a favorite
-    final Class fCls = cls;
-    final Object fCurrent = current;
-    item = new JMenuItem("Add to favorites...");
-    item.addActionListener((ActionEvent e) -> {
-      String name = null;
-      do {
-	name = GUIHelper.showInputDialog(null, "Please enter name for favorite:");
-	if (name == null)
-	  return;
-	name = name.trim();
-	if (name.startsWith("$")) {
-	  GUIHelper.showErrorMessage(
-	    null, "Name cannot start with '$'!");
-	  name = null;
-	}
-      }
-      while (name == null);
-      addFavorite(fCls, fCurrent, name);
-    });
-    addMenuItem(menu, item);
-
-    updatemenu = new JMenu("Update favorite");
-    updatemenu.setEnabled(false);  // in case we have no favorites yet
-    addMenuItem(menu, updatemenu);
-    for (i = 0; i < favorites.size(); i++) {
-      final Favorite favorite = favorites.get(i);
-      String name = favorite.getName();
-      if (name.equals(TEMPORARY))
-	continue;
-      updatemenu.setEnabled(true);
-      item = new JMenuItem(name);
-      item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, favorite.getName()));
-      updatemenu.add(item);
-    }
-
-    item = new JMenuItem("Add as temporary favorite");
-    item.addActionListener((ActionEvent e) -> addFavorite(fCls, fCurrent, TEMPORARY));
-    addMenuItem(menu, item);
-
-    // current favorites
-    final FavoriteSelectionListener fListener = listener;
-    for (i = 0; i < favorites.size(); i++) {
-      if (i == 0)
-	addSeparator(menu);
-      final Favorite favorite = favorites.get(i);
-      String name = favorite.getName();
-      if (name.equals(TEMPORARY))
-	name = "-Temp-";
-      item = new JMenuItem(name);
-      item.addActionListener((ActionEvent e) -> fListener.favoriteSelected(new FavoriteSelectionEvent(fListener, favorite)));
-      addMenuItem(menu, item);
-    }
+  public void addFavoritesMenuItems(Object menu, final Class cls, final Object current, FavoriteSelectionListener listener) {
+    addFavoritesMenuItems(false, menu, cls, current, listener);
+    if (menu instanceof JMenu)
+      ((JMenu) menu).addSeparator();
+    else if (menu instanceof JPopupMenu)
+      ((JPopupMenu) menu).addSeparator();
+    addFavoritesMenuItems(true, menu, cls, current, listener);
   }
 
   /**
@@ -864,36 +1042,6 @@ public class Favorites
   @Override
   public boolean equals(Object obj) {
     return (compareTo(obj) == 0);
-  }
-
-  /**
-   * Removes all the temporary favorites from the properties.
-   *
-   * @return		true if modified
-   */
-  protected boolean removeTemporaryFavorites() {
-    boolean		result;
-    Enumeration<String>	enm;
-    List<String>	tmp;
-    String		name;
-    int			i;
-
-    result = false;
-
-    tmp = new ArrayList<>();
-    enm = (Enumeration<String>) m_Properties.propertyNames();
-    while (enm.hasMoreElements()) {
-      name = enm.nextElement();
-      if (name.endsWith(SEPARATOR + TEMPORARY))
-	tmp.add(name);
-    }
-    if (!tmp.isEmpty()) {
-      result = true;
-      for (i = 0; i < tmp.size(); i++)
-	m_Properties.removeKey(tmp.get(i));
-    }
-
-    return result;
   }
 
   /**
