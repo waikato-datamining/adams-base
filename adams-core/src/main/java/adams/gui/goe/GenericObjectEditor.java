@@ -106,6 +106,9 @@ public class GenericObjectEditor
   /** the action command for Revert. */
   public final static String ACTION_CMD_REVERT = "revert";
 
+  /** whether to show the choose class button. */
+  public static boolean SHOW_CHOOSE_CLASS_BUTTON = false;
+
   /** for logging. */
   protected static Logger LOGGER = LoggingHelper.getLogger(GenericObjectEditor.class);
 
@@ -1352,8 +1355,10 @@ public class GenericObjectEditor
 	}
       };
       buttonPanel = new JPanel(new GridLayout(1, 1));
-      m_CustomPanelChooseButton = createChooseClassButton();
-      buttonPanel.add(m_CustomPanelChooseButton);
+      if (SHOW_CHOOSE_CLASS_BUTTON) {
+	m_CustomPanelChooseButton = createChooseClassButton();
+	buttonPanel.add(m_CustomPanelChooseButton);
+      }
       m_CustomPanelFavoriteButton = createFavoriteButton();
       buttonPanel.add(m_CustomPanelFavoriteButton);
       m_CustomPanel.add(buttonPanel, BorderLayout.EAST);
