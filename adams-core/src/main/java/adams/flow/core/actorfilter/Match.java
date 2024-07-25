@@ -32,7 +32,7 @@ public class Match
 
   private static final long serialVersionUID = -3558268845213578619L;
 
-  /** for peforming the checks. */
+  /** for performing the checks. */
   protected Compatibility m_Compatibility;
 
   /** the classes to check against. */

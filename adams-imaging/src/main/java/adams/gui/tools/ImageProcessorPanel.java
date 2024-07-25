@@ -772,14 +772,14 @@ public class ImageProcessorPanel
   }
 
   /**
-   * peforms an undo if possible.
+   * performs an undo if possible.
    */
   public void undo() {
     getFlow().undo();
   }
 
   /**
-   * peforms an redo if possible.
+   * performs an redo if possible.
    */
   public void redo() {
     getFlow().redo();

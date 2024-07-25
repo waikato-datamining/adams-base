@@ -151,7 +151,7 @@ public class RepeatedCrossValidation
     ((SpinnerNumberModel) m_SpinnerRuns.getModel()).setMinimum(-1);
     ((SpinnerNumberModel) m_SpinnerRuns.getModel()).setStepSize(1);
     m_SpinnerRuns.setValue(props.getInteger("Classify.NumRuns", 10));
-    m_SpinnerRuns.setToolTipText("The number of runs to peform");
+    m_SpinnerRuns.setToolTipText("The number of runs to perform");
     m_SpinnerRuns.addChangeListener((ChangeEvent e) -> update());
     m_PanelParameters.addParameter("Runs", m_SpinnerRuns);
 

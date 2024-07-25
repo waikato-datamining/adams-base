@@ -1054,7 +1054,7 @@ public class TimeseriesExplorer
   }
 
   /**
-   * peforms an undo if possible.
+   * performs an undo if possible.
    */
   public void undo() {
     if (!m_Undo.canUndo())
@@ -1086,7 +1086,7 @@ public class TimeseriesExplorer
   }
 
   /**
-   * peforms a redo if possible.
+   * performs a redo if possible.
    */
   public void redo() {
     if (!m_Undo.canRedo())

@@ -1096,7 +1096,7 @@ public class ImageViewerPanel
   }
 
   /**
-   * peforms an undo if possible.
+   * performs an undo if possible.
    */
   public void undo() {
     ImagePanel	panel;
@@ -1109,7 +1109,7 @@ public class ImageViewerPanel
   }
 
   /**
-   * peforms a redo if possible.
+   * performs a redo if possible.
    */
   public void redo() {
     ImagePanel	panel;
