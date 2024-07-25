@@ -197,9 +197,9 @@ Figure \ref{floweditor-helloworld-addactor3}.
 Now click on the \textit{StringConstants} actor to select it. The \textit{About}
 description only displays some of the information about an actor (normally only
 the first sentence of the general description). If you want to know more about
-an actor and its options, just click on on the \icon{images/help} button in the
-\textit{About} box. For the \textit{StringConstants} actor this opens a dialog
-like shown in Figure \ref{floweditor-helloworld-actorhelp}. For quick info on
+an actor and its options, just click on on the \textit{Help} tab towards the bottom
+of the dialog. For the \textit{StringConstants} actor this will look like in
+Figure \ref{floweditor-helloworld-actorhelp}. For quick info on
 options, you simply hover with your mouse over one of the options and a tool tip
 will come up with the description.
 
@@ -1572,14 +1572,15 @@ To make use of the variable \textit{filename}, we need to attach it to the
 \textit{file} option of the \textit{SingleFileSupplier}. You can attach a
 variable by simply bringing up the properties editor of an actor (or other
 ADAMS object), right-click on the name of the option and then entering the name
-of the variable (without ``$@\{$'' and ``$\}$''). The properties editor
-indicates whether a variable has been attached to an option by appending an asterisk
-(``$*$'') to the name of the option, as can be seen in Figure
+of the variable (without ``$@\{$'' and ``$\}$''). You can also left-click on the
+``\$v'' button between property name and value field. The properties editor
+indicates whether a variable has been attached to an option by turning the
+(``\$v'') button next to the name of the option \textbf{red}, as can be seen in Figure
 \ref{floweditor-variables1_flow-detail}.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=6.0cm]{images/floweditor-variables1_flow-detail.png}
-  \caption{The asterisk (``$*$'') next to an option indicates that a variable is
+  \caption{The red ``\$v'' next to an option indicates that a variable is
   attached.}
   \label{floweditor-variables1_flow-detail}
 \end{figure}
