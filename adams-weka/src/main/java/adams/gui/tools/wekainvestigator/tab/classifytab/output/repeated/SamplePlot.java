@@ -275,7 +275,7 @@ public class SamplePlot
     SimpleErrorPaintlet result;
 
     result = new SimpleErrorPaintlet();
-    result.setPlotType(PlotType.LINE);
+    result.setPlotType(PlotType.BAR);
 
     return result;
   }
