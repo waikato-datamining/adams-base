@@ -28,9 +28,11 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.statistics.StatUtils;
+import adams.flow.container.WekaEvaluationContainer;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import gnu.trove.list.TIntList;
+import weka.classifiers.Evaluation;
 
 import java.util.logging.Level;
 
@@ -77,13 +79,44 @@ public class PredictionUtils {
   public static SpreadSheet calcStats(ResultItem item, MessageCollection errors,
 				      CenterStatistic centerStat, LowerStatistic lowerStat, UpperStatistic upperStat,
 				      int numDecimals, Logger logger, TIntList cols, boolean addActual) {
+    WekaEvaluationContainer[]	conts;
+    int				i;
+
+    conts = new WekaEvaluationContainer[item.getRunEvaluations().length];
+    for (i = 0; i < conts.length; i++) {
+      conts[i] = new WekaEvaluationContainer(item.getRunEvaluations()[i]);
+      if (item.getRunOriginalIndices() != null)
+	conts[i].setValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, item.getRunOriginalIndices()[i]);
+    }
+
+    return calcStats(conts, item.getAdditionalAttributes(), errors,
+      centerStat, lowerStat, upperStat, numDecimals, logger, cols, addActual);
+  }
+
+  /**
+   * Generates a spreadsheet with the statistics.
+   *
+   * @param conts	the evaluation containers to calculate the statistics from
+   * @param additional 	the additional attributes to transfer, can be null
+   * @param errors	for collecting error messages
+   * @param centerStat 	the center statistics like mean
+   * @param lowerStat 	the lower bound statistic
+   * @param upperStat 	the upper bound statistic
+   * @param numDecimals	the number of decimals in the spreadsheet, -1 for no rounding
+   * @param logger 	for logging problems
+   * @param cols 	for storing the column indices of the computed statistics (center, lower, upper, [actual]), can be null
+   * @param addActual	whether to add the "actual" value in a separate column
+   * @return		the spreadsheet
+   */
+  public static SpreadSheet calcStats(WekaEvaluationContainer[] conts, SpreadSheet additional, MessageCollection errors,
+				      CenterStatistic centerStat, LowerStatistic lowerStat, UpperStatistic upperStat,
+				      int numDecimals, Logger logger, TIntList cols, boolean addActual) {
     SpreadSheet 	result;
     int			run;
     int			r;
     int			p;
     SpreadSheet[]	preds;
     Row 		row;
-    SpreadSheet		additional;
     double[]		values;
     double 		center;
     double		lower;
@@ -96,17 +129,19 @@ public class PredictionUtils {
     int			colLower;
     int			colUpper;
     int			colActual;
-
-    additional = item.getAdditionalAttributes();
+    int			numRows;
 
     // align all predictions
-    preds = new SpreadSheet[item.getRunEvaluations().length];
-    for (run = 0; run < item.getRunEvaluations().length; run++) {
+    preds = new SpreadSheet[conts.length];
+    for (run = 0; run < conts.length; run++) {
       preds[run] = PredictionHelper.toSpreadSheet(
-	null, errors, item.getRunEvaluations()[run], item.getRunOriginalIndices()[run], null, false, false, false, false, false);
+	null, errors, conts[run].getValue(WekaEvaluationContainer.VALUE_EVALUATION, Evaluation.class),
+	conts[run].getValue(WekaEvaluationContainer.VALUE_ORIGINALINDICES, int[].class),
+	null, false, false, false, false, false);
     }
 
     // initialize spreadsheet
+    numRows = 0;
     if (additional != null) {
       result    = additional.getClone();
       addRows   = false;
@@ -119,6 +154,7 @@ public class PredictionUtils {
       result.insertColumn(result.getColumnCount(), upperStat.name());
       if (addActual)
 	result.insertColumn(result.getColumnCount(), "Actual");
+      numRows = result.getRowCount();
     }
     else {
       result    = new DefaultSpreadSheet();
@@ -133,6 +169,8 @@ public class PredictionUtils {
       row.addCell("upper-" + upperStat).setContent(upperStat.name());
       if (addActual)
 	row.addCell("Actual").setContent("Actual");
+      if (preds[0] != null)
+	numRows = preds[0].getRowCount();
     }
 
     // record column indices
@@ -146,7 +184,7 @@ public class PredictionUtils {
     }
 
     // compute stats per row
-    for (r = 0; r < result.getRowCount(); r++) {
+    for (r = 0; r < numRows; r++) {
       if (addRows)
 	row = result.addRow();
       else

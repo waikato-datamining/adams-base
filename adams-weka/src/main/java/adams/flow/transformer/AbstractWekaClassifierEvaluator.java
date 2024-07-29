@@ -164,8 +164,10 @@ public abstract class AbstractWekaClassifierEvaluator
    * Cleans up the output buffer.
    */
   protected void cleanOutputBuffer() {
-    m_Output.setBuffer(null);
-    m_OutputBuffer = null;
+    if (m_Output != null) {
+      m_Output.setBuffer(null);
+      m_OutputBuffer = null;
+    }
   }
 
   /**

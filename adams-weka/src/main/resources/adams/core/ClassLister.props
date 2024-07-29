@@ -70,6 +70,10 @@ adams.flow.transformer.wekadatasetsmerge.AbstractMerge=\
 adams.flow.transformer.wekaensemblegenerator.AbstractWekaEnsembleGenerator=\
   adams.flow.transformer.wekaensemblegenerator
 
+# the output generators for repeated CV
+adams.flow.transformer.wekarepeatedcrossvalidationoutput.AbstractWekaRepeatedCrossValidationOutput=\
+  adams.flow.transformer.wekarepeatedcrossvalidationoutput
+
 # the dataset splitters
 adams.data.weka.datasetsplitter.AbstractSplitter=\
   adams.data.weka.datasetsplitter

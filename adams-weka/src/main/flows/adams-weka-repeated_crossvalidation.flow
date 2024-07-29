@@ -1,0 +1,25 @@
+# Project: adams
+# Date: 2024-07-30 11:33:51
+# User: fracpete
+# Charset: UTF-8
+#
+adams.flow.control.Flow -annotation "Shows how to perform repeated cross-validation and generate output from the results.\\nIn contrast to the Experimenter, which extracts statistics per fold, data is extracted\\non a per run basis." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.SpreadSheetDisplay -name Statistics -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name Predictions -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SequencePlotter -name SamplePlot -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -paintlet "adams.gui.visualization.sequence.CrossPaintlet -point-preprocessor adams.gui.visualization.sequence.pointpreprocessor.PassThrough -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy" -overlay-paintlet adams.gui.visualization.sequence.DiagonalOverlayPaintlet -marker-paintlet adams.flow.sink.sequenceplotter.NoMarkers -error-paintlet "adams.flow.sink.sequenceplotter.SimpleErrorPaintlet -point-preprocessor adams.gui.visualization.sequence.pointpreprocessor.PassThrough" -mouse-click-action adams.flow.sink.sequenceplotter.NullClickAction -color-provider adams.gui.visualization.core.DefaultColorProvider -overlay-color-provider adams.gui.visualization.core.DefaultColorProvider -axis-x "adams.gui.visualization.core.AxisPanelOptions -label actual -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 40 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.00" -axis-y "adams.gui.visualization.core.AxisPanelOptions -label predicted -tick-generator adams.gui.visualization.core.axis.FancyTickGenerator -nth-value 2 -width 60 -top-margin 0.05 -bottom-margin 0.05 -custom-format 0.00" -plot-updater adams.flow.sink.sequenceplotter.SimplePlotUpdater -post-processor adams.flow.sink.sequenceplotter.PassThrough
+ adams.flow.standalone.CallableActors
+  adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 1 -C -R 1.0E-8 -num-decimal-places 4"
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/bolts.arff
+ adams.flow.transformer.WekaFileReader -loader "weka.core.converters.SimpleArffLoader -encoding Default"
+ adams.flow.transformer.WekaClassSelector
+ adams.flow.transformer.WekaRepeatedCrossValidationEvaluator -generator weka.classifiers.DefaultCrossValidationFoldGenerator
+ adams.flow.control.Tee -name stats
+  adams.flow.transformer.WekaRepeatedCrossValidationOutput -output "adams.flow.transformer.wekarepeatedcrossvalidationoutput.Statistics -statistic CORRELATION_COEFFICIENT -statistic ROOT_MEAN_SQUARED_ERROR"
+  adams.flow.sink.CallableSink -callable Statistics
+ adams.flow.control.Tee -name predictions
+  adams.flow.transformer.WekaRepeatedCrossValidationOutput -output adams.flow.transformer.wekarepeatedcrossvalidationoutput.Predictions
+  adams.flow.sink.CallableSink -callable Predictions
+ adams.flow.control.Tee -name "sample plot"
+  adams.flow.transformer.WekaRepeatedCrossValidationOutput -output adams.flow.transformer.wekarepeatedcrossvalidationoutput.SamplePlot
+  adams.flow.sink.CallableSink -callable SamplePlot
