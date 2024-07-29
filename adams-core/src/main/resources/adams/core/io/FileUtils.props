@@ -1,7 +1,6 @@
 # Configuration for file related stuff.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # Characters that are considered valid in filenames
 FileNameChars=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-.,;()#@
@@ -13,4 +12,7 @@ MaxExtensionLength=6
 IgnoredExtensionSuffixes=\
   7z,\
   bz2,\
-  gz
+  gz,\
+  lzf,\
+  xz,\
+  zst

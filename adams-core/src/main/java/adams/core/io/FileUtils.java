@@ -129,7 +129,7 @@ public class FileUtils {
    */
   public static synchronized String[] getIgnoredExtensionSuffixes() {
     if (IGNORED_EXTENSION_SUFFIXES == null)
-      IGNORED_EXTENSION_SUFFIXES = getProperties().getProperty("IgnoredExtensionSuffixes", "7z,bz2,gz").replaceAll(" ", "").split(",");
+      IGNORED_EXTENSION_SUFFIXES = getProperties().getProperty("IgnoredExtensionSuffixes", "7z,bz2,gz,lzf,xz,zst").replaceAll(" ", "").split(",");
     return IGNORED_EXTENSION_SUFFIXES;
   }
 
