@@ -15,7 +15,7 @@
 
 /*
  * AbstractTextualDisplay.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -43,6 +43,7 @@ import adams.gui.core.MenuBarProvider;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -299,8 +300,9 @@ public abstract class AbstractTextualDisplay
    * @return		the generated menu
    */
   protected JMenu createFileMenu() {
-    JMenu	result;
-    JMenuItem	menuitem;
+    JMenu		result;
+    JMenuItem		menuitem;
+    JCheckBoxMenuItem 	checkMenuitem;
 
     // File
     result = new JMenu("File");
@@ -331,6 +333,12 @@ public abstract class AbstractTextualDisplay
     result.addSeparator();
     if (SendToActionUtils.addSendToSubmenu(this, result))
       result.addSeparator();
+
+    // File/Keep open
+    checkMenuitem = new JCheckBoxMenuItem("Keep open");
+    result.add(checkMenuitem);
+    checkMenuitem.setMnemonic('K');
+    checkMenuitem.addActionListener((ActionEvent e) -> setKeepOpen(!getKeepOpen()));
 
     // File/Close
     menuitem = new JMenuItem("Close");
@@ -511,6 +519,9 @@ public abstract class AbstractTextualDisplay
    * Closes the dialog or frame.
    */
   protected void close() {
+    // explicitly requested close, need to disable flag
+    if (m_KeepOpen)
+      m_KeepOpen = false;
     m_Panel.closeParent();
   }
 

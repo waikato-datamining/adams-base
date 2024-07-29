@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -39,6 +39,8 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.GraphicsConfiguration;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Hashtable;
 
 /**
@@ -88,6 +90,9 @@ public abstract class AbstractDisplay
   
   /** whether the GUI is currently being updated. */
   protected Boolean m_Updating;
+
+  /** whether to keep the GUI even beyond cleanup. */
+  protected boolean m_KeepOpen;
 
   /**
    * Adds options to the internal list of options.
@@ -463,6 +468,26 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Sets whether to keep the GUI open beyond cleanup.
+   *
+   * @param value	true if to keep open
+   */
+  public void setKeepOpen(boolean value) {
+    m_KeepOpen = value;
+    if (m_Frame != null)
+      m_Frame.setDefaultCloseOperation(BaseFrame.DISPOSE_ON_CLOSE);
+  }
+
+  /**
+   * Returns whether to keep the GUI open beyond cleanup.
+   *
+   * @return		true if to keep open
+   */
+  public boolean getKeepOpen() {
+    return m_KeepOpen;
+  }
+
+  /**
    * Resets the object. Removes graphical components as well.
    */
   @Override
@@ -483,6 +508,7 @@ public abstract class AbstractDisplay
     m_Frame       = null;
     m_Updating    = false;
     m_CreateFrame = true;
+    m_KeepOpen    = false;
   }
 
   /**
@@ -562,6 +588,8 @@ public abstract class AbstractDisplay
    * @return		the operation
    */
   protected int getFrameDefaultCloseOperation() {
+    if (getKeepOpen())
+      return BaseDialog.DISPOSE_ON_CLOSE;
     if ((getRoot() != null) && (getRoot() instanceof Flow))
       return ((Flow) getRoot()).getDefaultCloseOperation();
     else
@@ -596,6 +624,17 @@ public abstract class AbstractDisplay
     result.getContentPane().add(panel, BorderLayout.CENTER);
     result.setDefaultCloseOperation(getFrameDefaultCloseOperation());
     result.setSize(ActorUtils.determineSize(result, m_X, m_Y, m_Width, m_Height));
+    result.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+	if (getKeepOpen()) {
+	  // explicit close requested, disable flag
+	  m_KeepOpen = false;
+	  cleanUpGUI();
+	}
+	super.windowClosing(e);
+      }
+    });
     icon = ImageManager.getIcon(getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
@@ -751,6 +790,16 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Performs only minimal clean up as GUI elements were requested to stay available.
+   *
+   * @see		#getKeepOpen()
+   */
+  protected void cleanUpGUIKeepOpen() {
+    if (m_Frame != null)
+      deregisterWindow();
+  }
+
+  /**
    * Removes all graphical components.
    */
   protected void cleanUpGUI() {
@@ -759,7 +808,7 @@ public abstract class AbstractDisplay
 	((CleanUpHandler) m_Panel).cleanUp();
       m_Panel = null;
     }
-    
+
     if (m_Executed)
       m_DisplayType.cleanUpGUI(this);
 
@@ -800,7 +849,10 @@ public abstract class AbstractDisplay
 
     runnable = new Runnable() {
       public void run() {
-	cleanUpGUI();
+	if (getKeepOpen())
+	  cleanUpGUIKeepOpen();
+	else
+	  cleanUpGUI();
       }
     };
     SwingUtilities.invokeLater(runnable);

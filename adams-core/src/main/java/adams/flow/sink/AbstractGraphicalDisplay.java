@@ -15,7 +15,7 @@
 
 /*
  * AbstractGraphicalDisplay.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -39,6 +39,7 @@ import adams.gui.print.PNGWriter;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -228,10 +229,11 @@ public abstract class AbstractGraphicalDisplay
    * @return		the menu bar
    */
   protected JMenuBar createMenuBar() {
-    JMenuBar	result;
-    JMenu	menu;
-    JMenuItem	menuitem;
-    String	custom;
+    JMenuBar		result;
+    JMenu		menu;
+    JMenuItem		menuitem;
+    JCheckBoxMenuItem	checkMenuitem;
+    String		custom;
 
     result = new JMenuBar();
 
@@ -276,6 +278,13 @@ public abstract class AbstractGraphicalDisplay
     menu.addSeparator();
     if (SendToActionUtils.addSendToSubmenu(this, menu))
       menu.addSeparator();
+
+    // File/Keep open
+    checkMenuitem = new JCheckBoxMenuItem("Keep open");
+    checkMenuitem.setToolTipText("If checked, the window will stay open even after the flow cleans up all graphical output; the user must explicitly close the window.");
+    menu.add(checkMenuitem);
+    checkMenuitem.setMnemonic('K');
+    checkMenuitem.addActionListener((ActionEvent e) -> setKeepOpen(!getKeepOpen()));
 
     // File/Close
     menuitem = new JMenuItem("Close");
@@ -419,6 +428,11 @@ public abstract class AbstractGraphicalDisplay
    * Closes the dialog or frame.
    */
   protected void close() {
+    // explicitly requested close, need to disable flag
+    if (getKeepOpen()) {
+      m_KeepOpen = false;
+      cleanUp();
+    }
     m_Panel.closeParent();
   }
 

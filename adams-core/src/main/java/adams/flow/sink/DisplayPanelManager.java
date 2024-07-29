@@ -52,6 +52,7 @@ import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
 
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -1183,9 +1184,10 @@ public class DisplayPanelManager
    * @return		the menu bar
    */
   protected JMenuBar createMenuBar() {
-    JMenuBar	result;
-    JMenu	menu;
-    JMenuItem	menuitem;
+    JMenuBar		result;
+    JMenu		menu;
+    JMenuItem		menuitem;
+    JCheckBoxMenuItem 	checkMenuitem;
 
     result = new JMenuBar();
 
@@ -1229,6 +1231,13 @@ public class DisplayPanelManager
     menu.addSeparator();
     if (SendToActionUtils.addSendToSubmenu(this, menu))
       menu.addSeparator();
+
+    // File/Keep open
+    checkMenuitem = new JCheckBoxMenuItem("Keep open");
+    checkMenuitem.setToolTipText("If checked, the window will stay open even after the flow cleans up all graphical output; the user must explicitly close the window.");
+    menu.add(checkMenuitem);
+    checkMenuitem.setMnemonic('K');
+    checkMenuitem.addActionListener((ActionEvent e) -> setKeepOpen(!getKeepOpen()));
 
     // File/Close
     menuitem = new JMenuItem("Close");
@@ -1367,6 +1376,11 @@ public class DisplayPanelManager
    * Closes the dialog or frame.
    */
   protected void close() {
+    // explicitly requested close, need to disable flag
+    if (getKeepOpen()) {
+      m_KeepOpen = false;
+      cleanUp();
+    }
     m_HistoryPanel.closeParent();
   }
 
