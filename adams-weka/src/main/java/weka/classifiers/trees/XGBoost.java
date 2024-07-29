@@ -311,7 +311,7 @@ public class XGBoost extends AbstractSimpleClassifier implements TechnicalInform
   private static final long serialVersionUID = 7228620850250174821L;
 
   // https://github.com/dmlc/xgboost/issues/2578
-  public final static String[] MIN_GLIBC_VERSION = {"2", "23"};
+  public final static String[] MIN_GLIBC_VERSION = {"2", "28"};
 
   /**
    * The available types of booster.
