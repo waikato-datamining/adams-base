@@ -15,7 +15,7 @@
 
 /*
  * TarUtils.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
@@ -26,6 +26,13 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.base.BaseRegExp;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import com.github.luben.zstd.ZstdInputStream;
+import com.github.luben.zstd.ZstdOutputStream;
+import com.ning.compress.lzf.LZFInputStream;
+import com.ning.compress.lzf.LZFOutputStream;
+import lzma.sdk.lzma.Decoder;
+import lzma.streams.LzmaInputStream;
+import lzma.streams.LzmaOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -33,6 +40,9 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZInputStream;
+import org.tukaani.xz.XZOutputStream;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -40,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -66,35 +77,131 @@ public class TarUtils {
     /** gzip. */
     GZIP,
     /** bzip2. */
-    BZIP2
+    BZIP2,
+    /** lzf. */
+    LZF,
+    /** lzma. */
+    LZMA,
+    /** XZ. */
+    XZ,
+    /** Zstd. */
+    ZSTD,
+  }
+
+  /**
+   * Returns the list of supported compression extensions.
+   *
+   * @return		the list of extensions
+   */
+  public static List<String> getSupportedCompressionExtensions() {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    for (Compression c: Compression.values()) {
+      switch (c) {
+	case AUTO:
+	case NONE:
+	  // ignored
+	  continue;
+	case GZIP:
+	  result.add(".gz");
+	  break;
+	case BZIP2:
+	  result.add(".bz2");
+	  break;
+	case XZ:
+	  result.add(".xz");
+	  break;
+	case ZSTD:
+	  result.add(".zst");
+	  break;
+	case LZMA:
+	  result.add(".7z");
+	  break;
+	case LZF:
+	  result.add(".lzf");
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled compression: " + c);
+      }
+    }
+
+    Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Determines the compression based on the file extension.
+   * Falls back on "no" compression if unknown extension.
+   *
+   * @param archive	the archive to determine the compression for
+   * @return		the compression
+   * @throws Exception	if unsupported extension
+   */
+  public static Compression determineCompression(File archive) throws Exception {
+    return determineCompression(archive.getAbsolutePath(), false);
   }
 
   /**
    * Determines the compression based on the file extension.
    *
    * @param archive	the archive to determine the compression for
+   * @param strict 	fail if unsupported extension
    * @return		the compression
+   * @throws Exception	if unsupported extension
    */
-  public static Compression determineCompression(File archive) {
-    return determineCompression(archive.getAbsolutePath());
+  public static Compression determineCompression(File archive, boolean strict) throws Exception {
+    return determineCompression(archive.getAbsolutePath(), strict);
+  }
+
+  /**
+   * Determines the compression based on the file extension.
+   * Falls back on "no" compression if unknown extension.
+   *
+   * @param archive	the archive to determine the compression for
+   * @return		the compression
+   * @throws Exception	if unsupported extension
+   */
+  public static Compression determineCompression(String archive) throws Exception {
+    return determineCompression(archive, false);
   }
 
   /**
    * Determines the compression based on the file extension.
    *
    * @param archive	the archive to determine the compression for
+   * @param strict 	fail if unsupported extension
    * @return		the compression
+   * @throws Exception	if unsupported extension
    */
-  public static Compression determineCompression(String archive) {
+  public static Compression determineCompression(String archive, boolean strict) throws Exception {
     archive = archive.toLowerCase();
+
     if (archive.endsWith(".tar.gz"))
       return Compression.GZIP;
     else if (archive.endsWith(".tgz"))
       return Compression.GZIP;
     else if (archive.endsWith(".tar.bz2"))
       return Compression.BZIP2;
-    else
+    else if (archive.endsWith(".tar.7z"))
+      return Compression.LZMA;
+    else if (archive.endsWith(".tar.lzf"))
+      return Compression.LZF;
+    else if (archive.endsWith(".tar.xz"))
+      return Compression.XZ;
+    else if (archive.endsWith(".tar.zst"))
+      return Compression.ZSTD;
+
+    if (strict) {
+      if (archive.endsWith(".tar"))
+	return Compression.NONE;
+      else
+	throw new IllegalArgumentException("Unsupported extension: " + FileUtils.getExtension(archive));
+    }
+    else {
       return Compression.NONE;
+    }
   }
 
   /**
@@ -109,11 +216,19 @@ public class TarUtils {
   public static TarArchiveInputStream openArchiveForReading(File file, FileInputStream stream) throws Exception {
     Compression		comp;
 
-    comp = determineCompression(file);
+    comp = determineCompression(file, true);
     if (comp == Compression.GZIP)
       return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.BZIP2)
       return new TarArchiveInputStream(new BZip2CompressorInputStream(new BufferedInputStream(stream)));
+    else if (comp == Compression.LZF)
+      return new TarArchiveInputStream(new LZFInputStream(new BufferedInputStream(stream)));
+    else if (comp == Compression.LZMA)
+      return new TarArchiveInputStream(new LzmaInputStream(new BufferedInputStream(stream), new Decoder()));
+    else if (comp == Compression.XZ)
+      return new TarArchiveInputStream(new XZInputStream(new BufferedInputStream(stream)));
+    else if (comp == Compression.ZSTD)
+      return new TarArchiveInputStream(new ZstdInputStream(new BufferedInputStream(stream)));
     else
       return new TarArchiveInputStream(new BufferedInputStream(stream));
   }
@@ -133,11 +248,19 @@ public class TarUtils {
     TarArchiveOutputStream	result;
     Compression			comp;
 
-    comp = determineCompression(input);
+    comp = determineCompression(input, true);
     if (comp == Compression.GZIP)
       result = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(stream)));
     else if (comp == Compression.BZIP2)
       result = new TarArchiveOutputStream(new BZip2CompressorOutputStream(new BufferedOutputStream(stream)));
+    else if (comp == Compression.LZF)
+      result = new TarArchiveOutputStream(new LZFOutputStream(new BufferedOutputStream(stream)));
+    else if (comp == Compression.LZMA)
+      result = new TarArchiveOutputStream(new LzmaOutputStream.Builder(new BufferedOutputStream(stream)).build());
+    else if (comp == Compression.XZ)
+      result = new TarArchiveOutputStream(new XZOutputStream(new BufferedOutputStream(stream), new LZMA2Options()));
+    else if (comp == Compression.ZSTD)
+      result = new TarArchiveOutputStream(new ZstdOutputStream(new BufferedOutputStream(stream)));
     else
       result = new TarArchiveOutputStream(new BufferedOutputStream(stream));
 
@@ -219,9 +342,9 @@ public class TarUtils {
 
 	// Add tar entry to output stream.
 	filename = files[i].getParentFile().getAbsolutePath();
-	if (stripRegExp.length() > 0)
+	if (!stripRegExp.isEmpty())
 	  filename = filename.replaceFirst(stripRegExp, "");
-	if (filename.length() > 0)
+	if (!filename.isEmpty())
 	  filename += File.separator;
 	filename += files[i].getName();
 	entry = new TarArchiveEntry(filename);
@@ -358,7 +481,7 @@ public class TarUtils {
       buffer  = new byte[bufferSize];
       fis     = new FileInputStream(input.getAbsoluteFile());
       archive = openArchiveForReading(input, fis);
-      while ((entry = archive.getNextTarEntry()) != null) {
+      while ((entry = archive.getNextEntry()) != null) {
 	if (entry.isDirectory() && !createDirs)
 	  continue;
 
@@ -510,7 +633,7 @@ public class TarUtils {
       buffer  = new byte[bufferSize];
       fis     = new FileInputStream(input.getAbsoluteFile());
       archive = openArchiveForReading(input, fis);
-      while ((entry = archive.getNextTarEntry()) != null) {
+      while ((entry = archive.getNextEntry()) != null) {
 	if (entry.isDirectory())
 	  continue;
 	if (!entry.getName().equals(archiveFile))
@@ -560,7 +683,6 @@ public class TarUtils {
 	  break;
 	}
 	catch (Exception e) {
-	  result = false;
 	  msg = "Error extracting '" + entry.getName() + "' to '" + outName + "': ";
 	  LOGGER.log(Level.SEVERE, msg, e);
 	  errors.add(msg, e);
@@ -621,7 +743,7 @@ public class TarUtils {
     try {
       fis     = new FileInputStream(input.getAbsolutePath());
       archive = openArchiveForReading(input, fis);
-      while ((entry = archive.getNextTarEntry()) != null) {
+      while ((entry = archive.getNextEntry()) != null) {
 	if (entry.isDirectory()) {
           if (listDirs)
             result.add(new File(entry.getName()));
