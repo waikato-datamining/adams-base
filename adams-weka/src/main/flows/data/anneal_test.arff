@@ -1,4 +1,4 @@
-@relation anneal-weka.filters.unsupervised.instance.RemovePercentage-P66.0
+@relation anneal-test
 
 @attribute family {'?',GB,GK,GS,TN,ZA,ZF,ZH,ZM,ZS}
 @attribute product-type {C,H,G}
