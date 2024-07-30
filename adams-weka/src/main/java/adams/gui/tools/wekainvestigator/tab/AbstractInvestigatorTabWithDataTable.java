@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTabWithDataTable.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -314,9 +314,10 @@ public abstract class AbstractInvestigatorTabWithDataTable
       fireDataChange(new WekaInvestigatorDataEvent(getOwner()));
     }
     else {
+      getTable().setSelectedRows(new int[0]);
       Arrays.sort(rows);
       for (i = rows.length - 1; i >= 0; i--) {
-	logMessage("Removing: " + getData().get(i).getSource());
+	logMessage("Removing: " + getData().get(rows[i]).getSource());
 	cont = getData().remove(rows[i]);
 	list.add(cont);
       }
