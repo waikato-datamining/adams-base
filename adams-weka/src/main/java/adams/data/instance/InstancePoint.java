@@ -15,21 +15,20 @@
 
 /*
  * InstancePoint.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
 
-import weka.core.Attribute;
 import adams.core.Utils;
 import adams.data.container.AbstractDataPoint;
 import adams.data.container.DataPoint;
+import weka.core.Attribute;
 
 /**
  * A 2-dimensional point (X: attribute index, Y: internal value).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstancePoint
   extends AbstractDataPoint {
@@ -179,18 +178,22 @@ public class InstancePoint
     String	result;
     Attribute	att;
 
-    if (getParent() != null) {
+    result = null;
+
+    if ((getParent() != null) && (((Instance) getParent()).getDatasetHeader() != null)) {
       att     = ((Instance) getParent()).getDatasetHeader().attribute(getX());
-      result  = att.name();
-      result += "=";
-      if (att.isNominal())
-	result += att.value(getY().intValue());
-      else
-	result += getY();
+      if (att != null) {
+	result = att.name();
+	result += "=";
+	if (att.isNominal())
+	  result += att.value(getY().intValue());
+	else
+	  result += getY();
+      }
     }
-    else {
+
+    if (result == null)
       result = getX() + "," + getY();
-    }
 
     return result;
   }
