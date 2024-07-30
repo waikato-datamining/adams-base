@@ -15,7 +15,7 @@
 
 /*
  * AbstractInvestigatorTabWithEditableDataTable.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -143,12 +143,16 @@ public abstract class AbstractInvestigatorTabWithEditableDataTable
     panel = new JPanel(new GridLayout(1, 2));
     m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));
     m_ButtonUp.addActionListener((ActionEvent e) -> {
+      getData().setNoCleanUp(true);
       ListHelper.moveUp(getData(), getSelectedRows());
+      getData().setNoCleanUp(false);
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
     m_ButtonDown = new BaseFlatButton(ImageManager.getIcon("arrow_down.gif"));
     m_ButtonDown.addActionListener((ActionEvent e) -> {
+      getData().setNoCleanUp(true);
       ListHelper.moveDown(getData(), getSelectedRows());
+      getData().setNoCleanUp(false);
       fireDataChange(new WekaInvestigatorDataEvent(getOwner(), WekaInvestigatorDataEvent.TABLE_CHANGED));
     });
     panel.add(m_ButtonUp);

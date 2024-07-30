@@ -15,7 +15,7 @@
 
 /*
  * DataContainerList.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.wekainvestigator.data;
@@ -37,6 +37,9 @@ public class DataContainerList
   /** whether undo is enabled. */
   protected boolean m_UndoEnabled;
 
+  /** whether to suppress automatic cleanup. */
+  protected boolean m_NoCleanUp;
+
   /**
    * Sets whether undo is enabled.
    *
@@ -55,6 +58,24 @@ public class DataContainerList
    */
   public boolean isUndoEnabled() {
     return m_UndoEnabled;
+  }
+
+  /**
+   * Sets whether to suppress automatic clean ups.
+   *
+   * @param value	true if to suppress
+   */
+  public synchronized void setNoCleanUp(boolean value) {
+    m_NoCleanUp = value;
+  }
+
+  /**
+   * Returns whether to suppress automatic clean ups.
+   *
+   * @return		true if to suppress
+   */
+  public boolean isNoCleanUp() {
+    return m_NoCleanUp;
   }
 
   /**
@@ -84,26 +105,31 @@ public class DataContainerList
 
   @Override
   public DataContainer set(int index, DataContainer element) {
-    get(index).cleanUp();
+    if (!m_NoCleanUp)
+      get(index).cleanUp();
     return super.set(index, element);
   }
 
   @Override
   public boolean remove(Object o) {
-    ((DataContainer) o).cleanUp();
+    if (!m_NoCleanUp)
+      ((DataContainer) o).cleanUp();
     return super.remove(o);
   }
 
   @Override
   public DataContainer remove(int index) {
-    get(index).cleanUp();
+    if (!m_NoCleanUp)
+      get(index).cleanUp();
     return super.remove(index);
   }
 
   @Override
   protected void removeRange(int fromIndex, int toIndex) {
-    for (int i = fromIndex; i < toIndex; i++)
-      get(i).cleanUp();
+    if (!m_NoCleanUp) {
+      for (int i = fromIndex; i < toIndex; i++)
+	get(i).cleanUp();
+    }
     super.removeRange(fromIndex, toIndex);
   }
 
@@ -119,8 +145,10 @@ public class DataContainerList
 
   @Override
   public void clear() {
-    for (DataContainer c: this)
-      c.cleanUp();
+    if (!m_NoCleanUp) {
+      for (DataContainer c : this)
+	c.cleanUp();
+    }
     super.clear();
   }
 }
