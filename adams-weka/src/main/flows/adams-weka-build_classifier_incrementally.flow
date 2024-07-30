@@ -1,7 +1,8 @@
 # Project: adams
-# Date: 2016-02-15 15:18:26
+# Date: 2024-07-30 14:40:03
 # User: fracpete
 # Charset: UTF-8
+#
 adams.flow.control.Flow -annotation "Trains NaiveBayesUpdateable in an incremental fashion\\nand plots every \\\"interval\\\" instances the Accuracy, RMSE and AUC." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.SetVariable -annotation "After how many instances the classifier is evaluated against the test set." -var-name interval -var-value 3
  adams.flow.standalone.GridView -num-rows 3 -writer adams.gui.print.NullWriter
@@ -34,6 +35,6 @@ adams.flow.control.Flow -annotation "Trains NaiveBayesUpdateable in an increment
      adams.flow.transformer.MakePlotContainer -plot-name RMSE
      adams.flow.sink.CallableSink -callable RMSE
     adams.flow.control.Sequence -name AUC
-     adams.flow.transformer.WekaEvaluationValuePicker -statistic AREA_UNDER_ROC
+     adams.flow.transformer.WekaEvaluationValuePicker -statistic AREA_UNDER_ROC -index 2
      adams.flow.transformer.MakePlotContainer -plot-name AUC
      adams.flow.sink.CallableSink -callable AUC
