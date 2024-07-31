@@ -15,10 +15,11 @@
 
 /*
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.MessageCollection;
 import adams.core.Utils;
 import adams.core.annotation.AnnotationHelper;
 import adams.core.classmanager.ClassManager;
@@ -35,7 +36,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -67,10 +67,10 @@ public abstract class AbstractOptionConsumer<C,V>
   protected OptionHandler m_Output;
 
   /** for storing errors that occurred while consuming the options. */
-  protected List<String> m_Errors;
+  protected MessageCollection m_Errors;
 
   /** for storing warnings that occurred while consuming the options. */
-  protected List<String> m_Warnings;
+  protected MessageCollection m_Warnings;
 
   /** top-level properties to skip. */
   protected HashSet<String> m_SkippedProperties;
@@ -100,8 +100,8 @@ public abstract class AbstractOptionConsumer<C,V>
     m_LoggingLevel      = LoggingLevel.OFF;
     m_Input             = null;
     m_UsePropertyNames  = false;
-    m_Errors            = new ArrayList<>();
-    m_Warnings          = new ArrayList<>();
+    m_Errors            = new MessageCollection();
+    m_Warnings          = new MessageCollection();
     m_SkippedProperties = new HashSet<>();
     if (m_ClassnameCache == null)
       m_ClassnameCache = new HashMap<>();
@@ -166,7 +166,7 @@ public abstract class AbstractOptionConsumer<C,V>
    * @see		#logError(String)
    * @see		#hasErrors()
    */
-  public List<String> getErrors() {
+  public MessageCollection getErrors() {
     return m_Errors;
   }
 
@@ -198,7 +198,7 @@ public abstract class AbstractOptionConsumer<C,V>
    * @see		#logWarning(String)
    * @see		#hasWarnings()
    */
-  public List<String> getWarnings() {
+  public MessageCollection getWarnings() {
     return m_Warnings;
   }
 
@@ -613,6 +613,19 @@ public abstract class AbstractOptionConsumer<C,V>
    * @return		the option handler, null in case of an error
    */
   public static OptionHandler fromString(Class<? extends OptionConsumer> cls, String s) {
+    return fromString(cls, s, null);
+  }
+
+  /**
+   * Uses the specified consumer to parse the given string and return the
+   * option handler.
+   *
+   * @param cls		the consumer class to use
+   * @param s		the string to parse
+   * @param errors 	for storing errors, can be null
+   * @return		the option handler, null in case of an error
+   */
+  public static OptionHandler fromString(Class<? extends OptionConsumer> cls, String s, MessageCollection errors) {
     OptionHandler	result;
     OptionConsumer	consumer;
 
@@ -621,9 +634,13 @@ public abstract class AbstractOptionConsumer<C,V>
     try {
       consumer = cls.getDeclaredConstructor().newInstance();
       result   = consumer.fromString(s);
+      if (consumer.hasErrors())
+	errors.addAll(consumer.getErrors());
       consumer.cleanUp();
     }
     catch (Exception e) {
+      if (errors != null)
+	errors.add("Failed to process string: " + s, e);
       System.err.println("Failed to process string: " + s);
       e.printStackTrace();
     }

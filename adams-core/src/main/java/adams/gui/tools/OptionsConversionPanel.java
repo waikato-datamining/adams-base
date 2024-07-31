@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionsConversionPanel.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -328,7 +328,7 @@ public class OptionsConversionPanel
 	m_TextAreaCodeOutput.getComponent().setCaretPosition(0);
       }
       else {
-	throw new IllegalStateException("Failed to parse input!" + (consumer.hasErrors() ? "\n" + Utils.flatten(consumer.getErrors(), "\n") : ""));
+	throw new IllegalStateException("Failed to parse input!" + (consumer.hasErrors() ? "\n" + consumer.getErrors().toString() : ""));
       }
     }
     catch (Exception ex) {

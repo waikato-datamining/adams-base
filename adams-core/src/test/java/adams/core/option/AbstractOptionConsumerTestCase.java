@@ -15,12 +15,11 @@
 
 /*
  * AbstractOptionConsumerTestCase.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
-import adams.core.Utils;
 import adams.test.AdamsTestCase;
 
 /**
@@ -94,9 +93,9 @@ public abstract class AbstractOptionConsumerTestCase<C>
     consumer.setInput(input);
     consumer.consume();
     if (m_FailOnWarnings && consumer.hasWarnings())
-      fail("warnings encountered: " + Utils.flatten(consumer.getWarnings(), ", "));
+      fail("warnings encountered: " + consumer.getWarnings());
     if (m_FailOnErrors && consumer.hasErrors())
-      fail("errors encountered: " + Utils.flatten(consumer.getErrors(), ", "));
+      fail("errors encountered: " + consumer.getErrors());
     assertEquals("objects differ", handler, consumer.getOutput());
     consumer.cleanUp();
   }

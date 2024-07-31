@@ -15,7 +15,7 @@
 
 /*
  * CompactFlowConsumer.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.option;
@@ -147,7 +147,7 @@ public class CompactFlowConsumer
       result = OptionUtils.forCommandLine(Actor.class, line.getContent());
       checkDeprecation(result);
       m_Input.remove(0);
-      if (m_Input.size() > 0) {
+      if (!m_Input.isEmpty()) {
 	if (m_Input.get(0) instanceof ArrayList)
 	  m_Input = (List) m_Input.get(0);
 	else
@@ -228,11 +228,11 @@ public class CompactFlowConsumer
 	  line  = (Line) input.get(i);
 	  actor = (Actor) m_Consumer.fromString(line.getContent());
 	  if (m_Consumer.hasErrors()) {
-	    for (String error: m_Consumer.getErrors())
+	    for (String error: m_Consumer.getErrors().toList())
 	      logError(error);
 	  }
 	  if (m_Consumer.hasWarnings()) {
-	    for (String warning : m_Consumer.getWarnings())
+	    for (String warning : m_Consumer.getWarnings().toList())
 	      logWarning(warning);
           }
 	  if (mutable)

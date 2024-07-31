@@ -20,11 +20,11 @@
 package adams.core.option;
 
 import adams.core.CleanUpHandler;
+import adams.core.MessageCollection;
 import adams.core.logging.LoggingLevel;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Interface for classes that set the option values based on the input data.
@@ -72,7 +72,7 @@ public interface OptionConsumer<C,V>
    * @return		the error log, can be empty
    * @see		#hasErrors()
    */
-  public List<String> getErrors();
+  public MessageCollection getErrors();
 
   /**
    * Checks whether warnings were encountered while consuming the options.
@@ -88,7 +88,7 @@ public interface OptionConsumer<C,V>
    * @return		the warning log, can be empty
    * @see		#hasWarnings()
    */
-  public List<String> getWarnings();
+  public MessageCollection getWarnings();
 
   /**
    * Sets whether console output is suppressed or not.

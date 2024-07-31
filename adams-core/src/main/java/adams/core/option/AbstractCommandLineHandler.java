@@ -15,11 +15,12 @@
 
 /*
  * AbstractCommandLineHandler.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.ClassLister;
+import adams.core.MessageCollection;
 import adams.core.StaticClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingObject;
@@ -76,7 +77,18 @@ public abstract class AbstractCommandLineHandler
    * @param cmd		the commandline to create the object from
    * @return		the created object, null in case of error
    */
-  public abstract Object fromCommandLine(String cmd);
+  public Object fromCommandLine(String cmd) {
+    return fromCommandLine(cmd, new MessageCollection());
+  }
+
+  /**
+   * Generates an object from the specified commandline.
+   *
+   * @param cmd		the commandline to create the object from
+   * @param errors 	for recording errors
+   * @return		the created object, null in case of error
+   */
+  public abstract Object fromCommandLine(String cmd, MessageCollection errors);
 
   /**
    * Generates an object from the commandline options.
@@ -84,7 +96,18 @@ public abstract class AbstractCommandLineHandler
    * @param args	the commandline options to create the object from
    * @return		the created object, null in case of error
    */
-  public abstract Object fromArray(String[] args);
+  public Object fromArray(String[] args) {
+    return fromArray(args, new MessageCollection());
+  }
+
+  /**
+   * Generates an object from the commandline options.
+   *
+   * @param args	the commandline options to create the object from
+   * @param errors 	for recording errors
+   * @return		the created object, null in case of error
+   */
+  public abstract Object fromArray(String[] args, MessageCollection errors);
 
   /**
    * Generates a commandline from the specified object.

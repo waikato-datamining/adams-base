@@ -175,7 +175,7 @@ public class ArrayConsumer
       }
       else {
 	handler = AbstractCommandLineHandler.getHandler(object);
-	object  = handler.fromCommandLine(values[i]);
+	object  = handler.fromCommandLine(values[i], m_Errors);
       }
 
       Array.set(objects, i, object);

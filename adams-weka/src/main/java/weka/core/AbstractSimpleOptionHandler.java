@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleOptionHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package weka.core;
@@ -95,7 +95,7 @@ public abstract class AbstractSimpleOptionHandler
     getOptionManager().setDefaults();
     consumer.consume(this, options);
     if (consumer.hasErrors())
-      throw new IllegalArgumentException(adams.core.Utils.flatten(consumer.getErrors(), "\n"));
+      throw new IllegalArgumentException(consumer.getErrors().toString());
     consumer.cleanUp();
   }
 

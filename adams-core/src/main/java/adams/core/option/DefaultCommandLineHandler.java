@@ -15,11 +15,13 @@
 
 /*
  * DefaultCommandLineHandler.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 
+import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.core.classmanager.ClassManager;
 
 import java.util.logging.Level;
@@ -39,10 +41,11 @@ public class DefaultCommandLineHandler
    * Generates an object from the specified commandline.
    *
    * @param cmd		the commandline to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromCommandLine(String cmd) {
+  public Object fromCommandLine(String cmd, MessageCollection errors) {
     String	classname;
 
     if (cmd.indexOf(' ') == -1)
@@ -50,17 +53,18 @@ public class DefaultCommandLineHandler
     else
       classname = cmd.substring(0, cmd.indexOf(' '));
 
-    return fromArray(new String[]{classname});
+    return fromArray(new String[]{classname}, errors);
   }
 
   /**
    * Generates an object from the commandline options.
    *
    * @param args	the commandline options to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromArray(String[] args) {
+  public Object fromArray(String[] args, MessageCollection errors) {
     Object	result;
 
     result = null;
@@ -70,7 +74,8 @@ public class DefaultCommandLineHandler
 	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
+	errors.add("Failed to instantiate object from array (fromArray): " + Utils.arrayToString(args), e);
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):" + Utils.arrayToString(args), e);
       }
     }
 

@@ -585,13 +585,13 @@ public class OptionUtils {
       if (errors != null)
 	errors.addAll(consumer.getErrors());
       else if (!quiet)
-	LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getErrors(), "\n"));
+	LOGGER.severe("Error(s) parsing commandline: " + cmdline + "\n" + consumer.getErrors());
     }
     if (consumer.hasWarnings()) {
       if (warnings != null)
 	warnings.addAll(consumer.getWarnings());
       else if (!quiet)
-	LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + Utils.flatten(consumer.getWarnings(), "\n"));
+	LOGGER.warning("Warning(s) parsing commandline: " + cmdline + "\n" + consumer.getWarnings());
     }
     if (result == null)
       throw new Exception("Failed to instantiate object of type '" + classType.getName() + "' from '" + cmdline + "! Class not present?");
@@ -772,7 +772,7 @@ public class OptionUtils {
     if (result == null) {
       try {
 	handler = AbstractCommandLineHandler.getHandler(cls);
-	result  = handler.fromCommandLine(value);
+	result  = handler.fromCommandLine(value, new MessageCollection());
       }
       catch (Exception e) {
 	result = null;

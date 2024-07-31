@@ -19,6 +19,8 @@
  */
 package adams.core.option;
 
+import adams.core.MessageCollection;
+import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.classmanager.ClassManager;
 import nz.ac.waikato.cms.jenericcmdline.core.OptionUtils;
@@ -43,21 +45,23 @@ public class BaseObjectCommandLineHandler
    * Generates an object from the specified commandline.
    *
    * @param cmd		the commandline to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromCommandLine(String cmd) {
-    return fromArray(splitOptions(cmd));
+  public Object fromCommandLine(String cmd, MessageCollection errors) {
+    return fromArray(splitOptions(cmd), errors);
   }
 
   /**
    * Generates an object from the commandline options.
    *
    * @param args	the commandline options to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromArray(String[] args) {
+  public Object fromArray(String[] args, MessageCollection errors) {
     Object	result;
 
     result = null;
@@ -68,7 +72,8 @@ public class BaseObjectCommandLineHandler
 	setOptions(result, new String[]{args[1]});
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
+	errors.add("Failed to instantiate object from array (fromArray/len=2): " + Utils.arrayToString(args), e);
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray/len=2): " + Utils.arrayToString(args), e);
       }
     }
     else if (args.length == 1) {
@@ -76,7 +81,8 @@ public class BaseObjectCommandLineHandler
 	result = ClassManager.getSingleton().forName(Conversion.getSingleton().rename(args[0])).getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
+	errors.add("Failed to instantiate object from array (fromArray/len=1): " + Utils.arrayToString(args), e);
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray/len=1): " + Utils.arrayToString(args), e);
       }
     }
 

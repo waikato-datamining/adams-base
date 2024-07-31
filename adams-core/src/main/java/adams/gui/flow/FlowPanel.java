@@ -1098,7 +1098,7 @@ public class FlowPanel
       if (!consumer.hasErrors())
 	showNotification("Flow successfully imported from:\n" + file, NotificationType.PLAIN);
       else
-	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + Utils.flatten(consumer.getErrors(), "\n"), NotificationType.ERROR);
+	showNotification("Flow import of:\n" + file + "\nResulted in errors:\n" + consumer.getErrors(), NotificationType.ERROR);
     }
   }
 

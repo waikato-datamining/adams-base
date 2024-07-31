@@ -13,12 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaCommandLineHandler.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.MessageCollection;
+import adams.core.Utils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ import java.util.logging.Level;
  * interface.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.core.OptionHandler
  */
 public class WekaCommandLineHandler
@@ -44,14 +45,15 @@ public class WekaCommandLineHandler
    * Generates an object from the specified commandline.
    *
    * @param cmd		the commandline to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromCommandLine(String cmd) {
+  public Object fromCommandLine(String cmd, MessageCollection errors) {
     Object	result;
 
     try {
-      result = fromArray(weka.core.Utils.splitOptions(cmd));
+      result = fromArray(weka.core.Utils.splitOptions(cmd), errors);
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to process commandline '" + cmd + "':", e);
@@ -65,10 +67,11 @@ public class WekaCommandLineHandler
    * Generates an object from the commandline options.
    *
    * @param args	the commandline options to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromArray(String[] args) {
+  public Object fromArray(String[] args, MessageCollection errors) {
     Object	result;
     String	classname;
 
@@ -82,7 +85,8 @@ public class WekaCommandLineHandler
 	result = weka.core.Utils.forName(Object.class, Conversion.getSingleton().rename(classname), args);
       }
       catch (Exception e) {
-        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray):", e);
+	errors.add("Failed to instantiate object from array (fromArray): " + Utils.arrayToString(args), e);
+        getLogger().log(Level.SEVERE, "Failed to instantiate object from array (fromArray): " + Utils.arrayToString(args), e);
 	result = null;
       }
     }

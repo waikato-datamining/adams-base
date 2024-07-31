@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AdamsCommandLineHandler.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.MessageCollection;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 /**
@@ -26,7 +27,6 @@ import nz.ac.waikato.cms.locator.ClassLocator;
  * adams.core.option.OptionHandler.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see OptionHandler
  */
 public class AdamsCommandLineHandler
@@ -39,27 +39,31 @@ public class AdamsCommandLineHandler
    * Generates an object from the specified commandline.
    *
    * @param cmd		the commandline to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromCommandLine(String cmd) {
-    return AbstractOptionConsumer.fromString(ArrayConsumer.class, cmd);
+  public Object fromCommandLine(String cmd, MessageCollection errors) {
+    return AbstractOptionConsumer.fromString(ArrayConsumer.class, cmd, errors);
   }
 
   /**
    * Generates an object from the commandline options.
    *
    * @param args	the commandline options to create the object from
+   * @param errors 	for recording errors
    * @return		the created object, null in case of error
    */
   @Override
-  public Object fromArray(String[] args) {
+  public Object fromArray(String[] args, MessageCollection errors) {
     Object		result;
     ArrayConsumer	consumer;
 
     consumer = new ArrayConsumer();
     consumer.setInput(args);
     result = consumer.consume();
+    if (consumer.hasErrors())
+      errors.addAll(consumer.getErrors());
     consumer.cleanUp();
 
     return result;
