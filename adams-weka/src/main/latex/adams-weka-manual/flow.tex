@@ -1,8 +1,6 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision$
 
 \chapter{Flow}
 The \textit{adams-weka} module has a comprehensive set of actors and conversions
@@ -211,6 +209,10 @@ These transformers:
 	\item \textit{WekaReorderAttributesToReference} -- reorders the attributes
 	in incoming Instance/Instances based on an order defined in a reference
 	dataset (callable actor or file).
+	\item \textit{WekaRepeatedCrossValidationEvaluator} -- performs repeated
+	cross-validation on an incoming dataset using the referenced classifier setup.
+	\item \textit{WekaRepeatedCrossValidationOutput} -- generates output
+	from the repeated cross-validation data.
 	\item \textit{WekaSetInstanceValue} -- sets a specific attribute value in
 	an instance object.
 	\item \textit{WekaSetInstancesValue} -- sets a specific attribute value in

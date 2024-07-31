@@ -1,12 +1,10 @@
 % This work is made available under the terms of the
 % Creative Commons Attribution-ShareAlike 4.0 license,
 % http://creativecommons.org/licenses/by-sa/4.0/.
-%
-% Version: $Revision$
 
 \chapter{Tools}
 
-\section{Append datasets}
+\section{WEKA Append datasets}
 
 If you have datasets with the same structure, i.e., exactly the same
 attributes, then you can use the \textit{Append datasets} tool to combine
@@ -23,19 +21,7 @@ interface that guides you through the process.
 \end{figure}
 
 \clearpage
-\section{Arff viewer}
-
-WEKA's \textit{Arff viewer} is available from the ADAMS menu as well.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/arffviewer.png}
-  \caption{WEKA's Arff viewer displaying the iris UCI dataset.}
-  \label{arffviewer}
-\end{figure}
-
-\clearpage
-\section{Batch-filter datasets}
+\section{WEKA Batch-filter datasets}
 
 Training and test set are required to have exactly the same structure
 in WEKA. If you need to apply a pre-processing filter to both of the
@@ -85,43 +71,7 @@ batch-filtering conveniently through the GUI:
 \end{figure}
 
 \clearpage
-\section{BayesNet Editor}
-WEKA's \textit{BayesNet Editor} allows you to view and modify Bayesian nets.
-Figure \ref{bayesnet_editor} shows an example net loaded.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/bayesnet_editor.png}
-  \caption{BayesNet editor displaying a net.}
-  \label{bayesnet_editor}
-\end{figure}
-
-\clearpage
-\section{Dark Lord}
-The \textit{Dark Lord} wizard allows you to set up and monitor a genetic
-algorithm that determines the best set of attributes, based on the classifier
-and metric you choose to optimize on. The output directory that you define
-(see Figure \ref{darklord_setup}), is used to store all the \textit{reduced/optimized}
-datasets that improved the metric. The optimization can be paused, resumed or
-stopped with the buttons at the bottom right of the view panel (see Figure
-\ref{darklord_run}).
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/darklord_setup.png}
-  \caption{Dark Lord setup.}
-  \label{darklord_setup}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/darklord_run.png}
-  \caption{Dark Lord run.}
-  \label{darklord_run}
-\end{figure}
-
-\clearpage
-\section{Dataset compatibility}
+\section{WEKA Dataset compatibility}
 
 WEKA requires training and test sets to have the same structure, down to the
 same name and order of nominal labels. Rather than relying on the error message
@@ -140,80 +90,7 @@ and the other one a transformed version.
 \end{figure}
 
 \clearpage
-\section{Explorer}
-ADAMS contains an extended version of the WEKA Explorer. The interface uses
-menus instead of buttons to declutter the pre-process tab. Also, it keeps track
-of the datasets that the user loads, to make re-loading recent files easier.
-This saves a lot of time when working with the same files on a frequent basis.
-Furthermore, the user can have an arbitrary number of Explorer sessions in the
-same window, distinguished by names. Figure \ref{explorerext} shows the new
-interface with the drop-down menu in action.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/explorerext.png}
-  \caption{Explorer interface with menus.}
-  \label{explorerext}
-\end{figure}
-
-One very useful feature is the notion of \textit{workspaces} in this interface.
-You can save the current setup (current dataset, classifiers, clusterers,
-evaluation set up, results, etc.) to a file and restore all of it in one go
-again. Unfortunately, not all data can be stored, such as the log, the undo
-history and the built models or visualizations associated with a results.
-See Figure \ref{explorerext-workspaces} for the button (highlighted in red)
-that allows you to load/save workspaces.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/explorerext-workspaces.png}
-  \caption{Saving/restoring of workspaces.}
-  \label{explorerext-workspaces}
-\end{figure}
-
-\clearpage
-\section{Hermione}
-The \textit{Hermione} wizard allows you to set up and monitor a genetic
-algorithm that determines the best parameter settings, based on the classifier
-and metric you choose to optimize on. The output directory that you define
-(see Figure \ref{hermione_setup}), is used to store all the setups/datasets
-that improved the metric. The optimization can be paused, resumed or
-stopped with the buttons at the bottom right of the view panel (see Figure
-\ref{hermione_run}).
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/hermione_setup.png}
-  \caption{Hermione setup.}
-  \label{hermione_setup}
-\end{figure}
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/hermione_run.png}
-  \caption{Hermione run.}
-  \label{hermione_run}
-\end{figure}
-
-\clearpage
-\section{Investigator}
-The \textit{Weka Investigator} (see Figure \ref{wekainvestigator}) is aimed
-to be a replacement of the Weka Explorer. The idea is to have a more versatile
-and efficient user interface: manage multiple sessions, each session can manage
-multiple datasets (e.g., train and test set), making use of tabs instead of windows
-(but output tabs can still be detached for comparison), configuration of
-outputs to generate each time an evaluation is run (statistics, model,
-classifier errors, etc).
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/wekainvestigator.png}
-  \caption{Weka Investigator.}
-  \label{wekainvestigator}
-\end{figure}
-
-\clearpage
-\section{Make compatible datasets}
+\section{WEKA Make compatible datasets}
 When dealing with data across multiple spreadsheets, e.g., training, test
 and validation set, then it can happen that these datasets are not compatible
 in the strict Weka sense.
@@ -256,7 +133,7 @@ into compatible ARFF files:
 \end{figure}
 
 \clearpage
-\section{Merge datasets}
+\section{WEKA Merge datasets}
 The process of adding reference data to a dataset or performing
 \textit{data fusion}\footnote{\url{https://en.wikipedia.org/wiki/Data_fusion}{}},
 can be quite often a manual process, copy/pasting datasets in a spreadsheet
@@ -289,7 +166,7 @@ Figure \ref{merge_datasets-output} shows an example of a merged file.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=12.0cm]{images/merge_datasets3.png}
-  \caption{Selecting the output directory for the filtered datasets.}
+  \caption{Selecting the file to save the merged dataset to.}
   \label{merge_datasets3}
 \end{figure}
 
@@ -305,28 +182,4 @@ Figure \ref{merge_datasets-output} shows an example of a merged file.
   \includegraphics[width=12.0cm]{images/merge_datasets-output.png}
   \caption{The merged dataset.}
   \label{merge_datasets-output}
-\end{figure}
-
-\clearpage
-\section{SimpleCLI}
-Weka's basic command-line interface, \textit{SimpleCLI}, is also
-available. A screenshot is shown in Figure \ref{simplecli}.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/simplecli.png}
-  \caption{The SimpleCLI interface.}
-  \label{simplecli}
-\end{figure}
-
-\clearpage
-\section{Workbench}
-The more flexible alternative to the Explorer is called the \textit{Workbench}.
-A screenshot is shown in Figure \ref{workbench}.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=12.0cm]{images/workbench.png}
-  \caption{The Workbench interface.}
-  \label{workbench}
 \end{figure}
