@@ -477,6 +477,11 @@ public class WekaRepeatedCrossValidationEvaluator
       conts = new WekaEvaluationContainer[m_Runs];
 
       for (run = 0; run < m_Runs; run++) {
+	if (isStopped()) {
+	  conts = null;
+	  break;
+	}
+
 	try {
 	  m_CrossValidation = new WekaCrossValidationExecution();
 	  m_CrossValidation.setJobRunnerSetup(m_JobRunnerSetup);
