@@ -15,7 +15,7 @@
 
 /*
  * FlowTabManager.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
@@ -125,21 +125,19 @@ public class FlowTabManager
     for (Class tabClass: tabs) {
       try {
         tab = (AbstractEditorTab) tabClass.getDeclaredConstructor().newInstance();
-        if (tab != null) {
-          tab.setOwner(this);
-          m_TabList.add(tab);
-          key = createPropertyKey(tab.getClass());
-          if (!props.hasKey(key)) {
-            props.setBoolean(key, !(tab instanceof RuntimeTab) && tab.enabledByDefault());
-            update = true;
-          }
-          else if (tab instanceof RuntimeTab) {
-            if (props.getBoolean(key)) {
-              props.setBoolean(key, false);
-              update = true;
-            }
-          }
-        }
+	tab.setOwner(this);
+	m_TabList.add(tab);
+	key = createPropertyKey(tab.getClass());
+	if (!props.hasKey(key)) {
+	  props.setBoolean(key, !(tab instanceof RuntimeTab) && tab.enabledByDefault());
+	  update = true;
+	}
+	else if (tab instanceof RuntimeTab) {
+	  if (props.getBoolean(key)) {
+	    props.setBoolean(key, false);
+	    update = true;
+	  }
+	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, "Failed to instantiate editor tab: " + tabClass.getName(), e);
@@ -408,12 +406,14 @@ public class FlowTabManager
   }
 
   /**
-   * Sets whether all tabs should be visible or not.
+   * Sets whether all tabs should be visible or not (excluding runtime tabs).
    *
    * @param value	if true then the tab is made visible by default
    */
   public synchronized void setAllVisible(boolean value) {
     for (AbstractEditorTab tab: m_TabList) {
+      if (tab instanceof RuntimeTab)
+	continue;
       getProperties().setBoolean(createPropertyKey(tab.getClass()), value);
       if (value)
         displayTab(tab);
