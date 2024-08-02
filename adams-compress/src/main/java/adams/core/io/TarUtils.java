@@ -30,9 +30,6 @@ import com.github.luben.zstd.ZstdInputStream;
 import com.github.luben.zstd.ZstdOutputStream;
 import com.ning.compress.lzf.LZFInputStream;
 import com.ning.compress.lzf.LZFOutputStream;
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
-import lzma.streams.LzmaOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -40,6 +37,8 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
 import org.tukaani.xz.XZOutputStream;
@@ -224,7 +223,7 @@ public class TarUtils {
     else if (comp == Compression.LZF)
       return new TarArchiveInputStream(new LZFInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.LZMA)
-      return new TarArchiveInputStream(new LzmaInputStream(new BufferedInputStream(stream), new Decoder()));
+      return new TarArchiveInputStream(new LZMACompressorInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.XZ)
       return new TarArchiveInputStream(new XZInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.ZSTD)
@@ -256,7 +255,7 @@ public class TarUtils {
     else if (comp == Compression.LZF)
       result = new TarArchiveOutputStream(new LZFOutputStream(new BufferedOutputStream(stream)));
     else if (comp == Compression.LZMA)
-      result = new TarArchiveOutputStream(new LzmaOutputStream.Builder(new BufferedOutputStream(stream)).build());
+      result = new TarArchiveOutputStream(new LZMACompressorOutputStream(new BufferedOutputStream(stream)));
     else if (comp == Compression.XZ)
       result = new TarArchiveOutputStream(new XZOutputStream(new BufferedOutputStream(stream), new LZMA2Options()));
     else if (comp == Compression.ZSTD)

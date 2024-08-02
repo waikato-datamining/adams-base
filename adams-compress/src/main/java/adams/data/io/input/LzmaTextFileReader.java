@@ -13,14 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LzmaTextFileReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -45,7 +44,6 @@ import java.io.InputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LzmaTextFileReader
   extends AbstractCompressedTextReader {
@@ -70,10 +68,10 @@ public class LzmaTextFileReader
    */
   @Override
   public void initialize(InputStream stream) {
-    LzmaInputStream	lis;
+    LZMACompressorInputStream lis;
     
     try {
-      lis = new LzmaInputStream(new BufferedInputStream(stream), new Decoder());
+      lis = new LZMACompressorInputStream(new BufferedInputStream(stream));
       super.initialize(lis);
       m_TextReader.initialize(lis);
     }

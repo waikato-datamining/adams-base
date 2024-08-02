@@ -15,7 +15,7 @@
 
 /*
  * LzmaFileSearchHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filesearch;
@@ -23,8 +23,7 @@ package adams.core.io.filesearch;
 import adams.core.exception.ExceptionHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.LzmaUtils;
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -86,7 +85,7 @@ public class LzmaFileSearchHandler
 
     try {
       fis    = new FileInputStream(file);
-      cis    = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+      cis    = new LZMACompressorInputStream(new BufferedInputStream(fis));
       isr    = new InputStreamReader(cis, m_Encoding.charsetValue());
       result = m_Handler.searchStream(isr, searchText, caseSensitive, handler);
     }

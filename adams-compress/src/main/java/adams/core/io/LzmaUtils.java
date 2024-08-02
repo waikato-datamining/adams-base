@@ -15,20 +15,16 @@
 
 /*
  * LzmaUtils.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
- * Copyright (C) Julien Ponge
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
-import adams.core.License;
 import adams.core.MessageCollection;
-import adams.core.annotation.MixedCopyright;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
-import lzma.streams.LzmaOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -73,18 +69,13 @@ public class LzmaUtils {
    * @param outputFile	the destination file
    * @return		the error message, null if everything OK
    */
-  @MixedCopyright(
-      copyright = "Julien Ponge",
-      license = License.APACHE2,
-      url = "https://github.com/jponge/lzma-java/blob/master/README.md"
-  )
   public static String decompress(File archiveFile, int buffer, File outputFile) {
-    String		result;
-    LzmaInputStream	in;
-    OutputStream 	out;
-    FileInputStream     fis;
-    FileOutputStream	fos;
-    String		msg;
+    String			result;
+    LZMACompressorInputStream	in;
+    OutputStream 		out;
+    FileInputStream     	fis;
+    FileOutputStream		fos;
+    String			msg;
 
     in     = null;
     fis    = null;
@@ -98,7 +89,7 @@ public class LzmaUtils {
 	System.err.println("WARNING: overwriting '" + outputFile + "'!");
 
       fis = new FileInputStream(archiveFile.getAbsolutePath());
-      in  = new LzmaInputStream(new BufferedInputStream(fis), new Decoder());
+      in  = new LZMACompressorInputStream(new BufferedInputStream(fis));
       fos = new FileOutputStream(outputFile.getAbsolutePath());
       out = new BufferedOutputStream(fos);
 
@@ -152,14 +143,9 @@ public class LzmaUtils {
    * @param removeInput	whether to remove the input file
    * @return		the error message, null if everything OK
    */
-  @MixedCopyright(
-      copyright = "Julien Ponge",
-      license = License.APACHE2,
-      url = "https://github.com/jponge/lzma-java/blob/master/README.md"
-  )
   public static String compress(File inputFile, int buffer, File outputFile, boolean removeInput) {
     String			result;
-    LzmaOutputStream 		out;
+    LZMACompressorOutputStream 	out;
     BufferedInputStream 	in;
     FileInputStream		fis;
     FileOutputStream		fos;
@@ -178,7 +164,7 @@ public class LzmaUtils {
       fis = new FileInputStream(inputFile.getAbsolutePath());
       in  = new BufferedInputStream(fis);
       fos = new FileOutputStream(outputFile.getAbsolutePath());
-      out = new LzmaOutputStream.Builder(new BufferedOutputStream(fos)).build();
+      out = new LZMACompressorOutputStream(new BufferedOutputStream(fos));
       
       IOUtils.copy(in, out, buffer);
 
@@ -231,7 +217,7 @@ public class LzmaUtils {
   public static byte[] compress(byte[] input, MessageCollection errors) {
     ByteArrayInputStream 	bis;
     ByteArrayOutputStream 	bos;
-    LzmaOutputStream 		cos;
+    LZMACompressorOutputStream 	cos;
     String			msg;
 
     bis = null;
@@ -240,7 +226,7 @@ public class LzmaUtils {
     try {
       bis = new ByteArrayInputStream(input);
       bos = new ByteArrayOutputStream();
-      cos = new LzmaOutputStream.Builder(bos).build();
+      cos = new LZMACompressorOutputStream(bos);
       IOUtils.copy(bis, cos);
       FileUtils.closeQuietly(cos);
       return bos.toByteArray();
@@ -278,14 +264,14 @@ public class LzmaUtils {
    * @return		the decompressed bytes, null in case of error
    */
   public static byte[] decompress(byte[] input, int buffer, MessageCollection errors) {
-    LzmaInputStream 		cis;
+    LZMACompressorInputStream 	cis;
     ByteArrayOutputStream	bos;
     String			msg;
 
     cis = null;
     bos = null;
     try {
-      cis = new LzmaInputStream(new ByteArrayInputStream(input), new Decoder());
+      cis = new LZMACompressorInputStream(new ByteArrayInputStream(input));
       bos = new ByteArrayOutputStream();
       IOUtils.copy(cis, bos, buffer);
       return bos.toByteArray();
