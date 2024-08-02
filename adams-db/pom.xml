@@ -72,13 +72,13 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.7.2</version>
+      <version>2.7.3</version>
     </dependency>
 
     <dependency>
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
-      <version>3.45.0.0</version>
+      <version>3.46.0.1</version>
     </dependency>
 
     <dependency>
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
-      <version>12.4.2.jre11</version>
+      <version>12.8.0.jre11</version>
     </dependency>
   </dependencies>
 
