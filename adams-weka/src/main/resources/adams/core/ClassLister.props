@@ -42,6 +42,10 @@ adams.data.weka.columnfinder.ColumnFinder=\
 adams.data.weka.predictions.AbstractErrorScaler=\
   adams.data.weka.predictions
 
+# the package manager standalone actions
+adams.flow.standalone.wekapackagemanageraction.AbstractWekaPackageManagerAction=\
+  adams.flow.standalone.wekapackagemanageraction
+
 # the package manager source actions
 adams.flow.source.wekapackagemanageraction.AbstractWekaPackageManagerAction=\
   adams.flow.source.wekapackagemanageraction

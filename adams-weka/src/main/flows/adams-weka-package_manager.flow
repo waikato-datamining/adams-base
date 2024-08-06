@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2024-08-06 11:43:40
+# Date: 2024-08-06 15:07:32
 # User: fracpete
 # Charset: UTF-8
 #
@@ -8,6 +8,7 @@ adams.flow.control.Flow -annotation "Shows how to execute Weka package manager a
   adams.flow.sink.SpreadSheetDisplay -name All -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
   adams.flow.sink.SpreadSheetDisplay -name Installed -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
   adams.flow.sink.SpreadSheetDisplay -name Available -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -allow-search true -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+ adams.flow.standalone.WekaPackageManagerAction -name "WekaPackageManagerAction (refresh)" -action adams.flow.standalone.wekapackagemanageraction.RefreshCache
  adams.flow.source.Start
  adams.flow.control.Trigger -name all
   adams.flow.source.WekaPackageManagerAction -action adams.flow.source.wekapackagemanageraction.ListPackages
