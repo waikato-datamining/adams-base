@@ -105,6 +105,16 @@ public abstract class AbstractWekaPackageManagerAction
   }
 
   /**
+   * Adds an error message that the input type is not supported.
+   *
+   * @param input	the input type
+   * @param errors	the errors to update
+   */
+  protected void unhandledInputType(Object input, MessageCollection errors) {
+    errors.add("Unhandled input type: " + Utils.classToString(input));
+  }
+
+  /**
    * Executes the action.
    *
    * @param input 	the input to process

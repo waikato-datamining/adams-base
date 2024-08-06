@@ -22,7 +22,6 @@ package adams.flow.transformer.wekapackagemanageraction;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
-import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -196,7 +195,7 @@ public class Uninstall
       return successes;
     }
     else {
-      errors.add("Unhandled input type: " + Utils.arrayToString(input));
+      unhandledInputType(input, errors);
       return null;
     }
   }
