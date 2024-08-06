@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2024-08-07 09:50:13
+# User: fracpete
+# Charset: UTF-8
+#
+adams.flow.control.Flow -annotation "Turns the Weka Package information into JSON." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.WekaPackageManagerAction -name "WekaPackageManagerAction (refresh)" -action adams.flow.standalone.wekapackagemanageraction.RefreshCache
+ adams.flow.source.WekaPackageManagerAction -action "adams.flow.source.wekapackagemanageraction.ListPackages -output-format PACKAGE"
+ adams.flow.transformer.ArrayToSequence
+ adams.flow.transformer.Convert -conversion adams.data.conversion.WekaPackageToMap
+ adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.MapToJson
+ adams.flow.transformer.Convert -name "Convert (3)" -conversion "adams.data.conversion.JsonToString -pretty-printing true"
+ adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
