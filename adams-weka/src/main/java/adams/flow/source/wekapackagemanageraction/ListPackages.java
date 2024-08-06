@@ -37,7 +37,7 @@ import java.util.logging.Level;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ListPackages
-  extends AbstractWekaPackageManagerAction<SpreadSheet> {
+  extends AbstractWekaPackageManagerAction {
 
   private static final long serialVersionUID = -5149682404460521030L;
 
@@ -115,13 +115,13 @@ public class ListPackages
   }
 
   /**
-   * The type of data the action generates.
+   * The types of data the action generates.
    *
-   * @return the output type
+   * @return the output types
    */
   @Override
-  public Class generates() {
-    return SpreadSheet.class;
+  public Class[] generates() {
+    return new Class[]{SpreadSheet.class};
   }
 
   /**
@@ -131,7 +131,7 @@ public class ListPackages
    * @return the generated output, null if failed to generated
    */
   @Override
-  public SpreadSheet doExecute(MessageCollection errors) {
+  public Object doExecute(MessageCollection errors) {
     SpreadSheet		result;
     Row			row;
     List<Package> 	pkgs;

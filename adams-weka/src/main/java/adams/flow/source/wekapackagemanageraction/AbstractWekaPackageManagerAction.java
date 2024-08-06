@@ -30,9 +30,8 @@ import adams.flow.core.FlowContextHandler;
  * Ancestor for package manager actions.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @param <T> the produced output type
  */
-public abstract class AbstractWekaPackageManagerAction<T>
+public abstract class AbstractWekaPackageManagerAction
   extends AbstractOptionHandler
   implements QuickInfoSupporter, FlowContextHandler {
 
@@ -60,11 +59,11 @@ public abstract class AbstractWekaPackageManagerAction<T>
   }
 
   /**
-   * The type of data the action generates.
+   * The types of data the action generates.
    *
-   * @return		the output type
+   * @return		the output types
    */
-  public abstract Class generates();
+  public abstract Class[] generates();
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -94,7 +93,7 @@ public abstract class AbstractWekaPackageManagerAction<T>
    * @param errors	for collecting errors
    * @return		the generated output, null if failed to generated
    */
-  public abstract T doExecute(MessageCollection errors);
+  public abstract Object doExecute(MessageCollection errors);
 
   /**
    * Executes the action.
@@ -102,7 +101,7 @@ public abstract class AbstractWekaPackageManagerAction<T>
    * @param errors	for collecting errors
    * @return		the generated output, null if failed to generated
    */
-  public T execute(MessageCollection errors) {
+  public Object execute(MessageCollection errors) {
     String	msg;
 
     msg = check();

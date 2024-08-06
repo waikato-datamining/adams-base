@@ -22,18 +22,18 @@ package adams.flow.transformer.wekapackagemanageraction;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoSupporter;
+import adams.core.Utils;
 import adams.core.option.AbstractOptionHandler;
 import adams.flow.core.Actor;
+import adams.flow.core.Compatibility;
 import adams.flow.core.FlowContextHandler;
 
 /**
  * Ancestor for package manager actions.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @param <I> the input type
- * @param <O> the produced output type
  */
-public abstract class AbstractWekaPackageManagerAction<I, O>
+public abstract class AbstractWekaPackageManagerAction
   extends AbstractOptionHandler
   implements QuickInfoSupporter, FlowContextHandler {
 
@@ -61,18 +61,18 @@ public abstract class AbstractWekaPackageManagerAction<I, O>
   }
 
   /**
-   * The type of data the action accepts.
+   * The types of data the action accepts.
    *
-   * @return		the input type
+   * @return		the input types
    */
-  public abstract Class accepts();
+  public abstract Class[] accepts();
 
   /**
-   * The type of data the action generates.
+   * The types of data the action generates.
    *
-   * @return		the output type
+   * @return		the output types
    */
-  public abstract Class generates();
+  public abstract Class[] generates();
 
   /**
    * Returns a quick info about the object, which can be displayed in the GUI.
@@ -91,9 +91,16 @@ public abstract class AbstractWekaPackageManagerAction<I, O>
    * @param input 	the input to process
    * @return		null if checks passed, otherwise error message
    */
-  protected String check(I input) {
+  protected String check(Object input) {
+    Compatibility	comp;
+
     if (m_FlowContext == null)
       return "No flow context set!";
+
+    comp = new Compatibility();
+    if (!comp.isCompatible(new Class[]{input.getClass()}, accepts()))
+      return "Input (" + Utils.classToString(input) + ") cannot be processed (accepts only: " + Utils.classesToString(accepts()) + ")!";
+
     return null;
   }
 
@@ -104,7 +111,7 @@ public abstract class AbstractWekaPackageManagerAction<I, O>
    * @param errors	for collecting errors
    * @return		the generated output, null if failed to generated
    */
-  public abstract O doExecute(I input, MessageCollection errors);
+  public abstract Object doExecute(Object input, MessageCollection errors);
 
   /**
    * Executes the action.
@@ -113,7 +120,7 @@ public abstract class AbstractWekaPackageManagerAction<I, O>
    * @param errors	for collecting errors
    * @return		the generated output, null if failed to generated
    */
-  public O execute(I input, MessageCollection errors) {
+  public Object execute(Object input, MessageCollection errors) {
     String	msg;
 
     msg = check(input);

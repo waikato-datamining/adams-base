@@ -22,6 +22,7 @@ package adams.flow.transformer.wekapackagemanageraction;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
@@ -35,7 +36,7 @@ import java.util.logging.Level;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Uninstall
-  extends AbstractWekaPackageManagerAction<SpreadSheet, SpreadSheet>{
+  extends AbstractWekaPackageManagerAction {
 
   private static final long serialVersionUID = 551922326118868830L;
 
@@ -104,23 +105,23 @@ public class Uninstall
   }
 
   /**
-   * The type of data the action accepts.
+   * The types of data the action accepts.
    *
-   * @return the input type
+   * @return the input types
    */
   @Override
-  public Class accepts() {
-    return SpreadSheet.class;
+  public Class[] accepts() {
+    return new Class[]{SpreadSheet.class, String[].class};
   }
 
   /**
-   * The type of data the action generates.
+   * The types of data the action generates.
    *
-   * @return the output type
+   * @return the output types
    */
   @Override
-  public Class generates() {
-    return SpreadSheet.class;
+  public Class[] generates() {
+    return new Class[]{SpreadSheet.class, Boolean[].class};
   }
 
   /**
@@ -131,42 +132,72 @@ public class Uninstall
    * @return the generated output, null if failed to generated
    */
   @Override
-  public SpreadSheet doExecute(SpreadSheet input, MessageCollection errors) {
-    SpreadSheet		result;
+  public Object doExecute(Object input, MessageCollection errors) {
+    SpreadSheet 	sheet;
     Row			row;
     int			i;
     int			colName;
     int 		colUninstalled;
     String		name;
+    String[]		names;
+    Boolean[]		successes;
 
-    result = input.getClone();
-    result.insertColumn(result.getColumnCount(), "Uninstalled");
-    colUninstalled = result.getColumnCount() - 1;
-    m_ColName.setData(result);
-    colName = m_ColName.getIntIndex();
-    if (colName == -1) {
-      errors.add("Column with name not found: " + m_ColName.getIndex());
+    if (input instanceof SpreadSheet) {
+      sheet = ((SpreadSheet) input).getClone();
+      sheet.insertColumn(sheet.getColumnCount(), "Uninstalled");
+      colUninstalled = sheet.getColumnCount() - 1;
+      m_ColName.setData(sheet);
+      colName = m_ColName.getIntIndex();
+      if (colName == -1) {
+	errors.add("Column with name not found: " + m_ColName.getIndex());
+	return null;
+      }
+
+      for (i = 0; i < sheet.getRowCount(); i++) {
+	if (m_FlowContext.isStopped()) {
+	  sheet = null;
+	  break;
+	}
+	row = sheet.getRow(i);
+	name = row.getCell(colName).getContent();
+	try {
+	  getLogger().info("Uninstalling: " + name);
+	  WekaPackageManager.uninstallPackage(name, false);
+	  row.getCell(colUninstalled).setContent(true);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.WARNING, "Failed to uninstall: " + name, e);
+	  row.getCell(colUninstalled).setContent(false);
+	}
+      }
+
+      return sheet;
+    }
+    else if (input instanceof String[]) {
+      names     = (String[]) input;
+      successes = new Boolean[names.length];
+      for (i = 0; i < names.length; i++) {
+	if (m_FlowContext.isStopped()) {
+	  successes = null;
+	  break;
+	}
+	name = names[i];
+	try {
+	  getLogger().info("Uninstalling: " + name);
+	  WekaPackageManager.uninstallPackage(name, false);
+	  successes[i] = true;
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.WARNING, "Failed to uninstall: " + name, e);
+	  successes[i] = true;
+	}
+      }
+
+      return successes;
+    }
+    else {
+      errors.add("Unhandled input type: " + Utils.arrayToString(input));
       return null;
     }
-
-    for (i = 0; i < result.getRowCount(); i++) {
-      if (m_FlowContext.isStopped()) {
-	result = null;
-	break;
-      }
-      row = result.getRow(i);
-      name = row.getCell(colName).getContent();
-      try {
-	getLogger().info("Uninstalling: " + name);
-	WekaPackageManager.uninstallPackage(name, false);
-	row.getCell(colUninstalled).setContent(true);
-      }
-      catch (Exception e) {
-	getLogger().log(Level.WARNING, "Failed to uninstall: " + name, e);
-	row.getCell(colUninstalled).setContent(false);
-      }
-    }
-
-    return result;
   }
 }

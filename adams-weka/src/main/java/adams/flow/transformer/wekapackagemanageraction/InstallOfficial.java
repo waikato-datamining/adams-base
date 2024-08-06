@@ -35,7 +35,7 @@ import java.util.logging.Level;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class InstallOfficial
-  extends AbstractWekaPackageManagerAction<SpreadSheet, SpreadSheet>{
+  extends AbstractWekaPackageManagerAction{
 
   private static final long serialVersionUID = 551922326118868830L;
 
@@ -145,23 +145,23 @@ public class InstallOfficial
   }
 
   /**
-   * The type of data the action accepts.
+   * The types of data the action accepts.
    *
-   * @return the input type
+   * @return the input types
    */
   @Override
-  public Class accepts() {
-    return SpreadSheet.class;
+  public Class[] accepts() {
+    return new Class[]{SpreadSheet.class};
   }
 
   /**
-   * The type of data the action generates.
+   * The types of data the action generates.
    *
-   * @return the output type
+   * @return the output types
    */
   @Override
-  public Class generates() {
-    return SpreadSheet.class;
+  public Class[] generates() {
+    return new Class[]{SpreadSheet.class};
   }
 
   /**
@@ -172,7 +172,7 @@ public class InstallOfficial
    * @return the generated output, null if failed to generated
    */
   @Override
-  public SpreadSheet doExecute(SpreadSheet input, MessageCollection errors) {
+  public Object doExecute(Object input, MessageCollection errors) {
     SpreadSheet		result;
     Row			row;
     int			i;
@@ -182,7 +182,7 @@ public class InstallOfficial
     String		name;
     String		version;
 
-    result = input.getClone();
+    result = ((SpreadSheet) input).getClone();
     result.insertColumn(result.getColumnCount(), "Installed");
     colInstalled = result.getColumnCount() - 1;
     m_ColName.setData(result);

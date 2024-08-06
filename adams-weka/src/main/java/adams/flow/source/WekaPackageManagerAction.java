@@ -115,7 +115,7 @@ public class WekaPackageManagerAction
   @Override
   public Class[] generates() {
     if (m_Action != null)
-      return new Class[]{m_Action.generates()};
+      return m_Action.generates();
     else
       return new Class[0];
   }
