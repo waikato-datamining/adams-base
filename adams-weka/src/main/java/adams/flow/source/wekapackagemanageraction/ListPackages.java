@@ -26,6 +26,7 @@ import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import weka.core.WekaPackageManager;
+import weka.core.WekaPackageUtils;
 import weka.core.packageManagement.Package;
 
 import java.util.List;
@@ -49,9 +50,20 @@ public class ListPackages
     INSTALLED,
     AVAILABLE,
   }
-  
+
+  /**
+   * How to output the packages.
+   */
+  public enum OutputFormat {
+    SPREADSHEET,
+    PACKAGE,
+  }
+
   /** the type of list to generate. */
   protected ListType m_ListType;
+  
+  /** the output format. */
+  protected OutputFormat m_OutputFormat;
   
   /**
    * Returns a string describing the object.
@@ -73,6 +85,10 @@ public class ListPackages
     m_OptionManager.add(
       "list-type", "listType",
       ListType.ALL);
+
+    m_OptionManager.add(
+      "output-format", "outputFormat",
+      OutputFormat.SPREADSHEET);
   }
 
   /**
@@ -105,13 +121,47 @@ public class ListPackages
   }
 
   /**
+   * Sets the type of output format to generate.
+   *
+   * @param value	the type
+   */
+  public void setOutputFormat(OutputFormat value) {
+    m_OutputFormat = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of output format to generate.
+   *
+   * @return		the type
+   */
+  public OutputFormat getOutputFormat() {
+    return m_OutputFormat;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String outputFormatTipText() {
+    return "The type of output format to generate.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "listType", m_ListType, "list: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "listType", m_ListType, "list: ");
+    result += QuickInfoHelper.toString(this, "outputFromat", m_OutputFormat, ", format: ");
+
+    return result;
   }
 
   /**
@@ -121,7 +171,33 @@ public class ListPackages
    */
   @Override
   public Class[] generates() {
-    return new Class[]{SpreadSheet.class};
+    switch (m_OutputFormat) {
+      case SPREADSHEET:
+	return new Class[]{SpreadSheet.class};
+      case PACKAGE:
+	return new Class[]{Package[].class};
+      default:
+	throw new IllegalStateException("Unhandled output format: " + m_OutputFormat);
+    }
+  }
+
+  /**
+   * Returns the packages to output.
+   *
+   * @return		the packages
+   * @throws Exception	if retrieval of packages fails
+   */
+  protected List<Package> getPackages() throws Exception {
+    switch (m_ListType) {
+      case ALL:
+	return WekaPackageManager.getAllPackages();
+      case INSTALLED:
+	return WekaPackageManager.getInstalledPackages();
+      case AVAILABLE:
+	return WekaPackageManager.getAvailablePackages();
+      default:
+	throw new IllegalStateException("Unhandled list type: " + m_ListType);
+    }
   }
 
   /**
@@ -132,50 +208,54 @@ public class ListPackages
    */
   @Override
   public Object doExecute(MessageCollection errors) {
-    SpreadSheet		result;
+    SpreadSheet 	sheet;
     Row			row;
-    List<Package> 	pkgs;
 
-    result = new DefaultSpreadSheet();
-    result.addComment("List type: " + m_ListType);
+    switch (m_OutputFormat) {
+      case SPREADSHEET:
+	sheet = new DefaultSpreadSheet();
+	sheet.addComment("List type: " + m_ListType);
 
-    // header
-    row = result.getHeaderRow();
-    row.addCell("N").setContent("Name");
-    row.addCell("V").setContent("Version");
-    row.addCell("U").setContent("URL");
+	// header
+	row = sheet.getHeaderRow();
+	row.addCell("N").setContent("Name");
+	row.addCell("V").setContent("Version");
+	row.addCell("U").setContent("URL");
+	row.addCell("O").setContent("Official");
 
-    // data
-    try {
-      switch (m_ListType) {
-	case ALL:
-	  pkgs = WekaPackageManager.getAllPackages();
-	  break;
-	case INSTALLED:
-	  pkgs = WekaPackageManager.getInstalledPackages();
-	  break;
-	case AVAILABLE:
-	  pkgs = WekaPackageManager.getAvailablePackages();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled list type: " + m_ListType);
-      }
+	// data
+	try {
+	  for (Package pkg: getPackages()) {
+	    row = sheet.addRow();
+	    row.addCell("N").setContentAsString(pkg.getName());
+	    if (pkg.getPackageMetaData().containsKey("Version"))
+	      row.addCell("V").setContentAsString("" + pkg.getPackageMetaData().get("Version"));
+	    row.addCell("U").setContent(pkg.getPackageURL().toString());
+	    row.addCell("O").setContent(WekaPackageUtils.isOfficial(pkg));
+	  }
 
-      for (Package pkg: pkgs) {
-	row = result.addRow();
-	row.addCell("N").setContentAsString(pkg.getName());
-	if (pkg.getPackageMetaData().containsKey("Version"))
-	  row.addCell("V").setContentAsString("" + pkg.getPackageMetaData().get("Version"));
-	row.addCell("U").setContent(pkg.getPackageURL().toString());
-      }
+	  sheet.sort(0, true);
+	}
+	catch (Exception e) {
+	  errors.add("Failed to add packages!", e);
+	  getLogger().log(Level.SEVERE, "Failed to add packages!", e);
+	  sheet = null;
+	}
+	return sheet;
 
-      result.sort(0, true);
+      case PACKAGE:
+	try {
+	  return getPackages().toArray(new Package[0]);
+	}
+	catch (Exception e) {
+	  errors.add("Failed to retrieve packages!", e);
+	  getLogger().log(Level.SEVERE, "Failed to retrieve packages!", e);
+	  return null;
+	}
+
+      default:
+	errors.add("Unhandled output format: " + m_OutputFormat);
+	return null;
     }
-    catch (Exception e) {
-      errors.add("Failed to add packages!", e);
-      getLogger().log(Level.SEVERE, "Failed to add packages!", e);
-    }
-
-    return result;
   }
 }
