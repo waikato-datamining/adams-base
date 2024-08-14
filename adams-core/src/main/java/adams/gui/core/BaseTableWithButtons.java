@@ -15,13 +15,14 @@
 
 /*
  * BaseTableWithButtons.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.gui.event.PopupMenuListener;
 import adams.gui.event.RemoveItemsListener;
 
 import javax.swing.JList;
@@ -716,6 +717,42 @@ public class BaseTableWithButtons
    */
   public boolean getShowSimpleCellPopupMenu() {
     return m_Component.getShowSimpleCellPopupMenu();
+  }
+
+  /**
+   * Adds the popup menu listeners for the header.
+   *
+   * @param l		the listener to add
+   */
+  public void addHeaderPopupMenuListener(PopupMenuListener l) {
+    m_Component.addHeaderPopupMenuListener(l);
+  }
+
+  /**
+   * Removes the popup menu listener for the header from its internal list.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeHeaderPopupMenuListener(PopupMenuListener l) {
+    m_Component.removeHeaderPopupMenuListener(l);
+  }
+
+  /**
+   * Adds the popup menu listeners for the cell.
+   *
+   * @param l		the listener to add
+   */
+  public void addCellPopupMenuListener(PopupMenuListener l) {
+    m_Component.addCellPopupMenuListener(l);
+  }
+
+  /**
+   * Removes the popup menu listener for the cell from its internal list.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeCellPopupMenuListener(PopupMenuListener l) {
+    m_Component.removeCellPopupMenuListener(l);
   }
 
   /**
