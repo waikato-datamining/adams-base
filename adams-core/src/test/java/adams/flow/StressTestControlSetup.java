@@ -15,15 +15,15 @@
 
 /*
  * StressTestControlSetup.java
- * Copyright (C) 2009-2010 University of Waikato
+ * Copyright (C) 2009-2024 University of Waikato
  */
 
 package adams.flow;
 
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
 import adams.flow.setup.FlowSetup;
 import adams.flow.setup.FlowSetupManager;
-import adams.gui.scripting.ScriptingEngine;
 import adams.test.AbstractFileStressTest;
 
 /**
@@ -212,7 +212,7 @@ public class StressTestControlSetup
    * For cleaning up.
    */
   protected void postExecute() {
-    ScriptingEngine.stopAllEngines();
+    BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
   }
 
   /**

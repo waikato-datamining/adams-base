@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ScriptingEngine.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
-import java.util.Iterator;
-
 import adams.core.Properties;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.env.ScriptingEngineDefinition;
@@ -30,7 +29,6 @@ import adams.env.ScriptingEngineDefinition;
  * Processes scripting commands.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ScriptingEngine
   extends AbstractScriptingEngine {
@@ -84,25 +82,17 @@ public class ScriptingEngine
    * @return		the singleton
    */
   public synchronized static AbstractScriptingEngine getSingleton(AbstractDatabaseConnection dbcon) {
+    ScriptingEngine	engine;
+
     if (m_ScriptingEngineManager == null)
       m_ScriptingEngineManager = new ScriptingEngineManager();
     if (!m_ScriptingEngineManager.has(dbcon)) {
-      m_ScriptingEngineManager.add(dbcon, new ScriptingEngine());
-      m_ScriptingEngineManager.get(dbcon).setDatabaseConnection(dbcon);
+      engine = new ScriptingEngine();
+      engine.setDatabaseConnection(dbcon);
+      m_ScriptingEngineManager.add(dbcon, engine);
+      BackgroundScriptingEngineRegistry.getSingleton().register(engine);
     }
 
     return m_ScriptingEngineManager.get(dbcon);
-  }
-
-  /**
-   * Stops all scripting engines.
-   */
-  public synchronized static void stopAllEngines() {
-    Iterator<AbstractScriptingEngine>	iter;
-    if (m_ScriptingEngineManager != null) {
-      iter = m_ScriptingEngineManager.iterator();
-      while (iter.hasNext())
-	iter.next().stopEngine();
-    }
   }
 }

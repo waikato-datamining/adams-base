@@ -15,7 +15,7 @@
 
 /*
  * AbstractScriptingEngine.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
@@ -26,6 +26,7 @@ import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
+import adams.core.scriptingengine.BackgroundScriptingEngine;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
@@ -56,7 +57,7 @@ import static com.github.fracpete.javautils.Reflection.newInstance;
  */
 public abstract class AbstractScriptingEngine
   extends LoggingObject
-  implements DatabaseConnectionHandler, DatabaseConnectionChangeListener, ErrorProvider {
+  implements DatabaseConnectionHandler, DatabaseConnectionChangeListener, ErrorProvider, BackgroundScriptingEngine {
 
   /** for serialization. */
   private static final long serialVersionUID = -532845009254256601L;

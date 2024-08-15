@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTerminalApplication.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.application;
@@ -28,6 +28,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;
@@ -37,7 +38,6 @@ import adams.event.DatabaseConnectionChangeEvent.EventType;
 import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
-import adams.gui.scripting.ScriptingEngine;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
@@ -466,7 +466,7 @@ public abstract class AbstractTerminalApplication
 	application = forName(app.getName(), new String[0]);
 	System.out.print("\n" + OptionUtils.list(application));
 	LoggingHelper.outputHandlerOption();
-	ScriptingEngine.stopAllEngines();
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
 	application = forName(app.getName(), options);

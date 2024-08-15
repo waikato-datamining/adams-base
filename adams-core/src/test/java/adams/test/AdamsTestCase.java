@@ -28,8 +28,8 @@ import adams.core.management.LocaleHelper;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.core.option.OptionHandler;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.data.statistics.StatUtils;
-import adams.gui.scripting.ScriptingEngine;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
@@ -536,7 +536,7 @@ public class AdamsTestCase
   protected void tearDown() throws Exception {
     m_Regression = null;
 
-    ScriptingEngine.stopAllEngines();
+    BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
 
     super.tearDown();
   }

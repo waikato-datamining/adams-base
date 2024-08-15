@@ -38,6 +38,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.option.UserMode;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;
@@ -55,7 +56,6 @@ import adams.gui.core.UISettings;
 import adams.gui.event.RemoteScriptingEngineUpdateEvent;
 import adams.gui.event.RemoteScriptingEngineUpdateListener;
 import adams.gui.laf.AbstractLookAndFeel;
-import adams.gui.scripting.ScriptingEngine;
 import adams.gui.scripting.ScriptingEngineHandler;
 import adams.gui.scripting.ScriptingLogPanel;
 import adams.scripting.RemoteScriptingEngineHandler;
@@ -659,6 +659,7 @@ public abstract class AbstractApplicationFrame
    * Closes the application.
    */
   protected void closeApplication() {
+    BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
     m_Self.dispose();
   }
 
@@ -1389,7 +1390,7 @@ public abstract class AbstractApplicationFrame
 	result = forName(app.getName(), new String[0]);
 	System.out.print("\n" + OptionUtils.list(result));
 	LoggingHelper.outputHandlerOption();
-	ScriptingEngine.stopAllEngines();
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
 	result.dispose();
 	result = null;
       }

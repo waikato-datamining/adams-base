@@ -15,7 +15,7 @@
 
 /*
  * AbstractScriptingEngine.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.engine;
@@ -27,9 +27,9 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
 import adams.flow.core.Actor;
-import adams.gui.scripting.ScriptingEngine;
 import adams.multiprocess.CallableWithResult;
 import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.ScriptingHelper;
@@ -476,7 +476,7 @@ public abstract class AbstractScriptingEngine
 	result = forName(engine.getName(), new String[0]);
 	System.out.print("\n" + OptionUtils.list(result));
 	LoggingHelper.outputHandlerOption();
-	ScriptingEngine.stopAllEngines();
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
 	result = null;
       }
       else {

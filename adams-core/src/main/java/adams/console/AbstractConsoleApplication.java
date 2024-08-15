@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractConsoleApplication.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.console;
@@ -26,8 +26,8 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
-import adams.gui.scripting.ScriptingEngine;
 
 /**
  * Ancestor for simple console applications.
@@ -101,7 +101,7 @@ public abstract class AbstractConsoleApplication
 	application = forName(app.getName(), new String[0]);
 	System.out.print("\n" + OptionUtils.list(application));
 	LoggingHelper.outputHandlerOption();
-	ScriptingEngine.stopAllEngines();
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
 	application = forName(app.getName(), options);

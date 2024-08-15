@@ -15,18 +15,18 @@
 
 /*
  * StressTestFlow.java
- * Copyright (C) 2009-2016 University of Waikato
+ * Copyright (C) 2009-2024 University of Waikato
  */
 
 package adams.flow;
 
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorUtils;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.GUIHelper;
 import adams.gui.flow.FlowEditorPanel;
-import adams.gui.scripting.ScriptingEngine;
 import adams.test.AbstractFileStressTest;
 
 import java.awt.BorderLayout;
@@ -264,7 +264,7 @@ public class StressTestFlow
    * For cleaning up.
    */
   protected void postExecute() {
-    ScriptingEngine.stopAllEngines();
+    BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
     if (m_Frame != null)
       m_Frame.dispose();
   }

@@ -15,7 +15,7 @@
 
 /*
  * Tool.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,8 +30,8 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
-import adams.gui.scripting.ScriptingEngine;
 
 
 /**
@@ -210,7 +210,7 @@ public abstract class AbstractTool
 	instance = forName(tool.getName(), new String[0]);
 	System.out.print("\n" + OptionUtils.list(instance));
 	LoggingHelper.outputHandlerOption();
-	ScriptingEngine.stopAllEngines();
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
 	instance = forName(tool.getName(), options);
