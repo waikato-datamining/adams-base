@@ -265,6 +265,11 @@ adams.flow.core.CallableActorReference=true
 adams.flow.core.CallableActorReference#toString=adams.core.option.parsing.CallableActorReferenceParsing#toString
 adams.flow.core.CallableActorReference#valueOf=adams.core.option.parsing.CallableActorReferenceParsing#valueOf
 
+# VariableNameStorageNamePair objects
+adams.flow.control.VariableNameStorageNamePair=true
+adams.flow.control.VariableNameStorageNamePair#toString=adams.core.option.parsing.VariableNameStorageNamePairParsing#toString
+adams.flow.control.VariableNameStorageNamePair#valueOf=adams.core.option.parsing.VariableNameStorageNamePairParsing#valueOf
+
 # VariableName objects
 adams.core.VariableName=true
 adams.core.VariableName#toString=adams.core.option.parsing.BaseObjectParsing#toString
