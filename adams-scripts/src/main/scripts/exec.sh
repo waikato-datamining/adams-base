@@ -41,7 +41,7 @@ HEADLESS=
 WHITESPACE="[[:space:]]"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-no-gui" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-no-gui" ] || [ "$ARG" = "-venv" ]
   then
   	OPTION=$ARG
   	continue
@@ -66,6 +66,7 @@ do
   then
     echo "Activating Python virtual environment at: $ARG"
     . $ARG/bin/activate
+    OPTION=""
     continue
   fi
 

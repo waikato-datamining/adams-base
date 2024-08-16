@@ -47,7 +47,7 @@ COLLAPSE="-collapse"
 WHITESPACE="[[:space:]]"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ] || [ "$ARG" = "-env" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-jvm" ] || [ "$ARG" = "-cpa" ] || [ "$ARG" = "-priority" ] || [ "$ARG" = "-env" ] || [ "$ARG" = "-venv" ]
   then
   	OPTION=$ARG
   	continue
@@ -106,6 +106,7 @@ do
   then
     echo "Activating Python virtual environment at: $ARG"
     . $ARG/bin/activate
+    OPTION=""
     continue
   fi
 
