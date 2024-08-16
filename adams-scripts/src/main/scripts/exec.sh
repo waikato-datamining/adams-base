@@ -62,6 +62,11 @@ do
     HEADLESS="-Djava.awt.headless=true"
     OPTION=""
     continue
+  elif [ "$OPTION" = "-venv" ]
+  then
+    echo "Activating Python virtual environment at: $ARG"
+    . $ARG/bin/activate
+    continue
   fi
 
   if [[ $ARG =~ $WHITESPACE ]]

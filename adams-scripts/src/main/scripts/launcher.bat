@@ -97,6 +97,11 @@ set BASEDIR=%~dp0\..
     set OPTION=
     goto next
   )
+  if "%OPTION%"=="-venv" (
+    echo "Activating Python virtual environment"
+    %~1\Scripts\activate
+    goto next
+  )
 
   set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
 

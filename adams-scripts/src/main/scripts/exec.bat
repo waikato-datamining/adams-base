@@ -52,6 +52,11 @@ set HEADLESS=
     set OPTION=
     goto next
   )
+  if "%OPTION%"=="-venv" (
+    echo "Activating Python virtual environment"
+    %~1\Scripts\activate
+    goto next
+  )
   if "%~1"=="-no-gui" (
     set HEADLESS="-Djava.awt.headless=true"
     goto next
