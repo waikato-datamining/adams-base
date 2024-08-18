@@ -15,7 +15,7 @@
 
 /*
  * TextFileChooser.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -28,11 +28,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Specialized filechooser for text files.
@@ -156,7 +159,10 @@ public class TextFileChooser
   
   /** the accessory panel. */
   protected FileEncodingPanel m_PanelEncoding;
-  
+
+  /** the file filters. */
+  protected List<FileFilter> m_FileFilters;
+
   /**
    * Constructs a <code>TextFileChooser</code> pointing to the user's
    * default directory. This default depends on the operating system.
@@ -204,9 +210,11 @@ public class TextFileChooser
   protected void initialize() {
     ExtensionFileFilter	filter;
     Dimension		dim;
-    
+
+    m_FileFilters = new ArrayList<>();
+
     super.initialize();
-    
+
     m_PanelEncoding = new FileEncodingPanel();
     m_PanelEncoding.setOwner(this);
     dim = getDefaultAccessoryDimension();
@@ -225,6 +233,46 @@ public class TextFileChooser
     setFileFilter(filter);
     setDefaultExtension(ExtensionFileFilter.getTextFileFilter().getExtensions()[0]);
     setAutoAppendExtension(true);
+  }
+
+  /**
+   * Adds the file filter. Has to be a <code>ExtensionFileFilter</code>.
+   *
+   * @param filter	the filter to add
+   * @see		ExtensionFileFilter
+   */
+  @Override
+  public void addChoosableFileFilter(FileFilter filter) {
+    if (m_FileFilters != null)
+      m_FileFilters.add(filter);
+    super.addChoosableFileFilter(filter);
+  }
+
+  /**
+   * Removes a filter from the list of user choosable file filters. Returns
+   * true if the file filter was removed.
+   *
+   * @param f the file filter to be removed
+   * @return true if the file filter was removed, false otherwise
+   * @see #addChoosableFileFilter
+   * @see #getChoosableFileFilters
+   * @see #resetChoosableFileFilters
+   */
+  @Override
+  public boolean removeChoosableFileFilter(FileFilter f) {
+    if (m_FileFilters != null)
+      m_FileFilters.remove(f);
+    return super.removeChoosableFileFilter(f);
+  }
+
+  /**
+   * Removes all choosable file filters.
+   */
+  public void removeChoosableFileFilters() {
+    if (m_FileFilters != null) {
+      for (FileFilter filter : m_FileFilters.toArray(new FileFilter[0]))
+	removeChoosableFileFilter(filter);
+    }
   }
   
   /**
