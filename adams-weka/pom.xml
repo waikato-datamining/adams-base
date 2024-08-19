@@ -298,7 +298,7 @@
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>jgrapht-treevisualize-weka-package</artifactId>
-      <version>2019.4.11</version>
+      <version>2024.8.19</version>
       <type>jar</type>
       <exclusions>
         <exclusion>
