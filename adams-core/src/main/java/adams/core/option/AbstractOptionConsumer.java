@@ -634,7 +634,7 @@ public abstract class AbstractOptionConsumer<C,V>
     try {
       consumer = cls.getDeclaredConstructor().newInstance();
       result   = consumer.fromString(s);
-      if (consumer.hasErrors())
+      if (consumer.hasErrors() && (errors != null))
 	errors.addAll(consumer.getErrors());
       consumer.cleanUp();
     }
