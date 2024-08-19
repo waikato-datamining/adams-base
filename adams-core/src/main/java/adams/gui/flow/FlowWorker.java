@@ -195,8 +195,10 @@ public class FlowWorker
     m_Flow.wrapUp();
     if (m_Flow instanceof Flow)
       ((Flow) m_Flow).setParentComponent(null);
-    if (m_Owner.getRunGC())
+    if (m_Owner.getRunGC()) {
+      showStatus("Running GC...");
       System.gc();
+    }
 
     m_Flow = null;
     errors = null;

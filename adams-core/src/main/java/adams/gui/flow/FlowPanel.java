@@ -254,6 +254,7 @@ public class FlowPanel
     m_CheckLargeFlowsOnSave = null;
     m_LastReader            = null;
     m_LastWriter            = null;
+    m_RunGC                 = FlowEditorPanel.getPropertiesEditor().getBoolean("GarbageCollectAfterFinish", true);
     m_FlowFileMonitor       = new MultiMonitor();
     m_FlowFileMonitor.setCombinationType(CombinationType.AND);
     m_FlowFileMonitor.setMonitors(new FileChangeMonitor[]{
@@ -461,17 +462,16 @@ public class FlowPanel
   }
 
   /**
-   * Sets whether to run the GC after the flow finished executing.
+   * Sets whether to run the GC after the flow finished executing (or is being cleaned up).
    *
    * @param value	if true GC gets called
    */
   public void setRunGC(boolean value) {
-    if (!isRunning() && !isStopping())
-      m_RunGC = value;
+    m_RunGC = value;
   }
 
   /**
-   * Returns whether the GC gets called after the flow execution.
+   * Returns whether the GC gets called after the flow execution (or is being cleaned up).
    *
    * @return		true if to run GC
    */
@@ -1260,6 +1260,10 @@ public class FlowPanel
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
+    String	error;
+
+    error = null;
+
     if (m_LastFlow != null) {
       if (isDebugTreeVisible()) {
 	setDebugTreeVisible(false);
@@ -1274,10 +1278,17 @@ public class FlowPanel
 	showStatus("");
       }
       catch (Exception e) {
-	e.printStackTrace();
-	showStatus("Error cleaning up: " + e);
+	ConsolePanel.getSingleton().append("Error cleaning up flow!", e);
+	error = "Error cleaning up: " + e;
+      }
+      if (getRunGC()) {
+	showStatus("Running GC...");
+	System.gc();
       }
     }
+
+    if (error != null)
+      showStatus(error);
   }
 
   /**
