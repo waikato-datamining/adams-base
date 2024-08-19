@@ -1507,7 +1507,12 @@ public class FlowPanel
       dialog.setLocationRelativeTo(null);
     }
 
-    m_PanelVariables.setVariables(getRunningFlow().getVariables());
+    if (getRunningFlow() != null)
+      m_PanelVariables.setVariables(getRunningFlow().getVariables());
+    else if (getLastFlow() != null)
+      m_PanelVariables.setVariables(getLastFlow().getVariables());
+    else
+      return;
     m_PanelVariables.getParentDialog().setVisible(true);
   }
 
@@ -1530,7 +1535,12 @@ public class FlowPanel
       dialog.setLocationRelativeTo(null);
     }
 
-    m_PanelStorage.setHandler(getRunningFlow().getStorageHandler());
+    if (getRunningFlow() != null)
+      m_PanelStorage.setHandler(getRunningFlow().getStorageHandler());
+    else if (getLastFlow() != null)
+      m_PanelStorage.setHandler(getLastFlow().getStorageHandler());
+    else
+      return;
     m_PanelStorage.getParentDialog().setVisible(true);
   }
 

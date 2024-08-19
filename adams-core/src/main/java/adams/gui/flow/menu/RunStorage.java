@@ -15,7 +15,7 @@
 
 /*
  * RunStorage.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -57,6 +57,6 @@ public class RunStorage
   protected void doUpdate() {
     setEnabled(
       m_State.hasCurrentPanel()
-      && m_State.getCurrentPanel().isRunning());
+      && (m_State.getCurrentPanel().isRunning() || (m_State.getCurrentPanel().getLastFlow() != null)));
   }
 }
