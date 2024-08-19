@@ -20,6 +20,7 @@
 
 package adams.flow.transformer;
 
+import adams.core.EnumWithCustomDisplay;
 import adams.core.Index;
 import adams.core.QuickInfoHelper;
 import adams.data.report.DataType;
@@ -128,41 +129,117 @@ public class SpreadSheetInfo
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
-  public enum InfoType {
+  public enum InfoType
+    implements EnumWithCustomDisplay<InfoType> {
     /** the name. */
-    NAME,
+    NAME("Spreadsheet name"),
     /** the comments. */
-    COMMENTS,
+    COMMENTS("Stored comments"),
     /** the timezone (eg Pacific/Auckland). */
-    TIMEZONE,
+    TIMEZONE("Timezone"),
     /** the locale (eg en_NZ). */
-    LOCALE,
+    LOCALE("Locale"),
     /** the number of columns. */
-    NUM_COLUMNS,
+    NUM_COLUMNS("Number of columns"),
     /** the number of rows. */
-    NUM_ROWS,
+    NUM_ROWS("Number of rows"),
     /** the name of the column (at specified index). */
-    COLUMN_NAME,
+    COLUMN_NAME("Name of the column (at specified index)"),
     /** all column names. */
-    COLUMN_NAMES,
+    COLUMN_NAMES("All column names"),
     /** the overall column type (at specified index). */
-    COLUMN_TYPE,
+    COLUMN_TYPE("Overall column type (at specified index)"),
     /** all cell types (at specified index). */
-    CELL_TYPES,
+    CELL_TYPES("All cell types (at specified index)"),
     /** all (unique) cell values (at specified index). */
-    CELL_VALUES,
+    CELL_VALUES("All (unique) cell values (at specified index)"),
     /** values in specified column as they appear (unsorted, non-unique). */
-    COLUMN_VALUES,
+    COLUMN_VALUES("Values in specified column (unsorted, non-unique)"),
     /** all (unique) cell values. */
-    SHEET_VALUES,
+    SHEET_VALUES("All (unique) cell values"),
     /** field (at specified index). */
-    FIELD_SPEC,
+    FIELD_SPEC("Field definition (at specified index)"),
     /** fields (all). */
-    FIELD_SPECS,
+    FIELD_SPECS("Field definitions (all)"),
     /** field type (at specified index). */
-    FIELD_TYPE,
+    FIELD_TYPE("Field type (at specified index)"),
     /** field types (all). */
-    FIELD_TYPES,
+    FIELD_TYPES("Field types (all)");
+
+    /** the display string. */
+    private String m_Display;
+
+    /** the commandline string. */
+    private String m_Raw;
+
+    /**
+     * The constructor.
+     *
+     * @param display	the string to use as display
+     */
+    private InfoType(String display) {
+      m_Display = display;
+      m_Raw     = super.toString();
+    }
+
+    /**
+     * Returns the display string.
+     *
+     * @return		the display string
+     */
+    public String toDisplay() {
+      return m_Display;
+    }
+
+    /**
+     * Returns the raw enum string.
+     *
+     * @return		the raw enum string
+     */
+    public String toRaw() {
+      return m_Raw;
+    }
+
+    /**
+     * Returns the display string.
+     *
+     * @return		the display string
+     */
+    public String toString() {
+      return toDisplay();
+    }
+
+    /**
+     * Parses the given string and returns the associated enum.
+     *
+     * @param s		the string to parse
+     * @return		the enum or null if not found
+     */
+    public InfoType parse(String s) {
+      InfoType result;
+
+      result = null;
+
+      // default parsing
+      try {
+	result = valueOf(s);
+      }
+      catch (Exception e) {
+	// ignored
+      }
+
+      // try display
+      if (result == null) {
+	for (InfoType bd : values()) {
+	  if (bd.toDisplay().equals(s)) {
+	    result = bd;
+	    break;
+	  }
+	}
+      }
+
+      return result;
+    }
   }
 
   /** the type of information to generate. */
