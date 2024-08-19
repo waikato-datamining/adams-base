@@ -15,7 +15,7 @@
 
 /*
  * GzipUtils.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -28,7 +28,7 @@ import adams.core.logging.LoggingHelper;
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.CompressorStreamFactory;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -98,7 +98,7 @@ public class GzipUtils {
 
       fis = new FileInputStream(archiveFile.getAbsolutePath());
       out = new FileOutputStream(outputFile.getAbsolutePath());
-      in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis);
+      in  = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.GZIP, fis, true);
       IOUtils.copy(in, out, buffer);
     }
     catch (Exception e) {

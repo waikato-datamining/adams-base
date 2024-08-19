@@ -15,7 +15,7 @@
 
 /*
  * Bzip2FileSearchHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filesearch;
@@ -84,7 +84,7 @@ public class Bzip2FileSearchHandler
 
     try {
       fis = new FileInputStream(file);
-      cis = new BZip2CompressorInputStream(fis);
+      cis = new BZip2CompressorInputStream(fis, true);
       isr = new InputStreamReader(cis, m_Encoding.charsetValue());
       result = m_Handler.searchStream(isr, searchText, caseSensitive, handler);
     }

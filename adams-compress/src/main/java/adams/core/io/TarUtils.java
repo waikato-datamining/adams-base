@@ -217,9 +217,9 @@ public class TarUtils {
 
     comp = determineCompression(file, true);
     if (comp == Compression.GZIP)
-      return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(stream)));
+      return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(stream), true));
     else if (comp == Compression.BZIP2)
-      return new TarArchiveInputStream(new BZip2CompressorInputStream(new BufferedInputStream(stream)));
+      return new TarArchiveInputStream(new BZip2CompressorInputStream(new BufferedInputStream(stream), true));
     else if (comp == Compression.LZF)
       return new TarArchiveInputStream(new LZFInputStream(new BufferedInputStream(stream)));
     else if (comp == Compression.LZMA)

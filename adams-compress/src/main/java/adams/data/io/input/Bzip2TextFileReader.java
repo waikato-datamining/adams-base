@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Bzip2TextFileReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -72,7 +72,7 @@ public class Bzip2TextFileReader
     BZip2CompressorInputStream	bis;
     
     try {
-      bis = new BZip2CompressorInputStream(new BufferedInputStream(stream));
+      bis = new BZip2CompressorInputStream(new BufferedInputStream(stream), true);
       super.initialize(bis);
       m_TextReader.initialize(bis);
     }

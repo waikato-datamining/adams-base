@@ -15,7 +15,7 @@
 
 /*
  * Bzip2Utils.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -24,7 +24,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -91,7 +91,7 @@ public class Bzip2Utils {
       // create GZIP file
       buf = new byte[buffer];
       fis = new FileInputStream(archiveFile.getAbsolutePath());
-      in  = new BZip2CompressorInputStream(new BufferedInputStream(fis));
+      in  = new BZip2CompressorInputStream(new BufferedInputStream(fis), true);
       out = new BufferedOutputStream(new FileOutputStream(outputFile), buffer);
 
       // Transfer bytes from the file to the GZIP file
@@ -281,7 +281,7 @@ public class Bzip2Utils {
     cis = null;
     bos = null;
     try {
-      cis = new BZip2CompressorInputStream(new ByteArrayInputStream(input));
+      cis = new BZip2CompressorInputStream(new ByteArrayInputStream(input), true);
       bos = new ByteArrayOutputStream();
       IOUtils.copy(cis, bos, buffer);
       return bos.toByteArray();
