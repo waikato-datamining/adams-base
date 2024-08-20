@@ -15,7 +15,7 @@
 
 /*
  * FastCsvSpreadSheetReader.java
- * Copyright (C) 2019-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -498,7 +498,7 @@ public class FastCsvSpreadSheetReader
           }
 	  for (i = 0; i < hcells.size(); i++) {
 	    cell = hcells.get(i);
-	    if (m_Trim && cell.length() > 0)
+	    if (m_Trim && !cell.isEmpty())
 	      cell = cell.trim();
 	    row.addCell("" + i).setContentAsString(cell);
 	  }
@@ -511,14 +511,14 @@ public class FastCsvSpreadSheetReader
           row = result.addRow();
           for (i = 0; i < cells.length && i < numCells; i++) {
             cell = cells[i];
-            if (m_Trim && (cell.length() > 0))
+            if (m_Trim && !cell.isEmpty())
               cell = cell.trim();
             if (missing.matcher(cell).matches()) {
               if (row.hasCell(i))
                 row.getCell(i).setMissing();
             }
             else {
-              if ((numeric.size() > 0) && (numeric.contains(i)))
+              if (!numeric.isEmpty() && (numeric.contains(i)))
                 row.addCell(i).setContentAs(cell, ContentType.DOUBLE);
               else
                 row.addCell(i).setContentAsString(cell);
