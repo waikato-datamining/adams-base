@@ -15,7 +15,7 @@
 
 /*
  * FloatCell.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -488,7 +488,7 @@ public class FloatCell
       setContent(getSpreadSheet().getDateFormat().parse(value));
     }
     else if (checkLong(value)) {
-      setContent(new Long(value));
+      setContent(Long.valueOf(value));
     }
     else if (checkFloat(value)) {
       try {
@@ -561,12 +561,12 @@ public class FloatCell
 	  return SpreadSheet.MISSING_VALUE;
       case LONG:
 	if (checkLong(value))
-	  return new Long(value);
+	  return Long.valueOf(value);
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case DOUBLE:
 	if (checkFloat(value))
-	  return new Float(value);
+	  return Float.valueOf(value);
 	else
 	  return SpreadSheet.MISSING_VALUE;
       case STRING:
@@ -880,7 +880,7 @@ public class FloatCell
   public Boolean toBoolean() {
     calculateIfRequired();
     if (m_ContentType == ContentType.BOOLEAN)
-      return new Boolean(m_Content == 1.0);
+      return (m_Content == 1.0);
     else
       return null;
   }
@@ -1069,10 +1069,10 @@ public class FloatCell
   public Double toDouble() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DOUBLE) {
-      return new Double(m_Content);
+      return (double) m_Content;
     }
     else if (m_ContentType == ContentType.LONG) {
-      return new Double((long) m_Content);
+      return (double) ((long) m_Content);
     }
     else if (m_ContentType == ContentType.STRING) {
       try {
@@ -1114,7 +1114,7 @@ public class FloatCell
     if (m_ContentType == ContentType.LONG)
       return (long) m_Content;
     else if (m_ContentType == ContentType.STRING)
-      return new Float(getContent()).longValue();
+      return Float.valueOf(getContent()).longValue();
     return null;
   }
 
