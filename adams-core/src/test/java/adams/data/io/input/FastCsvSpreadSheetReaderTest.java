@@ -15,7 +15,7 @@
 
 /*
  * FastCsvSpreadSheetReaderTest.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -106,6 +106,43 @@ public class FastCsvSpreadSheetReaderTest
     sheet = reader.read(new TmpFile("sample.csv"));
     assertEquals("# cols differ", 3, sheet.getColumnCount());
     assertEquals("# rows differ", 7, sheet.getRowCount());
+  }
+
+  /**
+   * Tests reading chunks.
+   */
+  public void testChunking() {
+    FastCsvSpreadSheetReader reader = new FastCsvSpreadSheetReader();
+    reader.setChunkSize(5);
+    int numChunks = 1;
+    int numRows = 0;
+    SpreadSheet sheet = reader.read(new TmpFile("sample.csv"));
+    numRows += sheet.getRowCount();
+    while (reader.hasMoreChunks()) {
+      numChunks++;
+      sheet = reader.nextChunk();
+      numRows += sheet.getRowCount();
+    }
+    assertEquals("# chunks differ", 4, numChunks);
+    assertEquals("# cols differ", 3, sheet.getColumnCount());
+    assertEquals("# rows differ", 16, numRows);
+
+    reader = new FastCsvSpreadSheetReader();
+    reader.setChunkSize(5);
+    reader.setFirstRow(10);
+    reader.setNumRows(10);
+    numChunks = 1;
+    numRows = 0;
+    sheet = reader.read(new TmpFile("sample.csv"));
+    numRows += sheet.getRowCount();
+    while (reader.hasMoreChunks()) {
+      numChunks++;
+      sheet = reader.nextChunk();
+      numRows += sheet.getRowCount();
+    }
+    assertEquals("# chunks differ", 2, numChunks);
+    assertEquals("# cols differ", 3, sheet.getColumnCount());
+    assertEquals("# rows differ", 7, numRows);
   }
 
   /**

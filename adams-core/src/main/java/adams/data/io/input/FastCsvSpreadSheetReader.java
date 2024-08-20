@@ -22,6 +22,7 @@ package adams.data.io.input;
 
 import adams.core.Range;
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
@@ -30,14 +31,14 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
-import gnu.trove.set.TIntSet;
-import gnu.trove.set.hash.TIntHashSet;
 
 import java.io.BufferedReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 /**
@@ -47,9 +48,249 @@ import java.util.regex.Pattern;
  */
 public class FastCsvSpreadSheetReader
   extends AbstractSpreadSheetReaderWithMissingValueSupport
-  implements WindowedSpreadSheetReader, NoHeaderSpreadSheetReader {
+  implements WindowedSpreadSheetReader, NoHeaderSpreadSheetReader, ChunkedSpreadSheetReader {
 
   private static final long serialVersionUID = -3348397672538189709L;
+
+  /**
+   * Reads CSV files chunk by chunk.
+   *
+   * @author  fracpete (fracpete at waikato dot ac dot nz)
+   */
+  public static class ChunkReader
+    implements Serializable {
+
+    private static final long serialVersionUID = 7291891674724362161L;
+
+    /** the owning reader. */
+    protected FastCsvSpreadSheetReader m_Owner;
+
+    /** the reader in use. */
+    protected BufferedReader m_Reader;
+
+    /** the header. */
+    protected SpreadSheet m_Header;
+
+    /** the missing value. */
+    protected BaseRegExp m_MissingValue;
+
+    /** the quote character. */
+    protected String m_QuoteCharacter;
+
+    /** the column separator. */
+    protected String m_Separator;
+
+    /** the columns to treat as numeric. */
+    protected Range m_NumericColumns;
+
+    /** the numeric columns. */
+    protected boolean[] m_NumericCols;
+
+    /** whether to trim the cell content. */
+    protected boolean m_Trim;
+
+    /** whether the file has a header or not. */
+    protected boolean m_NoHeader;
+
+    /** the comma-separated list of column header names. */
+    protected String m_CustomColumnHeaders;
+
+    /** the first row to retrieve (1-based). */
+    protected int m_FirstRow;
+
+    /** the number of rows to retrieve (less than 1 = unlimited). */
+    protected int m_NumRows;
+
+    /** the chunk size to use. */
+    protected int m_ChunkSize;
+
+    /** the rows read so far. */
+    protected int m_RowCount;
+
+    /**
+     * Initializes the low-level reader.
+     *
+     * @param owner	the owning reader
+     */
+    public ChunkReader(FastCsvSpreadSheetReader owner) {
+      m_Owner = owner;
+    }
+
+    /**
+     * Closes the reader.
+     */
+    protected void close() {
+      try {
+	m_Reader.close();
+	m_Reader = null;
+      }
+      catch (Exception e) {
+	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
+	m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
+      }
+    }
+
+    /**
+     * Returns whether there is more data to be read.
+     *
+     * @return		true if more data available
+     */
+    public boolean hasNext() {
+      return (m_Reader != null);
+    }
+
+    /**
+     * Reads the next chunk.
+     *
+     * @return		the next chunk
+     */
+    public SpreadSheet next() {
+      SpreadSheet	result;
+      Row		row;
+      char		sep;
+      char		quote;
+      String		line;
+      String[]		cells;
+      List<String> 	hcells;
+      String		cell;
+      boolean		header;
+      int		i;
+      int		numCells;
+      Pattern 		missing;
+
+      header   = (m_Header == null);
+      sep      = (m_Separator.length() == 1 ? m_Separator.charAt(0) : ',');
+      quote    = (m_QuoteCharacter.length() == 1 ? m_QuoteCharacter.charAt(0) : '\0');
+      missing  = m_MissingValue.patternValue();
+
+      if (m_Header == null) {
+	result   = m_Owner.getSpreadSheetType().newInstance();
+	numCells = -1;
+      }
+      else {
+	result   = m_Header.getHeader();
+	numCells = m_Header.getColumnCount();
+      }
+
+      try {
+	while (!m_Owner.isStopped()) {
+	  line = m_Reader.readLine();
+	  if (line == null) {
+	    close();
+	    break;
+	  }
+
+	  if (line.isEmpty())
+	    continue;
+
+	  // skip row?
+	  if (!header) {
+	    m_RowCount++;
+	    if (m_RowCount < m_FirstRow)
+	      continue;
+	  }
+
+	  // parse cells
+	  cells = SpreadSheetUtils.split(line, sep, true, quote, false);
+	  if (header) {
+	    header   = false;
+	    row      = result.getHeaderRow();
+	    numCells = cells.length;
+	    if (m_NoHeader) {
+	      hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
+	    }
+	    else {
+	      if (m_CustomColumnHeaders.isEmpty())
+		hcells = new ArrayList<>(Arrays.asList(cells));
+	      else
+		hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
+	      cells = null;
+	    }
+	    for (i = 0; i < hcells.size(); i++) {
+	      cell = hcells.get(i);
+	      if (m_Trim && !cell.isEmpty())
+		cell = cell.trim();
+	      row.addCell("" + i).setContentAsString(cell);
+	    }
+	    m_NumericColumns.setMax(numCells);
+	    m_NumericCols = new boolean[result.getColumnCount()];
+	    for (int index: m_NumericColumns.getIntIndices())
+	      m_NumericCols[index] = true;
+	    m_Header = result.getHeader();
+	  }
+
+	  // add data row
+	  if (cells != null) {
+	    row = result.addRow();
+	    for (i = 0; i < cells.length && i < numCells; i++) {
+	      cell = cells[i];
+	      if (m_Trim && !cell.isEmpty())
+		cell = cell.trim();
+	      if (missing.matcher(cell).matches()) {
+		if (row.hasCell(i))
+		  row.getCell(i).setMissing();
+	      }
+	      else {
+		if (m_NumericCols[i])
+		  row.addCell(i).setContentAs(cell, ContentType.DOUBLE);
+		else
+		  row.addCell(i).setContentAsString(cell);
+	      }
+	    }
+	  }
+
+	  if (m_Owner.isLoggingEnabled() && (m_RowCount % 100 == 0))
+	    m_Owner.getLogger().info("Parsed #" + m_RowCount + " lines...");
+
+	  // all lines read?
+	  if (m_NumRows > -1) {
+	    if (m_RowCount >= m_FirstRow + m_NumRows - 1) {
+	      close();
+	      break;
+	    }
+	  }
+
+	  // chunk limit reached?
+	  if ((m_ChunkSize > 0) && (result.getRowCount() == m_ChunkSize))
+	    break;
+	}
+      }
+      catch (Exception e) {
+	result = null;
+	m_Owner.getLogger().log(Level.SEVERE, "Failed to read data!", e);
+	m_Owner.setLastError("Failed to read data!\n" + LoggingHelper.throwableToString(e));
+      }
+
+      return result;
+    }
+
+    /**
+     * Reads the spreadsheet content from the specified reader.
+     *
+     * @param r		the reader to read from
+     * @return		the spreadsheet or null in case of an error
+     */
+    public SpreadSheet read(Reader r) {
+      m_MissingValue        = m_Owner.getMissingValue();
+      m_QuoteCharacter      = m_Owner.getQuoteCharacter();
+      m_Separator           = m_Owner.getSeparator();
+      m_NumericColumns      = new Range(m_Owner.getNumericColumns().getRange());
+      m_Trim                = m_Owner.getTrim();
+      m_NoHeader            = m_Owner.getNoHeader();
+      m_CustomColumnHeaders = m_Owner.getCustomColumnHeaders();
+      m_FirstRow            = m_Owner.getFirstRow();
+      m_NumRows             = m_Owner.getNumRows();
+      m_ChunkSize           = m_Owner.getChunkSize();
+      m_RowCount            = 0;
+
+      if (r instanceof BufferedReader)
+	m_Reader = (BufferedReader) r;
+      else
+	m_Reader = new BufferedReader(r);
+
+      return next();
+    }
+  }
 
   /** the quote character. */
   protected String m_QuoteCharacter;
@@ -74,6 +315,12 @@ public class FastCsvSpreadSheetReader
 
   /** the number of rows to retrieve (less than 1 = unlimited). */
   protected int m_NumRows;
+
+  /** the chunk size to use. */
+  protected int m_ChunkSize;
+
+  /** the low-level reader. */
+  protected ChunkReader m_Reader;
 
   /**
    * Returns a string describing the object.
@@ -124,6 +371,10 @@ public class FastCsvSpreadSheetReader
 
     m_OptionManager.add(
       "num-rows", "numRows",
+      -1, -1, null);
+
+    m_OptionManager.add(
+      "chunk-size", "chunkSize",
       -1, -1, null);
   }
 
@@ -375,6 +626,40 @@ public class FastCsvSpreadSheetReader
   }
 
   /**
+   * Sets the maximum chunk size.
+   *
+   * @param value	the size of the chunks, &lt; 1 denotes infinity
+   */
+  @Override
+  public void setChunkSize(int value) {
+    if (value < 1)
+      value = -1;
+    m_ChunkSize = value;
+    reset();
+  }
+
+  /**
+   * Returns the current chunk size.
+   *
+   * @return	the size of the chunks, &lt; 1 denotes infinity
+   */
+  @Override
+  public int getChunkSize() {
+    return m_ChunkSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  @Override
+  public String chunkSizeTipText() {
+    return "The maximum number of rows per chunk; using -1 will read put all data into a single spreadsheet object.";
+  }
+
+  /**
    * Returns a string describing the format (used in the file chooser).
    *
    * @return 			a description suitable for displaying in the
@@ -433,115 +718,31 @@ public class FastCsvSpreadSheetReader
    */
   @Override
   protected SpreadSheet doRead(Reader r) {
-    SpreadSheet		result;
-    Row			row;
-    BufferedReader	reader;
-    int			lineNo;
-    int			lineRead;
-    char		sep;
-    char		quote;
-    String		line;
-    String[]		cells;
-    List<String> 	hcells;
-    String		cell;
-    boolean		header;
-    TIntSet 		numeric;
-    int			i;
-    int			numCells;
-    Pattern 		missing;
+    m_Reader = new ChunkReader(this);
+    return m_Reader.read(r);
+  }
 
-    result = getSpreadSheetType().newInstance();
-    if (r instanceof BufferedReader)
-      reader = (BufferedReader) r;
+  /**
+   * Checks whether there is more data to read.
+   *
+   * @return		true if there is more data available
+   */
+  @Override
+  public boolean hasMoreChunks() {
+    return (m_Reader != null) && m_Reader.hasNext();
+  }
+
+  /**
+   * Returns the next chunk.
+   *
+   * @return		the next chunk, null if no data available
+   */
+  @Override
+  public SpreadSheet nextChunk() {
+    if ((m_Reader == null) || !m_Reader.hasNext())
+      return null;
     else
-      reader = new BufferedReader(r);
-
-    sep      = (m_Separator.length() == 1 ? m_Separator.charAt(0) : ',');
-    quote    = (m_QuoteCharacter.length() == 1 ? m_QuoteCharacter.charAt(0) : '\0');
-    header   = true;
-    numCells = -1;
-    numeric  = new TIntHashSet();
-    missing  = m_MissingValue.patternValue();
-    lineNo   = 1;
-    lineRead = 0;
-    try {
-      while ((line = reader.readLine()) != null) {
-        if (m_Stopped) {
-          result = null;
-	  break;
-	}
-
-        if (line.isEmpty())
-          continue;
-
-	// skip row?
-	if (lineNo < m_FirstRow) {
-          lineNo++;
-          continue;
-        }
-
-        // parse cells
-        cells = SpreadSheetUtils.split(line, sep, true, quote, false);
-        if (header) {
-          header   = false;
-          row      = result.getHeaderRow();
-          numCells = cells.length;
-          if (m_NoHeader) {
-            hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
-          }
-          else {
-            if (m_CustomColumnHeaders.isEmpty())
-	      hcells = new ArrayList<>(Arrays.asList(cells));
-            else
-	      hcells = SpreadSheetUtils.createHeader(numCells, m_CustomColumnHeaders);
-            cells = null;
-          }
-	  for (i = 0; i < hcells.size(); i++) {
-	    cell = hcells.get(i);
-	    if (m_Trim && !cell.isEmpty())
-	      cell = cell.trim();
-	    row.addCell("" + i).setContentAsString(cell);
-	  }
-	  m_NumericColumns.setMax(numCells);
-	  numeric.addAll(m_NumericColumns.getIntIndices());
-	}
-
-	// add data row
-        if (cells != null) {
-          row = result.addRow();
-          for (i = 0; i < cells.length && i < numCells; i++) {
-            cell = cells[i];
-            if (m_Trim && !cell.isEmpty())
-              cell = cell.trim();
-            if (missing.matcher(cell).matches()) {
-              if (row.hasCell(i))
-                row.getCell(i).setMissing();
-            }
-            else {
-              if (!numeric.isEmpty() && (numeric.contains(i)))
-                row.addCell(i).setContentAs(cell, ContentType.DOUBLE);
-              else
-                row.addCell(i).setContentAsString(cell);
-            }
-          }
-        }
-
-	if (isLoggingEnabled() && (lineNo % 100 == 0))
-	  getLogger().info("Parsed #" + lineNo + " lines...");
-
-        // all lines read?
-        if ((m_NumRows >= 0) && (lineRead >= m_NumRows))
-          break;
-
-	lineNo++;
-	lineRead++;
-      }
-    }
-    catch (Exception e) {
-      m_LastError = LoggingHelper.handleException(this, "Failed to read CSV data!", e);
-    }
-
-    return result;
+      return m_Reader.next();
   }
 
   /**
