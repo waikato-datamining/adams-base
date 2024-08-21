@@ -15,7 +15,7 @@
 
 /*
  *    EnumEditor.java
- *    Copyright (C) 2008-2020 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -117,7 +117,7 @@ public class EnumEditor
     Object	result;
     int		i;
 
-    result = Array.newInstance(type, 0);
+    result = Array.newInstance(type, values.size());
     for (i = 0; i < values.size(); i++)
       Array.set(result, i, EnumHelper.parse(type, values.get(i)));
 
