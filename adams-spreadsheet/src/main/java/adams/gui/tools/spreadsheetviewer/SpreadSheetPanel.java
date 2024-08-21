@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetPanel.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -93,6 +93,9 @@ public class SpreadSheetPanel
   /** the writer used for writing the file. */
   protected SpreadSheetWriter m_Writer;
 
+  /** whether to apply GC during cleanup. */
+  protected boolean m_GarbageCollectionOnClose;
+
   /**
    * Initializes the panel.
    * 
@@ -114,6 +117,7 @@ public class SpreadSheetPanel
     m_Filename       = null;
     m_Reader         = null;
     m_Writer         = null;
+    m_GarbageCollectionOnClose = false;
   }
   
   /**
@@ -493,6 +497,24 @@ public class SpreadSheetPanel
   }
 
   /**
+   * Sets whether to run garbage collection on cleanup.
+   *
+   * @param value	true if to run
+   */
+  public void setGarbageCollectionOnClose(boolean value) {
+    m_GarbageCollectionOnClose = value;
+  }
+
+  /**
+   * Returns whether to run garbage collection on cleanup.
+   *
+   * @return		true if to run
+   */
+  public boolean getGarbageCollectionOnClose() {
+    return m_GarbageCollectionOnClose;
+  }
+
+  /**
    * Gets notified in case of changes to the table model.
    *
    * @param e		the event
@@ -517,5 +539,7 @@ public class SpreadSheetPanel
     if (m_Writer != null)
       m_Writer.destroy();
     m_Table.setModel(new SpreadSheetTableModel());
+    if (m_GarbageCollectionOnClose)
+      System.gc();
   }
 }

@@ -1,7 +1,6 @@
 # Configuration file for the SpreadSheet File Viewer.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # The initial directory for loading CSV files.
 # the following placeholders are recognized
@@ -14,3 +13,6 @@ InitialDir=%h
 
 # The number of recent CSV files to display in the menu.
 MaxRecentFiles=5
+
+# Whether to run GC when closing panels
+GarbageCollectionOnClose=true

@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetViewerPanel.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -69,6 +69,7 @@ import adams.gui.tools.spreadsheetviewer.menu.EditClearClipboard;
 import adams.gui.tools.spreadsheetviewer.menu.EditPasteAsNew;
 import adams.gui.tools.spreadsheetviewer.menu.FileClosePage;
 import adams.gui.tools.spreadsheetviewer.menu.FileExit;
+import adams.gui.tools.spreadsheetviewer.menu.FileGarbageCollectionOnClose;
 import adams.gui.tools.spreadsheetviewer.menu.FileOpen;
 import adams.gui.tools.spreadsheetviewer.menu.FileSave;
 import adams.gui.tools.spreadsheetviewer.menu.FileSaveAs;
@@ -152,6 +153,9 @@ public class SpreadSheetViewerPanel
 
   /** the "close" menu item. */
   protected SpreadSheetViewerAction m_ActionFileClosePage;
+
+  /** the "use GC" menu item. */
+  protected SpreadSheetViewerAction m_ActionFileGarbageCollectionOnClose;
 
   /** the "exit" menu item. */
   protected SpreadSheetViewerAction m_ActionFileExit;
@@ -301,6 +305,11 @@ public class SpreadSheetViewerPanel
     // File/Close page
     action = new FileClosePage();
     m_ActionFileClosePage = action;
+    m_Actions.add(action);
+
+    // File/Use GC
+    action = new FileGarbageCollectionOnClose();
+    m_ActionFileGarbageCollectionOnClose = action;
     m_Actions.add(action);
 
     // File/Exit
@@ -476,6 +485,7 @@ public class SpreadSheetViewerPanel
       menu.add(m_ActionFileSave);
       menu.add(m_ActionFileSaveAs);
       menu.add(m_ActionFileClosePage);
+      menu.add(m_ActionFileGarbageCollectionOnClose.getMenuItem());
 
       // File/Send to
       menu.addSeparator();
@@ -853,14 +863,17 @@ public class SpreadSheetViewerPanel
 	}
 	else {
 	  SpreadSheetPanel panel;
+	  boolean runGC = SpreadSheetViewerPanel.getProperties().getBoolean("GarbageCollectionOnClose", true);
 	  if (sheet != null) {
 	    panel = m_MultiPagePane.addPage(file, sheet);
 	    panel.setReader(sreader);
+	    panel.setGarbageCollectionOnClose(runGC);
 	  }
 	  else {
 	    for (SpreadSheet sh: sheets) {
 	      panel = m_MultiPagePane.addPage(file, sh);
 	      panel.setReader(sreader);
+	      panel.setGarbageCollectionOnClose(runGC);
 	    }
 	  }
 	  m_FileChooser.setCurrentDirectory(file.getParentFile().getAbsoluteFile());
