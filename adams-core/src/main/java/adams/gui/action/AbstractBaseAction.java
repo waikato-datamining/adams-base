@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBaseAction.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -33,7 +33,6 @@ import java.awt.event.KeyEvent;
  * Action with some methods added for convenience.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractBaseAction
   extends AbstractAction
@@ -152,6 +151,15 @@ public abstract class AbstractBaseAction
    */
   public Icon getIcon() {
     return (Icon) getValue(SMALL_ICON);
+  }
+
+  /**
+   * Checks whether an icon is present.
+   *
+   * @return		true if present
+   */
+  public boolean hasIcon() {
+    return (getIcon() != null);
   }
 
   /**
