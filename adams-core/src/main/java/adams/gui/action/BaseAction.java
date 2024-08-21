@@ -109,7 +109,7 @@ public interface BaseAction
    * @return		the mnemonic if available (e.g., KeyEvent.VK_O), otherwise null
    * @see		#hasMnemonic()
    */
-  public KeyStroke getMnemonic();
+  public Integer getMnemonic();
 
   /**
    * Sets the accelerator (KeyStroke) to use for the action.

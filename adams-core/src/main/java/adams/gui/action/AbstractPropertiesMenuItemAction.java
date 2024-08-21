@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPropertiesMenuItemAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -50,6 +50,10 @@ public abstract class AbstractPropertiesMenuItemAction<T, D extends Dialog>
       result.setIcon(getIcon());
     else
       result.setIcon(ImageManager.getEmptyIcon());
+    if (hasMnemonic())
+      result.setMnemonic(getMnemonic());
+    if (hasAccelerator())
+      result.setAccelerator(getAccelerator());
     
     return result;
   }

@@ -15,7 +15,7 @@
 
 /*
  * AbstractPropertiesCheckBoxMenuItemAction.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -74,6 +74,10 @@ public abstract class AbstractPropertiesCheckBoxMenuItemAction<T, D extends Dial
     
     result = new JCheckBoxMenuItem(this);
     result.setSelected(isSelected());
+    if (hasMnemonic())
+      result.setMnemonic(getMnemonic());
+    if (hasAccelerator())
+      result.setAccelerator(getAccelerator());
     result.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {

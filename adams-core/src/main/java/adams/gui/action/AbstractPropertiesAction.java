@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowEditorAction.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.action;
 
@@ -23,6 +23,7 @@ import adams.core.Properties;
 import adams.gui.core.ImageManager;
 
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import java.awt.Dialog;
 
 /**
@@ -49,6 +50,7 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
   protected void initialize() {
     String	shortcut;
     String	icon;
+    String	mnemonic;
 
     super.initialize();
 
@@ -63,6 +65,10 @@ public abstract class AbstractPropertiesAction<T, D extends Dialog>
     icon = getProperties().getProperty(getClass().getName() + "-Icon");
     if ((icon != null) && canUseIcon())
       setIcon(ImageManager.getIcon(icon));
+
+    mnemonic = getProperties().getProperty(getClass().getName() + "-Mnemonic");
+    if ((mnemonic != null) && (mnemonic.length() == 1))
+      setMnemonic(KeyStroke.getKeyStroke(mnemonic.toUpperCase()).getKeyCode());
   }
 
   /**

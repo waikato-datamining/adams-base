@@ -205,9 +205,9 @@ public abstract class AbstractBaseAction
    * @return		the mnemonic if available (e.g., KeyEvent.VK_O), otherwise null
    * @see		#hasMnemonic()
    */
-  public KeyStroke getMnemonic() {
+  public Integer getMnemonic() {
     if (hasMnemonic())
-      return (KeyStroke) getValue(MNEMONIC_KEY);
+      return (int) getValue(MNEMONIC_KEY);
     else
       return null;
   }
