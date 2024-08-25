@@ -58,5 +58,6 @@ public abstract class AbstractFlatLaf
     UIManager.put("Table.showVerticalLines", true);
     UIManager.put("Tree.selectionBackground", ColorHelper.valueOf("#b8cfe5"));
     UIManager.put("Tree.wideSelection", false);
+    UIManager.put("ScrollBar.showButtons", true);
   }
 }
