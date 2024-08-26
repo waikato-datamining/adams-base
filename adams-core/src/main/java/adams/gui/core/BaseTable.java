@@ -15,7 +15,7 @@
 
 /*
  * BaseTable.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -313,8 +313,8 @@ public class BaseTable
 	// ignored
       }
       public void keyPressed(KeyEvent e) {
-	if (m_RemoveItemsListeners.size() > 0) {
-	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiers() == 0)) {
+	if (!m_RemoveItemsListeners.isEmpty()) {
+	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiersEx() == 0)) {
 	    e.consume();
 	    notifyRemoveItemsListeners(getSelectedRows());
 	  }
@@ -337,7 +337,7 @@ public class BaseTable
    * Default implementation returns "false", since large tables might take too
    * long to be displayed otherwise.
    *
-   * @return		true if optimal column widths are used by default
+   * @return		the approach
    */
   protected ColumnWidthApproach initialUseOptimalColumnWidths() {
     return ColumnWidthApproach.NONE;
@@ -885,12 +885,12 @@ public class BaseTable
       SpreadSheet sheet = toSpreadSheet(TableRowRange.VISIBLE);
       StringBuilder content = new StringBuilder();
       String sep = System.getProperty("line.separator");
-      content.append(sheet.getColumnName(col) + sep);
+      content.append(sheet.getColumnName(col)).append(sep);
       for (int i = 0; i < sheet.getRowCount(); i++) {
 	if (!sheet.hasCell(i, col) || sheet.getCell(i, col).isMissing())
 	  content.append(sep);
 	else
-	  content.append(sheet.getCell(i, col).getContent() + sep);
+	  content.append(sheet.getCell(i, col).getContent()).append(sep);
       }
       ClipboardHelper.copyToClipboard(content.toString());
     });
@@ -1022,8 +1022,6 @@ public class BaseTable
         Object value = getValueAt(i, col);
         if (value != null)
           content.append(value.toString());
-        else
-          content.append("");
       }
       ClipboardHelper.copyToClipboard(content.toString());
     });
@@ -1199,7 +1197,7 @@ public class BaseTable
       result = super.getSelectedRow();
       if (result > -1) {
 	if (result >= getRowCount()) {
-	  System.out.println("invalid: " + result);
+	  System.err.println(getClass().getName() + ": invalid row: " + result);
 	  result = -1;
 	}
       }
@@ -1222,7 +1220,7 @@ public class BaseTable
     i      = 0;
     while (i < result.size()) {
       if (result.get(i) >= getRowCount()) {
-	System.out.println("invalid: " + result.get(i));
+	System.err.println(getClass().getName() + ": invalid row: " + result.get(i));
 	result.removeAt(i);
       }
       else
