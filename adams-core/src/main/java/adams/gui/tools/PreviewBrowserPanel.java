@@ -851,7 +851,7 @@ public class PreviewBrowserPanel
   protected void updateTitle() {
     if (!m_TitleGenerator.isEnabled())
       return;
-    if (m_CurrentFiles.length == 0)
+    if ((m_CurrentFiles == null) || (m_CurrentFiles.length == 0))
       setParentTitle(m_TitleGenerator.generate());
     else if (m_CurrentFiles.length == 1)
       setParentTitle(m_TitleGenerator.generate(m_CurrentFiles[0]));
