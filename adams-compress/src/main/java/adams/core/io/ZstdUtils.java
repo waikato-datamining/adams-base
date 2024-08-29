@@ -15,7 +15,7 @@
 
 /*
  * ZstdUtils.java
- * Copyright (C) 2018-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -24,7 +24,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import com.github.luben.zstd.ZstdInputStream;
 import com.github.luben.zstd.ZstdOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

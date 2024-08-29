@@ -15,14 +15,14 @@
 
 /*
  * XzUtils.java
- * Copyright (C) 2018-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
 import adams.core.MessageCollection;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
 import org.tukaani.xz.XZOutputStream;
