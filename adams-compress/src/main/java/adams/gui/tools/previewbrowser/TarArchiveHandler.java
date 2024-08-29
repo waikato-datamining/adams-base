@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TarArchiveHandler.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
-import java.io.File;
-import java.util.List;
-
 import adams.core.Utils;
 import adams.core.io.TarUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -49,7 +50,6 @@ import adams.core.io.TarUtils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TarArchiveHandler
   extends AbstractArchiveHandler {
@@ -73,11 +73,19 @@ public class TarArchiveHandler
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
-   * @return		the list of extensions (no dot)
+   * @return		the array of extensions (no dot)
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"tar", "tar.gz", "tgz", "tar.bz2"};
+    List<String>	result;
+
+    result = new ArrayList<>();
+    result.add("tar");
+    result.add("tgz");
+    for (String ext: TarUtils.getSupportedCompressionExtensions())
+      result.add("tar" + ext);
+
+    return result.toArray(new String[0]);
   }
 
   /**
