@@ -15,7 +15,7 @@
 
 /*
  * UniqueValues.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core.spreadsheettable;
@@ -26,6 +26,9 @@ import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.TableRowRange;
 import adams.gui.core.spreadsheettable.SpreadSheetTablePopupMenuItemHelper.TableState;
+import adams.gui.dialog.TextDialog;
+
+import java.awt.Dialog.ModalityType;
 
 /**
  * Displays all the unique values in the column.
@@ -77,13 +80,20 @@ public class UniqueValues
   public boolean doProcessColumn(TableState state) {
     String[]	values;
     SpreadSheet sheet;
+    TextDialog	dlg;
 
     sheet  = state.table.toSpreadSheet(state.range, true);
     values = SpreadSheetUtils.getColumn(sheet, state.actCol, true, true);
-    GUIHelper.showInformationMessage(
-      GUIHelper.getParentComponent(state.table),
-      Utils.flatten(values, "\n"),
-      "Unique values of column #" + (state.actCol+1) + "/" + sheet.getColumnName(state.actCol) + " (rows: " + state.range + ")");
+    if (GUIHelper.getParentDialog(state.table) != null)
+      dlg = new TextDialog(GUIHelper.getParentDialog(state.table), ModalityType.MODELESS);
+    else
+      dlg = new TextDialog(GUIHelper.getParentFrame(state.table), false);
+    dlg.setDialogTitle("Unique values of column #" + (state.actCol+1) + "/" + sheet.getColumnName(state.actCol) + " (rows: " + state.range + ")");
+    dlg.setContent(Utils.flatten(values, "\n"));
+    dlg.setSize(GUIHelper.getDefaultSmallDialogDimension());
+    dlg.setLocationRelativeTo(dlg.getParent());
+    dlg.setDefaultCloseOperation(TextDialog.DISPOSE_ON_CLOSE);
+    dlg.setVisible(true);
 
     return true;
   }
