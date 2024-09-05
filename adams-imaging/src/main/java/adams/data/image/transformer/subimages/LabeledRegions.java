@@ -32,9 +32,8 @@ import java.util.List;
  <!-- globalinfo-start -->
  * Extracts the sub-images according to the region definitions.<br>
  * Additional report values:<br>
- * - Region for the region<br>
- * - Coordinates for the 1-based coordinates (x,y,w,h)<br>
- * - Label for the label
+ * - Region: for the region<br>
+ * - Coordinates: for the 1-based coordinates (x,y,w,h)
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -71,6 +70,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
+ * <pre>-label-key &lt;java.lang.String&gt; (property: labelKey)
+ * &nbsp;&nbsp;&nbsp;The key for the label in the meta-data.
+ * &nbsp;&nbsp;&nbsp;default: type
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -87,14 +91,14 @@ public class LabeledRegions
   /** the key for the coordinates. */
   public final static String KEY_COORDINATES = "Coordinates";
 
-  /** the key for the label. */
-  public final static String KEY_LABEL = "Label";
-
   /** the regions to use. */
   protected LabeledRectangle[] m_Regions;
 
   /** whether the regions are 1-based or 0-based. */
   protected boolean m_OneBasedCoords;
+
+  /** the meta-data key for the label. */
+  protected String m_LabelKey;
 
   /**
    * Returns a string describing the object.
@@ -106,9 +110,8 @@ public class LabeledRegions
     return
       "Extracts the sub-images according to the region definitions.\n"
 	+ "Additional report values:\n"
-	+ "- " + KEY_REGION + " for the region\n"
-	+ "- " + KEY_COORDINATES + " for the 1-based coordinates (x,y,w,h)\n"
-	+ "- " + KEY_LABEL + " for the label";
+	+ "- " + KEY_REGION + ": for the region\n"
+	+ "- " + KEY_COORDINATES + ": for the 1-based coordinates (x,y,w,h)";
   }
 
   /**
@@ -125,6 +128,10 @@ public class LabeledRegions
     m_OptionManager.add(
       "one-based-coords", "oneBasedCoords",
       true);
+
+    m_OptionManager.add(
+      "label-key", "labelKey",
+      "type");
   }
 
   /**
@@ -186,6 +193,35 @@ public class LabeledRegions
   }
 
   /**
+   * Sets the key for the label in the meta-data.
+   *
+   * @param value	the key
+   */
+  public void setLabelKey(String value) {
+    m_LabelKey = value;
+    reset();
+  }
+
+  /**
+   * Returns the key for the label in the meta-data.
+   *
+   * @return		the key
+   */
+  public String getLabelKey() {
+    return m_LabelKey;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String labelKeyTipText() {
+    return "The key for the label in the meta-data.";
+  }
+
+  /**
    * Returns a quick info about the object, which can be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -197,6 +233,7 @@ public class LabeledRegions
     result = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "regions", m_Regions, ", regions: ");
     result += QuickInfoHelper.toString(this, "oneBasedCoords", m_OneBasedCoords, "1-based", ", ");
+    result += QuickInfoHelper.toString(this, "labelKey", m_LabelKey, ", label key: ");
 
     return result;
   }
@@ -244,7 +281,7 @@ public class LabeledRegions
       }
 
       cont = (BufferedImageContainer) image.getHeader();
-      cont.setReport(transferObjects(cont.getReport(), x, y, width, height, label));
+      cont.setReport(transferObjects(cont.getReport(), x, y, width, height, label, m_LabelKey));
       cont.setImage(bimage.getSubimage(x, y, width, height));
       cont.getReport().setNumericValue(KEY_REGION, i);
       cont.getReport().setStringValue(KEY_COORDINATES, (x+1) + "," + (y+1) + "," + width + "," + height);

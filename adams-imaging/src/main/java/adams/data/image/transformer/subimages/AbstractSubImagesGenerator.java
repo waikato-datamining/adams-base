@@ -201,7 +201,7 @@ public abstract class AbstractSubImagesGenerator
    * @return		the new report with the subset of objects in the region
    */
   protected Report transferObjects(Report oldReport, int x, int y, int width, int height) {
-    return transferObjects(oldReport, new Rectangle(x, y, width, height), null);
+    return transferObjects(oldReport, new Rectangle(x, y, width, height), null, null);
   }
 
   /**
@@ -213,10 +213,11 @@ public abstract class AbstractSubImagesGenerator
    * @param width	the width of the region
    * @param height 	the height of the region
    * @param label 	the label to set, ignored if null
+   * @param key		the meta-data key to use, ignored if null
    * @return		the new report with the subset of objects in the region
    */
-  protected Report transferObjects(Report oldReport, int x, int y, int width, int height, String label) {
-    return transferObjects(oldReport, new Rectangle(x, y, width, height), label);
+  protected Report transferObjects(Report oldReport, int x, int y, int width, int height, String label, String key) {
+    return transferObjects(oldReport, new Rectangle(x, y, width, height), label, key);
   }
 
   /**
@@ -227,7 +228,7 @@ public abstract class AbstractSubImagesGenerator
    * @return		the new report with the subset of objects in the region
    */
   protected Report transferObjects(Report oldReport, Rectangle region) {
-    return transferObjects(oldReport, region, null);
+    return transferObjects(oldReport, region, null, null);
   }
 
   /**
@@ -236,9 +237,10 @@ public abstract class AbstractSubImagesGenerator
    * @param oldReport	the old report to use as basis
    * @param region	the region in which to locate objects
    * @param label 	the label to set, ignored if null
+   * @param key		the meta-data key to use, ignored if null
    * @return		the new report with the subset of objects in the region
    */
-  protected Report transferObjects(Report oldReport, Rectangle region, String label) {
+  protected Report transferObjects(Report oldReport, Rectangle region, String label, String key) {
     Report		result;
     ObjectsInRegion	finder;
     LocatedObjects	objects;
@@ -292,7 +294,7 @@ public abstract class AbstractSubImagesGenerator
       // force label?
       if (label != null) {
 	for (LocatedObject obj: newObjects)
-	  obj.getMetaData().put("type", label);
+	  obj.getMetaData().put(key, label);
       }
 
       // transfer objects
