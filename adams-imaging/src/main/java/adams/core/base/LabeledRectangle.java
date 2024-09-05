@@ -14,8 +14,8 @@
  */
 
 /*
- * BaseRectangle.java
- * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
+ * LabeledRectangle.java
+ * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,21 +24,21 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
 /**
- * Wrapper for a rectangle object to be editable in the GOE.
+ * Wrapper for a rectangle object (with a label) to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class BaseRectangle
+public class LabeledRectangle
   extends AbstractBaseString {
 
   /** for serialization. */
   private static final long serialVersionUID = -5853830144343397434L;
 
   /**
-   * Initializes the string with "0 0 1 1".
+   * Initializes the string with "0 0 1 1 object".
    */
-  public BaseRectangle() {
-    this("0 0 1 1", false);
+  public LabeledRectangle() {
+    this("0 0 1 1 object", false);
   }
 
   /**
@@ -46,7 +46,7 @@ public class BaseRectangle
    *
    * @param s		the string to parse
    */
-  public BaseRectangle(String s) {
+  public LabeledRectangle(String s) {
     this(s, false);
   }
 
@@ -54,9 +54,9 @@ public class BaseRectangle
    * Initializes the object with the string to parse.
    *
    * @param s		the string to parse
-   * @param isXYXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
+   * @param isXYXY	whether in format 'x0 y0 x1 y1 label' (true) or 'x y w h label' (false)
    */
-  public BaseRectangle(String s, boolean isXYXY) {
+  public LabeledRectangle(String s, boolean isXYXY) {
     super(isXYXY ? fromXYXY(s) : s);
   }
 
@@ -64,11 +64,12 @@ public class BaseRectangle
    * Initializes the object with the location to use.
    *
    * @param location	the location to use
+   * @param label 	the label
    */
-  public BaseRectangle(Rectangle location) {
+  public LabeledRectangle(Rectangle location, String label) {
     this(
       location.x, location.y,
-      location.width, location.height, false);
+      location.width, location.height, false, label);
   }
 
   /**
@@ -78,9 +79,10 @@ public class BaseRectangle
    * @param y		the y of the top-left corner
    * @param w		the width
    * @param h		the height
+   * @param label 	the label
    */
-  public BaseRectangle(int x, int y, int w, int h) {
-    this(x, y, w, h, false);
+  public LabeledRectangle(int x, int y, int w, int h, String label) {
+    this(x, y, w, h, false, label);
   }
 
   /**
@@ -92,7 +94,7 @@ public class BaseRectangle
    * @param h_or_y	the height or y of bottom-right corner
    * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
    */
-  public BaseRectangle(int x, int y, int w_or_x, int h_or_y, boolean isXY) {
+  public LabeledRectangle(int x, int y, int w_or_x, int h_or_y, boolean isXY, String label) {
     this(
       x
 	+ " "
@@ -100,7 +102,9 @@ public class BaseRectangle
 	+ " "
 	+ (isXY ? w_or_x-x+1 : w_or_x)
 	+ " "
-	+ (isXY ? h_or_y-y+1 : h_or_y));
+	+ (isXY ? h_or_y-y+1 : h_or_y)
+	+ " "
+	+ label);
   }
 
   /**
@@ -110,9 +114,10 @@ public class BaseRectangle
    * @param y		the y of the top-left corner
    * @param w		the width
    * @param h		the height
+   * @param label 	the label
    */
-  public BaseRectangle(double x, double y, double w, double h) {
-    this(x, y, w, h, false);
+  public LabeledRectangle(double x, double y, double w, double h, String label) {
+    this(x, y, w, h, false, label);
   }
 
   /**
@@ -123,8 +128,9 @@ public class BaseRectangle
    * @param w_or_x	the width or x of bottom-right corner
    * @param h_or_y	the height or y of bottom-right corner
    * @param isXY	whether in format 'x0 y0 x1 y1' (true) or 'x y w h' (false)
+   * @param label 	the label
    */
-  public BaseRectangle(double x, double y, double w_or_x, double h_or_y, boolean isXY) {
+  public LabeledRectangle(double x, double y, double w_or_x, double h_or_y, boolean isXY, String label) {
     this(
       x
 	+ " "
@@ -132,7 +138,9 @@ public class BaseRectangle
 	+ " "
 	+ (isXY ? w_or_x-x+1 : w_or_x)
 	+ " "
-	+ (isXY ? h_or_y-y+1 : h_or_y));
+	+ (isXY ? h_or_y-y+1 : h_or_y)
+	+ " "
+	+ label);
   }
 
   /**
@@ -158,10 +166,10 @@ public class BaseRectangle
 
     parts = getValue().split(" ");
     result = new double[4];
-    if (parts.length != 4)
+    if (parts.length != 5)
       return result;
 
-    for (i = 0; i < parts.length; i++)
+    for (i = 0; i < 4; i++)
       result[i] = Double.parseDouble(parts[i]);
 
     return result;
@@ -179,10 +187,10 @@ public class BaseRectangle
 
     parts = getValue().split(" ");
     result = new int[4];
-    if (parts.length != 4)
+    if (parts.length != 5)
       return result;
 
-    for (i = 0; i < parts.length; i++)
+    for (i = 0; i < 4; i++)
       result[i] = (int) Double.parseDouble(parts[i]);
 
     return result;
@@ -206,7 +214,22 @@ public class BaseRectangle
   }
 
   /**
-   * Returns the rectangle in 'x0 y0 x1 y1' format.
+   * Returns the label, if possible.
+   *
+   * @return		the label or empty string if not present
+   */
+  public String labelValue() {
+    String[]	parts;
+
+    parts = getValue().split(" ");
+    if (parts.length == 5)
+      return parts[4];
+    else
+      return "";
+  }
+
+  /**
+   * Returns the rectangle in 'x0 y0 x1 y1 label' format.
    *
    * @return		the string value
    */
@@ -217,25 +240,29 @@ public class BaseRectangle
 
     rect = rectangleValue();
     allInt = (rect.getX() == (int) rect.getX())
-      && (rect.getY() == (int) rect.getY())
-      && (rect.getWidth() == (int) rect.getWidth())
-      && (rect.getHeight() == (int) rect.getHeight());
+	       && (rect.getY() == (int) rect.getY())
+	       && (rect.getWidth() == (int) rect.getWidth())
+	       && (rect.getHeight() == (int) rect.getHeight());
     if (allInt)
       result = ((int) rect.getX())
-	+ " "
-	+ ((int) rect.getY())
-	+ " "
-	+ ((int) (rect.getX() + rect.getWidth() - 1))
-	+ " "
-	+ ((int) (rect.getY() + rect.getHeight() - 1));
+		 + " "
+		 + ((int) rect.getY())
+		 + " "
+		 + ((int) (rect.getX() + rect.getWidth() - 1))
+		 + " "
+		 + ((int) (rect.getY() + rect.getHeight() - 1))
+		 + " "
+		 + labelValue();
     else
       result = rect.getX()
-	+ " "
-	+ rect.getY()
-	+ " "
-	+ (rect.getX() + rect.getWidth() - 1)
-	+ " "
-	+ (rect.getY() + rect.getHeight() - 1);
+		 + " "
+		 + rect.getY()
+		 + " "
+		 + (rect.getX() + rect.getWidth() - 1)
+		 + " "
+		 + (rect.getY() + rect.getHeight() - 1)
+		 + " "
+		 + labelValue();
 
     return result;
   }
@@ -259,7 +286,7 @@ public class BaseRectangle
    */
   @Override
   public String getTipText() {
-    return "Rectangle location string (x y width height).";
+    return "Rectangle location string with label (x y width height label).";
   }
 
   /**
@@ -269,16 +296,17 @@ public class BaseRectangle
    * @return		true if non-null
    */
   public static boolean isValidFormat(String value) {
-    String[]  parts;
+    String[]  	parts;
+    int		i;
 
     value = value.replaceAll("  ", " ");
     parts = value.split(" ");
-    if (parts.length != 4)
+    if (parts.length != 5)
       return false;
 
     try {
-      for (String part: parts)
-        Double.parseDouble(part);
+      for (i = 0; i < 4; i++)
+	Double.parseDouble(parts[i]);
     }
     catch (Exception e) {
       return false;
@@ -289,7 +317,7 @@ public class BaseRectangle
 
   /**
    * Parses the string in XY format and returns it in xywh format.
-   * Assumes there are 4 numbers present.
+   * Assumes there are 4 numbers and a label present.
    *
    * @param x0y0x1y1	the string to parse
    * @return		the converted string
@@ -302,13 +330,13 @@ public class BaseRectangle
 
     x0y0x1y1 = x0y0x1y1.replaceAll("  ", " ");
     parts = x0y0x1y1.split(" ");
-    if (parts.length != 4)
-      throw new IllegalArgumentException("Expected four numbers in string: " + x0y0x1y1);
+    if (parts.length != 5)
+      throw new IllegalArgumentException("Expected four numbers and a label in string: " + x0y0x1y1);
     values = new double[4];
-    for (i = 0; i < parts.length; i++)
+    for (i = 0; i < 4; i++)
       values[i] = Double.parseDouble(parts[i]);
     values[2] = values[2] - values[0] + 1;  // width
     values[3] = values[3] - values[1] + 1;  // height
-    return values[0] + " " + values[1] + " " + values[2] + " " + values[3];
+    return values[0] + " " + values[1] + " " + values[2] + " " + values[3] + " " + parts[4];
   }
 }

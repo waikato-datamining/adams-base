@@ -25,6 +25,11 @@ adams.core.base.BaseRectangle=true
 adams.core.base.BaseRectangle#toString=adams.core.option.parsing.BaseObjectParsing#toString
 adams.core.base.BaseRectangle#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
 
+# LabeledRectangle objects
+adams.core.base.LabeledRectangle=true
+adams.core.base.LabeledRectangle#toString=adams.core.option.parsing.BaseObjectParsing#toString
+adams.core.base.LabeledRectangle#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
+
 # QuadrilateralLocation objects
 adams.core.base.QuadrilateralLocation=true
 adams.core.base.QuadrilateralLocation#toString=adams.core.option.parsing.BaseObjectParsing#toString

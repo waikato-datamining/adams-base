@@ -15,7 +15,7 @@
 
 /*
  * AbstractSubImagesGenerator.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -201,7 +201,22 @@ public abstract class AbstractSubImagesGenerator
    * @return		the new report with the subset of objects in the region
    */
   protected Report transferObjects(Report oldReport, int x, int y, int width, int height) {
-    return transferObjects(oldReport, new Rectangle(x, y, width, height));
+    return transferObjects(oldReport, new Rectangle(x, y, width, height), null);
+  }
+
+  /**
+   * Generates a new report with only the objects that fall within the region.
+   *
+   * @param oldReport	the old report to use as basis
+   * @param x		the left position of the region
+   * @param y 		the top position of the region
+   * @param width	the width of the region
+   * @param height 	the height of the region
+   * @param label 	the label to set, ignored if null
+   * @return		the new report with the subset of objects in the region
+   */
+  protected Report transferObjects(Report oldReport, int x, int y, int width, int height, String label) {
+    return transferObjects(oldReport, new Rectangle(x, y, width, height), label);
   }
 
   /**
@@ -212,6 +227,18 @@ public abstract class AbstractSubImagesGenerator
    * @return		the new report with the subset of objects in the region
    */
   protected Report transferObjects(Report oldReport, Rectangle region) {
+    return transferObjects(oldReport, region, null);
+  }
+
+  /**
+   * Generates a new report with only the objects that fall within the region.
+   *
+   * @param oldReport	the old report to use as basis
+   * @param region	the region in which to locate objects
+   * @param label 	the label to set, ignored if null
+   * @return		the new report with the subset of objects in the region
+   */
+  protected Report transferObjects(Report oldReport, Rectangle region, String label) {
     Report		result;
     ObjectsInRegion	finder;
     LocatedObjects	objects;
@@ -260,6 +287,12 @@ public abstract class AbstractSubImagesGenerator
       if (m_FixInvalid) {
         for (LocatedObject obj: newObjects)
           obj.makeFit((int) region.getWidth(), (int) region.getHeight());
+      }
+
+      // force label?
+      if (label != null) {
+	for (LocatedObject obj: newObjects)
+	  obj.getMetaData().put("type", label);
       }
 
       // transfer objects
