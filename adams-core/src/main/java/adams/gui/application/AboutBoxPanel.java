@@ -15,7 +15,7 @@
 
 /*
  * AboutBoxPanel.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.application;
@@ -42,7 +42,6 @@ import java.util.List;
  * Represents an "About" box displayed from the main menu.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AboutBoxPanel
   extends BasePanel {
@@ -103,23 +102,23 @@ public class AboutBoxPanel
       // assemble tiptext
       tiptext = "";
       if (!module.getDescription().isEmpty()) {
-	if (tiptext.length() > 0)
+	if (!tiptext.isEmpty())
 	  tiptext += "<br>\n";
 	tiptext += module.getDescription();
       }
       if (!module.getAuthor().isEmpty()) {
-	if (tiptext.length() > 0)
+	if (!tiptext.isEmpty())
 	  tiptext += "<br>\n";
 	tiptext += module.getAuthor();
       }
       if (!module.getOrganization().isEmpty()) {
-	if (tiptext.length() > 0)
+	if (!tiptext.isEmpty())
 	  tiptext += "<br>\n";
 	tiptext += module.getOrganization();
       }
       // logo
       labelLogo = new JLabel(module.getLogo());
-      if (tiptext.length() > 0)
+      if (!tiptext.isEmpty())
 	labelLogo.setToolTipText("<html>" + tiptext + "</html>");
       panelModule.add(labelLogo, BorderLayout.CENTER);
       // module info
@@ -129,7 +128,7 @@ public class AboutBoxPanel
       name += "</center></html>";
       labelName = new JLabel(name);
       labelName.setFont(Font.decode("helvetica-PLAIN-10"));
-      if (tiptext.length() > 0)
+      if (!tiptext.isEmpty())
 	labelName.setToolTipText("<html>" + tiptext + "</html>");
       panelModule.add(labelName, BorderLayout.SOUTH);
       // add panel
