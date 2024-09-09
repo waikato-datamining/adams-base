@@ -15,7 +15,7 @@
 
 /*
  * AbstractEditableDataTableAction.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.datatable.action;
@@ -28,6 +28,9 @@ import adams.gui.event.WekaInvestigatorDataEvent;
 import adams.gui.tools.wekainvestigator.data.DataContainer;
 import adams.gui.tools.wekainvestigator.data.DataContainerList;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTabWithEditableDataTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ancestor for actions on the data displayed on a tab using a
@@ -86,16 +89,18 @@ public abstract class AbstractEditableDataTableAction
    * @return		the selected data
    */
   protected DataContainer[] getSelectedData() {
-    DataContainer[]	result;
+    List<DataContainer> result;
     int[]		rows;
     int			i;
 
     rows = getSelectedRows();
-    result = new DataContainer[rows.length];
-    for (i = 0; i < rows.length; i++)
-      result[i] = getData().get(rows[i]);
+    result = new ArrayList<>();
+    for (i = 0; i < rows.length; i++) {
+      if (rows[i] < getData().size())
+	result.add(getData().get(rows[i]));
+    }
 
-    return result;
+    return result.toArray(new DataContainer[0]);
   }
 
   /**
