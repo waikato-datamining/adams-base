@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ViewDataClickAction.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.stats.scatterplot.action;
 
@@ -33,7 +33,6 @@ import java.awt.event.MouseEvent;
  * Displays the data that the user clicked on in a table.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ViewDataClickAction
   extends AbstractMouseClickAction {
@@ -127,6 +126,7 @@ public class ViewDataClickAction
 	dialog.setSize(GUIHelper.getDefaultDialogDimension());
 	dialog.setLocationRelativeTo(panel);
 	dialog.setSpreadSheet(sheet);
+	dialog.getTable().setOptimalColumnWidthBounded(100);
 	dialog.setVisible(true);
       }
     }
