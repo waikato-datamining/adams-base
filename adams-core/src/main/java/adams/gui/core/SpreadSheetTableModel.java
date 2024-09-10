@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.CleanUpHandler;
 import adams.core.DateTime;
 import adams.core.DateTimeMsec;
+import adams.core.Shortening;
 import adams.core.Time;
 import adams.core.TimeMsec;
 import adams.core.Utils;
@@ -49,6 +50,15 @@ public class SpreadSheetTableModel
 
   /** for serialization. */
   private static final long serialVersionUID = 8062515320279133441L;
+
+  /** the default maximum column width. */
+  public final static int DEFAULT_MAX_COLUMN_CHARS = 40;
+
+  /** the key in GUIHelper.props for looking up the maximum chars in columns. */
+  public final static String MAX_COLUMN_CHARS_KEY = "SpreadSheetTableMaxColumnNameChars";
+
+  /** the maximum column width. */
+  protected static Integer MAX_COLUMN_CHARS;
 
   /** the underlying spreadsheet. */
   protected SpreadSheet m_Sheet;
@@ -77,7 +87,7 @@ public class SpreadSheetTableModel
   /** whether to show the types instead of the values. */
   protected boolean m_ShowCellTypes;
 
-  /** the type of a column. */
+  /** the types of the columns. */
   protected ContentType[] m_ColumnType;
 
   /**
@@ -237,6 +247,23 @@ public class SpreadSheetTableModel
   }
 
   /**
+   * Shortens the column name, if necessary.
+   *
+   * @param name 	the original name
+   * @return		the shortened name
+   * @see		#DEFAULT_MAX_COLUMN_CHARS
+   */
+  protected synchronized String shortenColumnName(String name) {
+    if (MAX_COLUMN_CHARS == null)
+      MAX_COLUMN_CHARS = GUIHelper.getInteger(MAX_COLUMN_CHARS_KEY, DEFAULT_MAX_COLUMN_CHARS);
+
+    if (MAX_COLUMN_CHARS <= 0)
+      return name;
+    else
+      return Shortening.shortenEnd(name, MAX_COLUMN_CHARS);
+  }
+
+  /**
    * Returns the name of the column at <code>columnIndex</code>.  This is used
    * to initialize the table's column header name.  Note: this name does
    * not need to be unique; two columns in a table can have the same name.
@@ -263,11 +290,11 @@ public class SpreadSheetTableModel
 	result = row.getCell(columnIndex).getContent();
       else
 	result = "<html>" 
-	    + "<center>" 
-	    + "<b>" + row.getCell(columnIndex).getContent() + "</b>"
+	    + "<left>"
+	    + "<b>" + shortenColumnName(row.getCell(columnIndex).getContent()) + "</b>"
 	    + "<br>" 
 	    + SpreadSheetUtils.getColumnPosition(columnIndex) + " / " + (columnIndex + 1)
-	    + "</center>"
+	    + "</left>"
 	    + "</html>";
     }
 
@@ -369,7 +396,7 @@ public class SpreadSheetTableModel
     double	factor;
 
     if (m_ShowRowColumn && (columnIndex == 0)) {
-      result = new Integer(rowIndex + 2);
+      result = rowIndex + 2;
     }
     else {
       if (m_ShowRowColumn)

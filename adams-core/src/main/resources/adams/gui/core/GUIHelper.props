@@ -183,3 +183,7 @@ GenericObjectEditorShowVariablePopupMenuButton=true
 # the type of directory chooser to use
 # (jfilechooser,simple)
 DirectoryChooserType=simple
+
+# the maximum width (in chars) for spreadsheet tables
+# (int, use <= 0 for unlimited)
+SpreadSheetTableMaxColumnNameChars=40
