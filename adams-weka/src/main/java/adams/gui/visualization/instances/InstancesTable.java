@@ -432,7 +432,7 @@ public class InstancesTable
       String filter = "";
       if (getColumnFilter(state.selCol) != null)
         filter = getColumnFilter(state.selCol);
-      filter = GUIHelper.showInputDialog(getParent(), "Please enter filter string", filter);
+      filter = GUIHelper.showInputDialog(getParent(), "Please enter filter (string or number)", filter);
       if ((filter == null) || filter.isEmpty())
         return;
       setColumnFilter(state.selCol, filter, false);

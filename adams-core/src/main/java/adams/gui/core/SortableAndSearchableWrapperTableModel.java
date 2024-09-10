@@ -15,11 +15,12 @@
 
 /*
  * SortableAndSearchableWrapperTableModel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -186,6 +187,9 @@ public class SortableAndSearchableWrapperTableModel
   /** the filter strings per column. */
   protected TIntObjectHashMap<String> m_ColumnFilters;
 
+  /** the numeric filter strings per column. */
+  protected TIntObjectHashMap<Double> m_ColumnFiltersNumeric;
+
   /** the filter regexps per column. */
   protected TIntObjectHashMap<BaseRegExp> m_ColumnFiltersRegExp;
 
@@ -204,12 +208,13 @@ public class SortableAndSearchableWrapperTableModel
   public SortableAndSearchableWrapperTableModel(TableModel model) {
     super();
 
-    m_MouseListener       = null;
-    m_SortedIndices       = null;
-    m_DisplayIndices      = null;
-    m_ColumnIsNumeric     = null;
-    m_ColumnFilters       = new TIntObjectHashMap<>();
-    m_ColumnFiltersRegExp = new TIntObjectHashMap<>();
+    m_MouseListener        = null;
+    m_SortedIndices        = null;
+    m_DisplayIndices       = null;
+    m_ColumnIsNumeric      = null;
+    m_ColumnFilters        = new TIntObjectHashMap<>();
+    m_ColumnFiltersNumeric = new TIntObjectHashMap<>();
+    m_ColumnFiltersRegExp  = new TIntObjectHashMap<>();
 
     setUnsortedModel(model);
   }
@@ -830,6 +835,8 @@ public class SortableAndSearchableWrapperTableModel
     int				col;
     Object			value;
     String			valueStr;
+    double			valueDbl;
+    boolean			numeric;
 
     params       = new SearchParameters(m_SearchString, m_RegExpSearch);
     unsorted     = getUnsortedModel();
@@ -867,11 +874,21 @@ public class SortableAndSearchableWrapperTableModel
 	    col = filterCols.get(c);
 	    value = unsorted.getValueAt(m_SortedIndices[i], col);
 	    if (value != null) {
+	      numeric = (value instanceof Number);
+	      if (numeric)
+		valueDbl = ((Number) value).doubleValue();
+	      else
+		valueDbl = Double.NaN;
 	      valueStr = "" + value;
-	      if (m_ColumnFilters.containsKey(col))
-		show = valueStr.toLowerCase().contains(m_ColumnFilters.get(col));
-	      else if (m_ColumnFiltersRegExp.containsKey(col))
+	      if (m_ColumnFilters.containsKey(col)) {
+		if (numeric && m_ColumnFiltersNumeric.containsKey(col))
+		  show = (Double.compare(valueDbl, m_ColumnFiltersNumeric.get(col)) == 0);
+		else
+		  show = valueStr.toLowerCase().contains(m_ColumnFilters.get(col));
+	      }
+	      else if (m_ColumnFiltersRegExp.containsKey(col)) {
 		show = m_ColumnFiltersRegExp.get(col).isMatch(valueStr);
+	      }
 	    }
 	    else {
 	      show = !((m_ColumnFilters.containsKey(col)) || (m_ColumnFiltersRegExp.containsKey(col)));
@@ -915,6 +932,7 @@ public class SortableAndSearchableWrapperTableModel
   public void setColumnFilter(int column, String filter, boolean isRegExp) {
     if ((filter == null) || filter.isEmpty())
       return;
+
     if (isRegExp) {
       m_ColumnFiltersRegExp.put(column, new BaseRegExp(filter));
       m_ColumnFilters.remove(column);
@@ -923,6 +941,12 @@ public class SortableAndSearchableWrapperTableModel
       m_ColumnFilters.put(column, filter.toLowerCase());
       m_ColumnFiltersRegExp.remove(column);
     }
+
+    // numeric?
+    m_ColumnFiltersNumeric.remove(column);
+    if (Utils.isDouble(filter))
+      m_ColumnFiltersNumeric.put(column, Utils.toDouble(filter));
+
     doSearchAndFilter();
   }
 
@@ -940,7 +964,7 @@ public class SortableAndSearchableWrapperTableModel
   }
 
   /**
-   * Returns the whether the filter for the column is a regular expression.
+   * Returns whether the filter for the column is a regular expression.
    *
    * @param column	the column to query
    * @return		true if filter set and regular expression
@@ -950,7 +974,7 @@ public class SortableAndSearchableWrapperTableModel
   }
 
   /**
-   * Returns the whether there is a filter active for the column.
+   * Returns whether there is a filter active for the column.
    *
    * @param column	the column to query
    * @return		true if a filter is active
@@ -976,6 +1000,7 @@ public class SortableAndSearchableWrapperTableModel
   public void removeColumnFilter(int column) {
     m_ColumnFilters.remove(column);
     m_ColumnFiltersRegExp.remove(column);
+    m_ColumnFiltersNumeric.remove(column);
     doSearchAndFilter();
   }
 
@@ -985,6 +1010,7 @@ public class SortableAndSearchableWrapperTableModel
   public void removeAllColumnFilters() {
     m_ColumnFilters.clear();
     m_ColumnFiltersRegExp.clear();
+    m_ColumnFiltersNumeric.clear();
     doSearchAndFilter();
   }
 
