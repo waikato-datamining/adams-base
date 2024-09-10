@@ -245,9 +245,14 @@ public abstract class AbstractInvestigatorTab
     if (m_Worker == null)
       return;
 
-    m_Worker.stop();
-    m_Worker = null;
-    postStopExecution();
+    try {
+      m_Worker.interrupt();
+      m_Worker.stop();
+    }
+    finally {
+      m_Worker = null;
+      postStopExecution();
+    }
   }
 
   /**

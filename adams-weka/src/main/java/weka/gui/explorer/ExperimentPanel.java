@@ -834,7 +834,12 @@ public class ExperimentPanel
       m_RunThread.interrupt();
       
       // This is deprecated (and theoretically the interrupt should do).
-      m_RunThread.stop();
+      try {
+	m_RunThread.stop();
+      }
+      catch (Exception e) {
+	// ignored
+      }
     }
   }
   

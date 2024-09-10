@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -673,10 +673,15 @@ public class InvestigatorPanel
     if (m_Worker == null)
       return;
 
-    m_Worker.stop();
-    logAndShowMessage("Stopped: " + m_Job.getTitle());
-    executionFinished();
-    updateMenu();
+    try {
+      m_Worker.interrupt();
+      m_Worker.stop();
+    }
+    finally {
+      logAndShowMessage("Stopped: " + m_Job.getTitle());
+      executionFinished();
+      updateMenu();
+    }
   }
 
   /**
