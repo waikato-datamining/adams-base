@@ -15,13 +15,15 @@
 
 /*
  * ToggleOutlier.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink.sequenceplotter;
 
 import adams.data.sequence.XYSequencePoint;
 import adams.flow.control.RemoveOutliers;
+import adams.gui.core.KeyUtils;
+import adams.gui.core.MouseUtils;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.CrossHitDetector;
 
@@ -60,8 +62,8 @@ public class ToggleOutlier
     super.defineOptions();
 
     m_OptionManager.add(
-	    "hit-detector", "hitDetector",
-	     new CrossHitDetector());
+      "hit-detector", "hitDetector",
+      new CrossHitDetector());
   }
 
   /**
@@ -94,55 +96,47 @@ public class ToggleOutlier
   }
 
   /**
-   * Gets called in case of a left-click.
+   * Gets triggered if the user clicks on the canvas.
    *
    * @param panel	the associated panel
    * @param e		the mouse event
    */
   @Override
-  protected void processLeftClick(SequencePlotterPanel panel, MouseEvent e) {
+  public void mouseClickOccurred(SequencePlotterPanel panel, MouseEvent e) {
     Object			located;
     List<XYSequencePoint> 	hits;
     SequencePlotPoint		point;
 
-    if (m_HitDetector.getOwner() != panel.getDataPaintlet())
-      m_HitDetector.setOwner(panel.getDataPaintlet());
-    located = m_HitDetector.locate(e);
-    if (located instanceof List) {
-      hits = (List<XYSequencePoint>) located;
-      for (XYSequencePoint hit: hits) {
-	if (hit instanceof SequencePlotPoint) {
-	  point = (SequencePlotPoint) hit;
-	  if (point.hasMetaData()) {
-	    if (point.getMetaData().containsKey(RemoveOutliers.KEY_OUTLIER))
-	      point.getMetaData().put(
-		RemoveOutliers.KEY_OUTLIER,
-		!((Boolean) point.getMetaData().get(RemoveOutliers.KEY_OUTLIER)));
-	    else
+    if (MouseUtils.isLeftClick(e) && KeyUtils.isNoneDown(e.getModifiersEx())) {
+      e.consume();
+      if (m_HitDetector.getOwner() != panel.getDataPaintlet())
+	m_HitDetector.setOwner(panel.getDataPaintlet());
+      located = m_HitDetector.locate(e);
+      if (located instanceof List) {
+	hits = (List<XYSequencePoint>) located;
+	for (XYSequencePoint hit : hits) {
+	  if (hit instanceof SequencePlotPoint) {
+	    point = (SequencePlotPoint) hit;
+	    if (point.hasMetaData()) {
+	      if (point.getMetaData().containsKey(RemoveOutliers.KEY_OUTLIER))
+		point.getMetaData().put(
+		  RemoveOutliers.KEY_OUTLIER,
+		  !((Boolean) point.getMetaData().get(RemoveOutliers.KEY_OUTLIER)));
+	      else
+		point.getMetaData().put(
+		  RemoveOutliers.KEY_OUTLIER,
+		  true);
+	    }
+	    else {
+	      point.setMetaData(new HashMap<>());
 	      point.getMetaData().put(
 		RemoveOutliers.KEY_OUTLIER,
 		true);
-	  }
-	  else {
-	    point.setMetaData(new HashMap<>());
-	    point.getMetaData().put(
-	      RemoveOutliers.KEY_OUTLIER,
-	      true);
+	    }
 	  }
 	}
+	panel.update();
       }
-      panel.update();
     }
-  }
-
-  /**
-   * Gets called in case of a right-click.
-   *
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  @Override
-  protected void processRightClick(SequencePlotterPanel panel, MouseEvent e) {
-    // ignored
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NullClickAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
@@ -25,7 +25,6 @@ import java.awt.event.MouseEvent;
  * Dummy action, does nothing.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NullClickAction
   extends AbstractMouseClickAction {
@@ -44,22 +43,12 @@ public class NullClickAction
   }
 
   /**
-   * Does nothing.
-   * 
+   * Gets triggered if the user clicks on the canvas.
+   *
    * @param panel	the associated panel
    * @param e		the mouse event
    */
   @Override
-  protected void processLeftClick(SequencePlotterPanel panel, MouseEvent e) {
-  }
-
-  /**
-   * Does nothing.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  @Override
-  protected void processRightClick(SequencePlotterPanel panel, MouseEvent e) {
+  public void mouseClickOccurred(SequencePlotterPanel panel, MouseEvent e) {
   }
 }

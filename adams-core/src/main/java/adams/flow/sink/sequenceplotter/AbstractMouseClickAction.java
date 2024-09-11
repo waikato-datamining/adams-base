@@ -13,23 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMouseClickAction.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
-import java.awt.event.MouseEvent;
-
 import adams.core.option.AbstractOptionHandler;
-
-import com.googlecode.jfilechooserbookmarks.gui.MouseUtils;
 
 /**
  * Ancestor for classes that react to mouse clicks on the canvas.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMouseClickAction
   extends AbstractOptionHandler
@@ -37,33 +32,4 @@ public abstract class AbstractMouseClickAction
 
   /** for serialization. */
   private static final long serialVersionUID = 5402943914014171320L;
-
-  /**
-   * Gets called in case of a left-click.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  protected abstract void processLeftClick(SequencePlotterPanel panel, MouseEvent e);
-
-  /**
-   * Gets called in case of a right-click.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  protected abstract void processRightClick(SequencePlotterPanel panel, MouseEvent e);
-
-  /**
-   * Gets triggered if the user clicks on the canvas.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  public void mouseClickOccurred(SequencePlotterPanel panel, MouseEvent e) {
-    if (MouseUtils.isLeftClick(e))
-      processLeftClick(panel, e);
-    else
-      processRightClick(panel, e);
-  }
 }
