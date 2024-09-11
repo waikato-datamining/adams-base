@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MouseClickAction.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.stats.scatterplot.action;
 
@@ -29,7 +29,6 @@ import java.io.Serializable;
  * canvas.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface MouseClickAction
   extends Serializable {

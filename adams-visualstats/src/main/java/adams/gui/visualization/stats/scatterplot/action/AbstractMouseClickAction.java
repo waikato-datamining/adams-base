@@ -13,17 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMouseClickAction.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.stats.scatterplot.action;
 
 import adams.core.option.AbstractOptionHandler;
-import adams.gui.visualization.stats.scatterplot.ScatterPlot;
-import com.googlecode.jfilechooserbookmarks.gui.MouseUtils;
-
-import java.awt.event.MouseEvent;
 
 /**
  * Ancestor for classes that react to mouse clicks on the canvas.
@@ -37,33 +33,4 @@ public abstract class AbstractMouseClickAction
 
   /** for serialization. */
   private static final long serialVersionUID = 5402943914014171320L;
-
-  /**
-   * Gets called in case of a left-click.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  protected abstract void processLeftClick(ScatterPlot panel, MouseEvent e);
-
-  /**
-   * Gets called in case of a right-click.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  protected abstract void processRightClick(ScatterPlot panel, MouseEvent e);
-
-  /**
-   * Gets triggered if the user clicks on the canvas.
-   * 
-   * @param panel	the associated panel
-   * @param e		the mouse event
-   */
-  public void mouseClickOccurred(ScatterPlot panel, MouseEvent e) {
-    if (MouseUtils.isLeftClick(e))
-      processLeftClick(panel, e);
-    else
-      processRightClick(panel, e);
-  }
 }
