@@ -15,7 +15,7 @@
 
 /*
  * ScatterPlot.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.scatterplot;
@@ -599,6 +599,7 @@ public class ScatterPlot
     dialog.setDefaultCloseOperation(SpreadSheetDialog.DISPOSE_ON_CLOSE);
     dialog.setTitle("Scatterplot");
     dialog.setSpreadSheet(toSpreadSheet());
+    dialog.getTable().setOptimalColumnWidthBounded(100);
     dialog.pack();
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
