@@ -15,7 +15,7 @@
 
 /*
  * ScatterPaintletErrors.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -74,24 +74,28 @@ extends AbstractScatterPlotPaintlet {
     int 	i;
     int 	posX;
     int 	posY;
+    double[]	x;
+    double[]	y;
 
     super.drawData(g);
 
-    if ((m_XData == null) || (m_YData == null))
+    x = m_XData;
+    y = m_YData;
+    if ((x == null) || (y == null))
       return;
 
     // need to convert value to pos using axis class
     g2d  = (Graphics2D) g;
-    for (i = 0; i< m_XData.length; i++) {
+    for (i = 0; i< x.length; i++) {
       //calculate size
-      size = (int)((10*(m_XData[i] - m_YData[i]))/(m_XData[i]));
+      size = (int)((10*(x[i] - y[i]))/(x[i]));
       if (size > 10)
 	size = 10;
       if (size <2)
 	size = 2;
 
-      posX = m_AxisBottom.valueToPos(m_XData[i]);
-      posY = m_AxisLeft.valueToPos(m_YData[i]);
+      posX = m_AxisBottom.valueToPos(x[i]);
+      posY = m_AxisLeft.valueToPos(y[i]);
       //plot the points
       g2d.setColor(getActualColor(i, m_Color));
       g2d.setStroke(new BasicStroke(m_StrokeThickness));

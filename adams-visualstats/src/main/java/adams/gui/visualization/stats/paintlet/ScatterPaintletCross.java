@@ -15,7 +15,7 @@
 
 /*
  * ScatterPaintletCross.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -111,16 +111,20 @@ extends AbstractScatterPlotPaintlet {
     int 	posY;
     Graphics2D 	g2d;
     int 	i;
+    double[]	x;
+    double[]	y;
 
     super.drawData(g);
 
-    if ((m_XData == null) || (m_YData == null))
+    x = m_XData;
+    y = m_YData;
+    if ((x == null) || (y == null))
       return;
 
     g2d = (Graphics2D)g;
-    for (i = 0; i< m_XData.length; i++) {
-      posX = m_AxisBottom.valueToPos(m_XData[i]);
-      posY = m_AxisLeft.valueToPos(m_YData[i]);
+    for (i = 0; i< x.length; i++) {
+      posX = m_AxisBottom.valueToPos(x[i]);
+      posY = m_AxisLeft.valueToPos(y[i]);
       // plot the points
       g2d.setColor(getActualColor(i, m_Color));
       g2d.setStroke(new BasicStroke(m_StrokeThickness));
