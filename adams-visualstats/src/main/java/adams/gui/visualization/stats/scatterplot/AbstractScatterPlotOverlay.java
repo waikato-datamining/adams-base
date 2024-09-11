@@ -40,7 +40,7 @@ public abstract class AbstractScatterPlotOverlay
   private static final long serialVersionUID = 7526127735639196077L;
 
   /** parent scatter plot to plot data on */
-  protected AbstractScatterPlot m_Parent;
+  protected transient AbstractScatterPlot m_Parent;
 
   /**Instances object containing data */
   protected SpreadSheet m_Data;

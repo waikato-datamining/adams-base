@@ -33,11 +33,8 @@ import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.awt.Dialog.ModalityType;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Displays the data that the user clicked on in a table.
@@ -52,9 +49,6 @@ public class ViewDataClickAction
 
   /** the hit detector to use. */
   protected AbstractScatterPlotHitDetector m_HitDetector;
-
-  /** the polygon points collected so far. */
-  protected List<Point> m_Polygon;
 
   /**
    * Returns a string describing the object.
@@ -80,16 +74,6 @@ public class ViewDataClickAction
     m_OptionManager.add(
       "hit-detector", "hitDetector",
       new ScatterPlotCircleHitDetector());
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Polygon = new ArrayList<>();
   }
 
   /**
@@ -167,17 +151,20 @@ public class ViewDataClickAction
     AxisPanel 	axisX;
     AxisPanel	axisY;
 
-    if (m_Polygon.size() < 3) {
-      m_Polygon.clear();
+    if (panel.getSelection().size() < 3) {
+      panel.clearSelection();
       return;
     }
 
+    axisX = panel.getPlot().getAxis(Axis.BOTTOM);
+    axisY = panel.getPlot().getAxis(Axis.LEFT);
+
     // create polygon
-    x = new int[m_Polygon.size()];
-    y = new int[m_Polygon.size()];
-    for (i = 0; i < m_Polygon.size(); i++) {
-      x[i] = (int) m_Polygon.get(i).getX();
-      y[i] = (int) m_Polygon.get(i).getY();
+    x = new int[panel.getSelection().size()];
+    y = new int[panel.getSelection().size()];
+    for (i = 0; i < panel.getSelection().size(); i++) {
+      x[i] = axisX.valueToPos(panel.getSelection().get(i).getX());
+      y[i] = axisY.valueToPos(panel.getSelection().get(i).getY());
     }
     poly = new Polygon(x, y, x.length);
 
@@ -186,8 +173,6 @@ public class ViewDataClickAction
     sheet = panel.toSpreadSheet();
     colX  = panel.getXIntIndex();
     colY  = panel.getYIntIndex();
-    axisX = panel.getPlot().getAxis(Axis.BOTTOM);
-    axisY = panel.getPlot().getAxis(Axis.LEFT);
     for (i = 0; i < sheet.getRowCount(); i++) {
       valX = sheet.getCell(i, colX).toDouble();
       valY = sheet.getCell(i, colY).toDouble();
@@ -202,7 +187,8 @@ public class ViewDataClickAction
     }
 
     // clear points
-    m_Polygon.clear();
+    panel.clearSelection();
+    panel.update();
 
     // display data
     data = sheet.toView(hits.toArray(), null);
@@ -240,10 +226,6 @@ public class ViewDataClickAction
 	e.consume();
 	showPolygonPoints(panel);
       }
-      else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
-	e.consume();
-	m_Polygon.clear();
-      }
     }
     else if (MouseUtils.isLeftClick(e)) {
       if (KeyUtils.isNoneDown(e.getModifiersEx())) {
@@ -254,11 +236,6 @@ public class ViewDataClickAction
 	if (located instanceof int[]) {
 	  showHits(panel, (int[]) located);
 	}
-      }
-      else if (KeyUtils.isOnlyShiftDown(e.getModifiersEx())) {
-	e.consume();
-	// add polygon point
-	m_Polygon.add(new Point(e.getX(), e.getY()));
       }
     }
   }

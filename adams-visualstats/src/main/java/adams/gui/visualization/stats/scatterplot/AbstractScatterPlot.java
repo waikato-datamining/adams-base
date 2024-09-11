@@ -24,8 +24,11 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.flow.sink.TextSupplier;
 import adams.gui.core.ExtensionFileFilter;
+import adams.gui.core.KeyUtils;
+import adams.gui.core.MouseUtils;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.core.plot.HitDetector;
 import adams.gui.visualization.core.plot.HitDetectorSupporter;
 import adams.gui.visualization.core.plot.TipTextCustomizer;
@@ -33,8 +36,12 @@ import adams.gui.visualization.stats.paintlet.AbstractScatterPlotPaintlet;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Abstract class for displaying a single scatterplotpanel on a paintable panel.
@@ -66,14 +73,54 @@ public abstract class AbstractScatterPlot
   /** Array of overlay options */
   protected AbstractScatterPlotOverlay[] m_Overlays;
 
+  /** whether selection is enabled. */
+  protected boolean m_SelectionEnabled;
+
+  /** the selection points collected so far. */
+  protected List<Point2D.Double> m_Selection;
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    m_XIntIndex = 0;
-    m_YIntIndex = 0;
+
+    m_XIntIndex        = 0;
+    m_YIntIndex        = 0;
+    m_Selection        = new ArrayList<>();
+    m_SelectionEnabled = false;
+  }
+
+  /**
+   * Finishes the initialization.
+   */
+  @Override
+  protected void finishInit() {
+    super.finishInit();
+
+    m_Plot.addMouseClickListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_SelectionEnabled) {
+	  if (MouseUtils.isRightClick(e)) {
+	    if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
+	      e.consume();
+	      m_Selection.clear();
+	    }
+	  }
+	  else if (MouseUtils.isLeftClick(e)) {
+	    if (KeyUtils.isOnlyShiftDown(e.getModifiersEx())) {
+	      e.consume();
+	      // add polygon point
+	      double valX = getPlot().getAxis(Axis.BOTTOM).posToValue(e.getX());
+	      double valY = getPlot().getAxis(Axis.LEFT).posToValue(e.getY());
+	      m_Selection.add(new Point2D.Double(valX, valY));
+	    }
+	  }
+	}
+      }
+    });
   }
 
   /**
@@ -94,6 +141,12 @@ public abstract class AbstractScatterPlot
     m_Paintlet = val;
   }
 
+  /**
+   * Returns true if the paintlets can be executed.
+   *
+   * @param g		the graphics context
+   * @return		true if painting can go ahead
+   */
   protected boolean canPaint(Graphics g) {
     return (m_Plot != null && m_Data != null);
   }
@@ -237,5 +290,39 @@ public abstract class AbstractScatterPlot
    */
   public String supplyText() {
     return toSpreadSheet().toString();
+  }
+
+  /**
+   * Returns the currently selected points.
+   *
+   * @return		the points
+   */
+  public List<Point2D.Double> getSelection() {
+    return m_Selection;
+  }
+
+  /**
+   * Removes any selected points.
+   */
+  public void clearSelection() {
+    m_Selection.clear();
+  }
+
+  /**
+   * Sets whether data points can be selected.
+   *
+   * @param value	true if can be selected
+   */
+  public void setSelectionEnabled(boolean value) {
+    m_SelectionEnabled = value;
+  }
+
+  /**
+   * Returns whether data points can be selected.
+   *
+   * @return		true if can be selected
+   */
+  public boolean isSelectionEnabled() {
+    return m_SelectionEnabled;
   }
 }

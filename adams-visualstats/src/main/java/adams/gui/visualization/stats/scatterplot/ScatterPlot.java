@@ -508,8 +508,10 @@ public class ScatterPlot
     int					i;
     
     overlays = new AbstractScatterPlotOverlay[val.length];
-    for (i = 0; i < val.length; i++)
+    for (i = 0; i < val.length; i++) {
       overlays[i] = val[i].shallowCopy();
+      overlays[i].setParent(this);
+    }
     m_PanelOverlay.setCurrent(overlays);
     changeOverlay();
   }
@@ -561,6 +563,7 @@ public class ScatterPlot
   public void prepareUpdate() {
     for (int i = 0; i< m_Overlays.length; i++) {
       if (m_Overlays[i].getPaintlet() != null) {
+	m_Overlays[i].setParent(this);
 	m_Overlays[i].getPaintlet().parameters(m_Data, m_XIntIndex, m_YIntIndex);
 	if (!m_Overlays[i].getPaintlet().getCalculated())
 	  m_Overlays[i].getPaintlet().calculate();
