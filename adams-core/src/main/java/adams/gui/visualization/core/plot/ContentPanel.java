@@ -15,7 +15,7 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
@@ -28,6 +28,7 @@ import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ImageManager;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.event.PlotPanelPanningEvent;
@@ -262,7 +263,7 @@ public class ContentPanel
       @Override
       public void mouseClicked(MouseEvent e) {
         if (!MouseUtils.isPrintScreenClick(e)) {
-          if (MouseUtils.isRightClick(e)) {
+          if (MouseUtils.isRightClick(e) && !KeyUtils.isCtrlDown(e.getModifiersEx()) && !KeyUtils.isShiftDown(e.getModifiersEx())) {
             BasePopupMenu menu = getPopupMenu(e);
             if (menu != null)
               menu.showAbsolute(m_Self, e);
