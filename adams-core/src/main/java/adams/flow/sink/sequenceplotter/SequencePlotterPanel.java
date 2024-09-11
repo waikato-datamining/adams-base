@@ -13,15 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SequencePlotterPanel.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
 import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.KeyUtils;
+import adams.gui.core.MouseUtils;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.visualization.core.ColorProvider;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
@@ -31,12 +34,15 @@ import gnu.trove.list.array.TIntArrayList;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The panel that plots all the sequences.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SequencePlotterPanel
   extends XYSequencePanel {
@@ -61,7 +67,13 @@ public class SequencePlotterPanel
 
   /** the mouse click action. */
   protected MouseClickAction m_MouseClickAction;
-  
+
+  /** whether selection is enabled. */
+  protected boolean m_SelectionEnabled;
+
+  /** the selection points collected so far. */
+  protected List<Double> m_Selection;
+
   /**
    * Initializes the panel with the specified title.
    *
@@ -81,6 +93,8 @@ public class SequencePlotterPanel
     m_MarkerContainerManager  = newMarkerContainerManager();
     m_OverlayContainerManager = newOverlayContainerManager();
     m_MouseClickAction        = new NullClickAction();
+    m_Selection               = new ArrayList<>();
+    m_SelectionEnabled        = true;
   }
 
   /**
@@ -107,7 +121,30 @@ public class SequencePlotterPanel
 	  m_MouseClickAction.mouseClickOccurred(SequencePlotterPanel.this, e);
       }
     });
-    
+
+    getPlot().addMouseClickListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_SelectionEnabled) {
+	  if (MouseUtils.isRightClick(e)) {
+	    if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
+	      e.consume();
+	      clearSelection();
+	    }
+	  }
+	  else if (MouseUtils.isLeftClick(e)) {
+	    if (KeyUtils.isOnlyShiftDown(e.getModifiersEx())) {
+	      e.consume();
+	      // add polygon point
+	      double valX = getPlot().getAxis(Axis.BOTTOM).posToValue(e.getX());
+	      double valY = getPlot().getAxis(Axis.LEFT).posToValue(e.getY());
+	      m_Selection.add(new Point2D.Double(valX, valY));
+	    }
+	  }
+	}
+      }
+    });
+
     setAllowResize(true);
   }
 
@@ -419,5 +456,39 @@ public class SequencePlotterPanel
     }
 
     super.dataChanged(e);
+  }
+
+  /**
+   * Returns the currently selected points.
+   *
+   * @return		the points
+   */
+  public List<Point2D.Double> getSelection() {
+    return m_Selection;
+  }
+
+  /**
+   * Removes any selected points.
+   */
+  public void clearSelection() {
+    m_Selection.clear();
+  }
+
+  /**
+   * Sets whether data points can be selected.
+   *
+   * @param value	true if can be selected
+   */
+  public void setSelectionEnabled(boolean value) {
+    m_SelectionEnabled = value;
+  }
+
+  /**
+   * Returns whether data points can be selected.
+   *
+   * @return		true if can be selected
+   */
+  public boolean isSelectionEnabled() {
+    return m_SelectionEnabled;
   }
 }

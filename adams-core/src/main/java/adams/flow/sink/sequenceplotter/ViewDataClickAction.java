@@ -34,7 +34,6 @@ import adams.gui.visualization.sequence.CircleHitDetector;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 
 import java.awt.Dialog.ModalityType;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -53,9 +52,6 @@ public class ViewDataClickAction
 
   /** the hit detector to use. */
   protected AbstractXYSequencePointHitDetector m_HitDetector;
-
-  /** the polygon points collected so far. */
-  protected List<Point> m_Polygon;
 
   /**
    * Returns a string describing the object.
@@ -81,16 +77,6 @@ public class ViewDataClickAction
     m_OptionManager.add(
       "hit-detector", "hitDetector",
       new CircleHitDetector());
-  }
-
-  /**
-   * Initializes the members.
-   */
-  @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_Polygon = new ArrayList<>();
   }
 
   /**
@@ -156,7 +142,6 @@ public class ViewDataClickAction
     int[]			y;
     int				i;
     Polygon 			poly;
-    SpreadSheet			data;
     List<XYSequencePoint> 	hits;
     int				posX;
     int				posY;
@@ -165,24 +150,25 @@ public class ViewDataClickAction
     XYSequenceContainer		cont;
     XYSequence			seq;
 
-    if (m_Polygon.size() < 3) {
-      m_Polygon.clear();
+    if (panel.getSelection().size() < 3) {
+      panel.clearSelection();
       return;
     }
 
+    axisX = panel.getPlot().getAxis(Axis.BOTTOM);
+    axisY = panel.getPlot().getAxis(Axis.LEFT);
+
     // create polygon
-    x = new int[m_Polygon.size()];
-    y = new int[m_Polygon.size()];
-    for (i = 0; i < m_Polygon.size(); i++) {
-      x[i] = (int) m_Polygon.get(i).getX();
-      y[i] = (int) m_Polygon.get(i).getY();
+    x = new int[panel.getSelection().size()];
+    y = new int[panel.getSelection().size()];
+    for (i = 0; i < panel.getSelection().size(); i++) {
+      x[i] = axisX.valueToPos(panel.getSelection().get(i).getX());
+      y[i] = axisY.valueToPos(panel.getSelection().get(i).getY());
     }
     poly = new Polygon(x, y, x.length);
 
     // iterate data
     hits  = new ArrayList<>();
-    axisX = panel.getPlot().getAxis(Axis.BOTTOM);
-    axisY = panel.getPlot().getAxis(Axis.LEFT);
     for (i = 0; i < panel.getSequenceManager().count(); i++) {
       cont = (XYSequenceContainer) panel.getSequenceManager().get(i);
       seq  = cont.getData();
@@ -195,7 +181,8 @@ public class ViewDataClickAction
     }
 
     // clear points
-    m_Polygon.clear();
+    panel.clearSelection();
+    panel.update();
 
     // display data
     showHits(panel, hits);
@@ -233,10 +220,6 @@ public class ViewDataClickAction
 	e.consume();
 	showPolygonPoints(panel);
       }
-      else if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
-	e.consume();
-	m_Polygon.clear();
-      }
     }
     else if (MouseUtils.isLeftClick(e)) {
       if (KeyUtils.isNoneDown(e.getModifiersEx())) {
@@ -247,11 +230,6 @@ public class ViewDataClickAction
 	if (located instanceof List) {
 	  showHits(panel, (List<XYSequencePoint>) located);
 	}
-      }
-      else if (KeyUtils.isOnlyShiftDown(e.getModifiersEx())) {
-	e.consume();
-	// add polygon point
-	m_Polygon.add(new Point(e.getX(), e.getY()));
       }
     }
   }
