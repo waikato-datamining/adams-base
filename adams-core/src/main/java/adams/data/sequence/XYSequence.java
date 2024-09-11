@@ -483,6 +483,7 @@ public class XYSequence
     result.setDataRowClass(SparseDataRow.class);
     result.setName(getID());
     row    = result.getHeaderRow();
+    row.addCell("Seq").setContent("Sequence");
     row.addCell("ID").setContent("ID");
     row.addCell("X").setContent("X");
     row.addCell("Y").setContent("Y");
@@ -498,6 +499,7 @@ public class XYSequence
     while (iter.hasNext()) {
       point = iter.next();
       row   = result.addRow();
+      row.addCell("Seq").setContentAsString(point.getParent().getID());
       row.addCell("ID").setContent(point.getID());
       if (hasMappingX())
 	row.addCell("X").setContent(getMappingX(point.getX()));
