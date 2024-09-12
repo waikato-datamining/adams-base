@@ -107,6 +107,7 @@ public abstract class AbstractScatterPlot
 	    if (KeyUtils.isCtrlDown(e.getModifiersEx())) {
 	      e.consume();
 	      m_Selection.clear();
+	      update();
 	    }
 	  }
 	  else if (MouseUtils.isLeftClick(e)) {
