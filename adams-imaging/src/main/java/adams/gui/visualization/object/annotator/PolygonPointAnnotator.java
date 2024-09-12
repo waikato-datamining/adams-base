@@ -15,7 +15,7 @@
 
 /*
  * PolygonPointAnnotator.java
- * Copyright (C) 2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -352,15 +352,26 @@ public class PolygonPointAnnotator
     Polygon 	poly;
     float	width;
 
-    if (m_Points.size() < 3)
+    if (m_Points.isEmpty())
       return;
 
     width = getStrokeWidth(g, 1.0f);
     applyStroke(g, m_StrokeThickness);
 
     g.setColor(m_Color);
-    poly = PolygonUtils.toPolygon(m_Points);
-    g.drawPolygon(poly.xpoints, poly.ypoints, poly.npoints);
+
+    if (m_Points.size() == 1) {
+      g.drawOval((int) m_Points.get(0).getX(), (int) m_Points.get(0).getY(), 3, 3);
+    }
+    else if (m_Points.size() == 2) {
+      g.drawLine(
+	(int) m_Points.get(0).getX(), (int) m_Points.get(0).getY(),
+	(int) m_Points.get(1).getX(), (int) m_Points.get(1).getY());
+    }
+    else {
+      poly = PolygonUtils.toPolygon(m_Points);
+      g.drawPolygon(poly.xpoints, poly.ypoints, poly.npoints);
+    }
 
     applyStroke(g, width);
   }
