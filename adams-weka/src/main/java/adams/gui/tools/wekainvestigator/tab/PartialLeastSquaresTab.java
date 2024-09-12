@@ -55,6 +55,7 @@ import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
+import adams.gui.visualization.stats.scatterplot.PolygonSelection;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import weka.core.Instances;
@@ -245,7 +246,8 @@ public class PartialLeastSquaresTab
     m_PanelLoadings.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelLoadings.setMouseClickAction(new ViewDataClickAction());
     m_PanelLoadings.setOverlays(new AbstractScatterPlotOverlay[]{
-      new Coordinates()
+      new Coordinates(),
+      new PolygonSelection(),
     });
     m_TabbedPanePlots.addTab("Loadings", m_PanelLoadings);
 
@@ -278,7 +280,8 @@ public class PartialLeastSquaresTab
     m_PanelScores.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelScores.setMouseClickAction(new ViewDataClickAction());
     m_PanelScores.setOverlays(new AbstractScatterPlotOverlay[]{
-      new Coordinates()
+      new Coordinates(),
+      new PolygonSelection(),
     });
     m_TabbedPanePlots.addTab("Scores", m_PanelScores);
   }

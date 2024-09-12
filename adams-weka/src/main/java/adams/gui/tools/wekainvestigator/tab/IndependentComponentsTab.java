@@ -15,7 +15,7 @@
 
 /*
  * IndependentComponentsTab.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -42,6 +42,7 @@ import adams.gui.tools.wekainvestigator.job.InvestigatorTabJob;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.scatterplot.AbstractScatterPlotOverlay;
 import adams.gui.visualization.stats.scatterplot.Coordinates;
+import adams.gui.visualization.stats.scatterplot.PolygonSelection;
 import adams.gui.visualization.stats.scatterplot.ScatterPlot;
 import adams.gui.visualization.stats.scatterplot.action.ViewDataClickAction;
 import com.github.waikatodatamining.matrix.algorithm.ica.FastICA;
@@ -239,7 +240,8 @@ public class IndependentComponentsTab
     m_PanelComponents.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelComponents.setMouseClickAction(new ViewDataClickAction());
     m_PanelComponents.setOverlays(new AbstractScatterPlotOverlay[]{
-      new Coordinates()
+      new Coordinates(),
+      new PolygonSelection(),
     });
     m_TabbedPanePlots.addTab("Components", m_PanelComponents);
 
@@ -252,7 +254,8 @@ public class IndependentComponentsTab
     m_PanelSources.getPlot().getAxis(Axis.BOTTOM).setBottomMargin(0.01);
     m_PanelSources.setMouseClickAction(new ViewDataClickAction());
     m_PanelSources.setOverlays(new AbstractScatterPlotOverlay[]{
-      new Coordinates()
+      new Coordinates(),
+      new PolygonSelection(),
     });
     m_TabbedPanePlots.addTab("Sources", m_PanelSources);
   }
