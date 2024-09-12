@@ -221,7 +221,7 @@ public class BlockingSearch
       // wait before next search attempt
       if (isLoggingEnabled())
 	getLogger().info("Waiting " + m_Interval + " msecs...");
-      Utils.wait(this, m_Interval, MIN_WAIT);
+      Utils.wait(this, this, m_Interval, MIN_WAIT);
     }
 
     return result;
