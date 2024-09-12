@@ -15,7 +15,7 @@
 
 /*
  * Sleep.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -27,12 +27,12 @@ import adams.flow.transformer.AbstractTransformer;
 
 /**
  <!-- globalinfo-start -->
- * Waits for a fixed amount of milli-seconds.
+ * Waits for a fixed amount of milliseconds.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
  * - generates:<br>
@@ -41,10 +41,10 @@ import adams.flow.transformer.AbstractTransformer;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -52,25 +52,41 @@ import adams.flow.transformer.AbstractTransformer;
  * &nbsp;&nbsp;&nbsp;default: Sleep
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-interval &lt;int&gt; (property: interval)
- * &nbsp;&nbsp;&nbsp;The interval in milli-seconds to wait before continuing with the execution.
+ * &nbsp;&nbsp;&nbsp;The interval in milliseconds to wait before continuing with the execution.
  * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Sleep
   extends AbstractTransformer
@@ -79,7 +95,7 @@ public class Sleep
   /** for serialization. */
   private static final long serialVersionUID = -3383735680425581504L;
 
-  /** the interval in milli-seconds. */
+  /** the interval in milliseconds. */
   protected int m_Interval;
 
   /**
@@ -89,7 +105,7 @@ public class Sleep
    */
   @Override
   public String globalInfo() {
-    return "Waits for a fixed amount of milli-seconds.";
+    return "Waits for a fixed amount of milliseconds.";
   }
 
   /**
@@ -100,22 +116,24 @@ public class Sleep
     super.defineOptions();
 
     m_OptionManager.add(
-	    "interval", "interval",
-	    1000);
+      "interval", "interval",
+      1000, 1, null);
   }
 
   /**
-   * Sets the interval in milli-seconds to wait.
+   * Sets the interval in milliseconds to wait.
    *
    * @param value	the interval
    */
   public void setInterval(int value) {
-    m_Interval = value;
-    reset();
+    if (getOptionManager().isValid("interval", value)) {
+      m_Interval = value;
+      reset();
+    }
   }
 
   /**
-   * Returns the interval to wait in milli-seconds.
+   * Returns the interval to wait in milliseconds.
    *
    * @return		the interval
    */
@@ -130,7 +148,7 @@ public class Sleep
    * 			displaying in the GUI or for listing the options.
    */
   public String intervalTipText() {
-    return "The interval in milli-seconds to wait before continuing with the execution.";
+    return "The interval in milliseconds to wait before continuing with the execution.";
   }
 
   /**
