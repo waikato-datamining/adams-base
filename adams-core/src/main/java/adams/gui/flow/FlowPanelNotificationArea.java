@@ -282,9 +282,9 @@ public class FlowPanelNotificationArea
 	if (m_Notification != null) {
 	  int minHeight = (int) getPreferredSize().getHeight();
 	  if (getOwner().getSplitPane().getDividerLocation() + minHeight >= getOwner().getSplitPane().getMaximumDividerLocation()) {
-	    int newLocation = getOwner().getSplitPane().getDividerLocation() - minHeight;
+	    int newLocation = getOwner().getSplitPane().getMaximumDividerLocation() - minHeight;
 	    if (newLocation < 0)
-	      newLocation = getOwner().getSplitPane().getDividerLocation() / 2;
+	      newLocation = getOwner().getSplitPane().getMaximumDividerLocation() / 2;
 	    getOwner().getSplitPane().setDividerLocation(newLocation);
 	  }
 	}
