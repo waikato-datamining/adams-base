@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFileSystemSearchlet.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
 import adams.core.QuickInfoSupporter;
 import adams.core.ShallowCopySupporter;
-import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
@@ -33,12 +33,11 @@ import java.util.List;
  * Ancestor for file-system search algorithms.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFileSystemSearchlet
   extends AbstractOptionHandler
   implements ShallowCopySupporter<AbstractFileSystemSearchlet>,
-             QuickInfoSupporter, Stoppable, FlowContextHandler {
+             QuickInfoSupporter, StoppableWithFeedback, FlowContextHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5019667028030872568L;
@@ -111,7 +110,18 @@ public abstract class AbstractFileSystemSearchlet
   /**
    * Stops the execution.
    */
+  @Override
   public abstract void stopExecution();
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
+  }
 
   /**
    * Returns a shallow copy of itself, i.e., based on the commandline options.
