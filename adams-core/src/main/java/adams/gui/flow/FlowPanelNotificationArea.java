@@ -278,6 +278,16 @@ public class FlowPanelNotificationArea
       if (getOwner() != null) {
         displayIcon(getOwner(), m_Type);
 	getOwner().getSplitPane().setBottomComponentHidden(m_Notification == null);
+	// ensure that the notification panel is visible
+	if (m_Notification != null) {
+	  int minHeight = (int) getPreferredSize().getHeight();
+	  if (getOwner().getSplitPane().getDividerLocation() + minHeight >= getOwner().getSplitPane().getMaximumDividerLocation()) {
+	    int newLocation = getOwner().getSplitPane().getDividerLocation() - minHeight;
+	    if (newLocation < 0)
+	      newLocation = getOwner().getSplitPane().getDividerLocation() / 2;
+	    getOwner().getSplitPane().setDividerLocation(newLocation);
+	  }
+	}
       }
 
       for (AbstractNotificationAreaAction action: m_Actions)
