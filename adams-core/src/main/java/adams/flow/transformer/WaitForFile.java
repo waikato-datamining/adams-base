@@ -15,7 +15,7 @@
 
 /*
  * WaitForFile.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,8 +23,9 @@ package adams.flow.transformer;
 import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.fileuse.AbstractFileUseCheck;
+import adams.core.io.fileuse.Default;
 
 import java.io.File;
 
@@ -49,57 +50,66 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WaitForFile
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-check &lt;adams.core.io.fileuse.AbstractFileUseCheck&gt; (property: check)
+ * &nbsp;&nbsp;&nbsp;The check scheme to use.
+ * &nbsp;&nbsp;&nbsp;default: adams.core.io.fileuse.Default
+ * </pre>
+ *
  * <pre>-max-attempts &lt;int&gt; (property: numAttempts)
  * &nbsp;&nbsp;&nbsp;The maximum number of intervals to wait.
  * &nbsp;&nbsp;&nbsp;default: 10
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-attempt-nterval &lt;int&gt; (property: attemptInterval)
- * &nbsp;&nbsp;&nbsp;The interval in milli-seconds to wait before continuing with the execution.
+ * &nbsp;&nbsp;&nbsp;The interval in milliseconds to wait before continuing with the execution.
  * &nbsp;&nbsp;&nbsp;default: 100
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-generate-error &lt;boolean&gt; (property: generateError)
- * &nbsp;&nbsp;&nbsp;If enabled, will generate an error in case the maximum number of waits has 
+ * &nbsp;&nbsp;&nbsp;If enabled, will generate an error in case the maximum number of waits has
  * &nbsp;&nbsp;&nbsp;been reached and the file is in use.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WaitForFile
   extends AbstractTransformer
@@ -108,10 +118,13 @@ public class WaitForFile
   /** for serialization. */
   private static final long serialVersionUID = -3383735680425581504L;
 
+  /** the check scheme to use. */
+  protected AbstractFileUseCheck m_Check;
+
   /** the maximum number of interval to wait. */
   protected int m_NumAttempts;
 
-  /** the interval in milli-seconds to wait. */
+  /** the interval in milliseconds to wait. */
   protected int m_AttemptInterval;
 
   /** whether to generate an error, in case the file is still not available after the maximum wait. */
@@ -135,6 +148,10 @@ public class WaitForFile
     super.defineOptions();
 
     m_OptionManager.add(
+      "check", "check",
+      new Default());
+
+    m_OptionManager.add(
       "max-attempts", "numAttempts",
       10, 1, null);
 
@@ -145,6 +162,35 @@ public class WaitForFile
     m_OptionManager.add(
       "generate-error", "generateError",
       false);
+  }
+
+  /**
+   * Sets the 'in use' check scheme.
+   *
+   * @param value	the check scheme
+   */
+  public void setCheck(AbstractFileUseCheck value) {
+    m_Check = value;
+    reset();
+  }
+
+  /**
+   * Returns the 'in use' check scheme.
+   *
+   * @return		the check scheme
+   */
+  public AbstractFileUseCheck getCheck() {
+    return m_Check;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String checkTipText() {
+    return "The check scheme to use.";
   }
 
   /**
@@ -179,7 +225,7 @@ public class WaitForFile
   }
 
   /**
-   * Sets the interval in milli-seconds to wait.
+   * Sets the interval in milliseconds to wait.
    *
    * @param value	the interval
    */
@@ -191,7 +237,7 @@ public class WaitForFile
   }
 
   /**
-   * Returns the interval to wait in milli-seconds.
+   * Returns the interval to wait in milliseconds.
    *
    * @return		the interval
    */
@@ -206,7 +252,7 @@ public class WaitForFile
    * 			displaying in the GUI or for listing the options.
    */
   public String attemptIntervalTipText() {
-    return "The interval in milli-seconds to wait before continuing with the execution.";
+    return "The interval in milliseconds to wait before continuing with the execution.";
   }
 
   /**
@@ -254,6 +300,7 @@ public class WaitForFile
     result  = QuickInfoHelper.toString(this, "numAttempts", m_NumAttempts);
     result += " * ";
     result += QuickInfoHelper.toString(this, "attemptInterval", m_AttemptInterval) + "ms";
+    result += QuickInfoHelper.toString(this, "check", m_Check, ", check: ");
 
     return result;
   }
@@ -299,14 +346,14 @@ public class WaitForFile
     // wait
     count = 0;
     while ((count < m_NumAttempts) && !isStopped()) {
-      if (!FileUtils.isOpen(file))
+      if (!m_Check.isInUse(file))
 	break;
       count++;
       Utils.wait(this, m_AttemptInterval, Math.min(100, m_AttemptInterval));
     }
 
     if (!isStopped()) {
-      inUse = FileUtils.isOpen(file);
+      inUse = m_Check.isInUse(file);
       if (isLoggingEnabled())
 	getLogger().info("count=" + count + ", inUse=" + inUse + ", file=" + file);
 
