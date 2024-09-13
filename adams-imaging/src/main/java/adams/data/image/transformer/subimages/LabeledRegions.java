@@ -280,12 +280,18 @@ public class LabeledRegions
 	    + ", label=" + label);
       }
 
-      cont = (BufferedImageContainer) image.getHeader();
-      cont.setReport(transferObjects(cont.getReport(), x, y, width, height, label, m_LabelKey));
-      cont.setImage(bimage.getSubimage(x, y, width, height));
-      cont.getReport().setNumericValue(KEY_REGION, i);
-      cont.getReport().setStringValue(KEY_COORDINATES, (x+1) + "," + (y+1) + "," + width + "," + height);
-      result.add(cont);
+      if ((x + width - 1 < image.getWidth()) && (y + height - 1 < image.getHeight())) {
+	cont = (BufferedImageContainer) image.getHeader();
+	cont.setReport(transferObjects(cont.getReport(), x, y, width, height, label, m_LabelKey));
+	cont.setImage(bimage.getSubimage(x, y, width, height));
+	cont.getReport().setNumericValue(KEY_REGION, i);
+	cont.getReport().setStringValue(KEY_COORDINATES, (x + 1) + "," + (y + 1) + "," + width + "," + height);
+	result.add(cont);
+      }
+      else {
+	getLogger().warning("Region exceeds image dimensions: region: x=" + x + ", y=" + y + ", w=" + width + ", h=" + height
+			      + "; image: w=" + image.getWidth() + ", h=" + image.getHeight());
+      }
     }
 
     return result;
