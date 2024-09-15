@@ -15,7 +15,7 @@
 
 /*
  * FileComplete.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -213,11 +213,16 @@ public class FileComplete
 
     if (m_File.exists() && !m_File.isDirectory()) {
       result = m_Check.isComplete(m_File);
+      if (isLoggingEnabled())
+	getLogger().info(m_File + " -> " + result);
     }
     else if ((token.hasPayload(String.class)) || (token.hasPayload(File.class))) {
       file = new PlaceholderFile("" + token.getPayload());
-      if (file.exists() && !file.isDirectory())
+      if (file.exists() && !file.isDirectory()) {
 	result = m_Check.isComplete(file);
+	if (isLoggingEnabled())
+	  getLogger().info(m_File + " -> " + result);
+      }
     }
 
     return result;
