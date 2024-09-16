@@ -1284,6 +1284,7 @@ public class FlowPanel
       if (getRunGC()) {
 	showStatus("Running GC...");
 	System.gc();
+	showStatus("");
       }
     }
 
