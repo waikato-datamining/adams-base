@@ -15,7 +15,7 @@
 
 /*
  * TextEditorPanel.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -922,6 +922,13 @@ public class TextEditorPanel
       m_TextArea.setSelectionEnd(m_TextArea.getText().length());
     });
     menu.add(menuitem);
+
+    if (isEditable()) {
+      menuitem = new JMenuItem("Clear all");
+      menuitem.addActionListener((ActionEvent ae) -> m_TextArea.setText(""));
+      menu.addSeparator();
+      menu.add(menuitem);
+    }
 
     menuitem = new JCheckBoxMenuItem("Line wrap");
     menuitem.setSelected(getLineWrap());
