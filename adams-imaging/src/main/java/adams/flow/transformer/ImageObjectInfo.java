@@ -23,6 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRectangle;
+import adams.data.geometry.GeometryUtils;
 import adams.data.image.BufferedImageContainer;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
@@ -105,6 +106,23 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
  *
+ * <pre>-perform-scaling &lt;boolean&gt; (property: performScaling)
+ * &nbsp;&nbsp;&nbsp;If enabled, the scale factors for X&#47;Y get applied.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-scale-x &lt;double&gt; (property: scaleX)
+ * &nbsp;&nbsp;&nbsp;The scale factor for the X axis.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
+ * <pre>-scale-y &lt;double&gt; (property: scaleY)
+ * &nbsp;&nbsp;&nbsp;The scale factor for the Y axis.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -142,6 +160,15 @@ public class ImageObjectInfo
   /** the info to provide. */
   protected InfoType m_Type;
 
+  /** whether to scale coordinates/areas. */
+  protected boolean m_PerformScaling;
+
+  /** the scale factor for X. */
+  protected double m_ScaleX;
+
+  /** the scale factor for Y. */
+  protected double m_ScaleY;
+
   /**
    * Returns a string describing the object.
    *
@@ -152,7 +179,9 @@ public class ImageObjectInfo
     return
       "Outputs the requested type of information for either the incoming "
 	+ Utils.classToString(LocatedObject.class) + " or the specified image "
-	+ "object in the report.";
+	+ "object in the report.\n"
+       + "NB: When performing scaling, the output of " + InfoType.RECTANGLE + " and "
+	+ InfoType.BASE_RECTANGLE + " will use coordinates that were cast to int.";
   }
 
   /**
@@ -173,6 +202,18 @@ public class ImageObjectInfo
     m_OptionManager.add(
       "type", "type",
       InfoType.X);
+
+    m_OptionManager.add(
+      "perform-scaling", "performScaling",
+      false);
+
+    m_OptionManager.add(
+      "scale-x", "scaleX",
+      1.0, 0.0, null);
+
+    m_OptionManager.add(
+      "scale-y", "scaleY",
+      1.0, 0.0, null);
   }
 
   /**
@@ -263,6 +304,97 @@ public class ImageObjectInfo
   }
 
   /**
+   * Sets whether to perform scaling.
+   *
+   * @param value 	true if to perform
+   */
+  public void setPerformScaling(boolean value) {
+    m_PerformScaling = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to perform scaling.
+   *
+   * @return 		true if to perform
+   */
+  public boolean getPerformScaling() {
+    return m_PerformScaling;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String performScalingTipText() {
+    return "If enabled, the scale factors for X/Y get applied.";
+  }
+
+  /**
+   * Sets the scale factor for the X axis.
+   *
+   * @param value 	the scale factor
+   */
+  public void setScaleX(double value) {
+    if (getOptionManager().isValid("scaleX", value)) {
+      m_ScaleX = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the scale factor for the X axis.
+   *
+   * @return 		the scale factor
+   */
+  public double getScaleX() {
+    return m_ScaleX;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scaleXTipText() {
+    return "The scale factor for the X axis.";
+  }
+
+  /**
+   * Sets the scale factor for the Y axis.
+   *
+   * @param value 	the scale factor
+   */
+  public void setScaleY(double value) {
+    if (getOptionManager().isValid("scaleY", value)) {
+      m_ScaleY = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the scale factor for the Y axis.
+   *
+   * @return 		the scale factor
+   */
+  public double getScaleY() {
+    return m_ScaleY;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scaleYTipText() {
+    return "The scale factor for the Y axis.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -284,6 +416,11 @@ public class ImageObjectInfo
       case Y:
       case WIDTH:
       case HEIGHT:
+	if (m_PerformScaling)
+	  return new Class[]{Double.class};
+	else
+	  return new Class[]{Integer.class};
+
       case INDEX_INT:
 	return new Class[]{Integer.class};
 
@@ -334,12 +471,13 @@ public class ImageObjectInfo
    */
   @Override
   protected String doExecute() {
-    String			result;
-    Report			report;
-    LocatedObjects		objs;
-    LocatedObject 		obj;
-    BufferedImageContainer	cont;
-    LocatedObjects		newObjs;
+    String				result;
+    Report				report;
+    LocatedObjects			objs;
+    LocatedObject 			obj;
+    BufferedImageContainer		cont;
+    LocatedObjects			newObjs;
+    org.locationtech.jts.geom.Polygon	polygon;
 
     result = null;
 
@@ -362,25 +500,43 @@ public class ImageObjectInfo
       if (obj != null) {
 	switch (m_Type) {
 	  case X:
-	    m_OutputToken = new Token(obj.getX());
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(obj.getX() * m_ScaleX);
+	    else
+	      m_OutputToken = new Token(obj.getX());
 	    break;
 	  case Y:
-	    m_OutputToken = new Token(obj.getY());
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(obj.getY() * m_ScaleY);
+	    else
+	      m_OutputToken = new Token(obj.getY());
 	    break;
 	  case WIDTH:
-	    m_OutputToken = new Token(obj.getWidth());
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(obj.getWidth() * m_ScaleX);
+	    else
+	      m_OutputToken = new Token(obj.getWidth());
 	    break;
 	  case HEIGHT:
-	    m_OutputToken = new Token(obj.getHeight());
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(obj.getHeight() * m_ScaleY);
+	    else
+	      m_OutputToken = new Token(obj.getHeight());
 	    break;
 	  case META_DATA:
 	    m_OutputToken = new Token(obj.getMetaData());
 	    break;
 	  case RECTANGLE:
-	    m_OutputToken = new Token(obj.getRectangle());
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(obj.getRectangle(m_ScaleX, m_ScaleY));
+	    else
+	      m_OutputToken = new Token(obj.getRectangle());
 	    break;
 	  case BASE_RECTANGLE:
-	    m_OutputToken = new Token(new BaseRectangle(obj.getRectangle()));
+	    if (m_PerformScaling)
+	      m_OutputToken = new Token(new BaseRectangle(obj.getRectangle(m_ScaleX, m_ScaleY)));
+	    else
+	      m_OutputToken = new Token(new BaseRectangle(obj.getRectangle()));
 	    break;
 	  case INDEX_STRING:
 	    m_OutputToken = new Token(obj.getIndexString());
@@ -400,7 +556,10 @@ public class ImageObjectInfo
 	    break;
 	  case RECTANGLE_AREA:
 	  case POLYGON_AREA:
-	    m_OutputToken = new Token(obj.toGeometry().getArea());
+	    polygon = obj.toGeometry();
+	    if (m_PerformScaling)
+	      polygon = GeometryUtils.scale(polygon, m_ScaleX, m_ScaleY);
+	    m_OutputToken = new Token(polygon.getArea());
 	  default:
 	    throw new IllegalStateException("Unhandled type: " + m_Type);
 	}
