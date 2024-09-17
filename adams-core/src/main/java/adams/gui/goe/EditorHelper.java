@@ -15,7 +15,7 @@
 
 /*
  * EditorHelper.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -133,6 +133,11 @@ public class EditorHelper {
       if (dialogGOE.getResult() != GenericObjectEditorDialog.APPROVE_OPTION)
 	return null;
       result = editor.getValue();
+    }
+
+    if (editor instanceof AbstractPropertyEditorSupport) {
+      if (((AbstractPropertyEditorSupport) editor).getChosenOption() != AbstractPropertyEditorSupport.APPROVE_OPTION)
+	return null;
     }
 
     if (primitive)
