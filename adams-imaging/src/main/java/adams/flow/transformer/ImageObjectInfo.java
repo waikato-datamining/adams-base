@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectInfo.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -56,6 +56,7 @@ import java.util.Map;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -79,12 +80,14 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -97,7 +100,7 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE|INDEX_STRING|INDEX_INT|BITMAP&gt; (property: type)
+ * <pre>-type &lt;X|Y|WIDTH|HEIGHT|META_DATA|RECTANGLE|BASE_RECTANGLE|INDEX_STRING|INDEX_INT|BITMAP|RECTANGLE_AREA|POLYGON_AREA&gt; (property: type)
  * &nbsp;&nbsp;&nbsp;The type of information to generate.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
@@ -126,6 +129,8 @@ public class ImageObjectInfo
     INDEX_STRING,
     INDEX_INT,
     BITMAP,
+    RECTANGLE_AREA,
+    POLYGON_AREA,
   }
 
   /** the prefix to use when generating a report. */
@@ -279,6 +284,7 @@ public class ImageObjectInfo
       case Y:
       case WIDTH:
       case HEIGHT:
+      case INDEX_INT:
 	return new Class[]{Integer.class};
 
       case META_DATA:
@@ -291,13 +297,14 @@ public class ImageObjectInfo
 	return new Class[]{BaseRectangle.class};
 
       case INDEX_STRING:
-        return new Class[]{String.class};
-
-      case INDEX_INT:
-        return new Class[]{Integer.class};
+	return new Class[]{String.class};
 
       case BITMAP:
-        return new Class[]{BufferedImageContainer.class};
+	return new Class[]{BufferedImageContainer.class};
+
+      case RECTANGLE_AREA:
+      case POLYGON_AREA:
+	return new Class[]{Double.class};
 
       default:
 	throw new IllegalStateException("Unhandled type: " + m_Type);
@@ -349,8 +356,8 @@ public class ImageObjectInfo
 
     if (result == null) {
       if (report != null) {
-        objs = LocatedObjects.fromReport(report, m_Prefix);
-        obj = objs.find(m_Index);
+	objs = LocatedObjects.fromReport(report, m_Prefix);
+	obj = objs.find(m_Index);
       }
       if (obj != null) {
 	switch (m_Type) {
@@ -390,12 +397,16 @@ public class ImageObjectInfo
 	      cont.getReport().mergeWith(newObjs.toReport(m_Prefix));
 	      m_OutputToken = new Token(cont);
 	    }
+	    break;
+	  case RECTANGLE_AREA:
+	  case POLYGON_AREA:
+	    m_OutputToken = new Token(obj.toGeometry().getArea());
 	  default:
 	    throw new IllegalStateException("Unhandled type: " + m_Type);
 	}
       }
       else {
-        result = "Index not found: " + m_Index;
+	result = "Index not found: " + m_Index;
       }
     }
 
