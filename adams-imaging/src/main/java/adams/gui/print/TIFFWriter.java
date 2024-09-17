@@ -15,20 +15,20 @@
 
 /*
   *    TIFFWriter.java
-  *    Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
   *
   */
 
 package adams.gui.print;
 
-import org.apache.commons.imaging.ImageFormat;
-import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.Imaging;
-import org.apache.commons.imaging.ImagingConstants;
+import adams.core.io.FileUtils;
+import org.apache.commons.imaging.formats.tiff.TiffImageParser;
+import org.apache.commons.imaging.formats.tiff.TiffImagingParameters;
 import org.apache.commons.imaging.formats.tiff.constants.TiffConstants;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -96,7 +96,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TIFFWriter
   extends BufferedImageBasedWriter {
@@ -180,17 +179,29 @@ public class TIFFWriter
    * @throws Exception	if something goes wrong
    */
   public void generateOutput() throws Exception {
-    ImageFormat format;
-    Map 	params;
-    
-    format = ImageFormats.TIFF;
+    TiffImagingParameters 	params;
+    BufferedOutputStream	bos;
+    FileOutputStream		fos;
 
-    params = new HashMap();
+    params = new TiffImagingParameters();
     if (m_Compress)
-      params.put(ImagingConstants.PARAM_KEY_COMPRESSION, TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED);
+      params.setCompression(TiffConstants.TIFF_COMPRESSION_LZW);
     else
-      params.put(ImagingConstants.PARAM_KEY_COMPRESSION, TiffConstants.TIFF_COMPRESSION_LZW);
-    
-    Imaging.writeImage(createBufferedImage(), getFile().getAbsoluteFile(), format, params);
+      params.setCompression(TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED);
+
+    fos = null;
+    bos = null;
+    try {
+      fos = new FileOutputStream(getFile().getAbsoluteFile());
+      bos = new BufferedOutputStream(fos);
+      new TiffImageParser().writeImage(createBufferedImage(), bos, params);
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write to: " + getFile(), e);
+    }
+    finally {
+      FileUtils.closeQuietly(bos);
+      FileUtils.closeQuietly(fos);
+    }
   }
 }

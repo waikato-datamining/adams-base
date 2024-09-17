@@ -15,7 +15,7 @@
 
 /*
  * ApacheCommonsImageWriter.java
- * Copyright (C) 2019-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -31,7 +31,6 @@ import org.apache.commons.imaging.ImageFormats;
 import org.apache.commons.imaging.Imaging;
 
 import java.io.OutputStream;
-import java.util.HashMap;
 
 /**
  <!-- globalinfo-start -->
@@ -216,7 +215,7 @@ public class ApacheCommonsImageWriter
 
     if (result == null) {
       try {
-	Imaging.writeImage(cont.toBufferedImage(), file.getAbsoluteFile(), format, new HashMap<>());
+	Imaging.writeImage(cont.toBufferedImage(), file.getAbsoluteFile(), format);
       }
       catch (Exception e) {
 	result = LoggingHelper.handleException(this, "Failed to write image to: " + file, e);
@@ -244,7 +243,7 @@ public class ApacheCommonsImageWriter
 
     if (result == null) {
       try {
-	Imaging.writeImage(cont.toBufferedImage(), stream, m_ImageFormat, new HashMap<>());
+	Imaging.writeImage(cont.toBufferedImage(), stream, m_ImageFormat);
       }
       catch (Exception e) {
 	result = LoggingHelper.handleException(this, "Failed to write image to stream!", e);
