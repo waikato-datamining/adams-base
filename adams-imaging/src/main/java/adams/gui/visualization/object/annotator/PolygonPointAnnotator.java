@@ -21,11 +21,11 @@
 package adams.gui.visualization.object.annotator;
 
 import adams.core.Utils;
+import adams.data.geometry.PolygonUtils;
 import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.MouseUtils;
-import adams.gui.visualization.image.PolygonUtils;
 import adams.gui.visualization.image.SelectionRectangle;
 
 import java.awt.Color;

@@ -18,7 +18,7 @@
  * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.visualization.image;
+package adams.data.geometry;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;

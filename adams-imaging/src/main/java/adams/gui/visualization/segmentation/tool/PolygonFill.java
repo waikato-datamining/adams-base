@@ -20,6 +20,7 @@
 
 package adams.gui.visualization.segmentation.tool;
 
+import adams.data.geometry.PolygonUtils;
 import adams.gui.core.BaseColorTextField;
 import adams.gui.core.Cursors;
 import adams.gui.core.ImageManager;
@@ -28,7 +29,6 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
-import adams.gui.visualization.image.PolygonUtils;
 import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
 import adams.gui.visualization.segmentation.paintoperation.PolygonOverlay;
 

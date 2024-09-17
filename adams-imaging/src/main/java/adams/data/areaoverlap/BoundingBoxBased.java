@@ -23,6 +23,7 @@ package adams.data.areaoverlap;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.geometry.GeometryUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import org.locationtech.jts.geom.Geometry;
@@ -142,12 +143,12 @@ public class BoundingBoxBased
     result = new LocatedObjects();
 
     for (LocatedObject key: matches.keySet()) {
-      keyGeo = LocatedObject.toGeometry(key.getRectangle());
+      keyGeo = GeometryUtils.toGeometry(key.getRectangle());
       subset = matches.get(key);
       for (LocatedObject sub: subset.keySet()) {
 	if (key.equals(sub))
 	  continue;
-	subGeo = LocatedObject.toGeometry(sub.getRectangle());
+	subGeo = GeometryUtils.toGeometry(sub.getRectangle());
 	try {
 	  switch (m_AreaType) {
 	    case INTERSECT:
@@ -160,7 +161,7 @@ public class BoundingBoxBased
 	      throw new IllegalStateException("Unhandled area type: " + m_AreaType);
 	  }
 	  if (combined instanceof Polygon) {
-	    newObj = new LocatedObject(null, LocatedObject.polygonBounds((Polygon) combined), key.getMetaData(true));
+	    newObj = new LocatedObject(null, GeometryUtils.polygonBounds((Polygon) combined), key.getMetaData(true));
 	    newObj.setPolygon((Polygon) combined);
 	    if ((newObj.getWidth() > 0) && (newObj.getHeight() > 0)) {
 	      newObj.getMetaData().put(KEY_AREA_OLD, keyGeo.getArea());

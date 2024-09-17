@@ -23,6 +23,7 @@ package adams.data.areaoverlap;
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.geometry.GeometryUtils;
 import adams.data.objectoverlap.OptionalBoundingBoxFallbackSupporter;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -210,9 +211,9 @@ public class PolygonBased
     fallback = m_Fallback && obj.boundingBoxFallback(m_BoundingBoxFallbackRatio);
 
     if (fallback)
-      result = LocatedObject.toGeometry(obj.getRectangle());
+      result = GeometryUtils.toGeometry(obj.getRectangle());
     else
-      result = LocatedObject.toGeometry(obj.getPolygon());
+      result = GeometryUtils.toGeometry(obj.getPolygon());
 
     return result;
   }
@@ -254,7 +255,7 @@ public class PolygonBased
 	      throw new IllegalStateException("Unhandled area type: " + m_AreaType);
 	  }
 	  if (combined instanceof Polygon) {
-	    newObj = new LocatedObject(null, LocatedObject.polygonBounds((Polygon) combined), key.getMetaData(true));
+	    newObj = new LocatedObject(null, GeometryUtils.polygonBounds((Polygon) combined), key.getMetaData(true));
 	    newObj.setPolygon((Polygon) combined);
 	    if ((newObj.getWidth() > 0) && (newObj.getHeight() > 0)) {
 	      newObj.getMetaData().put(KEY_AREA_OLD, keyGeo.getArea());

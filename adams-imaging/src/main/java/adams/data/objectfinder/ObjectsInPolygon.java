@@ -23,10 +23,10 @@ package adams.data.objectfinder;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.data.geometry.PolygonUtils;
 import adams.data.statistics.StatUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.visualization.image.PolygonUtils;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 

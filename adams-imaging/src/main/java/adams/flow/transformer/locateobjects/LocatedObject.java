@@ -23,26 +23,19 @@ import adams.core.CloneHandler;
 import adams.core.CompareUtils;
 import adams.core.Utils;
 import adams.core.base.QuadrilateralLocation;
+import adams.data.geometry.GeometryUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
 import adams.data.statistics.StatUtils;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -403,7 +396,7 @@ public class LocatedObject
    * @return		the rectangle
    */
   public Rectangle getRectangle() {
-    return getRectangle(1.0);
+    return getRectangle(1.0, 1.0);
   }
 
   /**
@@ -413,11 +406,22 @@ public class LocatedObject
    * @return		the rectangle
    */
   public Rectangle getRectangle(double scale) {
+    return getRectangle(scale, scale);
+  }
+
+  /**
+   * Returns the object as rectangle.
+   *
+   * @param scaleX	the scale factor for X, 1.0 for 100%
+   * @param scaleY	the scale factor for Y, 1.0 for 100%
+   * @return		the rectangle
+   */
+  public Rectangle getRectangle(double scaleX, double scaleY) {
     return new Rectangle(
-	(int) (getX() * scale),
-	(int) (getY() * scale),
-	(int) (getWidth() * scale),
-	(int) (getHeight() * scale));
+      (int) (getX() * scaleX),
+      (int) (getY() * scaleY),
+      (int) (getWidth() * scaleX),
+      (int) (getHeight() * scaleY));
   }
 
   /**
@@ -483,6 +487,17 @@ public class LocatedObject
    * @return		the polygon, null if no/incorrect data stored
    */
   public Polygon getPolygon(double scale) {
+    return getPolygon(scale, scale);
+  }
+
+  /**
+   * Returns the polygon, if possible.
+   *
+   * @param scaleX 	the scale to use for X
+   * @param scaleY 	the scale to use for Y
+   * @return		the polygon, null if no/incorrect data stored
+   */
+  public Polygon getPolygon(double scaleX, double scaleY) {
     int[]	x;
     int[]	y;
     int		i;
@@ -492,11 +507,14 @@ public class LocatedObject
     if ((x.length == 0) || (x.length != y.length))
       return null;
 
-    if (scale != 1.0) {
-      for (i = 0; i < x.length; i++) {
-	x[i] = (int) (x[i] * scale);
-	y[i] = (int) (y[i] * scale);
-      }
+    if (scaleX != 1.0) {
+      for (i = 0; i < x.length; i++)
+	x[i] = (int) (x[i] * scaleX);
+    }
+
+    if (scaleY != 1.0) {
+      for (i = 0; i < x.length; i++)
+	y[i] = (int) (y[i] * scaleY);
     }
 
     return new Polygon(x, y, x.length);
@@ -518,34 +536,21 @@ public class LocatedObject
    * @param value	the JTS polygon to use
    */
   public void setPolygon(org.locationtech.jts.geom.Polygon value) {
-    org.locationtech.jts.geom.Polygon 	bbox;
-    Coordinate[]			coords;
-    int[]				polyX;
-    int[]				polyY;
-    int 				i;
-
-    coords = value.getCoordinates();
-    polyX = new int[coords.length];
-    polyY = new int[coords.length];
-    for (i = 0; i < coords.length; i++) {
-      polyX[i] = (int) coords[i].x;
-      polyY[i] = (int) coords[i].y;
-    }
-    setPolygon(new Polygon(polyX, polyY, polyX.length));
+    setPolygon(GeometryUtils.toPolygon(value));
   }
 
   /**
    * Converts the polygon or rectangle into a JTS polygon (for proper intersects).
    *
    * @return		the polygon
-   * @see		#toGeometry(Polygon)
-   * @see		#toGeometry(Rectangle)
+   * @see               GeometryUtils#toGeometry(Polygon)
+   * @see               GeometryUtils#toGeometry(Rectangle)
    */
   public org.locationtech.jts.geom.Polygon toGeometry() {
     if (hasPolygon())
-      return toGeometry(getPolygon());
+      return GeometryUtils.toGeometry(getPolygon());
     else
-      return toGeometry(getRectangle());
+      return GeometryUtils.toGeometry(getRectangle());
   }
 
   /**
@@ -586,8 +591,8 @@ public class LocatedObject
     bbox = bboxToPolygon();
 
     if ((poly != null) && (minRatio > 0)) {
-      area_bbox = LocatedObject.toGeometry(bbox).getArea();
-      area_poly = LocatedObject.toGeometry(poly).getArea();
+      area_bbox = GeometryUtils.toGeometry(bbox).getArea();
+      area_poly = GeometryUtils.toGeometry(poly).getArea();
       if (area_bbox > 0) {
 	ratio = area_poly / area_bbox;
 	if (ratio < minRatio)
@@ -881,92 +886,6 @@ public class LocatedObject
     row.addCell("P").setContent(hasPolygon());
     row.addCell("M").setContent(getMetaData().toString());
 
-    return result;
-  }
-
-  /**
-   * Converts the polygon into a JTS polygon (for proper intersects).
-   *
-   * @return		the polygon
-   */
-  public static org.locationtech.jts.geom.Polygon toGeometry(Polygon polygon) {
-    org.locationtech.jts.geom.Polygon	result;
-    LinearRing 				ring;
-    List<Coordinate> 			coords;
-    GeometryFactory 			factory;
-    int[]				x;
-    int[]				y;
-    int					i;
-
-    factory = new GeometryFactory();
-    coords = new ArrayList<>();
-    x = polygon.xpoints;
-    y = polygon.ypoints;
-    for (i = 0; i < x.length; i++)
-      coords.add(new Coordinate(x[i], y[i]));
-    coords.add(new Coordinate(x[0], y[0]));
-    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
-    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
-
-    return result;
-  }
-
-  /**
-   * Converts the rectangle into a JTS polygon (for proper intersects).
-   *
-   * @return		the polygon
-   */
-  public static org.locationtech.jts.geom.Polygon toGeometry(Rectangle rectangle) {
-    org.locationtech.jts.geom.Polygon	result;
-    LinearRing 				ring;
-    List<Coordinate> 			coords;
-    GeometryFactory 			factory;
-    int[]				x;
-    int[]				y;
-    int					i;
-
-    factory = new GeometryFactory();
-    coords = new ArrayList<>();
-    coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
-    coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY()));
-    coords.add(new Coordinate(rectangle.getX() + rectangle.getWidth() - 1, rectangle.getY() + rectangle.getHeight() - 1));
-    coords.add(new Coordinate(rectangle.getX(), rectangle.getY() + rectangle.getHeight() - 1));
-    coords.add(new Coordinate(rectangle.getX(), rectangle.getY()));
-    ring = new LinearRing(new CoordinateArraySequence(coords.toArray(new Coordinate[0])), factory);
-    result = new org.locationtech.jts.geom.Polygon(ring, null, factory);
-
-    return result;
-  }
-
-  /**
-   * Returns the boundaries of the JTS polygon.
-   *
-   * @param polygon	the polygon to get the bounds for
-   * @return		the bounds, empty rectangle if failed to compute
-   */
-  public static Rectangle polygonBounds(org.locationtech.jts.geom.Polygon polygon) {
-    Rectangle				result;
-    Geometry				envelope;
-    org.locationtech.jts.geom.Polygon	bbox;
-    Coordinate[]			coords;
-    Point				point;
-
-    result   = new Rectangle();
-    envelope = polygon.getEnvelope();
-    if (envelope instanceof org.locationtech.jts.geom.Polygon) {
-      bbox = (org.locationtech.jts.geom.Polygon) polygon.getEnvelope();
-      coords = bbox.getCoordinates();
-      result = new Rectangle(
-	  (int) coords[0].x,
-	  (int) coords[0].y,
-	  (int) (coords[2].x - coords[0].x + 1),
-	  (int) (coords[2].y - coords[0].y + 1));
-    }
-    else if (envelope instanceof org.locationtech.jts.geom.Point) {
-      point = (org.locationtech.jts.geom.Point) envelope;
-      if (!point.isEmpty())
-	result = new Rectangle((int) point.getX(), (int) point.getY(), 0, 0);
-    }
     return result;
   }
 }

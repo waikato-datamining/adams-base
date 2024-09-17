@@ -21,9 +21,9 @@
 package adams.data.objectfilter;
 
 import adams.core.QuickInfoHelper;
+import adams.data.geometry.PolygonUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
-import adams.gui.visualization.image.PolygonUtils;
 
 import java.awt.Polygon;
 import java.util.ArrayList;

@@ -21,6 +21,7 @@
 package adams.gui.visualization.object.tools;
 
 import adams.core.ObjectCopyHelper;
+import adams.data.geometry.PolygonUtils;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -30,7 +31,6 @@ import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.ParameterPanel;
-import adams.gui.visualization.image.PolygonUtils;
 import adams.gui.visualization.image.RectangleUtils;
 import adams.gui.visualization.object.annotator.NullAnnotator;
 import adams.gui.visualization.object.objectannotations.outline.OutlinePlotter;

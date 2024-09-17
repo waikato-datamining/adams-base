@@ -20,6 +20,7 @@
 package adams.gui.visualization.image;
 
 import adams.core.base.BaseString;
+import adams.data.geometry.GeometryUtils;
 import adams.data.objectoverlap.BoundingBoxFallbackSupporter;
 import adams.data.report.AbstractField;
 import adams.data.report.Report;
@@ -277,8 +278,8 @@ public class ReportObjectOverlay
 
       // fall back on bbox?
       if ((poly != null) && (m_BoundingBoxFallbackRatio > 0)) {
-        area_bbox = LocatedObject.toGeometry(bbox).getArea();
-        area_poly = LocatedObject.toGeometry(poly).getArea();
+        area_bbox = GeometryUtils.toGeometry(bbox).getArea();
+        area_poly = GeometryUtils.toGeometry(poly).getArea();
         if (area_bbox > 0) {
 	  ratio = area_poly / area_bbox;
 	  if (ratio < m_BoundingBoxFallbackRatio)

@@ -22,6 +22,7 @@ package adams.data.objectfilter;
 
 import adams.core.Utils;
 import adams.core.logging.LoggingObject;
+import adams.data.geometry.GeometryUtils;
 import adams.data.objectoverlap.BoundingBoxFallbackSupporter;
 import adams.data.objectoverlap.GeometryType;
 import adams.data.objectoverlap.ObjectOverlap;
@@ -112,10 +113,10 @@ public class MergeOverlapsHelper {
 
     switch (geometry) {
       case BBOX:
-	result = LocatedObject.toGeometry(obj.getRectangle());
+	result = GeometryUtils.toGeometry(obj.getRectangle());
 	break;
       case POLYGON:
-	result = LocatedObject.toGeometry(obj.getPolygon());
+	result = GeometryUtils.toGeometry(obj.getPolygon());
 	break;
       default:
 	throw new IllegalStateException("Unhandled geometry type: " + geometry);
