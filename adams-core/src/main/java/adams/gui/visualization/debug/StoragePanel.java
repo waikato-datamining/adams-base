@@ -15,7 +15,7 @@
 
 /*
  * StoragePanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug;
 
@@ -49,6 +49,7 @@ import adams.gui.goe.EditorHelper;
 import adams.gui.visualization.debug.objectexport.AbstractObjectExporter;
 import adams.gui.visualization.debug.objectrenderer.AbstractObjectRenderer;
 import adams.gui.visualization.debug.objectrenderer.ObjectRenderer;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -238,7 +239,7 @@ public class StoragePanel
      * @return		the associated object, null if not found
      */
     public Object getObject(String cache, String key) {
-      if ((cache == null) || (cache.length() == 0))
+      if ((cache == null) || !cache.isEmpty())
 	return m_Storage.get(new StorageName(key));
       else
 	return m_Storage.get(cache, new StorageName(key));
@@ -288,12 +289,16 @@ public class StoragePanel
       String	cache;
       String	name;
 
-      if (!m_HasCacheData)
-	columnIndex++;
-
-      if (columnIndex == 2) {
+      if (m_HasCacheData) {
 	cache = (String) getValueAt(rowIndex, 0);
 	name  = (String) getValueAt(rowIndex, 1);
+      }
+      else {
+	cache = null;
+	name  = (String) getValueAt(rowIndex, 0);
+      }
+
+      if (name != null) {
 	if ((cache == null) || cache.isEmpty())
 	  m_Storage.put(new StorageName(name), aValue);
 	else
@@ -712,10 +717,15 @@ public class StoragePanel
     if (m_Table.getSelectedRow() == -1)
       return null;
 
-    cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
-    name  = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+    if (m_TableModel.hasCacheData()) {
+      cache = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+      name = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
 
-    return "cache: " + (((cache == null) || cache.isEmpty()) ? "-none-" : cache) + "/name: " + name;
+      return "cache: " + (((cache == null) || cache.isEmpty()) ? "-none-" : cache) + "/name: " + name;
+    }
+    else {
+      return "name: " + m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    }
   }
 
   /**
@@ -740,6 +750,33 @@ public class StoragePanel
     }
 
     return m_TableModel.getObject(cache, name);
+  }
+
+  /**
+   * Copies the name to the clipboard.
+   */
+  protected void copyName() {
+    String	value;
+
+    if (m_TableModel.hasCacheData())
+      value = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 1);
+    else
+      value = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+    if ((value != null) && !value.isEmpty())
+      ClipboardHelper.copyToClipboard(value);
+  }
+
+  /**
+   * Copies the cache to the clipboard.
+   */
+  protected void copyCache() {
+    String	value;
+
+    if (m_TableModel.hasCacheData()) {
+      value = (String) m_Table.getValueAt(m_Table.getSelectedRow(), 0);
+      if ((value != null) && !value.isEmpty())
+	ClipboardHelper.copyToClipboard(value);
+    }
   }
 
   /**
@@ -821,7 +858,10 @@ public class StoragePanel
 
     newObj = EditorHelper.simpleEdit(this, getSelectedObject(), getSelectedObjectID());
     if (newObj != null) {
-      m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 2);
+      if (m_TableModel.hasCacheData())
+	m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 2);
+      else
+	m_Table.setValueAt(newObj, m_Table.getSelectedRow(), 1);
       updatePreview();
       updateInspection();
     }
@@ -891,6 +931,20 @@ public class StoragePanel
 
     menu = new BasePopupMenu();
 
+    menuitem = new JMenuItem("Copy name");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> copyName());
+    menu.add(menuitem);
+
+    if (m_TableModel.hasCacheData()) {
+      menuitem = new JMenuItem("Copy cache");
+      menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+      menuitem.addActionListener((ActionEvent ae) -> copyCache());
+      menu.add(menuitem);
+    }
+
+    menu.addSeparator();
+
     menuitem = new JMenuItem("Inspect...");
     menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> inspect());
@@ -899,6 +953,18 @@ public class StoragePanel
     menuitem = new JMenuItem("Inspect (separate dialog)...");
     menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
     menuitem.addActionListener((ActionEvent ae) -> inspect(true));
+    menu.add(menuitem);
+
+    menu.addSeparator();
+
+    menuitem = new JMenuItem("Edit...");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> edit());
+    menu.add(menuitem);
+
+    menuitem = new JMenuItem("Export...");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> export());
     menu.add(menuitem);
 
     menu.addSeparator();
@@ -958,10 +1024,10 @@ public class StoragePanel
 	    n++;
 	  }
 	}
-	if (names.size() == 0)
+	if (names.isEmpty())
 	  break;
       }
-      if (rows.size() > 0) {
+      if (!rows.isEmpty()) {
 	final int[] rowArray = rows.toArray();
 	SwingUtilities.invokeLater(() -> m_Table.setSelectedRows(rowArray));
       }
