@@ -15,7 +15,7 @@
 
 /*
  * GetImageObjects.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -236,6 +236,7 @@ public class GetImageObjects
 
     result = QuickInfoHelper.toString(this, "finder", m_Finder, "finder: ");
     result += QuickInfoHelper.toString(this, "cleanIndices", m_CleanIndices, "clean indices", ", ");
+    result += QuickInfoHelper.toString(this, "outputArray", m_OutputArray, "as array", ", ");
 
     return result;
   }
