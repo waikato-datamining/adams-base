@@ -15,7 +15,7 @@
 
 /*
  * LocatedObjectsToReport.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -56,6 +56,12 @@ public class LocatedObjectsToReport
   /** the prefix to use. */
   protected String m_Prefix;
 
+  /** the offset to use. */
+  protected int m_Offset;
+
+  /** whether to update the index in the meta-data. */
+  protected boolean m_UpdateIndex;
+
   /**
    * Returns a string describing the object.
    *
@@ -76,6 +82,14 @@ public class LocatedObjectsToReport
     m_OptionManager.add(
       "prefix", "prefix",
       LocatedObjects.DEFAULT_PREFIX);
+
+    m_OptionManager.add(
+      "offset", "offset",
+      0);
+
+    m_OptionManager.add(
+      "update-index", "updateIndex",
+      false);
   }
 
   /**
@@ -108,13 +122,79 @@ public class LocatedObjectsToReport
   }
 
   /**
+   * Sets the offset to use for the index.
+   *
+   * @param value 	the offset
+   */
+  public void setOffset(int value) {
+    if (getOptionManager().isValid("offset", value)) {
+      m_Offset = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the offset in use for the index.
+   *
+   * @return 		the offset
+   */
+  public int getOffset() {
+    return m_Offset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String offsetTipText() {
+    return "The offset to use for the index.";
+  }
+
+  /**
+   * Sets whether to update the index in the meta-data.
+   *
+   * @param value 	true if to update
+   */
+  public void setUpdateIndex(boolean value) {
+    m_UpdateIndex = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to update the index in the meta-data.
+   *
+   * @return 		true if to update
+   */
+  public boolean getUpdateIndex() {
+    return m_UpdateIndex;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String updateIndexTipText() {
+    return "If enabled, the index in the meta-data will get updated.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    result += QuickInfoHelper.toString(this, "offset", m_Offset, ", offset: ");
+    result += QuickInfoHelper.toString(this, "updateIndex", m_UpdateIndex, "update index", ", ");
+
+    return result;
   }
 
   /**
@@ -151,7 +231,7 @@ public class LocatedObjectsToReport
 
     input   = (LocatedObject[]) m_Input;
     objects = new LocatedObjects(input);
-    result  = objects.toReport(m_Prefix);
+    result  = objects.toReport(m_Prefix, m_Offset, m_UpdateIndex);
 
     return result;
   }
