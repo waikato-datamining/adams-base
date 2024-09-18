@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayHistogram.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
@@ -108,7 +108,6 @@ import adams.core.base.BaseInterval;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the data to process
  */
 public class ArrayHistogram<T extends Number>
@@ -778,7 +777,7 @@ public class ArrayHistogram<T extends Number>
     binX = new double[bins.length];
     for (n = 0; n < bins.length; n++) {
       binX[n] = min + n * binWidth;
-      result.setCell(0, n, new Double(bins[n]));
+      result.setCell(0, n, (double) bins[n]);
     }
 
     // add meta-data

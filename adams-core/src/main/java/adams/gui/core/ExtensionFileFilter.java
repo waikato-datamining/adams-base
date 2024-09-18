@@ -15,7 +15,7 @@
 
 /*
  * ExtensionFileFilter.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -122,10 +122,7 @@ public class ExtensionFileFilter
     int		i;
     boolean	result;
 
-    result = false;
-
-    if (f.isDirectory())
-      result = true;
+    result = f.isDirectory();
 
     if (!result) {
       for (i = 0; i < m_Extensions.length; i++) {
@@ -152,22 +149,22 @@ public class ExtensionFileFilter
    */
   @Override
   public String getDescription() {
-    String	result;
-    int		i;
+    StringBuilder	result;
+    int			i;
 
-    result = m_Description + " (";
+    result = new StringBuilder(m_Description + " (");
     for (i = 0; i < m_Extensions.length; i++) {
       if (i > 0)
-	result += ", ";
+	result.append(", ");
       if (i == 9) {
-	result += "...";
+	result.append("...");
 	break;
       }
-      result += "." + m_Extensions[i];
+      result.append(".").append(m_Extensions[i]);
     }
-    result += ")";
+    result.append(")");
 
-    return result;
+    return result.toString();
   }
 
   /**
@@ -204,7 +201,7 @@ public class ExtensionFileFilter
     result = m_Description.compareTo(o.m_Description);
 
     if (result == 0)
-      result = new Integer(m_Extensions.length).compareTo(new Integer(o.m_Extensions.length));
+      result = Integer.compare(m_Extensions.length, o.m_Extensions.length);
 
     if (result == 0) {
       for (i = 0; i < m_Extensions.length; i++) {

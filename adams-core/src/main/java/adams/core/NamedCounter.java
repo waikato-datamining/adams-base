@@ -15,7 +15,7 @@
 
 /*
  * NamedCounter.java
- * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -81,7 +81,7 @@ public class NamedCounter
       else if (!m_Counter.has(o2))
 	return -1;
       else
-	return new Integer(m_Counter.current(o1)).compareTo(m_Counter.current(o2));
+	return Integer.compare(m_Counter.current(o1), m_Counter.current(o2));
     }
   }
 
@@ -93,7 +93,7 @@ public class NamedCounter
    */
   public NamedCounter() {
     super();
-    m_Counts = new Hashtable<String,Integer>();
+    m_Counts = new Hashtable<>();
   }
 
   /**
@@ -188,7 +188,7 @@ public class NamedCounter
 
     result = new ArrayList<>(m_Counts.keySet());
     comp   = new CounterComparator(this);
-    Collections.sort(result, comp);
+    result.sort(comp);
 
     if (!asc)
       Collections.reverse(result);

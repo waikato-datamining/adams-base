@@ -15,7 +15,7 @@
 
 /*
  * HeaderDefinition.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
 
@@ -245,7 +245,7 @@ public class HeaderDefinition
     result = m_Dataset.compareTo(o.getDataset());
     
     if (result == 0)
-      result = new Integer(m_Names.size()).compareTo(o.m_Names.size());
+      result = Integer.compare(m_Names.size(), o.m_Names.size());
 
     if (result == 0) {
       for (i = 0; i < m_Names.size(); i++) {
@@ -291,12 +291,12 @@ public class HeaderDefinition
     int			i;
     
     result = new StringBuilder();
-    result.append(m_Dataset + "|");
+    result.append(m_Dataset).append("|");
     
     for (i = 0; i < size(); i++) {
       if (i > 0)
 	result.append(",");
-      result.append(getName(i) + ":" + getType(i));
+      result.append(getName(i)).append(":").append(getType(i).toString());
     }
     
     return result.toString();

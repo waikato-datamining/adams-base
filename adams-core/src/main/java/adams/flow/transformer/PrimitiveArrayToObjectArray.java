@@ -15,7 +15,7 @@
 
 /*
  * PrimitiveArrayToObjectArray.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -147,33 +147,33 @@ public class PrimitiveArrayToObjectArray
       if (arrayIn instanceof byte[]) {
 	arrayOut = new Integer[len];
 	for (i = 0; i < len; i++)
-	  Array.set(arrayOut, i, new Integer(Array.getByte(arrayIn, i)));
+	  Array.set(arrayOut, i, (int) Array.getByte(arrayIn, i));
       }
       else if (arrayIn instanceof short[]) {
 	arrayOut = new Integer[len];
 	for (i = 0; i < len; i++)
-	  Array.set(arrayOut, i, new Integer(Array.getShort(arrayIn, i)));
+	  Array.set(arrayOut, i, (int) Array.getShort(arrayIn, i));
       }
       else if (arrayIn instanceof int[]) {
 	arrayOut = new Integer[len];
 	for (i = 0; i < len; i++)
-	  Array.set(arrayOut, i, new Integer(Array.getInt(arrayIn, i)));
+	  Array.set(arrayOut, i, (int) Array.getInt(arrayIn, i));
       }
       // TODO shift from int to long system-wide?
       else if (arrayIn instanceof long[]) {
 	arrayOut = new Integer[len];
 	for (i = 0; i < len; i++)
-	  Array.set(arrayOut, i, new Integer((int) Array.getLong(arrayIn, i)));
+	  Array.set(arrayOut, i, (int) Array.getLong(arrayIn, i));
       }
       else if (arrayIn instanceof float[]) {
 	arrayOut = new Double[len];
 	for (i = 0; i < len; i++)
-	  Array.setDouble(arrayOut, i, new Double(Array.getFloat(arrayIn, i)));
+	  Array.setDouble(arrayOut, i, (double) Array.getFloat(arrayIn, i));
       }
       else if (arrayIn instanceof double[]) {
 	arrayOut = new Double[len];
 	for (i = 0; i < len; i++)
-	  Array.setDouble(arrayOut, i, new Double(Array.getDouble(arrayIn, i)));
+	  Array.setDouble(arrayOut, i, Array.getDouble(arrayIn, i));
       }
       else {
 	result = "Unhandled class: " + Utils.classToString(m_InputToken.getPayload());

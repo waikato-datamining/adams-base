@@ -15,7 +15,7 @@
 
 /*
  * IncVariable.java
- * Copyright (C) 2011-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -401,9 +401,9 @@ public class IncVariable
 
     try {
       if (getVariables().has(m_VariableName.getValue()))
-	value = new Double(getVariables().get(m_VariableName.getValue()));
+	value = Double.parseDouble(getVariables().get(m_VariableName.getValue()));
       else
-	value = new Double(0.0);
+	value = 0.0;
     }
     catch (Exception e) {
       value = null;
@@ -412,13 +412,13 @@ public class IncVariable
     if (value != null) {
       switch (m_IncrementType) {
 	case INTEGER:
-	  value = new Integer(value.intValue() + m_IntegerIncrement);
+	  value = value.intValue() + m_IntegerIncrement;
 	  break;
 	case LONG:
-	  value = new Long(value.longValue() + m_IntegerIncrement);
+	  value = value.longValue() + m_IntegerIncrement;
 	  break;
 	case DOUBLE:
-	  value = new Double(value.doubleValue() + m_DoubleIncrement);
+	  value = value.doubleValue() + m_DoubleIncrement;
 	  break;
 	default:
 	  throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);

@@ -15,7 +15,7 @@
 
 /*
  * PlotPanel.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -229,7 +229,7 @@ public class PlotPanel
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	  if (    (e.getButton() == MouseEvent.BUTTON1)
-	       && (e.getModifiers() == MouseEvent.BUTTON1_MASK) ) {
+	       && (e.getModifiersEx() == MouseEvent.BUTTON1_DOWN_MASK) ) {
 	    getContent().requestFocusInWindow();
 	    e.consume();
 	  }
@@ -356,7 +356,7 @@ public class PlotPanel
       }
       @Override
       public void mouseClicked(MouseEvent e) {
-	if (m_MouseClickListeners.size() > 0)
+	if (!m_MouseClickListeners.isEmpty())
 	  notifyMouseClickListeners(e);
       }
     });
@@ -773,8 +773,7 @@ public class PlotPanel
    * @param axis	the axis to remove
    */
   public void removeToolTipAxis(Axis axis) {
-    if (m_ToolTipAxes.contains(axis))
-      m_ToolTipAxes.remove(axis);
+    m_ToolTipAxes.remove(axis);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * Formatter.java
- * Copyright (C) 2008-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.axis;
@@ -130,7 +130,7 @@ public class Formatter
         if (m_Format instanceof DecimalFormat)
           result = (Double) ((DecimalFormat) m_Format).parse(s);
         else if (m_Format instanceof SimpleDateFormat)
-          result = new Double(((SimpleDateFormat) m_Format).parse(s).getTime());
+          result = (double) ((SimpleDateFormat) m_Format).parse(s).getTime();
         else
           throw new IllegalArgumentException(
       	"Formatters of type " + m_Format.getClass().getName() + " are not supported!");
@@ -159,7 +159,7 @@ public class Formatter
     else {
       try {
         if (m_Format instanceof DecimalFormat)
-          result = ((DecimalFormat) m_Format).format(value);
+          result = m_Format.format(value);
         else if (m_Format instanceof SimpleDateFormat)
           result =((SimpleDateFormat) m_Format).format(new Date(value.longValue()));
         else

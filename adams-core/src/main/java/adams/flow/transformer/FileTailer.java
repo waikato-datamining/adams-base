@@ -15,7 +15,7 @@
 
 /*
  * FileTailer.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -28,6 +28,7 @@ import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -306,7 +307,7 @@ public class FileTailer
 
     if (file != null) {
       listener = new Listener(this, file.getAbsolutePath());
-      m_Tailer = Tailer.create(file.getAbsoluteFile(), listener, m_Delay, m_End);
+      m_Tailer = (Tailer.builder().setFile(file.getAbsoluteFile())).setTailerListener(listener).setDelayDuration(Duration.ofMillis(m_Delay)).setTailFromEnd(m_End).get();
     }
 
     return result;
@@ -318,7 +319,7 @@ public class FileTailer
   @Override
   public void stopExecution() {
     if (m_Tailer != null) {
-      m_Tailer.stop();
+      m_Tailer.close();
       m_Tailer = null;
     }
     super.stopExecution();

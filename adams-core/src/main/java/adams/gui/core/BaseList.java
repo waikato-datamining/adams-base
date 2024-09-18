@@ -15,7 +15,7 @@
 
 /*
  * BaseList.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -128,8 +128,8 @@ public class BaseList
 	// ignored
       }
       public void keyPressed(KeyEvent e) {
-	if (m_RemoveItemsListeners.size() > 0) {
-	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiers() == 0)) {
+	if (!m_RemoveItemsListeners.isEmpty()) {
+	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiersEx() == 0)) {
 	    e.consume();
 	    notifyRemoveItemsListeners(getSelectedIndices());
 	  }

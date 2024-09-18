@@ -15,7 +15,7 @@
 
 /*
  * IncStorageValue.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -419,13 +419,13 @@ public class IncStorageValue
 	else {
 	  switch (m_IncrementType) {
 	    case INTEGER:
-	      value = new Integer(0);
+	      value = 0;
 	      break;
 	    case LONG:
-	      value = new Long(0L);
+	      value = 0L;
 	      break;
 	    case DOUBLE:
-	      value = new Double(0.0);
+	      value = 0.0;
 	      break;
 	    default:
 	      throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
@@ -439,13 +439,13 @@ public class IncStorageValue
       if (value != null) {
 	switch (m_IncrementType) {
 	  case INTEGER:
-	    value = new Integer(value.intValue() + m_IntegerIncrement);
+	    value = value.intValue() + m_IntegerIncrement;
 	    break;
 	  case LONG:
-	    value = new Long(value.longValue() + m_IntegerIncrement);
+	    value = value.longValue() + m_IntegerIncrement;
 	    break;
 	  case DOUBLE:
-	    value = new Double(value.doubleValue() + m_DoubleIncrement);
+	    value = value.doubleValue() + m_DoubleIncrement;
 	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
