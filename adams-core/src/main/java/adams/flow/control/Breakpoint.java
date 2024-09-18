@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -253,7 +253,12 @@ public class Breakpoint
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "condition", m_Condition.getQuickInfo());
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "condition", m_Condition);
+    result += QuickInfoHelper.toString(this, "views", m_Views, ", views: ");
+
+    return result;
   }
 
   /**
