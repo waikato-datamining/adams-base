@@ -15,7 +15,7 @@
 
 /*
  * ControlPanel.java
- * Copyright (C) 2015-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -63,8 +63,9 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.List;
 
 /**
  * A little dialog for controlling the breakpoint. Cannot be static class!
@@ -872,7 +873,7 @@ public class ControlPanel
    * @param blocked	whether execution has been blocked
    */
   public void breakpointReached(boolean blocked) {
-    HashSet<View> views;
+    List<View>  views;
     int		i;
 
     m_TextActorPath.setText(getCurrentActor().getFullName());
@@ -904,9 +905,13 @@ public class ControlPanel
 
     if (!m_Manual) {
       // combine views
-      views = new HashSet<>(Arrays.asList(getOwner().getViews()));
-      if (getCurrentBreakpoint() != null)
-	views.addAll(Arrays.asList(getCurrentBreakpoint().getViews()));
+      views = new ArrayList<>(Arrays.asList(getOwner().getViews()));
+      if (getCurrentBreakpoint() != null) {
+	for (View view: getCurrentBreakpoint().getViews()) {
+	  if (!views.contains(view))
+	    views.add(view);
+	}
+      }
 
       // show dialogs
       for (View d : views) {
@@ -939,6 +944,10 @@ public class ControlPanel
 	    throw new IllegalStateException("Unhandled dialog type: " + d);
 	}
       }
+
+      // switch to first view
+      if (!views.isEmpty())
+	m_TabbedPaneDisplays.setSelectedIndex(0);
     }
   }
 
