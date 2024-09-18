@@ -15,12 +15,14 @@
 
 /*
  * ImageObjectFilter.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
+import adams.data.InPlaceProcessing;
 import adams.data.objectfilter.ObjectFilter;
 import adams.data.objectfilter.PassThrough;
 import adams.data.objectfinder.AllFinder;
@@ -33,7 +35,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
 
 /**
  <!-- globalinfo-start -->
- * Uses the specified object finder to locate objects and then applies the object filter to the located objects (modifies the report).
+ * Uses the specified object finder to locate objects and then applies the object filter to the located objects. Modifies the report&#47;report handler unless the 'no-copy' is flag is unset.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,6 +54,7 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -75,12 +78,14 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-finder &lt;adams.data.objectfinder.ObjectFinder&gt; (property: finder)
@@ -104,12 +109,19 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
+ * &nbsp;&nbsp;&nbsp;If enabled, no copy of the report&#47;report handler is created before processing
+ * &nbsp;&nbsp;&nbsp;the report.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectFilter
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements InPlaceProcessing {
 
   private static final long serialVersionUID = -3992867498417362738L;
 
@@ -125,6 +137,9 @@ public class ImageObjectFilter
   /** whether to clean the object indices. */
   protected boolean m_CleanIndices;
 
+  /** whether to skip creating a copy of the spreadsheet. */
+  protected boolean m_NoCopy;
+
   /**
    * Returns a string describing the object.
    *
@@ -132,7 +147,8 @@ public class ImageObjectFilter
    */
   @Override
   public String globalInfo() {
-    return "Uses the specified object finder to locate objects and then applies the object filter to the located objects (modifies the report).";
+    return "Uses the specified object finder to locate objects and then applies the object filter to the "
+	     + "located objects. Modifies the report/report handler unless the 'no-copy' is flag is unset.";
   }
 
   /**
@@ -157,6 +173,10 @@ public class ImageObjectFilter
     m_OptionManager.add(
       "clean-indices", "cleanIndices",
       false);
+
+    m_OptionManager.add(
+      "no-copy", "noCopy",
+      true);
   }
 
   /**
@@ -281,6 +301,38 @@ public class ImageObjectFilter
   }
 
   /**
+   * Sets whether to skip creating a copy of the report/report handler before updating the report.
+   *
+   * @param value	true if to skip creating copy
+   */
+  @Override
+  public void setNoCopy(boolean value) {
+    m_NoCopy = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip creating a copy of the report/report handler before updating the report.
+   *
+   * @return		true if copying is skipped
+   */
+  @Override
+  public boolean getNoCopy() {
+    return m_NoCopy;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String noCopyTipText() {
+    return "If enabled, no copy of the report/report handler is created before processing the report.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -313,6 +365,7 @@ public class ImageObjectFilter
     result += QuickInfoHelper.toString(this, "filter", m_Filter, ", filter: ");
     result += QuickInfoHelper.toString(this, "keepAllObjects", m_KeepAllObjects, "keep all", ", ");
     result += QuickInfoHelper.toString(this, "cleanIndices", m_CleanIndices, "clean indices", ", ");
+    result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
 
     return result;
   }
@@ -332,21 +385,27 @@ public class ImageObjectFilter
     LocatedObjects		objs;
     LocatedObjects		newObjs;
     LocatedObjects		otherObjs;
-    boolean			cleaned;
 
     result  = null;
     report  = null;
     handler = null;
     if (m_InputToken.hasPayload(MutableReportHandler.class)) {
       handler = m_InputToken.getPayload(MutableReportHandler.class);
+      if (!m_NoCopy)
+	handler = ObjectCopyHelper.copyObject(handler);
       report  = handler.getReport();
     }
     else if (m_InputToken.hasPayload(Report.class)) {
       report = m_InputToken.getPayload(Report.class);
+      if (!m_NoCopy)
+	report = ObjectCopyHelper.copyObject(report);
     }
     else {
       result = m_InputToken.unhandledData();
     }
+
+    if (report == null)
+      result = "No report available!";
 
     if (result == null) {
       try {
@@ -359,10 +418,10 @@ public class ImageObjectFilter
 	indices = m_Finder.find(objs);
 
 	// remove all old objects
-        for (AbstractField field : report.getFields()) {
-          if (field.getName().startsWith(m_Finder.getPrefix()))
-            report.removeValue(field);
-        }
+	for (AbstractField field : report.getFields()) {
+	  if (field.getName().startsWith(m_Finder.getPrefix()))
+	    report.removeValue(field);
+	}
 
 	// compile new objects
 	newObjs = objs.subset(indices);
@@ -372,10 +431,10 @@ public class ImageObjectFilter
 	newObjs = m_Filter.filter(newObjs);
 
 	// add objects to report
-        if (m_KeepAllObjects) {
-          otherObjs = objs.subset(indices, true);
-          newObjs.addAll(otherObjs);
-        }
+	if (m_KeepAllObjects) {
+	  otherObjs = objs.subset(indices, true);
+	  newObjs.addAll(otherObjs);
+	}
 	newReport = newObjs.toReport(m_Finder.getPrefix());
 	for (AbstractField field : newReport.getFields()) {
 	  report.addField(field);
