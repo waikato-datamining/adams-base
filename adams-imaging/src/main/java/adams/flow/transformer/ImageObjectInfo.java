@@ -560,6 +560,7 @@ public class ImageObjectInfo
 	    if (m_PerformScaling)
 	      polygon = GeometryUtils.scale(polygon, m_ScaleX, m_ScaleY);
 	    m_OutputToken = new Token(polygon.getArea());
+	    break;
 	  default:
 	    throw new IllegalStateException("Unhandled type: " + m_Type);
 	}
