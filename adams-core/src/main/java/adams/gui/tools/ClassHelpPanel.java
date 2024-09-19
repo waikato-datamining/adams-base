@@ -15,7 +15,7 @@
 
 /*
  * ClassHelpPanel.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -102,7 +102,7 @@ public class ClassHelpPanel
     m_TextSearch = new BaseTextField();
     m_TextSearch.getDocument().addDocumentListener(new DocumentListener() {
       protected void update() {
-	m_ListClasses.search(m_TextSearch.getText().length() == 0 ? null : m_TextSearch.getText(), false);
+	m_ListClasses.search(m_TextSearch.getText().isEmpty() ? null : m_TextSearch.getText(), false);
 	m_DelayedAction.queue(new AbstractAction(m_DelayedAction) {
 	  @Override
 	  public String execute() {
