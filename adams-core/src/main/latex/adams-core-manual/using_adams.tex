@@ -637,10 +637,12 @@ control actors. In the following a short introduction to the others:
 	hunting down memory leaks.
 	\item \textit{LoadBalancer} -- Spawns off threads for incoming tokens to
 	process the tokens independently in the sub-flow defined below this actor.
+	\item \textit{LocalScopeTee} -- Provides ``local'' variables and internal
+	storage for a ``Tee'' actor; useful when things run in parallel.
 	\item \textit{LocalScopeTransformer} -- Provides ``local'' variables and internal
-	storage; useful when things run in parallel.
+	storage for a ``SubProcess'' actor; useful when things run in parallel.
 	\item \textit{LocalScopeTrigger} -- Provides ``local'' variables and internal
-	storage; useful when things run in parallel.
+	storage for a ``Trigger'' actor; useful when things run in parallel.
 	\item \textit{Once} -- A tee actor that only tees off the first token it
 	encounters. A simplified \textit{ConditionalTee} so to speak.
 	\item \textit{MissionControl} -- shows a minimalistic control panel

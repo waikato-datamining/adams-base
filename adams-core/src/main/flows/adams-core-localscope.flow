@@ -1,8 +1,10 @@
 # Project: adams
-# Date: 2016-02-15 11:32:06
+# Date: 2024-09-19 16:01:49
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "This flow demonstrates how to \\\"localize\\\" the scope\\nof variables (and internal storage) by using the\\n\\\"LocalScope\\\" control actor.\\nThe flow below draws two bell curves concurrently, \\nboth using the same variable names, but one uses \\na mean of -2.0 and the other of 2.0." -flow-execution-listener adams.flow.execution.NullListener
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "This flow demonstrates how to \\\"localize\\\" the scope\\nof variables (and internal storage) by using the\\n\\\"LocalScopeTrigger\\\" control actor.\\nThe flow below draws two bell curves concurrently, \\nboth using the same variable names, but one uses \\na mean of -2.0 and the other of 2.0." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.source.Start
  adams.flow.control.Branch
   adams.flow.control.LocalScopeTrigger -name "LocalScopeTrigger (mean -2.0)"
