@@ -15,7 +15,7 @@
 
 /*
  * DeleteFile.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -30,7 +30,7 @@ import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Deletes the file&#47;directory received on its input port if it matches the provided regular expression.<br>
+ * Deletes the file&#47;directory (or files&#47;directories) received on its input port if it matches the provided regular expression.<br>
  * In case of directories, deletion is performed recursively (if a directory matches, then the content gets deleted regardless whether it matches the regular expression or not).
  * <br><br>
  <!-- globalinfo-end -->
@@ -40,9 +40,13 @@ import java.io.File;
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.String<br>
  * &nbsp;&nbsp;&nbsp;java.io.File<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.String[]<br>
+ * &nbsp;&nbsp;&nbsp;java.io.File[]<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -50,39 +54,50 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: DeleteFile
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression to match the filename against.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DeleteFile
   extends AbstractTransformer {
@@ -101,11 +116,11 @@ public class DeleteFile
   @Override
   public String globalInfo() {
     return
-        "Deletes the file/directory received on its input port if it matches the "
-      + "provided regular expression.\n"
-      + "In case of directories, deletion is performed recursively (if a directory "
-      + "matches, then the content gets deleted regardless whether it matches "
-      + "the regular expression or not).";
+      "Deletes the file/directory (or files/directories) received on its input port if it matches the "
+	+ "provided regular expression.\n"
+	+ "In case of directories, deletion is performed recursively (if a directory "
+	+ "matches, then the content gets deleted regardless whether it matches "
+	+ "the regular expression or not).";
   }
 
   /**
@@ -116,8 +131,8 @@ public class DeleteFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "regexp", "regExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "regexp", "regExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
   }
 
   /**
@@ -162,19 +177,19 @@ public class DeleteFile
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.io.File.class<!-- flow-accepts-end -->
+   * @return		the classes
    */
   public Class[] accepts() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, String[].class, File[].class};
   }
 
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->java.lang.String.class, java.io.File.class<!-- flow-generates-end -->
+   * @return		the classes
    */
   public Class[] generates() {
-    return new Class[]{String.class, File.class};
+    return new Class[]{String.class, File.class, String[].class, File[].class};
   }
 
   /**
@@ -185,29 +200,52 @@ public class DeleteFile
   @Override
   protected String doExecute() {
     String	result;
-    File	file;
+    File[]	files;
+    String[]	strings;
+    int		i;
     String	type;
 
     result = null;
 
-    if (m_InputToken.getPayload() instanceof File)
-      file = new PlaceholderFile((File) m_InputToken.getPayload());
-    else
-      file = new PlaceholderFile((String) m_InputToken.getPayload());
-    type = (file.isDirectory() ? "directory" : "file");
-
-    try {
-      getLogger().info(type + " '" + file + "' exists: " + file.exists());
-      if (file.exists()) {
-	getLogger().info(type + " '" + file + "' matches '" + m_RegExp + "': " + m_RegExp.isMatch(file.getName()));
-	if (m_RegExp.isMatch(file.getName())) {
-	  if (!FileUtils.delete(file))
-	    result = "Failed to delete " + type + ": " + file;
-	}
-      }
+    files = new File[0];
+    if (m_InputToken.hasPayload(File.class)) {
+      files = new File[]{new PlaceholderFile(m_InputToken.getPayload(File.class))};
     }
-    catch (Exception e) {
-      result = handleException("Problem deleting " + type + " '" + file + "': ", e);
+    else if (m_InputToken.hasPayload(String.class)) {
+      files = new File[]{new PlaceholderFile(m_InputToken.getPayload(String.class))};
+    }
+    else if (m_InputToken.hasPayload(File[].class)) {
+      files = m_InputToken.getPayload(File[].class);
+    }
+    else if (m_InputToken.hasPayload(String[].class)) {
+      strings = m_InputToken.getPayload(String[].class);
+      files   = new File[strings.length];
+      for (i = 0; i < strings.length; i++)
+	files[i] = new PlaceholderFile(strings[i]);
+    }
+    else {
+      result = m_InputToken.unhandledData();
+    }
+
+    if (result == null) {
+      for (File file : files) {
+	type = (file.isDirectory() ? "directory" : "file");
+	try {
+	  getLogger().info(type + " '" + file + "' exists: " + file.exists());
+	  if (file.exists()) {
+	    getLogger().info(type + " '" + file + "' matches '" + m_RegExp + "': " + m_RegExp.isMatch(file.getName()));
+	    if (m_RegExp.isMatch(file.getName())) {
+	      if (!FileUtils.delete(file))
+		result = "Failed to delete " + type + ": " + file;
+	    }
+	  }
+	}
+	catch (Exception e) {
+	  result = handleException("Problem deleting " + type + " '" + file + "': ", e);
+	}
+	if (result != null)
+	  break;
+      }
     }
 
     if (result == null)
