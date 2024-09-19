@@ -15,7 +15,7 @@
 
 /*
  * BaseCommandLineEditor.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,6 +27,8 @@ import adams.core.base.BaseObject;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.DoubleClickEvent;
+import adams.gui.event.DoubleClickListener;
 import adams.gui.tools.ClassHelpPanel;
 
 import javax.swing.BorderFactory;
@@ -138,6 +140,17 @@ public class BaseCommandLineEditor
     m_PanelHelp = new ClassHelpPanel();
     m_PanelHelp.listAllClassNames(false);
     m_PanelHelp.setPreferredSize(GUIHelper.getDefaultDialogDimension());
+    m_PanelHelp.setDoubleClickListener(new DoubleClickListener() {
+      @Override
+      public void doubleClickOccurred(DoubleClickEvent e) {
+	if (m_PanelHelp.getSelectedClassName() != null) {
+	  String s = (m_PanelHelp.getSelectedClassName() + " " + m_TextOptions.getText()).trim();
+	  if (((BaseCommandLine) getValue()).isValid(s) && !s.equals(((BaseObject) getValue()).getValue()))
+	    setValue(new BaseCommandLine(s));
+	}
+	closeDialog(APPROVE_OPTION);
+      }
+    });
     panelCenter.add(m_PanelHelp, BorderLayout.CENTER);
 
     panelOptions = new JPanel(new FlowLayout(FlowLayout.LEFT));
