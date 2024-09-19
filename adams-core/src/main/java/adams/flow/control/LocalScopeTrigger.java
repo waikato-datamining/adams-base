@@ -150,7 +150,7 @@ import adams.flow.core.StopRestrictor;
  */
 public class LocalScopeTrigger
   extends Trigger 
-  implements VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor {
+  implements VariablesHandler, StorageHandler, LocalScopeHandler, ProgrammaticLocalScope, StopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = -8344934611549310497L;
@@ -160,7 +160,13 @@ public class LocalScopeTrigger
 
   /** the variables manager. */
   protected FlowVariables m_LocalVariables;
-  
+
+  /** whether the local storage was programmatically set. */
+  protected boolean m_ProgrammaticLocalStorage;
+
+  /** whether the local vars were programmatically set. */
+  protected boolean m_ProgrammaticLocalVariables;
+
   /** the callable names. */
   protected CallableNamesRecorder m_CallableNames;
   
@@ -622,7 +628,31 @@ public class LocalScopeTrigger
     m_CallableNames.add(handler, actor);
     return null;
   }
-  
+
+  /**
+   * The local variables to use.
+   *
+   * @param variables	the variables
+   */
+  @Override
+  public void useLocalVariables(Variables variables) {
+    m_LocalVariables = new FlowVariables();
+    m_LocalVariables.setFlow(this);
+    m_LocalVariables.assign(variables);
+    m_ProgrammaticLocalVariables = true;
+  }
+
+  /**
+   * The local storage to use.
+   *
+   * @param storage	the storage
+   */
+  @Override
+  public void useLocalStorage(Storage storage) {
+    m_LocalStorage = storage;
+    m_ProgrammaticLocalStorage = true;
+  }
+
   /**
    * Returns the storage container.
    *
@@ -746,8 +776,10 @@ public class LocalScopeTrigger
    */
   @Override
   protected String preExecute() {
-    m_LocalStorage   = null;
-    m_LocalVariables = null;
+    if (!m_ProgrammaticLocalStorage)
+      m_LocalStorage = null;
+    if (!m_ProgrammaticLocalVariables)
+      m_LocalVariables = null;
     m_Actors.setVariables(getVariables());
     m_Actors.getOptionManager().updateVariableValues(true);
     if (m_RestrictedStop) {

@@ -14,9 +14,10 @@
  */
 
 /*
- * LocalScopeTee.java
- * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
+ * LocalScopeTransformer.java
+ * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
  */
+
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
@@ -24,51 +25,45 @@ import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingLevel;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandler;
+import adams.flow.core.ActorHandlerInfo;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.CallableNamesRecorder;
 import adams.flow.core.FlowVariables;
+import adams.flow.core.InputConsumer;
+import adams.flow.core.MutableActorHandler;
+import adams.flow.core.OutputProducer;
 import adams.flow.core.StopRestrictor;
+import adams.flow.core.Token;
+import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Executes the sub-actors whenever a token gets passed through, just like the adams.flow.control.Tee actor, but also provides its own scope for variables and internal storage.<br>
+ * Provides a local scope for the sub-actors.<br>
  * It is possible to 'propagate' or 'leak' variables and storage items from within the local scope back to the output scope. However, storage items from caches cannot be propagated.
  * <br><br>
  <!-- globalinfo-end -->
- *
- <!-- flow-summary-start -->
- * Input&#47;output:<br>
- * - accepts:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
- * - generates:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.core.Unknown<br>
- * <br><br>
- * Conditional equivalent:<br>
- * &nbsp;&nbsp;&nbsp;adams.flow.control.ConditionalTee
- * <br><br>
- <!-- flow-summary-end -->
  *
  <!-- options-start -->
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
- * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: LocalScopeTee
+ * &nbsp;&nbsp;&nbsp;default: LocalScopeTransformer
  * </pre>
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -78,37 +73,16 @@ import adams.flow.core.StopRestrictor;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
- * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
- * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
- * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
- * &nbsp;&nbsp;&nbsp;default: false
- * </pre>
- *
- * <pre>-stopping-timeout &lt;int&gt; (property: stoppingTimeout)
- * &nbsp;&nbsp;&nbsp;The timeout in milliseconds when waiting for actors to finish (&lt;= 0 for
- * &nbsp;&nbsp;&nbsp;infinity; see 'finishBeforeStopping').
- * &nbsp;&nbsp;&nbsp;default: -1
- * &nbsp;&nbsp;&nbsp;minimum: -1
- * </pre>
- *
- * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
- * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow
- * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
- * &nbsp;&nbsp;&nbsp;default: false
- * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
- * </pre>
- *
- * <pre>-tee &lt;adams.flow.core.Actor&gt; [-tee ...] (property: actors)
- * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
+ * <pre>-actor &lt;adams.flow.core.Actor&gt; [-actor ...] (property: actors)
+ * &nbsp;&nbsp;&nbsp;The actors to execute in the loop.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
@@ -123,8 +97,6 @@ import adams.flow.core.StopRestrictor;
  * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into
  * &nbsp;&nbsp;&nbsp;the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
@@ -136,8 +108,6 @@ import adams.flow.core.StopRestrictor;
  * <pre>-variables-regexp &lt;adams.core.base.BaseRegExp&gt; (property: variablesRegExp)
  * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
  * <pre>-scope-handling-storage &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingStorage)
@@ -151,8 +121,6 @@ import adams.flow.core.StopRestrictor;
  * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get
  * &nbsp;&nbsp;&nbsp;into the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
  * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
@@ -166,20 +134,27 @@ import adams.flow.core.StopRestrictor;
  * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order
  * &nbsp;&nbsp;&nbsp;to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
- * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
- * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
+ * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class LocalScopeTee
-  extends Tee
-  implements VariablesHandler, StorageHandler, LocalScopeHandler, StopRestrictor, ProgrammaticLocalScope {
+public class LocalScopeSubProcess
+  extends AbstractControlActor
+  implements InputConsumer, OutputProducer, MutableActorHandler,
+	       VariablesHandler, StorageHandler, LocalScopeHandler, ProgrammaticLocalScope, StopRestrictor, AtomicExecution {
 
   /** for serialization. */
-  private static final long serialVersionUID = -8344934611549310497L;
+  private static final long serialVersionUID = -2837014912083918343L;
+
+  /** the actors to execute. */
+  protected SubProcess m_Actors;
 
   /** the storage for temporary data. */
   protected transient Storage m_LocalStorage;
@@ -229,7 +204,7 @@ public class LocalScopeTee
   /**
    * Default constructor.
    */
-  public LocalScopeTee() {
+  public LocalScopeSubProcess() {
     super();
   }
 
@@ -238,7 +213,7 @@ public class LocalScopeTee
    *
    * @param name      the name to use
    */
-  public LocalScopeTee(String name) {
+  public LocalScopeSubProcess(String name) {
     this();
     setName(name);
   }
@@ -251,9 +226,7 @@ public class LocalScopeTee
   @Override
   public String globalInfo() {
     return
-      "Executes the sub-actors whenever a token gets passed through, just "
-	+ "like the " + Tee.class.getName() + " actor, but also provides "
-	+ "its own scope for variables and internal storage.\n"
+      "Provides a local scope for the sub-actors.\n"
 	+ "It is possible to 'propagate' or 'leak' variables and storage items "
 	+ "from within the local scope back to the output scope. However, "
 	+ "storage items from caches cannot be propagated.";
@@ -265,6 +238,10 @@ public class LocalScopeTee
   @Override
   public void defineOptions() {
     super.defineOptions();
+
+    m_OptionManager.add(
+      "actor", "actors",
+      new Actor[0]);
 
     m_OptionManager.add(
       "scope-handling-variables", "scopeHandlingVariables",
@@ -297,6 +274,44 @@ public class LocalScopeTee
     m_OptionManager.add(
       "storage-regexp", "storageRegExp",
       new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "finish-before-stopping", "finishBeforeStopping",
+      false);
+
+    m_OptionManager.add(
+      "stopping-timeout", "stoppingTimeout",
+      -1, -1, null);
+
+    m_OptionManager.add(
+      "stopping-warning-interval", "stoppingWarningInterval",
+      10000, -1, null);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_Actors = new SubProcess();
+    m_Actors.setAllowSource(false);
+    m_Actors.setAllowStandalones(false);
+    m_Actors.setAllowEmpty(true);
+    m_Actors.setRestrictingStops(true);
+
+    m_CallableNames            = new CallableNamesRecorder();
+    m_EnforceCallableNameCheck = true;
+  }
+
+  /**
+   * Resets the actor.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    m_CallableNames.clear();
   }
 
   /**
@@ -328,24 +343,55 @@ public class LocalScopeTee
   }
 
   /**
-   * Initializes the members.
+   * Sets the logging level.
+   *
+   * @param value 	the level
    */
   @Override
-  protected void initialize() {
-    super.initialize();
-
-    m_CallableNames            = new CallableNamesRecorder();
-    m_EnforceCallableNameCheck = true;
-    m_Actors.setRestrictingStops(true);
+  public void setLoggingLevel(LoggingLevel value) {
+    super.setLoggingLevel(value);
+    m_Actors.setLoggingLevel(value);
   }
 
   /**
-   * Resets the actor.
+   * Sets whether the transformation is skipped or not.
+   *
+   * @param value 	true if transformation is to be skipped
    */
   @Override
-  protected void reset() {
-    super.reset();
-    m_CallableNames.clear();
+  public void setSkip(boolean value) {
+    super.setSkip(value);
+    m_Actors.setSkip(value);
+  }
+
+  /**
+   * Sets the actors of the loop.
+   *
+   * @param value	the actors
+   */
+  public void setActors(Actor[] value) {
+    m_Actors.setActors(value);
+    reset();
+    updateParent();
+  }
+
+  /**
+   * Returns the actors of the loop.
+   *
+   * @return		the actors
+   */
+  public Actor[] getActors() {
+    return m_Actors.getActors();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String actorsTipText() {
+    return "The actors to execute in the loop.";
   }
 
   /**
@@ -605,6 +651,93 @@ public class LocalScopeTee
   }
 
   /**
+   * Sets whether to finish processing before stopping execution.
+   *
+   * @param value	if true then actor finishes processing first
+   */
+  public void setFinishBeforeStopping(boolean value) {
+    m_Actors.setFinishBeforeStopping(value);
+    reset();
+  }
+
+  /**
+   * Returns whether to finish processing before stopping execution.
+   *
+   * @return		true if actor finishes processing first
+   */
+  public boolean getFinishBeforeStopping() {
+    return m_Actors.getFinishBeforeStopping();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String finishBeforeStoppingTipText() {
+    return m_Actors.finishBeforeStoppingTipText();
+  }
+
+  /**
+   * Sets the timeout for waiting for the sub-flow to stop.
+   *
+   * @param value	timeout in milliseconds (<= 0 for infinity)
+   */
+  public void setStoppingTimeout(int value) {
+    m_Actors.setStoppingTimeout(value);
+    reset();
+  }
+
+  /**
+   * Returns the timeout for waiting for the sub-flow to stop.
+   *
+   * @return		timeout in milliseconds (<= 0 for infinity)
+   */
+  public int getStoppingTimeout() {
+    return m_Actors.getStoppingTimeout();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingTimeoutTipText() {
+    return m_Actors.stoppingTimeoutTipText();
+  }
+
+  /**
+   * Sets the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @param value	interval in milliseconds (<= 0 no warning)
+   */
+  public void setStoppingWarningInterval(int value) {
+    m_Actors.setStoppingWarningInterval(value);
+    reset();
+  }
+
+  /**
+   * Returns the interval for outputting warnings if the sub-flow hasn't stopped yet (and no stopping timeout set).
+   *
+   * @return		interval in milliseconds (<= 0 no warning)
+   */
+  public int getStoppingWarningInterval() {
+    return m_Actors.getStoppingWarningInterval();
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String stoppingWarningIntervalTipText() {
+    return m_Actors.stoppingWarningIntervalTipText();
+  }
+
+  /**
    * Sets whether to enforce the callable name check.
    *
    * @param value	true if to enforce check
@@ -757,6 +890,209 @@ public class LocalScopeTee
   }
 
   /**
+   * Updates the parent of all actors in this group.
+   */
+  @Override
+  protected void updateParent() {
+    m_Actors.setName(getName());
+    m_Actors.setParent(null);
+    m_Actors.setParent(this);
+    super.updateParent();
+  }
+
+  /**
+   * Returns the size of the group.
+   *
+   * @return		always 1
+   */
+  @Override
+  public int size() {
+    return m_Actors.size();
+  }
+
+  /**
+   * Returns the actor at the given position.
+   *
+   * @param index	the position
+   * @return		the actor
+   */
+  @Override
+  public Actor get(int index) {
+    return m_Actors.get(index);
+  }
+
+  /**
+   * Sets the actor at the given position.
+   *
+   * @param index	the position
+   * @param actor	the actor to set at this position
+   * @return		null if successful, otherwise error message
+   */
+  @Override
+  public String set(int index, Actor actor) {
+    String	result;
+
+    result = m_Actors.set(index, actor);
+    reset();
+    updateParent();
+
+    return result;
+  }
+
+  /**
+   * Returns the index of the actor.
+   *
+   * @param actor	the name of the actor to look for
+   * @return		the index of -1 if not found
+   */
+  @Override
+  public int indexOf(String actor) {
+    return m_Actors.indexOf(actor);
+  }
+
+  /**
+   * Inserts the actor at the end.
+   *
+   * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
+   */
+  public String add(Actor actor) {
+    return add(size(), actor);
+  }
+
+  /**
+   * Inserts the actor at the given position.
+   *
+   * @param index	the position
+   * @param actor	the actor to insert
+   * @return		null if successful, otherwise error message
+   */
+  public String add(int index, Actor actor) {
+    String	result;
+
+    if (actor == this)
+      throw new IllegalArgumentException("Cannot add itself!");
+
+    result = m_Actors.add(index, actor);
+    reset();
+    updateParent();
+
+    return result;
+  }
+
+  /**
+   * Removes the actor at the given position and returns the removed object.
+   *
+   * @param index	the position
+   * @return		the removed actor
+   */
+  public Actor remove(int index) {
+    Actor result;
+
+    result = m_Actors.remove(index);
+    reset();
+
+    return result;
+  }
+
+  /**
+   * Removes all actors.
+   */
+  public void removeAll() {
+    m_Actors.removeAll();
+    reset();
+  }
+
+  /**
+   * Returns some information about the actor handler, e.g., whether it can
+   * contain standalones and the actor execution.
+   *
+   * @return		the info
+   */
+  @Override
+  public ActorHandlerInfo getActorHandlerInfo() {
+    return m_Actors.getActorHandlerInfo();
+  }
+
+  /**
+   * Returns the class that the consumer accepts.
+   *
+   * @return		the Class of objects that can be processed
+   */
+  public Class[] accepts() {
+    return new Class[]{Unknown.class};
+  }
+
+  /**
+   * Returns the class of objects that it generates.
+   *
+   * @return		the Class of the generated tokens
+   */
+  @Override
+  public Class[] generates() {
+    return new Class[]{Unknown.class};
+  }
+
+  /**
+   * Gets called in the setUp() method. Returns null if loop-actors are fine,
+   * otherwise error message.
+   *
+   * @return		null if everything OK, otherwise error message
+   */
+  @Override
+  protected String setUpSubActors() {
+    String	result;
+    Actor	first;
+    Actor	last;
+
+    result = super.setUpSubActors();
+
+    first = firstActive();
+    last  = lastActive();
+    if ((first != null) && (last != null)) {
+      if (!ActorUtils.isTransformer(first))
+	result = "First active actor (" + first.getName() + ") is not a transformer!";
+      else if (!ActorUtils.isTransformer(last))
+	result = "Last active actor (" + last.getName() + ") is not a transformer!";
+    }
+
+    if (result == null)
+      result = m_Actors.setUp();
+
+    return result;
+  }
+
+  /**
+   * Does nothing.
+   *
+   * @param token	the token to accept and process
+   */
+  public void input(Token token) {
+    m_Actors.input(token);
+  }
+
+  /**
+   * Returns whether an input token is currently present.
+   *
+   * @return		true if input token present
+   */
+  public boolean hasInput() {
+    return (m_Actors != null) && (m_Actors.hasInput());
+  }
+
+  /**
+   * Returns the current input token, if any.
+   *
+   * @return		the input token, null if none present
+   */
+  public Token currentInput() {
+    if (m_Actors != null)
+      return m_Actors.currentInput();
+    else
+      return null;
+  }
+
+  /**
    * Returns whether stops are being restricted.
    *
    * @return		true if restricting stops
@@ -764,35 +1100,6 @@ public class LocalScopeTee
   @Override
   public boolean isRestrictingStops() {
     return true;
-  }
-
-  /**
-   * Stops the (restricted) execution. No message set.
-   */
-  @Override
-  public void restrictedStopExecution() {
-    m_RestrictedStop = true;
-    m_Actors.restrictedStopExecution();
-  }
-
-  /**
-   * Stops the (restricted) execution.
-   *
-   * @param msg		the message to set as reason for stopping, can be null
-   */
-  @Override
-  public void restrictedStopExecution(String msg) {
-    m_RestrictedStop = true;
-    m_Actors.restrictedStopExecution(msg);
-  }
-
-  /**
-   * Returns whether the stop was a restricted one (that can be resumed).
-   *
-   * @return		true if restricted stop occurred
-   */
-  public boolean isRestrictedStop() {
-    return m_RestrictedStop;
   }
 
   /**
@@ -814,6 +1121,16 @@ public class LocalScopeTee
     }
 
     return super.preExecute();
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    return m_Actors.execute();
   }
 
   /**
@@ -851,6 +1168,72 @@ public class LocalScopeTee
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether there is pending output to be collected after
+   * executing the flow item.
+   *
+   * @return		true if there is pending output
+   */
+  @Override
+  public boolean hasPendingOutput() {
+    return m_Actors.hasPendingOutput();
+  }
+
+  /**
+   * Returns the generated token.
+   *
+   * @return		the generated token
+   */
+  @Override
+  public Token output() {
+    return m_Actors.output();
+  }
+
+  /**
+   * Stops the processing of tokens without stopping the flow.
+   */
+  public void flushExecution() {
+    m_Actors.flushExecution();
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Actors.stopExecution();
+    super.stopExecution();
+  }
+
+  /**
+   * Returns whether the stop was a restricted one (that can be resumed).
+   *
+   * @return		true if restricted stop occurred
+   */
+  public boolean isRestrictedStop() {
+    return m_RestrictedStop;
+  }
+
+  /**
+   * Stops the (restricted) execution. No message set.
+   */
+  @Override
+  public void restrictedStopExecution() {
+    m_RestrictedStop = true;
+    m_Actors.restrictedStopExecution();
+  }
+
+  /**
+   * Stops the (restricted) execution.
+   *
+   * @param msg		the message to set as reason for stopping, can be null
+   */
+  @Override
+  public void restrictedStopExecution(String msg) {
+    m_RestrictedStop = true;
+    m_Actors.restrictedStopExecution(msg);
   }
 
   /**
