@@ -15,7 +15,7 @@
 
 /*
  * BaseClassnameEditor.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,6 +26,8 @@ import adams.core.base.BaseClassname;
 import adams.core.base.BaseObject;
 import adams.gui.core.BaseButton;
 import adams.gui.core.GUIHelper;
+import adams.gui.event.DoubleClickEvent;
+import adams.gui.event.DoubleClickListener;
 import adams.gui.tools.ClassHelpPanel;
 
 import javax.swing.BorderFactory;
@@ -125,6 +127,15 @@ public class BaseClassnameEditor
     m_PanelHelp = new ClassHelpPanel();
     m_PanelHelp.listAllClassNames(false);
     m_PanelHelp.setPreferredSize(GUIHelper.getDefaultDialogDimension());
+    m_PanelHelp.setDoubleClickListener(new DoubleClickListener() {
+      @Override
+      public void doubleClickOccurred(DoubleClickEvent e) {
+	String s = m_PanelHelp.getSelectedClassName();
+	if ((s != null) && ((BaseClassname) getValue()).isValid(s) && !s.equals(((BaseObject) getValue()).getValue()))
+	  setValue(new BaseClassname(s));
+	closeDialog(APPROVE_OPTION);
+      }
+    });
     panelAll.add(m_PanelHelp, BorderLayout.CENTER);
     panelAll.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 

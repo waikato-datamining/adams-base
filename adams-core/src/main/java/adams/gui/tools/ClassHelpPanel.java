@@ -29,7 +29,10 @@ import adams.gui.core.BaseTextField;
 import adams.gui.core.DelayedActionRunnable;
 import adams.gui.core.DelayedActionRunnable.AbstractAction;
 import adams.gui.core.Fonts;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.SearchableBaseList;
+import adams.gui.event.DoubleClickEvent;
+import adams.gui.event.DoubleClickListener;
 import adams.gui.help.AbstractHelpGenerator;
 import adams.gui.help.HelpContainer;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
@@ -45,6 +48,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -76,6 +81,9 @@ public class ClassHelpPanel
   /** for updating the search etc. */
   protected DelayedActionRunnable m_DelayedAction;
 
+  /** the double click listener. */
+  protected DoubleClickListener m_DoubleClickListener;
+
   /**
    * Initializes the listeners.
    */
@@ -83,8 +91,9 @@ public class ClassHelpPanel
   protected void initialize() {
     super.initialize();
 
-    m_ChangeListeners = new HashSet<>();
-    m_DelayedAction   = new DelayedActionRunnable(500, 50);
+    m_ChangeListeners     = new HashSet<>();
+    m_DelayedAction       = new DelayedActionRunnable(500, 50);
+    m_DoubleClickListener = null;
   }
 
   /**
@@ -149,6 +158,18 @@ public class ClassHelpPanel
       else
         clearHelp();
       notifyChangeListeners();
+    });
+    m_ListClasses.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (m_DoubleClickListener == null)
+	  return;
+	if (MouseUtils.isDoubleClick(e)) {
+	  String clsName = (String) m_ListClasses.getSelectedValue();
+	  if (clsName != null)
+	    m_DoubleClickListener.doubleClickOccurred(new DoubleClickEvent(ClassHelpPanel.this));
+	}
+      }
     });
     split.setTopComponent(new BaseScrollPane(m_ListClasses));
 
@@ -284,5 +305,30 @@ public class ClassHelpPanel
     e = new ChangeEvent(this);
     for (ChangeListener l: m_ChangeListeners)
       l.stateChanged(e);
+  }
+
+  /**
+   * Sets the listener for double-clicks on the classes (eg shortcut for selection).
+   *
+   * @param l		the listener to use, null to remove
+   */
+  public void setDoubleClickListener(DoubleClickListener l) {
+    m_DoubleClickListener = l;
+  }
+
+  /**
+   * Returns the current double-click listener on classes.
+   *
+   * @return		the listener in use, can be null
+   */
+  public DoubleClickListener getDoubleClickListener() {
+    return m_DoubleClickListener;
+  }
+
+  /**
+   * Removes any specified double-click listener.
+   */
+  public void removeDoubleClickListener() {
+    setDoubleClickListener(null);
   }
 }
