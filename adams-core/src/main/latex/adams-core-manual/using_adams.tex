@@ -635,11 +635,17 @@ control actors. In the following a short introduction to the others:
 	\item \textit{JMap} -- If available, i.e., using a JDK instead of JRE, you can
 	output information on what objects are currently present in the JVM. Useful for
 	hunting down memory leaks.
+	\item \textit{LaunchTee} -- launches threads for incoming tokens for processing
+	with the specified sub-flow (does not limit number of threads being executed);
+	uses a ``LocalScopeTee'' internally.
+	\item \textit{LaunchTrigger} -- launches threads for executing the specified
+	sub-flow (does not limit number of threads being executed);
+	uses a ``LocalScopeTrigger'' internally.
 	\item \textit{LoadBalancer} -- Spawns off threads for incoming tokens to
 	process the tokens independently in the sub-flow defined below this actor.
 	\item \textit{LocalScopeTee} -- Provides ``local'' variables and internal
 	storage for a ``Tee'' actor; useful when things run in parallel.
-	\item \textit{LocalScopeTransformer} -- Provides ``local'' variables and internal
+	\item \textit{LocalScopeSubProcess/LocalScopeTransformer} -- Provides ``local'' variables and internal
 	storage for a ``SubProcess'' actor; useful when things run in parallel.
 	\item \textit{LocalScopeTrigger} -- Provides ``local'' variables and internal
 	storage for a ``Trigger'' actor; useful when things run in parallel.
