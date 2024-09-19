@@ -36,7 +36,7 @@ import java.awt.FlowLayout;
 
 /**
  <!-- globalinfo-start -->
- * Prompts the user to click on 'positive' or 'negative' button.<br>
+ * Prompts the user to click on 'positive' or 'negative' button (negative button can be omitted).<br>
  * The actor's name can be used in the message using the following placeholders:<br>
  * {SHORT} - the short name<br>
  * {FULL} - the full name (incl path)<br>
@@ -63,7 +63,8 @@ import java.awt.FlowLayout;
  * </pre>
  *
  * <pre>-caption-negative &lt;java.lang.String&gt; (property: captionNegative)
- * &nbsp;&nbsp;&nbsp;The caption for the 'negative' button.
+ * &nbsp;&nbsp;&nbsp;The caption for the 'negative' button, leave empty to only show the 'positive'
+ * &nbsp;&nbsp;&nbsp; button.
  * &nbsp;&nbsp;&nbsp;default: no
  * </pre>
  *
@@ -129,7 +130,7 @@ public class PromptUser
   @Override
   public String globalInfo() {
     return
-      "Prompts the user to click on 'positive' or 'negative' button.\n"
+      "Prompts the user to click on 'positive' or 'negative' button (negative button can be omitted).\n"
 	+ "The actor's name can be used in the message using the following placeholders:\n"
 	+ PLACEHOLDER_SHORT + " - the short name\n"
 	+ PLACEHOLDER_FULL + " - the full name (incl path)\n"
@@ -253,7 +254,7 @@ public class PromptUser
    * 			displaying in the GUI or for listing the options.
    */
   public String captionNegativeTipText() {
-    return "The caption for the 'negative' button.";
+    return "The caption for the 'negative' button, leave empty to only show the 'positive' button.";
   }
 
   /**
@@ -382,12 +383,17 @@ public class PromptUser
     String      			initial;
     boolean				headless;
     GUIHelper.InputPanelWithButtons 	panelInput;
+    String[]				buttons;
 
     message = m_Message;
     if (owner != null) {
       message = owner.getVariables().expand(message);
       message = message.replace(PLACEHOLDER_SHORT, owner.getName()).replace(PLACEHOLDER_FULL, owner.getFullName());
     }
+    if (m_CaptionNegative.isEmpty())
+      buttons = new String[]{m_CaptionPositive};
+    else
+      buttons = new String[]{m_CaptionPositive, m_CaptionNegative};
 
     headless = ((owner != null) && (owner.isHeadless())) || GUIHelper.isHeadless();
 
@@ -395,24 +401,20 @@ public class PromptUser
     if (!m_NonInteractive) {
       m_Communication = new DialogCommunication();
       if (headless) {
-	answer = ConsoleHelper.selectOption(
-	  message, new String[]{m_CaptionPositive, m_CaptionNegative}, initial);
+	answer = ConsoleHelper.selectOption(message, buttons, initial);
       }
       else {
 	switch (m_DisplayLocation) {
 	  case DIALOG:
 	    answer = GUIHelper.showInputDialog(
 	      (owner == null) ? null : owner.getParentComponent(),
-	      message,
-	      initial,
-	      new String[]{m_CaptionPositive, m_CaptionNegative},
+	      message, initial, buttons,
 	      InputDialogMultiValueSelection.BUTTONS_HORIZONTAL,
-	      "Please choose",
-	      m_Communication);
+	      "Please choose", m_Communication);
 	    break;
 
 	  case NOTIFICATION_AREA:
-	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, new String[]{m_CaptionPositive, m_CaptionNegative}, true, FlowLayout.LEFT, "flow_question.png");
+	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, buttons, true, FlowLayout.LEFT, "flow_question.png");
 	    answer     = InteractionDisplayLocationHelper.display(owner, m_Communication, panelInput);
 	    break;
 
