@@ -31,6 +31,8 @@ import adams.data.spreadsheet.SpreadSheet;
 public class PassThrough
   extends AbstractMultiSpreadSheetOperation<SpreadSheet[]> {
 
+  private static final long serialVersionUID = 5831884654010979232L;
+
   /**
    * Returns a string describing the object.
    *
@@ -40,8 +42,6 @@ public class PassThrough
   public String globalInfo() {
     return "Dummy, just passes through the data.";
   }
-
-  private static final long serialVersionUID = 5831884654010979232L;
 
   /**
    * Returns the minimum number of sheets that are required for the operation.
