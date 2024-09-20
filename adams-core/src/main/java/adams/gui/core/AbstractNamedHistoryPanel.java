@@ -15,7 +15,7 @@
 
 /*
  * AbstractHistoryPanel.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -195,9 +195,9 @@ public abstract class AbstractNamedHistoryPanel<T>
    * A specialized frame class for displaying a history entries.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @param <T> the type of
+   * @param <T> the type of entry
    */
-  public static abstract class AbstractHistoryEntryFrame<T extends Object>
+  public static abstract class AbstractHistoryEntryFrame<T>
     extends BaseFrame {
 
     /** for serialization. */

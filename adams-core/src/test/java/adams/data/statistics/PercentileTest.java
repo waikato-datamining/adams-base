@@ -15,18 +15,18 @@
 
 /*
  * PercentileTest.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
 
-import java.util.Random;
-import java.util.Vector;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * Tests the adams.data.statistics.Percentile class. Run from commandline with: <br><br>
@@ -59,13 +59,13 @@ public class PercentileTest
     Integer		q1;
     Integer		q3;
 
-    values = new Vector<Integer>();
+    values = new Vector<>();
     for (i = 1; i <= 100; i++)
-      values.add(new Integer(i));
+      values.add(i);
 
-    q    = new Percentile<Integer>();
+    q    = new Percentile<>();
     rand = new Random(1);
-    while (values.size() > 0) {
+    while (!values.isEmpty()) {
       index = rand.nextInt(values.size());
       q.add(values.get(index));
       values.remove(index);
@@ -74,8 +74,8 @@ public class PercentileTest
     q1 = q.getPercentile(0.25);
     q3 = q.getPercentile(0.75);
 
-    assertEquals(new Integer(25), q1);
-    assertEquals(new Integer(75), q3);
+    assertEquals((Integer) 25, q1);
+    assertEquals((Integer) 75, q3);
   }
 
   /**

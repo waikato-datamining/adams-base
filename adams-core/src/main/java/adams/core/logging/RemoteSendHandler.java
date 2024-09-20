@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteSendHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.logging;
@@ -32,7 +32,6 @@ import java.util.logging.LogRecord;
  * Sends the log records to the specified host/port.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoteSendHandler
   extends AbstractLogHandler {
@@ -267,7 +266,7 @@ public class RemoteSendHandler
       other  = (RemoteSendHandler) o;
       result = getHostname().compareTo(other.getHostname());
       if (result == 0)
-	result = new Integer(getPort()).compareTo(other.getPort());
+	result = Integer.compare(getPort(), other.getPort());
     }
 
     return result;

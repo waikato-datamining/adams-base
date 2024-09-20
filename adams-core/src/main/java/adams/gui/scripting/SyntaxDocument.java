@@ -21,11 +21,9 @@
 
 package adams.gui.scripting;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Toolkit;
-import java.util.HashMap;
+import adams.core.License;
+import adams.core.Properties;
+import adams.core.annotation.MixedCopyright;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -37,10 +35,11 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.TabSet;
 import javax.swing.text.TabStop;
-
-import adams.core.License;
-import adams.core.Properties;
-import adams.core.annotation.MixedCopyright;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Toolkit;
+import java.util.HashMap;
 
 /**
  * Highlights syntax in a DefaultStyledDocument. Allows any number of keywords
@@ -62,7 +61,7 @@ public class SyntaxDocument
   extends DefaultStyledDocument {
 
   /** for serialization. */
-  protected static final long serialVersionUID = -3642426465631271381L;
+  private static final long serialVersionUID = -3642426465631271381L;
 
   /** the maximum number of tabs. */
   public static final int MAX_TABS = 35;

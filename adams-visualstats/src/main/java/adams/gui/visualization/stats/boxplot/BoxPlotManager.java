@@ -15,7 +15,7 @@
 
 /*
  * BoxPlotManager.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.boxplot;
@@ -297,9 +297,9 @@ public class BoxPlotManager
    */
   protected void updateButtons() {
     m_ButtonAdd.setEnabled(m_ListAvailableAttributes.getSelectedIndex() != -1);
-    m_ButtonAddAll.setEnabled(m_ModelAvailableAttributes.size() != 0);
+    m_ButtonAddAll.setEnabled(!m_ModelAvailableAttributes.isEmpty());
     m_ButtonRemove.setEnabled(m_ListChosenAttributes.getSelectedIndex() != -1);
-    m_ButtonRemoveAll.setEnabled(m_ModelChosenAttributes.size() != 0);
+    m_ButtonRemoveAll.setEnabled(!m_ModelChosenAttributes.isEmpty());
   }
 
   /**

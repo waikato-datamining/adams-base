@@ -15,7 +15,7 @@
 
 /*
  * Count.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -393,7 +393,7 @@ public class Count
    */
   @Override
   protected Token createTeeToken(Token token) {
-    return new Token(new Integer(m_Current));
+    return new Token(m_Current);
   }
 
   /**

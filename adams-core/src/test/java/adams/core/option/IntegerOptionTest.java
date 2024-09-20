@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IntegerOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Test class for all integer options. Run from the command line with: <br><br>
  * java adams.core.option.IntegerOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IntegerOptionTest
   extends AbstractNumericOptionTest {
@@ -37,7 +36,6 @@ public class IntegerOptionTest
    * Dummy class for testing integer options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class IntegerOptionClass
     extends AbstractOptionClass {
@@ -69,11 +67,11 @@ public class IntegerOptionTest
 
       m_OptionManager.add(
 	  "int-obj", "integerObj",
-	  new Integer((int) 2), new Integer(-10), new Integer(+10));
+	  2, -10, +10);
 
       m_OptionManager.add(
 	  "int-obj-array", "integerObjArray",
-	  new Integer[]{new Integer((int) 4), new Integer((int) 5), new Integer((int) 6)});
+	  new Integer[]{4, 5, 6});
     }
 
     public void setIntPrim(int value) {
@@ -158,7 +156,7 @@ public class IntegerOptionTest
    * @return		the value
    */
   protected Integer getLowerBoundTestValue() {
-    return new Integer(-100);
+    return -100;
   }
 
   /**
@@ -176,7 +174,7 @@ public class IntegerOptionTest
    * @return		the value
    */
   protected Integer getUpperBoundTestValue() {
-    return new Integer(100);
+    return 100;
   }
 
   /**

@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HashCodeTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the HashCode conversion.
@@ -50,10 +50,10 @@ public class HashCodeTest
   @Override
   protected Object[] getRegressionInput() {
     return new Object[]{
-	new Integer("1"),
-	new String("-1"),
-	new Double("31415"),
-	new Float("-31415")
+	Integer.parseInt("1"),
+	"-1",
+	Double.parseDouble("31415"),
+	Float.parseFloat("-31415")
     };
   }
 

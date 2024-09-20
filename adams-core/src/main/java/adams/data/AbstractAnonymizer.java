@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractAnonymizer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -29,9 +29,9 @@ import java.util.Random;
  * Allows anonymizing of values.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of object
  */
-public abstract class AbstractAnonymizer<T extends Object>
+public abstract class AbstractAnonymizer<T>
   implements Serializable {
   
   /** for serialization. */
@@ -137,7 +137,7 @@ public abstract class AbstractAnonymizer<T extends Object>
     int		i;
     
     for (i = 0; i < m_BufferSize; i++)
-      m_Buffer.add(new Integer(m_Mapping.size() + i));
+      m_Buffer.add(m_Mapping.size() + i);
     Collections.shuffle(m_Buffer, m_Random);
   }
   
@@ -156,7 +156,7 @@ public abstract class AbstractAnonymizer<T extends Object>
     if (m_Mapping.containsKey(value))
       return toAnonymized(m_Mapping.get(value));
 
-    if (m_Buffer.size() == 0)
+    if (m_Buffer.isEmpty())
       fillBuffer();
     
     next = m_Buffer.get(0);

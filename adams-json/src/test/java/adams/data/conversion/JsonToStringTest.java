@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JsonToStringTest.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -30,7 +30,6 @@ import net.minidev.json.JSONObject;
  * Tests the JsonToString conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JsonToStringTest
   extends AbstractConversionTestCase {
@@ -60,9 +59,9 @@ public class JsonToStringTest
     ((JSONObject) result[1]).put("blah", new JSONObject());
     result[2] = new JSONArray();
     result[3] = new JSONArray();
-    ((JSONArray) result[3]).add(new Integer(1));
-    ((JSONArray) result[3]).add(new Integer(2));
-    ((JSONArray) result[3]).add(new Integer(3));
+    ((JSONArray) result[3]).add(1);
+    ((JSONArray) result[3]).add(2);
+    ((JSONArray) result[3]).add(3);
     
     return result;
   }

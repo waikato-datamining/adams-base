@@ -15,7 +15,7 @@
 
 /*
  * BaseDouble.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -103,7 +103,7 @@ public class BaseDouble
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Double(0.0);
+      m_Internal = 0.0;
     }
   }
 
@@ -114,7 +114,7 @@ public class BaseDouble
    */
   @Override
   public String getValue() {
-    return ((Double) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -123,7 +123,7 @@ public class BaseDouble
    * @return		the double value
    */
   public double doubleValue() {
-    return ((Double) m_Internal).doubleValue();
+    return (Double) m_Internal;
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * ForLoop.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -256,7 +256,7 @@ public class ForLoop
       if (isLoggingEnabled())
 	getLogger().info("i=" + m_Current);
 
-      result = new Token(new Integer(m_Current));
+      result = new Token(m_Current);
       m_Current += m_LoopStep;
     }
 

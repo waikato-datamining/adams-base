@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BooleanEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
  * A custom editor for Booleans.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BooleanEditor
   extends AbstractBasicTypePropertyEditor {
@@ -78,7 +77,7 @@ public class BooleanEditor
    *     modified value.
    */
   public void setValue(Object value) {
-    m_Current = new Boolean((Boolean) value);
+    m_Current = (Boolean) value;
     firePropertyChange();
   }
 
@@ -104,9 +103,9 @@ public class BooleanEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "" + false;
-      result = new Boolean(text);
+      result = Boolean.parseBoolean(text);
     }
     catch (Exception e) {
       throw new IllegalArgumentException(e);

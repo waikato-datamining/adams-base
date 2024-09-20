@@ -15,7 +15,7 @@
 
 /*
  * FastWavelet.java
- * Copyright (C) 2009-2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -109,7 +109,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FastWavelet
   extends SimpleBatchFilter
@@ -566,7 +565,7 @@ public class FastWavelet
 	    index);
 
 	// record index
-	padded.add(new Integer(index));
+	padded.add(index);
       }
 
       // get padded indices

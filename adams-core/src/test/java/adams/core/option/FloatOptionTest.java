@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FloatOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Test class for all float options. Run from the command line with: <br><br>
  * java adams.core.option.FloatOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FloatOptionTest
   extends AbstractNumericOptionTest {
@@ -37,7 +36,6 @@ public class FloatOptionTest
    * Dummy class for testing float options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FloatOptionClass
     extends AbstractOptionClass {
@@ -69,11 +67,11 @@ public class FloatOptionTest
 
       m_OptionManager.add(
 	  "float-obj", "floatObj",
-	  new Float((float) 2), new Float((float) -10), new Float((float) +10));
+	  (float) 2, (float) -10, (float) +10);
 
       m_OptionManager.add(
 	  "float-obj-array", "floatObjArray",
-	  new Float[]{new Float((float) 4), new Float((float) 5), new Float((float) 6)});
+	  new Float[]{(float) 4, (float) 5, (float) 6});
     }
 
     public void setFloatPrim(float value) {
@@ -158,7 +156,7 @@ public class FloatOptionTest
    * @return		the value
    */
   protected Float getLowerBoundTestValue() {
-    return new Float((float) -100);
+    return (float) -100;
   }
 
   /**
@@ -176,7 +174,7 @@ public class FloatOptionTest
    * @return		the value
    */
   protected Float getUpperBoundTestValue() {
-    return new Float((float) 100);
+    return (float) 100;
   }
 
   /**

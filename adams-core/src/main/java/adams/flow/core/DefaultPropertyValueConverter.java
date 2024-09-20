@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultPropertyValueConverter.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -33,7 +33,6 @@ import java.lang.reflect.Array;
  * per array value).
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultPropertyValueConverter
   extends AbstractPropertyValueConverter {
@@ -114,25 +113,25 @@ public class DefaultPropertyValueConverter
 
     // boolean
     if ((cls == Boolean.class) || (cls == Boolean.TYPE))
-      result = new Boolean(value);
+      result = Boolean.parseBoolean(value);
     // byte
     else if ((cls == Byte.class) || (cls == Byte.TYPE))
-      result = new Byte(value);
+      result = Byte.parseByte(value);
     // short
     else if ((cls == Short.class) || (cls == Short.TYPE))
-      result = new Short(value);
+      result = Short.parseShort(value);
     // integer
     else if ((cls == Integer.class) || (cls == Integer.TYPE))
-      result = new Integer(value);
+      result = Integer.parseInt(value);
     // long
     else if ((cls == Long.class) || (cls == Long.TYPE))
-      result = new Long(value);
+      result = Long.parseLong(value);
     // float
     else if ((cls == Float.class) || (cls == Float.TYPE))
-      result = new Float(value);
+      result = Float.parseFloat(value);
     // double
     else if ((cls == Double.class) || (cls == Double.TYPE))
-      result = new Double(value);
+      result = Double.parseDouble(value);
     // String
     else if (cls == String.class)
       result = value;

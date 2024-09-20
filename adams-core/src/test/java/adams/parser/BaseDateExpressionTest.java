@@ -15,7 +15,7 @@
 
 /*
  * BaseDateExpressionTest.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -33,7 +33,6 @@ import java.util.Date;
  * java adams.parser.BaseDateExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseDateExpressionTest
   extends AbstractExpressionEvaluatorTestCase<Date, BaseDateExpression> {
@@ -104,9 +103,9 @@ public class BaseDateExpressionTest
   }
 
   /**
-   * Tests setitng the START variable programmatically.
+   * Tests setting the START variable programmatically.
    */
-  public static void testStart() {
+  public void testStart() {
     String expr = "START +2 DAY +1 MONTH";
     SimpleDateFormat format = new SimpleDateFormat(BaseDate.FORMAT);
     String startStr = "1901-01-01";
@@ -129,9 +128,9 @@ public class BaseDateExpressionTest
   }
 
   /**
-   * Tests setitng the END variable programmatically.
+   * Tests setting the END variable programmatically.
    */
-  public static void testEnd() {
+  public void testEnd() {
     String expr = "END -2 DAY -1 MONTH";
     SimpleDateFormat format = new SimpleDateFormat(BaseDate.FORMAT);
     String endStr = "1901-10-27";

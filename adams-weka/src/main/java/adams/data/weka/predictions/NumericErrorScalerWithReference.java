@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NumericErrorScalerWithReference.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.predictions;
 
-import java.util.ArrayList;
-
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -53,7 +53,6 @@ import weka.core.Capabilities.Capability;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NumericErrorScalerWithReference
   extends AbstractErrorScaler {
@@ -201,9 +200,9 @@ public class NumericErrorScalerWithReference
     for (i = 0; i < data.size(); i++) {
       errd = (Double) data.get(i);
       if (errd != null) {
-	err  = Math.abs(errd.doubleValue());
+	err  = Math.abs(errd);
 	temp = err / m_ReferenceError * m_ReferenceSize;
-	result.add(new Integer((int) temp));
+	result.add((int) temp);
       }
     }
 

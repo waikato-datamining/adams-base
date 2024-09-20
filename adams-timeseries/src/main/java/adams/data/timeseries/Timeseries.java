@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Timeseries.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.timeseries;
 
@@ -45,7 +45,6 @@ import java.util.List;
  * Container for a full timeseries.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Timeseries<P extends TimeseriesPoint, R extends Report, S extends TimeseriesStatistic>
   extends AbstractDataContainer<P>
@@ -322,7 +321,7 @@ public class Timeseries<P extends TimeseriesPoint, R extends Report, S extends T
     tp = (Timeseries) o;
 
     if (result == 0)
-      result = new Integer(getDatabaseID()).compareTo(new Integer(tp.getDatabaseID()));
+      result = Integer.compare(getDatabaseID(), tp.getDatabaseID());
 
     if (result == 0)
       result = CompareUtils.compare(getReport(), tp.getReport());

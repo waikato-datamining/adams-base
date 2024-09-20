@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NumberTextField.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -27,7 +27,6 @@ import javax.swing.text.Document;
  * A specialized text field for numbers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NumberTextField
   extends CheckedTextField {
@@ -39,7 +38,6 @@ public class NumberTextField
    * The type of number to accomodate.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum Type {
     BYTE,
@@ -55,7 +53,6 @@ public class NumberTextField
    * specified.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class NumberCheckModel
     extends AbstractCheckModel {
@@ -89,22 +86,22 @@ public class NumberTextField
       if (defValue == null) {
 	switch (m_Type) {
 	  case BYTE:
-	    defValue = new Byte((byte) 0);
+	    defValue = (byte) 0;
 	    break;
 	  case SHORT:
-	    defValue = new Short((short) 0);
+	    defValue = (short) 0;
 	    break;
 	  case INTEGER:
-	    defValue = new Integer(0);
+	    defValue = 0;
 	    break;
 	  case LONG:
-	    defValue = new Long(0);
+	    defValue = 0L;
 	    break;
 	  case FLOAT:
-	    defValue = new Float(0.0);
+	    defValue = 0.0f;
 	    break;
 	  case DOUBLE:
-	    defValue = new Double(0.0);
+	    defValue = 0.0;
 	    break;
 	  default:
 	    throw new IllegalArgumentException("Unhandled number type: " + m_Type);
@@ -124,7 +121,7 @@ public class NumberTextField
     public boolean isValid(String text) {
       boolean	result;
 
-      if (text.trim().length() == 0)
+      if (text.trim().isEmpty())
 	return true;
       
       try {
@@ -186,7 +183,6 @@ public class NumberTextField
    * specified.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class BoundedNumberCheckModel
     extends NumberCheckModel {
@@ -251,10 +247,10 @@ public class NumberTextField
 	result = (value != null);
 
 	if (result) {
-	  if ((m_LowerBound != null) && (value.doubleValue() < m_LowerBound.doubleValue()))
+	  if ((m_LowerBound != null) && (value < m_LowerBound.doubleValue()))
 	    result = false;
 
-	  if ((m_UpperBound != null) && (value.doubleValue() > m_UpperBound.doubleValue()))
+	  if ((m_UpperBound != null) && (value > m_UpperBound.doubleValue()))
 	    result = false;
 	}
       }

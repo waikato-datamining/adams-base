@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LongEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -25,7 +25,6 @@ import javax.swing.SpinnerNumberModel;
  * A custom editor for Longs.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LongEditor
   extends AbstractIntegralNumberEditor {
@@ -36,7 +35,7 @@ public class LongEditor
   public LongEditor() {
     super();
 
-    m_CurrentValue = new Long(0);
+    m_CurrentValue = 0L;
   }
 
   /**
@@ -50,7 +49,7 @@ public class LongEditor
    *     modified value.
    */
   public void setValue(Object value) {
-    m_CurrentValue = new Long(((Number) value).longValue());
+    m_CurrentValue = ((Number) value).longValue();
     firePropertyChange();
   }
 
@@ -76,9 +75,9 @@ public class LongEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "0";
-      result = new Long(text);
+      result = Long.parseLong(text);
     }
     catch (Exception e) {
       throw new IllegalArgumentException(e);
@@ -94,12 +93,12 @@ public class LongEditor
    */
   protected void updateBounds(SpinnerNumberModel model) {
     if (m_LowerBound == null)
-      model.setMinimum(new Integer(Integer.MIN_VALUE));
+      model.setMinimum(Integer.MIN_VALUE);
     else
       model.setMinimum(m_LowerBound.intValue());
 
     if (m_UpperBound == null)
-      model.setMaximum(new Integer(Integer.MAX_VALUE));
+      model.setMaximum(Integer.MAX_VALUE);
     else
       model.setMaximum(m_UpperBound.intValue());
   }

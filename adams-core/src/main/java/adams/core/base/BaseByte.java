@@ -15,7 +15,7 @@
 
 /*
  * BaseByte.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -101,7 +101,7 @@ public class BaseByte
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Byte((byte) 0);
+      m_Internal = (byte) 0;
     }
   }
 
@@ -112,7 +112,7 @@ public class BaseByte
    */
   @Override
   public String getValue() {
-    return ((Byte) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -121,7 +121,7 @@ public class BaseByte
    * @return		the byte value
    */
   public byte byteValue() {
-    return ((Byte) m_Internal).byteValue();
+    return (Byte) m_Internal;
   }
 
   /**

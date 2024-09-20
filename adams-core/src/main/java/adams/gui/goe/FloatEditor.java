@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FloatEditor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -26,7 +26,6 @@ import adams.gui.core.NumberTextField;
  * A custom editor for Floats.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FloatEditor
   extends AbstractFloatingPointNumberEditor {
@@ -37,7 +36,7 @@ public class FloatEditor
   public FloatEditor() {
     super();
 
-    m_CurrentValue = new Float(0.0f);
+    m_CurrentValue = 0.0f;
   }
 
   /**
@@ -62,7 +61,7 @@ public class FloatEditor
    */
   @Override
   public void setValue(Object value) {
-    m_CurrentValue = new Float(((Number) value).floatValue());
+    m_CurrentValue = ((Number) value).floatValue();
     firePropertyChange();
   }
 
@@ -101,7 +100,7 @@ public class FloatEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "0";
       result = Utils.toFloat(text);
     }

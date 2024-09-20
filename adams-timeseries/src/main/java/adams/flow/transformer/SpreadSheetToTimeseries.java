@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetToTimeseries.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -332,7 +332,7 @@ public class SpreadSheetToTimeseries
 	types.remove(ContentType.DATE);
 	types.remove(ContentType.DATETIME);
 	types.remove(ContentType.DATETIMEMSEC);
-	if (types.size() != 0)
+	if (!types.isEmpty())
 	  result = "Timestamp column ('" + m_ColumnTimestamp.getIndex() + "') contains other types than time/date/datetime: " + types;
       }
     }

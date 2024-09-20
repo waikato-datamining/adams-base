@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FakeClassifier.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers.functions;
 
@@ -78,7 +78,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FakeClassifier
   extends AbstractClassifier
@@ -470,7 +469,7 @@ public class FakeClassifier
     int   interval;
     int   current;
 
-    wait     = new Long(System.currentTimeMillis());
+    wait     = System.currentTimeMillis();
     interval = Math.min(100, msec / 10);
     current  = 0;
     while (current < msec) {

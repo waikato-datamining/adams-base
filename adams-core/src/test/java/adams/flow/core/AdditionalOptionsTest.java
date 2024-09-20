@@ -15,22 +15,21 @@
 
 /*
  * AdditionalOptionsTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the adams.flow.core.AdditionalOptions class. Run from commandline with: <br><br>
  * java adams.flow.core.AdditionalOptionsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AdditionalOptionsTest
   extends AdamsTestCase {
@@ -52,11 +51,11 @@ public class AdditionalOptionsTest
 
     add = new AdditionalOptions();
     assertNull("Hashtable should have been empty", add.getBoolean("blah"));
-    assertEquals("Empty hashtable did not return default value", add.getBoolean("blah", true), new Boolean(true));
+    assertEquals("Empty hashtable did not return default value", add.getBoolean("blah", true), (Boolean) true);
     assertEquals("Should have contained no key-value pair", 0, add.size());
 
     add.putBoolean("blah", false);
-    assertEquals("Non-empty hashtable did not return value", add.getBoolean("blah", true), new Boolean(false));
+    assertEquals("Non-empty hashtable did not return value", add.getBoolean("blah", true), (Boolean) false);
     assertEquals("Should have contained 1 key-value pair", 1, add.size());
   }
 
@@ -68,11 +67,11 @@ public class AdditionalOptionsTest
 
     add = new AdditionalOptions();
     assertNull("Hashtable should have been empty", add.getInteger("blah"));
-    assertEquals("Empty hashtable did not return default value", add.getInteger("blah", 1), new Integer(1));
+    assertEquals("Empty hashtable did not return default value", add.getInteger("blah", 1), (Integer) 1);
     assertEquals("Should have contained no key-value pair", 0, add.size());
 
     add.putInteger("blah", 42);
-    assertEquals("Non-empty hashtable did not return value", add.getInteger("blah", 1), new Integer(42));
+    assertEquals("Non-empty hashtable did not return value", add.getInteger("blah", 1), (Integer) 42);
     assertEquals("Should have contained 1 key-value pair", 1, add.size());
   }
 
@@ -84,7 +83,7 @@ public class AdditionalOptionsTest
 
     add = new AdditionalOptions();
     assertNull("Hashtable should have been empty", add.getDouble("blah"));
-    assertEquals("Empty hashtable did not return default value", add.getDouble("blah", 3.1415), new Double(3.1415));
+    assertEquals("Empty hashtable did not return default value", add.getDouble("blah", 3.1415), 3.1415);
     assertEquals("Should have contained no key-value pair", 0, add.size());
 
     add.putDouble("blah", 2.7182);

@@ -15,7 +15,7 @@
 
 /*
  * ConsoleOutputAnalyzerPanel.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -248,7 +248,7 @@ public class ConsoleOutputAnalyzerPanel
       if (o == null)
 	return 1;
       else
-	return new Integer(m_LineNo).compareTo(o.getLineNo());
+	return Integer.compare(m_LineNo, o.getLineNo());
     }
     
     /**

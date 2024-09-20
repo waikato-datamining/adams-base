@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DoubleOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Test class for all double options. Run from the command line with: <br><br>
  * java adams.core.option.DoubleOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DoubleOptionTest
   extends AbstractNumericOptionTest {
@@ -37,7 +36,6 @@ public class DoubleOptionTest
    * Dummy class for testing double options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class DoubleOptionClass
     extends AbstractOptionClass {
@@ -69,11 +67,11 @@ public class DoubleOptionTest
 
       m_OptionManager.add(
 	  "double-obj", "doubleObj",
-	  new Double((double) 2), new Double((double) -10), new Double((double) +10));
+	  (double) 2, (double) -10, (double) +10);
 
       m_OptionManager.add(
 	  "double-obj-array", "doubleObjArray",
-	  new Double[]{new Double((double) 4), new Double((double) 5), new Double((double) 6)});
+	  new Double[]{(double) 4, (double) 5, (double) 6});
     }
 
     public void setDoublePrim(double value) {
@@ -158,7 +156,7 @@ public class DoubleOptionTest
    * @return		the value
    */
   protected Double getLowerBoundTestValue() {
-    return new Double((double) -100);
+    return (double) -100;
   }
 
   /**
@@ -176,7 +174,7 @@ public class DoubleOptionTest
    * @return		the value
    */
   protected Double getUpperBoundTestValue() {
-    return new Double((double) 100);
+    return (double) 100;
   }
 
   /**

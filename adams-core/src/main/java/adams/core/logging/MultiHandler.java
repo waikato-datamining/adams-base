@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.logging;
@@ -27,7 +27,6 @@ import java.util.logging.LogRecord;
  * Combines multiple handlers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiHandler
   extends AbstractLogHandler {
@@ -168,13 +167,13 @@ public class MultiHandler
 
     if (result == 0) {
       other  = (MultiHandler) o;
-      result = new Integer(getHandlers().length).compareTo(other.getHandlers().length);
+      result = Integer.compare(getHandlers().length, other.getHandlers().length);
       if (result == 0) {
 	for (i = 0; i < getHandlers().length; i++) {
 	  if ((getHandlers()[i] instanceof AbstractLogHandler) && (other.getHandlers()[i] instanceof AbstractLogHandler))
 	    result = ((AbstractLogHandler) getHandlers()[i]).compareTo(other.getHandlers()[i]);
 	  else
-	    result = new Integer(getHandlers()[i].hashCode()).compareTo(other.getHandlers()[i].hashCode());
+	    result = Integer.compare(getHandlers()[i].hashCode(), other.getHandlers()[i].hashCode());
 	  if (result != 0)
 	    break;
 	}

@@ -13,22 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IntervalEstimatorBased.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.evaluator;
 
-import java.util.Collections;
-import java.util.Vector;
-import java.util.logging.Level;
-
+import adams.core.Utils;
 import weka.classifiers.Classifier;
 import weka.classifiers.IntervalEstimator;
 import weka.classifiers.functions.GaussianProcessesNoWeights;
 import weka.core.Instance;
 import weka.core.Instances;
-import adams.core.Utils;
+
+import java.util.Collections;
+import java.util.Vector;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -82,7 +82,6 @@ import adams.core.Utils;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class IntervalEstimatorBased
   extends AbstractCrossvalidatedInstanceEvaluator<IntervalEstimatorBased.SortedInterval> {
@@ -174,13 +173,13 @@ public class IntervalEstimatorBased
 
       other = (SortedInterval) o;
 
-      result = new Integer(getIntervals().length).compareTo(new Integer(other.getIntervals().length));
+      result = Integer.compare(getIntervals().length, other.getIntervals().length);
 
       if (result == 0) {
 	for (i = 0; i < m_Intervals.length; i++) {
 	  width      = calcWidth(getIntervals()[i]);
 	  widthOther = calcWidth(other.getIntervals()[i]);
-	  result     = new Double(width).compareTo(new Double(widthOther));
+	  result     = Double.compare(width, widthOther);
 	  if (result != 0)
 	    break;
 	}

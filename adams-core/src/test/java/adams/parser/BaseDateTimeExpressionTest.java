@@ -109,9 +109,9 @@ public class BaseDateTimeExpressionTest
   }
 
   /**
-   * Tests setitng the START variable programmatically.
+   * Tests setting the START variable programmatically.
    */
-  public static void testStart() {
+  public void testStart() {
     String expr = "START +2 DAY +1 MONTH +1 HOUR";
     SimpleDateFormat format = new SimpleDateFormat(BaseDateTime.FORMAT);
     String startStr = "1901-01-01 12:34:00";
@@ -134,9 +134,9 @@ public class BaseDateTimeExpressionTest
   }
 
   /**
-   * Tests setitng the END variable programmatically.
+   * Tests setting the END variable programmatically.
    */
-  public static void testEnd() {
+  public void testEnd() {
     String expr = "END -2 DAY -1 MONTH -1 HOUR";
     SimpleDateFormat format = new SimpleDateFormat(BaseDateTime.FORMAT);
     String endStr = "1901-10-27 12:34:00";

@@ -15,7 +15,7 @@
 
 /*
  *    ExperimentPanel.java
- *    Copyright (C) 2007-2015 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2007-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -204,8 +204,8 @@ public class ExperimentPanel
 
     m_RunsSpinner.setToolTipText("The number of runs to perform");
     m_RunsSpinner.setEnabled(false);
-    ((SpinnerNumberModel) m_RunsSpinner.getModel()).setMinimum(new Integer(1));
-    ((SpinnerNumberModel) m_RunsSpinner.getModel()).setValue(new Integer(10));
+    ((SpinnerNumberModel) m_RunsSpinner.getModel()).setMinimum(1);
+    m_RunsSpinner.getModel().setValue(10);
 
     m_EvalCombo.setToolTipText("The type of evaluation to be performed");
     m_EvalCombo.setEnabled(false);

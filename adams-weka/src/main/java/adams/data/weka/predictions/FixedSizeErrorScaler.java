@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FixedSizeErrorScaler.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.weka.predictions;
 
-import java.util.ArrayList;
-
 import weka.core.Capabilities;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -41,7 +41,6 @@ import weka.core.Capabilities;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FixedSizeErrorScaler
   extends AbstractErrorScaler {
@@ -127,11 +126,11 @@ public class FixedSizeErrorScaler
     ArrayList<Integer>	result;
     int			i;
 
-    result = new ArrayList<Integer>();
+    result = new ArrayList<>();
 
     // set fixed size errors
     for (i = 0; i < data.size(); i++)
-      result.add(new Integer(m_Size));
+      result.add(m_Size);
 
     return result;
   }

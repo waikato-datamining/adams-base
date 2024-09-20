@@ -15,7 +15,7 @@
 
 /*
  * BaseShort.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -101,7 +101,7 @@ public class BaseShort
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Short((short) 0);
+      m_Internal = (short) 0;
     }
   }
 
@@ -112,7 +112,7 @@ public class BaseShort
    */
   @Override
   public String getValue() {
-    return ((Short) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -121,7 +121,7 @@ public class BaseShort
    * @return		the short value
    */
   public short shortValue() {
-    return ((Short) m_Internal).shortValue();
+    return (Short) m_Internal;
   }
 
   /**

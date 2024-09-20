@@ -15,7 +15,7 @@
 
 /*
  * ActorPathTest.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -30,7 +30,6 @@ import junit.framework.TestSuite;
  * java adams.flow.core.ActorPathTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorPathTest
   extends AdamsTestCase {
@@ -47,7 +46,7 @@ public class ActorPathTest
   /**
    * Tests single path element.
    */
-  public static void testSingleElement() {
+  public void testSingleElement() {
     ActorPath path = new ActorPath("hello");
     assertEquals("Path length differs", 1, path.getPathCount());
     assertEquals("Path element differs", "hello", path.getPathComponent(0));
@@ -56,7 +55,7 @@ public class ActorPathTest
   /**
    * Tests multiple path elements.
    */
-  public static void testMultipleElements() {
+  public void testMultipleElements() {
     ActorPath path = new ActorPath("hello.world.out.there");
     assertEquals("Path length differs", 4, path.getPathCount());
     assertEquals("Path element 1 differs", "hello", path.getPathComponent(0));
@@ -68,7 +67,7 @@ public class ActorPathTest
   /**
    * Tests "blank" in element name.
    */
-  public static void testBlankInElement() {
+  public void testBlankInElement() {
     ActorPath path = new ActorPath("hello world.out.there");
     assertEquals("Path length differs", 3, path.getPathCount());
     assertEquals("Path element 1 differs", "hello world", path.getPathComponent(0));
@@ -79,7 +78,7 @@ public class ActorPathTest
   /**
    * Tests "dot" in element name.
    */
-  public static void testDotInElement() {
+  public void testDotInElement() {
     ActorPath path = new ActorPath("hello\\.world.out.there");
     assertEquals("Path length differs", 3, path.getPathCount());
     assertEquals("Path element 1 differs", "hello.world", path.getPathComponent(0));
@@ -92,7 +91,7 @@ public class ActorPathTest
    * <br><br>
    * Example: [Flow.ContainerValuePicker/700475288-DEBUG]
    */
-  public static void testConsoleString() {
+  public void testConsoleString() {
     ActorPath path = new ActorPath("[Flow.ArrayProcess.BufferedImageTransformer-11-INFO/20160523-151112.448]");
     assertEquals("Path length differs", 3, path.getPathCount());
     assertEquals("Path element 1 differs", "Flow", path.getPathComponent(0));
@@ -103,7 +102,7 @@ public class ActorPathTest
   /**
    * Tests "toString" method.
    */
-  public static void testToString() {
+  public void testToString() {
     String s = "hello\\.world.out.there";
     ActorPath path = new ActorPath(s);
     assertEquals("Path differs", s, path.toString());
@@ -128,7 +127,7 @@ public class ActorPathTest
   /**
    * Tests "isDescendant" method.
    */
-  public static void testDescendant() {
+  public void testDescendant() {
     ActorPath path1 = new ActorPath("a.b");
 
     ActorPath path2 = new ActorPath("a.b.c");
@@ -144,7 +143,7 @@ public class ActorPathTest
   /**
    * Tests "getCommonAncestor" method.
    */
-  public static void testCommonAncestor() {
+  public void testCommonAncestor() {
     ActorPath path1 = new ActorPath("a.b");
 
     ActorPath path2 = new ActorPath("a.b.c");
@@ -166,7 +165,7 @@ public class ActorPathTest
   /**
    * Tests "compareTo" method.
    */
-  public static void testCompareTo() {
+  public void testCompareTo() {
     ActorPath path1 = new ActorPath("a.b");
 
     ActorPath path2 = new ActorPath("a.b.c");
@@ -188,7 +187,7 @@ public class ActorPathTest
   /**
    * Tests "equals" method.
    */
-  public static void testEquals() {
+  public void testEquals() {
     ActorPath path1 = new ActorPath("a.b");
 
     ActorPath path2 = new ActorPath("a.b.c");
@@ -197,13 +196,13 @@ public class ActorPathTest
     path2 = new ActorPath("a.b");
     assertEquals("equals failed (" + path1 + ", " + path2 + ")", true, path1.equals(path2));
 
-    assertEquals("equals failed (integer)", false, path1.equals(new Integer(3)));
+    assertEquals("equals failed (integer)", false, path1.equals((Integer) 3));
   }
 
   /**
    * Tests "getFirstPathComponent" method.
    */
-  public static void testFirstPathComponent() {
+  public void testFirstPathComponent() {
     ActorPath path = new ActorPath("a.b");
     assertEquals("getFirstPathComponent failed (" + path + ")", "a", path.getFirstPathComponent());
 
@@ -217,7 +216,7 @@ public class ActorPathTest
   /**
    * Tests "getLastPathComponent" method.
    */
-  public static void testLastPathComponent() {
+  public void testLastPathComponent() {
     ActorPath path = new ActorPath("a.b");
     assertEquals("getLastPathComponent failed (" + path + ")", "b", path.getLastPathComponent());
 

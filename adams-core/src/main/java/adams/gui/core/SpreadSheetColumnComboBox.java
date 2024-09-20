@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetColumnComboBox.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -38,7 +38,6 @@ import java.util.List;
  * column is visible.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetColumnComboBox
   extends BaseComboBox {
@@ -122,7 +121,7 @@ public class SpreadSheetColumnComboBox
       
       result = getNameLowerCase().compareTo(o.getNameLowerCase());
       if (result == 0)
-	result = new Integer(getColumn()).compareTo(o.getColumn());
+	result = Integer.compare(getColumn(), o.getColumn());
 	
       return result;
     }

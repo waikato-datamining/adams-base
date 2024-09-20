@@ -15,7 +15,7 @@
 
 /*
  * BaseInteger.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -101,7 +101,7 @@ public class BaseInteger
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Integer(0);
+      m_Internal = 0;
     }
   }
 
@@ -112,7 +112,7 @@ public class BaseInteger
    */
   @Override
   public String getValue() {
-    return ((Integer) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -121,7 +121,7 @@ public class BaseInteger
    * @return		the int value
    */
   public int intValue() {
-    return ((Integer) m_Internal).intValue();
+    return (Integer) m_Internal;
   }
 
   /**

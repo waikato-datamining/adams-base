@@ -15,7 +15,7 @@
 
 /*
  * BaseBoolean.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -25,7 +25,6 @@ package adams.core.base;
  * Handles "f" or "t" (case-insensitive) as strings as well.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseBoolean
   extends BaseObject {
@@ -119,7 +118,7 @@ public class BaseBoolean
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Boolean(false);
+      m_Internal = false;
     }
   }
 
@@ -130,7 +129,7 @@ public class BaseBoolean
    */
   @Override
   public String getValue() {
-    return ((Boolean) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -139,7 +138,7 @@ public class BaseBoolean
    * @return		the boolean value
    */
   public boolean booleanValue() {
-    return ((Boolean) m_Internal).booleanValue();
+    return (Boolean) m_Internal;
   }
 
   /**

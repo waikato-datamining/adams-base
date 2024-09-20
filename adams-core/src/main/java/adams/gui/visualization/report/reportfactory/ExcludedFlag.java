@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ExcludedFlag.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.report.reportfactory;
 
@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
  * Sets the 'Excluded' flag and updates the database.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ExcludedFlag
   extends AbstractTableActionWithDatabaseAccess {
@@ -57,7 +56,7 @@ public class ExcludedFlag
     
     provider = getReportProvider();
     report   = getReport();
-    report.setValue(new Field(Report.FIELD_EXCLUDED, DataType.BOOLEAN), new Boolean(true));
+    report.setValue(new Field(Report.FIELD_EXCLUDED, DataType.BOOLEAN), true);
     provider.store(report.getDatabaseID(), report);
     setReport(report);
   }

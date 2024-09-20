@@ -15,7 +15,7 @@
 
 /*
  * AbstractInstanceInfoFrame.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.weka;
@@ -70,7 +70,6 @@ import java.util.Vector;
  * </ul>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractInstanceInfoFrame
   extends weka.gui.visualize.InstanceInfoFrame {
@@ -297,7 +296,7 @@ public abstract class AbstractInstanceInfoFrame
    * @return		the ID
    */
   protected int extractDatabaseID(String idStr) {
-    return new Integer(idStr.split(":")[1].trim());
+    return Integer.parseInt(idStr.split(":")[1].trim());
   }
 
   /**
@@ -343,7 +342,7 @@ public abstract class AbstractInstanceInfoFrame
       if (m_TableData.getSelectedRow() > -1) {
 	col = getDatabaseIDColumnIndex();
 	if (col > -1)
-	  result = new Double(m_TableData.getValueAt(m_TableData.getSelectedRow(), col).toString()).intValue();
+	  result = (int) Double.parseDouble(m_TableData.getValueAt(m_TableData.getSelectedRow(), col).toString());
       }
     }
     else {
@@ -380,7 +379,7 @@ public abstract class AbstractInstanceInfoFrame
 	if (col != -1) {
 	  result = new int[rows.length];
 	  for (i = 0; i < rows.length; i++)
-	    result[i] = new Double(m_TableData.getValueAt(rows[i], col).toString()).intValue();
+	    result[i] = (int) Double.parseDouble(m_TableData.getValueAt(rows[i], col).toString());
 	}
       }
     }
@@ -414,7 +413,7 @@ public abstract class AbstractInstanceInfoFrame
       if (col != -1) {
 	result = new int[m_TableData.getRowCount()];
 	for (i = 0; i < result.length; i++)
-	  result[i] = new Double(m_TableData.getValueAt(i, col).toString()).intValue();
+	  result[i] = (int) Double.parseDouble(m_TableData.getValueAt(i, col).toString());
       }
     }
     else {
@@ -453,8 +452,8 @@ public abstract class AbstractInstanceInfoFrame
       m_TableData.setOptimalColumnWidth(i);
 
     // text
-    list = new Vector<String>();
-    ids  = new HashSet<Long>();
+    list = new Vector<>();
+    ids  = new HashSet<>();
     for (i = 0; i < data.size(); i++) {
       // database ID present?
       att = data.get(i).attribute(ArffUtils.getDBIDName());
@@ -475,9 +474,9 @@ public abstract class AbstractInstanceInfoFrame
     m_LabelTextNumPoints.setText(generateNumPointsLabel(list.size()));
 
     m_ComboBoxTextInstances.setModel(new DefaultComboBoxModel(list));
-    m_ComboBoxTextInstances.setEnabled(list.size() > 0);
-    m_ButtonTextGo.setEnabled(list.size() > 0);
-    if (list.size() > 0)
+    m_ComboBoxTextInstances.setEnabled(!list.isEmpty());
+    m_ButtonTextGo.setEnabled(!list.isEmpty());
+    if (!list.isEmpty())
       m_ComboBoxTextInstances.setSelectedIndex(0);
   }
 

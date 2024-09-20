@@ -13,24 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BooleanOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.option.ArrayConsumer;
-import adams.core.option.ArrayProducer;
-import adams.env.Environment;
 
 /**
  * Test class for all boolean options. Run from the command line with: <br><br>
  * java adams.core.option.BooleanOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BooleanOptionTest
   extends AbstractOptionTest {
@@ -39,7 +36,6 @@ public class BooleanOptionTest
    * Dummy class for testing boolean options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class BooleanOptionClass
     extends AbstractOptionClass {
@@ -67,7 +63,7 @@ public class BooleanOptionTest
 
       m_OptionManager.add(
 	  "boolean-obj", "booleanObj",
-	  new Boolean(false));
+	(Boolean) false);
 
       m_OptionManager.add(
 	  "boolean-prim-inv", "booleanPrimInv",
@@ -75,7 +71,7 @@ public class BooleanOptionTest
 
       m_OptionManager.add(
 	  "boolean-obj-inv", "booleanObjInv",
-	  new Boolean(true));
+	(Boolean) true);
     }
 
     public void setBooleanPrim(boolean value) {

@@ -15,7 +15,7 @@
 
 /*
  * BaseLong.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -101,7 +101,7 @@ public class BaseLong
     }
     catch (Exception e) {
       e.printStackTrace();
-      m_Internal = new Long(0);
+      m_Internal = 0L;
     }
   }
 
@@ -112,7 +112,7 @@ public class BaseLong
    */
   @Override
   public String getValue() {
-    return ((Long) m_Internal).toString();
+    return m_Internal.toString();
   }
 
   /**
@@ -121,7 +121,7 @@ public class BaseLong
    * @return		the long value
    */
   public long longValue() {
-    return ((Long) m_Internal).longValue();
+    return (Long) m_Internal;
   }
 
   /**

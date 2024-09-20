@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteReceiveHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.logging;
@@ -35,7 +35,6 @@ import java.util.logging.LogRecord;
  * Waits for log records from a remote sender.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoteReceiveHandler
   extends AbstractEnhancingSingleHandler {
@@ -130,7 +129,7 @@ public class RemoteReceiveHandler
 	  getLogger().log(Level.SEVERE, "Failed to accept client connection!", e);
 	}
 	// extract log record
-	if (list.size() > 0) {
+	if (!list.isEmpty()) {
 	  try {
 	    record = (LogRecord) SerializationHelper.fromByteArray(list.toArray())[0];
 	    publish(record);
@@ -343,7 +342,7 @@ public class RemoteReceiveHandler
 
     if (result == 0) {
       other  = (RemoteReceiveHandler) o;
-      result = new Integer(getPort()).compareTo(other.getPort());
+      result = Integer.compare(getPort(), other.getPort());
     }
 
     return result;

@@ -13,23 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ByteOptionTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.option.AbstractOption;
-import adams.env.Environment;
 
 /**
  * Test class for all byte options. Run from the command line with: <br><br>
  * java adams.core.option.ByteOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ByteOptionTest
   extends AbstractNumericOptionTest {
@@ -38,7 +36,6 @@ public class ByteOptionTest
    * Dummy class for testing byte options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class ByteOptionClass
     extends AbstractOptionClass {
@@ -70,11 +67,11 @@ public class ByteOptionTest
 
       m_OptionManager.add(
 	  "byte-obj", "byteObj",
-	  new Byte((byte) 2), new Byte((byte) -10), new Byte((byte) +10));
+	  (byte) 2, (byte) -10, (byte) +10);
 
       m_OptionManager.add(
 	  "byte-obj-array", "byteObjArray",
-	  new Byte[]{new Byte((byte) 4), new Byte((byte) 5), new Byte((byte) 6)});
+	  new Byte[]{(byte) 4, (byte) 5, (byte) 6});
     }
 
     public void setBytePrim(byte value) {
@@ -159,7 +156,7 @@ public class ByteOptionTest
    * @return		the value
    */
   protected Byte getLowerBoundTestValue() {
-    return new Byte((byte) -30);
+    return (byte) -30;
   }
 
   /**
@@ -177,7 +174,7 @@ public class ByteOptionTest
    * @return		the value
    */
   protected Byte getUpperBoundTestValue() {
-    return new Byte((byte) 30);
+    return (byte) 30;
   }
 
   /**

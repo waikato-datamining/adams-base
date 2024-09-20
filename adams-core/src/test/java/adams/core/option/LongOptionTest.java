@@ -14,8 +14,8 @@
  */
 
 /*
- * ShortOptionTest.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * LongOptionTest.java
+ * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -24,102 +24,102 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Test class for all short options. Run from the command line with: <br><br>
- * java adams.core.option.ShortOptionTest
+ * Test class for all long options. Run from the command line with: <br><br>
+ * java adams.core.option.LongOptionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ShortOptionTest
+public class LongOptionTest
   extends AbstractNumericOptionTest {
 
   /**
-   * Dummy class for testing short options.
+   * Dummy class for testing long options.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
-  public static class ShortOptionClass
+  public static class LongOptionClass
     extends AbstractOptionClass {
 
     /** for serialization. */
-    private static final long serialVersionUID = 8286280518774728029L;
+    private static final long serialVersionUID = 8808117463200049431L;
 
-    protected short m_ShortPrim;
+    protected int m_LongPrim;
 
-    protected short[] m_ShortPrimArray;
+    protected int[] m_LongPrimArray;
 
-    protected Short m_ShortObj;
+    protected Long m_LongObj;
 
-    protected Short[] m_ShortObjArray;
+    protected Long[] m_LongObjArray;
 
     /**
-     * Adds options to the shorternal list of options.
+     * Adds options to the internal list of options.
      */
     public void defineOptions() {
       super.defineOptions();
 
       m_OptionManager.add(
-	  "short-prim", "shortPrim",
-	  (short) 1);
+	  "int-prim", "intPrim",
+	  1L);
 
       m_OptionManager.add(
-	  "short-prim-array", "shortPrimArray",
-	  new short[]{1, 2, 3});
+	  "int-prim-array", "intPrimArray",
+	  new long[]{1L, 2L, 3L});
 
       m_OptionManager.add(
-	  "short-obj", "shortObj",
-	  (short) 2, (short) -10, (short) +10);
+	  "int-obj", "longObj",
+	  2L, -10L, +10L);
 
       m_OptionManager.add(
-	  "short-obj-array", "shortObjArray",
-	  new Short[]{(short) 4, (short) 5, (short) 6});
+	  "int-obj-array", "longObjArray",
+	  new Long[]{4L, 5L, 6L});
     }
 
-    public void setShortPrim(short value) {
-      m_ShortPrim = value;
+    public void setIntPrim(int value) {
+      m_LongPrim = value;
     }
 
-    public short getShortPrim() {
-      return m_ShortPrim;
+    public int getIntPrim() {
+      return m_LongPrim;
     }
 
-    public String shortPrimTipText() {
-      return "shortPrim";
+    public String intPrimTipText() {
+      return "intPrim";
     }
 
-    public void setShortPrimArray(short[] value) {
-      m_ShortPrimArray = value;
+    public void setIntPrimArray(int[] value) {
+      m_LongPrimArray = value;
     }
 
-    public short[] getShortPrimArray() {
-      return m_ShortPrimArray;
+    public int[] getIntPrimArray() {
+      return m_LongPrimArray;
     }
 
-    public String shortPrimArrayTipText() {
-      return "shortPrimArray";
+    public String intPrimArrayTipText() {
+      return "intPrimArray";
     }
 
-    public void setShortObj(Short value) {
-      m_ShortObj = value;
+    public void setLongObj(Long value) {
+      m_LongObj = value;
     }
 
-    public Short getShortObj() {
-      return m_ShortObj;
+    public Long getLongObj() {
+      return m_LongObj;
     }
 
-    public String shortObjTipText() {
-      return "shortObj";
+    public String longObjTipText() {
+      return "longObj";
     }
 
-    public void setShortObjArray(Short[] value) {
-      m_ShortObjArray = value;
+    public void setLongObjArray(Long[] value) {
+      m_LongObjArray = value;
     }
 
-    public Short[] getShortObjArray() {
-      return m_ShortObjArray;
+    public Long[] getLongObjArray() {
+      return m_LongObjArray;
     }
 
-    public String shortObjArrayTipText() {
-      return "shortObjArray";
+    public String longObjArrayTipText() {
+      return "intObjArray";
     }
   }
 
@@ -128,7 +128,7 @@ public class ShortOptionTest
    *
    * @param name	the name of the test
    */
-  public ShortOptionTest(String name) {
+  public LongOptionTest(String name) {
     super(name);
   }
 
@@ -138,7 +138,7 @@ public class ShortOptionTest
    * @return		the object to use for testing the options
    */
   protected OptionHandler getOptionHandler() {
-    return new ShortOptionClass();
+    return new LongOptionClass();
   }
 
   /**
@@ -147,7 +147,7 @@ public class ShortOptionTest
    * @return		the property
    */
   protected String getLowerBoundTestProperty() {
-    return "shortObj";
+    return "longObj";
   }
 
   /**
@@ -155,8 +155,8 @@ public class ShortOptionTest
    *
    * @return		the value
    */
-  protected Short getLowerBoundTestValue() {
-    return (short) -100;
+  protected Long getLowerBoundTestValue() {
+    return -100L;
   }
 
   /**
@@ -165,7 +165,7 @@ public class ShortOptionTest
    * @return		the property
    */
   protected String getUpperBoundTestProperty() {
-    return "shortObj";
+    return "longObj";
   }
 
   /**
@@ -173,8 +173,8 @@ public class ShortOptionTest
    *
    * @return		the value
    */
-  protected Short getUpperBoundTestValue() {
-    return (short) 100;
+  protected Long getUpperBoundTestValue() {
+    return 100L;
   }
 
   /**
@@ -183,7 +183,7 @@ public class ShortOptionTest
    * @return		the test suite
    */
   public static Test suite() {
-    return new TestSuite(ShortOptionTest.class);
+    return new TestSuite(LongOptionTest.class);
   }
 
   /**

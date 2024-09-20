@@ -15,7 +15,7 @@
 
 /*
  * BaseDateTimeMsecExpressionTest.java
- * Copyright (C) 2015-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -33,7 +33,6 @@ import java.util.Date;
  * java adams.parser.BaseDateTimeMsecExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseDateTimeMsecExpressionTest
   extends AbstractExpressionEvaluatorTestCase<Date, BaseDateTimeMsecExpression> {
@@ -110,9 +109,9 @@ public class BaseDateTimeMsecExpressionTest
   }
 
   /**
-   * Tests setitng the START variable programmatically.
+   * Tests setting the START variable programmatically.
    */
-  public static void testStart() {
+  public void testStart() {
     String expr = "START +2 DAY +1 MONTH +1 HOUR";
     SimpleDateFormat format = new SimpleDateFormat(BaseDateTimeMsec.FORMAT);
     String startStr = "1901-01-01 12:34:00.123";
@@ -135,9 +134,9 @@ public class BaseDateTimeMsecExpressionTest
   }
 
   /**
-   * Tests setitng the END variable programmatically.
+   * Tests setting the END variable programmatically.
    */
-  public static void testEnd() {
+  public void testEnd() {
     String expr = "END -2 DAY -1 MONTH -1 HOUR";
     SimpleDateFormat format = new SimpleDateFormat(BaseDateTimeMsec.FORMAT);
     String endStr = "1901-10-27 12:34:00.123";

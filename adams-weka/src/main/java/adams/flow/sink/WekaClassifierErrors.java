@@ -15,7 +15,7 @@
 
 /*
  * WekaClassifierErrors.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -252,7 +252,7 @@ public class WekaClassifierErrors
       preds        = eval.predictions();
 
       // generate header
-      atts     = new ArrayList<Attribute>();
+      atts     = new ArrayList<>();
       atts.add(classAtt.copy("predicted" + classAtt.name()));
       atts.add((Attribute) classAtt.copy());
       m_PlotInstances = new Instances(
@@ -268,28 +268,28 @@ public class WekaClassifierErrors
 
         if (classAtt.isNominal()) {
           if (weka.core.Utils.isMissingValue(pred.actual()) || weka.core.Utils.isMissingValue(pred.predicted())) {
-            m_PlotShapes.addElement(new Integer(Plot2D.MISSING_SHAPE));
+            m_PlotShapes.addElement(Plot2D.MISSING_SHAPE);
           }
           else if (pred.predicted() != pred.actual()) {
             // set to default error point shape
-            m_PlotShapes.addElement(new Integer(Plot2D.ERROR_SHAPE));
+            m_PlotShapes.addElement(Plot2D.ERROR_SHAPE);
           }
           else {
             // otherwise set to constant (automatically assigned) point shape
-            m_PlotShapes.addElement(new Integer(Plot2D.CONST_AUTOMATIC_SHAPE));
+            m_PlotShapes.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
           }
-          m_PlotSizes.addElement(new Integer(Plot2D.DEFAULT_SHAPE_SIZE));
+          m_PlotSizes.addElement(Plot2D.DEFAULT_SHAPE_SIZE);
         }
         else {
           // store the error (to be converted to a point size later)
           Double errd = null;
           if (!weka.core.Utils.isMissingValue(pred.actual()) && !weka.core.Utils.isMissingValue(pred.predicted())) {
-            errd = new Double(pred.predicted() - pred.actual());
-            m_PlotShapes.addElement(new Integer(Plot2D.CONST_AUTOMATIC_SHAPE));
+            errd = pred.predicted() - pred.actual();
+            m_PlotShapes.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
           }
           else {
             // missing shape if actual class not present or prediction is missing
-            m_PlotShapes.addElement(new Integer(Plot2D.MISSING_SHAPE));
+            m_PlotShapes.addElement(Plot2D.MISSING_SHAPE);
           }
           m_PlotSizes.addElement(errd);
         }

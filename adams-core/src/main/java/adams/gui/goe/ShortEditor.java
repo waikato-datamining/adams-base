@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ShortEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -25,7 +25,6 @@ import javax.swing.SpinnerNumberModel;
  * A custom editor for Shorts.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ShortEditor
   extends AbstractIntegralNumberEditor {
@@ -36,7 +35,7 @@ public class ShortEditor
   public ShortEditor() {
     super();
 
-    m_CurrentValue = new Short("0");
+    m_CurrentValue = (short) 0;
   }
 
   /**
@@ -50,7 +49,7 @@ public class ShortEditor
    *     modified value.
    */
   public void setValue(Object value) {
-    m_CurrentValue = new Short(((Number) value).shortValue());
+    m_CurrentValue = ((Number) value).shortValue();
     firePropertyChange();
   }
 
@@ -76,9 +75,9 @@ public class ShortEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "0";
-      result = new Short(text);
+      result = Short.parseShort(text);
     }
     catch (Exception e) {
       throw new IllegalArgumentException(e);
@@ -94,12 +93,12 @@ public class ShortEditor
    */
   protected void updateBounds(SpinnerNumberModel model) {
     if (m_LowerBound == null)
-      model.setMinimum(new Short(Short.MIN_VALUE));
+      model.setMinimum(Short.MIN_VALUE);
     else
       model.setMinimum(m_LowerBound.intValue());
 
     if (m_UpperBound == null)
-      model.setMaximum(new Short(Short.MAX_VALUE));
+      model.setMaximum(Short.MAX_VALUE);
     else
       model.setMaximum(m_UpperBound.intValue());
   }

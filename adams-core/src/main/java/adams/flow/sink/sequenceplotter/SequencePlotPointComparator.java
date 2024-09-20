@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotPointComparator.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink.sequenceplotter;
@@ -27,7 +27,6 @@ import adams.data.sequence.XYSequencePointComparator;
  * A comparator for XY sequence points.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <X> the type of X
  * @param <Y> the type of Y
  */
@@ -127,7 +126,7 @@ public class SequencePlotPointComparator<X extends Number & Comparable, Y extend
 	  if ((m1 instanceof Comparable) && (m2 instanceof Comparable))
 	    result = ((Comparable) m1).compareTo(m2);
 	  else
-	    result = new Integer(m1.hashCode()).compareTo(m2.hashCode());
+	    result = Integer.compare(m1.hashCode(), m2.hashCode());
 	}
       }
     }

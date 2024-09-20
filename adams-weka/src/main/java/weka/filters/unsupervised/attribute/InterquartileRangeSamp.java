@@ -114,13 +114,12 @@ import java.util.Vector;
  *
  * @author  Dale Fletcher (dale at cs dot waikato dot ac dot nz)
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InterquartileRangeSamp
   extends InterquartileRange {
 
   /** for serialization */
-  protected static final long serialVersionUID = 3811630774543798261L;
+  private static final long serialVersionUID = 3811630774543798261L;
 
   public static final String SAMPLE_SIZE = "sample-size";
 

@@ -15,7 +15,7 @@
 
 /*
  * BaseTimeExpressionTest.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -33,7 +33,6 @@ import java.util.Date;
  * java adams.parser.BaseTimeExpressionTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTimeExpressionTest
   extends AbstractExpressionEvaluatorTestCase<Date, BaseTimeExpression> {
@@ -92,9 +91,9 @@ public class BaseTimeExpressionTest
   }
 
   /**
-   * Tests setitng the START variable programmatically.
+   * Tests setting the START variable programmatically.
    */
-  public static void testStart() {
+  public void testStart() {
     String expr = "START +1 HOUR +1 SECOND";
     SimpleDateFormat format = new SimpleDateFormat(BaseTime.FORMAT);
     String startStr = "12:34:00";
@@ -117,9 +116,9 @@ public class BaseTimeExpressionTest
   }
 
   /**
-   * Tests setitng the END variable programmatically.
+   * Tests setting the END variable programmatically.
    */
-  public static void testEnd() {
+  public void testEnd() {
     String expr = "END -1 HOUR -1 SECOND";
     SimpleDateFormat format = new SimpleDateFormat(BaseTime.FORMAT);
     String endStr = "12:34:00";

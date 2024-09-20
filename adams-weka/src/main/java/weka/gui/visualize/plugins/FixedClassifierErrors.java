@@ -15,7 +15,7 @@
 
 /*
  * FixedClassifierErrors.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.visualize.plugins;
@@ -40,7 +40,6 @@ import java.awt.event.WindowEvent;
  * the error plots.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FixedClassifierErrors
   implements ErrorVisualizePlugin {
@@ -84,25 +83,25 @@ public class FixedClassifierErrors
 	  double predicted = predInstF.instance(i).value(predInstF.classIndex() - 1);
 	  if (predInstF.classAttribute().isNominal()) {
 	    if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
-	      plotShape.addElement(new Integer(Plot2D.MISSING_SHAPE));
+	      plotShape.addElement(Plot2D.MISSING_SHAPE);
 	    }
 	    else if (actual != predicted) {
 	      // set to default error point shape
-	      plotShape.addElement(new Integer(Plot2D.ERROR_SHAPE));
+	      plotShape.addElement(Plot2D.ERROR_SHAPE);
 	    }
 	    else {
 	      // otherwise set to constant (automatically assigned) point shape
-	      plotShape.addElement(new Integer(Plot2D.CONST_AUTOMATIC_SHAPE));
+	      plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
 	    }
-	    plotSize.addElement(new Integer(PLOT_SIZE));
+	    plotSize.addElement(PLOT_SIZE);
 	  }
 	  else {
 	    if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
 	      // missing shape if actual class not present or prediction is missing
-	      plotShape.addElement(new Integer(Plot2D.MISSING_SHAPE));
+	      plotShape.addElement(Plot2D.MISSING_SHAPE);
 	    }
 	    else {
-	      plotShape.addElement(new Integer(Plot2D.CONST_AUTOMATIC_SHAPE));
+	      plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
 	    }
 	    plotSize.addElement(PLOT_SIZE);
 	  }

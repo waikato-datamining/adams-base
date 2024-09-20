@@ -47,7 +47,7 @@ public class ChildFrame
   implements Child {
 
   /** for serialization. */
-  protected static final long serialVersionUID = 8588293938686425618L;
+  private static final long serialVersionUID = 8588293938686425618L;
 
   /** the parent frame. */
   protected AbstractApplicationFrame m_Parent;

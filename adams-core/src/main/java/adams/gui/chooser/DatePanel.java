@@ -64,7 +64,7 @@ public class DatePanel
   extends BasePanel 
   implements JDatePanel, DateProvider {
 
-  protected static final long serialVersionUID = -2299249311312882915L;
+  private static final long serialVersionUID = -2299249311312882915L;
 
   protected HashSet<ActionListener> actionListeners;
   protected Properties i18nStrings;
@@ -230,7 +230,7 @@ public class DatePanel
    */
   protected class InternalView extends JPanel {
 
-    protected static final long serialVersionUID = -6844493839307157682L;
+    private static final long serialVersionUID = -6844493839307157682L;
 
     protected JPanel centerPanel;
     protected JPanel northCenterPanel;
@@ -623,7 +623,7 @@ public class DatePanel
    */
   protected class InternalTableCellRenderer extends DefaultTableCellRenderer {
 
-    protected static final long serialVersionUID = -2341614459632756921L;
+    private static final long serialVersionUID = -2341614459632756921L;
 
     @Override
     public Component getTableCellRendererComponent(JTable arg0, Object arg1, boolean isSelected, boolean hasFocus, int row, int col) {
@@ -830,7 +830,7 @@ public class DatePanel
      * Part of SpinnerModel, year
      */
     public void setValue(Object text) {
-      model.setYear(new Integer((String)text));
+      model.setYear(Integer.parseInt((String)text));
     }
 
     /**
@@ -873,7 +873,6 @@ public class DatePanel
     /**
      * Part of TableModel, day
      */
-    @SuppressWarnings("unchecked")
     public Class getColumnClass(int arg0) {
       return Integer.class;
     }
@@ -892,8 +891,7 @@ public class DatePanel
       Calendar firstDayOfMonth = Calendar.getInstance();
       firstDayOfMonth.set(model.getYear(), model.getMonth(), 1);
       int DOW = firstDayOfMonth.get(Calendar.DAY_OF_WEEK);
-      int value = arg1 - DOW + arg0*7 + 2;
-      return new Integer(value);
+      return arg1 - DOW + arg0*7 + 2;
     }
 
     /**

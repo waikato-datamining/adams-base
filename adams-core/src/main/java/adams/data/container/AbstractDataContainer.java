@@ -15,7 +15,7 @@
 
 /*
  * DataContainer.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.container;
@@ -186,7 +186,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 
     c = (AbstractDataContainer) o;
 
-    result = new Integer(size()).compareTo(c.size());
+    result = Integer.compare(size(), c.size());
 
     if (result == 0) {
       iter      = iterator();
