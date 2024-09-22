@@ -56,6 +56,9 @@ public class LoggingHelper {
   /** the formatter for the timestamp. */
   protected static DateFormat m_DateFormat;
 
+  /** the global logger instance. */
+  protected static Logger m_Global;
+
   /**
    * Gets the level for the specified environment variable. Checks:
    * - as is
@@ -294,6 +297,17 @@ public class LoggingHelper {
     result.setUseParentHandlers(false);
 
     return result;
+  }
+
+  /**
+   * Returns the global console logger instance.
+   *
+   * @return		the logger
+   */
+  public synchronized static Logger global() {
+    if (m_Global == null)
+      m_Global = getConsoleLogger("adams");
+    return m_Global;
   }
 
   /**

@@ -13,16 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EnumHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
+import adams.core.logging.LoggingHelper;
 import adams.core.option.EnumOption;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Helper class for enum-related operations.
@@ -60,8 +62,7 @@ public class EnumHelper {
       result    = (Object[]) method.invoke(null, new Object[0]);
     }
     catch (Exception e) {
-      System.err.println("Failed to obtain all enum values for enum: " + cls);
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to obtain all enum values for enum: " + cls.getName(), e);
       result = new Object[0];
     }
 

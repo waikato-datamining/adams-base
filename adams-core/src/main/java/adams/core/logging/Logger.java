@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Logger.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.logging;
@@ -32,7 +32,6 @@ import java.util.logging.LogRecord;
  * Simple logger class.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Logger
   implements CleanUpHandler {
@@ -92,7 +91,7 @@ public class Logger
    * @return		the handlers
    */
   public synchronized Handler[] getHandlers() {
-    return m_Handlers.toArray(new Handler[m_Handlers.size()]);
+    return m_Handlers.toArray(new Handler[0]);
   }
 
   /**

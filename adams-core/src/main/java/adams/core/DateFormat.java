@@ -15,19 +15,21 @@
 
 /*
  * DateFormat.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.logging.LoggingHelper;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * A threadsafe class for date formatting/parsing.
@@ -215,7 +217,7 @@ public class DateFormat
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to parse date: " + source, e);
     }
 
     return result;

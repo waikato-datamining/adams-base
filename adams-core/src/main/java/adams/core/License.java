@@ -13,21 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * License.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
-import java.net.URL;
-
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
+
+import java.net.URL;
+import java.util.logging.Level;
 
 /**
  * Enumeration of software licenses.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public enum License {
 
@@ -132,8 +133,7 @@ public enum License {
       }
       catch (Exception e) {
 	m_URL = null;
-	System.err.println("Failed to parse URL: " + url);
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse URL: " + url, e);
       }
     }
   }

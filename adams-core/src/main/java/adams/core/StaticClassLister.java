@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StaticClassLister.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.logging.LoggingHelper;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -26,13 +28,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Loads class names listed in props files, for cases when dynamic class
  * discovery is not available (e.g., JUnit tests).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StaticClassLister
   implements Serializable {
@@ -79,8 +81,7 @@ public class StaticClassLister
 	result.add(urls.nextElement());
     }
     catch (Exception e) {
-      System.err.println("Failed to obtain URLs for: " + resource);
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to obtain URLs for: " + resource, e);
     }
 
     return result;
@@ -95,7 +96,7 @@ public class StaticClassLister
    * @return		the retrieved classnames
    */
   public String[] getClassnames(List<String> propsfiles, String key) {
-    return getClassnames(propsfiles.toArray(new String[propsfiles.size()]), key);
+    return getClassnames(propsfiles.toArray(new String[0]), key);
   }
 
   /**
@@ -128,20 +129,19 @@ public class StaticClassLister
 	props.load(stream);
 	names  = props.getProperty(key, "").replace(" ", "").split(",");
 	for (String name: names) {
-	  if (name.length() > 0)
+	  if (!name.isEmpty())
 	    result.add(name);
 	}
 	stream.close();
       }
       catch (Exception e) {
-	System.err.println("Failed to load: " + url);
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to load: " + url, e);
       }
     }
 
     Collections.sort(result);
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**

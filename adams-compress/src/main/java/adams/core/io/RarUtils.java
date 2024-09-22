@@ -15,7 +15,7 @@
 
 /*
  * RarUtils.java
- * Copyright (C) 2017-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.io;
 
@@ -429,7 +429,7 @@ public class RarUtils {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to list files in: " + rarfile, e);
     }
     finally {
       if (rarfile != null) {

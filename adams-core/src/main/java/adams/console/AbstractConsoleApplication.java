@@ -29,6 +29,8 @@ import adams.core.option.OptionUtils;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.env.Environment;
 
+import java.util.logging.Level;
+
 /**
  * Ancestor for simple console applications.
  *
@@ -61,7 +63,7 @@ public abstract class AbstractConsoleApplication
       result = (AbstractConsoleApplication) OptionUtils.forName(AbstractConsoleApplication.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate console application: " + classname, e);
       result = null;
     }
 
@@ -110,7 +112,7 @@ public abstract class AbstractConsoleApplication
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to run application: " + app.getName(), e);
     }
   }
 }

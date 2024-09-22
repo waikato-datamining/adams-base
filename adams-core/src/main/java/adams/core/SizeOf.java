@@ -15,17 +15,19 @@
 
 /*
  * SizeOf.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import adams.core.logging.LoggingHelper;
 import sizeof.agent.Filter;
 import sizeof.agent.Statistics;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Helper class for measuring the size of objects using 
@@ -95,9 +97,8 @@ public class SizeOf {
 	  m_Available = (size > 0);
 	}
 	catch (Exception e) {
-	  e.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "SizeOf agent not available! Use '-javaagent:sizeofag.jar' on commandline.", e);
 	  m_Available = false;
-	  System.err.println("SizeOf agent not available! Use '-javaagent:sizeofag.jar' on commandline.");
 	}
       }
     }

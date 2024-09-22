@@ -15,13 +15,14 @@
 
 /*
  *    SerializedObject.java
- *    Copyright (C) 2001 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2001-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.core;
 
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -33,6 +34,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -149,7 +151,7 @@ public class SerializedObject
       istream.close();
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to deserialized!", e);
       result = null;
     }
 
@@ -197,7 +199,7 @@ public class SerializedObject
       result = true;
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to serialized to: " + file, e);
       result = false;
     }
     finally {

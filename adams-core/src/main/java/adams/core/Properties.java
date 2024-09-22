@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -600,7 +600,7 @@ public class Properties
     catch (Exception e) {
       clear();
       result = false;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to load: " + filename, e);
     }
     finally {
       FileUtils.closeQuietly(stream);
@@ -647,7 +647,7 @@ public class Properties
     }
     catch (Exception e) {
       result = false;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to save to: " + filename, e);
     }
     finally {
       FileUtils.closeQuietly(stream);
@@ -707,7 +707,7 @@ public class Properties
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to generate string!", e);
     }
 
     return result;

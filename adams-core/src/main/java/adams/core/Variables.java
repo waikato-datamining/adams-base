@@ -15,11 +15,12 @@
 
 /*
  * Variables.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 import adams.core.base.BaseRegExp;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.core.management.EnvVar;
 import adams.event.VariableChangeEvent;
@@ -230,7 +231,7 @@ public class Variables
       }
 
       // remove variables
-      result = (names.size() > 0);
+      result = !names.isEmpty();
       for (String name: names)
 	remove(name);
     }
@@ -452,7 +453,7 @@ public class Variables
       return false;
 
     name   = extractName(s);
-    result = (name.length() > 0);
+    result = !name.isEmpty();
     if (result) {
       for (i = 0; i < name.length(); i++) {
 	c = name.charAt(i);
@@ -693,8 +694,7 @@ public class Variables
     }
     catch (Exception e) {
       result = null;
-      System.err.println("Failed to clone variables:");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to clone variables!", e);
     }
 
     return result;
