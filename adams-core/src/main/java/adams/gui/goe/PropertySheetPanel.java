@@ -51,7 +51,6 @@ import adams.gui.help.HelpFrame;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -205,7 +204,7 @@ public class PropertySheetPanel
   }
 
   /**
-   * Sets whether to show the about box or not.
+   * Sets whether to show the about-box or not.
    * Must happen before calling {@link #setTarget(Object)}.
    *
    * @param value	true if to show
@@ -228,7 +227,7 @@ public class PropertySheetPanel
    * the object being edited. May return null if the edited
    * object provides no global info or tip text.
    *
-   * @return the about panel.
+   * @return the about-panel.
    */
   public JPanel getAboutPanel() {
     return m_PanelAbout;
@@ -348,7 +347,7 @@ public class PropertySheetPanel
     int		j;
     String 	name;
     String 	tipName;
-    String 	mname;
+    String 	displayName;
     String 	example;
 
     m_GlobalInfo = null;
@@ -368,9 +367,9 @@ public class PropertySheetPanel
       name    = m_Properties[i].getDisplayName();
       tipName = name + "TipText";
       for (j = 0; j < m_Methods.length; j++) {
-	mname       = m_Methods[j].getDisplayName();
+	displayName = m_Methods[j].getDisplayName();
 	method      = m_Methods[j].getMethod();
-	if (mname.equals(tipName)) {
+	if (displayName.equals(tipName)) {
 	  if (method.getReturnType().equals(String.class)) {
 	    try {
 	      m_TipTexts[i] = ((String) (method.invoke(m_Target))).trim();
@@ -396,9 +395,9 @@ public class PropertySheetPanel
   /**
    * Sets a new target object for customisation.
    *
-   * @param targ a value of type 'Object'
+   * @param value a value of type 'Object'
    */
-  public synchronized void setTarget(Object targ) {
+  public synchronized void setTarget(Object value) {
     int 				i;
     String 				name;
     Class 				type;
@@ -410,7 +409,7 @@ public class PropertySheetPanel
     boolean				canChangeClass;
     JComponent				view;
 
-    m_Target = targ;
+    m_Target = value;
 
     initSheet();
     initHelp();
@@ -449,7 +448,7 @@ public class PropertySheetPanel
 	canChangeClass = true;
 
 	// value
-	m_Values[i] = getter.invoke(m_Target, new Object[0]);
+	m_Values[i] = getter.invoke(m_Target);
 
 	// editor
 	pec = m_Properties[i].getPropertyEditorClass();
@@ -673,50 +672,42 @@ public class PropertySheetPanel
    * @param evt a value of type 'PropertyChangeEvent'
    */
   synchronized void wasModified(PropertyChangeEvent evt) {
+    PropertyEditor 	editor;
+    int			i;
+    PropertyDescriptor 	property;
+    Object 		value;
+    Method 		setter;
+    Method 		getter;
+    String 		message;
+    Component 		jf;
+    Object 		o;
+
     if (evt.getSource() instanceof PropertyEditor) {
-      PropertyEditor editor = (PropertyEditor) evt.getSource();
-      for (int i = 0 ; i < m_Editors.length; i++) {
+      editor = (PropertyEditor) evt.getSource();
+      for (i = 0 ; i < m_Editors.length; i++) {
 	if (m_Editors[i] == editor) {
-	  PropertyDescriptor property = m_Properties[i];
-	  Object value = editor.getValue();
+	  property    = m_Properties[i];
+	  value       = editor.getValue();
 	  m_Values[i] = value;
-	  Method setter = property.getWriteMethod();
+	  setter      = property.getWriteMethod();
 	  try {
-	    Object[] args = {value};
-	    setter.invoke(m_Target, args);
+	    setter.invoke(m_Target, value);
 	  }
 	  catch (InvocationTargetException ex) {
-	    if (ex.getTargetException()
-		instanceof PropertyVetoException) {
-	      String message = "WARNING: Vetoed; reason is: "
-		+ ex.getTargetException().getMessage();
-	      printErrorMessage(message);
+	    jf = null;
+	    if (evt.getSource() instanceof JPanel)
+	      jf = ((JPanel) evt.getSource()).getParent();
 
-	      Component jf;
-	      if(evt.getSource() instanceof JPanel)
-		jf = ((JPanel)evt.getSource()).getParent();
-	      else
-		jf = new JFrame();
+	    if (ex.getTargetException() instanceof PropertyVetoException) {
+	      message = "WARNING: Vetoed; reason is: " + ex.getTargetException().getMessage();
+	      printErrorMessage(message);
 	      GUIHelper.showErrorMessage(jf, message, "Error");
-	      if(jf instanceof JFrame)
-		((JFrame)jf).dispose();
 	    }
 	    else {
-	      printException(ex.getTargetException().getClass().getName()+
-		  " while updating "+ property.getName() +":", ex);
-	      Component jf;
-	      if(evt.getSource() instanceof JPanel)
-		jf = ((JPanel)evt.getSource()).getParent();
-	      else
-		jf = new JFrame();
+	      printException(ex.getTargetException().getClass().getName() + " while updating "+ property.getName() +":", ex);
 	      GUIHelper.showErrorMessage(jf,
-                ex.getTargetException().getClass().getName() +
-                  " while updating " + property.getName() +
-                  ":\n" +
-                  LoggingHelper.throwableToString(ex),
-		  "Error");
-	      if (jf instanceof JFrame)
-		((JFrame)jf).dispose();
+		ex.getTargetException().getClass().getName() + " while updating " + property.getName() + ":\n" +
+		  LoggingHelper.throwableToString(ex), "Error");
 	    }
 	  }
 	  catch (Exception ex) {
@@ -733,18 +724,16 @@ public class PropertySheetPanel
 
     // Now re-read all the properties and update the editors
     // for any other properties that have changed.
-    for (int i = 0; i < m_Properties.length; i++) {
-      Object o;
+    for (i = 0; i < m_Properties.length; i++) {
       try {
-	Method getter = m_Properties[i].getReadMethod();
-	Method setter = m_Properties[i].getWriteMethod();
+	getter = m_Properties[i].getReadMethod();
+	setter = m_Properties[i].getWriteMethod();
 
 	// ignore set/get only properties
 	if (getter == null || setter == null)
 	  continue;
 
-	Object[] args = {};
-	o = getter.invoke(m_Target, args);
+	o = getter.invoke(m_Target);
       }
       catch (Exception ex) {
 	o = null;
@@ -792,7 +781,7 @@ public class PropertySheetPanel
 	  break;
 	}
       }
-    };
+    }
 
     return result;
   }
