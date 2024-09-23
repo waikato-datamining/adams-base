@@ -24,6 +24,7 @@ package adams.gui.goe;
 import adams.core.ClassLister;
 import adams.core.CustomDisplayStringProvider;
 import adams.core.ObjectCopyHelper;
+import adams.core.Utils;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.Logger;
@@ -43,6 +44,8 @@ import adams.gui.core.BaseTextAreaWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.Undo;
+import adams.gui.core.UndoHandler;
 import adams.gui.core.dotnotationtree.AbstractItemFilter;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
 import adams.gui.goe.classtree.ClassTree;
@@ -50,6 +53,7 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -89,7 +93,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class GenericObjectEditor
-  implements PropertyEditor, CustomPanelSupplier, UserModeSupporter {
+  implements PropertyEditor, CustomPanelSupplier, UserModeSupporter, UndoHandler {
 
   /** the action command for OK. */
   public final static String ACTION_CMD_OK = "ok";
@@ -103,8 +107,17 @@ public class GenericObjectEditor
   /** the action command for Save. */
   public final static String ACTION_CMD_SAVE = "save";
 
-  /** the action command for Revert. */
-  public final static String ACTION_CMD_REVERT = "revert";
+  /** the action command for Undo. */
+  public final static String ACTION_CMD_UNDO = "undo";
+
+  /** the action command for Redo. */
+  public final static String ACTION_CMD_REDO = "redo";
+
+  /** constant for dialog cancellation. */
+  public final static int CANCEL_OPTION = JFileChooser.CANCEL_OPTION;
+
+  /** constant for dialog approval. */
+  public final static int APPROVE_OPTION = JFileChooser.APPROVE_OPTION;
 
   /** whether to show the choose class button. */
   public static boolean SHOW_CHOOSE_CLASS_BUTTON = false;
@@ -114,10 +127,6 @@ public class GenericObjectEditor
 
   /** The object being configured. */
   protected Object m_Object;
-
-  /** Holds a copy of the current object that can be reverted to
-      if the user decides to cancel. */
-  protected Object m_Backup;
 
   /** the default value. */
   protected Object m_DefaultValue;
@@ -170,6 +179,12 @@ public class GenericObjectEditor
   /** the user mode to use. */
   protected UserMode m_UserMode;
 
+  /** the undo manager. */
+  protected Undo m_Undo;
+
+  /** whether the dialog was cancelled or ok'ed. */
+  protected int m_Result;
+
   /**
    * Handles the GUI side of editing values.
    */
@@ -216,8 +231,8 @@ public class GenericObjectEditor
     /** cancel button. */
     protected BaseButton m_ButtonCancel;
 
-    /** revert button. */
-    protected BaseButton m_ButtonRevert;
+    /** undo button. */
+    protected BaseButton m_ButtonUndo;
 
     /** The filechooser for opening and saving object files. */
     protected transient ObjectFileChooser m_FileChooser;
@@ -261,7 +276,6 @@ public class GenericObjectEditor
     public GOEPanel() {
       super();
 
-      m_Backup      = copyObject(m_Object);
       m_UpdateSize  = false;
       m_FirstUpdate = true;
 
@@ -338,7 +352,7 @@ public class GenericObjectEditor
       m_ButtonOK.setMnemonic('O');
       m_ButtonOK.setToolTipText("Use this setup and close dialog");
       m_ButtonOK.addActionListener((ActionEvent e) -> {
-	m_Backup = copyObject(m_Object);
+	m_Result = APPROVE_OPTION;
 	close();
       });
 
@@ -348,21 +362,20 @@ public class GenericObjectEditor
       m_ButtonCancel.setMnemonic('C');
       m_ButtonCancel.setToolTipText("Discard changes and close dialog");
       m_ButtonCancel.addActionListener((ActionEvent e) -> {
-	if (m_Backup != null)
-	  m_Object = copyObject(m_Backup);
-	GenericObjectEditor.this.firePropertyChange();
+	m_Result = CANCEL_OPTION;
 	close();
       });
 
-      m_ButtonRevert = new BaseButton(ImageManager.getIcon("undo.gif"));
-      m_ButtonRevert.setActionCommand(ACTION_CMD_REVERT);
-      m_ButtonRevert.setEnabled(true);
-      m_ButtonRevert.setToolTipText("Revert changes");
-      m_ButtonRevert.addActionListener((ActionEvent e) -> {
-	if (m_Backup != null) {
-	  m_Object = copyObject(m_Backup);
+      m_ButtonUndo = new BaseButton(ImageManager.getIcon("undo.gif"));
+      m_ButtonUndo.setActionCommand(ACTION_CMD_UNDO);
+      m_ButtonUndo.setEnabled(true);
+      m_ButtonUndo.setToolTipText("Undo changes");
+      m_ButtonUndo.addActionListener((ActionEvent e) -> {
+	if (isUndoSupported() && getUndo().canUndo()) {
+	  m_Object = copyObject(getUndo().undo().getData());
 	  GenericObjectEditor.this.firePropertyChange();
 	  m_ObjectNames = getClasses();
+	  updateButtons();
 	  updateObjectNames();
 	  updateChildPropertySheet();
 	}
@@ -430,7 +443,7 @@ public class GenericObjectEditor
       leftButs.setLayout(new FlowLayout(FlowLayout.LEFT));
       leftButs.add(m_ButtonOpen);
       leftButs.add(m_ButtonSave);
-      leftButs.add(m_ButtonRevert);
+      leftButs.add(m_ButtonUndo);
       rightButs.setLayout(new FlowLayout(FlowLayout.RIGHT));
       rightButs.add(m_ButtonOK);
       rightButs.add(m_ButtonCancel);
@@ -445,6 +458,13 @@ public class GenericObjectEditor
       }
 
       m_PanelTree.focusSearch();
+    }
+
+    /**
+     * Updates the enabled state of the buttons.
+     */
+    protected void updateButtons() {
+      m_ButtonUndo.setEnabled(isUndoSupported() && getUndo().canUndo());
     }
 
     /**
@@ -848,6 +868,8 @@ public class GenericObjectEditor
     m_MinimumChars             = 0;
     m_PostProcessObjectHandler = null;
     m_UserMode                 = UserMode.HIGHEST;
+    m_Undo                     = new Undo();
+    m_Result                   = CANCEL_OPTION;
 
     setCanChangeClassInDialog(canChangeClassInDialog);
   }
@@ -910,16 +932,6 @@ public class GenericObjectEditor
    */
   public AbstractItemFilter getFilter() {
     return m_Filter;
-  }
-
-  /**
-   * Returns the backup object (may be null if there is no
-   * backup.
-   *
-   * @return 		the backup object
-   */
-  public Object getBackup() {
-    return m_Backup;
   }
 
   /**
@@ -1092,10 +1104,20 @@ public class GenericObjectEditor
       return;
     }
 
+    if (isUndoSupported()) {
+      if (m_Object != null)
+	getUndo().addUndo(m_Object, Utils.classToString(m_Object));
+      else
+	// undo for very first object
+	getUndo().addUndo(m_Object, Utils.classToString(o));
+    }
+
     setObject(o);
 
-    if (m_EditorComponent != null)
+    if (m_EditorComponent != null) {
       m_EditorComponent.repaint();
+      m_EditorComponent.updateButtons();
+    }
 
     updateObjectNames();
   }
@@ -1114,11 +1136,6 @@ public class GenericObjectEditor
       trueChange = (!obj.equals(getValue()));
     else
       trueChange = true;
-
-    if (m_Object != null)
-      m_Backup = m_Object;
-    else
-      m_Backup = ObjectCopyHelper.copyObject(obj);
 
     newObj = ObjectCopyHelper.copyObject(obj);
     if (m_PostProcessObjectHandler != null)
@@ -1460,6 +1477,9 @@ public class GenericObjectEditor
    * @param className 	the name of the class that was selected
    */
   protected void classSelected(String className) {
+    Object	current;
+
+    current = m_Object;
     try {
       if ((m_Object != null) && m_Object.getClass().getName().equals(className))
 	return;
@@ -1477,8 +1497,8 @@ public class GenericObjectEditor
 	  "Class load failed");
       LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate: " + className, ex);
       try {
-	if (m_Backup != null)
-	  setValue(m_Backup);
+	if (current != null)
+	  setValue(current);
 	else
 	  setDefaultValue();
       }
@@ -1654,5 +1674,46 @@ public class GenericObjectEditor
    */
   public String getLogMessage() {
     return ((GOEPanel) getCustomEditor()).getLogMessage();
+  }
+
+  /**
+   * Sets the undo manager to use, can be null if no undo-support wanted.
+   *
+   * @param value	the undo manager to use
+   */
+  @Override
+  public void setUndo(Undo value) {
+    m_Undo = value;
+  }
+
+  /**
+   * Returns the current undo manager, can be null.
+   *
+   * @return		the undo manager, if any
+   */
+  @Override
+  public Undo getUndo() {
+    return m_Undo;
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set
+   */
+  @Override
+  public boolean isUndoSupported() {
+    return (m_Undo != null) && m_Undo.isEnabled();
+  }
+
+  /**
+   * Returns whether the dialog got cancelled or approved.
+   *
+   * @return		the result
+   * @see		#APPROVE_OPTION
+   * @see		#CANCEL_OPTION
+   */
+  public int getResult() {
+    return m_Result;
   }
 }

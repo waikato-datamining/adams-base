@@ -20,12 +20,15 @@
 
 package adams.gui.goe;
 
+import adams.core.Utils;
 import adams.core.option.UserMode;
 import adams.core.option.UserModeSupporter;
 import adams.env.Environment;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.Undo;
+import adams.gui.core.UndoHandler;
 import adams.gui.core.UserModeUtils;
 import adams.gui.goe.GenericObjectEditor.GOEPanel;
 
@@ -57,7 +60,7 @@ import java.beans.PropertyEditor;
  */
 public class GenericObjectEditorDialog
   extends BaseDialog
-  implements ActionListener, UserModeSupporter {
+  implements ActionListener, UserModeSupporter, UndoHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 450801082654308978L;
@@ -301,6 +304,13 @@ public class GenericObjectEditorDialog
     setUserMode(UserModeUtils.getUserMode(getParent()));
 
     m_Current = m_Editor.getValue();
+
+    if (isUndoSupported()) {
+      getUndo().clear();
+      if (m_Current != null)
+	getUndo().addUndo(m_Current, Utils.classToString(m_Current));
+    }
+
     // only in case of GOEPanels can be determine whether OK or Cancel was
     // selected.
     if (m_Editor.getCustomEditor() instanceof GOEPanel)
@@ -478,6 +488,40 @@ public class GenericObjectEditorDialog
       result.setCurrent(value);
 
     return result;
+  }
+
+  /**
+   * Sets the undo manager to use, can be null if no undo-support wanted.
+   *
+   * @param value	the undo manager to use
+   */
+  @Override
+  public void setUndo(Undo value) {
+    if (getGOEEditor() != null)
+      getGOEEditor().setUndo(value);
+  }
+
+  /**
+   * Returns the current undo manager, can be null.
+   *
+   * @return		the undo manager, if any
+   */
+  @Override
+  public Undo getUndo() {
+    if (getGOEEditor() != null)
+      return getGOEEditor().getUndo();
+    else
+      return null;
+  }
+
+  /**
+   * Returns whether an Undo manager is currently available.
+   *
+   * @return		true if an undo manager is set
+   */
+  @Override
+  public boolean isUndoSupported() {
+    return (getGOEEditor() != null) && getGOEEditor().isUndoSupported();
   }
 
   /**
