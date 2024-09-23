@@ -178,7 +178,7 @@ public class GenericObjectEditor
     implements UserModeSupporter {
 
     /** for serialization. */
-    static final long serialVersionUID = 3656028520876011335L;
+    private static final long serialVersionUID = 3656028520876011335L;
 
     /** the split pane. */
     protected BaseSplitPane m_SplitPane;
@@ -252,7 +252,7 @@ public class GenericObjectEditor
     /** whether to update the dialog size. */
     protected boolean m_UpdateSize;
 
-    /** whether its the first update. */
+    /** whether it is the first update. */
     protected boolean m_FirstUpdate;
 
     /**
@@ -303,10 +303,10 @@ public class GenericObjectEditor
 	  return;
 	// update property sheet
 	try {
-	  setValue(ObjectCopyHelper.newInstance("" + m_ComboBoxClassname.getSelectedItem()));
+	  setValue(ObjectCopyHelper.newInstance(m_ComboBoxClassname.getSelectedItem()));
 	}
 	catch (Exception ex) {
-	  ex.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to set value from combobox: " + m_ComboBoxClassname.getSelectedItem(), ex);
 	}
       });
 
@@ -666,7 +666,7 @@ public class GenericObjectEditor
 	list.add(cls.getName());
       }
       Collections.sort(list);
-      m_ComboBoxClassname.setModel(new DefaultComboBoxModel<>(list.toArray(new String[list.size()])));
+      m_ComboBoxClassname.setModel(new DefaultComboBoxModel<>(list.toArray(new String[0])));
       m_ComboBoxClassname.setSelectedItem(classname);
       m_LabelClassname.setText(classname);
 
@@ -995,7 +995,7 @@ public class GenericObjectEditor
       list = getClasses();
       if (m_Filter != null) {
 	i    = 0;
-	while ((list.size() > 0) && (i < list.size())) {
+	while (!list.isEmpty() && (i < list.size())) {
 	  if (!m_Filter.filter(list.get(i)))
 	    list.remove(i);
 	  else
@@ -1003,7 +1003,7 @@ public class GenericObjectEditor
 	}
       }
       defaultValue = null;
-      if (list.size() > 0)
+      if (!list.isEmpty())
 	defaultValue = list.get(0);
       try {
 	if (defaultValue == null)
@@ -1471,11 +1471,11 @@ public class GenericObjectEditor
     catch (Exception ex) {
       GUIHelper.showErrorMessage(
 	  null,
-	  "Could not create an example of\n"
+	  "Failed to instantiate\n"
 	  + className + "\n"
 	  + "from the current classpath",
 	  "Class load failed");
-      ex.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate: " + className, ex);
       try {
 	if (m_Backup != null)
 	  setValue(m_Backup);
@@ -1506,7 +1506,7 @@ public class GenericObjectEditor
           classes.add(value[i].getClass());
       }
     }
-    setProposedClasses(classes.toArray(new Class[classes.size()]));
+    setProposedClasses(classes.toArray(new Class[0]));
   }
 
   /**
