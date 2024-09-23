@@ -320,7 +320,7 @@ public class GenericObjectEditor
 	  setValue(ObjectCopyHelper.newInstance(m_ComboBoxClassname.getSelectedItem()));
 	}
 	catch (Exception ex) {
-	  LoggingHelper.global().log(Level.SEVERE, "Failed to set value from combobox: " + m_ComboBoxClassname.getSelectedItem(), ex);
+	  LOGGER.log(Level.SEVERE, "Failed to set value from combobox: " + m_ComboBoxClassname.getSelectedItem(), ex);
 	}
       });
 
@@ -1495,7 +1495,7 @@ public class GenericObjectEditor
 	  + className + "\n"
 	  + "from the current classpath",
 	  "Class load failed");
-      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate: " + className, ex);
+      LOGGER.log(Level.SEVERE, "Failed to instantiate: " + className, ex);
       try {
 	if (current != null)
 	  setValue(current);
