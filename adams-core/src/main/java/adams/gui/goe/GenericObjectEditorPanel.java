@@ -32,8 +32,6 @@ import adams.gui.goe.GenericObjectEditor.PostProcessObjectHandler;
 import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * A panel that contains text field with the current setup of the object
@@ -43,7 +41,7 @@ import java.beans.PropertyChangeListener;
  */
 public class GenericObjectEditorPanel
   extends AbstractChooserPanel
-  implements PropertyChangeListener, UserModeSupporter {
+  implements UserModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8351558686664299781L;
@@ -126,7 +124,6 @@ public class GenericObjectEditorPanel
       m_CancelListener = (ActionEvent e) -> m_Editor.setValue(getCurrent());
       m_Editor = new GenericObjectEditor(m_CanChangeClass);
       m_Editor.setClassType(m_ClassType);
-      m_Editor.addPropertyChangeListener(this);
       ((GOEPanel) m_Editor.getCustomEditor()).addOkListener(m_OkListener);
       ((GOEPanel) m_Editor.getCustomEditor()).addCancelListener(m_CancelListener);
     }
@@ -140,7 +137,6 @@ public class GenericObjectEditorPanel
   protected void invalidatedEditor() {
     if (m_Editor == null)
       return;
-    m_Editor.removePropertyChangeListener(this);
     if (m_OkListener != null)
       ((GOEPanel) m_Editor.getCustomEditor()).removeOkListener(m_OkListener);
     if (m_CancelListener != null)
@@ -220,7 +216,7 @@ public class GenericObjectEditorPanel
   @Override
   protected Object doChoose() {
     if (m_Current != null)
-      getEditor().setValue(m_Current);
+      getEditor().setValue(ObjectCopyHelper.copyObject(m_Current));
     if (m_Dialog == null)
       m_Dialog = GenericObjectEditorDialog.createDialog(this, getEditor());
     m_Dialog.setUISettingsPrefix(getClassType());
@@ -342,16 +338,6 @@ public class GenericObjectEditorPanel
    */
   public PostProcessObjectHandler getPostProcessObjectHandler() {
     return getEditor().getPostProcessObjectHandler();
-  }
-
-  /**
-   * This method gets called when a bound property is changed.
-   * @param evt A PropertyChangeEvent object describing the event source
-   *          and the property that has changed.
-   */
-  public void propertyChange(PropertyChangeEvent evt) {
-    setCurrent(m_Editor.getValue());
-    notifyChangeListeners(new ChangeEvent(m_Self));
   }
 
   /**
