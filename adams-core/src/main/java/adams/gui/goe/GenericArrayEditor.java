@@ -15,7 +15,7 @@
 
 /*
  *    GenericArrayEditor.java
- *    Copyright (C) 1999-2019 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -78,13 +78,15 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * A PropertyEditor for arrays of objects that themselves have
  * property editors.
  *
+ * Based on weka.gui.GenericArrayEditor
+ *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @see weka.gui.GenericArrayEditor
  */
 public class GenericArrayEditor
   extends BasePanel
@@ -97,7 +99,7 @@ public class GenericArrayEditor
    * This class handles the creation of list cell renderers from the
    * property editors.
    */
-  protected class EditorListCellRenderer
+  protected static class EditorListCellRenderer
     implements ListCellRenderer {
 
     /** The class of the property editor for array objects. */
@@ -412,6 +414,7 @@ public class GenericArrayEditor
     m_ButtonActions = new BaseButtonWithDropDownMenu();
     m_ButtonActions.setToolTipText("More actions");
     m_ActionRestore = new AbstractBaseAction() {
+      private static final long serialVersionUID = -8746901680473804479L;
       @Override
       protected void initialize() {
 	super.initialize();
@@ -425,6 +428,7 @@ public class GenericArrayEditor
     };
     m_ButtonActions.addToMenu(m_ActionRestore);
     m_ActionSortAsc = new AbstractBaseAction() {
+      private static final long serialVersionUID = 3974602886089489212L;
       @Override
       protected void initialize() {
 	super.initialize();
@@ -438,6 +442,7 @@ public class GenericArrayEditor
     };
     m_ButtonActions.addToMenu(m_ActionSortAsc);
     m_ActionSortDesc = new AbstractBaseAction() {
+      private static final long serialVersionUID = 3988628222623631911L;
       @Override
       protected void initialize() {
 	super.initialize();
@@ -618,7 +623,7 @@ public class GenericArrayEditor
       primitive    = Utils.isPrimitive(elementClass);
       if (primitive)
 	elementClass = Utils.getWrapperClass(elementClass);
-      m_CanSort = ClassLocator.hasInterface(Comparable.class, elementClass);
+      m_CanSort = (elementClass != null) && ClassLocator.hasInterface(Comparable.class, elementClass);
       editor = PropertyEditorManager.findEditor(elementClass);
       view         = null;
       lcr          = new DefaultListCellRenderer();
@@ -641,29 +646,31 @@ public class GenericArrayEditor
 	  if (editor instanceof GenericObjectEditor) {
 	    ((GenericObjectEditor) editor).setDefaultValue();
 	  }
-	  else if (ClassLocator.isSubclass(Enum.class, elementClass)) {
+	  else if ((elementClass != null) && ClassLocator.isSubclass(Enum.class, elementClass)) {
 	    try {
-	      method = elementClass.getMethod("values", new Class[0]);
+	      method = elementClass.getMethod("values");
 	      obj    = (Object[]) method.invoke(null, new Object[0]);
 	      editor.setValue(obj[0]);
 	    }
 	    catch (Exception e) {
-	      e.printStackTrace();
+	      LOGGER.log(Level.SEVERE, "Failed to get values and update editor!", e);
 	    }
 	  }
 	  else {
-	    try {
-	      editor.setValue(ObjectCopyHelper.newInstance(elementClass));
-	    }
-	    catch(Exception ex) {
-	      m_ElementEditor = null;
-	      m_IsPrimitive   = false;
-	      m_View          = null;
-	      ex.printStackTrace();
-	      add(m_Label, BorderLayout.CENTER);
-	      firePropertyChange();
-	      validate();
-	      return;
+	    if (elementClass != null) {
+	      try {
+		editor.setValue(ObjectCopyHelper.newInstance(elementClass));
+	      }
+	      catch (Exception ex) {
+		m_ElementEditor = null;
+		m_IsPrimitive = false;
+		m_View = null;
+		LOGGER.log(Level.SEVERE, "Failed to instantiate: " + Utils.classToString(elementClass), ex);
+		add(m_Label, BorderLayout.CENTER);
+		firePropertyChange();
+		validate();
+		return;
+	      }
 	    }
 	  }
 	}
@@ -681,7 +688,8 @@ public class GenericArrayEditor
       }
 
       if (view == null) {
-	LOGGER.warning("No property editor for class: " + elementClass.getName());
+	if (elementClass != null)
+	  LOGGER.warning("No property editor for class: " + elementClass.getName());
       }
       else {
 	panel = new JPanel();
@@ -860,7 +868,7 @@ public class GenericArrayEditor
     PropertyEditor 		editor;
 
     editor = PropertyEditorManager.findEditor(m_ElementClass);
-    if ((m_ListModel == null) || (m_ListModel.size() == 0)) {
+    if ((m_ListModel == null) || m_ListModel.isEmpty()) {
       rep = NONE;
     }
     else if (m_ListModel.size() == 1) {
