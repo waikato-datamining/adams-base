@@ -20,6 +20,10 @@
 
 package adams.core.base;
 
+import adams.core.logging.LoggingHelper;
+
+import java.util.logging.Level;
+
 /**
  * Wrapper for a Long object to be editable in the GOE.
  *
@@ -100,7 +104,7 @@ public class BaseLong
       m_Internal = Long.parseLong(value);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to set value: " + value, e);
       m_Internal = 0L;
     }
   }

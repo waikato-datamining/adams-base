@@ -15,7 +15,7 @@
 
 /*
  * BaseObject.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -23,6 +23,7 @@ package adams.core.base;
 import adams.core.CloneHandler;
 import adams.core.Properties;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Super class for wrappers around classes like String, Integer, etc.
@@ -84,7 +86,7 @@ public abstract class BaseObject
       result.setValue(getValue());
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to clone!", e);
       result = null;
     }
 
@@ -116,8 +118,7 @@ public abstract class BaseObject
 	other.setValue((String) o);
       }
       catch (Exception e) {
-        System.err.println("Failed to initialize instance of " + getClass().getName() + " with '" + o + "'!");
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to initialize instance of " + getClass().getName() + " with '" + o + "'!", e);
 	return 1;
       }
     }
@@ -279,8 +280,7 @@ public abstract class BaseObject
 	result = null;
     }
     catch (Exception e) {
-      System.err.println("Failed to instantiate new instance of BaseObject-derived class with value '" + s + "':");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate new instance of BaseObject-derived class with value '" + s + "':", e);
       result = null;
     }
     
@@ -334,8 +334,7 @@ public abstract class BaseObject
 	Array.set(result, i, obj);
       }
       catch (Exception e) {
-	System.err.println("Failed to turn '" + array[i] + "' into a " + cls.getName() + " object:");
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to turn '" + array[i] + "' into a " + cls.getName() + " object:", e);
       }
     }
     

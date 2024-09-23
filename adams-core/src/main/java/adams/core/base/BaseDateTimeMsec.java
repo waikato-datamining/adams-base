@@ -25,11 +25,13 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTimeMsec;
 import adams.core.DateValueSupporter;
+import adams.core.logging.LoggingHelper;
 import adams.parser.BaseDateTimeMsecExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Wrapper for a Date/Time string to be editable in the GOE. Dates have to be of
@@ -220,10 +222,8 @@ public class BaseDateTimeMsec
       return BaseDateTimeMsecExpression.evaluate(s, m_Start, m_End, m_BusinessDays);
     }
     catch (Exception e) {
-      if (!quiet) {
-	System.err.println("Failed to parse: " + s);
-	e.printStackTrace();
-      }
+      if (!quiet)
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse: " + s, e);
       return null;
     }
   }

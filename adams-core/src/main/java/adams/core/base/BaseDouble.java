@@ -21,6 +21,9 @@
 package adams.core.base;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
+
+import java.util.logging.Level;
 
 /**
  * Wrapper for a Double object to be editable in the GOE.
@@ -102,7 +105,7 @@ public class BaseDouble
       m_Internal = Utils.toDouble(value);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to set value: " + value, e);
       m_Internal = 0.0;
     }
   }

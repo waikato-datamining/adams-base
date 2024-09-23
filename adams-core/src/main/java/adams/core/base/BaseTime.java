@@ -15,7 +15,7 @@
 
 /*
  * BaseTime.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -24,11 +24,13 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.core.Time;
+import adams.core.logging.LoggingHelper;
 import adams.parser.BaseTimeExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -189,10 +191,8 @@ public class BaseTime
       return BaseTimeExpression.evaluate(s, m_Start, m_End);
     }
     catch (Exception e) {
-      if (!quiet) {
-	System.err.println("Failed to parse: " + s);
-	e.printStackTrace();
-      }
+      if (!quiet)
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse: " + s, e);
       return null;
     }
   }

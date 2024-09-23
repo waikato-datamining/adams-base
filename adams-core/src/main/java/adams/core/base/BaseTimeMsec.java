@@ -24,11 +24,13 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateValueSupporter;
 import adams.core.TimeMsec;
+import adams.core.logging.LoggingHelper;
 import adams.parser.BaseTimeMsecExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Wrapper for a Time string to be editable in the GOE. Dates have to be of
@@ -189,10 +191,8 @@ public class BaseTimeMsec
       return BaseTimeMsecExpression.evaluate(s, m_Start, m_End);
     }
     catch (Exception e) {
-      if (!quiet) {
-	System.err.println("Failed to parse: " + s);
-	e.printStackTrace();
-      }
+      if (!quiet)
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse: " + s, e);
       return null;
     }
   }
@@ -210,7 +210,7 @@ public class BaseTimeMsec
     
     value = value.toUpperCase();
 
-    if (value.length() == 0)
+    if (value.isEmpty())
       return true;
 
     return (parse(value, true) != null);
@@ -230,7 +230,7 @@ public class BaseTimeMsec
       m_Internal = INF_FUTURE;
     else if (value.equals(INF_PAST_DATE))
       m_Internal = INF_PAST;
-    else if (value.length() == 0)
+    else if (value.isEmpty())
       m_Internal = NOW;
     else
       m_Internal = value;

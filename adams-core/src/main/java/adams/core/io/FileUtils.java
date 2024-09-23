@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -52,6 +52,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Utility class for I/O related actions.
@@ -152,7 +153,7 @@ public class FileUtils {
    * @return		the (potentially) updated string
    */
   public static String removeUTF8BOM(String s) {
-    if (s.length() > 0) {
+    if (!s.isEmpty()) {
       if (s.charAt(0) == '\uFEFF')
         return s.substring(1);
     }
@@ -244,7 +245,7 @@ public class FileUtils {
 	    str = new String(data, encoding);
 	  result = new ArrayList<>(Arrays.asList(Utils.split(str, "\n")));
 	  // remove byte order marks
-	  if (result.size() > 0)
+	  if (!result.isEmpty())
 	    result.set(0, removeAllByteOrderMarks(result.get(0)));
 	}
 	else {
@@ -258,14 +259,13 @@ public class FileUtils {
         else
           result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
         // remove byte order marks
-        if (result.size() > 0)
+        if (!result.isEmpty())
           result.set(0, removeAllByteOrderMarks(result.get(0)));
         return result;
       }
     }
     catch (Exception e) {
-      System.err.println("Failed to read lines from '" + file + "':");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read lines from '" + file + "':", e);
       return null;
     }
   }
@@ -281,8 +281,7 @@ public class FileUtils {
       return Files.readAllBytes(file.toPath());
     }
     catch (Exception e) {
-      System.err.println("Failed to read bytes from '" + file + "':");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read bytes from '" + file + "':", e);
       return null;
     }
   }
@@ -308,8 +307,7 @@ public class FileUtils {
       return result.toArray();
     }
     catch (Exception e) {
-      System.err.println("Failed to read " + max + " bytes from '" + file + "':");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read " + max + " bytes from '" + file + "':", e);
       return null;
     }
     finally {
@@ -354,7 +352,7 @@ public class FileUtils {
       if (i % columns == 0) {
 	if (i > 0) {
 	  hex.append(" | ");
-	  hex.append(human.toString());
+	  hex.append(human);
 	  hex.append("\n");
 	  human.delete(0, human.length());
 	}
@@ -386,7 +384,7 @@ public class FileUtils {
     List<String>	lines;
     int			i;
 
-    lines = new ArrayList<String>();
+    lines = new ArrayList<>();
     for (i = 0; i < content.length; i++)
       lines.add(content[i]);
 
@@ -422,7 +420,7 @@ public class FileUtils {
    * @param content	the content to save
    * @param file	the file to save the content to
    * @param encoding	the encoding to use, null for default
-   * @return		true if successfully saved
+   * @return		null if successfully saved, otherwise error message
    */
   public static String saveToFileMsg(List<String> content, File file, String encoding) {
     String		result;
@@ -537,7 +535,7 @@ public class FileUtils {
    * @param obj		the object to write
    * @param append	whether to append the message or not
    * @param encoding	the encoding to use, null for default
-   * @return		true if writing was successful
+   * @return		null if writing was successful, otherwise error message
    */
   public static String writeToFileMsg(String filename, Object obj, boolean append, String encoding) {
     String			result;
@@ -983,7 +981,7 @@ public class FileUtils {
     if (filename.indexOf('.') == -1)
       return null;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     shortened = removeIgnoredExtensionSuffixes(filename);
     max       = getMaxExtensionLength();
@@ -994,7 +992,7 @@ public class FileUtils {
     if ((posNext > -1) && (pos - posNext <= max))
       result.add(filename.substring(posNext + 1));
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -1044,7 +1042,7 @@ public class FileUtils {
     file  = removeIgnoredExtensionSuffixes(file);
     index = file.lastIndexOf('.');
     if (index > -1) {
-      if (newExt.length() > 0)
+      if (!newExt.isEmpty())
 	result = file.substring(0, index) + newExt;
       else
 	result = file.substring(0, index);
@@ -1089,8 +1087,7 @@ public class FileUtils {
       read   = stream.read(buffer);
     }
     catch (Exception e) {
-      System.err.println("Problem reading binary file '" + file + "':");
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Problem reading binary file '" + file + "':", e);
       read = -1;
     }
     finally {
@@ -1400,8 +1397,7 @@ public class FileUtils {
       // ignored
     }
     catch (Exception ex) {
-      System.err.println("Failed to check file open status of: " + file);
-      ex.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to check file open status of: " + file, ex);
     }
     finally {
       FileUtils.closeQuietly(reader);

@@ -15,7 +15,7 @@
 
 /*
  * BaseDateTime.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
@@ -25,11 +25,13 @@ import adams.core.Constants;
 import adams.core.DateFormat;
 import adams.core.DateTime;
 import adams.core.DateValueSupporter;
+import adams.core.logging.LoggingHelper;
 import adams.parser.BaseDateTimeExpression;
 import adams.parser.GrammarSupplier;
 
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Wrapper for a Date/Time string to be editable in the GOE. Dates have to be of
@@ -220,10 +222,8 @@ public class BaseDateTime
       return BaseDateTimeExpression.evaluate(s, m_Start, m_End, m_BusinessDays);
     }
     catch (Exception e) {
-      if (!quiet) {
-	System.err.println("Failed to parse: " + s);
-	e.printStackTrace();
-      }
+      if (!quiet)
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse: " + s, e);
       return null;
     }
   }
@@ -241,7 +241,7 @@ public class BaseDateTime
 
     value = value.toUpperCase();
 
-    if (value.length() == 0)
+    if (value.isEmpty())
       return true;
 
     return (parse(value, true) != null);
@@ -261,7 +261,7 @@ public class BaseDateTime
       m_Internal = INF_FUTURE;
     else if (value.equals(INF_PAST_DATE))
       m_Internal = INF_PAST;
-    else if (value.length() == 0)
+    else if (value.isEmpty())
       m_Internal = NOW;
     else
       m_Internal = value;

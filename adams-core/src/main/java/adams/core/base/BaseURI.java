@@ -15,12 +15,15 @@
 
 /*
  * BaseURI.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.base;
 
+import adams.core.logging.LoggingHelper;
+
 import java.net.URI;
+import java.util.logging.Level;
 
 /**
  * Wrapper for an URI object to be editable in the GOE.
@@ -109,7 +112,7 @@ public class BaseURI
       m_Internal = value;
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to set value: " + value, e);
       m_Internal = DEFAULT_URI;
       try {
 	m_Current = new URI(value);
