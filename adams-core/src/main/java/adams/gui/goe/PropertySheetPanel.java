@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2023 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -76,6 +76,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Displays a property sheet where (supported) properties of the target
@@ -89,7 +90,7 @@ public class PropertySheetPanel
   implements PropertyChangeListener, UserModeSupporter {
 
   /** for serialization. */
-  static final long serialVersionUID = -557854258929870536L;
+  private static final long serialVersionUID = -557854258929870536L;
 
   /** whether to show an extra button for variable popup menu. */
   protected static Boolean SHOW_VARIABLE_POPUP_BUTTON;
@@ -750,7 +751,7 @@ public class PropertySheetPanel
       }
 
       // The property is equal to its old value.
-      if (o == m_Values[i] || (o != null && o.equals(m_Values[i])))
+      if (Objects.equals(o, m_Values[i]))
 	continue;
 
       m_Values[i] = o;
