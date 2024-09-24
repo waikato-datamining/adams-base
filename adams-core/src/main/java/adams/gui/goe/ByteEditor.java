@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ByteEditor.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -25,7 +25,6 @@ import javax.swing.SpinnerNumberModel;
  * A custom editor for Bytes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ByteEditor
   extends AbstractIntegralNumberEditor {
@@ -36,7 +35,7 @@ public class ByteEditor
   public ByteEditor() {
     super();
 
-    m_CurrentValue = new Byte("0");
+    m_CurrentValue = 0;
   }
 
   /**
@@ -50,7 +49,7 @@ public class ByteEditor
    *     modified value.
    */
   public void setValue(Object value) {
-    m_CurrentValue = new Byte(((Number) value).byteValue());
+    m_CurrentValue = ((Number) value).byteValue();
     firePropertyChange();
   }
 
@@ -76,9 +75,9 @@ public class ByteEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "0";
-      result = new Byte(text);
+      result = Byte.parseByte(text);
     }
     catch (Exception e) {
       throw new IllegalArgumentException(e);
@@ -94,12 +93,12 @@ public class ByteEditor
    */
   protected void updateBounds(SpinnerNumberModel model) {
     if (m_LowerBound == null)
-      model.setMinimum(new Byte(Byte.MIN_VALUE));
+      model.setMinimum(Byte.MIN_VALUE);
     else
       model.setMinimum(m_LowerBound.byteValue());
 
     if (m_UpperBound == null)
-      model.setMaximum(new Byte(Byte.MAX_VALUE));
+      model.setMaximum(Byte.MAX_VALUE);
     else
       model.setMaximum(m_UpperBound.byteValue());
   }
