@@ -30,6 +30,7 @@ import adams.data.indexedsplits.SplitIndices;
 import adams.data.io.input.JsonIndexedSplitsRunsReader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.Strictness;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 
@@ -195,7 +196,7 @@ public class JsonIndexedSplitsRunsWriter
       jwriter = new JsonWriter(writer);
       if (m_PrettyPrinting)
 	jwriter.setIndent("  ");
-      jwriter.setLenient(true);
+      jwriter.setStrictness(Strictness.LENIENT);
       Streams.write(json, jwriter);
       return true;
     }
