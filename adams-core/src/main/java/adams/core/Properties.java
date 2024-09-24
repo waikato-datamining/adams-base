@@ -549,7 +549,7 @@ public class Properties
     String		key;
     Pattern		pattern;
 
-    if ((regExp == null) || (regExp.length() == 0))
+    if ((regExp == null) || regExp.isEmpty())
       regExp = ".*";
 
     pattern = Pattern.compile(regExp);
@@ -1005,7 +1005,7 @@ public class Properties
 
     try {
       if (hasKey(key)) {
-	value = "" + getProperty(key);
+	value = getProperty(key);
 	if (!value.equals("null"))
 	  result = Double.parseDouble(value);
       }
@@ -1470,9 +1470,9 @@ public class Properties
 	thisValue  = getProperty(key);
 	otherValue = other.getProperty(key);
 	if (!thisValue.equals(otherValue)) {
-	  if (thisValue.length() == 0)
+	  if (thisValue.isEmpty())
 	    setProperty(key, otherValue);
-	  else if (otherValue.length() == 0)
+	  else if (otherValue.isEmpty())
 	    setProperty(key, thisValue);
 	  else
 	    setProperty(key, thisValue + "," + otherValue);

@@ -15,32 +15,32 @@
 
 /*
  * AbstractGeneticAlgorithm.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.optimise.genetic;
 
-import java.util.BitSet;
-import java.util.Random;
-import java.util.Vector;
-import java.util.logging.Level;
-
-import weka.core.Instances;
 import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.Range;
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
 import adams.opt.optimise.AbstractOptimiser;
+import weka.core.Instances;
+
+import java.util.BitSet;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.Level;
 
 /**
  * Base class for genetic algorithms.
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractGeneticAlgorithm
   extends AbstractOptimiser {
@@ -48,8 +48,7 @@ public abstract class AbstractGeneticAlgorithm
   /** for serialization. */
   private static final long serialVersionUID = 2823734145266194843L;
 
-  /** the key for the relation name in the generated properties file.
-   * @see #storeSetup(Instances,GeneticAlgorithmJob). */
+  /** the key for the relation name in the generated properties file. */
   public final static String PROPS_RELATION = "relation";
 
   /** the key for a filter setup in the setup properties. */
@@ -92,7 +91,7 @@ public abstract class AbstractGeneticAlgorithm
   /** the time when training commenced. */
   protected long m_TrainStart;
 
-  public abstract Vector<int[]> getInitialSetups();
+  public abstract List<int[]> getInitialSetups();
 
   /** number of iterations. */
   protected int m_Iterations;
@@ -182,7 +181,7 @@ public abstract class AbstractGeneticAlgorithm
    * @return		the range
    */
   public String getBestRange() {
-    if (m_BestRange.getRange().length() == 0)
+    if (m_BestRange.getRange().isEmpty())
       return "-none-";
     else
       return m_BestRange.getRange();
@@ -386,7 +385,7 @@ public abstract class AbstractGeneticAlgorithm
     m_NumGenes = genes;
     getLogger().info("Numchrom="+ch+ "Numgene="+genes);
     m_Genes = new BitSet[m_NumChrom];
-    Vector<int[]> setups=getInitialSetups();
+    List<int[]> setups=getInitialSetups();
     for (int i = 0; i < m_NumChrom; i++) {
       m_Genes[i] = new BitSet(m_NumGenes);
 
@@ -593,7 +592,6 @@ public abstract class AbstractGeneticAlgorithm
    * properties file.
    *
    * @param data	the data to create the setup for
-   * @param job		the associated job
    * @see		#PROPS_RELATION
    * @return		the generated setup
    */
@@ -615,7 +613,6 @@ public abstract class AbstractGeneticAlgorithm
    * Creates a new dataset, with the setup as the new relation name.
    *
    * @param data	the data to replace the relation name with the setup
-   * @param job		the associated job
    * @return		the updated dataset
    */
   protected Instances updateHeader(Instances data) {
@@ -755,7 +752,7 @@ public abstract class AbstractGeneticAlgorithm
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to run genetic algorithm: " + Utils.classToString(genetic), e);
     }
   }
 
@@ -782,7 +779,7 @@ public abstract class AbstractGeneticAlgorithm
       result = (AbstractGeneticAlgorithm) OptionUtils.forName(AbstractGeneticAlgorithm.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate genetic algorithm: " + classname, e);
       result = null;
     }
 

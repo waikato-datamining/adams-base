@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * A table model for displaying the details of the database object.
@@ -210,7 +209,7 @@ public abstract class AbstractManagementTableModel<T extends Comparable>
    * Clears the internal model.
    */
   public void clear() {
-    m_Values = new Vector<T>();
+    m_Values = new ArrayList<>();
 
     fireTableDataChanged();
   }

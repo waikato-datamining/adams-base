@@ -15,7 +15,7 @@
 
 /*
  * GeneticAlgorithm.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.optimise;
@@ -42,8 +42,9 @@ import weka.filters.MultiFilter;
 import weka.filters.supervised.attribute.PLSFilter;
 import weka.filters.unsupervised.attribute.Remove;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -212,7 +213,7 @@ public class GeneticAlgorithm
   public synchronized void checkBest(Double fitness, OptData vars, FitnessFunction ff, int zerocount) {
     if (fitness > m_bestf || (fitness == m_bestf && zerocount < m_zerocount)) {
       m_zerocount=zerocount;
-      m_bestf=new Double(fitness);
+      m_bestf=fitness;
       if (m_bestv != null)
 	m_bestv.cleanUp();
       m_bestv=vars.getClone();
@@ -403,8 +404,8 @@ public class GeneticAlgorithm
   }
 
   @Override
-  public Vector<PackData> getDataSetups() {
-    Vector<PackData> vpd=new Vector<PackData>();
+  public List<PackData> getDataSetups() {
+    List<PackData> vpd=new ArrayList<>();
     return(vpd);
   }
 

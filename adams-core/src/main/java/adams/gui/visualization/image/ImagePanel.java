@@ -15,7 +15,7 @@
 
 /*
  * ImagePanel.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image;
 
@@ -113,7 +113,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  * For displaying a single image.
@@ -1492,12 +1491,12 @@ public class ImagePanel
    * Returns the current state of the panel.
    *
    * @return		the state
-   * @see		#setState(Vector)
+   * @see		#setState(List)
    */
-  protected Vector getState() {
-    Vector	result;
+  protected List getState() {
+    List	result;
 
-    result = new Vector();
+    result = new ArrayList();
     result.add(getCurrentFile());
     result.add(getCurrentImage());
     result.add(m_Modified);
@@ -1512,7 +1511,7 @@ public class ImagePanel
    * @param value	the state
    * @see		#getState()
    */
-  protected void setState(Vector value) {
+  protected void setState(List value) {
     setCurrentImage((BufferedImage) value.get(1));
     m_CurrentFile = (PlaceholderFile) value.get(0);
     m_Modified    = (Boolean) value.get(2);
@@ -2265,14 +2264,14 @@ public class ImagePanel
       case UNDO:
 	showStatus("Performing Undo...");
 	getUndo().addRedo(getState(), e.getUndoPoint().getComment());
-	setState((Vector) e.getUndoPoint().getData());
+	setState((List) e.getUndoPoint().getData());
 	showStatus("");
 	log(e.getType().toString().toLowerCase() + ": " + e.getUndoPoint().getComment());
 	break;
       case REDO:
 	showStatus("Performing Redo...");
 	getUndo().addUndo(getState(), e.getUndoPoint().getComment(), true);
-	setState((Vector) e.getUndoPoint().getData());
+	setState((List) e.getUndoPoint().getData());
 	showStatus("");
 	log(e.getType().toString().toLowerCase() + ": " + e.getUndoPoint().getComment());
       default:

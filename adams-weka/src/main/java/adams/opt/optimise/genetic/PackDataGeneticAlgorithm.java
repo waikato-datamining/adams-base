@@ -20,13 +20,13 @@
 
 package adams.opt.optimise.genetic;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ???
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class PackDataGeneticAlgorithm
   extends AbstractGeneticAlgorithm {
@@ -51,10 +51,9 @@ public abstract class PackDataGeneticAlgorithm
   }
 
   @Override
-  public Vector<int[]> getInitialSetups() {
-    // TODO Auto-generated method stub
-    Vector<int[]> ret=new Vector<int[]>();
-    Vector<PackData> vpd=getDataSetups();
+  public List<int[]> getInitialSetups() {
+    List<int[]> ret=new ArrayList<>();
+    List<PackData> vpd=getDataSetups();
     for (PackData pd:vpd) {
       ret.add(pd.getBits());
       printBits(pd.getBits());
@@ -70,5 +69,5 @@ public abstract class PackDataGeneticAlgorithm
 
   public abstract PackDataDef getDataDef();
 
-  public abstract Vector<PackData> getDataSetups();
+  public abstract List<PackData> getDataSetups();
 }

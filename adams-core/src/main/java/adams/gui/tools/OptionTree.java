@@ -15,7 +15,7 @@
 
 /*
  * OptionTree.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
@@ -43,13 +43,13 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays commandline options as tree.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OptionTree
   extends BasePanel {
@@ -239,10 +239,10 @@ public class OptionTree
    * @return		the generated options
    */
   protected String getOptions(DefaultMutableTreeNode node) {
-    Vector<String>	options;
+    List<String> options;
     int			i;
 
-    options = new Vector<String>();
+    options = new ArrayList<>();
 
     // the node itself
     if (!node.toString().equals(LABEL_ROOT) && !node.toString().equals(LABEL_NESTED))
@@ -252,7 +252,7 @@ public class OptionTree
     for (i = 0; i < node.getChildCount(); i++)
       options.add(getOptions((DefaultMutableTreeNode) node.getChildAt(i)));
 
-    return OptionUtils.joinOptions(options.toArray(new String[options.size()]));
+    return OptionUtils.joinOptions(options.toArray(new String[0]));
   }
 
   /**

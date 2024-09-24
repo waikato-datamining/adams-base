@@ -13,16 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataStatisticTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Vector;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
@@ -33,11 +28,16 @@ import adams.test.AdamsTestCase;
 import adams.test.TestHelper;
 import adams.test.TmpFile;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Ancestor for data statistic test cases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <A> the type of algorithm to use
  * @param <D> the type of data to process
  */
@@ -81,13 +81,13 @@ public abstract class AbstractDataStatisticTestCase<A extends AbstractDataStatis
    * @param scheme	the data statistic to process
    * @return		the generated output
    */
-  protected Vector<String> toString(A scheme) {
-    Vector<String>	result;
+  protected List<String> toString(A scheme) {
+    List<String> result;
     Iterator<String>	names;
-    Vector<String>	namesSorted;
+    List<String>	namesSorted;
 
-    result      = new Vector<String>();
-    namesSorted = new Vector<String>();
+    result      = new ArrayList<>();
+    namesSorted = new ArrayList<>();
     names       = scheme.statisticNames();
     while (names.hasNext())
       namesSorted.add(names.next());
@@ -128,7 +128,7 @@ public abstract class AbstractDataStatisticTestCase<A extends AbstractDataStatis
    * @param filename	the file to save the data to (in the temp directory)
    * @return		true if successfully saved
    */
-  protected boolean save(Vector<String> data, String filename) {
+  protected boolean save(List<String> data, String filename) {
     return FileUtils.saveToFile(data, new File(m_TestHelper.getTmpDirectory() + File.separator + filename));
   }
 
@@ -164,7 +164,7 @@ public abstract class AbstractDataStatisticTestCase<A extends AbstractDataStatis
    */
   public void testRegression() {
     D			data;
-    Vector<String>	processed;
+    List<String>	processed;
     boolean		ok;
     String		regression;
     int			i;

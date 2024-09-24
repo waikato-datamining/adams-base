@@ -15,19 +15,18 @@
 
 /*
  * ArrayCombinations.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
 import adams.core.QuickInfoHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -88,7 +87,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayCombinations
   extends AbstractTransformer {
@@ -112,7 +110,6 @@ public class ArrayCombinations
    * Defines whether to do combinations or permutations.
    *
    * @author  dale (dale at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum SubsetsType {
     /** combinations. */
@@ -139,12 +136,12 @@ public class ArrayCombinations
     super.defineOptions();
 
     m_OptionManager.add(
-	    "length", "length",
-	    1, 1, null);
+      "length", "length",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "subsets", "subsets",
-	    SubsetsType.COMBINATIONS);
+      "subsets", "subsets",
+      SubsetsType.COMBINATIONS);
   }
 
   /**
@@ -307,11 +304,11 @@ public class ArrayCombinations
    */
   @Override
   public boolean hasPendingOutput() {
-    return (m_Elements.size() > 0);
+    return !m_Elements.isEmpty();
   }
 
   protected Object[] remove(Object[] obj, int pos){
-    Object ret[] =new Object[obj.length-1];
+    Object[] ret =new Object[obj.length-1];
     int count=0;
     for (int i=0;i<obj.length;i++){
       if (i != pos){
@@ -322,7 +319,7 @@ public class ArrayCombinations
   }
 
   protected Object[] removeUpToIncluding(Object[] obj, int pos){
-    Object ret[] =new Object[obj.length-(pos+1)];
+    Object[] ret =new Object[obj.length-(pos+1)];
     int count=0;
     for (int i=0;i<obj.length;i++){
       if (i > pos){
@@ -332,8 +329,8 @@ public class ArrayCombinations
     return(ret);
   }
 
-  protected Object[] combine(Object o, Object arr[]){
-    Object ret[] =new Object[arr.length+1];
+  protected Object[] combine(Object o, Object[] arr){
+    Object[] ret =new Object[arr.length+1];
     ret[0]=o;
     for (int i=0;i<arr.length;i++){
       ret[i+1]=arr[i];
@@ -341,8 +338,8 @@ public class ArrayCombinations
     return(ret);
   }
 
-  protected Vector<Object[]> genCombinations(Object[] in, int num){
-    Vector<Object[]> vobj=new Vector<Object[]>();
+  protected List<Object[]> genCombinations(Object[] in, int num){
+    List<Object[]> vobj=new ArrayList<>();
     if (num == 0){
       return(vobj);
     }
@@ -351,7 +348,7 @@ public class ArrayCombinations
       if (in.length < num){
 	continue;
       }
-      Vector<Object[]> combs;
+      List<Object[]> combs;
       if (num == 1){
 	Object[] o=new Object[1];
 	o[0]=in[i];
@@ -386,10 +383,7 @@ public class ArrayCombinations
     try {
       m_Elements.clear();
       array = (Object[]) m_InputToken.getPayload();
-      Vector<Object[]> vobj=genCombinations(array,m_Length);
-      for (Object[] arr:vobj){
-	m_Elements.add(arr);
-      }
+      m_Elements.addAll(genCombinations(array, m_Length));
     }
     catch (Exception e) {
       result = handleException("Failed to generate combinations:", e);

@@ -15,7 +15,7 @@
 
 /*
  * ClassTree.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.classtree;
@@ -35,14 +35,14 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Displays classes in a tree structure.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassTree
   extends DotNotationTree<ClassNode> {
@@ -144,7 +144,7 @@ public class ClassTree
    * @param args	ignored
    */
   public static void main(String[] args) {
-    Vector<String> classes = new Vector<String>();
+    List<String> classes = new ArrayList<>();
     classes.add("weka.classifiers.trees.J48");
     classes.add("weka.classifiers.rules.ZeroR");
     classes.add("dummy.classifiers.trees.MyJ48");

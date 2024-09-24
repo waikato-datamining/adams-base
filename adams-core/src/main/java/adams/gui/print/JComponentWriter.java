@@ -15,7 +15,7 @@
 
  /*
   *    JComponentWriter.java
-  *    Copyright (C) 2005-2020 University of Waikato, Hamilton, New Zealand
+  *    Copyright (C) 2005-2024 University of Waikato, Hamilton, New Zealand
   *
   */
 
@@ -24,6 +24,7 @@ package adams.gui.print;
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -32,8 +33,10 @@ import adams.env.Environment;
 
 import javax.swing.JComponent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * This class takes any JComponent and outputs it to a file. Scaling is by
@@ -379,14 +382,14 @@ public abstract class JComponentWriter
    * @return		the filters
    */
   public static JComponentWriterFileFilter[] getFileFilters() {
-    Vector<JComponentWriterFileFilter>	result;
+    List<JComponentWriterFileFilter> result;
     String[]				writerNames;
     int					i;
     Class				cls;
     JComponentWriter			writer;
     JComponentWriterFileFilter		filter;
 
-    result = new Vector<JComponentWriterFileFilter>();
+    result = new ArrayList<>();
 
     // determine all available writers and add them to the filechooser
     writerNames = JComponentWriter.getWriters();
@@ -408,7 +411,7 @@ public abstract class JComponentWriter
       }
     }
 
-    return result.toArray(new JComponentWriterFileFilter[result.size()]);
+    return result.toArray(new JComponentWriterFileFilter[0]);
   }
 
   /**
@@ -485,7 +488,7 @@ public abstract class JComponentWriter
       result = (JComponentWriter) OptionUtils.forName(JComponentWriter.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate JComponentWriter: " + classname, e);
       result = null;
     }
 
