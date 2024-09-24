@@ -24,7 +24,7 @@ import adams.core.BusinessDays;
 import adams.core.base.BaseDateTime;
 import adams.parser.basedatetime.Parser;
 import adams.parser.basedatetime.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -298,7 +298,7 @@ public class BaseDateTimeExpression
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setStart(start);

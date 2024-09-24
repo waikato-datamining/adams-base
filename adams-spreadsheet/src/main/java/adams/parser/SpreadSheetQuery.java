@@ -26,7 +26,7 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.parser.spreadsheetquery.Parser;
 import adams.parser.spreadsheetquery.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -173,7 +173,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetQuery
   extends AbstractSymbolEvaluator<SpreadSheet> {
@@ -494,7 +493,7 @@ public class SpreadSheetQuery
     if (expr.startsWith("="))
       expr = expr.substring(1);
     
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);

@@ -25,7 +25,7 @@ import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.parser.mathematicalexpression.Parser;
 import adams.parser.mathematicalexpression.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -495,7 +495,7 @@ public class MathematicalExpression
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);

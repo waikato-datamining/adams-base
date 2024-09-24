@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorTemplateSuggestion.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -24,7 +24,7 @@ import adams.flow.core.Actor;
 import adams.flow.template.AbstractActorTemplate;
 import adams.parser.templatesuggestion.Parser;
 import adams.parser.templatesuggestion.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -103,7 +103,6 @@ import java.util.ArrayList;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ActorTemplateSuggestion
   extends AbstractExpressionEvaluator<AbstractActorTemplate>
@@ -306,7 +305,7 @@ public class ActorTemplateSuggestion
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(m_Expression.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setParent(getParent());

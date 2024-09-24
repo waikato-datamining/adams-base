@@ -28,7 +28,7 @@
 
 /*
  * Copyright 1996-1999 by Scott Hudson, Frank Flannery, C. Scott Ananian
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basetimemsec;
@@ -144,7 +144,7 @@ parser code {:
    * @param args the commandline arguments
    * @throws Exception if something goes wrong
    */
-  public static void main(String args[]) throws Exception {
+  public static void main(String[] args) throws Exception {
     // setup input stream
     int index = -1;
     if (args.length == 1)
@@ -160,7 +160,7 @@ parser code {:
     }
 
     // process stream
-    SymbolFactory sf = new DefaultSymbolFactory();
+    SymbolFactory sf = new ComplexSymbolFactory();
     String line;
     while ((line = input.readLine()) != null) {
       ByteArrayInputStream parserInput = new ByteArrayInputStream(line.getBytes());

@@ -15,7 +15,7 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -29,12 +29,11 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.parser.lookupupdate.Parser;
 import adams.parser.lookupupdate.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -703,7 +702,7 @@ public class LookUpUpdate
     if (expr.isEmpty())
       return symbols;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);

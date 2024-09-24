@@ -15,7 +15,7 @@
 
 /*
  * ExternalActorSuggestion.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -26,7 +26,7 @@ import adams.gui.flow.tree.Node;
 import adams.parser.ActorSuggestion.SuggestionData;
 import adams.parser.externalactorsuggestion.Parser;
 import adams.parser.externalactorsuggestion.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -143,7 +143,6 @@ import java.util.ArrayList;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-
 public class ExternalActorSuggestion
   extends AbstractExpressionEvaluator<Actor>
   implements GrammarSupplier {
@@ -425,7 +424,7 @@ public class ExternalActorSuggestion
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(m_Expression.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setParent(getParent());

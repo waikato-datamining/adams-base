@@ -7,7 +7,7 @@ package adams.parser.mathematicalexpression;
 
 import adams.core.DateUtils;
 import adams.parser.ParserHelper;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.BufferedReader;
@@ -5847,7 +5847,7 @@ public class Parser extends java_cup.runtime.lr_parser {
    * @param args the commandline arguments
    * @throws Exception if something goes wrong
    */
-  public static void main(String args[]) throws Exception {
+  public static void main(String[] args) throws Exception {
     // read symbols, if present
     HashMap symbols = new HashMap();
     if (args.length > 0) {
@@ -5887,7 +5887,7 @@ public class Parser extends java_cup.runtime.lr_parser {
     }
 
     // process stream
-    SymbolFactory sf = new DefaultSymbolFactory();
+    SymbolFactory sf = new ComplexSymbolFactory();
     String line;
     while ((line = input.readLine()) != null) {
       ByteArrayInputStream parserInput = new ByteArrayInputStream(line.getBytes());

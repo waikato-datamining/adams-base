@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorSuggestion.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.parser;
 
@@ -25,7 +25,7 @@ import adams.flow.core.ActorUtils;
 import adams.gui.flow.tree.Node;
 import adams.parser.actorsuggestion.Parser;
 import adams.parser.actorsuggestion.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -126,7 +126,6 @@ import java.util.ArrayList;
  * tree for parent and actors must be set programmatically.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 public class ActorSuggestion
@@ -430,7 +429,7 @@ public class ActorSuggestion
     ByteArrayInputStream 	parserInput;
     Parser 			parser;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(m_Expression.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setParent(getParent());

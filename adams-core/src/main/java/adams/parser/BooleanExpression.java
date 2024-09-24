@@ -24,7 +24,7 @@ import adams.core.Utils;
 import adams.data.report.Report;
 import adams.parser.booleanexpression.Parser;
 import adams.parser.booleanexpression.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -452,7 +452,7 @@ public class BooleanExpression
     else if (expr.equals("false"))
       return false;
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);

@@ -26,7 +26,7 @@ import adams.data.io.input.SpreadSheetReader;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.parser.spreadsheetformula.Parser;
 import adams.parser.spreadsheetformula.Scanner;
-import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
@@ -582,7 +582,7 @@ public class SpreadSheetFormula
     if (expr.startsWith("="))
       expr = expr.substring(1);
 
-    sf          = new DefaultSymbolFactory();
+    sf          = new ComplexSymbolFactory();
     parserInput = new ByteArrayInputStream(expr.getBytes());
     parser      = new Parser(new Scanner(parserInput, sf), sf);
     parser.setSymbols(symbols);
