@@ -15,11 +15,12 @@
 
 /*
  * Trie.java
- * Copyright (C) 2007-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -29,15 +30,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 /**
  * A class representing a Trie data structure for strings.
  * See also <a href="http://en.wikipedia.org/wiki/Trie" target="_blank">Trie</a>
  * on WikiPedia.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Trie
   implements Serializable, Cloneable, Collection<String> {
@@ -49,7 +47,6 @@ public class Trie
    * Represents a node in the trie.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TrieNode
     extends DefaultMutableTreeNode {
@@ -69,7 +66,7 @@ public class Trie
      * @param c		the value of this node
      */
     public TrieNode(char c) {
-      this(new Character(c));
+      this((Character) c);
     }
 
     /**
@@ -80,7 +77,7 @@ public class Trie
     public TrieNode(Character c) {
       super(c);
 
-      m_Children = new Hashtable<Character,TrieNode>(100);
+      m_Children = new Hashtable<>(100);
     }
 
     /**
@@ -420,7 +417,6 @@ public class Trie
    * Represents an iterator over a trie
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class TrieIterator
     implements Iterator<String> {
