@@ -15,7 +15,7 @@
 
 /*
  * ZipUtils.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -120,9 +120,9 @@ public class ZipUtils {
 
 	// Add ZIP entry to output stream.
 	filename = files[i].getParentFile().getAbsolutePath();
-	if (stripRegExp.length() > 0)
+	if (!stripRegExp.isEmpty())
 	  filename = filename.replaceFirst(stripRegExp, "");
-	if (filename.length() > 0)
+	if (!filename.isEmpty())
 	  filename += File.separator;
 	filename += files[i].getName();
 	entry = new ZipArchiveEntry(filename);
@@ -259,7 +259,7 @@ public class ZipUtils {
     try {
       // unzip archive
       buffer  = new byte[bufferSize];
-      archive = new ZipFile(input.getAbsoluteFile());
+      archive = ZipFile.builder().setFile(input.getAbsoluteFile()).get();
       enm     = archive.getEntries();
       while (enm.hasMoreElements()) {
 	entry = enm.nextElement();
@@ -413,7 +413,7 @@ public class ZipUtils {
     try {
       // unzip archive
       buffer  = new byte[bufferSize];
-      zipfile = new ZipFile(input.getAbsoluteFile());
+      zipfile = ZipFile.builder().setFile(input.getAbsoluteFile()).get();
       enm     = zipfile.getEntries();
       while (enm.hasMoreElements()) {
 	entry = enm.nextElement();
@@ -527,7 +527,7 @@ public class ZipUtils {
     result  = new ArrayList<>();
     zipfile = null;
     try {
-      zipfile = new ZipFile(input.getAbsoluteFile());
+      zipfile = ZipFile.builder().setFile(input.getAbsoluteFile()).get();
       enm     = zipfile.getEntries();
       while (enm.hasMoreElements()) {
 	entry = enm.nextElement();
