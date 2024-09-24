@@ -1911,7 +1911,7 @@ public class GUIHelper {
     String[]			lines;
     int				height;
     TextPanel			editor;
-    Long			sync;
+    String			sync;
 
     pparent = GUIHelper.getParentComponent(parent);
 
@@ -1958,7 +1958,7 @@ public class GUIHelper {
     dlg.setVisible(true);
 
     if (comm != null) {
-      sync = UniqueIDs.nextLong();
+      sync = UniqueIDs.next();
       // wait till dialog visible
       while (!dlg.isVisible()) {
 	try {
@@ -2059,7 +2059,7 @@ public class GUIHelper {
     InputPanelWithTextArea	panelInput;
     final ApprovalDialog	dialog;
     Component			pparent;
-    Long                        sync;
+    String                        sync;
 
     if ((title == null) || (title.isEmpty()))
       title = "Enter value";
@@ -2110,7 +2110,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = UniqueIDs.nextLong();
+      sync = UniqueIDs.next();
       // wait till dialog visible
       while (!dialog.isVisible()) {
 	try {
@@ -2188,7 +2188,7 @@ public class GUIHelper {
     InputPanelWithComboBox	panelInput;
     final ApprovalDialog	dialog;
     Component			pparent;
-    Long                        sync;
+    String                      sync;
 
     if ((title == null) || (title.isEmpty()))
       title = "Select value";
@@ -2232,7 +2232,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = UniqueIDs.nextLong();
+      sync = UniqueIDs.next();
       // wait till dialog visible
       while (!dialog.isVisible()) {
 	try {
@@ -2285,7 +2285,7 @@ public class GUIHelper {
     BaseButton			initialFocus;
     Component			pparent;
     final BaseDialog		dialog;
-    Long                	sync;
+    String                	sync;
 
     if ((title == null) || (title.isEmpty()))
       title = "Select value";
@@ -2319,7 +2319,7 @@ public class GUIHelper {
     dialog.setVisible(true);
 
     if (comm != null) {
-      sync = UniqueIDs.nextLong();
+      sync = UniqueIDs.next();
       // wait till dialog visible
       while (!dialog.isVisible()) {
 	try {

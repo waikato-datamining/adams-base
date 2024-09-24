@@ -19,6 +19,7 @@
  */
 package weka.classifiers.functions;
 
+import adams.core.UniqueIDs;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.UpdateableClassifier;
 import weka.core.Capabilities;
@@ -465,11 +466,11 @@ public class FakeClassifier
    * @param msec    the time in msec to wait
    */
   protected void wait(int msec) {
-    Long  wait;
+    String  wait;
     int   interval;
     int   current;
 
-    wait     = System.currentTimeMillis();
+    wait     = UniqueIDs.next();
     interval = Math.min(100, msec / 10);
     current  = 0;
     while (current < msec) {

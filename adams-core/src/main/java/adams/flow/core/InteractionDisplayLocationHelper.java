@@ -15,7 +15,7 @@
 
 /*
  * InteractionDisplayLocationHelper.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -66,7 +66,7 @@ public class InteractionDisplayLocationHelper {
    * @return		the selected button, null if stopped
    */
   public static String display(Actor context, DialogCommunication comm, InputPanelWithButtons panel) {
-    Long		sync;
+    String		sync;
     final StringBuilder answer;
 
     getFlowWorkerHandler(context).showNotification(panel, panel.getIcon());
@@ -79,7 +79,7 @@ public class InteractionDisplayLocationHelper {
     }
 
     // wait till answer provided
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     while ((answer.length() == 0) && !comm.isCloseRequested()) {
       try {
 	synchronized (sync) {
@@ -109,7 +109,7 @@ public class InteractionDisplayLocationHelper {
    * @return			the selected button, null if stopped
    */
   public static String display(Actor context, DialogCommunication comm, InputPanelWithComboBox panel, int btnJustification) {
-    Long		sync;
+    String		sync;
     JPanel		panelTop;
     JPanel		panelAll;
     JPanel		panelButtons;
@@ -138,7 +138,7 @@ public class InteractionDisplayLocationHelper {
     getFlowWorkerHandler(context).showNotification(panelAll, panel.getIcon());
 
     // wait till answer provided
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     while ((answer.length() == 0) && !comm.isCloseRequested()) {
       try {
 	synchronized (sync) {
@@ -168,7 +168,7 @@ public class InteractionDisplayLocationHelper {
    * @return			the selected button, null if stopped
    */
   public static String display(Actor context, DialogCommunication comm, InputPanelWithTextArea panel, int btnJustification) {
-    Long		sync;
+    String		sync;
     JPanel		panelTop;
     JPanel		panelAll;
     JPanel		panelButtons;
@@ -197,7 +197,7 @@ public class InteractionDisplayLocationHelper {
     getFlowWorkerHandler(context).showNotification(panelAll, panel.getIcon());
 
     // wait till answer provided
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     while ((answer.length() == 0) && !comm.isCloseRequested()) {
       try {
 	synchronized (sync) {
@@ -241,7 +241,7 @@ public class InteractionDisplayLocationHelper {
    * @return			whether OK (true) or Cancel (false) was selected, null if stopped
    */
   public static Boolean display(Actor context, DialogCommunication comm, JPanel panel, int btnJustification, String icon) {
-    Long		sync;
+    String		sync;
     JPanel		panelTop;
     JPanel		panelAll;
     JPanel		panelButtons;
@@ -270,7 +270,7 @@ public class InteractionDisplayLocationHelper {
     getFlowWorkerHandler(context).showNotification(panelAll, icon);
 
     // wait till answer provided
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     while ((answer.length() == 0) && !comm.isCloseRequested()) {
       try {
 	synchronized (sync) {

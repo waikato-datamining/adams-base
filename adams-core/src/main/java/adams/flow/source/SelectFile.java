@@ -15,7 +15,7 @@
 
 /*
  * SelectFile.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -956,7 +956,7 @@ public class SelectFile
    * @return		the files, null if cancelled or flow stopped
    */
   protected File[] doInteractInNotificationArea(BaseFileChooser fileChooser) {
-    Long		sync;
+    String		sync;
     final StringBuilder	answer;
 
     answer = new StringBuilder();
@@ -974,7 +974,7 @@ public class SelectFile
     m_Comm = new DialogCommunication();
 
     // wait till answer provided
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     while ((answer.length() == 0) && !m_Comm.isCloseRequested()) {
       try {
         synchronized (sync) {

@@ -22,6 +22,7 @@
 package adams.gui.tools.wekainvestigator.tab.preprocesstab;
 
 import adams.core.Properties;
+import adams.core.UniqueIDs;
 import adams.core.option.OptionUtils;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
@@ -176,7 +177,7 @@ public class AttributeVisualizationPanel extends BasePanel {
    * m_hc which we start when we want to calculate the internal fields for a bar
    * plot or a histogram.
    */
-  protected final Integer m_locker = 1;
+  protected final String m_locker = UniqueIDs.next();
 
   // Image img;
 

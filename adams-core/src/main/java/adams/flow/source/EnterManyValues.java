@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -769,7 +769,7 @@ public class EnterManyValues
    */
   protected String doInteractInDialog(PropertiesParameterPanel panel, JPanel panelMsg) {
     ApprovalDialog	dialog;
-    Long                sync;
+    String                sync;
 
     dialog = new ApprovalDialog(null, ModalityType.MODELESS);
     dialog.setTitle(getName());
@@ -783,7 +783,7 @@ public class EnterManyValues
     dialog.setLocationRelativeTo(getActualParentComponent());
     dialog.setVisible(true);
 
-    sync = UniqueIDs.nextLong();
+    sync = UniqueIDs.next();
     // wait till dialog visible
     while (!dialog.isVisible()) {
       try {
