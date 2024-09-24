@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DoubleEditor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -26,7 +26,6 @@ import adams.gui.core.NumberTextField;
  * A custom editor for Doubles.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DoubleEditor
   extends AbstractFloatingPointNumberEditor {
@@ -37,7 +36,7 @@ public class DoubleEditor
   public DoubleEditor() {
     super();
 
-    m_CurrentValue = new Double(0.0);
+    m_CurrentValue = 0.0;
   }
 
   /**
@@ -62,7 +61,7 @@ public class DoubleEditor
    */
   @Override
   public void setValue(Object value) {
-    m_CurrentValue = new Double(((Number) value).doubleValue());
+    m_CurrentValue = ((Number) value).doubleValue();
     firePropertyChange();
   }
 
@@ -101,7 +100,7 @@ public class DoubleEditor
     Object	result;
 
     try {
-      if (text.length() == 0)
+      if (text.isEmpty())
 	text = "0";
       result = Utils.toDouble(text);
     }

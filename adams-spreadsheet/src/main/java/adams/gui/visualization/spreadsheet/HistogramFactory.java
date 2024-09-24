@@ -15,7 +15,7 @@
 
 /*
  * HistogramFactory.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -29,7 +29,6 @@ import java.util.List;
  * A factory for histogram related objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 4584 $
  */
 public class HistogramFactory {
 
@@ -37,7 +36,6 @@ public class HistogramFactory {
    * A panel for displaying a histogram based on the data of a row.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class Panel
     extends adams.gui.visualization.statistics.HistogramFactory.Panel {
@@ -72,7 +70,7 @@ public class HistogramFactory {
       data   = new Double[c.size()];
       points = c.toList();
       for (i = 0; i < points.size(); i++)
-	data[i] = new Double(points.get(i).getY());
+	data[i] = points.get(i).getY();
 
       add(hist, data, name);
     }
@@ -82,7 +80,6 @@ public class HistogramFactory {
    * A dialog that queries the user about parameters for displaying histograms.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class SetupDialog
     extends adams.gui.visualization.statistics.HistogramFactory.SetupDialog {
@@ -115,7 +112,6 @@ public class HistogramFactory {
    * Dialog for displaying histograms generated from rows.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision: 4584 $
    */
   public static class Dialog
     extends adams.gui.visualization.statistics.HistogramFactory.Dialog {

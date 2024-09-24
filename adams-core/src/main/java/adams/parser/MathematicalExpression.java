@@ -15,7 +15,7 @@
 
 /*
  * MathematicalExpression.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -182,9 +182,9 @@ import java.util.HashMap;
  * <pre>
  * String expr = "pow(BASE,EXPONENT)*MULT";
  * HashMap symbols = new HashMap();
- * symbols.put("BASE", new Double(2));
- * symbols.put("EXPONENT", new Double(9));
- * symbols.put("MULT", new Double(0.1));
+ * symbols.put("BASE", 2.0);
+ * symbols.put("EXPONENT", 9.0);
+ * symbols.put("MULT", 0.1);
  * double result = MathematicalExpression.evaluate(expr, symbols);
  * System.out.println(expr + " and " + symbols + " = " + result);
  * </pre>
@@ -194,9 +194,9 @@ import java.util.HashMap;
  * String expr = "ifelse(I<0,pow(BASE,I*0.5),pow(BASE,I))";
  * MathematicalExpression.TreeNode tree = MathematicalExpression.parse(expr);
  * HashMap symbols = new HashMap();
- * symbols.put("BASE", new Double(2));
+ * symbols.put("BASE", 2.0);
  * for (int i = -10; i <= 10; i++) {
- *   symbols.put("I", new Double(i));
+ *   symbols.put("I", (double) i);
  *   double result = MathematicalExpression.evaluate(expr, symbols);
  *   System.out.println(expr + " and " + symbols + " = " + result);
  * }
@@ -425,7 +425,7 @@ public class MathematicalExpression
   @Override
   protected Object initializeSymbol(String name, String value) {
     if (Utils.isDouble(value))
-      return new Double(value);
+      return Double.parseDouble(value);
     else
       return value;
   }
@@ -470,7 +470,7 @@ public class MathematicalExpression
     // generate symbols
     if (x != null) {
       result = new HashMap();
-      result.put(PLACEHOLDER_OBJECT, new Double(x));
+      result.put(PLACEHOLDER_OBJECT, x);
     }
     else if (report != null) {
       result = ParserHelper.reportToSymbols(report);

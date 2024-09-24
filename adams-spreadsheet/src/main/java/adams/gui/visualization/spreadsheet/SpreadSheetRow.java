@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRow.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -227,7 +227,6 @@ public class SpreadSheetRow
     int					i;
     String				fieldStr;
     Cell 				cell;
-    Double				dbl;
 
     clear();
 
@@ -252,7 +251,7 @@ public class SpreadSheetRow
     // row
     if (index != -1) {
       m_Report.addField(new Field(REPORT_ROW, DataType.NUMERIC));
-      m_Report.addParameter(REPORT_ROW, new Double(index + 1));
+      m_Report.addParameter(REPORT_ROW, (double) (index + 1));
     }
     // additional attributes
     for (i = 0; i < additional.length; i++) {
@@ -271,7 +270,7 @@ public class SpreadSheetRow
     }
 
     // display ID (hashcode of string representation of Instance)
-    if (getID().length() == 0)
+    if (getID().isEmpty())
       setID("" + row.toString().hashCode());
   }
 

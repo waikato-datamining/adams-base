@@ -13,7 +13,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * HashableInstanceUsingSum.java
  * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
  */
@@ -23,7 +23,6 @@ package weka.core;
  * Computes the hashcode as sum of the internal double values.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class HashableInstanceUsingSum
   extends AbstractHashableInstance {
@@ -59,20 +58,19 @@ public class HashableInstanceUsingSum
 	index = m_Data.index(i);
 	if (index == m_Data.classIndex() && m_ExcludeClass)
 	  continue;
-	result += new Double(m_Data.valueSparse(i)).hashCode();
+	result += Double.hashCode(m_Data.valueSparse(i));
       }
     }
     else {
       for (i = 0; i < m_Data.numAttributes(); i++) {
 	if (i == m_Data.classIndex() && m_ExcludeClass)
 	  continue;
-	result += new Double(m_Data.value(i)).hashCode();
+	result += Double.hashCode(m_Data.value(i));
       }
     }
     if (!m_ExcludeWeight)
-      result += new Double(m_Data.weight()).hashCode();
+      result += Double.hashCode(m_Data.weight());
     
     return result;
   }
-
 }

@@ -15,17 +15,20 @@
 
 /*
  * AbstractOptimiser.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.opt.optimise;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
-import adams.core.option.ArrayConsumer;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+
+import java.util.logging.Level;
 
 /**
  * Abstract ancestor for optimization schemes.
@@ -77,7 +80,7 @@ public abstract class AbstractOptimiser
 
   public synchronized void checkBest(Double fitness, OptData vars, FitnessFunction ff) {
     if (fitness > m_bestf) {
-      m_bestf=new Double(fitness);
+      m_bestf = fitness;
       if (m_bestv != null)
 	m_bestv.cleanUp();
       m_bestv=vars.getClone();
@@ -178,7 +181,7 @@ public abstract class AbstractOptimiser
       result = (AbstractOptimiser) OptionUtils.forName(AbstractOptimiser.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate: " + classname, e);
       result = null;
     }
 

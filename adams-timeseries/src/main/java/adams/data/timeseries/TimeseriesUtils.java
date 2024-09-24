@@ -15,10 +15,12 @@
 
 /*
  * TimeseriesUtils.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.timeseries;
+
+import adams.data.container.DataContainerUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +29,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-
-import adams.data.container.DataContainerUtils;
 
 /**
  * Utility class for timeseries.
@@ -63,7 +63,7 @@ public class TimeseriesUtils
   protected static Timeseries getHeader(List<TimeseriesPoint> points) {
     Timeseries	result;
 
-    if ((points.size() > 0) && (points.get(0).getParent() != null)) {
+    if (!points.isEmpty() && (points.get(0).getParent() != null)) {
       result = ((Timeseries) points.get(0).getParent()).getHeader();
     }
     else {
@@ -119,7 +119,7 @@ public class TimeseriesUtils
 
     result = -1;
 
-    if (points.size() == 0)
+    if (points.isEmpty())
       return result;
 
     index = Collections.binarySearch(points, new TimeseriesPoint(timestamp, 0), m_Comparator);
@@ -308,17 +308,17 @@ public class TimeseriesUtils
    */
   public static Timeseries merge(List<Timeseries> list) {
     Timeseries				result;
-    int						i;
+    int					i;
     Hashtable<Date,TimeseriesPoint>	pool;
     Enumeration<TimeseriesPoint>	elements;
 
-    if (list.size() == 0)
+    if (list.isEmpty())
       return null;
     else if (list.size() == 1)
       return list.get(0);
 
     result = list.get(0).getHeader();
-    pool   = new Hashtable<Date,TimeseriesPoint>();
+    pool   = new Hashtable<>();
     for (i = 0; i < list.size(); i++) {
       add(pool, list.get(i));
     }
@@ -354,7 +354,7 @@ public class TimeseriesUtils
     result = new double[data.size()];
     i      = 0;
     for (TimeseriesPoint gcp:data)
-      result[i++] = new Double(gcp.getValue());
+      result[i++] = gcp.getValue();
 
     return result;
   }

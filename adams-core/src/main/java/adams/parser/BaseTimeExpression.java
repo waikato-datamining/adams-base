@@ -15,20 +15,20 @@
 
 /*
  * BaseTimeExpression.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
 
-import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.logging.Level;
-
-import java_cup.runtime.DefaultSymbolFactory;
-import java_cup.runtime.SymbolFactory;
 import adams.core.base.BaseTime;
 import adams.parser.basetime.Parser;
 import adams.parser.basetime.Scanner;
+import java_cup.runtime.DefaultSymbolFactory;
+import java_cup.runtime.SymbolFactory;
+
+import java.io.ByteArrayInputStream;
+import java.util.Date;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -93,7 +93,6 @@ import adams.parser.basetime.Scanner;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTimeExpression
   extends AbstractExpressionEvaluator<Date>
@@ -192,7 +191,7 @@ public class BaseTimeExpression
     Double	result;
 
     try {
-      result = new Double(value);
+      result = Double.parseDouble(value);
     }
     catch (Exception e) {
       result = null;

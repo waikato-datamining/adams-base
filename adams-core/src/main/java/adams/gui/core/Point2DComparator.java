@@ -15,7 +15,7 @@
 
 /*
  * Point2DComparator.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -79,10 +79,10 @@ public class Point2DComparator
   public int compare(Point2D o1, Point2D o2) {
     int		result;
 
-    result = new Double(o1.getX()).compareTo(o2.getX());
+    result = Double.compare(o1.getX(), o2.getX());
     
     if (!m_UseOnlyX && (result == 0))
-      result = new Double(o1.getY()).compareTo(o2.getY());
+      result = Double.compare(o1.getY(), o2.getY());
 
     // flip ordering?
     if (!m_Ascending)

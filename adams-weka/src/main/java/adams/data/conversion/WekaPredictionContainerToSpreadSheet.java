@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaPredictionContainerToSpreadSheet.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -95,7 +95,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaPredictionContainerToSpreadSheet
   extends AbstractConversion {
@@ -174,7 +173,7 @@ public class WekaPredictionContainerToSpreadSheet
      *		is less than, equal to, or greater than the specified object.
      */
     public int compareTo(SortContainer o) {
-      return new Double(getProbability()).compareTo(new Double(o.getProbability()));
+      return Double.compare(getProbability(), o.getProbability());
     }
 
     /**

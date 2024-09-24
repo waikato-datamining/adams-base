@@ -15,7 +15,7 @@
 
 /*
  * Instance.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
@@ -258,12 +258,12 @@ public class Instance
     m_Report.addParameter(REPORT_DATASET, m_DatasetHeader.relationName());
     att = m_DatasetHeader.attribute(ArffUtils.getDBIDName());
     if (att != null) {
-      m_Report.addParameter(REPORT_DB_ID, new Double(inst.value(att)));
+      m_Report.addParameter(REPORT_DB_ID, inst.value(att));
       m_Report.setDatabaseID((int) inst.value(att));
     }
     att = m_DatasetHeader.attribute(ArffUtils.getIDName());
     if (att != null)
-      m_Report.addParameter(REPORT_ID, new Double(inst.value(att)));
+      m_Report.addParameter(REPORT_ID, inst.value(att));
     // class
     if (inst.classIndex() > -1) {
       if (inst.classAttribute().isNumeric()) {
@@ -288,7 +288,7 @@ public class Instance
     // row
     if (index != -1) {
       m_Report.addField(new Field(REPORT_ROW, DataType.NUMERIC));
-      m_Report.addParameter(REPORT_ROW, new Double(index + 1));
+      m_Report.addParameter(REPORT_ROW, (double) (index + 1));
     }
     // additional attributes
     for (i = 0; i < additional.length; i++) {
@@ -305,7 +305,7 @@ public class Instance
     }
 
     // display ID (hashcode of string representation of Instance)
-    if (getID().length() == 0)
+    if (getID().isEmpty())
       setID("" + inst.toString().hashCode());
   }
 

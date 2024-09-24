@@ -15,21 +15,20 @@
 
 /*
  * InstanceUtils.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.instance;
 
+import adams.data.container.DataContainerUtils;
+
 import java.util.Collections;
 import java.util.List;
-
-import adams.data.container.DataContainerUtils;
 
 /**
  * Utility class for instances.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstanceUtils
   extends DataContainerUtils {
@@ -94,7 +93,7 @@ public class InstanceUtils
 
     result = -1;
 
-    if (points.size() == 0)
+    if (points.isEmpty())
       return result;
 
     index = Collections.binarySearch(points, new InstancePoint(x, 0.0), m_Comparator);
@@ -184,7 +183,7 @@ public class InstanceUtils
     result = new double[data.size()];
     i      = 0;
     for (InstancePoint gcp:data)
-      result[i++] = new Double(gcp.getY());
+      result[i++] = gcp.getY();
 
     return result;
   }

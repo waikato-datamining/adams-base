@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RowWisePlotGenerator.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
 
@@ -93,7 +93,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8739 $
  */
 public class RowWisePlotGenerator
   extends AbstractPlotGenerator {
@@ -352,7 +351,7 @@ public class RowWisePlotGenerator
 	comp = getCellValue(row, dataCols[n], null);
 	if (comp == null)
 	  continue;
-	cont = new SequencePlotterContainer(getActualPlotName(row, name), new Double(n), comp);
+	cont = new SequencePlotterContainer(getActualPlotName(row, name), (double) n, comp);
 	// meta-data
 	for (m = 0; m < metaCols.length; m++)
 	  cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));

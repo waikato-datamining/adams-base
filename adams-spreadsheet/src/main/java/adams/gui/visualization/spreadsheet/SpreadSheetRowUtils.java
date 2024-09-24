@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetRowUtils.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.spreadsheet;
@@ -94,7 +94,7 @@ public class SpreadSheetRowUtils
 
     result = -1;
 
-    if (points.size() == 0)
+    if (points.isEmpty())
       return result;
 
     index = Collections.binarySearch(points, new SpreadSheetRowPoint(x, 0.0), m_Comparator);
@@ -184,7 +184,7 @@ public class SpreadSheetRowUtils
     result = new double[data.size()];
     i      = 0;
     for (SpreadSheetRowPoint p : data)
-      result[i++] = new Double(p.getY());
+      result[i++] = p.getY();
 
     return result;
   }

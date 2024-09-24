@@ -15,7 +15,7 @@
 
 /*
  * BaseTimeMsecExpression.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -93,7 +93,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BaseTimeMsecExpression
   extends AbstractExpressionEvaluator<Date>
@@ -193,7 +192,7 @@ public class BaseTimeMsecExpression
     Double	result;
 
     try {
-      result = new Double(value);
+      result = Double.parseDouble(value);
     }
     catch (Exception e) {
       result = null;

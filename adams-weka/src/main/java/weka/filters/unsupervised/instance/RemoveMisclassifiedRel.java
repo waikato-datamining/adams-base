@@ -15,7 +15,7 @@
 
 /*
  *    RemoveMisclassifiedRel.java
- *    Copyright (C) 2002 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -75,7 +75,6 @@ import java.util.Vector;
  *
  * @author Richard Kirkby (rkirkby@cs.waikato.ac.nz)
  * @author Malcolm Ware (mfw4@cs.waikato.ac.nz)
- * @version $Revision$
  */
 public class RemoveMisclassifiedRel
   extends Filter
@@ -445,45 +444,41 @@ public class RemoveMisclassifiedRel
     setClassifier(AbstractClassifier.forName(classifierName, classifierSpec));
 
     String cString = Utils.getOption('C', options);
-    if (cString.length() != 0) {
-      setClassIndex((new Double(cString)).intValue());
+    if (!cString.isEmpty()) {
+      setClassIndex(Integer.parseInt(cString));
     } else {
       setClassIndex(-1);
     }
 
     String fString = Utils.getOption('F', options);
-    if (fString.length() != 0) {
-      setNumFolds((new Double(fString)).intValue());
+    if (!fString.isEmpty()) {
+      setNumFolds(Integer.parseInt(fString));
     } else {
       setNumFolds(0);
     }
 
     String tString = Utils.getOption('T', options);
-    if (tString.length() != 0) {
-      setThreshold((new Double(tString)).doubleValue());
+    if (!tString.isEmpty()) {
+      setThreshold(Double.parseDouble(tString));
     } else {
       setThreshold(0.1);
     }
 
     String aString = Utils.getOption('A', options);
-    if (aString.length() != 0) {
-      setAbsErr((new Double(aString)).doubleValue());
+    if (!aString.isEmpty()) {
+      setAbsErr(Double.parseDouble(aString));
     } else {
       setAbsErr(1);
     }
 
     String iString = Utils.getOption('I', options);
-    if (iString.length() != 0) {
-      setMaxIterations((new Double(iString)).intValue());
+    if (!iString.isEmpty()) {
+      setMaxIterations(Integer.parseInt(iString));
     } else {
       setMaxIterations(0);
     }
 
-    if (Utils.getFlag('V', options)) {
-      setInvert(true);
-    } else {
-      setInvert(false);
-    }
+    setInvert(Utils.getFlag('V', options));
 
     Utils.checkForRemainingOptions(options);
 
@@ -499,7 +494,7 @@ public class RemoveMisclassifiedRel
     String [] options = new String [15];
     int current = 0;
 
-    options[current++] = "-W"; options[current++] = "" + getClassifierSpec();
+    options[current++] = "-W"; options[current++] = getClassifierSpec();
     options[current++] = "-C"; options[current++] = "" + getClassIndex();
     options[current++] = "-F"; options[current++] = "" + getNumFolds();
     options[current++] = "-T"; options[current++] = "" + getThreshold();

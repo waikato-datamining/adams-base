@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * XYPlotGenerator.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
 
@@ -104,7 +104,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XYPlotGenerator
   extends AbstractPlotGenerator {
@@ -411,7 +410,7 @@ public class XYPlotGenerator
       }
       for (n = 0; n < plotCols.length; n++) {
 	if (xIndex == -1) {
-	  cont = new SequencePlotterContainer(getActualPlotName(row, prefix + plotNames[n]), new Double(i), getCellValue(row, plotCols[n]));
+	  cont = new SequencePlotterContainer(getActualPlotName(row, prefix + plotNames[n]), (double) i, getCellValue(row, plotCols[n]));
 	}
 	else {
 	  if (xIndex == plotCols[n])

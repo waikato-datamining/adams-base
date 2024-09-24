@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPlotGenerator.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
 
@@ -37,7 +37,6 @@ import java.util.List;
  * plot containers for the {@link SequencePlotter} sink.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPlotGenerator
   extends AbstractOptionHandler 
@@ -236,13 +235,13 @@ public abstract class AbstractPlotGenerator
     cell = row.getCell(index);
     if ((cell != null) && !cell.isMissing()) {
       if (cell.isNumeric())
-	result = new Double(Utils.toDouble(cell.getContent()));
+	result = Utils.toDouble(cell.getContent());
       else if (cell.isTime())
-	result = new Double(cell.toTime().getTime());
+	result = (double) cell.toTime().getTime();
       else if (cell.isDate())
-	result = new Double(cell.toDate().getTime());
+	result = (double) cell.toDate().getTime();
       else if (cell.isDateTime())
-	result = new Double(cell.toDateTime().getTime());
+	result = (double) cell.toDateTime().getTime();
       else
 	result = cell.getContent();
     }
@@ -265,9 +264,11 @@ public abstract class AbstractPlotGenerator
 
     result = defaultValue;
 
-    cell = row.getCell(index);
-    if ((cell != null) && !cell.isMissing())
-      result = cell.getNative();
+    if (row.hasCell(index)) {
+      cell = row.getCell(index);
+      if ((cell != null) && !cell.isMissing())
+	result = cell.getNative();
+    }
 
     return result;
   }

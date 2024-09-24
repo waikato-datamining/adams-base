@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetStatistic.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -268,9 +268,9 @@ public class SpreadSheetStatistic
     for (i = 0; i < result.length; i++) {
       cell = row.getCell(i);
       if ((cell == null) || cell.isMissing() || !cell.isNumeric())
-	result[i] = new Double(0.0);
+	result[i] = 0.0;
       else
-	result[i] = new Double(cell.getContent());
+	result[i] = Double.parseDouble(cell.getContent());
     }
 
     return result;
@@ -295,9 +295,9 @@ public class SpreadSheetStatistic
       row  = sheet.getRow(i);
       cell = row.getCell(index);
       if ((cell == null) || cell.isMissing() || !cell.isNumeric())
-	result[i] = new Double(0.0);
+	result[i] = 0.0;
       else
-	result[i] = new Double(cell.getContent());
+	result[i] = Double.parseDouble(cell.getContent());
     }
 
     return result;
@@ -319,9 +319,9 @@ public class SpreadSheetStatistic
     AbstractArrayStatistic 	stat;
 
     result = null;
+    sheet  = null;
 
     try {
-      sheet = null;
       data  = (SpreadSheet) m_InputToken.getPayload();
       stat  = m_Statistic.shallowCopy(true);
 
@@ -357,7 +357,6 @@ public class SpreadSheetStatistic
     }
     catch (Exception e) {
       result = handleException("Error generating the statistic: ", e);
-      sheet = null;
     }
 
     if (sheet != null)

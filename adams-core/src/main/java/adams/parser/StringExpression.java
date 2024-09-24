@@ -15,7 +15,7 @@
 
 /*
  * StringExpression.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -406,7 +406,7 @@ public class StringExpression
     Double	result;
 
     try {
-      result = new Double(value);
+      result = Double.parseDouble(value);
     }
     catch (Exception e) {
       result = null;

@@ -30,10 +30,10 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
 import weka.core.TechnicalInformation;
-import weka.core.TechnicalInformationHandler;
-import weka.core.Utils;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
+import weka.core.TechnicalInformationHandler;
+import weka.core.Utils;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.RemoveUseless;
@@ -232,8 +232,8 @@ public abstract class M5Base2
     setUseUnsmoothed(Utils.getFlag('U', options));
     setBuildRegressionTree(Utils.getFlag('R', options));
     String optionString = Utils.getOption('M', options);
-    if (optionString.length() != 0) {
-      setMinNumInstances((new Double(optionString)).doubleValue());
+    if (!optionString.isEmpty()) {
+      setMinNumInstances(Double.parseDouble(optionString));
     }
     Utils.checkForRemainingOptions(options);
   } 

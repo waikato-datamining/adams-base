@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetHistogramRanges.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -606,9 +606,9 @@ public class SpreadSheetHistogramRanges
     for (i = 0; i < result.length; i++) {
       cell = row.getCell(i);
       if ((cell == null) || cell.isMissing() || !cell.isNumeric())
-	result[i] = new Double(0.0);
+	result[i] = 0.0;
       else
-	result[i] = new Double(cell.getContent());
+	result[i] = Double.parseDouble(cell.getContent());
     }
 
     return result;
@@ -633,9 +633,9 @@ public class SpreadSheetHistogramRanges
       row  = sheet.getRow(i);
       cell = row.getCell(index);
       if ((cell == null) || cell.isMissing() || !cell.isNumeric())
-	result[i] = new Double(0.0);
+	result[i] = 0.0;
       else
-	result[i] = new Double(cell.getContent());
+	result[i] = Double.parseDouble(cell.getContent());
     }
 
     return result;

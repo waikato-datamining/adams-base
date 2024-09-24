@@ -15,7 +15,7 @@
 
 /*
  * PlotContainerSink.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -118,13 +118,7 @@ public class PlotContainerSink
      * 			greater than the second double
      */
     public int compare(String o1, String o2) {
-      Double	d1;
-      Double	d2;
-
-      d1 = new Double(o1);
-      d2 = new Double(o2);
-
-      return d1.compareTo(d2);
+      return Double.compare(Double.parseDouble(o1), Double.parseDouble(o2));
     }
   }
 
@@ -334,7 +328,7 @@ public class PlotContainerSink
 
     // add container to spreadsheet
     if (x == null)
-      x = new Double(m_TokenCounts.current(name));
+      x = (double) m_TokenCounts.current(name);
     rowKey = "" + x;
     if (m_SpreadSheet.hasRow(rowKey)) {
       row = m_SpreadSheet.getRow(rowKey);

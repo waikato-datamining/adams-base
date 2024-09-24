@@ -599,15 +599,15 @@ public class LinearRegressionJ extends AbstractClassifier implements
   public void setOptions(String[] options) throws Exception {
 
     String selectionString = Utils.getOption('S', options);
-    if (selectionString.length() != 0) {
+    if (!selectionString.isEmpty()) {
       setAttributeSelectionMethod(new SelectedTag(
         Integer.parseInt(selectionString), TAGS_SELECTION));
     } else {
       setAttributeSelectionMethod(new SelectedTag(SELECTION_M5, TAGS_SELECTION));
     }
     String ridgeString = Utils.getOption('R', options);
-    if (ridgeString.length() != 0) {
-      setRidge(new Double(ridgeString).doubleValue());
+    if (!ridgeString.isEmpty()) {
+      setRidge(Double.parseDouble(ridgeString));
     } else {
       setRidge(1.0e-8);
     }

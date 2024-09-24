@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimplePlotGenerator.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.plotgenerator;
 
@@ -80,7 +80,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimplePlotGenerator
   extends AbstractPlotGenerator {
@@ -251,7 +250,7 @@ public class SimplePlotGenerator
     for (i = 0; i < sheet.getRowCount(); i++) {
       row = sheet.getRow(i);
       for (n = 0; n < plotCols.length; n++) {
-	cont = new SequencePlotterContainer(getActualPlotName(row, plotNames[n]), new Double(i), getCellValue(row, plotCols[n]));
+	cont = new SequencePlotterContainer(getActualPlotName(row, plotNames[n]), (double) i, getCellValue(row, plotCols[n]));
 	// meta-data
 	for (m = 0; m < metaCols.length; m++)
 	  cont.addMetaData(sheet.getColumnName(metaCols[m]), getCellObject(row, metaCols[m], null));

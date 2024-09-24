@@ -15,19 +15,19 @@
 
 /*
  * WekaInstanceStreamPlotGenerator.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import weka.core.Instance;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.Token;
+import weka.core.Instance;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -86,7 +86,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstanceStreamPlotGenerator
   extends AbstractTransformer {
@@ -111,10 +110,10 @@ public class WekaInstanceStreamPlotGenerator
   @Override
   public String globalInfo() {
     return
-        "Generates plot containers from a range of attributes of the "
-      + "weka.core.Instance objects being passed through.\n"
-      + "The generator merely uses the internal data representation for "
-      + "generating the Y value of the plot container.";
+      "Generates plot containers from a range of attributes of the "
+	+ "weka.core.Instance objects being passed through.\n"
+	+ "The generator merely uses the internal data representation for "
+	+ "generating the Y value of the plot container.";
   }
 
   /**
@@ -125,8 +124,8 @@ public class WekaInstanceStreamPlotGenerator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "attributes", "attributes",
-	    new Range(Range.ALL));
+      "attributes", "attributes",
+      new Range(Range.ALL));
   }
 
   /**
@@ -224,14 +223,14 @@ public class WekaInstanceStreamPlotGenerator
     for (i = 0; i < indices.length; i++) {
       if (inst.attribute(indices[i]).isNominal())
 	cont = new SequencePlotterContainer(
-	    inst.dataset().attribute(indices[i]).name(),
-	    new Double(m_Counter),
-	    inst.stringValue(indices[i]));
+	  inst.dataset().attribute(indices[i]).name(),
+	  (double) m_Counter,
+	  inst.stringValue(indices[i]));
       else
 	cont = new SequencePlotterContainer(
-	    inst.dataset().attribute(indices[i]).name(),
-	    new Double(m_Counter),
-	    inst.value(indices[i]));
+	  inst.dataset().attribute(indices[i]).name(),
+	  (double) m_Counter,
+	  inst.value(indices[i]));
       m_Containers.add(cont);
     }
 

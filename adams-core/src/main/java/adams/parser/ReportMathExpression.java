@@ -15,7 +15,7 @@
 
 /*
  * ReportMathExpression.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -176,9 +176,9 @@ import adams.data.report.Report;
  * <pre>
  * String expr = "pow(BASE,EXPONENT)*MULT";
  * HashMap symbols = new HashMap();
- * symbols.put("BASE", new Double(2));
- * symbols.put("EXPONENT", new Double(9));
- * symbols.put("MULT", new Double(0.1));
+ * symbols.put("BASE", 2.0);
+ * symbols.put("EXPONENT", 9.0);
+ * symbols.put("MULT", 0.1);
  * double result = ReportMathExpression.evaluate(expr, symbols);
  * System.out.println(expr + " and " + symbols + " = " + result);
  * </pre>
@@ -188,9 +188,9 @@ import adams.data.report.Report;
  * String expr = "ifelse(I<0,pow(BASE,I*0.5),pow(BASE,I))";
  * ReportMathExpression.TreeNode tree = ReportMathExpression.parse(expr);
  * HashMap symbols = new HashMap();
- * symbols.put("BASE", new Double(2));
+ * symbols.put("BASE", 2.0);
  * for (int i = -10; i <= 10; i++) {
- *   symbols.put("I", new Double(i));
+ *   symbols.put("I", (double) i);
  *   double result = ReportMathExpression.evaluate(expr, symbols);
  *   System.out.println(expr + " and " + symbols + " = " + result);
  * }

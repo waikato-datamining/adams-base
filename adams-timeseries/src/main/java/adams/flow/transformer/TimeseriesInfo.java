@@ -15,12 +15,10 @@
 
 /*
  * TimeseriesInfo.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
-
-import java.util.ArrayList;
 
 import adams.core.Constants;
 import adams.core.DateFormat;
@@ -30,6 +28,8 @@ import adams.data.timeseries.Timeseries;
 import adams.data.timeseries.TimeseriesPoint;
 import adams.flow.core.DataInfoActor;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
 
 /**
  <!-- globalinfo-start -->
@@ -306,23 +306,23 @@ public class TimeseriesInfo
 	break;
 
       case MIN_TIMESTAMP:
-	if (series.size() > 0)
+	if (!series.isEmpty())
 	  m_Queue.add(m_Formatter.format(((TimeseriesPoint) series.toList().get(0)).getTimestamp()));
 	break;
 
       case MAX_TIMESTAMP:
-	if (series.size() > 0)
+	if (!series.isEmpty())
 	  m_Queue.add(m_Formatter.format(((TimeseriesPoint) series.toList().get(series.size() - 1)).getTimestamp()));
 	break;
 
       case MIN_VALUE:
 	if (series.getMinValue() != null)
-	  m_Queue.add(new Double(series.getMinValue().getValue()));
+	  m_Queue.add(series.getMinValue().getValue());
 	break;
 
       case MAX_VALUE:
 	if (series.getMaxValue() != null)
-	  m_Queue.add(new Double(series.getMaxValue().getValue()));
+	  m_Queue.add(series.getMaxValue().getValue());
 	break;
 
       default:
@@ -355,7 +355,7 @@ public class TimeseriesInfo
    */
   @Override
   public boolean hasPendingOutput() {
-    return (m_Queue.size() > 0);
+    return !m_Queue.isEmpty();
   }
 
   /**

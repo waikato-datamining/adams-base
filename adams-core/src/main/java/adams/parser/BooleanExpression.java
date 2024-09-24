@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpression.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -410,7 +410,7 @@ public class BooleanExpression
     Double	result;
 
     try {
-      result = new Double(value);
+      result = Double.parseDouble(value);
     }
     catch (Exception e) {
       result = null;
