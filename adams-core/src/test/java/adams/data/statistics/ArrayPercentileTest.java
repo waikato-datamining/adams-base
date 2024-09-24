@@ -15,24 +15,24 @@
 
 /*
  * ArrayPercentileTest.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
 
-import java.util.Random;
-import java.util.Vector;
-
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Tests the adams.data.statistics.ArrayPercentile class. Run from commandline with: <br><br>
  * java adams.data.statistics.ArrayPercentileTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayPercentileTest
   extends AbstractArrayStatisticTestCase<ArrayPercentile, Number> {
@@ -52,22 +52,21 @@ public class ArrayPercentileTest
    * @return		the data
    */
   protected Number[][][] getRegressionInputData() {
-    Vector<Double>	values;
+    List<Double> 	values;
     Random		rand;
     int			i;
     int			index;
-    Percentile<Double>	q;
     Number[][][]	result;
     Double[]		vals;
 
-    values = new Vector<Double>();
+    values = new ArrayList<>();
     for (i = 1; i <= 100; i++)
-      values.add(new Double(((double) i) / 10));
+      values.add(((double) i) / 10.0);
 
     vals = new Double[100];
     rand = new Random(1);
     i    = 0;
-    while (values.size() > 0) {
+    while (!values.isEmpty()) {
       index   = rand.nextInt(values.size());
       vals[i] = values.get(index);
       values.remove(index);

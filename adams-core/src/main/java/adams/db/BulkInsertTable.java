@@ -15,22 +15,22 @@
 
 /*
  * BulkInsertTable.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
  * Table that can do bulk inserts.
  *
  * @author dale
- * @version $Revision$
  */
 public abstract class BulkInsertTable
   extends AbstractIndexedTable{
@@ -39,23 +39,21 @@ public abstract class BulkInsertTable
   private static final long serialVersionUID = 401732448232750879L;
 
   /** columns for bulk insert. */
-  protected Vector<String> m_cols=new Vector<String>();
-
-  /** debug. **/
-  private boolean debug=false;
+  protected List<String> m_cols;
 
   /**
    * Constructor. Setup column vector.
    *
    * @param dbcon	the database context this table is used in
-   * @param tableName	the name of the table
+   * @param tablename	the name of the table
    */
   public BulkInsertTable(AbstractDatabaseConnection dbcon, String tablename) {
     super(dbcon, tablename);
 
-    ColumnMapping cm=getColumnMapping();
+    ColumnMapping cm = getColumnMapping();
+    m_cols = new ArrayList<>();
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
-      String cname=(String)enum1.nextElement();
+      String cname = (String) enum1.nextElement();
       m_cols.add(cname);
     }
   }
@@ -72,11 +70,11 @@ public abstract class BulkInsertTable
   /**
    * Attach a multiple insert object to this table.
    *
-   * @param mi
+   * @param mi		the insert
    */
   public void attach(MultipleInsert mi) {
     mi.setTable(this);
-    mi.setColumnVector(this.m_cols);
+    mi.setColumnVector(m_cols);
   }
 
   /**
@@ -84,21 +82,19 @@ public abstract class BulkInsertTable
    *
    * @param mi		multiple insert
    * @param vals	hashtable of values
-   * @return	success?
+   * @return		success?
    */
   public boolean insert(MultipleInsert mi, Hashtable<String,String> vals) {
-    String insString=mi.insert(vals);
-    if (insString!=null) {
+    String insString = mi.insert(vals);
+    if (insString != null) {
       try {
-	if (debug) {
-	  getLogger().severe("Entered ms point execute from insert");
-	}
-	Boolean ret=execute(insString);
+	if (isLoggingEnabled())
+	  getLogger().info("Entered ms point execute from insert");
+	Boolean ret = execute(insString);
 	if (ret == null)
 	  ret = false;
-	if (debug) {
-	  getLogger().severe("Complete ms point execute from insert");
-	}
+	if (isLoggingEnabled())
+	  getLogger().info("Complete ms point execute from insert");
 	return(ret);
       } catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to insert", e);
@@ -109,35 +105,35 @@ public abstract class BulkInsertTable
   }
 
   /**
-   * Complete bulk insert.
+   * Performs the bulk insert.
    *
-   * @param mi
+   * @param mi	the insert
    * @return	success?
    */
   protected boolean doInsert(MultipleInsert mi) {
-    String ins=mi.getInsertString();
-    if (ins!=null) {
+    String ins = mi.getInsertString();
+    if (ins != null) {
       try {
-	if (debug) {
-	  getLogger().severe("Entered ms point execute");
-	}
+	if (isLoggingEnabled())
+	  getLogger().info("Entered ms point execute");
 	return (execute(ins) != null);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to insert", e);
-	return(false);
+	return false;
       }
     }
-    return(true);
+    return true;
   }
 
   /**
    * Complete bulk insert.
    *
-   * @param mi
+   * @param mi	the insert
    * @return	success?
    */
   public boolean insertComplete(MultipleInsert mi) {
-    return(doInsert(mi));
+    return doInsert(mi);
   }
 
   /**
@@ -146,15 +142,15 @@ public abstract class BulkInsertTable
    * @return	column names
    */
   protected String getInsertColumnsAsString() {
-    String q="";
+    StringBuilder q = new StringBuilder();
     for (int i=0;i<m_cols.size();i++) {
-      String val=m_cols.elementAt(i);
+      String val=m_cols.get(i);
 
-      q+=val;
+      q.append(val);
       if (i != m_cols.size()-1) {
-	q+=",";
+	q.append(",");
       }
     }
-    return(q);
+    return q.toString();
   }
 }

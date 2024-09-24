@@ -15,7 +15,7 @@
 
 /*
  * CorrelationMatrix.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -37,6 +37,7 @@ import weka.filters.UnsupervisedFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -63,7 +64,6 @@ import java.util.Vector;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CorrelationMatrix
   extends SimpleBatchFilter
@@ -79,7 +79,7 @@ public class CorrelationMatrix
   protected boolean m_Absolute;
 
   /** the attribute indices to use. */
-  protected Vector<Integer> m_Indices;
+  protected List<Integer> m_Indices;
 
   /**
    * Returns a string describing this classifier.
@@ -126,17 +126,17 @@ public class CorrelationMatrix
    * @return      the current options
    */
   public String[] getOptions() {
-    Vector<String>	result;
+    List<String>	result;
 
-    result = new Vector<String>(Arrays.asList(super.getOptions()));
+    result = new ArrayList<>(Arrays.asList(super.getOptions()));
 
     result.add("-R");
-    result.add("" + getAttributeRange());
+    result.add(getAttributeRange());
 
     if (getAbsolute())
       result.add("-absolute");
 
-    return (String[]) result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -166,7 +166,7 @@ public class CorrelationMatrix
     String	tmpStr;
 
     tmpStr = Utils.getOption("R", options);
-    if (tmpStr.length() != 0)
+    if (!tmpStr.isEmpty())
       setAttributeRange(tmpStr);
     else
       setAttributeRange("first-last");
@@ -251,8 +251,8 @@ public class CorrelationMatrix
     m_AttributeRange.setUpper(inputFormat.numAttributes() - 1);
 
     // determine indices of attributes to compute correlation for
-    m_Indices = new Vector<Integer>();
-    attVals   = new ArrayList<String>();
+    m_Indices = new ArrayList<>();
+    attVals   = new ArrayList<>();
     for (i = 0; i < inputFormat.numAttributes(); i++) {
       if (!m_AttributeRange.isInRange(i))
 	continue;
@@ -263,7 +263,7 @@ public class CorrelationMatrix
     }
 
     // create header
-    atts = new ArrayList<Attribute>();
+    atts = new ArrayList<>();
     atts.add(0, new Attribute("x", attVals));
     for (i = 0; i < attVals.size(); i++)
       atts.add(new Attribute(attVals.get(i)));

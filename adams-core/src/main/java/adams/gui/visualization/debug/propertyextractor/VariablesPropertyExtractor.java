@@ -13,17 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * VariablesPropertyExtractor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.propertyextractor;
 
 import adams.core.Variables;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 
 /**
@@ -31,13 +32,12 @@ import java.util.Vector;
  * as a separate property.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariablesPropertyExtractor
   extends AbstractPropertyExtractor {
 
   /** the variable names. */
-  protected Vector<String> m_Names;
+  protected List<String> m_Names;
   
   /**
    * Initializes the extractor.
@@ -48,7 +48,7 @@ public class VariablesPropertyExtractor
     
     super.initialize();
     
-    m_Names = new Vector<String>();
+    m_Names = new ArrayList<>();
     names   = ((Variables) m_Current).names();
     while (names.hasMoreElements())
       m_Names.add(names.nextElement());

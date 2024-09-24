@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AnyToStringTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseText;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests the AnyToString conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AnyToStringTest
   extends AbstractConversionTestCase {
@@ -54,8 +53,8 @@ public class AnyToStringTest
   protected Object[] getRegressionInput() {
     return new Object[]{
 	new File("/home/sweet/home.txt"),
-	new Double(1.345),
-	new String("./some/place.txt"),
+	1.345,
+	"./some/place.txt",
 	new BaseText("hello world")
     };
   }

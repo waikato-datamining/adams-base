@@ -15,7 +15,7 @@
 
 /*
  * DataPoint.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.container;
@@ -24,7 +24,6 @@ package adams.data.container;
  * Superclass for data points.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDataPoint
   implements DataPoint {
@@ -131,7 +130,7 @@ public abstract class AbstractDataPoint
    */
   public static Double toDouble(Object value) {
     if (value instanceof Number)
-      return new Double(((Number) value).doubleValue());
+      return ((Number) value).doubleValue();
     else
       return null;
   }
@@ -143,7 +142,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Number value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -153,7 +152,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Byte value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -163,7 +162,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Short value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -173,7 +172,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Integer value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -183,7 +182,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Long value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -193,7 +192,7 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Float value) {
-    return new Double(value.doubleValue());
+    return value.doubleValue();
   }
 
   /**
@@ -203,6 +202,6 @@ public abstract class AbstractDataPoint
    * @return		the double
    */
   public static Double toDouble(Double value) {
-    return new Double(value.doubleValue());
+    return value;
   }
 }

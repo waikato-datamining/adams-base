@@ -25,15 +25,15 @@ import adams.test.AdamsTestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 /**
  * Tests the adams.data.statistics.Percentile class. Run from commandline with: <br><br>
  * java adams.data.statistics.PercentileTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PercentileTest
   extends AdamsTestCase {
@@ -51,7 +51,7 @@ public class PercentileTest
    * Tests the quartiles for Integer objects.
    */
   public void testInteger() {
-    Vector<Integer>	values;
+    List<Integer>	values;
     Random		rand;
     int			i;
     int			index;
@@ -59,7 +59,7 @@ public class PercentileTest
     Integer		q1;
     Integer		q3;
 
-    values = new Vector<>();
+    values = new ArrayList<>();
     for (i = 1; i <= 100; i++)
       values.add(i);
 
@@ -82,7 +82,7 @@ public class PercentileTest
    * Tests the quartiles for Double objects.
    */
   public void testDouble() {
-    Vector<Double>	values;
+    List<Double> 	values;
     Random		rand;
     int			i;
     int			index;
@@ -90,13 +90,13 @@ public class PercentileTest
     Double		q1;
     Double		q3;
 
-    values = new Vector<Double>();
+    values = new ArrayList<>();
     for (i = 1; i <= 100; i++)
-      values.add(new Double(((double) i) / 10));
+      values.add(((double) i) / 10.0);
 
-    q    = new Percentile<Double>();
+    q    = new Percentile<>();
     rand = new Random(1);
-    while (values.size() > 0) {
+    while (!values.isEmpty()) {
       index = rand.nextInt(values.size());
       q.add(values.get(index));
       values.remove(index);
@@ -105,15 +105,15 @@ public class PercentileTest
     q1 = q.getPercentile(0.25);
     q3 = q.getPercentile(0.75);
 
-    assertEquals(new Double(2.5), q1);
-    assertEquals(new Double(7.5), q3);
+    assertEquals(2.5, q1);
+    assertEquals(7.5, q3);
   }
 
   /**
    * Tests the quartiles for String objects.
    */
   public void testString() {
-    Vector<String>	values;
+    List<String>	values;
     Random		rand;
     int			i;
     int			index;
@@ -121,13 +121,13 @@ public class PercentileTest
     String		q1;
     String		q3;
 
-    values = new Vector<String>();
+    values = new ArrayList<>();
     for (i = 1; i <= 100; i++)
       values.add(Integer.toString(1000 + i));
 
-    q    = new Percentile<String>();
+    q    = new Percentile<>();
     rand = new Random(1);
-    while (values.size() > 0) {
+    while (!values.isEmpty()) {
       index = rand.nextInt(values.size());
       q.add(values.get(index));
       values.remove(index);

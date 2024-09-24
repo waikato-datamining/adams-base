@@ -131,7 +131,7 @@ public class OptionUtils {
 	  hookCls.getMethod(hookMethod, AbstractOption.class, String.class));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to add valueOf hook!", e);
     }
   }
 
@@ -178,7 +178,7 @@ public class OptionUtils {
 	  hookCls.getMethod(hookMethod, AbstractOption.class, Object.class));
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to add toString hook!", e);
     }
   }
 
@@ -523,7 +523,7 @@ public class OptionUtils {
     String[]	options;
     String	classname;
 
-    if (cmdline.trim().length() == 0)
+    if (cmdline.trim().isEmpty())
       throw new IllegalArgumentException("Empty commandline supplied!");
 
     options    = splitOptions(cmdline);
@@ -576,7 +576,7 @@ public class OptionUtils {
     OptionHandler	result;
     ArrayConsumer 	consumer;
 
-    if (cmdline.trim().length() == 0)
+    if (cmdline.trim().isEmpty())
       throw new IllegalArgumentException("Empty commandline supplied!");
 
     consumer = new ArrayConsumer();
@@ -686,7 +686,7 @@ public class OptionUtils {
 
     result = null;
 
-    if (cmdline.trim().length() > 0) {
+    if (!cmdline.trim().isEmpty()) {
       parts = cmdline.split(" ");
       if (parts.length > 0) {
         if (parts[0].contains("."))
@@ -733,16 +733,16 @@ public class OptionUtils {
     isDouble = Utils.isDouble(value);
 
     if ((cls == Byte.class) || (cls == Byte.TYPE))
-      result = isDouble ? new Double(value).byteValue() : Byte.valueOf(value);
+      result = isDouble ? (byte) Double.parseDouble(value) : Byte.parseByte(value);
       // short
     else if ((cls == Short.class) || (cls == Short.TYPE))
-      result = isDouble ? new Double(value).shortValue() : Short.valueOf(value);
+      result = isDouble ? (short) Double.parseDouble(value) : Short.parseShort(value);
       // int
     else if ((cls == Integer.class) || (cls == Integer.TYPE))
-      result = isDouble ? new Double(value).intValue() : Integer.valueOf(value);
+      result = isDouble ? (int) Double.parseDouble(value) : Integer.parseInt(value);
       // long
     else if ((cls == Long.class) || (cls == Long.TYPE))
-      result = isDouble ? new Double(value).longValue() : Long.valueOf(value);
+      result = isDouble ? (long) Double.parseDouble(value) : Long.parseLong(value);
       // float
     else if ((cls == Float.class) || (cls == Float.TYPE))
       result = Float.valueOf(value);
@@ -754,7 +754,7 @@ public class OptionUtils {
       result = Boolean.valueOf(value);
       // character
     else if ((cls == Character.class) || (cls == Character.TYPE))
-      result = "" + value;
+      result = value;
       // string
     else if (cls == String.class)
       result = value;
@@ -775,7 +775,7 @@ public class OptionUtils {
 	result  = handler.fromCommandLine(value, new MessageCollection());
       }
       catch (Exception e) {
-	result = null;
+	// ignored;
       }
     }
 
@@ -830,7 +830,7 @@ public class OptionUtils {
         result  = handler.toCommandLine(obj);
       }
       catch (Exception e) {
-        result = null;
+        // ignored;
       }
     }
 
@@ -1007,7 +1007,7 @@ public class OptionUtils {
     result = new StringBuilder();
 
     for (i = 0; i < options.length; i++) {
-      if (options[i].length() > 0) {
+      if (!options[i].isEmpty()) {
 	if (result.length() > 0)
 	  result.append(" ");
 	result.append(options[i]);
@@ -1018,14 +1018,14 @@ public class OptionUtils {
     // (from 'carry-overs' for single-line commands spread over multiple lines)
     if (result.length() > 0) {
       tmp = result.toString().replace("\\", "").replace(" ", "");
-      if (tmp.length() == 0)
+      if (tmp.isEmpty())
 	result = new StringBuilder();
     }
 
     if (result.length() == 0)
       return null;
     else
-      return "Unparsed options found:\n" + result.toString();
+      return "Unparsed options found:\n" + result;
   }
 
   /**
@@ -1386,7 +1386,7 @@ public class OptionUtils {
 	lines = new ArrayList<>();
 	for (i = 0; i < parts.length; i++) {
 	  line = parts[i].trim();
-	  if (line.length() == 0)
+	  if (line.isEmpty())
 	    continue;
 	  lines.add(line);
 	}

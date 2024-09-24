@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiConversionTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the MultiConversion conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiConversionTest
   extends AbstractConversionTestCase {
@@ -50,9 +49,9 @@ public class MultiConversionTest
   @Override
   protected Object[] getRegressionInput() {
     return new Object[]{
-	new Double(1.345),
-	new Double(7.45),
-	new Double(1.67E-45)
+	1.345,
+	7.45,
+	1.67E-45
     };
   }
 

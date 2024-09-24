@@ -20,23 +20,24 @@
 
 package adams.opt.optimise.genetic;
 
-import java.io.Serializable;
+import adams.core.logging.LoggingObject;
+
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * ???
  *
  * @author Dale (dale at cs dot waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PackDataDef
-  implements Serializable {
+  extends LoggingObject {
 
   /** for serialization. */
   private static final long serialVersionUID = -4776734918844200382L;
 
-  public class DataInfo{
+  public static class DataInfo {
     public String m_name;
     public int m_bits;
     public double m_max; //scale
@@ -45,11 +46,11 @@ public class PackDataDef
     protected double m_scale;
 
     public DataInfo(String name,int bits, double min, double max) {
-      m_bits=bits;
-      m_max=max;
-      m_min=min;
-      m_name=name;
-      m_scale=(m_max-m_min)/(double)getMaxVal();
+      m_bits  = bits;
+      m_max   = max;
+      m_min   = min;
+      m_name  = name;
+      m_scale = (m_max-m_min)/(double)getMaxVal();
     }
 
     public String getName() {
@@ -57,23 +58,21 @@ public class PackDataDef
     }
 
     public void resetMinMax(double min, double max) {
-
-      m_max=max;
-      m_min=min;
-
-      m_scale=(m_max-m_min)/(double)getMaxVal();
+      m_max   = max;
+      m_min   = min;
+      m_scale = (m_max-m_min)/(double)getMaxVal();
     }
 
     public int toBits(double val) {
-      return((int)((val-m_min)/m_scale));
+      return (int)((val-m_min)/m_scale);
     }
 
     public double fromBits(int bits) {
-      return((double)(bits * m_scale)+m_min);
+      return (bits * m_scale)+m_min;
     }
 
     public int getMaxVal() {
-      return((1<<m_bits)-1);
+      return (1<<m_bits)-1;
     }
   }
 
@@ -82,36 +81,35 @@ public class PackDataDef
     for (DataInfo di:m_packed) {
       count+=di.m_bits;
     }
-    return(count);
+    return count;
   }
 
+  protected Hashtable<String,Integer> m_sort_packed=new Hashtable<>();
 
-  protected Hashtable<String,Integer> m_sort_packed=new Hashtable<String,Integer>();
-  protected Vector<DataInfo> m_packed = new Vector<DataInfo>();
+  protected List<DataInfo> m_packed = new ArrayList<>();
 
   public void add(String name, int bits, double min, double max) {
-    DataInfo di=new DataInfo(name,bits,min,max);
+    DataInfo di = new DataInfo(name,bits,min,max);
     m_sort_packed.put(name, m_packed.size());
     m_packed.add(di);
   }
 
   public void setMinMax(String name, double min,double max) {
-    Integer pos=m_sort_packed.get(name);
+    Integer pos = m_sort_packed.get(name);
     if (pos == null) {
-      System.err.println("not there:"+name);
+      getLogger().severe("not there:" + name);
+      return;
     }
-    DataInfo di=m_packed.get(pos);
+    DataInfo di = m_packed.get(pos);
     di.resetMinMax(min,max);
   }
 
   public DataInfo get(String name) {
-    Integer pos=m_sort_packed.get(name);
+    Integer pos = m_sort_packed.get(name);
     if (pos == null) {
-      System.err.println("not there:"+name);
-      return(null);
+      getLogger().severe("not there:"+name);
+      return null;
     }
-    DataInfo di=m_packed.get(pos);
-    return(di);
+    return m_packed.get(pos);
   }
-
 }

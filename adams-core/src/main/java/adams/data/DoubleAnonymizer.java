@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * IntegerAnonymizer.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
@@ -23,7 +23,6 @@ package adams.data;
  * Anonymizes Double objects.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DoubleAnonymizer
   extends AbstractAnonymizer<Double> {
@@ -67,6 +66,6 @@ public class DoubleAnonymizer
    */
   @Override
   protected Double toAnonymized(Integer id) {
-    return new Double(id);
+    return id.doubleValue();
   }
 }

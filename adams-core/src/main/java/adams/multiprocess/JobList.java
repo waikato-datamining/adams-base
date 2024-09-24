@@ -26,12 +26,12 @@ import adams.event.JobCompleteListener;
 import adams.event.JobListCompleteEvent;
 import adams.event.JobListCompleteListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Vector;
 
 /**
  * A container for jobs to execute. A listener can be added which listens
@@ -48,7 +48,7 @@ public class JobList<T extends Job>
   private static final long serialVersionUID = 4324015262351789451L;
 
   /** the jobs. */
-  protected Vector<T> m_Jobs;
+  protected List<T> m_Jobs;
 
   /** the listeners listening for all jobs to be completed. */
   protected HashSet<JobListCompleteListener> m_Listeners;
@@ -68,8 +68,8 @@ public class JobList<T extends Job>
 
     m_Locked    = false;
     m_Finished  = false;
-    m_Jobs      = new Vector<T>();
-    m_Listeners = new HashSet<JobListCompleteListener>();
+    m_Jobs      = new ArrayList<>();
+    m_Listeners = new HashSet<>();
   }
 
   /**
@@ -91,7 +91,7 @@ public class JobList<T extends Job>
   }
 
   /**
-   * Adds all of the elements in the specified collection to this collection.
+   * Adds all the elements in the specified collection to this collection.
    *
    * @param c		the collection to add
    * @return		true if this collection changed as a result of the call
@@ -153,7 +153,7 @@ public class JobList<T extends Job>
   }
 
   /**
-   * Removes all of the elements from this collection.
+   * Removes all the elements from this collection.
    */
   public void clear() {
     if (!m_Locked)

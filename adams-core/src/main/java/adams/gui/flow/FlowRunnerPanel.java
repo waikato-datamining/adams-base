@@ -15,7 +15,7 @@
 
 /*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -90,8 +90,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Panel that allows the execution of flows.
@@ -184,13 +184,13 @@ public class FlowRunnerPanel
   protected JLabel m_LabelFlowAnnotation;
 
   /** the current SetVariable singletons (used for displaying the parameters). */
-  protected Vector<SetVariable> m_CurrentSetVariables;
+  protected List<SetVariable> m_CurrentSetVariables;
 
   /** the textfields for the current SetVariable singletons. */
-  protected Vector<BaseTextField> m_CurrentParameters;
+  protected List<BaseTextField> m_CurrentParameters;
 
   /** the buttons for the current SetVariable singletons. */
-  protected Vector<BaseButton> m_CurrentHelpButtons;
+  protected List<BaseButton> m_CurrentHelpButtons;
 
   /** the current worker. */
   protected FlowWorker m_CurrentWorker;
@@ -222,9 +222,9 @@ public class FlowRunnerPanel
     m_CurrentFile         = null;
     m_RecentFilesHandler  = null;
     m_TitleGenerator      = new TitleGenerator("Flow runner", true, ShorteningType.START);
-    m_CurrentSetVariables = new Vector<>();
-    m_CurrentParameters   = new Vector<>();
-    m_CurrentHelpButtons  = new Vector<>();
+    m_CurrentSetVariables = new ArrayList<>();
+    m_CurrentParameters   = new ArrayList<>();
+    m_CurrentHelpButtons  = new ArrayList<>();
     m_FileChooser         = new FlowFileChooser();
     m_FileChooser.setCurrentDirectory(new PlaceholderFile(getProperties().getPath("InitialDir", "%h")).getAbsoluteFile());
   }
@@ -578,7 +578,7 @@ public class FlowRunnerPanel
    * @param parent	the actor to search below
    * @param list	for storing the SetVariable actors
    */
-  protected void findSetVariableActors(Actor parent, Vector<SetVariable> list) {
+  protected void findSetVariableActors(Actor parent, List<SetVariable> list) {
     int		i;
     Actor 	actor;
 

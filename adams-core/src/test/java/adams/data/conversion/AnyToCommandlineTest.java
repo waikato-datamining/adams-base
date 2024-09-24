@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AnyToCommandlineTest.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.logging.LoggingLevel;
 import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**
  * Tests the AnyToCommandline conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AnyToCommandlineTest
   extends AbstractConversionTestCase {
@@ -55,7 +54,7 @@ public class AnyToCommandlineTest
 
     result = new Object[3];
 
-    result[0] = new Double(1.78);
+    result[0] = 1.78;
     result[1] = new adams.data.filter.PassThrough();
     ((adams.data.filter.PassThrough) result[1]).setLoggingLevel(LoggingLevel.FINEST);
     result[2] = new adams.data.filter.BaselineCorrection();

@@ -15,7 +15,7 @@
 
 /*
  * XYSequencePointComparator.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.sequence;
@@ -27,7 +27,6 @@ import adams.data.container.DataPointComparator;
  * A comparator for XY sequence points.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <X> the type of X
  * @param <Y> the type of Y
  */
@@ -106,15 +105,15 @@ public class XYSequencePointComparator<X extends Number & Comparable, Y extends 
     p2 = (XYSequencePoint) o2;
 
     if (m_Comparison == Comparison.Y) {
-      result = new Double(p1.getY()).compareTo(p2.getY());
+      result = Double.compare(p1.getY(), p2.getY());
     }
     else if (m_Comparison == Comparison.X) {
-      result = new Double(p1.getX()).compareTo(p2.getX());
+      result = Double.compare(p1.getX(), p2.getX());
     }
     else if (m_Comparison == Comparison.X_AND_Y) {
-      result = new Double(p1.getX()).compareTo(p2.getX());
+      result = Double.compare(p1.getX(), p2.getX());
       if (result == 0)
-	result = new Double(p1.getY()).compareTo(p2.getY());
+	result = Double.compare(p1.getY(), p2.getY());
     }
     else {
       throw new IllegalStateException("Unhandled comparison type: " + m_Comparison);

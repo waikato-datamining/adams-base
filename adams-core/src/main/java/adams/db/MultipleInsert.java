@@ -15,7 +15,7 @@
 
 /*
  * MultipleInsert.java
- * Copyright (C) 2008 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,13 +23,12 @@ package adams.db;
 
 import java.io.Serializable;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Manages a multiple insert operation for a table (bulkinserttable)
  *
  * @author dale
- * @version $Revision$
  */
 public class MultipleInsert
   implements Serializable {
@@ -38,26 +37,26 @@ public class MultipleInsert
   private static final long serialVersionUID = 6066126049923343182L;
 
   /** builds insert string. */
-  protected StringBuilder m_sb=new StringBuilder();
+  protected StringBuilder m_sb = new StringBuilder();
 
   /** inserts. */
-  protected int count=0;
+  protected int count = 0;
 
   /** force insert to db at count. */
-  protected int m_insert_at=250;
+  protected int m_insert_at = 250;
 
   /** Table this is associated with. */
   protected BulkInsertTable m_insert;
 
   /** columns for insert. */
-  protected Vector<String> m_cols=null; // vector of column names
+  protected List<String> m_cols = null; // lsit of column names
 
   /**
    * Constructor. Set max inserts before db insert
    * @param max		when to do actual insert
    */
   public MultipleInsert(int max) {
-    m_insert_at=max;
+    m_insert_at = max;
   }
 
   /**
@@ -72,20 +71,20 @@ public class MultipleInsert
    * Set the columns used for insert
    * @param sv	column vector
    */
-  public void setColumnVector(Vector<String> sv) {
+  public void setColumnVector(List<String> sv) {
     m_cols=sv;
   }
 
   /**
    * Insert. Get values from hashtable
    * @param vals	Hashtable of ColumnName(string)->InsertValue(string)
-   * @return	Insert string, if time to insert. Else null;
+   * @return		Insert string, if time to insert. Else null;
    */
   public String insert(Hashtable<String,String> vals) {  // return true if time to insert
     String ret=null;
     String q="(";
     for (int i=0;i<m_cols.size();i++) {
-      String val=vals.get(m_cols.elementAt(i));
+      String val=vals.get(m_cols.get(i));
       if (val == null) {
 	System.err.println("null in insert");
 	return(null);
@@ -135,7 +134,6 @@ public class MultipleInsert
     String ret=m_sb.toString();
     count=0;
     m_sb=new StringBuilder();
-    //m_sb.append(generateHeader());
     return(ret);
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * LogEntryViewerModel.java
- * Copyright (C) 2010-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -24,9 +24,10 @@ import adams.gui.core.AbstractBaseTableModel;
 import adams.gui.core.CustomSearchTableModel;
 import adams.gui.core.SearchParameters;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * The table model for displaying LogEntry objects.
@@ -41,13 +42,13 @@ public class LogEntryViewerTableModel
   private static final long serialVersionUID = -7031190404664584447L;
 
   /** the underlying data. */
-  protected Vector<LogEntry> m_Data;
+  protected List<LogEntry> m_Data;
 
   /**
    * Initializes the model with no data.
    */
   public LogEntryViewerTableModel() {
-    this(new Vector<>());
+    this(new ArrayList<>());
   }
 
   /**
@@ -55,10 +56,10 @@ public class LogEntryViewerTableModel
    *
    * @param data	the data to display
    */
-  public LogEntryViewerTableModel(Vector<LogEntry> data) {
+  public LogEntryViewerTableModel(List<LogEntry> data) {
     super();
 
-    m_Data = new Vector<LogEntry>(data);
+    m_Data = new ArrayList<>(data);
   }
 
   /**
@@ -66,7 +67,7 @@ public class LogEntryViewerTableModel
    *
    * @return		the data
    */
-  public Vector<LogEntry> getData() {
+  public List<LogEntry> getData() {
     return m_Data;
   }
 

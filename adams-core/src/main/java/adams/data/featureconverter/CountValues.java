@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CountValues.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.featureconverter;
 
@@ -432,7 +432,7 @@ public class CountValues
       if (use)
 	count++;
     }
-    countData.add(new Double(count));
+    countData.add((double) count);
 
     return m_Converter.generateRow(countData);
   }
