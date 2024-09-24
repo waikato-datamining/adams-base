@@ -46,6 +46,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.time.Duration;
 import java.util.logging.Level;
 
 /**
@@ -245,7 +246,7 @@ public class FileMonitorPanel
 
     stopListening();
     listener = new Listener(this, file.getAbsolutePath());
-    m_Tailer = Tailer.create(file.getAbsoluteFile(), listener, 100, true);
+    m_Tailer = (Tailer.builder().setFile(file.getAbsoluteFile())).setTailerListener(listener).setDelayDuration(Duration.ofMillis(100)).setTailFromEnd(true).get();
     m_RecentFilesHandler.addRecentItem(file);
     setCurrentFile(file);
   }
@@ -328,7 +329,7 @@ public class FileMonitorPanel
    */
   protected void stopListening() {
     if (m_Tailer != null) {
-      m_Tailer.stop();
+      m_Tailer.close();
       m_Tailer = null;
     }
   }
