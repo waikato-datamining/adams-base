@@ -37,8 +37,8 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
@@ -246,7 +246,7 @@ public class AdamsTestCase
 	result = ClassManager.getSingleton().forName(getClass().getName().replaceAll("Test$", ""));
       }
       catch (Exception e) {
-	result = null;
+	// ignored
       }
     }
 
@@ -259,7 +259,7 @@ public class AdamsTestCase
    * @return		the platforms
    */
   protected HashSet<Platform> getPlatforms() {
-    return new HashSet<>(Arrays.asList(Platform.ALL));
+    return new HashSet<>(List.of(Platform.ALL));
   }
   
   /**
