@@ -13,10 +13,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * (C) Rob Camick (primary author; java sun forums user 'camickr')
  * (C) David Underhill
- * (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.scripting;
@@ -37,8 +37,8 @@ import javax.swing.text.TabSet;
 import javax.swing.text.TabStop;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
 /**
@@ -192,7 +192,7 @@ public class SyntaxDocument
   public SyntaxDocument(Properties props) {
     m_Self = this;
     m_RootElement = m_Self.getDefaultRootElement();
-    m_Keywords = new HashMap<String, MutableAttributeSet>();
+    m_Keywords = new HashMap<>();
     m_FontSize = DEFAULT_FONT_SIZE;
     m_FontName = DEFAULT_FONT_FAMILY;
     putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
@@ -230,7 +230,7 @@ public class SyntaxDocument
 	keywordId += i;
       }
       keywords = props.getProperty(keywordId, "");
-      if (keywords.equals(""))
+      if (keywords.isEmpty())
 	break;
 
       MutableAttributeSet style = (MutableAttributeSet) DEFAULT_KEYWORD.clone();
@@ -381,8 +381,8 @@ public class SyntaxDocument
   public void setTabs(int charactersPerTab) {
     Font f = new Font(m_FontName, Font.PLAIN, m_FontSize);
 
-    FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(f);
-    int charWidth = fm.charWidth('w');
+    Rectangle2D r = f.getStringBounds("w", new FontRenderContext(f.getTransform(), true, true));
+    int charWidth = (int) r.getWidth();
     int tabWidth = charWidth * charactersPerTab;
 
     TabStop[] tabs = new TabStop[MAX_TABS];
@@ -412,8 +412,7 @@ public class SyntaxDocument
   @Override
   public void insertString(int offset, String str, AttributeSet a)
       throws BadLocationException {
-    if (m_AddMatchingEndBlocks && (m_BlockStart.length() > 0)
-	&& str.equals(m_BlockStart))
+    if (m_AddMatchingEndBlocks && !m_BlockStart.isEmpty() && str.equals(m_BlockStart))
       str = addMatchingBlockEnd(offset);
     else if (m_UseBlanks && str.equals("\t"))
       str = m_Indentation;
@@ -1111,7 +1110,7 @@ public class SyntaxDocument
    */
   public void setSingleLineCommentStart(String value) {
     m_SingleLineCommentStart = value;
-    if (m_SingleLineCommentStart.length() == 0)
+    if (m_SingleLineCommentStart.isEmpty())
       m_SingleLineComment = false;
   }
 
