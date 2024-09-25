@@ -15,7 +15,7 @@
 
 /*
  * DownloadFile.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -30,6 +30,7 @@ import adams.core.io.FileUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Base64;
@@ -229,7 +230,7 @@ public class DownloadFile
     fos    = null;
     try {
       if (m_InputToken.getPayload() instanceof String)
-	url = new URL((String) m_InputToken.getPayload());
+	url = new URI((String) m_InputToken.getPayload()).toURL();
       else
 	url = (URL) m_InputToken.getPayload();
 

@@ -22,6 +22,7 @@ package adams.core;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOption;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -129,7 +130,7 @@ public enum License {
     m_URL     = null;
     if (url != null) {
       try {
-	m_URL = new URL(url);
+	m_URL = new URI(url).toURL();
       }
       catch (Exception e) {
 	m_URL = null;

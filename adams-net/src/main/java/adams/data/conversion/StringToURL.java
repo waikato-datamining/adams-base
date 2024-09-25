@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StringToURL.java
- * Copyright (C) 2011-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -40,7 +41,6 @@ import java.net.URL;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class StringToURL
   extends AbstractConversion
@@ -83,6 +83,6 @@ public class StringToURL
    * @throws Exception	if something goes wrong with the conversion
    */
   protected Object doConvert() throws Exception {
-    return new URL((String) m_Input);
+    return new URI((String) m_Input).toURL();
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * BrowserHelper.java
- * Copyright (C) 2006-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2006-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -24,6 +24,7 @@ import adams.core.Properties;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.management.OS;
+import adams.core.option.OptionUtils;
 import adams.env.BrowserDefinition;
 import adams.env.Environment;
 
@@ -155,7 +156,7 @@ public class BrowserHelper {
     try {
       // do we have an explicit browser?
       defBrowser = getProperties().getPath("DefaultBrowser", "");
-      if ((defBrowser.trim().length() > 0) && (FileUtils.fileExists(defBrowser))) {
+      if ((!defBrowser.trim().isEmpty()) && (FileUtils.fileExists(defBrowser))) {
 	Runtime.getRuntime().exec(new String[]{defBrowser, url});
       }
       else {
@@ -168,18 +169,18 @@ public class BrowserHelper {
 	  // Mac OS
 	  if (OS.isMac()) {
 	    Class fileMgr = ClassManager.getSingleton().forName("com.apple.eio.FileManager");
-	    Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] {String.class});
-	    openURL.invoke(null, new Object[] {url});
+	    Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
+	    openURL.invoke(null, url);
 	  }
 	  // Windows
 	  else if (OS.isWindows()) {
-	    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+	    Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
 	  }
 	  // assume Unix or Linux
 	  else {
 	    String browser = null;
 	    browsers = getProperties().getProperty("LinuxBrowsers", "firefox").replaceAll(" ", "").split(",");
-	    for (int count = 0; count < browsers.length && browser == null; count++) {
+	    for (int count = 0; count < browsers.length; count++) {
 	      // look for binaries and take first that's available
 	      if (Runtime.getRuntime().exec(new String[] {"which", browsers[count]}).waitFor() == 0) {
 		browser = browsers[count];
@@ -222,7 +223,7 @@ public class BrowserHelper {
     result = null;
 
     try {
-      Runtime.getRuntime().exec(cmd + " " + url);
+      Runtime.getRuntime().exec(OptionUtils.splitOptions(cmd + " " + url));
     }
     catch (Exception e) {
       result = "Error attempting to launch web browser '" + cmd + "':\n" + e.getMessage();
@@ -247,7 +248,7 @@ public class BrowserHelper {
   public static JLabel createLink(String url, String text) {
     final String urlF = url;
     final JLabel result = new JLabel();
-    result.setText((text == null) || (text.length() == 0) ? url : text);
+    result.setText((text == null) || text.isEmpty() ? url : text);
     result.setToolTipText("Click to open link in browser");
     result.setForeground(Color.BLUE);
     result.addMouseListener(new MouseAdapter() {

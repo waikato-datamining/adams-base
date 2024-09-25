@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Regression.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.test;
 
 import adams.core.DiffUtils;
 import adams.core.io.FileUtils;
+import adams.core.management.Java;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import java.util.List;
  * Helper class for regression tests.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Regression {
 
@@ -48,6 +48,9 @@ public class Regression {
   /** the regression file to use. */
   protected File m_ReferenceFile;
 
+  /** whether tests are Java version specific. */
+  protected boolean m_JavaVersionSpecific;
+
   /**
    * Initializes the regression check.
    *
@@ -56,8 +59,9 @@ public class Regression {
   public Regression(Class cls) {
     super();
 
-    m_RegressionClass = cls;
-    m_ReferenceFile   = createReferenceFile(m_RegressionClass);
+    m_RegressionClass     = cls;
+    m_JavaVersionSpecific = false;
+    m_ReferenceFile       = createReferenceFile(m_RegressionClass);
   }
 
   /**
@@ -67,6 +71,27 @@ public class Regression {
    */
   public Class getRegressionClass() {
     return m_RegressionClass;
+  }
+
+  /**
+   * Sets whether to use Java-version specific reference files.
+   * Automatically regenerates the reference file name.
+   *
+   * @param value	true for Java-version specific ones
+   * @see		#createReferenceFile(Class,boolean)
+   */
+  public void setJavaVersionSpecific(boolean value) {
+    m_JavaVersionSpecific = value;
+    m_ReferenceFile       = createReferenceFile(m_RegressionClass, m_JavaVersionSpecific);
+  }
+
+  /**
+   * Returns whether to use Java-version spefici reference files.
+   *
+   * @return		true if Java-version specific ones used
+   */
+  public boolean isJavaVersionSpecific() {
+    return m_JavaVersionSpecific;
   }
 
   /**
@@ -122,7 +147,7 @@ public class Regression {
     reference = FileUtils.loadFromFile(getReferenceFile());
     result    = DiffUtils.unified(reference, content);
 
-    if (result.length() == 0)
+    if (result.isEmpty())
       return null;
     else
       return result;
@@ -284,6 +309,17 @@ public class Regression {
 
   /**
    * Creates a reference file for the specified class.
+   *
+   * @param regressionClass	the class to build the reference file name for
+   * @param javaVersionSpecific	whether to insert a Java-version specific suffix
+   * @return			the generated filename
+   */
+  public static File createReferenceFile(Class regressionClass, boolean javaVersionSpecific) {
+    return createReferenceFile(regressionClass, null, EXTENSION, javaVersionSpecific);
+  }
+
+  /**
+   * Creates a reference file for the specified class.
    * 
    * @param regressionClass	the class to build the reference file name for
    * @param suffix		the suffix to use (between classname and extension), null to omit
@@ -295,15 +331,32 @@ public class Regression {
 
   /**
    * Creates a reference file for the specified class.
-   * 
+   *
    * @param regressionClass	the class to build the reference file name for
    * @param suffix		the suffix to use (between classname and extension), null to omit
    * @param extension		the file extension (incl the dot, eg ".ref")
    * @return			the generated filename
    */
   public static File createReferenceFile(Class regressionClass, String suffix, String extension) {
+    return createReferenceFile(regressionClass, suffix, extension, false);
+  }
+
+  /**
+   * Creates a reference file for the specified class.
+   * 
+   * @param regressionClass	the class to build the reference file name for
+   * @param suffix		the suffix to use (between classname and extension), null to omit
+   * @param extension		the file extension (incl the dot, eg ".ref")
+   * @param javaVersionSpecific	whether to insert a Java-version specific suffix
+   * @return			the generated filename
+   */
+  public static File createReferenceFile(Class regressionClass, String suffix, String extension, boolean javaVersionSpecific) {
     if (suffix == null)
       suffix = "";
-    return new File(REFERENCES + "/" + regressionClass.getName().replace(".", "/") + suffix + extension);  
+
+    if (javaVersionSpecific)
+      suffix = suffix + "-java" + Java.getMajorVersion();
+
+    return new File(REFERENCES + "/" + regressionClass.getName().replace(".", "/") + suffix + extension);
   }
 }

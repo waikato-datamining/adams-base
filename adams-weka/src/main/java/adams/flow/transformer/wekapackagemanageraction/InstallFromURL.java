@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.base.BaseURL;
 import weka.core.WekaPackageManager;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -88,7 +89,7 @@ public class InstallFromURL
       urls    = new URL[strUrls.length];
       for (i = 0; i < strUrls.length; i++) {
 	try {
-	  urls[i] = new URL(strUrls[i]);
+	  urls[i] = new URI(strUrls[i]).toURL();
 	}
 	catch (Exception e) {
 	  errors.add("Failed to process URL: " + strUrls[i], e);

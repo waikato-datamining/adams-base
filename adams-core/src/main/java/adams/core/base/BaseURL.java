@@ -22,6 +22,7 @@ package adams.core.base;
 
 import adams.core.logging.LoggingHelper;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 
@@ -89,7 +90,7 @@ public class BaseURL
     if (value == null)
       return false;
     try {
-      new URL(value);
+      new URI(value).toURL();
       return true;
     }
     catch (Exception e) {
@@ -108,14 +109,14 @@ public class BaseURL
       return;
 
     try {
-      m_Current  = new URL(value);
+      m_Current  = new URI(value).toURL();
       m_Internal = value;
     }
     catch (Exception e) {
       LoggingHelper.global().log(Level.SEVERE, "Failed to set value: " + value, e);
       m_Internal = DEFAULT_URL;
       try {
-	m_Current = new URL(value);
+	m_Current = new URI(value).toURL();
       }
       catch (Exception ex) {
 	// ignored

@@ -15,7 +15,7 @@
 
 /*
  * DownloadContent.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,6 +29,7 @@ import adams.core.base.BaseURL;
 import adams.flow.core.Token;
 
 import java.io.BufferedInputStream;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Base64;
@@ -218,7 +219,7 @@ public class DownloadContent
     content = new StringBuilder();
     try {
       if (m_InputToken.getPayload() instanceof String)
-	url = new URL((String) m_InputToken.getPayload());
+	url = new URI((String) m_InputToken.getPayload()).toURL();
       else if (m_InputToken.getPayload() instanceof BaseURL)
         url = ((BaseURL) m_InputToken.getPayload()).urlValue();
       else

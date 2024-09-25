@@ -23,6 +23,7 @@ import adams.core.DateUtils;
 import adams.core.Properties;
 import adams.core.QuickInfoSupporter;
 import adams.core.classmanager.ClassManager;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.CharsetHelper;
 import adams.core.management.LocaleHelper;
 import adams.core.management.OS;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Ancestor for all test cases.
@@ -164,8 +166,7 @@ public class AdamsTestCase
 	  m_Properties.load(props);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to read properties defined in " + PROPERTY_TESTPROPS + ": " + props);
-	  e.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to read properties defined in " + PROPERTY_TESTPROPS + ": " + props, e);
 	}
       }
 
@@ -174,7 +175,7 @@ public class AdamsTestCase
 	  m_Properties = Properties.read(file);
 	}
 	catch (Exception e) {
-	  e.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to read properties: " + file, e);
 	  m_Properties = new Properties();
 	}
       }
@@ -312,12 +313,13 @@ public class AdamsTestCase
     LocaleHelper.getSingleton().setLocale(LocaleHelper.LOCALE_EN_US);
     DateUtils.setTimeZone(TimeZone.getTimeZone("Pacific/Auckland"));
     TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Auckland"));
-    DateUtils.setLocale(new Locale("en", "NZ"));
+    DateUtils.setLocale(new Locale.Builder().setLanguage("en").setRegion("NZ").build());
     CharsetHelper.getSingleton().setCharset("UTF-8");
     
     cls = getTestedClass();
     if (cls != null) {
       m_Regression          = new Regression(cls);
+      m_Regression.setJavaVersionSpecific(isRegressionJavaVersionSpecific());
       m_QuickInfoRegression = new Regression(cls);
       m_QuickInfoRegression.setReferenceFile(Regression.createReferenceFile(cls, null, ".quickinfo"));
     }
@@ -327,6 +329,16 @@ public class AdamsTestCase
     m_NoRegressionTest          = getBooleanProperty(PROPERTY_NOREGRESSION);
     m_NoQuickInfoRegressionTest = getBooleanProperty(PROPERTY_NOQUICKINFOREGRESSION);
     m_SkipAll                   = getBooleanProperty(PROPERTY_SKIP_ALL);
+  }
+
+  /**
+   * Returns whether to use java-version specific regression tests.
+   * Does not apply to quick info.
+   *
+   * @return		true if to use
+   */
+  protected boolean isRegressionJavaVersionSpecific() {
+    return false;
   }
 
   /**
