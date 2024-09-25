@@ -28,7 +28,6 @@ import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -150,7 +149,7 @@ public class BoofCVDetectLineSegmentsTest
 
     }
     catch (Exception e) {
-      Assert.fail("Failed to set up actor: " + e);
+      org.junit.Assert.fail("Failed to set up actor: " + e);
     }
     
     return flow;

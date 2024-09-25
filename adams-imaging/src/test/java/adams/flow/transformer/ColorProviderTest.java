@@ -15,7 +15,7 @@
 
 /*
  * ColorProviderTest.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -36,7 +36,6 @@ import adams.flow.source.StringConstants;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.test.AdamsTestCase;
 import adams.test.TmpFile;
-import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -152,7 +151,7 @@ public class ColorProviderTest
 
     }
     catch (Exception e) {
-      Assert.fail("Failed to set up actor: " + e);
+      org.junit.Assert.fail("Failed to set up actor: " + e);
     }
     
     return flow;

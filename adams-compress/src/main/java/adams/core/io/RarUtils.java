@@ -302,7 +302,7 @@ public class RarUtils {
       // unrar archive
       rarfile = new Archive(input.getAbsoluteFile(), new DummyUnrarCallback());
       for (FileHeader entry: rarfile.getFileHeaders()) {
-	entryFilename = entry.getFileNameString().replace("\\", "/");
+	entryFilename = entry.getFileName().replace("\\", "/");
 	if (entry.isDirectory())
 	  continue;
 	if (!entryFilename.equals(archiveFile))
@@ -414,7 +414,7 @@ public class RarUtils {
       if (rarfile.isEncrypted())
 	return result;
       for (FileHeader entry: rarfile.getFileHeaders()) {
-	entryFilename = entry.getFileNameString().replace("\\", "/");
+	entryFilename = entry.getFileName().replace("\\", "/");
 	// encrypted?
 	if (entry.isEncrypted())
 	  continue;

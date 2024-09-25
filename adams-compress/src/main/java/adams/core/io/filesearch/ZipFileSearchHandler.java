@@ -15,7 +15,7 @@
 
 /*
  * ZipFileSearchHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filesearch;
@@ -84,7 +84,7 @@ public class ZipFileSearchHandler
     m_Stopped = false;
 
     try {
-      archive = new ZipFile(file);
+      archive = ZipFile.builder().setFile(file).get();
       enm     = archive.getEntries();
       while (enm.hasMoreElements()) {
         if (m_Stopped)

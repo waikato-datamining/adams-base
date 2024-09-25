@@ -15,7 +15,7 @@
 
 /*
  * RarFileSearchHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filesearch;
@@ -101,7 +101,7 @@ public class RarFileSearchHandler
 	}
 	catch (Exception e) {
 	  if (handler != null)
-	    handler.handleException("Failed to zip/entry: " + file + "/" + entry.getFileNameString(), e);
+	    handler.handleException("Failed to zip/entry: " + file + "/" + entry.getFileName(), e);
 	}
 	finally {
 	  FileUtils.closeQuietly(isr);

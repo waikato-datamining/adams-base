@@ -13,27 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetCellFinderToPositionsTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.cellfinder.CellTypeRange;
 import adams.env.Environment;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the SpreadSheetCellFinderToPositions conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 6556 $
  */
 public class SpreadSheetCellFinderToPositionsTest
   extends AbstractConversionTestCase {
@@ -102,6 +101,7 @@ public class SpreadSheetCellFinderToPositionsTest
    * @return		the setups
    */
   @Override
+  @SuppressWarnings("deprecation")
   protected Conversion[] getRegressionSetups() {
     SpreadSheetCellFinderToPositions[]	result;
     CellTypeRange			finder;

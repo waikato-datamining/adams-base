@@ -46,7 +46,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -54,7 +54,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -408,7 +407,7 @@ public class ExcelStreamingSpreadSheetReader
       // Do now, as characters() may be called more than once
       if (m_ContentType == ContentType.STRING) {
 	idx            = Integer.parseInt(m_LastContents.toString());
-	m_LastContents = new StringBuilder(new XSSFRichTextString(m_SST.getEntryAt(idx)).toString());
+	m_LastContents = new StringBuilder(m_SST.getItemAt(idx).toString());
       }
 
       // expand spreadsheet if necessary
@@ -881,7 +880,6 @@ public class ExcelStreamingSpreadSheetReader
     InputSource 		sheetSource;
     HashSet<Integer>		indices;
     List<String>                header;
-    Row                         rowOld;
     Row                         row;
     int                         i;
 
@@ -905,7 +903,7 @@ public class ExcelStreamingSpreadSheetReader
 	    spsheet = m_SpreadSheetType.newInstance();
 	    spsheet.setDataRowClass(m_DataRowType.getClass());
 	    spsheet.setName(sheets.getSheetName());
-	    parser = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+	    parser = new SAXParser();
 	    m_Handler = new SheetHandler(this, spsheet, sst);
 	    parser.setContentHandler(m_Handler);
 	    sheetSource = new InputSource(sheet);
@@ -919,12 +917,12 @@ public class ExcelStreamingSpreadSheetReader
 	    }
 	    result.add(spsheet);
 	    // missing types?
-	    if (m_Handler.getUnknownCellTypes().size() > 0) {
+	    if (!m_Handler.getUnknownCellTypes().isEmpty()) {
 	      getLogger().severe("Unknown cell types: " + m_Handler.getUnknownCellTypes());
 	      for (String type : m_Handler.getUnknownCellTypes())
 		getLogger().severe("- cell type '" + type + "': " + m_Handler.getUnknownCellTypesExamples().get(type));
 	    }
-	    if (m_Handler.getUnknownCellStrings().size() > 0) {
+	    if (!m_Handler.getUnknownCellStrings().isEmpty()) {
 	      getLogger().severe("Unknown cell strings: " + m_Handler.getUnknownCellStrings());
 	      for (String str : m_Handler.getUnknownCellStrings())
 		getLogger().severe("- cell string '" + str + "': " + m_Handler.getUnknownCellStringsExamples().get(str));

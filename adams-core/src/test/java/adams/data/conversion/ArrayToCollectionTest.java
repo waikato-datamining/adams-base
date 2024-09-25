@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayToCollectionTest.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
 
-import java.util.Stack;
-import java.util.Vector;
-
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
+
+import java.util.Stack;
+import java.util.Vector;
 
 /**
  * Tests the ArrayToCollection conversion.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayToCollectionTest
   extends AbstractConversionTestCase {
@@ -72,6 +71,7 @@ public class ArrayToCollectionTest
    * @return		the setups
    */
   @Override
+  @SuppressWarnings("deprecation")
   protected Conversion[] getRegressionSetups() {
     ArrayToCollection[]		result;
     

@@ -15,13 +15,11 @@
 
 /*
  * WekaRenameRelationTest.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.control.Branch;
@@ -33,7 +31,10 @@ import adams.flow.sink.CallableSink;
 import adams.flow.sink.DumpFile;
 import adams.flow.source.FileSupplier;
 import adams.flow.standalone.CallableActors;
+import adams.flow.transformer.WekaInstancesInfo.InfoType;
 import adams.test.TmpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the WekaRenameRelation actor.
@@ -105,7 +106,8 @@ public class WekaRenameRelationTest
 
     WekaRenameRelation ren1 = new WekaRenameRelation();
     ren1.setReplace("branch1");
-    WekaRelationName rel1 = new WekaRelationName();
+    WekaInstancesInfo rel1 = new WekaInstancesInfo();
+    rel1.setType(InfoType.RELATION_NAME);
     CallableSink sink1 = new CallableSink();
     sink1.setCallableName(new CallableActorReference("sink"));
     Sequence seq1 = new Sequence();
@@ -117,7 +119,8 @@ public class WekaRenameRelationTest
 
     WekaRenameRelation ren2 = new WekaRenameRelation();
     ren2.setReplace("branch2");
-    WekaRelationName rel2 = new WekaRelationName();
+    WekaInstancesInfo rel2 = new WekaInstancesInfo();
+    rel2.setType(InfoType.RELATION_NAME);
     CallableSink sink2 = new CallableSink();
     sink2.setCallableName(new CallableActorReference("sink"));
     Sequence seq2 = new Sequence();
