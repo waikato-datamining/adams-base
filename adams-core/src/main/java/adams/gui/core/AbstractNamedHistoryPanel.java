@@ -69,7 +69,7 @@ public abstract class AbstractNamedHistoryPanel<T>
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
-  public static interface PopupCustomizer {
+  public interface PopupCustomizer {
 
     /**
      * Gets called before the popup for the entries is displayed.
@@ -416,13 +416,13 @@ public abstract class AbstractNamedHistoryPanel<T>
       @Override
       public void keyPressed(KeyEvent e) {
 	if (m_AllowRename) {
-	  if ((e.getKeyCode() == KeyEvent.VK_F2) && (e.getModifiers() == 0)) {
+	  if ((e.getKeyCode() == KeyEvent.VK_F2) && (e.getModifiersEx() == 0)) {
 	    e.consume();
 	    renameEntry();
 	  }
 	}
 	if (m_AllowRemove) {
-	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiers() == 0)) {
+	  if ((e.getKeyCode() == KeyEvent.VK_DELETE) && (e.getModifiersEx() == 0)) {
 	    e.consume();
 	    removeEntries(getSelectedIndices());
 	  }
@@ -693,7 +693,7 @@ public abstract class AbstractNamedHistoryPanel<T>
 
     // remove all
     menuitem = new JMenuItem("Remove all");
-    menuitem.setEnabled(m_Entries.size() > 0);
+    menuitem.setEnabled(!m_Entries.isEmpty());
     menuitem.addActionListener((ActionEvent ae) -> checkedRemoveAllEntries());
     result.add(menuitem);
 
@@ -758,7 +758,7 @@ public abstract class AbstractNamedHistoryPanel<T>
 	if (m_SearchRegexp)
 	  match = entry.matches(search);
 	else
-	  match = (entry.toLowerCase().indexOf(search) > -1);
+	  match = entry.toLowerCase().contains(search);
 	if (match)
 	  m_ListModelFiltered.addElement(entry);
       }
