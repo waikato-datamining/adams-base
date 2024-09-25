@@ -928,7 +928,7 @@ class CUP$Parser$actions {
 		String arg = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-1)).value;
 		
                   if (type.equals("number")) {
-                    RESULT = new Double(arg);
+                    RESULT = Double.parseDouble(arg);
                     parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else if (type.equals("date")) {

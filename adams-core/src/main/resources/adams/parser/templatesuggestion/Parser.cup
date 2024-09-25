@@ -50,7 +50,6 @@ import java.util.logging.Level;
  * flow editor.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 parser code {:
@@ -337,9 +336,9 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
               | BOOLEAN:b
                 {: RESULT = b; :}
               | TRUE
-                {: RESULT = new Boolean(true); :}
+                {: RESULT = true; :}
               | FALSE
-                {: RESULT = new Boolean(false); :}
+                {: RESULT = false; :}
               | boolexpr:l AND boolexpr:r
                 {: RESULT = l && r; :}
               | boolexpr:l OR boolexpr:r
@@ -351,7 +350,7 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
               | ISLAST
                 {: RESULT = parser.isLast(); :}
               | PARENT IS CLASSNAME:c
-                {: RESULT = new Boolean(parser.getParent().getClass().getName().equals(c)); :}
+                {: RESULT = (boolean) (parser.getParent().getClass().getName().equals(c)); :}
               | BEFORE STANDALONE
                 {: RESULT = parser.isStandalone(true); :}
               | AFTER STANDALONE

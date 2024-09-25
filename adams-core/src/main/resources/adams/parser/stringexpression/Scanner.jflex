@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.stringexpression;
@@ -145,21 +145,21 @@ import java.io.*;
   "second" { return sf.newSymbol("Second", sym.SECOND); }
   "weeknum" { return sf.newSymbol("WeekNum", sym.WEEKNUM); }
   "weekday" { return sf.newSymbol("WeekDay", sym.WEEKDAY); }
-  "f_"[a-zA-Z0-9_]+ { return sf.newSymbol("Function", sym.FUNCTION, new String(yytext().substring(2))); }
-  "p_"[a-zA-Z0-9_]+ { return sf.newSymbol("Procedure", sym.PROCEDURE, new String(yytext().substring(2))); }
+  "f_"[a-zA-Z0-9_]+ { return sf.newSymbol("Function", sym.FUNCTION, yytext().substring(2)); }
+  "p_"[a-zA-Z0-9_]+ { return sf.newSymbol("Procedure", sym.PROCEDURE, yytext().substring(2)); }
 
   // constants
   "PI" { return sf.newSymbol("pi", sym.PI); }
   "E" { return sf.newSymbol("e", sym.E); }
 
   // numbers and variables
-  [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
-  "-Infinity" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.NEGATIVE_INFINITY)); }
-  "Infinity" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.POSITIVE_INFINITY)); }
-  "NaN" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.NaN)); }
-  [A-Z][a-zA-Z0-9_\.]* { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext())); }
-  "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
-  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("'", "").replace("'", ""))); }
+  [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
+  "-Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.NEGATIVE_INFINITY); }
+  "Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.POSITIVE_INFINITY); }
+  "NaN" { return sf.newSymbol("Number", sym.NUMBER, Double.NaN); }
+  [A-Z][a-zA-Z0-9_\.]* { return sf.newSymbol("Variable", sym.VARIABLE, yytext()); }
+  "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, yytext().replace("[", "").replace("]", "")); }
+  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, yytext().replace("'", "").replace("'", "")); }
 
   // comment
   "#".* { /* ignore line comments. */ }

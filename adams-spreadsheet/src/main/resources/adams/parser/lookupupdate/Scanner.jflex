@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.lookupupdate;
@@ -138,10 +138,10 @@ import java.io.*;
   "false" { return sf.newSymbol("False", sym.FALSE); }
 
   // numbers and variables
-  "-"?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
-  [a-zA-Z0-9_\-\.]+ { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext())); }
-  "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("[", "").replace("]", ""))); }
-  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, new String(yytext().replace("'", "").replace("'", ""))); }
+  "-"?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
+  [a-zA-Z0-9_\-\.]+ { return sf.newSymbol("Variable", sym.VARIABLE, yytext()); }
+  "["[^\]]+"]" { return sf.newSymbol("Variable", sym.VARIABLE, yytext().replace("[", "").replace("]", "")); }
+  "'"[^\']+"'" { return sf.newSymbol("Variable", sym.VARIABLE, yytext().replace("'", "").replace("'", "")); }
 
   // comment
   "//".* { /* ignore line comments. */ }

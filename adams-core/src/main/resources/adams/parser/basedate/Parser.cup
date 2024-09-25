@@ -46,7 +46,6 @@ import adams.parser.TimeAmount;
  * A parser for parsing date expressions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 parser code {:
@@ -241,34 +240,34 @@ calc      ::=   LPAREN calc:e RPAREN
                 %prec UPLUS
                 
               | calc:l PLUS calc:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
               | calc:l MINUS calc:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
               | calc:l TIMES calc:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
               | calc:l DIVISION calc:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
               | calc:l MODULO calc:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
               | calc:b EXPONENT calc:e
-                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
                 
               | ABS LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.abs(parser.getHelper().toDouble(e))); :}
               | SQRT LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.sqrt(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.sqrt(parser.getHelper().toDouble(e))); :}
               | LOG LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.log(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.log(parser.getHelper().toDouble(e))); :}
               | EXP LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.exp(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.exp(parser.getHelper().toDouble(e))); :}
               | RINT LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.rint(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.rint(parser.getHelper().toDouble(e))); :}
               | FLOOR LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.floor(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.floor(parser.getHelper().toDouble(e))); :}
               | POW LPAREN calc:b COMMA calc:e RPAREN
-                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
               | CEIL LPAREN calc:e RPAREN
-                {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.ceil(parser.getHelper().toDouble(e))); :}
 
               | NUMBER:n
                 {: RESULT = n; :}

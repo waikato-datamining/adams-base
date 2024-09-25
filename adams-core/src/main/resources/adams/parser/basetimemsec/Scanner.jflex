@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basetimemsec;
@@ -92,7 +92,7 @@ import java.util.*;
 "HOUR"   { return sf.newSymbol("Hour",   sym.TIMEAMOUNT, new TimeAmount(Calendar.HOUR,      1)); }
 
 // numbers
-[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
+[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
 
 // time
 [0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9] { return sf.newSymbol("Date", sym.DATE_ACTUAL, getFormat().parse(yytext())); }

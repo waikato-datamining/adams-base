@@ -633,9 +633,9 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
               | BOOLEAN:b
                 {: RESULT = b; :}
               | TRUE
-                {: RESULT = new Boolean(true); :}
+                {: RESULT = true; :}
               | FALSE
-                {: RESULT = new Boolean(false); :}
+                {: RESULT = false; :}
               | boolexpr:l AND boolexpr:r
                 {: RESULT = l && r; :}
               | boolexpr:l OR boolexpr:r
@@ -648,18 +648,18 @@ boolexpr ::=    LPAREN boolexpr:b RPAREN
                 {: RESULT = parser.isLast(); :}
 
               | PARENT IS classexpr:c
-                {: RESULT = new Boolean(parser.checkParent(c, true, false)); :}
+                {: RESULT = (boolean) (parser.checkParent(c, true, false)); :}
               | PARENT LIKE classexpr:c
-                {: RESULT = new Boolean(parser.checkParent(c, false, false)); :}
+                {: RESULT = (boolean) (parser.checkParent(c, false, false)); :}
               | PARENT ALLOWS STANDALONE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainStandalones(); :}
               | PARENT ALLOWS SOURCE
                 {: RESULT = ((ActorHandler) parser.getParent()).getActorHandlerInfo().canContainSource(); :}
 
               | ANYPARENT IS classexpr:c
-                {: RESULT = new Boolean(parser.checkParent(c, true, true)); :}
+                {: RESULT = (boolean) (parser.checkParent(c, true, true)); :}
               | ANYPARENT LIKE classexpr:c
-                {: RESULT = new Boolean(parser.checkParent(c, false, true)); :}
+                {: RESULT = (boolean) (parser.checkParent(c, false, true)); :}
 
               | PRECEDING GENERATES classexpr:c
                 {: RESULT = parser.precedingGenerates(c); :}

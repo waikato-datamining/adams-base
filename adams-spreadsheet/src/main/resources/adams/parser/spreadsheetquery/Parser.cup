@@ -55,7 +55,6 @@ import adams.parser.spreadsheetquery.ParserHelper;
  * A parser for spreadsheet queries.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 parser code {:
@@ -303,7 +302,7 @@ value     ::=   NUMBER:n
               | PARSE LPAREN STRING:type COMMA STRING:arg RPAREN
                 {:
                   if (type.equals("number")) {
-                    RESULT = new Double(arg);
+                    RESULT = Double.parseDouble(arg);
                     parser.getHelper().getLogger().fine("parse/" + type + ": " + arg); 
                   }
                   else if (type.equals("date")) {

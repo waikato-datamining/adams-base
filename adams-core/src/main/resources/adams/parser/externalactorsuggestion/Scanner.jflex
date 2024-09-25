@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.externalactorsuggestion;
@@ -87,7 +87,7 @@ import java.util.*;
   "FALSE"       { return sf.newSymbol("False",       sym.FALSE); }
 
   // classname
-  ([a-zA-Z_$][0-9a-zA-Z\d_$]*\.)*[a-zA-Z_$][0-9a-zA-Z\d_$]* { return sf.newSymbol("Classname", sym.CLASSNAME, new String(yytext())); }
+  ([a-zA-Z_$][0-9a-zA-Z\d_$]*\.)*[a-zA-Z_$][0-9a-zA-Z\d_$]* { return sf.newSymbol("Classname", sym.CLASSNAME, yytext()); }
 
   // parentheses
   "(" { return sf.newSymbol("Left Bracket",  sym.LPAREN); }

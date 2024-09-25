@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.spreadsheetquery;
@@ -28,7 +28,6 @@ import java.io.*;
  * A scanner for spreadsheet queries.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 %%
 %caseless
@@ -107,9 +106,9 @@ import java.io.*;
   "or" { return sf.newSymbol("Or", sym.OR); }
 
   // numbers and variables
-  (-)?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
-  [a-zA-Z0-9_\-]+ { return sf.newSymbol("Column", sym.COLUMN, new String(yytext())); }
-  "["[^\]]+"]" { return sf.newSymbol("Column", sym.COLUMN, new String(yytext().replace("[", "").replace("]", ""))); }
+  (-)?[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
+  [a-zA-Z0-9_\-]+ { return sf.newSymbol("Column", sym.COLUMN, yytext()); }
+  "["[^\]]+"]" { return sf.newSymbol("Column", sym.COLUMN, yytext().replace("[", "").replace("]", "")); }
 
   // comment
   "--".* { /* ignore line comments. */ }

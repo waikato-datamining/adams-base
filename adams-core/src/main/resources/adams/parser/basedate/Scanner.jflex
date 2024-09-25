@@ -16,7 +16,7 @@
 
 /*
  * Scanner.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser.basedate;
@@ -94,7 +94,7 @@ import java.util.*;
 "YEAR"   { return sf.newSymbol("Year",   sym.TIMEAMOUNT, new TimeAmount(Calendar.YEAR,      1)); }
 
 // numbers
-[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
+[0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
 
 // date/time
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] { return sf.newSymbol("Date", sym.DATE_ACTUAL, getFormat().parse(yytext())); }

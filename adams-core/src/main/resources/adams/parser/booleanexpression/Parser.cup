@@ -123,7 +123,7 @@ parser code {:
         String[] pairs = args[1].replaceAll(" ", "").split(";");
         for (int i = 0; i < pairs.length; i++) {
           String[] parts = pairs[i].split("=");
-          symbols.put(parts[0], new Double(parts[1]));
+          symbols.put(parts[0], Double.parseDouble(parts[1]));
         }
         // print symbols
         System.out.println("\nSymbols provided:");
@@ -221,13 +221,13 @@ expr      ::=
                 :}
 
               | TRUE
-                {: RESULT = new Boolean(true); :}
+                {: RESULT = true; :}
               | FALSE
-                {: RESULT = new Boolean(false); :}
+                {: RESULT = false; :}
               | PI
-                {: RESULT = new Double(Math.PI); :}
+                {: RESULT = (double) Math.PI; :}
               | E
-                {: RESULT = new Double(Math.E); :}
+                {: RESULT = (double) Math.E; :}
               | NOW LPAREN RPAREN
                 {: RESULT = DateUtils.now(); :}
               | TODAY LPAREN RPAREN
@@ -238,17 +238,17 @@ expr      ::=
                 %prec UMINUS
                 
               | expr:l LT expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) < 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) < 0); :}
               | expr:l LE expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) <= 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) <= 0); :}
               | expr:l GT expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) > 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) > 0); :}
               | expr:l GE expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) >= 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) >= 0); :}
               | expr:l EQ expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) == 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) == 0); :}
               | expr:l NOT_EQ expr:r
-                {: RESULT = new Boolean(parser.getHelper().compare(l, r) != 0); :}
+                {: RESULT = (boolean) (parser.getHelper().compare(l, r) != 0); :}
 
               | NOT expr:b
                 {: RESULT = !parser.getHelper().toBoolean(b); :}
@@ -258,70 +258,70 @@ expr      ::=
                 {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
                 
               | expr:l PLUS expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
               | expr:l MINUS expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) - parser.getHelper().toDouble(r)); :}
               | expr:l TIMES expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) * parser.getHelper().toDouble(r)); :}
               | expr:l DIVISION expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) / parser.getHelper().toDouble(r)); :}
               | expr:l MODULO expr:r
-                {: RESULT = new Double(parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
+                {: RESULT = (double) (parser.getHelper().toDouble(l) % parser.getHelper().toDouble(r)); :}
               | expr:b EXPONENT expr:e
-                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
                 
               | ABS LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.abs(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.abs(parser.getHelper().toDouble(e))); :}
               | SQRT LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.sqrt(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.sqrt(parser.getHelper().toDouble(e))); :}
               | CBRT LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.cbrt(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.cbrt(parser.getHelper().toDouble(e))); :}
               | LOG LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.log(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.log(parser.getHelper().toDouble(e))); :}
               | LOG10 LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.log10(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.log10(parser.getHelper().toDouble(e))); :}
               | EXP LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.exp(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.exp(parser.getHelper().toDouble(e))); :}
               | SIN LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.sin(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.sin(parser.getHelper().toDouble(e))); :}
               | SINH LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.sinh(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.sinh(parser.getHelper().toDouble(e))); :}
               | COS LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.cos(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.cos(parser.getHelper().toDouble(e))); :}
               | COSH LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.cosh(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.cosh(parser.getHelper().toDouble(e))); :}
               | TAN LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.tan(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.tan(parser.getHelper().toDouble(e))); :}
               | TANH LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.tanh(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.tanh(parser.getHelper().toDouble(e))); :}
               | ATAN LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.atan(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.atan(parser.getHelper().toDouble(e))); :}
               | ATAN2 LPAREN expr:y semi_or_comma expr:x RPAREN
-                {: RESULT = new Double(Math.atan2(parser.getHelper().toDouble(y), parser.getHelper().toDouble(x))); :}
+                {: RESULT = (double) (Math.atan2(parser.getHelper().toDouble(y), parser.getHelper().toDouble(x))); :}
               | HYPOT LPAREN expr:x semi_or_comma expr:y RPAREN
-                {: RESULT = new Double(Math.hypot(parser.getHelper().toDouble(x), parser.getHelper().toDouble(y))); :}
+                {: RESULT = (double) (Math.hypot(parser.getHelper().toDouble(x), parser.getHelper().toDouble(y))); :}
               | SIGNUM LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.signum(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.signum(parser.getHelper().toDouble(e))); :}
               | RINT LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.rint(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.rint(parser.getHelper().toDouble(e))); :}
               | FLOOR LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.floor(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.floor(parser.getHelper().toDouble(e))); :}
               | POW LPAREN expr:b semi_or_comma expr:e RPAREN
-                {: RESULT = new Double(Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.pow(parser.getHelper().toDouble(b), parser.getHelper().toDouble(e))); :}
               | CEIL LPAREN expr:e RPAREN
-                {: RESULT = new Double(Math.ceil(parser.getHelper().toDouble(e))); :}
+                {: RESULT = (double) (Math.ceil(parser.getHelper().toDouble(e))); :}
               | MIN LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
-                {: RESULT = new Double(Math.min(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
+                {: RESULT = (double) (Math.min(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
               | MAX LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
-                {: RESULT = new Double(Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
+                {: RESULT = (double) (Math.max(parser.getHelper().toDouble(e1), parser.getHelper().toDouble(e2))); :}
               | RAND LPAREN RPAREN
-                {: RESULT = new Double(Math.random()); :}
+                {: RESULT = (double) (Math.random()); :}
               | RAND LPAREN expr:e RPAREN
-                {: RESULT = new Double(new Random(parser.getHelper().toInteger(e)).nextDouble()); :}
+                {: RESULT = (double) (new Random(parser.getHelper().toInteger(e)).nextDouble()); :}
               | RANDINT LPAREN expr:e RPAREN
-                {: RESULT = new Double(new Random().nextInt(parser.getHelper().toInteger(e))); :}
+                {: RESULT = (double) (new Random().nextInt(parser.getHelper().toInteger(e))); :}
               | RANDINT LPAREN expr:e1 semi_or_comma expr:e2 RPAREN
-                {: RESULT = new Double(new Random(parser.getHelper().toInteger(e1)).nextInt(parser.getHelper().toInteger(e2))); :}
+                {: RESULT = (double) (new Random(parser.getHelper().toInteger(e1)).nextInt(parser.getHelper().toInteger(e2))); :}
               | IFELSE LPAREN expr:b semi_or_comma expr:e_true semi_or_comma expr:e_false RPAREN
                 {: if (parser.getHelper().toBoolean(b))
                      RESULT = e_true;
@@ -329,7 +329,7 @@ expr      ::=
                      RESULT = e_false;
                 :}
               | HAS LPAREN VARIABLE:v RPAREN
-                {: RESULT = new Boolean(parser.getSymbols().containsKey(v)); :}
+                {: RESULT = (boolean) (parser.getSymbols().containsKey(v)); :}
               | IFMISSING LPAREN VARIABLE:v semi_or_comma expr:missing RPAREN
                 {: if (!parser.getSymbols().containsKey(v))
                      RESULT = missing;
@@ -341,9 +341,9 @@ expr      ::=
               | LENGTH LPAREN expr:s RPAREN
                 {: 
                    if (s.getClass().isArray())
-                     RESULT = new Double(Array.getLength(s));
+                     RESULT = (double) (Array.getLength(s));
                    else
-                     RESULT = new Double(parser.getHelper().toString(s).length());
+                     RESULT = (double) (parser.getHelper().toString(s).length());
                 :}
               | GET LPAREN expr:a semi_or_comma expr:index  RPAREN
                 {: RESULT = Array.get(a, parser.getHelper().toDouble(index).intValue() - 1); :}
@@ -397,7 +397,7 @@ expr      ::=
               | YEAR LPAREN expr:s RPAREN
                 {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.YEAR); :}
               | MONTH LPAREN expr:s RPAREN
-                {: RESULT = new Double(parser.getHelper().getDateFieldFromString(s, Calendar.MONTH) + 1); :}
+                {: RESULT = (double) (parser.getHelper().getDateFieldFromString(s, Calendar.MONTH) + 1); :}
               | DAY LPAREN expr:s RPAREN
                 {: RESULT = parser.getHelper().getDateFieldFromString(s, Calendar.DAY_OF_MONTH); :}
               | HOUR LPAREN expr:s RPAREN
@@ -438,17 +438,17 @@ expr      ::=
               | TRIM LPAREN expr:s RPAREN
                 {: RESULT = parser.getHelper().toString(s).trim(); :}
               | MATCHES LPAREN expr:s semi_or_comma expr:pattern RPAREN
-                {: RESULT = new Boolean(parser.getHelper().toString(s).matches(parser.getHelper().toString(pattern))); :}
+                {: RESULT = (boolean) (parser.getHelper().toString(s).matches(parser.getHelper().toString(pattern))); :}
               | FIND LPAREN expr:f semi_or_comma expr:s RPAREN
-                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase()) + 1); :}
+                {: RESULT = (double) (parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase()) + 1); :}
               | FIND LPAREN expr:f semi_or_comma expr:s semi_or_comma expr:p RPAREN
-                {: RESULT = new Double(parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase(), parser.getHelper().toInteger(p) - 1) + 1); :}
+                {: RESULT = (double) (parser.getHelper().toString(s).toLowerCase().indexOf(parser.getHelper().toString(f).toLowerCase(), parser.getHelper().toInteger(p) - 1) + 1); :}
               | CONTAINS LPAREN expr:s semi_or_comma expr:f RPAREN
-                {: RESULT = new Boolean(parser.getHelper().toString(s).contains(parser.getHelper().toString(f))); :}
+                {: RESULT = (boolean) (parser.getHelper().toString(s).contains(parser.getHelper().toString(f))); :}
               | STARTSWITH LPAREN expr:s semi_or_comma expr:f RPAREN
-                {: RESULT = new Boolean(parser.getHelper().toString(s).startsWith(parser.getHelper().toString(f))); :}
+                {: RESULT = (boolean) (parser.getHelper().toString(s).startsWith(parser.getHelper().toString(f))); :}
               | ENDSWITH LPAREN expr:s semi_or_comma expr:f RPAREN
-                {: RESULT = new Boolean(parser.getHelper().toString(s).endsWith(parser.getHelper().toString(f))); :}
+                {: RESULT = (boolean) (parser.getHelper().toString(s).endsWith(parser.getHelper().toString(f))); :}
               | REPLACE LPAREN expr:s semi_or_comma expr:p semi_or_comma expr:l semi_or_comma expr:n RPAREN
                 {: RESULT = parser.getHelper().replace(parser.getHelper().toString(s), parser.getHelper().toInteger(p) - 1, parser.getHelper().toInteger(l), parser.getHelper().toString(n)); :}
               | REPLACEALL LPAREN expr:s semi_or_comma expr:f semi_or_comma expr:r RPAREN

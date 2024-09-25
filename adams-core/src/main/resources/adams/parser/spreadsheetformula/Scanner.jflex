@@ -28,7 +28,6 @@ import java.io.*;
  * A scanner for spreadsheet formulas.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 %%
 %caseless
@@ -143,19 +142,19 @@ import java.io.*;
   "weekday" { return sf.newSymbol("WeekDay", sym.WEEKDAY); }
   "cellobj" { return sf.newSymbol("Cell object", sym.CELL_OBJECT); }
   "cellstr" { return sf.newSymbol("Cell string", sym.CELL_STRING); }
-  "f_"[a-zA-Z0-9_]+ { return sf.newSymbol("Function", sym.FUNCTION, new String(yytext().substring(2))); }
-  "p_"[a-zA-Z0-9_]+ { return sf.newSymbol("Procedure", sym.PROCEDURE, new String(yytext().substring(2))); }
+  "f_"[a-zA-Z0-9_]+ { return sf.newSymbol("Function", sym.FUNCTION, yytext().substring(2)); }
+  "p_"[a-zA-Z0-9_]+ { return sf.newSymbol("Procedure", sym.PROCEDURE, yytext().substring(2)); }
 
   // constants
   "PI" { return sf.newSymbol("pi", sym.PI); }
   "E" { return sf.newSymbol("e", sym.E); }
 
   // numbers and variables
-  [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, new Double(yytext())); }
-  "-Infinity" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.NEGATIVE_INFINITY)); }
-  "Infinity" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.POSITIVE_INFINITY)); }
-  "NaN" { return sf.newSymbol("Number", sym.NUMBER, new Double(Double.NaN)); }
-  [A-Z]+[0-9]+ { return sf.newSymbol("Cell", sym.CELL, new String(yytext())); }
+  [0-9]*\.?[0-9]+(E(-)?[1-9][0-9]*)? { return sf.newSymbol("Number", sym.NUMBER, Double.parseDouble(yytext())); }
+  "-Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.NEGATIVE_INFINITY); }
+  "Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.POSITIVE_INFINITY); }
+  "NaN" { return sf.newSymbol("Number", sym.NUMBER, Double.NaN); }
+  [A-Z]+[0-9]+ { return sf.newSymbol("Cell", sym.CELL, yytext()); }
 
   // comment
   "#".* { /* ignore line comments. */ }
