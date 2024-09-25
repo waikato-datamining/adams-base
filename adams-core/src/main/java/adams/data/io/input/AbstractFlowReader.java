@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowReader.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -253,7 +253,7 @@ public abstract class AbstractFlowReader
 	case FILE:
 	  throw new IllegalStateException("Only supports reading from files, not readers!");
 	case STREAM:
-	  result = doReadActor(new ReaderInputStream(r));
+	  result = doReadActor(ReaderInputStream.builder().setReader(r).get());
 	  break;
 	case READER:
 	  result = doReadActor(r);

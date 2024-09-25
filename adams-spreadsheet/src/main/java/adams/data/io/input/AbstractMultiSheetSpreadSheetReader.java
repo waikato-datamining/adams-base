@@ -227,7 +227,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader<T extends Range>
 	case FILE:
 	  throw new IllegalStateException("Only supports reading from files, not input streams!");
 	case STREAM:
-	  result = doReadRange(new ReaderInputStream(r));
+	  result = doReadRange(ReaderInputStream.builder().setReader(r).get());
 	  break;
 	case READER:
 	  result = doReadRange(r);

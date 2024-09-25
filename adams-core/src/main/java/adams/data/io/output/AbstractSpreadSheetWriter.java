@@ -15,7 +15,7 @@
 
 /*
  * AbstractSpreadSheetWriter.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -35,13 +35,13 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 /**
  * Ancestor for classes that can write spreadsheet objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSpreadSheetWriter
   extends AbstractOptionHandler
@@ -125,9 +125,9 @@ public abstract class AbstractSpreadSheetWriter
 
     result = new StringBuilder();
 
-    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("Supported file extensions: ").append(Utils.flatten(getFormatExtensions(), ", "));
     result.append("\n");
-    result.append("Default file extension: " + getDefaultFormatExtension());
+    result.append("Default file extension: ").append(getDefaultFormatExtension());
 
     return result.toString();
   }
@@ -241,8 +241,6 @@ public abstract class AbstractSpreadSheetWriter
     boolean			append;
     AppendableSpreadSheetWriter	appendable;
 
-    result = true;
-
     preWriteFile(filename);
 
     append = false;
@@ -285,8 +283,8 @@ public abstract class AbstractSpreadSheetWriter
       }
     }
     catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write to: " + filename, e);
       result = false;
-      e.printStackTrace();
     }
     finally {
       FileUtils.closeQuietly(writer);
@@ -332,7 +330,13 @@ public abstract class AbstractSpreadSheetWriter
       case FILE:
         throw new IllegalStateException("Only supports writing to files, not output streams!");
       case STREAM:
-        return doWrite(content, new WriterOutputStream(writer));
+	try {
+	  return doWrite(content, WriterOutputStream.builder().setWriter(writer).get());
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to write to stream!", e);
+	  return false;
+	}
       case WRITER:
         return doWrite(content, writer);
       default:

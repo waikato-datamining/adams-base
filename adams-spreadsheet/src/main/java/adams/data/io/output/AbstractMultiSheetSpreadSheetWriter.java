@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractMultiSheetSpreadSheetWriter.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -30,13 +30,13 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.logging.Level;
 
 /**
  * Ancestor for spreadsheet writers that can write multiple sheets into
  * a single document.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractMultiSheetSpreadSheetWriter
   extends AbstractSpreadSheetWriter
@@ -199,16 +199,10 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
     boolean			result;
     BufferedWriter		writer;
     OutputStream		output;
-    FileOutputStream            fos;
-    FileWriter			fw;
-
-    result = true;
 
     preWriteFile(filename);
 
     writer = null;
-    fw     = null;
-    fos    = null;
     try {
       switch (getOutputType()) {
         case FILE:
@@ -227,13 +221,11 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
       }
     }
     catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write to: " + filename, e);
       result = false;
-      e.printStackTrace();
     }
     finally {
       FileUtils.closeQuietly(writer);
-      FileUtils.closeQuietly(fw);
-      FileUtils.closeQuietly(fos);
     }
 
     return result;
@@ -275,7 +267,13 @@ public abstract class AbstractMultiSheetSpreadSheetWriter
       case FILE:
         throw new IllegalStateException("Can only write to files!");
       case STREAM:
-        return doWrite(content, new WriterOutputStream(writer));
+	try {
+	  return doWrite(content, WriterOutputStream.builder().setWriter(writer).get());
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to write to stream!", e);
+	  return false;
+	}
       case WRITER:
         return doWrite(content, writer);
       default:

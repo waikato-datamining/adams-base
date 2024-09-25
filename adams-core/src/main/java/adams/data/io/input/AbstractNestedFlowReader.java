@@ -153,7 +153,7 @@ public abstract class AbstractNestedFlowReader
 	case FILE:
 	  throw new IllegalStateException("Only supports reading from files, not readers!");
 	case STREAM:
-	  result = doReadNested(new ReaderInputStream(r));
+	  result = doReadNested(ReaderInputStream.builder().setReader(r).get());
 	  break;
 	case READER:
 	  result = doReadNested(r);

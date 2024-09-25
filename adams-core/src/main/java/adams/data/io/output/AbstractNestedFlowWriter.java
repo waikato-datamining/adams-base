@@ -15,7 +15,7 @@
 
 /*
  * AbstractListFlowWriter.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for flow writers that support the nested format.
@@ -66,8 +67,6 @@ public abstract class AbstractNestedFlowWriter
     BufferedWriter writer;
     OutputStream output;
 
-    result = true;
-
     writer = null;
     output = null;
     try {
@@ -88,8 +87,8 @@ public abstract class AbstractNestedFlowWriter
       }
     }
     catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write to: " + filename, e);
       result = false;
-      e.printStackTrace();
     }
     finally {
       FileUtils.closeQuietly(writer);
@@ -133,7 +132,13 @@ public abstract class AbstractNestedFlowWriter
       case FILE:
 	throw new IllegalStateException("Only supports writing to files, not output streams!");
       case STREAM:
-	return doWrite(content, new WriterOutputStream(writer));
+	try {
+	  return doWrite(content, WriterOutputStream.builder().setWriter(writer).get());
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to write to stream!", e);
+	  return false;
+	}
       case WRITER:
 	return doWrite(content, writer);
       default:

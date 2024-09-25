@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowWriter.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -32,12 +32,12 @@ import java.io.FileWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.logging.Level;
 
 /**
  * Ancestor for classes that can write flow objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowWriter
   extends AbstractOptionHandler
@@ -137,8 +137,8 @@ public abstract class AbstractFlowWriter
       }
     }
     catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to write to: " + filename, e);
       result = false;
-      e.printStackTrace();
     }
     finally {
       FileUtils.closeQuietly(writer);
@@ -182,7 +182,13 @@ public abstract class AbstractFlowWriter
       case FILE:
 	throw new IllegalStateException("Only supports writing to files, not output streams!");
       case STREAM:
-	return doWrite(content, new WriterOutputStream(writer));
+	try {
+	  return doWrite(content, WriterOutputStream.builder().setWriter(writer).get());
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to write to stream!", e);
+	  return false;
+	}
       case WRITER:
 	return doWrite(content, writer);
       default:

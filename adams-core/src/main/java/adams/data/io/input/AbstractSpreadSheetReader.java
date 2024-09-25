@@ -441,7 +441,7 @@ public abstract class AbstractSpreadSheetReader
         case FILE:
           throw new IllegalStateException("Only supports reading from files, not input streams!");
         case STREAM:
-          result = doRead(new ReaderInputStream(r));
+          result = doRead(ReaderInputStream.builder().setReader(r).get());
           break;
         case READER:
           result = doRead(r);
