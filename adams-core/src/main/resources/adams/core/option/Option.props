@@ -399,3 +399,8 @@ adams.core.base.MavenRepository#valueOf=adams.core.option.parsing.MavenRepositor
 adams.core.base.RangedThreshold=true
 adams.core.base.RangedThreshold#toString=adams.core.option.parsing.BaseObjectParsing#toString
 adams.core.base.RangedThreshold#valueOf=adams.core.option.parsing.BaseObjectParsing#valueOf
+
+# License objects
+adams.core.License=true
+adams.core.License#toString=adams.core.option.parsing.LicenseParsing#toString
+adams.core.License#valueOf=adams.core.option.parsing.LicenseParsing#valueOf

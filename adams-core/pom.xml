@@ -213,6 +213,11 @@
       <groupId>com.github.vbmacher</groupId>
       <artifactId>java-cup-runtime</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>nz.ac.waikato.cms.adams</groupId>
+      <artifactId>adams-annotations</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -225,6 +230,12 @@
       <plugin>
         <groupId>com.github.fracpete</groupId>
         <artifactId>latex-maven-plugin</artifactId>
+      </plugin>
+
+      <!-- for generating the license information -->
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
       </plugin>
 
       <plugin>

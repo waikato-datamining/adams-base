@@ -88,6 +88,12 @@
         <artifactId>latex-maven-plugin</artifactId>
       </plugin>
 
+      <!-- for generating the license information -->
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
