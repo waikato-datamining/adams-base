@@ -322,7 +322,10 @@ public abstract class AbstractChooserPanel<T>
       menu,
       getFavoritesClass(),
       getCurrent(),
-      (FavoriteSelectionEvent fe) -> setCurrent((T) fe.getFavorite().getObject()));
+      (FavoriteSelectionEvent fe) -> {
+	setCurrent((T) fe.getFavorite().getObject());
+	notifyChangeListeners(new ChangeEvent(m_Self));
+      });
     menu.show(m_ButtonFavorites, 0, m_ButtonFavorites.getHeight());
   }
 
