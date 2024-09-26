@@ -13,27 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocaleHelper.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
-
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
 
 import adams.core.Properties;
 import adams.env.Environment;
 import adams.env.LocaleDefinition;
 
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * Helper class for locale setup (see <a href="http://en.wikipedia.org/wiki/ISO_639" target="_blank">ISO 639</a>).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocaleHelper {
 
@@ -80,7 +80,7 @@ public class LocaleHelper {
    * Initializes the helper.
    */
   protected void initialize() {
-    m_LocaleEnUS = new Locale(LOCALE_EN_US);
+    m_LocaleEnUS = valueOf(LOCALE_EN_US);
   }
 
   /**
@@ -338,15 +338,15 @@ public class LocaleHelper {
    */
   public static String[] getIDs() {
     Locale[]		locales;
-    ArrayList<String>	result;
+    List<String> 	result;
     
-    result  = new ArrayList<String>();
+    result  = new ArrayList<>();
     locales = Locale.getAvailableLocales();
     for (Locale l: locales)
       result.add(l.toString());
     Collections.sort(result);
     result.add(0, LocaleHelper.LOCALE_DEFAULT);
     
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 }
