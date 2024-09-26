@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ThirdPartyCopyrightProcessor.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
@@ -25,7 +25,6 @@ import javax.annotation.processing.SupportedOptions;
  * A processor that lists all classes/methods with 3rd party copyright.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see MixedCopyright
  */
 @SupportedOptions(

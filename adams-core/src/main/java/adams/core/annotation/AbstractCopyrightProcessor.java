@@ -31,8 +31,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +40,6 @@ import java.util.Set;
  * A processor that lists all classes/methods with mixed copyright.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see MixedCopyright
  */
 public abstract class AbstractCopyrightProcessor<T extends Annotation>
@@ -73,7 +72,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    */
   @Override
   public Set<String> getSupportedOptions() {
-    return new HashSet<String>(Arrays.asList(new String[]{"module", "output", "printheader"}));
+    return new HashSet<>(List.of("module", "output", "printheader"));
   }
 
   /**
@@ -87,7 +86,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
    */
   @Override
   public Set<String> getSupportedAnnotationTypes() {
-    return new HashSet<String>(Arrays.asList(new String[]{getAnnotationClass().getName()}));
+    return new HashSet<>(List.of(getAnnotationClass().getName()));
   }
   
   /**
@@ -153,7 +152,7 @@ public abstract class AbstractCopyrightProcessor<T extends Annotation>
     boolean		printHeader;
     
     options     = processingEnv.getOptions();
-    module      = options.containsKey("module") ? options.get("module") : "N/A";
+    module      = options.getOrDefault("module", "N/A");
     printHeader = (options.get("printheader") != null) && (options.get("printheader").equalsIgnoreCase("true"));
     output      = options.get("output");
     if (output != null)

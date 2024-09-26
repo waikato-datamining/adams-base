@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MixedCopyright.java
- * Copyright (C) 2010-2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
@@ -25,7 +25,6 @@ import adams.core.License;
  * An annotation for classes with mixed copyright.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public @interface MixedCopyright {
   String copyright() default "";

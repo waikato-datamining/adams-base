@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DeprecatedClass.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.annotation;
 
@@ -27,7 +27,6 @@ import java.lang.annotation.RetentionPolicy;
  * class(es) to use instead.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DeprecatedClass {
