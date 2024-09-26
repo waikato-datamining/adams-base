@@ -50,9 +50,30 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.groovy</groupId>
+      <groupId>org.apache.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>3.0.20</version>
+      <version>4.0.23</version>
+      <type>pom</type>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-test-junit5</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-console</artifactId>
+      <version>4.0.23</version>
       <type>pom</type>
       <exclusions>
         <exclusion>

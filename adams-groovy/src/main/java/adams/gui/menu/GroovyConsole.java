@@ -15,7 +15,7 @@
 
 /*
  * GroovyConsole.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -24,13 +24,12 @@ package adams.gui.menu;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
-import groovy.ui.Console;
+import groovy.console.ui.Console;
 
 /**
  * Launches the Groovy Console.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GroovyConsole
   extends AbstractBasicMenuItemDefinition {
