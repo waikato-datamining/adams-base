@@ -15,7 +15,7 @@
 
 /*
  * DefaultProcessor.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.processor;
@@ -151,7 +151,7 @@ public class DefaultProcessor
 
     // command string
     result = new StringBuilder();
-    result.append(header.toComment());
+    result.append(header.toComment(true));
     result.append(Utils.flatten(Utils.breakUp(data, PAYLOAD_WIDTH), "\n"));
 
     return result.toString();

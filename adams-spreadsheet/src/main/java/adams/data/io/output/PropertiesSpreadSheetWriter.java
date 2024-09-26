@@ -15,7 +15,7 @@
 
 /*
  * PropertiesSpreadSheetWriter.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -54,7 +54,6 @@ import adams.data.spreadsheet.SpreadSheetColumnIndex;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesSpreadSheetWriter
   extends AbstractSpreadSheetWriter {
@@ -234,6 +233,6 @@ public class PropertiesSpreadSheetWriter
       }
     }
 
-    return props.save(filename);
+    return props.save(filename, true);
   }
 }

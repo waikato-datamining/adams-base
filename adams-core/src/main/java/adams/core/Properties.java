@@ -45,7 +45,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -611,7 +613,7 @@ public class Properties
   }
 
   /**
-   * Saves the properties to the given file.
+   * Saves the properties to the given file (unsorted).
    *
    * @param filename	the file to save the properties to
    * @return		true if successfully written
@@ -624,13 +626,37 @@ public class Properties
    * Saves the properties to the given file.
    *
    * @param filename	the file to save the properties to
+   * @param sorted 	whether to sort the content
+   * @return		true if successfully written
+   */
+  public boolean save(String filename, boolean sorted) {
+    return save(filename, null, sorted);
+  }
+
+  /**
+   * Saves the properties to the given file (unsorted).
+   *
+   * @param filename	the file to save the properties to
    * @param comment	the comment to use, can be null
    * @return		true if successfully written
    */
   public boolean save(String filename, String comment) {
+    return save(filename, comment, false);
+  }
+
+  /**
+   * Saves the properties to the given file.
+   *
+   * @param filename	the file to save the properties to
+   * @param comment	the comment to use, can be null
+   * @param sorted 	whether to sort the content
+   * @return		true if successfully written
+   */
+  public boolean save(String filename, String comment, boolean sorted) {
     boolean			result;
     BufferedOutputStream	stream;
     FileOutputStream		fos;
+    String			content;
 
     result = true;
 
@@ -642,7 +668,13 @@ public class Properties
 	stream = new BufferedOutputStream(new GZIPOutputStream(fos));
       else
 	stream = new BufferedOutputStream(fos);
-      collapse().store(stream, comment);
+      if (sorted) {
+	content = toString(comment, true);
+	stream.write(content.getBytes(StandardCharsets.ISO_8859_1));
+      }
+      else {
+	collapse().store(stream, comment);
+      }
       stream.flush();
     }
     catch (Exception e) {
@@ -679,24 +711,47 @@ public class Properties
   }
 
   /**
-   * Outputs the properties as they would be written to a file.
+   * Outputs the properties as they would be written to a file (unsorted).
    *
    * @return		the generated output or null in case of an error
    */
   @Override
   public String toString() {
-    return toString(null);
+    return toString(null, false);
+  }
+
+  /**
+   * Outputs the properties as they would be written to a file (unsorted).
+   *
+   * @param comment	the comment to output
+   * @return		the generated output or null in case of an error
+   */
+  public String toString(String comment) {
+    return toString(comment, false);
+  }
+
+  /**
+   * Outputs the properties as they would be written to a file.
+   *
+   * @param sorted 	whether to store the output
+   * @return		the generated output or null in case of an error
+   */
+  public String toString(boolean sorted) {
+    return toString(null, sorted);
   }
 
   /**
    * Outputs the properties as they would be written to a file.
    *
    * @param comment	the comment to output
+   * @param sorted 	whether to store the output
    * @return		the generated output or null in case of an error
    */
-  public String toString(String comment) {
+  public String toString(String comment, boolean sorted) {
     String		result;
     StringWriter	writer;
+    String[]		lines;
+    String[]		linesSubset;
 
     try {
       writer = new StringWriter();
@@ -704,6 +759,19 @@ public class Properties
       writer.flush();
       writer.close();
       result = writer.toString();
+      if (sorted) {
+	lines = result.split("\n");
+	linesSubset = Arrays.copyOfRange(lines, 1, lines.length);
+	Arrays.sort(linesSubset);
+	writer = new StringWriter();
+	writer.write(lines[0]);
+	writer.write("\n");
+	for (String line: linesSubset) {
+	  writer.write(line);
+	  writer.write("\n");
+	}
+	result = writer.toString();
+      }
     }
     catch (Exception e) {
       result = null;
@@ -714,7 +782,7 @@ public class Properties
   }
 
   /**
-   * Outputs the properties as they would be written to a file.
+   * Outputs the properties as they would be written to a file (unsorted).
    * In addition, all lines will be output as comment:
    * <pre>
    * # key1=value1
@@ -726,7 +794,24 @@ public class Properties
    * @see		#COMMENT
    */
   public String toComment() {
-    return Utils.commentOut(toString(), COMMENT);
+    return toComment(false);
+  }
+
+  /**
+   * Outputs the properties as they would be written to a file.
+   * In addition, all lines will be output as comment:
+   * <pre>
+   * # key1=value1
+   * # key2=value2
+   * # ...
+   * </pre>
+   *
+   * @param sorted 	whether to sort the output
+   * @return		the generated output or null in case of an error
+   * @see		#COMMENT
+   */
+  public String toComment(boolean sorted) {
+    return Utils.commentOut(toString(sorted), COMMENT);
   }
 
   /**
@@ -1655,8 +1740,12 @@ public class Properties
   public static void main(String[] args) throws Exception {
     Environment.setEnvironmentClass(Environment.class);
     Properties props = new Properties();
-    if (args.length > 0)
-      props = read(args[0], Environment.getInstance().getDirectories(args[0]));
+    if (args.length > 0) {
+      if (FileUtils.fileExists(args[0]))
+	props.load(args[0]);
+      else
+	props = read(args[0], Environment.getInstance().getDirectories(args[0]));
+    }
     Enumeration<String> names = (Enumeration<String>) props.propertyNames();
     while (names.hasMoreElements()) {
       String name = names.nextElement();
@@ -1667,5 +1756,8 @@ public class Properties
     Properties empty = new Properties();
     System.out.println("original == clone? " + props.equals(clone));
     System.out.println("original == empty? " + props.equals(empty));
+
+    System.out.println("Sorted:");
+    System.out.println(props.toString(true));
   }
 }

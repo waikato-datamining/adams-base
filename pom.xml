@@ -216,6 +216,8 @@
               <arg>java.desktop/sun.awt.image=ALL-UNNAMED</arg>
               <arg>--add-exports</arg>
               <arg>java.desktop/com.sun.media.sound=ALL-UNNAMED</arg>
+              <arg>--add-exports</arg>
+              <arg>java.base/sun.nio.cs=ALL-UNNAMED</arg>
             </compilerArgs>
           </configuration>
         </plugin>
@@ -319,7 +321,7 @@
               <adams.test.flow.dump.append>${adams.test.flow.dump.append}</adams.test.flow.dump.append>
             </systemPropertyVariables>
             <useModulePath>false</useModulePath>
-            <argLine>--add-exports java.base/jdk.internal.misc=ALL-UNNAMED --add-exports java.desktop/sun.awt.image=ALL-UNNAMED --add-exports java.desktop/com.sun.media.sound=ALL-UNNAMED</argLine>
+            <argLine>--add-exports java.base/jdk.internal.misc=ALL-UNNAMED --add-exports java.desktop/sun.awt.image=ALL-UNNAMED --add-exports java.desktop/com.sun.media.sound=ALL-UNNAMED --add-exports java.base/sun.nio.cs=ALL-UNNAMED</argLine>
           </configuration>
         </plugin>
 

@@ -15,7 +15,7 @@
 
 /*
  * SystemInfo.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.scripting.command.basic;
@@ -36,7 +36,6 @@ import java.util.logging.Level;
  * Sends the system info of the remote host back.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SystemInfo
   extends AbstractCommandWithResponse
@@ -174,7 +173,7 @@ public class SystemInfo
    */
   @Override
   public byte[] getResponsePayload() {
-    return m_Info.toString().getBytes();
+    return m_Info.toString(true).getBytes();
   }
 
   /**
