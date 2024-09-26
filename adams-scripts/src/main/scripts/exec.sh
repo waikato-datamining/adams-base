@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2017 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
@@ -85,6 +85,7 @@ done
   --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
   --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
   --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
+  --add-exports=java.base/sun.nio.cs=ALL-UNNAMED \
   $HEADLESS \
   $MAIN \
   $ARGS

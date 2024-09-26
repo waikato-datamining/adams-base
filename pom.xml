@@ -210,6 +210,8 @@
             <source>${maven.compiler.source}</source>
             <target>${maven.compiler.target}</target>
             <compilerArgs>
+              <!-- align with: exec/daemon/launcher.bat/.sh scripts -->
+              <!-- align with: maven-surefire-plugin "argLine" -->
               <arg>--add-exports</arg>
               <arg>java.base/jdk.internal.misc=ALL-UNNAMED</arg>
               <arg>--add-exports</arg>

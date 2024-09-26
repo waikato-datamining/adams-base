@@ -133,6 +133,7 @@ done
   -jvm --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED \
   -jvm --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
   -jvm --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
+  -jvm --add-exports=java.base/sun.nio.cs=ALL-UNNAMED \
   -main $MAIN \
   -doc-dir "$BASEDIR/docs" \
   $ARGS

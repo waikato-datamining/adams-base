@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2020 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -96,6 +96,7 @@ goto endInit
  --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED^
  --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED^
  --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED^
+ --add-exports=java.base/sun.nio.cs=ALL-UNNAMED^
  %HEADLESS% %MAIN% %CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
