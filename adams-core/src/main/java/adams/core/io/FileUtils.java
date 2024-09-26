@@ -26,6 +26,7 @@ import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.CharsetHelper;
 import adams.core.management.OS;
 import gnu.trove.list.TByteList;
 import gnu.trove.list.array.TByteArrayList;
@@ -43,7 +44,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -257,7 +257,7 @@ public class FileUtils {
         if (encoding == null)
           result = Files.readAllLines(file.toPath());
         else
-          result = Files.readAllLines(file.toPath(), Charset.forName(encoding));
+          result = Files.readAllLines(file.toPath(), CharsetHelper.valueOf(encoding));
         // remove byte order marks
         if (!result.isEmpty())
           result.set(0, removeAllByteOrderMarks(result.get(0)));
@@ -431,7 +431,7 @@ public class FileUtils {
       if (encoding == null)
 	Files.write(file.toPath(), content);
       else
-	Files.write(file.toPath(), content, Charset.forName(encoding));
+	Files.write(file.toPath(), content, CharsetHelper.valueOf(encoding));
     }
     catch (Exception e) {
       result = "Failed to save to '" + file + "':\n" + LoggingHelper.throwableToString(e);
@@ -553,7 +553,7 @@ public class FileUtils {
       if (encoding == null)
 	Files.write(new File(filename).toPath(), lines, options);
       else
-	Files.write(new File(filename).toPath(), lines, Charset.forName(encoding), options);
+	Files.write(new File(filename).toPath(), lines, CharsetHelper.valueOf(encoding), options);
     }
     catch (Exception e) {
       result = "Failed to write to '" + filename + "'\n" + LoggingHelper.throwableToString(e);
