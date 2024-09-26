@@ -48,6 +48,7 @@ public class LocaleHelperTest
   public void testValueOf() {
     assertEquals("locales differ", "en", LocaleHelper.valueOf("en").toString());
     assertEquals("locales differ", "en_US", LocaleHelper.valueOf("en_US").toString());
+    assertEquals("locales differ", "en_US_POSIX", LocaleHelper.valueOf("en_US_POSIX").toString());
     assertEquals("locales differ", "en_US_#Latn", LocaleHelper.valueOf("en_US_#Latn").toString());
   }
 

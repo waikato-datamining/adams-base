@@ -20,6 +20,7 @@
 package adams.core.management;
 
 import adams.core.Properties;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.env.LocaleDefinition;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 
 /**
  * Helper class for locale setup (see <a href="http://en.wikipedia.org/wiki/ISO_639" target="_blank">ISO 639</a>).
@@ -306,27 +308,39 @@ public class LocaleHelper {
    * @return		the generated locale
    */
   public static Locale valueOf(String str) {
-    String[]	parts;
+    Locale.Builder	builder;
+    String[]		parts;
     
     if (str.equals(LOCALE_DEFAULT)) {
       return Locale.getDefault();
     }
     else {
-      if (str.indexOf('_') == -1) {
-	return new Locale(str);
-      }
-      else {
-	parts = str.split("_");
-	if (parts.length == 2) {
-	  return new Locale(parts[0], parts[1]);
-	}
-	else if (parts.length == 3) {
-	  return new Locale(parts[0], parts[1], parts[2]);
+      try {
+	if (str.indexOf('_') == -1) {
+	  builder = new Locale.Builder().setLanguage(str);
 	}
 	else {
-	  System.err.println("Failed to parse locale '" + str + "', using default!");
-	  return Locale.getDefault();
+	  parts = str.split("_");
+	  if (parts.length == 2) {
+	    builder = new Locale.Builder().setLanguage(parts[0]).setRegion(parts[1]);
+	  }
+	  else if (parts.length == 3) {
+	    builder = new Locale.Builder().setLanguage(parts[0]).setRegion(parts[1]);
+	    if (parts[2].startsWith("#"))
+	      builder.setScript(parts[2].substring(1));
+	    else
+	      builder.setVariant(parts[2]);
+	  }
+	  else {
+	    LoggingHelper.global().severe("Failed to parse locale '" + str + "', using default!");
+	    return Locale.getDefault();
+	  }
 	}
+	return builder.build();
+      }
+      catch (Exception e) {
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse locale '" + str + "', using default!", e);
+	return Locale.getDefault();
       }
     }
   }
