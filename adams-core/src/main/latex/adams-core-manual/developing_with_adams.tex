@@ -283,6 +283,16 @@ to use, eg 2GB (see Figure \ref{intellij-main}).
   \label{intellij-main}
 \end{figure}
 
+For making it work with Java's modular framework, it is advised that you specify
+the following JVM parameters:
+
+\begin{verbatim}
+--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED
+--add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED
+--add-exports=java.base/sun.nio.cs=ALL-UNNAMED
+\end{verbatim}
+
 \clearpage
 \section{Eclipse}
 Prior to using IntelliJ IDEA, the choice of IDE was Eclipse\cite{eclipse}.
