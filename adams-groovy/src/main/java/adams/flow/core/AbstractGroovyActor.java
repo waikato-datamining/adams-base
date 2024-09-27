@@ -15,7 +15,7 @@
 
 /*
  *    AbstractGroovyActor.java
- *    Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -81,7 +81,7 @@ public abstract class AbstractGroovyActor
     else {
       result = QuickInfoHelper.toString(this, "inlineScript", Shortening.shortenEnd(m_InlineScript.stringValue(), 50));
       if (result != null)
-	result += QuickInfoHelper.toString(this, "scriptOptions", m_ScriptOptions, ", options: ");
+	result += QuickInfoHelper.toString(this, "scriptOptions", (m_ScriptOptions.isEmpty() ? "-none-" : m_ScriptOptions), ", options: ");
     }
 
     return result;
