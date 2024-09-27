@@ -15,7 +15,7 @@
 
 /*
  * FlowRunner.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
@@ -35,6 +35,7 @@ import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
+import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.core.shutdown.AbstractShutdownHook;
 import adams.core.shutdown.Null;
 import adams.env.Environment;
@@ -50,7 +51,6 @@ import adams.scripting.RemoteScriptingEngineHandler;
 import adams.scripting.engine.MultiScriptingEngine;
 import adams.scripting.engine.RemoteScriptingEngine;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -893,7 +893,7 @@ public class FlowRunner
     }
     catch (Exception e) {
       result = e.toString();
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to execute flow!", e);
     }
 
     m_Actor = null;
@@ -945,9 +945,9 @@ public class FlowRunner
   }
 
   /**
-   * Instantiates the flow with the given options.
+   * Instantiates the flow runner with the given options.
    *
-   * @param classname	the classname of the flow to instantiate
+   * @param classname	the classname of the flow runner to instantiate
    * @param options	the options for the flow
    * @return		the instantiated flow or null if an error occurred
    */
@@ -958,7 +958,7 @@ public class FlowRunner
       result = (FlowRunner) OptionUtils.forName(FlowRunner.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate flow runner: " + classname, e);
       result = null;
     }
 
@@ -979,35 +979,13 @@ public class FlowRunner
   }
 
   /**
-   * Stops all engines of the specified ScriptingEngine class.
-   *
-   * @param engines	the scripting engine to use
-   */
-  protected static void stopAllEngines(Class[] engines) {
-    int		i;
-    Method	method;
-
-    for (i = 0; i < engines.length; i++) {
-      try {
-        method = engines[i].getMethod(METHOD_STOPALLENGINES, new Class[0]);
-        method.invoke(null, new Object[0]);
-      }
-      catch (Exception e) {
-        System.err.println("Failed to call " + engines[i].getName() + "." + METHOD_STOPALLENGINES + ":");
-        e.printStackTrace();
-      }
-    }
-  }
-
-  /**
-   * Runs the flow from commandline.
+   * Runs the flow runner from commandline.
    *
    * @param env		the environment class to use
-   * @param flow	the flow class to execute
-   * @param engines	the class array of the scripting engines
+   * @param flow	the flow runner class to execute
    * @param args	the commandline arguments, use -help to display all
    */
-  public static void runFlow(Class env, Class flow, Class[] engines, String[] args) {
+  public static void runFlow(Class env, Class flow, String[] args) {
     FlowRunner  runner;
     String	result;
 
@@ -1026,7 +1004,7 @@ public class FlowRunner
         runner = forName(flow.getName(), args);
         ArrayConsumer.setOptions(runner, args);
         result = runner.execute();
-        stopAllEngines(engines);
+	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
         if (result == null) {
           System.out.println("\nFinished execution!");
         }
@@ -1041,7 +1019,7 @@ public class FlowRunner
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Error executing flow!", e);
     }
   }
 
@@ -1052,6 +1030,6 @@ public class FlowRunner
    * @param args	the options to use
    */
   public static void main(String[] args) {
-    runFlow(Environment.class, FlowRunner.class, new Class[]{adams.gui.scripting.ScriptingEngine.class}, args);
+    runFlow(Environment.class, FlowRunner.class, args);
   }
 }
