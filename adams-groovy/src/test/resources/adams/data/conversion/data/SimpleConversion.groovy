@@ -2,12 +2,11 @@
  * A simple Groovy conversion scheme that divides incoming numbers by 100.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.data.conversion.AbstractScript
 
-class SimpleConversion
+class SimpleConversionTesting
   extends AbstractScript {
 
   /**

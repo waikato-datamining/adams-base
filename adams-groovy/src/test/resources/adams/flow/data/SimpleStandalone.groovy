@@ -2,12 +2,11 @@
  * A simple Groovy standalone that just outputs some stuff on the commandline.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.flow.standalone.AbstractScript
 
-class SimpleSingleton
+class SimpleSingletonTesting
   extends AbstractScript {
 
   /**

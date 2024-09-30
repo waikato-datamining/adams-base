@@ -3,13 +3,12 @@
  * tokens (0-99).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.flow.core.Token
 import adams.flow.source.AbstractScript
 
-class SimpleSource
+class SimpleSourceTesting
   extends AbstractScript {
 
   /** contains all the tokens to send. */

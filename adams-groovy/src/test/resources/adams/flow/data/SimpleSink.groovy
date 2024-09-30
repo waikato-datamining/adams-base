@@ -8,7 +8,7 @@ import adams.core.Placeholders
 import adams.flow.core.Unknown
 import adams.flow.sink.AbstractScript
 
-class SimpleSink
+class SimpleSinkTesting
   extends AbstractScript {
 
   /**
