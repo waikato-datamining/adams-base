@@ -248,7 +248,7 @@ public abstract class AbstractScriptedActor
   public void stopExecution() {
     if (m_ScriptObject != null) {
       if (m_ScriptObject instanceof Actor)
-	((Actor) m_ScriptObject).stopExecution();;
+	((Actor) m_ScriptObject).stopExecution();
     }
 
     super.stopExecution();
