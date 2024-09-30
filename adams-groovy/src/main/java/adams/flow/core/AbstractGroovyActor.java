@@ -234,7 +234,7 @@ public abstract class AbstractGroovyActor
    * @return		null if successful, otherwise error message
    */
   protected String updateScriptOptions() {
-    if (!getScriptOptions().isEmpty())
+    if (getScriptOptions().isEmpty())
       return null;
     
     try {
