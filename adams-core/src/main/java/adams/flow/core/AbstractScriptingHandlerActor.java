@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptingActor.java
- *    Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,6 @@ import adams.core.scripting.Dummy;
  * scripting handler.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractScriptingHandlerActor
   extends AbstractScriptedActor {
@@ -52,8 +51,8 @@ public abstract class AbstractScriptingHandlerActor
     super.defineOptions();
 
     m_OptionManager.add(
-	    "handler", "handler",
-	    new Dummy());
+      "handler", "handler",
+      new Dummy());
   }
 
   /**
@@ -74,10 +73,10 @@ public abstract class AbstractScriptingHandlerActor
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result  = super.getQuickInfo();
     result +=  QuickInfoHelper.toString(this, "handler", m_Handler.getClass(), ", handler: ");
-    
+
     return result;
   }
 
@@ -90,9 +89,9 @@ public abstract class AbstractScriptingHandlerActor
   @Override
   public String scriptOptionsTipText() {
     return
-        "The options for the script; must consist of 'key=value' pairs "
-      + "separated by blanks; the value of 'key' can be accessed via the "
-      + "'getAdditionalOptions().getXYZ(\"key\")' method in the script actor.";
+      "The options for the script; must consist of 'key=value' pairs "
+	+ "separated by blanks; the value of 'key' can be accessed via the "
+	+ "'getAdditionalOptions().getXYZ(\"key\")' method in the script actor.";
   }
 
   /**
@@ -134,15 +133,15 @@ public abstract class AbstractScriptingHandlerActor
     Object[]	result;
 
     result = m_Handler.loadScriptObject(
-	Actor.class,
-	m_ScriptFile, 
-	m_ScriptOptions, 
-	getVariables());
+      Actor.class,
+      m_ScriptFile,
+      m_ScriptOptions,
+      getVariables());
     m_ScriptObject = result[1];
 
     return (String) result[0];
   }
-  
+
   /**
    * Checks the script object.
    *
@@ -181,23 +180,23 @@ public abstract class AbstractScriptingHandlerActor
 
     if (result == null) {
       if (m_ActorObject == null) {
-        m_ActorObject = (Actor) m_ScriptObject;
-        result = m_ActorObject.setUp();
+	m_ActorObject = (Actor) m_ScriptObject;
+	result = m_ActorObject.setUp();
       }
     }
 
     return result;
   }
-  
+
   /**
    * Updates the script options.
-   * 
+   *
    * @return		null if successful, otherwise error message
    */
   protected String updateScriptOptions() {
-    if (getScriptOptions().getValue().length() == 0)
+    if (getScriptOptions().getValue().isEmpty())
       return null;
-    
+
     try {
       AdditionalOptionsHandlerUtils.setOptions(m_ActorObject, getScriptOptions().getValue(), getVariables());
       return null;
