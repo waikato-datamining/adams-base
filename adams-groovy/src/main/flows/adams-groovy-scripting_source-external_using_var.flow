@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2024-09-30 11:43:19
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Example flow that uses an external Groovy source\\nscript to generate some random integers." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.SetVariable -var-name script -var-value ${FLOWS}/scripts/SimpleSource.groovy -value-type FILE_FORWARD_SLASHES
+ adams.flow.source.Groovy -script @{script}
+ adams.flow.sink.Display -writer adams.data.io.output.NullWriter

@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2024-09-30 12:01:30
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Demonstrates how to use a Groovy script for \\nconverting data using the Convert transformer." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.ForLoop
+ adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.IntToDouble
+ adams.flow.control.Tee
+  adams.flow.sink.CallableSink -callable Display
+ adams.flow.transformer.Convert -conversion "adams.data.conversion.Groovy -inline-script \"/*\\\\n * A simple Groovy conversion scheme that divides incoming numbers by 100.\\\\n *\\\\n * @author FracPete (fracpete at waikato dot ac dot nz)\\\\n */\\\\n\\\\nimport adams.data.conversion.AbstractScript\\\\n\\\\nclass SimpleConversion\\\\n  extends AbstractScript {\\\\n\\\\n  /**\\\\n   * Returns a string describing the object.\\\\n   *\\\\n   * @return \\\\t\\\\t\\\\ta description suitable for displaying in the gui\\\\n   */\\\\n  public String globalInfo() {\\\\n    return \\\\\\\"Just divides the incoming numbers by 100.\\\\\\\"\\\\n  }\\\\n\\\\n  /**\\\\n   * Returns the class of objects that it accepts.\\\\n   *\\\\n   * @return\\\\t\\\\tDouble.class\\\\n   */\\\\n  public Class accepts() {\\\\n    return Double.class\\\\n  }\\\\n\\\\n  /**\\\\n   * Returns the class of objects that it generates.\\\\n   *\\\\n   * @return\\\\t\\\\tDouble.class\\\\n   */\\\\n  public Class generates() {\\\\n    return Double.class\\\\n  }\\\\n\\\\n  /**\\\\n   * Performs the actual conversion.\\\\n   *\\\\n   * @return\\\\t\\\\tthe converted data\\\\n   * @throws Exception\\\\tif something goes wrong with the conversion\\\\n   */\\\\n  protected Object doConvert() throws Exception {\\\\n    return m_Input / 100\\\\n  }\\\\n}\\\\n\""
+ adams.flow.sink.CallableSink -callable Display
