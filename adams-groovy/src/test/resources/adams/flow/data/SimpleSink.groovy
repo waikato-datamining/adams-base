@@ -2,15 +2,11 @@
  * A simple Groovy sink that just dumps all the incoming data in a file.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 
 import adams.core.Placeholders
 import adams.flow.core.Unknown
 import adams.flow.sink.AbstractScript
-
-import java.io.BufferedWriter
-import java.io.FileWriter
 
 class SimpleSink
   extends AbstractScript {
@@ -60,7 +56,7 @@ class SimpleSink
     }
     catch (Exception e) {
       result = "Failed to write data to '" + filename + "':\n" + e.toString()
-      getSystemErr().printStackTrace(e);
+      e.printStackTrace(e)
     }
 
     return result

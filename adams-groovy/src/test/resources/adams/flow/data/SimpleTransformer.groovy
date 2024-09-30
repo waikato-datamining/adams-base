@@ -7,7 +7,6 @@
  */
 
 import adams.flow.core.Token
-import adams.flow.core.Unknown
 import adams.flow.transformer.AbstractScript
 
 class SimpleSource
@@ -51,7 +50,7 @@ class SimpleSource
    */
   protected String doExecute() {
     Integer input = (Integer) m_InputToken.getPayload()
-    m_OutputToken = new Token(new Integer(input + getAdditionalOptions().getInteger("add", 1)))
+    m_OutputToken = new Token((int) (input + getAdditionalOptions().getInteger("add", 1)))
     return null
   }
 }

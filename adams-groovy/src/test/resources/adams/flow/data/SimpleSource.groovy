@@ -7,11 +7,7 @@
  */
 
 import adams.flow.core.Token
-import adams.flow.core.Unknown
 import adams.flow.source.AbstractScript
-
-import java.util.Random
-import java.util.Vector
 
 class SimpleSource
   extends AbstractScript {
@@ -59,7 +55,7 @@ class SimpleSource
   protected String doExecute() {
   	def rand = new Random(1)
   	for (i in 1..10)
-  	  m_Tokens.add(new Token(new Integer(rand.nextInt(100))))
+  	  m_Tokens.add(new Token((int) (rand.nextInt(100))))
     return null
   }
 
