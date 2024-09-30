@@ -1,5 +1,3 @@
-package adams.flow.condition.bool
-
 import adams.flow.core.Actor
 import adams.flow.core.Token
 import adams.flow.core.Unknown

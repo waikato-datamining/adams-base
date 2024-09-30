@@ -1,8 +1,10 @@
 # Project: adams
-# Date: 2016-02-15 14:22:53
+# Date: 2024-09-30 14:51:13
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Demonstrates how to use a Groovy script for \\nconverting data using the Convert transformer." -flow-execution-listener adams.flow.execution.NullListener
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Demonstrates how to use a Groovy script for \\nconverting data using the Convert transformer.\\nThe script is loaded from an external file." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
   adams.flow.sink.Display -writer adams.data.io.output.NullWriter
  adams.flow.source.ForLoop

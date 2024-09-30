@@ -18,7 +18,7 @@ class SimpleTransformer
    * @return 			a description suitable for displaying in the gui
    */
   public String globalInfo() {
-    return "Just adds a user-supplied integer to the integers passing through.\n\nExpects an additional option called \"add\" with the number to add."
+    return "Just adds a user-supplied integer to the integers passing through. Expects an additional option called 'add' with the number to add."
   }
 
   /**

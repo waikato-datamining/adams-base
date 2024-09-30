@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2024-09-30 15:09:06
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Simple flow with an inline Groovy script that just adds\\na user-supplied integer value to the (integer) tokens\\nbeing passed through." -flow-execution-listener adams.flow.execution.NullListener
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load script"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/scripts/SimpleTransformer.groovy -use-forward-slashes true
+  adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
+  adams.flow.transformer.SetVariable -var-name script
+ adams.flow.control.Trigger -name "execute script"
+  adams.flow.source.ForLoop
+  adams.flow.transformer.Groovy -options add=10 -inline-script @{script}
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter

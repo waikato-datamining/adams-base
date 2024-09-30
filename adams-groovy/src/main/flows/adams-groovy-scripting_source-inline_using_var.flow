@@ -1,0 +1,15 @@
+# Project: adams
+# Date: 2024-09-30 15:10:41
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Example flow that uses an inline Groovy source\\nscript to generate some random integers.\\nThe script itself is loaded from disk and attached\\nvia variable to the \\\"inlineScript\\\" option." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load script"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/scripts/SimpleSource.groovy -use-forward-slashes true
+  adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
+  adams.flow.transformer.SetVariable -var-name script
+ adams.flow.control.Trigger -name "execute script"
+  adams.flow.source.Groovy -inline-script @{script}
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter

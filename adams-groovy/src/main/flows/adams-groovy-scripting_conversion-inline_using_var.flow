@@ -1,0 +1,21 @@
+# Project: adams
+# Date: 2024-09-30 14:50:55
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-groovy
+#
+adams.flow.control.Flow -annotation "Demonstrates how to use a Groovy script for \\nconverting data using the Convert transformer.\\nHere, the script gets loaded from disk and stored\\nin a variable that is also attached to the \\\"inlineScript\\\" \\noption of the conversion." -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -writer adams.data.io.output.NullWriter
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "load script"
+  adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/scripts/SimpleConversion.groovy -use-forward-slashes true
+  adams.flow.transformer.TextFileReader -reader adams.data.io.input.SingleStringTextReader
+  adams.flow.transformer.SetVariable -var-name script
+ adams.flow.control.Trigger -name "execute script"
+  adams.flow.source.ForLoop
+  adams.flow.transformer.Convert -name Convert-1 -conversion adams.data.conversion.IntToDouble
+  adams.flow.control.Tee
+   adams.flow.sink.CallableSink -callable Display
+  adams.flow.transformer.Convert -conversion "adams.data.conversion.Groovy -inline-script @{script}"
+  adams.flow.sink.CallableSink -callable Display
