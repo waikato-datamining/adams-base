@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptedConversion.java
- *    Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -23,6 +23,7 @@ package adams.data.conversion;
 
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseText;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.scripting.FileBasedScriptingWithOptions;
 
@@ -30,10 +31,9 @@ import adams.core.scripting.FileBasedScriptingWithOptions;
  * Abstract ancestor for actors that execute external scripts.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractScriptedConversion
-  extends AbstractConversion 
+  extends AbstractConversion
   implements ConversionWithInitialization, FileBasedScriptingWithOptions {
 
   /** for serialization. */
@@ -56,12 +56,12 @@ public abstract class AbstractScriptedConversion
     super.defineOptions();
 
     m_OptionManager.add(
-	    "script", "scriptFile",
-	    new PlaceholderFile("."));
+      "script", "scriptFile",
+      new PlaceholderFile("."));
 
     m_OptionManager.add(
-	    "options", "scriptOptions",
-	    new BaseText());
+      "options", "scriptOptions",
+      new BaseText());
   }
 
   /**
@@ -70,10 +70,10 @@ public abstract class AbstractScriptedConversion
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_ScriptObject = null;
   }
-  
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -81,7 +81,7 @@ public abstract class AbstractScriptedConversion
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "scriptFile", new String(m_ScriptFile + " " + m_ScriptOptions).trim(), null);
+    return QuickInfoHelper.toString(this, "scriptFile", (m_ScriptFile + " " + m_ScriptOptions).trim(), null);
   }
 
   /**
@@ -89,6 +89,7 @@ public abstract class AbstractScriptedConversion
    *
    * @param value 	the script
    */
+  @Override
   public void setScriptFile(PlaceholderFile value) {
     m_ScriptFile = value;
     reset();
@@ -99,6 +100,7 @@ public abstract class AbstractScriptedConversion
    *
    * @return 		the script
    */
+  @Override
   public PlaceholderFile getScriptFile() {
     return m_ScriptFile;
   }
@@ -109,6 +111,7 @@ public abstract class AbstractScriptedConversion
    * @return		tip text for this property suitable for
    * 			displaying in the explorer/experimenter gui
    */
+  @Override
   public String scriptFileTipText() {
     return "The script file to load and execute.";
   }
@@ -118,6 +121,7 @@ public abstract class AbstractScriptedConversion
    *
    * @param value 	the options
    */
+  @Override
   public void setScriptOptions(BaseText value) {
     m_ScriptOptions = value.getValue();
     reset();
@@ -128,6 +132,7 @@ public abstract class AbstractScriptedConversion
    *
    * @return 		the options
    */
+  @Override
   public BaseText getScriptOptions() {
     return new BaseText(m_ScriptOptions);
   }
@@ -138,6 +143,7 @@ public abstract class AbstractScriptedConversion
    * @return		tip text for this property suitable for
    * 			displaying in the explorer/experimenter gui
    */
+  @Override
   public String scriptOptionsTipText() {
     return "The options for the script.";
   }
@@ -173,24 +179,37 @@ public abstract class AbstractScriptedConversion
   }
 
   /**
+   * Method for checking whether we can setUp the script.
+   *
+   * @return		true if it can be setUp
+   */
+  protected boolean canSetUpScript() {
+    return FileUtils.fileExists(m_ScriptFile);
+  }
+
+  /**
    * Performs some initializations.
-   * 
+   *
    * @return		null if successful, otherwise error message
    */
   @Override
   public String setUp() {
-    return initScriptObject();
+    if (canSetUpScript())
+      return initScriptObject();
+
+    return null;
   }
-  
+
   /**
    * Checks whether we still need to perform a setup.
-   * 
+   *
    * @return		true if {@link #setUp()} call is necessary
    */
+  @Override
   public boolean requiresSetUp() {
     return (m_ScriptObject == null);
   }
-  
+
   /**
    * Frees up memory in a "destructive" non-reversible way.
    */

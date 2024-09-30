@@ -15,7 +15,7 @@
 
 /*
  * Groovy.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.conversion;
@@ -60,7 +60,6 @@ import adams.core.scripting.GroovyScript;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Groovy
   extends AbstractScriptedConversion {
@@ -214,21 +213,33 @@ public class Groovy
    */
   @Override
   protected String checkScriptObject() {
-    // TODO checks?
     return null;
   }
 
   /**
-   * Initializes the item for flow execution.
+   * Method for checking whether we can setUp the script.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @return		true if it can be setUp
    */
   @Override
-  public String setUp() {
+  protected boolean canSetUpScript() {
+    if (!m_InlineScript.isEmpty())
+      return true;
+
+    return super.canSetUpScript();
+  }
+
+  /**
+   * Tries to initialize the scripts object, sets its options and performs
+   * some checks.
+   *
+   * @return		null if OK, otherwise the error message
+   */
+  @Override
+  protected String initScriptObject() {
     String	result;
 
-    result = super.setUp();
-
+    result = super.initScriptObject();
     if (result == null)
       m_ConversionObject = (AbstractConversion) m_ScriptObject;
 
