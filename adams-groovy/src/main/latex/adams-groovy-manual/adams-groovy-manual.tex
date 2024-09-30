@@ -45,7 +45,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2009-2013} &
+		\parbox[c][2cm]{2cm}{\copyright 2009-2024} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -105,7 +105,7 @@ Writing a Groovy actor works just like writing a regular ADAMS actor in Java.
 \section{Superclass and wrapper}
 First, you create an empty text file for you new 
 actor\footnote{You can also simply use the \textit{inlineScript} option if you don't 
-want to use a file.}. Second, you choose what superclass you want to derive it from:
+want to use a separate file.}. Second, you choose what superclass you want to derive it from:
 \begin{tight_itemize}
 	\item \textbf{Standalone} -- \texttt{adams.flow.standalone.AbstractScript}
 	\item \textbf{Source} -- \texttt{adams.flow.source.AbstractScript}
@@ -206,7 +206,7 @@ by being implemented as regular conversion schemes in ADAMS.
 \section{Superclass and wrapper}
 First, you create an empty text file for you new 
 conversion\footnote{You can also simply use the \textit{inlineScript} option if you don't 
-want to use a file.}. Second, you use the following superclass to derive your 
+want to use a separate file.}. Second, you use the following superclass to derive your
 Groovy conversion from:
 \begin{verbatim}
   adams.data.conversion.AbstractScript
@@ -251,6 +251,15 @@ class SimpleConversion
 \section{Parameters}
 As in how to use parameters, see section \ref{parameters} as it works the
 same way as for actors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Troubleshooting}
+
+\begin{tight_itemize}
+    \item \texttt{Unexpected character: '"' @ line X, column Y.} -- if you are using an \textbf{inline script}
+    via a variable, then having new lines (\texttt{\\n}) in your strings will render the script unusable, due
+    to the expansion of the new line characters.
+\end{tight_itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
