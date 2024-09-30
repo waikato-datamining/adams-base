@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SQLIdSupplier.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-20124 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
@@ -45,13 +45,10 @@ import java.util.ArrayList;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -59,27 +56,45 @@ import java.util.ArrayList;
  * &nbsp;&nbsp;&nbsp;default: SQLIdSupplier
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-output-array (property: outputArray)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-output-array &lt;boolean&gt; (property: outputArray)
  * &nbsp;&nbsp;&nbsp;Whether to output the IDs as array or one by one.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, the source no longer reports an error when not finding any IDs.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-sql &lt;adams.db.SQLStatement&gt; (property: SQL)
- * &nbsp;&nbsp;&nbsp;The SQL statement to run that generates the IDs.
+ * &nbsp;&nbsp;&nbsp;The SQL statement to run that generates the IDs; variables get expanded
+ * &nbsp;&nbsp;&nbsp;automatically.
  * &nbsp;&nbsp;&nbsp;default: select auto_id from table
  * </pre>
  *
@@ -91,7 +106,6 @@ import java.util.ArrayList;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SQLIdSupplier
   extends AbstractDatabaseIdSupplier {
@@ -103,7 +117,6 @@ public class SQLIdSupplier
    * The type of IDs to output.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum Type {
     /** integer. */
@@ -126,8 +139,8 @@ public class SQLIdSupplier
   @Override
   public String globalInfo() {
     return
-        "Executes an SQL statement for generating the IDs.\n"
-      + "Variables are automatically expanded.";
+      "Executes an SQL statement for generating the IDs.\n"
+	+ "Variables are automatically expanded.";
   }
 
   /**
@@ -138,12 +151,12 @@ public class SQLIdSupplier
     super.defineOptions();
 
     m_OptionManager.add(
-	    "sql", "SQL",
-	    new SQLStatement("select auto_id from table"));
+      "sql", "SQL",
+      new SQLStatement("select auto_id from table"));
 
     m_OptionManager.add(
-	    "type", "type",
-	    Type.INTEGER);
+      "type", "type",
+      Type.INTEGER);
   }
 
   /**
@@ -157,7 +170,7 @@ public class SQLIdSupplier
 
     result  = QuickInfoHelper.toString(this, "type", m_Type);
     result += QuickInfoHelper.toString(this, "SQL", Shortening.shortenEnd(m_SQL.getValue().replaceAll("\\s", " ").replaceAll("[ ]+", " "), 50), ": ");
-    result += QuickInfoHelper.toString(this, "outputArray", (m_OutputArray ? "as array" : "one by one"), ", ");
+    result += QuickInfoHelper.toStringOutputArray(this);
 
     return result;
   }
@@ -188,7 +201,7 @@ public class SQLIdSupplier
    *             	displaying in the GUI or for listing the options.
    */
   public String SQLTipText() {
-    return "The SQL statement to run that generates the IDs.";
+    return "The SQL statement to run that generates the IDs; variables get expanded automatically.";
   }
 
   /**
@@ -245,9 +258,9 @@ public class SQLIdSupplier
   @Override
   protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
     return ActorUtils.getDatabaseConnection(
-	  this,
-	  adams.flow.standalone.DatabaseConnectionProvider.class,
-	  adams.db.DatabaseConnection.getSingleton());
+      this,
+      adams.flow.standalone.DatabaseConnectionProvider.class,
+      adams.db.DatabaseConnection.getSingleton());
   }
 
   /**
