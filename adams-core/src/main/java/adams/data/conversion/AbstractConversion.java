@@ -15,7 +15,7 @@
 
 /*
  * AbstractConversion.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -243,6 +243,8 @@ public abstract class AbstractConversion
 	  result = ((ConversionWithInitialization) this).setUp();
 	  if (isLoggingEnabled())
 	    getLogger().info("SetUp: " + result);
+	  if (((ConversionWithInitialization) this).requiresSetUp())
+	    result = "Delayed setUp call failed, still requiring setUp!";
 	}
       }
     }
