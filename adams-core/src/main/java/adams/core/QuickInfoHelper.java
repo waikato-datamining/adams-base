@@ -15,7 +15,7 @@
 
 /*
  * QuickInfoHelper.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,6 +25,7 @@ import adams.core.option.AbstractOption;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionProducer;
+import adams.flow.core.ArrayProvider;
 import adams.gui.core.ColorHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -103,7 +104,7 @@ public class QuickInfoHelper {
     String	result;
     
     if (current instanceof String) {
-      if (((String) current).length() == 0)
+      if (((String) current).isEmpty())
 	result = null;
       else
 	result = (String) current;
@@ -191,7 +192,7 @@ public class QuickInfoHelper {
 	  else {
 	    result = "";
 	    for (i = 0; i < Array.getLength(current); i++) {
-	      if (result.length() > 0)
+	      if (!result.isEmpty())
 		result += "|";
 	      result += toString(Array.get(current, i));
 	    }
@@ -328,7 +329,7 @@ public class QuickInfoHelper {
   public static boolean add(List<String> list, String value) {
     if (value == null)
       return false;
-    if (value.length() == 0)
+    if (value.isEmpty())
       return false;
     list.add(value);
     return true;
@@ -342,9 +343,19 @@ public class QuickInfoHelper {
    * @return		the generated list
    */
   public static String flatten(List<String> list) {
-    if (list.size() > 0)
+    if (!list.isEmpty())
       return " [" + Utils.flatten(list, ", ") + "]";
     else
       return "";
+  }
+
+  /**
+   * Generates a quick info string for the outputArray property.
+   *
+   * @param handler	the handler to generate it for
+   * @return		the generated string
+   */
+  public static String toStringOutputArray(ArrayProvider handler) {
+    return QuickInfoHelper.toString(handler, "outputArray", (handler.getOutputArray() ? "as array" : "one by one"), ", ");
   }
 }
