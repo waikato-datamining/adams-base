@@ -78,7 +78,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Groovy
   extends AbstractGroovyActor
@@ -127,13 +126,13 @@ public class Groovy
    */
   @Override
   protected void restoreState(Hashtable<String,Object> state) {
+    super.restoreState(state);
     if (state.containsKey(BACKUP_INPUT)) {
       m_InputToken = (Token) state.get(BACKUP_INPUT);
-      ((InputConsumer) m_ActorObject).input(m_InputToken);
+      if (m_ActorObject != null)
+	((InputConsumer) m_ActorObject).input(m_InputToken);
       state.remove(BACKUP_INPUT);
     }
-
-    super.restoreState(state);
   }
 
   /**
@@ -195,11 +194,18 @@ public class Groovy
   @Override
   protected String doExecute() {
     String	result;
-    
-    result = updateScriptOptions();
+
+    result = null;
+
+    if (m_ActorObject == null)
+      result = initScriptObject();
+
     if (result == null) {
-    ((InputConsumer) m_ActorObject).input(m_InputToken);
-      result = m_ActorObject.execute();
+      result = updateScriptOptions();
+      if (result == null) {
+	((InputConsumer) m_ActorObject).input(m_InputToken);
+	result = m_ActorObject.execute();
+      }
     }
 
     m_InputToken = null;

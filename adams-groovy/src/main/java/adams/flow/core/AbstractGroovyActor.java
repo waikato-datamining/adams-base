@@ -26,6 +26,8 @@ import adams.core.Shortening;
 import adams.core.scripting.Groovy;
 import adams.core.scripting.GroovyScript;
 
+import java.util.Hashtable;
+
 /**
  * Abstract ancestor for actors that execute Groovy scripts.
  *
@@ -150,6 +152,7 @@ public abstract class AbstractGroovyActor
 
     result         = Groovy.getSingleton().loadScriptObject(Actor.class, m_ScriptFile, m_InlineScript, m_ScriptOptions, getVariables());
     m_ScriptObject = result[1];
+    m_ActorObject  = (Actor) m_ScriptObject;
 
     return (String) result[0];
   }
@@ -180,6 +183,33 @@ public abstract class AbstractGroovyActor
   }
 
   /**
+   * Restores the state of the actor before the variables got updated.
+   *
+   * @param state	the backup of the state to restore from
+   */
+  @Override
+  protected void restoreState(Hashtable<String,Object> state) {
+    super.restoreState(state);
+    if (m_ActorObject == null)
+      initScriptObject();
+  }
+
+  /**
+   * Tries to initialize the scripts object, sets its options and performs
+   * some checks.
+   *
+   * @return		null if OK, otherwise the error message
+   */
+  protected String initScriptObject() {
+    String	result;
+
+    result = super.initScriptObject();
+    m_ActorObject = (Actor) m_ScriptObject;
+
+    return result;
+  }
+
+  /**
    * Pre-execute hook.
    *
    * @return		null if everything is fine, otherwise error message
@@ -191,10 +221,8 @@ public abstract class AbstractGroovyActor
     result = super.preExecute();
 
     if (result == null) {
-      if (m_ActorObject == null) {
-        m_ActorObject = (Actor) m_ScriptObject;
+      if (m_ActorObject != null)
         result = m_ActorObject.setUp();
-      }
     }
 
     return result;
@@ -206,7 +234,7 @@ public abstract class AbstractGroovyActor
    * @return		null if successful, otherwise error message
    */
   protected String updateScriptOptions() {
-    if (getScriptOptions().getValue().length() == 0)
+    if (!getScriptOptions().isEmpty())
       return null;
     
     try {
