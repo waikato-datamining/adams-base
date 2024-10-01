@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileWriter.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -237,7 +237,15 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "writer", m_Writer);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "writer", m_Writer, "writer: ");
+    result += QuickInfoHelper.toString(this, "outputDir", m_OutputDir, ", output: ");
+    result += QuickInfoHelper.toString(this, "fileNameGeneration", m_FileNameGeneration, ", name: ");
+    if (m_FileNameGeneration == FileNameGeneration.SUPPLIED)
+      result += QuickInfoHelper.toString(this, "suppliedFileName", m_SuppliedFileName, ", supplied: ");
+
+    return result;
   }
 
   /**
