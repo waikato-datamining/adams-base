@@ -15,14 +15,14 @@
 
 /*
  * AbstractJob.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.multiprocess;
 
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingHelper;
-import adams.core.logging.LoggingObject;
 import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
@@ -30,10 +30,9 @@ import adams.event.JobCompleteListener;
  * A job is a unit of execution.
  *
  * @author dale
- * @version $Revision$
  */
 public abstract class AbstractJob
-  extends LoggingObject
+  extends CustomLoggingLevelObject
   implements Job {
 
   /** for serialization. */
@@ -54,6 +53,9 @@ public abstract class AbstractJob
   /** whether the job has been stopped. */
   protected boolean m_Stopped;
 
+  /** optional progress info (output before/after execute). */
+  protected String m_ProgressInfo;
+
   /**
    * Job constructor.
    */
@@ -65,6 +67,7 @@ public abstract class AbstractJob
     m_JobCompleteListener = null;
     m_ExecutionError      = null;
     m_Stopped             = false;
+    m_ProgressInfo        = null;
   }
 
   /**
@@ -121,6 +124,24 @@ public abstract class AbstractJob
    */
   public boolean isComplete() {
     return m_Complete;
+  }
+
+  /**
+   * Sets the progress info to output before/after the job execution.
+   *
+   * @param value	the info, null to suppress
+   */
+  public void setProgressInfo(String value) {
+    m_ProgressInfo = value;
+  }
+
+  /**
+   * Returns the progress info (if any) to output before/after the job execution.
+   *
+   * @return		the info, null if none set
+   */
+  public String getProgressInfo() {
+    return m_ProgressInfo;
   }
 
   /**
@@ -182,6 +203,8 @@ public abstract class AbstractJob
 
     // process data
     if (success) {
+      if (m_ProgressInfo != null)
+	getLogger().info("Start: " + m_ProgressInfo);
       try {
 	process();
       }
@@ -189,6 +212,8 @@ public abstract class AbstractJob
 	m_ExecutionError = "'process' failed with exception: " + LoggingHelper.throwableToString(t);
 	success          = false;
       }
+      if (m_ProgressInfo != null)
+	getLogger().info("End: " + m_ProgressInfo + " - success? " + success);
     }
 
     // post-check
@@ -201,7 +226,7 @@ public abstract class AbstractJob
 
     if (!success) {
       addInfo = getAdditionalErrorInformation();
-      if (addInfo.length() > 0)
+      if (!addInfo.isEmpty())
 	m_ExecutionError += "\n" + addInfo;
     }
 
