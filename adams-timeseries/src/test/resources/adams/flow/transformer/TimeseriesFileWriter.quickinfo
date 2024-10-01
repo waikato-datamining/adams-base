@@ -1,1 +1,1 @@
-SimpleTimeseriesWriter
+writer: SimpleTimeseriesWriter, output: ${CWD}, name: AUTOMATIC
