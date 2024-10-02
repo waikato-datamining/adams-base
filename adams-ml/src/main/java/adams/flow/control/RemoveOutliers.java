@@ -15,7 +15,7 @@
 
 /*
  * RemoveOutliers.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control;
@@ -33,6 +33,7 @@ import adams.flow.control.removeoutliers.Null;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.OutlierPaintlet;
+import adams.flow.sink.sequenceplotter.PolygonSelectionPaintlet;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
 import adams.flow.sink.sequenceplotter.SequencePlotSequence;
 import adams.flow.sink.sequenceplotter.SequencePlotterPanel;
@@ -64,7 +65,8 @@ import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
- * Allows the user to interactively remove outliers.
+ * Allows the user to interactively remove outliers.<br>
+ * You can toggle the 'outlier' state of individual points by left-clicking them.You can also toggle whole regions by selecting a polygon around them: use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -84,95 +86,105 @@ import java.util.Set;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: RemoveOutliers
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
  * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
  * <pre>-detector &lt;adams.flow.control.removeoutliers.AbstractOutlierDetector&gt; (property: detector)
  * &nbsp;&nbsp;&nbsp;The detector to use for the initial outlier detection.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.control.removeoutliers.Null
  * </pre>
- * 
+ *
  * <pre>-col-actual &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: columnActual)
  * &nbsp;&nbsp;&nbsp;The spreadsheet column with the actual values.
  * &nbsp;&nbsp;&nbsp;default: 1
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-col-predicted &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: columnPredicted)
  * &nbsp;&nbsp;&nbsp;The spreadsheet column with the predicted values.
  * &nbsp;&nbsp;&nbsp;default: 2
- * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -213,7 +225,10 @@ public class RemoveOutliers
    */
   @Override
   public String globalInfo() {
-    return "Allows the user to interactively remove outliers.";
+    return "Allows the user to interactively remove outliers.\n"
+	     + "You can toggle the 'outlier' state of individual points by left-clicking them.\n"
+	     + "You can also toggle whole regions by selecting a polygon around them: "
+	     + "use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon.";
   }
 
   /**
@@ -389,6 +404,7 @@ public class RemoveOutliers
     ToggleOutlier 			mouseClick;
     MultiPaintlet 			overlays;
     StraightLineOverlayPaintlet 	diagonal;
+    PolygonSelectionPaintlet		polygonSelection;
     LinearRegressionOverlayPaintlet 	lrPaintlet;
 
     result = new BasePanel(new BorderLayout());
@@ -425,7 +441,8 @@ public class RemoveOutliers
     diagonal.setColor(Color.RED.darker());
     lrPaintlet = new LinearRegressionOverlayPaintlet();
     lrPaintlet.setOutputSlopeIntercept(true);
-    overlays.setSubPaintlets(new XYSequencePaintlet[]{diagonal, lrPaintlet});
+    polygonSelection = new PolygonSelectionPaintlet();
+    overlays.setSubPaintlets(new XYSequencePaintlet[]{diagonal, lrPaintlet, polygonSelection});
 
     m_PlotterPanel.setDataPaintlet(paintlet);
     m_PlotterPanel.setMouseClickAction(mouseClick);
@@ -551,7 +568,7 @@ public class RemoveOutliers
       seq.setID(original.getName());
     else
       seq.setID("Pred vs Act");
-      cont = manager.newContainer(seq);
+    cont = manager.newContainer(seq);
     manager.add(cont);
 
     for (i = 0; i < original.getRowCount(); i++) {

@@ -20,14 +20,20 @@
 
 package adams.flow.sink.sequenceplotter;
 
+import adams.data.sequence.XYSequence;
 import adams.data.sequence.XYSequencePoint;
 import adams.flow.control.RemoveOutliers;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
+import adams.gui.visualization.core.AxisPanel;
+import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector;
 import adams.gui.visualization.sequence.CrossHitDetector;
+import adams.gui.visualization.sequence.XYSequenceContainer;
 
+import java.awt.Polygon;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -96,6 +102,95 @@ public class ToggleOutlier
   }
 
   /**
+   * Sets or toggles the outlier state of the specified points.
+   *
+   * @param panel 	the panel the points belong to
+   * @param hits 	the points to process
+   */
+  protected void toggleHits(SequencePlotterPanel panel, List<XYSequencePoint> hits) {
+    SequencePlotPoint		point;
+
+    for (XYSequencePoint hit : hits) {
+      if (hit instanceof SequencePlotPoint) {
+	point = (SequencePlotPoint) hit;
+	if (point.hasMetaData()) {
+	  if (point.getMetaData().containsKey(RemoveOutliers.KEY_OUTLIER))
+	    point.getMetaData().put(
+	      RemoveOutliers.KEY_OUTLIER,
+	      !((Boolean) point.getMetaData().get(RemoveOutliers.KEY_OUTLIER)));
+	  else
+	    point.getMetaData().put(
+	      RemoveOutliers.KEY_OUTLIER,
+	      true);
+	}
+	else {
+	  point.setMetaData(new HashMap<>());
+	  point.getMetaData().put(
+	    RemoveOutliers.KEY_OUTLIER,
+	    true);
+	}
+      }
+    }
+    panel.update();
+  }
+
+  /**
+   * Displays the points that were surrounded by the polygon.
+   *
+   * @param panel	the associated panel
+   */
+  protected void togglePolygonPoints(SequencePlotterPanel panel) {
+    int[]			x;
+    int[]			y;
+    int				i;
+    Polygon 			poly;
+    List<XYSequencePoint> 	hits;
+    int				posX;
+    int				posY;
+    AxisPanel 			axisX;
+    AxisPanel			axisY;
+    XYSequenceContainer 	cont;
+    XYSequence 			seq;
+
+    if (panel.getSelection().size() < 3) {
+      panel.clearSelection();
+      return;
+    }
+
+    axisX = panel.getPlot().getAxis(Axis.BOTTOM);
+    axisY = panel.getPlot().getAxis(Axis.LEFT);
+
+    // create polygon
+    x = new int[panel.getSelection().size()];
+    y = new int[panel.getSelection().size()];
+    for (i = 0; i < panel.getSelection().size(); i++) {
+      x[i] = axisX.valueToPos(panel.getSelection().get(i).getX());
+      y[i] = axisY.valueToPos(panel.getSelection().get(i).getY());
+    }
+    poly = new Polygon(x, y, x.length);
+
+    // iterate data
+    hits  = new ArrayList<>();
+    for (i = 0; i < panel.getSequenceManager().count(); i++) {
+      cont = (XYSequenceContainer) panel.getSequenceManager().get(i);
+      seq  = cont.getData();
+      for (XYSequencePoint point: seq.toList()) {
+	posX = axisX.valueToPos(point.getX());
+	posY = axisY.valueToPos(point.getY());
+	if (poly.contains(posX, posY))
+	  hits.add(point);
+      }
+    }
+
+    // clear points
+    panel.clearSelection();
+    panel.update();
+
+    // display data
+    toggleHits(panel, hits);
+  }
+
+  /**
    * Gets triggered if the user clicks on the canvas.
    *
    * @param panel	the associated panel
@@ -103,40 +198,19 @@ public class ToggleOutlier
    */
   @Override
   public void mouseClickOccurred(SequencePlotterPanel panel, MouseEvent e) {
-    Object			located;
-    List<XYSequencePoint> 	hits;
-    SequencePlotPoint		point;
+    List<XYSequencePoint>	located;
 
     if (MouseUtils.isLeftClick(e) && KeyUtils.isNoneDown(e.getModifiersEx())) {
       e.consume();
       if (m_HitDetector.getOwner() != panel.getDataPaintlet())
 	m_HitDetector.setOwner(panel.getDataPaintlet());
       located = m_HitDetector.locate(e);
-      if (located instanceof List) {
-	hits = (List<XYSequencePoint>) located;
-	for (XYSequencePoint hit : hits) {
-	  if (hit instanceof SequencePlotPoint) {
-	    point = (SequencePlotPoint) hit;
-	    if (point.hasMetaData()) {
-	      if (point.getMetaData().containsKey(RemoveOutliers.KEY_OUTLIER))
-		point.getMetaData().put(
-		  RemoveOutliers.KEY_OUTLIER,
-		  !((Boolean) point.getMetaData().get(RemoveOutliers.KEY_OUTLIER)));
-	      else
-		point.getMetaData().put(
-		  RemoveOutliers.KEY_OUTLIER,
-		  true);
-	    }
-	    else {
-	      point.setMetaData(new HashMap<>());
-	      point.getMetaData().put(
-		RemoveOutliers.KEY_OUTLIER,
-		true);
-	    }
-	  }
-	}
-	panel.update();
-      }
+      if (located != null)
+	toggleHits(panel, located);
+    }
+    else if (MouseUtils.isRightClick(e) && KeyUtils.isShiftDown(e.getModifiersEx())) {
+      e.consume();
+      togglePolygonPoints(panel);
     }
   }
 }
