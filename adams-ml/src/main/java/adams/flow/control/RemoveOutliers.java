@@ -42,6 +42,9 @@ import adams.flow.transformer.AbstractInteractiveTransformerDialog;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
+import adams.gui.core.Undo;
+import adams.gui.event.UndoEvent;
+import adams.gui.event.UndoEvent.UndoType;
 import adams.gui.visualization.core.AxisPanelOptions;
 import adams.gui.visualization.core.axis.FancyTickGenerator;
 import adams.gui.visualization.core.plot.Axis;
@@ -396,8 +399,12 @@ public class RemoveOutliers
     JPanel 				panelButtonsRight;
     JPanel 				panelBottom;
     JPanel 				panelButtonsBottom;
+    JPanel				panelButtonsUndoRedo;
+    final Undo				undo;
     final BaseButton			buttonReset;
     final BaseButton			buttonClear;
+    final BaseButton			buttonUndo;
+    final BaseButton			buttonRedo;
     final BaseButton			buttonOK;
     final BaseButton			buttonCancel;
     OutlierPaintlet			paintlet;
@@ -411,6 +418,9 @@ public class RemoveOutliers
 
     m_PlotterPanel = new SequencePlotterPanel("Outliers");
     m_PlotterPanel.setSidePanelVisible(false);
+
+    undo = new Undo();
+    m_PlotterPanel.setUndo(undo);
 
     axis = new AxisPanelOptions();
     axis.setNthValueToShow(2);
@@ -464,6 +474,7 @@ public class RemoveOutliers
 	XYSequenceContainerManager manager = m_PlotterPanel.getContainerManager();
 	if (manager.countVisible() == 0)
 	  return;
+	m_PlotterPanel.addUndoPoint("reset");
 	manager.startUpdate();
 	XYSequence seq = manager.getVisible(0).getData();
 	for (int i = 0; i < seq.size(); i++) {
@@ -486,6 +497,7 @@ public class RemoveOutliers
 	if (manager.countVisible() == 0)
 	  return;
 	manager.startUpdate();
+	m_PlotterPanel.addUndoPoint("clear");
 	XYSequence seq = manager.getVisible(0).getData();
 	for (int i = 0; i < seq.size(); i++) {
 	  SequencePlotPoint point = (SequencePlotPoint) seq.toList().get(i);
@@ -498,6 +510,17 @@ public class RemoveOutliers
       }
     });
     panelButtonsRight.add(buttonClear);
+
+    panelButtonsUndoRedo = new JPanel(new GridLayout(1, 2, 5, 0));
+    panelButtonsRight.add(panelButtonsUndoRedo);
+
+    buttonUndo = new BaseButton(ImageManager.getIcon("undo.gif"));
+    buttonUndo.addActionListener((ActionEvent e) -> m_PlotterPanel.undo());
+    panelButtonsUndoRedo.add(buttonUndo);
+
+    buttonRedo = new BaseButton(ImageManager.getIcon("redo.gif"));
+    buttonRedo.addActionListener((ActionEvent e) -> m_PlotterPanel.redo());
+    panelButtonsUndoRedo.add(buttonRedo);
 
     panelBottom = new JPanel(new BorderLayout());
     result.add(panelBottom, BorderLayout.SOUTH);
@@ -526,6 +549,13 @@ public class RemoveOutliers
       }
     });
     panelButtonsBottom.add(buttonCancel);
+
+    undo.addUndoListener((UndoEvent e) -> {
+      if ((e.getType() == UndoType.UNDO) || (e.getType() == UndoType.REDO))
+	m_PlotterPanel.update();
+      buttonUndo.setEnabled(m_PlotterPanel.canUndo());
+      buttonRedo.setEnabled(m_PlotterPanel.canRedo());
+    });
 
     return result;
   }

@@ -157,6 +157,8 @@ public class ToggleOutlier
       return;
     }
 
+    panel.addUndoPoint("toggled polygon");
+
     axisX = panel.getPlot().getAxis(Axis.BOTTOM);
     axisY = panel.getPlot().getAxis(Axis.LEFT);
 
@@ -184,9 +186,8 @@ public class ToggleOutlier
 
     // clear points
     panel.clearSelection();
-    panel.update();
 
-    // display data
+    // update points
     toggleHits(panel, hits);
   }
 
@@ -205,8 +206,10 @@ public class ToggleOutlier
       if (m_HitDetector.getOwner() != panel.getDataPaintlet())
 	m_HitDetector.setOwner(panel.getDataPaintlet());
       located = m_HitDetector.locate(e);
-      if (located != null)
+      if (located != null) {
+	panel.addUndoPoint("toggled individual");
 	toggleHits(panel, located);
+      }
     }
     else if (MouseUtils.isRightClick(e) && KeyUtils.isShiftDown(e.getModifiersEx())) {
       e.consume();
