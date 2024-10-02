@@ -1,8 +1,10 @@
 # Project: adams
-# Date: 2016-02-15 15:26:09
+# Date: 2024-10-03 10:23:54
 # User: fracpete
 # Charset: UTF-8
-adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively." -flow-execution-listener adams.flow.execution.NullListener
+# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
+#
+adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively.\\nLeft-click: toggle outlier state of individual points.\\nSHIFT+left-click set vertex of polygon, SHIFT+right-click \\nfinalize polygon for toggling enclosed points.\\n" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
