@@ -15,11 +15,12 @@
 
 /*
  * XYSequencePanel.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
 
+import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
@@ -39,6 +40,7 @@ import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
 import adams.gui.core.Undo;
+import adams.gui.core.Undo.UndoPoint;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.SpreadSheetDialog;
 import adams.gui.event.PaintListener;
@@ -66,6 +68,7 @@ import adams.gui.visualization.core.plot.TipTextCustomizer;
 import javax.swing.JMenuItem;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -201,8 +204,6 @@ public class XYSequencePanel
 
     // paintlets
     m_XYSequencePaintlet = new StickPaintlet();
-    if (m_XYSequencePaintlet instanceof AntiAliasingSupporter)
-      ((AntiAliasingSupporter) m_XYSequencePaintlet).setAntiAliasingEnabled(props.getBoolean("Plot.AntiAliasing", true));
     m_XYSequencePaintlet.setPanel(this);
     setDataPaintlet(
       AbstractPaintlet.forCommandLine(
@@ -302,6 +303,82 @@ public class XYSequencePanel
   }
 
   /**
+   * Returns a copy of the current state of the sequence manager.
+   *
+   * @return		the current state
+   */
+  protected List<XYSequence> getState() {
+    return ObjectCopyHelper.copyObject(getSequenceManager().getAll());
+  }
+
+  /**
+   * Overwrites the sequences with the specified state.
+   *
+   * @param state	the new state to use
+   */
+  protected void setState(List<XYSequence> state) {
+    getSequenceManager().clear();
+    getSequenceManager().startUpdate();
+    getSequenceManager().addAll(state);
+    getSequenceManager().finishUpdate();
+  }
+
+  /**
+   * Adds an undo point, if undo is enabled.
+   *
+   * @param comment	the comment for the undo
+   */
+  public void addUndoPoint(String comment) {
+    if (!isUndoSupported())
+      return;
+    getUndo().addUndo(getState(), comment);
+  }
+
+  /**
+   * Returns whether an undo is possible.
+   *
+   * @return		true if possible
+   */
+  public boolean canUndo() {
+    return isUndoSupported() && getUndo().canUndo();
+  }
+
+  /**
+   * Performs an undo.
+   */
+  public void undo() {
+    UndoPoint 	point;
+
+    if (canUndo()) {
+      getUndo().addRedo(getState(), getUndo().peekUndoComment());
+      point = getUndo().undo();
+      SwingUtilities.invokeLater(() -> setState((List<XYSequence>) point.getData()));
+    }
+  }
+
+  /**
+   * Returns whether a redo is possible.
+   *
+   * @return		true if possible
+   */
+  public boolean canRedo() {
+    return isUndoSupported() && getUndo().canRedo();
+  }
+
+  /**
+   * Performs a redo.
+   */
+  public void redo() {
+    UndoPoint 	point;
+
+    if (canRedo()) {
+      getUndo().addUndo(getState(), getUndo().peekRedoComment(), true);
+      point = getUndo().redo();
+      SwingUtilities.invokeLater(() -> setState((List<XYSequence>) point.getData()));
+    }
+  }
+
+  /**
    * Returns true if the paintlets can be executed.
    *
    * @param g		the graphics context
@@ -369,7 +446,7 @@ public class XYSequencePanel
 	labels   = seq.getLabelsY();
 	fixed    = (FixedLabelTickGenerator) getPlot().getAxis(Axis.LEFT).getTickGenerator();
 	fixed.setLabels(labels);
-	if (labels.size() > 0) {
+	if (!labels.isEmpty()) {
 	  keys = seq.getMappingsX().keys();
 	  minY = StatUtils.min(keys);
 	  maxY = StatUtils.max(keys);
@@ -385,7 +462,7 @@ public class XYSequencePanel
 	labels   = seq.getLabelsX();
 	fixed    = (FixedLabelTickGenerator) getPlot().getAxis(Axis.BOTTOM).getTickGenerator();
 	fixed.setLabels(labels);
-	if (labels.size() > 0) {
+	if (!labels.isEmpty()) {
 	  keys = seq.getMappingsX().keys();
 	  minX = StatUtils.min(keys);
 	  maxX = StatUtils.max(keys);
@@ -414,7 +491,7 @@ public class XYSequencePanel
 	}
 
 	seq = getContainerManager().get(i).getData();
-	if (seq.size() == 0)
+	if (seq.isEmpty())
 	  continue;
 
 	// determine min/max
@@ -539,7 +616,7 @@ public class XYSequencePanel
       data = new ArrayList<>();
       for (XYSequenceContainer c: getTableModelContainers(true))
 	data.add(DataHelper.filter(c.getData().toSpreadSheet(), "X", xRange, "Y", yRange));
-      if (!((MultiSheetSpreadSheetWriter) writer).write(data.toArray(new SpreadSheet[data.size()]), filename))
+      if (!((MultiSheetSpreadSheetWriter) writer).write(data.toArray(new SpreadSheet[0]), filename))
 	GUIHelper.showErrorMessage(this, "Failed to write sequence data to '" + filename + "'!");
     }
     else {
