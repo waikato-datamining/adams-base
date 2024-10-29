@@ -15,7 +15,7 @@
 
 /*
  * DumpFile.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -145,7 +145,8 @@ public class DumpFile
   /** the buffer. */
   protected List<String> m_Buffer;
 
-  /** the time in msec to wait between attempts. */
+  /** whether currently writing to disk. */
+  protected boolean m_Writing;
 
   /**
    * Returns a string describing the object.
@@ -190,7 +191,19 @@ public class DumpFile
   protected void initialize() {
     super.initialize();
 
-    m_Buffer = new ArrayList<>();
+    m_Buffer  = new ArrayList<>();
+    m_Writing = false;
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Buffer.clear();
+    m_Writing = false;
   }
 
   /**
@@ -419,6 +432,10 @@ public class DumpFile
     int       attempt;
     boolean   finished;
 
+    if (m_Buffer.isEmpty())
+      return null;
+
+    m_Writing  = true;
     result   = null;
     finished = false;
     attempt  = 0;
@@ -430,7 +447,7 @@ public class DumpFile
 	m_Append,
 	m_Encoding.charsetValue().name());
       finished = (attempt == m_NumAttempts) || (result == null);
-      if (!finished && (result != null)) {
+      if (!finished) {
 	if (isLoggingEnabled())
 	  getLogger().info("Attempt " + attempt + "/" + m_NumAttempts + " failed, retrying...");
 	if (m_AttemptInterval > 0)
@@ -439,6 +456,7 @@ public class DumpFile
     }
 
     m_Buffer.clear();
+    m_Writing = false;
 
     return result;
   }
@@ -491,7 +509,11 @@ public class DumpFile
    * Performs the flush.
    */
   public void performFlush() {
-    if (m_Buffer.size() > 0)
+    if (!m_Buffer.isEmpty()) {
+      while (m_Writing) {
+	Utils.wait(this, this, 1000, 50);
+      }
       writeToDisk();
+    }
   }
 }
