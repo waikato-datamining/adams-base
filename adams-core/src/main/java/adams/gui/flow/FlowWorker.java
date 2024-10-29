@@ -26,6 +26,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.VariablesHandler;
+import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingHelper;
 import adams.db.LogEntryHandler;
 import adams.flow.control.Flow;
@@ -41,6 +42,7 @@ import adams.gui.flow.FlowPanelNotificationArea.NotificationType;
 import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Specialized worker class for executing a flow.
@@ -48,7 +50,10 @@ import java.io.File;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FlowWorker
+  extends CustomLoggingLevelObject
   implements Runnable, Pausable, Stoppable, StatusMessageHandler {
+
+  private static final long serialVersionUID = -3462535846381489083L;
 
   /** the panel this flow belongs to. */
   protected FlowWorkerHandler m_Owner;
@@ -61,6 +66,9 @@ public class FlowWorker
 
   /** generated output. */
   protected String m_Output;
+
+  /** the stop message. */
+  protected String m_StopMessage;
 
   /** whether to show a notification. */
   protected boolean m_ShowNotification;
@@ -89,6 +97,7 @@ public class FlowWorker
     m_Running          = false;
     m_Stopping         = false;
     m_StartTime        = 0;
+    setLoggingLevel(flow.getLoggingLevel());
   }
 
   /**
@@ -106,7 +115,8 @@ public class FlowWorker
     m_Owner.clearNotification();
     updateTabIcon("run.gif");
 
-    m_Running = true;
+    m_Running     = true;
+    m_StopMessage = null;
     m_Owner.update();
 
     try {
@@ -148,8 +158,8 @@ public class FlowWorker
 	}
 	while (!finished);
 	// did the flow get stopped by a critical actor?
-	if ((m_Output == null) && m_Flow.hasStopMessage())
-	  m_Output = m_Flow.getStopMessage();
+	if (m_Flow.hasStopMessage())
+	  m_StopMessage = m_Flow.getStopMessage();
 
 	// was flow stopped externally and we need to wait for it to finish?
 	if (m_Stopping) {
@@ -169,7 +179,7 @@ public class FlowWorker
     catch (Throwable e) {
       if (m_Flow instanceof Flow)
         ((Flow) m_Flow).setParentComponent(null);
-      e.printStackTrace();
+      getLogger().log(Level.SEVERE, "Failed to execute flow!", e);
       m_Output = LoggingHelper.throwableToString(e);
     }
 
@@ -186,10 +196,11 @@ public class FlowWorker
    * method is finished.
    */
   protected void done() {
-    String	msg;
-    String	errors;
-    int		countErrors;
-    long	time;
+    String		msg;
+    String		errors;
+    int			countErrors;
+    long		time;
+    NotificationType	type;
 
     showStatus("Finishing up");
     m_Flow.wrapUp();
@@ -210,28 +221,27 @@ public class FlowWorker
 	errors = countErrors + " error(s) logged";
     }
 
+    time = System.currentTimeMillis() - m_StartTime;
     if (m_Output != null) {
-      msg = "Finished with error: " + m_Output;
-      if (errors != null)
-	msg += "(" + errors + ")";
-      showStatus(msg);
-      if (m_ShowNotification)
-	showNotification(m_Output, NotificationType.ERROR);
+      msg  = "Finished with error (" + DateUtils.msecToString(time) + "):\n\n" + m_Output;
+      type = NotificationType.ERROR;
+    }
+    else if (m_StopMessage != null) {
+      msg  = "Flow stopped with message (" + DateUtils.msecToString(time) + "):\n\n" + m_StopMessage;
+      type = (errors != null) ? NotificationType.ERROR : NotificationType.WARNING;
     }
     else {
-      if (m_Running) {
-	time = System.currentTimeMillis() - m_StartTime;
+      if (m_Running)
 	msg = "Flow finished (" + DateUtils.msecToString(time) + ").";
-      }
-      else {
-	msg = "User stopped flow.";
-      }
-      if (errors != null)
-	msg += " " + errors + ".";
-      showStatus(msg);
-      if (m_ShowNotification)
-        m_Owner.showNotification(msg, m_Running ? NotificationType.INFO : NotificationType.WARNING);
+      else
+	msg = "User stopped flow (" + DateUtils.msecToString(time) + ").";
+      type = m_Running ? NotificationType.INFO : NotificationType.WARNING;
     }
+    if (errors != null)
+      msg += "\n\n" + errors + ".";
+    showStatus(msg);
+    if (m_ShowNotification)
+      showNotification(msg, type);
 
     m_Running  = false;
     m_Stopping = false;
