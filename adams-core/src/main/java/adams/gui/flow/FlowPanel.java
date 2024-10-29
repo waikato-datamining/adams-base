@@ -740,12 +740,12 @@ public class FlowPanel
 	  m_RecentFilesHandler.addRecentItem(new Setup(file, reader));
 	notifications = new StringBuilder();
 	if (!m_Errors.isEmpty()) {
-	  notifications.append("Error(s):\n" + m_Errors);
+	  notifications.append("Error(s):\n").append(m_Errors.toString());
 	}
 	if (!m_Warnings.isEmpty()) {
 	  msg = "Warning(s):\n" + m_Warnings;
 	  if (canExecute)
-	    ConsolePanel.getSingleton().append(LoggingLevel.SEVERE, msg);
+	    ConsolePanel.getSingleton().append(LoggingLevel.WARNING, msg);
 	  else
 	    notifications.append("\n\n").append(msg);
 	}
@@ -756,7 +756,7 @@ public class FlowPanel
 	  if (!m_Errors.isEmpty())
 	    type = NotificationType.ERROR;
 	  showNotification(
-	    "Problem(s) encountered loading flow '" + file + "':\n\n"
+	    "Issue(s) encountered loading flow '" + file + "':\n\n"
 	      + notifications.toString().trim(), type);
 	}
 
