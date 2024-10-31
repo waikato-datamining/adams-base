@@ -1251,6 +1251,9 @@ public class FlowPanel
 	if (Java.canStopThread())
 	  m_CurrentThread.stop();
       }
+      catch (Exception e) {
+	// ignored
+      }
       finally {
 	setPageIcon(null);
 	finishedExecution();

@@ -679,6 +679,9 @@ public class InvestigatorPanel
       if (Java.canStopThread())
 	m_Worker.stop();
     }
+    catch (Exception e) {
+      // ignored
+    }
     finally {
       logAndShowMessage("Stopped: " + m_Job.getTitle());
       executionFinished();

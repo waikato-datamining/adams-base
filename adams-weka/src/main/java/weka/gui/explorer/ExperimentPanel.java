@@ -832,8 +832,13 @@ public class ExperimentPanel
    */
   protected void stopExperiment() {
     if (m_RunThread != null) {
-      m_RunThread.interrupt();
-      
+      try {
+	m_RunThread.interrupt();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+
       // This is deprecated (and theoretically the interrupt should do).
       try {
 	if (Java.canStopThread())

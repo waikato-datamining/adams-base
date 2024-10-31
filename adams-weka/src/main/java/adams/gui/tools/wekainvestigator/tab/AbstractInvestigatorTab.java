@@ -251,6 +251,9 @@ public abstract class AbstractInvestigatorTab
       if (Java.canStopThread())
 	m_Worker.stop();
     }
+    catch (Exception e) {
+      // ignored
+    }
     finally {
       m_Worker = null;
       postStopExecution();
