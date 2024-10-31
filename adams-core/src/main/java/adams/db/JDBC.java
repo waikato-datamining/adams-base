@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JDBC.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -26,7 +26,6 @@ import adams.db.types.AbstractTypes;
  * Utility class for JDBC.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JDBC {
 
@@ -38,6 +37,12 @@ public class JDBC {
 
   /** the expression to match a SQLite JDBC URL. */
   public final static String URL_SQLITE = "jdbc:sqlite:.*";
+
+  /** the expression to match a HSQLDB JDBC URL. */
+  public final static String URL_HSQLDB = "jdbc:hsqldb:.*";
+
+  /** the expression to match a H2 JDBC URL. */
+  public final static String URL_H2 = "jdbc:h2:.*";
 
   /**
    * Checks whether this JDBC url represents a MySQL URL.
@@ -103,6 +108,50 @@ public class JDBC {
    */
   public static boolean isSQLite(AbstractDatabaseConnection conn) {
     return isSQLite(conn.getURL());
+  }
+
+  /**
+   * Checks whether this JDBC url represents a H2 URL.
+   *
+   * @param url		the URL to check
+   * @return		true if H2 URL
+   * @see		#URL_H2
+   */
+  public static boolean isH2(String url) {
+    return url.matches(URL_H2);
+  }
+
+  /**
+   * Checks whether this connection represents a H2 one.
+   *
+   * @param conn	the connection to check
+   * @return		true if h2 URL
+   * @see		#isH2(String)
+   */
+  public static boolean ish2(AbstractDatabaseConnection conn) {
+    return isH2(conn.getURL());
+  }
+
+  /**
+   * Checks whether this JDBC url represents a HSQLDB URL.
+   *
+   * @param url		the URL to check
+   * @return		true if HSQLDB URL
+   * @see		#URL_HSQLDB
+   */
+  public static boolean isHSQLDB(String url) {
+    return url.matches(URL_HSQLDB);
+  }
+
+  /**
+   * Checks whether this connection represents a HSQLDB one.
+   *
+   * @param conn	the connection to check
+   * @return		true if HSQLDB URL
+   * @see		#isHSQLDB(String)
+   */
+  public static boolean isHSQLDB(AbstractDatabaseConnection conn) {
+    return isHSQLDB(conn.getURL());
   }
 
   /**

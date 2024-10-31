@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2019} &
+		\parbox[c][2cm]{2cm}{\copyright 2019-2024} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -59,6 +59,7 @@
 Adds support for the following databases (via JDBC):
 \begin{tight_itemize}
   \item SQLite\cite{sqlite}
+  \item H2\cite{h2}
   \item HSQLDB\cite{hsqldb}
   \item PostgreSQL\cite{postgresql}
   \item MS SQL Server\cite{mssql}
@@ -66,6 +67,7 @@ Adds support for the following databases (via JDBC):
 The following JDBC drivers are available (see \texttt{adams/db/Drivers.props}):
 \begin{tight_itemize}
   \item SQLite: \verb|org.sqlite.JDBC|
+  \item H2: \verb|org.h2.Driver|
   \item HSQLDB: \verb|org.hsqldb.jdbcDriver|
   \item PostgreSQL: \verb|org.postgresql.Driver|
   \item MS SQL Server (jTDS)\cite{jtds}: \verb|net.sourceforge.jtds.jdbc.Driver|
@@ -74,6 +76,7 @@ The following JDBC drivers are available (see \texttt{adams/db/Drivers.props}):
 These JDBC drivers use the following JDBC URLs:
 \begin{tight_itemize}
   \item SQLite\cite{sqlitexerial}: \verb|jdbc:sqlite:PATH_TO_FILE|
+  \item H2: \verb|jdbc:h2:{mem/file/tcp/ssl}:...|
   \item HSQLDB: \verb|jdbc:hsqldb:{mem/file/res/hsql/http/hsqls/https}:...|
   \item PostgreSQL: \verb|jdbc:postgresql://HOST:5432/DATABASE|
   \item MS SQL Server (jTDS): \verb|jdbc:jtds:sqlserver://HOST:1433/DATABASE|
