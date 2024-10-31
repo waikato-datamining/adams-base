@@ -128,7 +128,7 @@ public class JDBC {
    * @return		true if h2 URL
    * @see		#isH2(String)
    */
-  public static boolean ish2(AbstractDatabaseConnection conn) {
+  public static boolean isH2(AbstractDatabaseConnection conn) {
     return isH2(conn.getURL());
   }
 
