@@ -15,7 +15,7 @@
 
 /*
  * DbBackend.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.autodetect;
@@ -27,7 +27,7 @@ import adams.db.LogIntf;
 import adams.db.SQLIntf;
 
 /**
- * Auto-detection database backend. Detects: MySQL, SQLite, PostgreSQL.
+ * Auto-detection database backend. Detects: MySQL, SQLite, PostgreSQL, H2.
  * Otherwise uses the generic SQL/LogT instances.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -44,8 +44,8 @@ public class DbBackend
    */
   @Override
   public String globalInfo() {
-    return "Auto-detect Spectral backend.\n"
-      + "Detects: MySQL, PostgreSQL, SQLite.\n"
+    return "Auto-detect DB backend.\n"
+      + "Detects: MySQL, PostgreSQL, SQLite, H2.\n"
       + "Otherwise uses generic SQL/LogT.";
   }
 
@@ -84,6 +84,8 @@ public class DbBackend
       return adams.db.postgresql.LogT.getSingleton(conn);
     else if (JDBC.isSQLite(conn))
       return adams.db.sqlite.LogT.getSingleton(conn);
+    else if (JDBC.isH2(conn))
+      return adams.db.h2.LogT.getSingleton(conn);
     else
       return adams.db.generic.LogT.singleton(conn);
   }
