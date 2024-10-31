@@ -15,7 +15,7 @@
 
 /*
  * AutoIncrementType.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,7 +30,6 @@ import java.sql.Types;
  * Autoincrement SQL type
  * 
  * @author dale
- * @version $Revision$
  */
 public class AutoIncrementType
   extends ColumnType {
@@ -48,7 +47,7 @@ public class AutoIncrementType
    */
   public String getCreateType(AbstractDatabaseConnection conn) {
     String create = super.getCreateType(conn);
-    if (JDBC.isMySQL(conn))
+    if (JDBC.isMySQL(conn) || JDBC.isH2(conn))
       return create + " AUTO_INCREMENT";
     else if (JDBC.isPostgreSQL(conn))
       return "BIGSERIAL";
@@ -57,5 +56,4 @@ public class AutoIncrementType
     else
       return create;
   }
-
 }
