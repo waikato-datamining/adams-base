@@ -19,6 +19,7 @@
  */
 package adams.core.management;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.option.OptionUtils;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
@@ -70,6 +71,14 @@ public class Java {
 
       if (versionStr.contains(".")) {
 	versionStr = versionStr.substring(0, versionStr.indexOf('.'));
+	try {
+	  versionInt = Integer.parseInt(versionStr);
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to determine major version in Java version string: " + System.getProperty("java.version"));
+	}
+      }
+      else if (Utils.isInteger(versionStr)) {
 	try {
 	  versionInt = Integer.parseInt(versionStr);
 	}
