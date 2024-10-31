@@ -15,7 +15,7 @@
 
 /*
  * Java.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -224,7 +224,7 @@ public class Java {
       cmd.add(0, executable);
 
       // execute command
-      proc = ProcessUtils.execute(cmd.toArray(new String[cmd.size()]));
+      proc = ProcessUtils.execute(cmd.toArray(new String[0]));
       if (!proc.hasSucceeded())
 	result = ProcessUtils.toErrorOutput(proc);
       else
@@ -248,20 +248,20 @@ public class Java {
    * @return 		the classpath
    */
   public static synchronized String getClassPath(boolean shorten) {
-    String 	result;
-    String	shortCP;
-    String	fullCP;
-    String[] 	parts;
-    String 	sep;
-    int 	i;
-    File	entry;
-    boolean	isJar;
+    String 		result;
+    StringBuilder	shortCP;
+    StringBuilder	fullCP;
+    String[] 		parts;
+    String 		sep;
+    int 		i;
+    File		entry;
+    boolean		isJar;
 
     if (CLASSPATH_FULL == null) {
       sep     = System.getProperty("path.separator");
       parts   = System.getProperty("java.class.path").split(sep);
-      shortCP = "";
-      fullCP  = "";
+      shortCP = new StringBuilder();
+      fullCP  = new StringBuilder();
       for (i = 0; i < parts.length; i++) {
 	isJar = false;
 	entry = new File(parts[i]);
@@ -273,18 +273,18 @@ public class Java {
 	}
 
 	if (shortCP.length() > 0) {
-	  shortCP += sep;
-	  fullCP  += sep;
+	  shortCP.append(sep);
+	  fullCP.append(sep);
 	}
 
 	if (isJar)
-	  shortCP += entry.getName();
+	  shortCP.append(entry.getName());
 	else
-	  shortCP += parts[i];
-	fullCP  += parts[i];
+	  shortCP.append(parts[i]);
+	fullCP.append(parts[i]);
       }
-      CLASSPATH_SHORT = shortCP;
-      CLASSPATH_FULL  = fullCP;
+      CLASSPATH_SHORT = shortCP.toString();
+      CLASSPATH_FULL  = fullCP.toString();
     }
 
     if (shorten)
@@ -293,6 +293,15 @@ public class Java {
       result = CLASSPATH_FULL;
 
     return result;
+  }
+
+  /**
+   * Returns whether we can call Thread.stop().
+   *
+   * @return		true if possible
+   */
+  public static boolean canStopThread() {
+    return (getMajorVersion() <= 17);
   }
 
   /**
@@ -307,11 +316,11 @@ public class Java {
     System.out.println("JDK? " + isJDK());
     System.out.println("bin dir? " + getBinDir());
 
-    for (int i = 0; i < args.length; i++) {
-      System.out.println("\n--> " + args[i]);
-      System.out.println("JRE? " + isJRE(args[i]));
-      System.out.println("JDK? " + isJDK(args[i]));
-      System.out.println("bin dir? " + getBinDir(args[i]));
+    for (String arg: args) {
+      System.out.println("\n--> " + arg);
+      System.out.println("JRE? " + isJRE(arg));
+      System.out.println("JDK? " + isJDK(arg));
+      System.out.println("bin dir? " + getBinDir(arg));
     }
   }
 }

@@ -38,6 +38,7 @@ import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingSupporter;
+import adams.core.management.Java;
 import adams.core.option.OptionConsumer;
 import adams.core.option.OptionProducer;
 import adams.core.option.OptionUtils;
@@ -1247,7 +1248,8 @@ public class FlowPanel
     if (m_CurrentThread != null) {
       try {
 	m_CurrentThread.interrupt();
-	m_CurrentThread.stop();
+	if (Java.canStopThread())
+	  m_CurrentThread.stop();
       }
       finally {
 	setPageIcon(null);

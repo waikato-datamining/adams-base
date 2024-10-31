@@ -30,6 +30,7 @@ import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.Java;
 import adams.core.option.OptionUtils;
 import adams.data.weka.classattribute.AbstractClassAttributeHeuristic;
 import adams.data.weka.classattribute.LastAttribute;
@@ -675,7 +676,8 @@ public class InvestigatorPanel
 
     try {
       m_Worker.interrupt();
-      m_Worker.stop();
+      if (Java.canStopThread())
+	m_Worker.stop();
     }
     finally {
       logAndShowMessage("Stopped: " + m_Job.getTitle());

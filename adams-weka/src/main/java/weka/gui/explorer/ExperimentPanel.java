@@ -24,6 +24,7 @@ package weka.gui.explorer;
 import adams.core.ObjectCopyHelper;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingHelper;
+import adams.core.management.Java;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseTextArea;
@@ -835,7 +836,8 @@ public class ExperimentPanel
       
       // This is deprecated (and theoretically the interrupt should do).
       try {
-	m_RunThread.stop();
+	if (Java.canStopThread())
+	  m_RunThread.stop();
       }
       catch (Exception e) {
 	// ignored

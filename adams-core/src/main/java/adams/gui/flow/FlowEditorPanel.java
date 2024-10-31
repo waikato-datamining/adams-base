@@ -26,6 +26,7 @@ import adams.core.StatusMessageHandlerExt;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.Java;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.FlowReader;
 import adams.data.io.output.FlowWriter;
@@ -1287,7 +1288,8 @@ public class FlowEditorPanel
       menu.add(m_ActionRunPauseAndResume);
       menu.add(m_ActionRunStop);
       menu.add(m_ActionRunStopAll);
-      menu.add(m_ActionRunKill);
+      if (Java.canStopThread())
+	menu.add(m_ActionRunKill);
       menu.addSeparator();
       menu.add(m_ActionRunEnableAllBreakpoints);
       menu.add(m_ActionRunDisableAllBreakpoints);

@@ -25,6 +25,7 @@ import adams.core.MessageCollection;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.management.Java;
 import adams.data.io.input.AbstractParameterMapReader;
 import adams.data.io.output.AbstractParameterMapWriter;
 import adams.gui.chooser.BaseFileChooser;
@@ -247,7 +248,8 @@ public abstract class AbstractInvestigatorTab
 
     try {
       m_Worker.interrupt();
-      m_Worker.stop();
+      if (Java.canStopThread())
+	m_Worker.stop();
     }
     finally {
       m_Worker = null;
