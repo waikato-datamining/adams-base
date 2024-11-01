@@ -931,7 +931,7 @@ public abstract class AbstractDatabaseConnection
     if (LoggingHelper.isAtLeast(getLogger(), Level.FINE))
       getLogger().log(Level.FINE, "tryConnection request originated from:\n" + LoggingHelper.getStackTrace(-1));
     while (!m_ConnectionOK) {
-      if (m_LastConnectionError.indexOf("CommunicationsException") > -1) {
+      if (m_LastConnectionError.contains("CommunicationsException")) {
 	return false;
       }
       else if (getFailedConnectAttempt(m_URL, m_User, m_Password) >= m_MaxConnectAttempts) {
@@ -1033,7 +1033,7 @@ public abstract class AbstractDatabaseConnection
       }
 
       try {
-	if (m_User.equals(""))
+	if (m_User.isEmpty())
 	  m_Connection = DriverManager.getConnection(m_URL);
 	else
 	  m_Connection = DriverManager.getConnection(m_URL,m_User,m_Password.getValue());
