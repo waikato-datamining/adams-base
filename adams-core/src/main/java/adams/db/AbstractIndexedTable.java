@@ -15,7 +15,7 @@
 
 /*
  * AbstractIndexedTable.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -118,7 +118,7 @@ public abstract class AbstractIndexedTable
     boolean ok = true;
     try {
       DatabaseMetaData dbmd = connection.getMetaData();
-      rs = new SimpleResultSet(dbmd.getColumns(connection.getCatalog(), null, m_TableName, "%"));
+      rs = new SimpleResultSet(dbmd.getColumns(connection.getCatalog(), null, updateTableName(dbmd, m_TableName), "%"));
       HashSet<String> columns = new HashSet<>();
       while(rs.next()) {
 	String cname = rs.getString("COLUMN_NAME").toUpperCase();
@@ -154,7 +154,7 @@ public abstract class AbstractIndexedTable
 	}
       }
 
-      // try add missing columns
+      // try adding missing columns
       if (columns.size() != cm.size()) {
 	Enumeration<String> keys = cm.keys();
 	while (keys.hasMoreElements()) {
@@ -166,8 +166,8 @@ public abstract class AbstractIndexedTable
 	    break;
 	  }
 	  ColumnType type = cm.getMapping(cname);
-	  String sql = "ALTER TABLE " + getTableName() + " ADD COLUMN ";
-	  sql += cname + " " + type.getCreateType(getDatabaseConnection());
+	  String sql = "ALTER TABLE " + updateTableName(dbmd, m_TableName) + " ADD COLUMN ";
+	  sql += quoteName(cname) + " " + type.getCreateType(getDatabaseConnection());
 	  try {
 	    execute(sql);
 	  }
@@ -253,13 +253,13 @@ public abstract class AbstractIndexedTable
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
       String cname = (String) enum1.nextElement();
       ColumnType type = cm.getMapping(cname);
-      sql += " " + cname + " " + type.getCreateType(getDatabaseConnection());
+      sql += " " + quoteName(cname) + " " + type.getCreateType(getDatabaseConnection());
       if (enum1.hasMoreElements()) {
 	sql += ",";
       }
       else {
 	if (cm.hasPrimaryKey())
-	  sql += ", PRIMARY KEY(" + cm.getPrimaryKey() + ")";
+	  sql += ", PRIMARY KEY(" + quoteName(cm.getPrimaryKey()) + ")";
 	sql += ")";
       }
     }

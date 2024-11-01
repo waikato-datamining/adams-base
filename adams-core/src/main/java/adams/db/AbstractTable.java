@@ -50,7 +50,10 @@ public abstract class AbstractTable
 
   /** name of the table. */
   protected String m_TableName;
-  
+
+  /** whether to use ANSI quotes around table/column names. */
+  protected boolean m_AnsiQuotes;
+
   /**
    * Initializes the table.
    *
@@ -69,6 +72,8 @@ public abstract class AbstractTable
 
     if (getDebug())
       getLogger().info(m_DatabaseConnection.toString());
+
+    m_AnsiQuotes = getProperties().getBoolean("AnsiQuotes", false);
   }
   
   /**
@@ -88,6 +93,29 @@ public abstract class AbstractTable
    */
   public String getTableName() {
     return m_TableName;
+  }
+
+  /**
+   * Returns whether ANSI quotes are to be used around table/column names.
+   *
+   * @return		true if to be used
+   */
+  public boolean useAnsiQuotes() {
+    return m_AnsiQuotes;
+  }
+
+  /**
+   * Returns the column/table quoted if ANSI quotes are to be used.
+   *
+   * @param name	the table/column name to quote (if necessary)
+   * @return		the potentially quoted name
+   * @see		#useAnsiQuotes()
+   */
+  public String quoteName(String name) {
+    if (m_AnsiQuotes)
+      return "\"" + name + "\"";
+    return
+      name;
   }
 
   /**
