@@ -131,6 +131,22 @@ public class SQL
   }
 
   /**
+   * Updates the case of the table name if necessary.
+   *
+   * @param dbmd	the database meta-data to query
+   * @param table	the table to process
+   * @return		the (potentially) updated table name
+   * @throws Exception	if accessing the meta-data fails
+   */
+  protected String updateTableName(DatabaseMetaData dbmd, String table) throws Exception {
+    if (dbmd.storesUpperCaseIdentifiers())
+      return table.toUpperCase();
+    else if (dbmd.storesLowerCaseIdentifiers())
+      return table.toLowerCase();
+    return table;
+  }
+
+  /**
    * Checks that a given table exists.
    *
    * @param table	the table to look for
@@ -147,9 +163,9 @@ public class SQL
     connection = m_DatabaseConnection.getConnection(true);
     try {
       dbmd = connection.getMetaData();
-      rs   = dbmd.getTables(null, connection.getCatalog(), table, null);
+      rs   = dbmd.getTables(null, null, null, null);
       while (rs.next()) {
-	if (rs.getString(1).equals(connection.getCatalog())) {
+	if (rs.getString(1).equals(connection.getCatalog()) && rs.getString(3).equalsIgnoreCase(table)) {
 	  result = true;
 	  break;
 	}
@@ -159,9 +175,9 @@ public class SQL
       // try again
       try {
 	dbmd = connection.getMetaData();
-	rs   = dbmd.getTables(null, connection.getCatalog(), table, null);
+	rs   = dbmd.getTables(null, null, null, null);
 	while (rs.next()) {
-	  if (rs.getString(1).equals(connection.getCatalog())) {
+	  if (rs.getString(1).equals(connection.getCatalog()) && rs.getString(3).equalsIgnoreCase(table)) {
 	    result = true;
 	    break;
 	  }
@@ -199,6 +215,7 @@ public class SQL
     conn   = m_DatabaseConnection.getConnection(true);
     try{
       dbmd   = conn.getMetaData();
+      table  = updateTableName(dbmd, table);
       rs     = dbmd.getColumns(conn.getCatalog(), null, table, column);
       result = rs.next();
     }
@@ -206,6 +223,7 @@ public class SQL
       // try again
       try {
 	dbmd   = conn.getMetaData();
+	table  = updateTableName(dbmd, table);
 	rs     = dbmd.getColumns(conn.getCatalog(), null, table, column);
 	result = rs.next();
       }
