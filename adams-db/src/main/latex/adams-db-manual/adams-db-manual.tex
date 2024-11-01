@@ -58,11 +58,11 @@
 \chapter{Databases}
 Adds support for the following databases (via JDBC):
 \begin{tight_itemize}
-  \item SQLite\cite{sqlite}
-  \item H2\cite{h2}
-  \item HSQLDB\cite{hsqldb}
-  \item PostgreSQL\cite{postgresql}
-  \item MS SQL Server\cite{mssql}
+  \item SQLite (\cite{sqlite}, \cite{sqlitexerial})
+  \item H2 (\cite{h2})
+  \item HSQLDB (\cite{hsqldb})
+  \item PostgreSQL (\cite{postgresql})
+  \item MS SQL Server (jTDS\cite{jtds} or MS\cite{mssql})
 \end{tight_itemize}
 The following JDBC drivers are available (see \texttt{adams/db/Drivers.props}):
 \begin{tight_itemize}
@@ -70,12 +70,12 @@ The following JDBC drivers are available (see \texttt{adams/db/Drivers.props}):
   \item H2: \verb|org.h2.Driver|
   \item HSQLDB: \verb|org.hsqldb.jdbcDriver|
   \item PostgreSQL: \verb|org.postgresql.Driver|
-  \item MS SQL Server (jTDS)\cite{jtds}: \verb|net.sourceforge.jtds.jdbc.Driver|
-  \item MS SQL Server (MS)\cite{mssqljdbc}: \verb|com.microsoft.sqlserver.jdbc.SQLServerDriver|
+  \item MS SQL Server (jTDS): \verb|net.sourceforge.jtds.jdbc.Driver|
+  \item MS SQL Server (MS): \verb|com.microsoft.sqlserver.jdbc.SQLServerDriver|
 \end{tight_itemize}
 These JDBC drivers use the following JDBC URLs:
 \begin{tight_itemize}
-  \item SQLite\cite{sqlitexerial}: \verb|jdbc:sqlite:PATH_TO_FILE|
+  \item SQLite: \verb|jdbc:sqlite:PATH_TO_FILE|
   \item H2: \verb|jdbc:h2:{mem/file/tcp/ssl}:...|
   \item HSQLDB: \verb|jdbc:hsqldb:{mem/file/res/hsql/http/hsqls/https}:...|
   \item PostgreSQL: \verb|jdbc:postgresql://HOST:5432/DATABASE|
@@ -83,6 +83,14 @@ These JDBC drivers use the following JDBC URLs:
   \item MS SQL Server (MS): \verb|jdbc:sqlserver://HOST:1433;databaseName=DATABASE;...|
 \end{tight_itemize}
 
+\clearpage
+\section{H2}
+The H2 database requires a more strict ANSI SQL syntax than MySQL uses by default.
+In order for the automatic table generation to work, you need to set the following property
+in \texttt{Table.props} and place that file, e.g., in the ADAMS home directory or the current directory:
+\begin{verbatim}
+AnsiQuotes=true
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
