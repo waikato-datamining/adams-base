@@ -1278,11 +1278,12 @@ actors allow you to perform some basic operations:
 For more functionality, see the documentation on the \textit{adams-spreadsheet}
 module.
 
-\noindent Here are JDBC URL templates for accessing the various types of databases:
+\noindent Here are JDBC URL templates for accessing various types of databases:
 \begin{tight_itemize}
-  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false&sessionVariables=sql_mode='ALLOW_INVALID_DATES'}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
   \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
-  \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB_CLOSE_DELAY=-1}
+  \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
   \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
   \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
   \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
