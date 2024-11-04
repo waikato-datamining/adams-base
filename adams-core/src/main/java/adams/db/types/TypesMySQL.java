@@ -20,6 +20,7 @@
 
 package adams.db.types;
 
+import adams.core.Constants;
 import adams.db.JDBC;
 
 import java.sql.Types;
@@ -98,7 +99,7 @@ public class TypesMySQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '1970-01-02 00:00:01'";
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '" + Constants.TIMESTAMP_DEFAULT_MYSQL + "'";
 	else
 	  return "TIMESTAMP";
 

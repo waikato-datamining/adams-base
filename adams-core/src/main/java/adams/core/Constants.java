@@ -54,6 +54,9 @@ public class Constants
   /** the date format for timestamps (ISO-8601). */
   public final static String TIMESTAMP_FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss";
 
+  /** the default value for MySQL timestamps (Jan 2nd to avoid timezone issues). */
+  public final static String TIMESTAMP_DEFAULT_MYSQL = "1970-01-02 00:00:01";
+
   /** the format for times. */
   public final static String TIME_FORMAT = "HH:mm:ss";
 
