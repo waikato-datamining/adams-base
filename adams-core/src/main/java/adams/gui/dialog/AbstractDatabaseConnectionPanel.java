@@ -15,12 +15,11 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
 
-import adams.core.Constants;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
@@ -111,6 +110,9 @@ public abstract class AbstractDatabaseConnectionPanel
   /** the change listeners. */
   protected HashSet<ChangeListener> m_ChangeListeners;
 
+  /** the echo char to use. */
+  protected char m_EchoChar;
+
   /**
    * For initializing members.
    */
@@ -159,7 +161,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_PanelParameters.addParameter("U_ser", m_TextUser);
 
     m_TextPassword = new BasePasswordField(20);
-    m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = m_TextPassword.getEchoChar();
     m_PanelParameters.addParameter("_Password", m_TextPassword);
 
     m_CheckBoxShowPassword = new BaseCheckBox();
@@ -168,7 +170,7 @@ public abstract class AbstractDatabaseConnectionPanel
       if (m_CheckBoxShowPassword.isSelected())
         m_TextPassword.setEchoChar((char) 0);
       else
-        m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+        m_TextPassword.setEchoChar(m_EchoChar);
     });
     m_PanelParameters.addParameter("Sho_w password", m_CheckBoxShowPassword);
 

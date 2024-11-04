@@ -15,11 +15,10 @@
 
 /*
  * JdbcOutputPanel.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
-import adams.core.Constants;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BasePasswordField;
@@ -64,7 +63,10 @@ public class JdbcOutputPanel
   
   /** whether to show the password. */
   protected BaseCheckBox m_CheckBoxShowPassword;
-  
+
+  /** the echo char to use. */
+  protected char m_EchoChar;
+
   /**
    * Initializes the widgets.
    */
@@ -105,13 +107,13 @@ public class JdbcOutputPanel
     m_TextUser.setText((dbutils == null) ? "" : dbutils.getUsername());
     m_TextPassword = new BasePasswordField(20);
     m_TextPassword.setText((dbutils == null) ? "" : dbutils.getPassword());
-    m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = m_TextPassword.getEchoChar();
     m_CheckBoxShowPassword = new BaseCheckBox();
     m_CheckBoxShowPassword.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
 	if (!m_CheckBoxShowPassword.isSelected())
-	  m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+	  m_TextPassword.setEchoChar(m_EchoChar);
 	else
 	  m_TextPassword.setEchoChar((char) 0);
       }

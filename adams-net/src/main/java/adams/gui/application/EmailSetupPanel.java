@@ -15,11 +15,10 @@
 
 /*
  * EmailSetupPanel.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import adams.core.Constants;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -97,6 +96,9 @@ public class EmailSetupPanel
   /** the support email addres. */
   protected BaseTextField m_TextSupportEmailAddress;
 
+  /** the echo char to use. */
+  protected char m_EchoChar;
+
   /**
    * Initializes the members.
    */
@@ -154,7 +156,7 @@ public class EmailSetupPanel
 
     m_TextSmtpPassword = new BasePasswordField(20);
     m_TextSmtpPassword.setText(EmailHelper.getSmtpPassword().getValue());
-    m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = m_TextSmtpPassword.getEchoChar();
     m_PanelParameters.addParameter("SMTP _Password", m_TextSmtpPassword);
 
     m_CheckBoxShowPassword = new BaseCheckBox();
@@ -163,7 +165,7 @@ public class EmailSetupPanel
       if (m_CheckBoxShowPassword.isSelected())
         m_TextSmtpPassword.setEchoChar((char) 0);
       else
-        m_TextSmtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
+        m_TextSmtpPassword.setEchoChar(m_EchoChar);
     });
     m_PanelParameters.addParameter("Sho_w Password", m_CheckBoxShowPassword);
 

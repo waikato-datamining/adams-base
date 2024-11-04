@@ -15,11 +15,10 @@
 
 /*
  * ProxyPanel.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
-import adams.core.Constants;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.FileUtils;
@@ -105,6 +104,9 @@ public class ProxySettingsPanel
   /** Whether to show the password. */
   protected BaseCheckBox m_CheckBoxShowSocksPassword;
 
+  /** the echo char to use. */
+  protected char m_EchoChar;
+
   /**
    * Initializes the widgets.
    */
@@ -167,7 +169,7 @@ public class ProxySettingsPanel
 
     m_TextHttpFtpPassword = new BasePasswordField(15);
     m_TextHttpFtpPassword.setEnabled(false);
-    m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = m_TextHttpFtpPassword.getEchoChar();
     m_PanelHttpFtp.addParameter("Password", m_TextHttpFtpPassword);
 
     m_CheckBoxShowHttpFtpPassword = new BaseCheckBox();
@@ -176,7 +178,7 @@ public class ProxySettingsPanel
       if (m_CheckBoxShowHttpFtpPassword.isSelected())
         m_TextHttpFtpPassword.setEchoChar((char) 0);
       else
-        m_TextHttpFtpPassword.setEchoChar(Constants.PASSWORD_CHAR);
+        m_TextHttpFtpPassword.setEchoChar(m_EchoChar);
     });
     m_PanelHttpFtp.addParameter("Sho_w Password", m_CheckBoxShowHttpFtpPassword);
 
@@ -205,7 +207,6 @@ public class ProxySettingsPanel
 
     m_TextSocksPassword = new BasePasswordField(15);
     m_TextSocksPassword.setEnabled(false);
-    m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
     m_PanelSocks.addParameter("Password", m_TextSocksPassword);
 
     m_CheckBoxShowSocksPassword = new BaseCheckBox();
@@ -214,7 +215,7 @@ public class ProxySettingsPanel
       if (m_CheckBoxShowSocksPassword.isSelected())
         m_TextSocksPassword.setEchoChar((char) 0);
       else
-        m_TextSocksPassword.setEchoChar(Constants.PASSWORD_CHAR);
+        m_TextSocksPassword.setEchoChar(m_EchoChar);
     });
     m_PanelSocks.addParameter("Sho_w Password", m_CheckBoxShowSocksPassword);
 

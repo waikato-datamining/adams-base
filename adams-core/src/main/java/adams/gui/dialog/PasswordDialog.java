@@ -15,11 +15,10 @@
 
 /*
  * PasswordDialog.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
-import adams.core.Constants;
 import adams.core.base.BasePassword;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
@@ -55,6 +54,9 @@ public class PasswordDialog
   
   /** whether to display the password or not. */
   protected BaseCheckBox m_CheckBoxShowPassword;
+
+  /** the echo char to use. */
+  protected char m_EchoChar;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -159,7 +161,7 @@ public class PasswordDialog
     getContentPane().add(panel, BorderLayout.NORTH);
     
     m_TextPassword = new BasePasswordField(20);
-    m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = m_TextPassword.getEchoChar();
     m_TextPassword.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -195,7 +197,7 @@ public class PasswordDialog
 	if (m_CheckBoxShowPassword.isSelected())
 	  m_TextPassword.setEchoChar((char) 0);
 	else
-	  m_TextPassword.setEchoChar(Constants.PASSWORD_CHAR);
+	  m_TextPassword.setEchoChar(m_EchoChar);
       }
     });
     panel.add(m_CheckBoxShowPassword);

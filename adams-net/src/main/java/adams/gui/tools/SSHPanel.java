@@ -15,7 +15,7 @@
 
 /*
  * SSHPanel.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) JCraft (original Shell example)
  */
 package adams.gui.tools;
@@ -271,6 +271,7 @@ public class SSHPanel
 	  authPanel.add(label);
 	  authPanel.add(m_TextUser);
 	  m_TextPassword = new BasePasswordField(8);
+	  m_TextPassword.setShowPopupMenu(true);
 	  label = new JLabel("Password");
 	  label.setLabelFor(m_TextPassword);
 	  authPanel.add(label);
@@ -293,6 +294,7 @@ public class SSHPanel
 	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, GUIHelper.getInteger("GOEDefaultHeight", 20)));
 	  authPanel.add(m_FileChooserPanelKey);
 	  m_TextKeyPassphrase = new BasePasswordField(8);
+	  m_TextKeyPassphrase.setShowPopupMenu(true);
 	  label = new JLabel("Passphrase");
 	  label.setLabelFor(m_TextKeyPassphrase);
 	  authPanel.add(label);

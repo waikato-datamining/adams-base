@@ -15,20 +15,26 @@
 
 /*
  * BasePasswordField.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
 import adams.core.base.BasePassword;
 import adams.event.AnyChangeListenerSupporter;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
+import javax.swing.JMenuItem;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,6 +49,12 @@ public class BasePasswordField
 
   /** the listeners for any changes to the text. */
   protected Set<ChangeListener> m_AnyChangeListeners;
+
+  /** whether to show the popup menu. */
+  protected boolean m_ShowPopupMenu;
+
+  /** the echo character in use. */
+  protected char m_EchoChar;
 
   /**
    * Constructs a new <code>TextField</code>.  A default model is created,
@@ -137,6 +149,19 @@ public class BasePasswordField
 	notifyAnyChangeListeners();
       }
     });
+    addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	super.mouseClicked(e);
+	if (MouseUtils.isRightClick(e) && getShowPopupMenu()) {
+	  JPopupMenu menu = createPopupMenu();
+	  if (menu != null)
+	    menu.show(BasePasswordField.this, e.getX(), e.getY());
+	}
+      }
+    });
+    m_ShowPopupMenu = false;
+    m_EchoChar      = getEchoChar();
   }
 
   /**
@@ -168,6 +193,60 @@ public class BasePasswordField
     e = new ChangeEvent(this);
     for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
       l.stateChanged(e);
+  }
+
+  /**
+   * Creates the popup menu.
+   *
+   * @return		the popup menu, null if none created
+   */
+  protected JPopupMenu createPopupMenu() {
+    JPopupMenu	result;
+    JMenuItem	menuitem;
+
+    result = new JPopupMenu();
+
+    if (getEchoChar() == (char) 0) {
+      menuitem = new JMenuItem("Hide password", ImageManager.getIcon("hide"));
+      menuitem.addActionListener((ActionEvent e) -> setEchoChar(m_EchoChar));
+    }
+    else {
+      menuitem = new JMenuItem("Show password", ImageManager.getIcon("show"));
+      menuitem.addActionListener((ActionEvent e) -> setEchoChar((char) 0));
+    }
+    result.add(menuitem);
+
+    result.addSeparator();
+
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy"));
+    menuitem.setEnabled(getPassword().length > 0);
+    menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(new String(getPassword())));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste"));
+    menuitem.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
+    menuitem.addActionListener((ActionEvent e) -> paste());
+    result.add(menuitem);
+
+    return result;
+  }
+
+  /**
+   * Sets whether to show the popup menu.
+   *
+   * @param value	true if to show
+   */
+  public void setShowPopupMenu(boolean value) {
+    m_ShowPopupMenu = value;
+  }
+
+  /**
+   * Returns whether the popup menu is shown.
+   *
+   * @return		true if shown
+   */
+  public boolean getShowPopupMenu() {
+    return m_ShowPopupMenu;
   }
 
   /**

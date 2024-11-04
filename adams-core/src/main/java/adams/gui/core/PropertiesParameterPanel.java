@@ -1077,6 +1077,7 @@ public class PropertiesParameterPanel
 	    pwfield.setText(value.getPassword(key).getValue());
 	    if (help != null)
 	      pwfield.setToolTipText(help);
+	    pwfield.setShowPopupMenu(true);
 	    pwfield.setBorder(BorderFactory.createEtchedBorder());
 	    addProperty(key, label, pwfield);
 	    break;

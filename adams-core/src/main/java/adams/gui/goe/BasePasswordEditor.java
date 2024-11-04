@@ -15,11 +15,10 @@
 
 /*
  * BasePasswordEditor.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import adams.core.Constants;
 import adams.core.base.BasePassword;
 import adams.core.option.parsing.BasePasswordParsing;
 import adams.gui.core.BaseButton;
@@ -53,6 +52,9 @@ public class BasePasswordEditor
   /** the checkbox for "show password". */
   protected BaseCheckBox m_CheckBoxShowPassword;
 
+  /** the echo char to use. */
+  protected char m_EchoChar;
+
   /**
    * Gets the custom editor component.
    *
@@ -71,7 +73,8 @@ public class BasePasswordEditor
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.NORTH);
     m_TextValue = new BasePasswordField(20);
-    ((BasePasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
+    ((BasePasswordField) m_TextValue).setShowPopupMenu(true);
+    m_EchoChar = ((BasePasswordField) m_TextValue).getEchoChar();
     m_TextValue.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -105,7 +108,7 @@ public class BasePasswordEditor
 	if (m_CheckBoxShowPassword.isSelected())
 	  ((BasePasswordField) m_TextValue).setEchoChar((char) 0);
 	else
-	  ((BasePasswordField) m_TextValue).setEchoChar(Constants.PASSWORD_CHAR);
+	  ((BasePasswordField) m_TextValue).setEchoChar(m_EchoChar);
       }
     });
     panelCheck.add(m_CheckBoxShowPassword);
