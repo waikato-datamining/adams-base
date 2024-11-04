@@ -98,7 +98,7 @@ public class TypesMySQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '1000-01-01 00:00:00'";
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '1970-01-02 00:00:01'";
 	else
 	  return "TIMESTAMP";
 
