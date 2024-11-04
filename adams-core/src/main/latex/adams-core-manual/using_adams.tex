@@ -3191,7 +3191,7 @@ MaxExtensionLength=7;IgnoredExtensionSuffixes=7z,bz2,gz,z
 Here are JDBC URL templates for accessing various types of databases:
 \begin{tight_itemize}
   \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
-  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?sslMode=PREFERRED}
   \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
   \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
   \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
@@ -3206,6 +3206,8 @@ Here are JDBC URL templates for accessing various types of databases:
     \texttt{\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
     \item If you need to connect to a MySQL database that requires SSL connections, then please refer to
     section \ref{mysql_ssl_connections}.
+    \item For more information on MySQL connection parameters, see section \href{https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html}{Configuration properties}
+    of the Connector/J documentation.
 \end{tight_itemize}
 
 
