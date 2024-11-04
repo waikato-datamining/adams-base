@@ -15,7 +15,7 @@
 
 /*
  * TypesMySQL.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
@@ -98,7 +98,7 @@ public class TypesMySQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '0000-00-00 00:00:00'";
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '1000-01-01 00:00:00'";
 	else
 	  return "TIMESTAMP";
 

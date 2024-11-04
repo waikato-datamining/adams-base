@@ -62,13 +62,19 @@ public class TypesH2
 	return "BOOLEAN";
 
       case Types.TIMESTAMP:
-	return "TIMESTAMP";
+	if (!compare)
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '1000-01-01 00:00:00'";
+	else
+	  return "TIMESTAMP";
 
       case Types.DATE:
 	return "DATE";
 
       case Types.TIME:
-	return "TIME";
+	if (size == -1)
+	  return "TIME";
+	else
+	  return "TIME(" + size + ")";
 
       case Types.DOUBLE:
 	return "DOUBLE PRECISION";
