@@ -1360,6 +1360,7 @@ for all plugins is:
 \end{tight_itemize}
 
 \section{Database access}
+\label{extending_adams_database_access}
 In order to add support in ADAMS for a database, in addition to MySQL\footnote{\url{http://www.mysql.com/}{}} 
 (sqlite\footnote{\url{http://www.sqlite.org/}{}}, PostgreSQL\footnote{\url{http://www.postgresql.org/}{}}
 and MS SQL Server/Sybase\footnote{\url{http://jtds.sourceforge.net/}{}} are supported through the \textit{adams-db}
@@ -1383,6 +1384,8 @@ Driver=oracle.jdbc.OracleDriver
 \end{verbatim}
 	This is a comma-separated list. If there are already entries, just append
 	your JDBC driver(s).
+	Alternatively, just place a new properties files \textit{Driver.props}
+	in one of the locations that ADAMS is looking for them (see \ref{propsfiles}).
 \end{itemize}
 
 %%%%%%%%%%%%%%%

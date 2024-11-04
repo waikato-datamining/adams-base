@@ -1251,9 +1251,7 @@ The following conversion are available:
 \section{Databases}
 Any database that has a JDBC driver can be used within ADAMS. By default,
 ADAMS comes with support for MySQL (and PostgreSQL, HSQLDB, SQLite and MS SQL
-Server via the \textit{adams-db} module).
-See section \ref{databaseaccess} for how to add more databases. The following
-actors allow you to perform some basic operations:
+Server via the \textit{adams-db} module). The following actors allow you to perform some basic operations:
 
 \noindent The following standalone actors are available:
 \begin{tight_itemize}
@@ -1276,26 +1274,8 @@ actors allow you to perform some basic operations:
 \end{tight_itemize}
 
 For more functionality, see the documentation on the \textit{adams-spreadsheet}
-module.
-
-\noindent Here are JDBC URL templates for accessing various types of databases:
-\begin{tight_itemize}
-  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
-  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false}
-  \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
-  \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
-  \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
-  \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
-  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
-\end{tight_itemize}
-
-\heading{Notes}
-\begin{tight_itemize}
-    \item Older versions of MySQL allowed \texttt{'0000-00-00 00:00:00'} as default value for TIMESTAMP columns.
-    If you encounter problems with exceptions due to invalid dates, append the following to your JDBC URL:
-    \texttt{\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
-\end{tight_itemize}
-
+module. On more information on JDBC URLs and databases, see \ref{using_adams_database_access},
+\ref{extending_adams_database_access} and the manual for the \textit{adams-db} module.
 
 \newpage
 \section{Callable actors}
@@ -3113,25 +3093,6 @@ default locale. See Figure \ref{locale_setup} for an example setup.
 \end{figure}
 
 
-\section{Database access}
-\label{databaseaccess}
-In order to add support in ADAMS for other databases, the following steps
-are required:
-\begin{itemize}
-	\item Place the jar archive of the JDBC driver in the \textit{lib} directory.
-	\item Either update the \textit{Drivers.props} properties file in the source
-	tree, adding the classname of the JDBC driver to the \textit{Drivers} key. For instance,
-	use \textit{oracle.jdbc.OracleDriver} for the Oracle driver: \\
-\begin{verbatim}
-Drivers=\
-  com.mysql.jdbc.Driver,\
-  oracle.jdbc.OracleDriver
-\end{verbatim}
-	This is a comma-separated list, so just append your JDBC driver(s). \\
-	Alternatively, just place a new properties files \textit{Driver.props}
-	in one of the locations that ADAMS is looking for them (see \ref{propsfiles}).
-\end{itemize}
-
 \section{Browser}
 Since release 6, Java can launch the desktop's default browser. With the huge
 variety of desktops for Linux, this does not work properly all the time, 
@@ -3223,6 +3184,113 @@ The content of such a variable is a semi-colon separated list of property=value 
 \begin{verbatim}
 MaxExtensionLength=7;IgnoredExtensionSuffixes=7z,bz2,gz,z
 \end{verbatim}
+
+
+\section{Database access}
+\label{using_adams_database_access}
+Here are JDBC URL templates for accessing various types of databases:
+\begin{tight_itemize}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false}
+  \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
+  \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
+  \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
+  \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
+  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
+\end{tight_itemize}
+
+\heading{Notes}
+\begin{tight_itemize}
+    \item Older versions of MySQL allowed \texttt{'0000-00-00 00:00:00'} as default value for TIMESTAMP columns.
+    If you encounter problems with exceptions due to invalid dates, append the following to your JDBC URL:
+    \texttt{\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
+    \item If you need to connect to a MySQL database that requires SSL connections, then please refer to
+    section \ref{mysql_ssl_connections}.
+\end{tight_itemize}
+
+
+\subsection{MySQL SSL connections}
+\label{mysql_ssl_connections}
+These sections in the MySQL reference manual are used as basis for the instructions:
+\begin{tight_itemize}
+    \item \href{https://dev.mysql.com/doc/refman/8.4/en/using-encrypted-connections.html}{Configuring MySQL to Use Encrypted Connections}
+    \item \href{https://dev.mysql.com/doc/refman/8.4/en/creating-ssl-rsa-files-using-mysql.html}{Creating SSL and RSA Certificates and Keys using MySQL}
+\end{tight_itemize}
+And this one from the documentation for the JDBC connector:
+\begin{tight_itemize}
+    \item \href{https://dev.mysql.com/doc/connector-j/en/connector-j-server-authentication.html}{Setting up Server Authentication}
+\end{tight_itemize}
+
+\subsubsection{Create certificates and trust store}
+\noindent The instructions below are for a Linux server with the MySQL configuration stored in
+\texttt{/etc/mysql/mysql.conf.d/mysqld.cnf}, data directory located at \texttt{/var/lib/mysql}
+and a user called \texttt{adamsuser}.
+\begin{tight_itemize}
+    \item Start up the MySQL server with automatic SSL/RSA file generation. Once started up,
+    the data directory should contain several files with a \texttt{.pem} extension.
+    \item Edit the \texttt{mysqld.cnf} file, adding the following content:
+    \begin{verbatim}
+[mysqld]
+ssl_ca=/var/lib/mysql/ca.pem
+ssl_cert=/var/lib/mysql/server-cert.pem
+ssl_key=/var/lib/mysql/server-key.pem
+require_secure_transport=on
+
+[client]
+ssl_ca=/var/lib/mysql/ca.pem
+ssl_cert=/var/lib/mysql/client-cert.pem
+ssl_key=/var/lib/mysql/client-key.pem
+    \end{verbatim}
+    \item As root user, create the truststore file in the \texttt{/var/lib/mysql} directory with this command
+    (do not forget to adjust the password):
+    \begin{verbatim}
+keytool -importcert -alias MySQLCACert -file ca.pem \
+  -keystore truststore -storepass mypassword
+    \end{verbatim}
+    \item Move the trust store to your ADAMS home directory and correct the ownership:
+    \begin{verbatim}
+mv truststore /home/adamsuser/.adams/
+chown adamsuser:adamsuser /home/adamsuser/.adams/truststore
+    \end{verbatim}
+\end{tight_itemize}
+
+\subsubsection{Make trust store available to ADAMS}
+The \textit{adams-security} module is required if you want to reference the truststore
+via the global \textit{Preferences} dialog. Otherwise, you have to modify the start script for
+ADAMS to include the following JVM options (adjust the password appropriately):
+\begin{verbatim}
+-Djavax.net.ssl.trustStore=/home/adamsuser/.adams/truststore
+-Djavax.net.ssl.trustStorePassword=mypassword
+\end{verbatim}
+
+\subsubsection{Enable SSL in database tool}
+If you use database tools, like \href{https://dbeaver.io/}{DBeaver} for managing databases, then
+you need to copy the CA certificate and the client-related files into your home directory to have access
+to them as regular user:
+\begin{tight_itemize}
+    \item Create a directory for the files:
+    \begin{verbatim}
+mkdir /home/adamsuser/.ssh/mysql
+    \end{verbatim}
+    \item Change into the new directory:
+    \begin{verbatim}
+cd /home/adamsuser/.ssh/mysql
+    \end{verbatim}
+    \item Copy the relevant files:
+    \begin{verbatim}
+sudo cp /var/lib/mysql/ca.pem \
+  /var/lib/mysql/client-cert.pem \
+  /var/lib/mysql/client-key.pem \
+  .
+    \end{verbatim}
+    \item Fix the ownership:
+    \begin{verbatim}
+sudo chown adamsuser:adamsuser *.pem
+    \end{verbatim}
+    \item Edit the database connection in your tool: enable SSL and point to the CA and client
+    certificates and the client private key.
+\end{tight_itemize}
+
 
 \section{Troubleshooting}
 \begin{tight_itemize}
