@@ -15,7 +15,7 @@
 
 /*
  * SQLUtils.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -171,11 +171,11 @@ public class SQLUtils {
   public static void closeAll(ResultSet r) {
     if (r != null) {
       try {
-	Statement s = r.getStatement();
-	r.close();
-	close(s);
-	s = null;
-	r = null;
+	if (!r.isClosed()) {
+	  Statement s = r.getStatement();
+	  r.close();
+	  close(s);
+	}
       }
       catch (Exception e) {
 	LOGGER.log(Level.SEVERE, "Error closing resultset", e);
@@ -219,11 +219,7 @@ public class SQLUtils {
    * @return	boolean
    */
   public static boolean tinyIntToBoolean(int i) {
-    if (i==0) {
-      return(false);
-    } else {
-      return(true);
-    }
+    return !(i == 0);
   }
 
   /**
