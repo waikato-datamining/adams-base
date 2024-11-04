@@ -1281,12 +1281,19 @@ module.
 \noindent Here are JDBC URL templates for accessing various types of databases:
 \begin{tight_itemize}
   \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>}
-  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
+  \item \textit{MySQL} -- \texttt{jdbc:mysql://<HOST>:3306/<DATABASE>?useSSL=false}
   \item \textit{PostgreSQL} -- \texttt{jdbc:postgresql://<HOST>:5432/<DATABASE>}
   \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
   \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
   \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
   \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
+\end{tight_itemize}
+
+\heading{Notes}
+\begin{tight_itemize}
+    \item Older versions of MySQL allowed \texttt{'0000-00-00 00:00:00'} as default value for TIMESTAMP columns.
+    If you encounter problems with exceptions due to invalid dates, append the following to your JDBC URL:
+    \texttt{\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
 \end{tight_itemize}
 
 
