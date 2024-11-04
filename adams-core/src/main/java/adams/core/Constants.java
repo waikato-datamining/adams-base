@@ -15,7 +15,7 @@
 
 /*
  * Constants.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -25,8 +25,7 @@ import java.io.Serializable;
 /**
  * Contains some commonly used constants.
  *
- * @author  peter (peter at waikato dot ac dot nz)
- * @version $Revision$
+ * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Constants
   implements Serializable {
@@ -54,9 +53,6 @@ public class Constants
 
   /** the date format for timestamps (ISO-8601). */
   public final static String TIMESTAMP_FORMAT_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss";
-
-  /** the character to use for "hiding" the password characters. */
-  public final static char PASSWORD_CHAR = '*';
 
   /** the format for times. */
   public final static String TIME_FORMAT = "HH:mm:ss";

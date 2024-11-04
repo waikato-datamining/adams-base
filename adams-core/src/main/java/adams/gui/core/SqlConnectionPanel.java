@@ -15,12 +15,11 @@
 
 /*
  * SqlConnectionPanel.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
 
-import adams.core.Constants;
 import adams.core.base.BasePassword;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
@@ -70,6 +69,9 @@ public class SqlConnectionPanel
 
   /** the change listeners for database connection changes. */
   protected Set<ChangeListener> m_ConnectionChangeListeners;
+
+  /** the echo char to use. */
+  protected char m_EchoChar;
 
   /**
    * Initializes the members.
@@ -198,13 +200,13 @@ public class SqlConnectionPanel
 
     textPassword = new BasePasswordField(20);
     textPassword.setText(getDatabaseConnection().getPassword().getValue());
-    textPassword.setEchoChar(Constants.PASSWORD_CHAR);
+    m_EchoChar = textPassword.getEchoChar();
     panelParameters.addParameter("_Password", textPassword);
 
     checkBoxShowPassword = new BaseCheckBox();
     checkBoxShowPassword.setSelected(false);
     checkBoxShowPassword.addActionListener((ActionEvent e) ->
-      textPassword.setEchoChar(checkBoxShowPassword.isSelected() ? (char) 0 : Constants.PASSWORD_CHAR));
+      textPassword.setEchoChar(checkBoxShowPassword.isSelected() ? (char) 0 : m_EchoChar));
     panelParameters.addParameter("Sho_w password", checkBoxShowPassword);
 
     comboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
