@@ -15,12 +15,13 @@
 
 /*
  * AbstractTableUpgrade.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.db.upgrade;
 
 import adams.core.ClassLister;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
@@ -30,12 +31,13 @@ import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 
+import java.util.logging.Level;
+
 /**
  * Abstract superclass for all helper classes that upgrade tables in one way
  * or another.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTableUpgrade
   extends AbstractOptionHandler
@@ -51,7 +53,7 @@ public abstract class AbstractTableUpgrade
   protected boolean m_Upgraded;
 
   /** database connection. */
-  protected transient AbstractDatabaseConnection m_dbc;
+  protected transient AbstractDatabaseConnection m_Connection;
 
   /**
    * Returns a string describing the object.
@@ -69,7 +71,7 @@ public abstract class AbstractTableUpgrade
     super.initialize();
 
     m_UpgradeInfo = new StringBuilder();
-    m_dbc         = null;
+    m_Connection = null;
   }
 
   /**
@@ -91,7 +93,7 @@ public abstract class AbstractTableUpgrade
    * @param value	the database connection
    */
   public void setDatabaseConnection(AbstractDatabaseConnection value) {
-    m_dbc = value;
+    m_Connection = value;
   }
 
   /**
@@ -100,7 +102,7 @@ public abstract class AbstractTableUpgrade
    * @return		the database connection
    */
   public AbstractDatabaseConnection getDatabaseConnection() {
-    return m_dbc;
+    return m_Connection;
   }
 
   /**
@@ -201,7 +203,7 @@ public abstract class AbstractTableUpgrade
       result = (AbstractTableUpgrade) OptionUtils.forName(AbstractTableUpgrade.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate table upgrade: " + classname, e);
       result = null;
     }
 
