@@ -15,7 +15,7 @@
 
 /*
  * ReportJsonUtils.java
- * Copyright (C) 2018-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.report;
@@ -103,6 +103,8 @@ public class ReportJsonUtils {
       prefix = "";
     result = new Report();
     for (Entry<String, JsonElement> entry: jobj.entrySet()) {
+      if (!entry.getValue().isJsonPrimitive())
+	continue;
       prim = entry.getValue().getAsJsonPrimitive();
       if (prim.isBoolean()) {
 	field = new Field(prefix + entry.getKey(), DataType.BOOLEAN);
