@@ -15,7 +15,7 @@
 
 /*
  * ImageLabeler.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -356,13 +356,8 @@ public class ImageLabeler
    * @param value 	the field
    */
   public void setField(Field value) {
-    if (value.getDataType() == DataType.STRING) {
-      m_Field = value;
-      reset();
-    }
-    else {
-      getLogger().warning("Data type of field must be string, but received: " + value);
-    }
+    m_Field = value;
+    reset();
   }
 
   /**
@@ -381,7 +376,7 @@ public class ImageLabeler
    * 			displaying in the GUI or for listing the options.
    */
   public String fieldTipText() {
-    return "The field to use for the chosen label.";
+    return "The field to use for the chosen label, must be of type " + DataType.STRING + ".";
   }
 
   /**
@@ -758,7 +753,7 @@ public class ImageLabeler
     // any old interactions?
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
-      if (value.length() > 0) {
+      if (!value.isEmpty()) {
 	try {
 	  parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
 	  array = (JSONArray) parser.parse(value);
@@ -771,7 +766,7 @@ public class ImageLabeler
 
 
     // separator
-    if (array.size() > 0) {
+    if (!array.isEmpty()) {
       interaction = new JSONObject();
       interaction.put("timestamp", formatter.format(m_StartTimestamp));
       interaction.put("id", "---");
@@ -798,6 +793,25 @@ public class ImageLabeler
 
     report.addField(field);
     report.setValue(field, array.toString());
+  }
+
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+
+    result = super.setUp();
+
+    if (result == null) {
+      if (m_Field.getDataType() != DataType.STRING)
+	result = "Data type of the label field must be: " + DataType.STRING;
+    }
+
+    return result;
   }
 
   /**
