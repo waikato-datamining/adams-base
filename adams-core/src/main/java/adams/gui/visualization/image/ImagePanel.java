@@ -83,6 +83,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
@@ -372,11 +373,13 @@ public class ImagePanel
 
       addMouseWheelListener(new MouseWheelListener() {
 	public void mouseWheelMoved(MouseWheelEvent e) {
-	  // get old relative positions of scrollbars
-	  final JScrollBar sbHor = getOwner().getScrollPane().getHorizontalScrollBar();
-	  final JScrollBar sbVer = getOwner().getScrollPane().getVerticalScrollBar();
-	  final double relHor = (double) (sbHor.getValue() + sbHor.getWidth() / 2) / sbHor.getMaximum();
-	  final double relVer = (double) (sbVer.getValue() + sbVer.getHeight() / 2) / sbVer.getMaximum();
+	  final JViewport viewPort = getOwner().getScrollPane().getViewport();
+	  Point viewPosOld = viewPort.getViewPosition();
+	  final Point mouseOld = mouseToPixelLocation(e.getPoint());
+
+	  // distance on screen from mouse to view port position
+	  int distX = (int) (e.getPoint().getX() - viewPosOld.x);
+	  int distY = (int) (e.getPoint().getY() - viewPosOld.y);
 
 	  // update scale
 	  int rotation = e.getWheelRotation();
@@ -388,11 +391,14 @@ public class ImagePanel
 	    newScale = oldScale / Math.pow(1.2, rotation);
 	  getOwner().setScale(newScale);
 
-	  // set new relative positions of scrollbars
-	  SwingUtilities.invokeLater(() -> {
-	    sbHor.setValue((int) (sbHor.getMaximum() * relHor) - (sbHor.getWidth() / 2));
-	    sbVer.setValue((int) (sbVer.getMaximum() * relVer) - (sbVer.getHeight() / 2));
-	  });
+	  // calculate new mouse position
+	  Point mouseNew = new Point((int) (mouseOld.getX() * newScale), (int) (mouseOld.getY() * newScale));
+
+	  // new view port position to have mouse in same location on screen
+	  final Point viewPosNew = new Point((int) (mouseNew.getX() - distX), (int) (mouseNew.getY() - distY));
+
+	  // set new view port position
+	  SwingUtilities.invokeLater(() -> viewPort.setViewPosition(viewPosNew));
 
 	  logMouseWheel(e, oldScale, newScale);
 	  updateStatus();
