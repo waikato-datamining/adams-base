@@ -112,7 +112,7 @@ public class Simple
     if (result == null) {
       for (i = 1; i < datasets.length; i++) {
 	if (datasets[0].numInstances() != datasets[i].numInstances())
-	  return "Datasets #" + (i + 1) + "has " + datasets[i].numInstances() + " rows instead of " + datasets[0].numInstances();
+	  return "Datasets #" + (i + 1) + " has " + datasets[i].numInstances() + " rows instead of " + datasets[0].numInstances();
       }
     }
 
