@@ -757,7 +757,7 @@ public class FlowPanel
 	  if (!m_Errors.isEmpty())
 	    type = NotificationType.ERROR;
 	  showNotification(
-	    "Issue(s) encountered loading flow '" + file + "':\n\n"
+	    "Issue(s) encountered loading the following flow:\n" + file.getAbsolutePath() + "\n\n"
 	      + notifications.toString().trim(), type);
 	}
 
