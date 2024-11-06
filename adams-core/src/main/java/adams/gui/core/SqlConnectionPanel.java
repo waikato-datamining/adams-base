@@ -40,6 +40,7 @@ import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -125,12 +126,15 @@ public class SqlConnectionPanel
    * Shows the popup menu with the connections.
    */
   protected void showConnectionsPopup() {
-    BasePopupMenu menu;
-    JMenuItem		menuitem;
-    List<JMenuItem> 	menuitems;
+    BasePopupMenu 		menu;
+    JMenuItem			menuitem;
+    List<JMenuItem> 		menuitems;
+    List<ConnectionParameters>	conns;
 
     menuitems = new ArrayList<>();
-    for (ConnectionParameters params: DatabaseConnection.getSingleton().getAllConnectionParameters()) {
+    conns     = DatabaseConnection.getSingleton().getAllConnectionParameters();
+    Collections.sort(conns);
+    for (ConnectionParameters params: conns) {
       final ConnectionParameters fParams = params;
       menuitem = new JMenuItem(params.toString());
       menuitem.addActionListener((ActionEvent e) -> connect(fParams));

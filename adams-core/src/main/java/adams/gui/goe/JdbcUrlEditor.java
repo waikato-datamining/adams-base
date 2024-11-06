@@ -15,7 +15,7 @@
 
 /*
  * JdbcUrlEditor.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -53,6 +53,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -242,12 +243,15 @@ public class JdbcUrlEditor
    * Shows the popup menu with the connections.
    */
   protected void showConnectionsPopup() {
-    BasePopupMenu 	menu;
-    JMenuItem 		menuitem;
-    List<JMenuItem> 	menuitems;
+    BasePopupMenu 		menu;
+    JMenuItem 			menuitem;
+    List<JMenuItem> 		menuitems;
+    List<ConnectionParameters>	conns;
 
     menuitems = new ArrayList<>();
-    for (ConnectionParameters params: DatabaseConnection.getSingleton().getAllConnectionParameters()) {
+    conns     = DatabaseConnection.getSingleton().getAllConnectionParameters();
+    Collections.sort(conns);
+    for (ConnectionParameters params: conns) {
       final ConnectionParameters fParams = params;
       menuitem = new JMenuItem(params.toString());
       menuitem.addActionListener((ActionEvent e) -> connect(fParams));
