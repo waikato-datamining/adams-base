@@ -45,6 +45,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -132,6 +133,20 @@ public abstract class AbstractDatabaseConnectionPanel
   protected abstract AbstractDatabaseConnection getDefaultDatabaseConnection();
 
   /**
+   * Returns all the connection parameters as sorted list.
+   *
+   * @return		the sorted list
+   */
+  protected List<ConnectionParameters> getAllConnectionParameters() {
+    List<ConnectionParameters>	result;
+
+    result = getDatabaseConnection().getAllConnectionParameters();
+    Collections.sort(result);
+
+    return result;
+  }
+
+  /**
    * Initializes the GUI.
    */
   @Override
@@ -146,7 +161,7 @@ public abstract class AbstractDatabaseConnectionPanel
     m_PanelParameters = new ParameterPanel();
     add(m_PanelParameters, BorderLayout.NORTH);
 
-    m_ComboBoxConnections = new BaseComboBox<>(getDatabaseConnection().getAllConnectionParameters().toArray(new ConnectionParameters[0]));
+    m_ComboBoxConnections = new BaseComboBox<>(getAllConnectionParameters().toArray(new ConnectionParameters[0]));
     m_ComboBoxConnections.addActionListener((ActionEvent e) -> {
       if (m_ComboBoxConnections.getSelectedIndex() == -1)
         return;
@@ -332,14 +347,14 @@ public abstract class AbstractDatabaseConnectionPanel
     int 			index;
 
     current     = conn.getCurrentConnectionParameters();
-    connections = conn.getAllConnectionParameters();
+    connections = getAllConnectionParameters();
     index       = connections.indexOf(current);
 
     connectionParametersToFields(current);
 
     connected = conn.isConnected();
     m_ComboBoxConnections.setModel(new DefaultComboBoxModel<>(connections.toArray(new ConnectionParameters[0])));
-    if ((index == -1) && (connections.size() > 0)) {
+    if ((index == -1) && !connections.isEmpty()) {
       displayConnection(connections.get(0));
       return;
     }
