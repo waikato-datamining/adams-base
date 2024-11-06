@@ -15,13 +15,14 @@
 
 /*
  * DatabaseConnectionsPanel.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
 import adams.core.ClassLister;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.ConsolePanel;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -85,8 +86,7 @@ public class DatabaseConnectionsPanel
 	m_Panels.add(panel);
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate '" + cls + "':");
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append("Failed to instantiate '" + cls + "':", e);
       }
     }
     Collections.sort(m_Panels);
