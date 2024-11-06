@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -101,9 +101,6 @@ public class Placeholders
   protected void initialize() {
     Enumeration<String>	enm;
     String		key;
-    String		env;
-    String[]		pairs;
-    String[]		parts;
 
     if (m_Properties == null) {
       try {
@@ -267,7 +264,7 @@ public class Placeholders
     do {
       while ((pos = curr.indexOf(PLACEHOLDER_START)) > -1) {
 	result.append(curr.substring(0, pos));
-	curr = curr.substring(pos + 2, curr.length());
+	curr = curr.substring(pos + 2);
 	pos  = curr.indexOf(PLACEHOLDER_END);
 	if (pos > -1) {
 	  key = curr.substring(0, pos);
@@ -278,7 +275,7 @@ public class Placeholders
 	    error  = true;
 	    break;
 	  }
-	  curr  = curr.substring(pos + 1, curr.length());
+	  curr  = curr.substring(pos + 1);
 	  value = get(key);
 	  if (value != null) {
 	    result.append(value);
@@ -291,11 +288,11 @@ public class Placeholders
 	}
 	else {
 	  result.append(curr.substring(pos));
-	  curr = curr.substring(pos + 1, curr.length());
+	  curr = curr.substring(pos + 1);
 	}
       }
 
-      if (!error && (curr.length() > 0))
+      if (!error && !curr.isEmpty())
 	result.append(curr);
 
       // any placeholders left?
@@ -338,7 +335,7 @@ public class Placeholders
     
     result  = s;
     bestKey = null;
-    if ((result.length() > 0) && !result.equals(".")) {
+    if (!result.isEmpty() && !result.equals(".")) {
       bestLeft   = result.length();
       bestKeyLen = result.length();
       for (String key: placeholders()) {
