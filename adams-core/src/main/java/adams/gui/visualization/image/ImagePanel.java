@@ -24,6 +24,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.StatusMessageHandler;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
@@ -114,6 +115,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * For displaying a single image.
@@ -1001,7 +1003,7 @@ public class ImagePanel
       reader = getReportFileChooser().getReader();
       reader.setInput(getReportFileChooser().getSelectedPlaceholderFile());
       reports = reader.read();
-      if (reports.size() == 0) {
+      if (reports.isEmpty()) {
 	GUIHelper.showErrorMessage(
 	  this, "No reports loaded from:\n" + getReportFileChooser().getSelectedPlaceholderFile());
 	return;
@@ -1169,8 +1171,7 @@ public class ImagePanel
 	    overlay.paintOverlay(this, g);
 	  }
 	  catch (Exception e) {
-	    System.err.println("Failed to apply overlay: " + OptionUtils.getCommandLine(overlay));
-	    e.printStackTrace();
+	    LoggingHelper.global().log(Level.SEVERE, "Failed to apply overlay: " + OptionUtils.getCommandLine(overlay), e);
 	  }
 	}
 
@@ -2411,7 +2412,7 @@ public class ImagePanel
 
     result = null;
 
-    if (trace.size() > 0) {
+    if (!trace.isEmpty()) {
       poly_x = new int[trace.size()];
       poly_y = new int[trace.size()];
       for (i = 0; i < trace.size(); i++) {
