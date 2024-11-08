@@ -271,4 +271,22 @@ public class BasePasswordFieldWithButton
   public boolean isEnabled() {
     return m_Field.isEnabled();
   }
+
+  /**
+   * Returns the underlying password field.
+   *
+   * @return		the field
+   */
+  public BasePasswordField getField() {
+    return m_Field;
+  }
+
+  /**
+   * Returns the underlying button.
+   *
+   * @return		the button
+   */
+  public BaseButton getButton() {
+    return m_Button;
+  }
 }
