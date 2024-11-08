@@ -104,10 +104,14 @@ public class BasePasswordFieldWithButton
 
     m_Field = new BasePasswordField();
     m_Field.addEchoCharChangeListener((ChangeEvent e) -> {
-      if (m_Field.isPasswordVisible())
+      if (m_Field.isPasswordVisible()) {
 	m_Button.setIcon(ImageManager.getIcon("hide"));
-      else
+	m_Button.setToolTipText("Hide password");
+      }
+      else {
 	m_Button.setIcon(ImageManager.getIcon("show"));
+	m_Button.setToolTipText("Show password");
+      }
     });
     add(m_Field, BorderLayout.CENTER);
 
@@ -247,5 +251,24 @@ public class BasePasswordFieldWithButton
    */
   public boolean isPasswordVisible() {
     return m_Field.isPasswordVisible();
+  }
+
+  /**
+   * Enables (or disables) the field/button.
+   *
+   * @param b  true to enable the field/button, otherwise false
+   */
+  public void setEnabled(boolean b) {
+    m_Field.setEnabled(b);
+    m_Button.setEnabled(b);
+  }
+
+  /**
+   * Returns whether the field/button are enabled.
+   *
+   * @return		true if enabled
+   */
+  public boolean isEnabled() {
+    return m_Field.isEnabled();
   }
 }

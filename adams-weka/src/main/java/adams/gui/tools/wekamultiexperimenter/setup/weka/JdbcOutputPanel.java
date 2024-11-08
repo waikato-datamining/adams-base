@@ -20,8 +20,7 @@
 package adams.gui.tools.wekamultiexperimenter.setup.weka;
 
 import adams.gui.core.BaseButton;
-import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 import adams.gui.dialog.ApprovalDialog;
@@ -30,8 +29,6 @@ import weka.experiment.DatabaseUtils;
 import weka.experiment.ResultListener;
 
 import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
@@ -59,14 +56,8 @@ public class JdbcOutputPanel
   protected BaseTextField m_TextUser;
   
   /** the password. */
-  protected BasePasswordField m_TextPassword;
+  protected BasePasswordFieldWithButton m_TextPassword;
   
-  /** whether to show the password. */
-  protected BaseCheckBox m_CheckBoxShowPassword;
-
-  /** the echo char to use. */
-  protected char m_EchoChar;
-
   /**
    * Initializes the widgets.
    */
@@ -105,20 +96,10 @@ public class JdbcOutputPanel
     
     m_TextUser = new BaseTextField(20);
     m_TextUser.setText((dbutils == null) ? "" : dbutils.getUsername());
-    m_TextPassword = new BasePasswordField(20);
+    m_TextPassword = new BasePasswordFieldWithButton(20);
+    m_TextPassword.setShowPopupMenu(true);
     m_TextPassword.setText((dbutils == null) ? "" : dbutils.getPassword());
-    m_EchoChar = m_TextPassword.getEchoChar();
-    m_CheckBoxShowPassword = new BaseCheckBox();
-    m_CheckBoxShowPassword.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-	if (!m_CheckBoxShowPassword.isSelected())
-	  m_TextPassword.setEchoChar(m_EchoChar);
-	else
-	  m_TextPassword.setEchoChar((char) 0);
-      }
-    });
-    
+
     add(panel, BorderLayout.CENTER);
   }
 
@@ -134,8 +115,7 @@ public class JdbcOutputPanel
     panel = new ParameterPanel();
     panel.addParameter("User", m_TextUser);
     panel.addParameter("Password", m_TextPassword);
-    panel.addParameter("Show password", m_CheckBoxShowPassword);
-    
+
     // backup values
     user = m_TextUser.getText();
     pw   = new String(m_TextPassword.getPassword());

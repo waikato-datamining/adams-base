@@ -185,8 +185,7 @@ public class SqlConnectionPanel
     ParameterPanel 		panelParameters;
     BaseTextField 		textURL;
     BaseTextField 		textUser;
-    BasePasswordField 		textPassword;
-    BaseCheckBox checkBoxShowPassword;
+    BasePasswordFieldWithButton textPassword;
     BaseComboBox<LoggingLevel> comboBoxLoggingLevel;
     String			error;
     ConnectionParameters	params;
@@ -202,16 +201,10 @@ public class SqlConnectionPanel
     textUser.setText(getDatabaseConnection().getUser());
     panelParameters.addParameter("U_ser", textUser);
 
-    textPassword = new BasePasswordField(20);
+    textPassword = new BasePasswordFieldWithButton(20);
+    textPassword.setShowPopupMenu(true);
     textPassword.setText(getDatabaseConnection().getPassword().getValue());
-    m_EchoChar = textPassword.getEchoChar();
     panelParameters.addParameter("_Password", textPassword);
-
-    checkBoxShowPassword = new BaseCheckBox();
-    checkBoxShowPassword.setSelected(false);
-    checkBoxShowPassword.addActionListener((ActionEvent e) ->
-      textPassword.setEchoChar(checkBoxShowPassword.isSelected() ? (char) 0 : m_EchoChar));
-    panelParameters.addParameter("Sho_w password", checkBoxShowPassword);
 
     comboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
     comboBoxLoggingLevel.setSelectedItem(getDatabaseConnection().getLoggingLevel());

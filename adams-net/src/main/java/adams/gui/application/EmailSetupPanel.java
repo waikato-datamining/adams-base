@@ -29,7 +29,7 @@ import adams.env.EmailDefinition;
 import adams.env.Environment;
 import adams.gui.chooser.BaseTextChooserPanel;
 import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
@@ -38,7 +38,6 @@ import adams.gui.core.ParameterPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 
 /**
  * Panel for configuring the system-wide Email settings.
@@ -82,10 +81,7 @@ public class EmailSetupPanel
   protected BaseTextField m_TextSmtpUser;
 
   /** the SMTP password. */
-  protected BasePasswordField m_TextSmtpPassword;
-
-  /** Whether to show the password. */
-  protected BaseCheckBox m_CheckBoxShowPassword;
+  protected BasePasswordFieldWithButton m_TextSmtpPassword;
 
   /** the default FROM address. */
   protected BaseTextField m_TextDefaultFromAddress;
@@ -95,9 +91,6 @@ public class EmailSetupPanel
 
   /** the support email addres. */
   protected BaseTextField m_TextSupportEmailAddress;
-
-  /** the echo char to use. */
-  protected char m_EchoChar;
 
   /**
    * Initializes the members.
@@ -154,20 +147,10 @@ public class EmailSetupPanel
     m_TextSmtpUser.setText(EmailHelper.getSmtpUser());
     m_PanelParameters.addParameter("SMTP _User", m_TextSmtpUser);
 
-    m_TextSmtpPassword = new BasePasswordField(20);
+    m_TextSmtpPassword = new BasePasswordFieldWithButton(20);
+    m_TextSmtpPassword.setShowPopupMenu(true);
     m_TextSmtpPassword.setText(EmailHelper.getSmtpPassword().getValue());
-    m_EchoChar = m_TextSmtpPassword.getEchoChar();
     m_PanelParameters.addParameter("SMTP _Password", m_TextSmtpPassword);
-
-    m_CheckBoxShowPassword = new BaseCheckBox();
-    m_CheckBoxShowPassword.setSelected(false);
-    m_CheckBoxShowPassword.addActionListener((ActionEvent e) -> {
-      if (m_CheckBoxShowPassword.isSelected())
-        m_TextSmtpPassword.setEchoChar((char) 0);
-      else
-        m_TextSmtpPassword.setEchoChar(m_EchoChar);
-    });
-    m_PanelParameters.addParameter("Sho_w Password", m_CheckBoxShowPassword);
 
     m_TextDefaultFromAddress = new BaseTextField(20);
     m_TextDefaultFromAddress.setText(EmailHelper.getDefaultFromAddress());

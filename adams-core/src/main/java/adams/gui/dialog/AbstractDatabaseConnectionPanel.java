@@ -30,7 +30,7 @@ import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
@@ -76,10 +76,7 @@ public abstract class AbstractDatabaseConnectionPanel
   protected BaseTextField m_TextUser;
 
   /** the edit field for the database password. */
-  protected BasePasswordField m_TextPassword;
-
-  /** the checkbox for showing the password. */
-  protected BaseCheckBox m_CheckBoxShowPassword;
+  protected BasePasswordFieldWithButton m_TextPassword;
 
   /** the combobox for the logging level. */
   protected BaseComboBox<LoggingLevel> m_ComboBoxLoggingLevel;
@@ -110,9 +107,6 @@ public abstract class AbstractDatabaseConnectionPanel
 
   /** the change listeners. */
   protected HashSet<ChangeListener> m_ChangeListeners;
-
-  /** the echo char to use. */
-  protected char m_EchoChar;
 
   /**
    * For initializing members.
@@ -175,19 +169,9 @@ public abstract class AbstractDatabaseConnectionPanel
     m_TextUser = new BaseTextField(20);
     m_PanelParameters.addParameter("U_ser", m_TextUser);
 
-    m_TextPassword = new BasePasswordField(20);
-    m_EchoChar = m_TextPassword.getEchoChar();
+    m_TextPassword = new BasePasswordFieldWithButton(20);
+    m_TextPassword.setShowPopupMenu(true);
     m_PanelParameters.addParameter("_Password", m_TextPassword);
-
-    m_CheckBoxShowPassword = new BaseCheckBox();
-    m_CheckBoxShowPassword.setSelected(false);
-    m_CheckBoxShowPassword.addActionListener((ActionEvent e) -> {
-      if (m_CheckBoxShowPassword.isSelected())
-        m_TextPassword.setEchoChar((char) 0);
-      else
-        m_TextPassword.setEchoChar(m_EchoChar);
-    });
-    m_PanelParameters.addParameter("Sho_w password", m_CheckBoxShowPassword);
 
     m_ComboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
     m_PanelParameters.addParameter("_Logging level", m_ComboBoxLoggingLevel);
@@ -320,8 +304,7 @@ public abstract class AbstractDatabaseConnectionPanel
 
     m_TextURL.setEditable(!connected);
     m_TextUser.setEditable(!connected);
-    m_TextPassword.setEditable(!connected);
-    m_CheckBoxShowPassword.setEnabled(!connected);
+    m_TextPassword.setEnabled(!connected);
     m_ComboBoxLoggingLevel.setEnabled(!connected);
     m_CheckBoxConnectOnStartUp.setEnabled(!connected);
     m_CheckBoxAutoCommit.setEnabled(!connected);
@@ -364,8 +347,7 @@ public abstract class AbstractDatabaseConnectionPanel
 
     m_TextURL.setEditable(!connected);
     m_TextUser.setEditable(!connected);
-    m_TextPassword.setEditable(!connected);
-    m_CheckBoxShowPassword.setEnabled(!connected);
+    m_TextPassword.setEnabled(!connected);
     m_ComboBoxLoggingLevel.setEnabled(!connected);
     m_CheckBoxConnectOnStartUp.setEnabled(!connected);
     m_CheckBoxAutoCommit.setEnabled(!connected);

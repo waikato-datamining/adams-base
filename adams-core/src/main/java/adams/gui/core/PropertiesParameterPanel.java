@@ -1074,10 +1074,10 @@ public class PropertiesParameterPanel
 	  case PASSWORD:
 	  case PASSWORD_PLAIN:
 	    final BasePasswordFieldWithButton pwfield = new BasePasswordFieldWithButton(20);
+	    pwfield.setShowPopupMenu(true);
 	    pwfield.setText(value.getPassword(key).getValue());
 	    if (help != null)
 	      pwfield.setToolTipText(help);
-	    pwfield.setShowPopupMenu(true);
 	    addProperty(key, label, pwfield);
 	    break;
 	  case SQL:

@@ -28,7 +28,7 @@ import adams.env.ProxyDefinition;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.ParameterPanel;
 
@@ -75,10 +75,7 @@ public class ProxySettingsPanel
   protected BaseTextField m_TextHttpFtpUser;
 
   /** the http proxy password. */
-  protected BasePasswordField m_TextHttpFtpPassword;
-
-  /** Whether to show the http password. */
-  protected BaseCheckBox m_CheckBoxShowHttpFtpPassword;
+  protected BasePasswordFieldWithButton m_TextHttpFtpPassword;
 
   /** the hosts that bypass the http proxy . */
   protected BaseTextField m_TextHttpFtpNoProxy;
@@ -99,13 +96,7 @@ public class ProxySettingsPanel
   protected BaseTextField m_TextSocksUser;
 
   /** the socks proxy password. */
-  protected BasePasswordField m_TextSocksPassword;
-
-  /** Whether to show the password. */
-  protected BaseCheckBox m_CheckBoxShowSocksPassword;
-
-  /** the echo char to use. */
-  protected char m_EchoChar;
+  protected BasePasswordFieldWithButton m_TextSocksPassword;
 
   /**
    * Initializes the widgets.
@@ -159,7 +150,6 @@ public class ProxySettingsPanel
     m_CheckBoxHttpFtpAuthentication.addChangeListener((ChangeEvent e) -> {
       m_TextHttpFtpUser.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
       m_TextHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
-      m_CheckBoxShowHttpFtpPassword.setEnabled(m_CheckBoxHttpFtpAuthentication.isSelected() && m_PanelHttpFtp.isEnabled());
     });
     m_PanelHttpFtp.addParameter("Requires _authentication", m_CheckBoxHttpFtpAuthentication);
 
@@ -167,20 +157,10 @@ public class ProxySettingsPanel
     m_TextHttpFtpUser.setEnabled(false);
     m_PanelHttpFtp.addParameter("User", m_TextHttpFtpUser);
 
-    m_TextHttpFtpPassword = new BasePasswordField(15);
+    m_TextHttpFtpPassword = new BasePasswordFieldWithButton(15);
+    m_TextHttpFtpPassword.setShowPopupMenu(true);
     m_TextHttpFtpPassword.setEnabled(false);
-    m_EchoChar = m_TextHttpFtpPassword.getEchoChar();
     m_PanelHttpFtp.addParameter("Password", m_TextHttpFtpPassword);
-
-    m_CheckBoxShowHttpFtpPassword = new BaseCheckBox();
-    m_CheckBoxShowHttpFtpPassword.setSelected(false);
-    m_CheckBoxShowHttpFtpPassword.addActionListener((ActionEvent e) -> {
-      if (m_CheckBoxShowHttpFtpPassword.isSelected())
-        m_TextHttpFtpPassword.setEchoChar((char) 0);
-      else
-        m_TextHttpFtpPassword.setEchoChar(m_EchoChar);
-    });
-    m_PanelHttpFtp.addParameter("Sho_w Password", m_CheckBoxShowHttpFtpPassword);
 
     // socks
     m_PanelSocks = new ParameterPanel();
@@ -197,7 +177,6 @@ public class ProxySettingsPanel
     m_CheckBoxSocksAuthentication.addChangeListener((ChangeEvent e) -> {
       m_TextSocksUser.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
       m_TextSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
-      m_CheckBoxShowSocksPassword.setEnabled(m_CheckBoxSocksAuthentication.isSelected() && m_PanelSocks.isEnabled());
     });
     m_PanelSocks.addParameter("Requires _authentication", m_CheckBoxSocksAuthentication);
 
@@ -205,19 +184,10 @@ public class ProxySettingsPanel
     m_TextSocksUser.setEnabled(false);
     m_PanelSocks.addParameter("User", m_TextSocksUser);
 
-    m_TextSocksPassword = new BasePasswordField(15);
+    m_TextSocksPassword = new BasePasswordFieldWithButton(15);
+    m_TextSocksPassword.setShowPopupMenu(true);
     m_TextSocksPassword.setEnabled(false);
     m_PanelSocks.addParameter("Password", m_TextSocksPassword);
-
-    m_CheckBoxShowSocksPassword = new BaseCheckBox();
-    m_CheckBoxShowSocksPassword.setSelected(false);
-    m_CheckBoxShowSocksPassword.addActionListener((ActionEvent e) -> {
-      if (m_CheckBoxShowSocksPassword.isSelected())
-        m_TextSocksPassword.setEchoChar((char) 0);
-      else
-        m_TextSocksPassword.setEchoChar(m_EchoChar);
-    });
-    m_PanelSocks.addParameter("Sho_w Password", m_CheckBoxShowSocksPassword);
 
     // display values
     load();

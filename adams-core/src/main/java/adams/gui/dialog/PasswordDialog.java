@@ -20,9 +20,8 @@
 package adams.gui.dialog;
 
 import adams.core.base.BasePassword;
-import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,8 +29,6 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -50,13 +47,7 @@ public class PasswordDialog
   protected JLabel m_LabelPassword;
 
   /** the text field for entering the password. */
-  protected BasePasswordField m_TextPassword;
-  
-  /** whether to display the password or not. */
-  protected BaseCheckBox m_CheckBoxShowPassword;
-
-  /** the echo char to use. */
-  protected char m_EchoChar;
+  protected BasePasswordFieldWithButton m_TextPassword;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -160,8 +151,8 @@ public class PasswordDialog
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     getContentPane().add(panel, BorderLayout.NORTH);
     
-    m_TextPassword = new BasePasswordField(20);
-    m_EchoChar = m_TextPassword.getEchoChar();
+    m_TextPassword = new BasePasswordFieldWithButton(20);
+    m_TextPassword.setShowPopupMenu(true);
     m_TextPassword.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
@@ -188,20 +179,7 @@ public class PasswordDialog
     // show password
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     getContentPane().add(panel, BorderLayout.CENTER);
-    
-    m_CheckBoxShowPassword = new BaseCheckBox("Show password");
-    m_CheckBoxShowPassword.setMnemonic('S');
-    m_CheckBoxShowPassword.setToolTipText("If checked, the password will be shown in clear text as you type it");
-    m_CheckBoxShowPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowPassword.isSelected())
-	  m_TextPassword.setEchoChar((char) 0);
-	else
-	  m_TextPassword.setEchoChar(m_EchoChar);
-      }
-    });
-    panel.add(m_CheckBoxShowPassword);
-    
+
     pack();
   }
   

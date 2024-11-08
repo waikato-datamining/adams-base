@@ -31,7 +31,7 @@ import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.BaseTextPaneWithButtons;
 import adams.gui.core.ConsolePanel;
@@ -118,13 +118,13 @@ public class SSHPanel
   protected FileChooserPanel m_FileChooserPanelKey;
 
   /** the text field for the private key passphrase. */
-  protected BasePasswordField m_TextKeyPassphrase;
+  protected BasePasswordFieldWithButton m_TextKeyPassphrase;
 
   /** the text field for the user. */
   protected BaseTextField m_TextUser;
 
   /** the text field for the password. */
-  protected BasePasswordField m_TextPassword;
+  protected BasePasswordFieldWithButton m_TextPassword;
 
   /** text area for the output. */
   protected BaseTextPaneWithButtons m_TextOutput;
@@ -170,7 +170,7 @@ public class SSHPanel
     super.initialize();
 
     m_CommandIndex   = 0;
-    m_CommandHistory = new ArrayList<String>();
+    m_CommandHistory = new ArrayList<>();
     m_CommandHistory.add("");  // empty command to clear command text field
 
     m_Session = null;
@@ -270,7 +270,7 @@ public class SSHPanel
 	  label.setLabelFor(m_TextUser);
 	  authPanel.add(label);
 	  authPanel.add(m_TextUser);
-	  m_TextPassword = new BasePasswordField(8);
+	  m_TextPassword = new BasePasswordFieldWithButton(8);
 	  m_TextPassword.setShowPopupMenu(true);
 	  label = new JLabel("Password");
 	  label.setLabelFor(m_TextPassword);
@@ -293,7 +293,7 @@ public class SSHPanel
 	  m_FileChooserPanelKey.setPrefix("Private key");
 	  m_FileChooserPanelKey.setPreferredSize(new Dimension(250, GUIHelper.getInteger("GOEDefaultHeight", 20)));
 	  authPanel.add(m_FileChooserPanelKey);
-	  m_TextKeyPassphrase = new BasePasswordField(8);
+	  m_TextKeyPassphrase = new BasePasswordFieldWithButton(8);
 	  m_TextKeyPassphrase.setShowPopupMenu(true);
 	  label = new JLabel("Passphrase");
 	  label.setLabelFor(m_TextKeyPassphrase);

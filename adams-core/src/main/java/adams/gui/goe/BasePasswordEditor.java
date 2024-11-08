@@ -52,9 +52,6 @@ public class BasePasswordEditor
   /** the checkbox for "show password". */
   protected BaseCheckBox m_CheckBoxShowPassword;
 
-  /** the echo char to use. */
-  protected char m_EchoChar;
-
   /**
    * Gets the custom editor component.
    *
@@ -74,7 +71,6 @@ public class BasePasswordEditor
     panelAll.add(panel, BorderLayout.NORTH);
     m_TextValue = new BasePasswordField(20);
     ((BasePasswordField) m_TextValue).setShowPopupMenu(true);
-    m_EchoChar = ((BasePasswordField) m_TextValue).getEchoChar();
     m_TextValue.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -103,14 +99,8 @@ public class BasePasswordEditor
     m_CheckBoxShowPassword = new BaseCheckBox("Show password");
     m_CheckBoxShowPassword.setMnemonic('S');
     m_CheckBoxShowPassword.setToolTipText("If checked, the password will be shown in clear text as you type it");
-    m_CheckBoxShowPassword.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-	if (m_CheckBoxShowPassword.isSelected())
-	  ((BasePasswordField) m_TextValue).setEchoChar((char) 0);
-	else
-	  ((BasePasswordField) m_TextValue).setEchoChar(m_EchoChar);
-      }
-    });
+    m_CheckBoxShowPassword.addActionListener((ActionEvent e) ->
+	((BasePasswordField) m_TextValue).setPasswordVisible(m_CheckBoxShowPassword.isSelected()));
     panelCheck.add(m_CheckBoxShowPassword);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
