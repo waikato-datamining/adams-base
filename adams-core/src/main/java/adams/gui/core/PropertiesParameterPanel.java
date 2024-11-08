@@ -1073,12 +1073,11 @@ public class PropertiesParameterPanel
 	    break;
 	  case PASSWORD:
 	  case PASSWORD_PLAIN:
-	    final BasePasswordField pwfield = new BasePasswordField(20);
+	    final BasePasswordFieldWithButton pwfield = new BasePasswordFieldWithButton(20);
 	    pwfield.setText(value.getPassword(key).getValue());
 	    if (help != null)
 	      pwfield.setToolTipText(help);
 	    pwfield.setShowPopupMenu(true);
-	    pwfield.setBorder(BorderFactory.createEtchedBorder());
 	    addProperty(key, label, pwfield);
 	    break;
 	  case SQL:
@@ -1311,7 +1310,7 @@ public class PropertiesParameterPanel
     Component			comp;
     PropertyType		type;
     JTextField 			textfield;
-    BasePasswordField		pwfield;
+    BasePasswordFieldWithButton	pwfield;
     SQLSyntaxEditorPanel	query;
     JCheckBox 			checkbox;
     JSpinner			spinner;
@@ -1366,11 +1365,11 @@ public class PropertiesParameterPanel
 	  result.setProperty(key, textPanel.getCurrent().getValue());
 	  break;
 	case PASSWORD:
-	  pwfield = (BasePasswordField) comp;
+	  pwfield = (BasePasswordFieldWithButton) comp;
 	  result.setPassword(key, new BasePassword(new String(pwfield.getPassword())));
 	  break;
 	case PASSWORD_PLAIN:
-	  pwfield = (BasePasswordField) comp;
+	  pwfield = (BasePasswordFieldWithButton) comp;
 	  result.setProperty(key, new String(pwfield.getPassword()));
 	  break;
 	case SQL:
