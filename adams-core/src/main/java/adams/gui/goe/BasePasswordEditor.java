@@ -22,8 +22,7 @@ package adams.gui.goe;
 import adams.core.base.BasePassword;
 import adams.core.option.parsing.BasePasswordParsing;
 import adams.gui.core.BaseButton;
-import adams.gui.core.BaseCheckBox;
-import adams.gui.core.BasePasswordField;
+import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.GUIHelper;
 
 import javax.swing.JComponent;
@@ -49,8 +48,8 @@ public class BasePasswordEditor
   extends BaseObjectEditor
   implements MultiSelectionEditor {
 
-  /** the checkbox for "show password". */
-  protected BaseCheckBox m_CheckBoxShowPassword;
+  /** the panel with the password field. */
+  protected BasePasswordFieldWithButton m_PasswordField;
 
   /**
    * Gets the custom editor component.
@@ -59,7 +58,6 @@ public class BasePasswordEditor
    */
   protected JComponent createCustomEditor() {
     JPanel	panelAll;
-    JPanel	panelCheck;
     JPanel	panel;
     JLabel	label;
     JPanel 	panelButtons;
@@ -69,9 +67,10 @@ public class BasePasswordEditor
     panelAll = new JPanel(new BorderLayout());
     panel    = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(panel, BorderLayout.NORTH);
-    m_TextValue = new BasePasswordField(20);
-    ((BasePasswordField) m_TextValue).setShowPopupMenu(true);
-    m_TextValue.addKeyListener(new KeyAdapter() {
+    m_PasswordField = new BasePasswordFieldWithButton(20);
+    m_TextValue = m_PasswordField.getField();
+    m_PasswordField.setShowPopupMenu(true);
+    m_PasswordField.getField().addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
 	if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 	  e.consume();
@@ -88,20 +87,9 @@ public class BasePasswordEditor
     });
     label = new JLabel("Password");
     label.setDisplayedMnemonic('p');
-    label.setLabelFor(m_TextValue);
+    label.setLabelFor(m_PasswordField.getField());
     panel.add(label);
-    panel.add(m_TextValue);
-
-    panelCheck = new JPanel(new BorderLayout());
-    panelAll.add(panelCheck, BorderLayout.CENTER);
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panelCheck.add(panel, BorderLayout.NORTH);
-    m_CheckBoxShowPassword = new BaseCheckBox("Show password");
-    m_CheckBoxShowPassword.setMnemonic('S');
-    m_CheckBoxShowPassword.setToolTipText("If checked, the password will be shown in clear text as you type it");
-    m_CheckBoxShowPassword.addActionListener((ActionEvent e) ->
-	((BasePasswordField) m_TextValue).setPasswordVisible(m_CheckBoxShowPassword.isSelected()));
-    panelCheck.add(m_CheckBoxShowPassword);
+    panel.add(m_PasswordField);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     panelAll.add(panelButtons, BorderLayout.SOUTH);
