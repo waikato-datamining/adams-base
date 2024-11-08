@@ -50,6 +50,9 @@ public class BasePasswordField
   /** the listeners for any changes to the text. */
   protected Set<ChangeListener> m_AnyChangeListeners;
 
+  /** the listener for any changes to the echo char. */
+  protected Set<ChangeListener> m_EchoCharChangeListeners;
+  
   /** whether to show the popup menu. */
   protected boolean m_ShowPopupMenu;
 
@@ -134,7 +137,11 @@ public class BasePasswordField
    * Initializes members.
    */
   protected void initTextField() {
-    m_AnyChangeListeners = new HashSet<>();
+    m_AnyChangeListeners      = new HashSet<>();
+    m_EchoCharChangeListeners = new HashSet<>();
+    m_ShowPopupMenu           = false;
+    m_EchoChar                = getEchoChar();
+    
     getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void insertUpdate(DocumentEvent e) {
@@ -149,6 +156,7 @@ public class BasePasswordField
 	notifyAnyChangeListeners();
       }
     });
+    
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -160,8 +168,6 @@ public class BasePasswordField
 	}
       }
     });
-    m_ShowPopupMenu = false;
-    m_EchoChar      = getEchoChar();
   }
 
   /**
@@ -190,9 +196,42 @@ public class BasePasswordField
   protected void notifyAnyChangeListeners() {
     ChangeEvent e;
 
-    e = new ChangeEvent(this);
-    for (ChangeListener l: m_AnyChangeListeners.toArray(new ChangeListener[0]))
-      l.stateChanged(e);
+    if (m_AnyChangeListeners != null) {
+      e = new ChangeEvent(this);
+      for (ChangeListener l : m_AnyChangeListeners.toArray(new ChangeListener[0]))
+	l.stateChanged(e);
+    }
+  }
+
+  /**
+   * Adds the listener for listening to echo char changes.
+   *
+   * @param l		the listener to add
+   */
+  public void addEchoCharChangeListener(ChangeListener l) {
+    m_EchoCharChangeListeners.add(l);
+  }
+
+  /**
+   * Removes the listener from listening to echo char changes.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeEchoCharChangeListener(ChangeListener l) {
+    m_EchoCharChangeListeners.remove(l);
+  }
+
+  /**
+   * Notifies all listeners that the echo char changed.
+   */
+  protected void notifyEchoCharChangeListeners() {
+    ChangeEvent e;
+
+    if (m_EchoCharChangeListeners != null) {
+      e = new ChangeEvent(this);
+      for (ChangeListener l : m_EchoCharChangeListeners.toArray(new ChangeListener[0]))
+	l.stateChanged(e);
+    }
   }
 
   /**
@@ -232,6 +271,22 @@ public class BasePasswordField
   }
 
   /**
+   * Sets the echo character for this <code>JPasswordField</code>.
+   * Note that this is largely a suggestion, since the
+   * view that gets installed can use whatever graphic techniques
+   * it desires to represent the field.  Setting a value of 0 indicates
+   * that you wish to see the text as it is typed, similar to
+   * the behavior of a standard <code>JTextField</code>.
+   * Notifies all echochar change listeners.
+   *
+   * @param c the echo character to display
+   */
+  public void setEchoChar(char c) {
+    super.setEchoChar(c);
+    notifyEchoCharChangeListeners();
+  }
+  
+  /**
    * Sets whether to show the popup menu.
    *
    * @param value	true if to show
@@ -264,6 +319,6 @@ public class BasePasswordField
    * @return		the password
    */
   public BasePassword getBasePassword() {
-    return new BasePassword(getSelectedText());
+    return new BasePassword(new String(getPassword()));
   }
 }
