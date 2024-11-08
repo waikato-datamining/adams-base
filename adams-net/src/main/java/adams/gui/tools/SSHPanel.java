@@ -71,11 +71,10 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * A simple telnet interface. Mainly used for testing.
+ * A simple SSH interface.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @author Bruno D'Avanzo (original SSHClientExample)
- * @version $Revision$
  */
 @MixedCopyright(
   copyright ="JCraft",
