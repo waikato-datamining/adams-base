@@ -247,11 +247,11 @@ public class BasePasswordField
 
     if (getEchoChar() == (char) 0) {
       menuitem = new JMenuItem("Hide password", ImageManager.getIcon("hide"));
-      menuitem.addActionListener((ActionEvent e) -> setEchoChar(m_EchoChar));
+      menuitem.addActionListener((ActionEvent e) -> setPasswordVisible(false));
     }
     else {
       menuitem = new JMenuItem("Show password", ImageManager.getIcon("show"));
-      menuitem.addActionListener((ActionEvent e) -> setEchoChar((char) 0));
+      menuitem.addActionListener((ActionEvent e) -> setPasswordVisible(true));
     }
     result.add(menuitem);
 
@@ -320,5 +320,26 @@ public class BasePasswordField
    */
   public BasePassword getBasePassword() {
     return new BasePassword(new String(getPassword()));
+  }
+
+  /**
+   * Shows or hides the password.
+   *
+   * @param value	true if to show
+   */
+  public void setPasswordVisible(boolean value) {
+    if (value)
+      setEchoChar((char) 0);
+    else
+      setEchoChar(m_EchoChar);
+  }
+
+  /**
+   * Returns whether the password is shown or hidden.
+   *
+   * @return		true if shown
+   */
+  public boolean isPasswordVisible() {
+    return (getEchoChar() == (char) 0);
   }
 }

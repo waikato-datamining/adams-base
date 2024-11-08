@@ -40,9 +40,6 @@ public class BasePasswordFieldWithButton
   /** the button for showing/hiding the password. */
   protected BaseButton m_Button;
 
-  /** the echo character. */
-  protected char m_EchoChar;
-
   /**
    * Constructs a new <code>TextField</code>.  A default model is created,
    * the initial string is <code>null</code>,
@@ -107,21 +104,15 @@ public class BasePasswordFieldWithButton
 
     m_Field = new BasePasswordField();
     m_Field.addEchoCharChangeListener((ChangeEvent e) -> {
-      if (m_Field.getEchoChar() == m_EchoChar)
-	m_Button.setIcon(ImageManager.getIcon("show"));
-      else
+      if (m_Field.isPasswordVisible())
 	m_Button.setIcon(ImageManager.getIcon("hide"));
+      else
+	m_Button.setIcon(ImageManager.getIcon("show"));
     });
-    m_EchoChar = m_Field.getEchoChar();
     add(m_Field, BorderLayout.CENTER);
 
     m_Button = new BaseButton(ImageManager.getIcon("show"));
-    m_Button.addActionListener((ActionEvent e) -> {
-      if (m_Field.getEchoChar() == m_EchoChar)
-	m_Field.setEchoChar((char) 0);
-      else
-	m_Field.setEchoChar(m_EchoChar);
-    });
+    m_Button.addActionListener((ActionEvent e) -> m_Field.setPasswordVisible(!m_Field.isPasswordVisible()));
     add(m_Button, BorderLayout.EAST);
   }
 
@@ -238,5 +229,23 @@ public class BasePasswordFieldWithButton
    */
   public BasePassword getBasePassword() {
     return m_Field.getBasePassword();
+  }
+
+  /**
+   * Shows or hides the password.
+   *
+   * @param value	true if to show
+   */
+  public void setPasswordVisible(boolean value) {
+    m_Field.setPasswordVisible(value);
+  }
+
+  /**
+   * Returns whether the password is shown or hidden.
+   *
+   * @return		true if shown
+   */
+  public boolean isPasswordVisible() {
+    return m_Field.isPasswordVisible();
   }
 }
