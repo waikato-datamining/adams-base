@@ -20,6 +20,7 @@
 
 package adams.gui.chooser;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -338,6 +339,28 @@ public class BaseFileChooser
   }
 
   /**
+   * Fixes the file prefix if the user accidentally pasted a filename starting with "file:///".
+   *
+   * @param file	the fix to check and fix
+   * @return		the potentially fixed file
+   */
+  protected File fixPrefix(File file) {
+    String 	prefix;
+
+    if (file != null) {
+      prefix = "file:";
+      if (file.getAbsolutePath().startsWith(prefix))
+	file = new File(file.getAbsolutePath().substring(prefix.length()));
+
+      prefix = System.getProperty("user.home") + "/file:";
+      if (file.getAbsolutePath().startsWith(prefix))
+	file = new File(file.getAbsolutePath().substring(prefix.length()));
+    }
+
+    return file;
+  }
+
+  /**
    * Sets the selected file. If the file's parent directory is
    * not the current directory, changes the current directory
    * to be the file's parent directory.
@@ -352,7 +375,7 @@ public class BaseFileChooser
     selFile = null;
 
     if (file != null)
-      selFile = new File(file.getAbsolutePath());
+      selFile = new File(fixPrefix(file).getAbsolutePath());
     if (selFile == null)
       return;
 
@@ -399,7 +422,7 @@ public class BaseFileChooser
     if (selectedFiles != null) {
       files = new File[selectedFiles.length];
       for (i = 0; i < selectedFiles.length; i++)
-	files[i] = selectedFiles[i].getAbsoluteFile();
+	files[i] = fixPrefix(selectedFiles[i].getAbsoluteFile());
     }
 
     try {
@@ -686,5 +709,19 @@ public class BaseFileChooser
   protected static void handleException(String msg, Throwable t) {
     ConsolePanel.getSingleton().append(msg, t);
     LoggingHelper.global().log(Level.SEVERE, msg, t);
+  }
+
+  public static void main(String[] args) throws Exception {
+    BaseFileChooser chooser = new BaseFileChooser();
+    chooser.setCurrentDirectory(new File("/home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train"));
+    chooser.setSelectedFiles(new File[]{
+      new File("file:///home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train/s-clean.arff.gz"),
+      new File("file:///home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train/s-raw.arff"),
+    });
+    int retval = chooser.showOpenDialog(null);
+    if (retval != BaseFileChooser.APPROVE_OPTION)
+      return;
+    System.out.println("files: " + Utils.arrayToString(chooser.getSelectedFiles()));
+    //System.out.println("placeholder file: " + chooser.getSelectedPlaceholderFile());
   }
 }
