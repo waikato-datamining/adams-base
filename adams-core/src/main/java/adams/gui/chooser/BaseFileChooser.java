@@ -15,13 +15,14 @@
 
 /*
  * BaseFileChooser.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.User;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
@@ -40,6 +41,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * A file chooser dialog based on the one developed by the 
@@ -683,7 +685,6 @@ public class BaseFileChooser
    */
   protected static void handleException(String msg, Throwable t) {
     ConsolePanel.getSingleton().append(msg, t);
-    System.err.println(msg);
-    t.printStackTrace();
+    LoggingHelper.global().log(Level.SEVERE, msg, t);
   }
 }
