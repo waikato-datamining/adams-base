@@ -20,7 +20,6 @@
 
 package adams.gui.chooser;
 
-import adams.core.Utils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
@@ -709,19 +708,5 @@ public class BaseFileChooser
   protected static void handleException(String msg, Throwable t) {
     ConsolePanel.getSingleton().append(msg, t);
     LoggingHelper.global().log(Level.SEVERE, msg, t);
-  }
-
-  public static void main(String[] args) throws Exception {
-    BaseFileChooser chooser = new BaseFileChooser();
-    chooser.setCurrentDirectory(new File("/home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train"));
-    chooser.setSelectedFiles(new File[]{
-      new File("file:///home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train/s-clean.arff.gz"),
-      new File("file:///home/fracpete/development/projects/waikato-datamining/adamsfamily/adams-processing/adams-processing-spectral-app/src/main/flows/basic/data/train/soil/5/train/s-raw.arff"),
-    });
-    int retval = chooser.showOpenDialog(null);
-    if (retval != BaseFileChooser.APPROVE_OPTION)
-      return;
-    System.out.println("files: " + Utils.arrayToString(chooser.getSelectedFiles()));
-    //System.out.println("placeholder file: " + chooser.getSelectedPlaceholderFile());
   }
 }
