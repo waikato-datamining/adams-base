@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationJob.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -29,6 +29,7 @@ import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.StoppableEvaluation;
 import weka.core.Instances;
 
 /**
@@ -59,7 +60,7 @@ public class WekaCrossValidationJob
   protected boolean m_DiscardPredictions;
 
   /** the evaluation. */
-  protected Evaluation m_Evaluation;
+  protected StoppableEvaluation m_Evaluation;
 
   /** for outputting notifications. */
   protected transient StatusMessageHandler m_StatusMessageHandler;
@@ -213,9 +214,9 @@ public class WekaCrossValidationJob
 	  + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
     try {
       if (m_Classifier instanceof FlowContextHandler)
-        ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
+	((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
       m_Classifier.buildClassifier(m_Train);
-      m_Evaluation = new Evaluation(m_Train);
+      m_Evaluation = new StoppableEvaluation(m_Train);
       m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
       m_Evaluation.evaluateModel(m_Classifier, m_Test);
     }
@@ -243,6 +244,16 @@ public class WekaCrossValidationJob
     if (m_Evaluation == null)
       return "Failed to evaluate?";
     return null;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Evaluation != null)
+      m_Evaluation.stopExecution();
+    super.stopExecution();
   }
 
   /**

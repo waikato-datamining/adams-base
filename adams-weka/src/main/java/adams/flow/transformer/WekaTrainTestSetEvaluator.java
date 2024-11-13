@@ -30,7 +30,7 @@ import adams.flow.standalone.JobRunnerInstance;
 import adams.multiprocess.AbstractJob;
 import adams.multiprocess.JobRunnerSupporter;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+import weka.classifiers.StoppableEvaluation;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.classifiers.evaluation.output.prediction.Null;
 import weka.core.Instances;
@@ -143,7 +143,7 @@ public class WekaTrainTestSetEvaluator
     protected Instances m_Test;
 
     /** the evaluation object to use. */
-    protected Evaluation m_Evaluation;
+    protected StoppableEvaluation m_Evaluation;
 
     /** for collecting the output. */
     protected AbstractOutput m_Output;
@@ -157,7 +157,7 @@ public class WekaTrainTestSetEvaluator
      * @param eval 		the evaluation object to use
      * @param output 		for collecting the output
      */
-    public EvaluateJob(Classifier classifier, Instances train, Instances test, Evaluation eval, AbstractOutput output) {
+    public EvaluateJob(Classifier classifier, Instances train, Instances test, StoppableEvaluation eval, AbstractOutput output) {
       super();
       m_Classifier = classifier;
       m_Train      = train;
@@ -204,6 +204,15 @@ public class WekaTrainTestSetEvaluator
     }
 
     /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      m_Evaluation.stopExecution();
+      super.stopExecution();
+    }
+
+    /**
      * Checks whether all post-conditions have been met.
      *
      * @return		null if everything is OK, otherwise an error message
@@ -246,6 +255,9 @@ public class WekaTrainTestSetEvaluator
 
   /** the JobRunnerInstance to use. */
   protected transient JobRunnerInstance m_JobRunnerInstance;
+
+  /** the current evaluation. */
+  protected transient StoppableEvaluation m_CurrentEvaluation;
 
   /**
    * Returns a string describing the object.
@@ -367,7 +379,6 @@ public class WekaTrainTestSetEvaluator
     Instances			train;
     Instances			test;
     weka.classifiers.Classifier	cls;
-    Evaluation			eval;
     WekaTrainTestSetContainer	cont;
     EvaluateJob			job;
 
@@ -385,10 +396,10 @@ public class WekaTrainTestSetEvaluator
       test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
       initOutputBuffer();
       m_Output.setHeader(train);
-      eval  = new Evaluation(train);
-      eval.setDiscardPredictions(m_DiscardPredictions);
+      m_CurrentEvaluation = new StoppableEvaluation(train);
+      m_CurrentEvaluation.setDiscardPredictions(m_DiscardPredictions);
       if (m_JobRunnerInstance != null) {
-	job = new EvaluateJob(cls, train, test, eval, m_Output);
+	job = new EvaluateJob(cls, train, test, m_CurrentEvaluation, m_Output);
 	result = m_JobRunnerInstance.executeJob(job);
 	if (result != null)
 	  throw new Exception(result);
@@ -396,16 +407,16 @@ public class WekaTrainTestSetEvaluator
       }
       else {
 	cls.buildClassifier(train);
-	eval.evaluateModel(cls, test, m_Output);
+	m_CurrentEvaluation.evaluateModel(cls, test, m_Output);
       }
 
       // broadcast result
       if (m_Output instanceof Null) {
-	m_OutputToken = new Token(new WekaEvaluationContainer(eval, cls));
+	m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, cls));
       }
       else {
 	if (m_AlwaysUseContainer)
-	  m_OutputToken = new Token(new WekaEvaluationContainer(eval, cls, m_Output.getBuffer().toString()));
+	  m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, cls, m_Output.getBuffer().toString()));
 	else
 	  m_OutputToken = new Token(m_Output.getBuffer().toString());
       }
@@ -424,6 +435,18 @@ public class WekaTrainTestSetEvaluator
 
     cleanOutputBuffer();
 
+    m_CurrentEvaluation = null;
+
     return result;
+  }
+
+  /**
+   * Stops the execution. No message set.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_CurrentEvaluation != null)
+      m_CurrentEvaluation.stopExecution();
+    super.stopExecution();
   }
 }
