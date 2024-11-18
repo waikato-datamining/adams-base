@@ -223,18 +223,18 @@ public class FlowWorker
 
     time = System.currentTimeMillis() - m_StartTime;
     if (m_Output != null) {
-      msg  = "Finished with error (" + DateUtils.msecToString(time) + "):\n\n" + m_Output;
+      msg  = "Finished with error (runtime: " + DateUtils.msecToString(time) + "):\n\n" + m_Output;
       type = NotificationType.ERROR;
     }
     else if (m_StopMessage != null) {
-      msg  = "Flow stopped with message (" + DateUtils.msecToString(time) + "):\n\n" + m_StopMessage;
+      msg  = "Flow stopped with message (runtime: " + DateUtils.msecToString(time) + "):\n\n" + m_StopMessage;
       type = (errors != null) ? NotificationType.ERROR : NotificationType.WARNING;
     }
     else {
       if (m_Running)
-	msg = "Flow finished (" + DateUtils.msecToString(time) + ").";
+	msg = "Flow finished (runtime: " + DateUtils.msecToString(time) + ").";
       else
-	msg = "User stopped flow (" + DateUtils.msecToString(time) + ").";
+	msg = "User stopped flow (runtime: " + DateUtils.msecToString(time) + ").";
       type = m_Running ? NotificationType.INFO : NotificationType.WARNING;
     }
     if (errors != null)
