@@ -25,6 +25,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.Pausable;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
+import adams.core.Stoppable;
 import adams.core.ThreadLimiter;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingHelper;
@@ -427,6 +428,8 @@ public class WekaClassifierRanker
     public void stopExecution() {
       if (m_Evaluation != null)
 	m_Evaluation.stopExecution();
+      if (m_Classifier instanceof Stoppable)
+	((Stoppable) m_Classifier).stopExecution();
       super.stopExecution();
     }
 

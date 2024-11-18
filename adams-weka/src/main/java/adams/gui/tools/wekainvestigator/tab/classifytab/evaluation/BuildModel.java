@@ -15,7 +15,7 @@
 
 /*
  * BuildModel.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -24,6 +24,8 @@ import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -61,7 +63,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class BuildModel
-  extends AbstractClassifierEvaluation {
+  extends AbstractClassifierEvaluation
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = 1175400993991698944L;
 
@@ -90,6 +93,12 @@ public class BuildModel
 
   /** the serialized model. */
   protected FileChooserPanel m_PanelModel;
+
+  /** the model that is being built. */
+  protected transient Classifier m_Model;
+
+  /** whether the build was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing the object.
@@ -232,7 +241,6 @@ public class BuildModel
    */
   @Override
   protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
-    Classifier		model;
     DataContainer 	dataCont;
     Instances		data;
     boolean		order;
@@ -241,9 +249,10 @@ public class BuildModel
     String		msg;
     MetaData 		runInfo;
 
-    model = ObjectCopyHelper.copyObject(classifier);
+    m_Stopped = false;
+    m_Model   = ObjectCopyHelper.copyObject(classifier);
 
-    if ((msg = canEvaluate(model)) != null)
+    if ((msg = canEvaluate(m_Model)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
@@ -255,9 +264,9 @@ public class BuildModel
     getOwner().logMessage("Using '" + dataCont.getID() + "/" + data.relationName() + "' to build " + OptionUtils.getCommandLine(classifier));
     if (!order)
       data.randomize(new Random(seed));
-    model.buildClassifier(data);
+    m_Model.buildClassifier(data);
     getOwner().logMessage("Built model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
-    SerializationHelper.writeAll(m_PanelModel.getCurrent().getAbsolutePath(), new Object[]{model, header});
+    SerializationHelper.writeAll(m_PanelModel.getCurrent().getAbsolutePath(), new Object[]{m_Model, header});
     getOwner().logMessage("Saved model built on '" + dataCont.getID() + "/" + data.relationName() + "' to " + m_PanelModel.getCurrent().getAbsolutePath());
 
     runInfo  = new MetaData();
@@ -271,9 +280,11 @@ public class BuildModel
     if (!order)
       runInfo.add("Seed", seed);
     runInfo.add("Model file", m_PanelModel.getCurrent().getAbsolutePath());
-    addObjectSize(runInfo, "Model size", model);
+    addObjectSize(runInfo, "Model size", m_Model);
 
-    item.update(null, model, runInfo);
+    item.update(null, m_Model, runInfo);
+
+    m_Model = null;
   }
 
   /**
@@ -292,7 +303,7 @@ public class BuildModel
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
     index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
@@ -310,6 +321,26 @@ public class BuildModel
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    if (m_Model instanceof Stoppable)
+      ((Stoppable) m_Model).stopExecution();
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

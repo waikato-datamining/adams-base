@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
+import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -41,8 +43,8 @@ import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.Serializatio
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
 import weka.classifiers.DefaultRandomSplitGenerator;
-import weka.classifiers.Evaluation;
 import weka.classifiers.RandomSplitGenerator;
+import weka.classifiers.StoppableEvaluation;
 import weka.classifiers.TestingHelper;
 import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
@@ -64,7 +66,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TrainTestSplit
-  extends AbstractClassifierEvaluation {
+  extends AbstractClassifierEvaluation
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = -4460266467650893551L;
 
@@ -113,6 +116,15 @@ public class TrainTestSplit
 
   /** whether to discard the predictions. */
   protected BaseCheckBox m_CheckBoxDiscardPredictions;
+
+  /** the current model. */
+  protected transient Classifier m_Model;
+
+  /** the current evaluation. */
+  protected transient StoppableEvaluation m_Evaluation;
+
+  /** whether the build was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing the object.
@@ -305,8 +317,6 @@ public class TrainTestSplit
    */
   @Override
   protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
-    Evaluation 			eval;
-    Classifier 			model;
     double			perc;
     int				seed;
     boolean		  	views;
@@ -323,6 +333,7 @@ public class TrainTestSplit
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
+    m_Stopped = false;
     dataCont = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex());
     data     = dataCont.getData();
     perc     = m_TextPercentage.getValue().doubleValue() / 100.0;
@@ -355,14 +366,14 @@ public class TrainTestSplit
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
-    model = ObjectCopyHelper.copyObject(classifier);
+    m_Model = ObjectCopyHelper.copyObject(classifier);
     getOwner().logMessage("Using " + m_TextPercentage.getText() + "% of '" + dataCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
-    model.buildClassifier(train);
-    addObjectSize(runInfo, "Model size", model);
+    m_Model.buildClassifier(train);
+    addObjectSize(runInfo, "Model size", m_Model);
     getOwner().logMessage("Using remainder from '" + dataCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
-    eval = new Evaluation(train);
-    eval.setDiscardPredictions(discard);
-    TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+    m_Evaluation = new StoppableEvaluation(train);
+    m_Evaluation.setDiscardPredictions(discard);
+    TestingHelper.evaluateModel(m_Model, test, m_Evaluation, getTestingUpdateInterval(), new TestingUpdateListener() {
       @Override
       public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
         getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
@@ -370,8 +381,11 @@ public class TrainTestSplit
     });
 
     item.update(
-      eval, model, runInfo,
+      m_Evaluation, m_Model, runInfo,
       null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
+
+    m_Model      = null;
+    m_Evaluation = null;
   }
 
   /**
@@ -388,9 +402,9 @@ public class TrainTestSplit
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
@@ -410,6 +424,28 @@ public class TrainTestSplit
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    if (m_Model instanceof Stoppable)
+      ((Stoppable) m_Model).stopExecution();
+    if (m_Evaluation != null)
+      m_Evaluation.stopExecution();
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

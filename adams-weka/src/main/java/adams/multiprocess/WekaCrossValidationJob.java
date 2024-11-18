@@ -23,6 +23,7 @@ package adams.multiprocess;
 import adams.core.ObjectCopyHelper;
 import adams.core.Shortening;
 import adams.core.StatusMessageHandler;
+import adams.core.Stoppable;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.flow.core.Actor;
@@ -253,6 +254,8 @@ public class WekaCrossValidationJob
   public void stopExecution() {
     if (m_Evaluation != null)
       m_Evaluation.stopExecution();
+    if (m_Classifier instanceof Stoppable)
+      ((Stoppable) m_Classifier).stopExecution();
     super.stopExecution();
   }
 

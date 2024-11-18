@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSet.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -23,6 +23,8 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
+import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.MetaData;
@@ -35,7 +37,7 @@ import adams.gui.tools.wekainvestigator.evaluation.DatasetHelper;
 import adams.gui.tools.wekainvestigator.tab.AbstractInvestigatorTab.SerializationOption;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+import weka.classifiers.StoppableEvaluation;
 import weka.classifiers.TestingHelper;
 import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
@@ -55,7 +57,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TrainTestSet
-  extends AbstractClassifierEvaluation {
+  extends AbstractClassifierEvaluation
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = -4460266467650893551L;
 
@@ -84,6 +87,15 @@ public class TrainTestSet
 
   /** whether to discard the predictions. */
   protected BaseCheckBox m_CheckBoxDiscardPredictions;
+
+  /** the current model. */
+  protected transient Classifier m_Model;
+
+  /** the current evaluation. */
+  protected StoppableEvaluation m_Evaluation;
+
+  /** whether the build was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing the object.
@@ -226,8 +238,6 @@ public class TrainTestSet
    */
   @Override
   protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
-    Evaluation 		eval;
-    Classifier  	model;
     DataContainer 	trainCont;
     DataContainer 	testCont;
     Instances		train;
@@ -239,6 +249,7 @@ public class TrainTestSet
     if ((msg = canEvaluate(classifier)) != null)
       throw new IllegalArgumentException("Cannot evaluate classifier!\n" + msg);
 
+    m_Stopped = false;
     trainCont = getOwner().getData().get(m_ComboBoxTrain.getSelectedIndex());
     testCont  = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex());
     train     = trainCont.getData();
@@ -258,15 +269,15 @@ public class TrainTestSet
     if (m_SelectAdditionalAttributes.getCurrent().length > 0)
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
 
-    model = ObjectCopyHelper.copyObject(classifier);
+    m_Model = ObjectCopyHelper.copyObject(classifier);
     getOwner().logMessage("Using '" + trainCont.getID() + "/" + train.relationName() + "' to train " + OptionUtils.getCommandLine(classifier));
-    model.buildClassifier(train);
-    addObjectSize(runInfo, "Model size", model);
+    m_Model.buildClassifier(train);
+    addObjectSize(runInfo, "Model size", m_Model);
     getOwner().logMessage("Using '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
 
-    eval = new Evaluation(train);
-    eval.setDiscardPredictions(discard);
-    TestingHelper.evaluateModel(model, test, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+    m_Evaluation = new StoppableEvaluation(train);
+    m_Evaluation.setDiscardPredictions(discard);
+    TestingHelper.evaluateModel(m_Model, test, m_Evaluation, getTestingUpdateInterval(), new TestingUpdateListener() {
       @Override
       public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
         getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
@@ -274,8 +285,11 @@ public class TrainTestSet
     });
 
     item.update(
-      eval, model, runInfo,
+      m_Evaluation, m_Model, runInfo,
       null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
+
+    m_Model      = null;
+    m_Evaluation = null;
   }
 
   /**
@@ -295,8 +309,8 @@ public class TrainTestSet
 
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       // train
-      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTrain.getSelectedItem());
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTrain.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxTrain.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxTrain.setSelectedIndex(0);
@@ -304,8 +318,8 @@ public class TrainTestSet
 	m_ComboBoxTrain.setSelectedIndex(index);
 
       // test
-      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTest.getSelectedItem());
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTest.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxTest.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxTest.setSelectedIndex(0);
@@ -325,6 +339,28 @@ public class TrainTestSet
    */
   public void activate(int index) {
     m_ComboBoxTrain.setSelectedIndex(index);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    if (m_Model instanceof Stoppable)
+      ((Stoppable) m_Model).stopExecution();
+    if (m_Evaluation != null)
+      m_Evaluation.stopExecution();
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

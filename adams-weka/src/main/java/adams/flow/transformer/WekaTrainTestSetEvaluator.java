@@ -21,6 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Stoppable;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaEvaluationContainer;
@@ -209,6 +210,8 @@ public class WekaTrainTestSetEvaluator
     @Override
     public void stopExecution() {
       m_Evaluation.stopExecution();
+      if (m_Classifier instanceof Stoppable)
+	((Stoppable) m_Classifier).stopExecution();
       super.stopExecution();
     }
 
@@ -258,6 +261,9 @@ public class WekaTrainTestSetEvaluator
 
   /** the current evaluation. */
   protected transient StoppableEvaluation m_CurrentEvaluation;
+
+  /** the current classifier. */
+  protected transient weka.classifiers.Classifier m_CurrentClassifier;
 
   /**
    * Returns a string describing the object.
@@ -378,7 +384,6 @@ public class WekaTrainTestSetEvaluator
     String			result;
     Instances			train;
     Instances			test;
-    weka.classifiers.Classifier	cls;
     WekaTrainTestSetContainer	cont;
     EvaluateJob			job;
 
@@ -387,8 +392,8 @@ public class WekaTrainTestSetEvaluator
 
     try {
       // cross-validate classifier
-      cls = getClassifierInstance();
-      if (cls == null)
+      m_CurrentClassifier = getClassifierInstance();
+      if (m_CurrentClassifier == null)
 	throw new IllegalStateException("Classifier '" + getClassifier() + "' not found!");
 
       cont  = (WekaTrainTestSetContainer) m_InputToken.getPayload();
@@ -399,24 +404,24 @@ public class WekaTrainTestSetEvaluator
       m_CurrentEvaluation = new StoppableEvaluation(train);
       m_CurrentEvaluation.setDiscardPredictions(m_DiscardPredictions);
       if (m_JobRunnerInstance != null) {
-	job = new EvaluateJob(cls, train, test, m_CurrentEvaluation, m_Output);
+	job = new EvaluateJob(m_CurrentClassifier, train, test, m_CurrentEvaluation, m_Output);
 	result = m_JobRunnerInstance.executeJob(job);
 	if (result != null)
 	  throw new Exception(result);
 	job.cleanUp();
       }
       else {
-	cls.buildClassifier(train);
-	m_CurrentEvaluation.evaluateModel(cls, test, m_Output);
+	m_CurrentClassifier.buildClassifier(train);
+	m_CurrentEvaluation.evaluateModel(m_CurrentClassifier, test, m_Output);
       }
 
       // broadcast result
       if (m_Output instanceof Null) {
-	m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, cls));
+	m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, m_CurrentClassifier));
       }
       else {
 	if (m_AlwaysUseContainer)
-	  m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, cls, m_Output.getBuffer().toString()));
+	  m_OutputToken = new Token(new WekaEvaluationContainer(m_CurrentEvaluation, m_CurrentClassifier, m_Output.getBuffer().toString()));
 	else
 	  m_OutputToken = new Token(m_Output.getBuffer().toString());
       }
@@ -436,6 +441,7 @@ public class WekaTrainTestSetEvaluator
     cleanOutputBuffer();
 
     m_CurrentEvaluation = null;
+    m_CurrentClassifier = null;
 
     return result;
   }
@@ -447,6 +453,8 @@ public class WekaTrainTestSetEvaluator
   public void stopExecution() {
     if (m_CurrentEvaluation != null)
       m_CurrentEvaluation.stopExecution();
+    if (m_CurrentClassifier instanceof Stoppable)
+      ((Stoppable) m_CurrentClassifier).stopExecution();
     super.stopExecution();
   }
 }

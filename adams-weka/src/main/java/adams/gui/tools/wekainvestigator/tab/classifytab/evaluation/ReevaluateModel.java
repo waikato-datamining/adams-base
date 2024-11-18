@@ -15,7 +15,7 @@
 
 /*
  * ReevaluateModel.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
@@ -41,7 +42,7 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Classifier;
-import weka.classifiers.Evaluation;
+import weka.classifiers.StoppableEvaluation;
 import weka.classifiers.TestingHelper;
 import weka.classifiers.TestingHelper.TestingUpdateListener;
 import weka.core.Capabilities;
@@ -63,7 +64,8 @@ import java.util.Set;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ReevaluateModel
-  extends AbstractClassifierEvaluation {
+  extends AbstractClassifierEvaluation
+  implements StoppableWithFeedback {
 
   private static final long serialVersionUID = 1175400993991698944L;
 
@@ -98,6 +100,12 @@ public class ReevaluateModel
 
   /** the training header (if any). */
   protected Instances m_Header;
+
+  /** the current evaluation. */
+  protected transient StoppableEvaluation m_Evaluation;
+
+  /** whether the build was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing the object.
@@ -294,7 +302,6 @@ public class ReevaluateModel
    */
   @Override
   protected void doEvaluate(Classifier classifier, ResultItem item) throws Exception {
-    Evaluation 		eval;
     DataContainer 	dataCont;
     Instances		data;
     boolean		discard;
@@ -303,6 +310,7 @@ public class ReevaluateModel
     TIntList 		original;
     int			i;
 
+    m_Stopped  = false;
     classifier = ObjectCopyHelper.copyObject(m_Model);
 
     if ((msg = canEvaluate(classifier)) != null)
@@ -324,9 +332,9 @@ public class ReevaluateModel
       runInfo.add("Additional attributes: ", Utils.flatten(m_SelectAdditionalAttributes.getCurrent(), ", "));
     addObjectSize(runInfo, "Model size", m_Model);
 
-    eval = new Evaluation(data);
-    eval.setDiscardPredictions(discard);
-    TestingHelper.evaluateModel(m_Model, data, eval, getTestingUpdateInterval(), new TestingUpdateListener() {
+    m_Evaluation = new StoppableEvaluation(data);
+    m_Evaluation.setDiscardPredictions(discard);
+    TestingHelper.evaluateModel(m_Model, data, m_Evaluation, getTestingUpdateInterval(), new TestingUpdateListener() {
       @Override
       public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
         getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + dataCont.getID() + "/" + data.relationName() + "' to evaluate " + OptionUtils.getCommandLine(m_Model));
@@ -338,8 +346,10 @@ public class ReevaluateModel
       original.add(i);
 
     item.update(
-      eval, m_Model, runInfo,
+      m_Evaluation, m_Model, runInfo,
       original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+
+    m_Evaluation = null;
   }
 
   /**
@@ -356,9 +366,9 @@ public class ReevaluateModel
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
@@ -378,6 +388,26 @@ public class ReevaluateModel
    */
   public void activate(int index) {
     m_ComboBoxDatasets.setSelectedIndex(index);
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    if (m_Evaluation != null)
+      m_Evaluation.stopExecution();
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

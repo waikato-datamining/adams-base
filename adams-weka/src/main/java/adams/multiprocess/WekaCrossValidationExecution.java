@@ -130,6 +130,9 @@ public class WekaCrossValidationExecution
   /** the evaluation currently being run. */
   protected transient StoppableEvaluation m_CurrentEvaluation;
 
+  /** the current classifier that is being trained. */
+  protected transient Classifier m_CurrentClassifier;
+
   /**
    * Initializes the execution.
    */
@@ -526,7 +529,6 @@ public class WekaCrossValidationExecution
     int[]				indices;
     Instances				train;
     Instances				test;
-    Classifier				cls;
     boolean				setNumThreads;
 
     result        = new MessageCollection();
@@ -569,12 +571,12 @@ public class WekaCrossValidationExecution
 	  cont  = generator.next();
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
-	  cls   = ObjectCopyHelper.copyObject(m_Classifier);
-	  if (cls instanceof FlowContextHandler)
-	    ((FlowContextHandler) cls).setFlowContext(m_FlowContext);
-	  cls.buildClassifier(train);
+	  m_CurrentClassifier = ObjectCopyHelper.copyObject(m_Classifier);
+	  if (m_CurrentClassifier instanceof FlowContextHandler)
+	    ((FlowContextHandler) m_CurrentClassifier).setFlowContext(m_FlowContext);
+	  m_CurrentClassifier.buildClassifier(train);
 	  m_CurrentEvaluation.setPriors(train);
-	  m_CurrentEvaluation.evaluateModel(cls, test, m_Output);
+	  m_CurrentEvaluation.evaluateModel(m_CurrentClassifier, test, m_Output);
 	  current++;
 	}
 	if (m_Output != null)
@@ -653,7 +655,11 @@ public class WekaCrossValidationExecution
     }
 
     m_CurrentEvaluation = null;
+    m_CurrentClassifier = null;
     m_OriginalIndices   = indices;
+
+    if (isStopped())
+      result.add("Stopped by user!");
 
     if (result.isEmpty())
       return null;
@@ -680,6 +686,8 @@ public class WekaCrossValidationExecution
       m_ActualJobRunner.terminate(m_WaitForJobs);
     if (m_CurrentEvaluation != null)
       m_CurrentEvaluation.stopExecution();
+    if (m_CurrentClassifier instanceof Stoppable)
+      ((Stoppable) m_CurrentClassifier).stopExecution();
   }
 
   /**
