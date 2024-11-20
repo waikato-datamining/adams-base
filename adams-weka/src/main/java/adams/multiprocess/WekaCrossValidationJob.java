@@ -217,9 +217,11 @@ public class WekaCrossValidationJob
       if (m_Classifier instanceof FlowContextHandler)
 	((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
       m_Classifier.buildClassifier(m_Train);
-      m_Evaluation = new StoppableEvaluation(m_Train);
-      m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
-      m_Evaluation.evaluateModel(m_Classifier, m_Test);
+      if (!m_Stopped) {
+	m_Evaluation = new StoppableEvaluation(m_Train);
+	m_Evaluation.setDiscardPredictions(m_DiscardPredictions);
+	m_Evaluation.evaluateModel(m_Classifier, m_Test);
+      }
     }
     catch (Exception e) {
       if (m_StatusMessageHandler != null)
