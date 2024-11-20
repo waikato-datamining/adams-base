@@ -1034,12 +1034,12 @@ public class Utils {
   /**
    * Turns the class of the object into a string.
    *
-   * @param o		the object to turn into a class string
+   * @param o		the object to turn into a class string, can be null
    * @return		the string
    */
   public static String classToString(Object o) {
     if (o == null)
-      return "null";
+      return classToString(null);
     else
       return classToString(o.getClass());
   }
@@ -1047,7 +1047,7 @@ public class Utils {
   /**
    * Turns a class into a string.
    *
-   * @param c		the class to turn into a string
+   * @param c		the class to turn into a string, can be null
    * @return		the string
    */
   public static String classToString(Class c) {
@@ -1056,14 +1056,19 @@ public class Utils {
     int			i;
 
     result = new StringBuilder();
-    if (c.isArray()) {
-      dim    = getArrayDimensions(c);
-      result.append(getArrayClass(c).getName());
-      for (i = 0; i < dim; i++)
-	result.append(ARRAY_INDICATOR);
+    if (c == null) {
+      result.append("null");
     }
     else {
-      result.append(c.getName());
+      if (c.isArray()) {
+	dim = getArrayDimensions(c);
+	result.append(getArrayClass(c).getName());
+	for (i = 0; i < dim; i++)
+	  result.append(ARRAY_INDICATOR);
+      }
+      else {
+	result.append(c.getName());
+      }
     }
 
     return result.toString();
@@ -1101,11 +1106,15 @@ public class Utils {
     int		i;
 
     if (o == null)
-      return "null";
+      return classToString(null);
 
     c = new Class[o.length];
-    for (i = 0; i < o.length; i++)
-      c[i] = o.getClass();
+    for (i = 0; i < o.length; i++) {
+      if (o[i] == null)
+	c[i] = null;
+      else
+	c[i] = o[i].getClass();
+    }
 
     return classesToString(c, separator);
   }
