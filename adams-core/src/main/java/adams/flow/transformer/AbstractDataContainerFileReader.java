@@ -15,13 +15,13 @@
 
 /*
  * AbstractDataContainerFileReader.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
@@ -291,8 +291,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   @Override
   public void stopExecution() {
     super.stopExecution();
-    if (m_Reader instanceof Stoppable)
-      ((Stoppable) m_Reader).stopExecution();
+    StoppableUtils.stopExecution(m_Reader);
   }
 
   /**
@@ -331,7 +330,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
     else {
       // read more data?
       if ((m_Reader instanceof IncrementalDataContainerReader) && !m_OutputArray) {
-        if (m_Containers.size() == 0)
+        if (m_Containers.isEmpty())
           m_Containers = m_Reader.read();
       }
 
@@ -351,9 +350,9 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   @Override
   public boolean hasPendingOutput() {
     if (m_Reader instanceof IncrementalDataContainerReader)
-      return (m_Containers.size() > 0) || ((IncrementalDataContainerReader) m_Reader).hasMoreData();
+      return !m_Containers.isEmpty() || ((IncrementalDataContainerReader) m_Reader).hasMoreData();
     else
-      return (m_Containers.size() > 0);
+      return !m_Containers.isEmpty();
   }
 
   /**

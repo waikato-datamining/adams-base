@@ -26,6 +26,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.Performance;
 import adams.core.StatusMessageHandler;
 import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.ThreadLimiter;
 import adams.core.logging.CustomLoggingLevelObject;
 import adams.core.logging.LoggingHelper;
@@ -684,10 +685,8 @@ public class WekaCrossValidationExecution
     getLogger().severe("Execution stopped");
     if (m_ActualJobRunner != null)
       m_ActualJobRunner.terminate(m_WaitForJobs);
-    if (m_CurrentEvaluation != null)
-      m_CurrentEvaluation.stopExecution();
-    if (m_CurrentClassifier instanceof Stoppable)
-      ((Stoppable) m_CurrentClassifier).stopExecution();
+    StoppableUtils.stopExecution(m_CurrentEvaluation);
+    StoppableUtils.stopAnyExecution(m_CurrentClassifier);
   }
 
   /**

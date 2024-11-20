@@ -21,6 +21,8 @@
 
 package weka.classifiers.meta;
 
+import adams.core.StoppableUtils;
+import adams.core.StoppableWithFeedback;
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.IntervalEstimator;
 import weka.classifiers.ThreadSafeClassifier;
@@ -125,16 +127,19 @@ import java.util.Vector;
  */
 public class FilteredClassifierExt
   extends FilteredClassifier
-  implements WeightedInstancesHandler, IntervalEstimator, AbstainingClassifier, ThreadSafeClassifier {
+  implements WeightedInstancesHandler, IntervalEstimator, AbstainingClassifier, ThreadSafeClassifier, StoppableWithFeedback {
 
   /** for serialization. */
   private static final long serialVersionUID = -696353491455375160L;
 
   /** The additional remove filter. */
-  protected Remove m_Remove = new weka.filters.unsupervised.attribute.Remove();
-  
+  protected Remove m_Remove = new Remove();
+
   /** whether the base classifier can abstain. */
   protected boolean m_CanAbstain = false;
+
+  /** whether the classifier was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Returns a string describing this classifier.
@@ -145,18 +150,18 @@ public class FilteredClassifierExt
   @Override
   public String globalInfo() {
     return
-        super.globalInfo()
-      + "\n\n"
-      + "In addition to the default FilteredClassifier, one can specify a "
-      + "range of attributes that are to be removed before applying the "
-      + "actual filter. Useful to remove ID attributes, without having to "
-      + "nest another FilteredClassifier.\n"
-      + "\n"
-      + "The meta-classifier also 'pretends' to be able to:\n"
-      + "- handle weighted instances\n"
-      + "- produce confidence intervals\n"
-      + "This will only lead to reasonable results, of course, if the base "
-      + "classifier supports this functionality.";
+      super.globalInfo()
+	+ "\n\n"
+	+ "In addition to the default FilteredClassifier, one can specify a "
+	+ "range of attributes that are to be removed before applying the "
+	+ "actual filter. Useful to remove ID attributes, without having to "
+	+ "nest another FilteredClassifier.\n"
+	+ "\n"
+	+ "The meta-classifier also 'pretends' to be able to:\n"
+	+ "- handle weighted instances\n"
+	+ "- produce confidence intervals\n"
+	+ "This will only lead to reasonable results, of course, if the base "
+	+ "classifier supports this functionality.";
   }
 
   /**
@@ -171,10 +176,10 @@ public class FilteredClassifierExt
 
     result = new Vector();
     result.addElement(new Option(
-	"\tThe range of attributes to remove. 'first' and 'last' are \n"
+      "\tThe range of attributes to remove. 'first' and 'last' are \n"
 	+ "\taccepted as well.\n"
 	+ "\t(default: none)",
-	"R", 1, "-R <att list>"));
+      "R", 1, "-R <att list>"));
 
     enm = super.listOptions();
     while (enm.hasMoreElements())
@@ -367,6 +372,7 @@ public class FilteredClassifierExt
    */
   @Override
   public synchronized void buildClassifier(Instances data) throws Exception {
+    m_Stopped = false;
     super.buildClassifier(filter(data));
     m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
@@ -448,7 +454,7 @@ public class FilteredClassifierExt
     } else {
       double[][] result = new double[insts.numInstances()][insts.numClasses()];
       for (int i = 0; i < insts.numInstances(); i++) {
-        result[i] = distributionForInstance(insts.instance(i));
+	result[i] = distributionForInstance(insts.instance(i));
       }
       return result;
     }
@@ -474,7 +480,7 @@ public class FilteredClassifierExt
 
   /**
    * Whether abstaining is possible, e.g., used in meta-classifiers.
-   * 
+   *
    * @return		true if abstaining is possible
    */
   @Override
@@ -484,7 +490,7 @@ public class FilteredClassifierExt
 
   /**
    * The prediction that made the classifier abstain.
-   * 
+   *
    * @param inst	the instance to get the prediction for
    * @return		the prediction, {@link Utils#missingValue()} if abstaining is not possible
    * @throws Exception	if fails to make prediction
@@ -499,17 +505,36 @@ public class FilteredClassifierExt
 
   /**
    * The class distribution that made the classifier abstain.
-   * 
+   *
    * @param inst	the instance to get the prediction for
    * @return		the class distribution, null if abstaining is not possible
    * @throws Exception	if fails to make prediction
    */
   @Override
   public synchronized double[] getAbstentionDistribution(Instance inst) throws Exception {
-    if (m_CanAbstain) 
+    if (m_CanAbstain)
       return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(filter(m_Filter, filter(inst)));
     else
       return null;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    StoppableUtils.stopAnyExecution(m_Classifier);
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

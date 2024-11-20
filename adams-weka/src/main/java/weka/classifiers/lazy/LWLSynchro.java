@@ -21,6 +21,8 @@
 
 package weka.classifiers.lazy;
 
+import adams.core.StoppableUtils;
+import adams.core.StoppableWithFeedback;
 import weka.classifiers.ThreadSafeClassifier;
 import weka.classifiers.functions.GaussianProcessesNoWeights;
 import weka.core.Instance;
@@ -155,7 +157,7 @@ import java.util.Vector;
  */
 public class LWLSynchro
   extends LWL
-  implements ThreadSafeClassifier {
+  implements ThreadSafeClassifier, StoppableWithFeedback {
 
   /** for serialization. */
   static final long serialVersionUID = 1979797405383665815L;
@@ -163,6 +165,9 @@ public class LWLSynchro
   /** whether to suppress the update of the nearest-neighbor search algorithm
    * when making predictions. */
   protected boolean m_NoUpdate;
+
+  /** whether the classifier was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Initializes the classifier.
@@ -196,11 +201,11 @@ public class LWLSynchro
     result = new Vector();
 
     result.addElement(
-	new Option(
-	    "\tSuppresses the update of the nearest neighbor search (nns)\n"
-	    + "\talgorithm with the data that is to be classified.\n"
-	    + "(default: nns gets updated).\n",
-	    "no-update", 0, "-no-update"));
+      new Option(
+	"\tSuppresses the update of the nearest neighbor search (nns)\n"
+	  + "\talgorithm with the data that is to be classified.\n"
+	  + "(default: nns gets updated).\n",
+	"no-update", 0, "-no-update"));
 
     enm = super.listOptions();
     while (enm.hasMoreElements())
@@ -324,8 +329,8 @@ public class LWLSynchro
    */
   public String noUpdateTipText() {
     return
-        "If turned on, suppresses the update of the nearest-neighbor search "
-      + "algorithm when making predictions (EXPERIMENTAL).";
+      "If turned on, suppresses the update of the nearest-neighbor search "
+	+ "algorithm when making predictions (EXPERIMENTAL).";
   }
 
   /**
@@ -346,6 +351,12 @@ public class LWLSynchro
    */
   public boolean getNoUpdate() {
     return m_NoUpdate;
+  }
+
+  @Override
+  public void buildClassifier(Instances instances) throws Exception {
+    m_Stopped = false;
+    super.buildClassifier(instances);
   }
 
   /**
@@ -375,7 +386,7 @@ public class LWLSynchro
     if (m_Debug) {
       System.out.println("Test Instance: "+instance);
       System.out.println("For "+k+" kept " + neighbours.numInstances() + " out of " +
-                         m_Train.numInstances() + " instances.");
+			   m_Train.numInstances() + " instances.");
     }
 
     //IF LinearNN has skipped so much that <k neighbours are remaining.
@@ -396,35 +407,35 @@ public class LWLSynchro
     if (bandwidth <= 0) {
       //if the kth distance is zero than give all instances the same weight
       for(int i=0; i < distances.length; i++)
-        distances[i] = 1;
+	distances[i] = 1;
     } else {
       // Rescale the distances by the bandwidth
       for (int i = 0; i < distances.length; i++)
-        distances[i] = distances[i] / bandwidth;
+	distances[i] = distances[i] / bandwidth;
     }
 
     // Pass the distances through a weighting kernel
     for (int i = 0; i < distances.length; i++) {
       switch (m_WeightKernel) {
-        case LINEAR:
-          distances[i] = 1.0001 - distances[i];
-          break;
-        case EPANECHNIKOV:
-          distances[i] = 3/4D*(1.0001 - distances[i]*distances[i]);
-          break;
-        case TRICUBE:
-          distances[i] = Math.pow( (1.0001 - Math.pow(distances[i], 3)), 3 );
-          break;
-        case CONSTANT:
-          //System.err.println("using constant kernel");
-          distances[i] = 1;
-          break;
-        case INVERSE:
-          distances[i] = 1.0 / (1.0 + distances[i]);
-          break;
-        case GAUSS:
-          distances[i] = Math.exp(-distances[i] * distances[i]);
-          break;
+	case LINEAR:
+	  distances[i] = 1.0001 - distances[i];
+	  break;
+	case EPANECHNIKOV:
+	  distances[i] = 3/4D*(1.0001 - distances[i]*distances[i]);
+	  break;
+	case TRICUBE:
+	  distances[i] = Math.pow( (1.0001 - Math.pow(distances[i], 3)), 3 );
+	  break;
+	case CONSTANT:
+	  //System.err.println("using constant kernel");
+	  distances[i] = 1;
+	  break;
+	case INVERSE:
+	  distances[i] = 1.0 / (1.0 + distances[i]);
+	  break;
+	case GAUSS:
+	  distances[i] = Math.exp(-distances[i] * distances[i]);
+	  break;
       }
     }
 
@@ -481,7 +492,7 @@ public class LWLSynchro
 
     return m_Classifier.distributionForInstance(instance);
   }
-  
+
   /**
    * Returns a description of this classifier.
    *
@@ -490,14 +501,33 @@ public class LWLSynchro
   @Override
   public String toString() {
     StringBuilder	result;
-    
+
     result = new StringBuilder(super.toString());
     if (m_Train != null) {
       if (result.indexOf("neighbours") > -1)
 	result.append("\n# of training instances: " + m_Train.numInstances() + "\n");
     }
-    
+
     return result.toString();
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+    StoppableUtils.stopAnyExecution(m_Classifier);
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**

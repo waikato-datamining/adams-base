@@ -23,7 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
@@ -432,10 +432,8 @@ public class TrainTestSplit
   @Override
   public void stopExecution() {
     m_Stopped = true;
-    if (m_Model instanceof Stoppable)
-      ((Stoppable) m_Model).stopExecution();
-    if (m_Evaluation != null)
-      m_Evaluation.stopExecution();
+    StoppableUtils.stopAnyExecution(m_Model);
+    StoppableUtils.stopExecution(m_Evaluation);
   }
 
   /**

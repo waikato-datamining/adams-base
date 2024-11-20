@@ -25,6 +25,7 @@ import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
 import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.option.OptionUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel;
@@ -1010,7 +1011,7 @@ public class ClassifyTab
 	protected Object doInBackground() throws Exception {
 	  m_Stopping = true;
 	  updateButtons();
-	  ((Stoppable) m_CurrentEvaluation).stopExecution();
+	  StoppableUtils.stopExecution(m_CurrentEvaluation);
 	  return null;
 	}
 

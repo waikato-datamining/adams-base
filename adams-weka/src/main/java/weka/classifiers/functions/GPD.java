@@ -21,7 +21,8 @@
 
 package weka.classifiers.functions;
 
-import weka.classifiers.AbstractClassifier;
+import adams.core.StoppedException;
+import weka.classifiers.StoppableClassifier;
 import weka.classifiers.functions.supportVector.RBFKernel;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -73,42 +74,42 @@ import java.util.Vector;
  *
  <!-- options-start -->
  * Valid options are: <p/>
- * 
+ *
  * <pre> -output-debug-info
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
- * 
+ *
  * <pre> -L &lt;double&gt;
  *  Level of Gaussian Noise.
  *  (default: 0.01)</pre>
- * 
+ *
  * <pre> -G &lt;double&gt;
  *  Gamma for the RBF kernel.
  *  (default: 0.01)</pre>
- * 
+ *
  * <pre> -N
  *  Whether to 0=normalize/1=standardize/2=neither.
  *  (default: 0=normalize)</pre>
- * 
+ *
  * <pre> -output-debug-info
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- * 
+ *
  * <pre> -do-not-check-capabilities
  *  If set, classifier capabilities are not checked before classifier is built
  *  (use with caution).</pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author Kurt Driessens (kurtd@cs.waikato.ac.nz)
  * @author Bernhard Pfahringer (bernhard@cs.waikato.ac.nz)
  */
 public class GPD
-  extends AbstractClassifier
+  extends StoppableClassifier
   implements WeightedInstancesHandler, OptionHandler, TechnicalInformationHandler  {
 
   /** for serialization */
@@ -219,17 +220,17 @@ public class GPD
 
     result.addElement(new Option(
       "\tLevel of Gaussian Noise.\n"
-        + "\t(default: 0.01)",
+	+ "\t(default: 0.01)",
       "L", 1, "-L <double>"));
 
     result.addElement(new Option(
       "\tGamma for the RBF kernel.\n"
-        + "\t(default: 0.01)",
+	+ "\t(default: 0.01)",
       "G", 1, "-G <double>"));
 
     result.addElement(new Option(
       "\tWhether to 0=normalize/1=standardize/2=neither.\n"
-        + "\t(default: 0=normalize)",
+	+ "\t(default: 0=normalize)",
       "N", 1, "-N"));
 
     Enumeration enu = super.listOptions();
@@ -416,31 +417,34 @@ public class GPD
    * @param A		the matrix.
    * @return		the decomposition
    */
-  protected double[][] choleskyDecomposition(double[][] A) {
+  protected double[][] choleskyDecomposition(double[][] A) throws Exception {
     // Initialize.
     int n = A.length;
     double[][] L = new double[n][n];
 
     // Main loop.
     for (int j = 0; j < n; j++) {
+      if (m_Stopped)
+	throw new StoppedException();
+
       double[] Lrowj = L[j];
       double d = 0.0;
       for (int k = 0; k < j; k++) {
-        double[] Lrowk = L[k];
-        double s = 0.0;
-        for (int i = 0; i < k; i++)
-          s += Lrowk[i]*Lrowj[i];
-        Lrowj[k] = s = (A[j][k] - s)/L[k][k];
-        d += s*s;
+	double[] Lrowk = L[k];
+	double s = 0.0;
+	for (int i = 0; i < k; i++)
+	  s += Lrowk[i]*Lrowj[i];
+	Lrowj[k] = s = (A[j][k] - s)/L[k][k];
+	d += s*s;
       }
       d = A[j][j] - d;
 
       L[j][j] = 0;
       if (d > 0)
-        L[j][j] = Math.sqrt(d);
+	L[j][j] = Math.sqrt(d);
 
       for (int k = j+1; k < n; k++) {
-        L[j][k] = 0.0;
+	L[j][k] = 0.0;
       }
     }
     return L;
@@ -457,7 +461,7 @@ public class GPD
     // Solve L*Y = B;
     for (int k = 0; k < n; k++) {
       for (int i = 0; i < k ; i++) {
-        X[k] -= X[i]*L[k][i];
+	X[k] -= X[i]*L[k][i];
       }
       X[k] /= L[k][k];
     }
@@ -465,7 +469,7 @@ public class GPD
     // Solve L'*X = Y;
     for (int k = n-1; k >= 0; k--) {
       for (int i = k+1; i < n ; i++) {
-        X[k] -= X[i]*L[i][k];
+	X[k] -= X[i]*L[i][k];
       }
       X[k] /= L[k][k];
     }
@@ -508,6 +512,8 @@ public class GPD
    * @throws Exception if the classifier can't be built successfully
    */
   public void buildClassifier(Instances insts) throws Exception {
+    m_Stopped = false;
+
     if (!m_checksTurnedOff) {
       // can classifier handle the data?
       getCapabilities().testWithFail(insts);
@@ -530,23 +536,23 @@ public class GPD
     if (getCapabilities().handles(Capability.NUMERIC_ATTRIBUTES)) {
       boolean onlyNumeric = true;
       if (!m_checksTurnedOff) {
-        for (int i = 0; i < insts.numAttributes(); i++) {
-          if (i != insts.classIndex()) {
-            if (!insts.attribute(i).isNumeric()) {
-              onlyNumeric = false;
-              break;
-            }
-          }
-        }
+	for (int i = 0; i < insts.numAttributes(); i++) {
+	  if (i != insts.classIndex()) {
+	    if (!insts.attribute(i).isNumeric()) {
+	      onlyNumeric = false;
+	      break;
+	    }
+	  }
+	}
       }
 
       if (!onlyNumeric) {
-        m_NominalToBinary = new NominalToBinary();
-        m_NominalToBinary.setInputFormat(insts);
-        insts = Filter.useFilter(insts, m_NominalToBinary);
+	m_NominalToBinary = new NominalToBinary();
+	m_NominalToBinary.setInputFormat(insts);
+	insts = Filter.useFilter(insts, m_NominalToBinary);
       }
       else {
-        m_NominalToBinary = null;
+	m_NominalToBinary = null;
       }
     }
     else {
@@ -569,6 +575,9 @@ public class GPD
     else {
       m_Filter = null;
     }
+
+    if (m_Stopped)
+      throw new StoppedException();
 
     m_NumTrain = insts.numInstances();
 
@@ -605,10 +614,13 @@ public class GPD
     // setup up kernel matrix ...
     double[][] a = new double[n][n];
     for (int i = 0; i < n; i++) {
+      if (m_Stopped)
+	throw new StoppedException();
+
       for (int j = 0; j < i; j++) {
-        double kv = rbfKernel( m_data[i], m_data[j], m_gamma);
-        a[i][j] = kv;
-        a[j][i] = kv;
+	double kv = rbfKernel( m_data[i], m_data[j], m_gamma);
+	a[i][j] = kv;
+	a[j][i] = kv;
       }
     }
 
@@ -630,8 +642,8 @@ public class GPD
     boolean failed = false;
     for (int i = 0; i < m_t.length; i++) {
       if (Double.isNaN(m_t[i])) {
-        failed = true;
-        break;
+	failed = true;
+	break;
       }
     }
     if (failed) {
@@ -714,11 +726,11 @@ public class GPD
       double min = m_t[0];
       double max = m_t[0];
       for (int i = 0; i < m_NumTrain; i++) {
-        if (m_t[i] < min) {
-          min = m_t[i];
-        } else if (m_t[i] > max) {
-          max = m_t[i];
-        }
+	if (m_t[i] < min) {
+	  min = m_t[i];
+	} else if (m_t[i] > max) {
+	  max = m_t[i];
+	}
       }
       text.append("    Lowest Value = " + min + "\n");
       text.append("    Highest Value = " + max + "\n \n");
@@ -736,7 +748,7 @@ public class GPD
    * @return		the revision
    */
   public String getRevision() {
-     return RevisionUtils.extract("$Revision$");
+    return RevisionUtils.extract("$Revision$");
   }
 
   /**

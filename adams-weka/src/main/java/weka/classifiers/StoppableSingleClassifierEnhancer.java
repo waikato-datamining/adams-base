@@ -21,6 +21,7 @@
 package weka.classifiers;
 
 import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.StoppableWithFeedback;
 
 /**
@@ -43,8 +44,7 @@ public abstract class StoppableSingleClassifierEnhancer
   @Override
   public void stopExecution() {
     m_Stopped = true;
-    if (m_Classifier instanceof Stoppable)
-      ((Stoppable) m_Classifier).stopExecution();
+    StoppableUtils.stopAnyExecution(m_Classifier);
   }
 
   /**

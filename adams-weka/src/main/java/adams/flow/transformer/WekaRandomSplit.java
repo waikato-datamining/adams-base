@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.Randomizable;
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.data.weka.InstancesViewCreator;
 import adams.flow.container.WekaTrainTestSetContainer;
 import weka.classifiers.DefaultRandomSplitGenerator;
@@ -451,10 +451,7 @@ public class WekaRandomSplit
    */
   @Override
   public void stopExecution() {
-    if (m_ActualGenerator != null) {
-      if (m_ActualGenerator instanceof Stoppable)
-        ((Stoppable) m_ActualGenerator).stopExecution();
-    }
+    StoppableUtils.stopAnyExecution(m_ActualGenerator);
     super.stopExecution();
   }
 }

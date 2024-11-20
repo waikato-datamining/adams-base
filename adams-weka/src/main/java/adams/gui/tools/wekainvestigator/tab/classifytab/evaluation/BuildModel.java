@@ -24,7 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Properties;
 import adams.core.SerializationHelper;
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
@@ -329,8 +329,7 @@ public class BuildModel
   @Override
   public void stopExecution() {
     m_Stopped = true;
-    if (m_Model instanceof Stoppable)
-      ((Stoppable) m_Model).stopExecution();
+    StoppableUtils.stopAnyExecution(m_Model);
   }
 
   /**

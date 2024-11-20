@@ -20,7 +20,7 @@
 
 package weka.classifiers.evaluation;
 
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.StoppableWithFeedback;
 import adams.core.StoppedException;
 import weka.classifiers.AbstractClassifier;
@@ -216,8 +216,7 @@ public class StoppableEvaluation
   @Override
   public void stopExecution() {
     m_Stopped = true;
-    if (m_CurrentClassifier instanceof Stoppable)
-      ((Stoppable) m_CurrentClassifier).stopExecution();
+    StoppableUtils.stopAnyExecution(m_CurrentClassifier);
   }
 
   /**

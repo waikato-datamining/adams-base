@@ -21,7 +21,7 @@
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.Stoppable;
+import adams.core.StoppableUtils;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
 import adams.flow.container.WekaEvaluationContainer;
@@ -209,9 +209,8 @@ public class WekaTrainTestSetEvaluator
      */
     @Override
     public void stopExecution() {
-      m_Evaluation.stopExecution();
-      if (m_Classifier instanceof Stoppable)
-	((Stoppable) m_Classifier).stopExecution();
+      StoppableUtils.stopExecution(m_Evaluation);
+      StoppableUtils.stopAnyExecution(m_Classifier);
       super.stopExecution();
     }
 
@@ -451,10 +450,8 @@ public class WekaTrainTestSetEvaluator
    */
   @Override
   public void stopExecution() {
-    if (m_CurrentEvaluation != null)
-      m_CurrentEvaluation.stopExecution();
-    if (m_CurrentClassifier instanceof Stoppable)
-      ((Stoppable) m_CurrentClassifier).stopExecution();
+    StoppableUtils.stopExecution(m_CurrentEvaluation);
+    StoppableUtils.stopAnyExecution(m_CurrentClassifier);
     super.stopExecution();
   }
 }
