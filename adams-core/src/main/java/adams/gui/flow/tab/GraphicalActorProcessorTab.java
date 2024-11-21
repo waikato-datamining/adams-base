@@ -15,13 +15,14 @@
 
 /*
  * GraphicalActorProcessorTab.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tab;
 
 import adams.gui.core.BaseSplitPane;
 import adams.gui.core.BaseTabbedPane;
+import adams.gui.core.DetachablePanel;
 import adams.gui.core.ErrorMessagePanel;
 import adams.gui.flow.FlowPanel;
 import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
@@ -94,6 +95,8 @@ public class GraphicalActorProcessorTab
       final BaseTabbedPane tabbed = new BaseTabbedPane();
       tabbed.setShowCloseTabButton(true);
       for (Output output: handler.getOutputs()) {
+	DetachablePanel detachPanel = new DetachablePanel();
+	detachPanel.setFrameTitle(output.title);
 	BaseSplitPane splitPane = new BaseSplitPane(BaseSplitPane.VERTICAL_SPLIT);
 	splitPane.setResizeWeight(0.5);
         if (output.hasError()) {
@@ -106,7 +109,8 @@ public class GraphicalActorProcessorTab
           splitPane.setTopComponent(output.component);
           splitPane.setBottomComponentHidden(true);
 	}
-	tabbed.addTab(output.title, splitPane);
+	detachPanel.getContentPanel().add(splitPane, BorderLayout.CENTER);
+	tabbed.addTab(output.title, detachPanel);
       }
       tabbed.setSelectedIndex(handler.getOutputs().size() - 1);
       tabbed.addTabChangeListener((ChangeEvent e) -> {
