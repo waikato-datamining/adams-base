@@ -15,13 +15,14 @@
 
 /*
  *    LinearRegressionJ.java
- *    Copyright (C) 1999-2012 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2024 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package weka.classifiers.functions;
 
-import weka.classifiers.AbstractClassifier;
+import adams.core.StoppedException;
+import weka.classifiers.StoppableClassifier;
 import weka.classifiers.evaluation.RegressionAnalysis;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
@@ -100,9 +101,8 @@ import java.util.Vector;
  * 
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision: 12246 $
  */
-public class LinearRegressionJ extends AbstractClassifier implements
+public class LinearRegressionJ extends StoppableClassifier implements
   OptionHandler, WeightedInstancesHandler {
 
   /** Attribute selection method: M5 method */
@@ -228,6 +228,7 @@ public class LinearRegressionJ extends AbstractClassifier implements
    */
   @Override
   public void buildClassifier(Instances data) throws Exception {
+    m_Stopped    = false;
     m_ModelBuilt = false;
 
     if (!m_checksTurnedOff) {
@@ -266,6 +267,9 @@ public class LinearRegressionJ extends AbstractClassifier implements
       m_TransformFilter = null;
       m_MissingFilter = null;
     }
+
+    if (m_Stopped)
+      throw new StoppedException();
 
     m_ClassIndex = data.classIndex();
     m_TransformedData = data;
@@ -859,6 +863,8 @@ public class LinearRegressionJ extends AbstractClassifier implements
 
     // Perform a regression for the full model, and remove colinear attributes
     do {
+      if (m_Stopped)
+	throw new StoppedException();
       m_Coefficients = doRegression(m_SelectedAttributes);
     } while (m_EliminateColinearAttributes
       && deselectColinearAttributes(m_SelectedAttributes, m_Coefficients));
@@ -891,7 +897,10 @@ public class LinearRegressionJ extends AbstractClassifier implements
         currentNumAttributes--;
 
         for (int i = 0; i < m_SelectedAttributes.length; i++) {
-          if (currentSelected[i]) {
+	  if (m_Stopped)
+	    throw new StoppedException();
+
+	  if (currentSelected[i]) {
 
             // Calculate the akaike rating without this attribute
             currentSelected[i] = false;
@@ -934,7 +943,10 @@ public class LinearRegressionJ extends AbstractClassifier implements
         double minSC = 0;
         int minAttr = -1, coeff = 0;
         for (int i = 0; i < m_SelectedAttributes.length; i++) {
-          if (m_SelectedAttributes[i]) {
+	  if (m_Stopped)
+	    throw new StoppedException();
+
+	  if (m_SelectedAttributes[i]) {
             double SC =
               Math.abs(m_Coefficients[coeff] * m_StdDevs[i] / m_ClassStdDev);
             if ((coeff == 0) || (SC < minSC)) {
@@ -1061,7 +1073,9 @@ public class LinearRegressionJ extends AbstractClassifier implements
       independent = new Matrix(m_TransformedData.numInstances(), numAttributes);
       dependent = new Matrix(m_TransformedData.numInstances(), 1);
       for (int i = 0; i < m_TransformedData.numInstances(); i++) {
-        Instance inst = m_TransformedData.instance(i);
+	if (m_Stopped)
+	  throw new StoppedException();
+	Instance inst = m_TransformedData.instance(i);
         double sqrt_weight = Math.sqrt(inst.weight());
         int column = 0;
         for (int j = 0; j < m_TransformedData.numAttributes(); j++) {
