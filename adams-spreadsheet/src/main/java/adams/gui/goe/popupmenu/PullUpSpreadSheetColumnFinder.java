@@ -15,7 +15,7 @@
 
 /*
  * PullUpSpreadSheetColumnFinder.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -75,6 +75,8 @@ public class PullUpSpreadSheetColumnFinder
     menuitem.addActionListener((ActionEvent e) -> {
       AbstractFilteredColumnFinder finder = (AbstractFilteredColumnFinder) editor.getValue();
       editor.setValue(finder.getColumnFinder());
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(menuitem);
   }

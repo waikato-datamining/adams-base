@@ -15,7 +15,7 @@
 
 /*
  * InvertSpreadSheetColumnFinder.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -78,6 +78,8 @@ public class InvertSpreadSheetColumnFinder
       Invert inv = new Invert();
       inv.setColumnFinder(finder);
       editor.setValue(inv);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(menuitem);
   }

@@ -15,7 +15,7 @@
 
 /*
  * EncloseBooleanCondition.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -84,6 +84,8 @@ public class EncloseBooleanCondition
       And cond = new And();
       cond.setConditions(new BooleanCondition[]{(BooleanCondition) editor.getValue()});
       editor.setValue(cond);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     submenu.add(menuitem);
 
@@ -92,6 +94,8 @@ public class EncloseBooleanCondition
       Or cond = new Or();
       cond.setConditions(new BooleanCondition[]{(BooleanCondition) editor.getValue()});
       editor.setValue(cond);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     submenu.add(menuitem);
 
@@ -100,6 +104,8 @@ public class EncloseBooleanCondition
       Not cond = new Not();
       cond.setCondition((BooleanCondition) editor.getValue());
       editor.setValue(cond);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     submenu.add(menuitem);
   }

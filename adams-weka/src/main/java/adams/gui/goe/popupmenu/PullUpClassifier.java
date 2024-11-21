@@ -77,6 +77,8 @@ public class PullUpClassifier
       SingleClassifierEnhancer wrapper = (SingleClassifierEnhancer) editor.getValue();
       Classifier base = wrapper.getClassifier();
       editor.setValue(base);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(item);
   }

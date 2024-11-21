@@ -15,7 +15,7 @@
 
 /*
  * EncloseClassifier.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -93,6 +93,8 @@ public class EncloseClassifier
 	    Classifier base = (Classifier) editor.getValue();
 	    wrapper.setClassifier(base);
 	    editor.setValue(wrapper);
+	    comp.repaint();
+	    menu.notifyChangeListeners();
 	  }
 	  catch (Exception ex) {
 	    ConsolePanel.getSingleton().append("Failed to wrap classifier in " + fCls.getName() + "!", ex);

@@ -77,6 +77,8 @@ public class PullUpClusterer
       SingleClustererEnhancer wrapper = (SingleClustererEnhancer) editor.getValue();
       Clusterer base = wrapper.getClusterer();
       editor.setValue(base);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(item);
   }

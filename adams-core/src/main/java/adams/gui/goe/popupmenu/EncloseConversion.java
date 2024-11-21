@@ -15,7 +15,7 @@
 
 /*
  * EncloseConversion.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -78,6 +78,8 @@ public class EncloseConversion
       MultiConversion multi = new MultiConversion();
       multi.setSubConversions(new Conversion[]{conv});
       editor.setValue(multi);
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(menuitem);
   }

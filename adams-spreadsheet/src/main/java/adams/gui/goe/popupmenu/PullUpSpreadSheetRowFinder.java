@@ -15,7 +15,7 @@
 
 /*
  * PullUpSpreadSheetRowFinder.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.goe.popupmenu;
@@ -75,6 +75,8 @@ public class PullUpSpreadSheetRowFinder
     menuitem.addActionListener((ActionEvent e) -> {
       AbstractFilteredRowFinder finder = (AbstractFilteredRowFinder) editor.getValue();
       editor.setValue(finder.getRowFinder());
+      comp.repaint();
+      menu.notifyChangeListeners();
     });
     menu.add(menuitem);
   }

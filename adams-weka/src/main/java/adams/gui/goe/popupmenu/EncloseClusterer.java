@@ -93,6 +93,8 @@ public class EncloseClusterer
 	    Clusterer base = (Clusterer) editor.getValue();
 	    wrapper.setClusterer(base);
 	    editor.setValue(wrapper);
+	    comp.repaint();
+	    menu.notifyChangeListeners();
 	  }
 	  catch (Exception ex) {
 	    ConsolePanel.getSingleton().append("Failed to wrap clusterer in " + fCls.getName() + "!", ex);
