@@ -442,7 +442,7 @@ public class GenericObjectEditorPopupMenu
   /**
    * Notifies all change listeners that the user modified the setup.
    */
-  protected void notifyChangeListeners() {
+  public void notifyChangeListeners() {
     ChangeEvent	e;
 
     e = new ChangeEvent(this);

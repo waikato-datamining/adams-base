@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaGenericObjectEditorPopupMenu.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -46,7 +46,6 @@ import java.util.HashSet;
  * Generic GOE popup menu, for copy/paste, etc.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaGenericObjectEditorPopupMenu
   extends BasePopupMenu {
@@ -234,7 +233,7 @@ public class WekaGenericObjectEditorPopupMenu
   /**
    * Notifies all change listeners that the user modified the setup.
    */
-  protected void notifyChangeListeners() {
+  public void notifyChangeListeners() {
     ChangeEvent	e;
 
     e = new ChangeEvent(this);
