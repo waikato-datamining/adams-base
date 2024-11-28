@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFlowEditorMenuItem.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -24,11 +24,13 @@ import adams.core.logging.LoggingObject;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.flow.FlowEditorPanel;
 
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
 /**
  * Ancestor for additional menu items in the flow editor.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFlowEditorMenuItem
   extends LoggingObject 
@@ -42,7 +44,13 @@ public abstract class AbstractFlowEditorMenuItem
   
   /** the underlying action. */
   protected AbstractBaseAction m_Action;
-  
+
+  /** the underlying menuitem. */
+  protected JMenuItem m_MenuItem;
+
+  /** the underlying submenu. */
+  protected JMenu m_SubMenu;
+
   /**
    * Initializes the menu item.
    */
@@ -55,16 +63,106 @@ public abstract class AbstractFlowEditorMenuItem
    * Initializes the menu item.
    */
   protected void initialize() {
-    m_Action = newAction();
+    if (hasAction())
+      m_Action = newAction();
+    else if (hasMenuItem())
+      m_MenuItem = newMenuItem();
+    else if (hasSubMenu())
+      m_SubMenu = newSubMenu();
   }
-  
+
+  /**
+   * Returns whether the menu item is based on an action.
+   * <br/>
+   * Default implementation returns true.
+   *
+   * @return		true if action-based
+   */
+  public boolean hasAction() {
+    return true;
+  }
+
   /**
    * Creates the action to use.
-   * 
+   *
    * @return		the action
    */
   protected abstract AbstractBaseAction newAction();
-  
+
+  /**
+   * Returns the action to add to the flow editor menu.
+   *
+   * @return		the action to add
+   * @see		#hasAction()
+   */
+  public AbstractBaseAction getAction() {
+    return m_Action;
+  }
+
+  /**
+   * Returns whether the menu item is based on a menuitem.
+   * <br/>
+   * Default implementation returns false.
+   *
+   * @return		true if menuitem-based
+   */
+  public boolean hasMenuItem() {
+    return false;
+  }
+
+  /**
+   * Creates the menuitem to use.
+   * <br/>
+   * Default implementation returns null.
+   *
+   * @return		the menuitem
+   */
+  protected JMenuItem newMenuItem() {
+    return null;
+  }
+
+  /**
+   * Returns the menuitem to add to the flow editor menu.
+   *
+   * @return		the menuitem to add
+   * @see		#hasMenuItem()
+   */
+  public JMenuItem getMenuItem() {
+    return m_MenuItem;
+  }
+
+  /**
+   * Returns whether the menu item is based on a submenu.
+   * <br/>
+   * Default implementation returns false.
+   *
+   * @return		true if submenu-based
+   */
+  public boolean hasSubMenu() {
+    return false;
+  }
+
+  /**
+   * Creates the submenu to use.
+   * <br/>
+   * Default implementation returns null.
+   *
+   * @return		the submenu
+   */
+  protected JMenu newSubMenu() {
+    return null;
+  }
+
+  /**
+   * Returns the submenu to add to the flow editor menu.
+   *
+   * @return		the submenu to add
+   * @see		#hasSubMenu()
+   */
+  public JMenu getSubMenu() {
+    return m_SubMenu;
+  }
+
   /**
    * Sets the owning flow editor.
    * 
@@ -88,27 +186,37 @@ public abstract class AbstractFlowEditorMenuItem
    * 
    * @return		the name of the menu
    * @see		FlowEditorPanel#MENU_FILE
-   * @see		FlowEditorPanel#MENU_DEBUG
+   * @see		FlowEditorPanel#MENU_EDIT
    * @see		FlowEditorPanel#MENU_RUN
+   * @see		FlowEditorPanel#MENU_ACTIVE
    * @see		FlowEditorPanel#MENU_VIEW
    * @see		FlowEditorPanel#MENU_WINDOW
+   * @see		FlowEditorPanel#MENU_HELP
    */
   public abstract String getMenu();
-  
+
   /**
-   * Returns the action to add to the flow editor menu.
-   * 
-   * @return		the action to add
+   * Updating the action/menuitem/submenu, based on the current status of the owner.
    */
-  public AbstractBaseAction getAction() {
-    return m_Action;
+  public abstract void update();
+
+  /**
+   * Determines the caption of the menu item.
+   *
+   * @param item	the item
+   * @return		the caption, empty string if unable to find one
+   */
+  protected String determineCaption(AbstractFlowEditorMenuItem item) {
+    if (item.hasAction())
+      return item.getAction().getName();
+    else if (item.hasMenuItem())
+      return item.getMenuItem().getText();
+    else if (item.hasSubMenu())
+      return item.getSubMenu().getText();
+    else
+      return "";
   }
-  
-  /**
-   * Updating the action, based on the current status of the owner.
-   */
-  public abstract void updateAction();
-  
+
   /**
    * Compares this object with the specified object for order.  Returns a
    * negative integer, zero, or a positive integer as this object is less
@@ -122,9 +230,16 @@ public abstract class AbstractFlowEditorMenuItem
    */
   @Override
   public int compareTo(AbstractFlowEditorMenuItem o) {
+    String 	captionThis;
+    String 	captionOther;
+
     if (o == null)
       return 1;
-    return getAction().getName().compareTo(o.getAction().getName());
+
+    captionThis  = determineCaption(this);
+    captionOther = determineCaption(o);
+
+    return captionThis.compareTo(captionOther);
   }
 
   /**

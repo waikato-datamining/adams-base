@@ -15,7 +15,7 @@
 
 /*
  * ActionQuickSearch.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree.keyboardaction;
@@ -103,7 +103,7 @@ public class ActionQuickSearch
     if (ClassLocator.matches(AbstractFlowEditorMenuItem.class, obj.getClass())) {
       AbstractFlowEditorMenuItem menuitem = (AbstractFlowEditorMenuItem) obj;
       menuitem.setOwner(state.tree.getOwner().getEditor());
-      menuitem.updateAction();
+      menuitem.update();
       return true;
     }
 

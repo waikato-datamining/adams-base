@@ -15,7 +15,7 @@
 
 /*
  * ShowTriggers.java
- * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -178,7 +178,7 @@ public class ShowTriggers
    * Updating the action, based on the current status of the owner.
    */
   @Override
-  public void updateAction() {
+  public void update() {
     m_Action.setEnabled(getOwner().isAnyRunning());
   }
 }

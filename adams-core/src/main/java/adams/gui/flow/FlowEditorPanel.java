@@ -1106,7 +1106,12 @@ public class FlowEditorPanel
 	  }
 	}
       }
-      menu.insert(item.getAction(), index);
+      if (item.hasAction())
+	menu.insert(item.getAction(), index);
+      else if (item.hasMenuItem())
+	menu.insert(item.getMenuItem(), index);
+      else if (item.hasSubMenu())
+	menu.insert(item.getSubMenu(), index);
     }
   }
 
@@ -1421,7 +1426,7 @@ public class FlowEditorPanel
 
     // additional menu items
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems)
-      item.updateAction();
+      item.update();
 
     if (m_MenuActive != null) {
       hasActive    = hasActivePanel();
