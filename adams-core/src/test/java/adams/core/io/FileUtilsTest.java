@@ -15,17 +15,17 @@
 
 /*
  * FileUtilsTest.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
 
-import java.io.File;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.io.File;
 
 /**
  * Tests for the FileUtils utility class.
@@ -172,7 +172,20 @@ public class FileUtilsTest
 	},
 	FileUtils.toStringArray(input));
   }
-  
+
+  /**
+   * Tests the relativePath method.
+   */
+  public void testRelativePath() {
+    File p;
+    File f;
+    p = new File("/home/user");
+    f = new File("/home/user/Documents/important.csv");
+    assertEquals("Paths differ", "Documents/important.csv", FileUtils.relativePath(p, f));
+    f = new File("/home/someoneelse/Documents/important.csv");
+    assertEquals("Paths differ", f.getAbsolutePath(), FileUtils.relativePath(p, f));
+  }
+
   /**
    * Returns a test suite.
    *

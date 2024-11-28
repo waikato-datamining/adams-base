@@ -1503,4 +1503,44 @@ public class FileUtils {
     else
       return (!file.exists() && (file.getParentFile() != null) && file.getParentFile().exists() && file.getParentFile().isDirectory());
   }
+
+  /**
+   * Returns the part of the file that is relative to the parent.
+   * If the file does not start with the parent, it will return the absolute path of the file.
+   *
+   * @param parent	the parent to use
+   * @param file	the file to obtain the relative path for
+   * @return		the relative path
+   */
+  public static String relativePath(File parent, File file) {
+    String	result;
+    String	parentStr;
+
+    parentStr = parent.getAbsolutePath() + File.separator;
+    result    = file.getAbsolutePath();
+    if (result.startsWith(parentStr))
+      result = result.substring(parentStr.length());
+
+    return result;
+  }
+
+  /**
+   * Returns the part of the file that is relative to the parent.
+   * If the file does not start with the parent, it will return the absolute path of the file.
+   *
+   * @param parent	the parent to use
+   * @param file	the file to obtain the relative path for
+   * @return		the relative path
+   */
+  public static String relativePath(String parent, String file) {
+    String	result;
+    String	parentStr;
+
+    parentStr = new PlaceholderFile(parent).getAbsolutePath() + File.separator;
+    result    = new PlaceholderFile(file).getAbsolutePath();
+    if (result.startsWith(parentStr))
+      result = result.substring(parentStr.length());
+
+    return result;
+  }
 }
