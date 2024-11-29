@@ -104,6 +104,7 @@
     <woodstox-core.version>6.5.1</woodstox-core.version>
     <owasp.dependency.check.skip>true</owasp.dependency.check.skip>
     <relaxngDatatype.version>20030807</relaxngDatatype.version>
+    <jsch.version>0.2.16</jsch.version>
   </properties>
 
   <scm>
