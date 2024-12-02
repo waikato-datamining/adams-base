@@ -15,7 +15,7 @@
 
 /*
  * AbstractResultItem.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.output;
@@ -56,7 +56,7 @@ public abstract class AbstractResultItem
   protected StringBuilder m_Log;
 
   /** the log component. */
-  protected SimpleLogPanel m_LogPanel;
+  protected transient SimpleLogPanel m_LogPanel;
 
   /** the tabbed pane with the generated output. */
   protected transient OutputTabbedPane m_TabbedPane;
