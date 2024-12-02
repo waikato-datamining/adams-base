@@ -77,6 +77,9 @@ public abstract class AbstractInvestigatorTab
   /** the file chooser. */
   protected ParameterMapFileChooser m_FileChooserParameters;
 
+  /** the actual title. */
+  protected String m_ActualTitle;
+
   /**
    * Initializes the members.
    */
@@ -84,7 +87,8 @@ public abstract class AbstractInvestigatorTab
   protected void initialize() {
     super.initialize();
 
-    m_Worker = null;
+    m_Worker      = null;
+    m_ActualTitle = null;
   }
 
   /**
@@ -107,11 +111,29 @@ public abstract class AbstractInvestigatorTab
   }
 
   /**
-   * Returns the title of this table.
+   * Returns the title of this tab.
    *
    * @return		the title
    */
   public abstract String getTitle();
+
+  /**
+   * Sets the actual title to use.
+   *
+   * @param value	the title
+   */
+  public void setActualTitle(String value) {
+    m_ActualTitle = value;
+  }
+
+  /**
+   * Returns the actual title in use.
+   *
+   * @return		the title, null if not set
+   */
+  public String getActualTitle() {
+    return m_ActualTitle;
+  }
 
   /**
    * Returns the icon name for the tab icon.
@@ -424,7 +446,7 @@ public abstract class AbstractInvestigatorTab
    */
   public void logMessage(String msg) {
     if ((msg != null) && !msg.isEmpty())
-      getOwner().logMessage("[" + getTitle() + "] " + msg);
+      getOwner().logMessage("[" + getActualTitle() + "] " + msg);
   }
 
   /**
@@ -435,7 +457,7 @@ public abstract class AbstractInvestigatorTab
    * @param title	the title for the dialog
    */
   public void logError(String msg, Throwable t, String title) {
-    getOwner().logError("[" + getTitle() + "] " + msg, t, title);
+    getOwner().logError("[" + getActualTitle() + "] " + msg, t, title);
   }
 
   /**
@@ -445,7 +467,7 @@ public abstract class AbstractInvestigatorTab
    * @param title	the title for the dialog
    */
   public void logError(String msg, String title) {
-    getOwner().logError("[" + getTitle() + "] " + msg, title);
+    getOwner().logError("[" + getActualTitle() + "] " + msg, title);
   }
 
   /**
@@ -455,6 +477,6 @@ public abstract class AbstractInvestigatorTab
    */
   public void showStatus(String msg) {
     logMessage(msg);
-    getOwner().showStatus("[" + getTitle() + "] " + msg);
+    getOwner().showStatus("[" + getActualTitle() + "] " + msg);
   }
 }

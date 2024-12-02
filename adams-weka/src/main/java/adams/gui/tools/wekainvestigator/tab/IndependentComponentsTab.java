@@ -414,7 +414,7 @@ public class IndependentComponentsTab
         "Failed to transfer additional attributes, number of rows in data differ: "
 	  + sheet.getRowCount() + " != " + data.numInstances() + "\n"
 	  + "Dataset: " + data.relationName(),
-	getTitle() + " - Additional attributes transfer");
+	getActualTitle() + " - Additional attributes transfer");
       return;
     }
 

@@ -15,7 +15,7 @@
 
 /*
  * PartialLeastSquaresTab.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -443,7 +443,7 @@ public class PartialLeastSquaresTab
         "Failed to transfer additional attributes, number of rows in data differ: "
 	  + sheet.getRowCount() + " != " + data.numInstances() + "\n"
 	  + "Dataset: " + data.relationName(),
-	getTitle() + " - Additional attributes transfer");
+	getActualTitle() + " - Additional attributes transfer");
       return;
     }
 
