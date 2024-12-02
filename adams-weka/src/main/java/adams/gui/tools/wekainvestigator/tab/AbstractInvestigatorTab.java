@@ -43,7 +43,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -151,12 +150,10 @@ public abstract class AbstractInvestigatorTab
     index  = getOwner().getTabbedPane().indexOfComponent(this);
 
     item = new JMenuItem("Copy", ImageManager.getIcon("copy.gif"));
-    item.addActionListener((ActionEvent e) -> {
-      getOwner().getTabbedPane().copyTabAt(index);
-    });
+    item.addActionListener((ActionEvent e) -> getOwner().getTabbedPane().copyTabAt(index));
     result.add(item);
 
-    if (serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS))) instanceof Map) {
+    if (serialize(new HashSet<>(List.of(SerializationOption.PARAMETERS))) instanceof Map) {
       item = new JMenuItem("Save parameters...", ImageManager.getIcon("save.gif"));
       item.addActionListener((ActionEvent e) -> saveParameters());
       result.add(item);
@@ -332,7 +329,7 @@ public abstract class AbstractInvestigatorTab
 
     paramFile = getFileChooserParameters().getSelectedFile();
     writer    = getFileChooserParameters().getWriter();
-    params    = (Map<String,Object>) serialize(new HashSet<>(Arrays.asList(SerializationOption.PARAMETERS)));
+    params    = (Map<String,Object>) serialize(new HashSet<>(List.of(SerializationOption.PARAMETERS)));
     try {
       writer.write(params, new PlaceholderFile(paramFile));
     }
@@ -395,7 +392,7 @@ public abstract class AbstractInvestigatorTab
 
     data = doSerialize(options);
 
-    return (data.size() == 0) ? null : data;
+    return data.isEmpty() ? null : data;
   }
 
   /**
