@@ -149,6 +149,9 @@ public class InvestigatorPanel
   /** the action for copying a tab. */
   protected BaseAction m_ActionTabCopyTab;
 
+  /** the action for renaming a tab. */
+  protected BaseAction m_ActionTabRenameTab;
+
   /** the action for saving parmeters of a tab. */
   protected BaseAction m_ActionTabSaveParameters;
 
@@ -292,6 +295,16 @@ public class InvestigatorPanel
     m_ActionTabCopyTab.setName("Copy tab");
     m_ActionTabCopyTab.setIcon(ImageManager.getIcon("copy.gif"));
 
+    m_ActionTabRenameTab = new AbstractBaseAction() {
+      private static final long serialVersionUID = 1028160012672649573L;
+      @Override
+      protected void doActionPerformed(ActionEvent e) {
+	m_TabbedPane.renameTabAt(m_TabbedPane.getSelectedIndex());
+      }
+    };
+    m_ActionTabRenameTab.setName("Rename tab");
+    m_ActionTabRenameTab.setIcon(ImageManager.getIcon("rename"));
+
     m_ActionTabSaveParameters = new AbstractBaseAction() {
       private static final long serialVersionUID = 1028160012672649573L;
       @Override
@@ -425,6 +438,7 @@ public class InvestigatorPanel
     m_ActionFileClear.setEnabled(getData().size() > 0);
     m_ActionFileStopJob.setEnabled(isBusy());
     m_ActionTabCopyTab.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
+    m_ActionTabRenameTab.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabSaveParameters.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabLoadParameters.setEnabled(m_TabbedPane.getSelectedIndex() > -1);
     m_ActionTabCloseTab.setEnabled(m_TabbedPane.getTabCount() > 0);
@@ -570,6 +584,7 @@ public class InvestigatorPanel
       }
       m_MenuTabNewTab.sort();
       menu.add(m_ActionTabCopyTab);
+      menu.add(m_ActionTabRenameTab);
       menu.add(m_ActionTabLoadParameters);
       menu.add(m_ActionTabSaveParameters);
       menu.addSeparator();

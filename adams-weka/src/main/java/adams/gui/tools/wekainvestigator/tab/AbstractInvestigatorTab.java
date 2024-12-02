@@ -175,6 +175,10 @@ public abstract class AbstractInvestigatorTab
     item.addActionListener((ActionEvent e) -> getOwner().getTabbedPane().copyTabAt(index));
     result.add(item);
 
+    item = new JMenuItem("Rename...", ImageManager.getIcon("rename"));
+    item.addActionListener((ActionEvent e) -> getOwner().getTabbedPane().renameTabAt(index));
+    result.add(item);
+
     if (serialize(new HashSet<>(List.of(SerializationOption.PARAMETERS))) instanceof Map) {
       item = new JMenuItem("Save parameters...", ImageManager.getIcon("save.gif"));
       item.addActionListener((ActionEvent e) -> saveParameters());

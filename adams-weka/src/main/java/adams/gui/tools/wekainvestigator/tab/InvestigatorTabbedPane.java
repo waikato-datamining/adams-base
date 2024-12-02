@@ -82,7 +82,7 @@ public class InvestigatorTabbedPane
    * @param title	the base title
    * @return		the new title
    */
-  protected String disambiguateTitle(String title) {
+  public String disambiguateTitle(String title) {
     String	result;
     int		i;
     int		count;
@@ -189,6 +189,23 @@ public class InvestigatorTabbedPane
     if (!errors.isEmpty())
       GUIHelper.showErrorMessage(
 	InvestigatorTabbedPane.this, "Errors occurred when copying tab:\n" + errors);
+  }
+
+  /**
+   * Prompts the user to enter a new name for the tab.
+   *
+   * @param index	the index of the tab to rename
+   */
+  public void renameTabAt(int index) {
+    AbstractInvestigatorTab tab = ((AbstractInvestigatorTab) getComponentAt(index));
+    String newTitle = GUIHelper.showInputDialog(this, "Please enter new name:", tab.getActualTitle());
+    if (newTitle == null)
+      return;
+    if (newTitle.isEmpty())
+      newTitle = tab.getTitle();
+    newTitle = disambiguateTitle(newTitle);
+    tab.setActualTitle(newTitle);
+    setTitleAt(index, newTitle);
   }
 
   /**
