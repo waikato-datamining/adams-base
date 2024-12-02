@@ -246,6 +246,10 @@ weka.core.converters.AbstractFileSaver=\
 weka.core.tokenizers.cleaners.TokenCleaner=\
   weka.core.tokenizers.cleaners
 
+# the nearest neighborsearches that support returning Instance indices of the hood
+weka.core.neighboursearch.NearestNeighbourSearchWithIndices=\
+  weka.core.neighboursearch
+
 # WEKA stream filters
 weka.filters.StreamableFilter=\
   weka.filters,\
