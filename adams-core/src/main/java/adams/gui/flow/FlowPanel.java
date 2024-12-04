@@ -696,19 +696,26 @@ public class FlowPanel
 	setTitle(FileUtils.replaceExtension(file.getName(), ""));
 	update();
 
-	if (reader instanceof NestedFlowReader) {
-	  List nested = ((NestedFlowReader) reader).readNested(file);
-	  m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
+	try {
+	  if (reader instanceof NestedFlowReader) {
+	    List nested = ((NestedFlowReader) reader).readNested(file);
+	    if (nested != null)
+	      m_Flow = TreeHelper.buildTree(nested, m_Warnings, m_Errors);
+	  }
+	  else {
+	    Actor actor = reader.readActor(file);
+	    if (actor != null)
+	      m_Flow = TreeHelper.buildTree(actor);
+	  }
+	  m_Errors.addAll(reader.getErrors());
+	  m_Warnings.addAll(reader.getWarnings());
+	  setCurrentFlow(m_Flow);
+	  redraw();
+	  getTree().requestFocus();
 	}
-	else {
-	  Actor actor = reader.readActor(file);
-	  m_Flow = TreeHelper.buildTree(actor);
+	catch (Exception e) {
+	  m_Errors.add("Failed to load flow: " + file.getAbsolutePath(), e);
 	}
-	m_Errors.addAll(reader.getErrors());
-	m_Warnings.addAll(reader.getWarnings());
-	setCurrentFlow(m_Flow);
-	redraw();
-	getTree().requestFocus();
 
 	showStatus("");
 
