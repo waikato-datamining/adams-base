@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.Properties;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
+import adams.core.base.BasePassword;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.HtmlUtils;
@@ -33,6 +34,7 @@ import adams.env.GUIHelperDefinition;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.Child;
 import adams.gui.dialog.ApprovalDialog;
+import adams.gui.dialog.PasswordDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
 import nz.ac.waikato.cms.locator.ClassLocator;
@@ -2390,6 +2392,42 @@ public class GUIHelper {
       default:
 	throw new IllegalStateException("Unhandled view type: " + view);
     }
+  }
+
+  /**
+   * Prompts the user for entering a password.
+   *
+   * @param parent	the parent component to use, can be null
+   * @return		the password, null if dialog canceled
+   */
+  public static BasePassword showPasswordDialog(Component parent) {
+    return showPasswordDialog(parent, null);
+  }
+
+  /**
+   * Prompts the user for entering a password.
+   *
+   * @param parent	the parent component to use, can be null
+   * @param labelText 	the text for the label, ignored if null
+   * @return		the password, null if dialog canceled
+   */
+  public static BasePassword showPasswordDialog(Component parent, String labelText) {
+    PasswordDialog	dlg;
+
+    if (getParentDialog(parent) != null) {
+      dlg = new PasswordDialog(getParentDialog(parent), ModalityType.DOCUMENT_MODAL);
+      dlg.setLocationRelativeTo(getParentDialog(parent));
+    }
+    else {
+      dlg = new PasswordDialog(getParentFrame(parent), true);
+      dlg.setLocationRelativeTo(getParentFrame(parent));
+    }
+    if (labelText != null)
+      dlg.setLabelPassword(labelText);
+    dlg.setVisible(true);
+    if (dlg.getOption() != PasswordDialog.APPROVE_OPTION)
+      return null;
+    return dlg.getPassword();
   }
 
   /**
