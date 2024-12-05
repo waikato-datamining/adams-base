@@ -15,7 +15,7 @@
 
 /*
  * SMBConnection.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -26,15 +26,12 @@ import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.management.User;
 import adams.core.net.SMBAuthenticationProvider;
-import adams.flow.control.Flow;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
-import adams.gui.dialog.PasswordDialog;
 import jcifs.smb.NtlmPasswordAuthentication;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -445,23 +442,11 @@ public class SMBConnection
    */
   @Override
   public String doInteract() {
-    String		result;
-    PasswordDialog	dlg;
-
-    dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
-    dlg.setLocationRelativeTo(getParentComponent());
-    ((Flow) getRoot()).registerWindow(dlg, dlg.getTitle());
-    dlg.setVisible(true);
-    ((Flow) getRoot()).deregisterWindow(dlg);
-    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
-      result = null;
+    m_ActualPassword = ActorUtils.promptPassword(this);
+    if (m_ActualPassword == null)
+      return INTERACTION_CANCELED;
     else
-      result = INTERACTION_CANCELED;
-
-    if (result == null)
-      m_ActualPassword = dlg.getPassword();
-
-    return result;
+      return null;
   }
 
   /**
