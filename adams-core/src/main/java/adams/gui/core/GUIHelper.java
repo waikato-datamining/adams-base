@@ -2422,8 +2422,10 @@ public class GUIHelper {
       dlg = new PasswordDialog(getParentFrame(parent), true);
       dlg.setLocationRelativeTo(getParentFrame(parent));
     }
-    if (labelText != null)
+    if (labelText != null) {
       dlg.setLabelPassword(labelText);
+      dlg.pack();
+    }
     dlg.setVisible(true);
     if (dlg.getOption() != PasswordDialog.APPROVE_OPTION)
       return null;
