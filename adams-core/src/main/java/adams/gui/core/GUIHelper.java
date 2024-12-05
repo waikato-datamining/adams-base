@@ -2412,6 +2412,7 @@ public class GUIHelper {
    * @return		the password, null if dialog canceled
    */
   public static BasePassword showPasswordDialog(Component parent, String labelText) {
+    BasePassword	result;
     PasswordDialog	dlg;
 
     if (getParentDialog(parent) != null) {
@@ -2428,8 +2429,11 @@ public class GUIHelper {
     }
     dlg.setVisible(true);
     if (dlg.getOption() != PasswordDialog.APPROVE_OPTION)
-      return null;
-    return dlg.getPassword();
+      result = null;
+    else
+      result = dlg.getPassword();
+    dlg.dispose();
+    return result;
   }
 
   /**
