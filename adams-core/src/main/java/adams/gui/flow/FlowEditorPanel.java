@@ -1077,6 +1077,9 @@ public class FlowEditorPanel
 
     separatorAdded = new HashSet<>();
     for (AbstractFlowEditorMenuItem item: m_AdditionalMenuItems) {
+      if (!(item.hasAction() || item.hasMenuItem() || item.hasSubMenu()))
+	continue;
+
       // determine menu to add the time to
       menu = null;
       for (i = 0; i < m_MenuBar.getMenuCount(); i++) {
