@@ -2412,6 +2412,18 @@ public class GUIHelper {
    * @return		the password, null if dialog canceled
    */
   public static BasePassword showPasswordDialog(Component parent, String labelText) {
+    return showPasswordDialog(parent, labelText, null);
+  }
+
+  /**
+   * Prompts the user for entering a password.
+   *
+   * @param parent	the parent component to use, can be null
+   * @param labelText 	the text for the label, ignored if null
+   * @param comments 	the comments to display, ignored if null
+   * @return		the password, null if dialog canceled
+   */
+  public static BasePassword showPasswordDialog(Component parent, String labelText, String comments) {
     BasePassword	result;
     PasswordDialog	dlg;
 
@@ -2427,6 +2439,7 @@ public class GUIHelper {
       dlg.setLabelPassword(labelText);
       dlg.pack();
     }
+    dlg.setComments(comments);
     dlg.setVisible(true);
     if (dlg.getOption() != PasswordDialog.APPROVE_OPTION)
       result = null;

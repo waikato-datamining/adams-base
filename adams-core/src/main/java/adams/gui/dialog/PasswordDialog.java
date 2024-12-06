@@ -22,7 +22,10 @@ package adams.gui.dialog;
 import adams.core.base.BasePassword;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePasswordFieldWithButton;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.BaseTextArea;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -48,6 +51,9 @@ public class PasswordDialog
 
   /** the text field for entering the password. */
   protected BasePasswordFieldWithButton m_TextPassword;
+
+  /** the comments box. */
+  protected BaseTextArea m_TextComments;
 
   /**
    * Creates a modeless dialog without a title with the specified Dialog as
@@ -176,9 +182,14 @@ public class PasswordDialog
     panel.add(m_LabelPassword);
     panel.add(m_TextPassword);
 
-    // show password
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    // the comments
+    panel = new JPanel(new BorderLayout());
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     getContentPane().add(panel, BorderLayout.CENTER);
+    m_TextComments = new BaseTextArea();
+    m_TextComments.setEditable(false);
+    m_TextComments.setVisible(false);
+    panel.add(new BaseScrollPane(m_TextComments), BorderLayout.CENTER);
 
     pack();
   }
@@ -217,5 +228,27 @@ public class PasswordDialog
    */
   public String getLabelPassword() {
     return m_LabelPassword.getText();
+  }
+
+  /**
+   * Sets the comments.
+   *
+   * @param value	the comments
+   */
+  public void setComments(String value) {
+    if (value == null)
+      value = "";
+    m_TextComments.setText(value);
+    m_TextComments.setVisible(!value.trim().isEmpty());
+    pack();
+  }
+
+  /**
+   * Returns the comments.
+   *
+   * @return		the comments
+   */
+  public String getComments() {
+    return m_TextComments.getText();
   }
 }
