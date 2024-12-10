@@ -1850,6 +1850,7 @@ public class ActorUtils {
     String[]		parts;
 
     result = new ArrayList<>();
+    text   = text.replaceAll(".*runtime: [0-9:\\.]+\\):", "").trim();
     text   = text.replaceAll(":\\n.*", "").replaceAll("\\n.*", "");  // remove trailing error message text
     lines  = text.split(" " + current.getName());
     if (lines.length > 0) {
