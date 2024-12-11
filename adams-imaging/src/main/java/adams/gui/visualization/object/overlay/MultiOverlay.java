@@ -15,7 +15,7 @@
 
 /*
  * MultiOverlay.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.overlay;
@@ -96,6 +96,10 @@ public class MultiOverlay
    */
   public Overlay[] getOverlays() {
     return m_Overlays;
+  }
+
+  public String overlaysTipText() {
+    return "the overlays to manage.";
   }
 
   /**

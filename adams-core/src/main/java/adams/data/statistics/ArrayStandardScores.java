@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayStandardScores.java
- * Copyright (C) 2010-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
@@ -35,7 +35,6 @@ package adams.data.statistics;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the data to process
  */
 public class ArrayStandardScores<T extends Number>
@@ -95,7 +94,7 @@ public class ArrayStandardScores<T extends Number>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String useAlwaysFirstStdevTipText() {
+  public String useAlwaysFirstStatsTipText() {
     return "If set to true, then the mean/stdev of the first array are always used to calculate the scores.";
   }
 

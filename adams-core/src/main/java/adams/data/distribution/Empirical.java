@@ -15,7 +15,7 @@
 
 /*
  * Empirical.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.distribution;
@@ -27,7 +27,6 @@ import org.apache.commons.math3.random.EmpiricalDistribution;
  * Empirical distribution.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see EmpiricalDistribution
  */
 public class Empirical
@@ -76,7 +75,7 @@ public class Empirical
    *
    * @return		the count
    */
-  public double getBinCount() {
+  public int getBinCount() {
     return m_BinCount;
   }
 

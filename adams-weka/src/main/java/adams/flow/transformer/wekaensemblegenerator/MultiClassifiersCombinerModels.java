@@ -15,7 +15,7 @@
 
 /*
  * MultipleClassifiersCombinerdModels.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekaensemblegenerator;
@@ -86,7 +86,7 @@ public class MultiClassifiersCombinerModels
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String voteTipText() {
+  public String templateTipText() {
     return "The template of the MultipleClassifiersCombiner classifier to use.";
   }
 

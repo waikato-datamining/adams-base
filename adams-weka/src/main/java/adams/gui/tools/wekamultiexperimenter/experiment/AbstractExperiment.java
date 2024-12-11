@@ -408,7 +408,7 @@ public abstract class AbstractExperiment
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String resultWriterTipText() {
+  public String resultsHandlerTipText() {
     return "The handler to use for the results (read/write).";
   }
 

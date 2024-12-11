@@ -25,7 +25,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.image.moments.MomentHelper;
 import adams.data.report.DataType;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +48,10 @@ public class OrientationVector extends AbstractBufferedImageFeatureGenerator {
   public void setBackgroundValue(Color m_Background) {
     this.m_BackgroundValue = m_Background;
     reset();
+  }
+
+  public String backgroundValueTipText() {
+    return "The background value.";
   }
 
   /**

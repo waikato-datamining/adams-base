@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Diff.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.multiimageoperation;
@@ -34,9 +34,10 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author sjb90
- * @version $Revision$
  */
 public class Diff extends AbstractBufferedImageMultiImageOperation {
+
+  private static final long serialVersionUID = -9082953554081133032L;
 
   /** the threshold at which two pixels are considered different */
   protected int m_Threshold;
@@ -47,6 +48,10 @@ public class Diff extends AbstractBufferedImageMultiImageOperation {
 
   public void setThreshold(int m_Threshold) {
     this.m_Threshold = m_Threshold;
+  }
+
+  public String thresholdTipText() {
+    return "the threshold at which two pixels are considered different";
   }
 
   /**

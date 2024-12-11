@@ -15,7 +15,7 @@
 
 /*
  * HasClass.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -103,7 +103,7 @@ public class HasClass
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String superClassTipText() {
+  public String classNameTipText() {
     return "The class to look for.";
   }
 

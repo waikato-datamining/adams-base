@@ -15,7 +15,7 @@
 
 /*
  * AbstractDistanceBasedHitDetector.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2008 Pieter Iserbyt <pieter.iserbyt@gmail.com> (distance calculation between point and line)
  */
 
@@ -106,7 +106,7 @@ public abstract class AbstractDistanceBasedHitDetector<H, P>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String minimumPixelDifferenceDetectorTipText() {
+  public String minimumPixelDifferenceTipText() {
     return "The minimum pixel difference to use.";
   }
 

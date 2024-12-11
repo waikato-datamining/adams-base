@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FilteredColumnFinder.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.columnfinder;
 
@@ -27,7 +27,6 @@ import adams.data.spreadsheet.SpreadSheet;
  * columns.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FilteredColumnFinder
   extends AbstractColumnFinder {
@@ -65,7 +64,7 @@ public class FilteredColumnFinder
 	    new ByIndex());
 
     m_OptionManager.add(
-	    "finder", "Finder",
+	    "finder", "finder",
 	    new ByName());
   }
 

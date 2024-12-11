@@ -15,7 +15,7 @@
 
 /*
  * RemoteCommandJobRunner.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -269,7 +269,7 @@ public class RemoteCommandJobRunner
    *
    * @param value 	the engine
    */
-  public void setScriptingEngine(RemoteScriptingEngine value) {
+  public void setResponseScriptingEngine(RemoteScriptingEngine value) {
     m_ResponseScriptingEngine = value;
     reset();
   }

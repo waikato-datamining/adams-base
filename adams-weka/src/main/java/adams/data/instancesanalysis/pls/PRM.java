@@ -15,7 +15,7 @@
 
 /*
  * PRM.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -248,7 +248,7 @@ public class PRM
    * @return 		tip text for this property suitable for displaying in the
    *         		explorer/experimenter gui
    */
-  public String CTipText() {
+  public String cTipText() {
     return "The tuning parameter, >0.";
   }
 

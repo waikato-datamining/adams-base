@@ -15,7 +15,7 @@
 
 /*
  * KernelPLS.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -24,6 +24,7 @@ import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
 import adams.core.option.OptionUtils;
+import com.github.waikatodatamining.matrix.core.PreprocessingType;
 import com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel;
 import com.github.waikatodatamining.matrix.transformation.kernel.RBFKernel;
 import weka.core.Instances;
@@ -68,8 +69,8 @@ public class KernelPLS
   @Override
   public String globalInfo() {
     return "Kernel Partial Least Squares Regression in Reproducing Kernel Hilbert Space\n\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -140,7 +141,7 @@ public class KernelPLS
    * @return 		tip text for this property suitable for displaying in the
    *         		explorer/experimenter gui
    */
-  public String kernelipText() {
+  public String kernelTipText() {
     return "The kernel to use";
   }
 
@@ -169,7 +170,7 @@ public class KernelPLS
    * @return 		tip text for this property suitable for displaying in the
    *         		explorer/experimenter gui
    */
-  public String tolipText() {
+  public String tolTipText() {
     return "The inner NIPALS loop maximum number of iterations.";
   }
 
@@ -198,7 +199,7 @@ public class KernelPLS
    * @return 		tip text for this property suitable for displaying in the
    *         		explorer/experimenter gui
    */
-  public String maxIteripText() {
+  public String maxIterTipText() {
     return "The inner NIPALS loop improvement tolerance.";
   }
 
@@ -266,7 +267,7 @@ public class KernelPLS
       m_KernelPLS = new com.github.waikatodatamining.matrix.algorithm.pls.KernelPLS();
       m_KernelPLS.setKernel((AbstractKernel) OptionUtils.shallowCopy(m_Kernel));
       m_KernelPLS.setNumComponents(m_NumComponents);
-      m_KernelPLS.setPreprocessingType(com.github.waikatodatamining.matrix.core.PreprocessingType.NONE);
+      m_KernelPLS.setPreprocessingType(PreprocessingType.NONE);
       m_KernelPLS.setTol(m_Tol);
       m_KernelPLS.setMaxIter(m_MaxIter);
       error = m_KernelPLS.initialize(X, Y);

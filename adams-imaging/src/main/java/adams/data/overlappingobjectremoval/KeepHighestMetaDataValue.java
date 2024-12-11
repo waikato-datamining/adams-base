@@ -15,7 +15,7 @@
 
 /*
  * KeepHighestMetaDataValue.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.overlappingobjectremoval;
@@ -86,7 +86,7 @@ public class KeepHighestMetaDataValue
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String labelKeyTipText() {
+  public String scoreKeyTipText() {
     return "The key for the (numeric) score in the meta-data.";
   }
 

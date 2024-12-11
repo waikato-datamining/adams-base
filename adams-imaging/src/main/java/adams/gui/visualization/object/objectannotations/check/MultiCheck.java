@@ -15,7 +15,7 @@
 
 /*
  * MultiCheck.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.object.objectannotations.check;
@@ -58,7 +58,7 @@ public class MultiCheck
     super.defineOptions();
 
     m_OptionManager.add(
-	"check", "check",
+	"check", "checks",
 	new AnnotationCheck[0]);
   }
 

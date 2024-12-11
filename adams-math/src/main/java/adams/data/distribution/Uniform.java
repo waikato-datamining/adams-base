@@ -94,7 +94,7 @@ public class Uniform
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String meanTipText() {
+  public String lowerBoundTipText() {
     return "The lower bound.";
   }
 

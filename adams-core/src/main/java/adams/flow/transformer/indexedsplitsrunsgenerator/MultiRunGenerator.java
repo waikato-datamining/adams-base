@@ -15,7 +15,7 @@
 
 /*
  * MultiRunGenerator.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.indexedsplitsrunsgenerator;
@@ -93,7 +93,7 @@ public class MultiRunGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String runRunsTipText() {
+  public String numRunsTipText() {
     return "The number of runs to generate.";
   }
 
