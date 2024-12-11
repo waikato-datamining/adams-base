@@ -1,0 +1,196 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * OptionLister.java
+ * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ */
+
+package adams.core.option;
+
+import adams.core.ClassLister;
+import adams.core.Properties;
+import adams.core.classmanager.ClassManager;
+import adams.core.io.FileUtils;
+import net.minidev.json.JSONObject;
+
+import java.io.File;
+
+/**
+ * Outputs the options (commandline, property, type, multiple, help) for
+ * the classes in the ClassLister output props file it receives as input.
+ *
+ * @author fracpete (fracpete at waikato dot ac dot nz)
+ */
+public class OptionLister {
+
+  /** the classlister props file to process. */
+  protected File m_ClassListerInput;
+  
+  /** the output JSON file to generate. */
+  protected File m_Output;
+
+  /**
+   * Initializes the lister.
+   */
+  public OptionLister() {
+    m_ClassListerInput = null;
+    m_Output           = null;
+  }
+
+  /**
+   * Sets the classlister props file to use as input.
+   * 
+   * @param value	the file to use
+   */
+  public void setClassListerInput(File value) {
+    m_ClassListerInput = value;
+  }
+
+  /**
+   * Returns the currently set classlister props file to use as input.
+   * 
+   * @return		the file to use, null if not set
+   */
+  public File getClassListerInput() {
+    return m_ClassListerInput;
+  }
+
+  /**
+   * Sets the file to store the JSON output in.
+   *
+   * @param value	the file to use
+   */
+  public void setOutput(File value) {
+    m_Output = value;
+  }
+
+  /**
+   * Returns the currently set file to store the JSON output in.
+   *
+   * @return		the file to use, null if not set
+   */
+  public File getOutput() {
+    return m_Output;
+  }
+
+  /**
+   * Generates the JSON.
+   *
+   * @return		null if successful, otherwise error message
+   */
+  public String execute() {
+    Properties				props;
+    JSONObject				output;
+    String				msg;
+    String[]				classes;
+    JsonClassDescriptionProducer	producer;
+    OptionHandler			handler;
+    Class				cls;
+    Object				obj;
+    JSONObject				desc;
+
+    if (m_ClassListerInput == null)
+      return "No classlister props file provided as input!";
+    if (!m_ClassListerInput.exists())
+      return "Classlister props file does not exist: " + m_ClassListerInput;
+    if (m_ClassListerInput.isDirectory())
+      return "Classlister props file points to directory: " + m_ClassListerInput;
+
+    // read properties
+    props = new Properties();
+    try {
+      props.load(m_ClassListerInput.getAbsolutePath());
+    }
+    catch (Exception e) {
+      return "Failed to read classlister props file: " + e;
+    }
+
+    // generate output
+    output   = new JSONObject();
+    producer = new JsonClassDescriptionProducer();
+    for (String superclass: props.keySetAll()) {
+      classes = props.getProperty(superclass).split(",");
+      for (String class_ : classes) {
+	if (class_.trim().isEmpty())
+	  continue;
+	try {
+	  cls = ClassManager.getSingleton().forName(class_);
+	  try {
+	    obj = cls.getDeclaredConstructor().newInstance();
+	  }
+	  catch (Exception e) {
+	    // no default constructor, so we'll ignore it
+	    continue;
+	  }
+	  if (obj instanceof OptionHandler) {
+	    handler = (OptionHandler) obj;
+	    desc = producer.produce(handler);
+	    output.put(class_, desc.get("options"));
+	  }
+	}
+	catch (Exception e) {
+	  System.err.println("Failed to process: " + class_);
+	  e.printStackTrace();
+	}
+      }
+    }
+
+    if (m_Output == null) {
+      System.out.println(output);
+    }
+    else {
+      msg = FileUtils.writeToFileMsg(m_Output.getAbsolutePath(), output, false, null);
+      if (msg != null)
+	return null;
+    }
+
+    return null;
+  }
+
+  /**
+   * For generating the option JSON output from the command-line.
+   *
+   * @param args	the options to use
+   * @throws Exception	if anything goes wrong
+   */
+  public static void main(String[] args) throws Exception {
+    OptionLister	lister;
+    String		msg;
+
+    if (OptionUtils.helpRequested(args)) {
+      System.out.println();
+      System.out.println("Usage: " + OptionLister.class.getName() + " -input <classlister props file> [-output <JSON file>]");
+      System.out.println();
+      System.out.println("-input <classlister props file>");
+      System.out.println("    the properties file generated by the " + ClassLister.class.getName() + " tool");
+      System.out.println("-output <JSON file>");
+      System.out.println("    the JSON file to write the generated data to; outputs to stdout if omitted");
+      System.out.println();
+      return;
+    }
+
+    lister = new OptionLister();
+    if (!OptionUtils.hasFlag(args, "-input"))
+      throw new IllegalArgumentException("Missing option: -input");
+    lister.setClassListerInput(new File(OptionUtils.getOption(args, "-input")));
+    if (OptionUtils.hasFlag(args, "-output"))
+      lister.setOutput(new File(OptionUtils.getOption(args, "-output")));
+    msg = lister.execute();
+    if (msg != null)
+      throw new IllegalStateException(msg);
+    System.exit(0);
+  }
+}

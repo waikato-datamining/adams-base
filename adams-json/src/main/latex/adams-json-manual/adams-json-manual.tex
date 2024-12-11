@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2019-2023} &
+		\parbox[c][2cm]{2cm}{\copyright 2019-2024} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -115,6 +115,19 @@ turn JSON into a more human-readable format.
   \label{pretty_print_json}
 \end{figure}
 
+\section{OptionLister}
+The \texttt{adams.core.option.OptionLister} tool allows you to export all the options for
+ADAMS classes that implement the \texttt{adams.core.option.OptionHandler} interface
+as JSON\footnote{Uses the \texttt{adams.core.option.JsonClassDescriptionProducer} class under the hood}.
+The following values are output for each class:
+\begin{tight_itemize}
+    \item \texttt{option} -- the command-line flag
+    \item \texttt{property} -- the Java introspection property
+    \item \texttt{type} -- the name of the base class (including primitives)
+    \item \texttt{multiple} -- whether the option supports single or multiple values (typically array)
+    \item \texttt{help} -- if available, the help string for the option
+\end{tight_itemize}
+Executes the tool with the \texttt{-h/--help} flag to see all its options.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
