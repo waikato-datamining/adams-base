@@ -15,7 +15,7 @@
 
 /*
  * ChangeCanvasSize.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.locateobjects;
@@ -71,19 +71,12 @@ import java.awt.image.BufferedImage;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9648 $
  */
 public class ChangeCanvasSize
   extends AbstractMetaObjectLocator {
 
   /** for serialization. */
   private static final long serialVersionUID = 7548064590836834398L;
-
-  /** the width of the canvas. */
-  protected int m_CanvasWidth;
-
-  /** the height of the canvas. */
-  protected int m_CanvasHeight;
 
   /** where to anchor the position on the canvas. */
   protected ImageAnchor m_Anchor;
@@ -111,88 +104,12 @@ public class ChangeCanvasSize
     super.defineOptions();
 
     m_OptionManager.add(
-	"canvas-width", "canvasWidth",
-	100, 1, null);
-
-    m_OptionManager.add(
-	"canvas-height", "canvasHeight",
-	100, 1, null);
-
-    m_OptionManager.add(
 	"anchor", "anchor",
 	ImageAnchor.TOP_LEFT);
 
     m_OptionManager.add(
 	"background", "background",
 	Color.WHITE);
-  }
-
-  /**
-   * Sets the width of the canvase.
-   *
-   * @param value	the width
-   */
-  public void setCanvasWidth(int value) {
-    if (value > 0) {
-      m_CanvasWidth = value;
-      reset();
-    }
-    else {
-      getLogger().severe("Canvas width has to be >0, provided: " + value);
-    }
-  }
-
-  /**
-   * Returns the width of the canvas.
-   *
-   * @return		the width
-   */
-  public int getCanvasWidth() {
-    return m_CanvasWidth;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String canvasWidthTipText() {
-    return "The width of the canvas in pixels.";
-  }
-
-  /**
-   * Sets the height of the canvas.
-   *
-   * @param value	the height
-   */
-  public void setCanvasHeight(int value) {
-    if (value > 0) {
-      m_CanvasHeight = value;
-      reset();
-    }
-    else {
-      getLogger().severe("Canvas height has to be >0, provided: " + value);
-    }
-  }
-
-  /**
-   * Returns the height of the canvas.
-   *
-   * @return		the height
-   */
-  public int getCanvasHeight() {
-    return m_CanvasHeight;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the gui
-   */
-  public String canvasHeightTipText() {
-    return "The height of the canvas in pixels.";
   }
 
   /**
