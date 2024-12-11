@@ -15,7 +15,7 @@
 
 /*
  * AbstractOptionProducer.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -563,7 +563,8 @@ public abstract class AbstractOptionProducer<O,I>
 	System.out.println("\n");
       }
       else {
-	Environment.setEnvironmentClass(Class.forName(OptionUtils.removeOption(args, "-env")));
+	if (OptionUtils.hasFlag(args, "-env"))
+	  Environment.setEnvironmentClass(Class.forName(OptionUtils.removeOption(args, "-env")));
 	input = OptionUtils.removeOption(args, "-input");
 	if (input == null)
 	  throw new IllegalArgumentException("No input file specified!");
