@@ -19,6 +19,7 @@
  */
 package adams.core.option;
 
+import adams.core.EnumHelper;
 import adams.core.Utils;
 import adams.core.io.FileFormatHandler;
 import adams.flow.control.Flow;
@@ -55,9 +56,19 @@ public class JsonClassDescriptionProducer
   @Override
   public String globalInfo() {
     return
-        "Generates a description of the class and its options in JSON format (JavaScript Object Notation).\n\n"
-      + "For more information on JSON, see:\n"
-      + "http://json.org/";
+      "Generates a description of the class and its options in JSON format (JavaScript Object Notation).\n\n"
+	+ "Outputs the following format:\n"
+	+ "{\"class\": \"...\", \"options\": [...]}\n"
+	+ "For 'options', each array element represents an option object with the following keys:\n"
+	+ "- 'option' (str): the command-line flag\n"
+	+ "- 'property' (str): the Java introspection property name\n"
+	+ "- 'type' (str): the class name\n"
+	+ "- 'enum' (array of str, optional): if the class represents an enum, this is the array of possible values\n"
+	+ "- 'multiple' (bool): whether this option handles single (false) or multiple (true) values of the specified type\n"
+	+ "- 'help' (str, optional): the help associated with this option\n"
+	+ "\n"
+	+ "For more information on JSON, see:\n"
+	+ "http://json.org/";
   }
 
   /**
@@ -138,6 +149,8 @@ public class JsonClassDescriptionProducer
     obj.put("option", "-" + option.getCommandline());
     obj.put("property", option.getProperty());
     obj.put("type", Utils.classToString(option.getBaseClass()));
+    if (option.getBaseClass().isEnum())
+      obj.put("enum", EnumHelper.getValues(option.getBaseClass()));
     obj.put("multiple", option.isMultiple());
     help = option.getToolTipMethod();
     if (help != null) {
@@ -210,10 +223,10 @@ public class JsonClassDescriptionProducer
   public String[] getFormatExtensions() {
     return new String[]{getDefaultFormatExtension()};
   }
-  
+
   /**
    * Executes the producer from commandline.
-   * 
+   *
    * @param args	the commandline arguments, use -help for help
    */
   public static void main(String[] args) {
