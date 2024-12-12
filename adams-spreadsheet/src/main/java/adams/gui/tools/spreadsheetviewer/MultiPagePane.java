@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
@@ -271,6 +271,45 @@ public class MultiPagePane
    */
   public CellRenderingCustomizer getCellRenderingCustomizer() {
     return m_CellRenderingCustomizer;
+  }
+
+  /**
+   * Sets the optimal column widths for all pages.
+   */
+  public void setOptimalColumnWidth() {
+    int	i;
+
+    for (i = 0; i < getPageCount(); i++)
+      setOptimalColumnWidthAt(i);
+  }
+
+  /**
+   * Sets the optimal column widths for the specified pane.
+   *
+   * @param index	the page index
+   */
+  public void setOptimalColumnWidthAt(int index) {
+    getPanelAt(index).getTable().setOptimalColumnWidth();
+  }
+
+  /**
+   * Sets the column widths for all pages.
+   */
+  public void setColumnWidths(int width) {
+    int	i;
+
+    for (i = 0; i < getPageCount(); i++)
+      setColumnWidthsAt(i, width);
+  }
+
+  /**
+   * Sets the column width for the specified pane.
+   *
+   * @param index	the page index
+   * @param width 	the width to use
+   */
+  public void setColumnWidthsAt(int index, int width) {
+    getPanelAt(index).getTable().setColumnWidths(width);
   }
 
   /**

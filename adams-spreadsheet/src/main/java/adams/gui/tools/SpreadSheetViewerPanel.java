@@ -79,6 +79,8 @@ import adams.gui.tools.spreadsheetviewer.menu.SpreadSheetViewerAction;
 import adams.gui.tools.spreadsheetviewer.menu.ViewApplyToAll;
 import adams.gui.tools.spreadsheetviewer.menu.ViewCellRenderingCustomizer;
 import adams.gui.tools.spreadsheetviewer.menu.ViewDecimals;
+import adams.gui.tools.spreadsheetviewer.menu.ViewOptimalColumnWidth;
+import adams.gui.tools.spreadsheetviewer.menu.ViewSetColumnWidth;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowCellTypes;
 import adams.gui.tools.spreadsheetviewer.menu.ViewShowFormulas;
 import adams.gui.tools.spreadsheetviewer.tab.ViewerTabManager;
@@ -195,6 +197,12 @@ public class SpreadSheetViewerPanel
 
   /** the "rendering" menu item. */
   protected SpreadSheetViewerAction m_ActionViewCellRenderingCustomizer;
+
+  /** the "optimal column widths" menu item. */
+  protected SpreadSheetViewerAction m_ActionViewOptimalColumnWidth;
+
+  /** the "set column widths" menu item. */
+  protected SpreadSheetViewerAction m_ActionViewSetColumnWidth;
 
   /** the "show formulas" menu item. */
   protected SpreadSheetViewerAction m_ActionViewShowFormulas;
@@ -377,6 +385,16 @@ public class SpreadSheetViewerPanel
     m_ActionViewCellRenderingCustomizer = action;
     m_Actions.add(action);
 
+    // View/Optimal column width
+    action = new ViewOptimalColumnWidth();
+    m_ActionViewOptimalColumnWidth = action;
+    m_Actions.add(action);
+
+    // View/Set column width
+    action = new ViewSetColumnWidth();
+    m_ActionViewSetColumnWidth = action;
+    m_Actions.add(action);
+
     // View/Show formulas
     action = new ViewShowFormulas();
     m_ActionViewShowFormulas = action;
@@ -551,6 +569,8 @@ public class SpreadSheetViewerPanel
       menu.add(m_ActionViewApplyToAll.getMenuItem());
       menu.add(m_ActionViewDisplayedDecimals);
       menu.add(m_ActionViewCellRenderingCustomizer);
+      menu.add(m_ActionViewOptimalColumnWidth);
+      menu.add(m_ActionViewSetColumnWidth);
       menu.add(m_ActionViewShowFormulas.getMenuItem());
       menu.add(m_ActionViewShowCellTypes.getMenuItem());
 
@@ -703,6 +723,39 @@ public class SpreadSheetViewerPanel
       m_MultiPagePane.setCellRenderingCustomizer(renderer);
     else
       m_MultiPagePane.setCellRenderingCustomizerAt(m_MultiPagePane.getSelectedIndex(), renderer);
+  }
+
+  /**
+   * Sets the optimal column widths for the page(s).
+   *
+   * @param applyAll	whether to apply to all or just current page
+   */
+  public void setOptimalColumnWidth(boolean applyAll) {
+    if (applyAll)
+      m_MultiPagePane.setOptimalColumnWidth();
+    else
+      m_MultiPagePane.setOptimalColumnWidthAt(m_MultiPagePane.getSelectedIndex());
+  }
+
+  /**
+   * Lets the user enter a column width and then sets the column widths for the page(s).
+   *
+   * @param applyAll	whether to apply to all or just current page
+   */
+  public void setColumnWidth(boolean applyAll) {
+    String 	valueStr;
+    int 	width;
+
+    valueStr = GUIHelper.showInputDialog(
+      this, "Please enter the column width:", "200");
+    if (valueStr == null)
+      return;
+
+    width = Integer.parseInt(valueStr);
+    if (applyAll)
+      m_MultiPagePane.setColumnWidths(width);
+    else
+      m_MultiPagePane.setColumnWidthsAt(m_MultiPagePane.getSelectedIndex(), width);
   }
 
   /**
