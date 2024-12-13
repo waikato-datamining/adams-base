@@ -25,7 +25,9 @@ import adams.core.annotation.MixedCopyright;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.gui.core.ImageManager;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -72,7 +74,7 @@ public class PDFBox {
    */
   public static PDDocument load(File file) {
     try {
-      return PDDocument.load(file.getAbsoluteFile());
+      return Loader.loadPDF(new RandomAccessReadBufferedFile((file.getAbsoluteFile())));
     }
     catch (Exception e) {
       LOGGER.log(Level.SEVERE, "Failed to load PDF: " + file, e);
@@ -233,7 +235,7 @@ public class PDFBox {
     PDDocument 	doc;
 
     try {
-      doc    = PDDocument.load(file.getAbsoluteFile());
+      doc    = Loader.loadPDF(new RandomAccessReadBufferedFile((file.getAbsoluteFile())));
       result = doc.getNumberOfPages();
     }
     catch (Exception e) {
@@ -257,7 +259,7 @@ public class PDFBox {
 
     doc = null;
     try {
-      doc      = PDDocument.load(file.getAbsoluteFile());
+      doc      = Loader.loadPDF(new RandomAccessReadBufferedFile((file.getAbsoluteFile())));
       stripper = new PDFTextStripper();
       result   = stripper.getText(doc);
     }
@@ -351,12 +353,11 @@ public class PDFBox {
    * @throws IOException	if extraction fails
    */
   public static List<BufferedImage> extractImages(File file) throws IOException {
-    List<BufferedImage>	result;
     PDDocument		doc;
 
     doc = null;
     try {
-      doc = PDDocument.load(file.getAbsoluteFile());
+      doc = Loader.loadPDF(new RandomAccessReadBufferedFile((file.getAbsoluteFile())));
       return extractImages(doc);
     }
     finally {

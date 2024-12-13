@@ -15,7 +15,7 @@
 
 /*
  * PDFMetaData.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -29,6 +29,8 @@ import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SparseDataRow;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
@@ -274,7 +276,7 @@ public class PDFMetaData
       file = new PlaceholderFile((String) m_InputToken.getPayload());
 
     try {
-      document = PDDocument.load(file.getAbsoluteFile());
+      document = Loader.loadPDF(new RandomAccessReadBufferedFile(file.getAbsoluteFile()));
       info     = document.getDocumentInformation();
       keys     = info.getMetadataKeys();
 
