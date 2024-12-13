@@ -536,17 +536,17 @@ public class MultiPagePane
     m_LeftPanel.add(m_PanelListButtons, BorderLayout.SOUTH);
 
     m_ButtonUp = new BaseFlatButton(ImageManager.getIcon("arrow_up.gif"));
-    m_ButtonUp.setToolTipText("Moves up selected");
+    m_ButtonUp.setToolTipText("Moves up selected (Alt+Up)");
     m_ButtonUp.addActionListener((ActionEvent e) -> moveUp());
     m_PanelListButtons.add(m_ButtonUp);
 
     m_ButtonDown = new BaseFlatButton(ImageManager.getIcon("arrow_down.gif"));
-    m_ButtonDown.setToolTipText("Moves down selected");
+    m_ButtonDown.setToolTipText("Moves down selected (Alt+Down)");
     m_ButtonDown.addActionListener((ActionEvent e) -> moveDown());
     m_PanelListButtons.add(m_ButtonDown);
 
     m_ButtonRemove = new BaseFlatButton(ImageManager.getIcon("delete.gif"));
-    m_ButtonRemove.setToolTipText("Removes currently selected");
+    m_ButtonRemove.setToolTipText("Removes currently selected (Delete)");
     m_ButtonRemove.addActionListener((ActionEvent e) -> checkedRemoveSelectedPages());
     m_PanelListButtons.add(m_ButtonRemove);
 
