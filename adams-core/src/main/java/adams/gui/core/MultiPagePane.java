@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -1325,6 +1325,16 @@ public class MultiPagePane
 	checkedRemoveSelectedPages();
 	return true;
       }
+    }
+    if ((e.getKeyCode() == KeyEvent.VK_UP) && (KeyUtils.isAltDown(e.getModifiersEx()))) {
+      if (canMoveUp())
+	moveUp();
+      return true;
+    }
+    if ((e.getKeyCode() == KeyEvent.VK_DOWN) && (KeyUtils.isAltDown(e.getModifiersEx()))) {
+      if (canMoveDown())
+	moveDown();
+      return true;
     }
     return false;
   }
