@@ -15,7 +15,7 @@
 
 /*
  * PDFBox.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -27,6 +27,7 @@ import adams.core.logging.LoggingHelper;
 import adams.gui.core.ImageManager;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -282,6 +283,41 @@ public class PDFBox {
   }
 
   /**
+   * Extracts the text from the PDF.
+   *
+   * @param data	the PDF (binary data) to get the text from
+   * @return		the text, null if failed to extract
+   */
+  public static String extractText(byte[] data) {
+    String 		result;
+    PDDocument 		doc;
+    PDFTextStripper 	stripper;
+
+    doc = null;
+    try {
+      doc      = Loader.loadPDF(new RandomAccessReadBuffer(data));
+      stripper = new PDFTextStripper();
+      result   = stripper.getText(doc);
+    }
+    catch (Exception e) {
+      LOGGER.log(Level.SEVERE, "Failed to extract text byte array!", e);
+      result = null;
+    }
+    finally {
+      if (doc != null) {
+	try {
+	  doc.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Extracts images from PDF resources.
    *
    * @param resources		the resources to extract the images from
@@ -357,7 +393,7 @@ public class PDFBox {
 
     doc = null;
     try {
-      doc = Loader.loadPDF(new RandomAccessReadBufferedFile((file.getAbsoluteFile())));
+      doc = Loader.loadPDF(new RandomAccessReadBufferedFile(file.getAbsoluteFile()));
       return extractImages(doc);
     }
     finally {
@@ -367,6 +403,32 @@ public class PDFBox {
       }
       catch (Exception e) {
         // ignored
+      }
+    }
+  }
+
+  /**
+   * Extracts images from a PDF document.
+   *
+   * @param data		the PDF data to extract the images from
+   * @return			the list of extracted images
+   * @throws IOException	if extraction fails
+   */
+  public static List<BufferedImage> extractImages(byte[] data) throws IOException {
+    PDDocument		doc;
+
+    doc = null;
+    try {
+      doc = Loader.loadPDF(new RandomAccessReadBuffer(data));
+      return extractImages(doc);
+    }
+    finally {
+      try {
+	if (doc != null)
+	  doc.close();
+      }
+      catch (Exception e) {
+	// ignored
       }
     }
   }
