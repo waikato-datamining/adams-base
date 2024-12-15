@@ -20,6 +20,7 @@
 package adams.gui.visualization.pdf;
 
 import adams.core.Properties;
+import adams.core.UniqueIDs;
 import adams.core.io.PlaceholderFile;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BasePanel;
@@ -32,6 +33,10 @@ import adams.gui.event.RecentItemEvent;
 import adams.gui.event.RecentItemListener;
 import adams.gui.sendto.SendToActionSupporter;
 import adams.gui.sendto.SendToActionUtils;
+import adams.gui.visualization.pdf.menu.AbstractPDFViewerAction;
+import adams.gui.visualization.pdf.menu.ToolExtractImages;
+import adams.gui.visualization.pdf.menu.ToolExtractPages;
+import adams.gui.visualization.pdf.menu.ToolExtractText;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.icepdf.core.pobjects.Document;
 
@@ -45,6 +50,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A basic PDF viewer.
@@ -118,6 +125,18 @@ public class PDFViewerPanel
   /** the "exit" menu item. */
   protected JMenuItem m_MenuItemFileExit;
 
+  /** the "extract pages" menu item. */
+  protected AbstractPDFViewerAction m_MenuItemToolsExtractPages;
+
+  /** the "extract text" menu item. */
+  protected AbstractPDFViewerAction m_MenuItemToolsExtractText;
+
+  /** the "extract images" menu item. */
+  protected AbstractPDFViewerAction m_MenuItemToolsExtractImages;
+
+  /** the menu item actions. */
+  protected List<AbstractPDFViewerAction> m_ViewerActions;
+
   /** the filedialog for loading CSV files. */
   protected transient BaseFileChooser m_FileChooser;
 
@@ -132,6 +151,7 @@ public class PDFViewerPanel
     super.initialize();
 
     m_RecentFilesHandler = null;
+    m_ViewerActions      = new ArrayList<>();
   }
 
   /**
@@ -174,7 +194,6 @@ public class PDFViewerPanel
     JMenu	menu;
     JMenu	submenu;
     JMenuItem	menuitem;
-    int		i;
 
     if (m_MenuBar == null) {
       result = new JMenuBar();
@@ -261,6 +280,31 @@ public class PDFViewerPanel
       });
       m_MenuItemFileExit = menuitem;
 
+      // Tools
+      menu = new JMenu("Tools");
+      result.add(menu);
+      menu.setMnemonic('T');
+      menu.addChangeListener(new ChangeListener() {
+	public void stateChanged(ChangeEvent e) {
+	  updateMenu();
+	}
+      });
+
+      // Tools/Extract pages
+      m_MenuItemToolsExtractPages = new ToolExtractPages();
+      menu.add(m_MenuItemToolsExtractPages);
+      m_ViewerActions.add(m_MenuItemToolsExtractPages);
+
+      // Tools/Extract text
+      m_MenuItemToolsExtractText = new ToolExtractText();
+      menu.add(m_MenuItemToolsExtractText);
+      m_ViewerActions.add(m_MenuItemToolsExtractText);
+
+      // Tools/Extract images
+      m_MenuItemToolsExtractImages = new ToolExtractImages();
+      menu.add(m_MenuItemToolsExtractImages);
+      m_ViewerActions.add(m_MenuItemToolsExtractImages);
+
       // update menu
       m_MenuBar = result;
       updateMenu();
@@ -304,6 +348,12 @@ public class PDFViewerPanel
     // File
     m_MenuItemFileClose.setEnabled(pdfAvailable);
     m_MenuItemFilePrint.setEnabled(pdfAvailable);
+
+    // actions
+    for (AbstractPDFViewerAction action: m_ViewerActions) {
+      action.setOwner(this);
+      action.update();
+    }
   }
 
   /**
@@ -341,6 +391,31 @@ public class PDFViewerPanel
   }
 
   /**
+   * Loads the specified PDF document.
+   *
+   * @param data	the data of the document to load
+   */
+  public void load(byte[] data) {
+    load(data, null);
+  }
+
+  /**
+   * Loads the specified PDF document.
+   *
+   * @param data	the data of the document to load
+   * @param desc 	the description for the document, can be null
+   */
+  public void load(byte[] data, String desc) {
+    PDFPanel	panel;
+
+    desc  = newDescriptionIfNecessary(desc);
+    panel = new PDFPanel();
+    panel.setDocument(data, desc);
+    m_MultiPagePane.addPage(desc, panel);
+    m_MultiPagePane.setSelectedIndex(m_MultiPagePane.getPageCount() - 1);
+  }
+
+  /**
    * Closes the current active tab.
    */
   protected void closeFile() {
@@ -359,7 +434,6 @@ public class PDFViewerPanel
    */
   protected void printFile() {
     int		index;
-    File        file;
 
     index = m_MultiPagePane.getSelectedIndex();
     if (index == -1)
@@ -432,5 +506,17 @@ public class PDFViewerPanel
     }
 
     return result;
+  }
+
+  /**
+   * Creates a new description if necessary (new+INT).
+   *
+   * @param desc	the description, auto-generates one if null
+   * @return		the potentially updated description
+   */
+  public static String newDescriptionIfNecessary(String desc) {
+    if (desc == null)
+      desc = "new" + UniqueIDs.nextInt("pdf");
+    return desc;
   }
 }

@@ -15,12 +15,15 @@
 
 /*
  * PDFPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.pdf;
 
 import adams.core.CleanUpHandler;
 import adams.core.io.IcePDF;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingSupporter;
 import adams.gui.core.BasePanel;
 import org.icepdf.core.pobjects.Document;
 import org.icepdf.ri.common.SwingController;
@@ -31,6 +34,7 @@ import org.icepdf.ri.util.ViewerPropertiesManager;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Panel for displaying a PDF file.
@@ -39,7 +43,7 @@ import java.io.File;
  */
 public class PDFPanel
     extends BasePanel
-    implements CleanUpHandler {
+    implements CleanUpHandler, LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1994121429485824895L;
@@ -52,6 +56,9 @@ public class PDFPanel
 
   /** whether a document is present. */
   protected boolean m_HasDocument;
+
+  /** for logging. */
+  protected Logger m_Logger;
 
   /**
    * Initializes the members.
@@ -112,6 +119,18 @@ public class PDFPanel
    */
   public void setDocument(File file) {
     setDocument(file.getAbsolutePath());
+  }
+
+  /**
+   * Sets the document to display.
+   *
+   * @param data	the data of the PDF document to display
+   * @param desc 	the description for the document, can be null
+   */
+  public void setDocument(byte[] data, String desc) {
+    m_Controller.closeDocument();
+    m_Controller.openDocument(data, 0, data.length, PDFViewerPanel.newDescriptionIfNecessary(desc), null);
+    m_HasDocument = true;
   }
 
   /**
@@ -178,6 +197,26 @@ public class PDFPanel
    */
   public void print(boolean withDialog) {
     m_Controller.print(withDialog);
+  }
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public synchronized Logger getLogger() {
+    if (m_Logger == null)
+      m_Logger = LoggingHelper.getLogger(getClass());
+    return m_Logger;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    return LoggingHelper.isAtLeast(getLogger(), Level.INFO);
   }
 
   /**
