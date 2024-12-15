@@ -15,7 +15,7 @@
 
 /*
  * iTextPDF.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -29,8 +29,9 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * Helper class for iTextPDF.
@@ -49,30 +50,56 @@ public class iTextPDF {
    * @return		null if successful, otherwise error message
    */
   public static String extractPages(LoggingSupporter logging, File input, UnorderedRange range, File output) {
+    String			result;
+    byte[]			bin;
+    ByteArrayInputStream	bis;
+    ByteArrayOutputStream	bos;
+
+    bin = FileUtils.loadFromBinaryFile(input);
+    if (bin == null)
+      return "Failed to read PDF from: " + input;
+    bis = new ByteArrayInputStream(bin);
+    bos = new ByteArrayOutputStream();
+    result = extractPages(logging, bis, range, bos);
+    if (result == null) {
+      if (!FileUtils.writeToBinaryFile(output.getAbsolutePath(), bos.toByteArray()))
+	result = "Failed to write PDF to: " + output;
+    }
+    FileUtils.closeQuietly(bis);
+    FileUtils.closeQuietly(bos);
+    return result;
+  }
+
+  /**
+   * Extracts a subset of pages from one PDF file and stores that in another PDF file.
+   *
+   * @param logging	for logging, can be null
+   * @param input	the input PDF
+   * @param range	the range of pages to extract
+   * @param output	the output PDF
+   * @return		null if successful, otherwise error message
+   */
+  public static String extractPages(LoggingSupporter logging, ByteArrayInputStream input, UnorderedRange range, ByteArrayOutputStream output) {
     String		result;
-    File		file;
     int			i;
     Document 		document;
     PdfCopy 		copy;
     PdfReader 		reader;
     int[]		pages;
     int			page;
-    FileOutputStream 	fos;
 
     result = null;
 
-    fos = null;
     try {
       if ((logging != null) && logging.isLoggingEnabled())
 	logging.getLogger().info("Extracting pages from '" + input + "' into '" + output + "'");
       document = new Document();
-      fos      = new FileOutputStream(output.getAbsolutePath());
-      copy     = new PdfCopy(document, fos);
+      copy     = new PdfCopy(document, output);
       document.open();
       document.addCreationDate();
       document.addCreator(Environment.getInstance().getProject());
       document.addAuthor(User.getName());
-      reader = new PdfReader(input.getAbsolutePath());
+      reader = new PdfReader(input.readAllBytes());
       if ((logging != null) && logging.isLoggingEnabled())
 	logging.getLogger().info("- #pages: " + reader.getNumberOfPages());
       range.setMax(reader.getNumberOfPages());
@@ -91,9 +118,6 @@ public class iTextPDF {
 	result = LoggingHelper.handleException(logging, "Failed to extract pages from " + input + " to " + output + ": ", e);
       else
         result = "Failed to extract pages from " + input + " to " + output + ":\n" + LoggingHelper.throwableToString(e);
-    }
-    finally {
-      FileUtils.closeQuietly(fos);
     }
 
     return result;
