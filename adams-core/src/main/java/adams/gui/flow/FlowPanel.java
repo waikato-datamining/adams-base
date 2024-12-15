@@ -579,7 +579,7 @@ public class FlowPanel
     getTree().setModified(false);
     setCurrentFile(null);
 
-    setTitle(PREFIX_NEW + UniqueIDs.nextInt(PREFIX_NEW));
+    setTitle(PREFIX_NEW + UniqueIDs.nextInt(PREFIX_FLOW));
 
     update();
 
