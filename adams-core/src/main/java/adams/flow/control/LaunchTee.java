@@ -15,16 +15,21 @@
 
 /*
  * LaunchTee.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.ObjectCopyHelper;
+import adams.core.OptionalThreadLimiter;
+import adams.core.Performance;
 import adams.core.QuickInfoHelper;
+import adams.core.StoppableUtils;
+import adams.core.ThreadLimiter;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.logging.LoggingLevel;
+import adams.core.option.OptionUtils;
 import adams.flow.control.ScopeHandler.ScopeHandling;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorHandlerInfo;
@@ -33,6 +38,9 @@ import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.Token;
 import adams.flow.sink.Null;
+import adams.multiprocess.AbstractJob;
+import adams.multiprocess.JobRunner;
+import adams.multiprocess.LocalJobRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +48,8 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Launches the sub-flow in a separate thread each time a token arrives.<br>
- * Internally, a adams.flow.control.LocalScopeTee is used to manage the scope and forward the token.
+ * Internally, a adams.flow.control.LocalScopeTee is used to manage the scope and forward the token.<br>
+ * However, when imposing thread limits, a job gets created with the sub-actors and placed into a job runner for execution.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -124,13 +133,106 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
+ * <pre>-impose-thread-limits &lt;boolean&gt; (property: imposeThreadLimits)
+ * &nbsp;&nbsp;&nbsp;If enabled, imposes the specified limit on threads.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-threads &lt;int&gt; (property: numThreads)
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number
+ * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential
+ * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means
+ * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LaunchTee
   extends AbstractControlActor
-  implements InputConsumer, MutableActorHandler {
+  implements InputConsumer, MutableActorHandler, OptionalThreadLimiter {
+
+  public static class LaunchJob
+    extends AbstractJob {
+
+    private static final long serialVersionUID = 6406892820872772446L;
+
+    /** the actor to execute. */
+    protected LocalScopeTee m_Local;
+
+    /**
+     * Initializes the job.
+     *
+     * @param local  	the actor to execute
+     */
+    public LaunchJob(LocalScopeTee local) {
+      super();
+      m_Local = local;
+    }
+
+    /**
+     * Checks whether all pre-conditions have been met.
+     *
+     * @return null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String preProcessCheck() {
+      if (m_Local == null)
+	return "No actor to execute!";
+      return null;
+    }
+
+    /**
+     * Does the actual execution of the job.
+     *
+     * @throws Exception if fails to execute job
+     */
+    @Override
+    protected void process() throws Exception {
+      m_Local.execute();
+    }
+
+    /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      StoppableUtils.stopAnyExecution(m_Local);
+      super.stopExecution();
+    }
+
+    /**
+     * Checks whether all post-conditions have been met.
+     *
+     * @return null if everything is OK, otherwise an error message
+     */
+    @Override
+    protected String postProcessCheck() {
+      return null;
+    }
+
+    /**
+     * Returns a string representation of this job.
+     *
+     * @return the job as string
+     */
+    @Override
+    public String toString() {
+      return OptionUtils.getCommandLine(m_Local);
+    }
+
+    /**
+     * Cleans up data structures, frees up memory.
+     * Removes dependencies and job parameters.
+     */
+    @Override
+    public void cleanUp() {
+      m_Local = null;
+      super.cleanUp();
+    }
+  }
 
   private static final long serialVersionUID = -6434809501169213229L;
 
@@ -152,6 +254,15 @@ public class LaunchTee
   /** the sub-flow to launch. */
   protected Tee m_Actors;
 
+  /** whether to limit the number of threads. */
+  protected boolean m_ImposeThreadLimits;
+
+  /** the number of threads to use for parallel execution. */
+  protected int m_NumThreads;
+
+  /** the job runner. */
+  protected transient JobRunner m_JobRunner;
+
   /** the launched sub-flows. */
   protected transient List<LocalScopeTee> m_Launched;
 
@@ -166,7 +277,8 @@ public class LaunchTee
   @Override
   public String globalInfo() {
     return "Launches the sub-flow in a separate thread each time a token arrives.\n"
-	     + "Internally, a " + Utils.classToString(LocalScopeTee.class) + " is used to manage the scope and forward the token.";
+	     + "Internally, a " + Utils.classToString(LocalScopeTee.class) + " is used to manage the scope and forward the token.\n"
+	     + "However, when imposing thread limits, a job gets created with the sub-actors and placed into a job runner for execution.";
   }
 
   /**
@@ -195,6 +307,14 @@ public class LaunchTee
     m_OptionManager.add(
       "storage-filter", "storageFilter",
       new BaseRegExp(BaseRegExp.MATCH_ALL));
+
+    m_OptionManager.add(
+      "impose-thread-limits", "imposeThreadLimits",
+      false);
+
+    m_OptionManager.add(
+      "num-threads", "numThreads",
+      -1);
   }
 
   /**
@@ -584,6 +704,68 @@ public class LaunchTee
   }
 
   /**
+   * Sets whether to limit the number of threads to use.
+   *
+   * @param value 	true if to limit
+   */
+  @Override
+  public void setImposeThreadLimits(boolean value) {
+    m_ImposeThreadLimits = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to limit the number of threads to use.
+   *
+   * @return 		true if to limit
+   */
+  @Override
+  public boolean getImposeThreadLimits() {
+    return m_ImposeThreadLimits;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String imposeThreadLimitsTipText() {
+    return "If enabled, imposes the specified limit on threads.";
+  }
+
+  /**
+   * Sets the number of threads to use for parallel execution of threads.
+   *
+   * @param value 	the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  @Override
+  public void setNumThreads(int value) {
+    m_NumThreads = value;
+    reset();
+  }
+
+  /**
+   * Returns the number of threads to use for parallel execution of threads.
+   *
+   * @return 		the number of threads: -1 = # of CPUs/cores; 0/1 = sequential execution
+   */
+  @Override
+  public int getNumThreads() {
+    return m_NumThreads;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numThreadsTipText() {
+    return Performance.getNumThreadsHelp();
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -601,6 +783,31 @@ public class LaunchTee
     result += QuickInfoHelper.toString(this, "scopeHandlingStorage", m_ScopeHandlingStorage, "scope: ");
     result += QuickInfoHelper.toString(this, "storageFilter", !m_StorageFilter.isMatchAll(), "filter: " + m_StorageFilter, ", ");
     result += "]";
+
+    if (m_ImposeThreadLimits)
+      result += ", " + QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
+
+    return result;
+  }
+
+  /**
+   * Initializes the item for flow execution.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  public String setUp() {
+    String	result;
+
+    result = super.setUp();
+
+    if (result == null) {
+      if (m_ImposeThreadLimits) {
+	m_JobRunner = new LocalJobRunner();
+	if (m_JobRunner instanceof ThreadLimiter)
+	  ((ThreadLimiter) m_JobRunner).setNumThreads(m_NumThreads);
+      }
+    }
 
     return result;
   }
@@ -633,9 +840,15 @@ public class LaunchTee
     local.getOptionManager().updateVariableValues(true);
     if (result == null) {
       m_Launched.add(local);
-      local.input(m_InputToken);
-      thread = new Thread(local::execute);
-      thread.start();
+      local.input(m_InputToken.getClone());
+      if (m_JobRunner != null) {
+	m_JobRunner.add(new LaunchJob(local));
+	m_JobRunner.start();
+      }
+      else {
+	thread = new Thread(local::execute);
+	thread.start();
+      }
     }
 
     return result;
@@ -646,6 +859,10 @@ public class LaunchTee
    */
   @Override
   public void stopExecution() {
+    if (m_JobRunner != null) {
+      m_JobRunner.terminate();
+      m_JobRunner = null;
+    }
     if (m_Launched != null) {
       for (LocalScopeTee local : m_Launched)
 	local.stopExecution();
@@ -658,6 +875,10 @@ public class LaunchTee
    */
   @Override
   public void wrapUp() {
+    if (m_JobRunner != null) {
+      m_JobRunner.stop();
+      m_JobRunner = null;
+    }
     if (m_Launched != null) {
       for (LocalScopeTee local : m_Launched)
 	local.wrapUp();
