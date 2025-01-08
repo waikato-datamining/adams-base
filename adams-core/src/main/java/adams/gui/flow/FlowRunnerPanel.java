@@ -15,7 +15,7 @@
 
 /*
  * FlowRunnerPanel.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -951,6 +951,15 @@ public class FlowRunnerPanel
    */
   public boolean isStopping() {
     return (m_CurrentWorker != null) && m_CurrentWorker.isStopping();
+  }
+
+  /**
+   * Returns whether a flow is currently running.
+   *
+   * @return		true if a flow is being executed
+   */
+  public boolean isPaused() {
+    return isRunning() && m_CurrentWorker.isPaused();
   }
 
   /**

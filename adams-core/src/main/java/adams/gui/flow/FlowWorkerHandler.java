@@ -15,7 +15,7 @@
 
 /*
  * FlowWorkerHandler.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -125,4 +125,25 @@ public interface FlowWorkerHandler
    * @return		the panel, null if not available
    */
   public StoragePanel getStoragePanel();
+
+  /**
+   * Returns whether a flow is currently running.
+   *
+   * @return		true if a flow is being executed
+   */
+  public boolean isRunning();
+
+  /**
+   * Returns whether a flow is currently being stopped.
+   *
+   * @return		true if a flow is currently being stopped
+   */
+  public boolean isStopping();
+
+  /**
+   * Returns whether a flow is currently running.
+   *
+   * @return		true if a flow is being executed
+   */
+  public boolean isPaused();
 }
