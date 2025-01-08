@@ -15,7 +15,7 @@
 
 /*
  * AbstractJob.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -203,7 +203,7 @@ public abstract class AbstractJob
 
     // process data
     if (success) {
-      if (m_ProgressInfo != null)
+      if ((m_ProgressInfo != null) && isLoggingEnabled())
 	getLogger().info("Start: " + m_ProgressInfo);
       try {
 	process();
@@ -212,7 +212,7 @@ public abstract class AbstractJob
 	m_ExecutionError = "'process' failed with exception: " + LoggingHelper.throwableToString(t);
 	success          = false;
       }
-      if (m_ProgressInfo != null)
+      if ((m_ProgressInfo != null) && isLoggingEnabled())
 	getLogger().info("End: " + m_ProgressInfo + " - success? " + success);
     }
 
@@ -267,7 +267,8 @@ public abstract class AbstractJob
    */
   public void stopExecution() {
     m_Stopped = true;
-    getLogger().severe("Execution stopped");
+    if (isLoggingEnabled())
+      getLogger().info("Execution stopped");
   }
 
   /**
