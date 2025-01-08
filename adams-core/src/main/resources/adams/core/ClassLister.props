@@ -257,6 +257,10 @@ adams.data.io.output.AbstractObjectWriter=\
 adams.data.io.output.AbstractIndexedSplitsRunsWriter=\
   adams.data.io.output
 
+# the JAI writer plugins
+adams.data.io.output.jaiwriter.AbstractJAIWriter=\
+  adams.data.io.output.jaiwriter
+
 # the schemes for extracting the ID from spectra/sample data
 adams.data.idextraction.IDExtractor=\
   adams.data.idextraction
