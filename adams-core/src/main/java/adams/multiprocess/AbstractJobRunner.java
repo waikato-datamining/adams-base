@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractJobRunner.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -27,7 +27,6 @@ import adams.flow.core.Actor;
  * Ancestor for jobrunner classes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of job to handle
  */
 public abstract class AbstractJobRunner<T extends Job>
@@ -41,6 +40,9 @@ public abstract class AbstractJobRunner<T extends Job>
 
   /** whether the execution is paused. */
   protected boolean m_Paused;
+
+  /** whether termination is under way. */
+  protected boolean m_Terminating;
 
   /** the flow context. */
   protected transient Actor m_FlowContext;
@@ -189,6 +191,7 @@ public abstract class AbstractJobRunner<T extends Job>
    * @return		null if successful, otherwise error message
    */
   protected String preTerminate() {
+    m_Terminating = true;
     return null;
   }
 
@@ -206,8 +209,9 @@ public abstract class AbstractJobRunner<T extends Job>
    * @return		null if successful, otherwise error message
    */
   protected String postTerminate() {
-    m_Running = false;
-    m_Paused  = false;
+    m_Terminating = false;
+    m_Running     = false;
+    m_Paused      = false;
     return null;
   }
 

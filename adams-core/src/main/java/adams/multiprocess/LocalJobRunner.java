@@ -15,7 +15,7 @@
 
 /*
  * JobRunner.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.multiprocess;
@@ -28,6 +28,7 @@ import adams.event.JobCompleteEvent;
 import adams.event.JobCompleteListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -210,6 +211,10 @@ public class LocalJobRunner<T extends Job>
    * @param job		the job to add
    */
   public void add(T job) {
+    if (m_Terminating) {
+      getLogger().warning("Terminating, cannot add new jobs!");
+      return;
+    }
     m_Jobs.add(job);
     synchronized(m_Queue) {
       m_Queue.add(job);
@@ -223,6 +228,10 @@ public class LocalJobRunner<T extends Job>
    * @param jobs	the jobs to add
    */
   public void add(JobList<T> jobs) {
+    if (m_Terminating) {
+      getLogger().warning("Terminating, cannot add new jobs!");
+      return;
+    }
     m_Jobs.addAll(jobs);
     synchronized(m_Queue) {
       m_Queue.addAll(jobs);
@@ -365,11 +374,15 @@ public class LocalJobRunner<T extends Job>
    * @return		null if successful, otherwise error message
    */
   protected String doTerminate(boolean wait) {
+    List<T> 	jobs;
+
     if (m_Executor == null)
       return null;
 
     try {
-      for (Job j: m_Jobs)
+      jobs = new ArrayList<>(m_Jobs);
+      Collections.reverse(jobs);
+      for (Job j: jobs)
 	j.stopExecution();
       if (m_Executor.isPaused())
 	m_Executor.resumeExecution();

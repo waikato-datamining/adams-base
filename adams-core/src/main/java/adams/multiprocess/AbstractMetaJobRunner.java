@@ -15,7 +15,7 @@
 
 /*
  * AbstractMetaJobRunner.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -138,6 +138,10 @@ public abstract class AbstractMetaJobRunner
    */
   @Override
   public void add(Job job) {
+    if (m_Terminating) {
+      getLogger().warning("Terminating, cannot add new jobs!");
+      return;
+    }
     m_Jobs.add(job);
   }
 
@@ -148,6 +152,10 @@ public abstract class AbstractMetaJobRunner
    */
   @Override
   public void add(JobList jobs) {
+    if (m_Terminating) {
+      getLogger().warning("Terminating, cannot add new jobs!");
+      return;
+    }
     m_Jobs.addAll(jobs);
   }
 
