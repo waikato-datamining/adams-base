@@ -15,7 +15,7 @@
 
 /*
  * CloseAndCleanUp.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.notificationareaaction;
@@ -61,6 +61,6 @@ public class CloseAndCleanUp
    */
   @Override
   public void update() {
-    setEnabled((m_Owner.getOwner().getLastFlow() != null));
+    setEnabled((m_Owner.getOwner().getLastFlow() != null) && !m_Owner.getOwner().isRunning());
   }
 }
