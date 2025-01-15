@@ -15,7 +15,7 @@
 
 /*
  * TextEditorPanel.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -1096,5 +1096,44 @@ public class TextEditorPanel
    */
   public void setCaret(Caret c) {
     m_TextArea.setCaret(c);
+  }
+
+  /**
+   * Returns the number of lines in the document (= # of elements).
+   *
+   * @return		the number of lines
+   */
+  public int getLineCount() {
+    return m_TextArea.getLineCount();
+  }
+
+  /**
+   * Jumps to the specified line.
+   *
+   * @param index	the 0-based index for the line
+   * @return		true if successfully jumped
+   */
+  public boolean gotoLine(int index) {
+    return m_TextArea.gotoLine(index);
+  }
+
+  /**
+   * Determines the line number for the caret position.
+   *
+   * @param position	the caret position
+   * @return		the line number, -1 if failed to determine
+   */
+  public int caretToLine(int position) {
+    return m_TextArea.caretToLine(position);
+  }
+
+  /**
+   * Removes all lines before the specified one.
+   *
+   * @param index	the 0-based index of the line to become the new first line
+   * @return		true if successful removed
+   */
+  public boolean removeBeforeLine(int index) {
+    return m_TextArea.removeBeforeLine(index);
   }
 }
