@@ -15,10 +15,11 @@
 
 /*
  * BaseTextArea.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
+import adams.core.logging.LoggingHelper;
 import adams.event.AnyChangeListenerSupporter;
 import adams.gui.chooser.FontChooser;
 
@@ -36,6 +37,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * A customized JTextArea. Adds functionality for printing and selecting fonts.
@@ -182,12 +184,12 @@ public class BaseTextArea
       print(null, null, true, null, null, true);
     }
     catch (Exception ex) {
-      ex.printStackTrace();
-      msg = "Failed to print:\n" + ex;
+      msg = "Failed to print:" + ex;
+      LoggingHelper.global().log(Level.SEVERE, msg, ex);
       if (getParentDialog() != null)
-	GUIHelper.showErrorMessage(getParentDialog(), msg);
+	GUIHelper.showErrorMessage(getParentDialog(), msg, ex, "Error");
       else
-	GUIHelper.showErrorMessage(getParentFrame(), msg);
+	GUIHelper.showErrorMessage(getParentFrame(), msg, ex, "Error");
     }
   }
 
@@ -313,8 +315,7 @@ public class BaseTextArea
 	replaceRange("", 0, offset);
       }
       catch (Exception e) {
-        System.err.println("append(String,int) generated exception:");
-        e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "append(String,int) generated exception:", e);
       }
     }
   }

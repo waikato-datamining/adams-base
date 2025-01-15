@@ -15,13 +15,14 @@
 
 /*
  * BaseTextPane.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2003-2007 Philip Isenhour (setting font)
  */
 package adams.gui.core;
 
 import adams.core.License;
 import adams.core.annotation.MixedCopyright;
+import adams.core.logging.LoggingHelper;
 import adams.event.AnyChangeListenerSupporter;
 import adams.gui.chooser.FontChooser;
 
@@ -42,6 +43,7 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * A customized JTextPane. Adds functionality for wordwrap, printing and
@@ -139,12 +141,12 @@ public class BaseTextPane
       print(null, null, true, null, null, true);
     }
     catch (Exception ex) {
-      ex.printStackTrace();
-      msg = "Failed to print:\n" + ex;
+      msg = "Failed to print:" + ex;
+      LoggingHelper.global().log(Level.SEVERE, msg, ex);
       if (getParentDialog() != null)
-	GUIHelper.showErrorMessage(getParentDialog(), msg);
+	GUIHelper.showErrorMessage(getParentDialog(), msg, ex, "Error");
       else
-	GUIHelper.showErrorMessage(getParentFrame(), msg);
+	GUIHelper.showErrorMessage(getParentFrame(), msg, ex, "Error");
     }
   }
 
@@ -300,8 +302,7 @@ public class BaseTextPane
       doc.insertString(doc.getLength(), text, a);
     }
     catch (Exception e) {
-      System.err.println("Failed to insert text: " + text);
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to insert text: " + text, e);
     }
     setCaretPosition(doc.getLength());
   }
