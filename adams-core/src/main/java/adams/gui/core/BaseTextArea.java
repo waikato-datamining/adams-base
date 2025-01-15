@@ -270,6 +270,35 @@ public class BaseTextArea
   }
 
   /**
+   * Removes all lines before the specified one.
+   *
+   * @param index	the 0-based index of the line to become the new first line
+   * @return		true if successful removed
+   */
+  public boolean removeBeforeLine(int index) {
+    Element	root;
+
+    if (index >= getLineCount())
+      return false;
+
+    synchronized(getDocument()) {
+      root = getDocument().getDefaultRootElement();
+      if (root.getElementCount() <= index)
+	return false;
+      root.getElement(index).getStartOffset();
+      try {
+	getDocument().remove(0, root.getElement(index).getStartOffset());
+      }
+      catch (Exception e) {
+	LoggingHelper.global().log(Level.SEVERE, "Failed to remove lines before " + index, e);
+	return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Sets the text font.
    *
    * @param value the font
