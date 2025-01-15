@@ -15,7 +15,7 @@
 
 /*
  * Display.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -53,106 +53,122 @@ import java.awt.event.ActionEvent;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Display
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
- * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full 
+ * &nbsp;&nbsp;&nbsp;If enabled uses just the name for the title instead of the actor's full
  * &nbsp;&nbsp;&nbsp;name.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-display-in-editor &lt;boolean&gt; (property: displayInEditor)
- * &nbsp;&nbsp;&nbsp;If enabled displays the panel in a tab in the flow editor rather than in 
- * &nbsp;&nbsp;&nbsp;a separate frame.
- * &nbsp;&nbsp;&nbsp;default: false
+ *
+ * <pre>-display-type &lt;adams.flow.core.displaytype.AbstractDisplayType&gt; (property: displayType)
+ * &nbsp;&nbsp;&nbsp;Determines how to show the display, eg as standalone frame (default) or
+ * &nbsp;&nbsp;&nbsp;in the Flow editor window.
+ * &nbsp;&nbsp;&nbsp;default: adams.flow.core.displaytype.Default
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-width &lt;int&gt; (property: width)
  * &nbsp;&nbsp;&nbsp;The width of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 640
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the dialog.
  * &nbsp;&nbsp;&nbsp;default: 480
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: x)
  * &nbsp;&nbsp;&nbsp;The X position of the dialog (&gt;=0: absolute, -1: left, -2: center, -3: right
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: y)
  * &nbsp;&nbsp;&nbsp;The Y position of the dialog (&gt;=0: absolute, -1: top, -2: center, -3: bottom
  * &nbsp;&nbsp;&nbsp;).
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -3
  * </pre>
- * 
+ *
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font of the dialog.
  * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
- * 
+ *
  * <pre>-always-clear &lt;boolean&gt; (property: alwaysClear)
  * &nbsp;&nbsp;&nbsp;If enabled, the display is always cleared before processing a token.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-show-flow-control-submenu &lt;boolean&gt; (property: showFlowControlSubMenu)
+ * &nbsp;&nbsp;&nbsp;If enabled, adds a flow control sub-menu to the menubar.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-writer &lt;adams.data.io.output.AbstractTextWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The writer to use for storing the textual output.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.NullWriter
  * </pre>
- * 
+ *
  * <pre>-line-wrap &lt;boolean&gt; (property: lineWrap)
  * &nbsp;&nbsp;&nbsp;If enabled, line wrap is used.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-wrap-style-word &lt;boolean&gt; (property: wrapStyleWord)
  * &nbsp;&nbsp;&nbsp;If enabled, wrapping occurs on word boundaries instead of character boundaries.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-max-lines &lt;int&gt; (property: maxLines)
+ * &nbsp;&nbsp;&nbsp;The maximum number of lines to keep at the end of the document; &lt;= no limit.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class Display
-  extends AbstractTextualDisplay 
+  extends AbstractTextualDisplay
   implements DisplayPanelProvider {
 
   /** for serialization. */
@@ -200,6 +216,9 @@ public class Display
   /** use word wrap style. */
   protected boolean m_WrapStyleWord;
 
+  /** the maximum number of lines to keep. */
+  protected int m_MaxLines;
+
   /**
    * Returns a string describing the object.
    *
@@ -208,8 +227,8 @@ public class Display
   @Override
   public String globalInfo() {
     return
-        "Actor that outputs any object that arrives at its input port via "
-      + "the 'toString()' method.";
+      "Actor that outputs any object that arrives at its input port via "
+	+ "the 'toString()' method.";
   }
 
   /**
@@ -230,6 +249,10 @@ public class Display
     m_OptionManager.add(
       "wrap-style-word", "wrapStyleWord",
       false);
+
+    m_OptionManager.add(
+      "max-lines", "maxLines",
+      -1, -1, null);
   }
 
   /**
@@ -319,6 +342,35 @@ public class Display
    */
   public String wrapStyleWordTipText() {
     return "If enabled, wrapping occurs on word boundaries instead of character boundaries.";
+  }
+
+  /**
+   * Sets the maximum number of lines to keep at the end of the document.
+   *
+   * @param value 	the maximum, <= for no limit
+   */
+  public void setMaxLines(int value) {
+    m_MaxLines = value;
+    reset();
+  }
+
+  /**
+   * Returns the maximum number of lines to keep at the end of the document.
+   *
+   * @return 		the maximum, <=0 for no limit
+   */
+  public int getMaxLines() {
+    return m_MaxLines;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String maxLinesTipText() {
+    return "The maximum number of lines to keep at the end of the document; <= no limit.";
   }
 
   /**
@@ -556,7 +608,7 @@ public class Display
 
     result = null;
 
-    panel = (TextEditorPanel) m_Panel; 
+    panel = (TextEditorPanel) m_Panel;
     if (panel != null) {
       if (panel.getContent().length() != 0)
 	result = panel.getContent();
@@ -601,9 +653,16 @@ public class Display
   @Override
   protected void display(Token token) {
     TextEditorPanel 	panel;
+    int			count;
 
     panel = (TextEditorPanel) m_Panel;
     panel.append(token.getPayload() + "\n");
+    // trim lines?
+    if (m_MaxLines > 0) {
+      count = panel.getLineCount();
+      if (count >= m_MaxLines)
+	panel.removeBeforeLine(count - m_MaxLines);
+    }
     panel.setModified(false);
   }
 
