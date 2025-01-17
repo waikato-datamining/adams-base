@@ -150,7 +150,6 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Breakpoint
   extends AbstractTransformer
@@ -274,6 +273,8 @@ public class Breakpoint
 
     result = QuickInfoHelper.toString(this, "condition", m_Condition);
     result += QuickInfoHelper.toString(this, "views", m_Views, ", views: ");
+    if (m_BringToFront)
+      result += QuickInfoHelper.toString(this, "bringToFront", m_BringToFront, "bring-to-front", ", ");
 
     return result;
   }
