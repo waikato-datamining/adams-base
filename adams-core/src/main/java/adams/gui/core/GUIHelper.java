@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -1528,6 +1528,17 @@ public class GUIHelper {
    * Attempts to bring the enclosing window to the front. Note: does not
    * work on all platforms.
    *
+   * @param comp	the container whose parent window to bring to front
+   */
+  public static void toFront(final Component comp) {
+    if (comp instanceof Container)
+      toFront((Container) comp);
+  }
+
+  /**
+   * Attempts to bring the enclosing window to the front. Note: does not
+   * work on all platforms.
+   *
    * @param cont	the container whose parent window to bring to front
    */
   public static void toFront(final Container cont) {
@@ -1536,12 +1547,21 @@ public class GUIHelper {
     run = new Runnable() {
       @Override
       public void run() {
-	if (getParentDialog(cont) != null)
+	if (getParentDialog(cont) != null) {
+	  cont.setVisible(true);
 	  getParentDialog(cont).toFront();
-	else if (getParentFrame(cont) != null)
+	  cont.requestFocus();
+	}
+	else if (getParentFrame(cont) != null) {
+	  cont.setVisible(true);
 	  getParentFrame(cont).toFront();
-	else if (getParentInternalFrame(cont) != null)
+	  cont.requestFocus();
+	}
+	else if (getParentInternalFrame(cont) != null) {
+	  cont.setVisible(true);
 	  getParentInternalFrame(cont).toFront();
+	  cont.requestFocus();
+	}
       }
     };
 
