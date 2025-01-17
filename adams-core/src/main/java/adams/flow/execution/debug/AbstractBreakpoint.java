@@ -15,7 +15,7 @@
 
 /*
  * AbstractBreakpoint.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution.debug;
 
@@ -28,7 +28,7 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
 
 /**
  * Ancestor for breakpoints for execution listeners.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractBreakpoint
@@ -39,7 +39,7 @@ public abstract class AbstractBreakpoint
 
   /** whether the breakpoint is disabled. */
   protected boolean m_Disabled;
-  
+
   /** break on preInput. */
   protected boolean m_OnPreInput;
 
@@ -70,6 +70,9 @@ public abstract class AbstractBreakpoint
   /** whether this is a one-off. */
   protected boolean m_OneOff;
 
+  /** whether to bring the window to the front. */
+  protected boolean m_BringToFront;
+
   /** the trigger counter. */
   protected int m_TriggerCount;
 
@@ -79,50 +82,54 @@ public abstract class AbstractBreakpoint
   @Override
   public void defineOptions() {
     super.defineOptions();
-    
-    m_OptionManager.add(
-	    "disabled", "disabled",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-pre-input", "onPreInput",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-post-input", "onPostInput",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-pre-execute", "onPreExecute",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-post-execute", "onPostExecute",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-pre-output", "onPreOutput",
-	    false);
-    
-    m_OptionManager.add(
-	    "on-post-output", "onPostOutput",
-	    false);
 
     m_OptionManager.add(
-	    "watch", "watches",
-	    new BaseString[0]);
+      "disabled", "disabled",
+      false);
 
     m_OptionManager.add(
-	    "watch-type", "watchTypes",
-	    new ExpressionType[0]);
+      "on-pre-input", "onPreInput",
+      false);
 
     m_OptionManager.add(
-	    "view", "views",
-	    new View[0]);
+      "on-post-input", "onPostInput",
+      false);
 
     m_OptionManager.add(
-	    "one-off", "oneOff",
-	    false);
+      "on-pre-execute", "onPreExecute",
+      false);
+
+    m_OptionManager.add(
+      "on-post-execute", "onPostExecute",
+      false);
+
+    m_OptionManager.add(
+      "on-pre-output", "onPreOutput",
+      false);
+
+    m_OptionManager.add(
+      "on-post-output", "onPostOutput",
+      false);
+
+    m_OptionManager.add(
+      "watch", "watches",
+      new BaseString[0]);
+
+    m_OptionManager.add(
+      "watch-type", "watchTypes",
+      new ExpressionType[0]);
+
+    m_OptionManager.add(
+      "view", "views",
+      new View[0]);
+
+    m_OptionManager.add(
+      "one-off", "oneOff",
+      false);
+
+    m_OptionManager.add(
+      "bring-to-front", "bringToFront",
+      false);
   }
 
   /**
@@ -163,7 +170,7 @@ public abstract class AbstractBreakpoint
   public String disabledTipText() {
     return "If set to true, the breakpoint is completely disabled.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on pre-input (of token).
    *
@@ -192,7 +199,7 @@ public abstract class AbstractBreakpoint
   public String onPreInputTipText() {
     return "If set to true, the breakpoint gets evaluated at pre-input (of token) time; token available.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on post-input (of token).
    *
@@ -221,7 +228,7 @@ public abstract class AbstractBreakpoint
   public String onPostInputTipText() {
     return "If set to true, the breakpoint gets evaluated at post-input (of token) time.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on pre-execute.
    *
@@ -250,7 +257,7 @@ public abstract class AbstractBreakpoint
   public String onPreExecuteTipText() {
     return "If set to true, the breakpoint gets evaluated at pre-execute time.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on post-execute.
    *
@@ -279,7 +286,7 @@ public abstract class AbstractBreakpoint
   public String onPostExecuteTipText() {
     return "If set to true, the breakpoint gets evaluated at post-execute time.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on pre-output (of token).
    *
@@ -308,7 +315,7 @@ public abstract class AbstractBreakpoint
   public String onPreOutputTipText() {
     return "If set to true, the breakpoint gets evaluated at pre-output (of token) time; token available.";
   }
-  
+
   /**
    * Sets whether to evaluate the breakpoing on post-output (of token).
    *
@@ -372,8 +379,8 @@ public abstract class AbstractBreakpoint
    */
   public String watchesTipText() {
     return
-        "The expression to display initially in the watch dialog; the type of "
-      + "the watch needs to be specified as well.";
+      "The expression to display initially in the watch dialog; the type of "
+	+ "the watch needs to be specified as well.";
   }
 
   /**
@@ -403,8 +410,8 @@ public abstract class AbstractBreakpoint
    */
   public String watchTypesTipText() {
     return
-        "The types of the watch expressions; determines how the expressions "
-      + "get evaluated and displayed.";
+      "The types of the watch expressions; determines how the expressions "
+	+ "get evaluated and displayed.";
   }
 
   /**
@@ -466,58 +473,87 @@ public abstract class AbstractBreakpoint
   }
 
   /**
+   * Sets whether to bring the flow editor window to the front once the breakpoint is reached.
+   *
+   * @param value	true if to bring to front
+   */
+  public void setBringToFront(boolean value) {
+    m_BringToFront = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to bring the flow editor window to the front once the breakpoint is reached.
+   *
+   * @return		true if to bring to front
+   */
+  public boolean getBringToFront() {
+    return m_BringToFront;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bringToFrontTipText() {
+    return "If set to true, it is attempted to bring the flow editor window to the front once the breakpoint is reached. NB Does not work on all platforms.";
+  }
+
+  /**
    * Evaluates the breakpoint at pre-input.
-   * 
+   *
    * @param actor	the current actor
    * @param token	the token available for input
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePreInput(Actor actor, Token token);
-  
+
   /**
    * Evaluates the breakpoint at post-input.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePostInput(Actor actor);
-  
+
   /**
    * Evaluates the breakpoint at pre-execute.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePreExecute(Actor actor);
-  
+
   /**
    * Evaluates the breakpoint at post-execute.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePostExecute(Actor actor);
-  
+
   /**
    * Evaluates the breakpoint at pre-output.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePreOutput(Actor actor);
-  
+
   /**
    * Evaluates the breakpoint at post-output.
-   * 
+   *
    * @param actor	the current actor
    * @param token	the token available for output
    * @return		true if breakpoint triggers
    */
   protected abstract boolean evaluatePostOutput(Actor actor, Token token);
-  
+
   /**
    * Checks whether the breakpoint gets triggered in pre-input.
-   * 
+   *
    * @param actor	the current actor
    * @param token	the token available for input
    * @return		true if triggered
@@ -525,50 +561,50 @@ public abstract class AbstractBreakpoint
   public boolean triggersPreInput(Actor actor, Token token) {
     return m_OnPreInput && evaluatePreInput(actor, token);
   }
-  
+
   /**
    * Checks whether the breakpoint gets triggered in post-input.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if triggered
    */
   public boolean triggersPostInput(Actor actor) {
     return m_OnPostInput && evaluatePostInput(actor);
   }
-  
+
   /**
    * Checks whether the breakpoint gets triggered in pre-execute.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if triggered
    */
   public boolean triggersPreExecute(Actor actor) {
     return m_OnPreExecute && evaluatePreExecute(actor);
   }
-  
+
   /**
    * Checks whether the breakpoint gets triggered in post-execute.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if triggered
    */
   public boolean triggersPostExecute(Actor actor) {
     return m_OnPostExecute && evaluatePostExecute(actor);
   }
-  
+
   /**
    * Checks whether the breakpoint gets triggered in pre-output.
-   * 
+   *
    * @param actor	the current actor
    * @return		true if triggered
    */
   public boolean triggersPreOutput(Actor actor) {
     return m_OnPreOutput && evaluatePreOutput(actor);
   }
-  
+
   /**
    * Checks whether the breakpoint gets triggered in post-output.
-   * 
+   *
    * @param actor	the current actor
    * @param token	the token available for output
    * @return		true if triggered

@@ -15,7 +15,7 @@
 
 /*
  * Breakpoint.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -46,97 +46,107 @@ import adams.gui.tools.ExpressionWatchPanel.ExpressionType;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Breakpoint
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-scope-restriction &lt;adams.flow.execution.debug.AbstractScopeRestriction&gt; (property: scopeRestriction)
  * &nbsp;&nbsp;&nbsp;The scopeRestriction to use for suspending the flow execution.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.execution.debug.NoScopeRestriction
  * </pre>
- * 
+ *
  * <pre>-on-pre-input &lt;boolean&gt; (property: onPreInput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-input (of token) time;
  * &nbsp;&nbsp;&nbsp; token available.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-on-post-input &lt;boolean&gt; (property: onPostInput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-input (of token) time.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-on-pre-execute &lt;boolean&gt; (property: onPreExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-execute time.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-on-post-execute &lt;boolean&gt; (property: onPostExecute)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-execute time.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-on-pre-output &lt;boolean&gt; (property: onPreOutput)
  * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at pre-output (of token) time;
  * &nbsp;&nbsp;&nbsp; token available.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-on-post-output &lt;boolean&gt; (property: onPostOutput)
- * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-output (of token) 
+ * &nbsp;&nbsp;&nbsp;If set to true, the breakpoint gets evaluated at post-output (of token)
  * &nbsp;&nbsp;&nbsp;time.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-condition &lt;adams.flow.condition.bool.BooleanCondition&gt; (property: condition)
- * &nbsp;&nbsp;&nbsp;The condition to evaluate; if the condition evaluates to 'true', the execution 
+ * &nbsp;&nbsp;&nbsp;The condition to evaluate; if the condition evaluates to 'true', the execution
  * &nbsp;&nbsp;&nbsp;of the flow is paused.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression
  * </pre>
- * 
+ *
  * <pre>-watch &lt;adams.core.base.BaseString&gt; [-watch ...] (property: watches)
- * &nbsp;&nbsp;&nbsp;The expression to display initially in the watch dialog; the type of the 
+ * &nbsp;&nbsp;&nbsp;The expression to display initially in the watch dialog; the type of the
  * &nbsp;&nbsp;&nbsp;watch needs to be specified as well.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-watch-type &lt;VARIABLE|BOOLEAN|NUMERIC|STRING&gt; [-watch-type ...] (property: watchTypes)
- * &nbsp;&nbsp;&nbsp;The types of the watch expressions; determines how the expressions get evaluated 
+ *
+ * <pre>-watch-type &lt;VARIABLE|STRING|BOOLEAN_EXPRESSION|MATH_EXPRESSION|STRING_EXPRESSION&gt; [-watch-type ...] (property: watchTypes)
+ * &nbsp;&nbsp;&nbsp;The types of the watch expressions; determines how the expressions get evaluated
  * &nbsp;&nbsp;&nbsp;and displayed.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-view &lt;SOURCE|EXPRESSIONS|VARIABLES|STORAGE|INSPECT_TOKEN|BREAKPOINTS&gt; [-view ...] (property: views)
  * &nbsp;&nbsp;&nbsp;The views to display automatically when the breakpoint is reached.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
+ * <pre>-bring-to-front &lt;boolean&gt; (property: bringToFront)
+ * &nbsp;&nbsp;&nbsp;If set to true, it is attempted to bring the flow editor window to the front
+ * &nbsp;&nbsp;&nbsp;once the breakpoint is reached. NB Does not work on all platforms.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -182,6 +192,9 @@ public class Breakpoint
   /** the watch expression types. */
   protected ExpressionType[] m_WatchTypes;
 
+  /** whether to bring the window to the front. */
+  protected boolean m_BringToFront;
+
   /**
    * Returns a string describing the object.
    *
@@ -190,8 +203,8 @@ public class Breakpoint
   @Override
   public String globalInfo() {
     return
-        "Allows to pause the execution of the flow when this actor is reached "
-      + "and the condition evaluates to 'true'.";
+      "Allows to pause the execution of the flow when this actor is reached "
+	+ "and the condition evaluates to 'true'.";
   }
 
   /**
@@ -244,6 +257,10 @@ public class Breakpoint
     m_OptionManager.add(
       "view", "views",
       new View[0]);
+
+    m_OptionManager.add(
+      "bring-to-front", "bringToFront",
+      false);
   }
 
   /**
@@ -491,8 +508,8 @@ public class Breakpoint
    */
   public String conditionTipText() {
     return
-        "The condition to evaluate; if the condition evaluates to 'true', "
-      + "the execution of the flow is paused.";
+      "The condition to evaluate; if the condition evaluates to 'true', "
+	+ "the execution of the flow is paused.";
   }
 
   /**
@@ -529,8 +546,8 @@ public class Breakpoint
    */
   public String watchesTipText() {
     return
-        "The expression to display initially in the watch dialog; the type of "
-      + "the watch needs to be specified as well.";
+      "The expression to display initially in the watch dialog; the type of "
+	+ "the watch needs to be specified as well.";
   }
 
   /**
@@ -560,8 +577,8 @@ public class Breakpoint
    */
   public String watchTypesTipText() {
     return
-        "The types of the watch expressions; determines how the expressions "
-      + "get evaluated and displayed.";
+      "The types of the watch expressions; determines how the expressions "
+	+ "get evaluated and displayed.";
   }
 
   /**
@@ -594,6 +611,35 @@ public class Breakpoint
   }
 
   /**
+   * Sets whether to bring the flow editor window to the front once the breakpoint is reached.
+   *
+   * @param value	true if to bring to front
+   */
+  public void setBringToFront(boolean value) {
+    m_BringToFront = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to bring the flow editor window to the front once the breakpoint is reached.
+   *
+   * @return		true if to bring to front
+   */
+  public boolean getBringToFront() {
+    return m_BringToFront;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bringToFrontTipText() {
+    return "If set to true, it is attempted to bring the flow editor window to the front once the breakpoint is reached. NB Does not work on all platforms.";
+  }
+
+  /**
    * Initializes the item for flow execution.
    *
    * @return		null if everything is fine, otherwise error message
@@ -619,10 +665,11 @@ public class Breakpoint
 	breakpoint.setOnPreOutput(m_OnPreOutput);
 	breakpoint.setOnPostOutput(m_OnPostOutput);
 	breakpoint.setCondition(getCondition());
-        breakpoint.setViews(m_Views.clone());
-        breakpoint.setWatches(m_Watches.clone());
-        breakpoint.setWatchTypes(m_WatchTypes.clone());
+	breakpoint.setViews(m_Views.clone());
+	breakpoint.setWatches(m_Watches.clone());
+	breakpoint.setWatchTypes(m_WatchTypes.clone());
 	breakpoint.setPath(new ActorPath(getFullName()));
+	breakpoint.setBringToFront(m_BringToFront);
 
 	flow.addBreakpoint(breakpoint, m_ScopeRestriction, false);
       }

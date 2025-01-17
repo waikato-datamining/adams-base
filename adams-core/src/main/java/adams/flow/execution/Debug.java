@@ -15,7 +15,7 @@
 
 /*
  * Debug.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -536,7 +536,7 @@ public class Debug
 	if (flow != null) {
 	  proc = new ListStructureModifyingActors();
 	  proc.process(flow);
-	  if (proc.getList().size() > 0) {
+	  if (!proc.getList().isEmpty()) {
 	    consumer = new NestedConsumer();
 	    producer = new DebugNestedProducer();
 	    producer.setOutputVariableValues(false);
@@ -684,6 +684,14 @@ public class Debug
   }
 
   /**
+   * Attempts to bring the flow editor to the front.
+   */
+  protected void bringToFront() {
+    if (getOwner().getParentComponent() != null)
+      GUIHelper.toFront(getOwner().getParentComponent());
+  }
+
+  /**
    * Suspends the flow execution.
    *
    * @param point	the breakpoint that triggered the suspend
@@ -699,7 +707,7 @@ public class Debug
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName());
 
-    blocked = ((point == null) && isStepMode()) || (point != null);
+    blocked = (point != null) || isStepMode();
 
     displayControlPanelIfNecessary();
 
@@ -713,8 +721,11 @@ public class Debug
       m_ControlPanel.setCurrentCondition(null);
     m_ControlPanel.breakpointReached(blocked);
 
-    if (point != null)
+    if (point != null) {
       point.triggered();
+      if (point.getBringToFront())
+	bringToFront();
+    }
 
     if (blocked)
       blockExecution();
@@ -737,7 +748,7 @@ public class Debug
     if (isLoggingEnabled())
       getLogger().info(point.getClass().getName() + "/" + stage + ": " + actor.getFullName() + "\n\t" + token);
 
-    blocked = ((point == null) && isStepMode()) || (point != null);
+    blocked = (point != null) || isStepMode();
 
     displayControlPanelIfNecessary();
 
@@ -754,6 +765,8 @@ public class Debug
     if (point != null) {
       removeOneOffBreakpoints(point);
       point.triggered();
+      if (point.getBringToFront())
+	bringToFront();
     }
 
     if (blocked)
