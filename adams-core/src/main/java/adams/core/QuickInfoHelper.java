@@ -15,7 +15,7 @@
 
 /*
  * QuickInfoHelper.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -273,8 +273,7 @@ public class QuickInfoHelper {
 
   /**
    * Returns either the variable name attached to optionhandler's property or
-   * the text if the current value is true. In both cases, the prefix (if not null)
-   * is prepended to the result string.
+   * the text if the current value is true.
    * 
    * @param handler	the option handler to inspect
    * @param property	the property of the option handler to inspect
