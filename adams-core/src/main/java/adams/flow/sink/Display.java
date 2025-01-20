@@ -656,8 +656,10 @@ public class Display
     TextEditorPanel 	panel;
 
     panel = (TextEditorPanel) m_Panel;
-    panel.append(token.getPayload() + "\n");
-    panel.setModified(false);
+    SwingUtilities.invokeLater(() -> {
+      panel.append(token.getPayload() + "\n");
+      panel.setModified(false);
+    });
     // trim lines?
     if (m_MaxLines > 0) {
       SwingUtilities.invokeLater(() -> {
