@@ -15,7 +15,7 @@
 
 /*
  * Console.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -142,7 +142,7 @@ public class Console
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "prefix", (getPrefix().length() > 0 ? getPrefix() : null));
+    return QuickInfoHelper.toString(this, "prefix", (!getPrefix().isEmpty() ? getPrefix() : null));
   }
 
   /**
@@ -168,7 +168,7 @@ public class Console
 
     try {
       str = new StringBuilder();
-      if (m_Prefix.length() > 0)
+      if (!m_Prefix.isEmpty())
 	str.append(m_Prefix);
       str.append(m_InputToken.getPayload().toString());
       if (isLoggingEnabled())
