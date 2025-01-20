@@ -15,7 +15,7 @@
 
 /*
  * Block.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -155,35 +155,35 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Continue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-condition &lt;adams.flow.condition.bool.BooleanCondition&gt; (property: condition)
  * &nbsp;&nbsp;&nbsp;The condition that determines whether to drop the token (ie continue) (evaluates 
  * &nbsp;&nbsp;&nbsp;to 'true') or not (evaluates to 'false').
  * &nbsp;&nbsp;&nbsp;default: adams.flow.condition.bool.Expression -expression false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -225,14 +225,20 @@ public class Block
    */
   @Override
   public String globalInfo() {
+    String	grammar;
+
+    grammar = getGrammar();
+    if (grammar == null)
+      grammar = "";
+    else
+      grammar = "\n\nThe following grammar is used for evaluating the boolean expressions "
+		  + "(depends on the selected condition):\n\n" + grammar;
     return
-        "Blocks the propagation of tokens if the condition evaluates to 'true', "
-      + "therefore acts like the 'continue' control statement.\n"
-      + "In case of integer or double tokens that arrive at the input, these "
-      + "can be accessed in the expression via 'X'.\n\n"
-      + "The following grammar is used for evaluating the boolean expressions "
-      + "(depends on the selected condition):\n\n"
-      + getGrammar();
+      "Blocks the propagation of tokens if the condition evaluates to 'true', "
+	+ "therefore acts like the 'continue' control statement.\n"
+	+ "In case of integer or double tokens that arrive at the input, these "
+	+ "can be accessed in the expression via 'X'."
+	+ grammar;
   }
 
   /**
@@ -253,23 +259,23 @@ public class Block
   @Override
   public void defineOptions() {
     super.defineOptions();
-    
+
     m_OptionManager.add(
-	    "condition", "condition",
-	    getDefaultCondition());
+      "condition", "condition",
+      getDefaultCondition());
   }
-  
+
   /**
    * Returns the default condition to use.
-   * 
+   *
    * @return		the condition
    */
   protected BooleanCondition getDefaultCondition() {
     Expression	result;
-    
+
     result = new Expression();
     result.setExpression(new BooleanExpressionText("false"));
-    
+
     return result;
   }
 
@@ -310,7 +316,7 @@ public class Block
    */
   public String conditionTipText() {
     return
-        "The condition that determines whether to drop the token (ie continue) "
+      "The condition that determines whether to drop the token (ie continue) "
 	+ "(evaluates to 'true') or not (evaluates to 'false').";
   }
 
