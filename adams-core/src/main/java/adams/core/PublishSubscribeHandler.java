@@ -15,7 +15,7 @@
 
 /*
  * PublishSubscribeHandler.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -40,6 +40,9 @@ public class PublishSubscribeHandler
   /** the subscribers. */
   public Set<PublicationListener> m_Subscribers;
 
+  /** the number data items published. */
+  public int m_NumPublished;
+
   /**
    * Initializes the handler.
    */
@@ -52,7 +55,8 @@ public class PublishSubscribeHandler
    * Initializes the members.
    */
   protected void initialize() {
-    m_Subscribers = new HashSet<>();
+    m_Subscribers  = new HashSet<>();
+    m_NumPublished = 0;
   }
 
   /**
@@ -78,6 +82,25 @@ public class PublishSubscribeHandler
    */
   public synchronized void clear() {
     m_Subscribers.clear();
+    m_NumPublished = 0;
+  }
+
+  /**
+   * Returns the number of subscribers.
+   *
+   * @return		the subscribers
+   */
+  public int size() {
+    return m_Subscribers.size();
+  }
+
+  /**
+   * Returns the number of data items published.
+   *
+   * @return		number of published items
+   */
+  public int getNumPublished() {
+    return m_NumPublished;
   }
 
   /**
@@ -92,5 +115,16 @@ public class PublishSubscribeHandler
     e = new PublicationEvent(this, source, data);
     for (PublicationListener s: m_Subscribers)
       s.dataPublished(e);
+    m_NumPublished++;
+  }
+
+  /**
+   * Returns some info on the pubsub handler.
+   *
+   * @return		the info
+   */
+  @Override
+  public String toString() {
+    return "# subscribers: " + size() + ", # published: " + getNumPublished();
   }
 }
