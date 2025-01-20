@@ -15,7 +15,7 @@
 
 /*
  * LabeledRegions.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.image.transformer.subimages;
 
@@ -32,7 +32,9 @@ import java.util.List;
  <!-- globalinfo-start -->
  * Extracts the sub-images according to the region definitions.<br>
  * Additional report values:<br>
- * - Region: for the region<br>
+ * - Region: for the region index (0-based, deprecated)<br>
+ * - Region-Index: for the region index (0-based)<br>
+ * - Region-Label: for the region label<br>
  * - Coordinates: for the 1-based coordinates (x,y,w,h)
  * <br><br>
  <!-- globalinfo-end -->
@@ -66,7 +68,7 @@ import java.util.List;
  * </pre>
  *
  * <pre>-one-based-coords &lt;boolean&gt; (property: oneBasedCoords)
- * &nbsp;&nbsp;&nbsp;If enabled, the coordinates are consisdered starting at 1 rather than 0.
+ * &nbsp;&nbsp;&nbsp;If enabled, the coordinates are considered starting at 1 rather than 0.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
  *
@@ -85,8 +87,14 @@ public class LabeledRegions
   /** for serialization. */
   private static final long serialVersionUID = 2488185528644078539L;
 
-  /** the key for the region. */
+  /** the key for the region (deprecated). */
   public final static String KEY_REGION = "Region";
+
+  /** the key for the region (index, 0-based). */
+  public final static String KEY_REGION_INDEX = "Region-Index";
+
+  /** the key for the region (label). */
+  public final static String KEY_REGION_LABEL = "Region-Label";
 
   /** the key for the coordinates. */
   public final static String KEY_COORDINATES = "Coordinates";
@@ -110,7 +118,9 @@ public class LabeledRegions
     return
       "Extracts the sub-images according to the region definitions.\n"
 	+ "Additional report values:\n"
-	+ "- " + KEY_REGION + ": for the region\n"
+	+ "- " + KEY_REGION + ": for the region index (0-based, deprecated)\n"
+	+ "- " + KEY_REGION_INDEX + ": for the region index (0-based)\n"
+	+ "- " + KEY_REGION_LABEL + ": for the region label\n"
 	+ "- " + KEY_COORDINATES + ": for the 1-based coordinates (x,y,w,h)";
   }
 
@@ -189,7 +199,7 @@ public class LabeledRegions
    * 			displaying in the gui
    */
   public String oneBasedCoordsTipText() {
-    return "If enabled, the coordinates are consisdered starting at 1 rather than 0.";
+    return "If enabled, the coordinates are considered starting at 1 rather than 0.";
   }
 
   /**
@@ -275,7 +285,7 @@ public class LabeledRegions
 
       if (isLoggingEnabled()) {
 	getLogger().info(
-	  "region=" + i + ", x=" + x + ", y=" + y
+	  "region-index=" + i + ", x=" + x + ", y=" + y
 	    + ", width=" + width + ", height=" + height
 	    + ", label=" + label);
       }
@@ -285,6 +295,8 @@ public class LabeledRegions
 	cont.setReport(transferObjects(cont.getReport(), x, y, width, height, label, m_LabelKey));
 	cont.setImage(bimage.getSubimage(x, y, width, height));
 	cont.getReport().setNumericValue(KEY_REGION, i);
+	cont.getReport().setNumericValue(KEY_REGION_INDEX, i);
+	cont.getReport().setStringValue(KEY_REGION_LABEL, label);
 	cont.getReport().setStringValue(KEY_COORDINATES, (x + 1) + "," + (y + 1) + "," + width + "," + height);
 	result.add(cont);
       }
