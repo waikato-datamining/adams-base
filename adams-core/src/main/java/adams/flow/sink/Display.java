@@ -32,6 +32,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -653,17 +654,19 @@ public class Display
   @Override
   protected void display(Token token) {
     TextEditorPanel 	panel;
-    int			count;
 
     panel = (TextEditorPanel) m_Panel;
     panel.append(token.getPayload() + "\n");
+    panel.setModified(false);
     // trim lines?
     if (m_MaxLines > 0) {
-      count = panel.getLineCount();
-      if (count >= m_MaxLines)
-	panel.removeBeforeLine(count - m_MaxLines);
+      SwingUtilities.invokeLater(() -> {
+	int count = panel.getLineCount();
+	if (count >= m_MaxLines)
+	  panel.removeBeforeLine(count - m_MaxLines);
+	panel.setModified(false);
+      });
     }
-    panel.setModified(false);
   }
 
   /**
