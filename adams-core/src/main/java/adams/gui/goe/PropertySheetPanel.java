@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2024 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -183,7 +183,7 @@ public class PropertySheetPanel
     m_SplitPaneContent.setDividerLocation(100);
     m_SplitPaneContent.setUISettingsParameters(getClass(), "GlobalInfoPropertiesDivider");
 
-    m_PanelAbout = new BaseTextAreaWithButtons();
+    m_PanelAbout = new BaseTextAreaWithButtons(1, 40);
     m_PanelAbout.setEditable(false);
     m_PanelAbout.setLineWrap(true);
     m_PanelAbout.setWrapStyleWord(true);
