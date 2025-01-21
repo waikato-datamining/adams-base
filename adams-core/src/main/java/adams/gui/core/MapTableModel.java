@@ -15,7 +15,7 @@
 
 /*
  * MapTableModel.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -35,6 +35,9 @@ public class MapTableModel
 
   /** for serialization. */
   private static final long serialVersionUID = -8212085458244592181L;
+
+  /** the type of the value column. */
+  protected Class m_TypeValue;
 
   /**
    * Initializes the table model with no data.
@@ -58,7 +61,18 @@ public class MapTableModel
    * @param data	the map to display
    */
   public MapTableModel(Map data) {
+    this(data, (Class) null);
+  }
+
+  /**
+   * Initializes the table model.
+   *
+   * @param data	the map to display
+   * @param typeValue 	the type for the value column, ignored if null
+   */
+  public MapTableModel(Map data, Class typeValue) {
     super(convert(data));
+    m_TypeValue = typeValue;
   }
 
   /**
@@ -68,7 +82,35 @@ public class MapTableModel
    * @param colNames	the column names to use
    */
   public MapTableModel(Map data, String[] colNames) {
+    this(data, colNames, null);
+  }
+
+  /**
+   * Initializes the table model.
+   *
+   * @param data	the map to display
+   * @param colNames	the column names to use
+   * @param typeValue 	the type for the value column, ignored if null
+   */
+  public MapTableModel(Map data, String[] colNames, Class typeValue) {
     super(convert(data), colNames);
+    m_TypeValue = typeValue;
+  }
+
+  /**
+   * Returns the class for the column.
+   *
+   * @param column	the column to retrieve the class for
+   * @return		the class
+   */
+  public Class getColumnClass(int column) {
+    if ((m_TypeValue != null) && (column == 1))
+      return m_TypeValue;
+
+    if (column == 0)
+      return String.class;
+    else
+      return Object.class;
   }
 
   /**
