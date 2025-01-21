@@ -15,7 +15,7 @@
 
 /*
  * FindUsages.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -23,22 +23,15 @@ import adams.flow.core.Actor;
 import adams.flow.core.ActorReferenceHandler;
 import adams.flow.processor.ActorLocationsPanel;
 import adams.flow.processor.ListActorReferenceUsage;
-import adams.flow.processor.ListAllStorageNames;
-import adams.flow.processor.ListAllVariables;
 import adams.flow.processor.ListStorageUsage;
 import adams.flow.processor.ListVariableUsage;
 import adams.gui.action.AbstractPropertiesAction;
 import adams.gui.core.ImageManager;
 import adams.gui.flow.tabhandler.GraphicalActorProcessorHandler;
-import adams.gui.flow.tree.Node;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.tree.TreeNode;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -70,73 +63,10 @@ public class FindUsages
    * @return		the actor reference, null if not applicable
    */
   protected String getActorReference(Actor actor, Actor parent) {
-    if (((parent != null) && (parent instanceof ActorReferenceHandler)))
+    if (parent instanceof ActorReferenceHandler)
       return actor.getName();
     else
       return null;
-  }
-
-  /**
-   * Tries to locate the variable names in the actor's options.
-   *
-   * @param actor	the actor to search
-   * @return		the variable names, empty if none found
-   */
-  protected List<String> findVariableNames(Actor actor) {
-    List<String>	result;
-    ListAllVariables	list;
-
-    list = new ListAllVariables();
-    list.process(actor);
-    result = list.getVariables();
-
-    if (result.size() > 1)
-      Collections.sort(result);
-
-    return result;
-  }
-
-  /**
-   * Tries to locate the storage name in the actor's options.
-   *
-   * @param actor	the actor to search
-   * @return		the storage name, empty if none found
-   */
-  protected List<String> findStorageNames(Actor actor) {
-    List<String>	result;
-    ListAllStorageNames	list;
-
-    list = new ListAllStorageNames();
-    list.process(actor);
-    result = list.getStorageNames();
-
-    if (result.size() > 1)
-      Collections.sort(result);
-
-    return result;
-  }
-
-  /**
-   * Locates all the occurrences of this actor.
-   *
-   * @param actor	the actor to look for
-   * @return		the actor paths
-   */
-  protected List<String> findActorLocations(Actor actor) {
-    List<String>		result;
-    Enumeration<TreeNode> 	nodes;
-    Node 			node;
-
-    result = new ArrayList<>();
-    nodes  = m_State.tree.getRootNode().depthFirstEnumeration();
-    while (nodes.hasMoreElements()) {
-      node = (Node) nodes.nextElement();
-      if (node.getActor().getClass().equals(actor.getClass())) {
-        result.add(node.getFullName());
-      }
-    }
-
-    return result;
   }
 
   /**
@@ -254,19 +184,19 @@ public class FindUsages
     parent = (m_State.parent != null) ? m_State.parent.getActor() : null;
 
     reference = getActorReference(actor, parent);
-    vars      = findVariableNames(actor);
-    items     = findStorageNames(actor);
-    locations = findActorLocations(actor);
+    vars      = m_State.tree.getOperations().findVariableNames(actor);
+    items     = m_State.tree.getOperations().findStorageNames(actor);
+    locations = m_State.tree.getOperations().findActorLocations(actor);
 
     // do we need a submenu?
     count = 0;
     if (reference != null)
       count++;
-    if (vars.size() > 0)
+    if (!vars.isEmpty())
       count++;
-    if (items.size() > 0)
+    if (!items.isEmpty())
       count++;
-    if (locations.size() > 0)
+    if (!locations.isEmpty())
       count++;
 
     if (count > 1) {
@@ -275,15 +205,15 @@ public class FindUsages
 	result.add(submenu);
 	submenu.add(createActorReferenceMenuItem(reference));
       }
-      if (locations.size() > 0)
+      if (!locations.isEmpty())
 	result.add(createActorLocationMenuItem(locations));
-      if (items.size() > 0) {
+      if (!items.isEmpty()) {
 	submenu = new JMenu("Storage item");
 	result.add(submenu);
 	for (String item: items)
 	  submenu.add(createStorageMenuItem(item));
       }
-      if (vars.size() > 0) {
+      if (!vars.isEmpty()) {
 	submenu = new JMenu("Variable");
 	result.add(submenu);
 	for (String var: vars)
@@ -294,13 +224,13 @@ public class FindUsages
       if (reference != null) {
 	result.add(createActorReferenceMenuItem(reference));
       }
-      if (locations.size() > 0)
+      if (!locations.isEmpty())
 	result.add(createActorLocationMenuItem(locations));
-      if (items.size() > 0) {
+      if (!items.isEmpty()) {
 	for (String item: items)
 	  result.add(createStorageMenuItem(item));
       }
-      if (vars.size() > 0) {
+      if (!vars.isEmpty()) {
 	for (String var: vars)
 	  result.add(createVariableMenuItem(var));
       }
@@ -325,8 +255,8 @@ public class FindUsages
       actor   = m_State.selNode.getActor();
       parent  = (m_State.parent != null) ? m_State.parent.getActor() : null;
       enabled = (getActorReference(actor, parent) != null)
-	|| (findVariableNames(actor).size() > 0)
-	|| (findStorageNames(actor).size() > 0);
+	|| !m_State.tree.getOperations().findVariableNames(actor).isEmpty()
+	|| !m_State.tree.getOperations().findStorageNames(actor).isEmpty();
     }
 
     setEnabled(enabled);

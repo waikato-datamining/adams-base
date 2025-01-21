@@ -66,6 +66,8 @@ import adams.flow.core.OutputProducer;
 import adams.flow.processor.ActorProcessor;
 import adams.flow.processor.ActorProcessorWithFlowPanelContext;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
+import adams.flow.processor.ListAllStorageNames;
+import adams.flow.processor.ListAllVariables;
 import adams.flow.processor.ModifyingProcessor;
 import adams.flow.processor.MultiProcessor;
 import adams.flow.sink.CallableSink;
@@ -119,6 +121,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
@@ -132,6 +135,8 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -2437,6 +2442,69 @@ public class TreeOperations
       result = new Node[lists.length];
       for (i = 0; i < lists.length; i++)
         result[i] = TreeHelper.buildTree(lists[i]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Tries to locate the variable names in the actor's options.
+   *
+   * @param actor	the actor to search
+   * @return		the variable names, empty if none found
+   */
+  public List<String> findVariableNames(Actor actor) {
+    List<String>	result;
+    ListAllVariables list;
+
+    list = new ListAllVariables();
+    list.process(actor);
+    result = list.getVariables();
+
+    if (result.size() > 1)
+      Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Tries to locate the storage name in the actor's options.
+   *
+   * @param actor	the actor to search
+   * @return		the storage name, empty if none found
+   */
+  public List<String> findStorageNames(Actor actor) {
+    List<String>	result;
+    ListAllStorageNames list;
+
+    list = new ListAllStorageNames();
+    list.process(actor);
+    result = list.getStorageNames();
+
+    if (result.size() > 1)
+      Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Locates all the occurrences of this actor.
+   *
+   * @param actor	the actor to look for
+   * @return		the actor paths
+   */
+  public List<String> findActorLocations(Actor actor) {
+    List<String>		result;
+    Enumeration<TreeNode> nodes;
+    Node 			node;
+
+    result = new ArrayList<>();
+    nodes  = m_Owner.getRootNode().depthFirstEnumeration();
+    while (nodes.hasMoreElements()) {
+      node = (Node) nodes.nextElement();
+      if (node.getActor().getClass().equals(actor.getClass())) {
+	result.add(node.getFullName());
+      }
     }
 
     return result;
