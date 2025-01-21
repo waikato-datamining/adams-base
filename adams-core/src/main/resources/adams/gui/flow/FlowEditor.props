@@ -188,7 +188,9 @@ Tree.PopupMenu=\
   submenu:Copy_(more)::\
     adams.gui.flow.tree.menu.CopyActorPlainText;\
     adams.gui.flow.tree.menu.CopyActorCommandline;\
-    adams.gui.flow.tree.menu.CopyActorPath,\
+    adams.gui.flow.tree.menu.CopyActorPath;\
+    adams.gui.flow.tree.menu.CopyVariableName;\
+    adams.gui.flow.tree.menu.CopyStorageName,\
   submenu:Paste:paste.gif:\
     adams.gui.flow.tree.menu.PasteActorBeneath;\
     -;\
