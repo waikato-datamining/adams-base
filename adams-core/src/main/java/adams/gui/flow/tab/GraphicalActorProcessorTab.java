@@ -15,7 +15,7 @@
 
 /*
  * GraphicalActorProcessorTab.java
- * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tab;
@@ -117,8 +117,12 @@ public class GraphicalActorProcessorTab
         // remove components that are no longer present
 	Set<Component> comps = new HashSet<>();
 	for (int i = 0; i < tabbed.getTabCount(); i++) {
-	  BaseSplitPane split = (BaseSplitPane) tabbed.getComponentAt(i);
-	  comps.add(split.getTopComponent());
+	  Component c = tabbed.getComponentAt(i);
+	  if (c instanceof DetachablePanel)
+	    c = ((DetachablePanel) c).getContentPanel().getComponent(0);
+	  if (c instanceof BaseSplitPane)
+	    c = ((BaseSplitPane) c).getTopComponent();
+	  comps.add(c);
 	}
 
 	List<Output> remove = new ArrayList<>();

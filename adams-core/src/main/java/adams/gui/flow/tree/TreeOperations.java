@@ -84,12 +84,14 @@ import adams.flow.standalone.SetVariable;
 import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
 import adams.flow.transformer.MapToVariables;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ErrorMessagePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.SearchPanel;
@@ -127,6 +129,8 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -1415,6 +1419,39 @@ public class TreeOperations
   }
 
   /**
+   * Wraps the graphical output of actor processors to make them re-runnable,
+   * adding a rerun button.
+   *
+   * @param handler	the handler in use
+   * @param comp	the output of the actor processor to wrap
+   * @param path 	the current path
+   * @param processor 	the current processor
+   * @return		the wrapped component
+   */
+  protected Component wrapActorProcessorGraphicalOutput(GraphicalActorProcessorHandler handler, Component comp, TreePath path, ActorProcessor processor) {
+    JPanel		result;
+    JPanel		panelButton;
+    BaseButton		buttonRerun;
+    ActorProcessor	fProcessor;
+
+    fProcessor = processor.shallowCopy();
+
+    result = new JPanel(new BorderLayout());
+    result.add(comp, BorderLayout.CENTER);
+
+    panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    result.add(panelButton, BorderLayout.SOUTH);
+    buttonRerun = new BaseButton("Rerun", ImageManager.getIcon("refresh"));
+    buttonRerun.addActionListener((ActionEvent e) -> {
+      handler.remove(result);
+      processActor(path, fProcessor);
+    });
+    panelButton.add(buttonRerun);
+
+    return result;
+  }
+
+  /**
    * Processes the specified actor with the specified actor processor.
    * NB: The options of the specified actor will get processed.
    *
@@ -1530,7 +1567,7 @@ public class TreeOperations
 	  if (handler != null) {
 	    handler.add(
 	      graphical.getTitle(),
-	      graphical.getGraphicalOutput(),
+	      wrapActorProcessorGraphicalOutput(handler, graphical.getGraphicalOutput(), fPath, fProcessor),
 	      fProcessor.hasErrors() ? Utils.flatten(fProcessor.getErrors(), "\n") : null);
 	    errorPanel = null;
 	  }
