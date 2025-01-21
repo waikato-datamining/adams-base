@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowExecutionListenerWithTable.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -27,7 +27,10 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.core.SortableAndSearchableTable;
+import adams.gui.event.SearchEvent;
 
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
@@ -46,6 +49,9 @@ public abstract class AbstractFlowExecutionListenerWithTable
   
   /** the table to update. */
   protected SortableAndSearchableTable m_Table;
+
+  /** the search panel. */
+  protected SearchPanel m_PanelSearch;
 
   /** the file chooser for saving the spreadsheet. */
   protected transient SpreadSheetFileChooser m_FileChooser;
@@ -81,7 +87,11 @@ public abstract class AbstractFlowExecutionListenerWithTable
     m_Table.setShowSimpleCellPopupMenu(true);
     m_Table.setShowSimpleHeaderPopupMenu(true);
     result.add(new BaseScrollPane(m_Table), BorderLayout.CENTER);
-    
+
+    m_PanelSearch = new SearchPanel(LayoutType.HORIZONTAL, true);
+    m_PanelSearch.addSearchListener((SearchEvent e) -> m_Table.search(e.getParameters().getSearchString(), e.getParameters().isRegExp()));
+    result.add(m_PanelSearch, BorderLayout.SOUTH);
+
     return result;
   }
 
@@ -102,7 +112,7 @@ public abstract class AbstractFlowExecutionListenerWithTable
   /**
    * Returns the table as spreadsheet.
    *
-   * @return		the spread sheet
+   * @return		the spreadsheet
    */
   public SpreadSheet getSheet() {
     SpreadSheet	result;
@@ -140,16 +150,7 @@ public abstract class AbstractFlowExecutionListenerWithTable
    */
   @Override
   protected void updateGUI() {
-    Runnable	run;
-
-    if (m_Table != null) {
-      run = new Runnable() {
-	@Override
-	public void run() {
-	  m_Table.setModel(createTableModel());
-	}
-      };
-      SwingUtilities.invokeLater(run);
-    }
+    if (m_Table != null)
+      SwingUtilities.invokeLater(() -> m_Table.setModel(createTableModel()));
   }
 }
