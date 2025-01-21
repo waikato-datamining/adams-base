@@ -15,7 +15,7 @@
 
 /*
  * ExecutionCounter.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution;
 
@@ -163,7 +163,7 @@ public class ExecutionCounter
    */
   @Override
   protected synchronized TableModel createTableModel() {
-    return new MapTableModel(new HashMap<>(m_Counts), new String[]{"Actor", "Count"});
+    return new MapTableModel(new HashMap<>(m_Counts), new String[]{"Actor", "Count"}, Integer.class);
   }
   
   /**
@@ -188,11 +188,8 @@ public class ExecutionCounter
     
     super.postExecute(actor);
     
-    key = actor.getFullName();
-    if (!m_Counts.containsKey(key))
-      count = 0;
-    else
-      count = m_Counts.get(key);
+    key   = actor.getFullName();
+    count = m_Counts.getOrDefault(key, 0);
     count++;
     m_Counts.put(key, count);
     
