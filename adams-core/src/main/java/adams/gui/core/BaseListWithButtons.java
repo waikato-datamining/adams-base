@@ -15,7 +15,7 @@
 
 /*
  * BaseListWithButtons.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -29,6 +29,9 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.util.List;
 
 /**
@@ -133,6 +136,36 @@ public class BaseListWithButtons
   }
 
   /**
+   * Adds the specified mouse listener to the list widget to receive events.
+   *
+   * @param    l   the mouse listener
+   */
+  @Override
+  public void addMouseListener(MouseListener l) {
+    m_Component.addMouseListener(l);
+  }
+
+  /**
+   * Adds the specified mouse motion listener to the list widget to receive events.
+   *
+   * @param    l   the mouse listener
+   */
+  @Override
+  public void addMouseMotionListener(MouseMotionListener l) {
+    m_Component.addMouseMotionListener(l);
+  }
+
+  /**
+   * Adds the specified mouse wheel listener to the list widget to receive events.
+   *
+   * @param    l   the mouse listener
+   */
+  @Override
+  public void addMouseWheelListener(MouseWheelListener l) {
+    m_Component.addMouseWheelListener(l);
+  }
+
+  /**
    * Adds a listener to the list, to be notified each time a change to the
    * selection occurs; the preferred way of listening for selection state
    * changes. {@code JList} takes care of listening for selection state
@@ -161,8 +194,7 @@ public class BaseListWithButtons
    *
    * @return all of the selected indices, in increasing order,
    *         or an empty array if nothing is selected
-   * @see #removeSelectionInterval
-   * @see #addListSelectionListener
+   * @see #addListSelectionListener(ListSelectionListener)
    */
   public int[] getSelectedIndices() {
     return m_Component.getSelectedIndices();
@@ -177,9 +209,7 @@ public class BaseListWithButtons
    *
    * @param index the index of the cell to select
    * @see ListSelectionModel#setSelectionInterval
-   * @see #isSelectedIndex
    * @see #addListSelectionListener
-   * @beaninfo
    * description: The index of the selected cell.
    */
   public void setSelectedIndex(int index) {
@@ -197,7 +227,6 @@ public class BaseListWithButtons
    * @param indices an array of the indices of the cells to select,
    *                {@code non-null}
    * @see ListSelectionModel#addSelectionInterval
-   * @see #isSelectedIndex
    * @see #addListSelectionListener
    * @throws NullPointerException if the given array is {@code null}
    */

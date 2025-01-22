@@ -27,15 +27,19 @@ import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
+import adams.core.option.OptionUtils;
 import adams.gui.action.AbstractBaseAction;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseButtonWithDropDownMenu;
 import adams.gui.core.BaseListWithButtons;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.MouseUtils;
 import adams.gui.event.RemoveItemsEvent;
 import adams.gui.goe.Favorites.FavoriteSelectionEvent;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import gnu.trove.set.hash.TIntHashSet;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -44,6 +48,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.ListCellRenderer;
@@ -66,6 +71,8 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -360,7 +367,7 @@ public class GenericArrayEditor
     m_ButtonSetFavorites.setToolTipText("Applying a favorite replaces the current array elements");
     m_ButtonSetFavorites.addActionListener((ActionEvent e) -> setFavorites());
 
-    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy.gif"));
+    m_ButtonCopy = new BaseButton(ImageManager.getIcon("copy_to_edit_field.gif"));
     m_ButtonCopy.setToolTipText("Copies the currently selected array item to the edit field");
     m_ButtonCopy.addActionListener((ActionEvent e) -> m_ElementEditor.setValue(ObjectCopyHelper.copyObject(m_ElementList.getSelectedValue())));
 
@@ -461,6 +468,16 @@ public class GenericArrayEditor
     m_ElementList.setInfoVisible(true);
     m_ElementList.addListSelectionListener((ListSelectionEvent e) -> updateButtons());
     m_ElementList.addRemoveItemsListener((RemoveItemsEvent e) -> removeSelectedObjects());
+    m_ElementList.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  JPopupMenu menu = createListPopupMenu(e);
+	  if (menu != null)
+	    menu.show(m_ElementList, e.getX(), e.getY());
+	}
+      }
+    });
     m_ModelListener = new ListDataListener() {
       @Override
       public void intervalAdded(ListDataEvent e) {
@@ -583,6 +600,33 @@ public class GenericArrayEditor
     m_ElementList.setModel(m_ListModel);
     m_Modified = true;
     updateButtons();
+  }
+
+  /**
+   * Creates the right-click popup for the list.
+   *
+   * @param e		the triggering event
+   */
+  protected JPopupMenu createListPopupMenu(MouseEvent e) {
+    BasePopupMenu	result;
+    JMenuItem		menuitem;
+
+    result = new BasePopupMenu();
+
+    menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy"));
+    menuitem.setEnabled(m_ElementList.getSelectedIndices().length > 0);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      StringBuilder content = new StringBuilder();
+      for (int index: m_ElementList.getSelectedIndices()) {
+	if (content.length() > 0)
+	  content.append("\n");
+	content.append(OptionUtils.getCommandLine(m_ListModel.get(index)));
+      }
+      ClipboardHelper.copyToClipboard(content.toString());
+    });
+    result.add(menuitem);
+
+    return result;
   }
 
   /**
