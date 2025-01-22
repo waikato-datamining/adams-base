@@ -15,7 +15,7 @@
 
 /*
  * WekaEvaluationValuePicker.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -36,50 +36,70 @@ import weka.classifiers.Evaluation;
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.classifiers.Evaluation<br>
+ * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaEvaluationContainer<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * <br><br>
+ * Container information:<br>
+ * - adams.flow.container.WekaEvaluationContainer: Evaluation, Model, Prediction output, Original indices, Test data
  * <br><br>
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: EvaluationValuePicker
+ * &nbsp;&nbsp;&nbsp;default: WekaEvaluationValuePicker
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-statistic &lt;ELAPSED_TIME_TRAINING|ELAPSED_TIME_TESTING|USERCPU_TIME_TRAINING|USERCPU_TIME_TESTING|SERIALIZED_MODEL_SIZE|SERIALIZED_TRAIN_SET_SIZE|SERIALIZED_TEST_SET_SIZE|NUMBER_OF_TRAINING_INSTANCES|NUMBER_OF_TESTING_INSTANCES|NUMBER_CORRECT|NUMBER_INCORRECT|NUMBER_UNCLASSIFIED|PERCENT_CORRECT|PERCENT_INCORRECT|PERCENT_UNCLASSIFIED|KAPPA_STATISTIC|MEAN_ABSOLUTE_ERROR|ROOT_MEAN_SQUARED_ERROR|RELATIVE_ABSOLUTE_ERROR|ROOT_RELATIVE_SQUARED_ERROR|CORRELATION_COEFFICIENT|SF_PRIOR_ENTROPY|SF_SCHEME_ENTROPY|SF_ENTROPY_GAIN|SF_MEAN_PRIOR_ENTROPY|SF_MEAN_SCHEME_ENTROPY|SF_MEAN_ENTROPY_GAIN|KB_INFORMATION|KB_MEAN_INFORMATION|KB_RELATIVE_INFORMATION|TRUE_POSITIVE_RATE|NUM_TRUE_POSITIVES|FALSE_POSITIVE_RATE|NUM_FALSE_POSITIVES|TRUE_NEGATIVE_RATE|NUM_TRUE_NEGATIVES|FALSE_NEGATIVE_RATE|NUM_FALSE_NEGATIVES|IR_PRECISION|IR_RECALL|F_MEASURE|AREA_UNDER_ROC&gt; (property: statisticValue)
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-statistic &lt;NUMBER_CORRECT|NUMBER_INCORRECT|NUMBER_UNCLASSIFIED|NUMBER_TOTAL|PERCENT_CORRECT|PERCENT_INCORRECT|PERCENT_UNCLASSIFIED|KAPPA_STATISTIC|MEAN_ABSOLUTE_ERROR|ROOT_MEAN_SQUARED_ERROR|RELATIVE_ABSOLUTE_ERROR|ROOT_RELATIVE_SQUARED_ERROR|CORRELATION_COEFFICIENT|SF_PRIOR_ENTROPY|SF_SCHEME_ENTROPY|SF_ENTROPY_GAIN|SF_MEAN_PRIOR_ENTROPY|SF_MEAN_SCHEME_ENTROPY|SF_MEAN_ENTROPY_GAIN|KB_INFORMATION|KB_MEAN_INFORMATION|KB_RELATIVE_INFORMATION|TRUE_POSITIVE_RATE|NUM_TRUE_POSITIVES|FALSE_POSITIVE_RATE|NUM_FALSE_POSITIVES|TRUE_NEGATIVE_RATE|NUM_TRUE_NEGATIVES|FALSE_NEGATIVE_RATE|NUM_FALSE_NEGATIVES|IR_PRECISION|IR_RECALL|F_MEASURE|MATTHEWS_CORRELATION_COEFFICIENT|AREA_UNDER_ROC|AREA_UNDER_PRC|WEIGHTED_TRUE_POSITIVE_RATE|WEIGHTED_FALSE_POSITIVE_RATE|WEIGHTED_TRUE_NEGATIVE_RATE|WEIGHTED_FALSE_NEGATIVE_RATE|WEIGHTED_IR_PRECISION|WEIGHTED_IR_RECALL|WEIGHTED_F_MEASURE|WEIGHTED_MATTHEWS_CORRELATION_COEFFICIENT|WEIGHTED_AREA_UNDER_ROC|WEIGHTED_AREA_UNDER_PRC|UNWEIGHTED_MACRO_F_MEASURE|UNWEIGHTED_MICRO_F_MEASURE|BIAS|MSLE|RSQUARED|SDR|RPD&gt; (property: statisticValue)
  * &nbsp;&nbsp;&nbsp;The evaluation value to extract.
  * &nbsp;&nbsp;&nbsp;default: PERCENT_CORRECT
  * </pre>
  *
- * <pre>-index &lt;int&gt; (property: classIndex)
+ * <pre>-index &lt;adams.data.weka.WekaLabelIndex&gt; (property: classIndex)
  * &nbsp;&nbsp;&nbsp;The class label index (eg used for AUC).
- * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; apart from label names (case-sensitive), the following placeholders can be used as well: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); label names can be surrounded by double quotes.
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaEvaluationValuePicker
   extends AbstractTransformer {
@@ -111,12 +131,12 @@ public class WekaEvaluationValuePicker
     super.defineOptions();
 
     m_OptionManager.add(
-	    "statistic", "statisticValue",
-	    EvaluationStatistic.PERCENT_CORRECT);
+      "statistic", "statisticValue",
+      EvaluationStatistic.PERCENT_CORRECT);
 
     m_OptionManager.add(
-	    "index", "classIndex",
-	    new WekaLabelIndex(WekaLabelIndex.FIRST));
+      "index", "classIndex",
+      new WekaLabelIndex(WekaLabelIndex.FIRST));
   }
 
   /**
@@ -195,7 +215,7 @@ public class WekaEvaluationValuePicker
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->weka.classifiers.Evaluation.class, adams.flow.container.WekaEvaluationContainer.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{Evaluation.class, WekaEvaluationContainer.class};

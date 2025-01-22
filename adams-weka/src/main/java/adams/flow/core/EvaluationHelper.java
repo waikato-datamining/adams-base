@@ -15,7 +15,7 @@
 
 /*
  * EvaluationHelper.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -50,6 +50,8 @@ public class EvaluationHelper {
 	return eval.incorrect();
       case NUMBER_UNCLASSIFIED:
 	return eval.unclassified();
+      case NUMBER_TOTAL:
+	return eval.numInstances();
       case PERCENT_CORRECT:
 	return eval.pctCorrect();
       case PERCENT_INCORRECT:
