@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorDialog.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -241,22 +241,32 @@ public class GenericObjectEditorDialog
     int		width;
     int		height;
     Dimension	max;
+    Dimension	min;
 
     update = false;
 
     width  = getWidth();
     height = getHeight();
     max    = GUIHelper.getDefaultLargeDialogDimension();
+    min    = GUIHelper.getDefaultDialogDimension();
 
     // width
     if (width > max.getWidth()) {
-      width = (int) max.getWidth();
+      width  = (int) max.getWidth();
+      update = true;
+    }
+    if (width < min.getWidth()) {
+      width  = (int) min.getWidth();
       update = true;
     }
 
     // height
     if (height > max.getHeight()) {
       height = (int) max.getHeight();
+      update = true;
+    }
+    if (height < min.getHeight()) {
+      height = (int) min.getHeight();
       update = true;
     }
 
@@ -311,7 +321,7 @@ public class GenericObjectEditorDialog
 	getUndo().addUndo(m_Current, Utils.classToString(m_Current));
     }
 
-    // only in case of GOEPanels can be determine whether OK or Cancel was
+    // only in case of GOEPanels can be determined whether OK or Cancel was
     // selected.
     if (m_Editor.getCustomEditor() instanceof GOEPanel)
       m_Result = CANCEL_OPTION;
