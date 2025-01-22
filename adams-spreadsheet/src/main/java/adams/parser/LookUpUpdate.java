@@ -15,7 +15,7 @@
 
 /*
  * LookUpUpdate.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -369,6 +369,7 @@ public class LookUpUpdate
 	    + "- 'str' uses "  + Utils.classToString(java.text.DecimalFormat.class) + " when supplying a format string\n"
 	    + "- Variables starting with '_' (inside the [] or '') are considered local and don't get transferred back out.\n"
 	    + "- The 'has' function checks whether a variable/symbol is present.\n"
+  	    + "- Line comments start with two forward slashes: //\n"
 	;
   }
 
