@@ -516,9 +516,9 @@ public class PropertySheetPanel
 	  m_Views[i].setMaximumSize(new Dimension(25, (int) (GUIHelper.getInteger("GOECheckBoxHeight", 20) * 1.2)));
 	}
 	else {
-	  m_Views[i].setSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20)));
-	  m_Views[i].setPreferredSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20)));
-	  m_Views[i].setMaximumSize(new Dimension(300, GUIHelper.getInteger("GOEDefaultHeight", 20) * 2));
+	  m_Views[i].setSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20) * 2));
 	}
 
 	m_Editors[i].addPropertyChangeListener(this);
