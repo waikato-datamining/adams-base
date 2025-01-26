@@ -327,8 +327,8 @@ public class AreaRatio
 	  thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
 	actObj = thisObj;
 	otherObjectHighest = null;
+	initMatch(matches, thisObj);
 	for (LocatedObject otherObj : predictions) {
-	  initMatch(matches, thisObj);
 	  if (m_ExcludeIdentical && thisObj.equals(otherObj))
 	    continue;
 	  ratio = thisObj.overlapRatio(otherObj);

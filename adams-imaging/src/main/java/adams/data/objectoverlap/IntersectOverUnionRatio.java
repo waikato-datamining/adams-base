@@ -470,8 +470,8 @@ public class IntersectOverUnionRatio
 	  thisLabel = "" + thisObj.getMetaData().get(m_LabelKey);
 	actObj = thisObj;
 	otherObjectHighest = null;
+	initMatch(matches, thisObj);
 	for (LocatedObject otherObj : predictions) {
-	  initMatch(matches, thisObj);
 	  if (m_ExcludeIdentical && thisObj.equals(otherObj))
 	    continue;
 	  iou = calculateIoU(thisObj, otherObj);
