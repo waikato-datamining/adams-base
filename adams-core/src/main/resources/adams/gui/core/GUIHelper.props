@@ -86,9 +86,13 @@ CheckBoxHeight=25
 ComboBoxHeight=25
 
 # The preferred defaults in the GOE
+GOESpinnerWidth=200
 GOESpinnerHeight=20
+GOECheckBoxWidth=25
 GOECheckBoxHeight=20
+GOEComboBoxWidth=200
 GOEComboBoxHeight=20
+GOEDefaultWidth=200
 GOEDefaultHeight=20
 
 # the maximum width to tool tips

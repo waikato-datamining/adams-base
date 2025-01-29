@@ -506,19 +506,19 @@ public class PropertySheetPanel
 
 	// set sensible dimensions for widgets
 	if (m_Views[i] instanceof JSpinner) {
-	  m_Views[i].setSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20)));
-	  m_Views[i].setPreferredSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20)));
-	  m_Views[i].setMaximumSize(new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20) * 2));
+	  m_Views[i].setSize(new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150), GUIHelper.getInteger("GOESpinnerHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150), GUIHelper.getInteger("GOESpinnerHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150) * 2, GUIHelper.getInteger("GOESpinnerHeight", 20) * 2));
 	}
 	else if (m_Views[i] instanceof JCheckBox) {
-	  m_Views[i].setSize(new Dimension(25, GUIHelper.getInteger("GOECheckBoxHeight", 20)));
-	  m_Views[i].setPreferredSize(new Dimension(25, GUIHelper.getInteger("GOECheckBoxHeight", 20)));
-	  m_Views[i].setMaximumSize(new Dimension(25, (int) (GUIHelper.getInteger("GOECheckBoxHeight", 20) * 1.2)));
+	  m_Views[i].setSize(new Dimension(GUIHelper.getInteger("GOECheckBoxWidth", 25), GUIHelper.getInteger("GOECheckBoxHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(GUIHelper.getInteger("GOECheckBoxWidth", 25), GUIHelper.getInteger("GOECheckBoxHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(GUIHelper.getInteger("GOECheckBoxWidth", 25), (int) (GUIHelper.getInteger("GOECheckBoxHeight", 20) * 1.2)));
 	}
 	else {
-	  m_Views[i].setSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20)));
-	  m_Views[i].setPreferredSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20)));
-	  m_Views[i].setMaximumSize(new Dimension(100, GUIHelper.getInteger("GOEDefaultHeight", 20) * 2));
+	  m_Views[i].setSize(new Dimension(GUIHelper.getInteger("GOEDefaultWidth", 150), GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setPreferredSize(new Dimension(GUIHelper.getInteger("GOEDefaultWidth", 150), GUIHelper.getInteger("GOEDefaultHeight", 20)));
+	  m_Views[i].setMaximumSize(new Dimension(GUIHelper.getInteger("GOEDefaultWidth", 150), GUIHelper.getInteger("GOEDefaultHeight", 20) * 2));
 	}
 
 	m_Editors[i].addPropertyChangeListener(this);
