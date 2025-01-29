@@ -241,32 +241,22 @@ public class GenericObjectEditorDialog
     int		width;
     int		height;
     Dimension	max;
-    Dimension	min;
 
     update = false;
 
     width  = getWidth();
     height = getHeight();
     max    = GUIHelper.getDefaultLargeDialogDimension();
-    min    = GUIHelper.getDefaultDialogDimension();
 
     // width
     if (width > max.getWidth()) {
       width  = (int) max.getWidth();
       update = true;
     }
-    if (width < min.getWidth()) {
-      width  = (int) min.getWidth();
-      update = true;
-    }
 
     // height
     if (height > max.getHeight()) {
       height = (int) max.getHeight();
-      update = true;
-    }
-    if (height < min.getHeight()) {
-      height = (int) min.getHeight();
       update = true;
     }
 
