@@ -15,7 +15,7 @@
 
 /*
  * ParameterPanel.java
- * Copyright (C) 2010-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -161,8 +161,8 @@ public class ParameterPanel
     m_Labels                     = new ArrayList<>();
     m_Parameters                 = new ArrayList<>();
     m_ActualParameters           = new ArrayList<>();
-    m_PreferredDimensionJSpinner = new Dimension(100, GUIHelper.getInteger("GOESpinnerHeight", 20));
-    m_MinDimensionJComboBox      = new Dimension(50, GUIHelper.getInteger("GOEComboBoxHeight", 20));
+    m_PreferredDimensionJSpinner = new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150), GUIHelper.getInteger("GOESpinnerHeight", 20));
+    m_MinDimensionJComboBox      = new Dimension(GUIHelper.getInteger("GOEComboBoxWidth", 150), GUIHelper.getInteger("GOEComboBoxHeight", 20));
     m_ChangeListeners            = new HashSet<>();
     m_UseMnemonicIndicators      = true;
     m_DocumentListener = new DocumentListener() {
