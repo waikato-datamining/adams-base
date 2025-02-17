@@ -105,6 +105,10 @@ import java.util.Vector;
  *  Whether to keep the original attribute names or use new ones ('att-XYZ').
  *  (default: don't keep)</pre>
  *
+ * <pre> -fix-att-count
+ *  Whether to fix the number of generated attributes.
+ *  (default: don't apply fix)</pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -145,10 +149,10 @@ public class SavitzkyGolay
    */
   public String globalInfo() {
     return
-        "A filter that applies Savitzky-Golay smoothing.\n"
-      + "If a class attribute is present this will not be touched and moved to the end.\n\n"
-      + "For more information see:\n\n"
-      + getTechnicalInformation().toString();
+      "A filter that applies Savitzky-Golay smoothing.\n"
+	+ "If a class attribute is present this will not be touched and moved to the end.\n\n"
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -196,29 +200,29 @@ public class SavitzkyGolay
     result = new Vector<>();
 
     result.addElement(new Option(
-	"\tThe number of points to the left (>= 0).\n"
+      "\tThe number of points to the left (>= 0).\n"
 	+ "\t(default: 3)",
-	"left", 1, "-left <int>"));
+      "left", 1, "-left <int>"));
 
     result.addElement(new Option(
-	"\tThe number of points to the right (>= 0).\n"
+      "\tThe number of points to the right (>= 0).\n"
 	+ "\t(default: 3)",
-	"right", 1, "-right <int>"));
+      "right", 1, "-right <int>"));
 
     result.addElement(new Option(
-	"\tThe polynomial order (>= 2).\n"
+      "\tThe polynomial order (>= 2).\n"
 	+ "\t(default: 2)",
-	"polynomial", 1, "-polynomial <int>"));
+      "polynomial", 1, "-polynomial <int>"));
 
     result.addElement(new Option(
-	"\tThe order of the derivative (>= 0).\n"
+      "\tThe order of the derivative (>= 0).\n"
 	+ "\t(default: 1)",
-	"derivative", 1, "-derivative <int>"));
+      "derivative", 1, "-derivative <int>"));
 
     result.addElement(new Option(
-	"\tWhether to keep the original attribute names or use new ones ('att-XYZ').\n"
+      "\tWhether to keep the original attribute names or use new ones ('att-XYZ').\n"
 	+ "\t(default: don't keep)",
-	"keep-attribute-names", 0, "-keep-attribute-names"));
+      "keep-attribute-names", 0, "-keep-attribute-names"));
 
     result.addElement(new Option(
       "\tWhether to fix the number of generated attributes.\n"
@@ -322,7 +326,7 @@ public class SavitzkyGolay
     }
     else {
       System.err.println(
-	  "The polynomial order must be at least 2 (provided: " + value + ")!");
+	"The polynomial order must be at least 2 (provided: " + value + ")!");
     }
   }
 
@@ -357,7 +361,7 @@ public class SavitzkyGolay
     }
     else {
       System.err.println(
-	  "The order of the derivative must be at least 0 (provided: " + value + ")!");
+	"The order of the derivative must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -392,7 +396,7 @@ public class SavitzkyGolay
     }
     else {
       System.err.println(
-	  "The number of points to the left must be at least 0 (provided: " + value + ")!");
+	"The number of points to the left must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -427,7 +431,7 @@ public class SavitzkyGolay
     }
     else {
       System.err.println(
-	  "The number of points to the right must be at least 0 (provided: " + value + ")!");
+	"The number of points to the right must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -566,7 +570,7 @@ public class SavitzkyGolay
     original = new ArrayList<>();
     for (i = 0; i < inputFormat.numAttributes(); i++) {
       if (i == inputFormat.classIndex())
-        continue;
+	continue;
       original.add(inputFormat.attribute(i).name());
     }
     for (i = 0; i < m_NumPointsLeft; i++)
@@ -576,7 +580,7 @@ public class SavitzkyGolay
     atts = new ArrayList<>();
     for (i = 0; i < count; i++) {
       if (m_KeepAttributeNames)
-        atts.add(new Attribute(original.get(i)));
+	atts.add(new Attribute(original.get(i)));
       else
 	atts.add(new Attribute("att" + (i + 1)));
     }

@@ -105,6 +105,10 @@ import java.util.Vector;
  *  Whether to keep the original attribute names or use new ones ('att-XYZ').
  *  (default: don't keep)</pre>
  *
+ * <pre> -fix-att-count
+ *  Whether to fix the number of generated attributes.
+ *  (default: don't apply fix)</pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
