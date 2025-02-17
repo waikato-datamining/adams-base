@@ -15,7 +15,7 @@
 
 /*
  * SavitzkyGolay.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.attribute;
@@ -128,6 +128,9 @@ public class SavitzkyGolay2
   /** whether to keep the original attribute names. */
   protected boolean m_KeepAttributeNames;
 
+  /** whether to use corrected output. */
+  protected boolean m_FixAttCount;
+
   /** the calculated coefficients. */
   protected double[] m_Coefficients;
 
@@ -140,9 +143,9 @@ public class SavitzkyGolay2
   public String globalInfo() {
     return
       "A filter that applies Savitzky-Golay smoothing.\n"
-        + "If a class attribute is present this will not be touched and moved to the end.\n\n"
-        + "For more information see:\n\n"
-        + getTechnicalInformation().toString();
+	+ "If a class attribute is present this will not be touched and moved to the end.\n\n"
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -191,28 +194,33 @@ public class SavitzkyGolay2
 
     result.addElement(new Option(
       "\tThe number of points to the left (>= 0).\n"
-        + "\t(default: 3)",
+	+ "\t(default: 3)",
       "left", 1, "-left <int>"));
 
     result.addElement(new Option(
       "\tThe number of points to the right (>= 0).\n"
-        + "\t(default: 3)",
+	+ "\t(default: 3)",
       "right", 1, "-right <int>"));
 
     result.addElement(new Option(
       "\tThe polynomial order (>= 2).\n"
-        + "\t(default: 2)",
+	+ "\t(default: 2)",
       "polynomial", 1, "-polynomial <int>"));
 
     result.addElement(new Option(
       "\tThe order of the derivative (>= 0).\n"
-        + "\t(default: 1)",
+	+ "\t(default: 1)",
       "derivative", 1, "-derivative <int>"));
 
     result.addElement(new Option(
-	"\tWhether to keep the original attribute names or use new ones ('att-XYZ').\n"
+      "\tWhether to keep the original attribute names or use new ones ('att-XYZ').\n"
 	+ "\t(default: don't keep)",
-	"keep-attribute-names", 0, "-keep-attribute-names"));
+      "keep-attribute-names", 0, "-keep-attribute-names"));
+
+    result.addElement(new Option(
+      "\tWhether to fix the number of generated attributes.\n"
+	+ "\t(default: don't apply fix)",
+      "fix-att-count", 0, "-fix-att-count"));
 
     return result.elements();
   }
@@ -252,6 +260,7 @@ public class SavitzkyGolay2
       setDerivativeOrder(1);
 
     setKeepAttributeNames(Utils.getFlag("keep-attribute-names", options));
+    setFixAttCount(Utils.getFlag("fix-att-count", options));
   }
 
   /**
@@ -275,6 +284,9 @@ public class SavitzkyGolay2
 
     if (getKeepAttributeNames())
       result.add("-keep-attribute-names");
+
+    if (getFixAttCount())
+      result.add("-fix-att-count");
 
     return result.toArray(new String[0]);
   }
@@ -300,7 +312,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-        "The polynomial order must be at least 2 (provided: " + value + ")!");
+	"The polynomial order must be at least 2 (provided: " + value + ")!");
     }
   }
 
@@ -335,7 +347,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-        "The order of the derivative must be at least 0 (provided: " + value + ")!");
+	"The order of the derivative must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -370,7 +382,7 @@ public class SavitzkyGolay2
     }
     else {
       System.err.println(
-        "The number of points to the left must be at least 0 (provided: " + value + ")!");
+	"The number of points to the left must be at least 0 (provided: " + value + ")!");
     }
   }
 
@@ -420,6 +432,35 @@ public class SavitzkyGolay2
    */
   public String keepAttributeNamesTipText() {
     return "If enabled, the original attribute names are kept rather than using new ones ('att-XYZ').";
+  }
+
+  /**
+   * Sets whether to apply fix to generate correct number of attributes.
+   *
+   * @param value 	true if to fix
+   */
+  public void setFixAttCount(boolean value) {
+    m_FixAttCount = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to apply fix to generate correct number of attributes.
+   *
+   * @return 		true if to fix
+   */
+  public boolean getFixAttCount() {
+    return m_FixAttCount;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fixAttCountTipText() {
+    return "If enabled, applies a fix to output the correct number of attributes.";
   }
 
   /**
@@ -473,12 +514,14 @@ public class SavitzkyGolay2
     if (hasClass)
       count--;
     count -= m_NumPoints + m_NumPoints + 1;
+    if (m_FixAttCount)
+      count++;
 
     // determine original attribute names
     original = new ArrayList<>();
     for (i = 0; i < inputFormat.numAttributes(); i++) {
       if (i == inputFormat.classIndex())
-        continue;
+	continue;
       original.add(inputFormat.attribute(i).name());
     }
     for (i = 0; i < m_NumPoints; i++)
@@ -488,7 +531,7 @@ public class SavitzkyGolay2
     atts = new ArrayList<>();
     for (i = 0; i < count; i++) {
       if (m_KeepAttributeNames)
-        atts.add(new Attribute(original.get(i)));
+	atts.add(new Attribute(original.get(i)));
       else
 	atts.add(new Attribute("att" + (i + 1)));
     }
@@ -513,7 +556,7 @@ public class SavitzkyGolay2
    * @return            the modified data
    * @throws Exception  in case the processing goes wrong
    */
-  protected Instance process(Instance instance) throws Exception {
+  protected Instance processIncorrectAttCount(Instance instance) throws Exception {
     Instance	result;
     double[]	valuesOld;
     double[]	values;
@@ -536,7 +579,7 @@ public class SavitzkyGolay2
     n         = 0;
     for (i = 0; i < instance.numAttributes(); i++) {
       if (i == instance.classIndex())
-        continue;
+	continue;
       valuesOld[n] = instance.value(i);
       n++;
     }
@@ -547,7 +590,7 @@ public class SavitzkyGolay2
     for (i = 0; i <= count - width; i++) {
       values[i] = 0;
       for (n = 0; n < width; n++)
-        values[i] += m_Coefficients[n] * valuesOld[i + n];
+	values[i] += m_Coefficients[n] * valuesOld[i + n];
     }
 
     // add class value
@@ -561,6 +604,81 @@ public class SavitzkyGolay2
     copyValues(result, false, instance.dataset(), getOutputFormat());
 
     return result;
+  }
+
+  /**
+   * processes the given instance (may change the provided instance) and
+   * returns the modified version.
+   *
+   * @param instance    the instance to process
+   * @return            the modified data
+   * @throws Exception  in case the processing goes wrong
+   */
+  protected Instance processCorrectAttCount(Instance instance) throws Exception {
+    Instance	result;
+    double[]	valuesOld;
+    double[] 	valuesNew;
+    boolean	hasClass;
+    int 	countOld;
+    int		countNew;
+    int		width;
+    int		i;
+    int		n;
+
+    if (m_Coefficients == null)
+      m_Coefficients = adams.data.utils.SavitzkyGolay.determineCoefficients(m_NumPoints, m_NumPoints, m_PolynomialOrder, m_DerivativeOrder);
+
+    hasClass = (instance.classIndex() > -1);
+    countOld = instance.numAttributes();
+    if (hasClass)
+      countOld--;
+    countNew = outputFormatPeek().numAttributes();
+
+    // get original values
+    valuesOld = new double[countOld];
+    n         = 0;
+    for (i = 0; i < instance.numAttributes(); i++) {
+      if (i == instance.classIndex())
+	continue;
+      valuesOld[n] = instance.value(i);
+      n++;
+    }
+
+    // smooth values
+    width = m_NumPoints + m_NumPoints + 1;
+    valuesNew = new double[countNew];
+    for (i = 0; i <= countOld - width; i++) {
+      valuesNew[i] = 0;
+      for (n = 0; n < width; n++)
+	valuesNew[i] += m_Coefficients[n] * valuesOld[i + n];
+    }
+
+    // add class value
+    if (hasClass)
+      valuesNew[valuesNew.length - 1] = instance.classValue();
+
+    // create instance
+    result = new DenseInstance(instance.weight(), valuesNew);
+    result.setDataset(getOutputFormat());
+
+    copyValues(result, false, instance.dataset(), getOutputFormat());
+
+    return result;
+  }
+
+  /**
+   * processes the given instance (may change the provided instance) and
+   * returns the modified version.
+   *
+   * @param instance    the instance to process
+   * @return            the modified data
+   * @throws Exception  in case the processing goes wrong
+   */
+  protected Instance process(Instance instance) throws Exception {
+    if (m_FixAttCount)
+      return processCorrectAttCount(instance);
+    else
+      return processIncorrectAttCount(instance);
   }
 
   /**

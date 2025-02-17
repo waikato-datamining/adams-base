@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.attribute;
@@ -30,13 +30,12 @@ import weka.filters.Filter;
 import weka.test.AdamsTestHelper;
 
 /**
- * Tests SavitzkyGolay. Run from the command line with: <br><br>
- * java weka.filters.unsupervised.attribute.SavitzkyGolayTest
+ * Tests SavitzkyGolay2. Run from the command line with: <br><br>
+ * java weka.filters.unsupervised.attribute.SavitzkyGolay2Test
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class SavitzkyGolayTest
+public class SavitzkyGolay2Test
   extends AbstractAdamsFilterTest {
 
   /**
@@ -44,7 +43,7 @@ public class SavitzkyGolayTest
    *
    * @param name	the name of the test
    */
-  public SavitzkyGolayTest(String name) {
+  public SavitzkyGolay2Test(String name) {
     super(name);
   }
 
@@ -83,24 +82,22 @@ public class SavitzkyGolayTest
    * @return		the default filter
    */
   public Filter getFilter() {
-    return new SavitzkyGolay();
+    return new SavitzkyGolay2();
   }
 
   /**
    * Creates a specialized SavitzkyGolay.
    *
-   * @param left	the points on the left side
-   * @param right	the points on the right side
+   * @param numPoints	the number of points left and right
    * @param poly	the polynomial order
    * @param der		the order of the derivative
    * @return		the filter
    */
-  public Filter getFilter(int left, int right, int poly, int der) {
-    SavitzkyGolay 	result;
+  public Filter getFilter(int numPoints, int poly, int der) {
+    SavitzkyGolay2 	result;
 
-    result = new SavitzkyGolay();
-    result.setNumPointsLeft(left);
-    result.setNumPointsRight(right);
+    result = new SavitzkyGolay2();
+    result.setNumPoints(numPoints);
     result.setPolynomialOrder(poly);
     result.setDerivativeOrder(der);
 
@@ -129,9 +126,9 @@ public class SavitzkyGolayTest
       fail("Exception thrown on useFilter(): \n" + ex.getMessage());
     }
 
-    SavitzkyGolay filter = (SavitzkyGolay) m_Filter;
+    SavitzkyGolay2 filter = (SavitzkyGolay2) m_Filter;
     int	numAtts = icopy.numAttributes();
-    numAtts -= filter.getNumPointsLeft() + filter.getNumPointsRight() + 1;
+    numAtts -= filter.getNumPoints()*2 + 1;
     assertEquals(numAtts, result.numAttributes());
     assertEquals(icopy.numInstances(), m_Instances.numInstances());
   }
@@ -142,7 +139,7 @@ public class SavitzkyGolayTest
   protected void performTestFixed() {
     Instances icopy = new Instances(m_Instances);
     Instances result = null;
-    ((SavitzkyGolay) m_Filter).setFixAttCount(true);
+    ((SavitzkyGolay2) m_Filter).setFixAttCount(true);
     try {
       m_Filter.setInputFormat(icopy);
     }
@@ -159,9 +156,9 @@ public class SavitzkyGolayTest
       fail("Exception thrown on useFilter(): \n" + ex.getMessage());
     }
 
-    SavitzkyGolay filter = (SavitzkyGolay) m_Filter;
+    SavitzkyGolay2 filter = (SavitzkyGolay2) m_Filter;
     int	numAtts = icopy.numAttributes();
-    numAtts -= filter.getNumPointsLeft() + filter.getNumPointsRight();
+    numAtts -= filter.getNumPoints()*2;
     assertEquals(numAtts, result.numAttributes());
     assertEquals(icopy.numInstances(), m_Instances.numInstances());
   }
@@ -176,28 +173,10 @@ public class SavitzkyGolayTest
   }
 
   /**
-   * Test default with no left points.
-   */
-  public void testNoLeft() {
-    m_Filter = getFilter(0, 3, 2, 1);
-    testBuffered();
-    performTest();
-  }
-
-  /**
-   * Test default with no right points.
-   */
-  public void testNoRight() {
-    m_Filter = getFilter(3, 0, 2, 1);
-    testBuffered();
-    performTest();
-  }
-
-  /**
    * Test default no derivative.
    */
   public void testNoDerivative() {
-    m_Filter = getFilter(3, 3, 2, 0);
+    m_Filter = getFilter(3, 2, 0);
     testBuffered();
     performTest();
   }
@@ -212,28 +191,10 @@ public class SavitzkyGolayTest
   }
 
   /**
-   * Test default with no left points.
-   */
-  public void testNoLeftFixed() {
-    m_Filter = getFilter(0, 3, 2, 1);
-    testBuffered();
-    performTestFixed();
-  }
-
-  /**
-   * Test default with no right points.
-   */
-  public void testNoRightFixed() {
-    m_Filter = getFilter(3, 0, 2, 1);
-    testBuffered();
-    performTestFixed();
-  }
-
-  /**
    * Test default no derivative.
    */
   public void testNoDerivativeFixed() {
-    m_Filter = getFilter(3, 3, 2, 0);
+    m_Filter = getFilter(3, 2, 0);
     testBuffered();
     performTestFixed();
   }
@@ -244,7 +205,7 @@ public class SavitzkyGolayTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(SavitzkyGolayTest.class);
+    return new TestSuite(SavitzkyGolay2Test.class);
   }
 
   /**
