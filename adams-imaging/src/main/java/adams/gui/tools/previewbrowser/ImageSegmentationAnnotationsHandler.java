@@ -15,7 +15,7 @@
 
 /*
  * ImageSegmentationAnnotationsHandler.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.previewbrowser;
@@ -327,7 +327,7 @@ public class ImageSegmentationAnnotationsHandler
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"jpg"};
+    return new String[]{"jpg", "jpeg"};
   }
 
   /**
