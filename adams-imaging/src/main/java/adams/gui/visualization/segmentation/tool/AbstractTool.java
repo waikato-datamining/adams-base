@@ -409,6 +409,24 @@ public abstract class AbstractTool
   }
 
   /**
+   * Returns the icon name for the unmodified state.
+   *
+   * @return		the image name
+   */
+  protected String getUnmodifiedIcon() {
+    return "validate.png";
+  }
+
+  /**
+   * Returns the icon name for the modified state.
+   *
+   * @return		the image name
+   */
+  protected String getModifiedIcon() {
+    return "validate_blue.png";
+  }
+
+  /**
    * Generates the apply button.
    *
    * @return		the button
@@ -416,7 +434,7 @@ public abstract class AbstractTool
   protected BaseFlatButton createApplyButton() {
     BaseFlatButton 	result;
 
-    result = new BaseFlatButton(ImageManager.getIcon("validate.png"));
+    result = new BaseFlatButton(ImageManager.getIcon(getUnmodifiedIcon()));
     result.setToolTipText("Apply current values");
     result.addActionListener((ActionEvent e) -> apply((BaseFlatButton) e.getSource()));
 
@@ -431,9 +449,9 @@ public abstract class AbstractTool
    */
   protected void setApplyButtonState(BaseFlatButton button, boolean modified) {
     if (modified)
-      button.setIcon(ImageManager.getIcon("validate_blue.png"));
+      button.setIcon(ImageManager.getIcon(getModifiedIcon()));
     else
-      button.setIcon(ImageManager.getIcon("validate.png"));
+      button.setIcon(ImageManager.getIcon(getUnmodifiedIcon()));
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractTool.java
- * Copyright (C) 2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.tools;
@@ -271,6 +271,24 @@ public abstract class AbstractTool
   }
 
   /**
+   * Returns the icon name for the unmodified state.
+   *
+   * @return		the image name
+   */
+  protected String getUnmodifiedIcon() {
+    return "validate.png";
+  }
+
+  /**
+   * Returns the icon name for the modified state.
+   *
+   * @return		the image name
+   */
+  protected String getModifiedIcon() {
+    return "validate_blue.png";
+  }
+
+  /**
    * Generates the apply button.
    *
    * @return		the button
@@ -278,7 +296,7 @@ public abstract class AbstractTool
   protected BaseFlatButton createApplyButton() {
     BaseFlatButton 	result;
 
-    result = new BaseFlatButton(ImageManager.getIcon("validate.png"));
+    result = new BaseFlatButton(ImageManager.getIcon(getUnmodifiedIcon()));
     result.setToolTipText("Apply current values");
     result.addActionListener((ActionEvent e) -> apply((BaseFlatButton) e.getSource()));
 
@@ -292,11 +310,11 @@ public abstract class AbstractTool
    * @param modified	whether applying needs doing or not
    */
   protected void setApplyButtonState(BaseFlatButton button, boolean modified) {
-    m_Modified= modified;
+    m_Modified = modified;
     if (modified)
-      button.setIcon(ImageManager.getIcon("validate_blue.png"));
+      button.setIcon(ImageManager.getIcon(getModifiedIcon()));
     else
-      button.setIcon(ImageManager.getIcon("validate.png"));
+      button.setIcon(ImageManager.getIcon(getUnmodifiedIcon()));
   }
 
   /**
