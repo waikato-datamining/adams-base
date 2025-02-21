@@ -179,7 +179,7 @@ public class Export
       manager = getCanvas().getOwner().getManager();
       image   = new BufferedImage(manager.getWidth(), manager.getHeight(), BufferedImage.TYPE_INT_ARGB);
       g2d     = image.createGraphics();
-      manager.draw(g2d);
+      manager.draw(g2d, 1.0);
       g2d.dispose();
       msg = BufferedImageHelper.write(image, file);
       if (msg == null)

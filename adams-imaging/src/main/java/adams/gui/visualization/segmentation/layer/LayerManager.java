@@ -788,6 +788,27 @@ public class LayerManager
   }
 
   /**
+   * Calls the draw method of all layers.
+   *
+   * @param g2d		the context to use
+   * @param zoom 	the zoom to use (1.0 = 100%)
+   */
+  public void draw(Graphics2D g2d, double zoom) {
+    g2d.scale(zoom, zoom);
+    getBackgroundLayer().draw(g2d);
+    getImageLayer().draw(g2d);
+    if (getSplitLayers()) {
+      for (OverlayLayer l : getOverlays())
+	l.draw(g2d);
+    }
+    else {
+      if (getCombinedLayer() != null)
+	getCombinedLayer().draw(g2d);
+    }
+    drawMarkers(g2d);
+  }
+
+  /**
    * Adds the change listener.
    *
    * @param l		the listener to add
