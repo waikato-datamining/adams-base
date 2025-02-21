@@ -20,7 +20,13 @@
 
 package adams.gui.visualization.segmentation;
 
+import adams.data.image.BufferedImageHelper;
 import adams.data.image.IntArrayMatrixView;
+import adams.gui.core.ColorHelper;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -316,5 +322,71 @@ public class ImageUtils {
 	queue.add(new Point(x, y + 1));
       }
     }
+  }
+
+  /**
+   * Generates a colors distribution for the image.
+   *
+   * @param image	the image to generate the distribution for
+   * @param removeAlpha	whether to remove the alpha channel first
+   * @return		the distribution: color (int) - count
+   */
+  public static TIntIntMap colorDistributionInt(BufferedImage image, boolean removeAlpha) {
+    TIntIntMap 	result;
+    int		i;
+    int		color;
+    int[]	pixels;
+
+    pixels    = BufferedImageHelper.getPixels(image);
+    result = new TIntIntHashMap();
+    // remove alpha channel
+    for (i = 0; i < pixels.length; i++) {
+      color = pixels[i];
+      if (removeAlpha)
+	color = (color & 0x00FFFFFF);
+      if (!result.containsKey(color))
+	result.put(color, 0);
+      result.put(color, result.get(color) + 1);
+    }
+
+    return result;
+  }
+
+  /**
+   * Generates a colors distribution for the image.
+   *
+   * @param image	the image to generate the distribution for
+   * @param removeAlpha	whether to remove the alpha channel first
+   * @return		the distribution: color (Color) - count
+   */
+  public static TObjectIntMap colorDistributionColor(BufferedImage image, boolean removeAlpha) {
+    TObjectIntMap	result;
+    TIntIntMap		colors;
+
+    colors = colorDistributionInt(image, removeAlpha);
+    result = new TObjectIntHashMap();
+    for (int key: colors.keys())
+      result.put(new Color(key), colors.get(key));
+
+    return result;
+  }
+
+  /**
+   * Generates a colors distribution for the image.
+   *
+   * @param image	the image to generate the distribution for
+   * @param removeAlpha	whether to remove the alpha channel first
+   * @return		the distribution: color (hex string) - count
+   */
+  public static TObjectIntMap colorDistributionHex(BufferedImage image, boolean removeAlpha) {
+    TObjectIntMap	result;
+    TIntIntMap		colors;
+
+    colors = colorDistributionInt(image, removeAlpha);
+    result = new TObjectIntHashMap();
+    for (int key: colors.keys())
+      result.put(ColorHelper.toHex(new Color(key)), colors.get(key));
+
+    return result;
   }
 }
