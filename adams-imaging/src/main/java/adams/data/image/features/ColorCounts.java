@@ -15,7 +15,7 @@
 
 /*
  * ColorCounts.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.image.features;
@@ -24,11 +24,9 @@ import adams.data.featureconverter.HeaderDefinition;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
 import adams.data.report.DataType;
-import adams.gui.core.ColorHelper;
-import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
+import adams.gui.visualization.segmentation.ImageUtils;
+import gnu.trove.map.TObjectIntMap;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,29 +111,19 @@ public class ColorCounts
   public List<Object>[] generateRows(BufferedImageContainer img) {
     List<Object>[]		result;
     BufferedImage		image;
-    int[]			pixels;
+    TObjectIntMap 		colors;
     int				i;
-    int				color;
-    TIntIntMap			colors;
-    int[]			keys;
 
-    image     = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_4BYTE_ABGR);
-    pixels    = BufferedImageHelper.getPixels(image);
-    colors    = new TIntIntHashMap();
-    // remove alpha channel
-    for (i = 0; i < pixels.length; i++) {
-      color = (pixels[i] & 0x00FFFFFF);
-      if (!colors.containsKey(color))
-        colors.put(color, 0);
-      colors.put(color, colors.get(color) + 1);
-    }
+    image  = BufferedImageHelper.convert(img.getImage(), BufferedImage.TYPE_4BYTE_ABGR);
+    colors = ImageUtils.colorDistributionHex(image, true);
 
     result = new List[colors.size()];
-    keys   = colors.keys();
-    for (i = 0; i < keys.length; i++) {
+    i      = 0;
+    for (Object key: colors.keys()) {
       result[i] = new ArrayList<>();
-      result[i].add(ColorHelper.toHex(new Color(keys[i])));
-      result[i].add(colors.get(keys[i]));
+      result[i].add(key.toString());
+      result[i].add(colors.get(key));
+      i++;
     }
 
     return result;
