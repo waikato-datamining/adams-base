@@ -15,7 +15,7 @@
 
 /*
  * CanvasPanel.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object;
@@ -623,6 +623,40 @@ public class CanvasPanel
 
     if (m_Image != null) {
       ((Graphics2D) g).scale(m_ActualZoom, m_ActualZoom);
+      if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
+	op = new RescaleOp(m_Brightness / 100.0f, 0, null);
+	m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());
+	image         = m_Image;
+	if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
+	  image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
+	m_BrightImage = op.filter(image, m_BrightImage);
+	m_LastBrightness = m_Brightness;
+      }
+      g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
+    }
+
+    if (getOwner().getShowAnnotations()) {
+      getOwner().getOverlay().paint(getOwner(), g);
+      getOwner().getAnnotator().paintSelection(g);
+    }
+  }
+
+  /**
+   * Paints the image or just a white background at full resolution.
+   *
+   * @param g		the graphics context
+   * @param zoom 	the zoom to use (1.0 = 100%)
+   */
+  public void paint(Graphics g, double zoom) {
+    RescaleOp 		op;
+    BufferedImage	image;
+
+    ((Graphics2D) g).scale(1.0, 1.0);
+    g.setColor(getOwner().getBackground());
+    g.fillRect(0, 0, m_Image.getWidth(), m_Image.getHeight());
+
+    if (m_Image != null) {
+      ((Graphics2D) g).scale(zoom, zoom);
       if ((m_BrightImage == null) || (m_LastBrightness == null) || (m_LastBrightness != m_Brightness)) {
 	op = new RescaleOp(m_Brightness / 100.0f, 0, null);
 	m_BrightImage = new BufferedImage(m_Image.getWidth(), m_Image.getHeight(), m_Image.getType());

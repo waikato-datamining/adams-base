@@ -175,9 +175,9 @@ public class Export
 
     file = m_FileChooserPanel.getCurrent();
     if (file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".jpg")) {
-      image   = new BufferedImage(getCanvas().getWidth(), getCanvas().getHeight(), BufferedImage.TYPE_INT_ARGB);
+      image   = new BufferedImage(getCanvas().getImage().getWidth(), getCanvas().getImage().getHeight(), BufferedImage.TYPE_INT_ARGB);
       g2d     = image.createGraphics();
-      getCanvas().paint(g2d);
+      getCanvas().paint(g2d, 1.0);
       g2d.dispose();
       msg = BufferedImageHelper.write(image, file);
       if (msg == null)
