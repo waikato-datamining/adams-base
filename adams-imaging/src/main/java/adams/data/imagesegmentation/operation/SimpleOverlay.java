@@ -15,7 +15,7 @@
 
 /*
  * SimpleOverlay.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.imagesegmentation.operation;
@@ -346,12 +346,9 @@ public class SimpleOverlay
     for (String layerName: layerNames) {
       layerColor = m_ColorProvider.next();
       layerImage = BufferedImageHelper.convert(layers.get(layerName), BufferedImage.TYPE_INT_ARGB);
-      if (layerImage == null) {
-        getLogger().warning("Layer '" + layerName + "' does not exist!");
-        continue;
-      }
       ImageUtils.replaceColor(layerImage, new Color(0, 0, 0, 255), new Color(0, 0, 0, 0));
       ImageUtils.replaceColor(layerImage, new Color(255, 255, 255, 255), layerColor);
+      ImageUtils.replaceColor(layerImage, new Color(1, 1, 1, 255), layerColor);  // for fixing binary images
       g2d.drawImage(layerImage, 0, 0, null);
     }
 
