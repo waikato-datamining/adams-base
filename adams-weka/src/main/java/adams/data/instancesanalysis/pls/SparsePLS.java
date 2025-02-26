@@ -15,7 +15,7 @@
 
 /*
  * SparsePLS.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -30,12 +30,75 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Nonlinear Iterative Partial Least Squares (SparsePLS).<br>
+ * Automatically standardizes X and Y internally.<br>
+ * <br>
+ * For more information see:<br>
+ * Chun H, Keles S. (2010). Sparse partial least squares regression for simultaneous dimension reduction and variable selection. Royal Statistical Society Series B, Statistical Methodology. 1:3-25. URL https:&#47;&#47;www.ncbi.nlm.nih.gov&#47;pmc&#47;articles&#47;PMC2810828&#47;
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{ChunH2010,
+ *    author = {Chun H, Keles S.},
+ *    journal = {Royal Statistical Society Series B, Statistical Methodology},
+ *    pages = {3-25},
+ *    title = {Sparse partial least squares regression for simultaneous dimension reduction and variable selection},
+ *    volume = {1},
+ *    year = {2010},
+ *    URL = {https:&#47;&#47;www.ncbi.nlm.nih.gov&#47;pmc&#47;articles&#47;PMC2810828&#47;}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-tol &lt;double&gt; (property: tol)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop improvement tolerance.
+ * &nbsp;&nbsp;&nbsp;default: 1.0E-7
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
+ * <pre>-max-iter &lt;int&gt; (property: maxIter)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop maximum number of iterations.
+ * &nbsp;&nbsp;&nbsp;default: 500
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-lambda &lt;double&gt; (property: lambda)
+ * &nbsp;&nbsp;&nbsp;The sparsity parameter; determines sparseness.
+ * &nbsp;&nbsp;&nbsp;default: 0.5
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -65,9 +128,9 @@ public class SparsePLS
   @Override
   public String globalInfo() {
     return "Nonlinear Iterative Partial Least Squares (SparsePLS).\n"
-      + "Automatically standardizes X and Y internally.\n\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "Automatically standardizes X and Y internally.\n\n"
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -269,6 +332,7 @@ public class SparsePLS
     com.github.waikatodatamining.matrix.core.Matrix	X;
     com.github.waikatodatamining.matrix.core.Matrix	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    com.github.waikatodatamining.matrix.core.Matrix	y_new;
     String 						error;
 
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
@@ -286,6 +350,11 @@ public class SparsePLS
     }
     X_new = m_SparsePLS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y));
+    if (m_PredictionType == PredictionType.ALL)
+      y_new = m_SparsePLS.predict(X);
+    else
+      y_new = y;
+
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y_new));
   }
 }

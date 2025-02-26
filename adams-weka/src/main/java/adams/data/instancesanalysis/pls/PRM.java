@@ -15,7 +15,7 @@
 
 /*
  * PRM.java
- * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -30,12 +30,79 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Partial robust M-regression (PRM).<br>
+ * For more information see:<br>
+ * Sven Serneels, Christophe Croux, Peter Filzmoser, Pierre J.Van Espen (2005). Partial robust M-regression. Chemometrics and Intelligent Laboratory Systems. 79:55-64. URL https:&#47;&#47;www.sciencedirect.com&#47;science&#47;article&#47;pii&#47;S0169743905000638
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{SvenSerneels2005,
+ *    author = {Sven Serneels, Christophe Croux, Peter Filzmoser, Pierre J.Van Espen},
+ *    journal = {Chemometrics and Intelligent Laboratory Systems},
+ *    pages = {55-64},
+ *    title = {Partial robust M-regression},
+ *    volume = {79},
+ *    year = {2005},
+ *    URL = {https:&#47;&#47;www.sciencedirect.com&#47;science&#47;article&#47;pii&#47;S0169743905000638}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-tol &lt;double&gt; (property: tol)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop improvement tolerance.
+ * &nbsp;&nbsp;&nbsp;default: 1.0E-6
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
+ * <pre>-max-iter &lt;int&gt; (property: maxIter)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop maximum number of iterations.
+ * &nbsp;&nbsp;&nbsp;default: 500
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-num-simpls-coefficients &lt;int&gt; (property: numSimplsCoefficients)
+ * &nbsp;&nbsp;&nbsp;The number of SIMPLS coefficients to keep; &lt;= 0 to keep all.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-c &lt;double&gt; (property: c)
+ * &nbsp;&nbsp;&nbsp;The tuning parameter, &gt;0.
+ * &nbsp;&nbsp;&nbsp;default: 4.0
+ * &nbsp;&nbsp;&nbsp;minimum: 1.0E-10
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -68,8 +135,8 @@ public class PRM
   @Override
   public String globalInfo() {
     return "Partial robust M-regression (PRM).\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -306,6 +373,7 @@ public class PRM
     com.github.waikatodatamining.matrix.core.Matrix	X;
     com.github.waikatodatamining.matrix.core.Matrix	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    com.github.waikatodatamining.matrix.core.Matrix	y_new;
     String 						error;
 
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
@@ -324,6 +392,11 @@ public class PRM
     }
     X_new = m_PRM.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y));
+    if (m_PredictionType == PredictionType.ALL)
+      y_new = m_PRM.predict(X);
+    else
+      y_new = y;
+
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y_new));
   }
 }

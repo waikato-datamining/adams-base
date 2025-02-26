@@ -15,7 +15,7 @@
 
 /*
  * DIPLS.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -30,12 +30,62 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Domain Invariant Partial Least Squares (DIPLS).<br>
+ * <br>
+ * For more information see:<br>
+ * Ramin Nikzad-Langerodi, Werner Zellinger, Edwin Lughofer,, Susanne Saminger-Platz. Domain-Invariant Partial-Least-Squares Regression. Analytical Chemistry. 90(11):6693-6701. URL https:&#47;&#47;pubs.acs.org&#47;doi&#47;10.1021&#47;acs.analchem.8b00498
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{missing_id,
+ *    author = {Ramin Nikzad-Langerodi, Werner Zellinger, Edwin Lughofer, and Susanne Saminger-Platz},
+ *    journal = {Analytical Chemistry},
+ *    number = {11},
+ *    pages = {6693-6701},
+ *    title = {Domain-Invariant Partial-Least-Squares Regression},
+ *    volume = {90},
+ *    URL = {https:&#47;&#47;pubs.acs.org&#47;doi&#47;10.1021&#47;acs.analchem.8b00498}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: CENTER
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-lambda &lt;double&gt; (property: lambda)
+ * &nbsp;&nbsp;&nbsp;The lambda (&gt; 0).
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * &nbsp;&nbsp;&nbsp;minimum: 1.0E-8
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -59,8 +109,8 @@ public class DIPLS
   @Override
   public String globalInfo() {
     return "Domain Invariant Partial Least Squares (DIPLS).\n\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -184,6 +234,9 @@ public class DIPLS
     com.github.waikatodatamining.matrix.core.Matrix	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
     String 						error;
+
+    if (getPredictionType() == PredictionType.ALL)
+      throw new IllegalStateException("Cannot perform predictions!");
 
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
     y = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data));

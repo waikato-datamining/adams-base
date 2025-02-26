@@ -15,7 +15,7 @@
 
 /*
  * NIPALS.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -31,12 +31,74 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Nonlinear Iterative Partial Least Squares (NIPALS).<br>
+ * <br>
+ * For more information see:<br>
+ * scikit-learn. Nonlinear Iterative Partial Least Squares (NIPALS). URL https:&#47;&#47;github.com&#47;scikit-learn&#47;scikit-learn&#47;blob&#47;ed5e127b&#47;sklearn&#47;cross_decomposition&#47;pls_.py#L455
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;misc{missing_id,
+ *    author = {scikit-learn},
+ *    title = {Nonlinear Iterative Partial Least Squares (NIPALS)},
+ *    URL = {https:&#47;&#47;github.com&#47;scikit-learn&#47;scikit-learn&#47;blob&#47;ed5e127b&#47;sklearn&#47;cross_decomposition&#47;pls_.py#L455}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: CENTER
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-tol &lt;double&gt; (property: tol)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop improvement tolerance.
+ * &nbsp;&nbsp;&nbsp;default: 1.0E-6
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
+ * <pre>-max-iter &lt;int&gt; (property: maxIter)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop maximum number of iterations.
+ * &nbsp;&nbsp;&nbsp;default: 500
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-norm-y-weights &lt;boolean&gt; (property: normYWeights)
+ * &nbsp;&nbsp;&nbsp;Whether to normalize Y weights.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-deflation-mode &lt;CANONICAL|REGRESSION&gt; (property: deflationMode)
+ * &nbsp;&nbsp;&nbsp;The deflation mode to use.
+ * &nbsp;&nbsp;&nbsp;default: REGRESSION
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -69,8 +131,8 @@ public class NIPALS
   @Override
   public String globalInfo() {
     return "Nonlinear Iterative Partial Least Squares (NIPALS).\n\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -290,6 +352,7 @@ public class NIPALS
     com.github.waikatodatamining.matrix.core.Matrix	X;
     com.github.waikatodatamining.matrix.core.Matrix	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    com.github.waikatodatamining.matrix.core.Matrix	y_new;
     String 						error;
 
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
@@ -308,6 +371,11 @@ public class NIPALS
     }
     X_new = m_NIPALS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y));
+    if (m_PredictionType == PredictionType.ALL)
+      y_new = m_NIPALS.predict(X);
+    else
+      y_new = y;
+
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y_new));
   }
 }

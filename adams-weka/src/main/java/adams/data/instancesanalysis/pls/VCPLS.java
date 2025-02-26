@@ -30,12 +30,62 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Variance constrained partial least squares.<br>
+ * <br>
+ * For more information see:<br>
+ * Xiubao Jiang, Xinge You, Shujian Yu, Dacheng Tao, C.L. Philip Chen, Yiu-ming Cheung (2015). Variance constrained partial least squares. Chemometrics and Intelligent Laboratory Systems. 145:60-71. URL http:&#47;&#47;dx.doi.org&#47;10.1016&#47;j.chemolab.2015.04.014
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{XiubaoJiang2015,
+ *    author = {Xiubao Jiang, Xinge You, Shujian Yu, Dacheng Tao, C.L. Philip Chen, Yiu-ming Cheung},
+ *    journal = {Chemometrics and Intelligent Laboratory Systems},
+ *    pages = {60-71},
+ *    title = {Variance constrained partial least squares},
+ *    volume = {145},
+ *    year = {2015},
+ *    URL = {http:&#47;&#47;dx.doi.org&#47;10.1016&#47;j.chemolab.2015.04.014},
+ *    HTTP = {http:&#47;&#47;or.nsfc.gov.cn&#47;bitstream&#47;00001903-5&#47;485833&#47;1&#47;1000013952154.pdf}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: CENTER
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-lambda &lt;double&gt; (property: lambda)
+ * &nbsp;&nbsp;&nbsp;The lambda parameter.
+ * &nbsp;&nbsp;&nbsp;default: 1.0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -59,8 +109,8 @@ public class VCPLS
   @Override
   public String globalInfo() {
     return "Variance constrained partial least squares.\n\n"
-      + "For more information see:\n"
-      + getTechnicalInformation();
+	     + "For more information see:\n"
+	     + getTechnicalInformation();
   }
 
   /**
@@ -182,6 +232,7 @@ public class VCPLS
     com.github.waikatodatamining.matrix.core.Matrix	X;
     com.github.waikatodatamining.matrix.core.Matrix	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    com.github.waikatodatamining.matrix.core.Matrix	y_new;
     String 						error;
 
     X = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
@@ -197,6 +248,11 @@ public class VCPLS
     }
     X_new = m_VCPLS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y));
+    if (m_PredictionType == PredictionType.ALL)
+      y_new = m_VCPLS.predict(X);
+    else
+      y_new = y;
+
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y_new));
   }
 }

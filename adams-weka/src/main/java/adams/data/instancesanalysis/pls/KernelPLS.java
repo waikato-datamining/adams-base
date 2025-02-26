@@ -15,7 +15,7 @@
 
 /*
  * KernelPLS.java
- * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.instancesanalysis.pls;
@@ -34,12 +34,81 @@ import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
+ * Kernel Partial Least Squares Regression in Reproducing Kernel Hilbert Space<br>
+ * <br>
+ * For more information see:<br>
+ * Roman Rosipal, Leonard J. Trejo (2001). Kernel Partial Least Squares Regression in Reproducing Kernel Hilbert Space. Journal of Machine Learning Research. 2:97-123. URL http:&#47;&#47;www.jmlr.org&#47;papers&#47;volume2&#47;rosipal01a&#47;rosipal01a.pdf
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- technical-bibtex-start -->
+ * <pre>
+ * &#64;article{Rosipal2001,
+ *    author = {Roman Rosipal and Leonard J. Trejo},
+ *    journal = {Journal of Machine Learning Research},
+ *    pages = {97-123},
+ *    title = {Kernel Partial Least Squares Regression in Reproducing Kernel Hilbert Space},
+ *    volume = {2},
+ *    year = {2001},
+ *    URL = {http:&#47;&#47;www.jmlr.org&#47;papers&#47;volume2&#47;rosipal01a&#47;rosipal01a.pdf}
+ * }
+ * </pre>
+ * <br><br>
  <!-- technical-bibtex-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-preprocessing-type &lt;NONE|CENTER|STANDARDIZE&gt; (property: preprocessingType)
+ * &nbsp;&nbsp;&nbsp;The type of preprocessing to perform.
+ * &nbsp;&nbsp;&nbsp;default: CENTER
+ * </pre>
+ *
+ * <pre>-replace-missing &lt;boolean&gt; (property: replaceMissing)
+ * &nbsp;&nbsp;&nbsp;Whether to replace missing values.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-num-components &lt;int&gt; (property: numComponents)
+ * &nbsp;&nbsp;&nbsp;The number of components to compute.
+ * &nbsp;&nbsp;&nbsp;default: 20
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-prediction-type &lt;NONE|ALL|EXCEPT_CLASS&gt; (property: predictionType)
+ * &nbsp;&nbsp;&nbsp;The type of prediction to perform.
+ * &nbsp;&nbsp;&nbsp;default: NONE
+ * </pre>
+ *
+ * <pre>-class-attributes &lt;adams.core.base.BaseRegExp&gt; (property: classAttributes)
+ * &nbsp;&nbsp;&nbsp;The regular expression for identifying the class attributes (besides an
+ * &nbsp;&nbsp;&nbsp;explicitly set one).
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-kernel &lt;com.github.waikatodatamining.matrix.transformation.kernel.AbstractKernel&gt; (property: kernel)
+ * &nbsp;&nbsp;&nbsp;The kernel to use
+ * &nbsp;&nbsp;&nbsp;default: com.github.waikatodatamining.matrix.transformation.kernel.RBFKernel -gamma 1.0
+ * </pre>
+ *
+ * <pre>-tol &lt;double&gt; (property: tol)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop maximum number of iterations.
+ * &nbsp;&nbsp;&nbsp;default: 1.0E-6
+ * &nbsp;&nbsp;&nbsp;minimum: 0.0
+ * </pre>
+ *
+ * <pre>-max-iter &lt;int&gt; (property: maxIter)
+ * &nbsp;&nbsp;&nbsp;The inner NIPALS loop improvement tolerance.
+ * &nbsp;&nbsp;&nbsp;default: 500
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -255,14 +324,15 @@ public class KernelPLS
   @Override
   protected Instances doTransform(Instances data, Map<String, Object> params) throws Exception {
     com.github.waikatodatamining.matrix.core.Matrix	X;
-    com.github.waikatodatamining.matrix.core.Matrix	Y;
+    com.github.waikatodatamining.matrix.core.Matrix 	y;
     com.github.waikatodatamining.matrix.core.Matrix	X_new;
+    com.github.waikatodatamining.matrix.core.Matrix	y_new;
     int[]						cols;
     String 						error;
 
     cols = m_ClassAttributeIndices.toArray();
     X    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getX(data));
-    Y    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data, cols));
+    y    = MatrixHelper.wekaToMatrixAlgo(MatrixHelper.getY(data, cols));
     if (!isInitialized()) {
       m_KernelPLS = new com.github.waikatodatamining.matrix.algorithm.pls.KernelPLS();
       m_KernelPLS.setKernel((AbstractKernel) OptionUtils.shallowCopy(m_Kernel));
@@ -270,12 +340,17 @@ public class KernelPLS
       m_KernelPLS.setPreprocessingType(PreprocessingType.NONE);
       m_KernelPLS.setTol(m_Tol);
       m_KernelPLS.setMaxIter(m_MaxIter);
-      error = m_KernelPLS.initialize(X, Y);
+      error = m_KernelPLS.initialize(X, y);
       if (error != null)
 	throw new Exception(error);
     }
     X_new = m_KernelPLS.transform(X);
 
-    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(Y));
+    if (m_PredictionType == PredictionType.ALL)
+      y_new = m_KernelPLS.predict(X);
+    else
+      y_new = y;
+
+    return MatrixHelper.toInstances(getOutputFormat(), MatrixHelper.matrixAlgoToWeka(X_new), MatrixHelper.matrixAlgoToWeka(y_new));
   }
 }
