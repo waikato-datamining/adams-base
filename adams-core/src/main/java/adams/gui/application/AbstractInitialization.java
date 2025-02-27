@@ -15,14 +15,17 @@
 
 /*
  * AbstractInitialization.java
- * Copyright (C) 2012-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
 import adams.core.ClassLister;
 import adams.core.SimpleTimer;
 import adams.core.classmanager.ClassManager;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
+
+import java.util.logging.Level;
 
 /**
  * Ancestor for initialization applets.
@@ -92,11 +95,10 @@ public abstract class AbstractInitialization
     for (String cls: classes) {
       try {
 	init   = (Initialization) ClassManager.getSingleton().forName(cls).getDeclaredConstructor().newInstance();
-	result = init.initialize(parent) || result;
+	result = init.initialize(parent) && result;
       }
       catch (Exception e) {
-	System.err.println("Failed to run initialization applet '" + cls + "':");
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to run initialization applet '" + cls + "':", e);
       }
     }
     
@@ -126,7 +128,7 @@ public abstract class AbstractInitialization
       result = (Initialization) OptionUtils.forName(Initialization.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate initialization applet '" + classname + "' with options: " + OptionUtils.joinOptions(options), e);
       result = null;
     }
 
