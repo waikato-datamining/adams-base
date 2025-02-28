@@ -15,7 +15,7 @@
 
 /*
  * WekaModelReader.java
- * Copyright (C) 2011-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -92,7 +92,6 @@ import weka.classifiers.meta.ThreadSafeClassifierWrapper;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaModelReader
   extends AbstractWekaModelReader {
@@ -198,6 +197,7 @@ public class WekaModelReader
 	  if (isLoggingEnabled())
 	    getLogger().info("Wrapping classifier");
 	  wrapper = new ThreadSafeClassifierWrapper();
+	  wrapper.setFlowContext(this);
 	  wrapper.setClassifier((Classifier) m_OutputToken.getPayload());
 	  m_OutputToken.setPayload(wrapper);
 	}
@@ -208,6 +208,7 @@ public class WekaModelReader
 	  if (isLoggingEnabled())
 	    getLogger().info("Wrapping classifier (in container)");
 	  wrapper = new ThreadSafeClassifierWrapper();
+	  wrapper.setFlowContext(this);
 	  wrapper.setClassifier((Classifier) cont.getValue(WekaModelContainer.VALUE_MODEL));
 	  cont.setValue(WekaModelContainer.VALUE_MODEL, wrapper);
 	  m_OutputToken.setPayload(cont);

@@ -15,7 +15,7 @@
 
 /*
  * WekaFilter.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -826,6 +826,10 @@ public class WekaFilter
 	m_ActualFilter = ObjectCopyHelper.copyObject(m_Filter);
       else
 	return errors.toString();
+    }
+    else {
+      if (m_ActualFilter instanceof FlowContextHandler)
+	((FlowContextHandler) m_ActualFilter).setFlowContext(this);
     }
 
     // configure containers

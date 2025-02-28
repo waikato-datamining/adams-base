@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractCallableWekaClassifierEvaluator.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -23,13 +23,13 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.source.WekaClassifierSetup;
 
 /**
  * Ancestor for classifier evaluators that make use of a callable classifier.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractCallableWekaClassifierEvaluator
   extends AbstractWekaClassifierEvaluator {
@@ -170,6 +170,10 @@ public abstract class AbstractCallableWekaClassifierEvaluator
     if (result == null) {
       if (!errors.isEmpty())
 	getLogger().severe(errors.toString());
+    }
+    else {
+      if (result instanceof FlowContextHandler)
+	((FlowContextHandler) result).setFlowContext(this);
     }
 
     return result;

@@ -13,13 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ThreadSafeClassifierWrapper.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers.meta;
 
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.ThreadSafeClassifier;
@@ -63,16 +65,18 @@ import weka.core.Utils;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ThreadSafeClassifierWrapper
   extends SingleClassifierEnhancer
-  implements AbstainingClassifier, ThreadSafeClassifier {
+  implements AbstainingClassifier, ThreadSafeClassifier, FlowContextHandler {
 
   private static final long serialVersionUID = 5699323936859571421L;
 
   /** whether the base classifier can abstain. */
   protected boolean m_CanAbstain = false;
+
+  /** the flow context. */
+  protected transient Actor m_FlowContext;
 
   /**
    * Returns a string describing classifier.
@@ -82,6 +86,24 @@ public class ThreadSafeClassifierWrapper
    */
   public String globalInfo() {
     return "Wraps an abstaining classifier and allows turning on/of abstaining.";
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value	the context
+   */
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context.
+   *
+   * @return		the context, null if not available
+   */
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**
@@ -97,6 +119,8 @@ public class ThreadSafeClassifierWrapper
   @Override
   public synchronized void buildClassifier(Instances data) throws Exception {
     getCapabilities().testWithFail(data);
+    if (m_Classifier instanceof FlowContextHandler)
+      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
     m_Classifier.buildClassifier(data);
     m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
@@ -122,6 +146,8 @@ public class ThreadSafeClassifierWrapper
    */
   @Override
   public synchronized double[] distributionForInstance(Instance instance) throws Exception {
+    if (m_Classifier instanceof FlowContextHandler)
+      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
     return m_Classifier.distributionForInstance(instance);
   }
 
@@ -142,6 +168,8 @@ public class ThreadSafeClassifierWrapper
    * @throws Exception	if fails to make prediction
    */
   public synchronized double getAbstentionClassification(Instance inst) throws Exception {
+    if (m_Classifier instanceof FlowContextHandler)
+      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
     if (canAbstain())
       return ((AbstainingClassifier) m_Classifier).getAbstentionClassification(inst);
     else
@@ -156,6 +184,8 @@ public class ThreadSafeClassifierWrapper
    * @throws Exception	if fails to make prediction
    */
   public synchronized double[] getAbstentionDistribution(Instance inst) throws Exception {
+    if (m_Classifier instanceof FlowContextHandler)
+      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
     if (canAbstain())
       return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(inst);
     else
