@@ -15,7 +15,7 @@
 
 /*
  * StoppableUtils.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -72,11 +72,13 @@ public class StoppableUtils {
      * @param desc	the property descriptor
      * @param parent	the parent object
      * @param child	the child object
+     * @return 		true if to continue observing
      */
     @Override
-    public void observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
+    public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
       if (isStoppable(child) && !m_Recorded.contains(child))
 	m_StoppableObjects.add(child);
+      return true;
     }
   }
 

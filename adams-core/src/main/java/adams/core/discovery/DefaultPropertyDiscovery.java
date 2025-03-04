@@ -15,7 +15,7 @@
 
 /*
  * DefaultPropertyDiscovery.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -51,7 +51,7 @@ public class DefaultPropertyDiscovery
   /**
    * Observer using discovery handlers.
    */
-  public class HandlerObserver
+  public static class HandlerObserver
     implements Observer {
 
     /** the handlers to use. */
@@ -73,13 +73,15 @@ public class DefaultPropertyDiscovery
      * @param desc	the property descriptor
      * @param parent	the parent object
      * @param child	the child object
+     * @return 		true if to continue observing
      */
     @Override
-    public void observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
+    public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
       for (AbstractDiscoveryHandler handler : m_Handlers) {
 	if (handler.handles(path, child))
 	  handler.addContainer(new PropertyContainer(path, desc, child));
       }
+      return true;
     }
   }
 

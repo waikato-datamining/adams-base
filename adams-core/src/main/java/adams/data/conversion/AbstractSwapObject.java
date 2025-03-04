@@ -15,7 +15,7 @@
 
 /*
  * AbstractSwapObject.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
@@ -70,13 +70,15 @@ public abstract class AbstractSwapObject
      * @param desc	the property descriptor
      * @param parent	the parent object
      * @param child	the child object
+     * @return 		true if to continue observing
      */
     @Override
-    public void observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
+    public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
       if (m_Owner.canSwap(path, desc, parent, child)) {
         if (!m_Owner.performSwap(path, desc, parent, child))
 	  m_Owner.getLogger().warning("Failed to swap: " + path + "/" + child.getClass().getName());
       }
+      return true;
     }
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * PropertyTraversal.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -59,8 +59,9 @@ public class PropertyTraversal
      * @param desc	the property descriptor
      * @param parent	the parent object
      * @param child	the child object
+     * @return		true if to continue observing
      */
-    public void observe(Path path, PropertyDescriptor desc, Object parent, Object child);
+    public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child);
   }
 
   /**
@@ -69,8 +70,10 @@ public class PropertyTraversal
    * @param observer		the observer to use
    * @param obj			the object to analyze
    * @param path		the path so far
+   * @return			true if to keep observing
    */
-  protected void traverse(Observer observer, Object obj, Path path) {
+  protected boolean traverse(Observer observer, Object obj, Path path) {
+    boolean 			result;
     IntrospectionContainer 	cont;
     PropertyDescriptor[] 	props;
     Object			child;
@@ -81,6 +84,9 @@ public class PropertyTraversal
     if (isLoggingEnabled())
       getLogger().info("traverse: " + path.toString());
 
+    if (obj == null)
+      return true;
+
     try {
       cont  = IntrospectionHelper.introspect(obj, false, UserMode.HIGHEST);
       props = cont.properties;
@@ -90,8 +96,9 @@ public class PropertyTraversal
       props = null;
     }
     if (props == null)
-      return;
+      return true;
 
+    result = true;
     for (PropertyDescriptor prop: props) {
       if (Utils.isPrimitive(prop.getReadMethod().getReturnType()))
 	continue;
@@ -105,27 +112,32 @@ public class PropertyTraversal
           len = Array.getLength(child);
 	  for (i = 0; i < len; i++) {
 	    newPath = path.append(prop.getDisplayName() + "[" + i + "]");
-	    observer.observe(newPath, prop, obj, Array.get(child, i));
+	    result = observer.observe(newPath, prop, obj, Array.get(child, i));
 	  }
 	}
 	else {
 	  newPath = path.append(prop.getDisplayName());
-	  observer.observe(newPath, prop, obj, child);
+	  result = observer.observe(newPath, prop, obj, child);
 	}
 	// recurse
         if (child.getClass().isArray()) {
           len = Array.getLength(child);
-          for (i = 0; i < len; i++)
-            traverse(observer, Array.get(child, i), path.append(prop.getDisplayName() + "[" + i + "]"));
+          for (i = 0; i < len; i++) {
+	    result = traverse(observer, Array.get(child, i), path.append(prop.getDisplayName() + "[" + i + "]"));
+	    if (!result)
+	      break;
+	  }
         }
         else {
-          traverse(observer, child, path.append(prop.getDisplayName()));
+          result = traverse(observer, child, path.append(prop.getDisplayName()));
         }
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to obtain object from read method: " + path, e);
       }
     }
+
+    return result;
   }
 
   /**
@@ -136,13 +148,15 @@ public class PropertyTraversal
    */
   public void traverse(Observer observer, Object obj) {
     Path	newPath;
+    boolean	keepObserving;
 
     // check current object
-    newPath = new Path(Path.CURRENT_OBJECT);
-    observer.observe(newPath, null, null, obj);
+    newPath       = new Path(Path.CURRENT_OBJECT);
+    keepObserving = observer.observe(newPath, null, null, obj);
 
     // check object's properties
-    traverse(observer, obj, new Path());
+    if (keepObserving)
+      traverse(observer, obj, new Path());
   }
 
   /**
@@ -158,8 +172,9 @@ public class PropertyTraversal
 
     Observer observer = new Observer() {
       @Override
-      public void observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
+      public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
 	System.out.println(path + " --> " + (child == null ? "-" : child.getClass().getName()));
+	return true;
       }
     };
 
