@@ -22,6 +22,7 @@ package weka.classifiers.meta;
 
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import weka.classifiers.AbstainingClassifier;
 import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.ThreadSafeClassifier;
@@ -119,8 +120,8 @@ public class ThreadSafeClassifierWrapper
   @Override
   public synchronized void buildClassifier(Instances data) throws Exception {
     getCapabilities().testWithFail(data);
-    if (m_Classifier instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
+    if (FlowContextUtils.isHandler(m_Classifier))
+      FlowContextUtils.update(m_Classifier, m_FlowContext);
     m_Classifier.buildClassifier(data);
     m_CanAbstain = (m_Classifier instanceof AbstainingClassifier) && ((AbstainingClassifier) m_Classifier).canAbstain();
   }
@@ -146,8 +147,8 @@ public class ThreadSafeClassifierWrapper
    */
   @Override
   public synchronized double[] distributionForInstance(Instance instance) throws Exception {
-    if (m_Classifier instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
+    if (FlowContextUtils.isHandler(m_Classifier))
+      FlowContextUtils.update(m_Classifier, m_FlowContext);
     return m_Classifier.distributionForInstance(instance);
   }
 
@@ -168,8 +169,8 @@ public class ThreadSafeClassifierWrapper
    * @throws Exception	if fails to make prediction
    */
   public synchronized double getAbstentionClassification(Instance inst) throws Exception {
-    if (m_Classifier instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
+    if (FlowContextUtils.isHandler(m_Classifier))
+      FlowContextUtils.update(m_Classifier, m_FlowContext);
     if (canAbstain())
       return ((AbstainingClassifier) m_Classifier).getAbstentionClassification(inst);
     else
@@ -184,8 +185,8 @@ public class ThreadSafeClassifierWrapper
    * @throws Exception	if fails to make prediction
    */
   public synchronized double[] getAbstentionDistribution(Instance inst) throws Exception {
-    if (m_Classifier instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Classifier).setFlowContext(m_FlowContext);
+    if (FlowContextUtils.isHandler(m_Classifier))
+      FlowContextUtils.update(m_Classifier, m_FlowContext);
     if (canAbstain())
       return ((AbstainingClassifier) m_Classifier).getAbstentionDistribution(inst);
     else

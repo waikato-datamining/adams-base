@@ -15,7 +15,7 @@
 
 /*
  * AbstractTemplate.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -203,8 +203,8 @@ public abstract class AbstractTemplate
 
     result = null;
 
-    if (m_Template instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Template).setFlowContext(this);
+    if (FlowContextUtils.isHandler(m_Template))
+      FlowContextUtils.update(m_Template, this);
 
     m_Actor = m_Template.generate();
     if (m_Actor == null) {

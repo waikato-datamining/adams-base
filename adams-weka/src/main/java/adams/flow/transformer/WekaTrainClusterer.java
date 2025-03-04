@@ -28,7 +28,7 @@ import adams.core.option.OptionUtils;
 import adams.flow.container.WekaModelContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.core.Token;
 import adams.flow.source.WekaClustererSetup;
 import adams.flow.standalone.JobRunnerInstance;
@@ -485,8 +485,8 @@ public class WekaTrainClusterer
 	throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "':\n" + errors);
     }
     else {
-      if (result instanceof FlowContextHandler)
-	((FlowContextHandler) result).setFlowContext(this);
+      if (FlowContextUtils.isHandler(result))
+	FlowContextUtils.update(result, this);
     }
 
     return result;

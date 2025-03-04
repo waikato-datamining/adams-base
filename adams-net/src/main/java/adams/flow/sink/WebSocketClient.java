@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WebSocketClient.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.websocket.client.SimpleSendGenerator;
 import adams.flow.websocket.client.WebSocketClientGenerator;
 
@@ -90,7 +90,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WebSocketClient
   extends AbstractSink {
@@ -234,8 +233,8 @@ public class WebSocketClient
     if (m_Client == null) {
       try {
 	m_Client = m_Generator.generateClient();
-	if (m_Client instanceof FlowContextHandler)
-	  ((FlowContextHandler) m_Client).setFlowContext(this);
+	if (FlowContextUtils.isHandler(m_Client))
+	  FlowContextUtils.update(m_Client, this);
       }
       catch (Exception e) {
 	result = handleException("Failed to generate websocket client!", e);

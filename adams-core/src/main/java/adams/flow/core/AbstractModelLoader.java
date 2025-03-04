@@ -463,8 +463,8 @@ public abstract class AbstractModelLoader<T>
         getLogger().info("Reload of model: " + (errors.isEmpty() ? "successful" : errors.toString()));
 
       // set context
-      if (m_Model instanceof FlowContextHandler)
-        ((FlowContextHandler) m_Model).setFlowContext(m_FlowContext);
+      if (FlowContextUtils.isHandler(m_Model))
+        FlowContextUtils.update(m_Model, m_FlowContext);
     }
 
     return m_Model;

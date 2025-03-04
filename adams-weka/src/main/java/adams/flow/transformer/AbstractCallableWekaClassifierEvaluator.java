@@ -15,7 +15,7 @@
 
 /*
  * AbstractCallableWekaClassifierEvaluator.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -23,7 +23,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.source.WekaClassifierSetup;
 
 /**
@@ -172,8 +172,8 @@ public abstract class AbstractCallableWekaClassifierEvaluator
 	getLogger().severe(errors.toString());
     }
     else {
-      if (result instanceof FlowContextHandler)
-	((FlowContextHandler) result).setFlowContext(this);
+      if (FlowContextUtils.isHandler(result))
+	FlowContextUtils.update(result, this);
     }
 
     return result;

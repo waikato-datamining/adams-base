@@ -15,7 +15,7 @@
 
 /*
  * WekaCrossValidationExecution.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.multiprocess;
@@ -35,6 +35,7 @@ import adams.data.weka.InstancesViewSupporter;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.standalone.JobRunnerSetup;
 import weka.classifiers.AggregateEvaluations;
 import weka.classifiers.Classifier;
@@ -573,8 +574,8 @@ public class WekaCrossValidationExecution
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
 	  m_CurrentClassifier = ObjectCopyHelper.copyObject(m_Classifier);
-	  if (m_CurrentClassifier instanceof FlowContextHandler)
-	    ((FlowContextHandler) m_CurrentClassifier).setFlowContext(m_FlowContext);
+	  if (FlowContextUtils.isHandler(m_CurrentClassifier))
+	    FlowContextUtils.update(m_CurrentClassifier, m_FlowContext);
 	  m_CurrentClassifier.buildClassifier(train);
 	  m_CurrentEvaluation.setPriors(train);
 	  m_CurrentEvaluation.evaluateModel(m_CurrentClassifier, test, m_Output);

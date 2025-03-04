@@ -15,7 +15,7 @@
 
 /*
  * AbstractFilter.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,7 +31,7 @@ import adams.db.DatabaseConnectionUser;
 import adams.event.VariableChangeEvent;
 import adams.event.VariableChangeEvent.Type;
 import adams.flow.container.AbstractFilterContainer;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.core.Token;
 import adams.flow.core.VariableMonitor;
 
@@ -361,8 +361,8 @@ public abstract class AbstractFilter
 
     if (!m_FlowContextUpdated) {
       m_FlowContextUpdated = true;
-      if (m_Filter instanceof FlowContextHandler)
-	((FlowContextHandler) m_Filter).setFlowContext(this);
+      if (FlowContextUtils.isHandler(m_Filter))
+	FlowContextUtils.update(m_Filter, this);
     }
 
     if (m_InputToken.getPayload() instanceof DataContainer) {

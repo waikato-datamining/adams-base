@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WebSocketServer.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
 
 import adams.core.QuickInfoHelper;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.websocket.server.EchoServerGenerator;
 import adams.flow.websocket.server.WebSocketServerGenerator;
 
@@ -79,7 +79,6 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WebSocketServer
   extends AbstractStandalone {
@@ -176,8 +175,8 @@ public class WebSocketServer
 
     try {
       m_Server = m_Generator.generateServer();
-      if (m_Server instanceof FlowContextHandler)
-        ((FlowContextHandler) m_Server).setFlowContext(this);
+      if (FlowContextUtils.isHandler(m_Server))
+	FlowContextUtils.update(m_Server, this);
       m_Server.start();
     }
     catch (Exception e) {

@@ -35,7 +35,7 @@ import adams.flow.control.StorageName;
 import adams.flow.control.StorageUser;
 import adams.flow.core.AbstractModelLoader.ModelLoadingType;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.core.ModelLoaderSupporter;
 import adams.flow.core.OptionalOneTimeInitializer;
 import adams.flow.core.Token;
@@ -828,8 +828,8 @@ public class WekaFilter
 	return errors.toString();
     }
     else {
-      if (m_ActualFilter instanceof FlowContextHandler)
-	((FlowContextHandler) m_ActualFilter).setFlowContext(this);
+      if (FlowContextUtils.isHandler(m_ActualFilter))
+	FlowContextUtils.update(m_ActualFilter, this);
     }
 
     // configure containers
@@ -912,8 +912,8 @@ public class WekaFilter
 	synchronized(m_ActualFilter) {
 	  if (!m_FlowContextUpdated) {
 	    m_FlowContextUpdated = true;
-	    if (m_ActualFilter instanceof FlowContextHandler)
-	      ((FlowContextHandler) m_ActualFilter).setFlowContext(this);
+	    if (FlowContextUtils.isHandler(m_ActualFilter))
+	      FlowContextUtils.update(m_ActualFilter, this);
 	  }
 
 	  // filter data

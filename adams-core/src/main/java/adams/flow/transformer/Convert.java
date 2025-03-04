@@ -15,7 +15,7 @@
 
 /*
  * Convert.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,7 +25,7 @@ import adams.core.QuickInfoHelper;
 import adams.data.conversion.Conversion;
 import adams.data.conversion.ConversionWithInitialization;
 import adams.data.conversion.UnknownToUnknown;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -245,8 +245,8 @@ public class Convert
   protected String doExecute() {
     String	result;
 
-    if (m_Conversion instanceof FlowContextHandler)
-      ((FlowContextHandler) m_Conversion).setFlowContext(this);
+    if (FlowContextUtils.isHandler(m_Conversion))
+      FlowContextUtils.update(m_Conversion, this);
 
     m_Conversion.setInput(m_InputToken.getPayload());
     result = m_Conversion.convert();

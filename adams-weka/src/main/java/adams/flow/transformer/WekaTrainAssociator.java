@@ -27,7 +27,7 @@ import adams.core.option.OptionUtils;
 import adams.flow.container.WekaAssociatorContainer;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.core.Token;
 import adams.flow.source.WekaAssociatorSetup;
 import adams.flow.standalone.JobRunnerInstance;
@@ -349,8 +349,8 @@ public class WekaTrainAssociator
 	throw new IllegalStateException("Failed to obtain associator from '" + m_Associator + "':\n" + errors);
     }
     else {
-      if (result instanceof FlowContextHandler)
-	((FlowContextHandler) result).setFlowContext(this);
+      if (FlowContextUtils.isHandler(result))
+	FlowContextUtils.update(result, this);
     }
 
     return result;

@@ -23,7 +23,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
-import adams.flow.core.FlowContextHandler;
+import adams.flow.core.FlowContextUtils;
 import adams.flow.source.WekaClustererSetup;
 
 /**
@@ -128,8 +128,8 @@ public abstract class AbstractCallableWekaClustererEvaluator
 	getLogger().severe(errors.toString());
     }
     else {
-      if (result instanceof FlowContextHandler)
-	((FlowContextHandler) result).setFlowContext(this);
+      if (FlowContextUtils.isHandler(result))
+	FlowContextUtils.update(result, this);
     }
 
     return result;
