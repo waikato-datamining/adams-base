@@ -275,6 +275,13 @@ And these sinks:
 	receiver-operator curve (ROC) or precision/recall.
 	\item \textit{WekaTreeVisualizer} -- displays a tree in 'dot' notation.
 \end{tight_itemize}
+The following flow processors are available:
+\begin{tight_itemize}
+    \item \textit{FixLWLSynchroNoUpdate} -- sets the \texttt{noUpdate} flag
+    in \texttt{LWLSynchro} classifiers, to avoid the neighborhood being updated
+    at prediction time and returning different neighborhoods for the same
+    instance over time.
+\end{tight_itemize}
 
 \section{Templates}
 Here are some templates that make the flow development for WEKA easier:
