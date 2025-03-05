@@ -26,6 +26,7 @@ import adams.gui.application.AboutBoxPanel;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.application.AbstractBasicMenuItemDefinition;
 import adams.gui.application.ChildFrame;
+import adams.gui.core.GUIHelper;
 
 /**
  * Displays the infamous about box.
@@ -74,8 +75,8 @@ public class About
     panel.addInfo("(c) 2009-2025 University of Waikato");
     panel.addInfo("Hamilton, New Zealand");
     ChildFrame frame = createChildFrame(panel);
-    frame.setResizable(false);
-    frame.pack();
+    frame.setSize(GUIHelper.getDefaultDialogDimension());
+    frame.setLocationRelativeTo(null);
   }
 
   /**
