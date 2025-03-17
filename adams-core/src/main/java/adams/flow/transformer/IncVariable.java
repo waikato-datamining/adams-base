@@ -15,7 +15,7 @@
 
 /*
  * IncVariable.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -399,34 +399,36 @@ public class IncVariable
 
     result = null;
 
-    try {
-      if (getVariables().has(m_VariableName.getValue()))
-	value = Double.parseDouble(getVariables().get(m_VariableName.getValue()));
-      else
-	value = 0.0;
-    }
-    catch (Exception e) {
-      value = null;
-    }
-
-    if (value != null) {
-      switch (m_IncrementType) {
-	case INTEGER:
-	  value = value.intValue() + m_IntegerIncrement;
-	  break;
-	case LONG:
-	  value = value.longValue() + m_IntegerIncrement;
-	  break;
-	case DOUBLE:
-	  value = value.doubleValue() + m_DoubleIncrement;
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
+    synchronized (getVariables()) {
+      try {
+	if (getVariables().has(m_VariableName.getValue()))
+	  value = Double.parseDouble(getVariables().get(m_VariableName.getValue()));
+	else
+	  value = 0.0;
       }
-      getVariables().set(m_VariableName.getValue(), "" + value);
-      if (isLoggingEnabled())
-	getLogger().info("Incremented variable '" + m_VariableName + "': " + value);
-      m_OutputToken = new Token(value);
+      catch (Exception e) {
+	value = null;
+      }
+
+      if (value != null) {
+	switch (m_IncrementType) {
+	  case INTEGER:
+	    value = value.intValue() + m_IntegerIncrement;
+	    break;
+	  case LONG:
+	    value = value.longValue() + m_IntegerIncrement;
+	    break;
+	  case DOUBLE:
+	    value = value.doubleValue() + m_DoubleIncrement;
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
+	}
+	getVariables().set(m_VariableName.getValue(), "" + value);
+	if (isLoggingEnabled())
+	  getLogger().info("Incremented variable '" + m_VariableName + "': " + value);
+	m_OutputToken = new Token(value);
+      }
     }
 
     if (!m_OutputVariableValue)
