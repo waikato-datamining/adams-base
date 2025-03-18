@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -494,7 +494,7 @@ public abstract class AbstractDisplay
   protected void reset() {
     super.reset();
 
-    cleanUpGUI();
+    SwingUtilities.invokeLater(this::cleanUpGUI);
   }
 
   /**
@@ -517,7 +517,7 @@ public abstract class AbstractDisplay
   public void closeFrame() {
     if (m_Frame == null)
       return;
-    cleanUpGUI();
+    SwingUtilities.invokeLater(this::cleanUpGUI);
   }
 
   /**
