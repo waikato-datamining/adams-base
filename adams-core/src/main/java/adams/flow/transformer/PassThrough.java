@@ -15,7 +15,7 @@
 
 /*
  * PassThrough.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -62,7 +62,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PassThrough
   extends AbstractTransformer {
@@ -121,26 +120,15 @@ public class PassThrough
   }
 
   /**
-   * Checks whether there is pending output to be collected after
-   * executing the flow item.
-   *
-   * @return		true if there is pending output
-   */
-  public boolean hasPendingOutput() {
-    return (m_OutputToken != null);
-  }
-
-  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
    */
   protected String doExecute() {
-    String	result;
-
-    result        = null;
     m_OutputToken = m_InputToken;
+    if (isLoggingEnabled())
+      getLogger().info(m_InputToken.toString());
 
-    return result;
+    return null;
   }
 }
