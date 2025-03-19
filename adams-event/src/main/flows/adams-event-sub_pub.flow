@@ -1,0 +1,14 @@
+# Project: adams
+# Date: 2025-03-18 16:51:09
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-event
+#
+adams.flow.control.Flow -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.InitPublishSubscribe -storage-name incoming -storage-name processed
+ adams.flow.standalone.Events
+  adams.flow.standalone.SubProcessEvent -event-trigger "adams.flow.standalone.subprocessevent.SubPub -subscribe-storage-name incoming -publish-storage-name processed" -scope-handling-storage SHARE
+   adams.flow.transformer.MathExpression -logging-level INFO -expression X*X*X
+ adams.flow.source.ForLoop
+ adams.flow.control.Sleep
+ adams.flow.sink.Publish -storage-name incoming

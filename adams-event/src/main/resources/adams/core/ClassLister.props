@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # the filters for log records
 adams.flow.standalone.logevent.AbstractLogRecordFilter=\
@@ -14,4 +13,7 @@ adams.flow.standalone.logevent.AbstractLogRecordFilter=\
 # the processors for log records
 adams.flow.standalone.logevent.AbstractLogRecordProcessor=\
   adams.flow.standalone.logevent
-  
+
+# the subprocess event triggers
+adams.flow.standalone.subprocessevent.SubProcessEventTrigger=\
+  adams.flow.standalone.subprocessevent

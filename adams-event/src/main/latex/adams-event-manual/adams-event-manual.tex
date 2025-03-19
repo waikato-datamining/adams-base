@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2019} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2025} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -76,6 +76,8 @@ The following actors are available:
 	\item \textit{QueueEvent} -- standalone that allows listening to a queue 
 	(ArrayList) located in internal storage and process items as soon as they
 	become available.
+	\item \textit{SubProcessEvent} -- standalone that processes data from trigger
+	events with its sub-flow (and the generated data gets forwarded).
 	\item \textit{VariableChangedEvent} -- standalone that allows listening to
 	changes to a specific variable.
 \end{tight_itemize}
