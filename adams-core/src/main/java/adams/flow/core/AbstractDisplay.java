@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -63,7 +63,7 @@ public abstract class AbstractDisplay
 
   /** whether to use just the actor name or the full name as title. */
   protected boolean m_ShortTitle;
-  
+
   /** the width of the dialog. */
   protected int m_Width;
 
@@ -78,7 +78,7 @@ public abstract class AbstractDisplay
 
   /** how to show the display. */
   protected AbstractDisplayType m_DisplayType;
-  
+
   /** the panel to display. */
   protected BasePanel m_Panel;
 
@@ -87,7 +87,7 @@ public abstract class AbstractDisplay
 
   /** whether to create the frame or just the panel. */
   protected boolean m_CreateFrame;
-  
+
   /** whether the GUI is currently being updated. */
   protected Boolean m_Updating;
 
@@ -102,28 +102,28 @@ public abstract class AbstractDisplay
     super.defineOptions();
 
     m_OptionManager.add(
-	    "short-title", "shortTitle",
-	    getDefaultShortTitle());
+      "short-title", "shortTitle",
+      getDefaultShortTitle());
 
     m_OptionManager.add(
-	    "display-type", "displayType",
-	    getDefaultDisplayType(), UserMode.EXPERT);
+      "display-type", "displayType",
+      getDefaultDisplayType(), UserMode.EXPERT);
 
     m_OptionManager.add(
-	    "width", "width",
-	    getDefaultWidth(), -1, null);
+      "width", "width",
+      getDefaultWidth(), -1, null);
 
     m_OptionManager.add(
-	    "height", "height",
-	    getDefaultHeight(), -1, null);
+      "height", "height",
+      getDefaultHeight(), -1, null);
 
     m_OptionManager.add(
-	    "x", "x",
-	    getDefaultX(), -3, null);
+      "x", "x",
+      getDefaultX(), -3, null);
 
     m_OptionManager.add(
-	    "y", "y",
-	    getDefaultY(), -3, null);
+      "y", "y",
+      getDefaultY(), -3, null);
   }
 
   /**
@@ -155,11 +155,11 @@ public abstract class AbstractDisplay
     else
       value = "" + m_Y;
     result += QuickInfoHelper.toString(this, "y", value, ", Y:");
-    
+
     result += QuickInfoHelper.toString(this, "width", m_Width, ", W:");
     result += QuickInfoHelper.toString(this, "height", m_Height, ", H:");
     result += QuickInfoHelper.toString(this, "shortTitle", m_ShortTitle, "short title", ", ");
-    
+
     return result;
   }
 
@@ -238,7 +238,7 @@ public abstract class AbstractDisplay
 
   /**
    * Returns the default value for short title.
-   * 
+   *
    * @return		the default
    */
   protected boolean getDefaultShortTitle() {
@@ -247,7 +247,7 @@ public abstract class AbstractDisplay
 
   /**
    * Returns the default value for showing the display.
-   * 
+   *
    * @return		the default
    */
   protected AbstractDisplayType getDefaultDisplayType() {
@@ -445,7 +445,7 @@ public abstract class AbstractDisplay
     m_DisplayType.updateOptions(this);
     reset();
   }
-  
+
   /**
    * Returns how to show the display.
    *
@@ -462,9 +462,9 @@ public abstract class AbstractDisplay
    * 			displaying in the GUI or for listing the options.
    */
   public String displayTypeTipText() {
-    return 
-	"Determines how to show the display, eg as standalone frame (default) "
-	  + "or in the Flow editor window.";
+    return
+      "Determines how to show the display, eg as standalone frame (default) "
+	+ "or in the Flow editor window.";
   }
 
   /**
@@ -517,7 +517,7 @@ public abstract class AbstractDisplay
   public void closeFrame() {
     if (m_Frame == null)
       return;
-    SwingUtilities.invokeLater(this::cleanUpGUI);
+    cleanUpGUI();
   }
 
   /**
@@ -534,13 +534,13 @@ public abstract class AbstractDisplay
 
   /**
    * Returns the panel.
-   * 
+   *
    * @return		the panel, null if not available
    */
   public BasePanel getPanel() {
     return m_Panel;
   }
-  
+
   /**
    * Creates a title for the dialog. Default implementation only returns
    * the full name of the actor.
@@ -556,22 +556,22 @@ public abstract class AbstractDisplay
 
   /**
    * Sets whether to create the frame or just the panel.
-   * 
+   *
    * @param value	if false, only the panel is created
    */
   public void setCreateFrame(boolean value) {
     m_CreateFrame = value;
   }
-  
+
   /**
    * Returns whether the frame is created as well as the panel.
-   * 
+   *
    * @return		true if the panel is created as well
    */
   public boolean getCreateFrame() {
     return m_CreateFrame;
   }
-  
+
   /**
    * Hook method before the frame gets created.
    * <br><br>
@@ -678,13 +678,13 @@ public abstract class AbstractDisplay
 
   /**
    * Returns the frame.
-   * 
+   *
    * @return		the frame, null if not available
    */
   public BaseFrame getFrame() {
     return m_Frame;
   }
-  
+
   /**
    * Registers the actor with the flow editor, if possible.
    */
@@ -697,7 +697,7 @@ public abstract class AbstractDisplay
 	handler.register(getClass(), getName(), this);
     }
   }
-  
+
   /**
    * Deregisters the actor from the flow editor, if possible.
    */
@@ -710,13 +710,13 @@ public abstract class AbstractDisplay
 	handler.deregister(getClass(), getName());
     }
   }
-  
+
   /**
    * Returns whether to de-register in {@link #wrapUp()} or wait till 
    * {@link #cleanUpGUI()}.
    * <br><br>
    * Default returns false.
-   * 
+   *
    * @return		true if to deregister already in {@link #wrapUp()}
    */
   public boolean deregisterInWrapUp() {
