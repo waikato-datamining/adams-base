@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -580,6 +580,18 @@ public class SetVariable
    * @param value	the variable value
    */
   public SetVariable(VariableName name, BaseText value) {
+    this();
+    setVariableName(name);
+    setVariableValue(value);
+  }
+
+  /**
+   * Constructor for setting variable name and value.
+   *
+   * @param name	the variable name
+   * @param value	the variable value
+   */
+  public SetVariable(VariableName name, String value) {
     this();
     setVariableName(name);
     setVariableValue(value);
