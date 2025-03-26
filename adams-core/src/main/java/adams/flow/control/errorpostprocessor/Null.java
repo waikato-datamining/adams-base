@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Null.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.errorpostprocessor;
@@ -38,7 +38,6 @@ import adams.flow.core.ErrorHandler;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Null
   extends AbstractErrorPostProcessor {
@@ -62,8 +61,10 @@ public class Null
    * @param source	the source actor where the error originated
    * @param type	the type of error
    * @param msg		the error message
+   * @return		the (potentially) updated error message
    */
   @Override
-  protected void doPostProcessError(ErrorHandler handler, Actor source, String type, String msg) {
+  protected String doPostProcessError(ErrorHandler handler, Actor source, String type, String msg) {
+    return msg;
   }
 }

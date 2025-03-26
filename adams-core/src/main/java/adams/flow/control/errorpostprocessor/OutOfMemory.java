@@ -15,7 +15,7 @@
 
 /*
  * OutOfMemory.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.errorpostprocessor;
@@ -185,9 +185,10 @@ public class OutOfMemory
    * @param source	the source actor where the error originated
    * @param type	the type of error
    * @param msg		the error message
+   * @return		the (potentially) updated error message
    */
   @Override
-  protected void doPostProcessError(ErrorHandler handler, Actor source, String type, String msg) {
+  protected String doPostProcessError(ErrorHandler handler, Actor source, String type, String msg) {
     LogEntry		entry;
     Properties		props;
 
@@ -210,5 +211,6 @@ public class OutOfMemory
 	getLogger().info("Log actor not available to send error to: " + m_Logger);
       }
     }
+    return msg;
   }
 }

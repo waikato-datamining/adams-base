@@ -155,6 +155,9 @@ public class TryCatch
   /** whether to store any error message in a variable. */
   protected boolean m_StoreError;
 
+  /** whether to prefix the error message with source actor's full name and type. */
+  protected boolean m_PrefixError;
+
   /** the variable to store the error in. */
   protected VariableName m_ErrorVariable;
 
@@ -225,6 +228,10 @@ public class TryCatch
     m_OptionManager.add(
       "store-error", "storeError",
       false);
+
+    m_OptionManager.add(
+      "prefix-error", "prefixError",
+      true);
 
     m_OptionManager.add(
       "error-variable", "errorVariable",
@@ -375,6 +382,37 @@ public class TryCatch
     return
 	"If enabled, then any error gets stored in the specified variable "
 	+ "'errorVariable'; does not modify the variable if there was no error.";
+  }
+
+  /**
+   * Sets whether to add the source actor's full name and type (e.g., 'execute').
+   *
+   * @param value 	true if to add prefix to error message
+   */
+  public void setPrefixError(boolean value) {
+    m_PrefixError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to add the source actor's full name and type (e.g., 'execute').
+   *
+   * @return 		true if to add prefix to error message
+   */
+  public boolean getPrefixError() {
+    return m_PrefixError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String prefixErrorTipText() {
+    return
+      "If enabled, the source actor's full name and the type (e.g., 'execute') gets "
+	+ "added as a prefix to the actual error message.";
   }
 
   /**
@@ -624,11 +662,14 @@ public class TryCatch
    */
   @Override
   public String handleError(Actor source, String type, String msg) {
-    m_ErrorOccurred = source.getFullName() + "/" + type + ": " + msg;
+    msg = m_ErrorPostProcessor.postProcessError(this, source, type, msg);
+    if (m_PrefixError)
+      m_ErrorOccurred = source.getFullName() + "/" + type + ": " + msg;
+    else
+      m_ErrorOccurred = msg;
     // stop further processing of tokens in m_Try
     if (m_Try instanceof ActorHandler)
       ((ActorHandler) m_Try).flushExecution();
-    m_ErrorPostProcessor.postProcessError(this, source, type, msg);
     return m_ErrorOccurred;
   }
 

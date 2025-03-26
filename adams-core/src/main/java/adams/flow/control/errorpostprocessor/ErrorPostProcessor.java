@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ErrorPostProcessor.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.errorpostprocessor;
@@ -28,7 +28,6 @@ import adams.flow.core.ErrorHandler;
  * To be used by error handlers.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ErrorPostProcessor {
 
@@ -39,6 +38,7 @@ public interface ErrorPostProcessor {
    * @param source	the source actor where the error originated
    * @param type	the type of error
    * @param msg		the error message
+   * @return		the (potentially) updated error message
    */
-  public void postProcessError(ErrorHandler handler, Actor source, String type, String msg);
+  public String postProcessError(ErrorHandler handler, Actor source, String type, String msg);
 }
