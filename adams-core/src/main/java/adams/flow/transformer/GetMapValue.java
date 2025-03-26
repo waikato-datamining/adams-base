@@ -15,7 +15,7 @@
 
 /*
  * GetMapValue.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -83,7 +83,6 @@ import java.util.Map;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GetMapValue
   extends AbstractTransformer {
@@ -103,6 +102,23 @@ public class GetMapValue
   public String globalInfo() {
     return
       "Obtains the value associated with the specified key from Map object received as input and forwards it.";
+  }
+
+  /**
+   * Default constructor.
+   */
+  public GetMapValue() {
+    super();
+  }
+
+  /**
+   * Convenience constructor.
+   *
+   * @param key 	the key to retrieve
+   */
+  public GetMapValue(String key) {
+    super();
+    setKey(key);
   }
 
   /**
