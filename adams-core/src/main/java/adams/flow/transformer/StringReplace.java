@@ -15,7 +15,7 @@
 
 /*
  * StringReplace.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,14 +24,17 @@ import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
+import adams.core.net.HtmlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  <!-- globalinfo-start -->
  * Performs a string replacement, using either String.replaceFirst(...) or String.replaceAll(...). Special characters like \n \r \t and \ need to be escaped properly. The input is expected to be escaped, i.e., the string "\t" will get turned into the character '\t'.<br>
  * If the 'replace' string contains both, variables and placeholders, then first all variables are expanded and then the placeholders. This ensures that variables containing placeholders expand their placeholders as well. Not expanding placeholders will cause 'Illegal group reference' error messages.<br>
+ * By enabling 'useDotAll', matching across lines is possible as well.<br>
  * If no regular expression matching is required, you can also use the simple replacing, which uses String.replace(...).
  * <br><br>
  <!-- globalinfo-end -->
@@ -48,63 +51,80 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: StringReplace
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-find &lt;adams.core.base.BaseRegExp&gt; (property: find)
  * &nbsp;&nbsp;&nbsp;The string to find (a regular expression).
  * &nbsp;&nbsp;&nbsp;default: find
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-replace &lt;java.lang.String&gt; (property: replace)
  * &nbsp;&nbsp;&nbsp;The string to replace the occurrences with.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-type &lt;FIRST|ALL|SIMPLE&gt; (property: replaceType)
- * &nbsp;&nbsp;&nbsp;Defines whether to use regular expression replacement (first&#47;all) or simple 
+ * &nbsp;&nbsp;&nbsp;Defines whether to use regular expression replacement (first&#47;all) or simple
  * &nbsp;&nbsp;&nbsp;string sequence replacement.
  * &nbsp;&nbsp;&nbsp;default: FIRST
  * </pre>
- * 
+ *
  * <pre>-placeholder &lt;boolean&gt; (property: replaceContainsPlaceholder)
- * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic placeholder expansion for the replacement 
+ * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic placeholder expansion for the replacement
  * &nbsp;&nbsp;&nbsp;string.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-variable &lt;boolean&gt; (property: replaceContainsVariable)
- * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic variable expansion for the replacement 
+ * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic variable expansion for the replacement
  * &nbsp;&nbsp;&nbsp;string.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-use-dot-all &lt;boolean&gt; (property: useDotAll)
+ * &nbsp;&nbsp;&nbsp;If enabled, new-lines are treated as regular characters, enabling matching
+ * &nbsp;&nbsp;&nbsp;across multiple lines, see: https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs
+ * &nbsp;&nbsp;&nbsp;&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html#DOTALL
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -127,9 +147,9 @@ public class StringReplace
     /** String.replaceAll(...). */
     ALL,
     /** String.replace(...). */
-    SIMPLE    
+    SIMPLE
   }
-  
+
   /** the string to find. */
   protected BaseRegExp m_Find;
 
@@ -147,6 +167,12 @@ public class StringReplace
    * expanded first. */
   protected boolean m_ReplaceContainsVariable;
 
+  /** whether to use dot all. */
+  protected boolean m_UseDotAll;
+
+  /** the pattern. */
+  protected transient Pattern m_Pattern;
+
   /**
    * Returns a string describing the object.
    *
@@ -155,17 +181,18 @@ public class StringReplace
   @Override
   public String globalInfo() {
     return
-        "Performs a string replacement, using either String.replaceFirst(...) "
-      + "or String.replaceAll(...). Special characters like \\n \\r \\t and \\ "
-      + "need to be escaped properly. The input is expected to be escaped, "
-      + "i.e., the string \"\\t\" will get turned into the character '\\t'.\n"
-      + "If the 'replace' string contains both, variables and placeholders, "
-      + "then first all variables are expanded and then the placeholders. This "
-      + "ensures that variables containing placeholders expand their placeholders "
-      + "as well. Not expanding placeholders will cause 'Illegal group reference' "
-      + "error messages.\n"
-      + "If no regular expression matching is required, you can also use the "
-      + "simple replacing, which uses String.replace(...).";
+      "Performs a string replacement, using either String.replaceFirst(...) "
+	+ "or String.replaceAll(...). Special characters like \\n \\r \\t and \\ "
+	+ "need to be escaped properly. The input is expected to be escaped, "
+	+ "i.e., the string \"\\t\" will get turned into the character '\\t'.\n"
+	+ "If the 'replace' string contains both, variables and placeholders, "
+	+ "then first all variables are expanded and then the placeholders. This "
+	+ "ensures that variables containing placeholders expand their placeholders "
+	+ "as well. Not expanding placeholders will cause 'Illegal group reference' "
+	+ "error messages.\n"
+	+ "By enabling 'useDotAll', matching across lines is possible as well.\n"
+	+ "If no regular expression matching is required, you can also use the "
+	+ "simple replacing, which uses String.replace(...).";
   }
 
   /**
@@ -176,24 +203,38 @@ public class StringReplace
     super.defineOptions();
 
     m_OptionManager.add(
-	    "find", "find",
-	    new BaseRegExp("find"));
+      "find", "find",
+      new BaseRegExp("find"));
 
     m_OptionManager.add(
-	    "replace", "replace",
-	    "");
+      "replace", "replace",
+      "");
 
     m_OptionManager.add(
-	    "type", "replaceType",
-	    ReplaceType.FIRST);
+      "type", "replaceType",
+      ReplaceType.FIRST);
 
     m_OptionManager.add(
-	    "placeholder", "replaceContainsPlaceholder",
-	    false);
+      "placeholder", "replaceContainsPlaceholder",
+      false);
 
     m_OptionManager.add(
-	    "variable", "replaceContainsVariable",
-	    false);
+      "variable", "replaceContainsVariable",
+      false);
+
+    m_OptionManager.add(
+      "use-dot-all", "useDotAll",
+      false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_Pattern = null;
   }
 
   /**
@@ -226,11 +267,12 @@ public class StringReplace
     if (QuickInfoHelper.hasVariable(this, "replace") || (replace.length() > 0))
       result += " with '" + replace + "'";
 
-    options = new ArrayList<String>();
+    options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "replaceContainsPlaceholder", m_ReplaceContainsPlaceholder, "PH"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "replaceContainsVariable", m_ReplaceContainsVariable, "Var"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useDotAll", m_UseDotAll, "dot-all"));
     result += QuickInfoHelper.flatten(options);
-    
+
     return result;
   }
 
@@ -318,8 +360,8 @@ public class StringReplace
    * 			displaying in the GUI or for listing the options.
    */
   public String replaceTypeTipText() {
-    return 
-	"Defines whether to use regular expression replacement (first/all) "
+    return
+      "Defines whether to use regular expression replacement (first/all) "
 	+ "or simple string sequence replacement.";
   }
 
@@ -386,6 +428,36 @@ public class StringReplace
   }
 
   /**
+   * Sets whether to enabled matching across multiple lines.
+   *
+   * @param value	true if to use dot all
+   */
+  public void setUseDotAll(boolean value) {
+    m_UseDotAll = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to enabled matching across multiple lines.
+   *
+   * @return		true if to use dot all
+   */
+  public boolean getUseDotAll() {
+    return m_UseDotAll;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useDotAllTipText() {
+    return "If enabled, new-lines are treated as regular characters, enabling matching "
+	     + "across multiple lines, see: " + HtmlUtils.toJavaApiURL(Pattern.class) + "#DOTALL";
+  }
+
+  /**
    * Processes the string.
    *
    * @param s		the string to process
@@ -399,6 +471,9 @@ public class StringReplace
     if (isLoggingEnabled())
       getLogger().info("pattern: " + m_Find);
 
+    if (m_UseDotAll && (m_Pattern == null))
+      m_Pattern = Pattern.compile(m_Find.getValue(), Pattern.DOTALL);
+
     // do we need to replace variables?
     replace = m_Replace;
     if (m_ReplaceContainsVariable)
@@ -411,9 +486,15 @@ public class StringReplace
 
     switch (m_ReplaceType) {
       case FIRST:
-	return s.replaceFirst(m_Find.getValue(), replace);
+	if (m_Pattern != null)
+	  return m_Pattern.matcher(s).replaceFirst(replace);
+	else
+	  return s.replaceFirst(m_Find.getValue(), replace);
       case ALL:
-	return s.replaceAll(m_Find.getValue(), replace);
+	if (m_Pattern != null)
+	  return m_Pattern.matcher(s).replaceAll(replace);
+	else
+	  return s.replaceAll(m_Find.getValue(), replace);
       case SIMPLE:
 	return s.replace(m_Find.getValue(), replace);
       default:
