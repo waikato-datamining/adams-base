@@ -494,7 +494,12 @@ public abstract class AbstractDisplay
   protected void reset() {
     super.reset();
 
-    SwingUtilities.invokeLater(this::cleanUpGUI);
+    try {
+      cleanUpGUI();
+    }
+    catch (Exception e) {
+      // ignored
+    }
   }
 
   /**
