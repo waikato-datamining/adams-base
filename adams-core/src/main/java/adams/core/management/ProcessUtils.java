@@ -15,7 +15,7 @@
 
 /*
  * ProcessUtils.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.management;
@@ -41,6 +41,9 @@ public class ProcessUtils {
 
   /** the constant for no PID. */
   public final static long NO_PID = -1;
+
+  /** global flag whether the JVM is shutting down. */
+  public static boolean SHUTTING_DOWN = false;
 
   /**
    * Returns the PID of the virtual machine. Caution: it's a hack and can break

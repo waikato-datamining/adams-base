@@ -93,6 +93,10 @@ adams.core.scripting.AbstractScriptingHandler=\
 adams.core.shutdown.AbstractShutdownHook=\
   adams.core.shutdown
 
+# the automatic/built-in JVM shutdown hooks
+adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook=\
+  adams.core.shutdownbuiltin
+
 # the object discovery handlers
 adams.core.discovery.AbstractDiscoveryHandler=\
   adams.core.discovery

@@ -15,7 +15,7 @@
 
 /*
  * Tool.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -31,6 +31,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
+import adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook;
 import adams.env.Environment;
 
 
@@ -213,6 +214,7 @@ public abstract class AbstractTool
 	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
+	AbstractBuiltInShutdownHook.installAll();
 	instance = forName(tool.getName(), options);
 	instance.getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 	instance.run();

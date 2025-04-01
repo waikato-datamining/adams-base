@@ -15,7 +15,7 @@
 
 /*
  * AbstractTerminalApplication.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.terminal.application;
@@ -29,6 +29,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
+import adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;
@@ -469,6 +470,7 @@ public abstract class AbstractTerminalApplication
 	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
+	AbstractBuiltInShutdownHook.installAll();
 	application = forName(app.getName(), options);
 	Environment.getInstance().setApplicationTerminal(application);
 	if (application.getDatabaseConnection().isConnected())

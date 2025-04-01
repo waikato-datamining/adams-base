@@ -38,6 +38,7 @@ import adams.core.option.OptionUtils;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
 import adams.core.shutdown.AbstractShutdownHook;
 import adams.core.shutdown.Null;
+import adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook;
 import adams.env.Environment;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
@@ -754,6 +755,7 @@ public class FlowRunner
       getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 
     AbstractInitialization.initAll();
+    AbstractBuiltInShutdownHook.installAll();
 
     if (!(m_ShutdownHook instanceof Null)) {
       result = m_ShutdownHook.install();

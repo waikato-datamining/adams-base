@@ -15,7 +15,7 @@
 
 /*
  * AbstractConsoleApplication.java
- * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.console;
@@ -27,6 +27,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
+import adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook;
 import adams.env.Environment;
 
 import java.util.logging.Level;
@@ -106,6 +107,7 @@ public abstract class AbstractConsoleApplication
 	BackgroundScriptingEngineRegistry.getSingleton().stopAllEngines();
       }
       else {
+	AbstractBuiltInShutdownHook.installAll();
 	application = forName(app.getName(), options);
 	application.getLogger().info("PID: " + ProcessUtils.getVirtualMachinePID());
 	application.execute();

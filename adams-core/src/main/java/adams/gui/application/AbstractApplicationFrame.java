@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -39,6 +39,7 @@ import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.core.option.UserMode;
 import adams.core.scriptingengine.BackgroundScriptingEngineRegistry;
+import adams.core.shutdownbuiltin.AbstractBuiltInShutdownHook;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.DatabaseConnectionHandler;
@@ -1395,6 +1396,7 @@ public abstract class AbstractApplicationFrame
 	result = null;
       }
       else {
+	AbstractBuiltInShutdownHook.installAll();
 	result = forName(app.getName(), options);
 	Environment.getInstance().setApplicationFrame(result);
 	if (result.getDatabaseConnection().isConnected()) {
