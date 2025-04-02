@@ -94,6 +94,9 @@ public abstract class AbstractDisplay
   /** whether to keep the GUI even beyond cleanup. */
   protected boolean m_KeepOpen;
 
+  /** whether to reset the GUI. */
+  protected boolean m_ResetGUIWaiting;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -202,8 +205,12 @@ public abstract class AbstractDisplay
    * @see		#m_InputToken
    */
   public void input(Token token) {
-    if (!m_Skip)
+    if (!m_Skip) {
       m_InputToken = token;
+
+      if (m_ResetGUIWaiting)
+	cleanUpGUI();
+    }
   }
 
   /**
@@ -494,11 +501,9 @@ public abstract class AbstractDisplay
   protected void reset() {
     super.reset();
 
-    try {
-      cleanUpGUI();
-    }
-    catch (Exception e) {
-      // ignored
+    if (!isHeadless()) {
+      if ((m_Frame != null) || (m_Panel != null))
+	m_ResetGUIWaiting = true;
     }
   }
 
@@ -768,6 +773,9 @@ public abstract class AbstractDisplay
   protected String doExecute() {
     Runnable	runnable;
 
+    if (m_ResetGUIWaiting)
+      cleanUpGUI();
+
     if (!isHeadless()) {
       if (m_Panel == null) {
 	m_Panel = newPanel();
@@ -808,6 +816,8 @@ public abstract class AbstractDisplay
    * Removes all graphical components.
    */
   protected void cleanUpGUI() {
+    m_ResetGUIWaiting = false;
+
     if (m_Panel != null) {
       if (m_Panel instanceof CleanUpHandler)
 	((CleanUpHandler) m_Panel).cleanUp();
