@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.imagesegmentation.operation;
@@ -69,6 +69,9 @@ public class ConfusionMatrix
   /** what values to generate. */
   protected MatrixValues m_MatrixValues;
 
+  /** the unlabeled text to use. */
+  protected String m_UnlabeledText;
+
   /**
    * Returns a string describing the object.
    *
@@ -102,6 +105,10 @@ public class ConfusionMatrix
     m_OptionManager.add(
       "matrix-values", "matrixValues",
       MatrixValues.COUNTS);
+
+    m_OptionManager.add(
+      "unlabeled-text", "unlabeledText",
+      "Unlabeled");
   }
 
   /**
@@ -218,6 +225,35 @@ public class ConfusionMatrix
    */
   public String matrixValuesTipText() {
     return "The type of values to generate.";
+  }
+
+  /**
+   * Sets the text to use in the confusion matrix for unlabeled pixels.
+   *
+   * @param value	the type of values
+   */
+  public void setUnlabeledText(String value) {
+    m_UnlabeledText = value;
+    reset();
+  }
+
+  /**
+   * Returns the text to use in the confusion matrix for unlabeled pixels.
+   *
+   * @return		the text
+   */
+  public String getUnlabeledText() {
+    return m_UnlabeledText;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String unlabeledTextTipText() {
+    return "The text to use in the confusion matrix for unlabeled pixels.";
   }
 
   /**
@@ -395,13 +431,13 @@ public class ConfusionMatrix
     // header
     row    = result.getHeaderRow();
     row.addCell("L").setContentAsString("x");
-    row.addCell("U").setContentAsString(m_PredictedPrefix + "Unlabeled");
+    row.addCell("U").setContentAsString(m_PredictedPrefix + m_UnlabeledText);
     for (i = 0; i < labels.size(); i++)
       row.addCell("" + i).setContentAsString(m_PredictedPrefix + labels.get(i));
 
     // unlabeled
     row = result.addRow();
-    row.addCell("L").setContentAsString(m_ActualPrefix + "Unlabeled");
+    row.addCell("L").setContentAsString(m_ActualPrefix + m_UnlabeledText);
     row.addCell("U").setNative(convert(matrix[0][0]));
     for (i = 0; i < labels.size(); i++)
       row.addCell("" + i).setNative(convert(matrix[0][i+1]));
