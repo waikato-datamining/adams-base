@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Image.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.pdfproclet;
 
@@ -38,82 +38,89 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-regexp-filename &lt;adams.core.base.BaseRegExp&gt; (property: regExpFilename)
  * &nbsp;&nbsp;&nbsp;The regular expression that the filename must match.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-add-filename &lt;boolean&gt; (property: addFilename)
- * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate 
+ * &nbsp;&nbsp;&nbsp;Whether to add the file name before the actual file content as separate
  * &nbsp;&nbsp;&nbsp;paragraph.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-font-filename &lt;adams.core.io.PdfFont&gt; (property: fontFilename)
  * &nbsp;&nbsp;&nbsp;The font to use for printing the file name header.
  * &nbsp;&nbsp;&nbsp;default: Helvetica-Bold-12
  * </pre>
- * 
+ *
  * <pre>-color-filename &lt;java.awt.Color&gt; (property: colorFilename)
  * &nbsp;&nbsp;&nbsp;The color to use for printing the file name header.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
- * 
+ *
  * <pre>-page-break-before &lt;boolean&gt; (property: pageBreakBefore)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added before the content of the file is inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-page-break-after &lt;boolean&gt; (property: pageBreakAfter)
  * &nbsp;&nbsp;&nbsp;If true, then a page-break is added after the content of the file is inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-num-files &lt;int&gt; (property: numFilesPerPage)
  * &nbsp;&nbsp;&nbsp;The number of files to put on a page before adding an automatic page break;
  * &nbsp;&nbsp;&nbsp; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-rotation &lt;int&gt; (property: rotation)
  * &nbsp;&nbsp;&nbsp;The rotation in degrees.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * &nbsp;&nbsp;&nbsp;maximum: 360
  * </pre>
- * 
+ *
  * <pre>-scale &lt;double&gt; (property: scale)
- * &nbsp;&nbsp;&nbsp;The scaling factor for the image, ie, scaling it to the page dimensions; 
+ * &nbsp;&nbsp;&nbsp;The scaling factor for the image, ie, scaling it to the page dimensions;
  * &nbsp;&nbsp;&nbsp;use 0 to turn scaling off.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
- * 
+ *
  * <pre>-use-absolute-position &lt;boolean&gt; (property: useAbsolutePosition)
  * &nbsp;&nbsp;&nbsp;If enabled, the absolute position is used (from bottom-left corner).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-x &lt;float&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The absolute X position.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
  * <pre>-y &lt;float&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The absolute Y position.
  * &nbsp;&nbsp;&nbsp;default: 0.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * </pre>
- * 
+ *
+ * <pre>-scaling-type &lt;SCALE_TO_FIT|SCALE_PERCENT&gt; (property: scalingType)
+ * &nbsp;&nbsp;&nbsp;The type of scaling to use.
+ * &nbsp;&nbsp;&nbsp;default: SCALE_TO_FIT
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Image
   extends AbstractPdfProcletWithPageBreaks
@@ -121,6 +128,14 @@ public class Image
 
   /** for serialization. */
   private static final long serialVersionUID = 3962046484864891107L;
+
+  /**
+   * The type of scaling to use.
+   */
+  public enum ScalingType {
+    SCALE_TO_FIT,
+    SCALE_PERCENT,
+  }
 
   /** the degrees to rotate images. */
   protected int m_Rotation;
@@ -136,6 +151,9 @@ public class Image
 
   /** the absolute Y position. */
   protected float m_Y;
+
+  /** the type of scaling to use. */
+  protected ScalingType m_ScalingType;
 
   /**
    * Returns a short description of the writer.
@@ -171,6 +189,10 @@ public class Image
     m_OptionManager.add(
       "y", "Y",
       0.0f, 0.0f, null);
+
+    m_OptionManager.add(
+      "scaling-type", "scalingType",
+      ScalingType.SCALE_TO_FIT);
   }
 
   /**
@@ -233,8 +255,8 @@ public class Image
    */
   public String scaleTipText() {
     return
-        "The scaling factor for the image, ie, scaling it to the page "
-      + "dimensions; use 0 to turn scaling off.";
+      "The scaling factor for the image, ie, scaling it to the page "
+	+ "dimensions; use 0 to turn scaling off.";
   }
 
   /**
@@ -329,16 +351,45 @@ public class Image
   }
 
   /**
+   * Sets the type of scaling to use.
+   *
+   * @param value	the type
+   */
+  public void setScalingType(ScalingType value) {
+    m_ScalingType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of scaling to use.
+   *
+   * @return 		the type
+   */
+  public ScalingType getScalingType() {
+    return m_ScalingType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String scalingTypeTipText() {
+    return "The type of scaling to use.";
+  }
+
+  /**
    * Returns the extensions that the processor can process.
    *
    * @return		the extensions (no dot)
    */
   public BaseString[] getExtensions() {
     return new BaseString[]{
-	new BaseString("gif"),
-	new BaseString("jpg"),
-	new BaseString("jpeg"),
-	new BaseString("png")
+      new BaseString("gif"),
+      new BaseString("jpg"),
+      new BaseString("jpeg"),
+      new BaseString("png")
     };
   }
 
@@ -362,9 +413,18 @@ public class Image
     }
     if (m_Scale > 0) {
       scale = (float) m_Scale;
-      image.scaleToFit(
-	generator.getDocument().getPageSize().getWidth() * scale,
-	generator.getDocument().getPageSize().getHeight() * scale);
+      switch (m_ScalingType) {
+	case SCALE_TO_FIT:
+	  image.scaleToFit(
+	    generator.getDocument().getPageSize().getWidth() * scale,
+	    generator.getDocument().getPageSize().getHeight() * scale);
+	  break;
+	case SCALE_PERCENT:
+	  image.scalePercent(scale * 100.0f);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled scaling type: " + m_ScalingType);
+      }
     }
     if (m_UseAbsolutePosition)
       image.setAbsolutePosition(m_X, m_Y);
