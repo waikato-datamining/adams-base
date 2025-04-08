@@ -15,12 +15,13 @@
 
 /*
  * CompareAnnotationWithPrediction.java
- * Copyright (C) 2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.imagesegmentation.operation;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.data.image.BufferedImageContainer;
 import adams.data.image.BufferedImageHelper;
@@ -363,10 +364,8 @@ public class CompareAnnotationWithPrediction
     labels = new ArrayList<>(annoLayers.keySet());
     Collections.sort(labels);
     // specific subset?
-    if (m_Labels.length > 0) {
-      for (BaseString label: m_Labels)
-	labels.remove(label.getValue());
-    }
+    if (m_Labels.length > 0)
+      labels.retainAll(BaseObject.toStringList(m_Labels));
 
     predPixels = new HashMap<>();
     annoPixels = new HashMap<>();
