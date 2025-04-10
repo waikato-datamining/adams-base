@@ -15,7 +15,7 @@
 
 /*
  * StatUtilsTest.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -50,6 +50,26 @@ public class StatUtilsTest
    */
   public static Test suite() {
     return new TestSuite(StatUtilsTest.class);
+  }
+
+  /**
+   * Tests the min methods.
+   */
+  public void testMin() {
+    assertEquals(1, StatUtils.min(new int[]{1, 3, 2}));
+    assertEquals(1, StatUtils.min(new Integer[]{1, 3, 2}));
+    assertEquals(1.1, StatUtils.min(new double[]{1.1, 3.3, 2.2}));
+    assertEquals(1.1, StatUtils.min(new Double[]{1.1, 3.3, 2.2}));
+  }
+
+  /**
+   * Tests the max methods.
+   */
+  public void testMax() {
+    assertEquals(3, StatUtils.max(new int[]{1, 3, 2}));
+    assertEquals(3, StatUtils.max(new Integer[]{1, 3, 2}));
+    assertEquals(3.3, StatUtils.max(new double[]{1.1, 3.3, 2.2}));
+    assertEquals(3.3, StatUtils.max(new Double[]{1.1, 3.3, 2.2}));
   }
 
   /**

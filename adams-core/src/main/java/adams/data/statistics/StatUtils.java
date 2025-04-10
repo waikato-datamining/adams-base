@@ -15,7 +15,7 @@
 
 /*
  * StatUtils.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -337,7 +337,21 @@ public class StatUtils {
    * @return		the index
    */
   public static int minIndex(int[] array) {
-    return minIndex(toNumberArray(array));
+    int		result;
+    int		i;
+    double	minValue;
+
+    result = -1;
+
+    minValue = Double.MAX_VALUE;
+    for (i = 0; i < array.length; i++) {
+      if (array[i] < minValue) {
+	minValue = array[i];
+	result   = i;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -348,7 +362,21 @@ public class StatUtils {
    * @return		the index
    */
   public static int minIndex(double[] array) {
-    return minIndex(toNumberArray(array));
+    int		result;
+    int		i;
+    double	minValue;
+
+    result = -1;
+
+    minValue = Double.MAX_VALUE;
+    for (i = 0; i < array.length; i++) {
+      if (array[i] < minValue) {
+	minValue = array[i];
+	result   = i;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -377,13 +405,14 @@ public class StatUtils {
    * @return		the smallest value
    */
   public static int min(int[] array) {
-    Integer	result;
+    int		index;
 
-    result = (Integer) min(toNumberArray(array));
-    if (result == null)
+    index = minIndex(array);
+
+    if (index == -1)
       return Integer.MIN_VALUE;
     else
-      return result;
+      return array[index];
   }
 
   /**
@@ -394,13 +423,14 @@ public class StatUtils {
    * @return		the smallest value
    */
   public static double min(double[] array) {
-    Double	result;
+    int		index;
 
-    result = (Double) min(toNumberArray(array));
-    if (result == null)
+    index = minIndex(array);
+
+    if (index == -1)
       return -Double.MAX_VALUE;
     else
-      return result;
+      return array[index];
   }
 
   /**
@@ -436,7 +466,21 @@ public class StatUtils {
    * @return		the index
    */
   public static int maxIndex(int[] array) {
-    return maxIndex(toNumberArray(array));
+    int		result;
+    int		i;
+    double	maxValue;
+
+    result = -1;
+
+    maxValue = -Double.MAX_VALUE;
+    for (i = 0; i < array.length; i++) {
+      if (array[i] > maxValue) {
+	maxValue = array[i];
+	result   = i;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -447,7 +491,21 @@ public class StatUtils {
    * @return		the index
    */
   public static int maxIndex(double[] array) {
-    return maxIndex(toNumberArray(array));
+    int		result;
+    int		i;
+    double	maxValue;
+
+    result = -1;
+
+    maxValue = -Double.MAX_VALUE;
+    for (i = 0; i < array.length; i++) {
+      if (array[i] > maxValue) {
+	maxValue = array[i];
+	result   = i;
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -476,13 +534,14 @@ public class StatUtils {
    * @return		the biggest value
    */
   public static int max(int[] array) {
-    Integer	result;
+    int		index;
 
-    result = (Integer) max(toNumberArray(array));
-    if (result == null)
+    index = maxIndex(array);
+
+    if (index == -1)
       return Integer.MAX_VALUE;
     else
-      return result;
+      return array[index];
   }
 
   /**
@@ -493,13 +552,14 @@ public class StatUtils {
    * @return		the biggest value
    */
   public static double max(double[] array) {
-    Double	result;
+    int		index;
 
-    result = (Double) max(toNumberArray(array));
-    if (result == null)
+    index = maxIndex(array);
+
+    if (index == -1)
       return Double.MAX_VALUE;
     else
-      return result;
+      return array[index];
   }
 
   /**
