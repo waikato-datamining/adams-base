@@ -23,19 +23,12 @@ package adams.data.opencv;
 import adams.data.Notes;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.Report;
-import com.github.fracpete.javautils.struct.Struct2;
-import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-import org.bytedeco.javacpp.indexer.IntRawIndexer;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter;
 import org.bytedeco.javacv.OpenCVFrameConverter.ToMat;
 import org.bytedeco.opencv.global.opencv_imgcodecs;
-import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.MatVector;
-import org.bytedeco.opencv.opencv_core.Scalar;
 
 import java.awt.image.BufferedImage;
 
@@ -133,91 +126,5 @@ public class OpenCVHelper {
     result.setNotes(notes);
 
     return result;
-  }
-
-  /**
-   * Finds the contours in the image. Automatically converts it to binary.
-   *
-   * @param img		the image to find the contours in
-   * @param threshold 	the threshold for generating the binary image, eg 127
-   * @param inverse 	whether to generate the inverse binary ie black instead of white
-   * @return		the list of contours, must be closed by caller
-   */
-  public static MatVector findContours(BufferedImage img, int threshold, boolean inverse) {
-    int		conversion;
-
-    switch (img.getType()) {
-      case BufferedImage.TYPE_INT_ARGB:
-	conversion = opencv_imgproc.COLOR_RGBA2GRAY;
-	break;
-      case BufferedImage.TYPE_INT_RGB:
-	conversion = opencv_imgproc.COLOR_RGB2GRAY;
-	break;
-      case BufferedImage.TYPE_INT_BGR:
-	conversion = opencv_imgproc.COLOR_BGR2GRAY;
-	break;
-      default:
-	throw new IllegalArgumentException("Unhandled image type: " + img.getType());
-    }
-    return findContours(toMat(img), conversion, threshold, inverse);
-  }
-
-  /**
-   * Finds the contours in the image. Automatically converts it to binary.
-   *
-   * @param mat		the image to find the contours in
-   * @param conversion 	the color conversion to perform, eg COLOR_RGBA2GRAY
-   * @param threshold 	the threshold for generating the binary image, eg 127
-   * @param inverse 	whether to generate the inverse binary ie black instead of white
-   * @return		the list of contours, must be closed by caller
-   */
-  public static MatVector findContours(Mat mat, int conversion, int threshold, boolean inverse) {
-    MatVector 		result;
-    Mat 		gray;
-    Mat 		binary;
-
-    // convert to grayscale
-    gray = new Mat(mat.rows(), mat.cols(), mat.type());
-    opencv_imgproc.cvtColor(mat, gray, conversion);
-
-    // generate binary
-    binary = new Mat(mat.rows(), mat.cols(), mat.type(), new Scalar(0));
-    opencv_imgproc.threshold(gray, binary, threshold, 255, inverse ? opencv_imgproc.THRESH_BINARY_INV : opencv_imgproc.THRESH_BINARY);
-
-    // find contours
-    result = new MatVector();
-    opencv_imgproc.findContours(binary, result, opencv_imgproc.RETR_TREE, opencv_imgproc.CHAIN_APPROX_SIMPLE);
-
-    // clean up
-    gray.close();
-    binary.close();
-
-    return result;
-  }
-
-  /**
-   * Turns the contour matrix into x/y int arrays of coordinates.
-   *
-   * @param contour	the contour to convert
-   * @return		the x/y coordinates
-   */
-  public static Struct2<int[], int[]> contourToCoordinates(Mat contour) {
-    TIntList	x;
-    TIntList	y;
-    int		i;
-
-    if (contour.cols() != 1)
-      throw new IllegalArgumentException("Contour matrix must have a width of 1, but found: " + contour.cols());
-
-    x = new TIntArrayList();
-    y = new TIntArrayList();
-
-    IntRawIndexer indexer = contour.createIndexer();
-    for (i = 0; i < contour.rows(); i++) {
-      x.add(indexer.get(i, 0, 0));
-      y.add(indexer.get(i, 0, 1));
-    }
-
-    return new Struct2<>(x.toArray(), y.toArray());
   }
 }
