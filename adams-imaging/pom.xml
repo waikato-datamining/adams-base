@@ -216,6 +216,12 @@
       <artifactId>jts-core</artifactId>
       <version>1.19.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.goebl</groupId>
+      <artifactId>simplify</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>
