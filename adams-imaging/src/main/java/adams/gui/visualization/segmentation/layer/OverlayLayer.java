@@ -15,7 +15,7 @@
 
 /*
  * OverlayLayer.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -28,6 +28,7 @@ import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFlatButtonWithDropDownMenu;
 import adams.gui.core.BaseObjectTextField;
+import adams.gui.core.BorderHelper;
 import adams.gui.core.ColorHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
@@ -35,7 +36,6 @@ import adams.gui.core.ImageManager;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
 
-import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -248,9 +248,9 @@ public class OverlayLayer
   public void setActive(boolean value) {
     m_Active = value;
     if (m_Active)
-      setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+      setBorder(BorderHelper.createBevelBorder(BevelBorder.LOWERED));
     else
-      setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+      setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
   }
 
   /**

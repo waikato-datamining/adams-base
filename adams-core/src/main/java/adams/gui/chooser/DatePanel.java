@@ -1,7 +1,7 @@
 /**
  * DatePanel.java
  * Copyright 2004 Juan Heyns. (original code)
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
@@ -10,6 +10,7 @@ import adams.core.License;
 import adams.core.annotation.MixedCopyright;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BorderHelper;
 import org.jdatepicker.DateModel;
 import org.jdatepicker.JDatePanel;
 import org.jdatepicker.graphics.JNextIcon;
@@ -25,6 +26,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
@@ -503,7 +505,7 @@ public class DatePanel
 	nextMonthButton = new adams.gui.core.BaseButton(new JNextIcon(4,7));
 	nextMonthButton.setText("");
 	nextMonthButton.setPreferredSize(new java.awt.Dimension(20,15));
-	nextMonthButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+	nextMonthButton.setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
 	nextMonthButton.setFocusable(false);
 	nextMonthButton.addActionListener(internalController);
 	nextMonthButton.setToolTipText(i18nStrings.getProperty("messages.nextMonth"));
@@ -521,7 +523,7 @@ public class DatePanel
 	nextYearButton = new adams.gui.core.BaseButton(new JNextIcon(8,7, true));
 	nextYearButton.setText("");
 	nextYearButton.setPreferredSize(new java.awt.Dimension(20,15));
-	nextYearButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+	nextYearButton.setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
 	nextYearButton.setFocusable(false);
 	nextYearButton.addActionListener(internalController);
 	nextYearButton.setToolTipText(i18nStrings.getProperty("messages.nextYear"));
@@ -539,7 +541,7 @@ public class DatePanel
 	previousMonthButton = new adams.gui.core.BaseButton(new JPreviousIcon(4,7));
 	previousMonthButton.setText("");
 	previousMonthButton.setPreferredSize(new java.awt.Dimension(20,15));
-	previousMonthButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+	previousMonthButton.setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
 	previousMonthButton.setFocusable(false);
 	previousMonthButton.addActionListener(internalController);
 	previousMonthButton.setToolTipText(i18nStrings.getProperty("messages.previousMonth"));
@@ -557,7 +559,7 @@ public class DatePanel
 	previousYearButton = new adams.gui.core.BaseButton(new JPreviousIcon(8,7, true));
 	previousYearButton.setText("");
 	previousYearButton.setPreferredSize(new java.awt.Dimension(20,15));
-	previousYearButton.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+	previousYearButton.setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
 	previousYearButton.setFocusable(false);
 	previousYearButton.addActionListener(internalController);
 	previousYearButton.setToolTipText(i18nStrings.getProperty("messages.previousYear"));

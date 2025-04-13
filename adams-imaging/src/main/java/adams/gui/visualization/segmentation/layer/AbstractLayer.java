@@ -23,9 +23,9 @@ package adams.gui.visualization.segmentation.layer;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BorderHelper;
 import adams.gui.core.ImageManager;
 
-import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -69,7 +69,7 @@ public abstract class AbstractLayer
   protected void initGUI() {
     super.initGUI();
 
-    setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+    setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
 
     m_CheckboxEnabled = new BaseCheckBox();
     m_CheckboxEnabled.setSelected(true);

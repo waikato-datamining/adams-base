@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlatLaf.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.laf;
@@ -34,6 +34,16 @@ public abstract class AbstractFlatLaf
   extends AbstractLookAndFeel {
 
   private static final long serialVersionUID = 2394913538898207432L;
+
+  /**
+   * Returns whether the Look'n'Feel has a flat or 3D visual appearance.
+   *
+   * @return		true if flat
+   */
+  @Override
+  public boolean isFlat() {
+    return true;
+  }
 
   /**
    * Checks whether the look and feel is available.

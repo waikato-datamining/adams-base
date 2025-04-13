@@ -15,7 +15,7 @@
 
 /*
  * CombinedLayer.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -26,9 +26,9 @@ import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseObjectTextField;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BorderHelper;
 import adams.gui.visualization.segmentation.ImageUtils;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -607,9 +607,9 @@ public class CombinedLayer
   public void activate(CombinedSubLayer layer) {
     for (CombinedSubLayer l: m_SubLayers) {
       if (l == layer)
-	l.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+	l.setBorder(BorderHelper.createBevelBorder(BevelBorder.LOWERED));
       else
-	l.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+	l.setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
     }
     m_ActiveSubLayer = layer;
   }

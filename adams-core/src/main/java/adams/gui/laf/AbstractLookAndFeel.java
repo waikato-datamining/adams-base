@@ -54,6 +54,15 @@ public abstract class AbstractLookAndFeel
   public abstract String getName();
 
   /**
+   * Returns whether the Look'n'Feel has a flat or 3D visual appearance.
+   *
+   * @return		true if flat
+   */
+  public boolean isFlat() {
+    return false;
+  }
+
+  /**
    * Checks whether the look and feel is available.
    *
    * @return		true if available

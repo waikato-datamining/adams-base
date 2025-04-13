@@ -15,14 +15,13 @@
 
 /*
  * BaseStatusBar.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
 import adams.core.StatusMessageHandler;
 import adams.gui.dialog.TextDialog;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -175,7 +174,7 @@ public class BaseStatusBar
     setLayout(new BorderLayout());
 
     inner = new JPanel(new BorderLayout());
-    inner.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+    inner.setBorder(BorderHelper.createBevelBorder(BevelBorder.LOWERED));
     add(inner, BorderLayout.CENTER);
 
     // left
