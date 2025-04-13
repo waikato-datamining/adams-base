@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2008-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -458,7 +458,7 @@ public abstract class AbstractDatabaseConnection
 
     if (value == null)
       return;
-    if (value.equals(""))
+    if (value.isEmpty())
       return;
 
     m_URL = value;
@@ -834,13 +834,8 @@ public abstract class AbstractDatabaseConnection
     String	key;
     int		result;
 
-    key = getFailedConnectAttemptKey(url, user, password);
-
-    // get current count
-    if (!m_FailedConnectAttempts.containsKey(key))
-      result = 0;
-    else
-      result = m_FailedConnectAttempts.get(key);
+    key    = getFailedConnectAttemptKey(url, user, password);
+    result = m_FailedConnectAttempts.getOrDefault(key, 0);
 
     return result;
   }
@@ -910,8 +905,26 @@ public abstract class AbstractDatabaseConnection
    * @return	new Connection
    */
   public synchronized Connection getConnection(boolean keepTrying) {
-    if (!m_ConnectionOK) {
+    boolean	reconnect;
+
+    reconnect = !m_ConnectionOK || (m_Connection == null);
+    if (m_Connection != null) {
+      try {
+	if (!m_Connection.isValid(3))
+	  reconnect = true;
+	else if (m_Connection.isClosed())
+	  reconnect = true;
+      }
+      catch (Exception e) {
+	reconnect    = true;
+	m_Connection = null;
+      }
+    }
+
+    if (reconnect) {
       if (keepTrying) {
+	m_ConnectionOK = false;
+	resetFailedConnectAttempt(m_URL, m_User, m_Password);
 	if (!tryConnection())
 	  return null;
       }
@@ -1055,13 +1068,10 @@ public abstract class AbstractDatabaseConnection
     }
 
     try {
-      if (m_AutoCommit)
-	m_Connection.setAutoCommit(true);
-      else
-	m_Connection.setAutoCommit(false);
+      m_Connection.setAutoCommit(m_AutoCommit);
     }
     catch(Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to set autocommit", e);
+      getLogger().log(Level.SEVERE, "Failed to set autocommit=" + m_AutoCommit, e);
     }
 
     m_ConnectionOK = isConnected();
@@ -1211,8 +1221,7 @@ public abstract class AbstractDatabaseConnection
 
     // insert connection as most recent
     connections = getAllConnectionParameters();
-    if (connections.contains(conn))
-      connections.remove(conn);
+    connections.remove(conn);
     connections.add(0, conn);
 
     result = connectionsToProperties(connections);
@@ -1325,7 +1334,7 @@ public abstract class AbstractDatabaseConnection
     long				start;
 
     count     = 0;
-    listeners = getChangeListeners().toArray(new DatabaseConnectionChangeListener[getChangeListeners().size()]);
+    listeners = getChangeListeners().toArray(new DatabaseConnectionChangeListener[0]);
     if (isLoggingEnabled())
       getLogger().fine("Notifying about: " + e.getType());
     for (DatabaseConnectionChangeListener listener: listeners) {
