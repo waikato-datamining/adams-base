@@ -15,7 +15,7 @@
 
 /*
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -45,7 +45,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -211,7 +211,7 @@ public class ExcelStreamingSpreadSheetReader
     protected SpreadSheet m_Sheet;
     
     /** the table for shared strings. */
-    protected SharedStringsTable m_SST;
+    protected SharedStrings m_SST;
     
     /** the assembled cell content. */
     protected StringBuilder m_LastContents;
@@ -268,7 +268,7 @@ public class ExcelStreamingSpreadSheetReader
      * @param sheet	the spreadsheet to add the content to
      * @param sst	the table for shared strings
      */
-    public SheetHandler(ExcelStreamingSpreadSheetReader owner, SpreadSheet sheet, SharedStringsTable sst) {
+    public SheetHandler(ExcelStreamingSpreadSheetReader owner, SpreadSheet sheet, SharedStrings sst) {
       int		i;
       
       m_Owner              = owner;
@@ -872,7 +872,7 @@ public class ExcelStreamingSpreadSheetReader
     int				count;
     OPCPackage 			pkg;
     XSSFReader 			reader;
-    SharedStringsTable 		sst;
+    SharedStrings 		sst;
     XMLReader 			parser;
     XSSFReader.SheetIterator 	sheets;
     InputStream 		sheet;
