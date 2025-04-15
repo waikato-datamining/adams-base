@@ -187,37 +187,6 @@
     </dependency>
 
     <dependency>
-      <groupId>nz.ac.waikato.cms.weka</groupId>
-      <artifactId>WekaExcel</artifactId>
-      <version>1.0.5</version>
-      <type>jar</type>
-      <exclusions>
-        <exclusion>
-          <groupId>nz.ac.waikato.cms.weka</groupId>
-          <artifactId>weka-dev</artifactId>
-        </exclusion>
-        <!-- newer version used by adams-core -->
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>nz.ac.waikato.cms.weka</groupId>
-      <artifactId>WekaODF</artifactId>
-      <version>1.0.4</version>
-      <type>jar</type>
-      <exclusions>
-        <exclusion>
-          <groupId>nz.ac.waikato.cms.weka</groupId>
-          <artifactId>weka-dev</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>multisearch-weka-package</artifactId>
       <version>2021.2.17</version>
