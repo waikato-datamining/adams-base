@@ -128,13 +128,13 @@ public class SpreadSheetLoader
     result.add(new Option(
 	"\tThe ADAMS spreadsheet reader to use."
 	+ "\t(default: " + CsvSpreadSheetReader.class.getName() + ")",
-	"-reader", 1, "-reader <classname + options>"));
+	"reader", 1, "-reader <classname + options>"));
     
     result.add(new Option(
 	"\tThe conversion scheme for converting the spreadsheet into an\n"
 	+ "\tInstances object to work on.\n"
 	+ "\t(default: " + SpreadSheetToWekaInstances.class.getName() + ")",
-	"-conversion", 1, "-conversion <classname + options>"));
+	"conversion", 1, "-conversion <classname + options>"));
     
     return result.elements();
   }
