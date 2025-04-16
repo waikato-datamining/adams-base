@@ -2318,9 +2318,7 @@ After=syslog.target network.target
 Type=simple
 User=adams
 Group=adams
-Environment="JAVA_HOME=/opt/jdk"
-Environment="PATH=/opt/jdk/bin:/usr/local/bin:/usr/bin"
-
+Environment="JAVA_HOME=/opt/jdk" "PATH=/opt/jdk/bin:/usr/local/bin:/usr/bin"
 WorkingDirectory=/opt/adams
 ExecStart=/opt/adams/bin/daemon.sh start 1g /opt/adams/flows/myflow.flow 12345
 ExecStop=/opt/adams/bin/daemon.sh stop 12345
