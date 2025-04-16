@@ -2321,6 +2321,9 @@ Environment="PATH=/opt/jdk/bin:/usr/local/bin:/usr/bin"
 WorkingDirectory=/opt/adams
 ExecStart=/opt/adams/bin/daemon.sh start 1g /opt/adams/flows/myflow.flow 12345
 ExecStop=/opt/adams/bin/daemon.sh stop 12345
+; the following is necessary since daemon.sh exits and ExecStop is
+; called immediately afterwards
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
