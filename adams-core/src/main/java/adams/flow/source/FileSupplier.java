@@ -15,7 +15,7 @@
 
 /*
  * FileSupplier.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -94,7 +94,6 @@ import java.util.ArrayList;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FileSupplier
   extends AbstractArrayProvider
@@ -108,6 +107,33 @@ public class FileSupplier
 
   /** whether to output forward slashes. */
   protected boolean m_UseForwardSlashes;
+
+  /**
+   * Default constructor.
+   */
+  public FileSupplier() {
+    super();
+  }
+
+  /**
+   * Constructor for single file.
+   *
+   * @param file 	the file to use
+   */
+  public FileSupplier(PlaceholderFile file) {
+    super();
+    setFiles(new PlaceholderFile[]{file});
+  }
+
+  /**
+   * Constructor for multiple files.
+   *
+   * @param files 	the file to use
+   */
+  public FileSupplier(PlaceholderFile[] files) {
+    super();
+    setFiles(files);
+  }
 
   /**
    * Returns a string describing the object.

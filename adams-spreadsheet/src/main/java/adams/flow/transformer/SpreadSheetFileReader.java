@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFileReader.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -93,7 +93,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetFileReader
   extends AbstractArrayProvider {
@@ -103,6 +102,21 @@ public class SpreadSheetFileReader
 
   /** the reader to use. */
   protected SpreadSheetReader m_Reader;
+
+  /**
+   * Default constructor.
+   */
+  public SpreadSheetFileReader() {
+    super();
+  }
+
+  /**
+   * Constructor for setting the reader.
+   */
+  public SpreadSheetFileReader(SpreadSheetReader reader) {
+    super();
+    setReader(reader);
+  }
 
   /**
    * Returns a string describing the object.
