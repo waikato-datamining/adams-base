@@ -2294,7 +2294,10 @@ Ubuntu, is fairly easy:
   RSA key pair for this server/application, in case the server gets compromised
   and you need to regenerate the key. The implications of replacing such a
   key-pair are then fairly limited.} to \texttt{/home/adams/.ssh/authorized\_keys}.
-  \item Download, extract and copy an Oracle JDK to \texttt{/opt/jdk}
+  \item Download, extract and copy an Oracle JDK to \texttt{/opt/jdk}\footnote{If you
+  prefer using the JDK managed through your Linux distro, then you can use
+  \texttt{\$(readlink -f /usr/bin/javac | sed "s:/bin/javac::")} to determine
+  the value for \texttt{JAVA\_HOME}.}
   \item Download, extract and copy ADAMS to \texttt{/opt/adams}
   \item If your flow is processing files, create the directory structure
   (see Figure \ref{example_linux_dir_layout_data_processing} for an example).
