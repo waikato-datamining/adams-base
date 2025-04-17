@@ -15,13 +15,14 @@
 
 /*
  * SelectArraySubset.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
+import adams.core.io.ConsoleHelper;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 import adams.gui.core.BaseButton;
@@ -503,6 +504,16 @@ public class SelectArraySubset
   }
 
   /**
+   * Returns whether headless interaction is supported.
+   *
+   * @return		true if interaction in headless environment is possible
+   */
+  @Override
+  public boolean supportsHeadlessInteraction() {
+    return true;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -550,5 +561,44 @@ public class SelectArraySubset
       return null;
     else
       return INTERACTION_CANCELED;
+  }
+
+  /**
+   * Performs the interaction with the user in a headless environment.
+   *
+   * @return		null if successfully interacted, otherwise error message
+   */
+  @Override
+  public String doInteractHeadless() {
+    String	result;
+    String	msg;
+    String	initial;
+    String	value;
+    Object 	arrayIn;
+    Object	arrayOut;
+    Range	range;
+    int[]	indices;
+    int		i;
+
+    result  = null;
+    arrayIn = m_InputToken.getPayload();
+    msg     = getVariables().expand(m_Message);
+    initial = m_InitialSelection.isEmpty() ? "" : m_InitialSelection.getRange();
+
+    value = ConsoleHelper.enterValue(msg, initial);
+    if (value == null) {
+      result = INTERACTION_CANCELED;
+    }
+    else {
+      range = new Range(value);
+      range.setMax(Array.getLength(arrayIn));
+      indices = range.getIntIndices();
+      arrayOut = Array.newInstance(m_InputToken.getPayload().getClass().getComponentType(), indices.length);
+      for (i = 0; i < indices.length; i++)
+	Array.set(arrayOut, i, Array.get(arrayIn, indices[i]));
+      m_OutputToken = new Token(arrayOut);
+    }
+
+    return result;
   }
 }
