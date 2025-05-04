@@ -15,7 +15,7 @@
 
 /*
  * Groovy.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.scripting;
@@ -132,7 +132,6 @@ public class Groovy
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to instantiate new classloader!", e);
-	result = null;
       }
     }
 
@@ -194,7 +193,6 @@ public class Groovy
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to invoke method '" + methodName + "' (" + Utils.arrayToString(paramClasses) + " with " + Utils.arrayToString(paramValues) + ")!", e);
-      result = null;
     }
 
     return result;
@@ -218,7 +216,7 @@ public class Groovy
 
     file = null;
     if (scriptFile.isDirectory()) {
-      if (inlineScript.getValue().trim().length() == 0) {
+      if (inlineScript.getValue().trim().isEmpty()) {
 	result[0] = "Neither script file nor inline script provided!";
       }
       else {
