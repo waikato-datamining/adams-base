@@ -48,6 +48,10 @@ adams.flow.control.Flow
 												adams.flow.core.displaytype.Default
 											-writer
 												adams.data.io.output.NullWriter
+	-execute-on-error
+		adams.flow.control.postflowexecution.Null
+	-execute-on-finish
+		adams.flow.control.postflowexecution.Null
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager

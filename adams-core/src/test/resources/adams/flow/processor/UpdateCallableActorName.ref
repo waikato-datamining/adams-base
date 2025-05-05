@@ -30,6 +30,10 @@ adams.flow.control.Flow
 					CallableSink-1
 					-callable
 					DumpFile
+	-execute-on-error
+		adams.flow.control.postflowexecution.Null
+	-execute-on-finish
+		adams.flow.control.postflowexecution.Null
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager
@@ -68,6 +72,10 @@ adams.flow.control.Flow
 					CallableSink-1
 					-callable
 					DumpFileNew
+	-execute-on-error
+		adams.flow.control.postflowexecution.Null
+	-execute-on-finish
+		adams.flow.control.postflowexecution.Null
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager

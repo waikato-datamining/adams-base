@@ -52,6 +52,10 @@ adams.flow.control.Flow
 				adams.flow.sink.HistoryDisplay
 					-display-type
 						adams.flow.core.displaytype.Default
+	-execute-on-error
+		adams.flow.control.postflowexecution.Null
+	-execute-on-finish
+		adams.flow.control.postflowexecution.Null
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager
