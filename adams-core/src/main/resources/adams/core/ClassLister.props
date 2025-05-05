@@ -438,6 +438,10 @@ adams.flow.standalone.AbstractStandalone=\
 adams.flow.control.errorpostprocessor.ErrorPostProcessor=\
   adams.flow.control.errorpostprocessor
 
+# the generators for actors that get executed after the flow has run
+adams.flow.control.postflowexecution.PostFlowExecution=\
+  adams.flow.control.postflowexecution
+
 # the managers for restarting a flow
 adams.flow.control.flowrestart.AbstractFlowRestartManager=\
   adams.flow.control.flowrestart

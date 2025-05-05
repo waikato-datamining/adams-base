@@ -27,7 +27,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.io.ConsoleHelper;
-import adams.core.io.FlowFile;
 import adams.core.option.UserMode;
 import adams.data.id.RuntimeIDGenerator;
 import adams.db.LogEntry;
@@ -36,6 +35,7 @@ import adams.env.Environment;
 import adams.env.FlowDefinition;
 import adams.flow.control.flowrestart.AbstractFlowRestartManager;
 import adams.flow.control.flowrestart.NullManager;
+import adams.flow.control.postflowexecution.PostFlowExecution;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -223,14 +223,14 @@ public class Flow
   /** the 'local' variables. */
   protected FlowVariables m_Variables;
 
-  /** the external flow to execute in case of an abnormal stop. */
-  protected FlowFile m_ExecuteOnError;
+  /** generator for flow to execute in case of an abnormal stop. */
+  protected PostFlowExecution m_ExecuteOnError;
 
-  /** the external actor to execute in case of an abnormal stop. */
+  /** the actor to execute in case of an abnormal stop. */
   protected Actor m_ExecuteOnErrorActor;
 
-  /** the external flow to execute in case the flow finishes normal. */
-  protected FlowFile m_ExecuteOnFinish;
+  /** generator for flow to execute in case the flow finishes normal. */
+  protected PostFlowExecution m_ExecuteOnFinish;
 
   /** the external actor to execute in case the flow finishes normal. */
   protected Actor m_ExecuteOnFinishActor;
@@ -308,11 +308,11 @@ public class Flow
 
     m_OptionManager.add(
       "execute-on-error", "executeOnError",
-      new FlowFile("."), UserMode.EXPERT);
+      new adams.flow.control.postflowexecution.Null(), UserMode.EXPERT);
 
     m_OptionManager.add(
       "execute-on-finish", "executeOnFinish",
-      new FlowFile("."), UserMode.EXPERT);
+      new adams.flow.control.postflowexecution.Null(), UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-execution-listening-enabled", "flowExecutionListeningEnabled",
@@ -370,20 +370,24 @@ public class Flow
 
     result = "";
 
-    value = QuickInfoHelper.toString(this, "executeOnError", (m_ExecuteOnError.isDirectory() ? null : m_ExecuteOnError));
-    if (value != null)
-      result += "on error: " + value;
+    if (!(m_ExecuteOnError instanceof adams.flow.control.postflowexecution.Null)) {
+      value = QuickInfoHelper.toString(this, "executeOnError", m_ExecuteOnError);
+      if (value != null)
+	result += "on error: " + value;
+    }
 
-    value = QuickInfoHelper.toString(this, "executeOnFinish", (m_ExecuteOnFinish.isDirectory() ? null : m_ExecuteOnFinish));
-    if (value != null) {
-      if (result.length() > 0)
-	result += ", ";
-      result += "on finish: " + value;
+    if (!(m_ExecuteOnFinish instanceof adams.flow.control.postflowexecution.Null)) {
+      value = QuickInfoHelper.toString(this, "executeOnFinish", m_ExecuteOnFinish);
+      if (value != null) {
+	if (!result.isEmpty())
+	  result += ", ";
+	result += "on finish: " + value;
+      }
     }
 
     if (m_FlowExecutionListeningEnabled || QuickInfoHelper.hasVariable(this, "executionListener")) {
       value = QuickInfoHelper.toString(this, "executionListener", m_FlowExecutionListener, "listener: ");
-      if (result.length() > 0)
+      if (!result.isEmpty())
 	result += ", ";
       result += value;
     }
@@ -504,21 +508,21 @@ public class Flow
   }
 
   /**
-   * Sets the external flow to execute in case the flow finishes with an error.
+   * Sets the generator for flow to execute in case the flow finishes with an error.
    *
-   * @param value 	the external flow
+   * @param value 	the flow generator
    */
-  public void setExecuteOnError(FlowFile value) {
+  public void setExecuteOnError(PostFlowExecution value) {
     m_ExecuteOnError = value;
     reset();
   }
 
   /**
-   * Returns the external flow to execute in case the flow finishes with an error.
+   * Returns the generator for flow to execute in case the flow finishes with an error.
    *
-   * @return 		the external flow
+   * @return 		the flow generator
    */
-  public FlowFile getExecuteOnError() {
+  public PostFlowExecution getExecuteOnError() {
     return m_ExecuteOnError;
   }
 
@@ -530,28 +534,28 @@ public class Flow
    */
   public String executeOnErrorTipText() {
     return
-      "The external flow to execute in case the flow finishes with an "
+      "The generator for the flow to execute in case the flow finishes with an "
 	+ "error; allows the user to call a clean-up flow.";
   }
 
   /**
-   * Sets the external flow to execute in case the flow finishes without
+   * Sets the generator for flow to execute in case the flow finishes without
    * any errors.
    *
-   * @param value 	the external flow
+   * @param value 	the flow generator
    */
-  public void setExecuteOnFinish(FlowFile value) {
+  public void setExecuteOnFinish(PostFlowExecution value) {
     m_ExecuteOnFinish = value;
     reset();
   }
 
   /**
-   * Returns the external flow to execute in case the flow finishes without
+   * Returns generator for flow to execute in case the flow finishes without
    * any errors.
    *
-   * @return 		the external flow
+   * @return 		the flow generator
    */
-  public FlowFile getExecuteOnFinish() {
+  public PostFlowExecution getExecuteOnFinish() {
     return m_ExecuteOnFinish;
   }
 
@@ -563,7 +567,7 @@ public class Flow
    */
   public String executeOnFinishTipText() {
     return
-      "The external flow to execute in case the flow finishes normal, without "
+      "The generator for the flow to execute in case the flow finishes normal, without "
 	+ "any errors.";
   }
 
@@ -1129,28 +1133,20 @@ public class Flow
     m_LogEntries.clear();
 
     if (result == null) {
-      if (!m_ExecuteOnError.isDirectory() && m_ExecuteOnError.exists()) {
+      if (!(m_ExecuteOnError instanceof adams.flow.control.postflowexecution.Null)) {
 	errors = new MessageCollection();
-	m_ExecuteOnErrorActor = ActorUtils.read(m_ExecuteOnError.getAbsolutePath(), errors);
+	m_ExecuteOnErrorActor = m_ExecuteOnError.configureExecution(errors);
 	if (!errors.isEmpty())
-	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "':\n" + errors;
-	else if (m_ExecuteOnErrorActor == null)
-	  result = "Error loading execute-on-error actor '" + m_ExecuteOnError.getAbsolutePath() + "'!";
-	else
-	  result = m_ExecuteOnErrorActor.setUp();
+	  result = errors.toString();
       }
     }
 
     if (result == null) {
-      if (!m_ExecuteOnFinish.isDirectory() && m_ExecuteOnFinish.exists()) {
+      if (!(m_ExecuteOnFinish instanceof adams.flow.control.postflowexecution.Null)) {
 	errors = new MessageCollection();
-	m_ExecuteOnFinishActor = ActorUtils.read(m_ExecuteOnFinish.getAbsolutePath(), errors);
+	m_ExecuteOnFinishActor = m_ExecuteOnFinish.configureExecution(errors);
 	if (!errors.isEmpty())
-	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "':\n" + errors;
-	else if (m_ExecuteOnFinishActor == null)
-	  result = "Finish loading execute-on-finish actor '" + m_ExecuteOnFinish.getAbsolutePath() + "'!";
-	else
-	  result = m_ExecuteOnFinishActor.setUp();
+	  result = errors.toString();
       }
     }
 
