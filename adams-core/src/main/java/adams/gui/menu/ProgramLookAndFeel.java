@@ -15,7 +15,7 @@
 
 /*
  * ProgramLookAndFeel.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -142,7 +142,7 @@ public class ProgramLookAndFeel
 	menuitem = new JRadioButtonMenuItem(laf.getName());
 	menuitem.setEnabled(laf.isAvailable());
 	group.add(menuitem);
-	if ((AbstractLookAndFeel.getCurrent() != null) && (laf.getName().equals(AbstractLookAndFeel.getCurrent().getName())))
+	if (AbstractLookAndFeel.hasCurrent() && (laf.getName().equals(AbstractLookAndFeel.getCurrent().getName())))
 	  menuitem.setSelected(true);
 	menuitem.addActionListener((ActionEvent e) -> {
 	  AbstractLookAndFeel.installLookAndFeel(laf);

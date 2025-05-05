@@ -41,7 +41,7 @@ public class BorderHelper {
    * @return		the border
    */
   public static Border createBevelBorder(int type) {
-    if (AbstractLookAndFeel.getCurrent().isFlat()) {
+    if (AbstractLookAndFeel.hasCurrent() && AbstractLookAndFeel.getCurrent().isFlat()) {
       if (type == BevelBorder.LOWERED)
 	return BorderFactory.createLineBorder(UIManager.getColor("Button.borderColor").darker().darker());
       else

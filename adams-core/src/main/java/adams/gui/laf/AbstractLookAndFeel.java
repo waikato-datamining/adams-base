@@ -15,7 +15,7 @@
 
 /*
  * AbstractLookAndFeel.java
- * Copyright (C) 2022-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.laf;
@@ -157,6 +157,15 @@ public abstract class AbstractLookAndFeel
    */
   public static Class[] getLookAndFeels() {
     return ClassLister.getSingleton().getClasses(AbstractLookAndFeel.class);
+  }
+
+  /**
+   * Whether a look and feel has been installed.
+   *
+   * @return		true if look and feel available
+   */
+  public static boolean hasCurrent() {
+    return (m_Current != null);
   }
 
   /**
