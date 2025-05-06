@@ -36,6 +36,10 @@ adams.flow.control.Flow
 		adams.flow.sink.DumpFile
 			-output
 			${TMP}/dumpfile.txt
+	-execute-on-error
+		adams.flow.control.postflowexecution.Null
+	-execute-on-finish
+		adams.flow.control.postflowexecution.Null
 	-flow-execution-listener
 		adams.flow.execution.NullListener
 	-flow-restart-manager
