@@ -23,17 +23,16 @@ package weka.classifiers;
 import adams.core.Placeholders;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
-import adams.core.discovery.IntrospectionHelper;
-import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
+import adams.core.base.AbstractBaseString;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.discovery.PropertyTraversal;
 import adams.core.discovery.PropertyTraversal.Observer;
-import adams.core.option.UserMode;
+import adams.core.logging.LoggingHelper;
 import adams.flow.core.Actor;
 import adams.gui.core.AbstractAdvancedScript;
-import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.beans.PropertyDescriptor;
+import java.util.logging.Level;
 
 /**
  * Helper class for managing/updating scripts of classifiers that
@@ -90,6 +89,45 @@ public class ScriptedClassifierUtils {
      */
     public int getInitializations() {
       return m_Initializations;
+    }
+  }
+
+  /**
+   * Expands placeholders when traversing properties.
+   */
+  public static class ExpandPlaceholdersObserver
+    implements Observer {
+
+    protected String[] m_Placeholders;
+
+    protected String[] m_Values;
+
+    public ExpandPlaceholdersObserver(String[] placeholders, String[] values) {
+      m_Placeholders = placeholders;
+      m_Values       = values;
+    }
+
+    /**
+     * Presents the current path, descriptor and object to the observer.
+     *
+     * @param path   the path
+     * @param desc   the property descriptor
+     * @param parent the parent object
+     * @param child  the child object
+     * @return true if to continue observing
+     */
+    @Override
+    public boolean observe(Path path, PropertyDescriptor desc, Object parent, Object child) {
+      try {
+	if (child instanceof AbstractAdvancedScript)
+	  expand(child, m_Placeholders, m_Values);
+	else if (child instanceof AbstractBaseString)
+	  expand(child, m_Placeholders, m_Values);
+      }
+      catch (Exception e) {
+	LoggingHelper.global().log(Level.SEVERE, "Failed to update: " + path, e);
+      }
+      return true;
     }
   }
 
@@ -158,6 +196,45 @@ public class ScriptedClassifierUtils {
   }
 
   /**
+   * Expands the placeholders in the object.
+   *
+   * @param obj			the object to expand
+   * @param placeholders	the placeholders to replace
+   * @param values		the replacement values
+   * @throws Exception		if updating fails
+   */
+  protected static void expand(Object obj, String[] placeholders, String[] values) throws Exception {
+    AbstractAdvancedScript	script;
+    String			scriptStr;
+    AbstractBaseString		base;
+    String			baseStr;
+    int				i;
+
+    // update script
+    if (obj instanceof AbstractAdvancedScript) {
+      script    = (AbstractAdvancedScript) obj;
+      scriptStr = script.getValue();
+      for (i = 0; i < placeholders.length; i++)
+	scriptStr = scriptStr.replace(placeholders[i], values[i]);
+      script.setValue(scriptStr);
+    }
+    // update base string
+    else if (obj instanceof AbstractBaseString) {
+      base    = (AbstractBaseString) obj;
+      baseStr = base.getValue();
+      for (i = 0; i < placeholders.length; i++)
+	baseStr = baseStr.replace(placeholders[i], values[i]);
+      base.setValue(baseStr);
+    }
+    else {
+      throw new IllegalStateException(
+	"Expected property type to be one of "
+	  + Utils.classesToString(new Class[]{AbstractAdvancedScript.class, AbstractBaseString.class})
+	  + " but got instead: " + Utils.classToString(obj));
+    }
+  }
+
+  /**
    * Updates the placeholders with the specified values for the given property.
    *
    * @param cls			the classifier to update
@@ -168,33 +245,18 @@ public class ScriptedClassifierUtils {
    * @throws Exception		if updating fails
    */
   protected static ScriptedClassifier expand(ScriptedClassifier cls, PropertyDescriptor desc, String[] placeholders, String[] values) throws Exception {
-    Object			obj;
-    AbstractAdvancedScript	script;
-    String			scriptStr;
-    int				i;
+    Object	obj;
 
-    // get current script instance
     obj = desc.getReadMethod().invoke(cls);
-
-    // update script
-    if (obj instanceof AbstractAdvancedScript) {
-      script    = (AbstractAdvancedScript) obj;
-      scriptStr = script.getValue();
-      for (i = 0; i < placeholders.length; i++)
-	scriptStr = scriptStr.replace(placeholders[i], values[i]);
-      script.setValue(scriptStr);
-      desc.getWriteMethod().invoke(cls, script);
-    }
-    else {
-      throw new IllegalStateException("Expected property to be of type " + Utils.classToString(AbstractAdvancedScript.class) + " but got instead: " + Utils.classToString(obj));
-    }
+    expand(obj, placeholders, values);
+    desc.getWriteMethod().invoke(cls, obj);
 
     return cls;
   }
 
   /**
    * Replaces the placeholder with the specified value in any {@link AbstractAdvancedScript}
-   * property of the classifier.
+   * or {@link AbstractBaseString} property of the classifier.
    *
    * @param cls		the classifier to update
    * @param placeholder	the placeholder to replace
@@ -208,7 +270,7 @@ public class ScriptedClassifierUtils {
 
   /**
    * Replaces the placeholder with the specified value in any {@link AbstractAdvancedScript}
-   * property of the classifier.
+   * or {@link AbstractBaseString} property of the classifier.
    *
    * @param cls		the classifier to update
    * @param placeholders	the placeholder to replace
@@ -218,7 +280,8 @@ public class ScriptedClassifierUtils {
    */
   public static ScriptedClassifier expand(ScriptedClassifier cls, String[] placeholders, String[] values) throws Exception {
     ScriptedClassifier		result;
-    IntrospectionContainer	cont;
+    ExpandPlaceholdersObserver	observer;
+    PropertyTraversal 		traversal;
 
     result = cls;
 
@@ -229,11 +292,9 @@ public class ScriptedClassifierUtils {
     if (placeholders.length != values.length)
       throw new IllegalArgumentException("Number of placeholders different from values: " + placeholders.length + " != " + values.length);
 
-    cont = IntrospectionHelper.introspect(cls, UserMode.EXPERT);
-    for (PropertyDescriptor desc: cont.properties) {
-      if (ClassLocator.matches(AbstractAdvancedScript.class, desc.getPropertyType()))
-	result = expand(result, desc, placeholders, values);
-    }
+    observer = new ExpandPlaceholdersObserver(placeholders, values);
+    traversal = new PropertyTraversal();
+    traversal.traverse(observer, cls);
 
     return result;
   }
