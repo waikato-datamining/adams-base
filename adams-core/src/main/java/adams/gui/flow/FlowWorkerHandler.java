@@ -106,6 +106,13 @@ public interface FlowWorkerHandler
   public void showNotification(JComponent comp, String icon);
 
   /**
+   * Updates the status icon, if supported.
+   *
+   * @param icon  	the icon name, can be null
+   */
+  public void updateStatusIcon(String icon);
+
+  /**
    * Returns the split pane.
    *
    * @return		the split pane

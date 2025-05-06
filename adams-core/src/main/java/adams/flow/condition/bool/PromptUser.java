@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2015-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -31,6 +31,7 @@ import adams.flow.core.Unknown;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.GUIHelper.DialogCommunication;
 import adams.gui.core.GUIHelper.InputDialogMultiValueSelection;
+import adams.gui.flow.FlowWorkerHandler;
 
 import java.awt.FlowLayout;
 
@@ -416,6 +417,8 @@ public class PromptUser
 	  case NOTIFICATION_AREA:
 	    panelInput = new GUIHelper.InputPanelWithButtons(message, initial, buttons, true, FlowLayout.LEFT, "flow_question.png");
 	    answer     = InteractionDisplayLocationHelper.display(owner, m_Communication, panelInput);
+	    if ((owner != null) && (owner.getParentComponent() instanceof FlowWorkerHandler))
+	      ((FlowWorkerHandler) owner.getParentComponent()).updateStatusIcon("run.gif");
 	    break;
 
 	  default:

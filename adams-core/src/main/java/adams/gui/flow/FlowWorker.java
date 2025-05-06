@@ -15,7 +15,7 @@
 
 /*
  * FlowWorker.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow;
@@ -113,7 +113,7 @@ public class FlowWorker
     m_Owner.update();
     m_Owner.cleanUp();
     m_Owner.clearNotification();
-    updateTabIcon("run.gif");
+    updateStatusIcon("run.gif");
 
     m_Running     = true;
     m_StopMessage = null;
@@ -274,7 +274,7 @@ public class FlowWorker
     showStatus("Pausing");
     if (m_Flow != null)
       ((Pausable) m_Flow).pauseExecution();
-    updateTabIcon("pause.gif");
+    updateStatusIcon("pause.gif");
     m_Owner.update();
   }
 
@@ -296,7 +296,7 @@ public class FlowWorker
     showStatus("Resuming");
     if (m_Flow != null)
       ((Pausable) m_Flow).resumeExecution();
-    updateTabIcon("run.gif");
+    updateStatusIcon("run.gif");
     m_Owner.update();
   }
 
@@ -360,11 +360,11 @@ public class FlowWorker
   }
 
   /**
-   * Updates the tab icon, if possible.
+   * Updates the status icon, if possible.
    *
    * @param icon  	the icon name, can be null
    */
-  protected void updateTabIcon(String icon) {
+  protected void updateStatusIcon(String icon) {
     SwingUtilities.invokeLater(() -> {
       if (m_Owner instanceof MultiPageIconSupporter)
         ((MultiPageIconSupporter) m_Owner).setPageIcon(icon);

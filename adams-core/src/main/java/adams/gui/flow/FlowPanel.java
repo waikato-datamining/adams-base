@@ -1878,6 +1878,18 @@ public class FlowPanel
   }
 
   /**
+   * Updates the status icon, if supported.
+   *
+   * @param icon  	the icon name, can be null
+   */
+  @Override
+  public void updateStatusIcon(String icon) {
+    SwingUtilities.invokeLater(() -> {
+      setPageIcon(icon);
+    });
+  }
+
+  /**
    * Returns whether the flow accepts input.
    *
    * @return		true if user can change flow

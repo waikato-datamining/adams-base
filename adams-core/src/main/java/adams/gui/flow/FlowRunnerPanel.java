@@ -1293,6 +1293,16 @@ public class FlowRunnerPanel
   }
 
   /**
+   * Updates the status icon, if supported.
+   *
+   * @param icon  	the icon name, can be null
+   */
+  @Override
+  public void updateStatusIcon(String icon) {
+    // does nothing
+  }
+
+  /**
    * Cleans up the last flow that was run.
    */
   public void cleanUp() {
