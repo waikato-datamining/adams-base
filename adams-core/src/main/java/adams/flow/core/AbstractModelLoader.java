@@ -15,17 +15,18 @@
 
 /*
  * AbstractModelLoader.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.core;
 
 import adams.core.MessageCollection;
+import adams.core.QuickInfoHelper;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
-import adams.core.io.ModelFileHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
+import adams.core.option.OptionHandler;
 import adams.flow.container.AbstractContainer;
 import adams.flow.control.StorageName;
 
@@ -37,7 +38,7 @@ import adams.flow.control.StorageName;
  */
 public abstract class AbstractModelLoader<T>
   extends AbstractOptionHandler
-  implements FlowContextHandler, ModelFileHandler {
+  implements FlowContextHandler, ModelLoaderSupporter {
 
   private static final long serialVersionUID = 7549636204208995661L;
 
@@ -468,5 +469,54 @@ public abstract class AbstractModelLoader<T>
     }
 
     return m_Model;
+  }
+
+  /**
+   * Generates the quick info string.
+   *
+   * @param handler 	the ModelLoaderSupporter to generate the quick info for
+   * @return		the generated quick info
+   */
+  public String getQuickInfo(OptionHandler handler) {
+    return getQuickInfo(handler, null);
+  }
+
+  /**
+   * Generates the quick info string.
+   *
+   * @param handler 	the ModelLoaderSupporter to generate the quick info for
+   * @param current 	the current info string, can be empty/null
+   * @return		the generated quick info
+   */
+  public String getQuickInfo(OptionHandler handler, String current) {
+    String			prefix;
+    ModelLoaderSupporter	loader;
+
+    loader = (ModelLoaderSupporter) handler;
+    if (current == null)
+      current = "";
+    prefix = "";
+    if (!current.isEmpty())
+      prefix = ", ";
+
+    current = QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), prefix + "type: ");
+    switch (getModelLoadingType()) {
+      case FILE:
+	current += QuickInfoHelper.toString(handler, "modelFile", loader.getModelFile(), prefix + "model: ");
+	break;
+      case SOURCE_ACTOR:
+	current += QuickInfoHelper.toString(handler, "modelSource", loader.getModelActor(), prefix + "source: ");
+	break;
+      case STORAGE:
+	current += QuickInfoHelper.toString(handler, "modelStorage", loader.getModelStorage(), prefix + "storage: ");
+	break;
+      case AUTO:
+	// nothing
+	break;
+      default:
+	throw new IllegalStateException("Unhandled model loading type: " + getModelLoadingType());
+    }
+
+    return current;
   }
 }

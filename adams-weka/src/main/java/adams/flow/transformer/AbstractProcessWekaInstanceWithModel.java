@@ -15,7 +15,7 @@
 
 /*
  * AbstractProcessWekaInstanceWithModel.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -297,8 +297,8 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   public String onTheFlyTipText() {
     return
-        "If set to true, the model file is not required to be present at "
-      + "set up time (eg if built on the fly), only at execution time.";
+      "If set to true, the model file is not required to be present at "
+	+ "set up time (eg if built on the fly), only at execution time.";
   }
 
   /**
@@ -330,8 +330,8 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   public String useModelResetVariableTipText() {
     return
-        "If enabled, chnages to the specified variable are monitored in order "
-	  + "to reset the model, eg when a storage model changed.";
+      "If enabled, chnages to the specified variable are monitored in order "
+	+ "to reset the model, eg when a storage model changed.";
   }
 
   /**
@@ -361,8 +361,8 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
    */
   public String modelResetVariableTipText() {
     return
-        "The variable to monitor for changes in order to reset the model, eg "
-	  + "when a storage model changed.";
+      "The variable to monitor for changes in order to reset the model, eg "
+	+ "when a storage model changed.";
   }
 
   /**
@@ -375,10 +375,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     String	result;
     String	value;
 
-    result  = QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), "type: ");
-    result += QuickInfoHelper.toString(this, "modelFile", getModelFile(), ", model: ");
-    result += QuickInfoHelper.toString(this, "modelSource", getModelActor(), ", source: ");
-    result += QuickInfoHelper.toString(this, "modelStorage", getModelStorage(), ", storage: ");
+    result = m_ModelLoader.getQuickInfo(this);
     value  = QuickInfoHelper.toString(this, "modelResetVariable", (m_UseModelResetVariable ? "reset: " + m_ModelResetVariable : ""));
     if (value != null)
       result += ", " + value;
@@ -537,7 +534,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     String			result;
     Instance			inst;
     WekaInstanceContainer 	cont;
-    Report			report;
+    Report 			report;
 
     result = null;
 
@@ -554,13 +551,13 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 	inst = m_InputToken.getPayload(Instance.class);
       }
       else {
-        cont   = m_InputToken.getPayload(WekaInstanceContainer.class);
-        inst   = cont.getContent();
-        report = cont.getReport();
+	cont   = m_InputToken.getPayload(WekaInstanceContainer.class);
+	inst   = cont.getContent();
+	report = cont.getReport();
       }
       m_OutputToken = processInstance(inst);
       if ((report != null) && m_OutputToken.hasPayload(ContainerWithReport.class))
-        m_OutputToken.getPayload(ContainerWithReport.class).setValue(ContainerWithReport.VALUE_REPORT, report.getClone());
+	m_OutputToken.getPayload(ContainerWithReport.class).setValue(ContainerWithReport.VALUE_REPORT, report.getClone());
     }
     catch (Exception e) {
       m_OutputToken = null;

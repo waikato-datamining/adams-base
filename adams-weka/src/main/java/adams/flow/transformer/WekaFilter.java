@@ -702,10 +702,7 @@ public class WekaFilter
     String	info;
 
     result  = QuickInfoHelper.toString(this, "filter", Shortening.shortenEnd(OptionUtils.getShortCommandLine(m_Filter), 40));
-    result += QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), ", type: ");
-    result += QuickInfoHelper.toString(this, "modelFile", getModelFile(), ", model: ");
-    result += QuickInfoHelper.toString(this, "modelSource", getModelActor(), ", source: ");
-    result += QuickInfoHelper.toString(this, "modelStorage", getModelStorage(), ", storage: ");
+    result += m_ModelLoader.getQuickInfo(this, result);
     result += QuickInfoHelper.toString(this, "keepRelationName", m_KeepRelationName, "keep relation name", ", ");
     result += QuickInfoHelper.toString(this, "preferJobRunner", m_PreferJobRunner, ", jobrunner");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
