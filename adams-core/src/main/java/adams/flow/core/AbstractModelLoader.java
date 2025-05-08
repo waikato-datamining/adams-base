@@ -502,13 +502,13 @@ public abstract class AbstractModelLoader<T>
     current = QuickInfoHelper.toString(this, "modelLoadingType", getModelLoadingType(), prefix + "type: ");
     switch (getModelLoadingType()) {
       case FILE:
-	current += QuickInfoHelper.toString(handler, "modelFile", loader.getModelFile(), prefix + "model: ");
+	current += QuickInfoHelper.toString(handler, "modelFile", loader.getModelFile(), ", model: ");
 	break;
       case SOURCE_ACTOR:
-	current += QuickInfoHelper.toString(handler, "modelSource", loader.getModelActor(), prefix + "source: ");
+	current += QuickInfoHelper.toString(handler, "modelSource", loader.getModelActor(), ", source: ");
 	break;
       case STORAGE:
-	current += QuickInfoHelper.toString(handler, "modelStorage", loader.getModelStorage(), prefix + "storage: ");
+	current += QuickInfoHelper.toString(handler, "modelStorage", loader.getModelStorage(), ", storage: ");
 	break;
       case AUTO:
 	// nothing
