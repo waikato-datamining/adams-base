@@ -15,7 +15,7 @@
 
 /*
  * CronScheduleEditor.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -216,7 +216,7 @@ public class CronScheduleEditor
     panelButtons.add(buttonHelp);
 
     buttonTemplates = new BaseButtonWithDropDownMenu(ImageManager.getIcon("template.gif"));
-    buttonTemplates.setToolTipText(getHelpDescription());
+    buttonTemplates.setToolTipText("Templates for various schedules");
     Map<String,CronSchedule> templates = BaseObject.getTemplates(CronSchedule.class);
     List<String> items = new ArrayList<>(templates.keySet());
     Collections.sort(items);
