@@ -15,7 +15,7 @@
 
 /*
  * WekaClassifying.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -220,7 +220,10 @@ public class WekaClassifying
    */
   @Override
   public Class[] generates() {
-    return new Class[]{WekaPredictionContainer.class, Instance.class};
+    if (m_OutputInstance)
+      return new Class[]{Instance.class};
+    else
+      return new Class[]{WekaPredictionContainer.class};
   }
 
   /**
