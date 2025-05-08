@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -58,48 +58,73 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Branch
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-branch &lt;adams.flow.core.Actor&gt; [-branch ...] (property: branches)
- * &nbsp;&nbsp;&nbsp;The different branches that branch off and will be supplied with a copy 
- * &nbsp;&nbsp;&nbsp;of the same object.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-num-threads &lt;int&gt; (property: numThreads)
- * &nbsp;&nbsp;&nbsp;The number of threads to use for executing the branches; -1 = number of 
- * &nbsp;&nbsp;&nbsp;CPUs&#47;cores; 0 or 1 = sequential execution.
+ *
+ * <pre>-stopping-timeout &lt;int&gt; (property: stoppingTimeout)
+ * &nbsp;&nbsp;&nbsp;The timeout in milliseconds when waiting for actors to finish (&lt;= 0 for
+ * &nbsp;&nbsp;&nbsp;infinity; see 'finishBeforeStopping').
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
+ * <pre>-stopping-warning-interval &lt;int&gt; (property: stoppingWarningInterval)
+ * &nbsp;&nbsp;&nbsp;The interval in milliseconds to output logging warnings if the actors haven't
+ * &nbsp;&nbsp;&nbsp;stopped yet (and no stopping timeout set); no warning if &lt;= 0.
+ * &nbsp;&nbsp;&nbsp;default: 10000
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-branch &lt;adams.flow.core.Actor&gt; [-branch ...] (property: branches)
+ * &nbsp;&nbsp;&nbsp;The different branches that branch off and will be supplied with a copy
+ * &nbsp;&nbsp;&nbsp;of the same object.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-num-threads &lt;int&gt; (property: numThreads)
+ * &nbsp;&nbsp;&nbsp;The number of threads to use for parallel execution; &gt; 0: specific number
+ * &nbsp;&nbsp;&nbsp;of cores to use (capped by actual number of cores available, 1 = sequential
+ * &nbsp;&nbsp;&nbsp;execution); = 0: number of cores; &lt; 0: number of free cores (eg -2 means
+ * &nbsp;&nbsp;&nbsp;2 free cores; minimum of one core is used)
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -129,9 +154,9 @@ public class Branch
   /** the token that gets passed on to all sub-branches. */
   protected transient Token m_CurrentToken;
 
-  /** whether the branch contains global transformers somewhere or not. */
-  protected boolean m_HasGlobalTransformers;
-  
+  /** whether the branch contains callable transformers somewhere or not. */
+  protected boolean m_HasCallableTransformers;
+
   /** whether to finish execution first before stopping. */
   protected boolean m_FinishBeforeStopping;
 
@@ -143,7 +168,7 @@ public class Branch
 
   /** whether to collect the output of the branches. */
   protected boolean m_CollectOutput;
-  
+
   /** the collected output. */
   protected HashMap<Integer,Token> m_CollectedOutput;
 
@@ -172,8 +197,8 @@ public class Branch
   @Override
   public String globalInfo() {
     return
-        "Branches off the flow into several sub-branches, each being supplied "
-      + "with a copy of the same object being passed into this meta-actor.";
+      "Branches off the flow into several sub-branches, each being supplied "
+	+ "with a copy of the same object being passed into this meta-actor.";
   }
 
   /**
@@ -231,23 +256,23 @@ public class Branch
 
   /**
    * Sets whether to finish processing before stopping execution.
-   * 
+   *
    * @param value	if true then actor finishes processing first 
    */
   public void setFinishBeforeStopping(boolean value) {
     m_FinishBeforeStopping = value;
     reset();
   }
-  
+
   /**
    * Returns whether to finish processing before stopping execution.
-   * 
+   *
    * @return		true if actor finishes processing first
    */
   public boolean getFinishBeforeStopping() {
     return m_FinishBeforeStopping;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -340,7 +365,7 @@ public class Branch
    * @return 		the branches
    */
   public Actor[] getBranches() {
-    return m_Branches.toArray(new Actor[m_Branches.size()]);
+    return m_Branches.toArray(new Actor[0]);
   }
 
   /**
@@ -384,32 +409,32 @@ public class Branch
 
   /**
    * Whether to collect the output of the branches.
-   * 
+   *
    * @param value	true if to collect the output
    */
   public void setCollectOutput(boolean value) {
     m_CollectOutput = value;
     reset();
   }
-  
+
   /**
    * Returns whether the output of the branches is collected.
-   * 
+   *
    * @return		true if output collected
    */
   public boolean getCollectOutput() {
     return m_CollectOutput;
   }
-  
+
   /**
    * Returns the collected output from the branches, if any.
-   * 
+   *
    * @return		the collected output, null if not available
    */
   public HashMap<Integer,Token> getCollectedOutput() {
     return m_CollectedOutput;
   }
-  
+
   /**
    * Initializes the sub-actors for flow execution.
    *
@@ -424,8 +449,10 @@ public class Branch
     if (result == null) {
       m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
 
-      if (m_ActualNumThreads > 0)
-	m_HasGlobalTransformers = hasGlobalTransformers();
+      if (m_ActualNumThreads > 1) {
+	m_HasCallableTransformers = hasCallableTransformers();
+	getLogger().warning("callable transformers found, parallel execution requires synchronization.");
+      }
 
       if (m_CollectOutput)
 	m_CollectedOutput = new HashMap<>();
@@ -443,9 +470,9 @@ public class Branch
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo()
-      .allowStandalones(false)
-      .actorExecution(ActorExecution.PARALLEL)
-      .forwardsInput(true);
+	     .allowStandalones(false)
+	     .actorExecution(ActorExecution.PARALLEL)
+	     .forwardsInput(true);
   }
 
   /**
@@ -632,7 +659,7 @@ public class Branch
 	  actor2 = get(n);
 	  if (actor2 instanceof InputConsumer) {
 	    if (    !comp.isCompatible(cls, ((InputConsumer) actor2).accepts())
-		 && !comp.isCompatible(((InputConsumer) actor2).accepts(), cls) ) {
+		      && !comp.isCompatible(((InputConsumer) actor2).accepts(), cls) ) {
 	      compatible = false;
 	      break;
 	    }
@@ -664,8 +691,8 @@ public class Branch
     }
 
     // only return the common class if it is the same in all sub-branches
-    if (all.size() > 0)
-      result = all.toArray(new Class[all.size()]);
+    if (!all.isEmpty())
+      result = all.toArray(new Class[0]);
 
     return result;
   }
@@ -777,12 +804,12 @@ public class Branch
   }
 
   /**
-   * Checks for global transformers that might get accessed by parallel threads.
+   * Checks for callable transformers that might get accessed by parallel threads.
    *
    * @return		true if the branch contains global transformers that are
    * 			accessed by
    */
-  protected boolean hasGlobalTransformers() {
+  protected boolean hasCallableTransformers() {
     boolean			result;
     Hashtable<String,Integer>	count;
     Enumeration<String>		names;
@@ -790,7 +817,7 @@ public class Branch
 
     result = false;
 
-    // check if global transformers get accesed more than once
+    // check if callable transformers get accessed more than once
     count = ActorUtils.findCallableTransformers(this);
     names = count.keys();
     while (names.hasMoreElements()) {
@@ -822,18 +849,18 @@ public class Branch
       getLogger().info("Starting parallel execution...");
 
     // create jobs
-    jobs = new ArrayList<CallableWithResult<String>>();
+    jobs = new ArrayList<>();
     for (i = 0; i < size(); i++) {
       final Actor branch = get(i);
       final int index = i;
       if (branch.getSkip())
 	continue;
-      job = new CallableWithResult<String>() {
+      job = new CallableWithResult<>() {
 	protected String doCall() throws Exception {
 	  if (isLoggingEnabled())
 	    getLogger().info("Executing branch #" + (index+1) + "...");
 	  String result;
-	  if (m_HasGlobalTransformers) {
+	  if (m_HasCallableTransformers) {
 	    synchronized(m_Self) {
 	      ((InputConsumer) branch).input(m_CurrentToken);
 	      result = branch.execute();
@@ -855,7 +882,7 @@ public class Branch
     m_Executor = Executors.newFixedThreadPool(m_ActualNumThreads);
     try {
       for (CallableWithResult<String> j: jobs)
-        m_Executor.submit(j);
+	m_Executor.submit(j);
     }
     catch (RejectedExecutionException e) {
       // ignored
@@ -926,7 +953,7 @@ public class Branch
 	continue;
 
       if (isLoggingEnabled())
-        getLogger().info("Executing branch #" + (i+1) + "...");
+	getLogger().info("Executing branch #" + (i+1) + "...");
 
       try {
 	// input
@@ -952,7 +979,7 @@ public class Branch
       }
 
       if (isLoggingEnabled())
-        getLogger().info("...finished" + ((result == null) ? "" : " with error"));
+	getLogger().info("...finished" + ((result == null) ? "" : " with error"));
 
       if (result != null)
 	break;
@@ -977,23 +1004,23 @@ public class Branch
 
     if (m_CollectOutput)
       m_CollectedOutput.clear();
-    
-    if (m_ActualNumThreads == 0)
-      result = executeSequential();
-    else
+
+    if (m_ActualNumThreads > 1)
       result = executeParallel();
+    else
+      result = executeSequential();
 
     m_CurrentToken = null;
 
     return result;
   }
-  
+
   /**
    * Stops the processing of tokens without stopping the flow.
    */
   public void flushExecution() {
     int		i;
-    
+
     for (i = size() - 1; i >= 0; i--) {
       if (get(i).getSkip())
 	continue;
@@ -1016,19 +1043,19 @@ public class Branch
       lastWarn = 0;
       while (isExecuting()) {
 	synchronized(this)  {
-          waited += 100;
+	  waited += 100;
 	  try {
 	    wait(100);
-            if ((m_StoppingWarningInterval > 0) && (m_StoppingTimeout <= 0) && (waited >= lastWarn + m_StoppingWarningInterval)) {
-              lastWarn = waited;
-              getLogger().warning("Waited already " + waited + " msec.");
-            }
+	    if ((m_StoppingWarningInterval > 0) && (m_StoppingTimeout <= 0) && (waited >= lastWarn + m_StoppingWarningInterval)) {
+	      lastWarn = waited;
+	      getLogger().warning("Waited already " + waited + " msec.");
+	    }
 	  }
 	  catch (Exception e) {
 	    // ignored
 	  }
-          if ((m_StoppingTimeout > 0) && (waited >= m_StoppingTimeout))
-            break;
+	  if ((m_StoppingTimeout > 0) && (waited >= m_StoppingTimeout))
+	    break;
 	}
       }
     }
