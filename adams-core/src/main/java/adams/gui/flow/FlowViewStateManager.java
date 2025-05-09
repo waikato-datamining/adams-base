@@ -67,6 +67,7 @@ public class FlowViewStateManager
     m_StateFile = new PlaceholderFile(Environment.getInstance().getHome() + "/" + "FlowViewState.ser");
     m_MaxStates = getProperties().getInteger("MaxStates", 50);
     m_Cache     = new LRUCache<>(m_MaxStates);
+    m_Cache.setEnabled(getProperties().getBoolean("Enabled", true));
     load();
   }
 
@@ -136,6 +137,10 @@ public class FlowViewStateManager
    */
   protected void load() {
     LRUCache<String, Struct2<List<String>, List<String>>>	cache;
+
+    if (!m_Cache.isEnabled())
+      return;
+
     if (m_StateFile.exists()) {
       try {
 	cache = (LRUCache<String, Struct2<List<String>,List<String>>>) SerializationHelper.read(m_StateFile.getAbsolutePath());
@@ -153,6 +158,9 @@ public class FlowViewStateManager
    * Saves the cache to disk.
    */
   protected void save() {
+    if (!m_Cache.isEnabled())
+      return;
+
     try {
       SerializationHelper.write(m_StateFile.getAbsolutePath(), m_Cache);
     }
@@ -180,7 +188,7 @@ public class FlowViewStateManager
   public static synchronized Properties getProperties() {
     if (m_Properties == null) {
       try {
-	m_Properties = Properties.read(Environment.getInstance().createPropertiesFilename(FILENAME));
+	m_Properties = Properties.read("adams/gui/flow/" + FILENAME);
       }
       catch (Exception e) {
 	m_Properties = new Properties();

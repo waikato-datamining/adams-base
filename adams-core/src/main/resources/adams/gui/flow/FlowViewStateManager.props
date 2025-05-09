@@ -2,6 +2,10 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
+# Whether the manager is enabled.
+# (true|false)
+Enabled=True
+
 # The maximum number of states to cache.
 # (int)
 MaxStates=50
