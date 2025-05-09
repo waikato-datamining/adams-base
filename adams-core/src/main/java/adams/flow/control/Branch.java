@@ -1005,7 +1005,7 @@ public class Branch
     if (m_CollectOutput)
       m_CollectedOutput.clear();
 
-    if (m_ActualNumThreads > 1)
+    if ((m_ActualNumThreads > 1) && (size() > 1))
       result = executeParallel();
     else
       result = executeSequential();
