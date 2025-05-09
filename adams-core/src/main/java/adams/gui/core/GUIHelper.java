@@ -21,6 +21,7 @@
 package adams.gui.core;
 
 import adams.core.Properties;
+import adams.core.StringHistory;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
 import adams.core.base.BasePassword;
@@ -37,6 +38,7 @@ import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PasswordDialog;
 import adams.gui.dialog.TextDialog;
 import adams.gui.dialog.TextPanel;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import javax.swing.BorderFactory;
@@ -76,6 +78,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -267,6 +270,9 @@ public class GUIHelper {
     /** the text area. */
     protected BaseTextArea m_TextArea;
 
+    /** the string history to use in the popup. */
+    protected StringHistory m_History;
+
     /**
      * Initializes the panel.
      *
@@ -297,6 +303,15 @@ public class GUIHelper {
     }
 
     /**
+     * Initializes the members.
+     */
+    @Override
+    protected void initialize() {
+      super.initialize();
+      m_History = null;
+    }
+
+    /**
      * Initializes the widgets.
      */
     @Override
@@ -308,6 +323,20 @@ public class GUIHelper {
 
       m_TextArea = new BaseTextArea();
       m_TextArea.setLineWrap(true);
+      m_TextArea.addMouseListener(new MouseAdapter() {
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	  if (MouseUtils.isRightClick(e)) {
+	    JPopupMenu menu = createPopupMenu(e);
+	    if (menu != null) {
+	      menu.show(m_TextArea, e.getX(), e.getY());
+	      e.consume();
+	    }
+	  }
+	  if (!e.isConsumed())
+	    super.mouseClicked(e);
+	}
+      });
       panelText = new JPanel(new BorderLayout());
       panelText.add(new BaseScrollPane(m_TextArea), BorderLayout.NORTH);
 
@@ -326,12 +355,80 @@ public class GUIHelper {
     }
 
     /**
+     * Creates the right-click popup menu.
+     *
+     * @param e		the mouse event that triggered the menu
+     * @return		the popup menu
+     */
+    protected JPopupMenu createPopupMenu(MouseEvent e) {
+      JPopupMenu	result;
+      JMenuItem		menuitem;
+      JMenu		submenu;
+      String		selText;
+
+      result  = new JPopupMenu();
+      selText = m_TextArea.getSelectedText();
+
+      menuitem = new JMenuItem("Cut", ImageManager.getIcon("cut"));
+      menuitem.setEnabled(selText != null);
+      menuitem.addActionListener((ActionEvent ae) -> m_TextArea.cut());
+      result.add(menuitem);
+
+      menuitem = new JMenuItem("Copy", ImageManager.getIcon("copy"));
+      menuitem.setEnabled(selText != null);
+      menuitem.addActionListener((ActionEvent ae) -> m_TextArea.copy());
+      result.add(menuitem);
+
+      menuitem = new JMenuItem("Paste", ImageManager.getIcon("paste"));
+      menuitem.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
+      menuitem.addActionListener((ActionEvent ae) -> m_TextArea.paste());
+      result.add(menuitem);
+
+      if ((m_History != null) && (m_History.size() > 0)) {
+	submenu = new JMenu("History");
+	result.addSeparator();
+	result.add(submenu);
+
+	for (String history: m_History.getHistory()) {
+	  menuitem = new JMenuItem(history);
+	  menuitem.addActionListener((ActionEvent ae) -> m_TextArea.setText(history));
+	  submenu.add(menuitem);
+	}
+
+	menuitem = new JMenuItem("Clear");
+	menuitem.addActionListener((ActionEvent ae) -> m_History.clear());
+	submenu.addSeparator();
+	submenu.add(menuitem);
+      }
+
+      return result;
+    }
+
+    /**
      * Gives access to the underlying textarea.
      *
      * @return		the textarea in use
      */
     public BaseTextArea getTextArea() {
       return m_TextArea;
+    }
+
+    /**
+     * Sets the underlying history, null to turn off.
+     *
+     * @param value	the history
+     */
+    public void setHistory(StringHistory value) {
+      m_History = value;
+    }
+
+    /**
+     * Returns the underlying history, if any.
+     *
+     * @return		the history
+     */
+    public StringHistory getHistory() {
+      return m_History;
     }
 
     /**
@@ -2078,10 +2175,32 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm, int minCols, int minRows) {
+    return showInputDialog(parent, msg, initial, title, comm, minCols, minRows, null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   * If "comm" is null simple modal dialogs are used, otherwise modeless ones
+   * with blocking till dialog closed (or closing requested via communication object).
+   *
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
+   * @param initial	the initial selection, can be null
+   * @param title	the title of the input dialog, can be null (uses "Enter value" in that case)
+   * @param comm        for communicating with the dialog, can be null
+   * @param minCols 	the minimum number of columns in the text box
+   * @param minRows 	the minimum number of rows in the text box
+   * @param history	history for recording the entered data, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm, int minCols, int minRows, StringHistory history) {
+    String			result;
     InputPanelWithTextArea	panelInput;
     final ApprovalDialog	dialog;
     Component			pparent;
-    String                        sync;
+    String			sync;
+
+    result = null;
 
     if ((title == null) || (title.isEmpty()))
       title = "Enter value";
@@ -2103,6 +2222,7 @@ public class GUIHelper {
     dialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
 
     panelInput = new InputPanelWithTextArea(msg, initial, minCols, minRows);
+    panelInput.setHistory(history);
     panelInput.getTextArea().setToolTipText("Use <Ctrl-Enter> for adding a new line");
     panelInput.getTextArea().addKeyListener(new KeyAdapter() {
       @Override
@@ -2161,9 +2281,12 @@ public class GUIHelper {
     }
 
     if (dialog.getOption() == ApprovalDialog.APPROVE_OPTION)
-      return panelInput.getValue();
-    else
-      return null;
+      result = panelInput.getValue();
+
+    if ((history != null) && (result != null) && !result.trim().isEmpty())
+      history.add(result);
+
+    return result;
   }
 
   /**

@@ -19,6 +19,9 @@
  */
 package adams.gui.flow.menu;
 
+import adams.core.StringHistory;
+import adams.core.io.PlaceholderFile;
+import adams.env.Environment;
 import adams.gui.core.GUIHelper;
 
 import java.awt.event.ActionEvent;
@@ -33,6 +36,8 @@ public class EditLocateActor
 
   /** for serialization. */
   private static final long serialVersionUID = 5235570137451285010L;
+
+  protected static StringHistory m_History;
 
   /**
    * Returns the caption of this action.
@@ -51,9 +56,14 @@ public class EditLocateActor
   protected void doActionPerformed(ActionEvent e) {
     String	path;
 
+    if (m_History == null) {
+      m_History = new StringHistory();
+      m_History.setHistoryFile(new PlaceholderFile(Environment.getInstance().getHome() + "/" + "HistoryLocateActor.list"));
+    }
+
     path = GUIHelper.showInputDialog(
       m_State, "Please enter the full name of the actor (e.g., 'Flow.Sequence.Display'):",
-      null, "Enter actor path", null, 40, 4);
+      null, "Enter actor path", null, 40, 4, m_History);
     if (path == null)
       return;
 
