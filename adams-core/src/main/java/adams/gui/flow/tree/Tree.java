@@ -15,7 +15,7 @@
 
 /*
  * Tree.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree;
@@ -23,9 +23,12 @@ package adams.gui.flow.tree;
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Properties;
+import adams.core.StringHistory;
 import adams.core.classmanager.ClassManager;
+import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.env.Environment;
 import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
@@ -149,6 +152,9 @@ public class Tree
       this.icon  = ((icon == null) || (icon.trim().isEmpty())) ? null : ImageManager.getIcon(icon);
     }
   }
+
+  /** the history for "find". */
+  protected static StringHistory m_FindHistory;
 
   /** the tree itself. */
   protected Tree m_Self;
@@ -1966,7 +1972,12 @@ public class Tree
     FindText	proc;
     String	input;
 
-    input = GUIHelper.showInputDialog(getParent(), "Find the following text (case-insensitive):", m_LastSearchString);
+    if (m_FindHistory == null) {
+      m_FindHistory = new StringHistory();
+      m_FindHistory.setHistoryFile(new PlaceholderFile(Environment.getInstance().getHome() + "/" + "HistoryFlowFind.list"));
+    }
+
+    input = GUIHelper.showInputDialog(getParent(), "Find the following text (case-insensitive):", m_LastSearchString, "Find", m_FindHistory);
     if (input == null)
       return;
     setLastSearchString(input);
