@@ -1,0 +1,7 @@
+# Configuration file for the FlowViewStateManager.
+#
+# Author: FracPete (fracpete at waikato dot ac dot nz)
+
+# The maximum number of states to cache.
+# (int)
+MaxStates=50

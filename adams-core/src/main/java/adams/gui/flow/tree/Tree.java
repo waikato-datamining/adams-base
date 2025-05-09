@@ -22,7 +22,6 @@ package adams.gui.flow.tree;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
-import adams.core.Properties;
 import adams.core.StringHistory;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
@@ -63,6 +62,7 @@ import adams.gui.flow.tree.menu.TreePopupAction;
 import adams.gui.flow.tree.quickaction.TreeQuickAction;
 import adams.gui.flow.tree.record.add.AbstractRecordActorAdded;
 import adams.gui.goe.FlowHelper;
+import com.github.fracpete.javautils.struct.Struct2;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.Icon;
@@ -295,11 +295,8 @@ public class Tree
   protected void initialize() {
     Class[]		classes;
     TreePopupAction	action;
-    Properties 		props;
 
     super.initialize();
-
-    props = FlowPanel.getProperties();
 
     m_Self                        = this;
     m_Operations                  = new TreeOperations(this);
@@ -451,7 +448,7 @@ public class Tree
       }
       else {
 	setModified(true);
-	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[nodes.size()]), Type.MODIFY));
+	notifyActorChangeListeners(new ActorChangeEvent(m_Self, nodes.toArray(new Node[0]), Type.MODIFY));
       }
     });
   }
@@ -596,7 +593,7 @@ public class Tree
 	  paths.add(path);
       }
     }
-    setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+    setSelectionPaths(paths.toArray(new TreePath[0]));
   }
 
   /**
@@ -1215,7 +1212,7 @@ public class Tree
       m_NodePopupCache = new ArrayList<>();
       items              = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenu", "").replace(" ", "").split(",");
       for (String item : items) {
-	if (item.trim().length() == 0)
+	if (item.trim().isEmpty())
 	  continue;
 	if (item.equals("-")) {
 	  m_NodePopupCache.add(Separator.class);
@@ -1256,7 +1253,7 @@ public class Tree
       // extensions
       items = FlowEditorPanel.getPropertiesEditor().getProperty("Tree.PopupMenuExtensions", "").replace(" ", "").split(",");
       for (String item : items) {
-	if (item.trim().length() == 0)
+	if (item.trim().isEmpty())
 	  continue;
         try {
           inserted = false;
@@ -1307,7 +1304,7 @@ public class Tree
       }
       else if (obj instanceof TreePopupSubmenu) {
         submenuCont = (TreePopupSubmenu) obj;
-        if (submenuCont.items.size() > 0) {
+        if (!submenuCont.items.isEmpty()) {
 	  submenu = new JMenu(submenuCont.title);
 	  menu.add(submenu);
 	  if (submenuCont.icon != null)
@@ -2114,11 +2111,30 @@ public class Tree
       buildTree(new Flow());
     setModified(value.modified);
     setFile(value.file);
-    SwingUtilities.invokeLater(() -> setExpandedFullNames(value.expanded));
-    SwingUtilities.invokeLater(() -> setSelectionFullNames(value.selection));
-    if (value.selection.size() > 0) {
+    setViewState(value.expanded, value.selection);
+  }
+
+  /**
+   * Sets the current view state (expansion, selection).
+   *
+   * @param state	the full names of expanded/selected actors
+   */
+  public void setViewState(Struct2<List<String>,List<String>> state) {
+    setViewState(state.value1, state.value2);
+  }
+
+  /**
+   * Sets the current view state (expansion, selection).
+   *
+   * @param expanded	the full names of expanded actors
+   * @param selection	the full names of selected actors
+   */
+  public void setViewState(List<String> expanded, List<String> selection) {
+    SwingUtilities.invokeLater(() -> setExpandedFullNames(expanded));
+    SwingUtilities.invokeLater(() -> setSelectionFullNames(selection));
+    if (!selection.isEmpty()) {
       SwingUtilities.invokeLater(() -> {
-	for (String sel: value.selection) {
+	for (String sel: selection) {
 	  Node node = locate(sel);
 	  if (node != null) {
 	    scrollPathToVisible(getPath(node));
@@ -2148,6 +2164,15 @@ public class Tree
     result.selection = getSelectionFullNames();
 
     return result;
+  }
+
+  /**
+   * Returns the current view state: expanded and selected full actor names.
+   *
+   * @return		the expanded/selected actor names
+   */
+  public Struct2<List<String>, List<String>> getViewState() {
+    return new Struct2<>(getExpandedFullNames(), getSelectionFullNames());
   }
 
   /**
@@ -2347,7 +2372,7 @@ public class Tree
     if (coll == null)
       return new BaseTreeNode[0];
     else
-      return coll.toArray(new Node[coll.size()]);
+      return coll.toArray(new Node[0]);
   }
 
   /**

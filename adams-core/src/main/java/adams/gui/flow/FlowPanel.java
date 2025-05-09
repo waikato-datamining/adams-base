@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -680,9 +680,9 @@ public class FlowPanel
     m_LastReader         = (FlowReader) OptionUtils.shallowCopy(reader);
 
     worker = new SwingWorker() {
-      protected Node m_Flow = null;
-      protected MessageCollection m_Errors;
-      protected MessageCollection m_Warnings;
+      private Node m_Flow = null;
+      private MessageCollection m_Errors;
+      private MessageCollection m_Warnings;
 
       @Override
       protected Object doInBackground() throws Exception {
@@ -712,6 +712,9 @@ public class FlowPanel
 	  setCurrentFlow(m_Flow);
 	  redraw();
 	  getTree().requestFocus();
+	  // restore view state
+	  if (FlowViewStateManager.getSingleton().has(file))
+	    getTree().setViewState(FlowViewStateManager.getSingleton().get(file));
 	}
 	catch (Exception e) {
 	  m_Errors.add("Failed to load flow: " + file.getAbsolutePath(), e);
@@ -789,12 +792,8 @@ public class FlowPanel
    * @param flow	the flow to use
    */
   public void setCurrentFlow(Actor flow) {
-    if (flow != null)
-      getTree().setActor(flow);
-    else
-      getTree().setActor(null);
+    getTree().setActor(flow);
     getTree().setModified(false);
-
     setCurrentFile(null);
     setTitle(PREFIX_FLOW + UniqueIDs.nextInt(PREFIX_FLOW));
   }
@@ -1207,7 +1206,6 @@ public class FlowPanel
       }
       else {
 	m_CurrentWorker.resumeExecution();
-	result = false;
       }
     }
 
@@ -1275,6 +1273,9 @@ public class FlowPanel
     String	error;
 
     error = null;
+
+    if (getCurrentFile() != null)
+      FlowViewStateManager.getSingleton().add(getCurrentFile(), m_Tree.getViewState());
 
     if (m_LastFlow != null) {
       if (isDebugTreeVisible()) {
