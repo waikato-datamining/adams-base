@@ -21,9 +21,12 @@
 package adams.gui.core;
 
 import adams.core.License;
+import adams.core.StringHistory;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.env.Environment;
 import adams.flow.sink.TextSupplier;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.TextFileChooser;
@@ -179,6 +182,9 @@ public class TextEditorPanel
 	l.stateChanged(e);
     }
   }
+
+  /** for recording the search history. */
+  protected static StringHistory m_History;
 
   /** for displaying the text. */
   protected TextEditorArea m_TextArea;
@@ -779,7 +785,12 @@ public class TextEditorPanel
     String	search;
     int		index;
 
-    search = GUIHelper.showInputDialog(GUIHelper.getParentComponent(this), "Enter search string", m_LastFind);
+    if (m_History == null) {
+      m_History = new StringHistory();
+      m_History.setHistoryFile(new PlaceholderFile(Environment.getInstance().getHome() + "/" + "HistoryTextEditorFind.list"));
+    }
+
+    search = GUIHelper.showInputDialog(GUIHelper.getParentComponent(this), "Enter search string", m_LastFind, "Search", m_History);
     if (search == null)
       return;
 

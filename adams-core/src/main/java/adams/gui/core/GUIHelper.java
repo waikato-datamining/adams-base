@@ -118,6 +118,12 @@ public class GUIHelper {
   /** the cancel option. */
   public final static int CANCEL_OPTION = ApprovalDialog.CANCEL_OPTION;
 
+  /** the default columns for the input dialog. */
+  public final static int INPUT_DIALOG_COLS = 20;
+
+  /** the default rows for the input dialog. */
+  public final static int INPUT_DIALOG_ROWS = 1;
+
   /** the properties. */
   protected static Properties m_Properties;
 
@@ -2141,7 +2147,21 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title) {
-    return showInputDialog(parent, msg, initial, title, null);
+    return showInputDialog(parent, msg, initial, title, (StringHistory) null);
+  }
+
+  /**
+   * A simple dialog for entering a string.
+   *
+   * @param parent	the parent for this dialog
+   * @param msg		the message to display, can be null (uses "Enter value" in that case)
+   * @param initial	the initial selection, can be null
+   * @param title	the title of the input dialog, can be null (uses "Enter value" in that case)
+   * @param history 	the history to use in the popup menu, can be null
+   * @return		the value entered, null if cancelled
+   */
+  public static String showInputDialog(Component parent, String msg, String initial, String title, StringHistory history) {
+    return showInputDialog(parent, msg, initial, title, null, INPUT_DIALOG_COLS, INPUT_DIALOG_ROWS, history);
   }
 
   /**
@@ -2157,7 +2177,7 @@ public class GUIHelper {
    * @return		the value entered, null if cancelled
    */
   public static String showInputDialog(Component parent, String msg, String initial, String title, DialogCommunication comm) {
-    return showInputDialog(parent, msg, initial, title, comm, 20, 1);
+    return showInputDialog(parent, msg, initial, title, comm, INPUT_DIALOG_COLS, INPUT_DIALOG_ROWS);
   }
 
   /**
