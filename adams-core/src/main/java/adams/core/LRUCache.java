@@ -33,7 +33,6 @@ import java.util.Set;
  *
  * @author Christian d'Heureuse (<a href="http://www.source-code.biz">www.source-code.biz</a>)
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LRUCache<K,V>
   implements Serializable, CloneHandler<LRUCache<K,V>> {
@@ -113,7 +112,7 @@ public class LRUCache<K,V>
    * @param value	if true then the cache is activated
    */
   public synchronized void setEnabled(boolean value) {
-    if ((value && (m_CacheSize > 0)) || !value)
+    if (!value || (m_CacheSize > 0))
       m_Enabled = value;
   }
 
@@ -189,7 +188,7 @@ public class LRUCache<K,V>
    * Removes the entry from this cache (if enabled).
    *
    * @param key    	the key of the value to remove from the cache
-   * @param return  	the previously with the key associated value, or null
+   * @return  		the value previously associated with the key, or null
    * 			if not in cache or cache not enabled
    */
   public synchronized V remove(K key) {
@@ -212,7 +211,25 @@ public class LRUCache<K,V>
    * @return 		a <code>Collection</code> with a copy of the cache content.
    */
   public synchronized Collection<Map.Entry<K,V>> getAll() {
-    return new ArrayList<Map.Entry<K,V>>(m_Map.entrySet());
+    return new ArrayList<>(m_Map.entrySet());
+  }
+
+  /**
+   * Caches the elements from the provided map.
+   *
+   * @param map 	the map to cache
+   */
+  public synchronized void putAll(Map<K,V> map) {
+    m_Map.putAll(map);
+  }
+
+  /**
+   * Caches the elements from the provided map.
+   *
+   * @param cache 	the map to cache
+   */
+  public synchronized void putAll(LRUCache<K,V> cache) {
+    m_Map.putAll(cache.m_Map);
   }
 
   /**
@@ -232,7 +249,7 @@ public class LRUCache<K,V>
   public LRUCache<K,V> getClone() {
     LRUCache<K,V>	result;
 
-    result           = new LRUCache<K,V>(m_CacheSize);
+    result           = new LRUCache<>(m_CacheSize);
     result.m_Map     = (LinkedHashMap<K,V>) m_Map.clone();
     result.m_Enabled = m_Enabled;
 
