@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2024 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -363,6 +363,12 @@ public class GenericObjectEditor
       m_ButtonCancel.setToolTipText("Discard changes and close dialog");
       m_ButtonCancel.addActionListener((ActionEvent e) -> {
 	m_Result = CANCEL_OPTION;
+	Object obj = null;
+	while (isUndoSupported() && getUndo().canUndo())
+	  obj = getUndo().undo().getData();
+	if (obj != null)
+	  m_Object = copyObject(obj);
+	GenericObjectEditor.this.firePropertyChange();
 	close();
       });
 
