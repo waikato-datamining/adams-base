@@ -24,7 +24,6 @@ import adams.gui.laf.AbstractLookAndFeel;
 
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
 /**
@@ -42,10 +41,7 @@ public class BorderHelper {
    */
   public static Border createBevelBorder(int type) {
     if (AbstractLookAndFeel.hasCurrent() && AbstractLookAndFeel.getCurrent().isFlat()) {
-      if (type == BevelBorder.LOWERED)
-	return BorderFactory.createLineBorder(UIManager.getColor("Button.borderColor").darker().darker());
-      else
-	return BorderFactory.createLineBorder(UIManager.getColor("Button.borderColor"));
+      return BorderFactory.createLineBorder(UIManager.getColor("Separator.foreground"));
     }
     else {
       return BorderFactory.createSoftBevelBorder(type);
