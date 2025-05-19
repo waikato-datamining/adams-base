@@ -119,9 +119,16 @@ public class ChangeVariableName
     addUndoPoint("Changed variable name to:" + nameNew);
     m_State.selNode.setActor(actorNew);
     if (!m_State.tree.getIgnoreNameChanges()) {
-      if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(m_State.tree), "Propagate changes throughout the tree?") == JOptionPane.YES_OPTION) {
+      int retVal = JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(m_State.tree), "Propagate changes throughout the tree?");
+      if (retVal == JOptionPane.YES_OPTION) {
 	varRenamed = new VariableRenamed();
 	varRenamed.postProcess(m_State.tree, m_State.parent.getActor(), actorOld, actorNew);
+      }
+      else if (!m_State.tree.getIgnoreNameChangesUserPrompted()) {
+	retVal = JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(m_State.tree), "Do you want to ignore name changes for this flow?");
+	if (retVal == JOptionPane.YES_OPTION)
+	  m_State.tree.setIgnoreNameChanges(true);
+	m_State.tree.setIgnoreNameChangesUserPrompted(true);
       }
     }
   }

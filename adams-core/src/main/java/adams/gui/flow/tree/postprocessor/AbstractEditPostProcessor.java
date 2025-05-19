@@ -15,7 +15,7 @@
 
 /*
  * AbstractEditPostProcessor.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree.postprocessor;
@@ -137,11 +137,18 @@ public abstract class AbstractEditPostProcessor
 	proc = (AbstractEditPostProcessor) processor.getDeclaredConstructor().newInstance();
 	if (proc.applies(parent, oldActor, newActor)) {
 	  if (!confirmed) {
-	    if (JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?") == JOptionPane.YES_OPTION) {
+	    int retVal = JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Propagate changes throughout the tree (if applicable)?");
+	    if (retVal == JOptionPane.YES_OPTION) {
 	      confirmed = true;
 	      tree.addUndoPoint("Post-processing actor '" + newActor.getName() + "'");
 	    }
 	    else {
+	      if (!tree.getIgnoreNameChangesUserPrompted()) {
+		retVal = JOptionPane.showConfirmDialog(GUIHelper.getParentComponent(tree), "Do you want to ignore name changes for this flow?");
+		if (retVal == JOptionPane.YES_OPTION)
+		  tree.setIgnoreNameChanges(true);
+		tree.setIgnoreNameChangesUserPrompted(true);
+	      }
 	      break;
 	    }
 	  }

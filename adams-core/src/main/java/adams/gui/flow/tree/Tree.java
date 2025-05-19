@@ -237,6 +237,9 @@ public class Tree
   /** whether to ignore name changes of actors (suppressing application of post-processors). */
   protected boolean m_IgnoreNameChanges;
 
+  /** whether the user already got prompted to ignore name changes for the flow. */
+  protected boolean m_IgnoreNameChangesUserPrompted;
+
   /** the actions with shortcuts. */
   protected List<TreePopupAction> m_Shortcuts;
 
@@ -298,39 +301,40 @@ public class Tree
 
     super.initialize();
 
-    m_Self                        = this;
-    m_Operations                  = new TreeOperations(this);
-    m_Modified                    = false;
-    m_ActorChangeListeners        = new HashSet<>();
-    m_LastSearchString            = "";
-    m_ShowQuickInfo               = true;
-    m_ShowAnnotations             = true;
-    m_ShowInputOutput             = false;
-    m_ActorNameColor              = "black";
-    m_ActorNameSize               = "3";
-    m_QuickInfoColor              = "#008800";
-    m_QuickInfoSize               = "-2";
-    m_AnnotationsColor            = "blue";
-    m_AnnotationsSize             = "-2";
-    m_PlaceholdersColor           = "navy";
-    m_PlaceholdersSize            = "-2";
-    m_InputOutputColor            = "grey";
-    m_InputOutputSize             = "-2";
-    m_VariableHighlightBackground = "#FFDD88";
-    m_BookmarkHighlightBackground = "#FFDD00";
-    m_InputOutputPrefixes         = new String[0];
-    m_CurrentEditingNode          = null;
-    m_CurrentEditingParent        = null;
-    m_File                        = null;
-    m_LastTemplate                = null;
-    m_IgnoreNameChanges           = false;
-    m_RecordAdd                   = false;
-    m_AllowNodePopup              = true;
-    m_AllowNodeQuickAction        = true;
-    m_AllowKeyboardShortcuts      = true;
-    m_KeyboardActions             = new ArrayList<>();
-    m_NodePopupCache = null;
-    m_Debug                       = false;
+    m_Self                          = this;
+    m_Operations                    = new TreeOperations(this);
+    m_Modified                      = false;
+    m_ActorChangeListeners          = new HashSet<>();
+    m_LastSearchString              = "";
+    m_ShowQuickInfo                 = true;
+    m_ShowAnnotations               = true;
+    m_ShowInputOutput               = false;
+    m_ActorNameColor                = "black";
+    m_ActorNameSize                 = "3";
+    m_QuickInfoColor                = "#008800";
+    m_QuickInfoSize                 = "-2";
+    m_AnnotationsColor              = "blue";
+    m_AnnotationsSize               = "-2";
+    m_PlaceholdersColor             = "navy";
+    m_PlaceholdersSize              = "-2";
+    m_InputOutputColor              = "grey";
+    m_InputOutputSize               = "-2";
+    m_VariableHighlightBackground   = "#FFDD88";
+    m_BookmarkHighlightBackground   = "#FFDD00";
+    m_InputOutputPrefixes           = new String[0];
+    m_CurrentEditingNode            = null;
+    m_CurrentEditingParent          = null;
+    m_File                          = null;
+    m_LastTemplate                  = null;
+    m_IgnoreNameChanges             = false;
+    m_IgnoreNameChangesUserPrompted = false;
+    m_RecordAdd                     = false;
+    m_AllowNodePopup                = true;
+    m_AllowNodeQuickAction          = true;
+    m_AllowKeyboardShortcuts        = true;
+    m_KeyboardActions               = new ArrayList<>();
+    m_NodePopupCache                = null;
+    m_Debug                         = false;
 
     putClientProperty("JTree.lineStyle", "None");
     setLargeModel(true);
@@ -965,6 +969,26 @@ public class Tree
    */
   public boolean getIgnoreNameChanges() {
     return m_IgnoreNameChanges;
+  }
+
+  /**
+   * Sets whether the user got prompted whether to ignore name changes for the flow.
+   * To suppress further prompt dialogs.
+   *
+   * @param value	true if prompted
+   */
+  public void setIgnoreNameChangesUserPrompted(boolean value) {
+    m_IgnoreNameChangesUserPrompted = value;
+  }
+
+  /**
+   * Returns whether the user got prompted whether to ignore name changes for the flow.
+   * To suppress further prompt dialogs.
+   *
+   * @return		true if already prompted
+   */
+  public boolean getIgnoreNameChangesUserPrompted() {
+    return m_IgnoreNameChangesUserPrompted;
   }
 
   /**
