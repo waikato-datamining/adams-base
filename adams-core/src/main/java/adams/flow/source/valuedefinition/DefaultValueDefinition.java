@@ -15,7 +15,7 @@
 
 /*
  * DefaultValueDefinition.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.valuedefinition;
@@ -56,7 +56,7 @@ public class DefaultValueDefinition
    */
   @Override
   public String globalInfo() {
-    return "Defintition for a value: name, type and default value.";
+    return "Definition for a value: name, type and default value.";
   }
 
   /**
