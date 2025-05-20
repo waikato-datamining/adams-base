@@ -15,7 +15,7 @@
 
 /*
  * ProgressBar.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -901,7 +901,6 @@ public class ProgressBar
       curr = getPrefix() + format.format(perc) + getSuffix();
       if (!m_Title.isEmpty())
 	text.append(m_Title).append(": ");
-      text.append(m_InputToken.getPayload().toString());
       text.append(curr);
       ConsoleHelper.printlnOut(text.toString());
     }
