@@ -15,13 +15,11 @@
 
 /*
  * DownloadContentTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.base.BaseURL;
 import adams.core.net.InetUtils;
 import adams.core.option.AbstractArgumentOption;
@@ -30,6 +28,8 @@ import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
 import adams.flow.core.Actor;
 import adams.flow.sink.DumpFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test for DownloadContent actor.
@@ -95,7 +95,7 @@ public class DownloadContentTest
 
     Flow flow = new Flow();
 
-    host = "adams.cms.waikato.ac.nz";
+    host = "github.com";
     if (!InetUtils.hasConnection(host, 3000))
       System.err.println("No connection to host '" + host + "'? Trying anyway...");
     try {
@@ -103,7 +103,7 @@ public class DownloadContentTest
       adams.flow.core.Actor[] actors = new adams.flow.core.Actor[3];
       adams.flow.source.URLSupplier url = new adams.flow.source.URLSupplier();
       argOption = (AbstractArgumentOption) url.getOptionManager().findByProperty("URLs");
-      url.setURLs(new BaseURL[]{(adams.core.base.BaseURL) argOption.valueOf("https://" + host + "/index.html")});
+      url.setURLs(new BaseURL[]{(adams.core.base.BaseURL) argOption.valueOf("https://" + host + "/waikato-datamining/adams-base/blob/master/README.md")});
 
       actors[0] = url;
       adams.flow.transformer.DownloadContent download = new adams.flow.transformer.DownloadContent();
