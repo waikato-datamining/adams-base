@@ -3039,6 +3039,48 @@ public class GUIHelper {
   }
 
   /**
+   * Makes the rectangle taller/wider by 20%.
+   *
+   * @param size  	the current size
+   * @return		the taller/wider rectangle
+   */
+  public static Dimension enlarge(Dimension size) {
+    return enlarge(size, 0.2);
+  }
+
+  /**
+   * Makes the rectangle taller/wider.
+   *
+   * @param size  	the current size
+   * @param percentage 	the percentage to increase the size with
+   * @return		the taller/wider rectangle
+   */
+  public static Dimension enlarge(Dimension size, double percentage) {
+    return makeTaller(makeWider(size, percentage), percentage);
+  }
+
+  /**
+   * Makes the rectangle smaller/narrower by 20%.
+   *
+   * @param size  	the current size
+   * @return		the smaller/narrower rectangle
+   */
+  public static Dimension shrink(Dimension size) {
+    return shrink(size, 0.2);
+  }
+
+  /**
+   * Makes the rectangle smaller/narrower.
+   *
+   * @param size  	the current size
+   * @param percentage 	the percentage to decrease the size with
+   * @return		the smaller/narrower rectangle
+   */
+  public static Dimension shrink(Dimension size, double percentage) {
+    return makeSmaller(makeNarrower(size, percentage), percentage);
+  }
+
+  /**
    * Widens the rectangle by 20%.
    *
    * @param size  	the current size
@@ -3102,7 +3144,7 @@ public class GUIHelper {
   }
 
   /**
-   * Makes the rectangle smaller by 20%.
+   * Makes the rectangle's height smaller by 20%.
    *
    * @param size  	the current size
    * @return		the smaller rectangle
@@ -3112,7 +3154,7 @@ public class GUIHelper {
   }
 
   /**
-   * Makes the rectangle smaller by the specified percentage.
+   * Makes the rectangle's height smaller by the specified percentage.
    *
    * @param size  	the current size
    * @param percent 	the percentage to make it smaller (0-1)
