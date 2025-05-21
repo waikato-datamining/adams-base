@@ -505,6 +505,7 @@
             </execution>
           </executions>
         </plugin>
+
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
@@ -519,6 +520,41 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+
+        <!-- checks for duplicate classes: mvn duplicate-finder:check -->
+        <plugin>
+          <groupId>org.basepom.maven</groupId>
+          <artifactId>duplicate-finder-maven-plugin</artifactId>
+          <version>2.0.1</version>
+          <executions>
+            <execution>
+              <id>check_duplicate_classes</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <useResultFile>true</useResultFile>
+            <resultFile>${project.build.directory}/duplicate-finder-result.xml</resultFile>
+            <resultFileMinClasspathCount>2</resultFileMinClasspathCount>
+            <ignoredResourcePatterns>
+              <ignoredResourcePattern>.*\.props$</ignoredResourcePattern>
+              <ignoredResourcePattern>.*\.blacklist$</ignoredResourcePattern>
+              <ignoredResourcePattern>.*\.mac$</ignoredResourcePattern>
+              <ignoredResourcePattern>.*\.gif$</ignoredResourcePattern>
+              <ignoredResourcePattern>.*\.png$</ignoredResourcePattern>
+            </ignoredResourcePatterns>
+            <exceptions>
+              <exception>
+                <packages>
+                  <package>java_cup</package>
+                  <package>java_cup.runtime</package>
+                </packages>
+              </exception>
+            </exceptions>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
