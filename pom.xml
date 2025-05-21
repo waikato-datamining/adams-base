@@ -546,14 +546,6 @@
               <ignoredResourcePattern>.*\.gif$</ignoredResourcePattern>
               <ignoredResourcePattern>.*\.png$</ignoredResourcePattern>
             </ignoredResourcePatterns>
-            <exceptions>
-              <exception>
-                <packages>
-                  <package>java_cup</package>
-                  <package>java_cup.runtime</package>
-                </packages>
-              </exception>
-            </exceptions>
           </configuration>
         </plugin>
       </plugins>
