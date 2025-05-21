@@ -296,6 +296,12 @@
       <artifactId>matrix-algorithms</artifactId>
       <version>${matrix-algorithms.version}</version>
       <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>net.sf.trove4j</groupId>
+          <artifactId>trove4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
