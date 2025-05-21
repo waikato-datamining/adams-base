@@ -56,7 +56,7 @@ ent the WeightedInstancesHandler interface. This meta-classifier does nothing wi
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class WeightedInstancesHandlerWrapper
+public class WeightedInstancesHandlerWrapper2
   extends SingleClassifierEnhancer
   implements WeightedInstancesHandler {
 
@@ -138,6 +138,6 @@ public class WeightedInstancesHandlerWrapper
    * @param args 	the options
    */
   public static void main(String[] args) {
-    runClassifier(new WeightedInstancesHandlerWrapper(), args);
+    runClassifier(new WeightedInstancesHandlerWrapper2(), args);
   }
 }

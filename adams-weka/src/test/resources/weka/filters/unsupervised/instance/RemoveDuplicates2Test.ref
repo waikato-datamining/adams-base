@@ -1,4 +1,4 @@
-@relation bolts-weka.filters.unsupervised.instance.RemoveDuplicates
+@relation bolts-weka.filters.unsupervised.instance.RemoveDuplicates2
 
 @attribute RUN numeric
 @attribute SPEED1 numeric

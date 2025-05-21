@@ -32,7 +32,7 @@ import weka.classifiers.Classifier;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class WeightedInstancesHandlerWrapperTest
+public class WeightedInstancesHandlerWrapper2Test
   extends AbstractAdamsClassifierTest {
 
   /**
@@ -40,7 +40,7 @@ public class WeightedInstancesHandlerWrapperTest
    *
    * @param name	the name of the test
    */
-  public WeightedInstancesHandlerWrapperTest(String name) {
+  public WeightedInstancesHandlerWrapper2Test(String name) {
     super(name);
   }
 
@@ -51,7 +51,7 @@ public class WeightedInstancesHandlerWrapperTest
    */
   @Override
   public Classifier getClassifier() {
-    return new WeightedInstancesHandlerWrapper();
+    return new WeightedInstancesHandlerWrapper2();
   }
 
   /**
@@ -60,7 +60,7 @@ public class WeightedInstancesHandlerWrapperTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(WeightedInstancesHandlerWrapperTest.class);
+    return new TestSuite(WeightedInstancesHandlerWrapper2Test.class);
   }
 
   /**

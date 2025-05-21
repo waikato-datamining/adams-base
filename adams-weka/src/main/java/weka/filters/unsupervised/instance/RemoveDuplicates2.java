@@ -20,13 +20,6 @@
 
 package weka.filters.unsupervised.instance;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Random;
-import java.util.Vector;
-
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.InstanceComparator;
@@ -37,6 +30,13 @@ import weka.core.RevisionUtils;
 import weka.core.Utils;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -65,7 +65,7 @@ import weka.filters.UnsupervisedFilter;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RemoveDuplicates
+public class RemoveDuplicates2
   extends SimpleBatchFilter
   implements UnsupervisedFilter, Randomizable {
 
@@ -347,6 +347,6 @@ public class RemoveDuplicates
    * @param args should contain arguments to the filter: use -h for help
    */
   public static void main(String [] args) {
-    runFilter(new RemoveDuplicates(), args);
+    runFilter(new RemoveDuplicates2(), args);
   }
 }

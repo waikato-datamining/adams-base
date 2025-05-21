@@ -23,11 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import weka.core.Instances;
-import weka.core.Range;
 import weka.core.converters.ArffLoader;
 import weka.filters.AbstractAdamsFilterTest;
 import weka.filters.Filter;
-import weka.filters.unsupervised.instance.RemoveDuplicates;
 import weka.test.AdamsTestHelper;
 
 /**
@@ -37,7 +35,7 @@ import weka.test.AdamsTestHelper;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
-public class RemoveDuplicatesTest
+public class RemoveDuplicates2Test
   extends AbstractAdamsFilterTest {
 
   /**
@@ -45,7 +43,7 @@ public class RemoveDuplicatesTest
    *
    * @param name	the name of the test
    */
-  public RemoveDuplicatesTest(String name) {
+  public RemoveDuplicates2Test(String name) {
     super(name);
   }
 
@@ -86,7 +84,7 @@ public class RemoveDuplicatesTest
    * @return		the default filter
    */
   public Filter getFilter() {
-    return new RemoveDuplicates();
+    return new RemoveDuplicates2();
   }
 
   /**
@@ -97,9 +95,9 @@ public class RemoveDuplicatesTest
    * @return		the filter
    */
   public Filter getFilter(boolean inclClass, boolean randomize) {
-    RemoveDuplicates 	result;
+    RemoveDuplicates2 result;
 
-    result = new RemoveDuplicates();
+    result = new RemoveDuplicates2();
     result.setIncludeClass(inclClass);
     result.setRandomize(randomize);
 
@@ -165,7 +163,7 @@ public class RemoveDuplicatesTest
    * @return		the suite
    */
   public static Test suite() {
-    return new TestSuite(RemoveDuplicatesTest.class);
+    return new TestSuite(RemoveDuplicates2Test.class);
   }
 
   /**
