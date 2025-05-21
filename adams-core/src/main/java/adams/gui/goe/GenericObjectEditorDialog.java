@@ -246,7 +246,7 @@ public class GenericObjectEditorDialog
 
     width  = getWidth();
     height = getHeight();
-    max    = GUIHelper.getDefaultLargeDialogDimension();
+    max    = GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension(), 0.2);
 
     // width
     if (width > max.getWidth()) {
