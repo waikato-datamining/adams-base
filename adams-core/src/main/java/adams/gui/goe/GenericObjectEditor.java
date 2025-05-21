@@ -280,6 +280,7 @@ public class GenericObjectEditor
       m_FirstUpdate = true;
 
       setLayout(new BorderLayout());
+      setPreferredSize(GUIHelper.getDefaultDialogDimension());
 
       m_SplitPane = new BaseSplitPane(BaseSplitPane.HORIZONTAL_SPLIT);
       m_SplitPane.setResizeWeight(0.0);
