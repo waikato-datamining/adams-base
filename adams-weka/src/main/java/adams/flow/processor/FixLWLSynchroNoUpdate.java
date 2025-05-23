@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.core.discovery.PropertyPath.Path;
 import adams.core.discovery.PropertyTraversal;
 import adams.core.discovery.PropertyTraversal.Observer;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.BooleanOption;
@@ -32,9 +33,12 @@ import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
 import weka.classifiers.Classifier;
+import weka.classifiers.lazy.LWL;
 import weka.classifiers.lazy.LWLSynchro;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Ensures that the 'noUpdate' flag is set in the LWLSynchro classifiers.
@@ -55,6 +59,18 @@ public class FixLWLSynchroNoUpdate
     /** the number of updates. */
     protected int m_Updates;
 
+    /** whether to migrate LWL to LWLSynchro as well. */
+    protected boolean m_MigrateToSynchro;
+
+    /**
+     * Initializes the observer.
+     *
+     * @param migrateToSynchro	whether to migrate LWL to LWLSynchro as well
+     */
+    public LWLSynchroObserver(boolean migrateToSynchro) {
+      m_MigrateToSynchro = migrateToSynchro;
+    }
+
     /**
      * Presents the current path, descriptor and object to the observer.
      *
@@ -72,6 +88,20 @@ public class FixLWLSynchroNoUpdate
 	  m_Updates++;
 	}
       }
+      else if (m_MigrateToSynchro && (child instanceof LWL)) {
+	LWL lwl = (LWL) child;
+	LWLSynchro synchro = new LWLSynchro();
+	try {
+	  synchro.setOptions(lwl.getOptions());
+	  synchro.setNoUpdate(true);
+	  Method method = desc.getWriteMethod();
+	  method.invoke(parent, synchro);
+	  m_Updates++;
+	}
+	catch (Exception e) {
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to convert LWL at " + path + " to LWLSynchro!", e);
+	}
+      }
       return true;
     }
 
@@ -85,6 +115,9 @@ public class FixLWLSynchroNoUpdate
     }
   }
 
+  /** whether to migrate LWL to LWLSynchro as well. */
+  protected boolean m_MigrateToSynchro;
+
   /**
    * Returns a string describing the object.
    *
@@ -92,7 +125,49 @@ public class FixLWLSynchroNoUpdate
    */
   @Override
   public String globalInfo() {
-    return "Ensures that the 'noUpdate' flag is set in the " + Utils.classToString(LWLSynchro.class) + " classifiers.";
+    return "Ensures that the 'noUpdate' flag is set in the " + Utils.classToString(LWLSynchro.class) + " classifiers.\n"
+      + "Optionally, can convert LWL instances to LWLSynchro as well.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "migrate-to-synchro", "migrateToSynchro",
+      false);
+  }
+
+  /**
+   * Sets whether to migrate LWL instances to LWLSynchro as well.
+   *
+   * @param value	true if to migrate
+   */
+  public void setMigrateToSynchro(boolean value) {
+    m_MigrateToSynchro = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to migrate to LWL instances to LWLSynchro as well.
+   *
+   * @return		true if to migrate
+   */
+  public boolean getMigrateToSynchro() {
+    return m_MigrateToSynchro;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String migrateToSynchroTipText() {
+    return "If enabled, any LWL instances will get migrated to LWLSynchro as well.";
   }
 
   /**
@@ -112,7 +187,7 @@ public class FixLWLSynchroNoUpdate
       @Override
       public void handleClassOption(ClassOption option, OptionTraversalPath path) {
 	Object current = option.getCurrentValue();
-	LWLSynchroObserver observer = new LWLSynchroObserver();
+	LWLSynchroObserver observer = new LWLSynchroObserver(m_MigrateToSynchro);
 	PropertyTraversal traversal = new PropertyTraversal();
 	traversal.traverse(observer, current);
 	if (observer.getUpdates() > 0)
