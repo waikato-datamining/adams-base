@@ -15,7 +15,7 @@
 
 /*
  * Documentation.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -39,7 +39,6 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -129,10 +128,10 @@ public class Documentation
       }
     }
     
-    if (files.size() == 0)
+    if (files.isEmpty())
       return null;
 
-    Collections.sort(files, new FileComparator(false, true));
+    files.sort(new FileComparator(false, true));
     
 
     menuitems = new ArrayList<>();
@@ -140,7 +139,7 @@ public class Documentation
       menuitem = new JMenuItem(FileUtils.replaceExtension(file, "").getName());
       menuitem.addActionListener((ActionEvent e) -> {
         try {
-          Desktop.getDesktop().open(file);
+          Desktop.getDesktop().open(file.getAbsoluteFile());
         }
         catch (Exception ex) {
           ConsolePanel.getSingleton().append(Level.SEVERE, "Failed to open documentation: " + file, ex);
