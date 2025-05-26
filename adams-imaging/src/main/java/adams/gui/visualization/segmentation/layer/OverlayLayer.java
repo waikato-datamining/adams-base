@@ -33,9 +33,12 @@ import adams.gui.core.ColorHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
+import adams.gui.laf.AbstractFlatLaf;
+import adams.gui.laf.AbstractLookAndFeel;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
 
+import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -247,10 +250,18 @@ public class OverlayLayer
    */
   public void setActive(boolean value) {
     m_Active = value;
-    if (m_Active)
-      setBorder(BorderHelper.createBevelBorder(BevelBorder.LOWERED));
-    else
-      setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
+    if (AbstractLookAndFeel.getCurrent() instanceof AbstractFlatLaf) {
+      if (m_Active)
+	setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
+      else
+	setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+    }
+    else {
+      if (m_Active)
+	setBorder(BorderHelper.createBevelBorder(BevelBorder.LOWERED));
+      else
+	setBorder(BorderHelper.createBevelBorder(BevelBorder.RAISED));
+    }
   }
 
   /**
