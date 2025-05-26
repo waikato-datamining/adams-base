@@ -15,7 +15,7 @@
 
 /*
  * WekaChooseAttributes.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.option.OptionUtils;
 import adams.flow.core.AutomatableInteractiveActor;
+import adams.flow.core.HeadlessExecutionSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
@@ -126,7 +127,7 @@ import java.util.List;
  */
 public class WekaChooseAttributes
   extends AbstractInteractiveTransformer
-  implements AutomatableInteractiveActor {
+  implements AutomatableInteractiveActor, HeadlessExecutionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1483735876005865608L;
@@ -493,6 +494,16 @@ public class WekaChooseAttributes
     }
     
     return result;
+  }
+
+  /**
+   * Returns whether headless execution is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsHeadlessExecution() {
+    return true;
   }
 
   /**

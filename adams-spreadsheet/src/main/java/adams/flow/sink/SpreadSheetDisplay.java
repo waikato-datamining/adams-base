@@ -20,9 +20,7 @@
 
 package adams.flow.sink;
 
-import adams.core.DateUtils;
 import adams.core.QuickInfoHelper;
-import adams.core.io.ConsoleHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.output.NullWriter;
 import adams.data.spreadsheet.DefaultSpreadSheet;
@@ -62,7 +60,6 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -990,30 +987,6 @@ public class SpreadSheetDisplay
   }
 
   /**
-   * Executes the flow item. 
-   * <br><br>
-   * Outputs the token on the command-line in headless mode.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  protected String doExecute() {
-    String	result;
-
-    result = null;
-
-    if (isHeadless()) {
-      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
-    }
-    else {
-      result = super.doExecute();
-    }
-
-    return result;
-  }
-
-  /**
    * Returns a custom file filter for the file chooser.
    *
    * @return		the file filter, null if to use default one
@@ -1058,13 +1031,13 @@ public class SpreadSheetDisplay
   public Class[] getSendToClasses() {
     List<Class> 	result;
 
-    result = new ArrayList<Class>(Arrays.asList(super.getSendToClasses()));
+    result = new ArrayList<>(Arrays.asList(super.getSendToClasses()));
     if (!result.contains(JTable.class))
       result.add(JTable.class);
     if (!result.contains(SpreadSheetTable.class))
       result.add(SpreadSheetTable.class);
 
-    return result.toArray(new Class[result.size()]);
+    return result.toArray(new Class[0]);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * AbstractTextualDisplay.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -615,27 +615,26 @@ public abstract class AbstractTextualDisplay
   }
 
   /**
-   * Executes the flow item. 
-   * <br><br>
-   * Outputs the token on the command-line in headless mode.
+   * Returns whether headless execution is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsHeadlessExecution() {
+    return true;
+  }
+
+  /**
+   * Executes the flow item in headless mode.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
-    String	result;
+  protected String doExecuteHeadless() {
+    ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+    ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
 
-    result = null;
-
-    if (isHeadless()) {
-      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
-    }
-    else {
-      result = super.doExecute();
-    }
-
-    return result;
+    return null;
   }
 
   /**

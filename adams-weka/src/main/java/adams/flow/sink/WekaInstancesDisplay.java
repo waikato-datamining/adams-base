@@ -219,27 +219,26 @@ public class WekaInstancesDisplay
   }
 
   /**
-   * Executes the flow item. 
-   * <br><br>
-   * Outputs the token on the command-line in headless mode.
+   * Returns whether headless execution is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsHeadlessExecution() {
+    return true;
+  }
+
+  /**
+   * Executes the flow item in headless mode.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
-    String	result;
-    
-    result = null;
-    
-    if (isHeadless()) {
-      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
-    }
-    else {
-      result = super.doExecute();
-    }
-    
-    return result;
+  protected String doExecuteHeadless() {
+    ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
+    ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
+
+    return null;
   }
 
   /**

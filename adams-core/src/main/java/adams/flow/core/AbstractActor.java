@@ -189,17 +189,17 @@ public abstract class AbstractActor
     if (standalone)
       result.append("\n-standalone-");
 
-    if (containers.size() > 0) {
+    if (!containers.isEmpty()) {
       result.append("\n\nContainer information:");
       for (i = 0; i < containers.size(); i++) {
-	result.append("\n- " + containers.get(i).getName() + ": ");
+	result.append("\n- ").append(containers.get(i).getName()).append(": ");
 	try {
 	  cont  = (AbstractContainer) containers.get(i).getDeclaredConstructor().newInstance();
 	  enm   = cont.names();
 	  while (enm.hasNext()) {
 	    name = enm.next();
 	    help = cont.getHelp(name);
-	    result.append("\n   - " + name + ((help == null) ? "" : ": " + help));
+	    result.append("\n   - ").append(name).append((help == null) ? "" : ": " + help);
 	  }
 	}
 	catch (Exception e) {
@@ -213,10 +213,10 @@ public abstract class AbstractActor
       info = ((ActorHandler) this).getActorHandlerInfo();
       result.append("\nActor handler information:");
       if (info.getActorExecution() != ActorExecution.UNDEFINED)
-	result.append("\n- Actor execution: " + info.getActorExecution());
-      result.append("\n- Standalones allowed: " + info.canContainStandalones());
-      result.append("\n- Source allowed: " + info.canContainSource());
-      result.append("\n- Forwards input: " + info.getForwardsInput());
+	result.append("\n- Actor execution: ").append(info.getActorExecution());
+      result.append("\n- Standalones allowed: ").append(info.canContainStandalones());
+      result.append("\n- Source allowed: ").append(info.canContainSource());
+      result.append("\n- Forwards input: ").append(info.getForwardsInput());
       if (info.hasRestrictions()) {
 	result.append("\n- Restrictions: ");
 	for (i = 0; i < info.getRestrictions().length; i++) {
@@ -230,14 +230,17 @@ public abstract class AbstractActor
     if (this instanceof StopRestrictor) {
       result.append("\nStop restriction: ");
       if (this instanceof OptionalStopRestrictor)
-	result.append("optional (currently: " + (((OptionalStopRestrictor) this).isRestrictingStops() ? "on" : "off") + ")");
+	result.append("optional (currently: ").append(((OptionalStopRestrictor) this).isRestrictingStops() ? "on" : "off").append(")");
       else
 	result.append("always");
     }
 
+    if (this instanceof HeadlessExecutionSupporter)
+      result.append("\n\nHeadless execution supported: ").append(((HeadlessExecutionSupporter) this).supportsHeadlessExecution() ? "yes" : "no");
+
     if (this instanceof InteractiveActor) {
       result.append("\n\nInteractive actor information:");
-      result.append("\n- supports interaction in headless mode: " + ((InteractiveActor) this).supportsHeadlessInteraction());
+      result.append("\n- supports interaction in headless mode: ").append(((InteractiveActor) this).supportsHeadlessInteraction() ? "yes" : "no");
     }
 
     return result.toString();

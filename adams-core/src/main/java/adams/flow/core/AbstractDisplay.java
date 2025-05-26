@@ -15,7 +15,7 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -50,7 +50,7 @@ import java.util.Hashtable;
  */
 public abstract class AbstractDisplay
   extends AbstractActor
-  implements DisplayTypeSupporter {
+  implements DisplayTypeSupporter, HeadlessExecutionSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 8175993838879683118L;
@@ -765,6 +765,27 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns whether headless execution is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsHeadlessExecution() {
+    return false;
+  }
+
+  /**
+   * Executes the flow item in headless mode.
+   * <br>
+   * Default implementation does nothing and just returns null.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  protected String doExecuteHeadless() {
+    return null;
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -773,10 +794,13 @@ public abstract class AbstractDisplay
   protected String doExecute() {
     Runnable	runnable;
 
-    if (m_ResetGUIWaiting)
-      cleanUpGUI();
+    if (isHeadless() && supportsHeadlessExecution()) {
+      return doExecuteHeadless();
+    }
+    else if (!isHeadless()) {
+      if (m_ResetGUIWaiting)
+	cleanUpGUI();
 
-    if (!isHeadless()) {
       if (m_Panel == null) {
 	m_Panel = newPanel();
 	if (getCreateFrame())

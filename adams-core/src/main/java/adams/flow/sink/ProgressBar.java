@@ -875,12 +875,22 @@ public class ProgressBar
   }
 
   /**
-   * Executes the flow item.
+   * Returns whether headless execution is supported.
+   *
+   * @return		true if supported
+   */
+  @Override
+  public boolean supportsHeadlessExecution() {
+    return true;
+  }
+
+  /**
+   * Executes the flow item in headless mode.
    *
    * @return		null if everything is fine, otherwise error message
    */
   @Override
-  protected String doExecute() {
+  protected String doExecuteHeadless() {
     String		result;
     StringBuilder 	text;
     String		curr;
@@ -889,24 +899,18 @@ public class ProgressBar
     DecimalFormat 	format;
 
     result = null;
-
-    if (isHeadless()) {
-      format = getFormat().toDecimalFormat();
-      text   = new StringBuilder();
-      if (m_InputToken.hasPayload(String.class))
-	current = Double.parseDouble(m_InputToken.getPayload(String.class));
-      else
-	current = m_InputToken.getPayload(Number.class).doubleValue();
-      perc = (current - getMinimum()) / (getMaximum()- getMinimum());
-      curr = getPrefix() + format.format(perc) + getSuffix();
-      if (!m_Title.isEmpty())
-	text.append(m_Title).append(": ");
-      text.append(curr);
-      ConsoleHelper.printlnOut(text.toString());
-    }
-    else {
-      result = super.doExecute();
-    }
+    format = getFormat().toDecimalFormat();
+    text   = new StringBuilder();
+    if (m_InputToken.hasPayload(String.class))
+      current = Double.parseDouble(m_InputToken.getPayload(String.class));
+    else
+      current = m_InputToken.getPayload(Number.class).doubleValue();
+    perc = (current - getMinimum()) / (getMaximum()- getMinimum());
+    curr = getPrefix() + format.format(perc) + getSuffix();
+    if (!m_Title.isEmpty())
+      text.append(m_Title).append(": ");
+    text.append(curr);
+    ConsoleHelper.printlnOut(text.toString());
 
     return result;
   }

@@ -15,13 +15,11 @@
 
 /*
  * ContainerDisplay.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
-import adams.core.DateUtils;
-import adams.core.io.ConsoleHelper;
 import adams.data.io.output.NullWriter;
 import adams.flow.container.AbstractContainer;
 import adams.flow.core.Token;
@@ -36,7 +34,6 @@ import javax.swing.JTable;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -272,30 +269,6 @@ public class ContainerDisplay
    */
   public boolean displayPanelRequiresScrollPane() {
     return false;
-  }
-
-  /**
-   * Executes the flow item. 
-   * <br><br>
-   * Outputs the token on the command-line in headless mode.
-   *
-   * @return		null if everything is fine, otherwise error message
-   */
-  @Override
-  protected String doExecute() {
-    String	result;
-    
-    result = null;
-    
-    if (isHeadless()) {
-      ConsoleHelper.printlnOut("\n--> " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n");
-      ConsoleHelper.printlnOut("" + m_InputToken.getPayload());
-    }
-    else {
-      result = super.doExecute();
-    }
-    
-    return result;
   }
 
   /**
