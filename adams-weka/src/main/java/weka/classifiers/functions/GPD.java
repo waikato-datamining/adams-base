@@ -506,6 +506,29 @@ public class GPD
   }
 
   /**
+   * Enables the checks.
+   */
+  public void enableChecks() {
+    m_checksTurnedOff = false;
+  }
+
+  /**
+   * Disables the checks.
+   */
+  public void disableChecks() {
+    m_checksTurnedOff = true;
+  }
+
+  /**
+   * Returns whether checks are turned off or not.
+   *
+   * @return		true if disabled
+   */
+  public boolean isChecksTurnedOff() {
+    return m_checksTurnedOff;
+  }
+
+  /**
    * Method for building the classifier.
    *
    * @param insts the set of training instances

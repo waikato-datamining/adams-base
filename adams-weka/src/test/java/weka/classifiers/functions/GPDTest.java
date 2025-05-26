@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.functions;
@@ -54,7 +54,7 @@ public class GPDTest
     GPD		result;
 
     result = new GPD();
-    result.m_checksTurnedOff = false;
+    result.enableChecks();
 
     return result;
   }
