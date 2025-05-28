@@ -15,7 +15,7 @@
 
 /*
  * SegmentationPanel.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation;
@@ -853,8 +853,12 @@ public class SegmentationPanel
       }
     }
 
-    if ((lastSettings != null) && !lastSettings.isEmpty())
+    if ((lastSettings != null) && !lastSettings.isEmpty()) {
       getManager().setSettings(lastSettings);
+      getManager().setImage(
+	segcont.getValue(ImageSegmentationContainer.VALUE_NAME, String.class),
+	segcont.getValue(ImageSegmentationContainer.VALUE_BASE, BufferedImage.class));
+    }
 
     // overriding visibility settings
     for (AbstractLayer l: getManager().getLayers()) {
