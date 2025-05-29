@@ -15,7 +15,7 @@
 
 /*
  * ConvertDateTimeType.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -181,10 +181,12 @@ public class ConvertDateTimeType
   @Override
   public Class accepts() {
     switch (m_InputDateTimeType) {
+      case NANOSECS:
       case MSECS:
       case SECONDS:
       case SERIAL_DATETIME:
 	return Double.class;
+      case NANOSECS_LONG:
       case MSECS_LONG:
       case SECONDS_LONG:
       case SERIAL_DATETIME_LONG:
@@ -222,10 +224,12 @@ public class ConvertDateTimeType
   @Override
   public Class generates() {
     switch (m_OutputDateTimeType) {
+      case NANOSECS:
       case MSECS:
       case SECONDS:
       case SERIAL_DATETIME:
 	return Double.class;
+      case NANOSECS_LONG:
       case MSECS_LONG:
       case SECONDS_LONG:
       case SERIAL_DATETIME_LONG:
@@ -263,98 +267,108 @@ public class ConvertDateTimeType
    */
   @Override
   protected Object doConvert() throws Exception {
-    long	msecs;
+    long 	nanosecs;
 
     // no conversion necessary?
     if (m_InputDateTimeType == m_OutputDateTimeType)
       return m_Input;
 
     switch (m_InputDateTimeType) {
+      case NANOSECS:
+	nanosecs = ((Double) m_Input).longValue();
+	break;
+      case NANOSECS_LONG:
+	nanosecs = (Long) m_Input;
+	break;
       case MSECS:
-	msecs = ((Double) m_Input).longValue();
+	nanosecs = ((Double) m_Input).longValue() * 1000;
 	break;
       case MSECS_LONG:
-	msecs = (Long) m_Input;
+	nanosecs = (Long) m_Input * 1000;
 	break;
       case SECONDS:
-	msecs = ((Double) m_Input).longValue() * 1000;
+	nanosecs = ((Double) m_Input).longValue() * 1000000;
 	break;
       case SECONDS_LONG:
-	msecs = ((Long) m_Input) * 1000;
+	nanosecs = ((Long) m_Input) * 1000000;
 	break;
       case DATE:
-	msecs = ((Date) m_Input).getTime();
+	nanosecs = ((Date) m_Input).getTime() * 1000;
 	break;
       case DATETIME:
-	msecs = ((DateTime) m_Input).getTime();
+	nanosecs = ((DateTime) m_Input).getTime() * 1000;
 	break;
       case DATETIMEMSEC:
-	msecs = ((DateTimeMsec) m_Input).getTime();
+	nanosecs = ((DateTimeMsec) m_Input).getTime() * 1000;
 	break;
       case TIME:
-	msecs = ((Time) m_Input).getTime();
+	nanosecs = ((Time) m_Input).getTime() * 1000;
 	break;
       case TIMEMSEC:
-	msecs = ((TimeMsec) m_Input).getTime();
+	nanosecs = ((TimeMsec) m_Input).getTime() * 1000;
 	break;
       case BASEDATE:
-	msecs = ((BaseDate) m_Input).dateValue().getTime();
+	nanosecs = ((BaseDate) m_Input).dateValue().getTime() * 1000;
 	break;
       case BASEDATETIME:
-	msecs = ((BaseDateTime) m_Input).dateValue().getTime();
+	nanosecs = ((BaseDateTime) m_Input).dateValue().getTime() * 1000;
 	break;
       case BASEDATETIMEMSEC:
-	msecs = ((BaseDateTimeMsec) m_Input).dateValue().getTime();
+	nanosecs = ((BaseDateTimeMsec) m_Input).dateValue().getTime() * 1000;
 	break;
       case BASETIME:
-	msecs = ((BaseTime) m_Input).dateValue().getTime();
+	nanosecs = ((BaseTime) m_Input).dateValue().getTime() * 1000;
 	break;
       case BASETIMEMSEC:
-	msecs = ((BaseTimeMsec) m_Input).dateValue().getTime();
+	nanosecs = ((BaseTimeMsec) m_Input).dateValue().getTime() * 1000;
 	break;
       case SERIAL_DATETIME:
-	msecs = DateUtils.serialDateToMsec((Double) m_Input);
+	nanosecs = DateUtils.serialDateToMsec((Double) m_Input) * 1000;
 	break;
       case SERIAL_DATETIME_LONG:
-	msecs = DateUtils.serialDateToMsec((Long) m_Input);
+	nanosecs = DateUtils.serialDateToMsec((Long) m_Input) * 1000;
 	break;
       default:
 	throw new IllegalStateException("Unhandled input data/time type: " + m_InputDateTimeType);
     }
 
     switch (m_OutputDateTimeType) {
+      case NANOSECS:
+	return (double) (nanosecs);
+      case NANOSECS_LONG:
+	return nanosecs;
       case MSECS:
-	return (double) (msecs);
+	return (double) (nanosecs / 1000);
       case MSECS_LONG:
-	return msecs;
+	return nanosecs / 1000;
       case SECONDS:
-	return (double) (msecs / 1000);
+	return (double) (nanosecs / 1000000);
       case SECONDS_LONG:
-	return (msecs / 1000);
+	return (nanosecs / 1000000);
       case DATE:
-	return new Date(msecs);
+	return new Date(nanosecs / 1000);
       case DATETIME:
-	return new DateTime(msecs);
+	return new DateTime(nanosecs / 1000);
       case DATETIMEMSEC:
-	return new DateTimeMsec(msecs);
+	return new DateTimeMsec(nanosecs / 1000);
       case TIME:
-	return new Time(msecs);
+	return new Time(nanosecs / 1000);
       case TIMEMSEC:
-	return new TimeMsec(msecs);
+	return new TimeMsec(nanosecs / 1000);
       case BASEDATE:
-	return new BaseDate(new Date(msecs));
+	return new BaseDate(new Date(nanosecs / 1000));
       case BASEDATETIME:
-	return new BaseDateTime(new DateTime(msecs));
+	return new BaseDateTime(new DateTime(nanosecs / 1000));
       case BASEDATETIMEMSEC:
-	return new BaseDateTimeMsec(new DateTime(msecs));
+	return new BaseDateTimeMsec(new DateTime(nanosecs / 1000));
       case BASETIME:
-	return new BaseTime(new Time(msecs));
+	return new BaseTime(new Time(nanosecs / 1000));
       case BASETIMEMSEC:
-	return new BaseTimeMsec(new TimeMsec(msecs));
+	return new BaseTimeMsec(new TimeMsec(nanosecs / 1000));
       case SERIAL_DATETIME:
-	return DateUtils.msecToSerialDate(msecs);
+	return DateUtils.msecToSerialDate(nanosecs / 1000);
       case SERIAL_DATETIME_LONG:
-	return (long) DateUtils.msecToSerialDate(msecs);
+	return (long) DateUtils.msecToSerialDate(nanosecs / 1000);
       default:
 	throw new IllegalStateException("Unhandled output data/time type: " + m_OutputDateTimeType);
     }

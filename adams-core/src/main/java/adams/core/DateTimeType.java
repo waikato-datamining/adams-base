@@ -14,8 +14,8 @@
  */
 
 /*
- * DateType.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * DateTimeType.java
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,6 +25,10 @@ package adams.core;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public enum DateTimeType {
+  /** nano secs since 1970. */
+  NANOSECS,
+  /** nano secs since 1970. */
+  NANOSECS_LONG,
   /** msecs since 1970. */
   MSECS,
   /** msecs since 1970. */

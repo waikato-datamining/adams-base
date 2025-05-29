@@ -15,7 +15,7 @@
 
 /*
  * ExtractDateTimeField.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -425,6 +425,12 @@ public class ExtractDateTimeField
 
     // update the calendar
     switch (m_DateTimeType) {
+      case NANOSECS:
+	m_Calendar.setTime(new Date(((Double) m_Input).longValue() / 1000));
+	break;
+      case NANOSECS_LONG:
+	m_Calendar.setTime(new Date((Long) m_Input / 1000));
+	break;
       case MSECS:
 	m_Calendar.setTime(new Date(((Double) m_Input).longValue()));
 	break;

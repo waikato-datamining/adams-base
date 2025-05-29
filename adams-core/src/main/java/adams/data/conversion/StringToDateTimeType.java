@@ -15,7 +15,7 @@
 
 /*
  * StringToDateTimeType.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -308,6 +308,10 @@ public class StringToDateTimeType
       }
 
       switch (m_DateTimeType) {
+	case NANOSECS:
+	  return (double) date.getTime() * 1000;
+	case NANOSECS_LONG:
+	  return date.getTime() * 1000;
 	case MSECS:
 	  return (double) date.getTime();
 	case MSECS_LONG:

@@ -15,7 +15,7 @@
 
 /*
  * DateTimeTypeToString.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -181,10 +181,12 @@ public class DateTimeTypeToString
   @Override
   public Class accepts() {
     switch (m_DateTimeType) {
+      case NANOSECS:
       case MSECS:
       case SECONDS:
       case SERIAL_DATETIME:
 	return Double.class;
+      case NANOSECS_LONG:
       case MSECS_LONG:
       case SECONDS_LONG:
       case SERIAL_DATETIME_LONG:
@@ -226,6 +228,10 @@ public class DateTimeTypeToString
       m_Formatter = m_Format.toDateFormat();
 
     switch (m_DateTimeType) {
+      case NANOSECS:
+	return m_Formatter.format(new Date(((Double) m_Input).longValue() / 1000));
+      case NANOSECS_LONG:
+	return m_Formatter.format(new Date((Long) m_Input / 1000));
       case MSECS:
 	return m_Formatter.format(new Date(((Double) m_Input).longValue()));
       case MSECS_LONG:

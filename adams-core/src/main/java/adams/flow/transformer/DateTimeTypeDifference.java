@@ -15,7 +15,7 @@
 
 /*
  * DateTimeTypeDifference.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -243,10 +243,12 @@ public class DateTimeTypeDifference
   @Override
   public Class[] accepts() {
     switch (m_InputDateTimeType) {
+      case NANOSECS:
       case MSECS:
       case SECONDS:
       case SERIAL_DATETIME:
 	return new Class[]{Double[].class};
+      case NANOSECS_LONG:
       case MSECS_LONG:
       case SECONDS_LONG:
       case SERIAL_DATETIME_LONG:
@@ -284,10 +286,12 @@ public class DateTimeTypeDifference
   @Override
   public Class[] generates() {
     switch (m_OutputDateTimeType) {
+      case NANOSECS:
       case MSECS:
       case SECONDS:
       case SERIAL_DATETIME:
 	return new Class[]{Double.class};
+      case NANOSECS_LONG:
       case MSECS_LONG:
       case SECONDS_LONG:
       case SERIAL_DATETIME_LONG:
@@ -335,7 +339,7 @@ public class DateTimeTypeDifference
     if (m_ConversionInput == null) {
       m_ConversionInput = new ConvertDateTimeType();
       m_ConversionInput.setInputDateTimeType(m_InputDateTimeType);
-      m_ConversionInput.setOutputDateTimeType(DateTimeType.MSECS_LONG);
+      m_ConversionInput.setOutputDateTimeType(DateTimeType.NANOSECS_LONG);
     }
 
     diff  = null;
@@ -361,7 +365,7 @@ public class DateTimeTypeDifference
     if (result == null) {
       if (m_ConversionOutput == null) {
 	m_ConversionOutput = new ConvertDateTimeType();
-	m_ConversionOutput.setInputDateTimeType(DateTimeType.MSECS_LONG);
+	m_ConversionOutput.setInputDateTimeType(DateTimeType.NANOSECS_LONG);
 	m_ConversionOutput.setOutputDateTimeType(m_OutputDateTimeType);
       }
       m_ConversionOutput.setInput(diff);
