@@ -15,7 +15,7 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.histogram;
@@ -67,8 +67,8 @@ public class Histogram
   /**Data to be plotted */
   protected SpreadSheet m_Data;
 
-  /** double array to plot. */
-  protected Double[] m_Array;
+  /** number array to plot. */
+  protected Number[] m_Array;
 
   /** Panel for displaying the histogram */
   protected HistogramPanel m_Plot;
@@ -108,7 +108,7 @@ public class Histogram
     super.initialize();
 
     m_HistOptions = new HistogramOptions();
-    m_Data = null;
+    m_Data        = null;
     m_Array       = null;
     m_DataName    = "";
     m_Index       = 0;
@@ -181,7 +181,7 @@ public class Histogram
    *
    * @param value	the array
    */
-  public void setArray(Double[] value) {
+  public void setArray(Number[] value) {
     m_Array = value;
     m_Data  = null;
     update();
@@ -192,7 +192,7 @@ public class Histogram
    *
    * @return		the array, null if not set
    */
-  public Double[] getArray() {
+  public Number[] getArray() {
     return m_Array;
   }
 
