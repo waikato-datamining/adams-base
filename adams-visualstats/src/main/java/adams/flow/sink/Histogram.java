@@ -15,7 +15,7 @@
 
 /*
  * Histogram.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -253,7 +253,7 @@ public class Histogram
    */
   @Override
   public Class[] accepts() {
-    return new Class[]{Double[].class, SpreadSheet.class};
+    return new Class[]{Double[].class, Float[].class, Long[].class, Integer[].class, SpreadSheet.class};
   }
 
   /**
@@ -276,7 +276,7 @@ public class Histogram
       hist.setData(data);
     }
     else {
-      hist.setArray((Double[]) token.getPayload());
+      hist.setArray((Number[]) token.getPayload());
     }
     hist.setDataName(m_DataName);
     hist.update();
