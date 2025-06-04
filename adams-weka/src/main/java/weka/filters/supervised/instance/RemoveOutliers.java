@@ -15,7 +15,7 @@
 
 /*
  * RemoveOutliers.java
- * Copyright (C) 2015-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.filters.supervised.instance;
@@ -474,9 +474,10 @@ public class RemoveOutliers
       list.cleanUp();
       jobRunner.cleanUp();
       result = evalAgg.aggregated();
-      if (result != null)
-        throw new IllegalStateException(
-          evalAgg.hasLastError() ? evalAgg.getLastError() : "Failed to aggregate evaluations!");
+      if (result == null)
+	throw new IllegalStateException("Failed to aggregate evaluations!");
+      if (evalAgg.hasLastError())
+	throw new IllegalStateException(evalAgg.getLastError());
       return result;
     }
   }
