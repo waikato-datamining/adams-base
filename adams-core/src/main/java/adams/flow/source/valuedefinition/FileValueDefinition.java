@@ -15,7 +15,7 @@
 
 /*
  * FileValueDefinition.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.source.valuedefinition;
@@ -27,7 +27,9 @@ import adams.core.io.ConsoleHelper;
 import adams.core.io.ForwardSlashSupporter;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.FileChooserPanel;
+import adams.gui.chooser.MultipleFileChooserPanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.PropertiesParameterPanel;
 import adams.gui.core.PropertiesParameterPanel.PropertyHint;
@@ -64,6 +66,9 @@ public class FileValueDefinition
 
   /** whether to allow the "All files" filter. */
   protected boolean m_AcceptAllFileFilter;
+
+  /** whether to select multiple files. */
+  protected boolean m_MultiSelect;
 
   /**
    * Returns a string describing the object.
@@ -110,6 +115,10 @@ public class FileValueDefinition
 
     m_OptionManager.add(
       "accept-all-file-filter", "acceptAllFileFilter",
+      false);
+
+    m_OptionManager.add(
+      "multi-select", "multiSelect",
       false);
   }
 
@@ -321,6 +330,35 @@ public class FileValueDefinition
   }
 
   /**
+   * Sets whether multiple files can be selected.
+   *
+   * @param value	true if can select multiple files
+   */
+  public void setMultiSelect(boolean value) {
+    m_MultiSelect = value;
+    reset();
+  }
+
+  /**
+   * Returns whether multiple files can be selected.
+   *
+   * @return		true if can select multiple files
+   */
+  public boolean getMultiSelect() {
+    return m_MultiSelect;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String multiSelectTipText() {
+    return "If enabled, multiple files can be selected.";
+  }
+
+  /**
    * Returns whether flow context is required.
    *
    * @return		true if required
@@ -368,19 +406,35 @@ public class FileValueDefinition
    */
   @Override
   public boolean addToPanel(PropertiesParameterPanel panel) {
-    FileChooserPanel	chooserPanel;
+    AbstractChooserPanel	chooserPanel;
+    FileChooserPanel 		singleChooserPanel;
+    MultipleFileChooserPanel	multiChooserPanel;
 
     if (!check())
       return false;
-
-    chooserPanel = new FileChooserPanel();
-    chooserPanel.setPrefix("");
-    for (BaseString ext: m_Extensions)
-      chooserPanel.addChoosableFileFilter(new ExtensionFileFilter(ext.getValue().toUpperCase() + " file", ext.getValue()));
-    chooserPanel.setCurrentDirectory(m_InitialDirectory);
-    chooserPanel.setAcceptAllFileFilterUsed(m_AcceptAllFileFilter);
-    chooserPanel.setFileChooserTitle(m_FileChooserTitle);
-    chooserPanel.setUseAbsolutePath(m_UseAbsolutePath);
+    
+    if (m_MultiSelect) {
+      multiChooserPanel = new MultipleFileChooserPanel();
+      multiChooserPanel.setPrefix("");
+      for (BaseString ext : m_Extensions)
+	multiChooserPanel.addChoosableFileFilter(new ExtensionFileFilter(ext.getValue().toUpperCase() + " file", ext.getValue()));
+      multiChooserPanel.setCurrentDirectory(m_InitialDirectory);
+      multiChooserPanel.setAcceptAllFileFilterUsed(m_AcceptAllFileFilter);
+      multiChooserPanel.setFileChooserTitle(m_FileChooserTitle);
+      multiChooserPanel.setUseAbsolutePath(m_UseAbsolutePath);
+      chooserPanel = multiChooserPanel;
+    }
+    else {
+      singleChooserPanel = new FileChooserPanel();
+      singleChooserPanel.setPrefix("");
+      for (BaseString ext : m_Extensions)
+	singleChooserPanel.addChoosableFileFilter(new ExtensionFileFilter(ext.getValue().toUpperCase() + " file", ext.getValue()));
+      singleChooserPanel.setCurrentDirectory(m_InitialDirectory);
+      singleChooserPanel.setAcceptAllFileFilterUsed(m_AcceptAllFileFilter);
+      singleChooserPanel.setFileChooserTitle(m_FileChooserTitle);
+      singleChooserPanel.setUseAbsolutePath(m_UseAbsolutePath);
+      chooserPanel = singleChooserPanel;
+    }
 
     panel.addPropertyType(getName(), PropertyType.CUSTOM_COMPONENT);
     panel.addProperty(getName(), getDisplay(), chooserPanel);
@@ -388,7 +442,7 @@ public class FileValueDefinition
     if (!getHelp().trim().isEmpty())
       panel.setHelp(getName(), getHelp());
     if (getUseForwardSlashes())
-      panel.addPropertyHint(getName(), PropertyHint.FORWARD_SLASHES);
+      panel.addPropertyHint(getName(), m_MultiSelect ? PropertyHint.MULTI_FORWARD_SLASHES : PropertyHint.FORWARD_SLASHES);
 
     return true;
   }

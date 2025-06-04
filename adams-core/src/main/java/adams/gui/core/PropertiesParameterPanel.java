@@ -15,7 +15,7 @@
 
 /*
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -32,6 +32,7 @@ import adams.core.base.BaseTime;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
 import adams.core.option.parsing.FontParsing;
@@ -78,6 +79,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Displays all properties in a props file as parameters (alphabetically
@@ -171,6 +173,7 @@ public class PropertiesParameterPanel
    */
   public enum PropertyHint {
     FORWARD_SLASHES,
+    MULTI_FORWARD_SLASHES,
   }
 
   /** the panel for the properties. */
@@ -443,11 +446,11 @@ public class PropertiesParameterPanel
   }
 
   /**
-   * Checks whether a property type has been specified for a particular
-   * property.
+   * Returns the property type that has been specified for a particular
+   * property or STRING if not.
    *
-   * @param property	the property to associate a type with
-   * @return		true if a type has been specified
+   * @param property	the property to get the type for
+   * @return		the associated type or STRING if none associated
    */
   public PropertyType getPropertyType(String property) {
     if (hasPropertyType(property))
@@ -457,17 +460,14 @@ public class PropertiesParameterPanel
   }
 
   /**
-   * Checks whether a property type has been specified for a particular
-   * property.
+   * Returns the (actual) property type that has been specified for a particular
+   * property or STRING if not.
    *
-   * @param property	the property to associate a type with
-   * @return		true if a type has been specified
+   * @param property	the property to get the type for
+   * @return		the associated type or STRING if none associated
    */
   public PropertyType getActualPropertyType(String property) {
-    if (m_ActualPropertyTypes.containsKey(property))
-      return m_ActualPropertyTypes.get(property);
-    else
-      return PropertyType.STRING;
+    return m_ActualPropertyTypes.getOrDefault(property, PropertyType.STRING);
   }
 
   /**
@@ -519,7 +519,7 @@ public class PropertiesParameterPanel
    */
   public boolean hasPropertyHints(String property) {
     return m_PropertyHints.containsKey(property)
-	&& (m_PropertyHints.get(property).size() > 0);
+	&& !m_PropertyHints.get(property).isEmpty();
   }
 
   /**
@@ -1052,9 +1052,9 @@ public class PropertiesParameterPanel
 	      public void changedUpdate(DocumentEvent e) {
 		check(e);
 	      }
-	      protected void check(DocumentEvent e) {
+	      private void check(DocumentEvent e) {
 		String text = textfield.getText();
-		if ((text.length() == 0) || Utils.isDouble(text))
+		if (text.isEmpty() || Utils.isDouble(text))
 		  textfield.setBorder(BorderFactory.createEtchedBorder());
 		else
 		  textfield.setBorder(BorderFactory.createLineBorder(Color.RED));
@@ -1073,12 +1073,12 @@ public class PropertiesParameterPanel
 	    break;
 	  case PASSWORD:
 	  case PASSWORD_PLAIN:
-	    final BasePasswordFieldWithButton pwfield = new BasePasswordFieldWithButton(20);
-	    pwfield.setShowPopupMenu(true);
-	    pwfield.setText(value.getPassword(key).getValue());
+	    final BasePasswordFieldWithButton pwField = new BasePasswordFieldWithButton(20);
+	    pwField.setShowPopupMenu(true);
+	    pwField.setText(value.getPassword(key).getValue());
 	    if (help != null)
-	      pwfield.setToolTipText(help);
-	    addProperty(key, label, pwfield);
+	      pwField.setToolTipText(help);
+	    addProperty(key, label, pwField);
 	    break;
 	  case SQL:
 	    final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
@@ -1195,7 +1195,7 @@ public class PropertiesParameterPanel
 	    if (help != null)
 	      chooserPanel.setToolTipText(help);
 	    try {
-	      if (value.getProperty(key).trim().length() > 0)
+	      if (!value.getProperty(key).trim().isEmpty())
 		chooserPanel.setCurrent(OptionUtils.forAnyCommandLine(Object.class, value.getProperty(key)));
 	    }
 	    catch (Exception e) {
@@ -1213,7 +1213,7 @@ public class PropertiesParameterPanel
 	    if (help != null)
 	      chooserPanel.setToolTipText(help);
 	    try {
-	      if (value.getProperty(key).trim().length() > 0) {
+	      if (!value.getProperty(key).trim().isEmpty()) {
 		if (sep.equals(" "))
 		  parts = OptionUtils.splitOptions(value.getProperty(key).trim());
 		else
@@ -1284,19 +1284,37 @@ public class PropertiesParameterPanel
   }
 
   /**
-   * Fixes the path, if necessary.
+   * Fixes the path(s), if necessary.
    *
-   * @param property	the property this path is from
-   * @param path	the path to fix
-   * @return		the fixed path
+   * @param property	the property this path is/these paths are from
+   * @param path	the path(s) to fix
+   * @return		the fixed path(s)
    * @see		PropertyHint#FORWARD_SLASHES
+   * @see		PropertyHint#MULTI_FORWARD_SLASHES
    * @see		#getPropertyHints(String)
    */
   protected String fixPath(String property, String path) {
-    if (getPropertyHints(property).contains(PropertyHint.FORWARD_SLASHES))
+    String[]	paths;
+    int		i;
+
+    if (getPropertyHints(property).contains(PropertyHint.FORWARD_SLASHES)) {
       return FileUtils.useForwardSlashes(path);
-    else
+    }
+    else if (getPropertyHints(property).contains(PropertyHint.MULTI_FORWARD_SLASHES)) {
+      try {
+	paths = OptionUtils.splitOptions(path);
+	for (i = 0; i < paths.length; i++)
+	  paths[i] = FileUtils.useForwardSlashes(paths[i]);
+	return OptionUtils.joinOptions(paths);
+      }
+      catch (Exception e) {
+	LoggingHelper.global().log(Level.SEVERE, "Failed to fix path: " + path, e);
+	return path;
+      }
+    }
+    else {
       return path;
+    }
   }
 
   /**
@@ -1328,6 +1346,7 @@ public class PropertiesParameterPanel
     RegExpTextField		regexpText;
     RegExpConstrainedTextField	regexpConstText;
     JComboBox			comboEnum;
+    JComboBox			comboList;
     SelectOptionPanel		optionPanel;
     BaseString[]		list;
     String			key;
@@ -1424,9 +1443,9 @@ public class PropertiesParameterPanel
 	case LIST:
 	case BLANK_SEPARATED_LIST_FIXED:
 	case COMMA_SEPARATED_LIST_FIXED:
-	  comboEnum = (JComboBox) comp;
-	  if (comboEnum.getSelectedIndex() > -1)
-	    result.setProperty(key, "" + comboEnum.getSelectedItem());
+	  comboList = (JComboBox) comp;
+	  if (comboList.getSelectedIndex() > -1)
+	    result.setProperty(key, "" + comboList.getSelectedItem());
 	  break;
 	case BLANK_SEPARATED_LIST:
 	case COMMA_SEPARATED_LIST:
