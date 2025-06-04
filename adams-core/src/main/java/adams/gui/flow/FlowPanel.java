@@ -1146,6 +1146,23 @@ public class FlowPanel
   }
 
   /**
+   * Stops and restarts the flow again.
+   *
+   * @param showNotification	whether to show notifications about
+   * 				errors/stopped/finished
+   * @param debug		whether to run in debug mode
+   */
+  public void restart(boolean showNotification, boolean debug) {
+    if (isRunning()) {
+      stop();
+      while (isRunning() || isStopping()) {
+	Utils.wait(this, 1000, 100);
+      }
+    }
+    run(showNotification, debug);
+  }
+
+  /**
    * Finishes up the execution, setting the worker to null.
    */
   public void finishedExecution() {

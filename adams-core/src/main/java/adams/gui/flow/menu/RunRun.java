@@ -15,10 +15,11 @@
 
 /*
  * RunRun.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
+import adams.gui.flow.FlowEditorPanel;
 import adams.gui.flow.FlowMultiPagePane.FlowPanelFilter;
 
 import java.awt.event.ActionEvent;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Executes the flow.
+ * Executes/restarts the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -55,7 +56,6 @@ public class RunRun
     Map<FlowPanelFilter,Boolean>	result;
 
     result = new HashMap<>();
-    result.put(FlowPanelFilter.RUNNING, false);
     result.put(FlowPanelFilter.STOPPING, false);
     result.put(FlowPanelFilter.SWINGWORKER, false);
     result.put(FlowPanelFilter.DEBUG, false);
@@ -69,8 +69,12 @@ public class RunRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter()))
-      m_State.getFlowPanels().getPanelAt(index).run(true, false);
+    for (int index: m_State.getFlowPanels().getSelectedIndices(getPanelFilter())) {
+      if (m_State.getFlowPanels().getPanelAt(index).isRunning())
+	m_State.getFlowPanels().getPanelAt(index).restart(true, false);
+      else
+	m_State.getFlowPanels().getPanelAt(index).run(true, false);
+    }
   }
 
   /**
@@ -78,6 +82,14 @@ public class RunRun
    */
   @Override
   protected void doUpdate() {
+    if (m_State.hasCurrentPanel() && m_State.getCurrentPanel().isRunning()) {
+      setIcon(FlowEditorPanel.getPropertiesMenu().getProperty(getClass().getName() + "Restart-Icon"));
+      setName("Restart");
+    }
+    else {
+      setIcon(FlowEditorPanel.getPropertiesMenu().getProperty(getClass().getName() + "-Icon"));
+      setName(getTitle());
+    }
     setEnabled(m_State.getFlowPanels().getSelectedIndices(getPanelFilter()).length > 0);
   }
 }

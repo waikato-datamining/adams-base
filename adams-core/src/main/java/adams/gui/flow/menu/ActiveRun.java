@@ -15,15 +15,17 @@
 
 /*
  * ActiveRun.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
+
+import adams.gui.flow.FlowEditorPanel;
 
 import java.awt.event.ActionEvent;
 
 /**
- * Executes the flow flagged as active (if any).
- * 
+ * Executes/restarts the flow flagged as active (if any).
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class ActiveRun
@@ -34,7 +36,7 @@ public class ActiveRun
 
   /**
    * Returns the caption of this action.
-   * 
+   *
    * @return		the caption, null if not applicable
    */
   @Override
@@ -47,7 +49,10 @@ public class ActiveRun
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getActivePanel().run(true, false);
+    if (m_State.getActivePanel().isInputEnabled())
+      m_State.getActivePanel().run(true, false);
+    else
+      m_State.getActivePanel().restart(true, false);
   }
 
   /**
@@ -55,10 +60,24 @@ public class ActiveRun
    */
   @Override
   protected void doUpdate() {
-    setEnabled(
-      m_State.hasActivePanel()
-	&& m_State.getActivePanel().isInputEnabled()
-        && !m_State.getActivePanel().getTree().isDebug()
-	&& m_State.getActivePanel().getTree().isFlow());
+    if (m_State.hasActivePanel()) {
+      if (m_State.getActivePanel().isInputEnabled()) {
+	setName(getTitle());
+	setIcon(FlowEditorPanel.getPropertiesMenu().getProperty(getClass().getName() + "-Icon"));
+	setEnabled(!m_State.getActivePanel().getTree().isDebug()
+		     && m_State.getActivePanel().getTree().isFlow());
+      }
+      else if (m_State.getActivePanel().isRunning()
+		 && !m_State.getActivePanel().isStopping()
+		 && !m_State.getActivePanel().getTree().isDebug()
+		 && m_State.getActivePanel().getTree().isFlow()) {
+	setName("Restart");
+	setIcon(FlowEditorPanel.getPropertiesMenu().getProperty(getClass().getName() + "Restart-Icon"));
+	setEnabled(true);
+      }
+    }
+    else {
+      setEnabled(false);
+    }
   }
 }

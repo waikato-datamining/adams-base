@@ -15,7 +15,7 @@
 
 /*
  * RunRunAll.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Executes all the flow.
+ * Executes/restarts all the flow.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
@@ -43,7 +43,7 @@ public class RunRunAll
    */
   @Override
   protected String getTitle() {
-    return "Run all";
+    return "Run/restart all";
   }
 
   /**
@@ -55,7 +55,6 @@ public class RunRunAll
     Map<FlowPanelFilter,Boolean>	result;
 
     result = new HashMap<>();
-    result.put(FlowPanelFilter.RUNNING, false);
     result.put(FlowPanelFilter.STOPPING, false);
     result.put(FlowPanelFilter.SWINGWORKER, false);
     result.put(FlowPanelFilter.DEBUG, false);
@@ -69,8 +68,12 @@ public class RunRunAll
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    for (int index: m_State.getFlowPanels().getIndices(getPanelFilter()))
-      m_State.getFlowPanels().getPanelAt(index).run(true, false);
+    for (int index: m_State.getFlowPanels().getIndices(getPanelFilter())) {
+      if (m_State.getFlowPanels().getPanelAt(index).isInputEnabled())
+	m_State.getFlowPanels().getPanelAt(index).run(true, false);
+      else
+	m_State.getFlowPanels().getPanelAt(index).restart(true, false);
+    }
   }
 
   /**
