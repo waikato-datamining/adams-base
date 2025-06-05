@@ -48,6 +48,9 @@ public class TagProcessorHelper {
   /** for caching the tag info per applicable. */
   protected static Map<Class,Set<TagInfo>> m_ApplicableTagInfoCache;
 
+  /** the lookup by name. */
+  protected static Map<String,TagInfo> m_TagInfos;
+
   /**
    * Checks whether the specified tag is present.
    *
@@ -517,12 +520,14 @@ public class TagProcessorHelper {
   protected static synchronized void initTagInfoCache() {
     Map<Class,Set<TagInfo>> 	supportedCache;
     Map<Class,Set<TagInfo>> 	applicableCache;
-    TagProcessor processor;
+    Map<String,TagInfo>		infos;
+    TagProcessor 		processor;
     Set<TagInfo> 		supported;
 
     if (m_ApplicableTagInfoCache == null) {
       supportedCache  = new HashMap<>();
       applicableCache = new HashMap<>();
+      infos           = new HashMap<>();
       for (Class cls: getTagProcessors()) {
 	try {
 	  processor = (TagProcessor) cls.getDeclaredConstructor().newInstance();
@@ -534,6 +539,7 @@ public class TagProcessorHelper {
 		applicableCache.put(appliesTo, new HashSet<>());
 	      applicableCache.get(appliesTo).add(info);
 	    }
+	    infos.put(info.getName(), info);
 	  }
 	}
 	catch (Exception e) {
@@ -542,6 +548,7 @@ public class TagProcessorHelper {
       }
       m_SupportedTagInfoCache  = supportedCache;
       m_ApplicableTagInfoCache = applicableCache;
+      m_TagInfos               = infos;
     }
   }
 
@@ -581,5 +588,38 @@ public class TagProcessorHelper {
     Collections.sort(result);
 
     return result;
+  }
+
+  /**
+   * Returns a list of all possible tags.
+   *
+   * @return		the tags
+   */
+  public static List<TagInfo> getAllTags() {
+    List<TagInfo>	result;
+    Set<TagInfo>	all;
+
+    initTagInfoCache();
+
+    all = new HashSet<>();
+    for (Class cls: m_SupportedTagInfoCache.keySet())
+      all.addAll(m_SupportedTagInfoCache.get(cls));
+
+    result = new ArrayList<>(all);
+    Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Returns the tag info for the tag's name.
+   *
+   * @param name	the name of the tag to get the info for
+   * @return		the info or null if unknown name
+   */
+  public static TagInfo getTagInfo(String name) {
+    initTagInfoCache();
+
+    return m_TagInfos.get(name);
   }
 }
