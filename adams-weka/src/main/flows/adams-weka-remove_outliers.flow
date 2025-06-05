@@ -1,25 +1,34 @@
 # Project: adams
-# Date: 2024-10-03 10:23:54
+# Date: 2025-06-06 09:40:31
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-core,adams-json,adams-math,adams-ml,adams-spreadsheet,adams-visualstats,adams-weka
 #
-adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively.\\nLeft-click: toggle outlier state of individual points.\\nSHIFT+left-click set vertex of polygon, SHIFT+right-click \\nfinalize polygon for toggling enclosed points.\\n" -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+adams.flow.control.Flow -annotation "Allows the user to remove outliers interactively.\\nLeft-click: toggle outlier state of individual points.\\nSHIFT+left-click set vertex of polygon, SHIFT+right-click \\nfinalize polygon for toggling enclosed points.\\n" -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.TabView -display-type adams.flow.core.displaytype.Default
+  adams.flow.sink.SpreadSheetDisplay -name original -short-title true -display-type adams.flow.core.displaytype.Default -width 400 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name clean -short-title true -display-type adams.flow.core.displaytype.Default -width 400 -x -2 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.SpreadSheetDisplay -name outliers -short-title true -display-type adams.flow.core.displaytype.Default -width 400 -x -3 -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview
+  adams.flow.sink.Display -name "outlier indices" -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
  adams.flow.standalone.CallableActors
   adams.flow.source.WekaClassifierSetup -classifier "weka.classifiers.functions.LinearRegression -S 0 -R 1.0E-8 -num-decimal-places 4"
  adams.flow.source.FileSupplier -file ${FLOWS}/data/bodyfat.arff
  adams.flow.transformer.WekaFileReader -loader weka.core.converters.AArffLoader
  adams.flow.transformer.WekaClassSelector
- adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -always-use-container true
- adams.flow.transformer.WekaPredictionsToSpreadSheet -use-original-indices true
+ adams.flow.transformer.WekaCrossValidationEvaluator -output weka.classifiers.evaluation.output.prediction.Null -always-use-container true -generator weka.classifiers.DefaultCrossValidationFoldGenerator
+ adams.flow.transformer.WekaPredictionsToSpreadSheet
  adams.flow.control.RemoveOutliers -short-title true -stop-if-canceled true -detector adams.flow.control.removeoutliers.StdDev
  adams.flow.control.Branch
   adams.flow.control.Sequence -name original
    adams.flow.control.ContainerValuePicker -value Original -switch-outputs true
-   adams.flow.sink.SpreadSheetDisplay -name original -short-title true -width 400 -writer adams.data.io.output.NullWriter
+   adams.flow.sink.CallableSink -callable original
   adams.flow.control.Sequence -name clean
    adams.flow.control.ContainerValuePicker -value Clean -switch-outputs true
-   adams.flow.sink.SpreadSheetDisplay -name clean -short-title true -width 400 -x -2 -writer adams.data.io.output.NullWriter
+   adams.flow.sink.CallableSink -callable clean
   adams.flow.control.Sequence -name outliers
    adams.flow.control.ContainerValuePicker -value Outliers -switch-outputs true
-   adams.flow.sink.SpreadSheetDisplay -name outliers -short-title true -width 400 -x -3 -writer adams.data.io.output.NullWriter
+   adams.flow.sink.CallableSink -callable outliers
+  adams.flow.control.Sequence -name indices
+   adams.flow.control.ContainerValuePicker -value Outlier-Indices -switch-outputs true
+   adams.flow.transformer.Convert -conversion adams.data.conversion.ZeroBasedToOneBased
+   adams.flow.transformer.Convert -name "Convert (2)" -conversion adams.data.conversion.AnyToString
+   adams.flow.sink.CallableSink -callable "outlier indices"
