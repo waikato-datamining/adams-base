@@ -24,7 +24,7 @@ import adams.core.ClassCrossReference;
 
 /**
  <!-- globalinfo-start -->
- * Converts 1-based indices into 0-based ones.<br>
+ * Converts 0-based indices into 1-based ones.<br>
  * <br>
  * See also:<br>
  * adams.data.conversion.OneBasedToZeroBased
@@ -55,7 +55,7 @@ public class ZeroBasedToOneBased
    */
   @Override
   public String globalInfo() {
-    return "Converts 1-based indices into 0-based ones.";
+    return "Converts 0-based indices into 1-based ones.";
   }
 
   /**
