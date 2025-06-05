@@ -15,11 +15,11 @@
 
 /*
  * EffectiveTagsTab.java
- * Copyright (C) 2017-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
-import adams.core.base.BaseKeyValuePair;
+import adams.core.tags.Tag;
 import adams.core.tags.TagProcessorHelper;
 import adams.flow.core.Actor;
 import adams.gui.core.BaseScrollPane;
@@ -87,10 +87,10 @@ public class EffectiveTagsTab
    * @param actors	the currently selected actors
    */
   public void actorSelectionChanged(TreePath[] paths, Actor[] actors) {
-    Runnable			run;
-    List<BaseKeyValuePair>	tags;
-    Object[][]			data;
-    int				i;
+    Runnable		run;
+    List<Tag>		tags;
+    Object[][]		data;
+    int			i;
 
     if (actors.length != 1) {
       m_Model = new KeyValuePairTableModel(new Object[0][], COLUMN_NAMES);

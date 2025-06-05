@@ -15,12 +15,10 @@
 
 /*
  * TagHandler.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.tags;
-
-import adams.core.base.BaseKeyValuePair;
 
 import java.util.List;
 
@@ -36,21 +34,21 @@ public interface TagHandler {
    *
    * @param value	the tag to add
    */
-  public void addTag(BaseKeyValuePair value);
+  public void addTag(Tag value);
 
   /**
    * Sets the tags (generators may make use of them).
    *
    * @param value	the tags
    */
-  public void setTags(BaseKeyValuePair[] value);
+  public void setTags(Tag[] value);
 
   /**
    * Returns the tags (generators may make use of them).
    *
    * @return		the tags
    */
-  public BaseKeyValuePair[] getTags();
+  public Tag[] getTags();
 
   /**
    * Returns the tip text for this property.
@@ -66,5 +64,5 @@ public interface TagHandler {
    *
    * @return		all tags
    */
-  public List<BaseKeyValuePair> getAllTags();
+  public List<Tag> getAllTags();
 }

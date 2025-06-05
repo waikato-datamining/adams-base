@@ -22,7 +22,6 @@ package adams.core.tags;
 
 import adams.core.ClassLister;
 import adams.core.Variables;
-import adams.core.base.BaseKeyValuePair;
 import adams.core.logging.LoggingHelper;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
@@ -57,13 +56,13 @@ public class TagProcessorHelper {
    * @return		true if the object supports tags and the tag is present
    */
   public static boolean hasTag(Object obj, String tag) {
-    List<BaseKeyValuePair>	tags;
+    List<Tag>	tags;
 
     if (!(obj instanceof TagHandler))
       return false;
 
     tags = ((TagHandler) obj).getAllTags();
-    for (BaseKeyValuePair t: tags) {
+    for (Tag t: tags) {
       if (t.getPairKey().equals(tag))
 	return true;
     }
@@ -82,14 +81,14 @@ public class TagProcessorHelper {
    * 			is not present)
    */
   protected static String getTagValue(Object obj, String tag, Variables vars) {
-    String			result;
-    List<BaseKeyValuePair>	tags;
+    String	result;
+    List<Tag>	tags;
 
     if (!(obj instanceof TagHandler))
       return null;
 
     tags = ((TagHandler) obj).getAllTags();
-    for (BaseKeyValuePair t: tags) {
+    for (Tag t: tags) {
       if (t.getPairKey().equals(tag)) {
         result = t.getPairValue();
         if ((vars != null) && (result.contains(Variables.START))) {
@@ -404,7 +403,7 @@ public class TagProcessorHelper {
    * @param handler 	the tag handler
    * @return		all tags
    */
-  public static List<BaseKeyValuePair> getAllTags(TagHandler handler) {
+  public static List<Tag> getAllTags(TagHandler handler) {
     return new ArrayList<>(handler.getAllTags());
   }
 
@@ -415,8 +414,8 @@ public class TagProcessorHelper {
    * @param tags	the tags to add
    * @param override	if true, then existing tags can be replaced; otherwise only non-existing tags get added
    */
-  protected static void addToMap(Map<String,BaseKeyValuePair> map, List<BaseKeyValuePair> tags, boolean override) {
-    addToMap(map, tags.toArray(new BaseKeyValuePair[0]), override);
+  protected static void addToMap(Map<String,Tag> map, List<Tag> tags, boolean override) {
+    addToMap(map, tags.toArray(new Tag[0]), override);
   }
 
   /**
@@ -426,8 +425,8 @@ public class TagProcessorHelper {
    * @param tags	the tags to add
    * @param override	if true, then existing tags can be replaced; otherwise only non-existing tags get added
    */
-  protected static void addToMap(Map<String,BaseKeyValuePair> map, BaseKeyValuePair[] tags, boolean override) {
-    for (BaseKeyValuePair tag: tags) {
+  protected static void addToMap(Map<String,Tag> map, Tag[] tags, boolean override) {
+    for (Tag tag: tags) {
       if (map.containsKey(tag.getPairValue()) && override)
 	map.put(tag.getPairKey(), tag);
       else if (!map.containsKey(tag.getPairKey()))
@@ -443,10 +442,10 @@ public class TagProcessorHelper {
    * @param traverse 	whether to traverse upwards or not traverse at all
    * @return		all tags
    */
-  public static List<BaseKeyValuePair> getAllTags(Actor actor, boolean traverse) {
-    List<BaseKeyValuePair>		result;
-    Map<String,BaseKeyValuePair>	tags;
-    Actor 				parent;
+  public static List<Tag> getAllTags(Actor actor, boolean traverse) {
+    List<Tag>		result;
+    Map<String,Tag>	tags;
+    Actor 			parent;
 
     tags = new HashMap<>();
     if (actor instanceof TagHandler)
@@ -477,10 +476,10 @@ public class TagProcessorHelper {
    * @param traverse 	whether to traverse upwards or not traverse at all
    * @return		all tags
    */
-  public static List<BaseKeyValuePair> getAllTags(Node node, boolean traverse) {
-    List<BaseKeyValuePair>		result;
-    Map<String,BaseKeyValuePair>	tags;
-    Node 				parent;
+  public static List<Tag> getAllTags(Node node, boolean traverse) {
+    List<Tag>		result;
+    Map<String,Tag>	tags;
+    Node 		parent;
 
     tags = new HashMap<>();
     if (node.getActor() instanceof TagHandler)
