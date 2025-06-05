@@ -5,7 +5,6 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # the flow generators
 adams.flow.generator.Generator=\
@@ -22,3 +21,7 @@ adams.flow.standalone.StandaloneMutableGroup=\
 # the standalone group items
 adams.flow.standalone.StandaloneGroupItem=\
   adams.flow.standalone
+
+# the tag processors
+adams.core.tags.TagProcessor=\
+  adams.core.tags

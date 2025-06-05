@@ -15,20 +15,26 @@
 
 /*
  * TagProcessorHelper.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.tags;
 
+import adams.core.ClassLister;
 import adams.core.Variables;
 import adams.core.base.BaseKeyValuePair;
+import adams.core.logging.LoggingHelper;
 import adams.flow.core.Actor;
 import adams.gui.flow.tree.Node;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Helper class for {@link TagProcessor} classes.
@@ -36,6 +42,12 @@ import java.util.Map;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TagProcessorHelper {
+
+  /** for caching the tag info per tag processor. */
+  protected static Map<Class,Set<TagInfo>> m_SupportedTagInfoCache;
+
+  /** for caching the tag info per applicable. */
+  protected static Map<Class,Set<TagInfo>> m_ApplicableTagInfoCache;
 
   /**
    * Checks whether the specified tag is present.
@@ -164,7 +176,7 @@ public class TagProcessorHelper {
 	result = Boolean.parseBoolean(value);
       }
       catch (Exception e) {
-	result = defValue;
+	// ignored
       }
     }
 
@@ -207,7 +219,7 @@ public class TagProcessorHelper {
 	result = Byte.parseByte(value);
       }
       catch (Exception e) {
-	result = defValue;
+	// ignored
       }
     }
 
@@ -250,7 +262,7 @@ public class TagProcessorHelper {
 	result = Integer.parseInt(value);
       }
       catch (Exception e) {
-	result = defValue;
+	// ignored
       }
     }
 
@@ -293,7 +305,7 @@ public class TagProcessorHelper {
 	result = Long.parseLong(value);
       }
       catch (Exception e) {
-	result = defValue;
+	// ignored
       }
     }
 
@@ -404,7 +416,7 @@ public class TagProcessorHelper {
    * @param override	if true, then existing tags can be replaced; otherwise only non-existing tags get added
    */
   protected static void addToMap(Map<String,BaseKeyValuePair> map, List<BaseKeyValuePair> tags, boolean override) {
-    addToMap(map, tags.toArray(new BaseKeyValuePair[tags.size()]), override);
+    addToMap(map, tags.toArray(new BaseKeyValuePair[0]), override);
   }
 
   /**
@@ -487,6 +499,87 @@ public class TagProcessorHelper {
     }
 
     result = new ArrayList<>(tags.values());
+
+    return result;
+  }
+
+  /**
+   * Returns the list of all classes that implement the TagProcessor interface.
+   *
+   * @return		the classes
+   */
+  public static Class[] getTagProcessors() {
+    return ClassLister.getSingleton().getClasses(TagProcessor.class);
+  }
+
+  /**
+   * Initializes the caches for the TagInfo items.
+   */
+  protected static synchronized void initTagInfoCache() {
+    Map<Class,Set<TagInfo>> 	supportedCache;
+    Map<Class,Set<TagInfo>> 	applicableCache;
+    TagProcessor processor;
+    Set<TagInfo> 		supported;
+
+    if (m_ApplicableTagInfoCache == null) {
+      supportedCache  = new HashMap<>();
+      applicableCache = new HashMap<>();
+      for (Class cls: getTagProcessors()) {
+	try {
+	  processor = (TagProcessor) cls.getDeclaredConstructor().newInstance();
+	  supported = processor.getSupportedTags();
+	  supportedCache.put(cls, supported);
+	  for (TagInfo info: supported) {
+	    for (Class appliesTo: info.getAppliesTo()) {
+	      if (!applicableCache.containsKey(appliesTo))
+		applicableCache.put(appliesTo, new HashSet<>());
+	      applicableCache.get(appliesTo).add(info);
+	    }
+	  }
+	}
+	catch (Exception e) {
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate tag processor class: " + cls.getName(), e);
+	}
+      }
+      m_SupportedTagInfoCache  = supportedCache;
+      m_ApplicableTagInfoCache = applicableCache;
+    }
+  }
+
+  /**
+   * Returns all the tags that can be applied to the specified class.
+   *
+   * @param cls		the class to look up the tags for
+   * @return		the applicable tags
+   */
+  public static List<TagInfo> getApplicableTags(Class cls) {
+    List<TagInfo>	result;
+    Set<TagInfo>	tags;
+
+    initTagInfoCache();
+
+    tags   = m_ApplicableTagInfoCache.getOrDefault(cls, new HashSet<>());
+    result = new ArrayList<>(tags);
+    Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Returns all the tags that can are supported by the specified class.
+   *
+   * @param cls		the class to look up the tags for
+   * @return		the supported tags
+   */
+  public static List<TagInfo> getSupportedTags(Class cls) {
+    List<TagInfo>	result;
+    Set<TagInfo>	tags;
+
+    initTagInfoCache();
+
+    tags   = m_SupportedTagInfoCache.getOrDefault(cls, new HashSet<>());
+    result = new ArrayList<>(tags);
+    Collections.sort(result);
 
     return result;
   }
