@@ -15,11 +15,12 @@
 
 /*
  * OutlierContainer.java
- * Copyright (C) 2015-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
 
+import adams.data.ArrayUtils;
 import adams.data.spreadsheet.SpreadSheet;
 
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import java.util.List;
  * A container for outlier data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OutlierContainer
   extends AbstractContainer {
@@ -47,13 +47,16 @@ public class OutlierContainer
   /** the identifier for the outlier data. */
   public final static String VALUE_OUTLIERS = "Outliers";
 
+  /** the identifier for the indices of the outliers. */
+  public final static String VALUE_OUTLIER_INDICES = "Outlier-Indices";
+
   /**
    * Initializes the container.
    * <br><br>
    * Only used for generating help information.
    */
   public OutlierContainer() {
-    this(null, null, null);
+    this(null, null, null, (Integer[]) null);
   }
 
   /**
@@ -64,11 +67,36 @@ public class OutlierContainer
    * @param outliers	the outlier data, can be null
    */
   public OutlierContainer(SpreadSheet original, SpreadSheet clean, SpreadSheet outliers) {
+    this(original, clean, outliers, (Integer[]) null);
+  }
+
+  /**
+   * Initializes the container with no header.
+   *
+   * @param original	the original data
+   * @param clean	the clean data, can be null
+   * @param outliers	the outlier data, can be null
+   * @param indices 	the indices of the outliers (0-based), can be null
+   */
+  public OutlierContainer(SpreadSheet original, SpreadSheet clean, SpreadSheet outliers, int[] indices) {
+    this(original, clean, outliers, (Integer[]) ArrayUtils.primitiveToObject(indices));
+  }
+
+  /**
+   * Initializes the container with no header.
+   *
+   * @param original	the original data
+   * @param clean	the clean data, can be null
+   * @param outliers	the outlier data, can be null
+   * @param indices 	the indices of the outliers (0-based), can be null
+   */
+  public OutlierContainer(SpreadSheet original, SpreadSheet clean, SpreadSheet outliers, Integer[] indices) {
     super();
 
-    store(VALUE_ORIGINAL, original);
-    store(VALUE_CLEAN,    clean);
-    store(VALUE_OUTLIERS, outliers);
+    store(VALUE_ORIGINAL,        original);
+    store(VALUE_CLEAN,           clean);
+    store(VALUE_OUTLIERS,        outliers);
+    store(VALUE_OUTLIER_INDICES, indices);
   }
 
   /**
@@ -80,6 +108,7 @@ public class OutlierContainer
     addHelp(VALUE_ORIGINAL, "original data", SpreadSheet.class);
     addHelp(VALUE_CLEAN, "clean data", SpreadSheet.class);
     addHelp(VALUE_OUTLIERS, "outliers", SpreadSheet.class);
+    addHelp(VALUE_OUTLIER_INDICES, "indices of the outliers (0-based)", Integer[].class);
   }
 
   /**
@@ -91,11 +120,12 @@ public class OutlierContainer
   public Iterator<String> names() {
     List<String>	result;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     result.add(VALUE_ORIGINAL);
     result.add(VALUE_CLEAN);
     result.add(VALUE_OUTLIERS);
+    result.add(VALUE_OUTLIER_INDICES);
 
     return result.iterator();
   }

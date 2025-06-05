@@ -54,6 +54,8 @@ import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequenceContainer;
 import adams.gui.visualization.sequence.XYSequenceContainerManager;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -581,6 +583,7 @@ public class RemoveOutliers
     boolean			isOutlier;
     int				index;
     Row				row;
+    TIntList			indices;
 
     original = (SpreadSheet) m_InputToken.getPayload();
     m_ColumnActual.setData(original);
@@ -625,6 +628,7 @@ public class RemoveOutliers
     if (m_Accepted) {
       clean    = original.getHeader();
       outliers = original.getHeader();
+      indices  = new TIntArrayList();
       for (i = 0; i < seq.size(); i++) {
 	point     = (SequencePlotPoint) seq.toList().get(i);
 	index     = (Integer) point.getMetaData().get(KEY_INDEX);
@@ -634,6 +638,7 @@ public class RemoveOutliers
 	if (isOutlier) {
 	  row = original.getRow(index).getClone(outliers);
 	  outliers.addRow().assign(row);
+	  indices.add(index);
 	}
 	else {
 	  row = original.getRow(index).getClone(clean);
@@ -641,7 +646,7 @@ public class RemoveOutliers
 	}
       }
       m_OutputToken = new Token(
-	new OutlierContainer(original, clean, outliers));
+	new OutlierContainer(original, clean, outliers, indices.toArray()));
     }
 
     return null;
