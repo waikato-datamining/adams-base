@@ -15,12 +15,13 @@
 
 /*
  * PropertiesParameterDialog.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.dialog;
 
 import adams.core.Properties;
+import adams.gui.core.BaseTextPane;
 import adams.gui.core.PropertiesParameterPanel;
 
 import java.awt.BorderLayout;
@@ -36,6 +37,9 @@ public class PropertiesParameterDialog
   extends ApprovalDialog {
 
   private static final long serialVersionUID = -3557570624720397564L;
+
+  /** for displaying some info. */
+  protected BaseTextPane m_PaneInfo;
 
   /** the properties panel in use. */
   protected PropertiesParameterPanel m_PropertiesParameterPanel;
@@ -133,8 +137,33 @@ public class PropertiesParameterDialog
   protected void initGUI() {
     super.initGUI();
 
+    m_PaneInfo = new BaseTextPane();
+    m_PaneInfo.setEditable(false);
+    m_PaneInfo.setVisible(false);
+    getContentPane().add(m_PaneInfo, BorderLayout.NORTH);
+
     m_PropertiesParameterPanel = new PropertiesParameterPanel();
     getContentPane().add(m_PropertiesParameterPanel, BorderLayout.CENTER);
+  }
+
+  /**
+   * Sets the info text to display.
+   * Automatically displays the pane if there is text or hides it if empty/null.
+   *
+   * @param value	the info to display, null or empty to hide
+   */
+  public void setInfo(String value) {
+    m_PaneInfo.setText(value);
+    m_PaneInfo.setVisible((value != null) && !value.isEmpty());
+  }
+
+  /**
+   * Returns the current info text.
+   *
+   * @return		the text
+   */
+  public String getInfo() {
+    return m_PaneInfo.getText();
   }
 
   /**
