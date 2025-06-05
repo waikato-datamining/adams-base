@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ObjectArrayToPrimitiveArray.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
-import adams.core.Utils;
+import adams.core.ClassCrossReference;
+import adams.data.ArrayUtils;
 import adams.flow.core.Unknown;
 
 /**
@@ -37,10 +38,10 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ObjectArrayToPrimitiveArray
-  extends AbstractConversion {
+  extends AbstractConversion
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 7012073882235453335L;
@@ -53,6 +54,16 @@ public class ObjectArrayToPrimitiveArray
   @Override
   public String globalInfo() {
     return "Converts an object array to its primitive counterpart.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  @Override
+  public Class[] getClassCrossReferences() {
+    return new Class[]{PrimitiveArrayToObjectArray.class};
   }
 
   /**
@@ -76,125 +87,6 @@ public class ObjectArrayToPrimitiveArray
   }
 
   /**
-   * Converts {@link Byte} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected byte[] convert(Byte[] array) {
-    byte[]	result;
-    int		i;
-    
-    result = new byte[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Short} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected short[] convert(Short[] array) {
-    short[]	result;
-    int		i;
-    
-    result = new short[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Integer} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected int[] convert(Integer[] array) {
-    int[]	result;
-    int		i;
-    
-    result = new int[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Long} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected long[] convert(Long[] array) {
-    long[]	result;
-    int		i;
-    
-    result = new long[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Float} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected float[] convert(Float[] array) {
-    float[]	result;
-    int		i;
-    
-    result = new float[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Double} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected double[] convert(Double[] array) {
-    double[]	result;
-    int		i;
-    
-    result = new double[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-
-  /**
-   * Converts {@link Character} arrays.
-   * 
-   * @param array	the array to convert
-   * @return		the converted array
-   */
-  protected char[] convert(Character[] array) {
-    char[]	result;
-    int		i;
-    
-    result = new char[array.length];
-    for (i = 0; i < array.length; i++)
-      result[i] = array[i];
-    
-    return result;
-  }
-  
-  /**
    * Performs the actual conversion.
    *
    * @return		the converted data
@@ -202,24 +94,6 @@ public class ObjectArrayToPrimitiveArray
    */
   @Override
   protected Object doConvert() throws Exception {
-    // common ones first
-    if (m_Input instanceof Byte[])
-      return convert((Byte[]) m_Input);
-    else if (m_Input instanceof Integer[])
-      return convert((Integer[]) m_Input);
-    else if (m_Input instanceof Long[])
-      return convert((Long[]) m_Input);
-    else if (m_Input instanceof Double[])
-      return convert((Double[]) m_Input);
-    // less common ones last
-    else if (m_Input instanceof Float[])
-      return convert((Float[]) m_Input);
-    else if (m_Input instanceof Short[])
-      return convert((Short[]) m_Input);
-    else if (m_Input instanceof Character[])
-      return convert((Character[]) m_Input);
-
-    getLogger().warning("Failed to convert array: " + Utils.classToString(m_Input));
-    return m_Input;
+    return ArrayUtils.objectToPrimitive(m_Input);
   }
 }
