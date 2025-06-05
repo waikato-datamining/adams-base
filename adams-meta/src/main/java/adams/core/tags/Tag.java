@@ -101,8 +101,7 @@ public class Tag
    *
    * @return		the key
    */
-  // TODO rename to tagName
-  public String getPairKey() {
+  public String tagName() {
     if (getValue().contains(SEPARATOR))
       return getValue().substring(0, getValue().indexOf(SEPARATOR));
     else
@@ -114,8 +113,7 @@ public class Tag
    *
    * @return		the value
    */
-  // TODO rename to tagValue
-  public String getPairValue() {
+  public String tagValue() {
     if (getValue().contains(SEPARATOR))
       return getValue().substring(getValue().indexOf(SEPARATOR) + 1);
     else
@@ -133,7 +131,7 @@ public class Tag
 
     result = new HashMap<>();
     for (Tag pair: pairs)
-      result.put(pair.getPairKey(), pair.getPairValue());
+      result.put(pair.tagName(), pair.tagValue());
 
     return result;
   }

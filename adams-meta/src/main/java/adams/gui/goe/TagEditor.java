@@ -136,10 +136,10 @@ public class TagEditor
     
     value = (Tag) getValue();
 
-    if (!m_TextKey.getText().equals(value.getPairKey()))
-      m_TextKey.setText(value.getPairKey());
-    if (!m_TextValue.getText().equals(value.getPairValue()))
-      m_TextValue.setText(value.getPairValue());
+    if (!m_TextKey.getText().equals(value.tagName()))
+      m_TextKey.setText(value.tagName());
+    if (!m_TextValue.getText().equals(value.tagValue()))
+      m_TextValue.setText(value.tagValue());
     m_TextKey.setToolTipText(((BaseObject) getValue()).getTipText());
     m_TextValue.setToolTipText(((BaseObject) getValue()).getTipText());
     m_TextKey.grabFocus();

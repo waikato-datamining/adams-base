@@ -66,7 +66,7 @@ public class TagProcessorHelper {
 
     tags = ((TagHandler) obj).getAllTags();
     for (Tag t: tags) {
-      if (t.getPairKey().equals(tag))
+      if (t.tagName().equals(tag))
 	return true;
     }
 
@@ -92,8 +92,8 @@ public class TagProcessorHelper {
 
     tags = ((TagHandler) obj).getAllTags();
     for (Tag t: tags) {
-      if (t.getPairKey().equals(tag)) {
-        result = t.getPairValue();
+      if (t.tagName().equals(tag)) {
+        result = t.tagValue();
         if ((vars != null) && (result.contains(Variables.START))) {
           result = vars.expand(result);
           // failed to expand? use null
@@ -430,10 +430,10 @@ public class TagProcessorHelper {
    */
   protected static void addToMap(Map<String,Tag> map, Tag[] tags, boolean override) {
     for (Tag tag: tags) {
-      if (map.containsKey(tag.getPairValue()) && override)
-	map.put(tag.getPairKey(), tag);
-      else if (!map.containsKey(tag.getPairKey()))
-	map.put(tag.getPairKey(), tag);
+      if (map.containsKey(tag.tagValue()) && override)
+	map.put(tag.tagName(), tag);
+      else if (!map.containsKey(tag.tagName()))
+	map.put(tag.tagName(), tag);
     }
   }
 

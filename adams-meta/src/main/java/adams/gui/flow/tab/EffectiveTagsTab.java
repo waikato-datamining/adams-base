@@ -102,7 +102,7 @@ public class EffectiveTagsTab
     tags = TagProcessorHelper.getAllTags(TreeHelper.pathToNode(paths[0]), true);
     data = new String[tags.size()][2];
     for (i = 0; i < tags.size(); i++)
-      data[i] = new String[]{tags.get(i).getPairKey(), tags.get(i).getPairValue()};
+      data[i] = new String[]{tags.get(i).tagName(), tags.get(i).tagValue()};
     m_Model = new KeyValuePairTableModel(data, COLUMN_NAMES);
 
     run = () -> m_Table.setModel(m_Model);
