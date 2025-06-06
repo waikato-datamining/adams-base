@@ -1594,4 +1594,24 @@ public class PropertiesParameterPanel
   public void removeChangeListener(ChangeListener l) {
     m_PanelProperties.removeChangeListener(l);
   }
+
+  /**
+   * Sets whether to interpret "_" in the name as a mnemonic indicator
+   * (the next letter is to be used as mnemonic indicator).
+   *
+   * @param value	true if to use mnemonic indicators
+   */
+  public void setUseMnemonicIndicators(boolean value) {
+    m_PanelProperties.setUseMnemonicIndicators(value);
+  }
+
+  /**
+   * Returns whether to interpret "_" in the name as a mnemonic indicator
+   * (the next letter is to be used as mnemonic indicator).
+   *
+   * @return		true if to use mnemonic indicators
+   */
+  public boolean getUseMnemonicIndicators() {
+    return m_PanelProperties.getUseMnemonicIndicators();
+  }
 }
