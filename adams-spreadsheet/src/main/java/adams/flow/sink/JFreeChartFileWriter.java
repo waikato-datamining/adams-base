@@ -15,7 +15,7 @@
 
 /*
  * JFreeChartFileWriter.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -45,7 +45,8 @@ import java.awt.image.BufferedImage;
 
 /**
  <!-- globalinfo-start -->
- * Generates a JFreeChart plot and writes the bitmap to a file.
+ * Generates a JFreeChart plot and writes the bitmap to a file.<br>
+ * Dataset generation is skipped if the incoming data already represents a JFreeChart dataset.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -53,6 +54,7 @@ import java.awt.image.BufferedImage;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;adams.data.spreadsheet.SpreadSheet<br>
+ * &nbsp;&nbsp;&nbsp;org.jfree.data.general.Dataset<br>
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -60,64 +62,77 @@ import java.awt.image.BufferedImage;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: JFreeChartFileWriter
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The file to write the plot to
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
  * <pre>-dataset &lt;adams.gui.visualization.jfreechart.dataset.AbstractDatasetGenerator&gt; (property: dataset)
  * &nbsp;&nbsp;&nbsp;The dataset generator to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.dataset.DefaultXY
  * </pre>
- * 
+ *
  * <pre>-chart &lt;adams.gui.visualization.jfreechart.chart.AbstractChartGenerator&gt; (property: chart)
  * &nbsp;&nbsp;&nbsp;The chart generator to use.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.chart.XYLineChart
  * </pre>
- * 
+ *
  * <pre>-shape &lt;adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator&gt; (property: shape)
- * &nbsp;&nbsp;&nbsp;The shape generator to use for the data point markers.
+ * &nbsp;&nbsp;&nbsp;The shape generator to use for the data point markers for XY charts.
  * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.jfreechart.shape.Default
  * </pre>
  *
+ * <pre>-background-color &lt;java.awt.Color&gt; (property: backgroundColor)
+ * &nbsp;&nbsp;&nbsp;The background color for the plot.
+ * &nbsp;&nbsp;&nbsp;default: #ffffff
+ * </pre>
+ *
  * <pre>-plot-color &lt;java.awt.Color&gt; (property: plotColor)
- * &nbsp;&nbsp;&nbsp;The color for the plot.
+ * &nbsp;&nbsp;&nbsp;The color for the plot of XY charts.
  * &nbsp;&nbsp;&nbsp;default: #0000ff
  * </pre>
  *
+ * <pre>-color-provider &lt;adams.gui.visualization.core.ColorProvider&gt; (property: colorProvider)
+ * &nbsp;&nbsp;&nbsp;The color provider to use for XY plots.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.core.DefaultColorProvider
+ * </pre>
+ *
  * <pre>-diagonal-color &lt;java.awt.Color&gt; (property: diagonalColor)
- * &nbsp;&nbsp;&nbsp;The color for the diagonal (ie second data series if present).
+ * &nbsp;&nbsp;&nbsp;The color for the diagonal (ie second data series if present) of XY charts.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
  *
@@ -126,18 +141,18 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;default: 800
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-height &lt;int&gt; (property: height)
  * &nbsp;&nbsp;&nbsp;The height of the plot.
  * &nbsp;&nbsp;&nbsp;default: 600
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
- * <pre>-writer &lt;adams.data.io.output.AbstractImageWriter&gt; (property: writer)
+ *
+ * <pre>-writer &lt;adams.data.io.output.ImageWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The image writer to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.JAIImageWriter
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -156,6 +171,9 @@ public class JFreeChartFileWriter
 
   /** the shape generator. */
   protected AbstractShapeGenerator m_Shape;
+
+  /** the background color. */
+  protected Color m_BackgroundColor;
 
   /** the color for the plot. */
   protected Color m_PlotColor;
@@ -183,7 +201,7 @@ public class JFreeChartFileWriter
   @Override
   public String globalInfo() {
     return "Generates a JFreeChart plot and writes the bitmap to a file.\n"
-      + "Dataset generation is skipped if the incoming data already represents a JFreeChart dataset.";
+	     + "Dataset generation is skipped if the incoming data already represents a JFreeChart dataset.";
   }
 
   /**
@@ -204,6 +222,10 @@ public class JFreeChartFileWriter
     m_OptionManager.add(
       "shape", "shape",
       new Default());
+
+    m_OptionManager.add(
+      "background-color", "backgroundColor",
+      Color.WHITE);
 
     m_OptionManager.add(
       "plot-color", "plotColor",
@@ -299,7 +321,7 @@ public class JFreeChartFileWriter
   }
 
   /**
-   * Sets the shape generator.
+   * Sets the shape generator for XY charts.
    *
    * @param value	the generator
    */
@@ -309,7 +331,7 @@ public class JFreeChartFileWriter
   }
 
   /**
-   * Returns the shape generator.
+   * Returns the shape generator for XY charts.
    *
    * @return		the generator
    */
@@ -324,11 +346,40 @@ public class JFreeChartFileWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String shapeTipText() {
-    return "The shape generator to use for the data point markers.";
+    return "The shape generator to use for the data point markers for XY charts.";
   }
 
   /**
-   * Sets the color for the plot.
+   * Sets the background color for the plot.
+   *
+   * @param value	the color
+   */
+  public void setBackgroundColor(Color value) {
+    m_BackgroundColor = value;
+    reset();
+  }
+
+  /**
+   * Returns the background color for the plot.
+   *
+   * @return		the color
+   */
+  public Color getBackgroundColor() {
+    return m_BackgroundColor;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String backgroundColorTipText() {
+    return "The background color for the plot.";
+  }
+
+  /**
+   * Sets the color for the plot of XY charts.
    *
    * @param value	the color
    */
@@ -338,7 +389,7 @@ public class JFreeChartFileWriter
   }
 
   /**
-   * Returns the color for the plot.
+   * Returns the color for the plot of XY charts.
    *
    * @return		the color
    */
@@ -353,11 +404,11 @@ public class JFreeChartFileWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String plotColorTipText() {
-    return "The color for the plot.";
+    return "The color for the plot of XY charts.";
   }
 
   /**
-   * Sets the color provider to use.
+   * Sets the color provider to use for XY charts.
    *
    * @param value	the color provider
    */
@@ -367,7 +418,7 @@ public class JFreeChartFileWriter
   }
 
   /**
-   * Returns the color provider to use.
+   * Returns the color provider to use for XY charts.
    *
    * @return		the color provider
    */
@@ -382,11 +433,11 @@ public class JFreeChartFileWriter
    * 			displaying in the gui
    */
   public String colorProviderTipText() {
-    return "The color provider to use for coloring in the trimap image.";
+    return "The color provider to use for XY plots.";
   }
 
   /**
-   * Sets the color for the diagonal (ie second data series if present).
+   * Sets the color for the diagonal (ie second data series if present) of XY charts.
    *
    * @param value	the color
    */
@@ -396,7 +447,7 @@ public class JFreeChartFileWriter
   }
 
   /**
-   * Returns the color for the diagonal (ie second data series if present).
+   * Returns the color for the diagonal (ie second data series if present) of XY charts.
    *
    * @return		the color
    */
@@ -411,7 +462,7 @@ public class JFreeChartFileWriter
    * 			displaying in the GUI or for listing the options.
    */
   public String diagonalColorTipText() {
-    return "The color for the diagonal (ie second data series if present).";
+    return "The color for the diagonal (ie second data series if present) of XY charts.";
   }
 
   /**
@@ -551,15 +602,15 @@ public class JFreeChartFileWriter
 
     try {
       if (m_InputToken.hasPayload(SpreadSheet.class)) {
-        sheet = (SpreadSheet) m_InputToken.getPayload();
-        dataset = m_Dataset.generate(sheet);
+	sheet = (SpreadSheet) m_InputToken.getPayload();
+	dataset = m_Dataset.generate(sheet);
       }
       else {
-        dataset = m_InputToken.getPayload(Dataset.class);
+	dataset = m_InputToken.getPayload(Dataset.class);
       }
       jfreechart = m_Chart.generate(dataset);
       shape      = m_Shape.generate();
-      jfreechart.getPlot().setBackgroundPaint(Color.WHITE);
+      jfreechart.getPlot().setBackgroundPaint(m_BackgroundColor);
       m_ColorProvider.resetColors();
       if (jfreechart.getPlot() instanceof XYPlot) {
 	plot = (XYPlot) jfreechart.getPlot();
