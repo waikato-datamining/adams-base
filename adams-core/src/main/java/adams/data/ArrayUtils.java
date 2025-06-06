@@ -135,12 +135,12 @@ public class ArrayUtils {
 	Array.setDouble(arrayOut, i, (Double) Array.get(arrayIn, i));
     }
     else if (arrayIn instanceof Character[]) {
-      arrayOut = new double[len];
+      arrayOut = new char[len];
       for (i = 0; i < len; i++)
 	Array.setChar(arrayOut, i, (Character) Array.get(arrayIn, i));
     }
     else if (arrayIn instanceof Boolean[]) {
-      arrayOut = new double[len];
+      arrayOut = new boolean[len];
       for (i = 0; i < len; i++)
 	Array.setBoolean(arrayOut, i, (Boolean) Array.get(arrayIn, i));
     }
