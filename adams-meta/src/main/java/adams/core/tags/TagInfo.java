@@ -15,7 +15,7 @@
 
 /*
  * TagInfo.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.tags;
@@ -44,21 +44,26 @@ public class TagInfo
   /** the classes this tag applies to. */
   protected Class[] m_AppliesTo;
 
+  /** the default value. */
+  protected Object m_DefaultValue;
+
   /**
    * Initializes the tag.
    *
    * @param name	the name, ie., the string to use when tagging an object
    * @param info	the help text
    * @param dataType	the data type
+   * @param defValue	the default value
    * @param appliesTo	the classes this tag applies to
    */
-  public TagInfo(String name, String info, TagDataType dataType, Class[] appliesTo) {
+  public TagInfo(String name, String info, TagDataType dataType, Object defValue, Class[] appliesTo) {
     super();
 
-    m_Name        = name;
-    m_Information = info;
-    m_DataType    = dataType;
-    m_AppliesTo   = appliesTo;
+    m_Name         = name;
+    m_Information  = info;
+    m_DataType     = dataType;
+    m_DefaultValue = defValue;
+    m_AppliesTo    = appliesTo;
   }
 
   /**
@@ -95,6 +100,15 @@ public class TagInfo
    */
   public Class[] getAppliesTo() {
     return m_AppliesTo;
+  }
+
+  /**
+   * Returns the default value.
+   *
+   * @return		the default
+   */
+  public Object getDefaultValue() {
+    return m_DefaultValue;
   }
 
   /**
