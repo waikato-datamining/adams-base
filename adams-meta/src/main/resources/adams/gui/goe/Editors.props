@@ -15,3 +15,4 @@
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
 adams.core.tags.Tag=adams.gui.goe.TagEditor
+adams.core.tags.Tag[]=adams.gui.goe.TagArrayEditor
