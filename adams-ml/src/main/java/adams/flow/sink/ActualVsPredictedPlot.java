@@ -15,7 +15,7 @@
 
 /*
  * ActualVsPredictedPlot.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -33,6 +33,7 @@ import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.ErrorCrossPaintlet;
+import adams.flow.sink.sequenceplotter.PolygonSelectionPaintlet;
 import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotContainerManager;
 import adams.flow.sink.sequenceplotter.SequencePlotPoint;
@@ -61,7 +62,10 @@ import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -1151,6 +1155,7 @@ public class ActualVsPredictedPlot
     XYSequencePaintlet 		paintlet;
     PaintletWithFixedXYRange 	fixedPaintlet;
     MultiPaintlet 		overlays;
+    List<XYSequencePaintlet> 	subPaintlets;
 
     result = new SequencePlotterPanel(m_SwapAxes ? "pred vs act" : "act vs pred");
     if (m_UseCustomPaintlet) {
@@ -1174,8 +1179,10 @@ public class ActualVsPredictedPlot
     fixedPaintlet.setPaintlet(paintlet);
     result.setDataPaintlet(fixedPaintlet);
     ActorUtils.updateFlowAwarePaintlet(result.getDataPaintlet(), this);
+    subPaintlets = new ArrayList<>(Arrays.asList((XYSequencePaintlet[]) OptionUtils.shallowCopy(m_Overlays)));
+    subPaintlets.add(new PolygonSelectionPaintlet());
     overlays = new MultiPaintlet();
-    overlays.setSubPaintlets((XYSequencePaintlet[]) OptionUtils.shallowCopy(m_Overlays));
+    overlays.setSubPaintlets(subPaintlets.toArray(new XYSequencePaintlet[0]));
     result.setOverlayPaintlet(overlays);
     ActorUtils.updateFlowAwarePaintlet(result.getOverlayPaintlet(), this);
     getDefaultAxisX().configure(result.getPlot(), Axis.BOTTOM);
@@ -1435,8 +1442,10 @@ public class ActualVsPredictedPlot
 	fixedPaintlet.setPaintlet(paintlet);
 	m_Panel.setDataPaintlet(fixedPaintlet);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getDataPaintlet(), ActualVsPredictedPlot.this);
+	List<XYSequencePaintlet> subPaintlets = new ArrayList<>(Arrays.asList((XYSequencePaintlet[]) OptionUtils.shallowCopy(m_Overlays)));
+	subPaintlets.add(new PolygonSelectionPaintlet());
         MultiPaintlet overlays = new MultiPaintlet();
-	overlays.setSubPaintlets(ObjectCopyHelper.copyObjects(m_Overlays));
+	overlays.setSubPaintlets(subPaintlets.toArray(new XYSequencePaintlet[0]));
         m_Panel.setOverlayPaintlet(overlays);
 	ActorUtils.updateFlowAwarePaintlet(m_Panel.getOverlayPaintlet(), ActualVsPredictedPlot.this);
 	getDefaultAxisX().configure(m_Panel.getPlot(), Axis.BOTTOM);
