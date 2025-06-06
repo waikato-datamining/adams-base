@@ -21,9 +21,12 @@
 package adams.gui.dialog;
 
 import adams.core.Properties;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextPane;
 import adams.gui.core.PropertiesParameterPanel;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -135,15 +138,21 @@ public class PropertiesParameterDialog
    */
   @Override
   protected void initGUI() {
+    JPanel	panel;
+
     super.initGUI();
+
+    panel = new JPanel(new BorderLayout(5, 5));
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    getContentPane().add(panel, BorderLayout.CENTER);
 
     m_PaneInfo = new BaseTextPane();
     m_PaneInfo.setEditable(false);
     m_PaneInfo.setVisible(false);
-    getContentPane().add(m_PaneInfo, BorderLayout.NORTH);
+    panel.add(new BaseScrollPane(m_PaneInfo), BorderLayout.NORTH);
 
     m_PropertiesParameterPanel = new PropertiesParameterPanel();
-    getContentPane().add(m_PropertiesParameterPanel, BorderLayout.CENTER);
+    panel.add(m_PropertiesParameterPanel, BorderLayout.CENTER);
   }
 
   /**
