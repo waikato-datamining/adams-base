@@ -33,6 +33,7 @@ import adams.data.spreadsheet.SpreadSheetHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.sink.sequenceplotter.ErrorCrossPaintlet;
+import adams.flow.sink.sequenceplotter.MouseClickAction;
 import adams.flow.sink.sequenceplotter.PolygonSelectionPaintlet;
 import adams.flow.sink.sequenceplotter.SequencePlotContainer;
 import adams.flow.sink.sequenceplotter.SequencePlotContainerManager;
@@ -352,6 +353,9 @@ public class ActualVsPredictedPlot
   /** the overlays to use. */
   protected XYSequencePaintlet[] m_Overlays;
 
+  /** the mouse click action. */
+  protected MouseClickAction m_MouseClickAction;
+
   /**
    * Returns a string describing the object.
    *
@@ -448,6 +452,10 @@ public class ActualVsPredictedPlot
     m_OptionManager.add(
       "overlay", "overlays",
       new XYSequencePaintlet[]{new StraightLineOverlayPaintlet()});
+
+    m_OptionManager.add(
+      "mouse-click-action", "mouseClickAction",
+      new ViewDataClickAction());
   }
 
   /**
@@ -1058,6 +1066,35 @@ public class ActualVsPredictedPlot
   }
 
   /**
+   * Sets the mouse click action to use.
+   *
+   * @param value	the action
+   */
+  public void setMouseClickAction(MouseClickAction value) {
+    m_MouseClickAction = value;
+    reset();
+  }
+
+  /**
+   * Returns the mouse click action in use.
+   *
+   * @return		the action
+   */
+  public MouseClickAction getMouseClickAction() {
+    return m_MouseClickAction;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String mouseClickActionTipText() {
+    return "The action to use when the user is clicking with the mouse.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -1189,7 +1226,7 @@ public class ActualVsPredictedPlot
     getDefaultAxisY().configure(result.getPlot(), Axis.LEFT);
     result.setColorProvider(new DefaultColorProvider());
     result.setSidePanelVisible(m_ShowSidePanel);
-    result.setMouseClickAction(new ViewDataClickAction());
+    result.setMouseClickAction(m_MouseClickAction);  // no copy to keep potential listeners
     result.getPlot().clearToolTipAxes();
     result.getPlot().setTipTextCustomizer(null);
 
@@ -1414,7 +1451,7 @@ public class ActualVsPredictedPlot
 
     result = new AbstractComponentDisplayPanel(getClass().getSimpleName()) {
       private static final long serialVersionUID = 4356468458332186521L;
-      protected SequencePlotterPanel m_Panel;
+      private SequencePlotterPanel m_Panel;
       @Override
       protected void initGUI() {
 	super.initGUI();
@@ -1452,7 +1489,7 @@ public class ActualVsPredictedPlot
 	getDefaultAxisY().configure(m_Panel.getPlot(), Axis.LEFT);
 	m_Panel.setColorProvider(new DefaultColorProvider());
 	m_Panel.setSidePanelVisible(m_ShowSidePanel);
-	m_Panel.setMouseClickAction(new ViewDataClickAction());
+	m_Panel.setMouseClickAction(m_MouseClickAction);  // no copy to keep potential listeners
 	m_Panel.getPlot().clearToolTipAxes();
 	m_Panel.getPlot().setTipTextCustomizer(null);
 	add(m_Panel, BorderLayout.CENTER);
