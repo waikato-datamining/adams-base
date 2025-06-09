@@ -100,7 +100,7 @@ public class PredictionHelper {
    * @return			the generated spreadsheet, null if failed
    */
   public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
-    return toSpreadSheet(logger, errors, eval, originalIndices, additionalAttributes, addLabelIndex, showDistribution, showProbability, showError, showWeight, true);
+    return toSpreadSheet(logger, errors, eval, originalIndices, additionalAttributes, addLabelIndex, showDistribution, showProbability, showError, showWeight, true, false);
   }
 
   /**
@@ -116,10 +116,11 @@ public class PredictionHelper {
    * @param showProbability 	whether to add the probability in a separate column
    * @param showError 		whether to add the error in a separate column
    * @param showWeight 		whether to add the weight in a separate column
-   * @param showAbsError	whether to show the absolute error
+   * @param showAbsError	whether to show absolute errors
+   * @param showRelError 	whether to show the relative error
    * @return			the generated spreadsheet, null if failed
    */
-  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight, boolean showAbsError) {
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight, boolean showAbsError, boolean showRelError) {
     WekaPredictionsToSpreadSheet 	p2s;
     WekaEvaluationContainer 		cont;
     Token 				token;
@@ -135,8 +136,9 @@ public class PredictionHelper {
     p2s.setShowDistribution(showDistribution);
     p2s.setShowProbability(showProbability);
     p2s.setShowError(showError);
-    p2s.setShowWeight(showWeight);
+    p2s.setShowRelativeError(showRelError);
     p2s.setUseAbsoluteError(showAbsError);
+    p2s.setShowWeight(showWeight);
     p2s.setUseOriginalIndices(true);
     p2s.input(new Token(cont));
     try {

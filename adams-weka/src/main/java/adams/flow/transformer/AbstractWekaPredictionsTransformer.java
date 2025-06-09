@@ -15,7 +15,7 @@
 
 /*
  * AbstractWekaPredictionsTransformer.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -47,11 +47,14 @@ public abstract class AbstractWekaPredictionsTransformer
   /** whether to prefix the labels with a 1-based index (only nominal classes). */
   protected boolean m_AddLabelIndex;
 
-  /** whether to add an error colunm. */
+  /** whether to add an error column. */
   protected boolean m_ShowError;
 
   /** whether to use absolute errors. */
   protected boolean m_UseAbsoluteError;
+
+  /** whether to add a relative error column (numeric class only). */
+  protected boolean m_ShowRelativeError;
 
   /** whether to output the probability of the prediction (only nominal classes). */
   protected boolean m_ShowProbability;
@@ -79,40 +82,44 @@ public abstract class AbstractWekaPredictionsTransformer
     super.defineOptions();
 
     m_OptionManager.add(
-	    "add-index", "addLabelIndex",
-	    false);
+      "add-index", "addLabelIndex",
+      false);
 
     m_OptionManager.add(
-	    "error", "showError",
-	    false);
+      "error", "showError",
+      false);
 
     m_OptionManager.add(
-	    "absolute-error", "useAbsoluteError",
-	    true);
+      "relative-error", "showRelativeError",
+      false);
 
     m_OptionManager.add(
-	    "probability", "showProbability",
-	    false);
+      "absolute-error", "useAbsoluteError",
+      true);
 
     m_OptionManager.add(
-	    "distribution", "showDistribution",
-	    false);
+      "probability", "showProbability",
+      false);
 
     m_OptionManager.add(
-	    "weight", "showWeight",
-	    false);
+      "distribution", "showDistribution",
+      false);
 
     m_OptionManager.add(
-	    "use-original-indices", "useOriginalIndices",
-	    true);
+      "weight", "showWeight",
+      false);
 
     m_OptionManager.add(
-	    "test-attributes", "testAttributes",
-	    new WekaAttributeRange(""));
+      "use-original-indices", "useOriginalIndices",
+      true);
 
     m_OptionManager.add(
-	    "measures-prefix", "measuresPrefix",
-	    "");
+      "test-attributes", "testAttributes",
+      new WekaAttributeRange(""));
+
+    m_OptionManager.add(
+      "measures-prefix", "measuresPrefix",
+      "");
   }
 
   /**
@@ -128,6 +135,7 @@ public abstract class AbstractWekaPredictionsTransformer
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "addLabelIndex", m_AddLabelIndex, "label-index"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showError", m_ShowError, "error"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showRelativeError", m_ShowRelativeError, "relative error"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useAbsoluteError", m_UseAbsoluteError, "absolute error"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showProbability", m_ShowProbability, "probability"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "showDistribution", m_ShowDistribution, "distribution"));
@@ -197,6 +205,35 @@ public abstract class AbstractWekaPredictionsTransformer
   }
 
   /**
+   * Sets whether to show the relative error as well.
+   *
+   * @param value	true if the relative error is to be displayed as well
+   */
+  public void setShowRelativeError(boolean value) {
+    m_ShowRelativeError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the relative error as well.
+   *
+   * @return		true if the relative error is displayed as well
+   */
+  public boolean getShowRelativeError() {
+    return m_ShowRelativeError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showRelativeErrorTipText() {
+    return "If set to true, then the relative error will be displayed as well (numeric class only).";
+  }
+
+  /**
    * Sets whether to use an absolute error (ie no direction).
    *
    * @param value	true if to use absolute error
@@ -252,8 +289,8 @@ public abstract class AbstractWekaPredictionsTransformer
    */
   public String showProbabilityTipText() {
     return
-        "If set to true, then the probability of the prediction will be "
-      + "displayed as well (only for nominal class attributes).";
+      "If set to true, then the probability of the prediction will be "
+	+ "displayed as well (only for nominal class attributes).";
   }
 
   /**
@@ -283,8 +320,8 @@ public abstract class AbstractWekaPredictionsTransformer
    */
   public String showDistributionTipText() {
     return
-        "If set to true, then the class distribution will be displayed as "
-      + "well (only for nominal class attributes).";
+      "If set to true, then the class distribution will be displayed as "
+	+ "well (only for nominal class attributes).";
   }
 
   /**
@@ -314,7 +351,7 @@ public abstract class AbstractWekaPredictionsTransformer
    */
   public String showWeightTipText() {
     return
-        "If set to true, then the instance weight will be displayed as well.";
+      "If set to true, then the instance weight will be displayed as well.";
   }
 
   /**
@@ -346,9 +383,9 @@ public abstract class AbstractWekaPredictionsTransformer
    */
   public String useOriginalIndicesTipText() {
     return
-        "If set to true, the input token is a " + WekaEvaluationContainer.class.getName()
-          + " and it contains the original indices ('" + WekaEvaluationContainer.VALUE_ORIGINALINDICES + "')"
-          + " then the output will get aligned with the original data.";
+      "If set to true, the input token is a " + WekaEvaluationContainer.class.getName()
+	+ " and it contains the original indices ('" + WekaEvaluationContainer.VALUE_ORIGINALINDICES + "')"
+	+ " then the output will get aligned with the original data.";
   }
 
   /**

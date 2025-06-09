@@ -76,6 +76,9 @@ public class Predictions
   /** whether to add an error colunm. */
   protected boolean m_ShowError;
 
+  /** whether to add a relative error column (numeric class only). */
+  protected boolean m_ShowRelativeError;
+
   /** whether to use absolute errors. */
   protected boolean m_UseAbsoluteError;
 
@@ -118,6 +121,10 @@ public class Predictions
 
     m_OptionManager.add(
       "error", "showError",
+      false);
+
+    m_OptionManager.add(
+      "relative-error", "showRelativeError",
       false);
 
     m_OptionManager.add(
@@ -203,6 +210,35 @@ public class Predictions
    */
   public String showErrorTipText() {
     return "If set to true, then the error will be displayed as well.";
+  }
+
+  /**
+   * Sets whether to show the relative error as well.
+   *
+   * @param value	true if the relative error is to be displayed as well
+   */
+  public void setShowRelativeError(boolean value) {
+    m_ShowRelativeError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the relative error as well.
+   *
+   * @return		true if the relative error is displayed as well
+   */
+  public boolean getShowRelativeError() {
+    return m_ShowRelativeError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showRelativeErrorTipText() {
+    return "If set to true, then the relative error will be displayed as well (numeric class only).";
   }
 
   /**
@@ -359,7 +395,8 @@ public class Predictions
     SpreadSheetTable	table;
 
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, eval, originalIndices, additionalAttributes, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight, m_UseAbsoluteError);
+      this, errors, eval, originalIndices, additionalAttributes, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability,
+      m_ShowError, m_ShowWeight, m_UseAbsoluteError, m_ShowRelativeError);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate prediction!");
