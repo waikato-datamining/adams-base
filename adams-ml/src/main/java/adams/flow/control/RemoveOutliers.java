@@ -15,7 +15,7 @@
 
 /*
  * RemoveOutliers.java
- * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control;
@@ -71,7 +71,8 @@ import java.util.Set;
 /**
  <!-- globalinfo-start -->
  * Allows the user to interactively remove outliers.<br>
- * You can toggle the 'outlier' state of individual points by left-clicking them.You can also toggle whole regions by selecting a polygon around them: use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon.
+ * You can toggle the 'outlier' state of individual points by left-clicking them.<br>
+ * You can also toggle whole regions by selecting a polygon around them: use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon. Use CTRL+right-click to clear the polygon points.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -83,7 +84,7 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.OutlierContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.OutlierContainer: Original, Clean, Outliers
+ * - adams.flow.container.OutlierContainer: Original, Clean, Outliers, Outlier-Indices
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -233,7 +234,8 @@ public class RemoveOutliers
     return "Allows the user to interactively remove outliers.\n"
 	     + "You can toggle the 'outlier' state of individual points by left-clicking them.\n"
 	     + "You can also toggle whole regions by selecting a polygon around them: "
-	     + "use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon.";
+	     + "use SHIFT+left-click to place vertices and SHIFT+right-click to finish the polygon. "
+	     + "Use CTRL+right-click to clear the polygon points.";
   }
 
   /**
