@@ -15,7 +15,7 @@
 
 /*
  * ClassifierErrors.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -24,27 +24,46 @@ import adams.core.AutoOnOff;
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.Utils;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnIndex;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.core.Token;
 import adams.flow.sink.ActualVsPredictedPlot;
 import adams.flow.sink.ActualVsPredictedPlot.LimitType;
+import adams.flow.sink.sequenceplotter.OutlierPaintlet;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MultiPagePane;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.datatable.DataTable;
+import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
+import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.tools.wekainvestigator.tab.classifytab.output.classifiererrors.RemoveOutliersClickAction;
 import adams.gui.visualization.sequence.MetaDataValuePaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
 import com.github.fracpete.javautils.enumerate.Enumerated;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Evaluation;
+import weka.core.Instances;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +81,8 @@ public class ClassifierErrors
 
   /** the maximum number of data points before turning off anti-aliasing. */
   public final static int MAX_DATA_POINTS = 1000;
+
+  public static final String META_DATA_INSTANCE_INDEX = "MetaData-Instance Index";
 
   /** the limit type. */
   protected LimitType m_Limit;
@@ -102,6 +123,9 @@ public class ClassifierErrors
   /** the overlays to use. */
   protected XYSequencePaintlet[] m_Overlays;
 
+  /** the ID of the last dataset selected. */
+  protected int m_LastID;
+
   /**
    * Returns a string describing the object.
    *
@@ -109,7 +133,20 @@ public class ClassifierErrors
    */
   @Override
   public String globalInfo() {
-    return "Generates classifier errors plot.";
+    return "Generates classifier errors plot.\n"
+	     + "\n"
+	     + "Mouse interaction:"
+	     + "Use CTRL+left-click to toggle individual points.\n"
+	     + "Use SHIFT+left-click to add polygon vertices and CTRL+SHIFT+left-click to finalize the "
+	     + "polygon and toggle points enclosed by the polygon. CTRL+right-click discards the polygon vertices.\n"
+	     + "SHIFT+right-clicks displays the outliers scheduled for removal.\n"
+	     + "CTRL+SHIFT+right-click clears all outlier flags.\n"
+	     + "\n"
+	     + "CAUTION:"
+	     + "The removal works solely by row index and will only work correctly with results from "
+	     + "cross-validations and explicit test sets that have been loaded into the Investigator."
+	     + "\n"
+	     + "NB: using a custom paintlet disables the ability to toggle and remove outliers.";
   }
 
   /**
@@ -170,6 +207,16 @@ public class ClassifierErrors
     m_OptionManager.add(
       "overlay", "overlays",
       new XYSequencePaintlet[]{new StraightLineOverlayPaintlet()});
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_LastID = -1;
   }
 
   /**
@@ -573,9 +620,112 @@ public class ClassifierErrors
    */
   public boolean canGenerateOutput(ResultItem item) {
     return item.hasEvaluation()
-      && (item.getEvaluation().predictions() != null)
-      && (item.getEvaluation().getHeader() != null)
-      && (item.getEvaluation().getHeader().classAttribute().isNumeric());
+	     && (item.getEvaluation().predictions() != null)
+	     && (item.getEvaluation().getHeader() != null)
+	     && (item.getEvaluation().getHeader().classAttribute().isNumeric());
+  }
+
+  /**
+   * Determines the last selected row.
+   *
+   * @param tab		the classify tab to obtain the data from
+   * @return		the last selected row (0 by default)
+   */
+  protected int determineLastSelectedRow(ClassifyTab tab) {
+    int		d;
+
+    if (m_LastID > -1) {
+      for (d = 0; d < tab.getData().size(); d++) {
+	if (tab.getData().get(d).getID() == m_LastID)
+	  return d;
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * Removes the instances from the current dataset.
+   *
+   * @param data	the data points to remove
+   */
+  protected void removeData(ResultItem item, SpreadSheet data) {
+    int			colIndex;
+    ClassifyTab		tab;
+    ApprovalDialog	dialog;
+    DataTableModel	model;
+    DataTable		table;
+    BaseCheckBox	checkCopy;
+    JPanel		panel;
+    DataContainer	cont;
+    DataContainer	contNew;
+    Instances		inst;
+    int			index;
+    TIntList		indices;
+    int 		selRow;
+
+    colIndex = data.getHeaderRow().indexOfContent(META_DATA_INSTANCE_INDEX);
+    if (colIndex == -1) {
+      GUIHelper.showErrorMessage(null, "Failed to locate column: " + META_DATA_INSTANCE_INDEX);
+      return;
+    }
+
+    tab = (ClassifyTab) GUIHelper.getParent(item.getTabbedPane(), ClassifyTab.class);
+    if (tab == null) {
+      GUIHelper.showErrorMessage(null, "Failed to get classify tab!");
+      return;
+    }
+
+    // let user select dataset to remove the data points from
+    if (GUIHelper.getParentDialog(tab) != null)
+      dialog = new ApprovalDialog(GUIHelper.getParentDialog(tab), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(GUIHelper.getParentFrame(tab), true);
+    dialog.setTitle("Select dataset to update");
+    model = new DataTableModel(tab.getData(), true);
+    table = new DataTable(model);
+    table.setAutoResizeMode(DataTable.AUTO_RESIZE_OFF);
+    table.setOptimalColumnWidth();
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.setSelectedRow(determineLastSelectedRow(tab));
+    checkCopy = new BaseCheckBox("Create copy of dataset first before removing rows");
+    panel = new JPanel(new BorderLayout(5, 5));
+    panel.add(new BaseScrollPane(table), BorderLayout.CENTER);
+    panel.add(checkCopy, BorderLayout.SOUTH);
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(tab);
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+    selRow = table.getSelectedRow();
+    if (selRow < 0)
+      return;
+
+    // remove data
+    cont = tab.getData().get(selRow);
+    if (checkCopy.isSelected()) {
+      contNew = new MemoryContainer(new Instances(cont.getData()));
+      contNew.getData().setRelationName("Copy of " + cont.getData().relationName());
+      tab.getData().add(contNew);
+      cont = contNew;
+    }
+    m_LastID = cont.getID();
+    cont.addUndoPoint("Classifier errors: remove rows");
+    inst    = cont.getData();
+    indices = new TIntArrayList();
+    for (Row row: data.rows()) {
+      index = row.getCell(colIndex).toLong().intValue() - 1;
+      if (index >= 0)
+	indices.add(index);
+    }
+    indices.sort();
+    indices.reverse();
+    for (int i: indices.toArray())
+      inst.remove(i);
+    cont.setModified(true);
+    tab.getOwner().fireDataChange(new WekaInvestigatorDataEvent(tab.getOwner()));
   }
 
   /**
@@ -587,7 +737,7 @@ public class ClassifierErrors
    * @param errors 		for collecting errors
    * @return			the generated panel, null if failed to generate
    */
-  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(ResultItem item, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     ActualVsPredictedPlot 		sink;
     boolean				showError;
     Token				token;
@@ -595,6 +745,7 @@ public class ClassifierErrors
     List<String>			additional;
     int					i;
     JPanel 				panel;
+    RemoveOutliersClickAction 		action;
 
     showError = m_UseError && eval.getHeader().classAttribute().isNumeric();
     sheet     = PredictionHelper.toSpreadSheet(this, errors, eval, originalIndices, additionalAttributes, showError);
@@ -616,9 +767,15 @@ public class ClassifierErrors
     sink.setShowSidePanel(false);
     sink.setAdditional(new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
     sink.setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
-    sink.setUseCustomPaintlet(m_UseCustomPaintlet);
-    sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
+    sink.setUseCustomPaintlet(true);
+    if (m_UseCustomPaintlet)
+      sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
+    else
+      sink.setCustomPaintlet(new OutlierPaintlet());
     sink.setOverlays(ObjectCopyHelper.copyObjects(m_Overlays));
+    action = new RemoveOutliersClickAction();
+    action.setRemoveDataListener((SpreadSheet data) -> removeData(item, data));
+    sink.setMouseClickAction(action);
     switch (m_AntiAliasingEnabled) {
       case AUTO:
 	sink.setAntiAliasingEnabled(
@@ -640,7 +797,7 @@ public class ClassifierErrors
       for (i = 0; i < additionalAttributes.getColumnCount(); i++)
 	additional.add(SpreadSheetColumnRange.escapeName(additionalAttributes.getColumnName(i)));
     }
-    if ((additional != null) && (additional.size() > 0))
+    if ((additional != null) && !additional.isEmpty())
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
 
     panel = sink.createDisplayPanel(token);
@@ -660,15 +817,15 @@ public class ClassifierErrors
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
+      addPage(multiPage, "Full", createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
     }
     else {
-      return createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
+      return createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
     }
   }
 }
