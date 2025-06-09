@@ -15,7 +15,7 @@
 
 /*
  * MultiPaintlet.java
- * Copyright (C) 2012-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.sequence;
 
@@ -26,10 +26,9 @@ import adams.gui.visualization.core.PaintablePanel;
 import java.awt.Graphics;
 
 /**
- * Paintlet that combines multiple XYSequence paintlets.
+ * Paintlet that combines multiple XYSequence sub-paintlets.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MultiPaintlet
   extends AbstractPaintlet
@@ -51,7 +50,7 @@ public class MultiPaintlet
    */
   @Override
   public String globalInfo() {
-    return "Combines multiple paintlets.";
+    return "Combines multiple XYSequence paintlets.";
   }
 
   /**
@@ -127,6 +126,18 @@ public class MultiPaintlet
   }
 
   /**
+   * Sets the panel to use, null to disable painting.
+   *
+   * @param value	the panel to paint on
+   * @param register	whether to register the paintlet
+   */
+  public void setPanel(PaintablePanel value, boolean register) {
+    super.setPanel(value, register);
+    for (XYSequencePaintlet paintlet: m_SubPaintlets)
+      paintlet.setPanel(value, register);
+  }
+
+  /**
    * Returns when this paintlet is to be executed.
    *
    * @return		when this paintlet is to be executed
@@ -139,11 +150,14 @@ public class MultiPaintlet
   /**
    * Returns a new instance of the hit detector to use.
    *
-   * @return		always null
+   * @return		hit detector of first sub-paintlet, null if no sub-paintlets
    */
   @Override
   public AbstractXYSequencePointHitDetector newHitDetector() {
-    return null;
+    if (m_SubPaintlets.length > 0)
+      return m_SubPaintlets[0].newHitDetector();
+    else
+      return null;
   }
 
   /**
