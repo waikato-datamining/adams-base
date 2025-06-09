@@ -409,7 +409,7 @@ public class Predictions
       menuitem.addActionListener((ActionEvent ae) -> {
 	SpreadSheet data = sheet.getHeader();
 	for (int index: table.getSelectedRows())
-	  data.addRow().assign(sheet.getRow(index));
+	  data.addRow().assign(sheet.getRow(table.getActualRow(index)));
 	removeData(item, data);
       });
       menu.addSeparator();
