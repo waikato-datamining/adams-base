@@ -15,7 +15,7 @@
 
 /*
  * SequencePlotterPanel.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink.sequenceplotter;
 
@@ -472,6 +472,7 @@ public class SequencePlotterPanel
    */
   public void clearSelection() {
     m_Selection.clear();
+    update();
   }
 
   /**
