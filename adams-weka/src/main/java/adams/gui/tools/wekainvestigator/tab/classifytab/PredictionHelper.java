@@ -15,7 +15,7 @@
 
 /*
  * PredictionHelper.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -87,19 +87,39 @@ public class PredictionHelper {
   /**
    * Turns the result item into a spreadsheet with the predictions.
    *
-   * @param logger 	the object used for logging, can be null
-   * @param errors 	for collecting errors
-   * @param eval	the evaluation to use
+   * @param logger 		the object used for logging, can be null
+   * @param errors 		for collecting errors
+   * @param eval		the evaluation to use
    * @param originalIndices     the original indices to use, can be null
    * @param additionalAttributes 	the additional attributes to use, can be null
    * @param addLabelIndex 	whether to add the label index in a separate column
    * @param showDistribution 	whether to add the distribution in a separate column
    * @param showProbability 	whether to add the probability in a separate column
-   * @param showError 	whether to add the error in a separate column
-   * @param showWeight 	whether to add the weight in a separate column
-   * @return		the generated spreadsheet, null if failed
+   * @param showError 		whether to add the error in a separate column
+   * @param showWeight 		whether to add the weight in a separate column
+   * @return			the generated spreadsheet, null if failed
    */
   public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight) {
+    return toSpreadSheet(logger, errors, eval, originalIndices, additionalAttributes, addLabelIndex, showDistribution, showProbability, showError, showWeight, true);
+  }
+
+  /**
+   * Turns the result item into a spreadsheet with the predictions.
+   *
+   * @param logger 		the object used for logging, can be null
+   * @param errors 		for collecting errors
+   * @param eval		the evaluation to use
+   * @param originalIndices     the original indices to use, can be null
+   * @param additionalAttributes 	the additional attributes to use, can be null
+   * @param addLabelIndex 	whether to add the label index in a separate column
+   * @param showDistribution 	whether to add the distribution in a separate column
+   * @param showProbability 	whether to add the probability in a separate column
+   * @param showError 		whether to add the error in a separate column
+   * @param showWeight 		whether to add the weight in a separate column
+   * @param showAbsError	whether to show the absolute error
+   * @return			the generated spreadsheet, null if failed
+   */
+  public static SpreadSheet toSpreadSheet(LoggingSupporter logger, MessageCollection errors, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, boolean addLabelIndex, boolean showDistribution, boolean showProbability, boolean showError, boolean showWeight, boolean showAbsError) {
     WekaPredictionsToSpreadSheet 	p2s;
     WekaEvaluationContainer 		cont;
     Token 				token;
@@ -116,6 +136,7 @@ public class PredictionHelper {
     p2s.setShowProbability(showProbability);
     p2s.setShowError(showError);
     p2s.setShowWeight(showWeight);
+    p2s.setUseAbsoluteError(showAbsError);
     p2s.setUseOriginalIndices(true);
     p2s.input(new Token(cont));
     try {

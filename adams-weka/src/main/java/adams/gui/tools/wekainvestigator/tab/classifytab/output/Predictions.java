@@ -15,22 +15,46 @@
 
 /*
  * Predictions.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.BaseCheckBox;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.GUIHelper;
+import adams.gui.core.ImageManager;
 import adams.gui.core.MultiPagePane;
 import adams.gui.core.SpreadSheetTable;
+import adams.gui.dialog.ApprovalDialog;
+import adams.gui.event.WekaInvestigatorDataEvent;
+import adams.gui.tools.wekainvestigator.data.DataContainer;
+import adams.gui.tools.wekainvestigator.data.MemoryContainer;
+import adams.gui.tools.wekainvestigator.datatable.DataTable;
+import adams.gui.tools.wekainvestigator.datatable.DataTableModel;
 import adams.gui.tools.wekainvestigator.output.TableContentPanel;
+import adams.gui.tools.wekainvestigator.tab.ClassifyTab;
 import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import com.github.fracpete.javautils.enumerate.Enumerated;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 import weka.classifiers.Evaluation;
+import weka.core.Instances;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.ListSelectionModel;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 
 import static com.github.fracpete.javautils.Enumerate.enumerate;
 
@@ -44,11 +68,16 @@ public class Predictions
 
   private static final long serialVersionUID = -6829245659118360739L;
 
+  public static final String INSTANCE_INDEX = "Instance Index";
+
   /** whether to prefix the labels with a 1-based index (only nominal classes). */
   protected boolean m_AddLabelIndex;
 
   /** whether to add an error colunm. */
   protected boolean m_ShowError;
+
+  /** whether to use absolute errors. */
+  protected boolean m_UseAbsoluteError;
 
   /** whether to output the probability of the prediction (only nominal classes). */
   protected boolean m_ShowProbability;
@@ -59,6 +88,9 @@ public class Predictions
   /** whether to output the weight as well. */
   protected boolean m_ShowWeight;
 
+  /** the ID of the last dataset selected. */
+  protected int m_LastID;
+
   /**
    * Returns a string describing the object.
    *
@@ -66,7 +98,11 @@ public class Predictions
    */
   @Override
   public String globalInfo() {
-    return "Generates classifier errors plot.";
+    return "Generates classifier errors plot.\n"
+	     + "\n"
+	     + "CAUTION:"
+	     + "The removal works solely by instance index and will only work correctly with results from "
+	     + "cross-validations and explicit test sets that have been loaded into the Investigator.";
   }
 
   /**
@@ -85,6 +121,10 @@ public class Predictions
       false);
 
     m_OptionManager.add(
+      "absolute-error", "useAbsoluteError",
+      true);
+
+    m_OptionManager.add(
       "probability", "showProbability",
       false);
 
@@ -95,6 +135,16 @@ public class Predictions
     m_OptionManager.add(
       "weight", "showWeight",
       false);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_LastID = -1;
   }
 
   /**
@@ -156,6 +206,35 @@ public class Predictions
   }
 
   /**
+   * Sets whether to use an absolute error (ie no direction).
+   *
+   * @param value	true if to use absolute error
+   */
+  public void setUseAbsoluteError(boolean value) {
+    m_UseAbsoluteError = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use an absolute error (ie no direction).
+   *
+   * @return		true if to use absolute error
+   */
+  public boolean getUseAbsoluteError() {
+    return m_UseAbsoluteError;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAbsoluteErrorTipText() {
+    return "If set to true, then the error will be absolute (no direction).";
+  }
+
+  /**
    * Sets whether to show the probability of the prediction as well.
    *
    * @param value	true if the probability is to be displayed as well
@@ -182,8 +261,8 @@ public class Predictions
    */
   public String showProbabilityTipText() {
     return
-        "If set to true, then the probability of the prediction will be "
-      + "displayed as well (only for nominal class attributes).";
+      "If set to true, then the probability of the prediction will be "
+	+ "displayed as well (only for nominal class attributes).";
   }
 
   /**
@@ -213,8 +292,8 @@ public class Predictions
    */
   public String showDistributionTipText() {
     return
-        "If set to true, then the class distribution will be displayed as "
-      + "well (only for nominal class attributes).";
+      "If set to true, then the class distribution will be displayed as "
+	+ "well (only for nominal class attributes).";
   }
 
   /**
@@ -244,7 +323,7 @@ public class Predictions
    */
   public String showWeightTipText() {
     return
-        "If set to true, then the instance weight will be displayed as well.";
+      "If set to true, then the instance weight will be displayed as well.";
   }
 
   /**
@@ -275,18 +354,30 @@ public class Predictions
    * @param errors		for collecting error messages
    * @return			the generated output
    */
-  protected TableContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
+  protected TableContentPanel createOutput(ResultItem item, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     SpreadSheet		sheet;
     SpreadSheetTable	table;
 
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, eval, originalIndices, additionalAttributes, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight);
+      this, errors, eval, originalIndices, additionalAttributes, m_AddLabelIndex, m_ShowDistribution, m_ShowProbability, m_ShowError, m_ShowWeight, m_UseAbsoluteError);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate prediction!");
       return null;
     }
     table = new SpreadSheetTable(sheet);
+    table.setCellPopupMenuCustomizer((MouseEvent e, JPopupMenu menu) -> {
+      JMenuItem menuitem = new JMenuItem("Remove from dataset", ImageManager.getIcon("delete-row"));
+      menuitem.setEnabled(table.getSelectedRows().length > 0);
+      menuitem.addActionListener((ActionEvent ae) -> {
+	SpreadSheet data = sheet.getHeader();
+	for (int index: table.getSelectedRows())
+	  data.addRow().assign(sheet.getRow(index));
+	removeData(item, data);
+      });
+      menu.addSeparator();
+      menu.add(menuitem);
+    });
 
     return new TableContentPanel(table, true, true);
   }
@@ -303,15 +394,118 @@ public class Predictions
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
+      addPage(multiPage, "Full", createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
     }
     else {
-      return createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
+      return createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
     }
+  }
+
+  /**
+   * Determines the last selected row.
+   *
+   * @param tab		the classify tab to obtain the data from
+   * @return		the last selected row (0 by default)
+   */
+  protected int determineLastSelectedRow(ClassifyTab tab) {
+    int		d;
+
+    if (m_LastID > -1) {
+      for (d = 0; d < tab.getData().size(); d++) {
+	if (tab.getData().get(d).getID() == m_LastID)
+	  return d;
+      }
+    }
+
+    return 0;
+  }
+
+  /**
+   * Removes the instances from the current dataset.
+   *
+   * @param data	the data points to remove
+   */
+  protected void removeData(ResultItem item, SpreadSheet data) {
+    int			colIndex;
+    ClassifyTab 	tab;
+    ApprovalDialog 	dialog;
+    DataTableModel 	model;
+    DataTable 		table;
+    BaseCheckBox 	checkCopy;
+    JPanel 		panel;
+    DataContainer 	cont;
+    DataContainer	contNew;
+    Instances 		inst;
+    int			index;
+    TIntList 		indices;
+    int 		selRow;
+
+    colIndex = data.getHeaderRow().indexOfContent(INSTANCE_INDEX);
+    if (colIndex == -1) {
+      GUIHelper.showErrorMessage(null, "Failed to locate column: " + INSTANCE_INDEX);
+      return;
+    }
+
+    tab = (ClassifyTab) GUIHelper.getParent(item.getTabbedPane(), ClassifyTab.class);
+    if (tab == null) {
+      GUIHelper.showErrorMessage(null, "Failed to get classify tab!");
+      return;
+    }
+
+    // let user select dataset to remove the data points from
+    if (GUIHelper.getParentDialog(tab) != null)
+      dialog = new ApprovalDialog(GUIHelper.getParentDialog(tab), ModalityType.DOCUMENT_MODAL);
+    else
+      dialog = new ApprovalDialog(GUIHelper.getParentFrame(tab), true);
+    dialog.setTitle("Select dataset to update");
+    model = new DataTableModel(tab.getData(), true);
+    table = new DataTable(model);
+    table.setAutoResizeMode(DataTable.AUTO_RESIZE_OFF);
+    table.setOptimalColumnWidth();
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    table.setSelectedRow(determineLastSelectedRow(tab));
+    checkCopy = new BaseCheckBox("Create copy of dataset first before removing rows");
+    panel = new JPanel(new BorderLayout(5, 5));
+    panel.add(new BaseScrollPane(table), BorderLayout.CENTER);
+    panel.add(checkCopy, BorderLayout.SOUTH);
+    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    dialog.getContentPane().add(panel, BorderLayout.CENTER);
+    dialog.pack();
+    dialog.setLocationRelativeTo(tab);
+    dialog.setVisible(true);
+    if (dialog.getOption() != ApprovalDialog.APPROVE_OPTION)
+      return;
+    selRow = table.getSelectedRow();
+    if (selRow < 0)
+      return;
+
+    // remove data
+    cont = tab.getData().get(selRow);
+    if (checkCopy.isSelected()) {
+      contNew = new MemoryContainer(new Instances(cont.getData()));
+      contNew.getData().setRelationName("Copy of " + cont.getData().relationName());
+      tab.getData().add(contNew);
+      cont = contNew;
+    }
+    m_LastID = cont.getID();
+    cont.addUndoPoint("Predictions: remove rows");
+    inst    = cont.getData();
+    indices = new TIntArrayList();
+    for (Row row: data.rows()) {
+      index = row.getCell(colIndex).toLong().intValue() - 1;
+      if (index >= 0)
+	indices.add(index);
+    }
+    indices.sort();
+    indices.reverse();
+    for (int i: indices.toArray())
+      inst.remove(i);
+    cont.setModified(true);
+    tab.getOwner().fireDataChange(new WekaInvestigatorDataEvent(tab.getOwner()));
   }
 }
