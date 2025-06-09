@@ -143,7 +143,7 @@ public class ClassifierErrors
 	     + "CTRL+SHIFT+right-click clears all outlier flags.\n"
 	     + "\n"
 	     + "CAUTION:"
-	     + "The removal works solely by row index and will only work correctly with results from "
+	     + "The removal works solely by instance index and will only work correctly with results from "
 	     + "cross-validations and explicit test sets that have been loaded into the Investigator."
 	     + "\n"
 	     + "NB: using a custom paintlet disables the ability to toggle and remove outliers.";
