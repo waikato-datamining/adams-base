@@ -3206,9 +3206,11 @@ Here are JDBC URL templates for accessing various types of databases:
 \begin{tight_itemize}
     \item Older versions of MySQL allowed \texttt{'0000-00-00 00:00:00'} as default value for TIMESTAMP columns.
     If you encounter problems with exceptions due to invalid dates, append the following to your JDBC URL:
-    \texttt{\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
+    \texttt{\&\&sessionVariables=sql\_mode='ALLOW\_INVALID\_DATES'}
     \item If you need to connect to a MySQL database that requires SSL connections, then please refer to
     section \ref{mysql_ssl_connections}.
+    \item If you get \textit{Cannot connect: java.sql.SQLNonTransientConnectionException: Public Key Retrieval is not allowed}
+    then add \texttt{\&\&allowPublicKeyRetrieval=true} the JDBC URL.
     \item For more information on MySQL connection parameters, see section \href{https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html}{Configuration properties}
     of the Connector/J documentation.
 \end{tight_itemize}
