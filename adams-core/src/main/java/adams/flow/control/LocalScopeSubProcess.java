@@ -15,12 +15,13 @@
 
 /*
  * LocalScopeTransformer.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
@@ -59,11 +60,11 @@ import adams.flow.core.Unknown;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -200,6 +201,9 @@ public class LocalScopeSubProcess
 
   /** whether a restricted stop occurred. */
   protected boolean m_RestrictedStop;
+
+  /** for synchronizing. */
+  protected final Long m_Synchronize = UniqueIDs.nextLong();
 
   /**
    * Default constructor.
@@ -817,20 +821,22 @@ public class LocalScopeSubProcess
    *
    * @return		the container
    */
-  public synchronized Storage getStorage() {
-    if (m_LocalStorage == null) {
-      switch (m_ScopeHandlingStorage) {
-	case EMPTY:
-	  m_LocalStorage = new Storage();
-	  break;
-	case COPY:
-	  m_LocalStorage = getParent().getStorageHandler().getStorage().getClone(m_StorageFilter);
-	  break;
-	case SHARE:
-	  m_LocalStorage = getParent().getStorageHandler().getStorage();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled storage scope handling type: " + m_ScopeHandlingStorage);
+  public Storage getStorage() {
+    synchronized (m_Synchronize) {
+      if (m_LocalStorage == null) {
+	switch (m_ScopeHandlingStorage) {
+	  case EMPTY:
+	    m_LocalStorage = new Storage();
+	    break;
+	  case COPY:
+	    m_LocalStorage = getParent().getStorageHandler().getStorage().getClone(m_StorageFilter);
+	    break;
+	  case SHARE:
+	    m_LocalStorage = getParent().getStorageHandler().getStorage();
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled storage scope handling type: " + m_ScopeHandlingStorage);
+	}
       }
     }
 
@@ -842,27 +848,29 @@ public class LocalScopeSubProcess
    *
    * @return		the local variables
    */
-  public synchronized Variables getLocalVariables() {
-    if (m_LocalVariables == null) {
-      switch (m_ScopeHandlingVariables) {
-	case EMPTY:
-	  m_LocalVariables = new FlowVariables();
-	  m_LocalVariables.setFlow(this);
-	  if (getParent().getVariables().has(ActorUtils.FLOW_FILENAME_LONG))
-	    ActorUtils.updateProgrammaticVariables(this, new PlaceholderFile(getParent().getVariables().get(ActorUtils.FLOW_FILENAME_LONG)));
-	  else
-	    ActorUtils.updateProgrammaticVariables(this, null);
-	  break;
-	case COPY:
-	  m_LocalVariables = new FlowVariables();
-	  m_LocalVariables.assign(getParent().getVariables(), m_VariablesFilter);
-	  m_LocalVariables.setFlow(this);
-	  break;
-	case SHARE:
-	  m_LocalVariables = (FlowVariables) getParent().getVariables();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
+  public Variables getLocalVariables() {
+    synchronized (m_Synchronize) {
+      if (m_LocalVariables == null) {
+	switch (m_ScopeHandlingVariables) {
+	  case EMPTY:
+	    m_LocalVariables = new FlowVariables();
+	    m_LocalVariables.setFlow(this);
+	    if (getParent().getVariables().has(ActorUtils.FLOW_FILENAME_LONG))
+	      ActorUtils.updateProgrammaticVariables(this, new PlaceholderFile(getParent().getVariables().get(ActorUtils.FLOW_FILENAME_LONG)));
+	    else
+	      ActorUtils.updateProgrammaticVariables(this, null);
+	    break;
+	  case COPY:
+	    m_LocalVariables = new FlowVariables();
+	    m_LocalVariables.assign(getParent().getVariables(), m_VariablesFilter);
+	    m_LocalVariables.setFlow(this);
+	    break;
+	  case SHARE:
+	    m_LocalVariables = (FlowVariables) getParent().getVariables();
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
+	}
       }
     }
 
@@ -875,7 +883,7 @@ public class LocalScopeSubProcess
    * @return		the scope handler
    */
   @Override
-  public synchronized Variables getVariables() {
+  public Variables getVariables() {
     return getLocalVariables();
   }
 

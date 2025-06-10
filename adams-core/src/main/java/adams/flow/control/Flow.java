@@ -15,7 +15,7 @@
 
 /*
  * Flow.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-202 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -24,6 +24,7 @@ import adams.core.DateUtils;
 import adams.core.MessageCollection;
 import adams.core.Properties;
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.io.ConsoleHelper;
@@ -184,8 +185,8 @@ import java.util.Map;
 public class Flow
   extends MutableConnectedControlActor
   implements MutableLogEntryHandler, StorageHandler,
-  VariablesHandler, TriggerableEvent, PauseStateHandler,
-  FlowExecutionListeningSupporter, ScopeHandler, StopRestrictor {
+	       VariablesHandler, TriggerableEvent, PauseStateHandler,
+	       FlowExecutionListeningSupporter, ScopeHandler, StopRestrictor {
 
   /** for serialization. */
   private static final long serialVersionUID = 723059748204261319L;
@@ -276,6 +277,9 @@ public class Flow
 
   /** the register for windows. */
   protected Map<Window,String> m_WindowRegister;
+
+  /** for synchronizing. */
+  protected final Long m_Synchronize = UniqueIDs.nextLong();
 
   /**
    * Returns a string describing the object.
@@ -397,7 +401,7 @@ public class Flow
 
     if (m_ReadOnly) {
       if (!result.isEmpty())
-        result += ", ";
+	result += ", ";
       result += "read-only";
     }
 
@@ -670,7 +674,7 @@ public class Flow
   /**
    * Attaches the listener and starts listening.
    *
-   * @param l		the listener to attach and use immediately, 
+   * @param l		the listener to attach and use immediately,
    * 			{@link NullListener} disables the listening
    * @return		true if listening could be started successfully
    */
@@ -717,7 +721,7 @@ public class Flow
 	multi.startListening();
       }
       listeners.add(l);
-      multi.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
+      multi.setSubListeners(listeners.toArray(new FlowExecutionListener[0]));
       m_FlowExecutionListener = multi;
       m_FlowExecutionListener.setOwner(this);
       l.startListening();
@@ -801,7 +805,7 @@ public class Flow
       if (!present) {
 	breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
 	breakpoints.add(breakpoint);
-	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+	debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[0]));
 	multiScope = new MultiScopeRestriction();
 	multiScope.setCombination(ScopeCombination.OR);
 	multiScope.setRestrictions(new AbstractScopeRestriction[]{
@@ -828,7 +832,7 @@ public class Flow
 	debug.setScopeRestriction(restriction);
 	listeners = new ArrayList<>(Arrays.asList(multiListen.getSubListeners()));
 	listeners.add(debug);
-	multiListen.setSubListeners(listeners.toArray(new FlowExecutionListener[listeners.size()]));
+	multiListen.setSubListeners(listeners.toArray(new FlowExecutionListener[0]));
       }
       else {
 	// breakpoint already present?
@@ -842,7 +846,7 @@ public class Flow
 	if (!present) {
 	  breakpoints = new ArrayList<>(Arrays.asList(debug.getBreakpoints()));
 	  breakpoints.add(breakpoint);
-	  debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[breakpoints.size()]));
+	  debug.setBreakpoints(breakpoints.toArray(new AbstractBreakpoint[0]));
 	  multiScope = new MultiScopeRestriction();
 	  multiScope.setCombination(ScopeCombination.OR);
 	  multiScope.setRestrictions(new AbstractScopeRestriction[]{
@@ -900,7 +904,7 @@ public class Flow
     if (l instanceof GraphicalFlowExecutionListener) {
       handler = getGraphicalFlowExecutionListenersHandler();
       if (handler != null)
-        handler.register((GraphicalFlowExecutionListener) l);
+	handler.register((GraphicalFlowExecutionListener) l);
     }
   }
 
@@ -915,7 +919,7 @@ public class Flow
     if (l instanceof GraphicalFlowExecutionListener) {
       handler = getGraphicalFlowExecutionListenersHandler();
       if (handler != null)
-        handler.deregister((GraphicalFlowExecutionListener) l);
+	handler.deregister((GraphicalFlowExecutionListener) l);
     }
   }
 
@@ -1020,9 +1024,9 @@ public class Flow
   @Override
   public ActorHandlerInfo getActorHandlerInfo() {
     return new ActorHandlerInfo()
-      .allowStandalones(true)
-      .actorExecution(ActorExecution.SEQUENTIAL)
-      .forwardsInput(false);
+	     .allowStandalones(true)
+	     .actorExecution(ActorExecution.SEQUENTIAL)
+	     .forwardsInput(false);
   }
 
   /**
@@ -1031,7 +1035,7 @@ public class Flow
    * @return		the scope handler
    */
   @Override
-  public synchronized Variables getVariables() {
+  public Variables getVariables() {
     return getLocalVariables();
   }
 
@@ -1049,8 +1053,10 @@ public class Flow
    *
    * @return		the scope handler
    */
-  public synchronized Variables getLocalVariables() {
-    getOptionManager().setVariables(m_Variables);
+  public Variables getLocalVariables() {
+    synchronized (m_Synchronize) {
+      getOptionManager().setVariables(m_Variables);
+    }
     return m_Variables;
   }
 
@@ -1217,9 +1223,11 @@ public class Flow
    *
    * @return		the container
    */
-  public synchronized Storage getStorage() {
-    if (m_Storage == null)
-      m_Storage = new Storage();
+  public Storage getStorage() {
+    synchronized (m_Synchronize) {
+      if (m_Storage == null)
+	m_Storage = new Storage();
+    }
 
     return m_Storage;
   }
@@ -1347,8 +1355,8 @@ public class Flow
       }
     }
 
+    start = new Date();
     if (m_Headless) {
-      start = new Date();
       ConsoleHelper.printlnOut("");
       ConsoleHelper.printlnOut("--> Start: " + DateUtils.getTimestampFormatterMsecs().format(start));
       ConsoleHelper.printlnOut("");
@@ -1359,8 +1367,8 @@ public class Flow
     if (result == null)
       result = super.doExecute();
 
+    finish = new Date();
     if (m_Headless) {
-      finish = new Date();
       ConsoleHelper.printlnOut("");
       ConsoleHelper.printlnOut("--> Finish: " + DateUtils.getTimestampFormatterMsecs().format(finish));
       ConsoleHelper.printlnOut("--> Duration: " + DateUtils.msecToString(DateUtils.difference(start, finish)) + "\n");

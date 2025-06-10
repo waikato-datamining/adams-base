@@ -15,11 +15,12 @@
 
 /*
  * LocalScopeTrigger.java
- * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
 import adams.core.QuickInfoHelper;
+import adams.core.UniqueIDs;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseRegExp;
@@ -55,101 +56,101 @@ import adams.flow.core.StopRestrictor;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: LocalScopeTrigger
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-finish-before-stopping &lt;boolean&gt; (property: finishBeforeStopping)
  * &nbsp;&nbsp;&nbsp;If enabled, actor first finishes processing all data before stopping.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-asynchronous &lt;boolean&gt; (property: asynchronous)
- * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow 
+ * &nbsp;&nbsp;&nbsp;If enabled, the sub-actors get executed asynchronously rather than the flow
  * &nbsp;&nbsp;&nbsp;waiting for them to finish before proceeding with execution.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-tee &lt;adams.flow.core.AbstractActor&gt; [-tee ...] (property: actors)
  * &nbsp;&nbsp;&nbsp;The actors to siphon-off the tokens to.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-scope-handling-variables &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingVariables)
- * &nbsp;&nbsp;&nbsp;Defines how variables are handled in the local scope; whether to start with 
- * &nbsp;&nbsp;&nbsp;empty set, a copy of the outer scope variables or share variables with the 
+ * &nbsp;&nbsp;&nbsp;Defines how variables are handled in the local scope; whether to start with
+ * &nbsp;&nbsp;&nbsp;empty set, a copy of the outer scope variables or share variables with the
  * &nbsp;&nbsp;&nbsp;outer scope.
  * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
- * 
+ *
  * <pre>-variables-filter &lt;adams.core.base.BaseRegExp&gt; (property: variablesFilter)
- * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into 
+ * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get into
  * &nbsp;&nbsp;&nbsp;the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-propagate-variables &lt;boolean&gt; (property: propagateVariables)
- * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that 
+ * &nbsp;&nbsp;&nbsp;If enabled and variables are not shared with outer scope, variables that
  * &nbsp;&nbsp;&nbsp;match the specified regular expression get propagated to the outer scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-variables-regexp &lt;adams.core.base.BaseRegExp&gt; (property: variablesRegExp)
  * &nbsp;&nbsp;&nbsp;The regular expression that variable names must match in order to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-scope-handling-storage &lt;EMPTY|COPY|SHARE&gt; (property: scopeHandlingStorage)
- * &nbsp;&nbsp;&nbsp;Defines how storage is handled in the local scope; whether to start with 
- * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage 
+ * &nbsp;&nbsp;&nbsp;Defines how storage is handled in the local scope; whether to start with
+ * &nbsp;&nbsp;&nbsp;empty set, a (deep) copy of the outer scope storage or share the storage
  * &nbsp;&nbsp;&nbsp;with the outer scope.
  * &nbsp;&nbsp;&nbsp;default: EMPTY
  * </pre>
- * 
+ *
  * <pre>-storage-filter &lt;adams.core.base.BaseRegExp&gt; (property: storageFilter)
- * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get 
+ * &nbsp;&nbsp;&nbsp;The regular expression that storage item names must match in order to get
  * &nbsp;&nbsp;&nbsp;into the local scope (when using COPY).
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  * <pre>-propagate-storage &lt;boolean&gt; (property: propagateStorage)
- * &nbsp;&nbsp;&nbsp;If enabled and storage is not shared with outer scope, storage items which 
- * &nbsp;&nbsp;&nbsp;names match the specified regular expression get propagated to the outer 
+ * &nbsp;&nbsp;&nbsp;If enabled and storage is not shared with outer scope, storage items which
+ * &nbsp;&nbsp;&nbsp;names match the specified regular expression get propagated to the outer
  * &nbsp;&nbsp;&nbsp;scope.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-storage-regexp &lt;adams.core.base.BaseRegExp&gt; (property: storageRegExp)
- * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order 
+ * &nbsp;&nbsp;&nbsp;The regular expression that the names of storage items must match in order
  * &nbsp;&nbsp;&nbsp;to get propagated.
  * &nbsp;&nbsp;&nbsp;default: .*
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class LocalScopeTrigger
-  extends Trigger 
+  extends Trigger
   implements VariablesHandler, StorageHandler, LocalScopeHandler, ProgrammaticLocalScope, StopRestrictor {
 
   /** for serialization. */
@@ -169,7 +170,7 @@ public class LocalScopeTrigger
 
   /** the callable names. */
   protected CallableNamesRecorder m_CallableNames;
-  
+
   /** whether the callable name check is enforced. */
   protected boolean m_EnforceCallableNameCheck;
 
@@ -200,6 +201,9 @@ public class LocalScopeTrigger
   /** whether a restricted stop occurred. */
   protected boolean m_RestrictedStop;
 
+  /** for synchronizing. */
+  protected final Long m_Synchronize = UniqueIDs.nextLong();
+
   /**
    * Default constructor.
    */
@@ -225,12 +229,12 @@ public class LocalScopeTrigger
   @Override
   public String globalInfo() {
     return
-        "Executes the sub-actors whenever a token gets passed through, just " 
-        + "like the " + Trigger.class.getName() + " actor, but also provides "
-        + "its own scope for variables and internal storage.\n"
-        + "It is possible to 'propagate' or 'leak' variables and storage items "
-        + "from within the local scope back to the output scope. However, "
-        + "storage items from caches cannot be propagated.";
+      "Executes the sub-actors whenever a token gets passed through, just "
+	+ "like the " + Trigger.class.getName() + " actor, but also provides "
+	+ "its own scope for variables and internal storage.\n"
+	+ "It is possible to 'propagate' or 'leak' variables and storage items "
+	+ "from within the local scope back to the output scope. However, "
+	+ "storage items from caches cannot be propagated.";
   }
 
   /**
@@ -241,36 +245,36 @@ public class LocalScopeTrigger
     super.defineOptions();
 
     m_OptionManager.add(
-	    "scope-handling-variables", "scopeHandlingVariables",
-	    ScopeHandling.EMPTY);
+      "scope-handling-variables", "scopeHandlingVariables",
+      ScopeHandling.EMPTY);
 
     m_OptionManager.add(
-	    "variables-filter", "variablesFilter",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "variables-filter", "variablesFilter",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "propagate-variables", "propagateVariables",
-	    false);
+      "propagate-variables", "propagateVariables",
+      false);
 
     m_OptionManager.add(
-	    "variables-regexp", "variablesRegExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "variables-regexp", "variablesRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "scope-handling-storage", "scopeHandlingStorage",
-	    ScopeHandling.EMPTY);
+      "scope-handling-storage", "scopeHandlingStorage",
+      ScopeHandling.EMPTY);
 
     m_OptionManager.add(
-	    "storage-filter", "storageFilter",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "storage-filter", "storageFilter",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
 
     m_OptionManager.add(
-	    "propagate-storage", "propagateStorage",
-	    false);
+      "propagate-storage", "propagateStorage",
+      false);
 
     m_OptionManager.add(
-	    "storage-regexp", "storageRegExp",
-	    new BaseRegExp(BaseRegExp.MATCH_ALL));
+      "storage-regexp", "storageRegExp",
+      new BaseRegExp(BaseRegExp.MATCH_ALL));
   }
 
   /**
@@ -324,23 +328,23 @@ public class LocalScopeTrigger
 
   /**
    * Sets how to handle variables into the local scope.
-   * 
+   *
    * @param value	the scope handling
    */
   public void setScopeHandlingVariables(ScopeHandling value) {
     m_ScopeHandlingVariables = value;
     reset();
   }
-  
+
   /**
    * Returns how variables are handled in the local scope.
-   * 
+   *
    * @return		the scope handling
    */
   public ScopeHandling getScopeHandlingVariables() {
     return m_ScopeHandlingVariables;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -348,8 +352,8 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String scopeHandlingVariablesTipText() {
-    return 
-	"Defines how variables are handled in the local scope; whether to "
+    return
+      "Defines how variables are handled in the local scope; whether to "
 	+ "start with empty set, a copy of the outer scope variables or "
 	+ "share variables with the outer scope.";
   }
@@ -357,24 +361,24 @@ public class LocalScopeTrigger
   /**
    * Sets the regular expression that variable names must match to get
    * into the local scope.
-   * 
+   *
    * @param value	the expression
    */
   public void setVariablesFilter(BaseRegExp value) {
     m_VariablesFilter = value;
     reset();
   }
-  
+
   /**
    * Returns the regular expression that variable names must match to get
    * into the local scope.
-   * 
+   *
    * @return		the expression
    */
   public BaseRegExp getVariablesFilter() {
     return m_VariablesFilter;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -382,30 +386,30 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String variablesFilterTipText() {
-    return 
-	"The regular expression that variable names must match in order to "
+    return
+      "The regular expression that variable names must match in order to "
 	+ "get into the local scope (when using " + ScopeHandling.COPY + ").";
   }
 
   /**
    * Sets whether to propagate variables from the local to the outer scope.
-   * 
+   *
    * @param value	if true then variables get propagated
    */
   public void setPropagateVariables(boolean value) {
     m_PropagateVariables = value;
     reset();
   }
-  
+
   /**
    * Returns whether to propagate variables from the local to the outer scope.
-   * 
+   *
    * @return		true if variables get propagated
    */
   public boolean getPropagateVariables() {
     return m_PropagateVariables;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -413,8 +417,8 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String propagateVariablesTipText() {
-    return 
-	"If enabled and variables are not shared with outer scope, variables "
+    return
+      "If enabled and variables are not shared with outer scope, variables "
 	+ "that match the specified regular expression get propagated to the "
 	+ "outer scope.";
   }
@@ -422,24 +426,24 @@ public class LocalScopeTrigger
   /**
    * Sets the regular expression that variable names must match to get
    * propagated.
-   * 
+   *
    * @param value	the expression
    */
   public void setVariablesRegExp(BaseRegExp value) {
     m_VariablesRegExp = value;
     reset();
   }
-  
+
   /**
    * Returns the regular expression that variable names must match to get
    * propagated.
-   * 
+   *
    * @return		the expression
    */
   public BaseRegExp getVariablesRegExp() {
     return m_VariablesRegExp;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -452,23 +456,23 @@ public class LocalScopeTrigger
 
   /**
    * Sets how to handle storage in the local scope.
-   * 
+   *
    * @param value	the scope handling
    */
   public void setScopeHandlingStorage(ScopeHandling value) {
     m_ScopeHandlingStorage = value;
     reset();
   }
-  
+
   /**
    * Returns how storage is handled in the local scope.
-   * 
+   *
    * @return		the scope handling
    */
   public ScopeHandling getScopeHandlingStorage() {
     return m_ScopeHandlingStorage;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -476,8 +480,8 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String scopeHandlingStorageTipText() {
-    return 
-	"Defines how storage is handled in the local scope; whether to "
+    return
+      "Defines how storage is handled in the local scope; whether to "
 	+ "start with empty set, a (deep) copy of the outer scope storage or "
 	+ "share the storage with the outer scope.";
   }
@@ -485,24 +489,24 @@ public class LocalScopeTrigger
   /**
    * Sets the regular expression that storage item names must match to get
    * into the local scope.
-   * 
+   *
    * @param value	the expression
    */
   public void setStorageFilter(BaseRegExp value) {
     m_StorageFilter = value;
     reset();
   }
-  
+
   /**
    * Returns the regular expression that storage item names must match to get
    * into the local scope.
-   * 
+   *
    * @return		the expression
    */
   public BaseRegExp getStorageFilter() {
     return m_StorageFilter;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -510,30 +514,30 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String storageFilterTipText() {
-    return 
-	"The regular expression that storage item names must match in order "
+    return
+      "The regular expression that storage item names must match in order "
 	+ "to get into the local scope (when using " + ScopeHandling.COPY + ").";
   }
 
   /**
    * Sets whether to propagate storage items from the local to the outer scope.
-   * 
+   *
    * @param value	if true then storage items get propagated
    */
   public void setPropagateStorage(boolean value) {
     m_PropagateStorage = value;
     reset();
   }
-  
+
   /**
    * Returns whether to propagate storage items from the local to the outer scope.
-   * 
+   *
    * @return		true if storage items get propagated
    */
   public boolean getPropagateStorage() {
     return m_PropagateStorage;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -541,8 +545,8 @@ public class LocalScopeTrigger
    * 			displaying in the GUI or for listing the options.
    */
   public String propagateStorageTipText() {
-    return 
-	"If enabled and storage is not shared with outer scope, storage "
+    return
+      "If enabled and storage is not shared with outer scope, storage "
 	+ "items which names match the specified regular expression get "
 	+ "propagated to the outer scope.";
   }
@@ -550,24 +554,24 @@ public class LocalScopeTrigger
   /**
    * Sets the regular expression that storage item names must match to get
    * propagated.
-   * 
+   *
    * @param value	the expression
    */
   public void setStorageRegExp(BaseRegExp value) {
     m_StorageRegExp = value;
     reset();
   }
-  
+
   /**
    * Returns the regular expression that storage item names must match to get
    * propagated.
-   * 
+   *
    * @return		the expression
    */
   public BaseRegExp getStorageRegExp() {
     return m_StorageRegExp;
   }
-  
+
   /**
    * Returns the tip text for this property.
    *
@@ -580,16 +584,16 @@ public class LocalScopeTrigger
 
   /**
    * Sets whether to enforce the callable name check.
-   * 
+   *
    * @param value	true if to enforce check
    */
   public void setEnforceCallableNameCheck(boolean value) {
     m_EnforceCallableNameCheck = value;
   }
-  
+
   /**
    * Returns whether the check of callable names is enforced.
-   * 
+   *
    * @return		true if check enforced
    */
   public boolean getEnforceCallableNameCheck() {
@@ -598,7 +602,7 @@ public class LocalScopeTrigger
 
   /**
    * Checks whether a callable name is already in use.
-   * 
+   *
    * @param handler 	the handler for the actor
    * @param actor	the actor name to check
    * @see		#getEnforceCallableNameCheck()
@@ -612,7 +616,7 @@ public class LocalScopeTrigger
 
   /**
    * Adds the callable name to the list of used ones.
-   * 
+   *
    * @param handler 	the handler for the actor
    * @param actor	the actor name to add
    * @return		null if successfully added, otherwise error message
@@ -621,10 +625,10 @@ public class LocalScopeTrigger
   public String addCallableName(ActorHandler handler, Actor actor) {
     if (!getEnforceCallableNameCheck())
       return null;
-    
+
     if (isCallableNameUsed(handler, actor))
       return "Callable name '" + actor.getName() + "' is already used in this scope ('" + getFullName() + "')!";
-    
+
     m_CallableNames.add(handler, actor);
     return null;
   }
@@ -658,20 +662,22 @@ public class LocalScopeTrigger
    *
    * @return		the container
    */
-  public synchronized Storage getStorage() {
-    if (m_LocalStorage == null) {
-      switch (m_ScopeHandlingStorage) {
-	case EMPTY:
-	  m_LocalStorage = new Storage();
-	  break;
-	case COPY:
-	  m_LocalStorage = getParent().getStorageHandler().getStorage().getClone(m_StorageFilter);
-	  break;
-	case SHARE:
-	  m_LocalStorage = getParent().getStorageHandler().getStorage();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled storage scope handling type: " + m_ScopeHandlingStorage);
+  public Storage getStorage() {
+    synchronized (m_Synchronize) {
+      if (m_LocalStorage == null) {
+	switch (m_ScopeHandlingStorage) {
+	  case EMPTY:
+	    m_LocalStorage = new Storage();
+	    break;
+	  case COPY:
+	    m_LocalStorage = getParent().getStorageHandler().getStorage().getClone(m_StorageFilter);
+	    break;
+	  case SHARE:
+	    m_LocalStorage = getParent().getStorageHandler().getStorage();
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled storage scope handling type: " + m_ScopeHandlingStorage);
+	}
       }
     }
 
@@ -683,30 +689,32 @@ public class LocalScopeTrigger
    *
    * @return		the local variables
    */
-  public synchronized Variables getLocalVariables() {
-    if (m_LocalVariables == null) {
-      switch (m_ScopeHandlingVariables) {
-	case EMPTY:
-	  m_LocalVariables = new FlowVariables();
-	  m_LocalVariables.setFlow(this);
-	  if (getParent().getVariables().has(ActorUtils.FLOW_FILENAME_LONG))
-	    ActorUtils.updateProgrammaticVariables(this, new PlaceholderFile(getParent().getVariables().get(ActorUtils.FLOW_FILENAME_LONG)));
-	  else
-	    ActorUtils.updateProgrammaticVariables(this, null);
-	  break;
-	case COPY:
-	  m_LocalVariables = new FlowVariables();
-	  m_LocalVariables.assign(getParent().getVariables(), m_VariablesFilter);
-	  m_LocalVariables.setFlow(this);
-	  break;
-	case SHARE:
-	  m_LocalVariables = (FlowVariables) getParent().getVariables();
-	  break;
-	default:
-	  throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
+  public Variables getLocalVariables() {
+    synchronized (m_Synchronize) {
+      if (m_LocalVariables == null) {
+	switch (m_ScopeHandlingVariables) {
+	  case EMPTY:
+	    m_LocalVariables = new FlowVariables();
+	    m_LocalVariables.setFlow(this);
+	    if (getParent().getVariables().has(ActorUtils.FLOW_FILENAME_LONG))
+	      ActorUtils.updateProgrammaticVariables(this, new PlaceholderFile(getParent().getVariables().get(ActorUtils.FLOW_FILENAME_LONG)));
+	    else
+	      ActorUtils.updateProgrammaticVariables(this, null);
+	    break;
+	  case COPY:
+	    m_LocalVariables = new FlowVariables();
+	    m_LocalVariables.assign(getParent().getVariables(), m_VariablesFilter);
+	    m_LocalVariables.setFlow(this);
+	    break;
+	  case SHARE:
+	    m_LocalVariables = (FlowVariables) getParent().getVariables();
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled variables scope handling type: " + m_ScopeHandlingVariables);
+	}
       }
     }
-    
+
     return m_LocalVariables;
   }
 
@@ -716,10 +724,10 @@ public class LocalScopeTrigger
    * @return		the scope handler
    */
   @Override
-  public synchronized Variables getVariables() {
+  public Variables getVariables() {
     return getLocalVariables();
   }
-  
+
   /**
    * Updates the Variables instance in use.
    *
@@ -789,7 +797,7 @@ public class LocalScopeTrigger
 
     return super.preExecute();
   }
-  
+
   /**
    * Post-execute hook.
    *
@@ -799,7 +807,7 @@ public class LocalScopeTrigger
   @Override
   protected String postExecute() {
     String	result;
-    
+
     result = super.postExecute();
 
     if (!isStopped()) {
@@ -812,7 +820,7 @@ public class LocalScopeTrigger
 	  }
 	}
       }
-      
+
       if ((m_ScopeHandlingStorage != ScopeHandling.SHARE) && m_PropagateStorage && (m_LocalStorage != null)) {
 	for (StorageName name: m_LocalStorage.keySet()) {
 	  if (m_StorageRegExp.isMatch(name.getValue())) {
@@ -823,7 +831,7 @@ public class LocalScopeTrigger
 	}
       }
     }
-    
+
     return result;
   }
 
@@ -835,20 +843,20 @@ public class LocalScopeTrigger
   public void cleanUp() {
     if (m_LocalVariables != null) {
       switch (m_ScopeHandlingVariables) {
-        case EMPTY:
-        case COPY:
-          m_LocalVariables.cleanUp();
-          break;
+	case EMPTY:
+	case COPY:
+	  m_LocalVariables.cleanUp();
+	  break;
       }
       m_LocalVariables = null;
     }
 
     if (m_LocalStorage != null) {
       switch (m_ScopeHandlingStorage) {
-        case EMPTY:
-        case COPY:
-          m_LocalStorage.clear();
-          break;
+	case EMPTY:
+	case COPY:
+	  m_LocalStorage.clear();
+	  break;
       }
       m_LocalStorage = null;
     }
