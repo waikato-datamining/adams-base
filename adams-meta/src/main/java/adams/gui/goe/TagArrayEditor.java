@@ -582,6 +582,7 @@ public class TagArrayEditor
 
     // add tag
     m_TableModel.add(tagNew);
+    m_Table.setOptimalColumnWidth();
   }
 
   /**
