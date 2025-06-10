@@ -1263,6 +1263,25 @@ public class FlowRunnerPanel
   }
 
   /**
+   * Displays the notification text.
+   *
+   * @param msg		the text to display
+   * @param icon	the icon to display, null for none
+   */
+  public void showNotification(String msg, String icon) {
+    SwingUtilities.invokeLater(() -> {
+      m_PanelBottom.removeAll();
+      m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
+      if (m_PanelBottom.getParent() != null) {
+	m_PanelBottom.getParent().invalidate();
+	m_PanelBottom.getParent().revalidate();
+	m_PanelBottom.getParent().doLayout();
+      }
+      m_PanelNotification.showNotification(msg, icon);
+    });
+  }
+
+  /**
    * Displays the notification component.
    *
    * @param comp	the component to display

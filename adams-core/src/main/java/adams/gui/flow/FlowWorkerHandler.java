@@ -98,6 +98,14 @@ public interface FlowWorkerHandler
   public void showNotification(String msg, NotificationType type);
 
   /**
+   * Displays the notification text.
+   *
+   * @param msg		the text to display
+   * @param icon	the icon to display, null for none
+   */
+  public void showNotification(String msg, String icon);
+
+  /**
    * Displays the notification component.
    *
    * @param comp	the component to display

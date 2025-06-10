@@ -1866,6 +1866,33 @@ public class FlowPanel
   }
 
   /**
+   * Displays the notification text.
+   *
+   * @param msg		the text to display
+   * @param icon	the icon to display, null for none
+   */
+  public void showNotification(String msg, String icon) {
+    SwingUtilities.invokeLater(() -> {
+      m_PanelBottom.removeAll();
+      m_PanelBottom.add(m_PanelNotification, BorderLayout.CENTER);
+      if (m_PanelBottom.getParent() != null) {
+	m_PanelBottom.getParent().invalidate();
+	m_PanelBottom.getParent().revalidate();
+	m_PanelBottom.getParent().doLayout();
+      }
+      m_PanelNotification.showNotification(msg, icon);
+    });
+    SwingUtilities.invokeLater(() -> {
+      if (isDebugTreeVisible()) {
+	int div = m_SplitPaneEditor.getDividerLocation();
+	int max = (int) (m_SplitPaneEditor.getHeight() - m_PanelNotification.getPreferredSize().getHeight() - m_SplitPaneEditor.getDividerSize() - 20);
+	if (div > max)
+	  m_SplitPaneEditor.setDividerLocation(max);
+      }
+    });
+  }
+
+  /**
    * Displays the notification component.
    *
    * @param comp	the component to display

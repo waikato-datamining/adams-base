@@ -15,7 +15,7 @@
 
 /*
  * FlowPanelNotificationArea.java
- * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
@@ -123,6 +123,9 @@ public class FlowPanelNotificationArea
   /** the type of notification. */
   protected NotificationType m_Type;
 
+  /** the custom icon to display. */
+  protected String m_Icon;
+
   /** the available actions. */
   protected List<AbstractNotificationAreaAction> m_Actions;
 
@@ -139,6 +142,7 @@ public class FlowPanelNotificationArea
     m_Owner          = null;
     m_CloseListeners = new HashSet<>();
     m_Notification   = null;
+    m_Icon           = null;
     m_Type           = NotificationType.PLAIN;
     m_Actions        = new ArrayList<>();
     classes          = AbstractNotificationAreaAction.getActions();
@@ -276,7 +280,10 @@ public class FlowPanelNotificationArea
       }
 
       if (getOwner() != null) {
-        displayIcon(getOwner(), m_Type);
+	if (m_Icon != null)
+	  displayIcon(getOwner(), m_Icon);
+	else
+	  displayIcon(getOwner(), m_Type);
 	getOwner().getSplitPane().setBottomComponentHidden(m_Notification == null);
 	// ensure that the notification panel is visible
 	if (m_Notification != null) {
@@ -305,6 +312,20 @@ public class FlowPanelNotificationArea
   public void showNotification(String msg, NotificationType type) {
     m_Notification = msg;
     m_Type         = type;
+    m_Icon         = null;
+    update();
+  }
+
+  /**
+   * Displays the notification text.
+   *
+   * @param msg		the text to display
+   * @param icon	the icon to use
+   */
+  public void showNotification(String msg, String icon) {
+    m_Notification = msg;
+    m_Type         = null;
+    m_Icon         = icon;
     update();
   }
 
@@ -314,6 +335,7 @@ public class FlowPanelNotificationArea
   public void clearNotification() {
     m_Notification = null;
     m_Type         = NotificationType.PLAIN;
+    m_Icon         = null;
     update();
   }
 
