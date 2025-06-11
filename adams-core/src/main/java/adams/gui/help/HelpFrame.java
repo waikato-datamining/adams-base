@@ -15,7 +15,7 @@
 
 /*
  * HelpPanel.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.help;

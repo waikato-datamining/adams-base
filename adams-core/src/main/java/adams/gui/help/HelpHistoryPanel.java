@@ -15,10 +15,11 @@
 
 /*
  * HelpHistoryPanel.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.help;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingLevel;
 import adams.gui.chooser.BaseFileChooser;
@@ -30,9 +31,11 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.Fonts;
+import adams.gui.core.GUIHelper;
 
 import javax.swing.JEditorPane;
 import javax.swing.JMenuItem;
+import javax.swing.text.JTextComponent;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -110,7 +113,7 @@ public class HelpHistoryPanel
   protected Hashtable<String,SingleHelpFrame> m_Frames;
 
   /** the editor pane to display the help in. */
-  protected JEditorPane m_Text;
+  protected JTextComponent m_Text;
 
   /** the file chooser for saving buffers. */
   protected transient BaseFileChooser m_FileChooser;
@@ -167,7 +170,7 @@ public class HelpHistoryPanel
    *
    * @param value	the text area to use
    */
-  public void setText(JEditorPane value) {
+  public void setText(JTextComponent value) {
     m_Text = value;
   }
 
@@ -180,15 +183,20 @@ public class HelpHistoryPanel
   protected void updateEntry(String name) {
     HelpContainer	cont;
 
-    m_Text.setContentType("text/html");
+    if (m_Text instanceof JEditorPane)
+      ((JEditorPane) m_Text).setContentType("text/html");
     m_Text.setText("<b>No help available/selected</b>");
 
     if (name != null) {
       // update text area
       if (hasEntry(name)) {
         cont = getEntry(name);
-	m_Text.setContentType(cont.isHtml() ? "text/html" : "text/plain");
-	m_Text.setText(cont.getHelp());
+	if (m_Text instanceof JEditorPane)
+	  ((JEditorPane) m_Text).setContentType(cont.isHtml() ? "text/html" : "text/plain");
+	if (cont.isHtml())
+	  m_Text.setText(cont.getHelp());
+	else
+	  m_Text.setText(Utils.insertLineBreaks(cont.getHelp(), GUIHelper.getInteger("HelpFrameMaxColumns", 80)));
       }
 
       if (m_CaretAtStart)

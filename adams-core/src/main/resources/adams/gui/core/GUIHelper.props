@@ -191,3 +191,7 @@ DirectoryChooserType=simple
 # the maximum width (in chars) for spreadsheet tables
 # (int, use <= 0 for unlimited)
 SpreadSheetTableMaxColumnNameChars=40
+
+# the maximum number of columns for plain text in adams.gui.help.HelpFrame
+# (int)
+HelpFrameMaxColumns=80
