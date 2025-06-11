@@ -15,7 +15,7 @@
 
 /*
  * DataContainerPanel.java
- * Copyright (C) 2008-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -32,6 +32,7 @@ import adams.db.DatabaseConnectionHandler;
 import adams.event.DatabaseConnectionChangeEvent;
 import adams.event.DatabaseConnectionChangeListener;
 import adams.gui.core.BasePanel;
+import adams.gui.core.HelpSupporter;
 import adams.gui.event.DataChangeEvent;
 import adams.gui.event.DataChangeListener;
 import adams.gui.scripting.AbstractScriptingEngine;
@@ -62,7 +63,6 @@ import java.util.Hashtable;
  * Special panel for displaying the DataContainer data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of container to visualize
  * @param <M> the type of container manager to use
  */
@@ -71,7 +71,7 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
   implements StatusMessageHandler, ScriptingEngineHandler,
              DatabaseConnectionHandler, DatabaseConnectionChangeListener,
              DataChangeListener, ContainerListManager<M>, CleanUpHandler,
-             SendToActionSupporter {
+             SendToActionSupporter, HelpSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 5719709547705333418L;
@@ -475,6 +475,62 @@ public abstract class DataContainerPanel<T extends DataContainer, M extends Abst
     }
 
     return result;
+  }
+
+  /**
+   * Clears any help information.
+   */
+  @Override
+  public void clearHelp() {
+    m_PlotPanel.clearHelp();
+  }
+
+  /**
+   * Returns whether any help information is available.
+   *
+   * @return		true if help available
+   */
+  @Override
+  public boolean hasHelp() {
+    return m_PlotPanel.hasHelp();
+  }
+
+  /**
+   * Sets the help information to offer.
+   *
+   * @param help	the help
+   * @param isHtml	whether html or plain text
+   */
+  @Override
+  public void setHelp(String help, boolean isHtml) {
+    m_PlotPanel.setHelp(help, isHtml);
+  }
+
+  /**
+   * Returns the help information if any.
+   *
+   * @return		the help information
+   */
+  @Override
+  public String getHelp() {
+    return m_PlotPanel.getHelp();
+  }
+
+  /**
+   * Returns whether the help is html or plain text.
+   *
+   * @return		true if html
+   */
+  @Override
+  public boolean isHelpHtml() {
+    return m_PlotPanel.isHelpHtml();
+  }
+
+  /**
+   * Displays the help.
+   */
+  public void showHelp() {
+    m_PlotPanel.showHelp();
   }
 
   /**

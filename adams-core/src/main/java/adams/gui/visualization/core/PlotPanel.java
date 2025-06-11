@@ -15,11 +15,12 @@
 
 /*
  * PlotPanel.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
 
+import adams.gui.core.HelpSupporter;
 import adams.gui.event.PaintEvent;
 import adams.gui.event.PaintEvent.PaintMoment;
 import adams.gui.event.PaintListener;
@@ -55,10 +56,10 @@ import java.util.Set;
  * Display and parametrization of top/bottom/left/right axis is possible.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PlotPanel
-  extends JPanel {
+  extends JPanel
+  implements HelpSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -3406313912401195452L;
@@ -908,7 +909,64 @@ public class PlotPanel
   public void addZoom(int top, int left, int bottom, int right) {
     m_PanelContent.addZoom(top, left, bottom, right);
   }
-  
+
+  /**
+   * Clears any help information.
+   */
+  @Override
+  public void clearHelp() {
+    m_PanelContent.clearHelp();
+  }
+
+  /**
+   * Returns whether any help information is available.
+   *
+   * @return		true if help available
+   */
+  @Override
+  public boolean hasHelp() {
+    return m_PanelContent.hasHelp();
+  }
+
+  /**
+   * Sets the help information to offer.
+   *
+   * @param help	the help
+   * @param isHtml	whether html or plain text
+   */
+  @Override
+  public void setHelp(String help, boolean isHtml) {
+    m_PanelContent.setHelp(help, isHtml);
+  }
+
+  /**
+   * Returns the help information if any.
+   *
+   * @return		the help information
+   */
+  @Override
+  public String getHelp() {
+    return m_PanelContent.getHelp();
+  }
+
+  /**
+   * Returns whether the help is html or plain text.
+   *
+   * @return		true if html
+   */
+  @Override
+  public boolean isHelpHtml() {
+    return m_PanelContent.isHelpHtml();
+  }
+
+  /**
+   * Displays the help.
+   */
+  @Override
+  public void showHelp() {
+    m_PanelContent.showHelp();
+  }
+
   /**
    * Returns a short description of the panel.
    *

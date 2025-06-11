@@ -15,18 +15,20 @@
 
 /*
  * ContentPanel.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core.plot;
 
 import adams.core.base.BaseInterval;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.OptionHandler;
 import adams.gui.core.BaseMenu;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.HelpSupporter;
 import adams.gui.core.ImageManager;
 import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
@@ -38,6 +40,7 @@ import adams.gui.event.PlotPanelZoomEvent;
 import adams.gui.event.PlotPanelZoomEvent.ZoomEventType;
 import adams.gui.event.PlotPanelZoomListener;
 import adams.gui.goe.GenericObjectEditorDialog;
+import adams.gui.help.HelpFrame;
 import adams.gui.print.JComponentWriter;
 import adams.gui.print.JComponentWriterFileChooser;
 import adams.gui.visualization.core.AxisPanel;
@@ -67,16 +70,16 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A specialized panel that can notify listeners of paint updates.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ContentPanel
   extends BasePanel
-  implements ChangeListener {
+  implements ChangeListener, HelpSupporter {
 
   /** the owner of the panel. */
   protected PlotPanel m_Owner;
@@ -150,6 +153,12 @@ public class ContentPanel
   /** the filechooser for saving the panel. */
   protected JComponentWriterFileChooser m_FileChooser;
 
+  /** the help string (if any). */
+  protected String m_Help;
+
+  /** whether the help string is html or plain text. */
+  protected boolean m_HtmlHelp;
+
   /**
    * Initializes the panel.
    *
@@ -182,6 +191,8 @@ public class ContentPanel
     m_MouseMovementTrackers = new HashSet<>();
     m_ZoomingEnabled        = true;
     m_PanningEnabled        = true;
+    m_Help                  = null;
+    m_HtmlHelp              = false;
   }
 
   /**
@@ -302,7 +313,7 @@ public class ContentPanel
       }
       @Override
       public void mouseMoved(MouseEvent e) {
-	if (m_MouseMovementTrackers.size() > 0)
+	if (!m_MouseMovementTrackers.isEmpty())
 	  notifyMouseMovementTrackers(e);
         super.mouseMoved(e);
       }
@@ -664,6 +675,12 @@ public class ContentPanel
     item = new JMenuItem("Save plot...", ImageManager.getIcon("save.gif"));
     item.addActionListener((ActionEvent ae) -> savePlot());
     result.add(item);
+
+    if (hasHelp()) {
+      item = new JMenuItem("Help...", ImageManager.getIcon("help"));
+      item.addActionListener((ActionEvent ae) -> showHelp());
+      result.add(item);
+    }
 
     // customize it?
     if (m_PopupMenuCustomizer != null) {
@@ -1136,15 +1153,74 @@ public class ContentPanel
       return;
 
     // save the file
+    file = getFileChooser().getSelectedFile().getAbsoluteFile();
     try {
-      file   = getFileChooser().getSelectedFile().getAbsoluteFile();
       writer = getFileChooser().getWriter();
       writer.setComponent(m_Owner);
       writer.setFile(new PlaceholderFile(file));
       writer.toOutput();
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to save plot to: " + file, e);
     }
+  }
+
+  /**
+   * Clears any help information.
+   */
+  @Override
+  public void clearHelp() {
+    m_Help       = null;
+    m_HtmlHelp = false;
+  }
+
+  /**
+   * Returns whether any help information is available.
+   *
+   * @return		true if help available
+   */
+  @Override
+  public boolean hasHelp() {
+    return (m_Help != null) && !m_Help.trim().isEmpty();
+  }
+
+  /**
+   * Sets the help information to offer.
+   *
+   * @param help	the help
+   * @param isHtml	whether html or plain text
+   */
+  @Override
+  public void setHelp(String help, boolean isHtml) {
+    m_Help     = help;
+    m_HtmlHelp = isHtml;
+  }
+
+  /**
+   * Returns the help information if any.
+   *
+   * @return		the help information
+   */
+  @Override
+  public String getHelp() {
+    return m_Help;
+  }
+
+  /**
+   * Returns whether the help is html or plain text.
+   *
+   * @return		true if html
+   */
+  @Override
+  public boolean isHelpHtml() {
+    return m_HtmlHelp;
+  }
+
+  /**
+   * Displays the help.
+   */
+  @Override
+  public void showHelp() {
+    HelpFrame.showHelp(getClass(), m_Help, m_HtmlHelp);
   }
 }

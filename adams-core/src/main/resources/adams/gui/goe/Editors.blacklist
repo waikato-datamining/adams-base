@@ -10,9 +10,12 @@
 # - you can use [] to denote arrays (only for classes, not for class+property)
 #
 # Author: FracPete (fracpete at waikat dot ac dot nz)
-# Version: $Revision$
 
 adams.flow.core.AbstractActor=true
 adams.flow.core.AbstractActor[]=true
 adams.flow.core.Actor=true
 adams.flow.core.Actor[]=true
+
+# To avoid stackoverflow when performing property traversal, since
+# the Dimension.getSize() method returns itself as new object
+java.awt.Dimension#size=true
