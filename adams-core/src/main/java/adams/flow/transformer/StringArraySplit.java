@@ -15,7 +15,7 @@
 
 /*
  * StringArraySplit.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -324,19 +324,19 @@ public class StringArraySplit
       if (m_RegExp.isMatch(line)) {
         switch (m_SplitHandling) {
 	  case DISCARD:
-	    if (current.size() > 0)
-	      m_Queue.add(current.toArray(new String[current.size()]));
+	    if (!current.isEmpty())
+	      m_Queue.add(current.toArray(new String[0]));
 	    current.clear();
 	    break;
 	  case AT_START:
-	    if (current.size() > 0)
-	      m_Queue.add(current.toArray(new String[current.size()]));
+	    if (!current.isEmpty())
+	      m_Queue.add(current.toArray(new String[0]));
 	    current.clear();
 	    current.add(line);
 	    break;
 	  case AT_END:
 	    current.add(line);
-	    m_Queue.add(current.toArray(new String[current.size()]));
+	    m_Queue.add(current.toArray(new String[0]));
 	    current.clear();
 	    break;
 	  default:
@@ -349,10 +349,10 @@ public class StringArraySplit
     }
 
     // remainder?
-    if (current.size() > 0) {
+    if (!current.isEmpty()) {
       switch (m_RemainderHandling) {
 	case OUTPUT:
-	  m_Queue.add(current.toArray(new String[current.size()]));
+	  m_Queue.add(current.toArray(new String[0]));
 	  current.clear();
 	  break;
 	case DISCARD:
