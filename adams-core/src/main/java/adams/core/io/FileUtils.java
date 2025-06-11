@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -1505,6 +1505,25 @@ public class FileUtils {
   }
 
   /**
+   * Returns the part of the files that is relative to the parent.
+   * If the files do not start with the parent, it will return the absolute paths of the files.
+   *
+   * @param parent	the parent to use
+   * @param files	the files to obtain the relative path for
+   * @return		the relative paths
+   */
+  public static String[] relativePath(File parent, File[] files) {
+    String[]	result;
+    int		i;
+
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = relativePath(parent, files[i]);
+
+    return result;
+  }
+
+  /**
    * Returns the part of the file that is relative to the parent.
    * If the file does not start with the parent, it will return the absolute path of the file.
    *
@@ -1525,6 +1544,25 @@ public class FileUtils {
   }
 
   /**
+   * Returns the part of the files that is relative to the parent.
+   * If the files do not start with the parent, it will return the absolute paths of the files.
+   *
+   * @param parent	the parent to use
+   * @param files	the files to obtain the relative path for
+   * @return		the relative paths
+   */
+  public static String[] relativePath(String parent, String[] files) {
+    String[]	result;
+    int		i;
+
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = relativePath(parent, files[i]);
+
+    return result;
+  }
+
+  /**
    * Returns the part of the file that is relative to the parent.
    * If the file does not start with the parent, it will return the absolute path of the file.
    *
@@ -1540,6 +1578,40 @@ public class FileUtils {
     result    = new PlaceholderFile(file).getAbsolutePath();
     if (result.startsWith(parentStr))
       result = result.substring(parentStr.length());
+
+    return result;
+  }
+
+  /**
+   * Returns the absolute paths.
+   *
+   * @param files	the files to get the absolute paths for
+   * @return		the absolute paths
+   */
+  public static String[] absolutePath(File[] files) {
+    String[]	result;
+    int		i;
+
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = files[i].getAbsolutePath();
+
+    return result;
+  }
+
+  /**
+   * Returns the absolute paths.
+   *
+   * @param files	the files to get the absolute paths for
+   * @return		the absolute paths
+   */
+  public static String[] absolutePath(String[] files) {
+    String[]	result;
+    int		i;
+
+    result = new String[files.length];
+    for (i = 0; i < files.length; i++)
+      result[i] = new PlaceholderFile(files[i]).getAbsolutePath();
 
     return result;
   }
