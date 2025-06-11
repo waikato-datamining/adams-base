@@ -41,6 +41,7 @@ import adams.flow.sink.sequenceplotter.ToggleOutlier;
 import adams.flow.transformer.AbstractInteractiveTransformerDialog;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.HelpSupporterUtils;
 import adams.gui.core.ImageManager;
 import adams.gui.core.Undo;
 import adams.gui.event.UndoEvent;
@@ -560,6 +561,8 @@ public class RemoveOutliers
       buttonUndo.setEnabled(m_PlotterPanel.canUndo());
       buttonRedo.setEnabled(m_PlotterPanel.canRedo());
     });
+
+    HelpSupporterUtils.setHelp(m_PlotterPanel, globalInfo(), false);
 
     return result;
   }

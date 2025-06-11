@@ -35,6 +35,7 @@ import adams.flow.sink.sequenceplotter.OutlierPaintlet;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.HelpSupporterUtils;
 import adams.gui.core.MultiPagePane;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.event.WekaInvestigatorDataEvent;
@@ -801,6 +802,7 @@ public class ClassifierErrors
       sink.setAdditional(new SpreadSheetColumnRange(Utils.flatten(additional, ",")));
 
     panel = sink.createDisplayPanel(token);
+    HelpSupporterUtils.setHelp(panel, globalInfo(), false);
 
     return new ComponentContentPanel(panel, sink.displayPanelRequiresScrollPane());
   }
