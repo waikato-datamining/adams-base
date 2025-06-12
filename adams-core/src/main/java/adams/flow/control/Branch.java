@@ -451,7 +451,8 @@ public class Branch
 
       if (m_ActualNumThreads > 1) {
 	m_HasCallableTransformers = hasCallableTransformers();
-	getLogger().warning("callable transformers found, parallel execution requires synchronization.");
+	if (m_HasCallableTransformers)
+	  getLogger().warning("callable transformers found, parallel execution requires synchronization.");
       }
 
       if (m_CollectOutput)
