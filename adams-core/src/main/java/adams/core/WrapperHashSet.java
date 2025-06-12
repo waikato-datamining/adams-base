@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WrapperHashSet.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -35,7 +35,6 @@ import java.util.Set;
  * of the payload object in its equals(Object) method for comparison.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <E> the type to store
  */
 public class WrapperHashSet<E>
@@ -121,7 +120,7 @@ public class WrapperHashSet<E>
   public WrapperHashSet() {
     super();
 
-    m_HashSet = new HashSet<Wrapper>();
+    m_HashSet = new HashSet<>();
   }
 
   /**
@@ -136,7 +135,7 @@ public class WrapperHashSet<E>
   public WrapperHashSet(Collection<? extends E> c) {
     super();
 
-    m_HashSet = new HashSet<Wrapper>();
+    m_HashSet = new HashSet<>();
     addAll(c);
   }
 
@@ -152,7 +151,7 @@ public class WrapperHashSet<E>
   public WrapperHashSet(int initialCapacity, float loadFactor) {
     super();
 
-    m_HashSet = new HashSet<Wrapper>(initialCapacity, loadFactor);
+    m_HashSet = new HashSet<>(initialCapacity, loadFactor);
   }
 
   /**
@@ -166,11 +165,11 @@ public class WrapperHashSet<E>
   public WrapperHashSet(int initialCapacity) {
     super();
 
-    m_HashSet = new HashSet<Wrapper>(initialCapacity);
+    m_HashSet = new HashSet<>(initialCapacity);
   }
 
   /**
-   * Removes all of the elements from this set.
+   * Removes all the elements from this set.
    * The set will be empty after this call returns.
    */
   @Override
@@ -188,7 +187,7 @@ public class WrapperHashSet<E>
   public Object clone() {
     WrapperHashSet<E> 	result;
 
-    result = new WrapperHashSet<E>();
+    result = new WrapperHashSet<>();
     result.m_HashSet = (HashSet<Wrapper>) m_HashSet.clone();
 
     return result;
@@ -205,8 +204,8 @@ public class WrapperHashSet<E>
   public Iterator<E> iterator() {
     List<E>	result;
 
-    result = new ArrayList<E>();
-    for (Wrapper w: m_HashSet)
+    result = new ArrayList<>();
+    for (Wrapper w: m_HashSet.toArray(new Wrapper[0]))
       result.add((E) w.getPayload());
 
     return result.iterator();
