@@ -16,7 +16,7 @@
 @REM
 
 @REM ----------------------------------------------------------------------------
-@REM Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
+@REM Copyright (C) 2011-2025 University of Waikato, Hamilton, NZ
 @REM ----------------------------------------------------------------------------
 
 @echo off
@@ -26,10 +26,10 @@ set ERROR_CODE=0
 :AssembleCmd
 set JCMD=java
 
-if not "%JAVA_HOME%"=="" if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
+if defined JAVA_HOME if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
 if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
 
-if not "%JAVACMD%"=="" if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
+if defined JAVACMD if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
 if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
 where /q "java"
