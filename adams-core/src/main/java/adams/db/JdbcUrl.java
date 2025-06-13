@@ -15,7 +15,7 @@
 
 /*
  * JdbcUrl.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -99,8 +99,7 @@ public class JdbcUrl
       + "- SQLite: jdbc:sqlite:PATH_TO_FILE\n"
       + "- H2: jdbc:h2:{mem|file|tcp|ssl|}:...\n"
       + "- HSQLDB: jdbc:hsqldb:{mem|file|res|hsql|http|hsqls|https}:...\n"
-      + "- MS SQL Server (jTDS): jdbc:jtds:sqlserver://HOST:1433/DATABASE\n"
-      + "- MS SQL Server (MS): jdbc:sqlserver://HOST:1433;databaseName=DATABASE";
+      + "- MS SQL Server: jdbc:sqlserver://HOST:1433;databaseName=DATABASE";
   }
 
   /**
