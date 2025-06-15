@@ -32,7 +32,6 @@ import adams.core.option.ClassOption;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.flow.core.Actor;
-import weka.classifiers.Classifier;
 import weka.classifiers.lazy.LWL;
 import weka.classifiers.lazy.LWLSynchro;
 
@@ -88,7 +87,7 @@ public class FixLWLSynchroNoUpdate
 	  m_Updates++;
 	}
       }
-      else if (m_MigrateToSynchro && (child instanceof LWL)) {
+      else if (m_MigrateToSynchro && (child.getClass().equals(LWL.class))) {
 	LWL lwl = (LWL) child;
 	LWLSynchro synchro = new LWLSynchro();
 	try {
@@ -126,7 +125,7 @@ public class FixLWLSynchroNoUpdate
   @Override
   public String globalInfo() {
     return "Ensures that the 'noUpdate' flag is set in the " + Utils.classToString(LWLSynchro.class) + " classifiers.\n"
-      + "Optionally, can convert LWL instances to LWLSynchro as well.";
+	     + "Optionally, can convert LWL instances to LWLSynchro as well.";
   }
 
   /**
@@ -199,7 +198,7 @@ public class FixLWLSynchroNoUpdate
       }
       @Override
       public boolean canHandle(AbstractOption option) {
-	return (option instanceof ClassOption) && (((ClassOption) option).getBaseClass() == Classifier.class);
+	return (option instanceof ClassOption);
       }
       @Override
       public boolean canRecurse(Class cls) {
