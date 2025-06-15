@@ -73,7 +73,8 @@ public class RemoveOutliersClickAction
 	     + "Use SHIFT+left-click to add polygon vertices and CTRL+SHIFT+left-click to finalize the "
 	     + "polygon and toggle points enclosed by the polygon. CTRL+right-click discards the polygon vertices.\n"
 	     + "SHIFT+right-clicks displays the outliers scheduled for removal.\n"
-	     + "CTRL+SHIFT+right-click clears all outlier flags.";
+	     + "CTRL+SHIFT+right-click clears all outlier flags.\n"
+	     + "A left-click with no modifiers displays the point(s) under the mouse cursor.";
   }
 
   /**
@@ -330,6 +331,23 @@ public class RemoveOutliersClickAction
   }
 
   /**
+   * Displays the points that were determined by the hit detector.
+   *
+   * @param panel 	the associated panel
+   * @param hits	the hits
+   */
+  protected void showHits(SequencePlotterPanel panel, List<XYSequencePoint> hits) {
+    SpreadSheet		sheet;
+
+    if (hits.isEmpty())
+      sheet = new DefaultSpreadSheet();
+    else
+      sheet = ((XYSequence) hits.get(0).getParent()).toSpreadSheet(hits);
+
+    showData(panel, sheet);
+  }
+
+  /**
    * Gets triggered if the user clicks on the canvas.
    *
    * @param panel	the associated panel
@@ -353,6 +371,15 @@ public class RemoveOutliersClickAction
       else if (KeyUtils.isShiftDown(e.getModifiersEx()) && KeyUtils.isCtrlDown(e.getModifiersEx())) {
 	e.consume();
 	togglePolygonPoints(panel);
+      }
+      else if (KeyUtils.isNoneDown(e.getModifiersEx())) {
+	e.consume();
+	if (m_HitDetector.getOwner() != panel.getDataPaintlet())
+	  m_HitDetector.setOwner(panel.getDataPaintlet());
+	located = m_HitDetector.locate(e);
+	if (located instanceof List) {
+	  showHits(panel, (List<XYSequencePoint>) located);
+	}
       }
     }
     else if (MouseUtils.isRightClick(e)) {
