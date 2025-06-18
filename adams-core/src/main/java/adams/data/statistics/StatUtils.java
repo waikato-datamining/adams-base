@@ -2519,6 +2519,66 @@ public class StatUtils {
   }
 
   /**
+   * Computes the cosine similarity between the two arrays.
+   *
+   * @param y1		the first array
+   * @param y2		the second array
+   * @return		the similarity
+   */
+  public static double cosineSimilarity(double[] y1, double[] y2) {
+    double 	dotProd;
+    double 	norm1;
+    double 	norm2;
+    int		i;
+
+    if (y1.length != y2.length)
+      throw new IllegalArgumentException(
+	"Arrays differ in length: " + y1.length + " != " + y2.length);
+
+    dotProd = 0.0;
+    norm1   = 0.0;
+    norm2   = 0.0;
+    for (i = 0; i < y1.length; i++) {
+      dotProd += y1[i] * y2[i];
+      norm1   += Math.pow(y1[i], 2);
+      norm2   += Math.pow(y2[i], 2);
+    }
+    return dotProd / (Math.sqrt(norm1) * Math.sqrt(norm2));
+  }
+
+  /**
+   * Computes the cosine similarity between the two arrays.
+   *
+   * @param y1		the first array
+   * @param y2		the second array
+   * @return		the similarity
+   */
+  public static double cosineSimilarity(Number[] y1, Number[] y2) {
+    double 	dotProd;
+    double 	norm1;
+    double 	norm2;
+    int		i;
+    double	y1d;
+    double	y2d;
+
+    if (y1.length != y2.length)
+      throw new IllegalArgumentException(
+	"Arrays differ in length: " + y1.length + " != " + y2.length);
+
+    dotProd = 0.0;
+    norm1   = 0.0;
+    norm2   = 0.0;
+    for (i = 0; i < y1.length; i++) {
+      y1d = y1[i].doubleValue();
+      y2d = y2[i].doubleValue();
+      dotProd += y1d * y2d;
+      norm1   += Math.pow(y1d, 2);
+      norm2   += Math.pow(y2d, 2);
+    }
+    return dotProd / (Math.sqrt(norm1) * Math.sqrt(norm2));
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
