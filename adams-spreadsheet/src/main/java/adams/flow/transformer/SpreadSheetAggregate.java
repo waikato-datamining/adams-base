@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetAggregate.java
- * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -178,7 +178,7 @@ public class SpreadSheetAggregate
 	+ "new column is generated.\n"
 	+ "If no key column(s) provided, the complete spreadsheet is used for aggregation.\n"
 	+ "Missing cells get ignored.\n"
-	+ "COUNT doesn't need any numeric columns.\n"
+	+ "COUNT doesn't need any numeric columns (leave 'aggregateColumns' empty if there are no numeric columns).\n"
 	+ "Note: A single non-numeric cell makes a column a non-numeric one!";
   }
 
