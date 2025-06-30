@@ -73,7 +73,7 @@ public class StringToObject
    */
   @Override
   public String globalInfo() {
-    return "Converts the JSON string into an object of the specified class.";
+    return "Converts the JSON string into an object of the specified class using Jackson's Databind functionality (https://github.com/FasterXML/jackson-databind).";
   }
 
   /**
