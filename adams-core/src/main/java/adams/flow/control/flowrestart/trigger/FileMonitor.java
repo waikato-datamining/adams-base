@@ -15,7 +15,7 @@
 
 /*
  * FileMonitor.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart.trigger;
@@ -196,12 +196,12 @@ public class FileMonitor
       protected void doRun() {
         String msg;
         while (!isStopped()) {
-          Utils.wait(this, m_Interval, 100);
           if (!m_Monitor.isInitialized(m_MonitoredFile)) {
             msg = m_Monitor.initialize(m_MonitoredFile);
             if (msg != null)
               getLogger().warning(msg);
           }
+	  Utils.wait(this, m_Interval, 100);
           if (m_Monitor.hasChanged(m_MonitoredFile)) {
             if (isLoggingEnabled())
               getLogger().info("File has changed (" + m_MonitoredFile + "), triggering!");
