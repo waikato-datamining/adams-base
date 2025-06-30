@@ -15,7 +15,7 @@
 
 /*
  * Null.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart.operation;
@@ -49,7 +49,7 @@ public class Null
    * @return		null if successfully restarted, otherwise the error message
    */
   @Override
-  public String restart(Flow flow) {
+  protected String doRestart(Flow flow) {
     return null;
   }
 }

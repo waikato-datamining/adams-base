@@ -15,7 +15,7 @@
 
 /*
  * AbstractRestartOperation.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart.operation;
@@ -54,7 +54,7 @@ public abstract class AbstractRestartOperation
   protected void stopFlow(Flow flow) {
     if (!flow.isStopped()) {
       if (isLoggingEnabled())
-	getLogger().info("Stopping flow...");
+	getLogger().info("Stopping flow: " + flow.getFlowID());
       flow.stopExecution();
       flow.wrapUp();
       flow.cleanUp();
@@ -67,5 +67,17 @@ public abstract class AbstractRestartOperation
    * @param flow	the flow to handle
    * @return		null if successfully restarted, otherwise the error message
    */
-  public abstract String restart(Flow flow);
+  protected abstract String doRestart(Flow flow);
+
+  /**
+   * Restarts the flow.
+   *
+   * @param flow	the flow to handle
+   * @return		null if successfully restarted, otherwise the error message
+   */
+  public String restart(Flow flow) {
+    if (isLoggingEnabled())
+      getLogger().info("Restart initiated: " + flow.getFlowID());
+    return doRestart(flow);
+  }
 }

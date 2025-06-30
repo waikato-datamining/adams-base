@@ -15,7 +15,7 @@
 
 /*
  * AbstractFlowRestartManager.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart;
@@ -39,7 +39,19 @@ public abstract class AbstractFlowRestartManager
    * @param flow	the flow to handle
    * @return		null if successfully started, otherwise error message
    */
-  public abstract String start(Flow flow);
+  protected abstract String doStart(Flow flow);
+
+  /**
+   * Starts the restart handling.
+   *
+   * @param flow	the flow to handle
+   * @return		null if successfully started, otherwise error message
+   */
+  public String start(Flow flow) {
+    if (isLoggingEnabled())
+      getLogger().info("Start restart handling: " + flow.getFlowID());
+    return doStart(flow);
+  }
 
   /**
    * Stops the restart handling.
@@ -47,5 +59,17 @@ public abstract class AbstractFlowRestartManager
    * @param flow	the flow to handle
    * @return		null if successfully stopped, otherwise error message
    */
-  public abstract String stop(Flow flow);
+  protected abstract String doStop(Flow flow);
+
+  /**
+   * Stops the restart handling.
+   *
+   * @param flow	the flow to handle
+   * @return		null if successfully stopped, otherwise error message
+   */
+  public String stop(Flow flow) {
+    if (isLoggingEnabled())
+      getLogger().info("Stop restart handling: " + flow.getFlowID());
+    return doStop(flow);
+  }
 }

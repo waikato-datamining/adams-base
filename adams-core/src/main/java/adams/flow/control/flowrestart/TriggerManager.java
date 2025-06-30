@@ -15,7 +15,7 @@
 
 /*
  * TriggerManager.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.control.flowrestart;
@@ -135,7 +135,7 @@ public class TriggerManager
    * @return		null if successfully started, otherwise error message
    */
   @Override
-  public String start(Flow flow) {
+  protected String doStart(Flow flow) {
     m_Flow = flow;
     m_Trigger.setTriggerHandler(this);
     return m_Trigger.start(flow);
@@ -148,6 +148,8 @@ public class TriggerManager
    */
   @Override
   public String trigger() {
+    if (isLoggingEnabled())
+      getLogger().info("Restart triggered: " + m_Flow.getFlowID());
     return m_Operation.restart(m_Flow);
   }
 
@@ -158,7 +160,7 @@ public class TriggerManager
    * @return		null if successfully stopped, otherwise error message
    */
   @Override
-  public String stop(Flow flow) {
+  protected String doStop(Flow flow) {
     return m_Trigger.stop();
   }
 }
