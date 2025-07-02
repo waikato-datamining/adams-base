@@ -15,18 +15,19 @@
 
 /*
  * AbstractOptionTransfer.java
- * Copyright (C) 2016-2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.optiontransfer;
 
 import adams.core.ClassLister;
-import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractOption;
+import adams.core.VariablesUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Ancestor for transferring options between option handlers.
@@ -70,15 +71,7 @@ public abstract class AbstractOptionTransfer {
    * @param property	the property for which to transfer the variable
    */
   protected void transferVariable(OptionHandler source, OptionHandler target, String property) {
-    String		var;
-    AbstractOption	option;
-
-    if (source.getOptionManager().hasVariableForProperty(property)) {
-      var    = source.getOptionManager().getVariableForProperty(property);
-      option = target.getOptionManager().findByProperty(property);
-      if ((option != null) && (option instanceof AbstractArgumentOption))
-	((AbstractArgumentOption) option).setVariable(var);
-    }
+    VariablesUtils.transferVariable(source, target, property);
   }
 
   /**
@@ -90,15 +83,7 @@ public abstract class AbstractOptionTransfer {
    * @param targetProperty	the target property to receive the variable
    */
   protected void transferVariable(OptionHandler source, String sourceProperty, OptionHandler target, String targetProperty) {
-    String		var;
-    AbstractOption	option;
-
-    if (source.getOptionManager().hasVariableForProperty(sourceProperty)) {
-      var    = source.getOptionManager().getVariableForProperty(sourceProperty);
-      option = target.getOptionManager().findByProperty(targetProperty);
-      if ((option != null) && (option instanceof AbstractArgumentOption))
-	((AbstractArgumentOption) option).setVariable(var);
-    }
+    VariablesUtils.transferVariable(source, sourceProperty, target, targetProperty);
   }
 
   /**
@@ -149,8 +134,7 @@ public abstract class AbstractOptionTransfer {
 	  m_Transfers.add(transfer);
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to instantiate: " + cls.getName());
-	  e.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate: " + cls.getName(), e);
 	}
       }
     }
