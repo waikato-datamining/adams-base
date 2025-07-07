@@ -65,6 +65,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
@@ -551,14 +552,22 @@ public class SegmentationPanel
    * Performs an undo.
    */
   public void undo() {
-    getManager().undo();
+    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    SwingUtilities.invokeLater(() -> {
+      getManager().undo();
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
   }
 
   /**
    * Performs a redo.
    */
   public void redo() {
-    getManager().redo();
+    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    SwingUtilities.invokeLater(() -> {
+      getManager().redo();
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    });
   }
 
   /**
