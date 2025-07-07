@@ -345,11 +345,13 @@ public class SimpleOverlay
     g2d.setComposite(alpha);
     for (String layerName: layerNames) {
       layerColor = m_ColorProvider.next();
-      layerImage = BufferedImageHelper.convert(layers.get(layerName), BufferedImage.TYPE_INT_ARGB);
-      ImageUtils.replaceColor(layerImage, new Color(0, 0, 0, 255), new Color(0, 0, 0, 0));
-      ImageUtils.replaceColor(layerImage, new Color(255, 255, 255, 255), layerColor);
-      ImageUtils.replaceColor(layerImage, new Color(1, 1, 1, 255), layerColor);  // for fixing binary images
-      g2d.drawImage(layerImage, 0, 0, null);
+      if (layers.get(layerName) != null) {
+	layerImage = BufferedImageHelper.convert(layers.get(layerName), BufferedImage.TYPE_INT_ARGB);
+	ImageUtils.replaceColor(layerImage, new Color(0, 0, 0, 255), new Color(0, 0, 0, 0));
+	ImageUtils.replaceColor(layerImage, new Color(255, 255, 255, 255), layerColor);
+	ImageUtils.replaceColor(layerImage, new Color(1, 1, 1, 255), layerColor);  // for fixing binary images
+	g2d.drawImage(layerImage, 0, 0, null);
+      }
     }
 
     g2d.dispose();
