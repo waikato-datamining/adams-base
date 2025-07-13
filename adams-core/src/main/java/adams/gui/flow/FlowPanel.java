@@ -1152,14 +1152,32 @@ public class FlowPanel
    * 				errors/stopped/finished
    * @param debug		whether to run in debug mode
    */
-  public void restart(boolean showNotification, boolean debug) {
+  public void restart(final boolean showNotification, final boolean debug) {
+    SwingWorker		worker;
+    final FlowPanel	owner;
+
+    owner = this;
     if (isRunning()) {
-      stop();
-      while (isRunning() || isStopping()) {
-	Utils.wait(this, 1000, 100);
-      }
+      worker = new SwingWorker() {
+	@Override
+	protected Object doInBackground() throws Exception {
+	  m_CurrentWorker.stopExecution();
+	  while (owner.isRunning() || owner.isStopping()) {
+	    Utils.wait(null, 1000, 100);
+	  }
+	  return null;
+	}
+	@Override
+	protected void done() {
+	  owner.run(showNotification, debug);
+	  super.done();
+	}
+      };
+      worker.execute();
     }
-    run(showNotification, debug);
+    else {
+      run(showNotification, debug);
+    }
   }
 
   /**
