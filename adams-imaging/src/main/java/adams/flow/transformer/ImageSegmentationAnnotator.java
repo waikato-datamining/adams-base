@@ -22,11 +22,9 @@ package adams.flow.transformer;
 
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
-import adams.data.json.JsonHelper;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
@@ -39,7 +37,6 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.object.tools.CustomizableTool;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
-import net.minidev.json.JSONObject;
 
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -946,19 +943,7 @@ public class ImageSegmentationAnnotator
     m_PanelSegmentation.setToolButtonColumns(m_ToolButtonColumns);
     m_PanelSegmentation.setAutomaticUndoEnabled(m_AutomaticUndo);
     m_PanelSegmentation.getUndo().setMaxUndo(m_MaxUndo <= 0 ? -1 : m_MaxUndo);
-    m_ToolOptionsUpdatedListener = new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-	if (m_ToolOptionsRestore.isDirectory())
-	  return;
-	if (isLoggingEnabled())
-	  getLogger().info("Saving tools options: " + m_ToolOptionsRestore);
-	JSONObject jobj = JsonHelper.fromMap(m_PanelSegmentation.getToolOptions());
-	String msg = FileUtils.writeToFileMsg(m_ToolOptionsRestore.getAbsolutePath(), jobj, false, null);
-	if (msg != null)
-	  getLogger().warning("Failed to write tools restore file '" + m_ToolOptionsRestore + "' for tools options:\n" + msg);
-      }
-    };
+    m_ToolOptionsUpdatedListener = e -> m_PanelSegmentation.saveToolOptions(m_ToolOptionsRestore, this);
     m_PanelSegmentation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
     return m_PanelSegmentation;
   }
@@ -1002,7 +987,6 @@ public class ImageSegmentationAnnotator
     BufferedImage		img;
     AbstractImageContainer	imgcont;
     ImageSegmentationContainer	segcont;
-    JSONObject			jobj;
 
     m_Accepted = false;
 
@@ -1019,13 +1003,7 @@ public class ImageSegmentationAnnotator
     }
 
     // tools restore file?
-    if (m_ToolOptionsRestore.exists() && !m_ToolOptionsRestore.isDirectory()) {
-      if (isLoggingEnabled())
-	getLogger().info("Loading tools options: " + m_ToolOptionsRestore);
-      jobj = (JSONObject) JsonHelper.parse(m_ToolOptionsRestore, this);
-      if (jobj != null)
-	m_PanelSegmentation.setToolOptions(JsonHelper.toMap(jobj, false));
-    }
+    m_PanelSegmentation.loadToolOptions(m_ToolOptionsRestore, this);
 
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());

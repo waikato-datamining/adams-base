@@ -25,9 +25,11 @@ import adams.core.CleanUpHandler;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingObject;
+import adams.core.logging.LoggingSupporter;
 import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.PNGImageReader;
+import adams.data.json.JsonHelper;
 import adams.env.Environment;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.gui.core.BaseButton;
@@ -60,6 +62,7 @@ import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
 import adams.gui.visualization.segmentation.tool.CustomizableTool;
 import adams.gui.visualization.segmentation.tool.Pointer;
 import adams.gui.visualization.segmentation.tool.Tool;
+import net.minidev.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -1034,6 +1037,39 @@ public class SegmentationPanel
     }
 
     return result;
+  }
+
+  /**
+   * Saves the tool options to the specified JSON file.
+   *
+   * @param optionsFile	the JSON file to save to
+   * @param logger	for logging messages
+   */
+  public void saveToolOptions(PlaceholderFile optionsFile, LoggingSupporter logger) {
+    if (optionsFile.isDirectory())
+      return;
+    logger.getLogger().info("Saving tools options: " + optionsFile);
+    JSONObject jobj = JsonHelper.fromMap(getToolOptions());
+    String msg = FileUtils.writeToFileMsg(optionsFile.getAbsolutePath(), jobj, false, null);
+    if (msg != null)
+      logger.getLogger().warning("Failed to write tools restore file '" + optionsFile + "' for tools options:\n" + msg);
+  }
+
+  /**
+   * Restores the tool options from the JSON file.
+   *
+   * @param optionsFile	the JSON file to load/parse
+   * @param logger	for logging messages
+   */
+  public void loadToolOptions(PlaceholderFile optionsFile, LoggingSupporter logger) {
+    JSONObject	jobj;
+
+    if (optionsFile.exists() && !optionsFile.isDirectory()) {
+      logger.getLogger().info("Loading tools options: " + optionsFile);
+      jobj = (JSONObject) JsonHelper.parse(optionsFile, logger);
+      if (jobj != null)
+	setToolOptions(JsonHelper.toMap(jobj, false));
+    }
   }
 
   /**
