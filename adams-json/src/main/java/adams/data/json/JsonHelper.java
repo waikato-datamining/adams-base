@@ -15,12 +15,14 @@
 
 /*
  * JsonHelper.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.json;
 
+import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -282,6 +284,34 @@ public class JsonHelper {
       else {
 	result.put(key, obj);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the map into a JSON object.
+   *
+   * @param map		the map to convert
+   * @return		the generated JSON object
+   */
+  public static JSONObject fromMap(Map map) {
+    JSONObject	result;
+    Object	value;
+
+    result = new JSONObject();
+    for (Object key: map.keySet()) {
+      value = map.get(key);
+      if (value instanceof Number)
+	result.put("" + key, value);
+      else if (value instanceof String)
+	result.put("" + key, value);
+      else if (value instanceof Boolean)
+	result.put("" + key, value);
+      else if (value instanceof Map)
+        result.put("" + key, fromMap((Map) value));
+      else
+	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromMap: Unhandled type in map: " + Utils.classToString(value));
     }
 
     return result;
