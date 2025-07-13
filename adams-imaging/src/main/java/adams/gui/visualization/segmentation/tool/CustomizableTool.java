@@ -15,10 +15,12 @@
 
 /*
  * CustomizableTool.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.segmentation.tool;
+
+import java.util.Map;
 
 /**
  * Interface for tools with options.
@@ -32,4 +34,18 @@ public interface CustomizableTool
    * Applies the options.
    */
   public void applyOptions();
+
+  /**
+   * Supplies initial options to use.
+   *
+   * @param value	the options to use
+   */
+  public void setInitialOptions(Map<String,Object> value);
+
+  /**
+   * Returns the current options as a map.
+   *
+   * @return		the options
+   */
+  public Map<String,Object> getCurrentOptions();
 }

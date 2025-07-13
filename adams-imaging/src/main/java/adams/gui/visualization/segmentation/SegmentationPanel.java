@@ -57,6 +57,7 @@ import adams.gui.visualization.segmentation.layer.ImageLayer;
 import adams.gui.visualization.segmentation.layer.LayerManager;
 import adams.gui.visualization.segmentation.layer.OverlayLayer;
 import adams.gui.visualization.segmentation.paintoperation.PaintOperation;
+import adams.gui.visualization.segmentation.tool.CustomizableTool;
 import adams.gui.visualization.segmentation.tool.Pointer;
 import adams.gui.visualization.segmentation.tool.Tool;
 
@@ -82,8 +83,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Panel for performing segmentation annotations.
@@ -231,6 +234,9 @@ public class SegmentationPanel
   /** whether separate layers were used. */
   protected ContainerSettings m_ContainerSettings;
 
+  /** listeners for when tool options get updated. */
+  protected Set<ChangeListener> m_ToolOptionsUpdatedListeners;
+
   /**
    * Initializes the members.
    */
@@ -238,12 +244,13 @@ public class SegmentationPanel
   protected void initialize() {
     super.initialize();
 
-    m_LastMouseListener       = null;
-    m_LastMouseMotionListener = null;
-    m_ActiveTool              = null;
-    m_ContainerSettings       = null;
-    m_PaintOperation          = null;
-    m_Tools                   = new ArrayList<>();
+    m_LastMouseListener           = null;
+    m_LastMouseMotionListener     = null;
+    m_ActiveTool                  = null;
+    m_ContainerSettings           = null;
+    m_PaintOperation              = null;
+    m_Tools                       = new ArrayList<>();
+    m_ToolOptionsUpdatedListeners = new HashSet<>();
   }
 
   /**
@@ -485,9 +492,7 @@ public class SegmentationPanel
     location = m_SplitPaneLeft.getDividerLocation();
     m_SplitPaneLeft.setLeftComponent(m_PanelLeft);
     m_SplitPaneLeft.setDividerLocation(location);
-    hasActive = false;
-    if (getManager().hasActiveOverlay())
-      hasActive = true;
+    hasActive = getManager().hasActiveOverlay();
     if ((getManager().getCombinedLayer() != null) && (getManager().getCombinedLayer().hasActiveSubLayer()))
       hasActive = true;
     if (!hasActive)
@@ -964,6 +969,83 @@ public class SegmentationPanel
   }
 
   /**
+   * Adds the listener for when tool options have been updated.
+   *
+   * @param l		the listener to add
+   */
+  public void addToolOptionsUpdatedListener(ChangeListener l) {
+    m_ToolOptionsUpdatedListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for when tool options have been updated.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeToolOptionsUpdatedListener(ChangeListener l) {
+    m_ToolOptionsUpdatedListeners.remove(l);
+  }
+
+  /**
+   * Gets called when the options in a tool got updated.
+   */
+  public void toolOptionsUpdated() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ToolOptionsUpdatedListeners)
+      l.stateChanged(e);
+  }
+
+  /**
+   * Updates the tools with these options.
+   *
+   * @param value	the options to use for updating the tools
+   */
+  public void setToolOptions(Map<String,Object> value) {
+    CustomizableTool	custTool;
+
+    for (Tool tool: m_Tools) {
+      if (tool instanceof CustomizableTool) {
+	custTool = (CustomizableTool) tool;
+	if (value.containsKey(custTool.getClass().getName())) {
+	  custTool.setInitialOptions((Map<String,Object>) value.get(custTool.getClass().getName()));
+	}
+      }
+    }
+  }
+
+  /**
+   * Retrieves the current options.
+   *
+   * @return		the options for the tools
+   */
+  public Map<String,Object> getToolOptions() {
+    Map<String,Object>	result;
+    CustomizableTool	custTool;
+
+    result = new HashMap<>();
+
+    for (Tool tool: m_Tools) {
+      if (tool instanceof CustomizableTool) {
+	custTool = (CustomizableTool) tool;
+	result.put(custTool.getClass().getName(), custTool.getCurrentOptions());
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Cleans up data structures, frees up memory.
+   */
+  public void cleanUp() {
+    for (Tool tool: m_Tools)
+      tool.cleanUp();
+    m_ToolOptionsUpdatedListeners.clear();
+  }
+
+  /**
    * Generates a panel with separate overlay layers.
    *
    * @param args	the files to load
@@ -1007,14 +1089,6 @@ public class SegmentationPanel
     }
     panel.setToolButtonColumns(2);
     return panel;
-  }
-
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    for (Tool tool: m_Tools)
-      tool.cleanUp();
   }
 
   /**

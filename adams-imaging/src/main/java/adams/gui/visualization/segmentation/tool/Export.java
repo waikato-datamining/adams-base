@@ -175,6 +175,9 @@ public class Export
     String		msg;
 
     file = m_FileChooserPanel.getCurrent();
+    if (file.isDirectory())
+      return;
+
     if (file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".jpg")) {
       manager = getCanvas().getOwner().getManager();
       image   = new BufferedImage(manager.getWidth(), manager.getHeight(), BufferedImage.TYPE_INT_ARGB);

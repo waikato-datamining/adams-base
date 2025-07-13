@@ -15,15 +15,18 @@
 
 /*
  * ImageSegmentationAnnotator.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
 import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
+import adams.data.json.JsonHelper;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
@@ -36,6 +39,7 @@ import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.object.tools.CustomizableTool;
 import adams.gui.visualization.segmentation.SegmentationPanel;
 import adams.gui.visualization.segmentation.layer.AbstractLayer.AbstractLayerState;
+import net.minidev.json.JSONObject;
 
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -71,6 +75,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -94,12 +99,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
@@ -232,6 +239,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-tool-options-restore &lt;adams.core.io.PlaceholderFile&gt; (property: toolOptionsRestore)
+ * &nbsp;&nbsp;&nbsp;The JSON file to store the tool options in for restoring it the next time
+ * &nbsp;&nbsp;&nbsp;the actor gets called; ignored if pointing to a directory.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -250,6 +263,9 @@ public class ImageSegmentationAnnotator
 
   /** the panel. */
   protected SegmentationPanel m_PanelSegmentation;
+
+  /** the listener for when tool options change. */
+  protected ChangeListener m_ToolOptionsUpdatedListener;
 
   /** the alpha value. */
   protected float m_Alpha;
@@ -286,6 +302,9 @@ public class ImageSegmentationAnnotator
 
   /** whether layer actions are available (when using separate layers). */
   protected boolean m_AllowLayerActions;
+
+  /** the json file to store the tool options in. */
+  protected PlaceholderFile m_ToolOptionsRestore;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -374,6 +393,10 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "allow-layer-actions", "allowLayerActions",
       false);
+
+    m_OptionManager.add(
+      "tool-options-restore", "toolOptionsRestore",
+      new PlaceholderFile("."));
   }
 
   /**
@@ -846,6 +869,37 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @param value 	the file
+   */
+  public void setToolOptionsRestore(PlaceholderFile value) {
+    m_ToolOptionsRestore = value;
+    reset();
+  }
+
+  /**
+   * Returns the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @return 		the file
+   */
+  public PlaceholderFile getToolOptionsRestore() {
+    return m_ToolOptionsRestore;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String toolOptionsRestoreTipText() {
+    return "The JSON file to store the tool options in for restoring it the next time the actor gets called; ignored if pointing to a directory.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -892,6 +946,20 @@ public class ImageSegmentationAnnotator
     m_PanelSegmentation.setToolButtonColumns(m_ToolButtonColumns);
     m_PanelSegmentation.setAutomaticUndoEnabled(m_AutomaticUndo);
     m_PanelSegmentation.getUndo().setMaxUndo(m_MaxUndo <= 0 ? -1 : m_MaxUndo);
+    m_ToolOptionsUpdatedListener = new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+	if (m_ToolOptionsRestore.isDirectory())
+	  return;
+	if (isLoggingEnabled())
+	  getLogger().info("Saving tools options: " + m_ToolOptionsRestore);
+	JSONObject jobj = JsonHelper.fromMap(m_PanelSegmentation.getToolOptions());
+	String msg = FileUtils.writeToFileMsg(m_ToolOptionsRestore.getAbsolutePath(), jobj, false, null);
+	if (msg != null)
+	  getLogger().warning("Failed to write tools restore file '" + m_ToolOptionsRestore + "' for tools options:\n" + msg);
+      }
+    };
+    m_PanelSegmentation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
     return m_PanelSegmentation;
   }
 
@@ -934,6 +1002,7 @@ public class ImageSegmentationAnnotator
     BufferedImage		img;
     AbstractImageContainer	imgcont;
     ImageSegmentationContainer	segcont;
+    JSONObject			jobj;
 
     m_Accepted = false;
 
@@ -947,6 +1016,15 @@ public class ImageSegmentationAnnotator
     }
     else {
       segcont = m_InputToken.getPayload(ImageSegmentationContainer.class);
+    }
+
+    // tools restore file?
+    if (m_ToolOptionsRestore.exists() && !m_ToolOptionsRestore.isDirectory()) {
+      if (isLoggingEnabled())
+	getLogger().info("Loading tools options: " + m_ToolOptionsRestore);
+      jobj = (JSONObject) JsonHelper.parse(m_ToolOptionsRestore, this);
+      if (jobj != null)
+	m_PanelSegmentation.setToolOptions(JsonHelper.toMap(jobj, false));
     }
 
     // annotate
@@ -977,9 +1055,9 @@ public class ImageSegmentationAnnotator
     // ensure that tool is active and ready to use
     if (m_FirstInteraction) {
       if (m_PanelSegmentation.getActiveTool() != null) {
-        if (m_PanelSegmentation.getActiveTool() instanceof CustomizableTool)
-          ((CustomizableTool) m_PanelSegmentation.getActiveTool()).applyOptions();
-        m_PanelSegmentation.getActiveTool().activate();
+	if (m_PanelSegmentation.getActiveTool() instanceof CustomizableTool)
+	  ((CustomizableTool) m_PanelSegmentation.getActiveTool()).applyOptions();
+	m_PanelSegmentation.getActiveTool().activate();
       }
     }
 

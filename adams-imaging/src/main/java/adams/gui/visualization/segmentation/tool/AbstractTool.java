@@ -15,7 +15,7 @@
 
 /*
  * AbstractTool.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -391,21 +391,23 @@ public abstract class AbstractTool
   /**
    * Applies the settings (if valid).
    *
+   * @return		true if applied
    * @see		#doApply()
    * @see		#checkBeforeApply()
    */
-  public void apply(BaseFlatButton button) {
+  public boolean apply(BaseFlatButton button) {
     String		msg;
 
     msg = checkBeforeApply();
     if (msg != null) {
       GUIHelper.showErrorMessage(getCanvas(), "Failed to apply settings:\n" + msg);
-      return;
+      return false;
     }
 
     setApplyButtonState(button, false);
     doApply();
     getCanvas().setCursor(getCursor());
+    return true;
   }
 
   /**
