@@ -15,7 +15,7 @@
 
 /*
  * AbstractSelectorPanel.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -25,6 +25,7 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.BaseTextComponent;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
@@ -65,7 +66,7 @@ import java.util.Set;
  */
 public abstract class AbstractChooserPanel<T>
   extends BasePanel
-  implements CleanUpHandler {
+  implements CleanUpHandler, BaseTextComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = -824479551072915989L;
@@ -943,6 +944,26 @@ public abstract class AbstractChooserPanel<T>
       m_PanelPrefix.add(m_PanelButtons, BorderLayout.EAST);
     else
       add(m_PanelButtons, BorderLayout.EAST);
+  }
+
+  /**
+   * Sets the text in the field.
+   *
+   * @param value	the text
+   */
+  @Override
+  public void setText(String value) {
+    setCurrentAsString(value);
+  }
+
+  /**
+   * Returns the text in the field.
+   *
+   * @return		the text
+   */
+  @Override
+  public String getText() {
+    return getCurrentAsString();
   }
 
   /**

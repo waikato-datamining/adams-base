@@ -15,7 +15,7 @@
 
 /*
  * BaseTextField.java
- * Copyright (C) 2018-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -38,7 +38,7 @@ import java.util.Set;
  */
 public class BaseTextField
   extends JTextField
-  implements AnyChangeListenerSupporter {
+  implements AnyChangeListenerSupporter, BaseTextComponent {
 
   private static final long serialVersionUID = 1849599255714467739L;
 

@@ -34,7 +34,7 @@ import java.awt.BorderLayout;
  */
 public class BaseTextPaneWithWordWrap
   extends BasePanel
-  implements TextPaneComponent, AnyChangeListenerSupporter {
+  implements TextPaneComponent, AnyChangeListenerSupporter, BaseTextComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 1382187615423454310L;

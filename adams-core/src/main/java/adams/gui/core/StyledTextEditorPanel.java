@@ -15,7 +15,7 @@
 
 /*
  * StyledTextEditorPanel.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Patrick Chan and Addison Wesley, Java Developers Almanac 2000 (undo/redo)
  */
 package adams.gui.core;
@@ -58,7 +58,8 @@ import java.util.List;
     note = "Undo/redo"
 )
 public class StyledTextEditorPanel
-  extends BasePanel {
+  extends BasePanel
+  implements BaseTextComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 3594108882868668611L;

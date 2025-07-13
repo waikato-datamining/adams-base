@@ -34,7 +34,7 @@ import java.awt.Font;
  */
 public class BaseTextPaneWithButtons
   extends AbstractComponentWithButtons<BaseTextPaneWithWordWrap>
-  implements TextPaneComponent, AnyChangeListenerSupporter {
+  implements TextPaneComponent, AnyChangeListenerSupporter, BaseTextComponent {
 
   private static final long serialVersionUID = -8562372761976614736L;
 

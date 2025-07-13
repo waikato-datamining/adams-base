@@ -53,7 +53,7 @@ import java.util.logging.Level;
  */
 public class BaseTextPane
   extends JTextPane
-  implements TextPaneComponent, AnyChangeListenerSupporter {
+  implements TextPaneComponent, AnyChangeListenerSupporter, BaseTextComponent {
 
   /** for serialization. */
   private static final long serialVersionUID = 5053144101104728014L;

@@ -15,7 +15,7 @@
 
 /*
  * BaseColorTextField.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -41,7 +41,7 @@ import java.awt.event.ActionEvent;
  */
 public class BaseColorTextField
   extends BasePanel
-  implements AnyChangeListenerSupporter {
+  implements AnyChangeListenerSupporter, BaseTextComponent {
 
   private static final long serialVersionUID = -6624338080908941975L;
 
@@ -233,6 +233,7 @@ public class BaseColorTextField
    *
    * @param value	the text
    */
+  @Override
   public void setText(String value) {
     m_TextField.setText(value);
   }
@@ -242,6 +243,7 @@ public class BaseColorTextField
    *
    * @return		the text
    */
+  @Override
   public String getText() {
     return m_TextField.getText();
   }

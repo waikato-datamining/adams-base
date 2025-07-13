@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TextAreaComponent.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -27,9 +27,9 @@ import java.awt.Font;
  * Common interface for TextArea-like components.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface TextAreaComponent {
+public interface TextAreaComponent
+  extends BaseTextComponent {
 
   /**
    * Sets the text to display.
