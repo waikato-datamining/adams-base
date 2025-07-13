@@ -15,7 +15,7 @@
 
 /*
  * ImageLabeler.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -25,6 +25,7 @@ import adams.core.DateUtils;
 import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseString;
+import adams.core.io.PlaceholderFile;
 import adams.data.conversion.MapToJson;
 import adams.data.image.AbstractImageContainer;
 import adams.data.report.DataType;
@@ -50,6 +51,7 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 
 import javax.swing.JPanel;
+import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -244,6 +246,9 @@ public class ImageLabeler
   /** the interaction logger to use. */
   protected InteractionLoggingFilter m_InteractionLoggingFilter;
 
+  /** the json file to store the tool options in. */
+  protected PlaceholderFile m_ToolOptionsRestore;
+
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
@@ -252,6 +257,9 @@ public class ImageLabeler
 
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
+
+  /** the listener for when tool options change. */
+  protected ChangeListener m_ToolOptionsUpdatedListener;
 
   /**
    * Returns a string describing the object.
@@ -308,6 +316,10 @@ public class ImageLabeler
     m_OptionManager.add(
       "interaction-logging-filter", "interactionLoggingFilter",
       new Null());
+
+    m_OptionManager.add(
+      "tool-options-restore", "toolOptionsRestore",
+      new PlaceholderFile("."));
   }
 
   /**
@@ -618,6 +630,37 @@ public class ImageLabeler
   }
 
   /**
+   * Sets the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @param value 	the file
+   */
+  public void setToolOptionsRestore(PlaceholderFile value) {
+    m_ToolOptionsRestore = value;
+    reset();
+  }
+
+  /**
+   * Returns the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @return 		the file
+   */
+  public PlaceholderFile getToolOptionsRestore() {
+    return m_ToolOptionsRestore;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String toolOptionsRestoreTipText() {
+    return "The JSON file to store the tool options in for restoring it the next time the actor gets called; ignored if pointing to a directory.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -694,6 +737,8 @@ public class ImageLabeler
     m_PanelObjectAnnotation.setInteractionLoggingFilter(ObjectCopyHelper.copyObject(m_InteractionLoggingFilter));
     m_PanelObjectAnnotation.setLeftDividerLocation(m_LeftDividerLocation);
     m_PanelObjectAnnotation.setRightDividerLocation(m_RightDividerLocation - m_LeftDividerLocation);
+    m_ToolOptionsUpdatedListener = e -> m_PanelObjectAnnotation.saveToolOptions(m_ToolOptionsRestore, this);
+    m_PanelObjectAnnotation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
     return m_PanelObjectAnnotation;
   }
 
@@ -828,6 +873,9 @@ public class ImageLabeler
     cont = (AbstractImageContainer) m_InputToken.getPayload();
 
     m_StartTimestamp = new Date();
+
+    // tools restore file?
+    m_PanelObjectAnnotation.loadToolOptions(m_ToolOptionsRestore, this);
 
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());

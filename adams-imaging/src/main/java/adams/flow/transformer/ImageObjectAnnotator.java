@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectAnnotator.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.DateFormat;
 import adams.core.DateUtils;
 import adams.core.ObjectCopyHelper;
 import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import adams.data.conversion.MapToJson;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
@@ -245,7 +246,7 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectAnnotator
-    extends AbstractInteractiveTransformerDialog {
+  extends AbstractInteractiveTransformerDialog {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -290,8 +291,14 @@ public class ImageObjectAnnotator
   /** the maximum undo steps. */
   protected int m_MaxUndo;
 
+  /** the json file to store the tool options in. */
+  protected PlaceholderFile m_ToolOptionsRestore;
+
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
+
+  /** the listener for when tool options change. */
+  protected ChangeListener m_ToolOptionsUpdatedListener;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -335,56 +342,60 @@ public class ImageObjectAnnotator
     super.defineOptions();
 
     m_OptionManager.add(
-        "annotations-display", "annotationsDisplay",
-        new DefaultAnnotationsDisplayGenerator());
+      "annotations-display", "annotationsDisplay",
+      new DefaultAnnotationsDisplayGenerator());
 
     m_OptionManager.add(
-        "annotator", "annotator",
-        new BoundingBoxAnnotator());
+      "annotator", "annotator",
+      new BoundingBoxAnnotator());
 
     m_OptionManager.add(
-        "label-selector", "labelSelector",
-        new ButtonSelectorGenerator());
+      "label-selector", "labelSelector",
+      new ButtonSelectorGenerator());
 
     m_OptionManager.add(
-        "mouse-click", "mouseClick",
-        new NullProcessor());
+      "mouse-click", "mouseClick",
+      new NullProcessor());
 
     m_OptionManager.add(
-        "overlay", "overlay",
-        new ObjectLocationsOverlayFromReport());
+      "overlay", "overlay",
+      new ObjectLocationsOverlayFromReport());
 
     m_OptionManager.add(
-        "annotation-check", "annotationCheck",
-        new PassThrough());
+      "annotation-check", "annotationCheck",
+      new PassThrough());
 
     m_OptionManager.add(
-        "left-divider-location", "leftDividerLocation",
-        200, 1, null);
+      "left-divider-location", "leftDividerLocation",
+      200, 1, null);
 
     m_OptionManager.add(
-        "right-divider-location", "rightDividerLocation",
-        900, 1, null);
+      "right-divider-location", "rightDividerLocation",
+      900, 1, null);
 
     m_OptionManager.add(
-        "zoom", "zoom",
-        100.0, 1.0, 1600.0);
+      "zoom", "zoom",
+      100.0, 1.0, 1600.0);
 
     m_OptionManager.add(
-        "best-fit", "bestFit",
-        false);
+      "best-fit", "bestFit",
+      false);
 
     m_OptionManager.add(
-        "interaction-logging-filter", "interactionLoggingFilter",
-        new Null());
+      "interaction-logging-filter", "interactionLoggingFilter",
+      new Null());
 
     m_OptionManager.add(
-        "allow-using-previous-report", "allowUsingPreviousReport",
-        false);
+      "allow-using-previous-report", "allowUsingPreviousReport",
+      false);
 
     m_OptionManager.add(
-        "max-undo", "maxUndo",
-        Undo.DEFAULT_MAX_UNDO, -1, null);
+      "max-undo", "maxUndo",
+      Undo.DEFAULT_MAX_UNDO, -1, null);
+
+    m_OptionManager.add(
+      "tool-options-restore", "toolOptionsRestore",
+      new PlaceholderFile("."));
   }
 
   /**
@@ -791,7 +802,7 @@ public class ImageObjectAnnotator
    */
   public String allowUsingPreviousReportTipText() {
     return "If enabled, allows the user to make use of the previous report "
-        + "(ie annotations); useful when annotations do not change much between images.";
+	     + "(ie annotations); useful when annotations do not change much between images.";
   }
 
   /**
@@ -821,6 +832,37 @@ public class ImageObjectAnnotator
    */
   public String maxUndoTipText() {
     return "The maximum undo steps to allow, use -1 for unlimited 0 to turn off (CAUTION: uses copies of images in memory).";
+  }
+
+  /**
+   * Sets the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @param value 	the file
+   */
+  public void setToolOptionsRestore(PlaceholderFile value) {
+    m_ToolOptionsRestore = value;
+    reset();
+  }
+
+  /**
+   * Returns the JSON file to store the tool options in for restoring the next time the
+   * actor gets called. Ignored when pointing to a directory.
+   *
+   * @return 		the file
+   */
+  public PlaceholderFile getToolOptionsRestore() {
+    return m_ToolOptionsRestore;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String toolOptionsRestoreTipText() {
+    return "The JSON file to store the tool options in for restoring it the next time the actor gets called; ignored if pointing to a directory.";
   }
 
   /**
@@ -896,6 +938,8 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.getUndo().setEnabled(m_MaxUndo != 0);
     m_PanelObjectAnnotation.setInteractionLoggingFilter(ObjectCopyHelper.copyObject(m_InteractionLoggingFilter));
     m_PanelObjectAnnotation.setUsePreviousReportVisible(m_AllowUsingPreviousReport);
+    m_ToolOptionsUpdatedListener = e -> m_PanelObjectAnnotation.saveToolOptions(m_ToolOptionsRestore, this);
+    m_PanelObjectAnnotation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
     return m_PanelObjectAnnotation;
   }
 
@@ -974,16 +1018,16 @@ public class ImageObjectAnnotator
     if (report.hasValue(field)) {
       value = "" + report.getValue(field);
       if (value.isEmpty()) {
-        array = new JSONArray();
+	array = new JSONArray();
       }
       else {
-        try {
-          parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
-          array = (JSONArray) parser.parse(value);
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
-        }
+	try {
+	  parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+	  array = (JSONArray) parser.parse(value);
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to parse old interactions: " + value, e);
+	}
       }
     }
 
@@ -1001,14 +1045,14 @@ public class ImageObjectAnnotator
       interaction.put("timestamp", formatter.format(event.getTimestamp()));
       interaction.put("id", event.getID());
       if (event.getData() != null) {
-        m2j.setInput(event.getData());
-        msg = m2j.convert();
-        if (msg == null) {
-          interaction.put("data", m2j.getOutput());
-        }
-        else {
-          getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
-        }
+	m2j.setInput(event.getData());
+	msg = m2j.convert();
+	if (msg == null) {
+	  interaction.put("data", m2j.getOutput());
+	}
+	else {
+	  getLogger().warning("Failed to convert interaction data to JSON: " + event.getData());
+	}
       }
       array.add(interaction);
     }
@@ -1044,6 +1088,9 @@ public class ImageObjectAnnotator
       imgcont = m_InputToken.getPayload(AbstractImageContainer.class);
     }
 
+    // tools restore file?
+    m_PanelObjectAnnotation.loadToolOptions(m_ToolOptionsRestore, this);
+
     // annotate
     registerWindow(m_Dialog, m_Dialog.getTitle());
     m_PanelObjectAnnotation.clear();
@@ -1057,9 +1104,9 @@ public class ImageObjectAnnotator
       resetLabel = ((AutoAdvanceAnnotator) m_Annotator).getAutoAdvanceLabels();
     if (resetLabel) {
       if (m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels().length > 0)
-        m_PanelObjectAnnotation.preselectCurrentLabel(m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels()[0]);
+	m_PanelObjectAnnotation.preselectCurrentLabel(m_PanelObjectAnnotation.getLabelSelectorPanel().getLabels()[0]);
       else
-        m_PanelObjectAnnotation.preselectCurrentLabel(null);
+	m_PanelObjectAnnotation.preselectCurrentLabel(null);
     }
     else {
       m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
@@ -1068,9 +1115,9 @@ public class ImageObjectAnnotator
     // ensure that tool is active and ready to use
     if (m_FirstInteraction) {
       if (m_PanelObjectAnnotation.getActiveTool() != null) {
-        if (m_PanelObjectAnnotation.getActiveTool() instanceof CustomizableTool)
-          ((CustomizableTool) m_PanelObjectAnnotation.getActiveTool()).applyOptions();
-        m_PanelObjectAnnotation.getActiveTool().activate();
+	if (m_PanelObjectAnnotation.getActiveTool() instanceof CustomizableTool)
+	  ((CustomizableTool) m_PanelObjectAnnotation.getActiveTool()).applyOptionsQuietly();
+	m_PanelObjectAnnotation.getActiveTool().activate();
       }
     }
     m_Dialog.setVisible(true);
@@ -1082,7 +1129,7 @@ public class ImageObjectAnnotator
       imgcont.setImage(m_PanelObjectAnnotation.getImage());
       imgcont.setReport(m_PanelObjectAnnotation.getReport().getClone());
       if (!(m_InteractionLoggingFilter instanceof Null))
-        addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
+	addInteractionsToReport(imgcont.getReport(), m_PanelObjectAnnotation.getInteractionLog());
       m_OutputToken = new Token(imgcont);
     }
 

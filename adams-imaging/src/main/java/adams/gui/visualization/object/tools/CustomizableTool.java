@@ -15,10 +15,12 @@
 
 /*
  * CustomizableTool.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.object.tools;
+
+import java.util.Map;
 
 /**
  * Interface for tools that can apply options.
@@ -32,4 +34,23 @@ public interface CustomizableTool
    * Applies the options.
    */
   public void applyOptions();
+
+  /**
+   * Applies the options quietly, i.e., doesn't trigger an event.
+   */
+  public void applyOptionsQuietly();
+
+  /**
+   * Supplies initial options to use.
+   *
+   * @param value	the options to use
+   */
+  public void setInitialOptions(Map<String,Object> value);
+
+  /**
+   * Returns the current options as a map.
+   *
+   * @return		the options
+   */
+  public Map<String,Object> getCurrentOptions();
 }

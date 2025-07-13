@@ -174,6 +174,9 @@ public class Export
     String		msg;
 
     file = m_FileChooserPanel.getCurrent();
+    if (file.isDirectory())
+      return;
+
     if (file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".jpg")) {
       image   = new BufferedImage(getCanvas().getImage().getWidth(), getCanvas().getImage().getHeight(), BufferedImage.TYPE_INT_ARGB);
       g2d     = image.createGraphics();

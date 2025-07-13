@@ -24,10 +24,13 @@ import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
 import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingSupporter;
 import adams.data.RoundingUtils;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.input.DefaultSimpleReportReader;
+import adams.data.json.JsonHelper;
 import adams.data.report.Report;
 import adams.env.Environment;
 import adams.flow.transformer.locateobjects.LocatedObjects;
@@ -69,7 +72,9 @@ import adams.gui.visualization.object.overlay.ObjectLocationsOverlayFromReport;
 import adams.gui.visualization.object.overlay.Overlay;
 import adams.gui.visualization.object.overlay.OverlayWithCustomAlphaSupport;
 import adams.gui.visualization.object.tools.Annotator;
+import adams.gui.visualization.object.tools.CustomizableTool;
 import adams.gui.visualization.object.tools.Tool;
+import net.minidev.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -93,8 +98,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -251,6 +258,9 @@ public class ObjectAnnotationPanel
   /** whether to show the annotations. */
   protected boolean m_ShowAnnotations;
 
+  /** listeners for when tool options get updated. */
+  protected Set<ChangeListener> m_ToolOptionsUpdatedListeners;
+
   /**
    * Initializes the members.
    */
@@ -258,15 +268,16 @@ public class ObjectAnnotationPanel
   protected void initialize() {
     super.initialize();
 
-    m_Overlay                   = new NullOverlay();
-    m_MouseClickProcessor       = new NullProcessor();
-    m_PanelLabelSelector        = null;
-    m_CurrentLabel              = null;
-    m_InteractionLog            = null;
-    m_PreviousReport            = null;
-    m_Undo                      = new Undo(List.class, false);
-    m_Tools                     = new ArrayList<>();
-    m_ShowAnnotations           = true;
+    m_Overlay                     = new NullOverlay();
+    m_MouseClickProcessor         = new NullProcessor();
+    m_PanelLabelSelector          = null;
+    m_CurrentLabel                = null;
+    m_InteractionLog              = null;
+    m_PreviousReport              = null;
+    m_Undo                        = new Undo(List.class, false);
+    m_Tools                       = new ArrayList<>();
+    m_ShowAnnotations             = true;
+    m_ToolOptionsUpdatedListeners = new HashSet<>();
     m_Undo.addUndoListener(this);
     m_AnnotationChangeListeners = new HashSet<>();
     setAnnotator(new NullAnnotator());
@@ -1152,6 +1163,107 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Adds the listener for when tool options have been updated.
+   *
+   * @param l		the listener to add
+   */
+  public void addToolOptionsUpdatedListener(ChangeListener l) {
+    m_ToolOptionsUpdatedListeners.add(l);
+  }
+
+  /**
+   * Removes the listener for when tool options have been updated.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeToolOptionsUpdatedListener(ChangeListener l) {
+    m_ToolOptionsUpdatedListeners.remove(l);
+  }
+
+  /**
+   * Gets called when the options in a tool got updated.
+   */
+  public void toolOptionsUpdated() {
+    ChangeEvent		e;
+
+    e = new ChangeEvent(this);
+    for (ChangeListener l: m_ToolOptionsUpdatedListeners)
+      l.stateChanged(e);
+  }
+
+  /**
+   * Updates the tools with these options.
+   *
+   * @param value	the options to use for updating the tools
+   */
+  public void setToolOptions(Map<String,Object> value) {
+    CustomizableTool custTool;
+
+    for (Tool tool: m_Tools) {
+      if (tool instanceof CustomizableTool) {
+	custTool = (CustomizableTool) tool;
+	if (value.containsKey(custTool.getClass().getName())) {
+	  custTool.setInitialOptions((Map<String,Object>) value.get(custTool.getClass().getName()));
+	}
+      }
+    }
+  }
+
+  /**
+   * Retrieves the current options.
+   *
+   * @return		the options for the tools
+   */
+  public Map<String,Object> getToolOptions() {
+    Map<String,Object>	result;
+    CustomizableTool	custTool;
+
+    result = new HashMap<>();
+
+    for (Tool tool: m_Tools) {
+      if (tool instanceof CustomizableTool) {
+	custTool = (CustomizableTool) tool;
+	result.put(custTool.getClass().getName(), custTool.getCurrentOptions());
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Saves the tool options to the specified JSON file.
+   *
+   * @param optionsFile	the JSON file to save to
+   * @param logger	for logging messages
+   */
+  public void saveToolOptions(PlaceholderFile optionsFile, LoggingSupporter logger) {
+    if (optionsFile.isDirectory())
+      return;
+    logger.getLogger().info("Saving tools options: " + optionsFile);
+    JSONObject jobj = JsonHelper.fromMap(getToolOptions());
+    String msg = FileUtils.writeToFileMsg(optionsFile.getAbsolutePath(), jobj, false, null);
+    if (msg != null)
+      logger.getLogger().warning("Failed to write tools restore file '" + optionsFile + "' for tools options:\n" + msg);
+  }
+
+  /**
+   * Restores the tool options from the JSON file.
+   *
+   * @param optionsFile	the JSON file to load/parse
+   * @param logger	for logging messages
+   */
+  public void loadToolOptions(PlaceholderFile optionsFile, LoggingSupporter logger) {
+    JSONObject	jobj;
+
+    if (optionsFile.exists() && !optionsFile.isDirectory()) {
+      logger.getLogger().info("Loading tools options: " + optionsFile);
+      jobj = (JSONObject) JsonHelper.parse(optionsFile, logger);
+      if (jobj != null)
+	setToolOptions(JsonHelper.toMap(jobj, false));
+    }
+  }
+
+  /**
    * Sets and installs the annotator.
    *
    * @param value	the annotator
@@ -1392,6 +1504,8 @@ public class ObjectAnnotationPanel
       m_Overlay.cleanUp();
     if (m_AnnotationChangeListeners != null)
       m_AnnotationChangeListeners.clear();
+    if (m_ToolOptionsUpdatedListeners != null)
+      m_ToolOptionsUpdatedListeners.clear();
   }
 
   /**
