@@ -1847,7 +1847,7 @@ public class Utils {
   /**
    * A simple waiting method.
    *
-   * @param obj		the object to use for logging and synchronizing
+   * @param obj		the object to use for logging and synchronizing, can be null
    * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
    * @param interval	the amount msecs to wait before checking state (interval < msec)
    */
@@ -1858,19 +1858,25 @@ public class Utils {
   /**
    * A simple waiting method.
    *
-   * @param obj		the object to use for logging and synchronizing
+   * @param obj		the object to use for logging and synchronizing, can be null
    * @param stoppable	the object to use for checking stoppped state
    * @param msec	the maximum number of milli-seconds to wait, no waiting if 0
    * @param interval	the amount msecs to wait before checking state (interval < msec)
    */
   public static void wait(LoggingSupporter obj, StoppableWithFeedback stoppable, int msec, int interval) {
-    int count;
-    int current;
+    int 		count;
+    int 		current;
+    final Object	sync;
 
     if (msec == 0)
       return;
 
-    if (obj.isLoggingEnabled())
+    if (obj != null)
+      sync = obj;
+    else
+      sync = UniqueIDs.nextLong();
+
+    if ((obj != null) && obj.isLoggingEnabled())
       obj.getLogger().fine("wait: " + msec);
 
     count = 0;
@@ -1881,8 +1887,8 @@ public class Utils {
 	  current = msec;
 	if (current > interval)
 	  current = interval;
-	synchronized (obj) {
-	  obj.wait(current);
+	synchronized (sync) {
+	  sync.wait(current);
 	}
 	count += current;
       }
