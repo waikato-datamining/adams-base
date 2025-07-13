@@ -36,6 +36,11 @@ public interface CustomizableTool
   public void applyOptions();
 
   /**
+   * Applies the options quietly, i.e., doesn't trigger an event.
+   */
+  public void applyOptionsQuietly();
+
+  /**
    * Supplies initial options to use.
    *
    * @param value	the options to use

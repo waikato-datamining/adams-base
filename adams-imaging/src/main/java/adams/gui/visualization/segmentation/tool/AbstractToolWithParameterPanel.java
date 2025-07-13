@@ -147,6 +147,16 @@ public abstract class AbstractToolWithParameterPanel
   }
 
   /**
+   * Applies the options quietly, i.e., doesn't trigger an event.
+   */
+  @Override
+  public void applyOptionsQuietly() {
+    m_IgnoreOptionsUpdate = true;
+    applyOptions();
+    m_IgnoreOptionsUpdate = false;
+  }
+
+  /**
    * Hook method for reacting to custom component types, updating their setting.
    *
    * @param index	the parameter index

@@ -1034,7 +1034,7 @@ public class ImageSegmentationAnnotator
     if (m_FirstInteraction) {
       if (m_PanelSegmentation.getActiveTool() != null) {
 	if (m_PanelSegmentation.getActiveTool() instanceof CustomizableTool)
-	  ((CustomizableTool) m_PanelSegmentation.getActiveTool()).applyOptions();
+	  ((CustomizableTool) m_PanelSegmentation.getActiveTool()).applyOptionsQuietly();
 	m_PanelSegmentation.getActiveTool().activate();
       }
     }
