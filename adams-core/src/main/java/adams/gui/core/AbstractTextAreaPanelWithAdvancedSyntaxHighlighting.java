@@ -13,18 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTextAreaPanelWithAdvancedSyntaxHighlighting.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
-import java.awt.Font;
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
+import adams.core.Utils;
+import adams.core.io.FileUtils;
+import adams.gui.chooser.BaseFileChooser;
+import adams.gui.chooser.FontChooser;
+import adams.gui.chooser.TextFileChooser;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -33,22 +35,17 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.Document;
-
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rtextarea.RTextScrollPane;
-
-import adams.core.Utils;
-import adams.core.io.FileUtils;
-import adams.gui.chooser.BaseFileChooser;
-import adams.gui.chooser.FontChooser;
-import adams.gui.chooser.TextFileChooser;
+import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Font;
+import java.io.File;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Panel with syntax highlighting using {@link RSyntaxTextArea}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTextAreaPanelWithAdvancedSyntaxHighlighting
   extends BasePanel {
@@ -151,7 +148,8 @@ public abstract class AbstractTextAreaPanelWithAdvancedSyntaxHighlighting
     result.setCodeFoldingEnabled(true);
     result.setBracketMatchingEnabled(false);
     result.setSyntaxEditingStyle(getSyntaxStyle());
-    
+    result.setFont(Fonts.getMonospacedFont());
+
     return result;
   }
   
