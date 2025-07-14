@@ -1082,7 +1082,7 @@ public class PropertiesParameterPanel
 	    break;
 	  case SQL:
 	    final SQLSyntaxEditorPanel query = new SQLSyntaxEditorPanel();
-	    query.setWordWrap(true);
+	    query.setLineWrap(true);
 	    query.setPreferredSize(m_DefaultSQLDimension);
 	    query.setContent(value.getProperty(key));
 	    if (help != null)

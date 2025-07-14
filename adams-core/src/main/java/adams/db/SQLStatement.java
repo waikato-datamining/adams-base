@@ -15,23 +15,22 @@
 
 /*
  * SQLStatement.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.db;
 
-import adams.gui.core.AbstractSimpleScript;
-import adams.gui.core.AbstractTextEditorPanelWithSimpleSyntaxHighlighting;
+import adams.gui.core.AbstractAdvancedScript;
+import adams.gui.core.AbstractTextAreaPanelWithAdvancedSyntaxHighlighting;
 import adams.gui.core.SQLSyntaxEditorPanel;
 
 /**
  * Wrapper for a SQL statement to be editable in the GOE.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SQLStatement
-  extends AbstractSimpleScript {
+  extends AbstractAdvancedScript {
 
   /** for serialization. */
   private static final long serialVersionUID = 4309078655122480376L;
@@ -62,14 +61,15 @@ public class SQLStatement
   }
 
   /**
-   * Returns the configured text editor panel to use in the GOE.
+   * Returns the configured text area panel to use in the GOE.
    *
-   * @return		the text editor panel
+   * @return the text area panel
    */
-  public AbstractTextEditorPanelWithSimpleSyntaxHighlighting getTextEditorPanel() {
+  @Override
+  public AbstractTextAreaPanelWithAdvancedSyntaxHighlighting getTextAreaPanel() {
     return new SQLSyntaxEditorPanel();
   }
-  
+
   /**
    * Returns whether inline editing in the GOE is allowed.
    * 

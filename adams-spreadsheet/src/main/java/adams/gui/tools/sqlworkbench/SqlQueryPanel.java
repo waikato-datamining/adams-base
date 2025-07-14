@@ -15,7 +15,7 @@
 
 /*
  * SqlPanel.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.sqlworkbench;
@@ -136,7 +136,7 @@ public class SqlQueryPanel
     m_PanelQuery = new SQLStatementPanel();
     m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> queryChanged());
     m_SplitPane.setTopComponent(m_PanelQuery);
-    m_PanelQuery.getQueryPanel().getTextPane().addKeyListener(new KeyAdapter() {
+    m_PanelQuery.getQueryPanel().getTextArea().addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
         if ((e.getKeyCode() == KeyEvent.VK_X) && (e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK)) {

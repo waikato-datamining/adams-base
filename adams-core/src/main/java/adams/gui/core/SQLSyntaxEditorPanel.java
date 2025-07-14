@@ -13,53 +13,43 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SQLSyntaxEditorPane.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
-import adams.core.Properties;
 import adams.db.SQLStatement;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 /**
  * Text editor pane with SQL syntax highlighting.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SQLSyntaxEditorPanel
-  extends AbstractTextEditorPanelWithSimpleSyntaxHighlighting {
+  extends AbstractTextAreaPanelWithAdvancedSyntaxHighlighting {
 
   /** for serialization. */
   private static final long serialVersionUID = -6311158717675828816L;
 
-  /** the props file with the style definitions. */
-  public final static String FILENAME = "adams/gui/core/SQLSyntaxEditorPanel.props";
-
-  /**
-   * Returns the syntax style definition.
-   *
-   * @return		the props file with the definitions
-   */
-  @Override
-  protected Properties getStyleProperties() {
-    try {
-      return Properties.read(FILENAME);
-    }
-    catch (Exception e) {
-      System.err.println("Failed to load style definitions '" + FILENAME + "': ");
-      e.printStackTrace();
-      return new Properties();
-    }
-  }
-  
   /**
    * Returns the current SQL statement.
    * 
    * @return		the statement
    */
   public SQLStatement getStatement() {
-    return new SQLStatement(getTextPane().getText());
+    return new SQLStatement(getTextArea().getText());
+  }
+
+  /**
+   * Returns the syntax style to use.
+   *
+   * @return style
+   * @see                RSyntaxTextArea
+   */
+  @Override
+  protected String getSyntaxStyle() {
+    return RSyntaxTextArea.SYNTAX_STYLE_SQL;
   }
 }

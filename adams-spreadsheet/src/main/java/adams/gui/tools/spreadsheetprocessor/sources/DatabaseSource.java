@@ -15,7 +15,7 @@
 
 /*
  * DatabaseSource.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.spreadsheetprocessor.sources;
@@ -140,7 +140,7 @@ public class DatabaseSource
       m_PanelQuery = new SQLStatementPanel();
       m_PanelQuery.addQueryChangeListener((ChangeEvent e) -> update());
       m_Widget.add(m_PanelQuery, BorderLayout.CENTER);
-      m_PanelQuery.getQueryPanel().getTextPane().addKeyListener(new KeyAdapter() {
+      m_PanelQuery.getQueryPanel().getTextArea().addKeyListener(new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
           if ((e.getKeyCode() == KeyEvent.VK_X) && (e.getModifiersEx() == KeyEvent.ALT_DOWN_MASK)) {
