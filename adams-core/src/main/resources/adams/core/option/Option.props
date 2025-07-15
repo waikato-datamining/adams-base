@@ -312,8 +312,8 @@ adams.db.JdbcUrl#valueOf=adams.core.option.parsing.JdbcUrlParsing#valueOf
 
 # SQLStatement objects
 adams.db.SQLStatement=true
-adams.db.SQLStatement#toString=adams.core.option.parsing.SimpleScriptParsing#toString
-adams.db.SQLStatement#valueOf=adams.core.option.parsing.SimpleScriptParsing#valueOf
+adams.db.SQLStatement#toString=adams.core.option.parsing.AdvancedScriptParsing#toString
+adams.db.SQLStatement#valueOf=adams.core.option.parsing.AdvancedScriptParsing#valueOf
 
 # BooleanExpressionText objects
 adams.parser.BooleanExpressionText=true
