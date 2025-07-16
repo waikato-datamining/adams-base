@@ -79,15 +79,19 @@ The following transformers are available:
 \end{tight_itemize}
 The following sinks are available:
 \begin{tight_itemize}
-	\item \textit{JsonDisplay} -- displays a JSON object in a browseable
+	\item \textit{JsonDisplay} -- displays a JSON object in a browsable
 	tree structure.
 	\item \textit{JsonFileWriter} -- writes the JSON object/array to disk.
 \end{tight_itemize}
+The following boolean conditions are available:
+\begin{tight_itemize}
+	\item \textit{HasJsonValue} -- Returns true if the specified key or path is present in the JSON string/object.
+\end{tight_itemize}
 The following conversion are available:
 \begin{tight_itemize}
-	\item \textit{ArrayToJsonArray} -- generates a JSON array from any object	array.
+	\item \textit{ArrayToJsonArray} -- generates a JSON array from any object array.
 	\item \textit{ListToJsonArray} -- generates a JSON array from a list.
-	\item \textit{JsonArrayToArray} -- turns a JSON array into a regular Java	object array.
+	\item \textit{JsonArrayToArray} -- turns a JSON array into a regular Java object array.
 	\item \textit{JsonArrayToList} -- turns a JSON array into a regular Java list.
 	\item \textit{JsonObjectToMap} -- turns the JSON object into a simple Map.
 	\item \textit{JsonToSpreadSheet} -- turns the JSON object into a spreadsheet (i.e., flattening it).
