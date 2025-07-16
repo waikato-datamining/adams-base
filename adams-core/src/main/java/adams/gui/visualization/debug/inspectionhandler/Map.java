@@ -15,7 +15,7 @@
 
 /*
  * Map.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.debug.inspectionhandler;
 
@@ -56,8 +56,12 @@ public class Map
     result = new Hashtable<>();
 
     map = (java.util.Map) obj;
-    for (Object key: map.keySet())
-      result.put("" + key, map.get(key));
+    for (Object key: map.keySet()) {
+      if (map.get(key) == null)
+	result.put("" + key, "-null-");
+      else
+	result.put("" + key, map.get(key));
+    }
 
     return result;
   }
