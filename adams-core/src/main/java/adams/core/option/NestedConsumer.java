@@ -15,7 +15,7 @@
 
 /*
  * NestedConsumer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -128,7 +128,7 @@ public class NestedConsumer
     range = new TIntArrayList();
     getLineRange(values, range);
     range.sort();
-    if (range.size() > 0) {
+    if (!range.isEmpty()) {
       min = range.get(0);
       max = range.get(range.size() - 1);
       if (min == max)
@@ -158,7 +158,7 @@ public class NestedConsumer
       result = (OptionHandler) forName(line.getContent()).newInstance();
       checkDeprecation(result);
       m_Input.remove(0);
-      if (m_Input.size() > 0) {
+      if (!m_Input.isEmpty()) {
 	if (m_Input.get(0) instanceof ArrayList)
 	  m_Input = (List) m_Input.get(0);
 	else
@@ -460,7 +460,7 @@ public class NestedConsumer
       cmdline = ((Line) input.get(i)).getContent();
 
       // skip empty strings
-      if (cmdline.length() == 0) {
+      if (cmdline.isEmpty()) {
 	i++;
 	continue;
       }
@@ -471,9 +471,11 @@ public class NestedConsumer
 	option  = manager.findByFlag(cmdline);
 	values  = null;
 	if (option == null) {
-	  msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + cmdline + "\n  --> Command-line: " + Utils.flatten(input, " ");
-	  logWarning(msg);
-	  getLogger().severe(msg);
+	  if (!manager.isRemovedFlag(cmdline)) {
+	    msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + cmdline + "\n  --> Command-line: " + Utils.flatten(input, " ");
+	    logWarning(msg);
+	    getLogger().severe(msg);
+	  }
 	  // remove unknown option
 	  input.remove(i);
 	  if ((i < input.size()) && (input.get(i).getClass() == Line.class)) {
@@ -488,7 +490,7 @@ public class NestedConsumer
 	else {
 	  if (option instanceof AbstractArgumentOption) {
 	    values = collectValues(option, input);
-	    if (values.size() == 0) {
+	    if (values.isEmpty()) {
 	      msg = "No argument supplied for option '" + option + "' (" + manager.getOwner().getClass().getName() + ")!";
 	      logWarning(msg);
 	      getLogger().severe(msg);

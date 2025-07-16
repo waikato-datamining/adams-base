@@ -15,17 +15,19 @@
 
 /*
  * OptionManager.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.CleanUpHandler;
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Properties;
+import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
 import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.env.OptionManagerDefinition;
 import adams.flow.core.Actor;
@@ -44,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Class for managing option definitions.
@@ -82,6 +85,12 @@ public class OptionManager
   /** the properties that cannot have variables attached. */
   protected Set<String> m_NoVariablesProperties;
 
+  /** the removed flags. */
+  protected Set<String> m_RemovedFlags;
+
+  /** the removed properties. */
+  protected Set<String> m_RemovedProperties;
+
   /** whether to throw exceptions or just ignore errors. */
   protected boolean m_ThrowExceptions;
 
@@ -104,6 +113,8 @@ public class OptionManager
     m_CommandlineIndex      = new HashMap<>();
     m_PropertyIndex         = new HashMap<>();
     m_NoVariablesProperties = null;
+    m_RemovedFlags          = null;
+    m_RemovedProperties     = null;
     m_ThrowExceptions       = false;
     m_Variables             = null;
     m_Quiet                 = false;
@@ -199,7 +210,7 @@ public class OptionManager
     if (m_ThrowExceptions)
       throw new OptionManagerException(t);
     else
-      t.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Option handling error occurred: " + Utils.classToString(getOwner()), t);
   }
 
   /**
@@ -589,7 +600,7 @@ public class OptionManager
   public void enabledVariables(String property) {
     if (m_NoVariablesProperties != null) {
       m_NoVariablesProperties.remove(property);
-      if (m_NoVariablesProperties.size() == 0)
+      if (m_NoVariablesProperties.isEmpty())
 	m_NoVariablesProperties = null;
     }
   }
@@ -714,23 +725,43 @@ public class OptionManager
    * Removes the option associated with the commandline flag/property.
    *
    * @param flagOrProperty	the commandline flag/property string
-   * @param flag		if true then "flagOrProperty" is interpreted
+   * @param isFlag		if true then "flagOrProperty" is interpreted
    * 				as flag instead of property
    * @return			the option or null if not found
    */
-  protected AbstractOption removeOption(String flagOrProperty, boolean flag) {
+  protected AbstractOption removeOption(String flagOrProperty, boolean isFlag) {
     AbstractOption	result;
     Integer		index;
     String		removeKey;
+    String 		flag;
+    String		property;
 
     result = null;
 
-    if (flag)
-      index = m_CommandlineIndex.get(flagOrProperty);
-    else
-      index = m_PropertyIndex.get(flagOrProperty);
+    if (isFlag) {
+      index    = m_CommandlineIndex.get(flagOrProperty);
+      flag     = flagOrProperty;
+      property = null;
+    }
+    else {
+      index    = m_PropertyIndex.get(flagOrProperty);
+      flag     = null;
+      property = flagOrProperty;
+    }
 
     if (index != null) {
+      // record removed flags/properties
+      if (flag == null)
+	flag = m_Options.get(index).getCommandline();
+      if (m_RemovedFlags == null)
+	m_RemovedFlags = new HashSet<>();
+      m_RemovedFlags.add(flag);
+      if (property == null)
+	property = m_Options.get(index).getProperty();
+      if (m_RemovedProperties == null)
+	m_RemovedProperties = new HashSet<>();
+      m_RemovedProperties.add(property);
+
       result = m_Options.get(index);
 
       // remove option
@@ -768,6 +799,26 @@ public class OptionManager
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether the flag has been removed intentionally.
+   *
+   * @param flag	the command-line flag to check
+   * @return		true if removed
+   */
+  public boolean isRemovedFlag(String flag) {
+    return (m_RemovedFlags != null) && m_RemovedFlags.contains(flag);
+  }
+
+  /**
+   * Checks whether the property has been removed intentionally.
+   *
+   * @param property	the property to check
+   * @return		true if removed
+   */
+  public boolean isRemovedProperty(String property) {
+    return (m_RemovedProperties != null) && m_RemovedProperties.contains(property);
   }
 
   /**
@@ -918,7 +969,7 @@ public class OptionManager
    */
   public void updateVariablesInstance(final Variables variables) {
     traverse(new OptionTraverser() {
-      protected void update(AbstractOption option, OptionTraversalPath path) {
+      private void update(AbstractOption option, OptionTraversalPath path) {
 	if (option.getOwner().getVariables() != variables)
 	  option.getOwner().setVariables(variables);
       }
@@ -978,8 +1029,8 @@ public class OptionManager
     OptionTraverserWithResult<StringBuilder>	traverser;
     StringBuilder				result;
 
-    traverser = new OptionTraverserWithResult<StringBuilder>() {
-      protected StringBuilder m_Result;
+    traverser = new OptionTraverserWithResult<>() {
+      private StringBuilder m_Result;
       public void resetResult() {
 	m_Result = new StringBuilder();
       }

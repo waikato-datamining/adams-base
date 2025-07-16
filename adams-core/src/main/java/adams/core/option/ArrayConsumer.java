@@ -15,7 +15,7 @@
 
 /*
  * ArrayConsumer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -293,7 +293,7 @@ public class ArrayConsumer
       i++;
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -315,7 +315,7 @@ public class ArrayConsumer
       cmdline = input[i];
 
       // skip empty strings
-      if (cmdline.length() == 0) {
+      if (cmdline.isEmpty()) {
 	i++;
 	continue;
       }
@@ -326,9 +326,11 @@ public class ArrayConsumer
 	option  = manager.findByFlag(cmdline);
 	values  = null;
 	if (option == null) {
-	  msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + cmdline + "\n  --> Command-line: " + Utils.flatten(input, " ");
-	  logWarning(msg);
-	  getLogger().severe(msg);
+	  if (!manager.isRemovedFlag(cmdline)) {
+	    msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + cmdline + "\n  --> Command-line: " + Utils.flatten(input, " ");
+	    logWarning(msg);
+	    getLogger().severe(msg);
+	  }
 	  // remove option
 	  input[i] = "";
 	  i++;

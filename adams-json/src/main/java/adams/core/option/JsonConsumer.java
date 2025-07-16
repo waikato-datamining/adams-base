@@ -15,7 +15,7 @@
 
 /*
  * JsonConsumer.java
- * Copyright (C) 2011-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -185,7 +185,7 @@ public class JsonConsumer
 	doConsume(handler.getOptionManager(), object);
       }
       else {
-	strOptions = (String[]) ((JSONArray) object.get(KEY_OPTIONS)).toArray(new String[0]);
+	strOptions = ((JSONArray) object.get(KEY_OPTIONS)).toArray(new String[0]);
 	obj        = OptionUtils.forName(Object.class, obj.getClass().getName(), strOptions);
 	Array.set(objects, 0, obj);
       }
@@ -203,7 +203,7 @@ public class JsonConsumer
 	  doConsume(handler.getOptionManager(), object);
 	}
 	else {
-	  strOptions = (String[]) ((JSONArray) object.get(KEY_OPTIONS)).toArray(new String[0]);
+	  strOptions = ((JSONArray) object.get(KEY_OPTIONS)).toArray(new String[0]);
 	  obj        = OptionUtils.forName(Object.class, obj.getClass().getName(), strOptions);
 	  Array.set(objects, i, obj);
 	}
@@ -306,7 +306,7 @@ public class JsonConsumer
 	result.add(input.get(name));
     }
 
-    return result.toArray(new Object[result.size()]);
+    return result.toArray(new Object[0]);
   }
 
   /**
@@ -332,9 +332,11 @@ public class JsonConsumer
       option = manager.findByProperty(name);
 
       if (option == null) {
-	msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + name;
-	logWarning(msg);
-	getLogger().log(Level.SEVERE, msg);
+	if (!manager.isRemovedProperty(name)) {
+	  msg = "Failed to find option (" + manager.getOwner().getClass().getName() + "): " + name;
+	  logWarning(msg);
+	  getLogger().log(Level.SEVERE, msg);
+	}
       }
       else {
 	values = collectValues(option, input);
