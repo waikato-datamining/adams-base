@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 
 /**
  <!-- globalinfo-start -->
- * Outputs progress information in the console. The incoming token is used as 'current' value to be displayed. For convenience, the incoming token representing a number can also be in string format.
+ * Outputs progress information in the console. The incoming token is used as 'current' value to be displayed. For convenience, the incoming token representing a number can also be in string format. Only outputs something if different from the last output.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -103,6 +103,12 @@ import java.text.DecimalFormat;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-title &lt;java.lang.String&gt; (property: title)
+ * &nbsp;&nbsp;&nbsp;The 'title' to use, used as prefix to the generated progress string, separated
+ * &nbsp;&nbsp;&nbsp;by ': '
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -128,8 +134,14 @@ public class ProgressConsole
   /** the suffix. */
   protected String m_Suffix;
 
+  /** the title. */
+  protected String m_Title;
+
   /** the actual format. */
-  protected DecimalFormat m_ActualFormat;
+  protected transient DecimalFormat m_ActualFormat;
+
+  /** the last string that was output. */
+  protected transient String m_LastOutput;
 
   /**
    * Returns a string describing the object.
@@ -141,7 +153,7 @@ public class ProgressConsole
     return
       "Outputs progress information in the console. The incoming token is used as 'current' value "
 	+ "to be displayed. For convenience, the incoming token representing a "
-	+ "number can also be in string format.";
+	+ "number can also be in string format. Only outputs something if different from the last output.";
   }
 
   /**
@@ -170,6 +182,20 @@ public class ProgressConsole
     m_OptionManager.add(
       "suffix", "suffix",
       "");
+
+    m_OptionManager.add(
+      "title", "title",
+      "");
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_LastOutput = null;
   }
 
   /**
@@ -257,6 +283,35 @@ public class ProgressConsole
    */
   public String prefixTipText() {
     return "The prefix string to print before the percentage.";
+  }
+
+  /**
+   * Sets the optional title string.
+   *
+   * @param value	the title
+   */
+  public void setTitle(String value) {
+    m_Title = value;
+    reset();
+  }
+
+  /**
+   * Returns the optional title string.
+   *
+   * @return		the title
+   */
+  public String getTitle() {
+    return m_Title;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String titleTipText() {
+    return "The 'title' to use, used as prefix to the generated progress string, separated by ': '";
   }
 
   /**
@@ -362,10 +417,17 @@ public class ProgressConsole
     if (m_ActualFormat == null)
       m_ActualFormat = getFormat().toDecimalFormat();
     curr = getPrefix() + m_ActualFormat.format(perc) + getSuffix();
-    if (isLoggingEnabled())
-      getLogger().info(curr);
-    else
-      System.out.println(curr);
+    if (!getTitle().isEmpty())
+      curr = getTitle() + ": " + curr;
+
+    if ((m_LastOutput == null) || !m_LastOutput.equals(curr)) {
+      if (isLoggingEnabled())
+	getLogger().info(curr);
+      else
+	System.out.println(curr);
+    }
+
+    m_LastOutput = curr;
 
     return null;
   }
