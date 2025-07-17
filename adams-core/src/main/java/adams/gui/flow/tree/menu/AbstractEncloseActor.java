@@ -15,7 +15,7 @@
 
 /*
  * AbstractEncloseActor.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
 
@@ -103,19 +103,26 @@ public abstract class AbstractEncloseActor
     result = new ArrayList<>();
 
     if (m_State.tree.getRecordEnclose()) {
-      actors          = MostCommon.getMostCommon(20).toArray(new String[0]);
+      actors = MostCommon.getMostCommon(20).toArray(new String[0]);
       for (i = 0; i < actors.length; i++) {
-	final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0]);
-	if (!actor.getActorHandlerInfo().canEncloseActors())
-	  continue;
-	if (actor instanceof Flow)
-	  continue;
-	if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
-	  continue;
-	menuitem = new JMenuItem(actor.getClass().getSimpleName());
-	menuitem.setIcon(ImageManager.getIcon(actor.getClass()));
-	result.add(menuitem);
-	menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
+	try {
+	  final ActorHandler actor = (ActorHandler) AbstractActor.forName(actors[i], new String[0], true);
+	  if (actor == null)
+	    continue;
+	  if (!actor.getActorHandlerInfo().canEncloseActors())
+	    continue;
+	  if (actor instanceof Flow)
+	    continue;
+	  if ((m_State.selPaths != null) && (m_State.selPaths.length > 1) && (!(actor instanceof MutableActorHandler)))
+	    continue;
+	  menuitem = new JMenuItem(actor.getClass().getSimpleName());
+	  menuitem.setIcon(ImageManager.getIcon(actor.getClass()));
+	  result.add(menuitem);
+	  menuitem.addActionListener((ActionEvent e) -> m_State.tree.getOperations().encloseActor(m_State.selPaths, actor));
+	}
+	catch (Exception e) {
+	  // ignored
+	}
       }
     }
 
