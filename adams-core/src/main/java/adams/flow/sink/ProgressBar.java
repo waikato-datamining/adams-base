@@ -318,7 +318,7 @@ public class ProgressBar
   protected String m_Prefix;
 
   /** the format of the current value. */
-  protected DecimalFormatString m_Format;
+  protected transient DecimalFormatString m_Format;
 
   /** the suffix. */
   protected String m_Suffix;
@@ -334,6 +334,9 @@ public class ProgressBar
 
   /** the progress bar. */
   protected ProgressBarPanel m_PanelProgress;
+
+  /** the last string that was output. */
+  protected transient String m_LastOutput;
 
   /**
    * Returns a string describing the object.
@@ -402,6 +405,16 @@ public class ProgressBar
     m_OptionManager.add(
       "show-stop-button", "showStopButton",
       false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_LastOutput = null;
   }
 
   /**
@@ -910,7 +923,11 @@ public class ProgressBar
     if (!m_Title.isEmpty())
       text.append(m_Title).append(": ");
     text.append(curr);
-    ConsoleHelper.printlnOut(text.toString());
+
+    curr = text.toString();
+    if ((m_LastOutput == null) || !m_LastOutput.equals(curr))
+      ConsoleHelper.printlnOut(curr);
+    m_LastOutput = curr;
 
     return result;
   }
