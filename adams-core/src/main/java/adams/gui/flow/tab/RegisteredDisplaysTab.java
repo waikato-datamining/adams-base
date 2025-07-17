@@ -15,10 +15,11 @@
 
 /*
  * RegisteredDisplaysTab.java
- * Copyright (C) 2014-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tab;
 
+import adams.flow.core.AbstractActor;
 import adams.flow.core.AbstractDisplay;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTabbedPane;
@@ -28,7 +29,11 @@ import adams.gui.flow.tabhandler.RegisteredDisplaysHandler;
 
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,7 +67,40 @@ public class RegisteredDisplaysTab
   public void update() {
     flowPanelChanged(getCurrentPanel());
   }
-  
+
+  /**
+   * Groups the registered displays by title.
+   *
+   * @param displays	the displays to group
+   * @return		the grouped displays
+   */
+  protected Map<String,List<AbstractDisplay>> groupByTitle(Map<Class,HashMap<String,AbstractDisplay>> displays) {
+    Map<String,List<AbstractDisplay>>	result;
+    HashMap<String,AbstractDisplay>	subset;
+    String				title;
+
+    result = new HashMap<>();
+
+    // group by flow title
+    for (Class cls: displays.keySet()) {
+      subset = displays.get(cls);
+      for (String key : subset.keySet()) {
+	if (subset.get(key).getParentComponent() != null) {
+	  title = ((FlowPanel) subset.get(key).getParentComponent()).getTitle();
+	  if (!result.containsKey(title))
+	    result.put(title, new ArrayList<>());
+	  result.get(title).add(subset.get(key));
+	}
+      }
+    }
+
+    // sort the subgroups
+    for (String t: result.keySet())
+      result.get(t).sort(Comparator.comparing(AbstractActor::getName));
+
+    return result;
+  }
+
   /**
    * Notifies the tab of the currently selected flow panel.
    *
@@ -88,25 +126,23 @@ public class RegisteredDisplaysTab
       if (handler == null)
         return;
       Map<Class,HashMap<String,AbstractDisplay>> registered = handler.getDisplays();
-      if (registered.size() == 0)
+      if (registered.isEmpty())
 	return;
 
-      m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
+      // sort titles
+      Map<String,List<AbstractDisplay>> grouped = groupByTitle(registered);
+      List<String> titles = new ArrayList<>(grouped.keySet());
+      Collections.sort(titles);
+      if (grouped.isEmpty())
+	return;
+
+      m_TabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
       m_TabbedDisplays.setDetachableTabs(true);
       add(m_TabbedDisplays, BorderLayout.CENTER);
-      for (Class regCls: registered.keySet()) {
-	HashMap<String,AbstractDisplay> displays = registered.get(regCls);
-	if (displays.size() == 0)
-	  continue;
-	BaseTabbedPane tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.TOP);
-	for (String name: displays.keySet()) {
-	  AbstractDisplay display = displays.get(name);
-	  String title   = name;
-	  if (display.getParentComponent() instanceof FlowPanel)
-	    title = ((FlowPanel) display.getParentComponent()).getTitle() + ":" + title;
-	  tabbedDisplays.addTab(title, display.getPanel());
-	}
-	String title = "Type:" + regCls.getSimpleName();
+      for (String title: titles) {
+	BaseTabbedPane tabbedDisplays = new BaseTabbedPane(BaseTabbedPane.BOTTOM);
+	for (AbstractDisplay display: grouped.get(title))
+	  tabbedDisplays.addTab(display.getName(), display.getPanel());
 	BasePanel bpanel = new BasePanel(new BorderLayout());
 	bpanel.add(tabbedDisplays, BorderLayout.CENTER);
 	DetachablePanel detachable = new DetachablePanel();
