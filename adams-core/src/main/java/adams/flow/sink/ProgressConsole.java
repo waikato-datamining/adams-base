@@ -20,6 +20,7 @@
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
+import adams.core.io.ConsoleHelper;
 import adams.data.DecimalFormatString;
 
 import java.text.DecimalFormat;
@@ -420,12 +421,8 @@ public class ProgressConsole
     if (!getTitle().isEmpty())
       curr = getTitle() + ": " + curr;
 
-    if ((m_LastOutput == null) || !m_LastOutput.equals(curr)) {
-      if (isLoggingEnabled())
-	getLogger().info(curr);
-      else
-	System.out.println(curr);
-    }
+    if ((m_LastOutput == null) || !m_LastOutput.equals(curr))
+      ConsoleHelper.printlnOut(curr);
 
     m_LastOutput = curr;
 
