@@ -255,7 +255,7 @@ public class FilePanel
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
-	      setCurrentDir(file.toString());
+	      setCurrentDir(fixDir(file).toString());
 	    }
 	  }
 	}
@@ -272,7 +272,7 @@ public class FilePanel
 	  if (file != null) {
 	    if (file.isDirectory()) {
 	      e.consume();
-	      setCurrentDir(file.toString());
+	      setCurrentDir(fixDir(file).toString());
 	    }
 	    else {
               notifyFileDoubleClickListeners(new FileDoubleClickEvent(FilePanel.this, file));
@@ -327,6 +327,19 @@ public class FilePanel
 
     setMultiSelection(false);
     update();
+  }
+
+  /**
+   * Fixes .. paths.
+   *
+   * @param dir		the path to check
+   * @return		the potentially fixed path
+   */
+  protected FileObject fixDir(FileObject dir) {
+    if (dir.getName().equals(".."))
+      return dir.getParent();
+    else
+      return dir;
   }
 
   /**
