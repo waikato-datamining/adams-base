@@ -38,19 +38,19 @@ public class LocalFileObject
   protected File m_File;
 
   /** the length. */
-  protected long m_Length;
+  protected Long m_Length;
 
   /** whether a directory. */
-  protected boolean m_Directory;
+  protected Boolean m_Directory;
 
   /** the modified date. */
   protected Date m_LastModified;
 
   /** whether the file is hidden. */
-  protected boolean m_Hidden;
+  protected Boolean m_Hidden;
 
   /** whether the file is a link. */
-  protected boolean m_Link;
+  protected Boolean m_Link;
 
   /**
    * Initializes the wrapper.
@@ -58,12 +58,7 @@ public class LocalFileObject
    * @param file	the file to wrap
    */
   public LocalFileObject(File file) {
-    m_File         = file.getAbsoluteFile();
-    m_Directory    = m_File.isDirectory();
-    m_Length       = m_File.length();
-    m_LastModified = new Date(m_File.lastModified());
-    m_Hidden       = m_File.isHidden();
-    m_Link         = Files.isSymbolicLink(m_File.toPath());
+    m_File = file.getAbsoluteFile();
   }
 
   /**
@@ -134,6 +129,8 @@ public class LocalFileObject
    */
   @Override
   public long getLength() {
+    if (m_Length == null)
+      m_Length = m_File.length();
     return m_Length;
   }
 
@@ -144,6 +141,8 @@ public class LocalFileObject
    */
   @Override
   public boolean isDirectory() {
+    if (m_Directory == null)
+      m_Directory = m_File.isDirectory();
     return m_Directory;
   }
 
@@ -154,6 +153,8 @@ public class LocalFileObject
    */
   @Override
   public Date getLastModified() {
+    if (m_LastModified == null)
+      m_LastModified = new Date(m_File.lastModified());
     return m_LastModified;
   }
 
@@ -164,6 +165,8 @@ public class LocalFileObject
    */
   @Override
   public boolean isHidden() {
+    if (m_Hidden == null)
+      m_Hidden = m_File.isHidden();
     return m_Hidden;
   }
 
@@ -174,6 +177,8 @@ public class LocalFileObject
    */
   @Override
   public boolean isLink() {
+    if (m_Link == null)
+      m_Link = Files.isSymbolicLink(m_File.toPath());
     return m_Link;
   }
 
