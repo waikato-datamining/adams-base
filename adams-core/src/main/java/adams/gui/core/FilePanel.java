@@ -15,7 +15,7 @@
 
 /*
  * FilePanel.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -40,6 +40,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -49,7 +50,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
@@ -632,7 +632,7 @@ public class FilePanel
       }
     }
 
-    return result.toArray(new FileObject[result.size()]);
+    return result.toArray(new FileObject[0]);
   }
 
   /**
@@ -680,22 +680,63 @@ public class FilePanel
   }
 
   /**
+   * Lists the files/dirs in the current directory.
+   *
+   * @return		the files/dirs
+   */
+  public List<FileObject> listDir() {
+    List<FileObject> 	result;
+
+    result = new ArrayList<>();
+    for (FileObject wrapper: m_Lister.listObjects()) {
+      if (!m_ShowHidden && wrapper.isHidden())
+	continue;
+      result.add(wrapper);
+    }
+
+    result.sort(m_Comparator);
+
+    return result;
+  }
+
+  /**
+   * Lists the files/dirs in the specified directory.
+   *
+   * @param dir 	the directory to list
+   * @return		the files/dirs
+   */
+  public List<FileObject> listDir(String dir) {
+    List<FileObject> 	result;
+    String		oldDir;
+
+    result = new ArrayList<>();
+    oldDir = m_Lister.getWatchDir();
+    m_Lister.setWatchDir(dir);
+    for (FileObject wrapper: m_Lister.listObjects()) {
+      if (!m_ShowHidden && wrapper.isHidden())
+	continue;
+      result.add(wrapper);
+    }
+    m_Lister.setWatchDir(oldDir);
+
+    result.sort(m_Comparator);
+
+    return result;
+  }
+
+  /**
    * Updates the view.
    */
   protected void update() {
     if (m_IgnoreChanges)
       return;
 
+    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     m_Worker = new SwingWorker() {
-      protected List<FileObject> files = new ArrayList<>();
+      private List<FileObject> files = new ArrayList<>();
       @Override
       protected Object doInBackground() throws Exception {
-	for (FileObject wrapper: m_Lister.listObjects()) {
-	  if (!m_ShowHidden && wrapper.isHidden())
-	    continue;
-	  files.add(wrapper);
-	}
-	Collections.sort(files, m_Comparator);
+	files = listDir();
 	if (m_Lister.hasParentDirectory())
 	  files.add(0, m_Lister.newDirectory(".."));
 	return null;
@@ -706,6 +747,7 @@ public class FilePanel
 	m_Files = files;
 	updateGUI();
 	m_Worker = null;
+	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       }
     };
     m_Worker.execute();
