@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileObject.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -29,10 +29,16 @@ import java.util.Date;
  * values also abstracting file representation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface FileObject
   extends Serializable, Comparable<FileObject> {
+
+  /**
+   * Returns the parent, if available.
+   *
+   * @return		the parent or null if not available
+   */
+  public FileObject getParent();
 
   /**
    * Returns the wrapped file.

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FtpFileObject.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -30,7 +30,6 @@ import java.util.Date;
  * Wrapper for remote FTP files.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FtpFileObject
   implements FileObject {
@@ -75,6 +74,29 @@ public class FtpFileObject
    */
   public String getParentDir() {
     return m_ParentDir;
+  }
+
+  /**
+   * Returns the parent, if available.
+   *
+   * @return		the parent or null if not available
+   */
+  @Override
+  public FileObject getParent() {
+    File 	file;
+
+    if (m_ParentDir != null) {
+      file = new File(m_ParentDir);
+      try {
+	return new FtpFileObject(file.getParent(), getClient().mlistFile(m_ParentDir), m_Client);
+      }
+      catch (Exception e) {
+	return null;
+      }
+    }
+    else {
+      return null;
+    }
   }
 
   /**

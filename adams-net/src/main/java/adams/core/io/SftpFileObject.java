@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SftpFileObject.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -30,7 +30,6 @@ import java.util.Date;
  * Wrapper for remote SFTP files.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SftpFileObject
   implements FileObject {
@@ -90,6 +89,22 @@ public class SftpFileObject
     m_Name      = name;
     m_Directory = dir;
     m_Session   = session;
+  }
+
+  /**
+   * Returns the parent, if available.
+   *
+   * @return		the parent or null if not available
+   */
+  @Override
+  public FileObject getParent() {
+    File	parent;
+
+    parent = m_ParentDir.getParentFile();
+    if (parent != null)
+      return new SftpFileObject(parent.getParentFile(), parent.getName(), true, m_Session);
+    else
+      return null;
   }
 
   /**

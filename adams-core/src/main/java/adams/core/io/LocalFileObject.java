@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * LocalFileWrapper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * LocalFileObject.java
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
@@ -28,7 +28,6 @@ import java.util.Date;
  * Wraps a local file and avoids costly API calls by caching values.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocalFileObject
   implements FileObject {
@@ -68,10 +67,24 @@ public class LocalFileObject
   }
 
   /**
+   * Returns the parent, if available.
+   *
+   * @return		the parent or null if not available
+   */
+  @Override
+  public FileObject getParent() {
+    if (m_File.getParentFile() != null)
+      return new LocalFileObject(m_File.getParentFile());
+    else
+      return null;
+  }
+
+  /**
    * Returns the wrapped file.
    *
    * @return		the file
    */
+  @Override
   public File getFile() {
     return m_File;
   }
@@ -81,6 +94,7 @@ public class LocalFileObject
    *
    * @return		the actual file
    */
+  @Override
   public File getActualFile() {
     if (isLink()) {
       try {
@@ -100,6 +114,7 @@ public class LocalFileObject
    *
    * @return		the name
    */
+  @Override
   public String getName() {
     return m_File.getName();
   }
@@ -109,6 +124,7 @@ public class LocalFileObject
    *
    * @return		the size
    */
+  @Override
   public long getLength() {
     return m_Length;
   }
@@ -118,6 +134,7 @@ public class LocalFileObject
    *
    * @return		true if directory
    */
+  @Override
   public boolean isDirectory() {
     return m_Directory;
   }
@@ -127,6 +144,7 @@ public class LocalFileObject
    *
    * @return		date when last modified
    */
+  @Override
   public Date getLastModified() {
     return m_LastModified;
   }
@@ -136,6 +154,7 @@ public class LocalFileObject
    *
    * @return		true if hidden
    */
+  @Override
   public boolean isHidden() {
     return m_Hidden;
   }
@@ -145,6 +164,7 @@ public class LocalFileObject
    *
    * @return		true if link
    */
+  @Override
   public boolean isLink() {
     return m_Link;
   }
@@ -154,6 +174,7 @@ public class LocalFileObject
    *
    * @return		true if local
    */
+  @Override
   public boolean isLocal() {
     return true;
   }

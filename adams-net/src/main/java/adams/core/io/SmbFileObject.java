@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SmbFileObject.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io;
 
+import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbFile;
 
 import java.io.File;
@@ -29,7 +30,6 @@ import java.util.Date;
  * Wrapper for remote SMB files.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SmbFileObject
   implements FileObject {
@@ -58,6 +58,27 @@ public class SmbFileObject
    */
   public SmbFileObject(SmbFile file) {
     m_File = file;
+  }
+
+  /**
+   * Returns the parent, if available.
+   *
+   * @return		the parent or null if not available
+   */
+  @Override
+  public FileObject getParent() {
+    // at the root "smb://"?
+    if (m_File.getParent().equals(m_File.getCanonicalPath())) {
+      return null;
+    }
+    else {
+      try {
+	return new SmbFileObject(new SmbFile(m_File.getParent(), (NtlmPasswordAuthentication) m_File.getPrincipal()));
+      }
+      catch (Exception e) {
+	return null;
+      }
+    }
   }
 
   /**
