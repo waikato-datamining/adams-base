@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RemoteToRemoteFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -29,7 +29,6 @@ import java.io.File;
  * files.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RemoteToRemoteFileOperations
   extends AbstractFileOperations {
@@ -167,5 +166,15 @@ public class RemoteToRemoteFileOperations
    */
   public String mkdir(String dir) {
     return m_Source.mkdir(dir);
+  }
+
+  /**
+   * Checks whether the path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  public boolean isDir(String path) {
+    return m_Source.isDir(path);
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SmbFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -31,7 +31,6 @@ import jcifs.smb.SmbFile;
  * SMB / Windows share file operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SmbFileOperations
   extends AbstractRemoteFileOperations {
@@ -194,5 +193,24 @@ public class SmbFileOperations
     }
 
     return null;
+  }
+
+  /**
+   * Checks whether the remote path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  protected boolean isDirRemote(String path) {
+    SmbFile 	smbfile;
+
+    try {
+      smbfile = new SmbFile(path, m_Provider.getAuthentication());
+      return smbfile.isDirectory();
+    }
+    catch (Exception e) {
+      LoggingHelper.handleException(this, "Failed to check directory: " + path, e);
+      return false;
+    }
   }
 }

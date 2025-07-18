@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -24,7 +24,6 @@ package adams.core.io.fileoperations;
  * Interface for file operation facades.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface FileOperations {
 
@@ -78,4 +77,12 @@ public interface FileOperations {
    * @return		null if successful, otherwise error message
    */
   public String mkdir(String dir);
+
+  /**
+   * Checks whether the path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  public boolean isDir(String path);
 }

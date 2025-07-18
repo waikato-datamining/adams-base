@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LocalFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -29,7 +29,6 @@ import java.util.logging.Level;
  * Local file operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LocalFileOperations
   extends AbstractFileOperations {
@@ -129,5 +128,18 @@ public class LocalFileOperations
     if (!file.mkdirs())
       return "Failed to create directory: " + dir;
     return null;
+  }
+
+  /**
+   * Checks whether the path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  public boolean isDir(String path) {
+    PlaceholderFile	file;
+
+    file = new PlaceholderFile(path);
+    return file.exists() && file.isDirectory();
   }
 }

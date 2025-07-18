@@ -15,7 +15,7 @@
 
 /*
  * SftpFileOperations.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -280,5 +280,42 @@ public class SftpFileOperations
     }
 
     return null;
+  }
+
+  /**
+   * Checks whether the remote path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  protected boolean isDirRemote(String path) {
+    boolean		result;
+    ChannelSftp 	channel;
+
+    result  = false;
+    channel = null;
+    try {
+      if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
+	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
+	channel.connect();
+	if (isLoggingEnabled())
+	  getLogger().info("Checking directory " + path);
+	result = channel.lstat(path).isDir();
+	channel.disconnect();
+      }
+      else {
+	getLogger().severe("No active connection (mkdirRemote)!");
+      }
+    }
+    catch (Exception e) {
+      LoggingHelper.handleException(this, "Failed to check directory: " + path, e);
+    }
+    finally {
+      if (channel != null) {
+	channel.disconnect();
+      }
+    }
+
+    return result;
   }
 }

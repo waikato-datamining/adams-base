@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractRemoteFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -24,7 +24,6 @@ package adams.core.io.fileoperations;
  * Ancestor for remote file operation classes.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractRemoteFileOperations
   extends AbstractFileOperations
@@ -170,6 +169,41 @@ public abstract class AbstractRemoteFileOperations
         return mkdirLocal(dir);
       case REMOTE_TO_LOCAL:
         return mkdirRemote(dir);
+      default:
+	throw new IllegalStateException("Unhandled direction!");
+    }
+  }
+
+  /**
+   * Checks whether the local path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  protected boolean isDirLocal(String path) {
+    return m_LocalOperations.isDir(path);
+  }
+
+  /**
+   * Checks whether the remote path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  protected abstract boolean isDirRemote(String path);
+
+  /**
+   * Checks whether the path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  public boolean isDir(String path) {
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+	return isDirLocal(path);
+      case REMOTE_TO_LOCAL:
+	return isDirRemote(path);
       default:
 	throw new IllegalStateException("Unhandled direction!");
     }

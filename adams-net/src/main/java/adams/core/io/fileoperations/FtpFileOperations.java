@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FtpFileOperations.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -33,7 +33,6 @@ import java.io.FileOutputStream;
  * FTP file operations.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FtpFileOperations
   extends AbstractRemoteFileOperations {
@@ -226,8 +225,32 @@ public class FtpFileOperations
       m_Client.makeDirectory(dir);
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to create diretory: " + dir, e);
+      return LoggingHelper.handleException(this, "Failed to create directory: " + dir, e);
     }
     return null;
+  }
+
+  /**
+   * Checks whether the remote path is a directory.
+   *
+   * @param path	the path to check
+   * @return		true if path exists and is a directory
+   */
+  protected boolean isDirRemote(String path) {
+    boolean	result;
+    String	oldPath;
+
+    result = false;
+
+    try {
+      oldPath = m_Client.printWorkingDirectory();
+      result  = (m_Client.cwd(path) == 250);
+      m_Client.cwd(oldPath);
+    }
+    catch (Exception e) {
+      LoggingHelper.handleException(this, "Failed to check directory: " + path, e);
+    }
+
+    return result;
   }
 }
