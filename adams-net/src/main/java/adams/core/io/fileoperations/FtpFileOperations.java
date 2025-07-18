@@ -21,6 +21,8 @@
 package adams.core.io.fileoperations;
 
 import adams.core.io.FileUtils;
+import adams.core.io.lister.DirectoryLister;
+import adams.core.io.lister.FtpDirectoryLister;
 import adams.core.logging.LoggingHelper;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -86,7 +88,7 @@ public class FtpFileOperations
    * @param target	the target file
    * @return		null if successful, otherwise error message
    */
-  public String copy(String source, String target) {
+  protected String copyFile(String source, String target) {
     String			result;
     String 			remoteFile;
     String			outFile;
@@ -151,32 +153,16 @@ public class FtpFileOperations
   }
 
   /**
-   * Moves a file.
+   * Returns an instance of the remote directory lister.
    *
-   * @param source	the source file
-   * @param target	the target file
-   * @return		null if successful, otherwise error message
+   * @return		the directory lister
    */
-  public String move(String source, String target) {
-    String	result;
+  @Override
+  protected DirectoryLister newRemoteDirectoryLister() {
+    FtpDirectoryLister	result;
 
-    result = copy(source, target);
-
-    if (result == null) {
-      switch (m_Direction) {
-	case LOCAL_TO_REMOTE:
-	  if (!FileUtils.delete(source))
-	    result = "Failed to delete: " + source;
-	  break;
-
-	case REMOTE_TO_LOCAL:
-	  result = delete(source);
-	  break;
-
-	default:
-	  throw new IllegalStateException("Unhandled direction: " + m_Direction);
-      }
-    }
+    result = new FtpDirectoryLister();
+    result.setClient(m_Client);
 
     return result;
   }

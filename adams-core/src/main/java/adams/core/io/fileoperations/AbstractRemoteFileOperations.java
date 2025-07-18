@@ -20,6 +20,12 @@
 
 package adams.core.io.fileoperations;
 
+import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
+import adams.core.io.PlaceholderFile;
+import adams.core.io.lister.DirectoryLister;
+import adams.core.io.lister.LocalDirectoryLister;
+
 /**
  * Ancestor for remote file operation classes.
  *
@@ -67,6 +73,119 @@ public abstract class AbstractRemoteFileOperations
   }
 
   /**
+   * Copies a file.
+   *
+   * @param source	the source file
+   * @param target	the target file
+   * @return		null if successful, otherwise error message
+   */
+  protected abstract String copyFile(String source, String target);
+
+  /**
+   * Returns an instance of the remote directory lister.
+   *
+   * @return		the directory lister
+   */
+  protected abstract DirectoryLister newRemoteDirectoryLister();
+
+  /**
+   * Copies a directory.
+   *
+   * @param source	the source dir
+   * @param target	the target dir
+   * @return		null if successful, otherwise error message
+   */
+  protected String copyDir(String source, String target) {
+    String		result;
+    DirectoryLister lister;
+    FileObject[]	files;
+
+    result = null;
+
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+	// create remote sub dir
+	result = mkdirRemote(target);
+	if (result != null)
+	  return result;
+
+	// copy files in source dir
+	lister = new LocalDirectoryLister();
+	lister.setWatchDir(source);
+	lister.setListDirs(true);
+	lister.setListFiles(true);
+	files = lister.listObjects();
+	for (FileObject file: files) {
+	  if (file.isDirectory())
+	    result = copyDir(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	  else
+	    result = copyFile(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	  if (result != null)
+	    break;
+	}
+	break;
+
+      case REMOTE_TO_LOCAL:
+	// create remote sub dir
+	result = mkdirLocal(target);
+	if (result != null)
+	  return result;
+
+	// copy files in source dir
+	lister = newRemoteDirectoryLister();
+	lister.setWatchDir(source);
+	lister.setListDirs(true);
+	lister.setListFiles(true);
+	files = lister.listObjects();
+	for (FileObject file: files) {
+	  if (file.isDirectory())
+	    result = copyDir(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	  else
+	    result = copyFile(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	  if (result != null)
+	    break;
+	}
+	break;
+    }
+
+    return result;
+  }
+
+  /**
+   * Copies a file/dir.
+   *
+   * @param source	the source file/dir
+   * @param target	the target file/dir
+   * @return		null if successful, otherwise error message
+   */
+  public String copy(String source, String target) {
+    String		result;
+    PlaceholderFile	file;
+
+    switch (m_Direction) {
+      case LOCAL_TO_REMOTE:
+	file = new PlaceholderFile(source);
+	if (file.isDirectory())
+	  result = copyDir(source, target);
+	else
+	  result = copyFile(source, target);
+	break;
+
+      case REMOTE_TO_LOCAL:
+	if (isDirRemote(source))
+	  result = copyDir(source, target);
+	else
+	  result = copyFile(source, target);
+	break;
+
+      default:
+	throw new IllegalStateException("Unhandled direction: " + m_Direction);
+    }
+
+    return result;
+  }
+
+  /**
    * Renames a local file/dir.
    *
    * @param source	the source file/dir (old)
@@ -102,6 +221,37 @@ public abstract class AbstractRemoteFileOperations
       default:
 	throw new IllegalStateException("Unhandled direction!");
     }
+  }
+
+  /**
+   * Moves a file.
+   *
+   * @param source	the source file
+   * @param target	the target file
+   * @return		null if successful, otherwise error message
+   */
+  public String move(String source, String target) {
+    String	result;
+
+    result = copy(source, target);
+
+    if (result == null) {
+      switch (m_Direction) {
+	case LOCAL_TO_REMOTE:
+	  if (!FileUtils.delete(source))
+	    result = "Failed to delete: " + source;
+	  break;
+
+	case REMOTE_TO_LOCAL:
+	  result = deleteRemote(source);
+	  break;
+
+	default:
+	  throw new IllegalStateException("Unhandled direction: " + m_Direction);
+      }
+    }
+
+    return result;
   }
 
   /**

@@ -20,8 +20,9 @@
 
 package adams.core.io.fileoperations;
 
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.lister.DirectoryLister;
+import adams.core.io.lister.SmbDirectoryLister;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.SMB;
 import adams.core.net.SMBAuthenticationProvider;
@@ -84,7 +85,7 @@ public class SmbFileOperations
    * @param target	the target file
    * @return		null if successful, otherwise error message
    */
-  public String copy(String source, String target) {
+  protected String copyFile(String source, String target) {
     String		result;
 
     switch (m_Direction) {
@@ -104,32 +105,15 @@ public class SmbFileOperations
   }
 
   /**
-   * Moves a file.
+   * Returns an instance of the remote directory lister.
    *
-   * @param source	the source file
-   * @param target	the target file
-   * @return		null if successful, otherwise error message
+   * @return		the directory lister
    */
-  public String move(String source, String target) {
-    String	result;
+  protected DirectoryLister newRemoteDirectoryLister() {
+    SmbDirectoryLister	result;
 
-    result = copy(source, target);
-
-    if (result == null) {
-      switch (m_Direction) {
-	case LOCAL_TO_REMOTE:
-	  if (!FileUtils.delete(source))
-	    result = "Failed to delete: " + source;
-	  break;
-
-	case REMOTE_TO_LOCAL:
-	  result = delete(source);
-	  break;
-
-	default:
-	  throw new IllegalStateException("Unhandled direction: " + m_Direction);
-      }
-    }
+    result = new SmbDirectoryLister();
+    result.setAuthenticationProvider(m_Provider);
 
     return result;
   }

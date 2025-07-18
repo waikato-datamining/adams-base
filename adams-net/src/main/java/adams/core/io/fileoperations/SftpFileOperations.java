@@ -20,8 +20,11 @@
 
 package adams.core.io.fileoperations;
 
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.core.io.SftpFileObject;
+import adams.core.io.lister.DirectoryLister;
+import adams.core.io.lister.SftpDirectoryLister;
+import adams.core.io.lister.Sorting;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.SSHSessionProvider;
 import com.jcraft.jsch.ChannelSftp;
@@ -83,7 +86,7 @@ public class SftpFileOperations
    * @param target	the target file
    * @return		null if successful, otherwise error message
    */
-  public String copy(String source, String target) {
+  protected String copyFile(String source, String target) {
     String		result;
     ChannelSftp 	channel;
 
@@ -146,32 +149,16 @@ public class SftpFileOperations
   }
 
   /**
-   * Moves a file.
+   * Returns an instance of the remote directory lister.
    *
-   * @param source	the source file
-   * @param target	the target file
-   * @return		null if successful, otherwise error message
+   * @return		the directory lister
    */
-  public String move(String source, String target) {
-    String	result;
+  @Override
+  protected DirectoryLister newRemoteDirectoryLister() {
+    SftpDirectoryLister	result;
 
-    result = copy(source, target);
-
-    if (result == null) {
-      switch (m_Direction) {
-	case LOCAL_TO_REMOTE:
-	  if (!FileUtils.delete(source))
-	    result = "Failed to delete: " + source;
-	  break;
-
-	case REMOTE_TO_LOCAL:
-	  result = delete(source);
-	  break;
-
-	default:
-	  throw new IllegalStateException("Unhandled direction: " + m_Direction);
-      }
-    }
+    result = new SftpDirectoryLister();
+    result.setSessionProvider(m_Provider);
 
     return result;
   }
@@ -213,6 +200,44 @@ public class SftpFileOperations
   }
 
   /**
+   * Deletes a remote dir. Must be empty.
+   *
+   * @param channel 	the channel to use
+   * @param path	the file/dir to delete
+   * @return		null if successful, otherwise error message
+   */
+  protected String deleteRemoteDir(ChannelSftp channel, String path) {
+    try {
+      if (isLoggingEnabled())
+	getLogger().info("Deleting " + path);
+      channel.rmdir(path);
+      return null;
+    }
+    catch (Exception e) {
+      return LoggingHelper.handleException(this, "Failed to delete dir: " + path, e);
+    }
+  }
+
+  /**
+   * Deletes a remote file.
+   *
+   * @param channel 	the channel to use
+   * @param path	the file/dir to delete
+   * @return		null if successful, otherwise error message
+   */
+  protected String deleteRemoteFile(ChannelSftp channel, String path) {
+    try {
+      if (isLoggingEnabled())
+	getLogger().info("Deleting " + path);
+      channel.rm(path);
+      return null;
+    }
+    catch (Exception e) {
+      return LoggingHelper.handleException(this, "Failed to delete file: " + path, e);
+    }
+  }
+
+  /**
    * Deletes a remote file/dir.
    *
    * @param path	the file/dir to delete
@@ -221,6 +246,10 @@ public class SftpFileOperations
   protected String deleteRemote(String path) {
     ChannelSftp 	channel;
     boolean		isDir;
+    SftpDirectoryLister	lister;
+    SftpFileObject[]	files;
+    String		msg;
+    int			i;
 
     channel = null;
     isDir   = isDirRemote(path);
@@ -228,12 +257,38 @@ public class SftpFileOperations
       if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
 	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
 	channel.connect();
-	if (isLoggingEnabled())
-	  getLogger().info("Deleting " + path);
-	if (isDir)
+	if (isDir) {
+	  // list all files/dirs
+	  lister = new SftpDirectoryLister();
+	  lister.setWatchDir(path);
+	  lister.setSessionProvider(m_Provider);
+	  lister.setRecursive(true);
+	  lister.setListFiles(true);
+	  lister.setListDirs(true);
+	  lister.setSorting(Sorting.SORT_BY_NAME);
+	  files = lister.listObjects();
+	  // delete files to empty the dirs
+	  for (SftpFileObject file: files) {
+	    if (file.isDirectory())
+	      continue;
+	    msg = deleteRemoteFile(channel, file.getFile().getAbsolutePath());
+	    if (msg != null)
+	      return msg;
+	  }
+	  // delete dirs in reverse order
+	  for (i = files.length - 1; i >= 0; i--) {
+	    if (files[i].isDirectory()) {
+	      msg = deleteRemoteDir(channel, files[i].getFile().getAbsolutePath());
+	      if (msg != null)
+		return msg;
+	    }
+	  }
+	  // delete uppermost dir
 	  channel.rmdir(path);
-	else
-	  channel.rm(path);
+	}
+	else {
+	  deleteRemoteFile(channel, path);
+	}
 	channel.disconnect();
       }
       else {
