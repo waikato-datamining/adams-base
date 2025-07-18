@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * FileCommanderPanel.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
@@ -424,8 +424,6 @@ public class FileCommanderPanel
    */
   public void copy() {
     FileObject[]	files;
-    String		input;
-    String		target;
     int			retVal;
 
     m_Stopped = false;
@@ -442,76 +440,49 @@ public class FileCommanderPanel
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to copy " + files.length + " file" + (files.length > 1 ? "s" : "")
+	this, "Do you want to copy " + files.length + " files?"
 	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
-    if (files.length > 1) {
-      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
-	GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot copy files!");
-	return;
-      }
-      m_Worker = new SwingWorker() {
-	protected MessageCollection errors = new MessageCollection();
-	@Override
-	protected Object doInBackground() throws Exception {
-	  String target = m_FilesInactive.getFilePanel().getCurrentDir();
-	  for (int i = 0; i < files.length; i++) {
-	    if (m_Stopped)
-	      break;
-	    FileObject file = files[i];
-	    String targetFile = target + "/" + file.getName();
-	    m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
-	    try {
-	      String msg = m_FileOperations.copy(file.toString(), targetFile);
-	      if (msg != null)
-		errors.add("Failed to copy " + file + " to " + targetFile + ":\n" + msg);
-	    }
-	    catch (Exception e) {
-	      errors.add("Failed to copy " + files[0] + " to " + targetFile + "!", e);
-	    }
-	  }
-	  return null;
-	}
-	@Override
-	protected void done() {
-	  super.done();
-	  m_Worker = null;
+    m_Worker = new SwingWorker() {
+      private MessageCollection errors = new MessageCollection();
+      @Override
+      protected Object doInBackground() throws Exception {
+	String target = m_FilesInactive.getFilePanel().getCurrentDir();
+	for (int i = 0; i < files.length; i++) {
 	  if (m_Stopped)
-	    m_StatusBar.showStatus("User stopped copying files!");
-	  else
-	    m_StatusBar.showStatus("");
-	  updateButtons();
-	  if (!errors.isEmpty())
-	    GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
-	  reload();
+	    break;
+	  FileObject file = files[i];
+	  String targetFile = target + "/" + file.getName();
+	  m_StatusBar.showStatus("Copying " + (i+1) + "/" + files.length + ": " + file);
+	  try {
+	    String msg = m_FileOperations.copy(file.toString(), targetFile);
+	    if (msg != null)
+	      errors.add("Failed to copy " + file + " to " + targetFile + ":\n" + msg);
+	  }
+	  catch (Exception e) {
+	    errors.add("Failed to copy " + files[0] + " to " + targetFile + "!", e);
+	  }
 	}
-      };
-      m_Worker.execute();
-    }
-    else {
-      input = GUIHelper.showInputDialog(this, "Please enter new file name", files[0].getName());
-      if (input == null)
-	return;
-      if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir()) && input.equals(files[0].getName())) {
-	showStatus("Cannot copy file unto itself!");
-	return;
+	return null;
       }
-      target = m_FilesInactive.getFilePanel().getCurrentDir();
-      String targetFile = target + "/" + input;
-      try {
-	String msg = m_FileOperations.copy(files[0].toString(), targetFile);
-	if (msg != null)
-	  GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + targetFile + ":\n" + msg);
+      @Override
+      protected void done() {
+	super.done();
+	m_Worker = null;
+	if (m_Stopped)
+	  m_StatusBar.showStatus("User stopped copying files!");
+	else
+	  m_StatusBar.showStatus("");
+	updateButtons();
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	reload();
       }
-      catch (Exception e) {
-	GUIHelper.showErrorMessage(this, "Failed to copy " + files[0] + " to " + targetFile + "!", e);
-      }
-    }
-
-    reload();
+    };
+    m_Worker.execute();
   }
 
   /**
@@ -577,14 +548,14 @@ public class FileCommanderPanel
 	this, "Do you want to move the following file?\n" + files[0]);
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to move " + files.length + " file" + (files.length > 1 ? "s" : "")
+	this, "Do you want to move " + files.length + " files"
 	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     m_Worker = new SwingWorker() {
-      protected MessageCollection errors = new MessageCollection();
+      private MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
 	String target = m_FilesInactive.getFilePanel().getCurrentDir();
@@ -670,13 +641,13 @@ public class FileCommanderPanel
 	this, "Do you want to delete the following file?\n" + files[0]);
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to delete " + files.length + " file" + (files.length > 1 ? "s" : "")
+	this, "Do you want to delete " + files.length + " files"
 	  + " from\n" + m_FilesActive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     m_Worker = new SwingWorker() {
-      protected MessageCollection errors = new MessageCollection();
+      private MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
 	updateButtons();
