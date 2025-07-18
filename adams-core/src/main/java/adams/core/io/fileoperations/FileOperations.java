@@ -54,21 +54,21 @@ public interface FileOperations {
   public String move(String source, String target);
 
   /**
-   * Renames a file.
+   * Renames a file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   public String rename(String source, String target);
 
   /**
-   * Deletes a file.
+   * Deletes a file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file);
+  public String delete(String path);
 
   /**
    * Creates the directory.

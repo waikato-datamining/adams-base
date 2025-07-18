@@ -135,10 +135,10 @@ public class SmbFileOperations
   }
 
   /**
-   * Renames a remote file.
+   * Renames a remote file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   protected String renameRemote(String source, String target) {
@@ -156,20 +156,21 @@ public class SmbFileOperations
   }
 
   /**
-   * Deletes a remote file.
+   * Deletes a remote file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  protected String deleteRemote(String file) {
+  protected String deleteRemote(String path) {
     SmbFile 	smbfile;
 
     try {
-      smbfile = new SmbFile(file, m_Provider.getAuthentication());
+      smbfile = new SmbFile(path, m_Provider.getAuthentication());
+      // deletes file or dir
       smbfile.delete();
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete file: " + path, e);
     }
 
     return null;

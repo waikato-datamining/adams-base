@@ -182,10 +182,10 @@ public class FtpFileOperations
   }
 
   /**
-   * Renames a remote file.
+   * Renames a remote file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   protected String renameRemote(String source, String target) {
@@ -199,17 +199,23 @@ public class FtpFileOperations
   }
 
   /**
-   * Deletes a remote file.
+   * Deletes a remote file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  protected String deleteRemote(String file) {
+  protected String deleteRemote(String path) {
+    boolean		isDir;
+
+    isDir = isDirRemote(path);
     try {
-      m_Client.deleteFile(file);
+      if (isDir)
+	m_Client.rmd(path);
+      else
+	m_Client.deleteFile(path);
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete " + (isDir ? "directory" : "file") + ": " + path, e);
     }
     return null;
   }

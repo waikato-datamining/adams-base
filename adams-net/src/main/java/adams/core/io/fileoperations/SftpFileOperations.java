@@ -177,10 +177,10 @@ public class SftpFileOperations
   }
 
   /**
-   * Renames a remote file.
+   * Renames a remote file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   protected String renameRemote(String source, String target) {
@@ -213,22 +213,27 @@ public class SftpFileOperations
   }
 
   /**
-   * Deletes a remote file.
+   * Deletes a remote file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  protected String deleteRemote(String file) {
+  protected String deleteRemote(String path) {
     ChannelSftp 	channel;
+    boolean		isDir;
 
     channel = null;
+    isDir   = isDirRemote(path);
     try {
       if ((m_Provider.getSession() != null) && m_Provider.getSession().isConnected()) {
 	channel = (ChannelSftp) m_Provider.getSession().openChannel("sftp");
 	channel.connect();
 	if (isLoggingEnabled())
-	  getLogger().info("Deleting " + file);
-	channel.rm(file);
+	  getLogger().info("Deleting " + path);
+	if (isDir)
+	  channel.rmdir(path);
+	else
+	  channel.rm(path);
 	channel.disconnect();
       }
       else {
@@ -236,7 +241,7 @@ public class SftpFileOperations
       }
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to delete file: " + file, e);
+      return LoggingHelper.handleException(this, "Failed to delete file: " + path, e);
     }
     finally {
       if (channel != null) {

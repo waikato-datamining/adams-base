@@ -67,10 +67,10 @@ public abstract class AbstractRemoteFileOperations
   }
 
   /**
-   * Renames a local file.
+   * Renames a local file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   protected String renameLocal(String source, String target) {
@@ -78,19 +78,19 @@ public abstract class AbstractRemoteFileOperations
   }
 
   /**
-   * Renames a remote file.
+   * Renames a remote file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   protected abstract String renameRemote(String source, String target);
 
   /**
-   * Renames a file.
+   * Renames a file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   public String rename(String source, String target) {
@@ -105,35 +105,35 @@ public abstract class AbstractRemoteFileOperations
   }
 
   /**
-   * Deletes a local file.
+   * Deletes a local file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  protected String deleteLocal(String file) {
-    return m_LocalOperations.delete(file);
+  protected String deleteLocal(String path) {
+    return m_LocalOperations.delete(path);
   }
 
   /**
-   * Deletes a remote file.
+   * Deletes a remote file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  protected abstract String deleteRemote(String file);
+  protected abstract String deleteRemote(String path);
 
   /**
-   * Deletes a file.
+   * Deletes a file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
+  public String delete(String path) {
     switch (m_Direction) {
       case LOCAL_TO_REMOTE:
-        return deleteLocal(file);
+        return deleteLocal(path);
       case REMOTE_TO_LOCAL:
-        return deleteRemote(file);
+        return deleteRemote(path);
       default:
 	throw new IllegalStateException("Unhandled direction!");
     }

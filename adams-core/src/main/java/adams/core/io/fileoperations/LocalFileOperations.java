@@ -91,10 +91,10 @@ public class LocalFileOperations
   }
 
   /**
-   * Renames a file.
+   * Renames a file/dir.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   public String rename(String source, String target) {
@@ -104,14 +104,14 @@ public class LocalFileOperations
   }
 
   /**
-   * Deletes a file.
+   * Deletes a file/dir.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
-    if (!FileUtils.delete(file))
-      return "Failed to delete file: " + file;
+  public String delete(String path) {
+    if (!FileUtils.delete(path))
+      return "Failed to delete file: " + path;
     return null;
   }
 

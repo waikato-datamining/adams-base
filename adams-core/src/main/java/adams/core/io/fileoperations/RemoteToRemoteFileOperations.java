@@ -138,10 +138,10 @@ public class RemoteToRemoteFileOperations
   }
 
   /**
-   * Renames a file. Uses {@link #getSource()}.
+   * Renames a file/dir. Uses {@link #getSource()}.
    *
-   * @param source	the source file (old)
-   * @param target	the target file (new)
+   * @param source	the source file/dir (old)
+   * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
   public String rename(String source, String target) {
@@ -149,13 +149,13 @@ public class RemoteToRemoteFileOperations
   }
 
   /**
-   * Deletes a file. Uses {@link #getSource()}.
+   * Deletes a file/dir. Uses {@link #getSource()}.
    *
-   * @param file	the file to delete
+   * @param path	the file/dir to delete
    * @return		null if successful, otherwise error message
    */
-  public String delete(String file) {
-    return m_Source.delete(file);
+  public String delete(String path) {
+    return m_Source.delete(path);
   }
 
   /**
