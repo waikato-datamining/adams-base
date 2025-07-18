@@ -73,10 +73,10 @@ public class LocalFileOperations
   }
 
   /**
-   * Moves a file.
+   * Moves a file/dir.
    *
-   * @param source	the source file
-   * @param target	the target file
+   * @param source	the source file/dir
+   * @param target	the target file/dir
    * @return		null if successful, otherwise error message
    */
   public String move(String source, String target) {
