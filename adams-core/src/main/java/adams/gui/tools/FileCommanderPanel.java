@@ -440,7 +440,7 @@ public class FileCommanderPanel
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to copy " + files.length + " files?"
+	this, "Do you want to copy " + files.length + " objects?"
 	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
@@ -473,7 +473,7 @@ public class FileCommanderPanel
 	super.done();
 	m_Worker = null;
 	if (m_Stopped)
-	  m_StatusBar.showStatus("User stopped copying files!");
+	  m_StatusBar.showStatus("User stopped copying objects!");
 	else
 	  m_StatusBar.showStatus("");
 	updateButtons();
@@ -504,7 +504,7 @@ public class FileCommanderPanel
       return;
 
     retVal = GUIHelper.showConfirmMessage(
-      this, "Do you want to rename the following file?\n" + files[0]);
+      this, "Do you want to rename the following object?\n" + files[0]);
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -539,16 +539,16 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
     if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
-      GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move files!");
+      GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move objects!");
       return;
     }
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to move the following file?\n" + files[0]);
+	this, "Do you want to move the following object?\n" + files[0]);
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to move " + files.length + " files"
+	this, "Do you want to move " + files.length + " objects"
 	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
 	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
@@ -565,7 +565,7 @@ public class FileCommanderPanel
 	  FileObject file = files[i];
 	  m_StatusBar.showStatus("Moving " + (i+1) + "/" + files.length + ": " + file);
 	  try {
-	    String msg = m_FileOperations.move(file.toString(), target);
+	    String msg = m_FileOperations.move(file.toString(), target + "/" + file.getName());
 	    if (msg != null)
 	      errors.add("Failed to move " + file + " to " + target + ":\n" + msg);
 	  }
@@ -580,7 +580,7 @@ public class FileCommanderPanel
 	super.done();
 	m_Worker = null;
 	if (m_Stopped)
-	  m_StatusBar.showStatus("User stopped moving files!");
+	  m_StatusBar.showStatus("User stopped moving objects!");
 	else
 	  m_StatusBar.showStatus("");
 	updateButtons();
@@ -638,10 +638,10 @@ public class FileCommanderPanel
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to delete the following file?\n" + files[0]);
+	this, "Do you want to delete the following object?\n" + files[0]);
     else
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to delete " + files.length + " files"
+	this, "Do you want to delete " + files.length + " objects"
 	  + " from\n" + m_FilesActive.getFilePanel().getCurrentDir() + "?");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
@@ -672,12 +672,12 @@ public class FileCommanderPanel
 	super.done();
 	m_Worker = null;
 	if (m_Stopped)
-	  m_StatusBar.showStatus("User stopped deleting files!");
+	  m_StatusBar.showStatus("User stopped deleting objects!");
 	else
 	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
-	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete file(s)!\n" + errors);
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete object(s)!\n" + errors);
 	reload();
       }
     };
