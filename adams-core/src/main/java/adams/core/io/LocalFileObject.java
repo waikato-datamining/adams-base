@@ -58,7 +58,7 @@ public class LocalFileObject
    * @param file	the file to wrap
    */
   public LocalFileObject(File file) {
-    m_File         = file;
+    m_File         = file.getAbsoluteFile();
     m_Directory    = m_File.isDirectory();
     m_Length       = m_File.length();
     m_LastModified = new Date(m_File.lastModified());
@@ -73,10 +73,18 @@ public class LocalFileObject
    */
   @Override
   public FileObject getParent() {
-    if (m_File.getParentFile() != null)
-      return new LocalFileObject(m_File.getParentFile());
-    else
-      return null;
+    File	file;
+    try {
+      if (m_File.getName().equals(".."))
+	return new LocalFileObject(m_File.getCanonicalFile());
+      file = m_File.getAbsoluteFile();
+      if (file.getParentFile() != null)
+	return new LocalFileObject(file.getParentFile());
+    }
+    catch (Exception e) {
+      // ignored
+    }
+    return null;
   }
 
   /**
