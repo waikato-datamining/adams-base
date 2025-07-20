@@ -36,19 +36,28 @@ public interface FileOperations {
   public boolean isSupported(Operation op);
 
   /**
-   * Copies a file.
+   * Copies a file/dir.
    *
-   * @param source	the source file
-   * @param target	the target file
+   * @param source	the source file/dir
+   * @param target	the target file/dir
    * @return		null if successful, otherwise error message
    */
   public String copy(String source, String target);
 
   /**
-   * Moves a file.
+   * Duplicates a file/dir.
    *
    * @param source	the source file
    * @param target	the target file
+   * @return		null if successful, otherwise error message
+   */
+  public String duplicate(String source, String target);
+
+  /**
+   * Moves a file/dir.
+   *
+   * @param source	the source file/dir
+   * @param target	the target file/dir
    * @return		null if successful, otherwise error message
    */
   public String move(String source, String target);

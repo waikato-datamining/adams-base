@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Operation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.fileoperations;
@@ -31,5 +31,6 @@ public enum Operation {
   MOVE,
   RENAME,
   DELETE,
-  MKDIR
+  MKDIR,
+  DUPLICATE,
 }

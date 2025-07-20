@@ -20,6 +20,7 @@
 
 package adams.core.io.fileoperations;
 
+import adams.core.exception.NotImplementedException;
 import adams.core.io.FileObject;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -183,6 +184,18 @@ public abstract class AbstractRemoteFileOperations
     }
 
     return result;
+  }
+
+  /**
+   * Duplicates a file/dir.
+   * Not implemented!
+   *
+   * @param source	the source file/dir
+   * @param target	the target file/dir
+   * @return		null if successful, otherwise error message
+   */
+  public String duplicate(String source, String target) {
+    throw new NotImplementedException();
   }
 
   /**

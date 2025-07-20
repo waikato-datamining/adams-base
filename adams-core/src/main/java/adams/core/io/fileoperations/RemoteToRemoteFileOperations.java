@@ -20,6 +20,7 @@
 
 package adams.core.io.fileoperations;
 
+import adams.core.exception.NotImplementedException;
 import adams.core.io.TempUtils;
 
 import java.io.File;
@@ -118,6 +119,18 @@ public class RemoteToRemoteFileOperations
       tmp.delete();
 
     return result;
+  }
+
+  /**
+   * Duplicates a file/dir.
+   * Not implemented!
+   *
+   * @param source	the source file/dir
+   * @param target	the target file/dir
+   * @return		null if successful, otherwise error message
+   */
+  public String duplicate(String source, String target) {
+    throw new NotImplementedException();
   }
 
   /**

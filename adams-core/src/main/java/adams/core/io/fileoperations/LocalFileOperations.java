@@ -48,6 +48,7 @@ public class LocalFileOperations
       case RENAME:
       case DELETE:
       case MKDIR:
+      case DUPLICATE:
 	return true;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
@@ -64,10 +65,28 @@ public class LocalFileOperations
   public String copy(String source, String target) {
     try {
       if (!FileUtils.copy(new PlaceholderFile(source), new PlaceholderFile(target)))
-	return "Failed to copy file: " + source + " -> " + target;
+	return "Failed to copy file/dir: " + source + " -> " + target;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to copy file: " + source + " -> " + target, e);
+      getLogger().log(Level.SEVERE, "Failed to copy file/dir: " + source + " -> " + target, e);
+    }
+    return null;
+  }
+
+  /**
+   * Duplicates a file/dir.
+   *
+   * @param source	the source file/dir
+   * @param target	the target file/dir
+   * @return		null if successful, otherwise error message
+   */
+  public String duplicate(String source, String target) {
+    try {
+      if (!FileUtils.copy(new PlaceholderFile(source), new PlaceholderFile(target)))
+	return "Failed to duplicate file/dir: " + source + " -> " + target;
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to copy file/dir: " + source + " -> " + target, e);
     }
     return null;
   }
@@ -82,10 +101,10 @@ public class LocalFileOperations
   public String move(String source, String target) {
     try {
       if (!FileUtils.move(new PlaceholderFile(source), new PlaceholderFile(target)))
-	return "Failed to move file: " + source + " -> " + target;
+	return "Failed to move file/dir: " + source + " -> " + target;
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to move file: " + source + " -> " + target, e);
+      getLogger().log(Level.SEVERE, "Failed to move file/dir: " + source + " -> " + target, e);
     }
     return null;
   }
@@ -99,7 +118,7 @@ public class LocalFileOperations
    */
   public String rename(String source, String target) {
     if (!new PlaceholderFile(source).renameTo(new PlaceholderFile(target)))
-      return "Failed to rename file: " + source + " -> " + target;
+      return "Failed to rename file/dir: " + source + " -> " + target;
     return null;
   }
 
@@ -111,7 +130,7 @@ public class LocalFileOperations
    */
   public String delete(String path) {
     if (!FileUtils.delete(path))
-      return "Failed to delete file: " + path;
+      return "Failed to delete file/dir: " + path;
     return null;
   }
 
