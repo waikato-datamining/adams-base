@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.StatusMessageHandlerExt;
 import adams.core.StoppableWithFeedback;
 import adams.core.io.FileObject;
+import adams.core.io.FileUtils;
 import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.LocalFileOperations;
 import adams.core.io.fileoperations.Operation;
@@ -96,8 +97,11 @@ public class FileCommanderPanel
   /** the button for viewing the file. */
   protected BaseFlatButton m_ButtonView;
 
-  /** the button for copying the file. */
+  /** the button for copying. */
   protected BaseFlatButton m_ButtonCopy;
+
+  /** the button for duplicating. */
+  protected BaseFlatButton m_ButtonDuplicate;
 
   /** the button for moving. */
   protected BaseFlatButton m_ButtonMove;
@@ -181,6 +185,7 @@ public class FileCommanderPanel
     super.initGUI();
 
     setLayout(new BorderLayout());
+    setPreferredSize(GUIHelper.makeWider(GUIHelper.getDefaultDialogDimension()));
 
     panelAll = new JPanel(new BorderLayout());
     add(panelAll, BorderLayout.CENTER);
@@ -203,7 +208,7 @@ public class FileCommanderPanel
     panel.add(m_PanelRight);
 
     // buttons
-    m_PanelButtons = new JPanel(new FlowLayout());
+    m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelAll.add(m_PanelButtons, BorderLayout.SOUTH);
 
     m_ButtonReload = new BaseFlatButton("Reload");
@@ -221,6 +226,10 @@ public class FileCommanderPanel
     m_ButtonCopy = new BaseFlatButton("Copy");
     m_ButtonCopy.addActionListener((ActionEvent) -> copy());
     m_PanelButtons.add(m_ButtonCopy);
+
+    m_ButtonDuplicate = new BaseFlatButton("Duplicate");
+    m_ButtonDuplicate.addActionListener((ActionEvent) -> duplicate());
+    m_PanelButtons.add(m_ButtonDuplicate);
 
     m_ButtonMove = new BaseFlatButton("Move");
     m_ButtonMove.addActionListener((ActionEvent) -> move());
@@ -308,6 +317,7 @@ public class FileCommanderPanel
     m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1) && m_FileOperations.isSupported(Operation.RENAME));
     m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1));
     m_ButtonCopy.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.COPY));
+    m_ButtonDuplicate.setEnabled(!busy && hasActive && (activeFiles.length == 1) && m_FileOperations.isSupported(Operation.DUPLICATE));
     m_ButtonMove.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.MOVE));
     m_ButtonMkDir.setEnabled(!busy && hasActive && m_FileOperations.isSupported(Operation.MKDIR));
     m_ButtonDelete.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.DELETE));
@@ -420,7 +430,7 @@ public class FileCommanderPanel
   }
 
   /**
-   * Copies the selected files to the other directory.
+   * Copies the selected files/dirs to the other directory.
    */
   public void copy() {
     FileObject[]	files;
@@ -486,7 +496,83 @@ public class FileCommanderPanel
   }
 
   /**
-   * Renames a file.
+   * Duplicates the selected file/dir.
+   * Only for local files/dirs.
+   */
+  public void duplicate() {
+    FileObject[]	files;
+    String		input;
+    String 		base;
+    String		ext;
+    int			count;
+    String		newName;
+    final String	sourceObj;
+    final String 	targetObj;
+
+    m_Stopped = false;
+
+    if (m_FilesActive == null)
+      return;
+    files = m_FilesActive.getFilePanel().getSelectedFileObjects();
+    if (files.length != 1)
+      return;
+
+    // determine new name
+    base = FileUtils.replaceExtension(files[0].getName(), "");
+    ext  = FileUtils.getExtension(files[0].getName());
+    if (ext == null)
+      ext = "";
+    if (base.matches(".\\([0-9]+\\)$"))
+      base = base.replaceAll(".\\([0-9]+\\)$", "");
+    count = 1;
+    while (true) {
+      count++;
+      newName = base + " (" + count + ")." + ext;
+      if (!FileUtils.fileExists(files[0].getFile().getParent() + "/" + newName))
+	break;
+    }
+
+    // prompt user for new name
+    input = GUIHelper.showInputDialog(this, "Please enter new file/dir name", newName);
+    if (input == null)
+      return;
+    if (input.equals(files[0].getName())) {
+      showStatus("Cannot copy file/dir unto itself!");
+      return;
+    }
+
+    // duplicate file/dir
+    sourceObj = files[0].getFile().getAbsolutePath();
+    targetObj = files[0].getFile().getParent() + "/" + input;
+    m_Worker = new SwingWorker() {
+      private MessageCollection errors = new MessageCollection();
+      @Override
+      protected Object doInBackground() throws Exception {
+	m_StatusBar.showStatus("Duplicating " + sourceObj + "...");
+	String msg = m_FileOperations.copy(sourceObj, targetObj);
+	if (msg != null)
+	  errors.add(msg);
+	return null;
+      }
+      @Override
+      protected void done() {
+	super.done();
+	m_Worker = null;
+	if (m_Stopped)
+	  m_StatusBar.showStatus("User stopped duplicating file/dir!");
+	else
+	  m_StatusBar.showStatus("");
+	updateButtons();
+	if (!errors.isEmpty())
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	reload();
+      }
+    };
+    m_Worker.execute();
+  }
+
+  /**
+   * Renames a file/dir.
    */
   public void rename() {
     FileObject[]	files;
@@ -525,7 +611,7 @@ public class FileCommanderPanel
   }
 
   /**
-   * Moves multiple selected files to the other directory.
+   * Moves multiple selected files/dirs to the other directory.
    */
   public void move() {
     FileObject[]	files;
@@ -622,7 +708,7 @@ public class FileCommanderPanel
   }
 
   /**
-   * Deletes the selected files.
+   * Deletes the selected files/dirs.
    */
   public void delete() {
     FileObject[]	files;
