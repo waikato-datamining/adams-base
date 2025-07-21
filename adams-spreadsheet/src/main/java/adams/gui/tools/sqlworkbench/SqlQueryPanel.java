@@ -229,7 +229,7 @@ public class SqlQueryPanel
         m_PanelConnection.setEnabled(false);
 	try {
 	  SQLIntf sql = SQLF.getSingleton(m_PanelConnection.getDatabaseConnection());
-	  if (query.toLowerCase().startsWith("select ")) {
+	  if (query.toLowerCase().startsWith("select ") || query.toLowerCase().startsWith("show ")) {
 	    Reader reader = new Reader(new DefaultTypeMapper(), DenseDataRow.class);
 	    ResultSet rs = sql.getResultSet(query);
 	    m_Sheet = reader.read(rs, 0);
