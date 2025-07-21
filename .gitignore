@@ -10,3 +10,4 @@ venv/
 *.pyc
 __pycache__/
 *.props_
+Blah*.java
