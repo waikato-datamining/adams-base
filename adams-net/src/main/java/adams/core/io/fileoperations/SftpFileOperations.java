@@ -74,6 +74,8 @@ public class SftpFileOperations
       case DELETE:
       case MKDIR:
 	return true;
+      case DUPLICATE:
+	return false;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
     }

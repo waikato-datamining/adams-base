@@ -26,6 +26,7 @@ import adams.core.io.FileObjectComparator;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.RecursiveDirectoryLister;
+import adams.core.logging.LoggingHelper;
 import adams.env.Environment;
 import adams.gui.core.BaseTable.ColumnWidthApproach;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -749,9 +750,15 @@ public class FilePanel
       private List<FileObject> files = new ArrayList<>();
       @Override
       protected Object doInBackground() throws Exception {
-	files = listDir();
-	if (m_Lister.hasParentDirectory())
-	  files.add(0, m_Lister.newDirectory(".."));
+	try {
+	  files = listDir();
+	  if (m_Lister.hasParentDirectory())
+	    files.add(0, m_Lister.newDirectory(".."));
+	}
+	catch (Exception e) {
+	  LoggingHelper.handleException(null, "Failed to list files/dirs?", e);
+	  files = new ArrayList<>();
+	}
 	return null;
       }
       @Override

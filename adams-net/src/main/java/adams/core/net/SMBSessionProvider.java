@@ -13,34 +13,33 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * SBMAuthenticationProvider.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * SMBSessionProvider.java
+ * Copyright (C) 2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.net;
 
-import jcifs.smb.NtlmPasswordAuthentication;
+import com.hierynomus.smbj.session.Session;
 
 /**
- * Interface for classes that provide SMB authentication.
+ * Interface for classes that provide SMB sessions.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface SMBAuthenticationProvider {
+public interface SMBSessionProvider {
 
   /**
-   * Returns the authentication.
+   * Returns the session.
    *
-   * @return		the authentication, null if not connected
+   * @return		the session, null if not connected
    */
-  public NtlmPasswordAuthentication getAuthentication();
+  public Session getSession();
 
   /**
-   * Returns a new authentication.
+   * Returns a new session.
    *
-   * @return		the authentication
+   * @return		the session
    */
-  public NtlmPasswordAuthentication newAuthentication();
+  public Session newSession();
 }

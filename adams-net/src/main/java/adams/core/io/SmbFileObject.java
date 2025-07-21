@@ -20,8 +20,9 @@
 
 package adams.core.io;
 
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbFile;
+import adams.core.net.SMB;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.smbj.share.DiskShare;
 
 import java.io.File;
 import java.util.Date;
@@ -36,8 +37,17 @@ public class SmbFileObject
 
   private static final long serialVersionUID = -1391761454087211261L;
 
+  /** the disk share. */
+  protected DiskShare m_Share;
+
+  /** the parent dir. */
+  protected String m_ParentDir;
+
   /** the actual file. */
-  protected SmbFile m_File;
+  protected FileIdBothDirectoryInformation m_File;
+
+  /** the name to use (overrides m_File). */
+  protected String m_Name;
 
   /** the length. */
   protected Long m_Length;
@@ -54,10 +64,27 @@ public class SmbFileObject
   /**
    * Initializes the wrapper.
    *
+   * @param share 	the share to use
+   * @param parentDir 	the parent dir
    * @param file	the file
    */
-  public SmbFileObject(SmbFile file) {
-    m_File = file;
+  public SmbFileObject(DiskShare share, String parentDir, FileIdBothDirectoryInformation file) {
+    this(share, parentDir, file, null);
+  }
+
+  /**
+   * Initializes the wrapper.
+   *
+   * @param share 	the share to use
+   * @param parentDir 	the parent dir
+   * @param file	the file
+   * @param name 	the name to override the one from "file"
+   */
+  public SmbFileObject(DiskShare share, String parentDir, FileIdBothDirectoryInformation file, String name) {
+    m_Share     = share;
+    m_ParentDir = parentDir;
+    m_File      = file;
+    m_Name      = name;
   }
 
   /**
@@ -67,18 +94,35 @@ public class SmbFileObject
    */
   @Override
   public FileObject getParent() {
-    // at the root "smb://"?
-    if (m_File.getParent().equals(m_File.getCanonicalPath())) {
-      return null;
+    SmbFileObject	result;
+    String		parent;
+
+    result = null;
+
+    if (m_ParentDir.contains("/")) {
+      parent = SMB.getParent(m_ParentDir);
+      result = new SmbFileObject(m_Share, parent, null);
     }
-    else {
-      try {
-	return new SmbFileObject(new SmbFile(m_File.getParent(), (NtlmPasswordAuthentication) m_File.getPrincipal()));
-      }
-      catch (Exception e) {
-	return null;
-      }
-    }
+
+    return result;
+  }
+
+  /**
+   * Returns the current parent directory.
+   *
+   * @return		the dir
+   */
+  public String getParentDir() {
+    return m_ParentDir;
+  }
+
+  /**
+   * Returns the underlying disk share.
+   *
+   * @return		the share
+   */
+  public DiskShare getShare() {
+    return m_Share;
   }
 
   /**
@@ -88,7 +132,10 @@ public class SmbFileObject
    */
   @Override
   public File getFile() {
-    return new File(m_File.getUncPath());
+    if (m_File != null)
+      return new File(m_File.getFileName());
+    else
+      return null;
   }
 
   /**
@@ -108,7 +155,12 @@ public class SmbFileObject
    */
   @Override
   public String getName() {
-    return m_File.getName();
+    if (m_Name != null)
+      return m_Name;
+    else if (m_File != null)
+      return m_File.getFileName();
+    else
+      return "";
   }
 
   /**
@@ -119,10 +171,15 @@ public class SmbFileObject
   @Override
   public synchronized long getLength() {
     if (m_Length == null) {
-      try {
-	m_Length = m_File.length();
+      if (m_File != null) {
+	try {
+	  m_Length = m_File.getEndOfFile();
+	}
+	catch (Exception e) {
+	  m_Length = -1L;
+	}
       }
-      catch (Exception e) {
+      else {
 	m_Length = -1L;
       }
     }
@@ -137,11 +194,16 @@ public class SmbFileObject
   @Override
   public synchronized boolean isDirectory() {
     if (m_Directory == null) {
-      try {
-	m_Directory = m_File.isDirectory();
+      if (m_File != null) {
+	try {
+	  m_Directory = SMB.isDirectory(m_File);
+	}
+	catch (Exception e) {
+	  m_Directory = false;
+	}
       }
-      catch (Exception e) {
-	m_Directory = false;
+      else {
+	m_Directory = m_ParentDir.endsWith("/");
       }
     }
     return m_Directory;
@@ -155,10 +217,15 @@ public class SmbFileObject
   @Override
   public synchronized Date getLastModified() {
     if (m_LastModified == null) {
-      try {
-	m_LastModified = new Date(m_File.lastModified());
+      if (m_File != null) {
+	try {
+	  m_LastModified = m_File.getLastWriteTime().toDate();
+	}
+	catch (Exception e) {
+	  m_LastModified = new Date(0L);
+	}
       }
-      catch (Exception e) {
+      else {
 	m_LastModified = new Date(0L);
       }
     }
@@ -173,10 +240,15 @@ public class SmbFileObject
   @Override
   public synchronized boolean isHidden() {
     if (m_Hidden == null) {
-      try {
-	m_Hidden = m_File.isHidden();
+      if (m_File != null) {
+	try {
+	  m_Hidden = SMB.isHidden(m_File);
+	}
+	catch (Exception e) {
+	  m_Hidden = false;
+	}
       }
-      catch (Exception e) {
+      else {
 	m_Hidden = false;
       }
     }
@@ -209,7 +281,12 @@ public class SmbFileObject
    * @return		the long name, not UNC path!
    */
   public String toString() {
-    return m_File.toString();
+    if (m_Name != null)
+      return m_ParentDir + m_Name;
+    else if (m_File != null)
+      return m_ParentDir + m_File.getFileName();
+    else
+      return m_ParentDir;
   }
 
   /**

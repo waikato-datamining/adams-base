@@ -15,7 +15,7 @@
 
 /*
  * SMBConnection.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -25,12 +25,15 @@ import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
 import adams.core.io.ConsoleHelper;
 import adams.core.management.User;
-import adams.core.net.SMBAuthenticationProvider;
+import adams.core.net.SMBSessionProvider;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.OptionalPasswordPrompt;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
-import jcifs.smb.NtlmPasswordAuthentication;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.auth.AuthenticationContext;
+import com.hierynomus.smbj.connection.Connection;
+import com.hierynomus.smbj.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,13 +123,16 @@ import java.util.List;
  */
 public class SMBConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt, SMBAuthenticationProvider, PasswordPrompter {
+  implements OptionalPasswordPrompt, SMBSessionProvider, PasswordPrompter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
 
   /** the domain. */
   protected String m_Domain;
+
+  /** the host. */
+  protected String m_Host;
 
   /** the SMB user to use. */
   protected String m_User;
@@ -149,8 +155,14 @@ public class SMBConnection
   /** how to perform the stop. */
   protected StopMode m_StopMode;
 
+  /** the SMB client. */
+  protected transient SMBClient m_Client;
+
+  /** the SMB connection. */
+  protected transient Connection m_Connection;
+
   /** the SMB authentication. */
-  protected transient NtlmPasswordAuthentication m_Session;
+  protected transient Session m_Session;
 
   /**
    * Returns a string describing the object.
@@ -171,6 +183,10 @@ public class SMBConnection
 
     m_OptionManager.add(
       "domain", "domain",
+      "WORKGROUP");
+
+    m_OptionManager.add(
+      "host", "host",
       "");
 
     m_OptionManager.add(
@@ -199,6 +215,15 @@ public class SMBConnection
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    cleanUpSmb();
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -209,7 +234,7 @@ public class SMBConnection
     List<String>	options;
     String		value;
 
-    result = QuickInfoHelper.toString(this, "domain", (m_Domain.length() == 0 ? "no domain" : m_Domain), "domain: ");
+    result = QuickInfoHelper.toString(this, "domain", (m_Domain.isEmpty() ? "no domain" : m_Domain), "domain: ");
     result += QuickInfoHelper.toString(this, "user", m_User, ", user: ");
     value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
     if (value != null)
@@ -252,6 +277,35 @@ public class SMBConnection
    */
   public String domainTipText() {
     return "The domain name to connect to.";
+  }
+
+  /**
+   * Sets the host to connect to.
+   *
+   * @param value	the host name/ip
+   */
+  public void setHost(String value) {
+    m_Host = value;
+    reset();
+  }
+
+  /**
+   * Returns the host to connect to.
+   *
+   * @return		the host name/ip
+   */
+  public String getHost() {
+    return m_Host;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String hostTipText() {
+    return "The host (name/IP address) to connect to.";
   }
 
   /**
@@ -480,23 +534,44 @@ public class SMBConnection
   }
 
   /**
-   * Returns the SMB authentication.
+   * Returns the SMB session.
    *
-   * @return		the SMB authentication, null if not connected
+   * @return		the SMB session, null if not connected
    */
-  public synchronized NtlmPasswordAuthentication getAuthentication() {
+  @Override
+  public synchronized Session getSession() {
     if (m_Session == null)
-      m_Session = newAuthentication();
+      m_Session = newSession();
     return m_Session;
   }
 
   /**
-   * Returns a new SMB authentication.
+   * Returns a new SMB session.
    *
-   * @return		the SMB authentication
+   * @return		the SMB session
    */
-  public NtlmPasswordAuthentication newAuthentication() {
-    return new NtlmPasswordAuthentication(m_Domain, m_User, m_ActualPassword.getValue());
+  @Override
+  public synchronized Session newSession() {
+    Session			result;
+    AuthenticationContext 	context;
+
+    if (m_Client == null)
+      m_Client = new SMBClient();
+
+    if (m_Connection == null) {
+      try {
+	m_Connection = m_Client.connect(m_Host);
+      }
+      catch (Exception e) {
+	handleException("Failed to connect to: " + m_Host, e);
+	return null;
+      }
+    }
+
+    context = new AuthenticationContext(m_User, m_Password.getValue().toCharArray(), m_Domain);
+    result  = m_Connection.authenticate(context);
+
+    return result;
   }
 
   /**
@@ -518,12 +593,12 @@ public class SMBConnection
       // password
       m_ActualPassword = m_Password;
 
-      if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
+      if (m_PromptForPassword && (m_Password.getValue().isEmpty())) {
 	if (!isHeadless()) {
 	  msg = doInteract();
 	  if (msg != null) {
 	    if (m_StopFlowIfCanceled) {
-	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().isEmpty()))
 		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
 	      else
 		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
@@ -535,7 +610,7 @@ public class SMBConnection
 	  msg = doInteractHeadless();
 	  if (msg != null) {
 	    if (m_StopFlowIfCanceled) {
-	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
+	      if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().isEmpty()))
 		StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
 	      else
 		StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
@@ -546,7 +621,7 @@ public class SMBConnection
       }
 
       if (result == null)
-	m_Session = newAuthentication();
+	m_Session = newSession();
     }
     else {
       if (isLoggingEnabled())
@@ -554,5 +629,44 @@ public class SMBConnection
     }
 
     return result;
+  }
+
+  /**
+   * Cleans up the SMB components.
+   */
+  protected void cleanUpSmb() {
+    if (m_Client != null)
+      m_Client.close();
+    m_Client = null;
+
+    if (m_Connection != null) {
+      try {
+	m_Connection.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_Connection = null;
+    }
+
+    if (m_Session != null) {
+      try {
+	m_Session.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_Session = null;
+    }
+  }
+
+  /**
+   * Cleans up after the execution has finished. Also removes graphical
+   * components.
+   */
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    cleanUpSmb();
   }
 }

@@ -24,9 +24,14 @@ import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 import adams.core.io.FileObject;
 import adams.core.io.SmbFileObject;
-import adams.core.net.SMBAuthenticationProvider;
-import jcifs.smb.NtlmPasswordAuthentication;
-import jcifs.smb.SmbFile;
+import adams.core.net.SMB;
+import adams.core.net.SMBSessionProvider;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.auth.AuthenticationContext;
+import com.hierynomus.smbj.connection.Connection;
+import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.DiskShare;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +54,9 @@ public class SmbDirectoryLister
   /** the SMB host. */
   protected String m_Host;
 
+  /** the share to access. */
+  protected String m_Share;
+
   /** the SMB domain. */
   protected String m_Domain;
 
@@ -58,11 +66,23 @@ public class SmbDirectoryLister
   /** the SMB password to use. */
   protected BasePassword m_Password;
 
-  /** the authentication provider to use. */
-  protected SMBAuthenticationProvider m_AuthenticationProvider;
+  /** whether to show hidden files/dirs. */
+  protected boolean m_ListHidden;
 
-  /** the authentication to use. */
-  protected transient NtlmPasswordAuthentication m_Authentication;
+  /** the session provider to use. */
+  protected SMBSessionProvider m_SessionProvider;
+
+  /** the SMB client. */
+  protected transient SMBClient m_Client;
+
+  /** the SMB connection. */
+  protected transient Connection m_Connection;
+
+  /** the session to use. */
+  protected transient Session m_Session;
+
+  /** the diskshare in use. */
+  protected transient DiskShare m_DiskShare;
 
   /**
    * Sets the host to connect to.
@@ -71,6 +91,7 @@ public class SmbDirectoryLister
    */
   public void setHost(String value) {
     m_Host = value;
+    cleanUpSmb();
   }
 
   /**
@@ -98,6 +119,24 @@ public class SmbDirectoryLister
    */
   public String getDomain() {
     return m_Domain;
+  }
+
+  /**
+   * Sets the share to use.
+   *
+   * @param value	the share
+   */
+  public void setShare(String value) {
+    m_Share = value;
+  }
+
+  /**
+   * Returns the share to access.
+   *
+   * @return		the share
+   */
+  public String getShare() {
+    return m_Share;
   }
 
   /**
@@ -137,21 +176,74 @@ public class SmbDirectoryLister
   }
 
   /**
-   * Sets the authentication provider to use.
+   * Sets whether to list hidden dirs/files.
    *
-   * @param value	the provider
+   * @param value 	true if to list
    */
-  public void setAuthenticationProvider(SMBAuthenticationProvider value) {
-    m_AuthenticationProvider = value;
+  public void setListHidden(boolean value) {
+    m_ListHidden = value;
   }
 
   /**
-   * Returns the authentication provider to use.
+   * Returns whether to list hidden dirs/files.
+   *
+   * @return 		true if to list
+   */
+  public boolean getListHidden() {
+    return m_ListHidden;
+  }
+
+  /**
+   * Sets the session provider to use.
+   *
+   * @param value	the provider
+   */
+  public void setSessionProvider(SMBSessionProvider value) {
+    m_SessionProvider = value;
+  }
+
+  /**
+   * Returns the session provider to use.
    *
    * @return		the provider
    */
-  public SMBAuthenticationProvider getAuthenticationProvider() {
-    return m_AuthenticationProvider;
+  public SMBSessionProvider getSessionProvider() {
+    return m_SessionProvider;
+  }
+
+  /**
+   * Obtains the share instance to use.
+   *
+   * @return		the share
+   */
+  protected DiskShare getDiskShare() {
+    AuthenticationContext	context;
+
+    if (m_DiskShare == null) {
+      if (m_Session == null) {
+	if (m_SessionProvider != null) {
+	  m_Session = m_SessionProvider.getSession();
+	}
+	else {
+	  if (m_Client == null)
+	    m_Client = new SMBClient();
+	  if (m_Connection == null) {
+	    try {
+	      m_Connection = m_Client.connect(m_Host);
+	    }
+	    catch (Exception e) {
+	      getLogger().log(Level.SEVERE, "Failed to connect to: " + m_Host);
+	      return null;
+	    }
+	  }
+	  context   = new AuthenticationContext(m_User, m_Password.getValue().toCharArray(), m_Domain);
+	  m_Session = m_Connection.authenticate(context);
+	}
+      }
+
+      m_DiskShare = (DiskShare) m_Session.connectShare(m_Share);
+    }
+    return m_DiskShare;
   }
 
   /**
@@ -183,24 +275,39 @@ public class SmbDirectoryLister
   }
 
   /**
-   * Returns a new directory relative to the watch directory.
+   * Returns a new directory relative to the parent directory.
    *
+   * @param parent 	the parent directory
    * @param dir		the directory name
    * @return		the new wrapper
    */
   public SmbFileObject newDirectory(String parent, String dir) {
-    String 	pdir;
+    String 		pdir;
+    String		ddir;
+    String[]		parts;
+
     try {
-      pdir = parent;
-      if (!pdir.startsWith("/"))
-	pdir = "/" + pdir;
-      if (!pdir.endsWith("/"))
-	pdir += "/";
-      if (!dir.endsWith("/"))
-	dir += dir;
-      return new SmbFileObject(new SmbFile("smb://" + m_Host + pdir + dir));
+      if (dir.equals("..")) {
+	parts = SMB.splitPath(parent);
+	pdir  = SMB.getParent(parent);
+	ddir  = SMB.fixSubDir(parts[parts.length - 1]);
+	for (FileIdBothDirectoryInformation info : getDiskShare().list(pdir, parts[parts.length - 1]))
+	  return new SmbFileObject(getDiskShare(), pdir + ddir, info, "..");
+      }
+      else {
+	pdir = SMB.fixDir(parent);
+	ddir = SMB.fixSubDir(dir);
+	// can we find the dir via its parent?
+	for (FileIdBothDirectoryInformation info : getDiskShare().list(pdir, dir))
+	  return new SmbFileObject(getDiskShare(), pdir, info);
+	// the directory does not yet exist, maybe in the process of being created
+	return new SmbFileObject(getDiskShare(), pdir + ddir, null);
+      }
+      getLogger().warning("Parent directory not found? parent=" + parent + ", dir=" + dir);
+      return null;
     }
     catch (Exception e) {
+      getLogger().warning("Failed to construct new dir for: parent=" + parent + ", dir=" + dir);
       return null;
     }
   }
@@ -209,61 +316,65 @@ public class SmbDirectoryLister
    * Performs the recursive search. Search goes deeper if != 0 (use -1 to
    * start with for infinite search).
    *
-   * @param context	the context to use
+   * @param dir		the dir to search
    * @param files	the files collected so far
    * @param depth	the depth indicator (searched no deeper, if 0)
    * @throws Exception	if listing fails
    */
-  protected void search(SmbFile context, List<SortContainer> files, int depth) throws Exception {
-    SmbFile[]	currFiles;
-    SmbFile	entry;
-    int		i;
+  protected void search(String dir, List<SortContainer> files, int depth) throws Exception {
+    List<FileIdBothDirectoryInformation>	currFiles;
+    FileIdBothDirectoryInformation		entry;
+    int						i;
 
     if (depth == 0)
       return;
 
     if (getDebug())
-      getLogger().info("search: context=" + context + ", depth=" + depth);
+      getLogger().info("search: parentDir=" + dir + ", depth=" + depth);
 
-    currFiles = context.listFiles();
-    if (currFiles == null) {
+    currFiles = getDiskShare().list(dir);
+    if ((currFiles == null) || currFiles.isEmpty()) {
       if (getDebug())
 	getLogger().info("No files listed!");
       return;
     }
 
-    for (i = 0; i < currFiles.length; i++) {
+    for (i = 0; i < currFiles.size(); i++) {
       // do we have to stop?
       if (m_Stopped)
 	break;
 
-      entry = currFiles[i];
+      entry = currFiles.get(i);
+
+      // hidden?
+      if (SMB.isHidden(entry) && !m_ListHidden)
+	continue;
 
       // directory?
-      if (entry.isDirectory()) {
+      if (SMB.isDirectory(entry)) {
 	// ignore "." and ".."
-	if (entry.getName().equals(".") || entry.getName().equals(".."))
+	if (entry.getFileName().equals(".") || entry.getFileName().equals(".."))
 	  continue;
 
 	// search recursively?
 	if (m_Recursive)
-	  search(entry, files, depth - 1);
+	  search(dir + entry.getFileName() + "/", files, depth - 1);
 
 	if (m_ListDirs) {
 	  // does name match?
-	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getName()))
+	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFileName()))
 	    continue;
 
-	  files.add(new SortContainer(new SmbFileObject(entry), m_Sorting));
+	  files.add(new SortContainer(new SmbFileObject(getDiskShare(), dir, entry), m_Sorting));
 	}
       }
       else {
 	if (m_ListFiles) {
 	  // does name match?
-	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getName()))
+	  if (!m_RegExp.isEmpty() && !m_RegExp.isMatch(entry.getFileName()))
 	    continue;
 
-	  files.add(new SortContainer(new SmbFileObject(entry), m_Sorting));
+	  files.add(new SortContainer(new SmbFileObject(getDiskShare(), dir, entry), m_Sorting));
 	}
       }
     }
@@ -273,11 +384,11 @@ public class SmbDirectoryLister
    * Returns the list of files/directories in the watched directory. In case
    * the execution gets stopped, this method returns empty list.
    *
-   * @param context	the context
+   * @param dir		the directory to search
    * @return		the list of absolute file/directory names
    * @throws Exception	if listing fails
    */
-  public List<SmbFileObject> search(SmbFile context) throws Exception {
+  public List<SmbFileObject> search(String dir) throws Exception {
     List<SmbFileObject>		result;
     List<SortContainer>		list;
     SortContainer		cont;
@@ -288,12 +399,12 @@ public class SmbDirectoryLister
 
     if (m_ListFiles || m_ListDirs) {
       if (getDebug())
-	getLogger().info("watching '" + m_WatchDir + "'");
+	getLogger().info("watching '" + dir + "'");
 
       if (getDebug())
 	getLogger().info("before search(...)");
       list = new ArrayList<>();
-      search(context, list, m_MaxDepth);
+      search(dir, list, m_MaxDepth);
 
       // sort files ascendingly regarding lastModified
       if (getDebug())
@@ -346,7 +457,7 @@ public class SmbDirectoryLister
    * Returns the list of files/directories in the watched directory. In case
    * the execution gets stopped, this method returns a 0-length array.
    *
-   * @return		 the list of absolute file/directory names
+   * @return		 the array of absolute file/directory names
    */
   @Override
   public String[] list() {
@@ -366,35 +477,87 @@ public class SmbDirectoryLister
    * Returns the list of files/directories in the watched directory. In case
    * the execution gets stopped, this method returns a 0-length array.
    *
-   * @return		 the list of file/directory wrappers
+   * @return		 the array of file/directory wrappers
    */
   public SmbFileObject[] listObjects() {
     List<SmbFileObject> 	result;
-    SmbFile			context;
-    String			dir;
+    AuthenticationContext 	context;
 
     result    = new ArrayList<>();
     m_Stopped = false;
-    if (m_Authentication == null) {
-      if (m_AuthenticationProvider != null)
-	m_Authentication = m_AuthenticationProvider.getAuthentication();
-      else
-	m_Authentication = new NtlmPasswordAuthentication(m_Domain, m_User, m_Password.getValue());
+    if (m_Session == null) {
+      if (m_SessionProvider != null) {
+	m_Session = m_SessionProvider.getSession();
+      }
+      else {
+	if (m_Client == null)
+	  m_Client = new SMBClient();
+
+	if (m_Connection == null) {
+	  try {
+	    m_Connection = m_Client.connect(m_Host);
+	  }
+	  catch (Exception e) {
+	    getLogger().log(Level.SEVERE, "Failed to connect to: " + m_Host, e);
+	  }
+	}
+
+	context = new AuthenticationContext(m_User, m_Password.getValue().toCharArray(), m_Domain);
+	m_Session  = m_Connection.authenticate(context);
+      }
+
+      if (m_Session == null)
+	throw new IllegalStateException("Failed to open session!");
     }
 
     try {
-      dir = m_WatchDir;
-      if (!dir.startsWith("/"))
-	dir = "/" + dir;
-      if (!dir.endsWith("/"))
-	dir += "/";
-      context = new SmbFile("smb://" + m_Host + dir, m_Authentication);
-      result.addAll(search(context));
+      result.addAll(search(SMB.fixDir(m_WatchDir)));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to create search context!", e);
     }
 
-    return result.toArray(new SmbFileObject[result.size()]);
+    return result.toArray(new SmbFileObject[0]);
+  }
+
+  /**
+   * Cleans up the SMB components.
+   */
+  protected void cleanUpSmb() {
+    if (m_SessionProvider == null) {
+      if (m_Client != null)
+	m_Client.close();
+      m_Client = null;
+
+      if (m_Connection != null) {
+	try {
+	  m_Connection.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+	m_Connection = null;
+      }
+
+      if (m_Session != null) {
+	try {
+	  m_Session.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+	m_Session = null;
+      }
+    }
+
+    if (m_DiskShare != null) {
+      try {
+	m_DiskShare.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_DiskShare = null;
+    }
   }
 }

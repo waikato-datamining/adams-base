@@ -15,7 +15,7 @@
 
 /*
  * SMBSend.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -26,6 +26,7 @@ import adams.core.net.SMB;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SMBConnection;
+import com.hierynomus.smbj.share.DiskShare;
 
 import java.io.File;
 
@@ -93,7 +94,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SMBSend
   extends AbstractTransformer {
@@ -101,14 +101,17 @@ public class SMBSend
   /** for serialization. */
   private static final long serialVersionUID = -5015637337437403790L;
 
-  /** the host. */
-  protected String m_Host;
+  /** the share to access. */
+  protected String m_Share;
 
   /** the directory to upload the file to. */
   protected String m_RemoteDir;
 
   /** the SMB connection to use. */
-  protected SMBConnection m_Connection;
+  protected transient SMBConnection m_Connection;
+
+  /** the disk share instance. */
+  protected transient DiskShare m_DiskShare;
 
   /**
    * Returns a string describing the object.
@@ -130,12 +133,21 @@ public class SMBSend
     super.defineOptions();
 
     m_OptionManager.add(
-      "host", "host",
+      "share", "share",
       "");
 
     m_OptionManager.add(
       "remote-dir", "remoteDir",
       "");
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    cleanUpSmb();
   }
 
   /**
@@ -147,29 +159,29 @@ public class SMBSend
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "host", (m_Host.isEmpty() ? "-none-" : m_Host), "host: ");
+    result  = QuickInfoHelper.toString(this, "share", (m_Share.isEmpty() ? "-none-" : m_Share), "share: ");
     result += QuickInfoHelper.toString(this, "remoteDir", (m_RemoteDir.isEmpty() ? "-none-" : m_RemoteDir), ", remote dir: ");
 
     return result;
   }
 
   /**
-   * Sets the host to connect to.
+   * Sets the share to access.
    *
-   * @param value	the host name/ip
+   * @param value	the share
    */
-  public void setHost(String value) {
-    m_Host = value;
+  public void setShare(String value) {
+    m_Share = value;
     reset();
   }
 
   /**
-   * Returns the host to connect to.
+   * Returns the share to access.
    *
-   * @return		the host name/ip
+   * @return		the share
    */
-  public String getHost() {
-    return m_Host;
+  public String getShare() {
+    return m_Share;
   }
 
   /**
@@ -178,8 +190,8 @@ public class SMBSend
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String hostTipText() {
-    return "The host (name/IP address) to connect to.";
+  public String shareTipText() {
+    return "The share to access.";
   }
 
   /**
@@ -261,15 +273,51 @@ public class SMBSend
     File 	localFile;
     String 	remoteFile;
 
+    result     = null;
     filename   = (String) m_InputToken.getPayload();
     localFile  = new PlaceholderFile(filename);
-    remoteFile = "smb://" + m_Host + "/" + m_RemoteDir + "/" + localFile.getName();
-    result     = SMB.copyTo(this, m_Connection, localFile, remoteFile);
+    remoteFile = m_RemoteDir + "/" + localFile.getName();
+
+    if (m_DiskShare == null) {
+      if (isLoggingEnabled())
+	getLogger().info("Connection to share: " + m_Share);
+      m_DiskShare = (DiskShare) m_Connection.getSession().connectShare(m_Share);
+    }
+
+    if (isLoggingEnabled())
+      getLogger().info("Copying '" + localFile + "' to '" + remoteFile + "'");
+    result = SMB.copyTo(this, m_Connection, localFile, m_DiskShare, remoteFile);
+
     if (result == null)
       m_OutputToken = new Token(filename);
     else
       m_OutputToken = null;
 
     return result;
+  }
+
+  /**
+   * Cleans up SMB related resources.
+   */
+  protected void cleanUpSmb() {
+    if (m_DiskShare != null) {
+      try {
+	m_DiskShare.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_DiskShare = null;
+    }
+  }
+
+  /**
+   * Cleans up after the execution has finished. Also removes graphical
+   * components.
+   */
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    cleanUpSmb();
   }
 }

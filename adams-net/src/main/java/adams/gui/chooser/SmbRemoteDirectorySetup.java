@@ -15,7 +15,7 @@
 
 /*
  * SmbRemoteDirectory.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.chooser;
@@ -23,9 +23,14 @@ package adams.gui.chooser;
 import adams.core.PasswordSupporter;
 import adams.core.base.BasePassword;
 import adams.core.management.User;
-import adams.core.net.SMBAuthenticationProvider;
+import adams.core.net.SMBSessionProvider;
 import adams.core.option.AbstractOptionHandler;
-import jcifs.smb.NtlmPasswordAuthentication;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.auth.AuthenticationContext;
+import com.hierynomus.smbj.connection.Connection;
+import com.hierynomus.smbj.session.Session;
+
+import java.util.logging.Level;
 
 /**
  * For configuring an SMB connection and remote directory.
@@ -34,12 +39,15 @@ import jcifs.smb.NtlmPasswordAuthentication;
  */
 public class SmbRemoteDirectorySetup
   extends AbstractOptionHandler
-  implements SMBAuthenticationProvider, RemoteDirectorySetup, PasswordSupporter {
+  implements SMBSessionProvider, RemoteDirectorySetup, PasswordSupporter {
 
   private static final long serialVersionUID = -8429471751146663032L;
 
   /** the domain. */
   protected String m_Domain;
+
+  /** the share to access. */
+  protected String m_Share;
 
   /** the SMB user to use. */
   protected String m_User;
@@ -53,8 +61,17 @@ public class SmbRemoteDirectorySetup
   /** the directory to list. */
   protected String m_RemoteDir;
 
-  /** the SMB authentication. */
-  protected transient NtlmPasswordAuthentication m_Session;
+  /** whether to list hidden files/dirs. */
+  protected boolean m_ListHidden;
+
+  /** the SMB client. */
+  protected transient SMBClient m_Client;
+
+  /** the SMB connection. */
+  protected transient Connection m_Connection;
+
+  /** the SMB authentication context. */
+  protected transient Session m_Session;
 
   /**
    * Returns a string describing the object.
@@ -78,6 +95,14 @@ public class SmbRemoteDirectorySetup
       "");
 
     m_OptionManager.add(
+      "host", "host",
+      "");
+
+    m_OptionManager.add(
+      "share", "share",
+      "");
+
+    m_OptionManager.add(
       "user", "user",
       User.getName(), false);
 
@@ -86,12 +111,21 @@ public class SmbRemoteDirectorySetup
       new BasePassword(""), false);
 
     m_OptionManager.add(
-      "host", "host",
+      "remote-dir", "remoteDir",
       "");
 
     m_OptionManager.add(
-      "remote-dir", "remoteDir",
-      "");
+      "list-hidden", "listHidden",
+      false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    cleanUpSmb();
   }
 
   /**
@@ -150,6 +184,35 @@ public class SmbRemoteDirectorySetup
    */
   public String domainTipText() {
     return "The domain name to connect to.";
+  }
+
+  /**
+   * Sets the share to access.
+   *
+   * @param value	the share
+   */
+  public void setShare(String value) {
+    m_Share = value;
+    reset();
+  }
+
+  /**
+   * Returns the share to access.
+   *
+   * @return		the share
+   */
+  public String getShare() {
+    return m_Share;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String shareTipText() {
+    return "The share to access.";
   }
 
   /**
@@ -240,13 +303,43 @@ public class SmbRemoteDirectorySetup
   }
 
   /**
+   * Sets whether to list hidden files/dirs.
+   *
+   * @param value	true if to list
+   */
+  public void setListHidden(boolean value) {
+    m_ListHidden = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to list hidden files/dirs.
+   *
+   * @return		true if to list
+   */
+  public boolean getListHidden() {
+    return m_ListHidden;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String listHiddenTipText() {
+    return "Whether to list hidden files/dirs as well.";
+  }
+
+  /**
    * Returns the SMB authentication.
    *
    * @return		the SMB authentication, null if not connected
    */
-  public synchronized NtlmPasswordAuthentication getAuthentication() {
+  @Override
+  public synchronized Session getSession() {
     if (m_Session == null)
-      m_Session = newAuthentication();
+      m_Session = newSession();
     return m_Session;
   }
 
@@ -255,15 +348,28 @@ public class SmbRemoteDirectorySetup
    *
    * @return		the SMB authentication
    */
-  public NtlmPasswordAuthentication newAuthentication() {
-    return new NtlmPasswordAuthentication(m_Domain, m_User, m_Password.getValue());
-  }
+  @Override
+  public Session newSession() {
+    Session			result;
+    AuthenticationContext 	context;
 
-  /**
-   * Cleans up data structures, frees up memory.
-   */
-  public void cleanUp() {
-    m_Session = null;
+    if (m_Client == null)
+      m_Client = new SMBClient();
+
+    if (m_Connection == null) {
+      try {
+	m_Connection = m_Client.connect(m_Host);
+      }
+      catch (Exception e) {
+	getLogger().log(Level.SEVERE, "Failed to connect to: " + m_Host, e);
+	return null;
+      }
+    }
+
+    context = new AuthenticationContext(m_User, m_Password.getValue().toCharArray(), m_Domain);
+    result  = m_Connection.authenticate(context);
+
+    return result;
   }
 
   /**
@@ -274,5 +380,43 @@ public class SmbRemoteDirectorySetup
    */
   public boolean requiresInitialization() {
     return true;
+  }
+
+  /**
+   * Cleans up the SMB components.
+   */
+  protected void cleanUpSmb() {
+    if (m_Client != null)
+      m_Client.close();
+    m_Client = null;
+
+    if (m_Connection != null) {
+      try {
+	m_Connection.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_Connection = null;
+    }
+
+    if (m_Session != null) {
+      try {
+	m_Session.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_Session = null;
+    }
+  }
+
+  /**
+   * Cleans up after the execution has finished. Also removes graphical
+   * components.
+   */
+  @Override
+  public void cleanUp() {
+    cleanUpSmb();
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * SMBFrom.java
- * Copyright (C) 2012-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -27,6 +27,7 @@ import adams.core.net.SMB;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 import adams.flow.standalone.SMBConnection;
+import com.hierynomus.smbj.share.DiskShare;
 
 import java.io.File;
 
@@ -99,7 +100,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SMBGet
   extends AbstractTransformer {
@@ -107,8 +107,8 @@ public class SMBGet
   /** for serialization. */
   private static final long serialVersionUID = -5015637337437403790L;
 
-  /** the host. */
-  protected String m_Host;
+  /** the share to access. */
+  protected String m_Share;
 
   /** the directory to list. */
   protected String m_RemoteDir;
@@ -118,6 +118,9 @@ public class SMBGet
 
   /** the SMB connection to use. */
   protected SMBConnection m_Connection;
+
+  /** the disk share instance. */
+  protected transient DiskShare m_DiskShare;
 
   /**
    * Returns a string describing the object.
@@ -140,7 +143,7 @@ public class SMBGet
     super.defineOptions();
 
     m_OptionManager.add(
-      "host", "host",
+      "share", "share",
       "");
 
     m_OptionManager.add(
@@ -153,6 +156,15 @@ public class SMBGet
   }
 
   /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    cleanUpSmb();
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -161,7 +173,7 @@ public class SMBGet
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "host", (m_Host.isEmpty() ? "-none-" : m_Host), "host: ");
+    result  = QuickInfoHelper.toString(this, "share", (m_Share.isEmpty() ? "-none-" : m_Share), "share: ");
     result += QuickInfoHelper.toString(this, "remoteDir", (m_RemoteDir.isEmpty() ? "-none-" : m_RemoteDir), ", remote dir: ");
     result += QuickInfoHelper.toString(this, "outputDirectory", m_OutputDirectory, ", output: ");
 
@@ -169,22 +181,22 @@ public class SMBGet
   }
 
   /**
-   * Sets the host to connect to.
+   * Sets the share to access.
    *
-   * @param value	the host name/ip
+   * @param value	the share
    */
-  public void setHost(String value) {
-    m_Host = value;
+  public void setShare(String value) {
+    m_Share = value;
     reset();
   }
 
   /**
-   * Returns the host to connect to.
+   * Returns the share to access.
    *
-   * @return		the host name/ip
+   * @return		the share
    */
-  public String getHost() {
-    return m_Host;
+  public String getShare() {
+    return m_Share;
   }
 
   /**
@@ -193,8 +205,8 @@ public class SMBGet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String hostTipText() {
-    return "The host (name/IP address) to connect to.";
+  public String shareTipText() {
+    return "The share to access.";
   }
 
   /**
@@ -301,22 +313,42 @@ public class SMBGet
   @Override
   protected String doExecute() {
     String	result;
-    String	file;
     String 	remoteFile;
     File	localFile;
 
-    file = (String) m_InputToken.getPayload();
-    if (file.startsWith("smb:"))
-      remoteFile = file;
-    else
-      remoteFile = "smb://" + m_Host + (m_RemoteDir.startsWith("/") ? "" : "/") + m_RemoteDir + "/" + file;
-    localFile  = new PlaceholderFile(m_OutputDirectory.getAbsolutePath() + File.separator + new File(file).getName());
-    result     = SMB.copyFrom(this, m_Connection, remoteFile, localFile);
+    remoteFile = (String) m_InputToken.getPayload();
+    localFile  = new PlaceholderFile(m_OutputDirectory.getAbsolutePath() + File.separator + new File(remoteFile).getName());
+    result     = SMB.copyFrom(this, m_Connection, m_Share, remoteFile, localFile);
     if (result == null)
       m_OutputToken = new Token(localFile);
     else
       m_OutputToken = null;
 
     return result;
+  }
+
+  /**
+   * Cleans up SMB related resources.
+   */
+  protected void cleanUpSmb() {
+    if (m_DiskShare != null) {
+      try {
+	m_DiskShare.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_DiskShare = null;
+    }
+  }
+
+  /**
+   * Cleans up after the execution has finished. Also removes graphical
+   * components.
+   */
+  @Override
+  public void cleanUp() {
+    super.cleanUp();
+    cleanUpSmb();
   }
 }

@@ -140,9 +140,9 @@ public abstract class AbstractRemoteFileOperations
 	files = lister.listObjects();
 	for (FileObject file: files) {
 	  if (file.isDirectory())
-	    result = copyDir(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	    result = copyDir(file.toString(), target + "/" + file.getName());
 	  else
-	    result = copyFile(file.getActualFile().getAbsolutePath(), target + "/" + file.getName());
+	    result = copyFile(file.toString(), target + "/" + file.getName());
 	  if (result != null)
 	    break;
 	}

@@ -25,8 +25,8 @@ import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.SmbDirectoryLister;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.SMB;
-import adams.core.net.SMBAuthenticationProvider;
-import jcifs.smb.SmbFile;
+import adams.core.net.SMBSessionProvider;
+import com.hierynomus.smbj.share.DiskShare;
 
 /**
  * SMB / Windows share file operations.
@@ -39,15 +39,48 @@ public class SmbFileOperations
   private static final long serialVersionUID = -4668267794023495691L;
 
   /** the authentication provider to use. */
-  protected SMBAuthenticationProvider m_Provider;
+  protected SMBSessionProvider m_Provider;
+
+  /** the share to access. */
+  protected String m_Share;
+
+  /** the diskshare instance. */
+  protected transient DiskShare m_DiskShare;
+
+  /**
+   * Cleans up SMB resources.
+   */
+  protected void cleanUpSmb() {
+    if (m_DiskShare != null) {
+      try {
+	m_DiskShare.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_DiskShare = null;
+    }
+  }
+
+  /**
+   * Returns the disk share to use.
+   *
+   * @return		the share
+   */
+  protected DiskShare getDiskShare() {
+    if (m_DiskShare == null)
+      m_DiskShare = (DiskShare) m_Provider.getSession().connectShare(m_Share);
+    return m_DiskShare;
+  }
 
   /**
    * Sets the authentication provider to use.
    *
    * @param value	the provider
    */
-  public void setProvider(SMBAuthenticationProvider value) {
+  public void setProvider(SMBSessionProvider value) {
     m_Provider = value;
+    cleanUpSmb();
   }
 
   /**
@@ -55,8 +88,27 @@ public class SmbFileOperations
    *
    * @return		the provider, null if none set
    */
-  public SMBAuthenticationProvider getProvider() {
+  public SMBSessionProvider getProvider() {
     return m_Provider;
+  }
+
+  /**
+   * Sets the share to access.
+   *
+   * @param value	the share
+   */
+  public void setShare(String value) {
+    m_Share = value;
+    cleanUpSmb();
+  }
+
+  /**
+   * Returns the share to access.
+   *
+   * @return		the share
+   */
+  public String getShare() {
+    return m_Share;
   }
 
   /**
@@ -73,6 +125,8 @@ public class SmbFileOperations
       case DELETE:
       case MKDIR:
 	return true;
+      case DUPLICATE:
+	return false;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
     }
@@ -90,11 +144,11 @@ public class SmbFileOperations
 
     switch (m_Direction) {
       case LOCAL_TO_REMOTE:
-        result = SMB.copyTo(this, m_Provider, new PlaceholderFile(source), target);
+        result = SMB.copyTo(this, m_Provider, new PlaceholderFile(source), getDiskShare(), target);
         break;
 
       case REMOTE_TO_LOCAL:
-        result = SMB.copyFrom(this, m_Provider, source, new PlaceholderFile(target));
+        result = SMB.copyFrom(this, m_Provider, getDiskShare(), source, new PlaceholderFile(target));
 	break;
 
       default:
@@ -113,7 +167,8 @@ public class SmbFileOperations
     SmbDirectoryLister	result;
 
     result = new SmbDirectoryLister();
-    result.setAuthenticationProvider(m_Provider);
+    result.setSessionProvider(m_Provider);
+    result.setShare(m_Share);
 
     return result;
   }
@@ -126,17 +181,17 @@ public class SmbFileOperations
    * @return		null if successful, otherwise error message
    */
   protected String renameRemote(String source, String target) {
-    SmbFile	file;
-
-    try {
-      file = new SmbFile(source, m_Provider.getAuthentication());
-      file.renameTo(new SmbFile(target, m_Provider.getAuthentication()));
+    if (getDiskShare().folderExists(source)) {
+      // TODO
+      return "Not implemented!";
     }
-    catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to rename file: " + source + " -> " + target, e);
+    else if (getDiskShare().fileExists(source)) {
+      // TODO
+      return "Not implemented!";
     }
-
-    return null;
+    else {
+      return "File/dir does not exist: " + source;
+    }
   }
 
   /**
@@ -146,15 +201,14 @@ public class SmbFileOperations
    * @return		null if successful, otherwise error message
    */
   protected String deleteRemote(String path) {
-    SmbFile 	smbfile;
-
     try {
-      smbfile = new SmbFile(path, m_Provider.getAuthentication());
-      // deletes file or dir
-      smbfile.delete();
+      if (getDiskShare().folderExists(path))
+	getDiskShare().rmdir(path, true);
+      else
+	getDiskShare().rm(path);
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to delete file: " + path, e);
+      return LoggingHelper.handleException(this, "Failed to delete file/dir: " + path, e);
     }
 
     return null;
@@ -167,11 +221,8 @@ public class SmbFileOperations
    * @return		null if successful, otherwise error message
    */
   protected String mkdirRemote(String dir) {
-    SmbFile 	smbfile;
-
     try {
-      smbfile = new SmbFile(dir, m_Provider.getAuthentication());
-      smbfile.mkdirs();
+      getDiskShare().mkdir(dir);
     }
     catch (Exception e) {
       return LoggingHelper.handleException(this, "Failed to create directory: " + dir, e);
@@ -187,11 +238,8 @@ public class SmbFileOperations
    * @return		true if path exists and is a directory
    */
   protected boolean isDirRemote(String path) {
-    SmbFile 	smbfile;
-
     try {
-      smbfile = new SmbFile(path, m_Provider.getAuthentication());
-      return smbfile.isDirectory();
+      return getDiskShare().folderExists(path);
     }
     catch (Exception e) {
       LoggingHelper.handleException(this, "Failed to check directory: " + path, e);

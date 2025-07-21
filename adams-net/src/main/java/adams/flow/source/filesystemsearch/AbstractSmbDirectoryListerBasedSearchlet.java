@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSmbDirectoryListerBasedSearchlet.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source.filesystemsearch;
 
@@ -23,6 +23,7 @@ import adams.core.io.lister.SmbDirectoryLister;
 import adams.core.logging.LoggingLevel;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.SMBConnection;
+import com.hierynomus.smbj.share.DiskShare;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,6 @@ import java.util.List;
  * under the hood.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractSmbDirectoryListerBasedSearchlet
   extends AbstractFileSystemSearchlet {
@@ -44,6 +44,9 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
   /** for listing the contents. */
   protected SmbDirectoryLister m_Lister;
 
+  /** the diskshare instance. */
+  protected transient DiskShare m_DiskShare;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -52,8 +55,17 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
     super.defineOptions();
 
     m_OptionManager.add(
-      "host", "host",
+      "share", "share",
       "");
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+    cleanUpSmb();
   }
 
   /**
@@ -78,21 +90,22 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
   }
 
   /**
-   * Sets the host to connect to.
+   * Sets the share to access.
    *
-   * @param value	the host
+   * @param value	the share
    */
-  public void setHost(String value) {
-    m_Lister.setHost(value);
+  public void setShare(String value) {
+    m_Lister.setShare(value);
+    reset();
   }
 
   /**
-   * Returns the host to connect to.
+   * Returns the share to access.
    *
-   * @return		the hsot
+   * @return		the share
    */
-  public String getHost() {
-    return m_Lister.getHost();
+  public String getShare() {
+    return m_Lister.getShare();
   }
 
   /**
@@ -101,8 +114,8 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String hostTipText() {
-    return "The host to connect to.";
+  public String shareTipText() {
+    return "The share to access.";
   }
 
   /**
@@ -123,7 +136,8 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
     conn = (SMBConnection) ActorUtils.findClosestType(m_FlowContext, SMBConnection.class);
     if (conn == null)
       throw new IllegalStateException("No " + SMBConnection.class.getName() + " actor found!");
-    m_Lister.setAuthenticationProvider(conn);
+    m_Lister.setSessionProvider(conn);
+    cleanUpSmb();
   }
 
   /**
@@ -135,10 +149,10 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
   @Override
   protected List<String> doSearch() throws Exception {
     List<String>	result;
-    
-    result = new ArrayList<>();
-    result.addAll(Arrays.asList(m_Lister.list()));
-    
+
+    result = new ArrayList<>(Arrays.asList(m_Lister.list()));
+    cleanUpSmb();
+
     return result;
   }
 
@@ -148,5 +162,20 @@ public abstract class AbstractSmbDirectoryListerBasedSearchlet
   public void stopExecution() {
     m_Stopped = true;
     m_Lister.stopExecution();
+  }
+
+  /**
+   * Cleans up SMB resources.
+   */
+  protected void cleanUpSmb() {
+    if (m_DiskShare != null) {
+      try {
+	m_DiskShare.close();
+      }
+      catch (Exception e) {
+	// ignored
+      }
+      m_DiskShare = null;
+    }
   }
 }

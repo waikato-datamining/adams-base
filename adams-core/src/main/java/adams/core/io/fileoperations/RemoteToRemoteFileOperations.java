@@ -95,6 +95,8 @@ public class RemoteToRemoteFileOperations
       case DELETE:
       case MKDIR:
 	return m_Source.isSupported(op);
+      case DUPLICATE:
+	return false;
       default:
 	throw new IllegalStateException("Unhandled operation: " + op);
     }

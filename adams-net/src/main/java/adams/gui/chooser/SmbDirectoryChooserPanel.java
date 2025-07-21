@@ -15,7 +15,7 @@
 
 /*
  * SmbDirectoryChooserPanel.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -24,7 +24,7 @@ import adams.core.io.fileoperations.FileOperations;
 import adams.core.io.fileoperations.SmbFileOperations;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.SmbDirectoryLister;
-import adams.core.net.SMBAuthenticationProvider;
+import adams.core.net.SMBSessionProvider;
 import adams.core.option.OptionUtils;
 import adams.gui.core.GUIHelper;
 import adams.gui.goe.GenericObjectEditorDialog;
@@ -35,7 +35,6 @@ import java.awt.Dialog.ModalityType;
  * Chooser for remote directories (via SMB).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SmbDirectoryChooserPanel
   extends AbstractChooserPanelWithIOSupport<SmbRemoteDirectorySetup> {
@@ -43,8 +42,8 @@ public class SmbDirectoryChooserPanel
   /** for serialization. */
   private static final long serialVersionUID = 6235369491956122980L;
 
-  /** the session provider. */
-  protected SMBAuthenticationProvider m_Provider;
+  /** the context provider. */
+  protected SMBSessionProvider m_Provider;
 
   /**
    * Initializes the panel with no file.
@@ -176,7 +175,7 @@ public class SmbDirectoryChooserPanel
     return "SMB";
   }
 
-  protected synchronized SMBAuthenticationProvider getProvider() {
+  protected synchronized SMBSessionProvider getProvider() {
     if (m_Provider == null)
       m_Provider = getCurrent();
     return m_Provider;
@@ -189,11 +188,14 @@ public class SmbDirectoryChooserPanel
    */
   public DirectoryLister getDirectoryLister() {
     SmbDirectoryLister   	result;
+    SmbRemoteDirectorySetup	current;
 
-    result = new SmbDirectoryLister();
-    result.setAuthenticationProvider(getProvider());
-    result.setHost(getCurrent().getHost());
+    current = getCurrent();
+    result  = new SmbDirectoryLister();
+    result.setSessionProvider(getProvider());
+    result.setShare(current.getShare());
     result.setWatchDir(getCurrentDirectory());
+    result.setListHidden(current.getListHidden());
 
     return result;
   }
@@ -205,10 +207,13 @@ public class SmbDirectoryChooserPanel
    */
   @Override
   public FileOperations getFileOperations() {
-    SmbFileOperations	result;
+    SmbFileOperations		result;
+    SmbRemoteDirectorySetup	current;
 
-    result = new SmbFileOperations();
-    result.setProvider(getProvider());
+    current = getCurrent();
+    result  = new SmbFileOperations();
+    result.setProvider(current);
+    result.setShare(current.getShare());
 
     return result;
   }
