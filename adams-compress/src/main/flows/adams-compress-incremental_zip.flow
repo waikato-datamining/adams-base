@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2025-07-22 21:39:46
+# Date: 2025-07-23 09:11:32
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-compress,adams-core
@@ -22,5 +22,5 @@ adams.flow.control.Flow -annotation "In this flow, a ZIP file is created and fil
    adams.flow.transformer.SetStorageValue -storage-name bytes
   adams.flow.transformer.AppendArchive -type STORAGE -storage-name bytes -object-appender adams.flow.transformer.appendarchive.BytesObjectAppender -entry-name logo.jpg
  adams.flow.control.Tee -name "add serialized object"
-  adams.flow.transformer.AppendArchive -type STORAGE -storage-name text -object-appender adams.flow.transformer.appendarchive.SerializedObjectAppender -entry-name object.ser
+  adams.flow.transformer.AppendArchive -type STORAGE -storage-name text -object-appender adams.flow.transformer.appendarchive.SerializedObjectAppender -entry-name models/object.ser
  adams.flow.sink.CloseArchive
