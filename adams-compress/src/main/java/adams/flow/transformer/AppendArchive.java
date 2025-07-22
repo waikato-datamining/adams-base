@@ -111,7 +111,8 @@ import adams.flow.transformer.appendarchive.SerializedObjectAppender;
  * </pre>
  *
  * <pre>-entry-name &lt;java.lang.String&gt; (property: entryName)
- * &nbsp;&nbsp;&nbsp;The name to use in the archive.
+ * &nbsp;&nbsp;&nbsp;The name to use in the archive; you can also specify sub-folders with 'SUBFOLDER
+ * &nbsp;&nbsp;&nbsp;&#47;FILE.EXT' as the name
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
@@ -330,7 +331,7 @@ public class AppendArchive
    *             	displaying in the GUI or for listing the options.
    */
   public String entryNameTipText() {
-    return "The name to use in the archive.";
+    return "The name to use in the archive; you can also specify sub-folders with 'SUBFOLDER/FILE.EXT' as the name";
   }
 
   /**
