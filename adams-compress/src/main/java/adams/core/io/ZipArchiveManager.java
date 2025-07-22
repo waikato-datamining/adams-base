@@ -141,7 +141,7 @@ public class ZipArchiveManager
       m_ZipOut  = new ZipArchiveOutputStream(new BufferedOutputStream(m_FileOut));
     }
     catch (Exception e) {
-      return LoggingHelper.handleException(this, "Failed to open zip file: " + output, e);
+      return LoggingHelper.handleException(this, "Failed to open zip file for writing: " + output, e);
     }
 
     return null;
