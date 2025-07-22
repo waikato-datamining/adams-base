@@ -23,6 +23,7 @@ package adams.gui.core;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileObject;
 import adams.core.io.FileObjectComparator;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.core.io.lister.RecursiveDirectoryLister;
@@ -384,12 +385,30 @@ public class FilePanel
   }
 
   /**
+   * Sets the directory to list.
+   *
+   * @param value	the directory
+   */
+  public void setCurrentDir(File value) {
+    setCurrentDir(value.getAbsolutePath());
+  }
+
+  /**
    * Returns the current directory.
    *
    * @return		the directory
    */
   public String getCurrentDir() {
     return m_Lister.getWatchDir();
+  }
+
+  /**
+   * Returns the current directory as dir object.
+   *
+   * @return		the directory
+   */
+  public PlaceholderDirectory getCurrentDirAsFile() {
+    return new PlaceholderDirectory(m_Lister.getWatchDir());
   }
 
   /**
