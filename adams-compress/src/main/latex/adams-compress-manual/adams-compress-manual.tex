@@ -183,7 +183,16 @@ actors:
     can be used multiple times
     \item \texttt{CloseArchive} -- finalizes and closes the archive
 \end{tight_itemize}
-The flow \textit{adams-compress-incremental\_zip.flow} demonstrates the use of these actors.
+The following archive managers are available:
+\begin{tight_itemize}
+    \item \texttt{TarArchiveManager} -- for tar files (various compressions are supported)
+    \item \texttt{ZipArchiveManager} -- for zip files
+\end{tight_itemize}
+The following examples flows demonstrate the functionality:
+\begin{tight_itemize}
+    \item \texttt{tar} -- \textit{adams-compress-incremental\_tar.flow}
+    \item \texttt{zip} -- \textit{adams-compress-incremental\_zip.flow}
+\end{tight_itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
