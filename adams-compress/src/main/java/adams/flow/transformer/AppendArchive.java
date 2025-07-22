@@ -353,7 +353,7 @@ public class AppendArchive
 	result += QuickInfoHelper.toString(this, "objectAppender", m_ObjectAppender, ", appender: ");
 	break;
     }
-    result += QuickInfoHelper.toString(this, "entryName", m_EntryName, ", entry: ");
+    result += QuickInfoHelper.toString(this, "entryName", (m_EntryName.isEmpty() ? "-missing-" : m_EntryName), ", entry: ");
 
     return result;
   }
