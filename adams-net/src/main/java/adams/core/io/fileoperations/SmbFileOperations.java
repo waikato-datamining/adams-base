@@ -20,13 +20,23 @@
 
 package adams.core.io.fileoperations;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.SmbDirectoryLister;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.SMB;
 import adams.core.net.SMBSessionProvider;
+import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.mssmb2.SMB2CreateDisposition;
+import com.hierynomus.mssmb2.SMB2CreateOptions;
+import com.hierynomus.mssmb2.SMB2ShareAccess;
+import com.hierynomus.smbj.share.Directory;
 import com.hierynomus.smbj.share.DiskShare;
+import com.hierynomus.smbj.share.File;
+
+import java.util.EnumSet;
 
 /**
  * SMB / Windows share file operations.
@@ -180,14 +190,41 @@ public class SmbFileOperations
    * @param target	the target file/dir (new)
    * @return		null if successful, otherwise error message
    */
+  @MixedCopyright(
+    author = "https://stackoverflow.com/users/753575/isabsent",
+    url = "https://stackoverflow.com/a/79558619/4698227",
+    license = License.CC_BY_SA_4
+  )
   protected String renameRemote(String source, String target) {
     if (getDiskShare().folderExists(source)) {
-      // TODO
-      return "Not implemented!";
+      try (Directory directory = getDiskShare().openDirectory(source,
+	EnumSet.of(AccessMask.DELETE, AccessMask.FILE_WRITE_ATTRIBUTES, AccessMask.FILE_READ_ATTRIBUTES),
+	null,
+	EnumSet.of(SMB2ShareAccess.FILE_SHARE_DELETE, SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
+	SMB2CreateDisposition.FILE_OPEN_IF,
+	EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))
+      ) {
+	directory.rename(target, false);
+	return null;
+      }
+      catch (Exception e) {
+	return LoggingHelper.handleException(this, "Failed to rename dir '" + source + "' to '" + target + "'!", e);
+      }
     }
     else if (getDiskShare().fileExists(source)) {
-      // TODO
-      return "Not implemented!";
+      try (File file = getDiskShare().openFile(source,
+	EnumSet.of(AccessMask.MAXIMUM_ALLOWED),
+	null,
+	EnumSet.of(SMB2ShareAccess.FILE_SHARE_DELETE, SMB2ShareAccess.FILE_SHARE_READ, SMB2ShareAccess.FILE_SHARE_WRITE),
+	SMB2CreateDisposition.FILE_OPEN_IF,
+	EnumSet.of(SMB2CreateOptions.FILE_NON_DIRECTORY_FILE, SMB2CreateOptions.FILE_WRITE_THROUGH)
+      )) {
+	file.rename(target, false);
+	return null;
+      }
+      catch (Exception e) {
+	return LoggingHelper.handleException(this, "Failed to rename file '" + source + "' to '" + target + "'!", e);
+      }
     }
     else {
       return "File/dir does not exist: " + source;
