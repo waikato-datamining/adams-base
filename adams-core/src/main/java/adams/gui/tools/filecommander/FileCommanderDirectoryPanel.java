@@ -313,6 +313,15 @@ public class FileCommanderDirectoryPanel
   }
 
   /**
+   * Reloads the files.
+   *
+   * @param action	the action to run after the reload
+   */
+  public void reload(Runnable action) {
+    m_Files.reload(action);
+  }
+
+  /**
    * Sets the current directory.
    *
    * @param dir		the directory to use

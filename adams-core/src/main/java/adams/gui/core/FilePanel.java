@@ -34,8 +34,11 @@ import adams.gui.core.SearchPanel.LayoutType;
 import adams.gui.event.SearchEvent;
 import adams.gui.event.SearchListener;
 import com.googlecode.jfilechooserbookmarks.gui.BaseScrollPane;
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
 
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -761,6 +764,15 @@ public class FilePanel
    * Updates the view.
    */
   protected void update() {
+    update((Runnable) null);
+  }
+
+  /**
+   * Updates the view.
+   *
+   * @param action 	the action to execute after the reload, ignored if null
+   */
+  protected void update(final Runnable action) {
     if (m_IgnoreChanges)
       return;
 
@@ -787,6 +799,8 @@ public class FilePanel
 	updateGUI();
 	m_Worker = null;
 	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	if (action != null)
+	  SwingUtilities.invokeLater(action);
       }
     };
     m_Worker.execute();
@@ -817,6 +831,15 @@ public class FilePanel
    */
   public void reload() {
     update();
+  }
+
+  /**
+   * Updates the files (if not busy).
+   *
+   * @param action 	the action to perform after the reload
+   */
+  public void reload(Runnable action) {
+    update(action);
   }
 
   /**
@@ -851,6 +874,44 @@ public class FilePanel
    */
   public boolean isBusy() {
     return (m_Worker != null);
+  }
+
+  /**
+   * Selects the specified file.
+   *
+   * @param file	the file to select
+   */
+  public void setSelectedFile(FileObject file) {
+    int		index;
+
+    index = m_Files.indexOf(file);
+    if (index > -1) {
+      index = m_Table.getDisplayRow(index);
+      m_Table.setSelectedRow(index);
+      m_Table.scrollRowToVisible(index);
+    }
+  }
+
+  /**
+   * Selects the specified files.
+   *
+   * @param files	the files to select
+   */
+  public void setSelectedFiles(FileObject[] files) {
+    TIntList	indices;
+    int		index;
+
+    indices = new TIntArrayList();
+    for (FileObject file: files) {
+      index = m_Files.indexOf(file);
+      if (index > -1)
+	indices.add(m_Table.getDisplayRow(index));
+    }
+    if (!indices.isEmpty()) {
+      indices.sort();
+      m_Table.setSelectedRows(indices.toArray());
+      m_Table.scrollRowToVisible(indices.get(0));
+    }
   }
 
   /**

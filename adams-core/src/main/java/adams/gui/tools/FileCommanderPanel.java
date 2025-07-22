@@ -491,7 +491,8 @@ public class FileCommanderPanel
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
-	reload();
+	// update the panel that received the files
+	m_FilesInactive.reload();
       }
     };
     m_Worker.execute();
@@ -567,7 +568,8 @@ public class FileCommanderPanel
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString(), "Duplicate");
-	reload();
+	// update the affected panel
+	m_FilesActive.reload();
       }
     };
     m_Worker.execute();
@@ -603,7 +605,8 @@ public class FileCommanderPanel
       GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!", e, "Rename");
     }
 
-    reload();
+    // update the affected panel
+    m_FilesActive.reload();
   }
 
   /**
@@ -670,6 +673,7 @@ public class FileCommanderPanel
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString(), "Move");
+	// update both panels
 	reload();
       }
     };
@@ -693,7 +697,7 @@ public class FileCommanderPanel
       return;
 
     dir   = m_FilesActive.getFilePanel().getCurrentDirAsFile().getAbsolutePath();
-    input = GUIHelper.showInputDialog(this, "Please enter name for new directory", "Make dir");
+    input = GUIHelper.showInputDialog(this, "Please enter name for new directory", "", "Make dir");
     if (input == null)
       return;
 
@@ -702,7 +706,7 @@ public class FileCommanderPanel
     if (msg != null)
       GUIHelper.showErrorMessage(this, "Failed to create directory: " + dirNew + "\n" + msg, "Make dir");
     else
-      reload();
+      m_FilesActive.reload(() -> m_FilesActive.getFilePanel().setSelectedFile(dirNew));
   }
 
   /**
@@ -764,7 +768,8 @@ public class FileCommanderPanel
 	updateButtons();
 	if (!errors.isEmpty())
 	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete object(s)!\n" + errors, "Delete");
-	reload();
+	// update the affected panel
+	m_FilesActive.reload();
       }
     };
     m_Worker.execute();
