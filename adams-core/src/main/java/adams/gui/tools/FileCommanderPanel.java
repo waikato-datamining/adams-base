@@ -447,12 +447,14 @@ public class FileCommanderPanel
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to copy\n" + files[0]
-	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDirAsFile().getAbsolutePath() + "?",
+	"Copy");
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to copy " + files.length + " objects?"
-	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
-	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
+	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDirAsFile().getAbsolutePath()
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDirAsFile().getAbsolutePath() + "?",
+	"Copy");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -460,7 +462,7 @@ public class FileCommanderPanel
       private MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
-	String target = m_FilesInactive.getFilePanel().getCurrentDir();
+	String target = m_FilesInactive.getFilePanel().getCurrentDirAsFile().getAbsolutePath();
 	for (int i = 0; i < files.length; i++) {
 	  if (m_Stopped)
 	    break;
@@ -533,7 +535,7 @@ public class FileCommanderPanel
     }
 
     // prompt user for new name
-    input = GUIHelper.showInputDialog(this, "Please enter new file/dir name", newName);
+    input = GUIHelper.showInputDialog(this, "Please enter new name", newName, "Duplicate");
     if (input == null)
       return;
     if (input.equals(files[0].getName())) {
@@ -559,12 +561,12 @@ public class FileCommanderPanel
 	super.done();
 	m_Worker = null;
 	if (m_Stopped)
-	  m_StatusBar.showStatus("User stopped duplicating file/dir!");
+	  m_StatusBar.showStatus("User stopped duplicating operation!");
 	else
 	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
-	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString(), "Duplicate");
 	reload();
       }
     };
@@ -588,17 +590,17 @@ public class FileCommanderPanel
     if (files.length != 1)
       return;
 
-    input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
+    input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName(), "Rename");
     if ((input == null) || input.equals(files[0].getName()))
       return;
     target = m_FilesActive.getDirectory() + File.separator + input;
     try {
       msg = m_FileOperations.rename(files[0].toString(), target);
       if (msg != null)
-	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + ":\n" + msg);
+	GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + ":\n" + msg, "Rename");
     }
     catch (Exception e) {
-      GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!", e);
+      GUIHelper.showErrorMessage(this, "Failed to rename " + files[0] + " to " + target + "!", e, "Rename");
     }
 
     reload();
@@ -619,18 +621,20 @@ public class FileCommanderPanel
     if (files.length == 0)
       return;
     if (m_FilesActive.getFilePanel().getCurrentDir().equals(m_FilesInactive.getFilePanel().getCurrentDir())) {
-      GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move objects!");
+      GUIHelper.showErrorMessage(this, "Source and target directory are the same, cannot move objects!", "Move");
       return;
     }
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to move the following object?\n" + files[0]);
+	this, "Do you want to move the following object?\n" + files[0],
+	"Move");
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to move " + files.length + " objects"
-	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDir()
-	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDir() + "?");
+	  + "\nfrom\n" + m_FilesActive.getFilePanel().getCurrentDirAsFile().getAbsolutePath()
+	  + "\nto\n" + m_FilesInactive.getFilePanel().getCurrentDirAsFile().getAbsolutePath() + "?",
+	"Move");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -638,7 +642,7 @@ public class FileCommanderPanel
       private MessageCollection errors = new MessageCollection();
       @Override
       protected Object doInBackground() throws Exception {
-	String target = m_FilesInactive.getFilePanel().getCurrentDir();
+	String target = m_FilesInactive.getFilePanel().getCurrentDirAsFile().getAbsolutePath();
 	for (int i = 0; i < files.length; i++) {
 	  if (m_Stopped)
 	    break;
@@ -665,7 +669,7 @@ public class FileCommanderPanel
 	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
-	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString());
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, errors.toString(), "Move");
 	reload();
       }
     };
@@ -688,15 +692,15 @@ public class FileCommanderPanel
     if (m_FilesActive == null)
       return;
 
-    dir   = m_FilesActive.getFilePanel().getCurrentDir();
-    input = GUIHelper.showInputDialog(this, "Please enter name for new directory");
+    dir   = m_FilesActive.getFilePanel().getCurrentDirAsFile().getAbsolutePath();
+    input = GUIHelper.showInputDialog(this, "Please enter name for new directory", "Make dir");
     if (input == null)
       return;
 
     dirNew = m_FilesActive.getDirectoryLister().newDirectory(dir, input);
     msg    = m_FileOperations.mkdir(dirNew.toString());
     if (msg != null)
-      GUIHelper.showErrorMessage(this, "Failed to create directory: " + dirNew + "\n" + msg);
+      GUIHelper.showErrorMessage(this, "Failed to create directory: " + dirNew + "\n" + msg, "Make dir");
     else
       reload();
   }
@@ -718,11 +722,13 @@ public class FileCommanderPanel
 
     if (files.length == 1)
       retVal = GUIHelper.showConfirmMessage(
-	this, "Do you want to delete the following object?\n" + files[0]);
+	this, "Do you want to delete the following object?\n" + files[0],
+	"Delete");
     else
       retVal = GUIHelper.showConfirmMessage(
 	this, "Do you want to delete " + files.length + " objects"
-	  + " from\n" + m_FilesActive.getFilePanel().getCurrentDir() + "?");
+	  + " from\n" + m_FilesActive.getFilePanel().getCurrentDirAsFile().getAbsolutePath() + "?",
+	"Delete");
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
@@ -757,7 +763,7 @@ public class FileCommanderPanel
 	  m_StatusBar.showStatus("");
 	updateButtons();
 	if (!errors.isEmpty())
-	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete object(s)!\n" + errors);
+	  GUIHelper.showErrorMessage(FileCommanderPanel.this, "Failed to delete object(s)!\n" + errors, "Delete");
 	reload();
       }
     };
