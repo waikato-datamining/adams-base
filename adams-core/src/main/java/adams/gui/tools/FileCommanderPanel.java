@@ -578,7 +578,6 @@ public class FileCommanderPanel
     FileObject[]	files;
     String		input;
     String		target;
-    int			retVal;
     String		msg;
 
     m_Stopped = false;
@@ -587,11 +586,6 @@ public class FileCommanderPanel
       return;
     files = m_FilesActive.getFilePanel().getSelectedFileObjects();
     if (files.length != 1)
-      return;
-
-    retVal = GUIHelper.showConfirmMessage(
-      this, "Do you want to rename the following object?\n" + files[0]);
-    if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
     input = GUIHelper.showInputDialog(this, "Please enter new name", files[0].getName());
