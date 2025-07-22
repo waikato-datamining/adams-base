@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2021} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2025} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -170,6 +170,20 @@ limit the files extracted to the ones that match the regular expression (you
 can also invert the matching sense).\footnote{adams-compress-extract\_from\_zip.flow}
 Optionally, you can choose whether to re-create the directory structure 
 stored in the archive.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Incremental creation}
+It is also possible to create multi-file archives in stages using the following
+actors:
+\begin{tight_itemize}
+    \item \texttt{NewArchive} -- initializes the archive and forwards a data structure to be used
+    by the following two actors
+    \item \texttt{AppendArchive} -- for adding a file or an item from storage to the archive,
+    can be used multiple times
+    \item \texttt{CloseArchive} -- finalizes and closes the archive
+\end{tight_itemize}
+The flow \textit{adams-compress-incremental\_zip.flow} demonstrates the use of these actors.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}

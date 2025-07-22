@@ -1,0 +1,15 @@
+# Configuration file listing the superclasses and the packages in which to
+# look for derived classes.
+#
+# Format:
+# class.name=package1,package2,...
+#
+# Author:  FracPete (fracpete at waikato dot ac dot nz)
+
+# the archive managers
+adams.core.io.ArchiveManager=\
+  adams.core.io
+
+# the object appenders
+adams.flow.transformer.appendarchive.ArchiveObjectAppender=\
+  adams.flow.transformer.appendarchive

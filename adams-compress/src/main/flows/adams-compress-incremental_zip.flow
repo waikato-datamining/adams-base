@@ -1,0 +1,26 @@
+# Project: adams
+# Date: 2025-07-22 21:39:46
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-compress,adams-core
+#
+adams.flow.control.Flow -annotation "In this flow, a ZIP file is created and filled with data in multiple steps." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.NewArchive -manager adams.core.io.ZipArchiveManager -output ${EXAMPLE_FLOWS}/output/incremental.zip
+ adams.flow.control.Tee -name "add binary file"
+  adams.flow.transformer.AppendArchive -input-file ${EXAMPLE_FLOWS}/data/3267694739_4981d2f944_z.jpg -object-appender adams.flow.transformer.appendarchive.SerializedObjectAppender -entry-name image.jpg
+ adams.flow.control.Tee -name "add text file"
+  adams.flow.transformer.AppendArchive -input-file ${EXAMPLE_FLOWS}/data/bodyfat.arff -object-appender adams.flow.transformer.appendarchive.SerializedObjectAppender -entry-name dataset.arff
+ adams.flow.control.Tee -name "add text object"
+  adams.flow.control.Trigger -name "add string to storage"
+   adams.flow.source.CombineVariables -expression "This is just a simple string to store in storage." -conversion adams.data.conversion.StringToString
+   adams.flow.transformer.SetStorageValue -storage-name text
+  adams.flow.transformer.AppendArchive -type STORAGE -storage-name text -object-appender adams.flow.transformer.appendarchive.StringObjectAppender -entry-name text.txt
+ adams.flow.control.Tee -name "add bytes object"
+  adams.flow.control.Trigger -name "load binary file as bytes"
+   adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/adams_logo.jpg
+   adams.flow.transformer.BinaryFileReader -output-array true
+   adams.flow.transformer.SetStorageValue -storage-name bytes
+  adams.flow.transformer.AppendArchive -type STORAGE -storage-name bytes -object-appender adams.flow.transformer.appendarchive.BytesObjectAppender -entry-name logo.jpg
+ adams.flow.control.Tee -name "add serialized object"
+  adams.flow.transformer.AppendArchive -type STORAGE -storage-name text -object-appender adams.flow.transformer.appendarchive.SerializedObjectAppender -entry-name object.ser
+ adams.flow.sink.CloseArchive
