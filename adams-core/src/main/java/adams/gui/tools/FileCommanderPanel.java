@@ -38,6 +38,7 @@ import adams.gui.core.BaseSplitButton;
 import adams.gui.core.BaseStatusBar;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.tools.filecommander.AbstractFileCommanderAction;
@@ -57,6 +58,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +148,9 @@ public class FileCommanderPanel
   /** whether the operation was stopped by the user. */
   protected boolean m_Stopped;
 
+  /** the key listener for actions on the active table. */
+  protected KeyAdapter m_ActivePanelKeyListener;
+
   /**
    * Initializes the members.
    */
@@ -213,34 +219,42 @@ public class FileCommanderPanel
 
     m_ButtonReload = new BaseFlatButton("Reload");
     m_ButtonReload.addActionListener((ActionEvent) -> reload());
+    m_ButtonReload.setToolTipText("Ctrl+R");
     m_PanelButtons.add(m_ButtonReload);
 
     m_ButtonRename = new BaseFlatButton("Rename");
     m_ButtonRename.addActionListener((ActionEvent) -> rename());
+    m_ButtonRename.setToolTipText("F2");
     m_PanelButtons.add(m_ButtonRename);
 
     m_ButtonView = new BaseFlatButton("View");
     m_ButtonView.addActionListener((ActionEvent) -> view());
+    m_ButtonView.setToolTipText("F3");
     m_PanelButtons.add(m_ButtonView);
 
     m_ButtonCopy = new BaseFlatButton("Copy");
     m_ButtonCopy.addActionListener((ActionEvent) -> copy());
+    m_ButtonCopy.setToolTipText("F5");
     m_PanelButtons.add(m_ButtonCopy);
 
     m_ButtonDuplicate = new BaseFlatButton("Duplicate");
     m_ButtonDuplicate.addActionListener((ActionEvent) -> duplicate());
+    m_ButtonDuplicate.setToolTipText("Ctrl+C");
     m_PanelButtons.add(m_ButtonDuplicate);
 
     m_ButtonMove = new BaseFlatButton("Move");
     m_ButtonMove.addActionListener((ActionEvent) -> move());
+    m_ButtonMove.setToolTipText("F6");
     m_PanelButtons.add(m_ButtonMove);
 
     m_ButtonMkDir = new BaseFlatButton("MkDir");
     m_ButtonMkDir.addActionListener((ActionEvent) -> mkdir());
+    m_ButtonMkDir.setToolTipText("F7");
     m_PanelButtons.add(m_ButtonMkDir);
 
     m_ButtonDelete = new BaseFlatButton("Delete");
     m_ButtonDelete.addActionListener((ActionEvent) -> delete());
+    m_ButtonDelete.setToolTipText("F8");
     m_PanelButtons.add(m_ButtonDelete);
 
     // only show actions button if actual actions present
@@ -259,14 +273,88 @@ public class FileCommanderPanel
 
     m_ButtonStop = new BaseFlatButton("Stop");
     m_ButtonStop.addActionListener((ActionEvent) -> stopExecution());
+    m_ButtonStop.setToolTipText("F9");
     m_PanelButtons.add(m_ButtonStop);
 
     m_ButtonQuit = new BaseFlatButton("Quit");
     m_ButtonQuit.addActionListener((ActionEvent) -> quit());
+    m_ButtonQuit.setToolTipText("F10");
     m_PanelButtons.add(m_ButtonQuit);
 
     m_StatusBar = new BaseStatusBar();
     add(m_StatusBar, BorderLayout.SOUTH);
+
+    m_ActivePanelKeyListener = new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	switch (e.getKeyCode()) {
+	  case KeyEvent.VK_R:
+	    if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx())) {
+	      if (m_ButtonReload.isEnabled()) {
+		e.consume();
+		m_FilesActive.reload();
+	      }
+	    }
+	    break;
+	  case KeyEvent.VK_F2:
+	    if (m_ButtonRename.isEnabled()) {
+	      e.consume();
+	      rename();
+	    }
+	    break;
+	  case KeyEvent.VK_F3:
+	    if (m_ButtonView.isEnabled()) {
+	      e.consume();
+	      view();
+	    }
+	    break;
+	  case KeyEvent.VK_F5:
+	    if (m_ButtonCopy.isEnabled()) {
+	      e.consume();
+	      copy();
+	    }
+	    break;
+	  case KeyEvent.VK_C:
+	    if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx())) {
+	      if (m_ButtonDuplicate.isEnabled()) {
+		e.consume();
+		duplicate();
+	      }
+	    }
+	    break;
+	  case KeyEvent.VK_F6:
+	    if (m_ButtonMove.isEnabled()) {
+	      e.consume();
+	      move();
+	    }
+	    break;
+	  case KeyEvent.VK_F7:
+	    if (m_ButtonMkDir.isEnabled()) {
+	      e.consume();
+	      mkdir();
+	    }
+	    break;
+	  case KeyEvent.VK_F8:
+	    if (m_ButtonDelete.isEnabled()) {
+	      e.consume();
+	      delete();
+	    }
+	    break;
+	  case KeyEvent.VK_F9:
+	    if (m_ButtonStop.isEnabled()) {
+	      e.consume();
+	      stopExecution();
+	    }
+	    break;
+	  case KeyEvent.VK_F10:
+	    if (m_ButtonQuit.isEnabled()) {
+	      e.consume();
+	      quit();
+	    }
+	    break;
+	}
+      }
+    };
   }
 
   /**
@@ -294,6 +382,9 @@ public class FileCommanderPanel
     m_FilesInactive.getFilePanel().clearSelection();
     m_FilesActive.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
     m_FilesInactive.setBorder(BorderFactory.createLineBorder(m_FilesActive.getBackground(), 3));
+    m_FilesInactive.getFilePanel().removeTableKeyListener(m_ActivePanelKeyListener);
+    m_FilesActive.getFilePanel().removeTableKeyListener(m_ActivePanelKeyListener);
+    m_FilesActive.getFilePanel().addTableKeyListener(m_ActivePanelKeyListener);
 
     updateFileOperations();
     updateButtons();
@@ -315,7 +406,7 @@ public class FileCommanderPanel
       activeFiles = new File[0];
 
     m_ButtonRename.setEnabled(!busy && hasActive && (activeFiles.length == 1) && m_FileOperations.isSupported(Operation.RENAME));
-    m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1));
+    m_ButtonView.setEnabled(!busy && hasActive && (activeFiles.length == 1) && activeFiles[0].isFile());
     m_ButtonCopy.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.COPY));
     m_ButtonDuplicate.setEnabled(!busy && hasActive && (activeFiles.length == 1) && m_FileOperations.isSupported(Operation.DUPLICATE));
     m_ButtonMove.setEnabled(!busy && hasActive && (activeFiles.length > 0) && m_FileOperations.isSupported(Operation.MOVE));
@@ -606,7 +697,7 @@ public class FileCommanderPanel
     }
 
     // update the affected panel
-    m_FilesActive.reload();
+    m_FilesActive.reload(() -> m_FilesActive.getFilePanel().setSelectedName(input));
   }
 
   /**

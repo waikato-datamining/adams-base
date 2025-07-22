@@ -51,6 +51,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -893,6 +894,30 @@ public class FilePanel
   }
 
   /**
+   * Selects the specified file name.
+   *
+   * @param name	the file name to select, no path
+   */
+  public void setSelectedName(String name) {
+    int		index;
+    int		i;
+
+    index = -1;
+    for (i = 0; i < m_Files.size(); i++) {
+      if (m_Files.get(i).getName().equals(name)) {
+	index = i;
+	break;
+      }
+    }
+
+    if (index > -1) {
+      index = m_Table.getDisplayRow(index);
+      m_Table.setSelectedRow(index);
+      m_Table.scrollRowToVisible(index);
+    }
+  }
+
+  /**
    * Selects the specified files.
    *
    * @param files	the files to select
@@ -1061,6 +1086,24 @@ public class FilePanel
    */
   public void removeSearchListener(SearchListener l) {
     m_PanelSearch.removeSearchListener(l);
+  }
+
+  /**
+   * Adds the specified key listener to the table.
+   *
+   * @param l		the listener to add
+   */
+  public void addTableKeyListener(KeyListener l) {
+    m_Table.addKeyListener(l);
+  }
+
+  /**
+   * Removes the specified key listener from the table.
+   *
+   * @param l		the listener to remove
+   */
+  public void removeTableKeyListener(KeyListener l) {
+    m_Table.removeKeyListener(l);
   }
 
   /**
