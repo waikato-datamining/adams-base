@@ -15,7 +15,7 @@
 
 /*
  * TarUtils.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  * Copyright (C) 2010 jcscoobyrs
  */
 package adams.core.io;
@@ -213,9 +213,18 @@ public class TarUtils {
    * @throws Exception	if file not found or similar problems
    */
   public static TarArchiveInputStream openArchiveForReading(File file, FileInputStream stream) throws Exception {
-    Compression		comp;
+    return openArchiveForReading(stream, determineCompression(file, true));
+  }
 
-    comp = determineCompression(file, true);
+  /**
+   * Returns an input stream for the specified tar archive.
+   *
+   * @param stream	the stream to wrap
+   * @param comp 	the compression to use
+   * @return		the input stream
+   * @throws Exception	if file not found or similar problems
+   */
+  public static TarArchiveInputStream openArchiveForReading(FileInputStream stream, Compression comp) throws Exception {
     if (comp == Compression.GZIP)
       return new TarArchiveInputStream(new GzipCompressorInputStream(new BufferedInputStream(stream), true));
     else if (comp == Compression.BZIP2)
@@ -244,10 +253,21 @@ public class TarUtils {
    * @see		TarArchiveOutputStream#LONGFILE_GNU
    */
   public static TarArchiveOutputStream openArchiveForWriting(File input, FileOutputStream stream) throws Exception {
-    TarArchiveOutputStream	result;
-    Compression			comp;
+    return openArchiveForWriting(stream, determineCompression(input, true));
+  }
 
-    comp = determineCompression(input, true);
+  /**
+   * Returns an output stream for the specified tar archive.
+   * Uses GNU long filename support.
+   *
+   * @param stream	the output stream to wrap
+   * @return		the output stream
+   * @throws Exception	if file not found or similar problems
+   * @see		TarArchiveOutputStream#LONGFILE_GNU
+   */
+  public static TarArchiveOutputStream openArchiveForWriting(FileOutputStream stream, Compression comp) throws Exception {
+    TarArchiveOutputStream	result;
+
     if (comp == Compression.GZIP)
       result = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(stream)));
     else if (comp == Compression.BZIP2)
