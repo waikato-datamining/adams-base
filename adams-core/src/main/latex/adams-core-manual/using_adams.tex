@@ -1249,6 +1249,20 @@ The following conversion are available:
 
 
 \clearpage
+\section{Timing execution}
+At times, it can be important to determine the time it takes for certain actors to
+be executed. Whether it be for finding bottlenecks or reporting performance figures.
+ADAMS has the notion of \textit{timed actors}, that record the wall time it takes
+for the managed actors to be executed. The following actors are available:
+\begin{tight_itemize}
+    \item \textit{TimedSource} -- \textit{adams-core-timedsource.flow}
+    \item \textit{TimedSubProcess} -- \textit{adams-core-timedsubprocess.flow}
+    \item \textit{TimedTee} -- \textit{adams-core-timedtee.flow}
+    \item \textit{TimedTrigger} -- \textit{adams-core-timedtrigger.flow}
+\end{tight_itemize}
+
+
+\clearpage
 \section{Databases}
 Any database that has a JDBC driver can be used within ADAMS. By default,
 ADAMS comes with support for MySQL (and PostgreSQL, HSQLDB, SQLite and MS SQL

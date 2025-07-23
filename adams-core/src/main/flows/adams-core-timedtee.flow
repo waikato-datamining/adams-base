@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2025-07-24 11:26:41
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "Demonstrates the use of a TimedTee actor." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.sink.Display -display-type adams.flow.core.displaytype.Default -writer adams.data.io.output.NullWriter
+ adams.flow.source.StringConstants -string 1 -conversion adams.data.conversion.StringToString
+ adams.flow.control.TimedTee -callable Display
+  adams.flow.control.Sleep
+  adams.flow.sink.CallableSink -callable Display
