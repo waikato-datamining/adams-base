@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TimedTee.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -126,7 +126,6 @@ import java.util.Hashtable;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TimedTee
   extends Tee
@@ -240,6 +239,7 @@ public class TimedTee
    *
    * @param value 	true if timing enabled
    */
+  @Override
   public void setTimingEnabled(boolean value) {
     m_TimingEnabled = value;
     reset();
@@ -250,6 +250,7 @@ public class TimedTee
    *
    * @return 		true if timing enabled
    */
+  @Override
   public boolean getTimingEnabled() {
     return m_TimingEnabled;
   }
@@ -260,6 +261,7 @@ public class TimedTee
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String timingEnabledTipText() {
     return "If enabled, then the actors performs timing on its execution.";
   }
@@ -269,6 +271,7 @@ public class TimedTee
    *
    * @param value 	the prefix
    */
+  @Override
   public void setPrefix(String value) {
     m_Prefix = value;
     reset();
@@ -279,6 +282,7 @@ public class TimedTee
    *
    * @return 		the prefix
    */
+  @Override
   public String getPrefix() {
     return m_Prefix;
   }
@@ -289,6 +293,7 @@ public class TimedTee
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String prefixTipText() {
     return "The prefix to store in the timing container; automatically expands variables.";
   }
@@ -298,6 +303,7 @@ public class TimedTee
    *
    * @param value 	the callable name
    */
+  @Override
   public void setCallableName(CallableActorReference value) {
     m_CallableName = value;
     reset();
@@ -308,6 +314,7 @@ public class TimedTee
    *
    * @return 		the callable name
    */
+  @Override
   public CallableActorReference getCallableName() {
     return m_CallableName;
   }
@@ -318,6 +325,7 @@ public class TimedTee
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String callableNameTipText() {
     return "The name of the callable actor to use.";
   }
@@ -327,6 +335,7 @@ public class TimedTee
    *
    * @param value 	true if optional
    */
+  @Override
   public void setOptional(boolean value) {
     m_Optional = value;
     reset();
@@ -337,6 +346,7 @@ public class TimedTee
    *
    * @return 		true if optional
    */
+  @Override
   public boolean getOptional() {
     return m_Optional;
   }
@@ -347,6 +357,7 @@ public class TimedTee
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String optionalTipText() {
     return 
 	"If enabled, then the callable actor is optional, ie no error is "
@@ -363,7 +374,7 @@ public class TimedTee
     String	result;
     
     result  = QuickInfoHelper.toString(this, "callableName", m_CallableName);
-    result += QuickInfoHelper.toString(this, "prefix", (m_Prefix.isEmpty() ? "-none-" : m_Prefix), ". prefix: ");
+    result += QuickInfoHelper.toString(this, "prefix", (m_Prefix.isEmpty() ? "-none-" : m_Prefix), ", prefix: ");
     result += QuickInfoHelper.toString(this, "optional", m_Optional, "optional", ", ");
     result += QuickInfoHelper.toString(this, "timingEnabled", m_TimingEnabled, "enabled", ", ");
 
@@ -385,6 +396,7 @@ public class TimedTee
    * @return		true if a reference is available
    * @see		#getCallableActor()
    */
+  @Override
   public boolean hasCallableActor() {
     return (m_CallableActor != null);
   }
@@ -484,7 +496,7 @@ public class TimedTee
       if (result == null) {
 	variables = findVariables(m_CallableActor);
 	m_DetectedVariables.addAll(variables);
-	if (m_DetectedVariables.size() > 0)
+	if (!m_DetectedVariables.isEmpty())
 	  getVariables().addVariableChangeListener(this);
 	if (getErrorHandler() != this)
 	  ActorUtils.updateErrorHandler(m_CallableActor, getErrorHandler(), isLoggingEnabled());
