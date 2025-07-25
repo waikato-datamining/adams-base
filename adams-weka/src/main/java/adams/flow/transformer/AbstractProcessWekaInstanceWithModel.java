@@ -480,8 +480,10 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   protected String setUpModel() {
     String		result;
     MessageCollection 	errors;
+    long		start;
 
     result = null;
+    start  = System.currentTimeMillis();
 
     if (m_ResetModel)
       m_ModelLoader.reset();
@@ -492,6 +494,9 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
       result = errors.toString();
 
     m_ResetModel = false;
+
+    if (isLoggingEnabled())
+      getLogger().info("setUpModel (msec): " + (System.currentTimeMillis() - start));
 
     return result;
   }
@@ -535,6 +540,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
     Instance			inst;
     WekaInstanceContainer 	cont;
     Report 			report;
+    long			start;
 
     result = null;
 
@@ -555,7 +561,10 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
 	inst   = cont.getContent();
 	report = cont.getReport();
       }
+      start         = System.currentTimeMillis();
       m_OutputToken = processInstance(inst);
+      if (isLoggingEnabled())
+	getLogger().info("processInstance (msec): " + (System.currentTimeMillis() - start));
       if ((report != null) && m_OutputToken.hasPayload(ContainerWithReport.class))
 	m_OutputToken.getPayload(ContainerWithReport.class).setValue(ContainerWithReport.VALUE_REPORT, report.getClone());
     }
