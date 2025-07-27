@@ -15,7 +15,7 @@
 
 /*
  * CombineVariables.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -88,7 +88,6 @@ import adams.flow.core.Token;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CombineVariables
   extends AbstractSimpleSource {
@@ -101,6 +100,32 @@ public class CombineVariables
 
   /** the type of conversion. */
   protected Conversion m_Conversion;
+
+  /**
+   * Default constructor;
+   */
+  public CombineVariables() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified expression.
+   *
+   * @param expression	the expression to use
+   */
+  public CombineVariables(String expression) {
+    this(new BaseText(expression));
+  }
+
+  /**
+   * Initializes the actor with the specified expression.
+   *
+   * @param expression	the expression to use
+   */
+  public CombineVariables(BaseText expression) {
+    this();
+    setExpression((BaseText) expression.getClone());
+  }
 
   /**
    * Returns a string describing the object.
