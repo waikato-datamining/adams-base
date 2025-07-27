@@ -48,6 +48,35 @@ public class WekaClassifierModelReader
   protected int m_Iterations;
 
   /**
+   * Default constructor.
+   */
+  public WekaClassifierModelReader() {
+    super();
+  }
+
+  /**
+   * Convenience constructor for setting the warmup flag.
+   *
+   * @param warmUp	whether to perform warmup
+   */
+  public WekaClassifierModelReader(boolean warmUp) {
+    this();
+    setWarmUp(warmUp);
+  }
+
+  /**
+   * Convenience constructor for configuring the warmup.
+   *
+   * @param warmUp	whether to perform warmup
+   * @param iterations 	the number of iterations to perform
+   */
+  public WekaClassifierModelReader(boolean warmUp, int iterations) {
+    this();
+    setWarmUp(warmUp);
+    setIterations(iterations);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return a description suitable for displaying in the gui
