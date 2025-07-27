@@ -250,11 +250,12 @@ public class WekaClassifierModelReader
     try {
       objects = SerializationHelper.readAll(file.getAbsolutePath());
       cls     = (Classifier) objects[0];
-      header  = null;
-      if (objects.length > 1)
-	header = (Instances) objects[1];
 
       if (m_WarmUp) {
+	header  = null;
+	if (objects.length > 1)
+	  header = (Instances) objects[1];
+
 	if (header != null) {
 	  if (!performWarmUp(header, cls))
 	    getLogger().warning("Classifier warm up was not successful: " + file);
