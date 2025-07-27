@@ -28,6 +28,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionHandler;
 import adams.flow.container.AbstractContainer;
+import adams.flow.control.Storage;
 import adams.flow.control.StorageName;
 
 /**
@@ -389,17 +390,20 @@ public abstract class AbstractModelLoader<T>
   protected T loadFromStorage(MessageCollection errors) {
     T 		result;
     Object	obj;
+    Storage	storage;
 
     if (m_FlowContext == null) {
       errors.add("No flow context specified!");
       return null;
     }
-    if (!m_FlowContext.getStorageHandler().getStorage().has(m_ModelStorage)) {
+
+    storage = m_FlowContext.getStorageHandler().getStorage();
+    if (!storage.has(m_ModelStorage)) {
       errors.add("Model storage item not available: " + m_ModelStorage);
       return null;
     }
 
-    obj    = m_FlowContext.getStorageHandler().getStorage().get(m_ModelStorage);
+    obj    = storage.get(m_ModelStorage);
     result = unwrapModel(obj, errors);
 
     return result;
@@ -463,9 +467,8 @@ public abstract class AbstractModelLoader<T>
       if (isLoggingEnabled())
         getLogger().info("Reload of model: " + (errors.isEmpty() ? "successful" : errors.toString()));
 
-      // set context
-      if (FlowContextUtils.isHandler(m_Model))
-        FlowContextUtils.update(m_Model, m_FlowContext);
+      // set context (if applicable)
+      FlowContextUtils.update(m_Model, m_FlowContext);
     }
 
     return m_Model;

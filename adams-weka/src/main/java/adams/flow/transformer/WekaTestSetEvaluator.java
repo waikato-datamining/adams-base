@@ -436,8 +436,7 @@ public class WekaTestSetEvaluator
 	  cls = (weka.classifiers.Classifier) m_InputToken.getPayload();
 	else
 	  cls = (weka.classifiers.Classifier) ((WekaModelContainer) m_InputToken.getPayload()).getValue(WekaModelContainer.VALUE_MODEL);
-	if (FlowContextUtils.isHandler(cls))
-	  FlowContextUtils.update(cls, this);
+	FlowContextUtils.update(cls, this);
 	initOutputBuffer();
 	m_Output.setHeader(test);
 	m_CurrentEvaluation = new StoppableEvaluation(test);

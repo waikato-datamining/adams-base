@@ -825,8 +825,7 @@ public class WekaFilter
 	return errors.toString();
     }
     else {
-      if (FlowContextUtils.isHandler(m_ActualFilter))
-	FlowContextUtils.update(m_ActualFilter, this);
+      FlowContextUtils.update(m_ActualFilter, this);
     }
 
     // configure containers
@@ -909,8 +908,7 @@ public class WekaFilter
 	synchronized(m_ActualFilter) {
 	  if (!m_FlowContextUpdated) {
 	    m_FlowContextUpdated = true;
-	    if (FlowContextUtils.isHandler(m_ActualFilter))
-	      FlowContextUtils.update(m_ActualFilter, this);
+	    FlowContextUtils.update(m_ActualFilter, this);
 	  }
 
 	  // filter data

@@ -471,8 +471,7 @@ public class WekaTrainClassifier
 	throw new IllegalStateException("Failed to obtain classifier from '" + m_Classifier + "':\n" + errors);
     }
     else {
-      if (FlowContextUtils.isHandler(result))
-	FlowContextUtils.update(result, this);
+      FlowContextUtils.update(result, this);
     }
 
     return result;

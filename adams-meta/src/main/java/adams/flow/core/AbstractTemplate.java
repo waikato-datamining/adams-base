@@ -203,8 +203,7 @@ public abstract class AbstractTemplate
 
     result = null;
 
-    if (FlowContextUtils.isHandler(m_Template))
-      FlowContextUtils.update(m_Template, this);
+    FlowContextUtils.update(m_Template, this);
 
     m_Actor = m_Template.generate();
     if (m_Actor == null) {

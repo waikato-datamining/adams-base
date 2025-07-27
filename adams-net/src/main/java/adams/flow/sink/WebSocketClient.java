@@ -233,8 +233,7 @@ public class WebSocketClient
     if (m_Client == null) {
       try {
 	m_Client = m_Generator.generateClient();
-	if (FlowContextUtils.isHandler(m_Client))
-	  FlowContextUtils.update(m_Client, this);
+	FlowContextUtils.update(m_Client, this);
       }
       catch (Exception e) {
 	result = handleException("Failed to generate websocket client!", e);

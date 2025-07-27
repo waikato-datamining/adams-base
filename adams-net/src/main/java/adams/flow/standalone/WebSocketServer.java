@@ -175,8 +175,7 @@ public class WebSocketServer
 
     try {
       m_Server = m_Generator.generateServer();
-      if (FlowContextUtils.isHandler(m_Server))
-	FlowContextUtils.update(m_Server, this);
+      FlowContextUtils.update(m_Server, this);
       m_Server.start();
     }
     catch (Exception e) {

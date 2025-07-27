@@ -349,8 +349,7 @@ public class WekaTrainAssociator
 	throw new IllegalStateException("Failed to obtain associator from '" + m_Associator + "':\n" + errors);
     }
     else {
-      if (FlowContextUtils.isHandler(result))
-	FlowContextUtils.update(result, this);
+      FlowContextUtils.update(result, this);
     }
 
     return result;

@@ -210,10 +210,8 @@ public abstract class AbstractSimpleSourceWithPropertiesUpdating
     if (!errors.isEmpty())
       result = errors.toString();
 
-    if (result == null) {
-      if (FlowContextUtils.isHandler(obj))
-	FlowContextUtils.update(obj, this);
-    }
+    if (result == null)
+      FlowContextUtils.update(obj, this);
 
     return result;
   }

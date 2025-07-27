@@ -215,8 +215,7 @@ public class WekaCrossValidationJob
 	"Fold " + m_Fold + " - start: '" + m_Train.relationName() + "' using "
 	  + Shortening.shortenEnd(OptionUtils.getCommandLine(m_Classifier), 100));
     try {
-      if (FlowContextUtils.isHandler(m_Classifier))
-	FlowContextUtils.update(m_Classifier, m_FlowContext);
+      FlowContextUtils.update(m_Classifier, m_FlowContext);
       m_Classifier.buildClassifier(m_Train);
       if (!m_Stopped) {
 	m_Evaluation = new StoppableEvaluation(m_Train);

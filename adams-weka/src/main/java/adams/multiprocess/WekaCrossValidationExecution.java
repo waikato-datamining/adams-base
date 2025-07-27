@@ -574,8 +574,7 @@ public class WekaCrossValidationExecution
 	  train = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TRAIN);
 	  test  = (Instances) cont.getValue(WekaTrainTestSetContainer.VALUE_TEST);
 	  m_CurrentClassifier = ObjectCopyHelper.copyObject(m_Classifier);
-	  if (FlowContextUtils.isHandler(m_CurrentClassifier))
-	    FlowContextUtils.update(m_CurrentClassifier, m_FlowContext);
+	  FlowContextUtils.update(m_CurrentClassifier, m_FlowContext);
 	  m_CurrentClassifier.buildClassifier(train);
 	  m_CurrentEvaluation.setPriors(train);
 	  m_CurrentEvaluation.evaluateModel(m_CurrentClassifier, test, m_Output);

@@ -128,8 +128,7 @@ public abstract class AbstractCallableWekaClustererEvaluator
 	getLogger().severe(errors.toString());
     }
     else {
-      if (FlowContextUtils.isHandler(result))
-	FlowContextUtils.update(result, this);
+      FlowContextUtils.update(result, this);
     }
 
     return result;

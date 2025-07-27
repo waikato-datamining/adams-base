@@ -245,8 +245,7 @@ public class Convert
   protected String doExecute() {
     String	result;
 
-    if (FlowContextUtils.isHandler(m_Conversion))
-      FlowContextUtils.update(m_Conversion, this);
+    FlowContextUtils.update(m_Conversion, this);
 
     m_Conversion.setInput(m_InputToken.getPayload());
     result = m_Conversion.convert();

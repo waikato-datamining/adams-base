@@ -485,8 +485,7 @@ public class WekaTrainClusterer
 	throw new IllegalStateException("Failed to obtain clusterer from '" + m_Clusterer + "':\n" + errors);
     }
     else {
-      if (FlowContextUtils.isHandler(result))
-	FlowContextUtils.update(result, this);
+      FlowContextUtils.update(result, this);
     }
 
     return result;

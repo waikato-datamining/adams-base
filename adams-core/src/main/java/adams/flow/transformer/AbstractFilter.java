@@ -361,8 +361,7 @@ public abstract class AbstractFilter
 
     if (!m_FlowContextUpdated) {
       m_FlowContextUpdated = true;
-      if (FlowContextUtils.isHandler(m_Filter))
-	FlowContextUtils.update(m_Filter, this);
+      FlowContextUtils.update(m_Filter, this);
     }
 
     if (m_InputToken.getPayload() instanceof DataContainer) {
