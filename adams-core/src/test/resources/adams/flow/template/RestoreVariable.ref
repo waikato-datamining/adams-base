@@ -1,0 +1,14 @@
+--> adams.flow.template.RestoreVariable-out0.txt
+adams.flow.standalone.SetVariable
+	-name
+	restore file
+	-var-name
+	restore
+	-var-value
+	@{flow_filename_long}.props
+	-value-type
+	FILE_FORWARD_SLASHES
+	-expand-value
+	true
+
+
