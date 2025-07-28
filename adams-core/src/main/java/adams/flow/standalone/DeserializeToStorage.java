@@ -15,7 +15,7 @@
 
 /*
  * DeserializeToStorage.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -298,7 +298,7 @@ public class DeserializeToStorage
   }
 
   /**
-   * Adds the variable name/value pair.
+   * Adds the container name / storage name pair.
    *
    * @param value	the pair to add
    */
