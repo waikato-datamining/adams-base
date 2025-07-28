@@ -15,14 +15,22 @@
 
 /*
  * ContainerToVariables.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
+import adams.core.QuickInfoHelper;
+import adams.core.Variables;
+import adams.core.base.BaseKeyValuePair;
 import adams.flow.container.AbstractContainer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  <!-- globalinfo-start -->
@@ -38,7 +46,6 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;adams.flow.container.AbstractContainer<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.AbstractContainer: <br>
  * - adams.flow.container.AbstractContainer:
  * <br><br>
  <!-- flow-summary-end -->
@@ -47,6 +54,7 @@ import java.util.Iterator;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -66,20 +74,25 @@ import java.util.Iterator;
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-regexp &lt;adams.core.base.BaseRegExp&gt; (property: regExp)
  * &nbsp;&nbsp;&nbsp;The regular expression to match the names of the container values against.
  * &nbsp;&nbsp;&nbsp;default: .*
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
  *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
@@ -87,15 +100,22 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-container-variable-name-pair &lt;adams.core.base.BaseKeyValuePair&gt; [-container-variable-name-pair ...] (property: containerVariableNamePairs)
+ * &nbsp;&nbsp;&nbsp;The pairs of container name and variable name, overrides the regular expression.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ContainerToVariables
   extends AbstractContainerValueExtractor {
 
   private static final long serialVersionUID = 8072844783869677669L;
+
+  /** the container name/variable name pairs. */
+  protected List<BaseKeyValuePair> m_ContainerVariableNamePairs;
 
   /**
    * Returns a string describing the object.
@@ -111,6 +131,28 @@ public class ContainerToVariables
   }
 
   /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "container-variable-name-pair", "containerVariableNamePairs",
+      new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_ContainerVariableNamePairs = new ArrayList<>();
+  }
+
+  /**
    * Returns the tip text for this property.
    *
    * @return 		tip text for this property suitable for
@@ -122,6 +164,63 @@ public class ContainerToVariables
   }
 
   /**
+   * Adds the container name / variable name pair.
+   *
+   * @param value	the pair to add
+   */
+  public void addContainerVariableNamePair(BaseKeyValuePair value) {
+    m_ContainerVariableNamePairs.add(value);
+    reset();
+  }
+
+  /**
+   * Sets the container name / variable name pairs.
+   *
+   * @param value	the pairs
+   */
+  public void setContainerVariableNamePairs(BaseKeyValuePair[] value) {
+    m_ContainerVariableNamePairs.clear();
+    m_ContainerVariableNamePairs.addAll(Arrays.asList(value));
+    reset();
+  }
+
+  /**
+   * Returns the pairs of container name / variable name.
+   *
+   * @return		the pairs
+   */
+  public BaseKeyValuePair[] getContainerVariableNamePairs() {
+    return m_ContainerVariableNamePairs.toArray(new BaseKeyValuePair[0]);
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String containerVariableNamePairsTipText() {
+    return "The pairs of container name and variable name, overrides the regular expression.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    if (m_ContainerVariableNamePairs.isEmpty())
+      result = super.getQuickInfo();
+    else
+      result = QuickInfoHelper.toString(this, "containerVariableNamePairs", m_ContainerVariableNamePairs, "pairs: ");
+
+    return result;
+  }
+
+  /**
    * Processes the container.
    *
    * @param cont	the container to process
@@ -129,16 +228,25 @@ public class ContainerToVariables
    */
   @Override
   protected String processContainer(AbstractContainer cont) {
-    Iterator<String> 	names;
-    String		name;
-    Object		value;
+    Iterator<String> 		names;
+    String			name;
+    Object			value;
+    Map<String, String> 	pairs;
 
     names = cont.names();
 
+    pairs = new HashMap<>();
+    for (BaseKeyValuePair pair: m_ContainerVariableNamePairs)
+      pairs.put(pair.getPairKey(), Variables.toValidName(pair.getPairValue()));
+
     while (names.hasNext()) {
-      name = names.next();
-      if (m_RegExp.isMatch(name) && cont.hasValue(name)) {
-	value = cont.getValue(name);
+      name  = names.next();
+      value = cont.getValue(name);
+      if (!pairs.isEmpty()) {
+	if (pairs.containsKey(name))
+	  getVariables().set(pairs.get(name), "" + value);
+      }
+      else if (m_RegExp.isMatch(name) && cont.hasValue(name)) {
 	getVariables().set(m_Prefix + name, "" + value);
       }
     }
