@@ -3321,6 +3321,14 @@ sudo chown adamsuser:adamsuser *.pem
 
 \section{Troubleshooting}
 \begin{tight_itemize}
+  \item When the Flow editor warns \textit{Flow was saved with additional modules:} after loading
+  a flow, then this indicates that the current flow was saved with another ADAMS configuration.
+  Depending on what actors are used in the flow, it may not be possible to load the flow.
+  The list of modules gives a hint at the ADAMS application that the flow was written with.
+  If these warnings are annoying, they can be turned off by creating the \texttt{Option.props}
+  config file containing \texttt{option.ReportModuleDifferences=false} (see \ref{propsfiles}
+  for more details where to store the file).
+
   \item ADAMS is unusable on Linux after coming back from sleep, due to a
   \textit{Exception in thread "AWT-EventQueue-0" java.lang.ClassCastException:
   sun.awt.image.BufImgSurfaceData cannot be cast to sun.java2d.xr.XRSurfaceData}

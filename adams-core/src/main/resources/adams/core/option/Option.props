@@ -26,6 +26,10 @@ option.SuppressDefaultValues=true
 # whether to enable debugging output
 option.Debug=false
 
+# whether the NestedFormatHelper reports that modules are different
+# between current application and the ones stored in the nested format file
+option.ReportModuleDifferences=true
+
 #########
 # hooks #
 #########

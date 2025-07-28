@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * OptionsDefinition.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
@@ -25,7 +25,6 @@ import adams.core.option.OptionUtils;
  * Definition for the Options props file.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class OptionsDefinition
   extends AbstractPropertiesDefinition {
@@ -61,6 +60,7 @@ public class OptionsDefinition
    * @param env		the environment object to update
    */
   public void update(AbstractEnvironment env) {
-    add(env, Project.NAME + "/core/option", new String[0]);
+    add(env, Project.NAME + "/core/option",
+      new String[]{"option.SuppressDefaultValues", "option.Debug", "option.ReportModuleDifferences"});
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * OptionUtils.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -96,6 +96,9 @@ public class OptionUtils {
 
   /** whether to suppress default options (toArray/toString). */
   protected static Boolean m_SuppressDefaultValues;
+
+  /** whether to suppress warnings when the modules of the current application differ from the ones in nested format. */
+  protected static Boolean m_ReportModuleDifferences;
 
   /**
    * Adds the given hook for converting strings into objects (low-level).
@@ -226,6 +229,19 @@ public class OptionUtils {
       m_Debug = getProperties().getBoolean(OPTION_PREFIX + "Debug", false);
 
     return m_Debug;
+  }
+
+  /**
+   * Returns whether the NestedFormatHelper reports differences between modules
+   * stored in the nested format file and the current application.
+   *
+   * @return		true if debugging output is on
+   */
+  public static synchronized boolean getReportModuleDifferences() {
+    if (m_ReportModuleDifferences == null)
+      m_ReportModuleDifferences = getProperties().getBoolean(OPTION_PREFIX + "ReportModuleDifferences", true);
+
+    return m_ReportModuleDifferences;
   }
 
   /**

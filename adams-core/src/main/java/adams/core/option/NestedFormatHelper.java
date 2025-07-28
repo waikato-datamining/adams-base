@@ -353,11 +353,17 @@ public class NestedFormatHelper {
   /**
    * Checks whether there are any modules missing in the current environment
    * compared to the provided list of module names.
+   * Only performs a check if {@link OptionUtils#getReportModuleDifferences()}
+   * is set to true.
    *
    * @param modules	the list of modules to check
    * @return		null if everything OK, otherwise error message
+   * @see		OptionUtils#getReportModuleDifferences()
    */
   public static String checkModules(List<String> modules) {
+    if (!OptionUtils.getReportModuleDifferences())
+      return null;
+
     if (!modules.isEmpty()) {
       for (Module module: Modules.getSingleton().getModules())
 	modules.remove(module.getName());
