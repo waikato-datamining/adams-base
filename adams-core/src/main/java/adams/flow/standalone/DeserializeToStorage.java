@@ -451,7 +451,7 @@ public class DeserializeToStorage
         result = read(m_ModelFile, m_StorageName);
       }
 
-      if ((result == null) && (m_StorageFilePairs.size() > 0)) {
+      if ((result == null) && (!m_StorageFilePairs.isEmpty())) {
         errors = new MessageCollection();
         for (i = 0; i < m_StorageFilePairs.size(); i++) {
           if (isStopped())
