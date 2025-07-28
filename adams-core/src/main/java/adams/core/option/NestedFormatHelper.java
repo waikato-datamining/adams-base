@@ -15,7 +15,7 @@
 
 /*
  * NestedFormatHelper.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -122,7 +122,7 @@ public class NestedFormatHelper {
     int		result;
     
     result = 0;
-    while ((lines.size() > 0) && (lines.get(0).startsWith(NestedProducer.COMMENT))) {
+    while ((!lines.isEmpty()) && (lines.get(0).startsWith(NestedProducer.COMMENT))) {
       result++;
       lines.remove(0);
     }
@@ -358,10 +358,10 @@ public class NestedFormatHelper {
    * @return		null if everything OK, otherwise error message
    */
   public static String checkModules(List<String> modules) {
-    if (modules.size() > 0) {
+    if (!modules.isEmpty()) {
       for (Module module: Modules.getSingleton().getModules())
 	modules.remove(module.getName());
-      if (modules.size() > 0)
+      if (!modules.isEmpty())
 	return "Flow was saved with additional modules: " + Utils.flatten(modules, ",");
     }
     return null;
