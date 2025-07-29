@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ModelOutput.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -23,10 +23,16 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
+import adams.gui.core.MultiPagePane;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import com.github.fracpete.javautils.enumerate.Enumerated;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 
 import javax.swing.JComponent;
+
+import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Outputs the model if available.
@@ -69,6 +75,27 @@ public class ModelOutput
   }
 
   /**
+   * Generates the output for the specified model.
+   *
+   * @param item	the parent item
+   * @param model	the model to generate the output for
+   * @param errors	for collecting errors
+   * @return		the output component, null if failed to generate
+   */
+  protected JComponent createOutput(ResultItem item, Classifier model, MessageCollection errors) {
+    BaseTextArea 	text;
+
+    text = new BaseTextArea();
+    text.setEditable(false);
+    text.setTextFont(Fonts.getMonospacedFont());
+    text.setText(model.toString());
+    text.setCaretPosition(0);
+
+    return new TextualContentPanel(text, true);
+
+  }
+
+  /**
    * Generates output from the item.
    *
    * @param item	the item to generate output for
@@ -76,19 +103,23 @@ public class ModelOutput
    * @return		the output component, null if failed to generate
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    BaseTextArea 	text;
+    MultiPagePane 	multiPage;
 
-    if (!item.hasModel()) {
-      errors.add("No model available!");
-      return null;
+    if (item.hasFoldModels()) {
+      multiPage = newMultiPagePane(item);
+      addPage(multiPage, "Full", createOutput(item, item.getModel(), errors), 0);
+      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, item.getFoldModels()[eval.index], errors), eval.index + 1);
+      if (multiPage.getPageCount() > 0)
+	multiPage.setSelectedIndex(0);
+      return multiPage;
     }
-
-    text = new BaseTextArea();
-    text.setEditable(false);
-    text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(item.getModel().toString());
-    text.setCaretPosition(0);
-
-    return new TextualContentPanel(text, true);
+    else {
+      if (!item.hasModel()) {
+	errors.add("No model available!");
+	return null;
+      }
+      return createOutput(item, item.getModel(), errors);
+    }
   }
 }
