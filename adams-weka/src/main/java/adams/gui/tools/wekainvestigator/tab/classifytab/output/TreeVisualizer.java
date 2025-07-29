@@ -15,7 +15,7 @@
 
 /*
  * TreeVisualizer.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -23,11 +23,11 @@ package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 import adams.core.MessageCollection;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.output.GraphHelper;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DirectedPseudograph;
+import weka.classifiers.Classifier;
 import weka.core.Drawable;
 import weka.gui.visualize.plugins.JGraphTTreeVisualization;
 import weka.gui.visualize.plugins.jgrapht.SimpleEdge;
@@ -41,7 +41,7 @@ import javax.swing.JComponent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TreeVisualizer
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithFoldModelsSupport {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -65,23 +65,25 @@ public class TreeVisualizer
   }
 
   /**
-   * Checks whether output can be generated from this item.
+   * Checks whether the model can be handled.
    *
-   * @param item	the item to check
-   * @return		true if output can be generated
+   * @param model	the model to check
+   * @return		true if handled
    */
-  public boolean canGenerateOutput(ResultItem item) {
-    return item.hasModel() && (item.getModel() instanceof Drawable) && GraphHelper.hasGraph((Drawable) item.getModel());
+  @Override
+  protected boolean canHandleModel(Classifier model) {
+    return (model instanceof Drawable) && GraphHelper.hasGraph((Drawable) model);
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output for the model.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param model		the model to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  @Override
+  protected JComponent createOutput(Classifier model, MessageCollection errors) {
     String						dotty;
     DirectedPseudograph<SimpleVertex, SimpleEdge> 	graph;
     JGraphXAdapter<SimpleVertex, SimpleEdge> 		jgxAdapter;
@@ -89,7 +91,7 @@ public class TreeVisualizer
     mxCompactTreeLayout 				layout;
 
     try {
-      dotty = ((Drawable) item.getModel()).graph();
+      dotty = ((Drawable) model).graph();
       graph = JGraphTTreeVisualization.getSingleton().importDotty(dotty);
       jgxAdapter = new JGraphXAdapter<>(graph);
       jgxAdapter.setCellsEditable(false);

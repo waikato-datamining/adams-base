@@ -14,17 +14,14 @@
  */
 
 /*
- * ModelOutput.java
- * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
+ * AbstractOutputGeneratorWithFoldModelsSupport.java
+ * Copyright (C) 2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
-import adams.gui.core.BaseTextArea;
-import adams.gui.core.Fonts;
 import adams.gui.core.MultiPagePane;
-import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import com.github.fracpete.javautils.enumerate.Enumerated;
 import weka.classifiers.Classifier;
@@ -35,55 +32,45 @@ import javax.swing.JComponent;
 import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
- * Outputs the model if available.
+ * Ancestor for output generators that can generate output for separate folds
+ * just using the Classifier objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class ModelOutput
-  extends AbstractOutputGeneratorWithFoldModelsSupport {
+public abstract class AbstractOutputGeneratorWithFoldModelsSupport<T extends JComponent>
+  extends AbstractOutputGenerator {
 
-  private static final long serialVersionUID = -6829245659118360739L;
+  private static final long serialVersionUID = -1143220703202297185L;
 
   /**
-   * Returns a string describing the object.
+   * Checks whether the model can be handled.
    *
-   * @return 			a description suitable for displaying in the gui
+   * @param model	the model to check
+   * @return		true if handled
    */
-  @Override
-  public String globalInfo() {
-    return "Outputs the model if available.";
+  protected boolean canHandleModel(Classifier model) {
+    return true;
   }
 
   /**
-   * The title to use for the tab.
+   * Checks whether output can be generated from this item.
    *
-   * @return		the title
+   * @param item	the item to check
+   * @return		true if output can be generated
    */
-  public String getTitle() {
-    return "Model";
+  public boolean canGenerateOutput(ResultItem item) {
+    return (item.hasModel() && canHandleModel(item.getModel())
+	      || (item.hasFoldModels() && canHandleModel(item.getFoldModels()[0])));
   }
 
   /**
-   * Generates the output for the specified model.
+   * Generates the output for the model.
    *
-   * @param model	the model to generate the output for
-   * @param errors	for collecting errors
-   * @return		the output component, null if failed to generate
+   * @param model		the model to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  @Override
-  protected JComponent createOutput(Classifier model, MessageCollection errors) {
-    BaseTextArea 	text;
-
-    text = new BaseTextArea();
-    text.setEditable(false);
-    text.setTextFont(Fonts.getMonospacedFont());
-    text.setText(model.toString());
-    text.setCaretPosition(0);
-
-    return new TextualContentPanel(text, true);
-
-  }
+  protected abstract T createOutput(Classifier model, MessageCollection errors);
 
   /**
    * Generates output from the item.
@@ -93,11 +80,12 @@ public class ModelOutput
    * @return		the output component, null if failed to generate
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    MultiPagePane 	multiPage;
+    MultiPagePane multiPage;
 
     if (item.hasFoldModels()) {
       multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(item.getModel(), errors), 0);
+      if (item.hasModel())
+	addPage(multiPage, "Full", createOutput(item.getModel(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
 	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldModels()[eval.index], errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)

@@ -15,7 +15,7 @@
 
 /*
  * GraphSource.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -24,7 +24,7 @@ import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import weka.classifiers.Classifier;
 import weka.core.Drawable;
 
 import javax.swing.JComponent;
@@ -35,7 +35,7 @@ import javax.swing.JComponent;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class GraphSource
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithFoldModelsSupport {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -59,35 +59,32 @@ public class GraphSource
   }
 
   /**
-   * Checks whether output can be generated from this item.
+   * Checks whether the model can be handled.
    *
-   * @param item	the item to check
-   * @return		true if output can be generated
+   * @param model	the model to check
+   * @return		true if handled
    */
-  public boolean canGenerateOutput(ResultItem item) {
-    return item.hasModel() && (item.getModel() instanceof Drawable);
+  @Override
+  protected boolean canHandleModel(Classifier model) {
+    return (model instanceof Drawable);
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output for the model.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param model		the model to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  @Override
+  protected JComponent createOutput(Classifier model, MessageCollection errors) {
     BaseTextArea 	text;
-
-    if (!item.hasModel()) {
-      errors.add("No model available!");
-      return null;
-    }
 
     try {
       text = new BaseTextArea();
       text.setEditable(false);
       text.setTextFont(Fonts.getMonospacedFont());
-      text.setText(((Drawable) item.getModel()).graph());
+      text.setText(((Drawable) model).graph());
       text.setCaretPosition(0);
       return new TextualContentPanel(text, true);
     }

@@ -15,7 +15,7 @@
 
 /*
  * TreeGraphML.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -25,9 +25,9 @@ import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.GraphHelper;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import org.jgrapht.graph.DirectedPseudograph;
 import org.jgrapht.io.GraphMLExporter;
+import weka.classifiers.Classifier;
 import weka.core.Drawable;
 import weka.gui.visualize.plugins.JGraphTTreeVisualization;
 import weka.gui.visualize.plugins.jgrapht.SimpleEdge;
@@ -48,7 +48,7 @@ import java.io.StringWriter;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class TreeGraphML
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithFoldModelsSupport {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -67,18 +67,20 @@ public class TreeGraphML
    *
    * @return		the title
    */
+  @Override
   public String getTitle() {
     return "Tree GraphML";
   }
 
   /**
-   * Checks whether output can be generated from this item.
+   * Checks whether the model can be handled.
    *
-   * @param item	the item to check
-   * @return		true if output can be generated
+   * @param model	the model to check
+   * @return		true if handled
    */
-  public boolean canGenerateOutput(ResultItem item) {
-    return item.hasModel() && (item.getModel() instanceof Drawable) && GraphHelper.isDottyTree((Drawable) item.getModel());
+  @Override
+  protected boolean canHandleModel(Classifier model) {
+    return (model instanceof Drawable) && GraphHelper.isDottyTree((Drawable) model);
   }
 
   /**
@@ -113,27 +115,23 @@ public class TreeGraphML
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output for the model.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param model		the model to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  @Override
+  protected JComponent createOutput(Classifier model, MessageCollection errors) {
     BaseTextArea 	text;
     String		dotty;
     String		graphml;
 
-    if (!item.hasModel()) {
-      errors.add("No model available!");
-      return null;
-    }
-
     try {
-      dotty = ((Drawable) item.getModel()).graph();
+      dotty = ((Drawable) model).graph();
       graphml = toGraphml(dotty, errors);
       if (graphml == null)
-        return null;
+	return null;
       text = new BaseTextArea();
       text.setEditable(false);
       text.setTextFont(Fonts.getMonospacedFont());

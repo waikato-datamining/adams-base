@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SourceCode.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -24,7 +24,7 @@ import adams.core.MessageCollection;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.Fonts;
 import adams.gui.tools.wekainvestigator.output.TextualContentPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import weka.classifiers.Classifier;
 import weka.classifiers.Sourcable;
 
 import javax.swing.JComponent;
@@ -33,10 +33,9 @@ import javax.swing.JComponent;
  * Outputs source code from the model (if classifier implements {@link Sourcable}).
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SourceCode
-  extends AbstractOutputGenerator {
+  extends AbstractOutputGeneratorWithFoldModelsSupport {
 
   private static final long serialVersionUID = -6829245659118360739L;
 
@@ -104,39 +103,32 @@ public class SourceCode
   }
 
   /**
-   * Checks whether output can be generated from this item.
+   * Checks whether the model can be handled.
    *
-   * @param item	the item to check
-   * @return		true if output can be generated
+   * @param model	the model to check
+   * @return		true if handled
    */
-  public boolean canGenerateOutput(ResultItem item) {
-    return item.hasModel() && (item.getModel() instanceof Sourcable);
+  @Override
+  protected boolean canHandleModel(Classifier model) {
+    return (model instanceof Sourcable);
   }
 
   /**
-   * Generates output from the item.
+   * Generates the output for the model.
    *
-   * @param item	the item to generate output for
-   * @param errors	for collecting error messages
-   * @return		the output component, null if failed to generate
+   * @param model		the model to use as basis
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
+  @Override
+  protected JComponent createOutput(Classifier model, MessageCollection errors) {
     BaseTextArea 	text;
-
-    if (!item.hasModel()) {
-      errors.add("No model available!");
-      return null;
-    }
-    if (!(item.getModel() instanceof Sourcable)) {
-      errors.add("Classifier does not implement " + Sourcable.class.getName() + "!");
-      return null;
-    }
 
     text = new BaseTextArea();
     text.setEditable(false);
     text.setTextFont(Fonts.getMonospacedFont());
     try {
-      text.setText(((Sourcable) item.getModel()).toSource(m_Classname));
+      text.setText(((Sourcable) model).toSource(m_Classname));
     }
     catch (Exception e) {
       errors.add("Failed to generate source code!", e);

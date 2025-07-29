@@ -15,7 +15,7 @@
 
 /*
  * AbstractOutputGeneratorWithSeparateFoldsSupport.java
- * Copyright (C) 2019-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -42,7 +42,7 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
   private static final long serialVersionUID = -1143220703202297185L;
 
   /**
-   * Generates the table with the confusion matrix.
+   * Generates the output for the evaluation.
    *
    * @param eval		the evaluation to use as basis
    * @param errors 		for collecting errors
