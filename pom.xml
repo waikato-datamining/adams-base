@@ -174,34 +174,36 @@
   <profiles>
     <profile>
       <id>javadoc-generation</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.11.2</version>
+            <reportSets>
+              <reportSet>
+                <id>aggregate</id>
+                <reports>
+                  <report>aggregate</report>
+                </reports>
+              </reportSet>
+            </reportSets>
+            <configuration>
+              <show>protected</show>
+              <nohelp>true</nohelp>
+              <doclint>none</doclint>
+              <additionalJOption>--no-module-directories</additionalJOption>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>3.3</version>
+            <version>3.21.0</version>
             <configuration>
-              <reportPlugins>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-javadoc-plugin</artifactId>
-                  <version>2.9</version>
-                  <reportSets>
-                    <reportSet>
-                      <id>aggregate</id>
-                      <reports>
-                        <report>aggregate</report>
-                      </reports>
-                    </reportSet>
-                  </reportSets>
-                  <configuration>
-                    <show>protected</show>
-                    <nohelp>true</nohelp>
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                    <additionalJOption>--no-module-directories</additionalJOption>
-                  </configuration>
-                </plugin>
-              </reportPlugins>
             </configuration>
           </plugin>
         </plugins>
@@ -253,7 +255,7 @@
             </execution>
           </executions>
         </plugin>
-    
+
         <plugin>
           <groupId>org.bsc.maven</groupId>
           <artifactId>maven-processor-plugin</artifactId>
@@ -267,18 +269,18 @@
               <phase>process-classes</phase>
               <configuration>
                 <processors>
-                   <processor>adams.core.annotation.MixedCopyrightProcessor</processor>
-                   <processor>adams.core.annotation.ThirdPartyCopyrightProcessor</processor>
+                  <processor>adams.core.annotation.MixedCopyrightProcessor</processor>
+                  <processor>adams.core.annotation.ThirdPartyCopyrightProcessor</processor>
                 </processors>
                 <options>
                   <printheader>true</printheader>
                   <module>${project.artifactId}</module>
                   <output>${project.build.directory}/${project.artifactId}-${project.version}</output>
                 </options>
-              </configuration> 
+              </configuration>
             </execution>
           </executions>
-        </plugin>         
+        </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -293,7 +295,7 @@
           </executions>
         </plugin>
 
-        <!-- update license file: mvn license:add-third-party -DuseMissingFile -->    
+        <!-- update license file: mvn license:add-third-party -DuseMissingFile -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>license-maven-plugin</artifactId>
@@ -310,7 +312,7 @@
               </configuration>
             </execution>
           </executions>
-        </plugin>         
+        </plugin>
 
         <!--
         example usage: mvn test, mvn test -Dtest=testclassname
@@ -364,13 +366,13 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.21.0</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>2.9</version>
+          <version>3.9.0</version>
         </plugin>
 
         <!-- generates dependency graphs, get pdfs/flows/sources -->
