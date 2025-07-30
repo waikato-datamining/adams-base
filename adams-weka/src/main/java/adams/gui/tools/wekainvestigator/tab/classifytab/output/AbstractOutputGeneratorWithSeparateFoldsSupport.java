@@ -46,13 +46,14 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
   /**
    * Generates the output for the evaluation.
    *
+   * @param item		the item to generate output for
    * @param eval		the evaluation to use as basis
    * @param originalIndices 	the original indices to use, can be null
    * @param additionalAttributes the additional attributes to display, can be null
    * @param errors 		for collecting errors
    * @return			the generated table, null if failed to generate
    */
-  protected abstract T createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors);
+  protected abstract T createOutput(ResultItem item, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors);
 
   /**
    * Generates output from the item.
@@ -69,19 +70,19 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
+      addPage(multiPage, "Full", createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations())) {
 	foldEval       = item.getFoldEvaluation(eval.index);
 	foldIndices    = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index));
 	foldAdditional = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index), item.getAdditionalAttributes());
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(foldEval, foldIndices, foldAdditional, errors), eval.index + 1);
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, foldEval, foldIndices, foldAdditional, errors), eval.index + 1);
       }
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
     }
     else {
-      return createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
+      return createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
     }
   }
 }

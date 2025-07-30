@@ -118,6 +118,7 @@ public class LegacyCostBenefitAnalysis
   /**
    * Generates the output for the evaluation.
    *
+   * @param item		the item to generate output for
    * @param eval		the evaluation to use as basis
    * @param originalIndices 	the original indices to use, can be null
    * @param additionalAttributes the additional attributes to display, can be null
@@ -125,7 +126,7 @@ public class LegacyCostBenefitAnalysis
    * @return			the generated table, null if failed to generate
    */
   @Override
-  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
+  protected ComponentContentPanel createOutput(ResultItem item, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     WekaCostBenefitAnalysis 	sink;
     JPanel 			panel;
 
