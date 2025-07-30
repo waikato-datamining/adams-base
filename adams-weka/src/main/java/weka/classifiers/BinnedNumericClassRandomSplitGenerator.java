@@ -15,7 +15,7 @@
 
 /*
  * BinnedNumericClassRandomSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -99,7 +99,7 @@ public class BinnedNumericClassRandomSplitGenerator
   }
 
   /**
-   * Initializes the generator. Does not preserve the order.
+   * Initializes the generator.
    *
    * @param data	the dataset to split
    * @param seed	the seed value to use for randomization
