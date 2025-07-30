@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ResultItem.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.attseltab;
@@ -34,7 +34,6 @@ import weka.core.Instances;
  * result history.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ResultItem
   extends AbstractResultItem {
@@ -95,40 +94,48 @@ public class ResultItem
    * Updates the item.
    *
    * @param attsel	the attribute selection
-   * @param full	the full dataset
-   * @param runInfo	the run information, can be null
+   * @return		itself
    */
-  public void update(AttributeSelection attsel, Instances full, MetaData runInfo) {
-    update(attsel, -1, full, runInfo);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param attsel	the attribute selection
-   * @param folds	the number of folds, ignored if < 2
-   * @param runInfo	the run information, can be null
-   */
-  public void update(AttributeSelection attsel, int folds, MetaData runInfo) {
-    update(attsel, folds, null, runInfo);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param attsel	the attribute selection
-   * @param folds	the number of folds, ignored if < 2
-   * @param full	the full dataset, can be null in case of cross-validation
-   * @param runInfo	the run information, can be null
-   */
-  protected void update(AttributeSelection attsel, int folds, Instances full, MetaData runInfo) {
-    if (attsel == null)
-      throw new IllegalArgumentException("Attribute selection cannot be null!");
-
+  public ResultItem update(AttributeSelection attsel) {
     m_AttributeSelection = attsel;
-    m_Folds              = folds;
-    m_Full               = full;
-    m_RunInformation     = runInfo;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param full	the full dataset
+   * @return		itself
+   */
+  public ResultItem update(Instances full) {
+    m_Full = full;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runInfo	the run information, can be null
+   * @return		itself
+   */
+  public ResultItem update(MetaData runInfo) {
+    m_RunInformation = runInfo;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param folds	the number of folds, ignored if < 2
+   * @return		itself
+   */
+  public ResultItem update(int folds) {
+    m_Folds = folds;
+    invalidateName();
+    return this;
   }
 
   /**

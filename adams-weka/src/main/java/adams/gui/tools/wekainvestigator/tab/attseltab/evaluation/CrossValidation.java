@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CrossValidation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
@@ -58,7 +58,6 @@ import java.util.Set;
  * Performs cross-validation.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CrossValidation
   extends AbstractAttributeSelectionEvaluation {
@@ -265,7 +264,9 @@ public class CrossValidation
       attsel.selectAttributesCVSplit(train);
     }
 
-    item.update(attsel, folds, runInfo);
+    item.update(attsel)
+      .update(folds)
+      .update(runInfo);
   }
 
   /**
@@ -282,9 +283,9 @@ public class CrossValidation
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);
