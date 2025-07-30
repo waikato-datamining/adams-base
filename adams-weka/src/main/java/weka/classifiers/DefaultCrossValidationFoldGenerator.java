@@ -15,7 +15,7 @@
 
 /*
  * DefaultCrossValidationFoldGenerator.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -44,7 +44,7 @@ import java.util.NoSuchElementException;
  */
 public class DefaultCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator {
+  implements CrossValidationFoldGenerator, PerFoldCrossValidationFoldGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -380,7 +380,7 @@ public class DefaultCrossValidationFoldGenerator
     Instances 				test;
     int[]				trainRows;
     int[]				testRows;
-
+    int					i;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
@@ -396,9 +396,12 @@ public class DefaultCrossValidationFoldGenerator
 
       m_FoldPairs = m_Generator.generate(binnableInst);
 
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
-	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
+      m_OriginalIndices        = new TIntArrayList();
+      m_OriginalIndicesPerFold = new int[m_FoldPairs.size()][];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	m_OriginalIndicesPerFold[i] = m_FoldPairs.get(i).getTest().getOriginalIndices().toArray();
+	m_OriginalIndices.addAll(m_OriginalIndicesPerFold[i]);
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -437,6 +440,16 @@ public class DefaultCrossValidationFoldGenerator
    */
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    return m_OriginalIndicesPerFold;
   }
 
   /**

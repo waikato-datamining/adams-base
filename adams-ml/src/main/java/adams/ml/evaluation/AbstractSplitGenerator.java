@@ -15,7 +15,7 @@
 
 /*
  * AbstractSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.evaluation;
 
@@ -24,7 +24,6 @@ import adams.data.splitgenerator.SplitGenerator;
 import adams.flow.container.TrainTestSetContainer;
 import adams.ml.data.Dataset;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
 
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -54,7 +53,7 @@ public abstract class AbstractSplitGenerator
   protected boolean m_Initialized;
 
   /** the original indicies. */
-  protected TIntList m_OriginalIndices;
+  protected TIntList[] m_OriginalIndices;
 
   /**
    * Initializes the generator.
@@ -85,7 +84,7 @@ public abstract class AbstractSplitGenerator
   @Override
   protected void initialize() {
     super.initialize();
-    m_OriginalIndices = new TIntArrayList();
+    m_OriginalIndices = null;
   }
 
   /**
@@ -95,8 +94,8 @@ public abstract class AbstractSplitGenerator
   protected void reset() {
     super.reset();
 
-    m_Initialized = false;
-    m_OriginalIndices.clear();
+    m_Initialized     = false;
+    m_OriginalIndices = null;
   }
 
   /**
@@ -104,6 +103,7 @@ public abstract class AbstractSplitGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Dataset value) {
     m_Data = (value != null) ? value.getClone() : null;
     reset();
@@ -114,6 +114,7 @@ public abstract class AbstractSplitGenerator
    *
    * @return		the data
    */
+  @Override
   public Dataset getData() {
     return m_Data;
   }
@@ -123,6 +124,7 @@ public abstract class AbstractSplitGenerator
    *
    * @param value	the seed
    */
+  @Override
   public void setSeed(long value) {
     m_Seed = value;
     reset();
@@ -133,6 +135,7 @@ public abstract class AbstractSplitGenerator
    *
    * @return		the seed
    */
+  @Override
   public long getSeed() {
     return m_Seed;
   }
@@ -143,6 +146,7 @@ public abstract class AbstractSplitGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String seedTipText() {
     return "The seed value for the random number generator.";
   }
@@ -237,6 +241,7 @@ public abstract class AbstractSplitGenerator
    *
    * @see		#canRandomize()
    */
+  @Override
   public void initializeIterator() {
     doInitializeIterator();
     m_Initialized = true;

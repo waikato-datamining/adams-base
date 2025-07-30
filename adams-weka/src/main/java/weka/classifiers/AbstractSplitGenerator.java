@@ -15,7 +15,7 @@
 
 /*
  * AbstractSplitGenerator.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -52,8 +52,11 @@ public abstract class AbstractSplitGenerator
   /** whether the iterator has been initialized. */
   protected boolean m_Initialized;
 
-  /** the original indicies. */
+  /** the original indices. */
   protected TIntList m_OriginalIndices;
+
+  /** the original indices per fold. */
+  protected int[][] m_OriginalIndicesPerFold;
 
   /**
    * Initializes the generator.
@@ -84,7 +87,8 @@ public abstract class AbstractSplitGenerator
   @Override
   protected void initialize() {
     super.initialize();
-    m_OriginalIndices = new TIntArrayList();
+    m_OriginalIndices        = new TIntArrayList();
+    m_OriginalIndicesPerFold = null;
   }
 
   /**
@@ -96,6 +100,7 @@ public abstract class AbstractSplitGenerator
 
     m_Initialized = false;
     m_OriginalIndices.clear();
+    m_OriginalIndicesPerFold = null;
   }
 
   /**

@@ -15,13 +15,13 @@
 
 /*
  * DefaultCrossValidationFoldGenerator.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.evaluation;
 
 import adams.data.binning.Binnable;
 import adams.data.binning.BinnableDataset;
-import adams.data.splitgenerator.CrossValidationFoldGenerator;
+import adams.data.splitgenerator.PerFoldCrossValidationFoldGenerator;
 import adams.data.splitgenerator.generic.crossvalidation.FoldPair;
 import adams.data.splitgenerator.generic.randomization.DefaultRandomization;
 import adams.data.splitgenerator.generic.stratification.DefaultStratification;
@@ -29,6 +29,7 @@ import adams.data.spreadsheet.DataRow;
 import adams.flow.container.TrainTestSetContainer;
 import adams.ml.data.Dataset;
 import adams.ml.data.DatasetView;
+import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.List;
@@ -44,7 +45,7 @@ import java.util.NoSuchElementException;
  */
 public class DefaultCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator<Dataset,TrainTestSetContainer> {
+  implements PerFoldCrossValidationFoldGenerator<Dataset,TrainTestSetContainer> {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -154,6 +155,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Dataset value) {
     super.setData(value);
     if (m_Data != null) {
@@ -167,6 +169,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -177,6 +180,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -197,6 +201,7 @@ public class DefaultCrossValidationFoldGenerator
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_ActualNumFolds;
   }
@@ -206,6 +211,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -216,6 +222,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -342,7 +349,7 @@ public class DefaultCrossValidationFoldGenerator
     Dataset 				test;
     int[]				trainRows;
     int[]				testRows;
-
+    int					i;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
@@ -358,9 +365,11 @@ public class DefaultCrossValidationFoldGenerator
 
       m_FoldPairs = m_Generator.generate(binnedData);
 
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<DataRow>> pair : m_FoldPairs)
-	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
+      m_OriginalIndices = new TIntArrayList[m_FoldPairs.size()];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	m_OriginalIndices[i] = new TIntArrayList();
+	m_OriginalIndices[i].addAll(m_FoldPairs.get(i).getTest().getOriginalIndices());
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -393,8 +402,38 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
-    return m_OriginalIndices.toArray();
+    TIntList	result;
+
+    if (m_OriginalIndices == null)
+      return null;
+
+    result = new TIntArrayList();
+    for (TIntList fold: m_OriginalIndices)
+      result.addAll(fold);
+
+    return result.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return		the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    int[][]	result;
+    int		i;
+
+    if (m_OriginalIndices == null)
+      return null;
+
+    result = new int[m_OriginalIndices.length][];
+    for (i = 0; i < m_OriginalIndices.length; i++)
+      result[i] = m_OriginalIndices[i].toArray();
+
+    return result;
   }
 
   /**
