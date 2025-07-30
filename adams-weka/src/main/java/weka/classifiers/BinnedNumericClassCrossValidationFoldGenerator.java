@@ -15,7 +15,7 @@
 
 /*
  * DefaultCrossValidationFoldGenerator.java
- * Copyright (C) 2012-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -92,27 +92,30 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    * Initializes the generator.
    *
    * @param data	the full dataset
+   * @param algorithm 	the algorithm to use
    * @param numFolds	the number of folds, leave-one-out if less than 2
    * @param seed	the seed for randomization
    * @param stratify	whether to perform stratified CV
    */
-  public BinnedNumericClassCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean stratify) {
-    this(data, numFolds, seed, true, stratify, null);
+  public BinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean stratify) {
+    this(data, algorithm, numFolds, seed, true, stratify, null);
   }
 
   /**
    * Initializes the generator.
    *
    * @param data	the full dataset
+   * @param algorithm 	the algorithm to use
    * @param numFolds	the number of folds, leave-one-out if less than 2
    * @param seed	the seed value
    * @param randomize 	whether to randomize the data
    * @param stratify	whether to perform stratified CV
    * @param relName	the relation name template, use null to ignore
    */
-  public BinnedNumericClassCrossValidationFoldGenerator(Instances data, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
+  public BinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
     super();
     setData(data);
+    setAlgorithm(algorithm);
     setSeed(seed);
     setNumFolds(numFolds);
     setRelationName(relName);
