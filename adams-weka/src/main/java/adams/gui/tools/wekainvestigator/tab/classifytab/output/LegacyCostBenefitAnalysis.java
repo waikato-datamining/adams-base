@@ -15,12 +15,13 @@
 
 /*
  * LegacyCostBenefitAnalysis.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.data.weka.WekaLabelIndex;
 import adams.flow.core.Token;
 import adams.flow.sink.WekaCostBenefitAnalysis;
@@ -115,13 +116,16 @@ public class LegacyCostBenefitAnalysis
   }
 
   /**
-   * Generates output from the evaluation.
+   * Generates the output for the evaluation.
    *
-   * @param eval	the evaluation to use
-   * @param errors	for collecting errors
-   * @return		the generated output
+   * @param eval		the evaluation to use as basis
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes the additional attributes to display, can be null
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
+  @Override
+  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     WekaCostBenefitAnalysis 	sink;
     JPanel 			panel;
 

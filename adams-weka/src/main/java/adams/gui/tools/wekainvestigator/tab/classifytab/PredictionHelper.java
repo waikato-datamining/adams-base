@@ -23,12 +23,19 @@ package adams.gui.tools.wekainvestigator.tab.classifytab;
 import adams.core.MessageCollection;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingSupporter;
+import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.core.Token;
 import adams.flow.transformer.SpreadSheetMerge;
 import adams.flow.transformer.WekaPredictionsToSpreadSheet;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
 import weka.classifiers.Evaluation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Helper class for dealing with predictions from result items.
@@ -36,6 +43,60 @@ import weka.classifiers.Evaluation;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class PredictionHelper {
+
+  /**
+   * Treats the indices as a subset, generating new indices while maintaining order.
+   *
+   * @param originalIndices	the indices to process
+   * @return			the indices for the subset
+   */
+  public static int[] toSubset(int[] originalIndices) {
+    int[]	result;
+    int[]	sorted;
+    TIntIntMap 	map;
+    int		i;
+
+    // sort the original indices so we can create a lookup for old/new index
+    sorted = originalIndices.clone();
+    Arrays.sort(sorted);
+    map = new TIntIntHashMap();
+    for (i = 0; i < sorted.length; i++)
+      map.put(sorted[i], i);
+
+    // create new indices with the same order as the original array
+    result = new int[originalIndices.length];
+    for (i = 0; i < result.length; i++)
+      result[i] = map.get(originalIndices[i]);
+
+    return result;
+  }
+
+  /**
+   * Returns the subset of the additional attributes as per indices.
+   *
+   * @param originalIndices		the indices of the subset
+   * @param additionalAttributes	the full additional attributes
+   * @return				the subset of the additional attributes
+   */
+  public static SpreadSheet toSubset(int[] originalIndices, SpreadSheet additionalAttributes) {
+    SpreadSheet	result;
+    int[]	subsetIndices;
+    int		i;
+    List<Row> 	rows;
+
+    subsetIndices = toSubset(originalIndices);
+    rows          = new ArrayList<>();
+    for (i = 0; i < originalIndices.length; i++)
+      rows.add(null);
+    for (i = 0; i < originalIndices.length; i++)
+      rows.set(subsetIndices[i], additionalAttributes.getRow(originalIndices[i]));
+
+    result = additionalAttributes.getHeader();
+    for (Row row: rows)
+      result.addRow().assign(row);
+
+    return result;
+  }
 
   /**
    * Turns the result item into a spreadsheet with the predictions.

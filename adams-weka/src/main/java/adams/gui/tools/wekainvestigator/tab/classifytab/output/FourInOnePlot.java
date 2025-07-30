@@ -15,7 +15,7 @@
 
 /*
  * FourInOnePlot.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -264,13 +264,16 @@ public class FourInOnePlot
   }
 
   /**
-   * Creates the 4-in-1 plot for the evaluation.
+   * Generates the output for the evaluation.
    *
-   * @param eval	the evaluation to use
-   * @param errors	for collecting errors
-   * @return		the generated plot
+   * @param eval		the evaluation to use as basis
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes the additional attributes to display, can be null
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
+  @Override
+  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     BaseTabbedPane			tabbedPane;
     WekaPredictionsToSpreadSheet	p2s;
     Token				token;

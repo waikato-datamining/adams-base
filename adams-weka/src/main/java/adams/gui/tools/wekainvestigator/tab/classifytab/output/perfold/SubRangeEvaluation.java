@@ -296,10 +296,10 @@ public class SubRangeEvaluation
 	  // fold
 	  else {
 	    valid = (item.hasFoldEvaluations())
-	      && (item.getFoldEvaluations()[fold -1].getHeader().classAttribute().isNumeric())
-	      && (item.getFoldEvaluations()[fold -1].predictions() != null);
+	      && (item.getFoldEvaluation(fold -1).getHeader().classAttribute().isNumeric())
+	      && (item.getFoldEvaluation(fold -1).predictions() != null);
 	    if (valid)
-	      eval = item.getFoldEvaluations()[fold -1];
+	      eval = item.getFoldEvaluation(fold -1);
 	  }
 	  if (valid) {
 	    validIndices.add(fold);
@@ -310,9 +310,9 @@ public class SubRangeEvaluation
     }
 
     result = new JMenuItem(getTitle());
-    result.setEnabled(validIndices.size() > 0);
+    result.setEnabled(!validIndices.isEmpty());
 
-    if (validIndices.size() == 0)
+    if (validIndices.isEmpty())
       return result;
 
     result.addActionListener((ActionEvent e) -> {

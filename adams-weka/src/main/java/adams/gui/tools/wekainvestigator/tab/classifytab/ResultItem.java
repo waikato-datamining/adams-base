@@ -281,6 +281,19 @@ public class ResultItem
   }
 
   /**
+   * Returns the stored Evaluation objects per specified fold.
+   *
+   * @param index 	the index of the fold to return
+   * @return		the evaluation for the fold, null if not present
+   */
+  public Evaluation getFoldEvaluation(int index) {
+    if (m_FoldEvaluations != null)
+      return m_FoldEvaluations[index];
+    else
+      return null;
+  }
+
+  /**
    * Returns whether Evaluation objects per run are present.
    *
    * @return		true if available
@@ -296,6 +309,19 @@ public class ResultItem
    */
   public Evaluation[] getRunEvaluations() {
     return m_RunEvaluations;
+  }
+
+  /**
+   * Returns the stored Evaluation objects per specified run.
+   *
+   * @param index 	the index of the run to return
+   * @return		the evaluation for the run, null if not present
+   */
+  public Evaluation getRunEvaluation(int index) {
+    if (m_RunEvaluations != null)
+      return m_RunEvaluations[index];
+    else
+      return null;
   }
 
   /**
@@ -359,6 +385,19 @@ public class ResultItem
    */
   public Classifier[] getFoldModels() {
     return m_FoldModels;
+  }
+
+  /**
+   * Returns the stored Classifier object for the specified fold.
+   *
+   * @param index 	the index of the fold
+   * @return		the classifier for the fold, null if not present
+   */
+  public Classifier getFoldModel(int index) {
+    if (m_FoldModels != null)
+      return m_FoldModels[index];
+    else
+      return null;
   }
 
   /**
@@ -429,8 +468,21 @@ public class ResultItem
    *
    * @return		the indices, null if not present
    */
-  public int[][] getFoldnOriginalIndices() {
+  public int[][] getFoldOriginalIndices() {
     return m_FoldOriginalIndices;
+  }
+
+  /**
+   * Returns the stored original indices for the specified fold.
+   *
+   * @param index 	the index of the fold to return
+   * @return		the indices for the fold, null if not present
+   */
+  public int[] getFoldOriginalIndices(int index) {
+    if (m_FoldOriginalIndices != null)
+      return m_FoldOriginalIndices[index];
+    else
+      return null;
   }
 
   /**
@@ -449,6 +501,19 @@ public class ResultItem
    */
   public int[][] getRunOriginalIndices() {
     return m_RunOriginalIndices;
+  }
+
+  /**
+   * Returns the stored original indices for the specified run.
+   *
+   * @param index 	the index of the run to return
+   * @return		the indices for the run, null if not present
+   */
+  public int[] getRunOriginalIndices(int index) {
+    if (m_RunOriginalIndices != null)
+      return m_RunOriginalIndices[index];
+    else
+      return null;
   }
 
   /**

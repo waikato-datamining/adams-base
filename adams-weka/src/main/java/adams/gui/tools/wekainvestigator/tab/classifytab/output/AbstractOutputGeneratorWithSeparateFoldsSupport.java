@@ -21,7 +21,9 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.MultiPagePane;
+import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import com.github.fracpete.javautils.enumerate.Enumerated;
 import weka.classifiers.Evaluation;
@@ -45,10 +47,12 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
    * Generates the output for the evaluation.
    *
    * @param eval		the evaluation to use as basis
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes the additional attributes to display, can be null
    * @param errors 		for collecting errors
    * @return			the generated table, null if failed to generate
    */
-  protected abstract T createOutput(Evaluation eval, MessageCollection errors);
+  protected abstract T createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors);
 
   /**
    * Generates output from the item.
@@ -58,19 +62,26 @@ public abstract class AbstractOutputGeneratorWithSeparateFoldsSupport<T extends 
    * @return		the output component, null if failed to generate
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    MultiPagePane multiPage;
+    MultiPagePane 	multiPage;
+    Evaluation		foldEval;
+    int[]		foldIndices;
+    SpreadSheet		foldAdditional;
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(item.getEvaluation(), errors), 0);
-      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldEvaluations()[eval.index], errors), eval.index + 1);
+      addPage(multiPage, "Full", createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
+      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations())) {
+	foldEval       = item.getFoldEvaluation(eval.index);
+	foldIndices    = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index));
+	foldAdditional = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index), item.getAdditionalAttributes());
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(foldEval, foldIndices, foldAdditional, errors), eval.index + 1);
+      }
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
     }
     else {
-      return createOutput(item.getEvaluation(), errors);
+      return createOutput(item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
     }
   }
 }

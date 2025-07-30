@@ -15,7 +15,7 @@
 
 /*
  * PredictionTrend.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -196,11 +196,14 @@ public class PredictionTrend
   /**
    * Generates the output for the evaluation.
    *
-   * @param eval	the evaluation to use
-   * @param errors	for collecting errors
-   * @return		the generated output
+   * @param eval		the evaluation to use as basis
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes the additional attributes to display, can be null
+   * @param errors 		for collecting errors
+   * @return			the generated table, null if failed to generate
    */
-  protected ComponentContentPanel createOutput(Evaluation eval, MessageCollection errors) {
+  @Override
+  protected ComponentContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     SpreadSheet			sheet;
     SimplePlot			plot;
     AbstractDisplayPanel	panel;
@@ -210,7 +213,7 @@ public class PredictionTrend
     int				n;
 
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, eval, null, null, false, false, false, false, false);
+      this, errors, eval, originalIndices, additionalAttributes, false, false, false, false, false);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate predictions!");

@@ -427,13 +427,20 @@ public class Predictions
    * @return		the output component, null if failed to generate
    */
   public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    MultiPagePane multiPage;
+    MultiPagePane 	multiPage;
+    Evaluation		foldEval;
+    int[]		foldIndices;
+    SpreadSheet		foldAdditional;
 
     if (item.hasFoldEvaluations()) {
       multiPage = newMultiPagePane(item);
       addPage(multiPage, "Full", createOutput(item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
-      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, item.getFoldEvaluations()[eval.index], null, null, errors), eval.index + 1);
+      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations())) {
+	foldEval       = item.getFoldEvaluation(eval.index);
+	foldIndices    = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index));
+	foldAdditional = PredictionHelper.toSubset(item.getFoldOriginalIndices(eval.index), item.getAdditionalAttributes());
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item, foldEval, foldIndices, foldAdditional, errors), eval.index + 1);
+      }
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;

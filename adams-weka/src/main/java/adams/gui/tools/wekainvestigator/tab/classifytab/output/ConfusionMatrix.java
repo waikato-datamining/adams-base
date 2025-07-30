@@ -15,7 +15,7 @@
 
 /*
  * ConfusionMatrix.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
@@ -233,13 +233,16 @@ public class ConfusionMatrix
   }
 
   /**
-   * Generates the table with the confusion matrix.
+   * Generates the output for the evaluation.
    *
    * @param eval		the evaluation to use as basis
+   * @param originalIndices 	the original indices to use, can be null
+   * @param additionalAttributes the additional attributes to display, can be null
    * @param errors 		for collecting errors
    * @return			the generated table, null if failed to generate
    */
-  protected TableContentPanel createOutput(Evaluation eval, MessageCollection errors) {
+  @Override
+  protected TableContentPanel createOutput(Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
     SpreadSheet					sheet;
     SpreadSheetTable				table;
     adams.flow.transformer.ConfusionMatrix	matrix;
@@ -254,7 +257,7 @@ public class ConfusionMatrix
     for (i = 0; i < eval.getHeader().classAttribute().numValues(); i++)
       labels.add(new BaseString(eval.getHeader().classAttribute().value(i)));
     sheet = PredictionHelper.toSpreadSheet(
-      this, errors, eval, null, null, false, false, true, false, false);
+      this, errors, eval, originalIndices, additionalAttributes, false, false, true, false, false);
     if (sheet == null) {
       if (errors.isEmpty())
 	errors.add("Failed to generate predictions!");

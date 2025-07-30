@@ -87,7 +87,7 @@ public abstract class AbstractOutputGeneratorWithFoldModelsSupport<T extends JCo
       if (item.hasModel())
 	addPage(multiPage, "Full", createOutput(item.getModel(), errors), 0);
       for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldModels()[eval.index], errors), eval.index + 1);
+	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(item.getFoldModel(eval.index), errors), eval.index + 1);
       if (multiPage.getPageCount() > 0)
 	multiPage.setSelectedIndex(0);
       return multiPage;
