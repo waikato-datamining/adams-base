@@ -15,7 +15,7 @@
 
 /*
  * CrossValidationSetup.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools.wekainvestigator.tab.experimenttab.setup;
@@ -318,7 +318,8 @@ public class CrossValidationSetup
     meta.add("Class", m_Dataset.classAttribute().name());
     meta.add("Generator", OptionUtils.getCommandLine(m_GOEGenerator.getCurrent()));
     meta.add("JobRunner", OptionUtils.getCommandLine(m_GOEJobRunner.getCurrent()));
-    item.update(cont, meta);
+    item.update(cont)
+      .update(meta);
   }
 
   /**

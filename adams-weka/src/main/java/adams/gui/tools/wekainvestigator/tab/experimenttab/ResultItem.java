@@ -15,7 +15,7 @@
 
 /*
  * ResultItem.java
- * Copyright (C) 2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2024-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.experimenttab;
@@ -86,23 +86,23 @@ public class ResultItem
   /**
    * Updates the item.
    *
-   * @param experiment	the experiment, can be null
+   * @param experiment	the experiment
    */
-  public void update(WekaExperimentContainer experiment) {
-    update(experiment, null);
+  public ResultItem update(WekaExperimentContainer experiment) {
+    m_Experiment = experiment;
+    invalidateName();
+    return this;
   }
 
   /**
    * Updates the item.
    *
-   * @param experiment	the evaluation, can be null
    * @param runInfo	the meta-data for the run
    */
-  public void update(WekaExperimentContainer experiment, MetaData runInfo) {
-    m_Experiment     = experiment;
+  public ResultItem update(MetaData runInfo) {
     m_RunInformation = runInfo;
-
     invalidateName();
+    return this;
   }
 
   /**
