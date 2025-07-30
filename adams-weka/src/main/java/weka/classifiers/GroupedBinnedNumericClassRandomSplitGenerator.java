@@ -132,13 +132,17 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    * @param seed	the seed value to use for randomization
    * @param percentage	the percentage of the training set (0-1)
    * @param preserveOrder 	whether to preserve the order
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
    */
-  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, long seed, double percentage, boolean preserveOrder) {
+  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, long seed, double percentage, boolean preserveOrder, BaseRegExp regExp, String group) {
     super();
     setData(data);
     setSeed(seed);
     setPercentage(percentage);
     setPreserveOrder(preserveOrder);
+    setRegExp(regExp);
+    setGroup(group);
   }
 
   /**
