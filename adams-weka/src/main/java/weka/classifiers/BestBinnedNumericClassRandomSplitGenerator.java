@@ -15,7 +15,7 @@
 
 /*
  * BestBinnedNumericClassRandomSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -70,6 +70,64 @@ public class BestBinnedNumericClassRandomSplitGenerator
 
   /** for generating class distributions. */
   protected ManualBinning m_Manual;
+
+  /**
+   * Initializes the generator.
+   */
+  public BestBinnedNumericClassRandomSplitGenerator() {
+    super();
+  }
+
+  /**
+   * Initializes the generator. Does not preserve the order.
+   *
+   * @param data	the dataset to split
+   * @param algorithms 	the binning algorithms to use
+   * @param seed	the seed value to use for randomization
+   * @param percentage	the percentage of the training set (0-1)
+   */
+  public BestBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm[] algorithms, long seed, double percentage) {
+    super();
+    setData(data);
+    setAlgorithms(algorithms);
+    setSeed(seed);
+    setPercentage(percentage);
+    setPreserveOrder(false);
+  }
+
+  /**
+   * Initializes the generator. Preserves the order.
+   *
+   * @param data	the dataset to split
+   * @param algorithms 	the binning algorithms to use
+   * @param percentage	the percentage of the training set (0-1)
+   */
+  public BestBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm[] algorithms, double percentage) {
+    super();
+    setData(data);
+    setAlgorithms(algorithms);
+    setSeed(-1L);
+    setPercentage(percentage);
+    setPreserveOrder(true);
+  }
+
+  /**
+   * Initializes the generator.
+   *
+   * @param data		the dataset to split
+   * @param algorithms 		the binning algorithms to use
+   * @param seed		the seed value to use for randomization
+   * @param percentage		the percentage of the training set (0-1)
+   * @param preserveOrder 	whether to preserve the order
+   */
+  public BestBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm[] algorithms, long seed, double percentage, boolean preserveOrder) {
+    super();
+    setData(data);
+    setAlgorithms(algorithms);
+    setSeed(seed);
+    setPercentage(percentage);
+    setPreserveOrder(preserveOrder);
+  }
 
   /**
    * Returns a string describing the object.
