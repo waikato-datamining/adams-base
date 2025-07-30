@@ -15,7 +15,7 @@
 
 /*
  * LeaveOneOutByValueGenerator.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -26,9 +26,11 @@ import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Generates train/test split pairs using the unique values from the specified attribute.
@@ -251,8 +253,10 @@ public class LeaveOneOutByValueGenerator
    */
   @Override
   protected void doInitializeIterator() {
-    int   	col;
-    int		i;
+    int   		col;
+    int			i;
+    String		value;
+    Set<String>		unique;
 
     if (m_Data == null)
       throw new IllegalStateException("No data provided!");
@@ -271,8 +275,14 @@ public class LeaveOneOutByValueGenerator
     if (m_Data.attribute(col).isNumeric())
       throw new IllegalStateException("Attribute is numeric: " + m_Index.getIndex());
 
-    for (i = 0; i < m_Data.attribute(col).numValues(); i++)
-      m_UniqueValues.add(m_Data.attribute(col).value(i));
+    unique = new HashSet<>();
+    for (i = 0; i < m_Data.numInstances(); i++) {
+      value = m_Data.instance(i).stringValue(col);
+      if (!unique.contains(value)) {
+	unique.add(value);
+	m_UniqueValues.add(value);
+      }
+    }
 
     if ((m_RelationName == null) || m_RelationName.isEmpty())
       m_RelationName = PLACEHOLDER_ORIGINAL;
@@ -295,7 +305,7 @@ public class LeaveOneOutByValueGenerator
     result = new StringBuilder();
     name   = template;
 
-    while (name.length() > 0) {
+    while (!name.isEmpty()) {
       if (name.startsWith(PLACEHOLDER_ORIGINAL)) {
 	len = 1;
 	result.append(relation);
