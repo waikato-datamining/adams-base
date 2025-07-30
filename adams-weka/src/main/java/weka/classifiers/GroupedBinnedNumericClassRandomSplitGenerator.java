@@ -15,7 +15,7 @@
 
 /*
  * GroupedBinnedNumericClassRandomSplitGenerator.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
@@ -88,12 +88,14 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    * Initializes the generator. Does not preserve the order.
    *
    * @param data	the dataset to split
+   * @param algorithm 	the algorithm to use
    * @param seed	the seed value to use for randomization
    * @param percentage	the percentage of the training set (0-1)
    */
-  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, long seed, double percentage) {
+  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, long seed, double percentage) {
     super();
     setData(data);
+    setAlgorithm(algorithm);
     setSeed(seed);
     setPercentage(percentage);
     setPreserveOrder(false);
@@ -103,11 +105,13 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    * Initializes the generator. Preserves the order.
    *
    * @param data	the dataset to split
+   * @param algorithm 	the algorithm to use
    * @param percentage	the percentage of the training set (0-1)
    */
-  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, double percentage) {
+  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, double percentage) {
     super();
     setData(data);
+    setAlgorithm(algorithm);
     setSeed(-1L);
     setPercentage(percentage);
     setPreserveOrder(true);
