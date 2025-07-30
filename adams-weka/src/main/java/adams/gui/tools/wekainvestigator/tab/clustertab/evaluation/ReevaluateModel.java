@@ -15,7 +15,7 @@
 
 /*
  * ReevaluateModel.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -278,8 +278,9 @@ public class ReevaluateModel
     eval.setClusterer(m_Model);
     eval.evaluateClusterer(data);
 
-    item.update(eval, m_Model, runInfo);
-    item.invalidateName();
+    item.update(eval)
+      .update(m_Model)
+      .update(runInfo);
   }
 
   /**
@@ -296,9 +297,9 @@ public class ReevaluateModel
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);

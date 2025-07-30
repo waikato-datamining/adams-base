@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TrainTestSet.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -46,7 +46,6 @@ import java.util.Set;
  * Uses dedicated train/test sets.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrainTestSet
   extends AbstractClustererEvaluation {
@@ -222,7 +221,9 @@ public class TrainTestSet
     eval.setClusterer(model);
     eval.evaluateClusterer(test);
 
-    item.update(eval, model, runInfo);
+    item.update(eval)
+      .update(model)
+      .update(runInfo);
   }
 
   /**
@@ -242,8 +243,8 @@ public class TrainTestSet
 
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
       // train
-      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTrain.getSelectedItem());
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTrain.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxTrain.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxTrain.setSelectedIndex(0);
@@ -251,8 +252,8 @@ public class TrainTestSet
 	m_ComboBoxTrain.setSelectedIndex(index);
 
       // test
-      index = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTest.getSelectedItem());
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      index = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTest.getSelectedItem());
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxTest.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxTest.setSelectedIndex(0);

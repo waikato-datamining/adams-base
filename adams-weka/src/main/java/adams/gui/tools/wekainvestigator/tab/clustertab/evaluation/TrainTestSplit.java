@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * TrainTestSplit.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -56,7 +56,6 @@ import java.util.Set;
  * Uses a (random) percentage split to generate train/test.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class TrainTestSplit
   extends AbstractClustererEvaluation {
@@ -304,7 +303,9 @@ public class TrainTestSplit
     eval.setClusterer(model);
     eval.evaluateClusterer(test);
 
-    item.update(eval, model, runInfo);
+    item.update(eval)
+      .update(model)
+      .update(runInfo);
   }
 
   /**
@@ -321,9 +322,9 @@ public class TrainTestSplit
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);

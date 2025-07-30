@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ClassesToClusters.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -50,7 +50,6 @@ import java.util.Set;
  * the dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ClassesToClusters
   extends AbstractClustererEvaluation {
@@ -209,7 +208,7 @@ public class ClassesToClusters
     Attribute 	att;
 
     result   = -1;
-    classAtt = "" + m_ComboBoxClass.getSelectedItem();
+    classAtt = m_ComboBoxClass.getSelectedItem();
     data     = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     att = data.attribute(classAtt);
     if (att != null)
@@ -228,7 +227,7 @@ public class ClassesToClusters
     String	classAtt;
     Attribute 	att;
 
-    classAtt = "" + m_ComboBoxClass.getSelectedItem();
+    classAtt = m_ComboBoxClass.getSelectedItem();
 
     data = new Instances(data);
     if (data.classIndex() > -1)
@@ -383,7 +382,11 @@ public class ClassesToClusters
 
     matrix = toMatrixString(numClusters, counts, clusterTotals, new Instances(data, 0));
 
-    item.update(eval, "Classes to clusters", matrix, model, runInfo);
+    item.update(eval)
+      .update(model)
+      .update(runInfo)
+      .updateSupplementary("Classes to clusters")
+      .updateSupplementary(matrix);
   }
 
   /**
@@ -404,10 +407,10 @@ public class ClassesToClusters
       return;
 
     datasets   = DatasetHelper.generateDatasetList(getOwner().getData());
-    indexTrain = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTrain.getSelectedItem());
-    indexTest  = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxTest.getSelectedItem());
+    indexTrain = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTrain.getSelectedItem());
+    indexTest  = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxTest.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       // train
       m_ComboBoxTrain.setModel(m_ModelDatasets);
       if ((indexTrain == -1) && (m_ModelDatasets.getSize() > 0))

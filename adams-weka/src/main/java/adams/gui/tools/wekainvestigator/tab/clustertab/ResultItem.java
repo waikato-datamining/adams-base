@@ -15,7 +15,7 @@
 
 /*
  * ResultItem.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab;
@@ -96,40 +96,60 @@ public class ResultItem
    * Updates the item.
    *
    * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   * @param runInfo	the run information, can be null
+   * @return		itself
    */
-  public void update(ClusterEvaluation evaluation, Clusterer model, MetaData runInfo) {
-    update(evaluation, null, null, model, runInfo);
+  public ResultItem update(ClusterEvaluation evaluation) {
+    m_Evaluation = evaluation;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param model	the model, can be null
+   * @return		itself
+   */
+  public ResultItem update(Clusterer model) {
+    m_Model = model;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runInfo	the run information, can be null
+   * @return		itself
+   */
+  public ResultItem update(MetaData runInfo) {
+    m_RunInformation = runInfo;
+    invalidateName();
+    return this;
   }
 
   /**
    * Updates the item.
    *
    * @param supplementaryName	the name for the supplementary data, can be null
-   * @param supplementaryData	the supplementary data, can be null
-   * @param model	the model, can be null
-   * @param runInfo	the run information, can be null
+   * @return			itself
    */
-  public void update(String supplementaryName, Serializable supplementaryData, Clusterer model, MetaData runInfo) {
-    update(null, supplementaryName, supplementaryData, model, runInfo);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param evaluation		the evaluation, can be null
-   * @param supplementaryName	the name for the supplementary data, can be null
-   * @param supplementaryData	the supplementary data, can be null
-   * @param model	the model, can be null
-   * @param runInfo	the run information, can be null
-   */
-  public void update(ClusterEvaluation evaluation, String supplementaryName, Serializable supplementaryData, Clusterer model, MetaData runInfo) {
-    m_Model             = model;
+  public ResultItem updateSupplementary(String supplementaryName) {
     m_SupplementaryName = supplementaryName;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param supplementaryData	the supplementary data, can be null
+   * @return			itself
+   */
+  public ResultItem updateSupplementary(Serializable supplementaryData) {
     m_SupplementaryData = supplementaryData;
-    m_Evaluation        = evaluation;
-    m_RunInformation    = runInfo;
+    invalidateName();
+    return this;
   }
 
   /**
