@@ -424,8 +424,8 @@ public class CrossValidation
       .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
     if (sepFolds) {
       item.updateFolds(m_CrossValidation.getEvaluations())
-	.updateFolds(m_CrossValidation.getClassifiers());
-      // TODO indices
+	.updateFolds(m_CrossValidation.getClassifiers())
+	.updateFolds(m_CrossValidation.getOriginalIndicesFolds());
     }
 
     getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));

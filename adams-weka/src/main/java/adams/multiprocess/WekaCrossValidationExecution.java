@@ -42,6 +42,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.CrossValidationFoldGenerator;
 import weka.classifiers.DefaultCrossValidationFoldGenerator;
 import weka.classifiers.Evaluation;
+import weka.classifiers.PerFoldCrossValidationFoldGenerator;
 import weka.classifiers.StoppableEvaluation;
 import weka.classifiers.evaluation.output.prediction.AbstractOutput;
 import weka.core.Instances;
@@ -116,6 +117,9 @@ public class WekaCrossValidationExecution
 
   /** the original indices. */
   protected int[] m_OriginalIndices;
+
+  /** the original indices per fold. */
+  protected int[][] m_OriginalIndicesFolds;
 
   /** whether the execution has been stopped. */
   protected boolean m_Stopped;
@@ -506,6 +510,15 @@ public class WekaCrossValidationExecution
   }
 
   /**
+   * Returns the original indices per fold.
+   *
+   * @return		the indices, null if not available
+   */
+  public int[][] getOriginalIndicesFolds() {
+    return m_OriginalIndicesFolds;
+  }
+
+  /**
    * Returns whether the execution was single-threaded (after {@link #execute()}).
    *
    * @return		true if single-threaded
@@ -529,12 +542,14 @@ public class WekaCrossValidationExecution
     int					i;
     int					current;
     int[]				indices;
+    int[][]				indicesFolds;
     Instances				train;
     Instances				test;
     boolean				setNumThreads;
 
     result        = new MessageCollection();
     indices       = null;
+    indicesFolds  = null;
     m_Evaluation  = null;
     m_Evaluations = null;
     m_Classifiers = null;
@@ -648,16 +663,20 @@ public class WekaCrossValidationExecution
 	m_ActualJobRunner = null;
       }
 
-      if (!m_DiscardPredictions)
+      if (!m_DiscardPredictions) {
 	indices = generator.crossValidationIndices();
+	if (generator instanceof PerFoldCrossValidationFoldGenerator)
+	  indicesFolds = ((PerFoldCrossValidationFoldGenerator) generator).crossValidationIndicesPerFold();
+      }
     }
     catch (Exception e) {
       result.add(LoggingHelper.handleException(this, "Failed to cross-validate classifier: ", e));
     }
 
-    m_CurrentEvaluation = null;
-    m_CurrentClassifier = null;
-    m_OriginalIndices   = indices;
+    m_CurrentEvaluation    = null;
+    m_CurrentClassifier    = null;
+    m_OriginalIndices      = indices;
+    m_OriginalIndicesFolds = indicesFolds;
 
     if (isStopped())
       result.add("Stopped by user!");
