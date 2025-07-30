@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * BuildModel.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+/*
+ * Train.java
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.associatetab.evaluation;
@@ -45,7 +45,6 @@ import java.util.Set;
  * Builds an associator on a dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Train
   extends AbstractAssociatorEvaluation {
@@ -180,7 +179,8 @@ public class Train
     runInfo.add("# Instances", data.numInstances());
     addObjectSize(runInfo, "Model size", model);
 
-    item.update(null, model, runInfo);
+    item.update(model)
+      .update(runInfo);
   }
 
   /**
@@ -197,9 +197,9 @@ public class Train
       return;
 
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
-    index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
+    index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);

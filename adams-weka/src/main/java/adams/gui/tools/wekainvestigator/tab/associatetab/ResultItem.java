@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ResultItem.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.associatetab;
@@ -33,7 +33,6 @@ import weka.core.Instances;
  * result history.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ResultItem
   extends AbstractResultItem {
@@ -88,14 +87,37 @@ public class ResultItem
   /**
    * Updates the item.
    *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   * @param runInfo	the run information, can be null
+   * @param evaluation	the evaluation
+   * @return		itself
    */
-  public void update(AssociatorEvaluation evaluation, Associator model, MetaData runInfo) {
-    m_Model          = model;
-    m_Evaluation     = evaluation;
+  public ResultItem update(AssociatorEvaluation evaluation) {
+    m_Evaluation = evaluation;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param model	the model
+   * @return		itself
+   */
+  public ResultItem update(Associator model) {
+    m_Model = model;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runInfo	the run information, can be null
+   * @return		itself
+   */
+  public ResultItem update(MetaData runInfo) {
     m_RunInformation = runInfo;
+    invalidateName();
+    return this;
   }
 
   /**
