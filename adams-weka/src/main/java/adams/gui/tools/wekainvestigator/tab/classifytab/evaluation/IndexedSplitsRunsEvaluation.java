@@ -15,7 +15,7 @@
 
 /*
  * IndexedSplitsRunsEvaluation.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -340,12 +340,9 @@ public class IndexedSplitsRunsEvaluation
     if (conts.length > 1)
       runInfo.add("Run", 1);
 
-    item.update(
-      (Evaluation) conts[0].getValue(WekaEvaluationContainer.VALUE_EVALUATION),
-      null,
-      runInfo,
-      null,
-      transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+    item.update((Evaluation) conts[0].getValue(WekaEvaluationContainer.VALUE_EVALUATION))
+      .update(runInfo)
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
 
     if (conts.length > 1) {
       item.setNameSuffix("run #1");
@@ -354,12 +351,9 @@ public class IndexedSplitsRunsEvaluation
 	runInfo.add("Run", (i+1));
         nested = new ResultItem(item.getTemplate(), item.getHeader());
         nested.setNameSuffix("run #" + (i+1));
-	nested.update(
-	  (Evaluation) conts[i].getValue(WekaEvaluationContainer.VALUE_EVALUATION),
-	  null,
-	  runInfo,
-	  null,
-	  transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+	nested.update((Evaluation) conts[i].getValue(WekaEvaluationContainer.VALUE_EVALUATION))
+	  .update(runInfo)
+	  .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
         item.addNestedItem(item.getName() + "run #" + (i+1), nested);
       }
     }
@@ -381,7 +375,7 @@ public class IndexedSplitsRunsEvaluation
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
     index    = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);

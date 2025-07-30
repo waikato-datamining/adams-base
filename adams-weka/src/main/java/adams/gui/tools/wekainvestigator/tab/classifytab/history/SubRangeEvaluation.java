@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SubRangeEvaluation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.history;
@@ -50,7 +50,6 @@ import java.util.ArrayList;
  * that fits in the specified sub-range.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SubRangeEvaluation
   extends AbstractHistoryPopupMenuItem {
@@ -230,7 +229,8 @@ public class SubRangeEvaluation
       // add to history
       runInfoSub = addSubRangeInfo(item.getRunInformation(), range);
       itemSub    = new ResultItem(item.getTemplate(), new Instances(data, 0));
-      itemSub.update(evalSub, null, runInfoSub);
+      itemSub.update(evalSub)
+	.update(runInfoSub);
       if (additionalSub != null)
         itemSub.setAdditionalAttributes(additionalSub);
       history.addEntry(itemSub.getName(), itemSub);

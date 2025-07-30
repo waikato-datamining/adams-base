@@ -15,7 +15,7 @@
 
 /*
  * CrossValidation.java
- * Copyright (C) 2016-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -418,14 +418,15 @@ public class CrossValidation
     if (msg != null)
       throw new Exception("Failed to cross-validate:\n" + msg);
 
-    item.update(
-      m_CrossValidation.getEvaluation(),
-      sepFolds ? m_CrossValidation.getEvaluations() : null,
-      null,
-      sepFolds ? m_CrossValidation.getClassifiers() : null,
-      runInfo,
-      m_CrossValidation.getOriginalIndices(),
-      transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+    item.update(m_CrossValidation.getEvaluation())
+      .update(runInfo)
+      .update(m_CrossValidation.getOriginalIndices())
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+    if (sepFolds) {
+      item.updateFolds(m_CrossValidation.getEvaluations())
+	.updateFolds(m_CrossValidation.getClassifiers());
+      // TODO indices
+    }
 
     getOwner().logMessage("Building final model on '" + dataCont.getID() + "/" + data.relationName() + "' using " + OptionUtils.getCommandLine(classifier));
     finalModel.generate(this, data, item);
@@ -450,7 +451,7 @@ public class CrossValidation
     datasets = DatasetHelper.generateDatasetList(getOwner().getData());
     index    = DatasetHelper.indexOfDataset(getOwner().getData(), (String) m_ComboBoxDatasets.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelDatasets)) {
-      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelDatasets = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxDatasets.setModel(m_ModelDatasets);
       if ((index == -1) && (m_ModelDatasets.getSize() > 0))
 	m_ComboBoxDatasets.setSelectedIndex(0);

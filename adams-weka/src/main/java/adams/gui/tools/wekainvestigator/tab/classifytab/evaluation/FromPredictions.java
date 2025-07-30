@@ -15,7 +15,7 @@
 
 /*
  * FromPredictions.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -293,9 +293,11 @@ public class FromPredictions
     if (!m_TextAdditional.getText().isEmpty())
       additional = new SpreadSheetView(m_Model.getPredictions(), null, m_Model.getAdditionalIndices());
 
-    item.update(
-      eval, m_Model, runInfo,
-      original.toArray(), additional);
+    item.update(eval)
+      .update(m_Model)
+      .update(runInfo)
+      .update(original.toArray())
+      .update(additional);
   }
 
   /**

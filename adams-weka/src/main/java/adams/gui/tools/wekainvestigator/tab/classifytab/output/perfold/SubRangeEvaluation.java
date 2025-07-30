@@ -15,7 +15,7 @@
 
 /*
  * SubRangeEvaluation.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.output.perfold;
@@ -225,7 +225,8 @@ public class SubRangeEvaluation
       // add to pane
       runInfoSub = addSubRangeInfo(item.getRunInformation(), range);
       itemSub    = new ResultItem(item.getTemplate(), new Instances(data, 0));
-      itemSub.update(evalSub, null, runInfoSub);
+      itemSub.update(evalSub)
+	.update(runInfoSub);
       errors = new MessageCollection();
       comp   = m_OutputGenerator.createOutput(itemSub, errors);
       if (fold == 0)

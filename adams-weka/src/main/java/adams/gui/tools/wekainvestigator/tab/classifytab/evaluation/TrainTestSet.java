@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSet.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -284,9 +284,10 @@ public class TrainTestSet
       }
     });
 
-    item.update(
-      m_Evaluation, m_Model, runInfo,
-      null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
+    item.update(m_Evaluation)
+      .update(m_Model)
+      .update(runInfo)
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
 
     m_Model      = null;
     m_Evaluation = null;

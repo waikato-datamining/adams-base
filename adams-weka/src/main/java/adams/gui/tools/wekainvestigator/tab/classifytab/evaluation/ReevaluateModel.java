@@ -15,7 +15,7 @@
 
 /*
  * ReevaluateModel.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -345,9 +345,11 @@ public class ReevaluateModel
     for (i = 0; i < data.numInstances(); i++)
       original.add(i);
 
-    item.update(
-      m_Evaluation, m_Model, runInfo,
-      original.toArray(), transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+    item.update(m_Evaluation)
+      .update(m_Model)
+      .update(runInfo)
+      .update(original.toArray())
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
 
     m_Evaluation = null;
   }

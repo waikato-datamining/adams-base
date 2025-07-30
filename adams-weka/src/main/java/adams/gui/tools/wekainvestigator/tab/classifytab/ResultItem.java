@@ -15,7 +15,7 @@
 
 /*
  * ResultItem.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab;
@@ -67,6 +67,9 @@ public class ResultItem
   /** the original indices. */
   protected int[] m_OriginalIndices;
 
+  /** the original indices (folds). */
+  protected int[][] m_FoldOriginalIndices;
+
   /** the original indices (runs). */
   protected int[][] m_RunOriginalIndices;
 
@@ -112,79 +115,133 @@ public class ResultItem
   /**
    * Updates the item.
    *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   */
-  public void update(Evaluation evaluation, Classifier model) {
-    update(evaluation, model, null);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
    * @param runInfo	the meta-data for the run
+   * @return		itself
    */
-  public void update(Evaluation evaluation, Classifier model, MetaData runInfo) {
-    update(evaluation, model, runInfo, null, null);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param evaluation	the evaluation, can be null
-   * @param model	the model, can be null
-   * @param runInfo	the meta-data for the run
-   * @param original	the original indices, can be null
-   * @param additional 	the additional attributes, can be null
-   */
-  public void update(Evaluation evaluation, Classifier model, MetaData runInfo, int[] original, SpreadSheet additional) {
-    update(evaluation, null, model, null, runInfo, original, additional);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param evaluation	the evaluation, can be null
-   * @param foldEvaluations the evaluations per fold, can be null
-   * @param model	the model, can be null
-   * @param foldModels 	the models per fold, can be null
-   * @param runInfo	the meta-data for the run
-   * @param original	the original indices, can be null
-   * @param additional 	the additional attributes, can be null
-   */
-  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Classifier model, Classifier[] foldModels, MetaData runInfo, int[] original, SpreadSheet additional) {
-    update(evaluation, foldEvaluations, null, model, foldModels, null, runInfo, original, null, additional);
-  }
-
-  /**
-   * Updates the item.
-   *
-   * @param evaluation		the evaluation, can be null
-   * @param foldEvaluations 	the evaluations per fold, can be null
-   * @param runEvaluations 	the evaluations per run, can be null
-   * @param model		the model, can be null
-   * @param foldModels 		the models per fold, can be null
-   * @param runModels 		the models per run, can be null
-   * @param runInfo		the meta-data for the run
-   * @param original		the original indices, can be null
-   * @param runOriginals 	the original indices per run, can be null
-   * @param additional 		the additional attributes, can be null
-   */
-  public void update(Evaluation evaluation, Evaluation[] foldEvaluations, Evaluation[] runEvaluations, Classifier model, Classifier[] foldModels, Classifier[] runModels, MetaData runInfo, int[] original, int[][] runOriginals, SpreadSheet additional) {
-    m_Evaluation           = evaluation;
-    m_FoldEvaluations      = foldEvaluations;
-    m_FoldModels           = foldModels;
-    m_RunEvaluations       = runEvaluations;
-    m_RunModels            = runModels;
-    m_Model                = model;
-    m_RunInformation       = runInfo;
-    m_OriginalIndices      = original;
-    m_RunOriginalIndices   = runOriginals;
-    m_AdditionalAttributes = additional;
-
+  public ResultItem update(MetaData runInfo) {
+    m_RunInformation = runInfo;
     invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param evaluation	the evaluation
+   * @return		itself
+   */
+  public ResultItem update(Evaluation evaluation) {
+    m_Evaluation = evaluation;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param model	the model
+   * @return		itself
+   */
+  public ResultItem update(Classifier model) {
+    m_Model = model;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param original	the original indices
+   * @return		itself
+   */
+  public ResultItem update(int[] original) {
+    m_OriginalIndices = original;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param additional 	the additional attributes
+   * @return		itself
+   */
+  public ResultItem update(SpreadSheet additional) {
+    m_AdditionalAttributes = additional;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param foldEvaluations 	the evaluations per fold
+   * @return			itself
+   */
+  public ResultItem updateFolds(Evaluation[] foldEvaluations) {
+    m_FoldEvaluations = foldEvaluations;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param foldModels 	the models per fold
+   * @return		itself
+   */
+  public ResultItem updateFolds(Classifier[] foldModels) {
+    m_FoldModels = foldModels;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param foldOriginal 	the original indices per fold
+   * @return			itself
+   */
+  public ResultItem updateFolds(int[][] foldOriginal) {
+    m_FoldOriginalIndices = foldOriginal;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runEvaluations 	the evaluations per run
+   * @return			itself
+   */
+  public ResultItem updateRuns(Evaluation[] runEvaluations) {
+    m_RunEvaluations = runEvaluations;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runModels 	the models per run
+   * @return		itself
+   */
+  public ResultItem updateRuns(Classifier[] runModels) {
+    m_RunModels = runModels;
+    invalidateName();
+    return this;
+  }
+
+  /**
+   * Updates the item.
+   *
+   * @param runOriginal 	the original indices per run
+   * @return			itself
+   */
+  public ResultItem updateRuns(int[][] runOriginal) {
+    m_RunOriginalIndices = runOriginal;
+    invalidateName();
+    return this;
   }
 
   /**
@@ -356,6 +413,24 @@ public class ResultItem
    */
   public int[] getOriginalIndices() {
     return m_OriginalIndices;
+  }
+
+  /**
+   * Returns whether the original indices per fold are present.
+   *
+   * @return		true if available
+   */
+  public boolean hasFoldOriginalIndices() {
+    return (m_FoldOriginalIndices != null);
+  }
+
+  /**
+   * Returns the stored original indices per fold.
+   *
+   * @return		the indices, null if not present
+   */
+  public int[][] getFoldnOriginalIndices() {
+    return m_FoldOriginalIndices;
   }
 
   /**

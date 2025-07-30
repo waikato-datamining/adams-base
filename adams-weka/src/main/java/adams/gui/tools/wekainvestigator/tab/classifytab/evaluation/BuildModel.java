@@ -15,7 +15,7 @@
 
 /*
  * BuildModel.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -282,7 +282,8 @@ public class BuildModel
     runInfo.add("Model file", m_PanelModel.getCurrent().getAbsolutePath());
     addObjectSize(runInfo, "Model size", m_Model);
 
-    item.update(null, m_Model, runInfo);
+    item.update(m_Model)
+      .update(runInfo);
 
     m_Model = null;
   }

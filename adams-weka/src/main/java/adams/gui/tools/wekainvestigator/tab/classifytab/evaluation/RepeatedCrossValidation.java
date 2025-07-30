@@ -327,12 +327,11 @@ public class RepeatedCrossValidation
     }
 
     if (!isStopped()) {
-      item.update(
-	null, null, evals,
-	null, null, models,
-	runInfo,
-	null, original,
-	transferAdditionalAttributes(m_SelectAdditionalAttributes, data));
+      item.update(runInfo)
+	.update(transferAdditionalAttributes(m_SelectAdditionalAttributes, data))
+	.updateRuns(evals)
+	.updateRuns(models)
+	.updateRuns(original);
     }
 
     m_CrossValidation.cleanUp();

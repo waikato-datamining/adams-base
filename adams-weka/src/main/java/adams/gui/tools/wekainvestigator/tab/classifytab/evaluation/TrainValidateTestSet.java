@@ -15,7 +15,7 @@
 
 /*
  * TrainTestSet.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -322,9 +322,10 @@ public class TrainValidateTestSet
       }
     });
 
-    item.update(
-      m_Evaluation, m_Model, runInfo,
-      null, transferAdditionalAttributes(m_SelectAdditionalAttributes, validate));
+    item.update(m_Evaluation)
+      .update(m_Model)
+      .update(runInfo)
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, validate));
 
     // test
     m_Evaluation = new StoppableEvaluation(train);
@@ -338,9 +339,10 @@ public class TrainValidateTestSet
 
     nested = new ResultItem(item.getTemplate(), item.getHeader());
     nested.setNameSuffix("Validation");
-    nested.update(
-      m_Evaluation, m_Model, runInfo,
-      null, transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
+    nested.update(m_Evaluation)
+      .update(m_Model)
+      .update(runInfo)
+      .update(transferAdditionalAttributes(m_SelectAdditionalAttributes, test));
     item.addNestedItem("Validation", nested);
 
     m_Model      = null;
