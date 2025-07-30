@@ -111,9 +111,11 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    * @param numFolds	the number of folds, leave-one-out if less than 2
    * @param seed	the seed for randomization
    * @param stratify	whether to perform stratified CV
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
    */
-  public GroupedBinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean stratify) {
-    this(data, algorithm, numFolds, seed, true, stratify, null);
+  public GroupedBinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean stratify, BaseRegExp regExp, String group) {
+    this(data, algorithm, numFolds, seed, true, stratify, regExp, group, null);
   }
 
   /**
@@ -125,9 +127,11 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    * @param seed	the seed value
    * @param randomize 	whether to randomize the data
    * @param stratify	whether to perform stratified CV
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
    * @param relName	the relation name template, use null to ignore
    */
-  public GroupedBinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean randomize, boolean stratify, String relName) {
+  public GroupedBinnedNumericClassCrossValidationFoldGenerator(Instances data, BinningAlgorithm algorithm, int numFolds, long seed, boolean randomize, boolean stratify, BaseRegExp regExp, String group, String relName) {
     super();
     setData(data);
     setAlgorithm(algorithm);
@@ -136,6 +140,8 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
     setRelationName(relName);
     setStratify(stratify);
     setRandomize(randomize);
+    setRegExp(regExp);
+    setGroup(group);
   }
 
   /**

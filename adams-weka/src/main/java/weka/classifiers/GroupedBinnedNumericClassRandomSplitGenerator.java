@@ -91,14 +91,18 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    * @param algorithm 	the algorithm to use
    * @param seed	the seed value to use for randomization
    * @param percentage	the percentage of the training set (0-1)
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
    */
-  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, long seed, double percentage) {
+  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, long seed, double percentage, BaseRegExp regExp, String group) {
     super();
     setData(data);
     setAlgorithm(algorithm);
     setSeed(seed);
     setPercentage(percentage);
     setPreserveOrder(false);
+    setRegExp(regExp);
+    setGroup(group);
   }
 
   /**
@@ -107,14 +111,18 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    * @param data	the dataset to split
    * @param algorithm 	the algorithm to use
    * @param percentage	the percentage of the training set (0-1)
+   * @param regExp 	the regular expression to apply to the attribute values
+   * @param group 	the regexp group to use as group
    */
-  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, double percentage) {
+  public GroupedBinnedNumericClassRandomSplitGenerator(Instances data, BinningAlgorithm algorithm, double percentage, BaseRegExp regExp, String group) {
     super();
     setData(data);
     setAlgorithm(algorithm);
     setSeed(-1L);
     setPercentage(percentage);
     setPreserveOrder(true);
+    setRegExp(regExp);
+    setGroup(group);
   }
 
   /**
