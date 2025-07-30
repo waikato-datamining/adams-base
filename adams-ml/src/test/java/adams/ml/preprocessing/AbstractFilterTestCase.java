@@ -15,7 +15,7 @@
 
 /*
  * AbstractFilterTestCase.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.preprocessing;
@@ -91,7 +91,7 @@ public abstract class AbstractFilterTestCase<T extends BatchFilter>
       algorithm.filter(data);
     }
     catch (Exception e) {
-      fail("Failed to build model: " + LoggingHelper.throwableToString(e));
+      fail("Failed to filter data: " + LoggingHelper.throwableToString(e));
       return;
     }
 
