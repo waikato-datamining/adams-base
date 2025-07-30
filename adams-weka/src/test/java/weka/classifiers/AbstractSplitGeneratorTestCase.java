@@ -13,16 +13,18 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractSplitGeneratorTestCase.java
- * Copyright (C) 2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
 
 import adams.core.CleanUpHandler;
 import adams.core.Destroyable;
+import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
+import adams.flow.container.TrainTestSetContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.test.AbstractTestHelper;
 import adams.test.AdamsTestCase;
@@ -70,12 +72,25 @@ public abstract class AbstractSplitGeneratorTestCase
    * @return		always null
    */
   protected Instances load(String filename) {
+    return load(filename, -1);
+  }
+
+  /**
+   * Loads the data to process.
+   *
+   * @param filename	the filename to load (without path)
+   * @param maxRows 	the maximum number of rows to read, -1 for all
+   * @return		always null
+   */
+  protected Instances load(String filename, int maxRows) {
     Instances	result;
 
     m_TestHelper.copyResourceToTmp(filename);
     try {
       result = DataSource.read(new TmpFile(filename).getAbsolutePath());
       result.setClassIndex(result.numAttributes() - 1);
+      if (maxRows != -1)
+	result = new Instances(result, 0, maxRows);
     }
     catch (Exception e) {
       result = null;
@@ -86,6 +101,20 @@ public abstract class AbstractSplitGeneratorTestCase
   }
 
   /**
+   * Turns the object into a string.
+   *
+   * @param obj		the object to convert, can be null
+   * @return		the generated string
+   */
+  protected String toString(Object obj) {
+    if (obj == null)
+      return "" + obj;
+    if (obj.getClass().isArray())
+      return Utils.arrayToString(obj);
+    return obj.toString();
+  }
+
+  /**
    * Saves the data in the tmp directory.
    *
    * @param data	the data to save
@@ -93,7 +122,19 @@ public abstract class AbstractSplitGeneratorTestCase
    * @return		true if successfully saved
    */
   protected boolean save(WekaTrainTestSetContainer data, String filename) {
-    return FileUtils.writeToFile(m_TestHelper.getTmpDirectory() + File.separator + filename, data, false);
+    String			output;
+
+    output = m_TestHelper.getTmpDirectory() + File.separator + filename;
+
+    return
+      FileUtils.writeToFile(output, "\nTrain:\n", false)
+	&& FileUtils.writeToFile(output, toString(data.getValue(TrainTestSetContainer.VALUE_TRAIN)), true)
+	&& FileUtils.writeToFile(output, "\nTest:\n", true)
+	&& FileUtils.writeToFile(output, toString(data.getValue(TrainTestSetContainer.VALUE_TEST)), true)
+	&& FileUtils.writeToFile(output, "\nTrain original indices:\n", true)
+	&& FileUtils.writeToFile(output, toString(data.getValue(TrainTestSetContainer.VALUE_TRAIN_ORIGINALINDICES)), true)
+	&& FileUtils.writeToFile(output, "\nTest original indices:\n", true)
+	&& FileUtils.writeToFile(output, toString(data.getValue(TrainTestSetContainer.VALUE_TEST_ORIGINALINDICES)), true);
   }
 
   /**
@@ -156,18 +197,17 @@ public abstract class AbstractSplitGeneratorTestCase
     }
 
     // test regression
-    regression = m_Regression.compare(outputFiles.toArray(new TmpFile[outputFiles.size()]));
+    regression = m_Regression.compare(outputFiles.toArray(new TmpFile[0]));
     assertNull("Output differs:\n" + regression, regression);
 
     // remove output, clean up scheme
     for (i = 0; i < setups.length; i++) {
-      if (setups[i] instanceof Destroyable)
+      if (setups[i] != null)
 	((Destroyable) setups[i]).destroy();
       else if (setups[i] instanceof CleanUpHandler)
 	((CleanUpHandler) setups[i]).cleanUp();
     }
-    for (i = 0; i < outputFiles.size(); i++) {
+    for (i = 0; i < outputFiles.size(); i++)
       outputFiles.get(i).delete();
-    }
   }
 }

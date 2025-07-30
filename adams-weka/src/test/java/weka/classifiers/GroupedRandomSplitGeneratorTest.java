@@ -15,7 +15,7 @@
 
 /*
  * GroupedRandomSplitGeneratorTest.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -55,8 +55,8 @@ public class GroupedRandomSplitGeneratorTest
     Instances				anneal;
     Instances				bodyfat;
 
-    anneal  = load("anneal_with_group.arff");
-    bodyfat = load("bodyfat_with_group.arff");
+    anneal  = load("anneal_with_group.arff", 50);
+    bodyfat = load("bodyfat_with_group.arff", 50);
 
     result    = new GroupedRandomSplitGenerator[3];
     result[0] = new GroupedRandomSplitGenerator(anneal, 42, 0.66, false, new WekaAttributeIndex("1"), new BaseRegExp("(.*)"), "$1");

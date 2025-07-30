@@ -15,7 +15,7 @@
 
 /*
  * GroupedCrossValidationFoldGeneratorTest.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -55,8 +55,8 @@ public class GroupedCrossValidationFoldGeneratorTest
     Instances			anneal;
     Instances			bodyfat;
 
-    anneal  = load("anneal_with_group.arff");
-    bodyfat = load("bodyfat_with_group.arff");
+    anneal  = load("anneal_with_group.arff", 100);
+    bodyfat = load("bodyfat_with_group.arff", 100);
 
     result    = new GroupedCrossValidationFoldGenerator[3];
     result[0] = new GroupedCrossValidationFoldGenerator(anneal, 10, 42, true, true, new WekaAttributeIndex("1"), new BaseRegExp("(.*)"), "$1");

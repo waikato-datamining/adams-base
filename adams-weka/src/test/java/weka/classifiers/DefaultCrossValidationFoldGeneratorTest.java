@@ -15,7 +15,7 @@
 
 /*
  * DefaultCrossValidationFoldGeneratorTest.java
- * Copyright (C) 2016-2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -53,8 +53,8 @@ public class DefaultCrossValidationFoldGeneratorTest
     Instances			anneal;
     Instances			bodyfat;
 
-    anneal  = load("anneal.arff");
-    bodyfat = load("bodyfat.arff");
+    anneal  = load("anneal.arff", 50);
+    bodyfat = load("bodyfat.arff", 50);
 
     result    = new DefaultCrossValidationFoldGenerator[3];
     result[0] = new DefaultCrossValidationFoldGenerator(anneal, 10, 42, true);
