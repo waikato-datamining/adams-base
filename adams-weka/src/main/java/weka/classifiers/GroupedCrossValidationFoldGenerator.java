@@ -15,7 +15,7 @@
 
 /*
  * GroupedCrossValidationFoldGenerator.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -55,7 +55,9 @@ import java.util.NoSuchElementException;
  */
 public class GroupedCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator {
+  implements CrossValidationFoldGenerator, PerFoldCrossValidationFoldGenerator {
+
+  // NB: CrossValidationFoldGenerator needs to be implemented for class hierarchy!
 
   private static final long serialVersionUID = -6949071991599401776L;
 
@@ -278,6 +280,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -291,6 +294,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -301,6 +305,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -321,6 +326,7 @@ public class GroupedCrossValidationFoldGenerator
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_ActualNumFolds;
   }
@@ -330,6 +336,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -340,6 +347,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -510,15 +518,21 @@ public class GroupedCrossValidationFoldGenerator
     FoldPair<Binnable<BinnableGroup<Instance>>> foldPair;
     Struct2<TIntList,List<Binnable<Instance>>>	subsetTrain;
     Struct2<TIntList,List<Binnable<Instance>>>	subsetTest;
+    int						i;
+    FoldPair<Binnable<BinnableGroup<Instance>>> pair;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
     if (m_FoldPairs == null) {
-      m_FoldPairs       = m_Generator.generate(m_BinnableGroups);
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs)
-        m_OriginalIndices.addAll(Subset.extractIndicesAndBinnable(pair.getTest()).value1);
+      m_FoldPairs              = m_Generator.generate(m_BinnableGroups);
+      m_OriginalIndices        = new TIntArrayList();
+      m_OriginalIndicesPerFold = new int[m_FoldPairs.size()][];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	pair = m_FoldPairs.get(i);
+	m_OriginalIndicesPerFold[i] = Subset.extractIndicesAndBinnable(pair.getTest()).value1.toArray();
+	m_OriginalIndices.addAll(m_OriginalIndicesPerFold[i]);
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -555,8 +569,19 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return		the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    return m_OriginalIndicesPerFold;
   }
 
   /**
