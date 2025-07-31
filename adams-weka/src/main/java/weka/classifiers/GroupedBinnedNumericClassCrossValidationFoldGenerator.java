@@ -61,7 +61,7 @@ import java.util.NoSuchElementException;
  */
 public class GroupedBinnedNumericClassCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator, BinningAlgorithmUser {
+  implements CrossValidationFoldGenerator, BinningAlgorithmUser, PerFoldCrossValidationFoldGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -533,6 +533,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
     TIntList					testIndices;
     Subset<Binnable<Instance>>			trainSub;
     Subset<Binnable<Instance>>			testSub;
+    FoldPair<Binnable<Instance>> 		pair;
 
     if (m_CurrentFold > m_NumFolds)
       throw new NoSuchElementException("No more folds available!");
@@ -596,9 +597,13 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
 	m_FoldPairs.add(new FoldPair<>(i, trainSub, testSub));
       }
 
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
-	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
+      m_OriginalIndices        = new TIntArrayList();
+      m_OriginalIndicesPerFold = new int[m_FoldPairs.size()][];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	pair = m_FoldPairs.get(i);
+	m_OriginalIndicesPerFold[i] = pair.getTest().getOriginalIndices().toArray();
+	m_OriginalIndices.addAll(m_OriginalIndicesPerFold[i]);
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -637,6 +642,16 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    */
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return		the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    return m_OriginalIndicesPerFold;
   }
 
   /**
