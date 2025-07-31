@@ -152,6 +152,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -167,6 +168,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -177,6 +179,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -197,6 +200,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_ActualNumFolds;
   }
@@ -206,6 +210,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -216,6 +221,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -235,6 +241,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @param value	the template
    */
+  @Override
   public void setRelationName(String value) {
     m_RelationName = value;
     reset();
@@ -245,6 +252,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @return		the template
    */
+  @Override
   public String getRelationName() {
     return m_RelationName;
   }
@@ -264,6 +272,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @param value	ignored
    */
+  @Override
   public void setStratify(boolean value) {
   }
 
@@ -272,6 +281,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @return		always false
    */
+  @Override
   public boolean getStratify() {
     return false;
   }
@@ -417,6 +427,7 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
   }

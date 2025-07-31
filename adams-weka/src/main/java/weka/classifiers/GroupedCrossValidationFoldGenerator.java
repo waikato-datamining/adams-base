@@ -367,6 +367,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @param value	whether to stratify the data (nominal class)
    */
+  @Override
   public void setStratify(boolean value) {
     m_Stratify = value;
     reset();
@@ -377,6 +378,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @return		true if to stratify
    */
+  @Override
   public boolean getStratify() {
     return m_Stratify;
   }
@@ -396,6 +398,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @param value	the template
    */
+  @Override
   public void setRelationName(String value) {
     m_RelationName = value;
     reset();
@@ -406,6 +409,7 @@ public class GroupedCrossValidationFoldGenerator
    *
    * @return		the template
    */
+  @Override
   public String getRelationName() {
     return m_RelationName;
   }

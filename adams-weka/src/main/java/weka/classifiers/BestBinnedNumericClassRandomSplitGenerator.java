@@ -49,7 +49,7 @@ import static com.github.fracpete.javautils.Enumerate.enumerate;
  */
 public class BestBinnedNumericClassRandomSplitGenerator
   extends AbstractSplitGenerator
-  implements weka.classifiers.RandomSplitGenerator {
+  implements RandomSplitGenerator {
 
   private static final long serialVersionUID = -3836027382933579890L;
 
@@ -173,6 +173,7 @@ public class BestBinnedNumericClassRandomSplitGenerator
    *
    * @param value	the percentage (0-1)
    */
+  @Override
   public void setPercentage(double value) {
     if (getOptionManager().isValid("percentage", value)) {
       m_Percentage = value;
@@ -185,6 +186,7 @@ public class BestBinnedNumericClassRandomSplitGenerator
    *
    * @return		the percentage (0-1)
    */
+  @Override
   public double getPercentage() {
     return m_Percentage;
   }
@@ -204,6 +206,7 @@ public class BestBinnedNumericClassRandomSplitGenerator
    *
    * @param value	true if to preserve order
    */
+  @Override
   public void setPreserveOrder(boolean value) {
     m_PreserveOrder = value;
     reset();
@@ -214,6 +217,7 @@ public class BestBinnedNumericClassRandomSplitGenerator
    *
    * @return		true if to preserve order
    */
+  @Override
   public boolean getPreserveOrder() {
     return m_PreserveOrder;
   }
@@ -301,6 +305,7 @@ public class BestBinnedNumericClassRandomSplitGenerator
   /**
    * Initializes the iterator.
    */
+  @Override
   protected void doInitializeIterator() {
     if (m_Data == null)
       throw new IllegalStateException("No data available!");

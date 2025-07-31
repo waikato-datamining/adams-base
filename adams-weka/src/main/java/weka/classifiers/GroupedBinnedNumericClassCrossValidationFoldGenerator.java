@@ -210,6 +210,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -225,6 +226,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -235,6 +237,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -255,6 +258,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_NumFolds;
   }
@@ -264,6 +268,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -274,6 +279,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -293,6 +299,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	whether to stratify the data (nominal class)
    */
+  @Override
   public void setStratify(boolean value) {
     m_Stratify = value;
     reset();
@@ -303,6 +310,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		true if to stratify
    */
+  @Override
   public boolean getStratify() {
     return m_Stratify;
   }
@@ -322,6 +330,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the template
    */
+  @Override
   public void setRelationName(String value) {
     m_RelationName = value;
     reset();
@@ -332,6 +341,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the template
    */
+  @Override
   public String getRelationName() {
     return m_RelationName;
   }
@@ -640,6 +650,7 @@ public class GroupedBinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
   }

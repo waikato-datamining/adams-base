@@ -194,6 +194,7 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    *
    * @param value	the percentage (0-1)
    */
+  @Override
   public void setPercentage(double value) {
     if (getOptionManager().isValid("percentage", value)) {
       m_Percentage = value;
@@ -206,6 +207,7 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    *
    * @return		the percentage (0-1)
    */
+  @Override
   public double getPercentage() {
     return m_Percentage;
   }
@@ -225,6 +227,7 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    *
    * @param value	true if to preserve order
    */
+  @Override
   public void setPreserveOrder(boolean value) {
     m_PreserveOrder = value;
     reset();
@@ -235,6 +238,7 @@ public class GroupedBinnedNumericClassRandomSplitGenerator
    *
    * @return		true if to preserve order
    */
+  @Override
   public boolean getPreserveOrder() {
     return m_PreserveOrder;
   }

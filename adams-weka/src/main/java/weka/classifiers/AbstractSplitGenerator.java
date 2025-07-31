@@ -108,6 +108,7 @@ public abstract class AbstractSplitGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     m_Data = (value != null) ? new Instances(value) : null;
     reset();
@@ -118,6 +119,7 @@ public abstract class AbstractSplitGenerator
    *
    * @return		the data
    */
+  @Override
   public Instances getData() {
     return m_Data;
   }
@@ -127,6 +129,7 @@ public abstract class AbstractSplitGenerator
    *
    * @param value	the seed
    */
+  @Override
   public void setSeed(long value) {
     m_Seed = value;
     reset();
@@ -137,6 +140,7 @@ public abstract class AbstractSplitGenerator
    *
    * @return		the seed
    */
+  @Override
   public long getSeed() {
     return m_Seed;
   }
@@ -147,6 +151,7 @@ public abstract class AbstractSplitGenerator
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String seedTipText() {
     return "The seed value for the random number generator.";
   }
@@ -156,6 +161,7 @@ public abstract class AbstractSplitGenerator
    *
    * @param value	true if to uses views
    */
+  @Override
   public void setUseViews(boolean value) {
     m_UseViews = value;
     reset();
@@ -166,6 +172,7 @@ public abstract class AbstractSplitGenerator
    *
    * @return		true if to uses views
    */
+  @Override
   public boolean getUseViews() {
     return m_UseViews;
   }
@@ -241,6 +248,7 @@ public abstract class AbstractSplitGenerator
    *
    * @see		#canRandomize()
    */
+  @Override
   public void initializeIterator() {
     doInitializeIterator();
     m_Initialized = true;

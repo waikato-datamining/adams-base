@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class BinnedNumericClassRandomSplitGenerator
   extends AbstractSplitGenerator
-  implements weka.classifiers.RandomSplitGenerator, BinningAlgorithmUser {
+  implements RandomSplitGenerator, BinningAlgorithmUser {
 
   /** for serialization. */
   private static final long serialVersionUID = -4813006743965500489L;
@@ -155,6 +155,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @param value	the percentage (0-1)
    */
+  @Override
   public void setPercentage(double value) {
     if (getOptionManager().isValid("percentage", value)) {
       m_Percentage = value;
@@ -167,6 +168,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @return		the percentage (0-1)
    */
+  @Override
   public double getPercentage() {
     return m_Percentage;
   }
@@ -186,6 +188,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @param value	true if to preserve order
    */
+  @Override
   public void setPreserveOrder(boolean value) {
     m_PreserveOrder = value;
     reset();
@@ -196,6 +199,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @return		true if to preserve order
    */
+  @Override
   public boolean getPreserveOrder() {
     return m_PreserveOrder;
   }
@@ -247,6 +251,7 @@ public class BinnedNumericClassRandomSplitGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -270,6 +275,7 @@ public class BinnedNumericClassRandomSplitGenerator
   /**
    * Initializes the iterator.
    */
+  @Override
   protected void doInitializeIterator() {
     if (m_Data == null)
       throw new IllegalStateException("No data available!");
