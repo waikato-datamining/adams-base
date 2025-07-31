@@ -46,6 +46,8 @@ public class DefaultCrossValidationFoldGenerator
   extends AbstractSplitGenerator
   implements CrossValidationFoldGenerator, PerFoldCrossValidationFoldGenerator {
 
+  // NB: CrossValidationFoldGenerator needs to be implemented for class hierarchy!
+
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
 
@@ -163,6 +165,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -176,6 +179,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -186,6 +190,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -206,6 +211,7 @@ public class DefaultCrossValidationFoldGenerator
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_ActualNumFolds;
   }
@@ -215,6 +221,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -225,6 +232,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -438,6 +446,7 @@ public class DefaultCrossValidationFoldGenerator
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
   }
