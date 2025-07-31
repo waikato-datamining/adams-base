@@ -14,7 +14,7 @@
  */
 
 /*
- * DefaultCrossValidationFoldGenerator.java
+ * BinnedNumericClassCrossValidationFoldGenerator.java
  * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package weka.classifiers;
@@ -55,7 +55,7 @@ import java.util.NoSuchElementException;
  */
 public class BinnedNumericClassCrossValidationFoldGenerator
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator, BinningAlgorithmUser {
+  implements CrossValidationFoldGenerator, BinningAlgorithmUser, PerFoldCrossValidationFoldGenerator {
 
   /** for serialization. */
   private static final long serialVersionUID = -8387205583429213079L;
@@ -177,6 +177,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the data
    */
+  @Override
   public void setData(Instances value) {
     super.setData(value);
     if (m_Data != null) {
@@ -192,6 +193,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the number of folds, less than 2 for LOO
    */
+  @Override
   public void setNumFolds(int value) {
     m_NumFolds = value;
     reset();
@@ -202,6 +204,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the number of folds
    */
+  @Override
   public int getNumFolds() {
     return m_NumFolds;
   }
@@ -222,6 +225,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    * @return		the actual number of folds, -1 if not yet calculated
    * @see		#initializeIterator()
    */
+  @Override
   public int getActualNumFolds() {
     return m_NumFolds;
   }
@@ -231,6 +235,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	true if to randomize the data
    */
+  @Override
   public void setRandomize(boolean value) {
     m_Randomize = value;
     reset();
@@ -241,6 +246,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		true if to randomize the data
    */
+  @Override
   public boolean getRandomize() {
     return m_Randomize;
   }
@@ -260,6 +266,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	whether to stratify the data (nominal class)
    */
+  @Override
   public void setStratify(boolean value) {
     m_Stratify = value;
     reset();
@@ -270,6 +277,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		true if to stratify
    */
+  @Override
   public boolean getStratify() {
     return m_Stratify;
   }
@@ -289,6 +297,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @param value	the template
    */
+  @Override
   public void setRelationName(String value) {
     m_RelationName = value;
     reset();
@@ -299,6 +308,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the template
    */
+  @Override
   public String getRelationName() {
     return m_RelationName;
   }
@@ -409,6 +419,7 @@ public class BinnedNumericClassCrossValidationFoldGenerator
     TIntList				testIndices;
     Subset<Binnable<Instance>>		trainSub;
     Subset<Binnable<Instance>>		testSub;
+    FoldPair<Binnable<Instance>> 	pair;
 
     if (m_CurrentFold > m_NumFolds)
       throw new NoSuchElementException("No more folds available!");
@@ -463,9 +474,13 @@ public class BinnedNumericClassCrossValidationFoldGenerator
 	m_FoldPairs.add(new FoldPair<>(i, trainSub, testSub));
       }
 
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<Instance>> pair : m_FoldPairs)
-	m_OriginalIndices.addAll(pair.getTest().getOriginalIndices());
+      m_OriginalIndices        = new TIntArrayList();
+      m_OriginalIndicesPerFold = new int[m_FoldPairs.size()][];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	pair = m_FoldPairs.get(i);
+	m_OriginalIndicesPerFold[i] = pair.getTest().getOriginalIndices().toArray();
+	m_OriginalIndices.addAll(m_OriginalIndicesPerFold[i]);
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -502,8 +517,19 @@ public class BinnedNumericClassCrossValidationFoldGenerator
    *
    * @return		the indices
    */
+  @Override
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return		the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    return m_OriginalIndicesPerFold;
   }
 
   /**
