@@ -15,7 +15,7 @@
 
 /*
  * GroupedCrossValidationFoldGeneratorUsingNumericClassValues.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, NZ
  */
 
 package weka.classifiers;
@@ -53,7 +53,7 @@ import java.util.NoSuchElementException;
  */
 public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
   extends AbstractSplitGenerator
-  implements CrossValidationFoldGenerator {
+  implements CrossValidationFoldGenerator, PerFoldCrossValidationFoldGenerator {
 
   private static final long serialVersionUID = -6949071991599401776L;
 
@@ -366,15 +366,21 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
     FoldPair<Binnable<BinnableGroup<Instance>>> foldPair;
     Struct2<TIntList,List<Binnable<Instance>>>	subsetTrain;
     Struct2<TIntList,List<Binnable<Instance>>>	subsetTest;
+    int						i;
+    FoldPair<Binnable<BinnableGroup<Instance>>> pair;
 
     if (m_CurrentFold > m_ActualNumFolds)
       throw new NoSuchElementException("No more folds available!");
 
     if (m_FoldPairs == null) {
-      m_FoldPairs       = m_Generator.generate(m_BinnableGroups);
-      m_OriginalIndices = new TIntArrayList();
-      for (FoldPair<Binnable<BinnableGroup<Instance>>> pair : m_FoldPairs)
-        m_OriginalIndices.addAll(Subset.extractIndicesAndBinnable(pair.getTest()).value1);
+      m_FoldPairs              = m_Generator.generate(m_BinnableGroups);
+      m_OriginalIndices        = new TIntArrayList();
+      m_OriginalIndicesPerFold = new int[m_FoldPairs.size()][];
+      for (i = 0; i < m_FoldPairs.size(); i++) {
+	pair = m_FoldPairs.get(i);
+	m_OriginalIndicesPerFold[i] = Subset.extractIndicesAndBinnable(pair.getTest()).value1.toArray();
+	m_OriginalIndices.addAll(m_OriginalIndicesPerFold[i]);
+      }
     }
 
     foldPair = m_FoldPairs.get(m_CurrentFold - 1);
@@ -413,6 +419,16 @@ public class GroupedCrossValidationFoldGeneratorUsingNumericClassValues
    */
   public int[] crossValidationIndices() {
     return m_OriginalIndices.toArray();
+  }
+
+  /**
+   * Returns the cross-validation indices per fold.
+   *
+   * @return		the indices
+   */
+  @Override
+  public int[][] crossValidationIndicesPerFold() {
+    return m_OriginalIndicesPerFold;
   }
 
   /**
