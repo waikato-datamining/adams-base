@@ -43,7 +43,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2024} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2025} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -183,39 +183,6 @@ been restarted, you get a \textit{Send error report} menu item in the
 notification area is enabled as well (this one also attaches the flow that
 generated the error for further analysis).
 
-
-%%%%%%%
-% FTP %
-%%%%%%%
-
-\chapter{FTP}
-In addition to Email, ADAMS also supports FTP (file transfer protocol). Since
-FTP does not encrypt the commands or transferred data, it is recommended to not
-use it outside a company's network or for non-anonymous access (e.g., download
-from a public FTP server).
-
-The following actors are available:
-\begin{tight_itemize}
-	\item \textit{FTPConnection} -- standalone actor that defines the server
-	connection.
-	\item \textit{FTPDelete} -- for deleting a remote file via FTP.
-	\item \textit{FTPDisconnect} -- transformer that closes an existing
-	connection, to avoid too many open connections (simply passes through any 
-	token it receives).
-	\item \textit{FTPGet} -- for obtaining a remote file via FTP.
-	\item \textit{FTPNoOp} -- sends a NOOP command to the server; useful when
-	trying to keep the connection alive.
-	\item \textit{FTPSend} -- for sending a file via FTP to a remote host.
-\end{tight_itemize}
-The \textit{FTPConnection} standalone allows you to enter the password at 
-runtime, if you do not want to store the password with the
-flow setup. At execution time, the user gets prompted with a dialog to enter
-a password to be used for the connection.
-
-There are also several \textit{searchlets} available for the
-\textit{FileSystemSearch} source actor that allow the listing of remote
-files.
-
 %%%%%%%
 % SSH %
 %%%%%%%
@@ -304,7 +271,6 @@ The \textit{adams-net} module adds several connection schemes for the
 remote command framework:
 
 \begin{tight_itemize}
-	\item \textit{FTPConnection} -- sends commands as files via FTP.
 	\item \textit{ScpConnection} -- sends commands as files using secure
 	copy (\textit{scp}).
 	\item \textit{SSHConnection} -- offers SSH tunnelling, useful when
