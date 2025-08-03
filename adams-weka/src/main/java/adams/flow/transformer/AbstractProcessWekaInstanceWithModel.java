@@ -35,6 +35,7 @@ import adams.flow.core.AbstractModelLoader;
 import adams.flow.core.AbstractModelLoader.ModelLoadingType;
 import adams.flow.core.CallableActorReference;
 import adams.flow.core.DynamicModelLoaderSupporter;
+import adams.flow.core.OptionalModelResetWithVariable;
 import adams.flow.core.Token;
 import weka.core.Instance;
 
@@ -49,7 +50,7 @@ import java.util.Hashtable;
  */
 public abstract class AbstractProcessWekaInstanceWithModel<T>
   extends AbstractTransformer
-  implements DynamicModelLoaderSupporter {
+  implements DynamicModelLoaderSupporter, OptionalModelResetWithVariable {
 
   /** for serialization. */
   private static final long serialVersionUID = -5275241130624220000L;
