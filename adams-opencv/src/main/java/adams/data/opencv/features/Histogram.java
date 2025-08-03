@@ -241,7 +241,7 @@ public class Histogram
   }
 
   /**
-   * Sets the whether to group by channels.
+   * Sets whether to group by channels.
    *
    * @param value 	true if to group by channels
    */

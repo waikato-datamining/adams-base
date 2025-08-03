@@ -385,7 +385,7 @@ public class MetaHeadline
   }
 
   /**
-   * Sets the whether to add the headline only on the first page.
+   * Sets whether to add the headline only on the first page.
    *
    * @param value	if true then the headline is only added on the first page
    */
@@ -395,7 +395,7 @@ public class MetaHeadline
   }
 
   /**
-   * Returns the whether to add the headline only on the first page.
+   * Returns whether to add the headline only on the first page.
    *
    * @return 		true if the headline is only on the first page
    */

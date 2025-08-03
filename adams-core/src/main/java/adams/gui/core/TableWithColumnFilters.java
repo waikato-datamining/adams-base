@@ -45,7 +45,7 @@ public interface TableWithColumnFilters {
   public String getColumnFilter(int column);
 
   /**
-   * Returns the whether the filter for the column is a regular expression.
+   * Returns whether the filter for the column is a regular expression.
    *
    * @param column	the column to query
    * @return		true if filter set and regular expression

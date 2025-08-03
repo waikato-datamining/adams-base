@@ -19,15 +19,14 @@
  */
 package adams.gui.visualization.core;
 
+import adams.core.io.PlaceholderFile;
+import adams.gui.event.PaintEvent.PaintMoment;
+
+import javax.imageio.ImageIO;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
 import java.util.logging.Level;
-
-import javax.imageio.ImageIO;
-
-import adams.core.io.PlaceholderFile;
-import adams.gui.event.PaintEvent.PaintMoment;
 
 /**
  * Paintlet for painting a background image.
@@ -106,7 +105,7 @@ public class BackgroundImagePaintlet
   }
 
   /**
-   * Sets the whether to use a fixed size image or resize according to canvas.
+   * Sets whether to use a fixed size image or resize according to canvas.
    *
    * @param value 	true if to use fixed size
    */

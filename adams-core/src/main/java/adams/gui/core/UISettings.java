@@ -642,7 +642,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the whether the value is present.
+   * Returns whether the value is present.
    *
    * @param obj		the object
    * @param property	the property
@@ -653,7 +653,7 @@ public class UISettings {
   }
 
   /**
-   * Returns the whether the value is present.
+   * Returns whether the value is present.
    *
    * @param cls		the class
    * @param property	the property

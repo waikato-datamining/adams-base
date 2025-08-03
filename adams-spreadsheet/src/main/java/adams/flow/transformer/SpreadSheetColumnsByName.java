@@ -20,14 +20,14 @@
 
 package adams.flow.transformer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
 import adams.core.base.BaseRegExp;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.core.Token;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -178,7 +178,7 @@ public class SpreadSheetColumnsByName
   }
 
   /**
-   * Sets the whether to invert the matching.
+   * Sets whether to invert the matching.
    *
    * @param value	if true the matching is inverted
    */

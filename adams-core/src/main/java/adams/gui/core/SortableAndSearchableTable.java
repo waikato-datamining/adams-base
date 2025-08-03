@@ -534,7 +534,7 @@ public class SortableAndSearchableTable
   }
 
   /**
-   * Returns the whether the filter for the column is a regular expression.
+   * Returns whether the filter for the column is a regular expression.
    *
    * @param column	the column to query
    * @return		true if filter set and regular expression
@@ -544,7 +544,7 @@ public class SortableAndSearchableTable
   }
 
   /**
-   * Returns the whether there is a filter active for the column.
+   * Returns whether there is a filter active for the column.
    *
    * @param column	the column to query
    * @return		true if a filter is active

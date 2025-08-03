@@ -397,7 +397,7 @@ public class AccumulatedLWLWeights
   }
 
   /**
-   * Sets the whether to use the row finder.
+   * Sets whether to use the row finder.
    *
    * @param value true if to use the row finder
    */

@@ -303,7 +303,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
-   * Sets the whether to use a variable to monitor for changes in order
+   * Sets whether to use a variable to monitor for changes in order
    * to reset the model.
    *
    * @param value	true if to use monitor variable
@@ -314,7 +314,7 @@ public abstract class AbstractProcessWekaInstanceWithModel<T>
   }
 
   /**
-   * Returns the whether to use a variable to monitor for changes in order
+   * Returns whether to use a variable to monitor for changes in order
    * to reset the model.
    *
    * @return		true if to use monitor variable

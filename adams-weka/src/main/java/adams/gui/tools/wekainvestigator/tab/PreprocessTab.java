@@ -105,10 +105,10 @@ public class PreprocessTab
   /** the checkbox for batch-filtering. */
   protected BaseCheckBox m_CheckBoxBatchFilter;
 
-  /** the whether to keep the relation name. */
+  /** whether to keep the relation name. */
   protected BaseCheckBox m_CheckBoxKeepName;
 
-  /** the whether to serialize the filter to a file. */
+  /** whether to serialize the filter to a file. */
   protected BaseCheckBox m_CheckBoxSerialize;
 
   /** the file to serialize the trained filter to. */
