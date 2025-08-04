@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractClassifierEvaluation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.evaluation;
@@ -35,7 +35,7 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.ml.data.InstancesView;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
@@ -47,7 +47,6 @@ import java.util.List;
  * Ancestor for classifier evaluation setups.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClassifierEvaluation
   extends AbstractEvaluation<ClassifyTab, ResultItem> {

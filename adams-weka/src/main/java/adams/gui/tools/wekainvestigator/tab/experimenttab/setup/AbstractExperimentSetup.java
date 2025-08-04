@@ -25,7 +25,7 @@ import adams.core.StoppableWithFeedback;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.ExperimentTab;
 import adams.gui.tools.wekainvestigator.tab.experimenttab.ResultItem;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import weka.classifiers.Classifier;
 
 /**

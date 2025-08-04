@@ -31,7 +31,7 @@ import adams.flow.core.Compatibility;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.TimedActor;
 import adams.flow.core.Token;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.HashSet;
 import java.util.Hashtable;

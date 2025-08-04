@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractAssociatorEvaluation.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.associatetab.evaluation;
@@ -24,14 +24,13 @@ import adams.core.ClassLister;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.AssociateTab;
 import adams.gui.tools.wekainvestigator.tab.associatetab.ResultItem;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import weka.associations.Associator;
 
 /**
  * Ancestor for associator evaluation setups.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractAssociatorEvaluation
   extends AbstractEvaluation<AssociateTab, ResultItem> {

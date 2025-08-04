@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractAttributeSelectionEvaluation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.attseltab.evaluation;
@@ -24,7 +24,7 @@ import adams.core.ClassLister;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.AttributeSelectionTab;
 import adams.gui.tools.wekainvestigator.tab.attseltab.ResultItem;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 
@@ -32,7 +32,6 @@ import weka.attributeSelection.ASSearch;
  * Ancestor for attribute selection evaluation setups.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractAttributeSelectionEvaluation
   extends AbstractEvaluation<AttributeSelectionTab, ResultItem> {

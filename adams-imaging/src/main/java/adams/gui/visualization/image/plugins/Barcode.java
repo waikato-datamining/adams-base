@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Barcode.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.image.plugins;
 
@@ -28,13 +28,12 @@ import adams.data.text.TextContainer;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.TextDialog;
 import adams.gui.visualization.image.ImagePanel;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * Extracts the barcode from the image.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 7714 $
  */
 public class Barcode
   extends AbstractImageViewerPluginWithGOE {

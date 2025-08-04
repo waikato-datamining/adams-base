@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractClustererEvaluation.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
@@ -24,14 +24,13 @@ import adams.core.ClassLister;
 import adams.gui.tools.wekainvestigator.evaluation.AbstractEvaluation;
 import adams.gui.tools.wekainvestigator.tab.ClusterTab;
 import adams.gui.tools.wekainvestigator.tab.clustertab.ResultItem;
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import weka.clusterers.Clusterer;
 
 /**
  * Ancestor for clusterer evaluation setups.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractClustererEvaluation
   extends AbstractEvaluation<ClusterTab, ResultItem> {
