@@ -67,7 +67,7 @@
     <dependency>
       <groupId>com.github.fracpete</groupId>
       <artifactId>rsync4j-windows64</artifactId>
-      <version>3.3.0-3</version>
+      <version>3.3.0-5</version>
     </dependency>
   </dependencies>
 
