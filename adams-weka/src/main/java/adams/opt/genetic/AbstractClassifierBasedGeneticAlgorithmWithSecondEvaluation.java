@@ -81,7 +81,7 @@ public abstract class AbstractClassifierBasedGeneticAlgorithmWithSecondEvaluatio
     }
 
     /**
-     * Returns the whether to use second evaluation.
+     * Returns whether to use second evaluation.
      *
      * @return		true if to use second evaluation
      */
