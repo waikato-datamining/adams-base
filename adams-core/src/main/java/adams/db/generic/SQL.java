@@ -29,6 +29,7 @@ import adams.db.SQLIntf;
 import adams.db.SQLUtils;
 import adams.db.SimpleResultSet;
 import adams.db.TableManager;
+import adams.db.quirks.AbstractDatabaseQuirks;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.TLongList;
@@ -65,6 +66,9 @@ public class SQL
   /** connection to database. */
   protected AbstractDatabaseConnection m_DatabaseConnection;
 
+  /** the quirks for the connection. */
+  protected AbstractDatabaseQuirks m_Quirks;
+
   /** the table manager. */
   protected static TableManager<SQL> m_TableManager;
 
@@ -77,6 +81,7 @@ public class SQL
     super();
 
     m_DatabaseConnection = dbcon;
+    m_Quirks             = AbstractDatabaseQuirks.getHandler(dbcon.getURL());
 
     updatePrefix();
   }
@@ -157,15 +162,29 @@ public class SQL
     Connection 		connection;
     ResultSet 		rs;
     DatabaseMetaData 	dbmd;
+    String		connCatalog;
+    String		rsCatalog;
+    String		rsTable;
+    boolean		catalogOK;
+    boolean		tableOK;
 
     result     = false;
     rs         = null;
     connection = m_DatabaseConnection.getConnection(true);
     try {
-      dbmd = connection.getMetaData();
-      rs   = dbmd.getTables(null, null, null, null);
+      dbmd        = connection.getMetaData();
+      connCatalog = connection.getCatalog();
+      rs          = dbmd.getTables(connection.getCatalog(), null, "%", null);
       while (rs.next()) {
-	if (rs.getString(1).equals(connection.getCatalog()) && rs.getString(3).equalsIgnoreCase(table)) {
+	rsCatalog = rs.getString(1);
+	rsTable   = rs.getString(3);
+	if (m_Quirks.tableExistsChecksCatalog())
+	  catalogOK = ((connCatalog == null) && (rsCatalog == null))
+			|| ((connCatalog != null) && (connCatalog.equalsIgnoreCase(rsCatalog)));
+	else
+	  catalogOK = true;
+	tableOK = (rsTable != null) && (rsTable.equalsIgnoreCase(table));
+	if (catalogOK && tableOK) {
 	  result = true;
 	  break;
 	}
@@ -174,10 +193,19 @@ public class SQL
     catch (SQLException e) {
       // try again
       try {
-	dbmd = connection.getMetaData();
-	rs   = dbmd.getTables(null, null, null, null);
+	dbmd        = connection.getMetaData();
+	connCatalog = connection.getCatalog();
+	rs          = dbmd.getTables(connection.getCatalog(), null, "%", null);
 	while (rs.next()) {
-	  if (rs.getString(1).equals(connection.getCatalog()) && rs.getString(3).equalsIgnoreCase(table)) {
+	  rsCatalog = rs.getString(1);
+	  rsTable   = rs.getString(3);
+	  if (m_Quirks.tableExistsChecksCatalog())
+	    catalogOK = ((connCatalog == null) && (rsCatalog == null))
+			  || ((connCatalog != null) && (connCatalog.equalsIgnoreCase(rsCatalog)));
+	  else
+	    catalogOK = true;
+	  tableOK = (rsTable != null) && (rsTable.equalsIgnoreCase(table));
+	  if (catalogOK && tableOK) {
 	    result = true;
 	    break;
 	  }

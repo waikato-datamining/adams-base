@@ -376,6 +376,10 @@ adams.db.upgrade.AbstractTableUpgrade=\
 adams.db.AbstractTableCleanUp=\
   adams.db
 
+# the SQL quirks classes
+adams.db.types.AbstractDatabaseQuirks=\
+  adams.db.quirks
+
 # the SQL types classes
 adams.db.types.AbstractTypes=\
   adams.db.types
