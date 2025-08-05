@@ -15,11 +15,12 @@
 
 /*
  * TypesPostgreSQL.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
 
+import adams.core.Constants;
 import adams.db.JDBC;
 
 import java.sql.Types;
@@ -89,7 +90,7 @@ public class TypesPostgreSQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '0000-00-00 00:00:00'";
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '" + Constants.TIMESTAMP_DEFAULT_POSTGRESQL + "'";
 	else
 	  return "TIMESTAMP";
 

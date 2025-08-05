@@ -15,7 +15,7 @@
 
 /*
  * Constants.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -56,6 +56,9 @@ public class Constants
 
   /** the default value for MySQL timestamps (Jan 2nd to avoid timezone issues). */
   public final static String TIMESTAMP_DEFAULT_MYSQL = "1970-01-02 00:00:01";
+
+  /** the default value for PostgreSQL timestamps (Jan 2nd to avoid timezone issues). */
+  public final static String TIMESTAMP_DEFAULT_POSTGRESQL = "1970-01-02 00:00:01";
 
   /** the format for times. */
   public final static String TIME_FORMAT = "HH:mm:ss";
