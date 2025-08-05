@@ -14,7 +14,7 @@
  */
 
 /*
- * BucketFill.java
+ * Pointer.java
  * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
  */
 
