@@ -44,12 +44,14 @@ import adams.gui.core.Cursors;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.Undo;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
+import adams.gui.help.HelpFrame;
 import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.DefaultColorProvider;
 import adams.gui.visualization.segmentation.layer.AbstractLayer;
@@ -77,6 +79,8 @@ import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -174,6 +178,9 @@ public class SegmentationPanel
   /** the button for performing a redo. */
   protected BaseFlatButton m_ButtonRedo;
 
+  /** the button for help. */
+  protected BaseFlatButton m_ButtonHelp;
+
   /** the main split pane. */
   protected BaseSplitPane m_SplitPaneLeft;
 
@@ -221,6 +228,9 @@ public class SegmentationPanel
 
   /** the last mouse motion listener in use. */
   protected MouseMotionListener m_LastMouseMotionListener;
+
+  /** the base key listener. */
+  protected KeyListener m_BaseKeyListener;
 
   /** the last key listener in use. */
   protected KeyListener m_LastKeyListener;
@@ -323,6 +333,10 @@ public class SegmentationPanel
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     panel.add(m_ButtonRedo);
+    m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
+    m_ButtonHelp.setToolTipText("Display help");
+    m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
+    panel.add(m_ButtonHelp);
 
     m_PanelCanvas = new CanvasPanel();
     m_PanelCanvas.setOwner(this);
@@ -418,6 +432,50 @@ public class SegmentationPanel
 	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
       }
     }
+
+    // base key listener
+    m_BaseKeyListener = new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	// undo ctrl+z
+	if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_Z)) {
+	  e.consume();
+	  undo();
+	}
+	// redo ctrl+y
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_Y)) {
+	  e.consume();
+	  redo();
+	}
+	// toggle enabled state of active layer ctrl+a
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_A)) {
+	  e.consume();
+	  getManager().getActiveOverlay(false).setEnabled(!getManager().getActiveOverlay(false).isEnabled());
+	  getManager().update();
+	}
+	// zoom in with ctrl+=
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_EQUALS)) {
+	  e.consume();
+	  zoomIn();
+	}
+	// zoom out with ctrl+-
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_MINUS)) {
+	  e.consume();
+	  zoomOut();
+	}
+	// zoom 100% with ctrl+1
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_1)) {
+	  e.consume();
+	  clearZoom();
+	}
+	// best fit with ctrl+f
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_F)) {
+	  e.consume();
+	  bestFitZoom();
+	}
+      }
+    };
+    m_PanelCanvas.addKeyListener(m_BaseKeyListener);
 
     // center
     m_PanelCenter = new BasePanel(new BorderLayout());
@@ -585,6 +643,29 @@ public class SegmentationPanel
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Returns the help string.
+   *
+   * @return		the help
+   */
+  public String help() {
+    return "Available keyboard shortcuts when the canvas panel has the focus:\n"
+      + "- CTRL+Z: undo\n"
+      + "- CTRL+Y: redo\n"
+      + "- CTRL+A: toggle active layer\n"
+      + "- CTRL+1: 100% zoom\n"
+      + "- CTRL+F: best fit zoom\n"
+      + "- CTRL+=: zoom in\n"
+      + "- CTRL+-: zoom out\n";
+  }
+
+  /**
+   * Displays the help in a dialog.
+   */
+  public void showHelp() {
+    HelpFrame.showHelp(getClass(), help(), false);
   }
 
   /**

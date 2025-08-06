@@ -44,6 +44,7 @@ import adams.gui.core.BaseToggleButton;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
@@ -51,6 +52,7 @@ import adams.gui.core.Undo;
 import adams.gui.core.UndoHandlerWithQuickAccess;
 import adams.gui.event.UndoEvent;
 import adams.gui.event.UndoListener;
+import adams.gui.help.HelpFrame;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLogManager;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
@@ -89,6 +91,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -177,6 +181,9 @@ public class ObjectAnnotationPanel
   /** for toggling the visibility of the annotations. */
   protected BaseToggleButton m_ButtonShowAnnotations;
 
+  /** the button for help. */
+  protected BaseFlatButton m_ButtonHelp;
+
   /** the left split panel (label selector | rest). */
   protected BaseSplitPane m_SplitPaneLeft;
 
@@ -251,6 +258,9 @@ public class ObjectAnnotationPanel
 
   /** the last key listener in use. */
   protected KeyListener m_LastKeyListener;
+
+  /** the base key listener. */
+  protected KeyListener m_BaseKeyListener;
 
   /** the active tool. */
   protected Tool m_ActiveTool;
@@ -392,6 +402,12 @@ public class ObjectAnnotationPanel
     m_ButtonShowAnnotations.addActionListener((ActionEvent e) -> setShowAnnotations(m_ButtonShowAnnotations.isSelected()));
     panel.add(m_ButtonShowAnnotations);
 
+    m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
+    m_ButtonHelp.setToolTipText("Display help");
+    m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
+    panel.add(new JLabel(" "));
+    panel.add(m_ButtonHelp);
+
     // left split pane
     m_SplitPaneLeft = new BaseSplitPane();
     m_SplitPaneLeft.setOneTouchExpandable(true);
@@ -484,6 +500,44 @@ public class ObjectAnnotationPanel
 	ConsolePanel.getSingleton().append("Failed to instantiate tool class: " + t.getName(), e);
       }
     }
+
+    // base key listener
+    m_BaseKeyListener = new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+	// undo ctrl+z
+	if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_Z)) {
+	  e.consume();
+	  undo();
+	}
+	// redo ctrl+y
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_Y)) {
+	  e.consume();
+	  redo();
+	}
+	// zoom in with ctrl+=
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_EQUALS)) {
+	  e.consume();
+	  zoomIn();
+	}
+	// zoom out with ctrl+-
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_MINUS)) {
+	  e.consume();
+	  zoomOut();
+	}
+	// zoom 100% with ctrl+1
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_1)) {
+	  e.consume();
+	  clearZoom();
+	}
+	// best fit with ctrl+f
+	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_F)) {
+	  e.consume();
+	  bestFitZoom();
+	}
+      }
+    };
+    m_PanelCanvas.addKeyListener(m_BaseKeyListener);
 
     // bottom
     m_StatusBar = new BaseStatusBar();
@@ -1327,6 +1381,28 @@ public class ObjectAnnotationPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Returns the help string.
+   *
+   * @return		the help
+   */
+  public String help() {
+    return "Available keyboard shortcuts when the canvas panel has the focus:\n"
+	     + "- CTRL+Z: undo\n"
+	     + "- CTRL+Y: redo\n"
+	     + "- CTRL+1: 100% zoom\n"
+	     + "- CTRL+F: best fit zoom\n"
+	     + "- CTRL+=: zoom in\n"
+	     + "- CTRL+-: zoom out\n";
+  }
+
+  /**
+   * Displays the help in a dialog.
+   */
+  public void showHelp() {
+    HelpFrame.showHelp(getClass(), help(), false);
   }
 
   /**

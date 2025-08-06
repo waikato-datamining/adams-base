@@ -15,7 +15,7 @@
 
 /*
  * LayerManager.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -744,9 +744,21 @@ public class LayerManager
    * @return		the layer, null if none active
    */
   public OverlayLayer getActiveOverlay() {
+    return getActiveOverlay(true);
+  }
+
+  /**
+   * Returns the active overlay layer, if any.
+   *
+   * @param mustBeEnabled 	whether the layer must be enabled as well
+   * @return			the layer, null if none active
+   */
+  public OverlayLayer getActiveOverlay(boolean mustBeEnabled) {
     for (OverlayLayer l: m_Overlays) {
-      if (l.isActive() && l.isEnabled())
-	return l;
+      if (l.isActive()) {
+	if (!mustBeEnabled || l.isEnabled())
+	  return l;
+      }
     }
     return null;
   }
