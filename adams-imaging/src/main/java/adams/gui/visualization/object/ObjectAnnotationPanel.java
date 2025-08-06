@@ -34,6 +34,7 @@ import adams.data.json.JsonHelper;
 import adams.data.report.Report;
 import adams.env.Environment;
 import adams.flow.transformer.locateobjects.LocatedObjects;
+import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -180,6 +181,9 @@ public class ObjectAnnotationPanel
 
   /** for toggling the visibility of the annotations. */
   protected BaseToggleButton m_ButtonShowAnnotations;
+
+  /** the button for maximize/minimize. */
+  protected BaseFlatButton m_ButtonMaxMin;
 
   /** the button for help. */
   protected BaseFlatButton m_ButtonHelp;
@@ -402,6 +406,12 @@ public class ObjectAnnotationPanel
     m_ButtonShowAnnotations.addActionListener((ActionEvent e) -> setShowAnnotations(m_ButtonShowAnnotations.isSelected()));
     panel.add(m_ButtonShowAnnotations);
 
+    m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
+    m_ButtonMaxMin.setToolTipText("Maximize window");
+    m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());
+    panel.add(new JLabel(" "));
+    panel.add(m_ButtonMaxMin);
+
     m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
     m_ButtonHelp.setToolTipText("Display help");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
@@ -558,6 +568,15 @@ public class ObjectAnnotationPanel
     super.finishInit();
     setLeftDividerLocation(0.2);
     setRightDividerLocation(0.75);
+  }
+
+  /**
+   * Hook method just before the panel is made visible.
+   */
+  @Override
+  protected void beforeShow() {
+    super.beforeShow();
+    m_ButtonMaxMin.setVisible(getParentDialog() instanceof BaseDialog);
   }
 
   /**
@@ -1383,6 +1402,27 @@ public class ObjectAnnotationPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Toggles the window size between normal and maximized.
+   */
+  public void toggleWindowSize() {
+    BaseDialog dialog;
+
+    if (getParentDialog() instanceof BaseDialog) {
+      dialog = (BaseDialog) getParentDialog();
+      if (dialog.canMaximize()) {
+	dialog.maximize();
+	m_ButtonMaxMin.setIcon(ImageManager.getIcon("minimize.png"));
+	m_ButtonMaxMin.setToolTipText("Minimize window");
+      }
+      else if (dialog.canMinimize()) {
+	dialog.minimize();
+	m_ButtonMaxMin.setIcon(ImageManager.getIcon("maximize.png"));
+	m_ButtonMaxMin.setToolTipText("Maximize window");
+      }
+    }
   }
 
   /**

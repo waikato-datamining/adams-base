@@ -33,6 +33,7 @@ import adams.data.json.JsonHelper;
 import adams.env.Environment;
 import adams.flow.container.ImageSegmentationContainer;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFrame;
 import adams.gui.core.BasePanel;
@@ -177,6 +178,9 @@ public class SegmentationPanel
 
   /** the button for performing a redo. */
   protected BaseFlatButton m_ButtonRedo;
+
+  /** the button for maximize/minimize. */
+  protected BaseFlatButton m_ButtonMaxMin;
 
   /** the button for help. */
   protected BaseFlatButton m_ButtonHelp;
@@ -333,6 +337,10 @@ public class SegmentationPanel
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     panel.add(m_ButtonRedo);
+    m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
+    m_ButtonMaxMin.setToolTipText("Maximize window");
+    m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());
+    panel.add(m_ButtonMaxMin);
     m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
     m_ButtonHelp.setToolTipText("Display help");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
@@ -504,6 +512,15 @@ public class SegmentationPanel
   }
 
   /**
+   * Hook method just before the panel is made visible.
+   */
+  @Override
+  protected void beforeShow() {
+    super.beforeShow();
+    m_ButtonMaxMin.setVisible(getParentDialog() instanceof BaseDialog);
+  }
+
+  /**
    * Returns the layer manager.
    *
    * @return		the manager
@@ -643,6 +660,27 @@ public class SegmentationPanel
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Toggles the window size between normal and maximized.
+   */
+  public void toggleWindowSize() {
+    BaseDialog	dialog;
+
+    if (getParentDialog() instanceof BaseDialog) {
+      dialog = (BaseDialog) getParentDialog();
+      if (dialog.canMaximize()) {
+	dialog.maximize();
+	m_ButtonMaxMin.setIcon(ImageManager.getIcon("minimize.png"));
+	m_ButtonMaxMin.setToolTipText("Minimize window");
+      }
+      else if (dialog.canMinimize()) {
+	dialog.minimize();
+	m_ButtonMaxMin.setIcon(ImageManager.getIcon("maximize.png"));
+	m_ButtonMaxMin.setToolTipText("Maximize window");
+      }
+    }
   }
 
   /**
