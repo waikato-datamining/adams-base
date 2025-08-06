@@ -15,7 +15,7 @@
 
 /*
  * BaseDialog.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -26,6 +26,7 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -70,6 +71,12 @@ public class BaseDialog
 
   /** the actions to execute after the dialog has been hidden. */
   protected Set<Runnable> m_AfterHideActions;
+
+  /** the dimensions of the dialog before maximizing it. */
+  protected Dimension m_SizeBeforeMaximize;
+
+  /** the position of the dialog before maximizing it. */
+  protected Point m_LocationBeforeMaximize;
 
   /**
    * Creates a modeless dialog without a title and without a specified Frame
@@ -177,14 +184,16 @@ public class BaseDialog
    * For initializing members.
    */
   protected void initialize() {
-    m_DisposeCalled     = false;
-    m_UISettingsPrefix  = "";
-    m_UISettingsStored  = false;
-    m_UISettingsApplied = false;
-    m_BeforeHideActions = new HashSet<>();
-    m_AfterHideActions  = new HashSet<>();
-    m_BeforeShowActions = new HashSet<>();
-    m_AfterShowActions  = new HashSet<>();
+    m_DisposeCalled           = false;
+    m_UISettingsPrefix        = "";
+    m_UISettingsStored        = false;
+    m_UISettingsApplied       = false;
+    m_BeforeHideActions       = new HashSet<>();
+    m_AfterHideActions        = new HashSet<>();
+    m_BeforeShowActions       = new HashSet<>();
+    m_AfterShowActions        = new HashSet<>();
+    m_SizeBeforeMaximize = null;
+    m_LocationBeforeMaximize = null;
   }
 
   /**
@@ -485,6 +494,48 @@ public class BaseDialog
   protected void executeBeforeHideActions() {
     for (Runnable r: m_BeforeHideActions) {
       SwingUtilities.invokeLater(r);
+    }
+  }
+
+  /**
+   * Returns whether the dialog can be maximized, i.e., not yet maximized.
+   *
+   * @return		true if it can be maximized
+   */
+  public boolean canMaximize() {
+    return (m_SizeBeforeMaximize == null);
+  }
+
+  /**
+   * Maximizes the dialog.
+   */
+  public void maximize() {
+    m_SizeBeforeMaximize     = getSize();
+    m_LocationBeforeMaximize = getLocation();
+    setSize(GUIHelper.getScreenBounds(this).getSize());
+    setLocation(0, 0);
+  }
+
+  /**
+   * Returns whether the dialog can be minimized, i.e., previously maximized.
+   *
+   * @return		true if it can be minimized
+   */
+  public boolean canMinimize() {
+    return (m_SizeBeforeMaximize != null);
+  }
+
+  /**
+   * Minimizes the dialog.
+   */
+  public void minimize() {
+    if (m_SizeBeforeMaximize != null) {
+      setSize(m_SizeBeforeMaximize);
+      m_SizeBeforeMaximize = null;
+    }
+    if (m_LocationBeforeMaximize != null) {
+      setLocation(m_LocationBeforeMaximize);
+      m_LocationBeforeMaximize = null;
     }
   }
 }
