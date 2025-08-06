@@ -515,25 +515,27 @@ public class ObjectAnnotationPanel
 	  e.consume();
 	  redo();
 	}
-	// zoom in with ctrl+=
-	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_EQUALS)) {
-	  e.consume();
-	  zoomIn();
-	}
-	// zoom out with ctrl+-
-	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_MINUS)) {
-	  e.consume();
-	  zoomOut();
-	}
-	// zoom 100% with ctrl+1
-	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_1)) {
-	  e.consume();
-	  clearZoom();
-	}
-	// best fit with ctrl+f
-	else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_F)) {
-	  e.consume();
-	  bestFitZoom();
+	else if (isZoomVisible()) {
+	  // zoom in with ctrl+=
+	  if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_EQUALS)) {
+	    e.consume();
+	    zoomIn();
+	  }
+	  // zoom out with ctrl+-
+	  else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_MINUS)) {
+	    e.consume();
+	    zoomOut();
+	  }
+	  // zoom 100% with ctrl+1
+	  else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_1)) {
+	    e.consume();
+	    clearZoom();
+	  }
+	  // best fit with ctrl+f
+	  else if (KeyUtils.isOnlyCtrlDown(e.getModifiersEx()) && (e.getKeyCode() == KeyEvent.VK_F)) {
+	    e.consume();
+	    bestFitZoom();
+	  }
 	}
       }
     };
@@ -1389,13 +1391,19 @@ public class ObjectAnnotationPanel
    * @return		the help
    */
   public String help() {
-    return "Available keyboard shortcuts when the canvas panel has the focus:\n"
+    String	result;
+
+    result = "Available keyboard shortcuts when the canvas panel has the focus:\n"
 	     + "- CTRL+Z: undo\n"
-	     + "- CTRL+Y: redo\n"
-	     + "- CTRL+1: 100% zoom\n"
+	     + "- CTRL+Y: redo\n";
+
+    if (isZoomVisible())
+      result +="- CTRL+1: 100% zoom\n"
 	     + "- CTRL+F: best fit zoom\n"
 	     + "- CTRL+=: zoom in\n"
 	     + "- CTRL+-: zoom out\n";
+
+    return result;
   }
 
   /**
