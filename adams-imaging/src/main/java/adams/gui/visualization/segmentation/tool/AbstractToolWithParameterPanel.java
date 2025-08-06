@@ -21,15 +21,22 @@
 package adams.gui.visualization.segmentation.tool;
 
 import adams.core.Utils;
+import adams.data.json.JsonHelper;
+import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextComponent;
+import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
+import adams.gui.core.StringFavorites;
+import adams.gui.core.StringFavorites.StringFavoriteSelectionEvent;
+import net.minidev.json.JSONObject;
 
 import javax.swing.AbstractButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.text.JTextComponent;
@@ -53,6 +60,9 @@ public abstract class AbstractToolWithParameterPanel
 
   /** the apply button. */
   protected BaseFlatButton m_ButtonApply;
+
+  /** the button for the favorites. */
+  protected BaseButton m_ButtonFavorites;
 
   /** the parameter panel. */
   protected ParameterPanel m_ParameterPanel;
@@ -96,6 +106,9 @@ public abstract class AbstractToolWithParameterPanel
 
     m_ButtonApply = createApplyButton();
 
+    m_ButtonFavorites = new BaseButton(ImageManager.getIcon("favorite.gif"));
+    m_ButtonFavorites.addActionListener(e -> showFavoritesMenu());
+
     panel = new JPanel(new BorderLayout());
     result.add(panel, BorderLayout.NORTH);
 
@@ -109,6 +122,7 @@ public abstract class AbstractToolWithParameterPanel
     panelButton = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelButton.add(m_ButtonApply);
     setApplyButtonState(m_ButtonApply, false);
+    panelButton.add(m_ButtonFavorites);
     panel2.add(panelButton, BorderLayout.SOUTH);
 
     return result;
@@ -354,5 +368,45 @@ public abstract class AbstractToolWithParameterPanel
     }
 
     return result;
+  }
+
+  /**
+   * Returns the options for the favorites.
+   *
+   * @return		the JSON string from the options
+   */
+  protected String getFavoritesOptions() {
+    return JsonHelper.fromMap(getCurrentOptions()).toJSONString();
+  }
+
+  /**
+   * Parses the JSON string and sets the options.
+   *
+   * @param json	the options as json string
+   */
+  protected void setFavoritesOptions(String json) {
+    JSONObject		obj;
+    Map<String,Object>	map;
+
+    obj = (JSONObject) JsonHelper.parse(json, null);
+    if (obj != null) {
+      map = JsonHelper.toMap(obj, true);
+      updateOptions(map);
+    }
+  }
+
+  /**
+   * Displays the favorites menu.
+   */
+  protected void showFavoritesMenu() {
+    JPopupMenu menu;
+
+    menu = new JPopupMenu();
+    StringFavorites.getSingleton().addFavoritesMenuItems(
+      menu,
+      getClass(),
+      getFavoritesOptions(),
+      (StringFavoriteSelectionEvent fe) -> setFavoritesOptions(fe.getFavorite().getData()));
+    menu.show(m_ButtonFavorites, 0, m_ButtonFavorites.getHeight());
   }
 }
