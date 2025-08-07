@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2025-07-14 09:54:48
+# Date: 2025-08-08 10:55:23
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -28,6 +28,6 @@ adams.flow.control.Flow -annotation "Allows the user to attach classification la
    adams.flow.transformer.IncVariable -var-name count -output-variable-value true
    adams.flow.sink.CallableSink -callable ProgressBar
   adams.flow.transformer.ImageFileReader -reader adams.data.io.input.JAIImageReader -load-meta-data true -meta-data-reader adams.data.io.input.DefaultSimpleReportReader
-  adams.flow.transformer.ImageLabeler -label @{labels} -use-buttons @{use_buttons} -overlay "adams.gui.visualization.object.overlay.ClassificationLabelTextOverlay -label-font Dialog-PLAIN-40 -label-offset-y 40" -best-fit true -interaction-logging-filter adams.gui.visualization.image.interactionlogging.Null -tool-options-restore @{tools_restore_file}
+  adams.flow.transformer.ImageLabeler -label @{labels} -use-buttons @{use_buttons} -overlay "adams.gui.visualization.object.overlay.ClassificationLabelTextOverlay -label-font Dialog-PLAIN-40 -label-offset-y 40" -best-fit true -interaction-logging-filter adams.gui.visualization.image.interactionlogging.Null -tool-options-restore @{tools_restore_file} -show-flow-control-buttons true
   adams.flow.transformer.ReportFileWriter -writer adams.data.io.output.DefaultSimpleReportWriter -generator "adams.core.io.SimpleFixedFilenameGenerator -name @{outreport}"
  adams.flow.control.CloseCallableDisplay -callable ProgressBar

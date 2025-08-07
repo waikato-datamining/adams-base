@@ -1,5 +1,5 @@
 # Project: adams
-# Date: 2025-07-14 09:54:04
+# Date: 2025-08-08 10:55:11
 # User: fracpete
 # Charset: UTF-8
 # Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
@@ -35,7 +35,7 @@ adams.flow.control.Flow -annotation "Allows the user to annotate JPG/PNG images 
    adams.flow.transformer.ImageSegmentationFileReader -name indexed_png -reader "adams.data.io.input.IndexedPNGImageSegmentationReader -layer-name @{labels} -lenient true"
    adams.flow.transformer.ImageSegmentationFileReader -name "individual layers- read as is" -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.PassThrough"
    adams.flow.transformer.ImageSegmentationFileReader -name "individual layers- replace predominant" -reader "adams.data.io.input.IndividualImageSegmentationLayerReader -layer-transformer adams.data.image.transformer.ReplacePredominantColor"
-  adams.flow.transformer.ImageSegmentationAnnotator -name "Image segmentation" -short-title true -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -max-undo @{max_undo} -best-fit @{best_fit} -use-separate-layers @{use_separate_layers} -layer-visibility PREVIOUSLY_VISIBLE -allow-layer-remove true -allow-layer-actions true -tool-options-restore @{tools_restore_file}
+  adams.flow.transformer.ImageSegmentationAnnotator -name "Image segmentation" -short-title true -label @{labels} -color-provider adams.gui.visualization.core.DefaultColorProvider -max-undo @{max_undo} -best-fit @{best_fit} -use-separate-layers @{use_separate_layers} -layer-visibility PREVIOUSLY_VISIBLE -allow-layer-remove true -allow-layer-actions true -tool-options-restore @{tools_restore_file} -show-flow-control-buttons true
   adams.flow.control.Switch -name save -condition "adams.flow.condition.bool.HasVariableValue -variable-name file_format -value bluechannel" -condition "adams.flow.condition.bool.HasVariableValue -variable-name file_format -value grayscale" -condition "adams.flow.condition.bool.HasVariableValue -variable-name file_format -value indexed_png" -condition "adams.flow.condition.bool.HasVariableValue -variable-name file_format -value individual_layers" -condition "adams.flow.condition.bool.HasVariableValue -variable-name file_format -value individual_layers-replace_dominant"
    adams.flow.sink.ImageSegmentationFileWriter -name bluechannel -output @{file} -writer "adams.data.io.output.BlueChannelImageSegmentationWriter -skip-base-image true -layer-name @{labels} -implicit-background @{skip_first_layer}"
    adams.flow.sink.ImageSegmentationFileWriter -name grayscale -output @{file} -writer "adams.data.io.output.GrayscaleImageSegmentationWriter -skip-base-image true -layer-name @{labels} -implicit-background @{skip_first_layer}"
