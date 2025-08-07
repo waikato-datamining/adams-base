@@ -15,11 +15,14 @@
 
 /*
  * AbstractImageLayer.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
 
+import adams.data.image.BufferedImageHelper;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -91,5 +94,15 @@ public abstract class AbstractImageLayer
   public void draw(Graphics2D g2d) {
     if (isEnabled() && (m_Image != null))
       doDraw(g2d);
+  }
+
+  /**
+   * Rotates the images by the specified number of degrees.
+   * Caller must call the update() method.
+   *
+   * @param degrees	the rotation
+   */
+  public void rotate(int degrees) {
+    m_Image = BufferedImageHelper.rotate(m_Image, degrees, new Color(0, 0, 0, 0));
   }
 }

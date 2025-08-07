@@ -76,6 +76,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -178,6 +179,12 @@ public class SegmentationPanel
 
   /** the button for performing a redo. */
   protected BaseFlatButton m_ButtonRedo;
+
+  /** the button for rotating left. */
+  protected BaseFlatButton m_ButtonRotateLeft;
+  
+  /** the button for rotating right. */
+  protected BaseFlatButton m_ButtonRotateRight;
 
   /** the button for maximize/minimize. */
   protected BaseFlatButton m_ButtonMaxMin;
@@ -347,6 +354,14 @@ public class SegmentationPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelButtons.add(panel, BorderLayout.EAST);
 
+    m_ButtonRotateLeft = new BaseFlatButton(ImageManager.getIcon("rotate_left.png"));
+    m_ButtonRotateLeft.setToolTipText("Rotates the view by -90 degrees");
+    m_ButtonRotateLeft.addActionListener((ActionEvent e) -> rotate(-90));
+    panel.add(m_ButtonRotateLeft);
+    m_ButtonRotateRight = new BaseFlatButton(ImageManager.getIcon("rotate_right.png"));
+    m_ButtonRotateRight.setToolTipText("Rotates the view by +90 degrees");
+    m_ButtonRotateRight.addActionListener((ActionEvent e) -> rotate(90));
+    panel.add(m_ButtonRotateRight);
     m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
     m_ButtonMaxMin.setToolTipText("Maximize window");
     m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());
@@ -670,6 +685,15 @@ public class SegmentationPanel
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Rotates the view by the specified amount of degrees.
+   *
+   * @param degrees	the degrees to rotate by
+   */
+  public void rotate(int degrees) {
+    m_Manager.rotate(degrees);
   }
 
   /**
@@ -1038,6 +1062,20 @@ public class SegmentationPanel
   }
 
   /**
+   * Reverts any rotation, if necessary.
+   *
+   * @param img		the image to process
+   * @param rotation	the rotation in degrees
+   * @return		the (potentially) updated image
+   */
+  protected BufferedImage revertRotation(BufferedImage img, int rotation) {
+    if (rotation == 0)
+      return img;
+    else
+      return BufferedImageHelper.rotate(img, -rotation, new Color(0, 0, 0, 0));
+  }
+
+  /**
    * Turns the layers into a container.
    *
    * @param useSeparateLayers	whether to use separate layers or combined layers
@@ -1046,15 +1084,17 @@ public class SegmentationPanel
   public ImageSegmentationContainer toContainer(boolean useSeparateLayers) {
     ImageSegmentationContainer 	result;
     Map<String, BufferedImage> 	layers;
+    int				rotation;
 
-    layers = new HashMap<>();
+    layers   = new HashMap<>();
+    rotation = getManager().getRotation();
     if (useSeparateLayers) {
       for (OverlayLayer l : getManager().getOverlays())
-	layers.put(l.getName(), l.getBinaryImage());
+	layers.put(l.getName(), revertRotation(l.getBinaryImage(), rotation));
     }
     else {
       for (CombinedLayer.CombinedSubLayer l: getManager().getCombinedLayer().getSubLayers())
-	layers.put(l.getName(), l.getBinaryImage());
+	layers.put(l.getName(), revertRotation(l.getBinaryImage(), rotation));
     }
 
     result = new ImageSegmentationContainer();

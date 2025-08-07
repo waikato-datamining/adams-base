@@ -94,6 +94,9 @@ public class LayerManager
   /** the marker points to draw. */
   protected Markers m_Markers;
 
+  /** the current rotation. */
+  protected int m_Rotation;
+
   /**
    * Initializes the layer manager using split layers.
    *
@@ -117,6 +120,7 @@ public class LayerManager
     m_Undo.addUndoListener(this);
     m_Undo.setMaxUndo(20);
     m_Markers         = new Markers(this);
+    m_Rotation        = 0;
   }
 
   /**
@@ -176,6 +180,7 @@ public class LayerManager
     if (m_CombinedLayer != null)
       m_CombinedLayer.clear();
     m_Undo.clear();
+    m_Rotation = 0;
     update();
   }
 
@@ -939,5 +944,43 @@ public class LayerManager
 	layer.setEnabled(!layer.isEnabled());
     }
     finishUpdate(true);
+  }
+
+  /**
+   * Rotates the images by the specified number of degrees.
+   *
+   * @param degrees	the rotation
+   */
+  public void rotate(int degrees) {
+    for (AbstractLayer layer: getLayers()) {
+      if (layer instanceof AbstractImageLayer)
+	((AbstractImageLayer) layer).rotate(degrees);
+    }
+
+    // keep track how much we've rotated so far
+    m_Rotation += degrees;
+    if (m_Rotation >= 360)
+      m_Rotation = 0;
+    if (m_Rotation <= -360)
+      m_Rotation = 0;
+
+    update();
+  }
+
+  /**
+   * Reverts any rotation.
+   */
+  public void revertRotation() {
+    if (m_Rotation != 0)
+      rotate(-m_Rotation);
+  }
+
+  /**
+   * Returns the current rotation in degrees.
+   *
+   * @return		the current rotation
+   */
+  public int getRotation() {
+    return m_Rotation;
   }
 }

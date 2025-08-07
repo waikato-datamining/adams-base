@@ -15,7 +15,7 @@
 
 /*
  * ImageLayer.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer;
@@ -32,6 +32,7 @@ import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
@@ -263,5 +264,17 @@ public class ImageLayer
       return;
     setApplyButtonState(m_ButtonApply, false);
     super.update();
+  }
+
+  /**
+   * Rotates the images by the specified number of degrees.
+   * Caller must call the update() method.
+   *
+   * @param degrees	the rotation
+   */
+  public void rotate(int degrees) {
+    super.rotate(degrees);
+    if (m_BrightImage != null)
+      m_BrightImage = BufferedImageHelper.rotate(m_BrightImage, degrees, new Color(0, 0, 0, 0));
   }
 }
