@@ -866,4 +866,41 @@ public class BufferedImageHelper {
     g.dispose();
     return result;
   }
+
+  /**
+   * Rotates the images by the specified number of degrees.
+   *
+   * @param img 	the image to rotate
+   * @param degrees	the rotation
+   * @param background 	the background color to use
+   * @return		the rotated image
+   */
+  public static BufferedImage rotate(BufferedImage img, int degrees, Color background) {
+    BufferedImage 	result;
+    double 		sin;
+    double 		cos;
+    int 		widthOld;
+    int			heightOld;
+    int 		widthNew;
+    int 		heightNew;
+    Graphics2D 		g;
+
+    sin       = Math.abs(Math.sin(Math.toRadians(degrees)));
+    cos       = Math.abs(Math.cos(Math.toRadians(degrees)));
+    widthOld  = img.getWidth();
+    heightOld = img.getHeight();
+    widthNew  = (int) Math.floor(widthOld * cos + heightOld * sin);
+    heightNew = (int) Math.floor(heightOld * cos + widthOld * sin);
+
+    result    = new BufferedImage(widthNew, heightNew, img.getType());
+    g         = result.createGraphics();
+    g.setColor(background);
+    g.fillRect(0, 0, widthNew, heightNew);
+    g.translate((widthNew - widthOld) / 2, (heightNew - heightOld) / 2);
+    g.rotate(Math.toRadians(degrees), widthOld / 2, heightOld / 2);
+    g.drawRenderedImage(img, null);
+    g.dispose();
+
+    return result;
+  }
 }
