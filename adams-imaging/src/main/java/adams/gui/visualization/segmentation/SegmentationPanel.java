@@ -32,6 +32,8 @@ import adams.data.io.input.PNGImageReader;
 import adams.data.json.JsonHelper;
 import adams.env.Environment;
 import adams.flow.container.ImageSegmentationContainer;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFlatButton;
@@ -104,7 +106,7 @@ import java.util.Set;
  */
 public class SegmentationPanel
     extends BasePanel
-    implements ChangeListener, UndoListener, CleanUpHandler {
+    implements ChangeListener, UndoListener, CleanUpHandler, FlowContextHandler {
 
   private static final long serialVersionUID = -7354416525309860289L;
 
@@ -186,6 +188,9 @@ public class SegmentationPanel
   /** the button for rotating right. */
   protected BaseFlatButton m_ButtonRotateRight;
 
+  /** the button for stopping the flow. */
+  protected BaseFlatButton m_ButtonStopFlow;
+
   /** the button for maximize/minimize. */
   protected BaseFlatButton m_ButtonMaxMin;
 
@@ -260,6 +265,9 @@ public class SegmentationPanel
 
   /** listeners for when tool options get updated. */
   protected Set<ChangeListener> m_ToolOptionsUpdatedListeners;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Initializes the members.
@@ -336,7 +344,20 @@ public class SegmentationPanel
     m_ButtonZoomBestFit.setToolTipText("Best fit");
     m_ButtonZoomBestFit.addActionListener((ActionEvent e) -> bestFitZoom());
     panel.add(m_ButtonZoomBestFit);
+
     panel.add(new JLabel(" "));
+
+    m_ButtonRotateLeft = new BaseFlatButton(ImageManager.getIcon("rotate_left.png"));
+    m_ButtonRotateLeft.setToolTipText("Rotates the view by -90 degrees");
+    m_ButtonRotateLeft.addActionListener((ActionEvent e) -> rotate(-90));
+    panel.add(m_ButtonRotateLeft);
+    m_ButtonRotateRight = new BaseFlatButton(ImageManager.getIcon("rotate_right.png"));
+    m_ButtonRotateRight.setToolTipText("Rotates the view by +90 degrees");
+    m_ButtonRotateRight.addActionListener((ActionEvent e) -> rotate(90));
+    panel.add(m_ButtonRotateRight);
+
+    panel.add(new JLabel(" "));
+
     m_ButtonAddUndo = new BaseFlatButton(ImageManager.getIcon("undo_add.gif"));
     m_ButtonAddUndo.setToolTipText("Add undo point");
     m_ButtonAddUndo.addActionListener((ActionEvent e) -> addUndoPoint());
@@ -354,18 +375,15 @@ public class SegmentationPanel
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panelButtons.add(panel, BorderLayout.EAST);
 
-    m_ButtonRotateLeft = new BaseFlatButton(ImageManager.getIcon("rotate_left.png"));
-    m_ButtonRotateLeft.setToolTipText("Rotates the view by -90 degrees");
-    m_ButtonRotateLeft.addActionListener((ActionEvent e) -> rotate(-90));
-    panel.add(m_ButtonRotateLeft);
-    m_ButtonRotateRight = new BaseFlatButton(ImageManager.getIcon("rotate_right.png"));
-    m_ButtonRotateRight.setToolTipText("Rotates the view by +90 degrees");
-    m_ButtonRotateRight.addActionListener((ActionEvent e) -> rotate(90));
-    panel.add(m_ButtonRotateRight);
     m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
     m_ButtonMaxMin.setToolTipText("Maximize window");
     m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());
     panel.add(m_ButtonMaxMin);
+    m_ButtonStopFlow = new BaseFlatButton(ImageManager.getIcon("stop_blue.gif"));
+    m_ButtonStopFlow.setToolTipText("Stops the current flow");
+    m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
+    m_ButtonStopFlow.setVisible(false);
+    panel.add(m_ButtonStopFlow);
     m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
     m_ButtonHelp.setToolTipText("Display help");
     m_ButtonHelp.addActionListener((ActionEvent e) -> showHelp());
@@ -546,6 +564,26 @@ public class SegmentationPanel
   }
 
   /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  @Override
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  @Override
+  public Actor getFlowContext() {
+    return m_FlowContext;
+  }
+
+  /**
    * Returns the layer manager.
    *
    * @return		the manager
@@ -685,6 +723,32 @@ public class SegmentationPanel
    */
   public void undoOccurred(UndoEvent e) {
     updateButtons();
+  }
+
+  /**
+   * Sets whether to show the stop flow button.
+   *
+   * @param value 	true if to show
+   */
+  public void setStopFlowButtonVisible(boolean value) {
+    m_ButtonStopFlow.setVisible(value);
+  }
+
+  /**
+   * Returns whether to show the stop flow button.
+   *
+   * @return 		true if to show
+   */
+  public boolean isStopFlowButtonVisible() {
+    return m_ButtonStopFlow.isVisible();
+  }
+
+  /**
+   * Stops the flow execution, if a flow context is set and the stop button visible.
+   */
+  public void stopFlow() {
+    if ((m_FlowContext != null) && m_ButtonStopFlow.isVisible())
+      m_FlowContext.stopExecution("User stopped flow.");
   }
 
   /**

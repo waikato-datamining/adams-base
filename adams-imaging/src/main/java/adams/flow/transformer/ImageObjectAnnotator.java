@@ -31,6 +31,7 @@ import adams.data.image.BufferedImageContainer;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
+import adams.flow.core.FlowControlButtonsSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
@@ -90,6 +91,7 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -113,12 +115,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-short-title &lt;boolean&gt; (property: shortTitle)
@@ -241,12 +245,24 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
+ * <pre>-tool-options-restore &lt;adams.core.io.PlaceholderFile&gt; (property: toolOptionsRestore)
+ * &nbsp;&nbsp;&nbsp;The JSON file to store the tool options in for restoring it the next time
+ * &nbsp;&nbsp;&nbsp;the actor gets called; ignored if pointing to a directory.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
+ * <pre>-show-flow-control-buttons &lt;boolean&gt; (property: showFlowControlButtons)
+ * &nbsp;&nbsp;&nbsp;If enabled, shows the 'stop flow' button.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageObjectAnnotator
-  extends AbstractInteractiveTransformerDialog {
+  extends AbstractInteractiveTransformerDialog
+  implements FlowControlButtonsSupporter {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -293,6 +309,9 @@ public class ImageObjectAnnotator
 
   /** the json file to store the tool options in. */
   protected PlaceholderFile m_ToolOptionsRestore;
+
+  /** whether to show the flow control buttons. */
+  protected boolean m_ShowFlowControlButtons;
 
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
@@ -396,6 +415,10 @@ public class ImageObjectAnnotator
     m_OptionManager.add(
       "tool-options-restore", "toolOptionsRestore",
       new PlaceholderFile("."));
+
+    m_OptionManager.add(
+      "show-flow-control-buttons", "showFlowControlButtons",
+      false);
   }
 
   /**
@@ -866,6 +889,38 @@ public class ImageObjectAnnotator
   }
 
   /**
+   * Sets whether to show flow control button(s).
+   *
+   * @param value 	true if to show
+   */
+  @Override
+  public void setShowFlowControlButtons(boolean value) {
+    m_ShowFlowControlButtons = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show flow control button(s).
+   *
+   * @return 		true if to show
+   */
+  @Override
+  public boolean getShowFlowControlButtons() {
+    return m_ShowFlowControlButtons;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String showFlowControlButtonsTipText() {
+    return "If enabled, shows the 'stop flow' button.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -940,6 +995,8 @@ public class ImageObjectAnnotator
     m_PanelObjectAnnotation.setUsePreviousReportVisible(m_AllowUsingPreviousReport);
     m_ToolOptionsUpdatedListener = e -> m_PanelObjectAnnotation.saveToolOptions(m_ToolOptionsRestore, this);
     m_PanelObjectAnnotation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
+    m_PanelObjectAnnotation.setStopFlowButtonVisible(m_ShowFlowControlButtons);
+    m_PanelObjectAnnotation.setFlowContext(this);
     return m_PanelObjectAnnotation;
   }
 

@@ -15,7 +15,7 @@
 
 /*
  * ImageSegmentationViewer.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -672,6 +672,7 @@ public class ImageSegmentationViewer
     m_PanelSegmentation.setToolPanelVisible(false);
     m_PanelSegmentation.setAutomaticUndoEnabled(false);
     m_PanelSegmentation.getUndo().setEnabled(false);
+    m_PanelSegmentation.setFlowContext(this);
 
     return m_PanelSegmentation;
   }

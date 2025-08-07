@@ -26,6 +26,7 @@ import adams.core.io.PlaceholderFile;
 import adams.data.RoundingUtils;
 import adams.data.image.AbstractImageContainer;
 import adams.flow.container.ImageSegmentationContainer;
+import adams.flow.core.FlowControlButtonsSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseDialog;
@@ -242,13 +243,18 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
+ * <pre>-show-flow-control-buttons &lt;boolean&gt; (property: showFlowControlButtons)
+ * &nbsp;&nbsp;&nbsp;If enabled, shows the 'stop flow' button.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class ImageSegmentationAnnotator
   extends AbstractInteractiveTransformerDialog
-  implements ColorProviderHandler {
+  implements ColorProviderHandler, FlowControlButtonsSupporter {
 
   private static final long serialVersionUID = -761517109077084448L;
 
@@ -302,6 +308,9 @@ public class ImageSegmentationAnnotator
 
   /** the json file to store the tool options in. */
   protected PlaceholderFile m_ToolOptionsRestore;
+
+  /** whether to show the flow control buttons. */
+  protected boolean m_ShowFlowControlButtons;
 
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
@@ -394,6 +403,10 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "tool-options-restore", "toolOptionsRestore",
       new PlaceholderFile("."));
+
+    m_OptionManager.add(
+      "show-flow-control-buttons", "showFlowControlButtons",
+      false);
   }
 
   /**
@@ -897,6 +910,38 @@ public class ImageSegmentationAnnotator
   }
 
   /**
+   * Sets whether to show flow control button(s).
+   *
+   * @param value 	true if to show
+   */
+  @Override
+  public void setShowFlowControlButtons(boolean value) {
+    m_ShowFlowControlButtons = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show flow control button(s).
+   *
+   * @return 		true if to show
+   */
+  @Override
+  public boolean getShowFlowControlButtons() {
+    return m_ShowFlowControlButtons;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String showFlowControlButtonsTipText() {
+    return "If enabled, shows the 'stop flow' button.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -945,6 +990,8 @@ public class ImageSegmentationAnnotator
     m_PanelSegmentation.getUndo().setMaxUndo(m_MaxUndo <= 0 ? -1 : m_MaxUndo);
     m_ToolOptionsUpdatedListener = e -> m_PanelSegmentation.saveToolOptions(m_ToolOptionsRestore, this);
     m_PanelSegmentation.addToolOptionsUpdatedListener(m_ToolOptionsUpdatedListener);
+    m_PanelSegmentation.setStopFlowButtonVisible(m_ShowFlowControlButtons);
+    m_PanelSegmentation.setFlowContext(this);
     return m_PanelSegmentation;
   }
 

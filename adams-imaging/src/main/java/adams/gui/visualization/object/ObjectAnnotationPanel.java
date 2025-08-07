@@ -33,6 +33,8 @@ import adams.data.io.input.DefaultSimpleReportReader;
 import adams.data.json.JsonHelper;
 import adams.data.report.Report;
 import adams.env.Environment;
+import adams.flow.core.Actor;
+import adams.flow.core.FlowContextHandler;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BaseFlatButton;
@@ -116,7 +118,8 @@ import java.util.Set;
  */
 public class ObjectAnnotationPanel
   extends BasePanel
-  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager, PopupMenuCustomizer {
+  implements CleanUpHandler, UndoHandlerWithQuickAccess, UndoListener, InteractionLogManager,
+	       PopupMenuCustomizer, FlowContextHandler {
 
   private static final long serialVersionUID = 2804494506168717754L;
 
@@ -181,6 +184,9 @@ public class ObjectAnnotationPanel
 
   /** for toggling the visibility of the annotations. */
   protected BaseToggleButton m_ButtonShowAnnotations;
+
+  /** the button for stopping the flow. */
+  protected BaseFlatButton m_ButtonStopFlow;
 
   /** the button for maximize/minimize. */
   protected BaseFlatButton m_ButtonMaxMin;
@@ -274,6 +280,9 @@ public class ObjectAnnotationPanel
 
   /** listeners for when tool options get updated. */
   protected Set<ChangeListener> m_ToolOptionsUpdatedListeners;
+
+  /** the flow context. */
+  protected Actor m_FlowContext;
 
   /**
    * Initializes the members.
@@ -420,6 +429,12 @@ public class ObjectAnnotationPanel
     m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());
     panel.add(new JLabel(" "));
     panel.add(m_ButtonMaxMin);
+
+    m_ButtonStopFlow = new BaseFlatButton(ImageManager.getIcon("stop_blue.gif"));
+    m_ButtonStopFlow.setToolTipText("Stops the current flow");
+    m_ButtonStopFlow.addActionListener((ActionEvent e) -> stopFlow());
+    panel.add(new JLabel(" "));
+    panel.add(m_ButtonStopFlow);
 
     m_ButtonHelp = new BaseFlatButton(ImageManager.getIcon("help2.png"));
     m_ButtonHelp.setToolTipText("Display help");
@@ -586,6 +601,26 @@ public class ObjectAnnotationPanel
   protected void beforeShow() {
     super.beforeShow();
     m_ButtonMaxMin.setVisible(getParentDialog() instanceof BaseDialog);
+  }
+
+  /**
+   * Sets the flow context.
+   *
+   * @param value the actor
+   */
+  @Override
+  public void setFlowContext(Actor value) {
+    m_FlowContext = value;
+  }
+
+  /**
+   * Returns the flow context, if any.
+   *
+   * @return the actor, null if none available
+   */
+  @Override
+  public Actor getFlowContext() {
+    return m_FlowContext;
   }
 
   /**
@@ -1411,6 +1446,32 @@ public class ObjectAnnotationPanel
    */
   public void showStatus(String msg) {
     m_StatusBar.showStatus(msg);
+  }
+
+  /**
+   * Sets whether to show the stop flow button.
+   *
+   * @param value 	true if to show
+   */
+  public void setStopFlowButtonVisible(boolean value) {
+    m_ButtonStopFlow.setVisible(value);
+  }
+
+  /**
+   * Returns whether to show the stop flow button.
+   *
+   * @return 		true if to show
+   */
+  public boolean isStopFlowButtonVisible() {
+    return m_ButtonStopFlow.isVisible();
+  }
+
+  /**
+   * Stops the flow execution, if a flow context is set and the stop button visible.
+   */
+  public void stopFlow() {
+    if ((m_FlowContext != null) && m_ButtonStopFlow.isVisible())
+      m_FlowContext.stopExecution("User stopped flow.");
   }
 
   /**
