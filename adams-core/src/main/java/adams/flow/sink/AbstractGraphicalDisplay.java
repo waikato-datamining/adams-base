@@ -15,7 +15,7 @@
 
 /*
  * AbstractGraphicalDisplay.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -25,6 +25,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.option.UserMode;
 import adams.flow.control.Flow;
 import adams.flow.core.ClearableDisplay;
+import adams.flow.core.FlowControlSubMenuSupporter;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.gui.chooser.TextFileChooser;
@@ -55,7 +56,8 @@ import java.awt.event.ActionEvent;
  */
 public abstract class AbstractGraphicalDisplay
   extends AbstractDisplay
-  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter, ClearableDisplay {
+  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter, ClearableDisplay,
+	       FlowControlSubMenuSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4882859296402745911L;
@@ -143,6 +145,7 @@ public abstract class AbstractGraphicalDisplay
    *
    * @param value 	true if to show
    */
+  @Override
   public void setShowFlowControlSubMenu(boolean value) {
     m_ShowFlowControlSubMenu = value;
     reset();
@@ -153,6 +156,7 @@ public abstract class AbstractGraphicalDisplay
    *
    * @return 		true if to show
    */
+  @Override
   public boolean getShowFlowControlSubMenu() {
     return m_ShowFlowControlSubMenu;
   }
@@ -163,6 +167,7 @@ public abstract class AbstractGraphicalDisplay
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String showFlowControlSubMenuTipText() {
     return "If enabled, adds a flow control sub-menu to the menubar.";
   }

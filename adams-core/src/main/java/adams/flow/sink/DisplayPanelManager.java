@@ -15,7 +15,7 @@
 
 /*
  * DisplayPanelManager.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -28,6 +28,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.UserMode;
 import adams.flow.control.Flow;
+import adams.flow.core.FlowControlSubMenuSupporter;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.flow.core.Token;
@@ -204,7 +205,8 @@ import java.util.Hashtable;
  */
 public class DisplayPanelManager
   extends AbstractDisplay
-  implements MenuBarProvider, ComponentSupplier, TextSupplier, SendToActionSupporter {
+  implements MenuBarProvider, ComponentSupplier, TextSupplier, SendToActionSupporter,
+	       FlowControlSubMenuSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3365817040968234289L;
@@ -919,6 +921,7 @@ public class DisplayPanelManager
    *
    * @param value 	true if to show
    */
+  @Override
   public void setShowFlowControlSubMenu(boolean value) {
     m_ShowFlowControlSubMenu = value;
     reset();
@@ -929,6 +932,7 @@ public class DisplayPanelManager
    *
    * @return 		true if to show
    */
+  @Override
   public boolean getShowFlowControlSubMenu() {
     return m_ShowFlowControlSubMenu;
   }
@@ -939,6 +943,7 @@ public class DisplayPanelManager
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String showFlowControlSubMenuTipText() {
     return "If enabled, adds a flow control sub-menu to the menubar.";
   }

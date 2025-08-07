@@ -15,7 +15,7 @@
 
 /*
  * DisplayPanelGrid.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -24,6 +24,7 @@ import adams.core.VariableNameNoUpdate;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.UserMode;
 import adams.flow.control.Flow;
+import adams.flow.core.FlowControlSubMenuSupporter;
 import adams.flow.core.StopHelper;
 import adams.flow.core.StopMode;
 import adams.flow.core.Token;
@@ -163,7 +164,8 @@ import java.util.List;
  */
 public class DisplayPanelGrid
   extends AbstractDisplay
-  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter {
+  implements MenuBarProvider, ComponentSupplier, SendToActionSupporter,
+	       FlowControlSubMenuSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -8176623753237046447L;
@@ -455,6 +457,7 @@ public class DisplayPanelGrid
    *
    * @param value 	true if to show
    */
+  @Override
   public void setShowFlowControlSubMenu(boolean value) {
     m_ShowFlowControlSubMenu = value;
     reset();
@@ -465,6 +468,7 @@ public class DisplayPanelGrid
    *
    * @return 		true if to show
    */
+  @Override
   public boolean getShowFlowControlSubMenu() {
     return m_ShowFlowControlSubMenu;
   }
@@ -475,6 +479,7 @@ public class DisplayPanelGrid
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String showFlowControlSubMenuTipText() {
     return "If enabled, adds a flow control sub-menu to the menubar.";
   }

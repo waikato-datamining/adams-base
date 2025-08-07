@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiView.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -36,6 +36,7 @@ import adams.flow.core.ActorReferenceHandlerHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.core.ClearableDisplay;
 import adams.flow.core.DataPlotUpdaterSupporter;
+import adams.flow.core.FlowControlSubMenuSupporter;
 import adams.flow.core.Flushable;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.StopHelper;
@@ -72,7 +73,8 @@ import java.util.List;
  */
 public abstract class AbstractMultiView
   extends AbstractDisplay
-  implements ActorReferenceHandler, MenuBarProvider, SendToActionSupporter {
+  implements ActorReferenceHandler, MenuBarProvider, SendToActionSupporter,
+	       FlowControlSubMenuSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -4454052058077687116L;
@@ -442,6 +444,7 @@ public abstract class AbstractMultiView
    *
    * @param value 	true if to show
    */
+  @Override
   public void setShowFlowControlSubMenu(boolean value) {
     m_ShowFlowControlSubMenu = value;
     reset();
@@ -452,6 +455,7 @@ public abstract class AbstractMultiView
    *
    * @return 		true if to show
    */
+  @Override
   public boolean getShowFlowControlSubMenu() {
     return m_ShowFlowControlSubMenu;
   }
@@ -462,6 +466,7 @@ public abstract class AbstractMultiView
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String showFlowControlSubMenuTipText() {
     return "If enabled, adds a flow control sub-menu to the menubar.";
   }
