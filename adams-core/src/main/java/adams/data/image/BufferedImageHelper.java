@@ -866,35 +866,4 @@ public class BufferedImageHelper {
     g.dispose();
     return result;
   }
-
-  /**
-   * Rotates the images by the specified number of degrees (must divisible by 90).
-   * Caller must call the update() method.
-   *
-   * @param img 	the image to rotate
-   * @param degrees	the rotation
-   * @return		the rotated image
-   */
-  public static BufferedImage rotate(BufferedImage img, int degrees) {
-    BufferedImage 	result;
-    int 		width;
-    int 		height;
-    int 		type;
-    Graphics2D 		g2d;
-
-    if (degrees % 90 != 0)
-      throw new IllegalArgumentException("Degrees must be divisible by 90, but got: " + degrees);
-
-    width    = img.getWidth();
-    height   = img.getHeight();
-    type     = img.getType();
-    result = new BufferedImage(width, height, type);
-
-    g2d = result.createGraphics();
-    g2d.rotate(Math.toRadians(degrees), width / 2, height / 2);
-    g2d.drawImage(img, null, 0, 0);
-    g2d.dispose();
-
-    return result;
-  }
 }
