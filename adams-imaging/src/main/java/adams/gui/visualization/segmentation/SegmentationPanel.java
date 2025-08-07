@@ -275,6 +275,7 @@ public class SegmentationPanel
    */
   @Override
   protected void initGUI() {
+    JPanel		panelButtons;
     JPanel		panel;
     Class[]		tools;
     JLabel		label;
@@ -287,8 +288,12 @@ public class SegmentationPanel
     setLayout(new BorderLayout());
 
     // top
+    panelButtons = new JPanel(new BorderLayout());
+    add(panelButtons, BorderLayout.NORTH);
+
+    // buttons / left
     panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    add(panel, BorderLayout.NORTH);
+    panelButtons.add(panel, BorderLayout.WEST);
 
     m_TextZoom = new NumberTextField(Type.DOUBLE, "100");
     m_TextZoom.setColumns(5);
@@ -337,6 +342,11 @@ public class SegmentationPanel
     m_ButtonRedo.setToolTipText("Redo changes");
     m_ButtonRedo.addActionListener((ActionEvent e) -> redo());
     panel.add(m_ButtonRedo);
+
+    // buttons / right
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panel, BorderLayout.EAST);
+
     m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
     m_ButtonMaxMin.setToolTipText("Maximize window");
     m_ButtonMaxMin.addActionListener((ActionEvent e) -> toggleWindowSize());

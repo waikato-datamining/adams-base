@@ -302,6 +302,7 @@ public class ObjectAnnotationPanel
    */
   @Override
   protected void initGUI() {
+    JPanel		panelButtons;
     JPanel		panel;
     JLabel		label;
     Class[]		tools;
@@ -314,8 +315,12 @@ public class ObjectAnnotationPanel
     setLayout(new BorderLayout());
 
     // top
-    panel = new JPanel(new FlowLayout(0, 0, FlowLayout.LEFT));
-    add(panel, BorderLayout.NORTH);
+    panelButtons = new JPanel(new BorderLayout());
+    add(panelButtons, BorderLayout.NORTH);
+
+    // buttons / left
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panel, BorderLayout.WEST);
 
     m_PanelZoom = new JPanel(new FlowLayout(FlowLayout.LEFT));
     panel.add(m_PanelZoom);
@@ -405,6 +410,10 @@ public class ObjectAnnotationPanel
     m_ButtonShowAnnotations.setSelected(true);
     m_ButtonShowAnnotations.addActionListener((ActionEvent e) -> setShowAnnotations(m_ButtonShowAnnotations.isSelected()));
     panel.add(m_ButtonShowAnnotations);
+
+    // buttons / right
+    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    panelButtons.add(panel, BorderLayout.EAST);
 
     m_ButtonMaxMin = new BaseFlatButton(ImageManager.getIcon("maximize.png"));
     m_ButtonMaxMin.setToolTipText("Maximize window");
