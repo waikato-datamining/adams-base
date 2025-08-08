@@ -15,7 +15,7 @@
 
 /*
  * Rotate.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -25,12 +25,10 @@ import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
 import java.awt.Polygon;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 /**
  <!-- globalinfo-start -->
- * Rotates the objects using the specified degrees.<br>
+ * Rotates the objects using the specified degrees (90 degree increments only).<br>
  * Requires the original image width before the image got rotated in order to rotate the objects correctly.
  * <br><br>
  <!-- globalinfo-end -->
@@ -39,11 +37,14 @@ import java.awt.geom.Point2D;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-angle &lt;double&gt; (property: angle)
- * &nbsp;&nbsp;&nbsp;The rotation angle in degrees.
- * &nbsp;&nbsp;&nbsp;default: 0.0
+ * <pre>-angle &lt;int&gt; (property: angle)
+ * &nbsp;&nbsp;&nbsp;The rotation angle in degrees (90 degree increments only).
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * &nbsp;&nbsp;&nbsp;maximum: 360
  * </pre>
  *
  * <pre>-image-width &lt;int&gt; (property: imageWidth)
@@ -68,7 +69,7 @@ public class Rotate
   private static final long serialVersionUID = -2181381799680316619L;
 
   /** the rotation in degrees. */
-  protected double m_Angle;
+  protected int m_Angle;
 
   /** the original image width. */
   protected int m_ImageWidth;
@@ -83,8 +84,8 @@ public class Rotate
    */
   @Override
   public String globalInfo() {
-    return "Rotates the objects using the specified degrees.\n"
-      + "Requires the original image width before the image got rotated in order to rotate the objects correctly.";
+    return "Rotates the objects using the specified degrees (90 degree increments only).\n"
+	     + "Requires the original image width before the image got rotated in order to rotate the objects correctly.";
   }
 
   /**
@@ -96,7 +97,7 @@ public class Rotate
 
     m_OptionManager.add(
       "angle", "angle",
-      0.0);
+      0, 0, 360);
 
     m_OptionManager.add(
       "image-width", "imageWidth",
@@ -112,9 +113,11 @@ public class Rotate
    *
    * @param value	the angle
    */
-  public void setAngle(double value) {
-    m_Angle = value;
-    reset();
+  public void setAngle(int value) {
+    if (getOptionManager().isValid("angle", value) && (value % 90 == 0)) {
+      m_Angle = value;
+      reset();
+    }
   }
 
   /**
@@ -122,7 +125,7 @@ public class Rotate
    *
    * @return		the angle
    */
-  public double getAngle() {
+  public int getAngle() {
     return m_Angle;
   }
 
@@ -133,7 +136,7 @@ public class Rotate
    * 			displaying in the GUI or for listing the options.
    */
   public String angleTipText() {
-    return "The rotation angle in degrees.";
+    return "The rotation angle in degrees (90 degree increments only).";
   }
 
   /**
@@ -213,6 +216,186 @@ public class Rotate
   }
 
   /**
+   * Returns the new X location.
+   *
+   * @param x		the original x
+   * @param y 		the original y
+   * @return		the rotated x
+   */
+  protected int rotateX(int x, int y) {
+    int		xN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0:
+	xN = x;
+	break;
+      case 90:
+	xN = m_ImageHeight - y - 1;
+	break;
+      case 180:
+	xN = m_ImageWidth - x - 1;
+	break;
+      case 270:
+	xN = y;
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return xN;
+  }
+
+  /**
+   * Returns the new Y location.
+   *
+   * @param x		the original x
+   * @param y 		the original y
+   * @return		the rotated y
+   */
+  protected int rotateY(int x, int y) {
+    int		yN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0:
+	yN = y;
+	break;
+      case 90:
+	yN = x;
+	break;
+      case 180:
+	yN = m_ImageHeight - y - 1;
+	break;
+      case 270:
+	yN = m_ImageWidth - x - 1;
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return yN;
+  }
+
+  /**
+   * Computes the new X for the obj.
+   *
+   * @param obj		the obj to rotate
+   * @return		the new X
+   */
+  protected int newX(LocatedObject obj) {
+    int		xN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0: // same
+	xN = obj.getX();
+	break;
+      case 90: // left/bottom
+	xN = rotateX(obj.getX(), obj.getY() + obj.getHeight() - 1);
+	break;
+      case 180: // right/bottom
+	xN = rotateX(obj.getX() + obj.getWidth() - 1, obj.getY() + obj.getHeight() - 1);
+	break;
+      case 270: // right/top
+	xN = rotateX(obj.getX() + obj.getWidth() - 1, obj.getY());
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return xN;
+  }
+
+  /**
+   * Computes the new Y for the obj.
+   *
+   * @param obj		the obj to rotate
+   * @return		the new Y
+   */
+  protected int newY(LocatedObject obj) {
+    int 	yN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0: // same
+	yN = obj.getY();
+	break;
+      case 90: // left/bottom
+	yN = rotateY(obj.getX(), obj.getY() + obj.getHeight() - 1);
+	break;
+      case 180: // right/bottom
+	yN = rotateY(obj.getX() + obj.getWidth() - 1, obj.getY() + obj.getHeight() - 1);
+	break;
+      case 270: // right/top
+	yN = rotateY(obj.getX() + obj.getWidth() - 1, obj.getY());
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return yN;
+  }
+
+  /**
+   * Computes the new width for the obj.
+   *
+   * @param obj		the obj to rotate
+   * @return		the new width
+   */
+  protected int newW(LocatedObject obj) {
+    int		wN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0:
+      case 180:
+	wN = obj.getWidth();
+	break;
+      case 90:
+      case 270:
+	wN = obj.getHeight();
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return wN;
+  }
+
+  /**
+   * Computes the new height for the obj.
+   *
+   * @param obj		the obj to rotate
+   * @return		the new height
+   */
+  protected int newH(LocatedObject obj) {
+    int 	hN;
+    int		angle;
+
+    angle = m_Angle % 360;
+    switch (angle) {
+      case 0:
+      case 180:
+	hN = obj.getHeight();
+	break;
+      case 90:
+      case 270:
+	hN = obj.getWidth();
+	break;
+      default:
+	throw new IllegalStateException("Invalid angle: " + m_Angle);
+    }
+
+    return hN;
+  }
+
+  /**
    * Filters the image objects.
    *
    * @param objects	the located objects
@@ -222,77 +405,31 @@ public class Rotate
   protected LocatedObjects doFilter(LocatedObjects objects) {
     LocatedObjects	result;
     LocatedObject	newObj;
-    int			x;
-    int			y;
-    int			w;
-    int			h;
-    int			xN;
-    int			yN;
-    int			wN;
-    int			hN;
-    double		theta;
-    boolean		hasPoly;
-    Polygon poly;
-    Point2D tl;
-    Point2D		br;
-    Point2D		tlN;
-    Point2D 		brN;
-    AffineTransform trans;
     int[]		xpoints;
     int[]		ypoints;
-    Point2D[]		polyP;
-    Point2D[]		polyPN;
     int			i;
 
     result = new LocatedObjects();
-    theta  = m_Angle / 180 * Math.PI;
-    trans  = AffineTransform.getRotateInstance(theta, m_ImageWidth / 2, m_ImageHeight / 2);
 
     for (LocatedObject obj: objects) {
-      x       = obj.getX();
-      y       = obj.getY();
-      w       = obj.getWidth();
-      h       = obj.getHeight();
-      tl      = new Point2D.Double(x, y);
-      br      = new Point2D.Double(x + w - 1, y + h - 1);
-      tlN     = new Point2D.Double();
-      brN     = new Point2D.Double();
-      polyP   = new Point2D[0];
-      polyPN  = new Point2D[0];
-      hasPoly = obj.hasPolygon();
-      if (hasPoly) {
-	poly    = obj.getPolygon();
-	xpoints = poly.xpoints;
-	ypoints = poly.ypoints;
-	polyP   = new Point2D[xpoints.length];
-	polyPN  = new Point2D[xpoints.length];
+      newObj = new LocatedObject(
+	obj.getImage(),
+	newX(obj),
+	newY(obj),
+	newW(obj),
+	newH(obj),
+	obj.getMetaData(true));
+
+      if (obj.hasPolygon()) {
+	xpoints = obj.getPolygonX();
+	ypoints = obj.getPolygonY();
 	for (i = 0; i < xpoints.length; i++) {
-	  polyP[i]  = new Point2D.Double(xpoints[i], ypoints[i]);
-	  polyPN[i] = new Point2D.Double();
-	}
-      }
-
-      trans.transform(tl, tlN);
-      trans.transform(br, brN);
-      if (hasPoly)
-	trans.transform(polyP, 0, polyPN, 0, polyP.length);
-
-      xN = (int) tlN.getX();
-      yN = (int) tlN.getY();
-      wN = (int) (brN.getX() - tlN.getX() + 1);
-      hN = (int) (brN.getY() - tlN.getY() + 1);
-
-      newObj = new LocatedObject(obj.getImage(), xN, yN, wN, hN, obj.getMetaData(true));
-
-      if (hasPoly) {
-        xpoints = new int[polyPN.length];
-        ypoints = new int[polyPN.length];
-        for (i = 0; i < polyPN.length; i++) {
-          xpoints[i] = (int) polyPN[i].getX();
-          ypoints[i] = (int) polyPN[i].getY();
+	  xpoints[i] = rotateX(xpoints[i], ypoints[i]);
+	  ypoints[i] = rotateY(xpoints[i], ypoints[i]);
 	}
 	newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
       }
+
       result.add(newObj);
     }
 
