@@ -1011,7 +1011,7 @@ public class PropertiesParameterPanel
 	switch (type) {
 	  case TIME:
 	    timePanel = new TimeChooserPanel();
-	    timePanel.setCurrent(new BaseTime(value.getTime(key)).timeValue());
+	    timePanel.setCurrent(new BaseTime(value.getProperty(key)).timeValue());  // need to get string, as it may contain an expression
 	    if (help != null)
 	      timePanel.setToolTipText(help);
 	    timePanel.setInlineEditingEnabled(true);
@@ -1019,7 +1019,7 @@ public class PropertiesParameterPanel
 	    break;
 	  case DATE:
 	    datePanel = new DateChooserPanel();
-	    datePanel.setCurrent(new BaseDate(value.getDate(key)).dateValue());
+	    datePanel.setCurrent(new BaseDate(value.getProperty(key)).dateValue());  // need to get string, as it may contain an expression
 	    if (help != null)
 	      datePanel.setToolTipText(help);
 	    datePanel.setInlineEditingEnabled(true);
@@ -1027,7 +1027,7 @@ public class PropertiesParameterPanel
 	    break;
 	  case DATETIME:
 	    dateTimePanel = new DateTimeChooserPanel();
-	    dateTimePanel.setCurrent(new BaseDateTime(value.getDateTime(key)).dateTimeValue());
+	    dateTimePanel.setCurrent(new BaseDateTime(value.getProperty(key)).dateTimeValue());  // need to get string, as it may contain an expression
 	    if (help != null)
 	      dateTimePanel.setToolTipText(help);
 	    dateTimePanel.setInlineEditingEnabled(true);
