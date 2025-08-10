@@ -22,6 +22,7 @@ package adams.db.queries;
 
 import adams.core.ClassLister;
 import adams.core.Utils;
+import adams.core.base.BaseRegExp;
 import adams.db.SQLUtils;
 
 import java.io.Serializable;
@@ -52,6 +53,15 @@ public abstract class AbstractDatabaseQueries
    * @return		the keyword
    */
   public abstract String regexpKeyword();
+
+  /**
+   * Generates a regexp expression from the column and regular expression.
+   *
+   * @return		the expression
+   */
+  public String regexp(String col, BaseRegExp expr) {
+    return regexp(col, expr.getValue());
+  }
 
   /**
    * Generates a regexp expression from the column and regular expression.

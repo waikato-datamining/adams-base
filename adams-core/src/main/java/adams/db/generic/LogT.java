@@ -176,25 +176,23 @@ public class LogT
     StringBuilder	sqlWhere;
     List<String>	where;
     int			i;
-    String		regexp;
 
     result = new ArrayList<>();
-    regexp = m_Queries.regexpKeyword();
 
     cond.update();
 
     // translate conditions
     where = new ArrayList<>();
     if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
-      where.add("HOST " + regexp + " " + SQLUtils.backquote(cond.getHost()));
+      where.add(m_Queries.regexp("HOST", cond.getHost()));
     if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
-      where.add("IP " + regexp + " " + SQLUtils.backquote(cond.getIP()));
+      where.add(m_Queries.regexp("IP", cond.getIP()));
     if (!cond.getType().isEmpty() && !cond.getType().isMatchAll())
-      where.add("TYPE " + regexp + " " + SQLUtils.backquote(cond.getType()));
+      where.add(m_Queries.regexp("TYPE", cond.getType()));
     if (!cond.getStatus().isEmpty() && !cond.getStatus().isMatchAll())
-      where.add("STATUS " + regexp + " " + SQLUtils.backquote(cond.getStatus()));
+      where.add(m_Queries.regexp("STATUS", cond.getStatus()));
     if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
-      where.add("SOURCE " + regexp + " " + SQLUtils.backquote(cond.getSource()));
+      where.add(m_Queries.regexp("SOURCE", cond.getSource()));
     if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
       where.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
     if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
@@ -212,7 +210,7 @@ public class LogT
     else
       sqlWhere.append(" ORDER BY GENERATION ASC");
     if (cond.getLimit() > -1)
-      sqlWhere.append(" LIMIT " + cond.getLimit());
+      sqlWhere.append(" LIMIT ").append(cond.getLimit());
 
     // retrieve data
     rs = null;
@@ -344,7 +342,6 @@ public class LogT
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Storing failed using prepared statement: " + sql, e);
-	result = false;
       }
     }
 
@@ -390,7 +387,7 @@ public class LogT
     String	sql;
 
     sql = "DELETE FROM " + getTableName() + " "
-       	+ "WHERE AUTO_ID = " + log.getLargeDatabaseID() + "";
+       	+ "WHERE AUTO_ID = " + log.getLargeDatabaseID();
 
     getLogger().info("Removing: " + sql);
     try {

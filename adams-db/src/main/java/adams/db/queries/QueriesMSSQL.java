@@ -49,7 +49,7 @@ public class QueriesMSSQL
    * @return		the expression
    */
   public String regexp(String col, String expr) {
-    return col + " " + regexpKeyword() + SQLUtils.backquote(expr);
+    return regexpKeyword() + "(" + col + ", " + SQLUtils.backquote(expr) + ")";
   }
 
   /**
