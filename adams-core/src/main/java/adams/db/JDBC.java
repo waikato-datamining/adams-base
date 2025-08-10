@@ -43,8 +43,11 @@ public class JDBC {
   /** the expression to match a HSQLDB JDBC URL. */
   public final static String URL_HSQLDB = "jdbc:hsqldb:.*";
 
-  /** the expression to match a H2 JDBC URL. */
+  /** the expression to match an H2 JDBC URL. */
   public final static String URL_H2 = "jdbc:h2:.*";
+
+  /** the expression to match a MSSQL JDBC URL. */
+  public final static String URL_MSSQL = "jdbc:sqlserver:.*";
 
   /**
    * Checks whether this JDBC url represents a MySQL URL.
@@ -154,6 +157,28 @@ public class JDBC {
    */
   public static boolean isHSQLDB(AbstractDatabaseConnection conn) {
     return isHSQLDB(conn.getURL());
+  }
+
+  /**
+   * Checks whether this JDBC url represents a MSSQL URL.
+   *
+   * @param url		the URL to check
+   * @return		true if MSSQL URL
+   * @see		#URL_MSSQL
+   */
+  public static boolean isMSSQL(String url) {
+    return url.matches(URL_MSSQL);
+  }
+
+  /**
+   * Checks whether this connection represents a MSSQL one.
+   *
+   * @param conn	the connection to check
+   * @return		true if MSSQL URL
+   * @see		#isMSSQL(String)
+   */
+  public static boolean isMSSQL(AbstractDatabaseConnection conn) {
+    return isMSSQL(conn.getURL());
   }
 
   /**

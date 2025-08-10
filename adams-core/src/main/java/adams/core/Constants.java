@@ -60,6 +60,9 @@ public class Constants
   /** the default value for PostgreSQL timestamps (Jan 2nd to avoid timezone issues). */
   public final static String TIMESTAMP_DEFAULT_POSTGRESQL = "1970-01-02 00:00:01";
 
+  /** the default value for MSSQL timestamps (Jan 2nd to avoid timezone issues). */
+  public final static String TIMESTAMP_DEFAULT_MSSQL = "1753-01-02 00:00:01";
+
   /** the format for times. */
   public final static String TIME_FORMAT = "HH:mm:ss";
 
