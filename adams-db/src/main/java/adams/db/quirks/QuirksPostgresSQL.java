@@ -51,6 +51,6 @@ public class QuirksPostgresSQL
    */
   @Override
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_POSTGRESQL);
+    return JDBC.isPostgreSQL(url);
   }
 }

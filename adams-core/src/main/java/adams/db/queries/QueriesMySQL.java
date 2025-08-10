@@ -50,6 +50,6 @@ public class QueriesMySQL
    */
   @Override
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_MYSQL);
+    return JDBC.isMySQL(url);
   }
 }

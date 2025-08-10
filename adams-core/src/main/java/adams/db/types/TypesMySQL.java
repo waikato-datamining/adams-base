@@ -15,7 +15,7 @@
 
 /*
  * TypesMySQL.java
- * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
@@ -136,6 +136,6 @@ public class TypesMySQL
    * @return		true if handled by this type class
    */
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_MYSQL);
+    return JDBC.isMySQL(url);
   }
 }

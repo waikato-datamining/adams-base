@@ -117,6 +117,6 @@ public class TypesH2
    * @return		true if handled by this type class
    */
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_H2);
+    return JDBC.isH2(url);
   }
 }

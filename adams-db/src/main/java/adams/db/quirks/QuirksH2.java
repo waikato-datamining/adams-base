@@ -51,6 +51,6 @@ public class QuirksH2
    */
   @Override
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_H2);
+    return JDBC.isH2(url);
   }
 }

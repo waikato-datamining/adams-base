@@ -128,6 +128,6 @@ public class TypesPostgreSQL
    * @return		true if handled by this type class
    */
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_POSTGRESQL);
+    return JDBC.isPostgreSQL(url);
   }
 }

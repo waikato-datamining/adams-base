@@ -15,7 +15,7 @@
 
 /*
  * TypesSQLite.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
@@ -92,6 +92,6 @@ public class TypesSQLite
    * @return		true if handled by this type class
    */
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_SQLITE);
+    return JDBC.isSQLite(url);
   }
 }

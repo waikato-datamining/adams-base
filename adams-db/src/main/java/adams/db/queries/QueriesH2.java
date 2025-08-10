@@ -50,6 +50,6 @@ public class QueriesH2
    */
   @Override
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_MYSQL);
+    return JDBC.isH2(url);
   }
 }

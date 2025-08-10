@@ -50,6 +50,6 @@ public class QueriesSQLite
    */
   @Override
   public boolean handles(String url) {
-    return url.matches(JDBC.URL_MYSQL);
+    return JDBC.isSQLite(url);
   }
 }
