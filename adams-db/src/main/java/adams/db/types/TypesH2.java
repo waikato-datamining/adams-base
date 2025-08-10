@@ -102,15 +102,6 @@ public class TypesH2
   }
 
   /**
-   * Returns the keyword for regular expression matching in queries.
-   *
-   * @return		the keyword
-   */
-  public String regexpKeyword() {
-    return "REGEXP";
-  }
-
-  /**
    * Checks whether this URL is handled.
    *
    * @param url		the URL to check
