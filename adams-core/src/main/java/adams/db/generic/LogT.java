@@ -15,7 +15,7 @@
 
 /*
  * LogT.java
- * Copyright (C) 2010-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -26,7 +26,6 @@ import adams.core.base.BaseDateTime;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
 import adams.db.ColumnMapping;
-import adams.db.JDBC;
 import adams.db.LogEntry;
 import adams.db.LogEntryConditions;
 import adams.db.LogIntf;
@@ -180,7 +179,7 @@ public class LogT
     String		regexp;
 
     result = new ArrayList<>();
-    regexp = JDBC.regexpKeyword(getDatabaseConnection());
+    regexp = m_Queries.regexpKeyword();
 
     cond.update();
 

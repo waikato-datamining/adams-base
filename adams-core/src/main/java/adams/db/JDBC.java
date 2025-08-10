@@ -15,11 +15,13 @@
 
 /*
  * JDBC.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
 
+import adams.db.queries.AbstractDatabaseQueries;
+import adams.db.quirks.AbstractDatabaseQuirks;
 import adams.db.types.AbstractTypes;
 
 /**
@@ -155,28 +157,6 @@ public class JDBC {
   }
 
   /**
-   * Returns the keyword for regular expression matching in queries.
-   *
-   * @param conn	the connection to retrieve the keyword for
-   * @return		the keyword
-   * @throws IllegalArgumentException	if JDBC connection type not supported
-   */
-  public static String regexpKeyword(AbstractDatabaseConnection conn) {
-    return regexpKeyword(conn.getURL());
-  }
-
-  /**
-   * Returns the keyword for regular expression matching in queries.
-   *
-   * @param url		the connection to retrieve the keyword for
-   * @return		the keyword
-   * @throws IllegalArgumentException	if JDBC connection type not supported
-   */
-  public static String regexpKeyword(String url) {
-    return AbstractTypes.getHandler(url).regexpKeyword();
-  }
-
-  /**
    * Returns the appropriate types.
    *
    * @param conn	the connection to use for identification
@@ -196,5 +176,49 @@ public class JDBC {
    */
   public static AbstractTypes getTypes(String url) {
     return AbstractTypes.getHandler(url);
+  }
+
+  /**
+   * Returns the appropriate quirks.
+   *
+   * @param conn	the connection to use for identification
+   * @return		the quirks
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractDatabaseQuirks getQuirks(AbstractDatabaseConnection conn) {
+    return getQuirks(conn.getURL());
+  }
+
+  /**
+   * Returns the appropriate quirks.
+   *
+   * @param url		the URL to use for identification
+   * @return		the quirks
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractDatabaseQuirks getQuirks(String url) {
+    return AbstractDatabaseQuirks.getHandler(url);
+  }
+
+  /**
+   * Returns the appropriate queries helper.
+   *
+   * @param conn	the connection to use for identification
+   * @return		the queries helper
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractDatabaseQueries getQueries(AbstractDatabaseConnection conn) {
+    return getQueries(conn.getURL());
+  }
+
+  /**
+   * Returns the appropriate queries helper.
+   *
+   * @param url		the URL to use for identification
+   * @return		the queries helper
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static AbstractDatabaseQueries getQueries(String url) {
+    return AbstractDatabaseQueries.getHandler(url);
   }
 }

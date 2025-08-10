@@ -23,6 +23,7 @@ import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.logging.LoggingHelper;
 import adams.db.generic.SQL;
+import adams.db.queries.AbstractDatabaseQueries;
 import adams.env.Environment;
 import adams.env.TableDefinition;
 import adams.event.DatabaseConnectionChangeEvent;
@@ -54,6 +55,9 @@ public abstract class AbstractTable
   /** whether to use ANSI quotes around table/column names. */
   protected boolean m_AnsiQuotes;
 
+  /** for helping with queries. */
+  protected AbstractDatabaseQueries m_Queries;
+
   /**
    * Initializes the table.
    *
@@ -74,6 +78,7 @@ public abstract class AbstractTable
       getLogger().info(m_DatabaseConnection.toString());
 
     m_AnsiQuotes = getProperties().getBoolean("AnsiQuotes", false);
+    m_Queries    = AbstractDatabaseQueries.getHandler(dbcon.getURL());
   }
   
   /**
