@@ -524,10 +524,9 @@ public abstract class AbstractDisplay
   /**
    * Closes the frame.
    */
-  public void closeFrame() {
-    if (m_Frame == null)
-      return;
-    cleanUpGUI();
+  public void closeDisplay() {
+    if ((m_Frame != null) || (m_Panel != null))
+      cleanUpGUI();
   }
 
   /**

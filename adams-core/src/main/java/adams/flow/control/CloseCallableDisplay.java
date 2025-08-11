@@ -15,7 +15,7 @@
 
 /*
  * CloseCallableDisplay.java
- * Copyright (C) 2017-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -217,7 +217,7 @@ public class CloseCallableDisplay
   @Override
   protected String executeCallableActor() {
     if (!isHeadless())
-      ((AbstractDisplay) m_CallableActor).closeFrame();
+      ((AbstractDisplay) m_CallableActor).closeDisplay();
     return null;
   }
 
