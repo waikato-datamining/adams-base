@@ -15,7 +15,7 @@
 
 /*
  * ArrayToChunks.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -47,6 +47,7 @@ import java.util.Hashtable;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -70,12 +71,14 @@ import java.util.Hashtable;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-chunk-size &lt;int&gt; (property: chunkSize)
@@ -202,10 +205,9 @@ public class ArrayToChunks
 
     result = super.backupState();
 
-    if (m_InputToken != null)
+    if (m_CurrentArray != null)
       result.put(BACKUP_ARRAY, m_CurrentArray);
-    if (m_OutputToken != null)
-      result.put(BACKUP_INDEX, m_CurrentIndex);
+    result.put(BACKUP_INDEX, m_CurrentIndex);
 
     return result;
   }
