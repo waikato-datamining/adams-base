@@ -210,7 +210,7 @@ public class LogT
     else
       sqlWhere.append(" ORDER BY GENERATION ASC");
     if (cond.getLimit() > -1)
-      sqlWhere.append(" LIMIT ").append(cond.getLimit());
+      sqlWhere.append(" ").append(m_Queries.limit(cond.getLimit()));
 
     // retrieve data
     rs = null;

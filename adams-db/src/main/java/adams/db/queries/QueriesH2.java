@@ -43,6 +43,16 @@ public class QueriesH2
   }
 
   /**
+   * Returns the keyword for limiting the number of rows.
+   *
+   * @return		the keyword
+   */
+  @Override
+  public String limitKeyword() {
+    return "LIMIT";
+  }
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url the URL to check

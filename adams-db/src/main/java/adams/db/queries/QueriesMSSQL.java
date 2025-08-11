@@ -53,6 +53,27 @@ public class QueriesMSSQL
   }
 
   /**
+   * Returns the keyword for limiting the number of rows.
+   *
+   * @return		the keyword
+   */
+  @Override
+  public String limitKeyword() {
+    return "FETCH FIRST";
+  }
+
+  /**
+   * Generates the row limiting expression.
+   *
+   * @param max		the maximum number of rows to return
+   * @return		the expression
+   */
+  @Override
+  public String limit(int max) {
+    return limitKeyword() + " " + max + " ROWS ONLY";
+  }
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url the URL to check
