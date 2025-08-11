@@ -561,8 +561,9 @@ public class SQL
 
     // where
     if ((where != null) && !where.isEmpty()) {
-      if (   !where.trim().toUpperCase().startsWith("LIMIT ")
-	  && !where.trim().toUpperCase().startsWith("ORDER ") )
+      if (     !where.trim().toUpperCase().startsWith("LIMIT ")
+	    && !where.trim().toUpperCase().startsWith("FETCH FIRST ")
+	    && !where.trim().toUpperCase().startsWith("ORDER ") )
 	query += " WHERE";
       query += " " + where;
     }
