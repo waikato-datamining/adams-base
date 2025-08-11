@@ -235,7 +235,10 @@ public class SqlQueryPanel
 	    m_Sheet = reader.read(rs, 0);
 	  }
 	  else {
-	    if (sql.execute(query))
+	    Boolean res = sql.execute(query);
+	    if (res == null)
+	      m_Error = "SQL statement failed! Check terminal or Console window for error message.";
+	    else if (res)
 	      m_Error = "Query generated results unexpectedly!";
 	    else
 	      m_Result = "Query succeeded!";
