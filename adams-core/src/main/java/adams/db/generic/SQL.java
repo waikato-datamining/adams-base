@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -104,7 +104,7 @@ public class SQL
 
     prefix   = getClass().getName() + "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
     m_Logger = LoggingHelper.getLogger(prefix);
-    m_Logger.setLevel(getDebug() ? Level.INFO : Level.OFF);
+    m_Logger.setLevel(getDebug() ? Level.INFO : Level.WARNING);
   }
 
   /**
