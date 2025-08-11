@@ -110,6 +110,15 @@ public abstract class AbstractTable
   }
 
   /**
+   * Returns the underlying queries helper instance.
+   *
+   * @return		the instance
+   */
+  public AbstractDatabaseQueries getQueries() {
+    return m_Queries;
+  }
+
+  /**
    * Returns the column/table quoted if ANSI quotes are to be used.
    *
    * @param name	the table/column name to quote (if necessary)
