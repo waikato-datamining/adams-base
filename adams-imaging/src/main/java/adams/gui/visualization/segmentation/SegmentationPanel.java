@@ -748,7 +748,7 @@ public class SegmentationPanel
    */
   public void stopFlow() {
     if ((m_FlowContext != null) && m_ButtonStopFlow.isVisible())
-      m_FlowContext.stopExecution("User stopped flow.");
+      m_FlowContext.getRoot().stopExecution("User stopped flow.");
   }
 
   /**
