@@ -3219,7 +3219,7 @@ Here are JDBC URL templates for accessing various types of databases:
   \item \textit{H2} -- \texttt{jdbc:h2:mem:<DATABASE>;DB\_CLOSE\_DELAY=-1}
   \item \textit{HSQLDB} -- \texttt{jdbc:hsqldb:hsql://<HOST>:9001}
   \item \textit{SQLite} -- \texttt{jdbc:sqlite:<PATH\_TO\_FILE>}
-  \item \textit{MS SQL Server} -- \texttt{jdbc:jtds:sqlserver://<HOST>:1433/<DATABASE>}\footnote{For more info, see \url{http://jtds.sourceforge.net/faq.html\#urlFormat}{}}
+  \item \textit{MS SQL Server} -- \verb|jdbc:sqlserver://HOST:1433;databaseName=DATABASE;...|
 \end{tight_itemize}
 
 \heading{Notes}
