@@ -15,14 +15,13 @@
 
 /*
  * AutoIncrementType.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.db.types;
 
 import adams.db.AbstractDatabaseConnection;
-import adams.db.JDBC;
 
 import java.sql.Types;
 
@@ -35,7 +34,7 @@ public class AutoIncrementType
   extends ColumnType {
 
   /**
-   * Constructor: it's a BIGINT
+   * Constructor: it's by default a BIGINT, but may change based on database connection.
    *
    */
   public AutoIncrementType() {
@@ -43,17 +42,9 @@ public class AutoIncrementType
   }
 
   /**
-   * Return creation String
+   * Return creation string.
    */
   public String getCreateType(AbstractDatabaseConnection conn) {
-    String create = super.getCreateType(conn);
-    if (JDBC.isMySQL(conn) || JDBC.isH2(conn))
-      return create + " AUTO_INCREMENT";
-    else if (JDBC.isPostgreSQL(conn))
-      return "BIGSERIAL";
-    else if (JDBC.isSQLite(conn))
-      return create;
-    else
-      return create;
+    return AbstractTypes.getHandler(conn.getURL()).getAutoIncrementCreateType(m_Type);
   }
 }

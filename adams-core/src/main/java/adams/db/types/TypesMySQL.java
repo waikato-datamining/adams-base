@@ -121,6 +121,17 @@ public class TypesMySQL
   }
 
   /**
+   * Returns the type definition for auto increment types.
+   *
+   * @param type	the preferred type
+   * @return		the definition for creating the column
+   */
+  @Override
+  public String getAutoIncrementCreateType(int type) {
+    return toTypeString(type, -1, false) + " AUTO_INCREMENT";
+  }
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url		the URL to check

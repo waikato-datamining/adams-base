@@ -15,7 +15,7 @@
 
 /*
  * ColumnType.java
- * Copyright (C) 2008-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -67,7 +67,7 @@ public class ColumnType {
       case Types.TIME:
       case Types.TIMESTAMP:
         if ((size == 3) || (size == 6) || (size == 9))
-        m_Size = size;
+	  m_Size = size;
         break;
     }
   }

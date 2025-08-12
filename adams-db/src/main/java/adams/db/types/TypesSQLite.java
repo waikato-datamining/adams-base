@@ -77,6 +77,17 @@ public class TypesSQLite
   }
 
   /**
+   * Returns the type definition for auto increment types.
+   *
+   * @param type	the preferred type - ignored
+   * @return		the definition for creating the column
+   */
+  @Override
+  public String getAutoIncrementCreateType(int type) {
+    return toTypeString(Types.INTEGER, -1, false);
+  }
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url		the URL to check

@@ -15,7 +15,7 @@
 
 /*
  * AbstractTypes.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
@@ -116,6 +116,14 @@ public abstract class AbstractTypes
         return -1;
     }
   }
+
+  /**
+   * Returns the type definition for auto increment types.
+   *
+   * @param type	the preferred type
+   * @return		the definition for creating the column
+   */
+  public abstract String getAutoIncrementCreateType(int type);
 
   /**
    * Checks whether this URL is handled.
