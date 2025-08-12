@@ -51,10 +51,8 @@ public class TypesMSSQL
 
     switch (type) {
       case Types.BIT:
-	return "BIT";
-
       case Types.BOOLEAN:
-	return "BOOLEAN";
+	return "BIT";
 
       case Types.TINYINT:
 	return "TINYINT";
