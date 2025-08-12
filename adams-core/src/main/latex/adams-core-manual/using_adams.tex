@@ -3233,6 +3233,10 @@ Here are JDBC URL templates for accessing various types of databases:
     then add \texttt{\&\&allowPublicKeyRetrieval=true} the JDBC URL.
     \item For more information on MySQL connection parameters, see section \href{https://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html}{Configuration properties}
     of the Connector/J documentation.
+    \item MS SQL Server connections place user and password into the JDBC URL: \\
+    \texttt{;user=USER;password=PW;}
+    \item To turn off encryption for MS SQL Server connections, append the following: \\
+    \texttt{encrypt=false;}
 \end{tight_itemize}
 
 
