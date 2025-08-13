@@ -73,14 +73,14 @@ public abstract class AbstractDatabaseQueries
   }
 
   /**
-   * Returns the keyword for limiting the number of rows.
+   * Returns the keyword/expression for limiting the number of rows.
    *
-   * @return		the keyword
+   * @return		the keyword/expression
    */
   public abstract String limitKeyword();
 
   /**
-   * Generates the row limiting expression.
+   * Generates the row limiting expression. NB: requires an ORDER BY in the statement.
    *
    * @param max		the maximum number of rows to return
    * @return		the expression
