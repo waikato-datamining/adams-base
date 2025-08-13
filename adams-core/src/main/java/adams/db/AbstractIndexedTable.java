@@ -15,7 +15,7 @@
 
 /*
  * AbstractIndexedTable.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -113,25 +113,38 @@ public abstract class AbstractIndexedTable
    * @return		columns match?
    */
   protected boolean columnsMatchTest(ColumnMapping cm, boolean print, boolean tryAgain, boolean addMissing) {
-    Connection connection = m_DatabaseConnection.getConnection(true);
-    SimpleResultSet rs = null;
-    boolean ok = true;
+    boolean 		result;
+    Connection 		connection;
+    SimpleResultSet 	rs;
+    DatabaseMetaData 	meta;
+    HashSet<String> 	columns;
+    String 		cname;
+    int 		type;
+    int 		size;
+    ColumnType 		columnType;
+    ColumnType 		expectedColumn;
+    Enumeration<String> keys;
+    StringBuilder 	sql;
+
+    result     = true;
+    connection = m_DatabaseConnection.getConnection(true);
+    rs         = null;
     try {
-      DatabaseMetaData dbmd = connection.getMetaData();
-      rs = new SimpleResultSet(dbmd.getColumns(connection.getCatalog(), null, updateTableName(dbmd, m_TableName), "%"));
-      HashSet<String> columns = new HashSet<>();
+      meta    = connection.getMetaData();
+      rs      = new SimpleResultSet(meta.getColumns(connection.getCatalog(), null, updateTableName(meta, m_TableName), "%"));
+      columns = new HashSet<>();
       while(rs.next()) {
-	String cname = rs.getString("COLUMN_NAME").toUpperCase();
+	cname = rs.getString("COLUMN_NAME").toUpperCase();
 	columns.add(cname);
-	int type = rs.getInt("DATA_TYPE");
-	int size = rs.getInt("COLUMN_SIZE");
-	ColumnType columnType = new ColumnType(type,size);
-	ColumnType expectedColumn = cm.getMapping(cname);
+	type = rs.getInt("DATA_TYPE");
+	size = rs.getInt("COLUMN_SIZE");
+	columnType = new ColumnType(type,size);
+	expectedColumn = cm.getMapping(cname);
 	if (expectedColumn == null) {
 	  if (print)
 	    getLogger().severe(
 		"false because expectedColumn null for '" + cname + "' (" + getTableName() + ")");
-	  ok = false;
+	  result = false;
 	}
 	else if (!expectedColumn.equivalentTo(getDatabaseConnection(), columnType)) {
 	  if (expectedColumn.isEncompassed(getDatabaseConnection(), columnType)) {
@@ -149,34 +162,34 @@ public abstract class AbstractIndexedTable
 		  + expectedColumn.getCompareType(getDatabaseConnection())
 		  + " != "
 		  + columnType.getCompareType(getDatabaseConnection()) + " " + getTableName() + ")");
-	    ok = false;
+	    result = false;
 	  }
 	}
       }
 
       // try adding missing columns
       if (columns.size() != cm.size()) {
-	Enumeration<String> keys = cm.keys();
+	keys = cm.keys();
 	while (keys.hasMoreElements()) {
-	  String cname = keys.nextElement();
+	  cname = keys.nextElement();
 	  if (columns.contains(cname))
 	    continue;
 	  if (!addMissing) {
-	    ok = false;
+	    result = false;
 	    break;
 	  }
-	  ColumnType type = cm.getMapping(cname);
-	  String sql = "ALTER TABLE " + updateTableName(dbmd, m_TableName) + " ADD COLUMN ";
-	  sql += quoteName(cname) + " " + type.getCreateType(getDatabaseConnection());
+	  columnType = cm.getMapping(cname);
+	  sql = new StringBuilder("ALTER TABLE " + updateTableName(meta, m_TableName) + " ADD COLUMN ");
+	  sql.append(quoteName(cname)).append(" ").append(columnType.getCreateType(getDatabaseConnection()));
 	  try {
-	    execute(sql);
+	    execute(sql.toString());
 	  }
 	  catch (Exception e) {
-	    ok = false;
+	    result = false;
 	  }
 	  if (print)
-	    getLogger().severe("Adding column '" + cname + "' (" + getTableName() + "): " + ok);
-	  if (!ok)
+	    getLogger().severe("Adding column '" + cname + "' (" + getTableName() + "): " + result);
+	  if (!result)
 	    break;
 	  columns.add(cname);
 	}
@@ -187,7 +200,7 @@ public abstract class AbstractIndexedTable
 	    if (print)
 	      getLogger().severe(
 		  "false because column count.columnCount=" + columns.size() + ", cmsize=" + cm.size() + " (" + getTableName() + ")");
-	    ok = false;
+	    result = false;
 	  }
 	}
       }
@@ -195,7 +208,7 @@ public abstract class AbstractIndexedTable
     catch (SQLException e) {
       if (tryAgain) {
 	SQLUtils.closeAll(rs);
-	ok = columnsMatchTest(cm, print, false, addMissing);
+	result = columnsMatchTest(cm, print, false, addMissing);
       }
     }
     catch (Exception e) {
@@ -204,7 +217,7 @@ public abstract class AbstractIndexedTable
     finally {
       SQLUtils.closeAll(rs);
     }
-    return ok;
+    return result;
   }
 
   /**
@@ -248,51 +261,62 @@ public abstract class AbstractIndexedTable
    * @return	success?
    */
   protected boolean create() {
-    ColumnMapping cm = getColumnMapping();
-    String sql = "CREATE TABLE " + m_TableName + " (";
+    StringBuilder 	sql;
+    ColumnMapping 	cm;
+    String 		cname;
+    ColumnType 		type;
+    Boolean 		retVal;
+    int			i;
+    Indices 		indices;
+    Index 		index;
+    int			j;
+    IndexColumn 	ic;
+
+    cm = getColumnMapping();
+    sql = new StringBuilder("CREATE TABLE " + m_TableName + " (");
     for (Enumeration enum1 = cm.keys() ; enum1.hasMoreElements() ;) {
-      String cname = (String) enum1.nextElement();
-      ColumnType type = cm.getMapping(cname);
-      sql += " " + quoteName(cname) + " " + type.getCreateType(getDatabaseConnection());
+      cname = (String) enum1.nextElement();
+      type = cm.getMapping(cname);
+      sql.append(" ").append(quoteName(cname)).append(" ").append(type.getCreateType(getDatabaseConnection()));
       if (enum1.hasMoreElements()) {
-	sql += ",";
+	sql.append(",");
       }
       else {
 	if (cm.hasPrimaryKey())
-	  sql += ", PRIMARY KEY(" + quoteName(cm.getPrimaryKey()) + ")";
-	sql += ")";
+	  sql.append(", PRIMARY KEY(").append(quoteName(cm.getPrimaryKey())).append(")");
+	sql.append(")");
       }
     }
 
     try {
       getLogger().info("Creating table: " + sql);
-      Boolean rs = execute(sql);
-      if ((rs == null) || rs)
-	return(false);
+      retVal = execute(sql.toString());
+      if ((retVal == null) || retVal)
+	return false;
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Error creating table: " + sql, e);
     }
 
-    Indices ind=this.getIndices();
-    if (ind != null) {
-      for (int i = 0; i < ind.size(); i++) {
-	sql= "CREATE INDEX " + m_TableName + "_IND_" + i + " ON " + m_TableName + " (";
-	Index index = ind.get(i);
-	for (int j = 0; j < index.size() - 1; j++) {
-	  IndexColumn ic = index.get(j);
-	  sql = sql + " " + ic.toString(getDatabaseConnection()) + ",";
+    indices = getIndices();
+    if (indices != null) {
+      for (i = 0; i < indices.size(); i++) {
+	sql = new StringBuilder("CREATE INDEX " + m_TableName + "_IND_" + i + " ON " + m_TableName + " (");
+	index = indices.get(i);
+	for (j = 0; j < index.size() - 1; j++) {
+	  ic = index.get(j);
+	  sql.append(" ").append(ic.toString(getDatabaseConnection())).append(",");
 	}
-	sql = sql + " " + index.get(index.size() - 1).toString(getDatabaseConnection()) + ")";
+	sql.append(" ").append(index.get(index.size() - 1).toString(getDatabaseConnection())).append(")");
 	try {
 	  getLogger().info("Creating indices: " + sql);
-	  Boolean rs = execute(sql);
-	  if ((rs == null) || rs)
-	    return(false);
+	  retVal = execute(sql.toString());
+	  if ((retVal == null) || retVal)
+	    return false;
 	}
 	catch(Exception e) {
 	  getLogger().log(Level.SEVERE, "Error creating indices: " + sql, e);
-	  return(false);
+	  return false;
 	}
       }
     }
