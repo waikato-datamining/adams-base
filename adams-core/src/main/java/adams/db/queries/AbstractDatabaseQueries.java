@@ -69,7 +69,7 @@ public abstract class AbstractDatabaseQueries
    * @return		the expression
    */
   public String regexp(String col, String expr) {
-    return col + " " + regexpKeyword() + SQLUtils.backquote(expr);
+    return col + " " + regexpKeyword() + " " + SQLUtils.backquote(expr);
   }
 
   /**
