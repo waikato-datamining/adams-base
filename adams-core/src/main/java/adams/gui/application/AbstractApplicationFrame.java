@@ -746,8 +746,21 @@ public abstract class AbstractApplicationFrame
     int 			screenHeight;
     int 			screenWidth;
     ScriptingEngineHandler 	handler;
+    Dimension			screenSize;
+    Dimension			newSize;
 
     result = new ChildFrame(owner, insertHostnamePrefix(title), icon);
+
+    if (owner != null) {
+      screenHeight = GUIHelper.getScreenBounds(owner).getBounds().height - owner.getHeight();
+      screenWidth  = GUIHelper.getScreenBounds(owner).getBounds().width;
+      screenSize   = new Dimension(screenWidth, screenHeight);
+    }
+    else {
+      screenWidth  = -1;
+      screenHeight = -1;
+      screenSize   = null;
+    }
 
     // layout
     result.setLayout(new BorderLayout());
@@ -756,17 +769,21 @@ public abstract class AbstractApplicationFrame
 
     // size
     result.pack();
-    if ((size.getWidth() > -1) && (size.getHeight() > -1))
+    if ((size.getWidth() > -1) && (size.getHeight() > -1)) {
+      if (screenSize != null) {
+	newSize = GUIHelper.makeAtMost(size, screenSize);
+	if (newSize != null)
+	  size = newSize;
+      }
       result.setSize(size);
+    }
     result.validate();
 
     // location
     if (owner != null) {
-      screenHeight = owner.getGraphicsConfiguration().getBounds().height;
-      screenWidth  = owner.getGraphicsConfiguration().getBounds().width;
       result.setLocation(
-	  (screenWidth - result.getBounds().width) / 2,
-	  (screenHeight - result.getBounds().height) / 2);
+	(screenWidth - result.getBounds().width) / 2,
+	owner.getHeight() + (screenHeight - result.getBounds().height) / 2);
     }
 
     // custom size and location
