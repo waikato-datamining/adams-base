@@ -22,6 +22,7 @@
 package adams.db.generic;
 
 import adams.core.Constants;
+import adams.core.Utils;
 import adams.core.base.BaseDateTime;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractIndexedTable;
@@ -172,9 +173,9 @@ public class LogT
   public List<LogEntry> load(LogEntryConditions cond) {
     List<LogEntry>	result;
     LogEntry		log;
-    ResultSet rs;
-    StringBuilder	sqlWhere;
-    List<String>	where;
+    ResultSet 		rs;
+    StringBuilder 	where;
+    List<String> 	whereParts;
     int			i;
 
     result = new ArrayList<>();
@@ -182,45 +183,40 @@ public class LogT
     cond.update();
 
     // translate conditions
-    where = new ArrayList<>();
+    whereParts = new ArrayList<>();
     if (!cond.getHost().isEmpty() && !cond.getHost().isMatchAll())
-      where.add(m_Queries.regexp("HOST", cond.getHost()));
+      whereParts.add(m_Queries.regexp("HOST", cond.getHost()));
     if (!cond.getIP().isEmpty() && !cond.getIP().isMatchAll())
-      where.add(m_Queries.regexp("IP", cond.getIP()));
+      whereParts.add(m_Queries.regexp("IP", cond.getIP()));
     if (!cond.getType().isEmpty() && !cond.getType().isMatchAll())
-      where.add(m_Queries.regexp("TYPE", cond.getType()));
+      whereParts.add(m_Queries.regexp("TYPE", cond.getType()));
     if (!cond.getStatus().isEmpty() && !cond.getStatus().isMatchAll())
-      where.add(m_Queries.regexp("STATUS", cond.getStatus()));
+      whereParts.add(m_Queries.regexp("STATUS", cond.getStatus()));
     if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
-      where.add(m_Queries.regexp("SOURCE", cond.getSource()));
+      whereParts.add(m_Queries.regexp("SOURCE", cond.getSource()));
     if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
-      where.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
+      whereParts.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
     if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
-      where.add("GENERATION <= '" + cond.getGenerationEndDate().stringValue() + "'");
+      whereParts.add("GENERATION <= '" + cond.getGenerationEndDate().stringValue() + "'");
 
     // generate sql
-    sqlWhere = new StringBuilder();
-    for (i = 0; i < where.size(); i++) {
-      if (i > 0)
-	sqlWhere.append(" AND ");
-      sqlWhere.append(where.get(i));
-    }
+    where = new StringBuilder(Utils.flatten(whereParts, " AND "));
     if (cond.getLatest())
-      sqlWhere.append(" ORDER BY GENERATION DESC");
+      where.append(" ORDER BY GENERATION DESC");
     else
-      sqlWhere.append(" ORDER BY GENERATION ASC");
+      where.append(" ORDER BY GENERATION ASC");
     if (cond.getLimit() > -1)
-      sqlWhere.append(" ").append(m_Queries.limit(cond.getLimit()));
+      where.append(" ").append(m_Queries.limit(cond.getLimit()));
 
     // retrieve data
     rs = null;
     try {
-      rs = select("*", sqlWhere.toString());
+      rs = select("*", where.toString());
       while ((log = resultsetToObject(rs)) != null)
 	result.add(log);
     }
     catch (Exception e) {
-      getLogger().log(Level.SEVERE, "Failed to load: " + sqlWhere, e);
+      getLogger().log(Level.SEVERE, "Failed to load: " + where, e);
     }
     finally {
       SQLUtils.closeAll(rs);
