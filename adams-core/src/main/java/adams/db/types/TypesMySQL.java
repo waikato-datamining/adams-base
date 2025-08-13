@@ -99,7 +99,7 @@ public class TypesMySQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '" + Constants.TIMESTAMP_DEFAULT_MYSQL + "'";
+	  return "TIMESTAMP" + (size != -1 ? "(" + size + ")" : "") + " NOT NULL DEFAULT '" + getTimestampDefault() + "'";
 	else
 	  return "TIMESTAMP";
 
@@ -129,6 +129,26 @@ public class TypesMySQL
   @Override
   public String getAutoIncrementCreateType(int type) {
     return toTypeString(type, -1, false) + " AUTO_INCREMENT";
+  }
+
+  /**
+   * Whether a default is used for timestamps.
+   *
+   * @return		true if a default is used
+   */
+  @Override
+  public boolean usesTimestampDefault() {
+    return true;
+  }
+
+  /**
+   * Returns the default used for timestamps.
+   *
+   * @return		the default, null if none used
+   */
+  @Override
+  public String getTimestampDefault() {
+    return Constants.TIMESTAMP_DEFAULT_MYSQL;
   }
 
   /**

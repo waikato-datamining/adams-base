@@ -88,6 +88,26 @@ public class TypesSQLite
   }
 
   /**
+   * Whether a default is used for timestamps.
+   *
+   * @return		true if a default is used
+   */
+  @Override
+  public boolean usesTimestampDefault() {
+    return false;
+  }
+
+  /**
+   * Returns the default used for timestamps.
+   *
+   * @return		the default, null if none used
+   */
+  @Override
+  public String getTimestampDefault() {
+    return null;
+  }
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url		the URL to check

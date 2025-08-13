@@ -20,6 +20,7 @@
 
 package adams.db;
 
+import adams.core.Constants;
 import adams.db.queries.AbstractDatabaseQueries;
 import adams.db.quirks.AbstractDatabaseQuirks;
 import adams.db.types.AbstractTypes;
@@ -245,5 +246,35 @@ public class JDBC {
    */
   public static AbstractDatabaseQueries getQueries(String url) {
     return AbstractDatabaseQueries.getHandler(url);
+  }
+
+  /**
+   * Returns the default timestamp to use for the URL.
+   * Defaults to {@link Constants#TIMESTAMP_DEFAULT_MYSQL}.
+   *
+   * @param conn	the connection to use for identification
+   * @return		the default timestamp value
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static String getDefaultTimestamp(AbstractDatabaseConnection conn) {
+    return getDefaultTimestamp(conn.getURL());
+  }
+
+  /**
+   * Returns the default timestamp to use for the URL.
+   * Defaults to {@link Constants#TIMESTAMP_DEFAULT_MYSQL}.
+   *
+   * @param url		the URL to use for identification
+   * @return		the default timestamp value
+   * @throws IllegalArgumentException	if JDBC connection type not supported
+   */
+  public static String getDefaultTimestamp(String url) {
+    AbstractTypes	types;
+
+    types = AbstractTypes.getHandler(url);
+    if (types.usesTimestampDefault())
+      return types.getTimestampDefault();
+    else
+      return Constants.TIMESTAMP_DEFAULT_MYSQL;
   }
 }

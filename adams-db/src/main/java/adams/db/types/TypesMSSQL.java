@@ -86,7 +86,7 @@ public class TypesMSSQL
 
       case Types.TIMESTAMP:
         if (!compare)
-	  return "DATETIME NOT NULL DEFAULT '" + Constants.TIMESTAMP_DEFAULT_MSSQL + "'";
+	  return "DATETIME NOT NULL DEFAULT '" + getTimestampDefault() + "'";
 	else
 	  return "DATETIME";
 
@@ -114,6 +114,26 @@ public class TypesMSSQL
   @Override
   public String getAutoIncrementCreateType(int type) {
     return toTypeString(type, -1, false) + " IDENTITY(1,1)";
+  }
+
+  /**
+   * Whether a default is used for timestamps.
+   *
+   * @return		true if a default is used
+   */
+  @Override
+  public boolean usesTimestampDefault() {
+    return true;
+  }
+
+  /**
+   * Returns the default used for timestamps.
+   *
+   * @return		the default, null if none used
+   */
+  @Override
+  public String getTimestampDefault() {
+    return Constants.TIMESTAMP_DEFAULT_MSSQL;
   }
 
   /**

@@ -126,6 +126,20 @@ public abstract class AbstractTypes
   public abstract String getAutoIncrementCreateType(int type);
 
   /**
+   * Whether a default is used for timestamps.
+   *
+   * @return		true if a default is used
+   */
+  public abstract boolean usesTimestampDefault();
+
+  /**
+   * Returns the default used for timestamps.
+   *
+   * @return		the default, null if none used
+   */
+  public abstract String getTimestampDefault();
+
+  /**
    * Checks whether this URL is handled.
    *
    * @param url		the URL to check
