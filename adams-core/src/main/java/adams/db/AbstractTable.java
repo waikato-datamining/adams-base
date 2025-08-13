@@ -55,9 +55,6 @@ public abstract class AbstractTable
   /** whether to use ANSI quotes around table/column names. */
   protected boolean m_AnsiQuotes;
 
-  /** for helping with queries. */
-  protected AbstractDatabaseQueries m_Queries;
-
   /**
    * Initializes the table.
    *
@@ -78,7 +75,6 @@ public abstract class AbstractTable
       getLogger().info(m_DatabaseConnection.toString());
 
     m_AnsiQuotes = getProperties().getBoolean("AnsiQuotes", false);
-    m_Queries    = AbstractDatabaseQueries.getHandler(dbcon.getURL());
   }
   
   /**

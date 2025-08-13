@@ -29,6 +29,7 @@ import adams.db.SQLIntf;
 import adams.db.SQLUtils;
 import adams.db.SimpleResultSet;
 import adams.db.TableManager;
+import adams.db.queries.AbstractDatabaseQueries;
 import adams.db.quirks.AbstractDatabaseQuirks;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
@@ -69,6 +70,9 @@ public class SQL
   /** the quirks for the connection. */
   protected AbstractDatabaseQuirks m_Quirks;
 
+  /** for helping with queries. */
+  protected AbstractDatabaseQueries m_Queries;
+
   /** the table manager. */
   protected static TableManager<SQL> m_TableManager;
 
@@ -82,6 +86,7 @@ public class SQL
 
     m_DatabaseConnection = dbcon;
     m_Quirks             = AbstractDatabaseQuirks.getHandler(dbcon.getURL());
+    m_Queries            = AbstractDatabaseQueries.getHandler(dbcon.getURL());
 
     updatePrefix();
   }
@@ -178,7 +183,7 @@ public class SQL
       while (rs.next()) {
 	rsCatalog = rs.getString(1);
 	rsTable   = rs.getString(3);
-	if (m_Quirks.tableExistsChecksCatalog())
+	if ((m_Quirks == null) || m_Quirks.tableExistsChecksCatalog())
 	  catalogOK = ((connCatalog == null) && (rsCatalog == null))
 			|| ((connCatalog != null) && (connCatalog.equalsIgnoreCase(rsCatalog)));
 	else
@@ -199,7 +204,7 @@ public class SQL
 	while (rs.next()) {
 	  rsCatalog = rs.getString(1);
 	  rsTable   = rs.getString(3);
-	  if (m_Quirks.tableExistsChecksCatalog())
+	  if ((m_Quirks == null) || m_Quirks.tableExistsChecksCatalog())
 	    catalogOK = ((connCatalog == null) && (rsCatalog == null))
 			  || ((connCatalog != null) && (connCatalog.equalsIgnoreCase(rsCatalog)));
 	  else
@@ -547,31 +552,44 @@ public class SQL
    * @throws Exception 	if something goes wrong
    */
   protected ResultSet doSelect(boolean distinct, String columns, String tables, String where) throws Exception {
-    String	query;
+    StringBuilder	query;
+    List<String> 	keywords;
+    String		whereTest;
+    boolean		found;
 
     // select
-    query = "SELECT ";
+    query = new StringBuilder("SELECT ");
     if (distinct)
-      query += "DISTINCT ";
-    query += columns;
+      query.append("DISTINCT ");
+    query.append(columns);
 
     // from
     if (tables != null)
-      query += " FROM " + tables;
+      query.append(" FROM ").append(tables);
 
     // where
     if ((where != null) && !where.isEmpty()) {
-      if (     !where.trim().toUpperCase().startsWith("LIMIT ")
-	    && !where.trim().toUpperCase().startsWith("FETCH FIRST ")
-	    && !where.trim().toUpperCase().startsWith("ORDER ") )
-	query += " WHERE";
-      query += " " + where;
+      // check whether we need to insert the "WHERE" keyword
+      keywords = new ArrayList<>(List.of("ORDER "));
+      if (m_Queries != null)
+	keywords.add(m_Queries.limitKeyword().toUpperCase());
+      whereTest = where.trim().toUpperCase();
+      found     = false;
+      for (String keyword: keywords) {
+	if (whereTest.startsWith(keyword)) {
+	  found = true;
+	  break;
+	}
+      }
+      if (!found)
+	query.append(" WHERE");
+      query.append(" ").append(where);
     }
 
     if (isLoggingEnabled())
       getLogger().info("doSelect: " + query);
     try {
-      return getResultSet(query);
+      return getResultSet(query.toString());
     }
     catch (SQLException e) {
       getLogger().log(Level.SEVERE, "Error executing 'doSelect': " + query, e);
