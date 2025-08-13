@@ -65,8 +65,7 @@ public abstract class AbstractDatabaseQuirks
    * Returns the handler for the JDBC url.
    *
    * @param url		the URL
-   * @return		the handler
-   * @throws IllegalArgumentException	if JDBC connection type not supported
+   * @return		the handler, null if no support available
    */
   public static synchronized AbstractDatabaseQuirks getHandler(String url) {
     if (m_Cache == null) {
@@ -92,7 +91,7 @@ public abstract class AbstractDatabaseQuirks
     }
 
     if (!m_Cache.containsKey(url))
-      throw new IllegalStateException("Unsupported JDBC connection: " + url);
+      return null;
 
     return m_Cache.get(url);
   }
