@@ -75,14 +75,14 @@ public class TypesMSSQL
       case Types.DOUBLE:
 	return "NUMERIC";
 
-      case Types.LONGVARCHAR:
       case Types.VARCHAR:
-	if (size <= MAX_VARCHAR) {
+	if (size <= MAX_VARCHAR)
 	  return "VARCHAR(" + size + ")";
-	}
-	else{
-	  return "NTEXT";  // ntext is unicode, text is non-unicode
-	}
+	else
+	  return "NVARCHAR(max)";
+
+      case Types.LONGVARCHAR:
+	return "NVARCHAR(max)";
 
       case Types.TIMESTAMP:
         if (!compare)
@@ -98,7 +98,7 @@ public class TypesMSSQL
 
       case Types.BLOB:
       case Types.LONGVARBINARY:
-	return "VARBINARY";
+	return "VARBINARY(max)";
 
       default:
 	throw new IllegalStateException("No TYPE for " + type);
