@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTableFacade.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -29,7 +29,6 @@ import java.util.logging.Level;
  * Ancestor for database table facades.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractTableFacade
   extends LoggingObject {
@@ -68,7 +67,7 @@ public abstract class AbstractTableFacade
 
     prefix   = getClass().getName() + "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
     m_Logger = LoggingHelper.getLogger(prefix);
-    m_Logger.setLevel(getDebug() || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO) ? Level.INFO : Level.OFF);
+    m_Logger.setLevel(getDebug() || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO) ? Level.INFO : Level.WARNING);
   }
 
   /**
