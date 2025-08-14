@@ -15,12 +15,15 @@
 
 /*
  * AbstractManagementPanel.java
- * Copyright (C) 2012-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.tools;
 
 import adams.core.CleanUpHandler;
+import adams.core.logging.Logger;
+import adams.core.logging.LoggingHelper;
+import adams.core.logging.LoggingSupporter;
 import adams.data.id.IDHandler;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.SpreadSheetFileChooser;
@@ -49,6 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -56,10 +60,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.text.Document;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A panel for managing objects.
@@ -69,7 +75,7 @@ import java.util.List;
  */
 public abstract class AbstractManagementPanel<T extends Comparable>
   extends BasePanel
-  implements CleanUpHandler, MenuBarProvider {
+  implements CleanUpHandler, MenuBarProvider, LoggingSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 3181901882660335578L;
@@ -127,6 +133,9 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
   /** the menu item for removing. */
   protected JMenuItem m_MenuItemEditRemove;
+
+  /** the logger instance to use. */
+  protected Logger m_Logger;
 
   /**
    * Initializes the widgets.
@@ -191,7 +200,7 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     m_TableValues.addToButtonsPanel(m_ButtonLoad);
     m_TableValues.setDoubleClickButton(m_ButtonLoad);
 
-    if (!isReadOnly()) {
+    if (canRemoveObjects()) {
       m_TableValues.addToButtonsPanel(new JLabel(" "));  // separator
 
       m_ButtonRemove = new BaseButton("Remove");
@@ -216,6 +225,26 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 
     clear();
     refresh();
+  }
+
+  /**
+   * Returns the logger in use.
+   *
+   * @return		the logger
+   */
+  public Logger getLogger() {
+    if (m_Logger == null)
+      m_Logger = LoggingHelper.getLogger(getClass(), Level.INFO);
+    return m_Logger;
+  }
+
+  /**
+   * Returns whether logging is enabled.
+   *
+   * @return		true if at least {@link Level#INFO}
+   */
+  public boolean isLoggingEnabled() {
+    return LoggingHelper.isAtLeast(getLogger(), Level.INFO);
   }
 
   /**
@@ -317,7 +346,9 @@ public abstract class AbstractManagementPanel<T extends Comparable>
 	menuitem.setIcon(ImageManager.getIcon("save.gif"));
 	menuitem.addActionListener((ActionEvent e) -> updateObject());
 	m_MenuItemEditUpdate = menuitem;
+      }
 
+      if (canRemoveObjects()) {
 	// Edit/Remove
 	menuitem = new JMenuItem("Remove");
 	menu.add(menuitem);
@@ -349,6 +380,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     if (!isReadOnly()) {
       m_MenuItemEditAdd.setEnabled(canAddObject());
       m_MenuItemEditUpdate.setEnabled(canAddObject());
+    }
+    if (canRemoveObjects()) {
       m_MenuItemEditRemove.setEnabled(m_TableValues.getSelectedRowCount() > 0);
     }
   }
@@ -585,7 +618,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     StringBuilder	ids;
     int			i;
     int			retVal;
-    T[]			values;
+    final T[]		values;
+    SwingWorker		worker;
 
     indices = m_TableValues.getSelectedRows();
     values  = (T[]) Array.newInstance(getManagedClass(), indices.length);
@@ -605,10 +639,29 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     if (retVal != ApprovalDialog.APPROVE_OPTION)
       return;
 
-    for (Object value: values)
-      remove((T) value);
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	int count = 0;
+	for (Object value: values) {
+	  count++;
+	  remove((T) value);
+	  if (count % 100 == 0)
+	    getLogger().info("Removed " + count + "/" + values.length + "...");
+	}
+	getLogger().info("Removed " + count + "/" + values.length + "!");
+	return null;
+      }
 
-    refresh();
+      @Override
+      protected void done() {
+	super.done();
+	setCursor(Cursor.getDefaultCursor());
+	refresh();
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -650,10 +703,26 @@ public abstract class AbstractManagementPanel<T extends Comparable>
    * Refreshes the table.
    */
   protected void refresh() {
+    SwingWorker		worker;
+
     m_ModelValues.clear();
-    m_ModelValues.addAll(loadAll());
-    m_TableValues.setOptimalColumnWidthBounded(getMaximumColumnWidth());
-    update();
+    worker = new SwingWorker() {
+      @Override
+      protected Object doInBackground() throws Exception {
+	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	m_ModelValues.addAll(loadAll());
+	return null;
+      }
+
+      @Override
+      protected void done() {
+	super.done();
+	m_TableValues.setOptimalColumnWidthBounded(getMaximumColumnWidth());
+	setCursor(Cursor.getDefaultCursor());
+	update();
+      }
+    };
+    worker.execute();
   }
 
   /**
@@ -681,6 +750,16 @@ public abstract class AbstractManagementPanel<T extends Comparable>
   protected abstract boolean isReadOnly();
 
   /**
+   * Returns whether objects can be deleted.
+   * Default implementation returns inverse of {@link #isReadOnly()}.
+   *
+   * @return		true if delete supported
+   */
+  protected boolean canRemoveObjects() {
+    return !isReadOnly();
+  }
+
+  /**
    * Returns whether all the required fields are set to add the object.
    *
    * @return		true if required fields are filled in
@@ -703,6 +782,8 @@ public abstract class AbstractManagementPanel<T extends Comparable>
     if (!isReadOnly()) {
       m_ButtonAdd.setEnabled(canAddObject());
       m_ButtonUpdate.setEnabled(m_ButtonAdd.isEnabled());
+    }
+    if (canRemoveObjects()) {
       m_ButtonRemove.setEnabled(m_TableValues.getSelectedRowCount() > 0);
     }
     m_ButtonLoad.setEnabled(m_TableValues.getSelectedRowCount() == 1);
