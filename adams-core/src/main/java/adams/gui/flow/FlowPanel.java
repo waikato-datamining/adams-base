@@ -91,6 +91,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 import java.awt.BorderLayout;
@@ -154,11 +155,20 @@ public class FlowPanel
   /** the tree displaying the flow structure. */
   protected Tree m_Tree;
 
-  /** the tree displaying the debug flow structure. */
-  protected Tree m_DebugTree;
+  /** the panel with the tree. */
+  protected JPanel m_PanelTree;
+
+  /** the panel with label. */
+  protected JPanel m_PanelTreeLabel;
 
   /** the panel with the debug tree. */
   protected JPanel m_PanelDebugTree;
+
+  /** the panel with the debug tree label. */
+  protected JPanel m_PanelDebugTreeLabel;
+
+  /** the tree displaying the debug flow structure. */
+  protected Tree m_DebugTree;
 
   /** the recent files handler. */
   protected RecentFilesHandlerWithCommandline<JMenu> m_RecentFilesHandler;
@@ -282,7 +292,6 @@ public class FlowPanel
     String[]				keyboardShortcuts;
     AbstractKeyboardAction		keyboardAction;
     List<AbstractKeyboardAction>	keyboardActions;
-    JPanel				panel;
 
     super.initGUI();
 
@@ -302,11 +311,12 @@ public class FlowPanel
     m_PanelDebugTree = new JPanel(new BorderLayout());
     m_SplitPaneTrees.setTopComponent(m_PanelDebugTree);
     m_SplitPaneTrees.setTopComponentHidden(true);
-    panel = new JPanel(new FlowLayout());
-    m_PanelDebugTree.add(panel, BorderLayout.NORTH);
-    panel.add(new JLabel("Debug view"));
+    m_PanelDebugTreeLabel = new JPanel(new FlowLayout());
+    m_PanelDebugTree.add(m_PanelDebugTreeLabel, BorderLayout.NORTH);
+    m_PanelDebugTreeLabel.add(new JLabel("Debug view"));
     m_DebugTree = new Tree(this);
     m_DebugTree.setDebug(true);
+    m_DebugTree.setBackground(UIManager.getColor("Panel.background"));
     configureUI(m_DebugTree);
     m_PanelDebugTree.add(new BaseScrollPane(m_DebugTree), BorderLayout.CENTER);
 
@@ -349,7 +359,13 @@ public class FlowPanel
 	showStatus(false, m_Tree.getSelectedFullName());
     });
 
-    m_SplitPaneEditor.setTopComponent(new BaseScrollPane(m_Tree));
+    m_PanelTree = new JPanel(new BorderLayout());
+    m_PanelTreeLabel = new JPanel(new FlowLayout());
+    m_PanelTreeLabel.setVisible(false);
+    m_PanelTreeLabel.add(new JLabel("Flow view"));
+    m_PanelTree.add(m_PanelTreeLabel, BorderLayout.NORTH);
+    m_PanelTree.add(new BaseScrollPane(m_Tree), BorderLayout.CENTER);
+    m_SplitPaneEditor.setTopComponent(m_PanelTree);
 
     // the tabs
     m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
@@ -1744,6 +1760,7 @@ public class FlowPanel
    * @param value	true if visible
    */
   public void setDebugTreeVisible(boolean value) {
+    m_PanelTreeLabel.setVisible(value);
     m_SplitPaneTrees.setTopComponentHidden(!value);
   }
 
