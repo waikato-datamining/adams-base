@@ -1365,15 +1365,15 @@ public class PropertiesParameterPanel
       switch (type) {
 	case TIME:
 	  timePanel = (TimeChooserPanel) comp;
-	  result.setTime(key, timePanel.getCurrent());
+	  result.setProperty(key, new BaseTime(timePanel.getCurrent()).getValue());
 	  break;
 	case DATE:
 	  datePanel = (DateChooserPanel) comp;
-	  result.setDate(key, datePanel.getCurrent());
+	  result.setProperty(key, new BaseDate(datePanel.getCurrent()).getValue());
 	  break;
 	case DATETIME:
 	  dateTimePanel = (DateTimeChooserPanel) comp;
-	  result.setDateTime(key, dateTimePanel.getCurrent());
+	  result.setProperty(key, new BaseDateTime(dateTimePanel.getCurrent()).getValue());
 	  break;
 	case DOUBLE:
 	  textfield = (JTextField) comp;

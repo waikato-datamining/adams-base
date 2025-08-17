@@ -15,7 +15,7 @@
 
 /*
  * EnterManyValues.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -24,6 +24,9 @@ import adams.core.Properties;
 import adams.core.QuickInfoHelper;
 import adams.core.UniqueIDs;
 import adams.core.Utils;
+import adams.core.base.BaseDate;
+import adams.core.base.BaseDateTime;
+import adams.core.base.BaseTime;
 import adams.core.io.PlaceholderFile;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
@@ -317,7 +320,7 @@ public class EnterManyValues
       if (def.getEnabled())
 	names.add(def.getName());
     }
-    namesStr = QuickInfoHelper.toString(this, "values", (names.size() > 0 ? Utils.flatten(names, "|") : "-none-"), ", ");
+    namesStr = QuickInfoHelper.toString(this, "values", (!names.isEmpty() ? Utils.flatten(names, "|") : "-none-"), ", ");
     if (namesStr != null)
       result += namesStr;
 
@@ -675,13 +678,13 @@ public class EnterManyValues
 	  row.addCell(val.getName()).setContent(props.getBoolean(val.getName()));
 	  break;
 	case TIME:
-	  row.addCell(val.getName()).setContent(props.getTime(val.getName()));
+	  row.addCell(val.getName()).setContent(new BaseTime(props.getProperty(val.getName())).timeValue());
 	  break;
 	case DATE:
-	  row.addCell(val.getName()).setContent(props.getDate(val.getName()));
+	  row.addCell(val.getName()).setContent(new BaseDate(props.getProperty(val.getName())).dateValue());
 	  break;
 	case DATETIME:
-	  row.addCell(val.getName()).setContent(props.getDateTime(val.getName()));
+	  row.addCell(val.getName()).setContent(new BaseDateTime(props.getProperty(val.getName())).dateTimeValue());
 	  break;
 	default:
 	  row.addCell(val.getName()).setContentAsString(props.getProperty(val.getName()));
