@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractLogHandler.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -29,7 +29,6 @@ import java.util.logging.LogRecord;
  * Ancestor for log handlers.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractLogHandler
   extends Handler
@@ -98,6 +97,15 @@ public abstract class AbstractLogHandler
   }
 
   /**
+   * Returns whether the handler has been initialized.
+   *
+   * @return		true if initialized
+   */
+  protected boolean isSetUp() {
+    return !m_LogUsed;
+  }
+
+  /**
    * Publish a <tt>LogRecord</tt>.
    * <p>
    * The logging request was made initially to a <tt>Logger</tt> object,
@@ -111,7 +119,7 @@ public abstract class AbstractLogHandler
    */
   @Override
   public void publish(LogRecord record) {
-    if (!m_LogUsed)
+    if (!isSetUp())
       setUp();
     doPublish(record);
     postPublish(record);

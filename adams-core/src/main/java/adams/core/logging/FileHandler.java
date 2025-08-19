@@ -15,7 +15,7 @@
 
 /*
  * FileHandler.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -26,6 +26,8 @@ import adams.core.management.EnvVar;
 import adams.env.Environment;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -44,6 +46,9 @@ public class FileHandler
 
   /** the environment variable to inject a prefix into the log file. */
   public final static String ADAMS_LOGFILE_PREFIX = "ADAMS_LOGFILE_PREFIX";
+
+  /** whether the file has been configured. */
+  protected final static Map<File,Boolean> m_Configured = new HashMap<>();
 
   /** the log file to use. */
   protected File m_LogFile;
@@ -86,23 +91,39 @@ public class FileHandler
   }
 
   /**
+   * Returns whether the handler has been initialized.
+   *
+   * @return		true if initialized
+   */
+  protected boolean isSetUp() {
+    if (m_LogFile == null)
+      return false;
+    synchronized (m_Configured) {
+      return m_Configured.getOrDefault(m_LogFile, false);
+    }
+  }
+
+  /**
    * Hook method for performing setup before processing first log record.
    */
   @Override
   protected void setUp() {
     File	logDir;
 
-    super.setUp();
+    synchronized (m_Configured) {
+      super.setUp();
 
-    if (m_LogFile != null) {
-      logDir = m_LogFile.getAbsoluteFile().getParentFile();
-      if (!logDir.exists()) {
-	if (!logDir.mkdirs())
-	  System.err.println(getClass().getName() + ": Failed to create log directory '" + logDir + "'?");
+      if (m_LogFile != null) {
+	logDir = m_LogFile.getAbsoluteFile().getParentFile();
+	if (!logDir.exists()) {
+	  if (!logDir.mkdirs())
+	    System.err.println(getClass().getName() + ": Failed to create log directory '" + logDir + "'?");
+	}
       }
-    }
 
-    m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
+      m_LogIsDir = (m_LogFile == null) || m_LogFile.isDirectory();
+      m_Configured.put(m_LogFile, true);
+    }
   }
 
   /**
