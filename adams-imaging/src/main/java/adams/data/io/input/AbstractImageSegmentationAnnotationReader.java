@@ -15,11 +15,12 @@
 
 /*
  * AbstractImageSegmentationAnnotationReader.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.io.output.ImageSegmentationAnnotationWriter;
@@ -35,6 +36,90 @@ public abstract class AbstractImageSegmentationAnnotationReader
   implements ImageSegmentationAnnotationReader {
 
   private static final long serialVersionUID = -2475426542124421777L;
+
+  /** whether to use an alternative annotation directory. */
+  protected boolean m_UseAlternativeAnnotationDir;
+
+  /** the alternative annotation directory. */
+  protected PlaceholderDirectory m_AlternativeAnnotationDir;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "use-alternative-annotation-dir", "useAlternativeAnnotationDir",
+      false);
+
+    m_OptionManager.add(
+      "alternative-annotation-dir", "alternativeAnnotationDir",
+      new PlaceholderDirectory());
+  }
+
+  /**
+   * Sets whether to use an alternative directory for the annotations.
+   *
+   * @param value	true if to use alternative dir
+   */
+  @Override
+  public void setUseAlternativeAnnotationDir(boolean value) {
+    m_UseAlternativeAnnotationDir = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to use an alternative directory for the annotations.
+   *
+   * @return		true if to use alternative dir
+   */
+  @Override
+  public boolean getUseAlternativeAnnotationDir() {
+    return m_UseAlternativeAnnotationDir;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useAlternativeAnnotationDirTipText() {
+    return "If enabled, uses the specified directory to locate annotations.";
+  }
+
+  /**
+   * Sets the alternative directory for the annotations.
+   *
+   * @param value	the alternative dir
+   */
+  @Override
+  public void setAlternativeAnnotationDir(PlaceholderDirectory value) {
+    m_AlternativeAnnotationDir = value;
+    reset();
+  }
+
+  /**
+   * Returns the alternative directory for the annotations.
+   *
+   * @return		the alternative dir
+   */
+  @Override
+  public PlaceholderDirectory getAlternativeAnnotationDir() {
+    return m_AlternativeAnnotationDir;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String alternativeAnnotationDirTipText() {
+    return "The alternative directory to look for annotations.";
+  }
 
   /**
    * Returns, if available, the corresponding writer.
@@ -52,6 +137,14 @@ public abstract class AbstractImageSegmentationAnnotationReader
   protected String check(PlaceholderFile file) {
     if (file == null)
       return "No file provided!";
+
+    if (m_UseAlternativeAnnotationDir) {
+      if (!m_AlternativeAnnotationDir.exists())
+	return "Alternative annotation directory does not exist: " + m_AlternativeAnnotationDir;
+      if (m_AlternativeAnnotationDir.isFile())
+	return "Alternative annotation directory points to a file: " + m_AlternativeAnnotationDir;
+    }
+
     return null;
   }
 

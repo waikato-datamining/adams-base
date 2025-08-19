@@ -15,7 +15,7 @@
 
 /*
  * IndividualImageSegmentationLayerReader.java
- * Copyright (C) 2020-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -169,7 +169,10 @@ public class IndividualImageSegmentationLayerReader
     lister.setListFiles(true);
     lister.setListDirs(false);
     lister.setRecursive(false);
-    lister.setWatchDir(file.getParentFile().getAbsolutePath());
+    if (m_UseAlternativeAnnotationDir)
+      lister.setWatchDir(m_AlternativeAnnotationDir.getAbsolutePath());
+    else
+      lister.setWatchDir(file.getParentFile().getAbsolutePath());
     lister.setRegExp(new BaseRegExp(name + "-.*\\.(png|PNG)"));
     files = lister.list();
     if (isLoggingEnabled())

@@ -15,12 +15,13 @@
 
 /*
  * ImageSegmentationAnnotationReader.java
- * Copyright (C) 2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
 import adams.core.io.FileFormatHandler;
+import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionHandler;
 import adams.data.io.output.ImageSegmentationAnnotationWriter;
@@ -40,6 +41,34 @@ public interface ImageSegmentationAnnotationReader
    * @return		the writer, null if none available
    */
   public abstract ImageSegmentationAnnotationWriter getCorrespondingWriter();
+
+  /**
+   * Sets whether to use an alternative directory for the annotations.
+   *
+   * @param value	true if to use alternative dir
+   */
+  public abstract void setUseAlternativeAnnotationDir(boolean value);
+
+  /**
+   * Returns whether to use an alternative directory for the annotations.
+   *
+   * @return		true if to use alternative dir
+   */
+  public abstract boolean getUseAlternativeAnnotationDir();
+
+  /**
+   * Sets the alternative directory for the annotations.
+   *
+   * @param value	the alternative dir
+   */
+  public abstract void setAlternativeAnnotationDir(PlaceholderDirectory value);
+
+  /**
+   * Returns the alternative directory for the annotations.
+   *
+   * @return		the alternative dir
+   */
+  public abstract PlaceholderDirectory getAlternativeAnnotationDir();
 
   /**
    * Reads the image segmentation annotations.

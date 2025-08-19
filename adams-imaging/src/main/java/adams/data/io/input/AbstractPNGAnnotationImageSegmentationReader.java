@@ -15,7 +15,7 @@
 
 /*
  * AbstractPNGAnnotationImageSegmentationReader.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -188,6 +188,9 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
   protected PlaceholderFile locatePNG(PlaceholderFile file) {
     PlaceholderFile	png;
 
+    if (m_UseAlternativeAnnotationDir)
+      file = new PlaceholderFile(m_AlternativeAnnotationDir.getAbsolutePath() + "/" + file.getName());
+
     png = FileUtils.replaceExtension(file, ".png");
     if (png.exists())
       return png;
@@ -216,7 +219,7 @@ public abstract class AbstractPNGAnnotationImageSegmentationReader
       if (!m_Lenient) {
 	png = locatePNG(file);
 	if (png == null)
-	  result = "Associated PNG file with annotations is missing!";
+	  result = "Associated PNG file with annotations is missing: " + file;
       }
     }
 

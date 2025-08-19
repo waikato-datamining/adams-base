@@ -15,13 +15,12 @@
 
 /*
  * IndexedPNGImageSegmentationReader.java
- * Copyright (C) 2020-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
 
 import adams.core.Utils;
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.image.BufferedImageHelper;
 import adams.data.io.output.ImageSegmentationAnnotationWriter;
@@ -188,7 +187,7 @@ public class IndexedPNGImageSegmentationReader
     Map<String,BufferedImage> 	layerImages;
 
     baseImage   = BufferedImageHelper.read(file).toBufferedImage();
-    png         = FileUtils.replaceExtension(file, ".png");
+    png         = locatePNG(file);
     layerImages = readLayers(png);
     result      = new ImageSegmentationContainer(file.getName(), baseImage, layerImages);
     return result;
