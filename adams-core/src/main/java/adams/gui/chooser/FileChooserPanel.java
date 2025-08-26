@@ -15,7 +15,7 @@
 
 /*
  * FileChooserPanel.java
- * Copyright (C) 2008-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -26,6 +26,7 @@ import adams.core.io.AbsolutePathSupporter;
 import adams.core.io.PlaceholderFile;
 import adams.env.Environment;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.PopupMenuActions;
 import adams.gui.event.HistorySelectionEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -485,6 +486,12 @@ public class FileChooserPanel
     BasePopupMenu	result;
 
     result = super.getPopupMenu();
+
+    result.addSeparator();
+
+    PopupMenuActions.openInPreviewBrowser(result, getCurrent());
+    PopupMenuActions.openInFileBrowser(result, getCurrent());
+    PopupMenuActions.openInTerminal(result, getCurrent());
 
     result.addSeparator();
 

@@ -15,31 +15,22 @@
 
 /*
  *    FileEditor.java
- *    Copyright (C) 1999-2023 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.core.management.FileBrowser;
-import adams.core.management.Terminal;
 import adams.core.management.User;
 import adams.core.option.parsing.FileParsing;
 import adams.gui.chooser.BaseFileChooser;
-import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.ImageManager;
-import adams.gui.dialog.PreviewBrowserDialog;
-import adams.gui.dialog.SimplePreviewBrowserDialog;
+import adams.gui.core.PopupMenuActions;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
-import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -249,46 +240,15 @@ public class FileEditor
    * @param menu	the menu to customize
    */
   public void customizePopupMenu(final BasePanel owner, JPopupMenu menu) {
-    JMenuItem		menuitem;
     final File		file;
 
     menu.addSeparator();
 
-    file     = (File) getValue();
-    menuitem = new JMenuItem("Open in preview browser...");
-    menuitem.setIcon(ImageManager.getIcon("previewbrowser.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> {
-      BaseDialog dialog;
-      if (file.isDirectory()) {
-	dialog = new PreviewBrowserDialog();
-	((PreviewBrowserDialog) dialog).open(new PlaceholderDirectory(file));
-      }
-      else {
-	dialog = new SimplePreviewBrowserDialog();
-	((SimplePreviewBrowserDialog) dialog).open(new PlaceholderFile(file));
-      }
-      dialog.setLocationRelativeTo(dialog.getOwner());
-      dialog.setVisible(true);
-    });
-    menu.add(menuitem);
+    file = (File) getValue();
 
-    menuitem = new JMenuItem("Open in file browser...");
-    menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> FileBrowser.launch(file));
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Open in terminal...");
-    menuitem.setIcon(ImageManager.getIcon("terminal.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> Terminal.launch(file));
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Copy (absolute path)");
-    menuitem.setIcon(ImageManager.getIcon("copy.gif"));
-    menuitem.setEnabled(true);
-    menuitem.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(file.getAbsolutePath()));
-    menu.add(menuitem);
+    PopupMenuActions.openInPreviewBrowser(menu, file);
+    PopupMenuActions.openInFileBrowser(menu, file);
+    PopupMenuActions.openInTerminal(menu, file);
+    PopupMenuActions.copyAbsolutePath(menu, file);
   }
 }

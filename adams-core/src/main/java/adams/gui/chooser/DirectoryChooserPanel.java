@@ -15,7 +15,7 @@
 
 /*
  * DirectoryChooserPanel.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -31,6 +31,7 @@ import adams.core.io.lister.DirectoryLister;
 import adams.core.io.lister.LocalDirectoryLister;
 import adams.env.Environment;
 import adams.gui.core.BasePopupMenu;
+import adams.gui.core.PopupMenuActions;
 import adams.gui.event.HistorySelectionEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
@@ -325,6 +326,12 @@ public class DirectoryChooserPanel
     BasePopupMenu	result;
 
     result = super.getPopupMenu();
+
+    result.addSeparator();
+
+    PopupMenuActions.openInPreviewBrowser(result, getCurrent());
+    PopupMenuActions.openInFileBrowser(result, getCurrent());
+    PopupMenuActions.openInTerminal(result, getCurrent());
 
     result.addSeparator();
 

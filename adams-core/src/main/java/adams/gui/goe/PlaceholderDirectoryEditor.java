@@ -15,32 +15,25 @@
 
 /*
  *    PlaceholderDirectoryEditor.java
- *    Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.goe;
 
-import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import adams.core.management.FileBrowser;
-import adams.core.management.Terminal;
 import adams.core.management.User;
 import adams.core.option.parsing.PlaceholderDirectoryParsing;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserFactory;
 import adams.gui.chooser.FileChooser;
-import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
-import adams.gui.core.ImageManager;
-import adams.gui.dialog.PreviewBrowserDialog;
-import adams.gui.dialog.SimplePreviewBrowserDialog;
+import adams.gui.core.PopupMenuActions;
 import adams.gui.goe.PropertyPanel.PopupMenuCustomizer;
 
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -237,40 +230,14 @@ public class PlaceholderDirectoryEditor
    * @param menu	the menu to customize
    */
   public void customizePopupMenu(final BasePanel owner, JPopupMenu menu) {
-    JMenuItem			menuitem;
     final PlaceholderFile	file;
 
     menu.addSeparator();
 
-    file     = (PlaceholderFile) getValue();
-    menuitem = new JMenuItem("Open in preview browser...");
-    menuitem.setIcon(ImageManager.getIcon("previewbrowser.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> {
-      BaseDialog dialog;
-      if (file.isDirectory()) {
-	dialog = new PreviewBrowserDialog();
-	((PreviewBrowserDialog) dialog).open(new PlaceholderDirectory(file));
-      }
-      else {
-	dialog = new SimplePreviewBrowserDialog();
-	((SimplePreviewBrowserDialog) dialog).open(file);
-      }
-      dialog.setLocationRelativeTo(dialog.getOwner());
-      dialog.setVisible(true);
-    });
-    menu.add(menuitem);
+    file = (PlaceholderFile) getValue();
 
-    menuitem = new JMenuItem("Open in file browser...");
-    menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> FileBrowser.launch(file));
-    menu.add(menuitem);
-
-    menuitem = new JMenuItem("Open in terminal...");
-    menuitem.setIcon(ImageManager.getIcon("terminal.png"));
-    menuitem.setEnabled(FileUtils.dirOrParentDirExists(file));
-    menuitem.addActionListener((ActionEvent e) -> Terminal.launch(file));
-    menu.add(menuitem);
+    PopupMenuActions.openInPreviewBrowser(menu, file);
+    PopupMenuActions.openInFileBrowser(menu, file);
+    PopupMenuActions.openInTerminal(menu, file);
   }
 }

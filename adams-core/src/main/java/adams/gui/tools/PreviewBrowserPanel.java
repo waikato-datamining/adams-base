@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -33,7 +33,6 @@ import adams.core.io.TempUtils;
 import adams.core.io.filechanged.FileChangeMonitor;
 import adams.core.io.filechanged.LastModified;
 import adams.core.logging.LoggingLevel;
-import adams.core.management.FileBrowser;
 import adams.gui.application.ChildFrame;
 import adams.gui.chooser.AbstractChooserPanel;
 import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
@@ -50,6 +49,7 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
+import adams.gui.core.PopupMenuActions;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -371,10 +371,7 @@ public class PreviewBrowserPanel
     m_PanelDir.setPopupMenuCustomizer(new PopupMenuCustomizer() {
       @Override
       public void customizePopupMenu(AbstractChooserPanel owner, JPopupMenu menu) {
-	JMenuItem menuitem = new JMenuItem("Open in file browser...");
-	menuitem.setIcon(ImageManager.getIcon("filebrowser.png"));
-	menuitem.addActionListener((ActionEvent ae) -> FileBrowser.launch(m_PanelDir.getCurrent()));
-	menu.add(menuitem);
+	PopupMenuActions.openInFileBrowser(menu, m_PanelDir.getCurrent());
       }
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
