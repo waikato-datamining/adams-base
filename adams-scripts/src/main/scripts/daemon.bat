@@ -58,7 +58,8 @@ goto wrongcmd
  --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED^
  --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED^
  --add-exports=java.base/sun.nio.cs=ALL-UNNAMED^
- adams.flow.FlowRunner^
+ --add-exports=java.base/sun.util.calendar=ALL-UNNAMED^
+adams.flow.FlowRunner^
  -input "%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^
  -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"^

@@ -86,6 +86,7 @@ done
   --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED \
   --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
   --add-exports=java.base/sun.nio.cs=ALL-UNNAMED \
+  --add-exports=java.base/sun.util.calendar=ALL-UNNAMED \
   $HEADLESS \
   $MAIN \
   $ARGS
