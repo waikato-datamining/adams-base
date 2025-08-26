@@ -35,6 +35,8 @@ import adams.flow.transformer.PassThrough;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -46,6 +48,9 @@ public class PropertyTraversal
   extends CustomLoggingLevelObject {
 
   private static final long serialVersionUID = -7623097519689686115L;
+
+  /** for keeping track whether illegal access has been reported already for this path. */
+  protected static Set<String> m_IllegalAccessReportedForPath = new HashSet<>();
 
   /**
    * Interface for traversal observers.
@@ -131,6 +136,13 @@ public class PropertyTraversal
         else {
           result = traverse(observer, child, path.append(prop.getDisplayName()));
         }
+      }
+      catch (java.lang.IllegalAccessException iae) {
+	String p = path.toString();
+	if (!m_IllegalAccessReportedForPath.contains(p)) {
+	  getLogger().warning("Illegal access for path: " + p + "\n" + iae.getMessage());
+	  m_IllegalAccessReportedForPath.add(p);
+	}
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to obtain object from read method: " + path, e);
