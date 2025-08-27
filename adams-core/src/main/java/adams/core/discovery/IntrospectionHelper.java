@@ -15,7 +15,7 @@
 
 /*
  * IntrospectionHelper.java
- * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.discovery;
@@ -125,11 +125,11 @@ public class IntrospectionHelper {
 	propdesc.add(optionsTmp.get(i).getDescriptor());
 	options.add(optionsTmp.get(i));
       }
-      properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
+      properties = propdesc.toArray(new PropertyDescriptor[0]);
 
       // assemble result
       result            = new IntrospectionContainer();
-      result.options    = options.toArray(new AbstractOption[options.size()]);
+      result.options    = options.toArray(new AbstractOption[0]);
       result.properties = properties;
       result.methods    = bi.getMethodDescriptors();
 
@@ -181,7 +181,7 @@ public class IntrospectionHelper {
       }
       propdesc.add(desc);
     }
-    properties = propdesc.toArray(new PropertyDescriptor[propdesc.size()]);
+    properties = propdesc.toArray(new PropertyDescriptor[0]);
 
     // assemble result
     result            = new IntrospectionContainer();
