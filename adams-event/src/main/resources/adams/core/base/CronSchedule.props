@@ -19,3 +19,11 @@ every15min.value=0 0/15 * * * ?
 # every 15 seconds
 every15sec.display=Every 15 seconds
 every15sec.value=0/15 * * * * ?
+
+# every Sunday at 2:15am
+everySunday.display=Every Sunday at 2:15am
+everySunday.value=0 15 2 ? * SUN
+
+# on the 1st of every month at 8am
+every1stOfMonth.display=On the 1st of every month at 8am
+every1stOfMonth.value=0 0 8 1 * ?
