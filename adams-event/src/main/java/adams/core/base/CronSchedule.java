@@ -15,7 +15,7 @@
 
 /*
  * CronSchedule.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.base;
 
@@ -96,7 +96,7 @@ public class CronSchedule
    */
   @Override
   public String getHelpURL() {
-    return "http://www.docjar.com/docs/api/org/quartz/CronExpression.html";
+    return "https://www.javadoc.io/doc/org.quartz-scheduler/quartz/2.3.2/org/quartz/CronExpression.html";
   }
 
   /**
