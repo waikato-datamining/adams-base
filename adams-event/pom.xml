@@ -50,6 +50,7 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- update URL in adams.core.base.CronSchedule when updating dependency -->
     <dependency>
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
