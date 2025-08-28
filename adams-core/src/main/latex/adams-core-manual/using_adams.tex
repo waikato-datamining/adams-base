@@ -2351,6 +2351,10 @@ WantedBy=multi-user.target
     \end{verbatim}}
 \end{tight_itemize}
 
+\clearpage
+\subsection{Directory layout for processing files}
+Use the directory layout specified in \ref{example_linux_dir_layout_data_processing},
+if your flow is processing files.
 \begin{figure}[htb]
 \dirtree{%
  .1 /.
@@ -2365,9 +2369,13 @@ WantedBy=multi-user.target
   \label{example_linux_dir_layout_data_processing}
 \end{figure}
 
+\clearpage
 \section{Windows servers}
-ADAMS can be run as background process on Windows as well. Using the NSSM\cite{nssm}
-tool, you can a Windows service that executes the flow \textit{myflow.flow}.
+ADAMS can be run as background process on Windows as well. There are two options,
+which are described in the following sub-sections: NSSM\cite{nssm} or WinSW\cite{winsw}.
+
+\subsection{NSSM}
+Using the NSSM\cite{nssm} tool, you can install a Windows service that executes the flow \textit{myflow.flow}.
 ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
 example and \textit{myflow.flow} resides in the \textit{C:\textbackslash flows}
 directory.
@@ -2376,6 +2384,7 @@ directory.
 \begin{tight_itemize}
   \item Set up a new, non-privileged user called \textit{adams}, since we
   don't want to run ADAMS with admin rights in order to avoid potential attacks.
+  This user must have appropriate access to the adams directory.
   \item Run \textit{nssm} from the command-line (from the directory the
   \textit{nssm.exe} executable is located):
     \begin{verbatim}
@@ -2415,7 +2424,62 @@ as follows:
 nssm install adams
 \end{verbatim}
 
+\subsection{WinSW}
+Using the WinSW\cite{winsw} tool, you can install a Windows service that executes the flow \textit{myflow.flow}.
+ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
+example and \textit{myflow.flow} resides in the \textit{C:\textbackslash flows}
+directory. The JDK is available from \textit{C:\textbackslash java\textbackslash jdk21}.
 
+\noindent Use the following steps to set up the service:
+\begin{tight_itemize}
+  \item Set up a new, non-privileged user called \textit{adams}, since we
+  don't want to run ADAMS with admin rights in order to avoid potential attacks.
+  This user must have appropriate access to the adams directory.
+  \item Download the WinSW x64 binary that includes the .NET runtime, to avoid having
+  to install that as well (at the time of writing, this refers to version
+  2.12.0\footnote{\url{https://github.com/winsw/winsw/releases/download/v2.12.0/WinSW-x64.exe}{}}).
+  \item Place the WinSW binary in the \textit{C:\textbackslash flows} directory and rename it
+  to \textit{myflow.exe}.
+  \item Create an XML file called \textit{myflow.xml} alongside the binary with the following content:
+  {\scriptsize
+  \begin{verbatim}
+<service>
+  <id>myflow</id>
+  <name>myflow</name>
+  <description>Starts the ADAMS myflow workflow.</description>
+  <env name="JAVA_HOME" value="C:\java\jdk21"/>
+  <env name="BASEDIR" value="C:\adams"/>
+  <workingdirectory>%BASEDIR%</workingdirectory>
+  <executable>%JAVA_HOME%\bin\java</executable>
+  <arguments>
+   -classpath "%BASEDIR%\resources";"%BASEDIR%\lib\java-cup-11b-20160615.jar";"%BASEDIR%\lib\*"
+   -Xmx4g
+   --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED
+   --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED
+   --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED
+   --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED
+   --add-exports=java.base/sun.nio.cs=ALL-UNNAMED
+   adams.flow.FlowRunner
+   -input "%BASE%\myflow.flow"
+   -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port 12345"
+   -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"
+   -headless true
+   -non-interactive true
+   -register true
+   -clean-up true
+  </arguments>
+</service>
+  \end{verbatim}}
+  \item You can then install the service using \textit{myflow.exe install}.
+  \item You can then start the service using \textit{myflow.exe start}.
+\end{tight_itemize}
+\textbf{NB:} Whenever you make a change, you need to \textit{stop}, \textit{uninstall},
+\textit{install} and \textit{start} the service, before the changes will take effect.
+
+\clearpage
+\subsection{Directory layout for processing files}
+Use the directory layout specified in \ref{example_windows_dir_layout_data_processing},
+if your flow is processing files.
 \begin{figure}[htb]
 \dirtree{%
  .1 C:/.
@@ -2430,6 +2494,7 @@ nssm install adams
 \end{figure}
 
 
+\clearpage
 \section{Executing commands}
 Using the \textit{adams.scripting.CommandRunner} command-line utility, it is
 possible to send commands to remote ADAMS instances from within scripts, e.g.,
