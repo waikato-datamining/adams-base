@@ -1,7 +1,7 @@
 " Vim filetype plugin file
 " Language:	Adams flows (based on Make)
 " Maintainer:	FracPete (fracpete at waikato dot ac dot nz)
-" Last Change:	2009 Jul 20
+" Last Change:	2025 Aug 28
 
 " Only do this when not done yet for this buffer
 if exists("b:did_ftplugin")
