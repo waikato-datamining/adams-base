@@ -242,6 +242,7 @@ public class PlaceholderFileEditor
 
     file = (PlaceholderFile) getValue();
 
+    PopupMenuActions.copyAbsolutePath(menu, file);
     PopupMenuActions.openInPreviewBrowser(menu, file);
     PopupMenuActions.openInFileBrowser(menu, file);
     PopupMenuActions.openInTerminal(menu, file);

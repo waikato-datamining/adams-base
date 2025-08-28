@@ -246,6 +246,7 @@ public class FileEditor
 
     file = (File) getValue();
 
+    PopupMenuActions.copyAbsolutePath(menu, file);
     PopupMenuActions.openInPreviewBrowser(menu, file);
     PopupMenuActions.openInFileBrowser(menu, file);
     PopupMenuActions.openInTerminal(menu, file);
