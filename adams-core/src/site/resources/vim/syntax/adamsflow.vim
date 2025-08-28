@@ -70,6 +70,6 @@ if version >= 508 || !exists("did_flows_syn_inits")
   delcommand HiLink
 endif
 
-let b:current_syntax = "flows"
+let b:current_syntax = "adamsflow"
 
 " vim: ts=8
