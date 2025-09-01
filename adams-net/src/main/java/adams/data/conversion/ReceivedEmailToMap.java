@@ -101,6 +101,29 @@ public class ReceivedEmailToMap
   }
 
   /**
+   * Turns the priority value into a string representation.
+   *
+   * @param priority	the priority value
+   * @return		the generated string
+   */
+  protected String priorityToStr(int priority) {
+    switch (priority) {
+      case ReceivedEmail.PRIORITY_HIGHEST:
+	return "highest";
+      case ReceivedEmail.PRIORITY_HIGH:
+	return "high";
+      case ReceivedEmail.PRIORITY_NORMAL:
+	return "normal";
+      case ReceivedEmail.PRIORITY_LOW:
+	return "low";
+      case ReceivedEmail.PRIORITY_LOWEST:
+	return "lowest";
+      default:
+	return "unknown (" + priority + ")";
+    }
+  }
+
+  /**
    * Performs the actual conversion.
    *
    * @throws Exception if something goes wrong with the conversion
@@ -111,6 +134,7 @@ public class ReceivedEmailToMap
     Map<String,Object>	result;
     ReceivedEmail	email;
     DateFormat		df;
+    int			i;
 
     result = new HashMap<>();
     email  = (ReceivedEmail) m_Input;
@@ -122,6 +146,7 @@ public class ReceivedEmailToMap
     if (email.replyTo().length > 0)
       result.put("reply-to", toList(email.replyTo()));
     result.put("subject", email.subject());
+    result.put("subject-encoding", email.subjectEncoding());
     result.put("received-date", df.format(email.receivedDate()));
     result.put("sent-date", df.format(email.sentDate()));
     result.put("answered", "" + email.isAnswered());
@@ -129,6 +154,13 @@ public class ReceivedEmailToMap
     result.put("draft", "" + email.isDraft());
     result.put("seen", "" + email.isSeen());
     result.put("recent", "" + email.isRecent());
+    result.put("priority", "" + email.priority());
+    result.put("priorityText", priorityToStr(email.priority()));
+    for (i = 0; i < email.messages().size(); i++) {
+      result.put("message-" + (i + 1) + "-content", email.messages().get(i).getContent());
+      result.put("message-" + (i + 1) + "-encoding", email.messages().get(i).getEncoding());
+      result.put("message-" + (i + 1) + "-mimetype", email.messages().get(i).getMimeType());
+    }
 
     return result;
   }
