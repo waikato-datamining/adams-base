@@ -72,18 +72,22 @@ attachments before sending the email off to the specified recipients. You can
 also define a custom subject and body. Variables can be placed in subject and
 body alike, as they get expanded when creating the email.
 
-In order to be able to send emails, ADAMS needs to know what SMTP server to
-connect to. The following example configures ADAMS to send emails using a Gmail
-account \footnote{For more details, see the following Gmail help page: \\
-\url{http://support.google.com/mail/bin/answer.py?hl=en&answer=13287}{}}. 
+With the built-in IMAP\cite{imap} support, you can also monitor email accounts and
+react to messages and/or their attachments.
 
-There are two ways of configuring Email:
+
+\section{SMTP}
+In order to be able to send emails, ADAMS needs to know what SMTP\cite{smtp} server to
+connect to. The following example configures ADAMS to send emails using a Gmail
+account\cite{gmail_other_clients}.
+
+There are two ways of configuring SMTP:
 \begin{tight_itemize}
 	\item \textit{globally} -- using the preferences
 	\item \textit{per flow} -- using the \textit{SMTPConnection} standalone actor
 \end{tight_itemize}
 
-\section{Global settings}
+\subsection{Global SMTP settings}
 For configuring email globally, use the dialog available from the main
 menu (\textit{Program $\rightarrow$ Preferences $\rightarrow$ Email}), as depicted in Figure
 \ref{email_setup}. The placeholders \textit{USER} and \textit{PASSWORD} have to
@@ -92,10 +96,12 @@ actual user's name, of course.
 
 Alternatively, you can also simply create a properties file in the
 \texttt{\$HOME/.adams} directory, called \texttt{Email.props}. The content for
-the Gmail setup would look like this:
+the Gmail setup\cite{gmail_app_pw} would look like this:
 
+{\scriptsize
 \begin{verbatim}
 Enabled=true
+SmtpUseSsl=false
 SmtpStartTls=true
 SmtpProtocols=TLSv1.2
 SmtpPassword=YOUR_APP_PASSWORD  # https://support.google.com/accounts/answer/185833?hl=en
@@ -106,7 +112,7 @@ SmtpRequiresAuthentication=true
 SmtpUser=USER
 DefaultAddressFrom=YOUR NAME <USER@gmail.com>
 DefaultSignature=
-\end{verbatim}
+\end{verbatim}}
 
 \begin{figure}[htb]
   \centering
@@ -115,45 +121,9 @@ DefaultSignature=
   \label{email_setup}
 \end{figure}
 
-\section{Actors}
-The following standalone actors are available:
-\begin{tight_itemize}
-	\item \textit{SMTPConnection} -- for configuring a SMTP server connection.
-\end{tight_itemize}
-The following transformers are available:
-\begin{tight_itemize}
-	\item \textit{CreateEmail} -- creates an Email object. Interprets incoming files
-	as attachments.
-	\item \textit{EmailFileReader} -- reads email files with the specified email reader.
-\end{tight_itemize}
-The following sinks are available:
-\begin{tight_itemize}
-	\item \textit{EmailFileWriter} -- writes Email objects to files using the specified
-	email writer.
-	\item \textit{EmailViewer} -- displays an Email object; can be used in conjunction 
-	with the \textit{DisplayPanelManager} as well.
-	\item \textit{SendEmail} -- sends Email objects to a SMTP server.
-\end{tight_itemize}
-
-\heading{SMTPConnection}
-If you do not want to store the password with the flow - after all, the password
-is only obscured with base64 encoding - you can enable the 
-\textit{promptForPassword} option. This will prompt the user with a dialog 
-for entering a password to be used for the connection.
-
-\section{Addressbook}
-ADAMS also offers a very simple addressbook for emails. Figure \ref{email_address_book}
-shows a screenshot of it.
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/email_addressbook.png}
-  \caption{Email address book}
-  \label{email_address_book}
-\end{figure}
-
-\section{Command-line}
+\subsection{Command-line}
 Using the \textit{adams.core.net.SimpleMailer} command-line tool, you can read
-and send previously saved emails. The following command-line loads/sends all 
+and send previously saved emails. The following command-line loads/sends all
 files in the directory \textit{/some/where} that end with \textit{.props} using the
 \textit{PropertiesEmailFileReader} reader:
 \begin{verbatim}
@@ -164,11 +134,65 @@ java -cp lib/* adams.core.net.SimpleMailer
   -regexp ".*.props"
   -D 1
 \end{verbatim}
-After a file got sucessfully loaded and sent, it gets (by default) the 
+After a file got sucessfully loaded and sent, it gets (by default) the
 \textit{.sent} extension appended. If the process failed, the \textit{.failed}
 extension is used (by default).
-Use the \textit{-h} or \textit{-help} option on the command-line to list all 
+Use the \textit{-h} or \textit{-help} option on the command-line to list all
 the available options.
+
+\clearpage
+\section{Flow components}
+The following standalone actors are available:
+\begin{tight_itemize}
+	\item \textit{SMTPConnection} -- for configuring a SMTP server connection.
+    \item \textit{IMAPConnection} - defines the IMAP server parameters.
+\end{tight_itemize}
+The following source actors are available:
+\begin{tight_itemize}
+    \item \textit{IMAPOperation} - for IMAP operations that only generate output
+\end{tight_itemize}
+The following transformers are available:
+\begin{tight_itemize}
+	\item \textit{CreateEmail} -- creates an Email object. Interprets incoming files
+	as attachments.
+	\item \textit{EmailFileReader} -- reads email files with the specified email reader.
+    \item \textit{IMAPOperation} - for operations that take input and generate output
+    \item \textit{SaveEmailAttachments} - saves attachments of received emails to the specified directory
+\end{tight_itemize}
+The following sinks are available:
+\begin{tight_itemize}
+	\item \textit{EmailFileWriter} -- writes Email objects to files using the specified
+	email writer.
+	\item \textit{EmailViewer} -- displays an Email object; can be used in conjunction 
+	with the \textit{DisplayPanelManager} as well.
+	\item \textit{SendEmail} -- sends Email objects to a SMTP server.
+\end{tight_itemize}
+The following conversions are available:
+\begin{tight_itemize}
+    \item \textit{ReceivedEmailToMap} - turns the properties of a received email into a
+    Java map, to make them easier to access in the flow.
+\end{tight_itemize}
+
+\heading{SMTPConnection/IMAPConnection}
+If you do not want to store the password with the flow - after all, the password
+is only obscured with base64 encoding - you can enable the 
+\textit{promptForPassword} option. This will prompt the user with a dialog 
+for entering a password to be used for the connection.
+
+For Gmail, you will need to enable app passwords\cite{gmail_app_pw}.
+
+
+\clearpage
+\section{Addressbook}
+ADAMS also offers a very simple addressbook for emails. Figure \ref{email_address_book}
+shows a screenshot of it.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=10.0cm]{images/email_addressbook.png}
+  \caption{Email address book}
+  \label{email_address_book}
+\end{figure}
+
 
 \section{Support email}
 In order to make it easier for users or clients, you can set up a
@@ -182,6 +206,7 @@ been restarted, you get a \textit{Send error report} menu item in the
 \textit{Program} menu and the \textit{Send error report} action in the flow's
 notification area is enabled as well (this one also attaches the flow that
 generated the error for further analysis).
+
 
 %%%%%%%
 % SSH %
@@ -217,6 +242,7 @@ There are also several \textit{searchlets} available for the
 \textit{FileSystemSearch} source actor that allow the listing of remote
 files.
 
+
 %%%%%%%
 % SSL %
 %%%%%%%
@@ -233,23 +259,13 @@ default settings.
   \label{ssl_setup}
 \end{figure}
 
+
 %%%%%%%
 % SMB %
 %%%%%%%
 
 \chapter{SMB}
-What WINS server ADAMS uses for SMB (i.e., Windows shares), can be configured in the
-\textit{SMB} preferences. Figure \ref{smb_setup} shows a screenshot of the
-default settings.
-
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=10.0cm]{images/smb_setup.png}
-  \caption{SMB preferences}
-  \label{smb_setup}
-\end{figure}
-
-The following actors are available:
+SMB support is available through the following actors are available:
 \begin{tight_itemize}
 	\item \textit{SMBConnection} -- standalone actor that defines the server
 	connection (domain/user/password).
@@ -260,6 +276,7 @@ The following actors are available:
 There are also several \textit{searchlets} available for the
 \textit{FileSystemSearch} source actor that allow the listing of remote
 files.
+
 
 %%%%%%%%%%%%%%%%%%%
 % Remote commands %

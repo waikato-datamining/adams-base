@@ -39,6 +39,14 @@ adams.data.io.output.EmailWriter=\
 adams.data.io.output.EmailFileWriter=\
   adams.data.io.output
 
+# the IMAP source operations
+adams.flow.source.imapsource.AbstractIMAPOperation=\
+  adams.flow.source.imapsource
+
+# the IMAP transformer operations
+adams.flow.transformer.imaptransformer.AbstractIMAPOperation=\
+  adams.flow.transformer.imaptransformer
+
 # the websocket server generators
 adams.flow.websocket.server.WebSocketServerGenerator=\
   adams.flow.websocket.server
