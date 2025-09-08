@@ -1475,6 +1475,24 @@ public class ObjectAnnotationPanel
   }
 
   /**
+   * Sets whether the max/min button is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setMaxMinVisible(boolean value) {
+    m_ButtonMaxMin.setVisible(value);
+  }
+
+  /**
+   * Returns whether the max/min button is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isMaxMinVisible() {
+    return m_ButtonMaxMin.isVisible();
+  }
+
+  /**
    * Toggles the window size between normal and maximized.
    */
   public void toggleWindowSize() {
@@ -1493,6 +1511,24 @@ public class ObjectAnnotationPanel
 	m_ButtonMaxMin.setToolTipText("Maximize window");
       }
     }
+  }
+
+  /**
+   * Sets whether the help button is visible.
+   *
+   * @param value	true if visible
+   */
+  public void setHelpVisible(boolean value) {
+    m_ButtonHelp.setVisible(value);
+  }
+
+  /**
+   * Returns whether the help button is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isHelpVisible() {
+    return m_ButtonHelp.isVisible();
   }
 
   /**
