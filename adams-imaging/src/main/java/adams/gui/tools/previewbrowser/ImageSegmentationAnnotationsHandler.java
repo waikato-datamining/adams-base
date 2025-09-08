@@ -376,6 +376,8 @@ public class ImageSegmentationAnnotationsHandler
     panel.getManager().setSplitLayers(m_UseSeparateLayers);
     panel.setToolPanelVisible(false);
     panel.setZoom(m_Zoom);
+    panel.setHelpVisible(false);
+    panel.setMaxMinVisible(false);
     panel.fromContainer(
 	cont,
 	labels,
