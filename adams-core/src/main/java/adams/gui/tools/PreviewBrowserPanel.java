@@ -34,8 +34,6 @@ import adams.core.io.filechanged.FileChangeMonitor;
 import adams.core.io.filechanged.LastModified;
 import adams.core.logging.LoggingLevel;
 import adams.gui.application.ChildFrame;
-import adams.gui.chooser.AbstractChooserPanel;
-import adams.gui.chooser.AbstractChooserPanel.PopupMenuCustomizer;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.chooser.DirectoryChooserPanel;
 import adams.gui.chooser.TextFileChooser;
@@ -49,7 +47,6 @@ import adams.gui.core.ImageManager;
 import adams.gui.core.JTableSupporter;
 import adams.gui.core.MenuBarProvider;
 import adams.gui.core.MouseUtils;
-import adams.gui.core.PopupMenuActions;
 import adams.gui.core.RecentFilesHandler;
 import adams.gui.core.SearchPanel;
 import adams.gui.core.SearchPanel.LayoutType;
@@ -367,12 +364,6 @@ public class PreviewBrowserPanel
 	m_RecentFilesHandler.addRecentItem(m_PanelDir.getCurrent());
       if (!m_ModelLocalFiles.isEmpty())
 	m_ListLocalFiles.setSelectedIndex(0);
-    });
-    m_PanelDir.setPopupMenuCustomizer(new PopupMenuCustomizer() {
-      @Override
-      public void customizePopupMenu(AbstractChooserPanel owner, JPopupMenu menu) {
-	PopupMenuActions.openInFileBrowser(menu, m_PanelDir.getCurrent());
-      }
     });
     m_PanelLocalFiles.add(m_PanelDir, BorderLayout.NORTH);
 
