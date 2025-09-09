@@ -15,7 +15,7 @@
 
 /*
  * Pencil.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -26,6 +26,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.visualization.segmentation.CanvasPanel;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -74,7 +75,7 @@ public class Pencil
    */
   @Override
   public String globalInfo() {
-    return "For coloring in pixels.";
+    return "For coloring in pixels.\n" + CanvasPanel.draggingHelp();
   }
 
   /**

@@ -22,6 +22,7 @@ package adams.gui.visualization.segmentation.tool;
 
 import adams.gui.core.BasePanel;
 import adams.gui.core.ImageManager;
+import adams.gui.visualization.segmentation.CanvasPanel;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -47,7 +48,7 @@ public class Pointer
    */
   @Override
   public String globalInfo() {
-    return null;
+    return CanvasPanel.draggingHelp();
   }
 
   /**

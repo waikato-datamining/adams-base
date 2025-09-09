@@ -15,7 +15,7 @@
 
 /*
  * Eraser.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -26,6 +26,7 @@ import adams.gui.core.NumberTextField;
 import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 import adams.gui.core.NumberTextField.Type;
 import adams.gui.core.ParameterPanel;
+import adams.gui.visualization.segmentation.CanvasPanel;
 import adams.gui.visualization.segmentation.ImageUtils;
 
 import javax.swing.ButtonGroup;
@@ -75,7 +76,7 @@ public class Eraser
    */
   @Override
   public String globalInfo() {
-    return "Removes pixels using the background.";
+    return "Removes pixels using the background.\n" + CanvasPanel.draggingHelp();
   }
 
   /**

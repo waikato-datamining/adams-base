@@ -15,7 +15,7 @@
 
 /*
  * AbstractShapeTool.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -123,14 +123,16 @@ public abstract class AbstractShapeTool
     return new ToolMouseAdapter(this) {
       @Override
       public void mousePressed(MouseEvent e) {
-	if (MouseUtils.isLeftClick(e)) {
+	if (MouseUtils.isLeftClick(e) && MouseUtils.hasNoModifierKey(e)) {
 	  if (isAutomaticUndoEnabled())
 	    getCanvas().getOwner().addUndoPoint();
 	  drawShape(e.getPoint());
 	  m_LastPoint = e.getPoint();
 	  e.consume();
 	}
-	super.mouseClicked(e);
+
+	if (!e.isConsumed())
+	  super.mouseClicked(e);
       }
       @Override
       public void mouseReleased(MouseEvent e) {
@@ -150,7 +152,7 @@ public abstract class AbstractShapeTool
     return new ToolMouseMotionAdapter(this) {
       @Override
       public void mouseDragged(MouseEvent e) {
-	if (getOwner().getCanvas().isLeftMouseDown()) {
+	if (getOwner().getCanvas().isLeftMouseDown() && MouseUtils.hasNoModifierKey(e)) {
 	  if (m_LastPoint == null)
 	    drawShape(e.getPoint());
 	  else
@@ -158,9 +160,9 @@ public abstract class AbstractShapeTool
 	  m_LastPoint = e.getPoint();
 	  e.consume();
 	}
-	else {
+
+	if (!e.isConsumed())
 	  super.mouseDragged(e);
-	}
       }
     };
   }

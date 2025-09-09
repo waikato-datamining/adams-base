@@ -15,7 +15,7 @@
 
 /*
  * ToolMouseAdapter.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -85,6 +85,17 @@ public class ToolMouseAdapter
   public void mouseClicked(MouseEvent e) {
     if (m_AutomaticallyRequestFocus)
       requestFocus();
+  }
+
+  /**
+   * Called when a mouse button is released.
+   *
+   * @param e the event to be processed
+   */
+  @Override
+  public void mouseReleased(MouseEvent e) {
+    super.mouseReleased(e);
+    getOwner().getCanvas().setCursor(getOwner().getCursor());
   }
 
   /**

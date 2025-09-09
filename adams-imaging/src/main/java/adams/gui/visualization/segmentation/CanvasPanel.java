@@ -22,12 +22,17 @@ package adams.gui.visualization.segmentation;
 
 import adams.data.RoundingUtils;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -50,6 +55,12 @@ public class CanvasPanel
   /** whether the right mouse button is down. */
   protected boolean m_RightMouseDown;
 
+  /** whether the image is being dragged. */
+  protected boolean m_Dragging;
+
+  /** the last point position while dragging. */
+  protected Point m_LastDraggingPoint;
+
   /**
    * Initializes the members.
    */
@@ -57,8 +68,10 @@ public class CanvasPanel
   protected void initialize() {
     super.initialize();
 
-    m_LeftMouseDown  = false;
-    m_RightMouseDown = false;
+    m_LeftMouseDown     = false;
+    m_RightMouseDown    = false;
+    m_Dragging          = false;
+    m_LastDraggingPoint = null;
   }
 
   /**
@@ -73,14 +86,42 @@ public class CanvasPanel
       public void mousePressed(MouseEvent e) {
         m_LeftMouseDown  = MouseUtils.isLeftDown(e);
         m_RightMouseDown = MouseUtils.isRightDown(e);
+	m_Dragging       = MouseUtils.isLeftClick(e) && KeyUtils.isOnlyShiftDown(e.getModifiersEx());
+	if (m_Dragging) {
+	  m_LastDraggingPoint = e.getPoint();
+	  setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	}
+	else {
+	  m_LastDraggingPoint = null;
+	}
 	super.mousePressed(e);
       }
 
       @Override
       public void mouseReleased(MouseEvent e) {
-        m_LeftMouseDown  = false;
-        m_RightMouseDown = false;
+        m_LeftMouseDown     = false;
+        m_RightMouseDown    = false;
+	m_Dragging          = false;
+	m_LastDraggingPoint = null;
 	super.mouseReleased(e);
+      }
+    });
+
+    addMouseMotionListener(new MouseMotionAdapter() {
+      @Override
+      public void mouseDragged(MouseEvent e) {
+	if (m_Dragging) {
+	  int diffX = m_LastDraggingPoint.x - e.getX();
+	  int diffY = m_LastDraggingPoint.y - e.getY();
+	  BaseScrollPane scrollPane = getOwner().getScrollPane();
+	  Point curPos = scrollPane.getViewport().getViewPosition();
+	  Point newPos = new Point(curPos.x + diffX, curPos.y + diffY);
+	  scrollPane.getViewport().setViewPosition(newPos);
+	  e.consume();
+	}
+
+	if (!e.isConsumed())
+	  super.mouseDragged(e);
       }
     });
 
@@ -137,6 +178,24 @@ public class CanvasPanel
   }
 
   /**
+   * Returns whether the image is currently being dragged.
+   *
+   * @return		true if dragged
+   */
+  public boolean isDragging() {
+    return m_Dragging;
+  }
+
+  /**
+   * Returns the last point of the image being dragged.
+   *
+   * @return		the last point, null if not set
+   */
+  public Point getLastDraggingPoint() {
+    return m_LastDraggingPoint;
+  }
+
+  /**
    * Paints the component.
    *
    * @param g		the context
@@ -149,5 +208,14 @@ public class CanvasPanel
       if (m_Owner.getPaintOperation() != null)
         m_Owner.getPaintOperation().performPaint((Graphics2D) g);
     }
+  }
+
+  /**
+   * Returns the help information on dragging the image.
+   *
+   * @return		the help string
+   */
+  public static String draggingHelp() {
+    return "Use SHIFT+left-click to drag the image.";
   }
 }
