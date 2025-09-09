@@ -26,8 +26,10 @@ import adams.data.image.BufferedImageHelper;
 import adams.data.io.output.ImageWriter;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BaseScrollPane;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.core.KeyUtils;
 import adams.gui.core.MouseUtils;
 import adams.gui.visualization.image.interactionlogging.InteractionEvent;
 import adams.gui.visualization.image.interactionlogging.InteractionLoggingFilter;
@@ -38,6 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -100,6 +103,15 @@ public class CanvasPanel
   /** the file dialog for saving the image. */
   protected ImageFileChooser m_FileChooser;
 
+  /** whether dragging is enabled. */
+  protected boolean m_DraggingEnabled;
+
+  /** whether the image is being dragged. */
+  protected boolean m_Dragging;
+
+  /** the last point position while dragging. */
+  protected Point m_LastDraggingPoint;
+
   /**
    * Initializes the members.
    */
@@ -118,6 +130,9 @@ public class CanvasPanel
     m_FileChooser    = null;
     m_InteractionLoggingFilter = new Null();
     m_PopupMenuCustomizer      = null;
+    m_DraggingEnabled          = true;
+    m_Dragging                 = false;
+    m_LastDraggingPoint        = null;
   }
 
   /**
@@ -148,6 +163,21 @@ public class CanvasPanel
       public void mouseMoved(MouseEvent e) {
 	getOwner().updateStatus(e.getPoint());
       }
+      @Override
+      public void mouseDragged(MouseEvent e) {
+	if (m_DraggingEnabled && m_Dragging) {
+	  int diffX = m_LastDraggingPoint.x - e.getX();
+	  int diffY = m_LastDraggingPoint.y - e.getY();
+	  BaseScrollPane scrollPane = getOwner().getScrollPane();
+	  Point curPos = scrollPane.getViewport().getViewPosition();
+	  Point newPos = new Point(curPos.x + diffX, curPos.y + diffY);
+	  scrollPane.getViewport().setViewPosition(newPos);
+	  e.consume();
+	}
+
+	if (!e.isConsumed())
+	  super.mouseDragged(e);
+      }
     });
 
     addMouseListener(new MouseAdapter() {
@@ -157,6 +187,30 @@ public class CanvasPanel
 	  JPopupMenu menu = createPopupMenu();
 	  menu.show(CanvasPanel.this, e.getX(), e.getY());
 	}
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e) {
+	if (m_DraggingEnabled) {
+	  m_Dragging = MouseUtils.isLeftClick(e) && KeyUtils.isOnlyShiftDown(e.getModifiersEx());
+	  if (m_Dragging) {
+	    m_LastDraggingPoint = e.getPoint();
+	    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	  }
+	  else {
+	    m_LastDraggingPoint = null;
+	  }
+	}
+	super.mousePressed(e);
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+	if (m_DraggingEnabled) {
+	  m_Dragging = false;
+	  m_LastDraggingPoint = null;
+	}
+	super.mouseReleased(e);
       }
     });
   }
@@ -177,6 +231,33 @@ public class CanvasPanel
    */
   public ObjectAnnotationPanel getOwner() {
     return m_Owner;
+  }
+
+  /**
+   * Returns whether the image can be dragged.
+   *
+   * @return		true if dragged is enabled
+   */
+  public boolean isDraggingEnabled() {
+    return m_DraggingEnabled;
+  }
+
+  /**
+   * Returns whether the image is currently being dragged.
+   *
+   * @return		true if dragged
+   */
+  public boolean isDragging() {
+    return m_Dragging;
+  }
+
+  /**
+   * Returns the last point of the image being dragged.
+   *
+   * @return		the last point, null if not set
+   */
+  public Point getLastDraggingPoint() {
+    return m_LastDraggingPoint;
   }
 
   /**
@@ -673,5 +754,14 @@ public class CanvasPanel
       getOwner().getOverlay().paint(getOwner(), g);
       getOwner().getAnnotator().paintSelection(g);
     }
+  }
+
+  /**
+   * Returns the help information on dragging the image.
+   *
+   * @return		the help string
+   */
+  public static String draggingHelp() {
+    return "Use SHIFT+left-click to drag the image.";
   }
 }
