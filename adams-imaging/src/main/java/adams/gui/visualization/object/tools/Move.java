@@ -288,7 +288,7 @@ public class Move
       public void mouseDragged(MouseEvent e) {
 	if (!m_Dragging) {
 	  selectObjects(getCanvas().mouseToPixelLocation(e.getPoint()));
-	  if (m_SelectedObjects.size() > 0) {
+	  if (!m_SelectedObjects.isEmpty()) {
 	    m_DragStart = getCanvas().mouseToPixelLocation(e.getPoint());
 	    m_Dragging  = true;
 	    getCanvas().setCursor(Cursors.fromIcon("cursor_move.png", 15, 15));
