@@ -324,6 +324,7 @@ public class CompareAnnotationWithPrediction
     }
 
     for (i = 0; i < predPixels.length; i++) {
+      // binary layers, so no need to check whether the same value
       if ((annoPixels[i] != black) && (predPixels[i] != black))
 	pixels[i] = colorOverlap;
       else if (annoPixels[i] != black)
