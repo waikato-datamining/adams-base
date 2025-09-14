@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFormula.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -346,6 +346,7 @@ public class SpreadSheetFormula
         + "              | min ( cell1 : cell2 )\n"
         + "              | max ( cell1 : cell2 )\n"
         + "              | average ( cell1 : cell2 )\n"
+	+ "              | median ( cell1 : cell2 )\n"
         + "              | stdev ( cell1 : cell2 )\n"
         + "              | stdevp ( cell1 : cell2 )\n"
         + "              | countif ( cell1 : cell2 ; expr )\n"
