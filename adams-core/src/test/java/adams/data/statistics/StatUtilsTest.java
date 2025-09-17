@@ -113,18 +113,36 @@ public class StatUtilsTest
    * Tests the countNonZero method.
    */
   public void testCountNonZero() {
-    assertEquals("non-zero count differs", 0, StatUtils.countNonZero(new byte[0]));
-    assertEquals("non-zero count differs", 0, StatUtils.countNonZero(new byte[]{0, 0, 0, 0, 0, 0}));
-    assertEquals("non-zero count differs", 6, StatUtils.countNonZero(new byte[]{-1, 1, 2, 3, -2, -3}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new byte[]{0, 1, 2, 3, 0, 0}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new int[]{0, 1, 2, 3, 0, 0}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new long[]{0L, 1L, 2L, 3L, 0L, 0L}));
-    assertEquals("non-zero count differs", 0, StatUtils.countNonZero(new double[0]));
-    assertEquals("non-zero count differs", 0, StatUtils.countNonZero(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
-    assertEquals("non-zero count differs", 6, StatUtils.countNonZero(new double[]{-1.0, 1.0, 2.0, 3.0, -2.0, -3.0}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new double[]{-0.0, 1.0, 2.0, 3.0, -0.0, +0.0}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new double[]{0.0, 1.0, 2.0, 3.0, 0.0, 0.0}));
-    assertEquals("non-zero count differs", 3, StatUtils.countNonZero(new float[]{0.0f, 1.0f, 2.0f, 3.0f, 0.0f, 0.0f}));
+    assertEquals("counts differ", 0, StatUtils.countNonZero(new byte[0]));
+    assertEquals("counts differ", 0, StatUtils.countNonZero(new byte[]{0, 0, 0, 0, 0, 0}));
+    assertEquals("counts differ", 6, StatUtils.countNonZero(new byte[]{-1, 1, 2, 3, -2, -3}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new byte[]{0, 1, 2, 3, 0, 0}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new int[]{0, 1, 2, 3, 0, 0}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new long[]{0L, 1L, 2L, 3L, 0L, 0L}));
+    assertEquals("counts differ", 0, StatUtils.countNonZero(new double[0]));
+    assertEquals("counts differ", 0, StatUtils.countNonZero(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+    assertEquals("counts differ", 6, StatUtils.countNonZero(new double[]{-1.0, 1.0, 2.0, 3.0, -2.0, -3.0}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new double[]{-0.0, 1.0, 2.0, 3.0, -0.0, +0.0}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new double[]{0.0, 1.0, 2.0, 3.0, 0.0, 0.0}));
+    assertEquals("counts differ", 3, StatUtils.countNonZero(new float[]{0.0f, 1.0f, 2.0f, 3.0f, 0.0f, 0.0f}));
+  }
+
+  /**
+   * Tests the countNonZero method.
+   */
+  public void testCountDifferent() {
+    assertEquals("counts differ", 0, StatUtils.countDifferent(new byte[0], (byte) 0));
+    assertEquals("counts differ", 0, StatUtils.countDifferent(new byte[]{0, 0, 0, 0, 0, 0}, (byte) 0));
+    assertEquals("counts differ", 6, StatUtils.countDifferent(new byte[]{-1, 1, 2, 3, -2, -3}, (byte) 0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new byte[]{0, 1, 2, 3, 0, 0}, (byte) 0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new int[]{0, 1, 2, 3, 0, 0}, 0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new long[]{0L, 1L, 2L, 3L, 0L, 0L}, 0));
+    assertEquals("counts differ", 0, StatUtils.countDifferent(new double[0], 0.0));
+    assertEquals("counts differ", 0, StatUtils.countDifferent(new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0.0));
+    assertEquals("counts differ", 6, StatUtils.countDifferent(new double[]{-1.0, 1.0, 2.0, 3.0, -2.0, -3.0, 0.0}, 0.0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new double[]{-0.0, 1.0, 2.0, 3.0, -0.0, +0.0}, 0.0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new double[]{0.0, 1.0, 2.0, 3.0, 0.0, 0.0}, 0.0));
+    assertEquals("counts differ", 3, StatUtils.countDifferent(new float[]{0.0f, 1.0f, 2.0f, 3.0f, 0.0f, 0.0f}, 0.0f));
   }
 
   /**

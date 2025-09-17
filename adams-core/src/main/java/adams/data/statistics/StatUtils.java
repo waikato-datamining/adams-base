@@ -2693,6 +2693,128 @@ public class StatUtils {
   }
 
   /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(byte[] x, byte value) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == value)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(int[] x, int value) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == value)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(long[] x, long value) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == value)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(float[] x, float value) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == value)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(double[] x, double value) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == value)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number numbers in the array that differ from the specified value.
+   *
+   * @param x		the array to process
+   * @param value 	the value to check against
+   * @return		the number of different values
+   */
+  public static int countDifferent(Number[] x, Number value) {
+    int		result;
+    int		i;
+    double	dValue;
+
+    result = 0;
+    dValue = value.doubleValue();
+    for (i = 0; i < x.length; i++) {
+      if (x[i].doubleValue() == dValue)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
