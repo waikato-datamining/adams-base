@@ -2579,6 +2579,120 @@ public class StatUtils {
   }
 
   /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(byte[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(int[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(long[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(float[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(double[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i] == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
+   * Counts the number non-zero numbers in the array.
+   *
+   * @param x		the array to process
+   * @return		the number of non-zero values
+   */
+  public static int countNonZero(Number[] x) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < x.length; i++) {
+      if (x[i].doubleValue() == 0)
+	result++;
+    }
+
+    return x.length - result;
+  }
+
+  /**
    * Just for testing.
    *
    * @param args	ignored
