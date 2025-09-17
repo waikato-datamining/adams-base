@@ -1,19 +1,21 @@
+# Contains the setup for conversion operations.
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision: 9394 $
 
 # Lists the keys that contain classname mappings.
 # This is used to ensure a minimal backwards compatibility, in case classes
 # get renamed.
 Rename=\
   Rename-imaging-imagereader,\
-  Rename-imaging-imagewriter
+  Rename-imaging-imagewriter,\
+  Rename-imaging-CompareAnnotationWithPredictionCounts
 
 # general format for classname mappings ("rename"):
 # <key>=<old classname>-<new classname>
 #Rename-jai_flattener_dft=adams.data.jai.flattener.DFT-adams.data.jai.features.DFT
 Rename-imaging-imagereader=adams.flow.transformer.ImageReader-adams.flow.transformer.ImageFileReader
 Rename-imaging-imagewriter=adams.flow.sink.ImageWriter-adams.flow.sink.ImageFileWriter
+Rename-imaging-CompareAnnotationWithPredictionCounts=adams.data.imagesegmentation.operation.CompareAnnotationWithPredictionCounts-adams.data.imagesegmentation.operation.CompareAnnotationWithPredictionStats
 
 # Lists the keys that contain partial classname renaming.
 PartialRename=\

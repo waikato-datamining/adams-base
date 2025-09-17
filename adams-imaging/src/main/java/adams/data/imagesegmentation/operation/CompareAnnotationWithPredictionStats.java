@@ -14,7 +14,7 @@
  */
 
 /*
- * CompareAnnotationWithPredictionCounts.java
+ * CompareAnnotationWithPredictionStats.java
  * Copyright (C) 2025 University of Waikato, Hamilton, NZ
  */
 
@@ -27,6 +27,7 @@ import adams.data.image.BufferedImageHelper;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.statistics.StatUtils;
 import adams.flow.container.ImageSegmentationContainer;
 
 import java.awt.Color;
@@ -40,13 +41,14 @@ import java.util.Map;
 
 /**
  * Compares a prediction (first container) with the annotation
- * (second container) and outputs counts/percentages per label
- * with the correct overlaps, the missed annotations and additionally
- * predicted pixels.
+ * (second container) and outputs statistics per label:
+ * correct overlaps (count/%), the missed annotations (count/%) and additionally
+ * predicted pixels (count/%), Intersect-over-Union, Dice coefficient.
+ * For the percentages, the total number of annotations is used as divisor.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
-public class CompareAnnotationWithPredictionCounts
+public class CompareAnnotationWithPredictionStats
   extends AbstractImageSegmentationContainerOperation {
 
   private static final long serialVersionUID = 5451678654384977453L;
@@ -62,9 +64,10 @@ public class CompareAnnotationWithPredictionCounts
   @Override
   public String globalInfo() {
     return "Compares a prediction (first container) with the annotation "
-      + "(second container) and outputs counts/percentages per label "
-      + "with the correct overlaps, the missed annotations and additionally "
-      + "predicted pixels.";
+	     + "(second container) and outputs statistics per label: "
+	     + "correct overlaps (count/%), the missed annotations (count/%) and additionally "
+	     + "predicted pixels (count/%), Intersect-over-Union, Dice coefficient. "
+	     + "For the percentages, the total number of annotations is used as divisor.";
   }
 
   /**
@@ -199,7 +202,11 @@ public class CompareAnnotationWithPredictionCounts
     Map<String,int[]> 				annoPixels;
     List<String> 				labels;
     int[]					counts;
-    int						total;
+    int						overlap;
+    int						missed;
+    int						additional;
+    int						annoTotal;
+    int						predTotal;
 
     predCont   = containers[0];
     predLayers = (Map<String,BufferedImage>) predCont.getValue(ImageSegmentationContainer.VALUE_LAYERS);
@@ -230,17 +237,25 @@ public class CompareAnnotationWithPredictionCounts
     row.addCell("MP").setContentAsString("Missed %");
     row.addCell("AC").setContentAsString("Additional");
     row.addCell("AP").setContentAsString("Additional %");
+    row.addCell("IOU").setContentAsString("IoU");
+    row.addCell("DC").setContentAsString("Dice");
     for (String label: labels) {
-      counts = generate(predPixels.get(label), annoPixels.get(label));
-      total  = counts[0] + counts[1];  // overlap + missed = total of annotations
-      row    = result.addRow();
+      counts     = generate(predPixels.get(label), annoPixels.get(label));
+      overlap    = counts[0];
+      missed     = counts[1];
+      additional = counts[2];
+      annoTotal  = StatUtils.countDifferent(annoPixels.get(label), Color.BLACK.getRGB());
+      predTotal  = StatUtils.countDifferent(predPixels.get(label), Color.BLACK.getRGB());
+      row        = result.addRow();
       row.addCell("L").setContentAsString(label);
-      row.addCell("CC").setContent(counts[0]);
-      row.addCell("CP").setContent((double) counts[0] / total * 100.0);
-      row.addCell("MC").setContent(counts[1]);
-      row.addCell("MP").setContent((double) counts[1] / total * 100.0);
-      row.addCell("AC").setContent(counts[2]);
-      row.addCell("AP").setContent((double) counts[2] / total * 100.0);
+      row.addCell("CC").setContent(overlap);
+      row.addCell("CP").setContent((double) overlap / annoTotal * 100.0);
+      row.addCell("MC").setContent(missed);
+      row.addCell("MP").setContent((double) missed / annoTotal * 100.0);
+      row.addCell("AC").setContent(additional);
+      row.addCell("AP").setContent((double) additional / annoTotal * 100.0);
+      row.addCell("IOU").setContent((double) overlap / (double) (overlap + missed + additional));
+      row.addCell("DC").setContent((double) (2*overlap) / (double) (annoTotal + predTotal));
     }
 
     return result;
