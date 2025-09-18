@@ -300,10 +300,13 @@ public class LayerManager
       }
       else if (state instanceof OverlayLayerState) {
 	ostate = (OverlayLayerState) state;
-	if (hasOverlay(ostate.name))
+	if (hasOverlay(ostate.name)) {
 	  getOverlay(ostate.name).setState(ostate);
-	else
+	}
+	else {
 	  addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+	  getOverlay(ostate.name).setState(ostate);
+	}
       }
     }
 
@@ -345,10 +348,13 @@ public class LayerManager
       }
       else if (state instanceof OverlayLayerState) {
 	ostate = (OverlayLayerState) state;
-	if (hasOverlay(ostate.name))
+	if (hasOverlay(ostate.name)) {
 	  getOverlay(ostate.name).setSettings(ostate);
-	else
+	}
+	else {
 	  addOverlay(ostate.name, ostate.color, ostate.alpha, ostate.image);
+	  getOverlay(ostate.name).setSettings(ostate);
+	}
       }
     }
 
@@ -594,7 +600,9 @@ public class LayerManager
     result.setImage(image);
     result.setName(name);
     result.setColor(color);
+    result.setDefaultColor(color);
     result.setAlpha(alpha);
+    result.setDefaultAlpha(alpha);
     m_Overlays.add(result);
     if (m_Overlays.size() == 1)
       result.setActive(true);

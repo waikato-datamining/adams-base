@@ -24,6 +24,7 @@ import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.base.BaseFloat;
 import adams.data.image.BufferedImageHelper;
+import adams.data.json.JsonHelper;
 import adams.gui.core.BaseColorTextField;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BaseFlatButtonWithDropDownMenu;
@@ -33,14 +34,18 @@ import adams.gui.core.ColorHelper;
 import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
+import adams.gui.core.StringFavorites;
+import adams.gui.core.StringFavorites.StringFavoriteSelectionEvent;
 import adams.gui.laf.AbstractFlatLaf;
 import adams.gui.laf.AbstractLookAndFeel;
 import adams.gui.visualization.segmentation.ImageUtils;
 import adams.gui.visualization.segmentation.layer.overlaylayeraction.AbstractOverlayLayerAction;
+import net.minidev.json.JSONObject;
 
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import java.awt.AlphaComposite;
@@ -51,6 +56,8 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class for overlay layers.
@@ -61,6 +68,10 @@ public class OverlayLayer
   extends AbstractImageLayer {
 
   private static final long serialVersionUID = 7829707838665930430L;
+
+  public static final String KEY_ALPHA = "alpha";
+
+  public static final String KEY_COLOR = "color";
 
   /**
    * For storing the state of an overlay layer.
@@ -73,11 +84,23 @@ public class OverlayLayer
     /** the color. */
     public Color color;
 
+    /** the default color. */
+    public Color defaultColor;
+
     /** the alpha value. */
     public float alpha;
 
+    /** the default alpha value. */
+    public float defaultAlpha;
+
     /** whether active. */
     public boolean active;
+
+    /** whether removable. */
+    public boolean removable;
+
+    /** whether the actions are visible. */
+    public boolean actionsAvailable;
   }
 
   /** The alpha value in use. */
@@ -88,6 +111,9 @@ public class OverlayLayer
 
   /** the button for applying the values. */
   protected BaseFlatButton m_ButtonApply;
+
+  /** the button for favorites. */
+  protected BaseFlatButton m_ButtonFavorites;
 
   /** the button for the action drop. */
   protected BaseFlatButtonWithDropDownMenu m_ButtonActions;
@@ -101,6 +127,12 @@ public class OverlayLayer
   /** whether the layer is active. */
   protected boolean m_Active;
 
+  /** the default alpha. */
+  protected float m_DefaultAlpha;
+
+  /** the default color. */
+  protected Color m_DefaultColor;
+
   /**
    * Initializes the members.
    */
@@ -108,7 +140,9 @@ public class OverlayLayer
   protected void initialize() {
     super.initialize();
 
-    m_Active = false;
+    m_Active       = false;
+    m_DefaultAlpha = 0.5f;
+    m_DefaultColor = Color.BLUE;
   }
 
   /**
@@ -134,6 +168,7 @@ public class OverlayLayer
     m_ButtonRemove.setVisible(false);
     m_ButtonRemove.setToolTipText("Remove layer");
     m_ButtonRemove.addActionListener((ActionEvent e) -> {
+      getManager().addUndoPoint("Remove layer: " + getName());
       getManager().removeOverlay(getName());
       update();
     });
@@ -174,6 +209,10 @@ public class OverlayLayer
       update();
     });
     panelRow.add(m_ButtonApply);
+
+    m_ButtonFavorites = new BaseFlatButton(ImageManager.getIcon("favorite.gif"));
+    m_ButtonFavorites.addActionListener(e -> showFavoritesMenu());
+    panelRow.add(m_ButtonFavorites);
   }
 
   /**
@@ -225,6 +264,24 @@ public class OverlayLayer
   }
 
   /**
+   * Sets the default alpha.
+   *
+   * @param value	the default
+   */
+  public void setDefaultAlpha(float value) {
+    m_DefaultAlpha = value;
+  }
+
+  /**
+   * Returns the default alpha.
+   *
+   * @return		the default
+   */
+  public float getDefaultAlpha() {
+    return m_DefaultAlpha;
+  }
+
+  /**
    * Sets the color value to use for the layer.
    *
    * @param value	the color value
@@ -241,6 +298,36 @@ public class OverlayLayer
    */
   public Color getColor() {
     return m_TextColor.getObject().toColorValue();
+  }
+
+  /**
+   * Sets the default color.
+   * 
+   * @param value	the default
+   */
+  public void setDefaultColor(Color value) {
+    m_DefaultColor = value;
+  }
+
+  /**
+   * Returns the default color.
+   * 
+   * @return		the default
+   */
+  public Color getDefaultColor() {
+    return m_DefaultColor;
+  }
+
+  /**
+   * Switches to the default values.
+   *
+   * @see 	#getDefaultAlpha()
+   * @see	#getDefaultColor()
+   */
+  public void useDefault() {
+    setAlpha(getDefaultAlpha());
+    setColor(getDefaultColor());
+    update();
   }
 
   /**
@@ -384,12 +471,16 @@ public class OverlayLayer
   public AbstractLayerState getSettings() {
     OverlayLayerState	result;
 
-    result         = new OverlayLayerState();
-    result.name    = getName();
-    result.enabled = isEnabled();
-    result.color   = getColor();
-    result.alpha   = getAlpha();
-    result.active  = isActive();
+    result                  = new OverlayLayerState();
+    result.name             = getName();
+    result.enabled          = isEnabled();
+    result.color            = getColor();
+    result.defaultColor     = getDefaultColor();
+    result.alpha            = getAlpha();
+    result.defaultAlpha     = getDefaultAlpha();
+    result.active           = isActive();
+    result.removable        = isRemovable();
+    result.actionsAvailable = hasActionsAvailable();
 
     return result;
   }
@@ -405,8 +496,12 @@ public class OverlayLayer
 
     if (settings instanceof OverlayLayerState) {
       setColor(((OverlayLayerState) settings).color);
+      setDefaultColor(((OverlayLayerState) settings).defaultColor);
       setAlpha(((OverlayLayerState) settings).alpha);
+      setDefaultAlpha(((OverlayLayerState) settings).defaultAlpha);
       setActive(((OverlayLayerState) settings).active);
+      setRemovable(((OverlayLayerState) settings).removable);
+      setActionsAvailable(((OverlayLayerState) settings).actionsAvailable);
     }
   }
 
@@ -418,5 +513,56 @@ public class OverlayLayer
       return;
     setApplyButtonState(m_ButtonApply, false);
     super.update();
+  }
+
+  /**
+   * Returns the options for the favorites.
+   *
+   * @return		the JSON string from the options
+   */
+  protected String getFavoritesOptions() {
+    Map<String,Object>	result;
+
+    result = new HashMap<>();
+    result.put(KEY_ALPHA, getAlpha());
+    result.put(KEY_COLOR, ColorHelper.toHex(getColor()));
+
+    return JsonHelper.fromMap(result).toJSONString();
+  }
+
+  /**
+   * Parses the JSON string and sets the options.
+   *
+   * @param json	the options as json string
+   */
+  protected void setFavoritesOptions(String json) {
+    JSONObject obj;
+    Map<String,Object> map;
+
+    obj = (JSONObject) JsonHelper.parse(json, null);
+    if (obj != null) {
+      map = JsonHelper.toMap(obj, true);
+
+      if (map.containsKey(KEY_ALPHA))
+	setAlpha(((Double) map.get(KEY_ALPHA)).floatValue());
+      if (map.containsKey(KEY_COLOR))
+	setColor(ColorHelper.valueOf((String) map.get(KEY_COLOR)));
+      update();
+    }
+  }
+
+  /**
+   * Displays the favorites menu.
+   */
+  protected void showFavoritesMenu() {
+    JPopupMenu menu;
+
+    menu = new JPopupMenu();
+    StringFavorites.getSingleton().addFavoritesMenuItems(
+      menu,
+      getClass(),
+      getFavoritesOptions(),
+      (StringFavoriteSelectionEvent fe) -> setFavoritesOptions(fe.getFavorite().getData()));
+    menu.show(m_ButtonFavorites, 0, m_ButtonFavorites.getHeight());
   }
 }
