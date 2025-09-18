@@ -15,7 +15,7 @@
 
 /*
  * Invert.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer.overlaylayeraction;
@@ -90,6 +90,7 @@ public class Invert
    */
   @Override
   public void performAction(OverlayLayer origin) {
+    origin.getManager().addUndoPoint(getName());
     swap(origin.getImage());
     origin.getManager().update();
   }

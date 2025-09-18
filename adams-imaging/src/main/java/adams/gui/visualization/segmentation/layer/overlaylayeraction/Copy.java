@@ -15,7 +15,7 @@
 
 /*
  * Copy.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.layer.overlaylayeraction;
@@ -72,6 +72,7 @@ public class Copy
       return;
     }
 
+    origin.getManager().addUndoPoint(getName());
     newLayer = origin.getManager().addOverlay(newName, origin.getColor().darker().darker(), origin.getAlpha(), origin.getBinaryImage());
     newLayer.setRemovable(origin.isRemovable());
     newLayer.setActionsAvailable(origin.hasActionsAvailable());
