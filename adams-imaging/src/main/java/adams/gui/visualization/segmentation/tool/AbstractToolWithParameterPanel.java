@@ -22,7 +22,6 @@ package adams.gui.visualization.segmentation.tool;
 
 import adams.core.Utils;
 import adams.data.json.JsonHelper;
-import adams.gui.core.BaseButton;
 import adams.gui.core.BaseFlatButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTextComponent;
@@ -62,7 +61,7 @@ public abstract class AbstractToolWithParameterPanel
   protected BaseFlatButton m_ButtonApply;
 
   /** the button for the favorites. */
-  protected BaseButton m_ButtonFavorites;
+  protected BaseFlatButton m_ButtonFavorites;
 
   /** the parameter panel. */
   protected ParameterPanel m_ParameterPanel;
@@ -106,7 +105,7 @@ public abstract class AbstractToolWithParameterPanel
 
     m_ButtonApply = createApplyButton();
 
-    m_ButtonFavorites = new BaseButton(ImageManager.getIcon("favorite.gif"));
+    m_ButtonFavorites = new BaseFlatButton(ImageManager.getIcon("favorite.gif"));
     m_ButtonFavorites.addActionListener(e -> showFavoritesMenu());
 
     panel = new JPanel(new BorderLayout());
