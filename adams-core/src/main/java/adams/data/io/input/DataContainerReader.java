@@ -94,10 +94,10 @@ public interface DataContainerReader<T extends DataContainer>
   public String createDummyReportTipText();
 
   /**
-   * Returns the spectrums generated from the file. If necessary,
+   * Returns the data containers generated from the file. If necessary,
    * performs the parsing (e.g., if not yet read).
    *
-   * @return		the spectrums generated from the file
+   * @return		the data containers generated from the file
    */
   public List<T> read();
 }
