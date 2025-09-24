@@ -15,12 +15,12 @@
 
 /*
  * TimeseriesFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.data.io.output.AbstractDataContainerWriter;
+import adams.data.io.output.DataContainerWriter;
 import adams.data.io.output.SimpleTimeseriesWriter;
 import adams.data.timeseries.Timeseries;
 
@@ -113,7 +113,7 @@ public class TimeseriesFileWriter
    * @return		the default writer
    */
   @Override
-  protected AbstractDataContainerWriter<Timeseries> getDefaultWriter() {
+  protected DataContainerWriter<Timeseries> getDefaultWriter() {
     return new SimpleTimeseriesWriter();
   }
 

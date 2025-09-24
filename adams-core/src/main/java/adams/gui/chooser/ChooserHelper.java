@@ -15,16 +15,16 @@
 
 /*
  * ChooserHelper.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.chooser;
 
 import adams.core.ClassLister;
 import adams.core.classmanager.ClassManager;
-import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.input.AbstractReportReader;
-import adams.data.io.output.AbstractDataContainerWriter;
+import adams.data.io.input.DataContainerReader;
 import adams.data.io.output.AbstractReportWriter;
+import adams.data.io.output.DataContainerWriter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,16 +71,16 @@ public class ChooserHelper {
   public static String[] getDataContainerReadersForFile(Class cls, File file) {
     List<String>		result;
     String[]			classes;
-    AbstractDataContainerReader	reader;
+    DataContainerReader		reader;
     String[]			exts;
     String			fileExt;
 
-    result  = new ArrayList<String>();
+    result  = new ArrayList<>();
     classes = ClassLister.getSingleton().getClassnames(cls);
     fileExt = file.getName().toLowerCase().replaceAll(".*\\.", "");
 
     for (String clazz: classes) {
-      reader = (AbstractDataContainerReader) getInstance(AbstractDataContainerReader.class, clazz);
+      reader = (DataContainerReader) getInstance(DataContainerReader.class, clazz);
       if (reader == null)
 	continue;
       // check extensions
@@ -93,7 +93,7 @@ public class ChooserHelper {
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -107,16 +107,16 @@ public class ChooserHelper {
   public static String[] getDataContainerWritersForFile(Class cls, File file) {
     List<String>		result;
     String[]			classes;
-    AbstractDataContainerWriter	writer;
+    DataContainerWriter		writer;
     String[]			exts;
     String			fileExt;
 
-    result  = new ArrayList<String>();
+    result  = new ArrayList<>();
     classes = ClassLister.getSingleton().getClassnames(cls);
     fileExt = file.getName().toLowerCase().replaceAll(".*\\.", "");
 
     for (String clazz: classes) {
-      writer = (AbstractDataContainerWriter) getInstance(AbstractDataContainerWriter.class, clazz);
+      writer = (DataContainerWriter) getInstance(DataContainerWriter.class, clazz);
       if (writer == null)
 	continue;
       // check extensions
@@ -129,7 +129,7 @@ public class ChooserHelper {
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -165,7 +165,7 @@ public class ChooserHelper {
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -201,6 +201,6 @@ public class ChooserHelper {
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 }

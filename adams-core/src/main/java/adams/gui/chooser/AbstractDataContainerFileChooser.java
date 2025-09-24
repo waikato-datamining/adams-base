@@ -15,7 +15,7 @@
 
 /*
  * DataContainerFileChooser.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
@@ -24,8 +24,8 @@ import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
-import adams.data.io.output.AbstractDataContainerWriter;
+import adams.data.io.input.DataContainerReader;
+import adams.data.io.output.DataContainerWriter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,21 +40,20 @@ import java.util.List;
  * Based on <code>weka.gui.ConverterFileChooser</code>
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see	    weka.gui.ConverterFileChooser
  * @param <T> the type of container
  */
-public abstract class AbstractDataContainerFileChooser<T extends DataContainer, R extends AbstractDataContainerReader, W extends AbstractDataContainerWriter>
+public abstract class AbstractDataContainerFileChooser<T extends DataContainer, R extends DataContainerReader, W extends DataContainerWriter>
   extends AbstractConfigurableExtensionFileFilterFileChooser<R, W> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5373058011025481738L;
 
   /** the file filters for the readers. */
-  protected static Hashtable<Class,List<ExtensionFileFilterWithClass>> m_ReaderFileFilters = new Hashtable<Class,List<ExtensionFileFilterWithClass>>();
+  protected static Hashtable<Class,List<ExtensionFileFilterWithClass>> m_ReaderFileFilters = new Hashtable<>();
 
   /** the file filters for the writers. */
-  protected static Hashtable<Class,List<ExtensionFileFilterWithClass>> m_WriterFileFilters = new Hashtable<Class,List<ExtensionFileFilterWithClass>>();
+  protected static Hashtable<Class,List<ExtensionFileFilterWithClass>> m_WriterFileFilters = new Hashtable<>();
 
   /**
    * Constructs a FileChooser pointing to the user's default directory.
@@ -98,9 +97,9 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     ExtensionFileFilterWithClass 	filter;
 
     if (reader)
-      m_ReaderFileFilters.put(chooser.getClass(), new ArrayList<ExtensionFileFilterWithClass>());
+      m_ReaderFileFilters.put(chooser.getClass(), new ArrayList<>());
     else
-      m_WriterFileFilters.put(chooser.getClass(), new ArrayList<ExtensionFileFilterWithClass>());
+      m_WriterFileFilters.put(chooser.getClass(), new ArrayList<>());
 
     for (i = 0; i < classnames.length; i++) {
       classname = (String) classnames[i];
@@ -110,12 +109,12 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
 	cls       = ClassManager.getSingleton().forName(classname);
 	converter = cls.getDeclaredConstructor().newInstance();
 	if (reader) {
-	  desc = ((AbstractDataContainerReader) converter).getFormatDescription();
-	  ext  = ((AbstractDataContainerReader) converter).getFormatExtensions();
+	  desc = ((DataContainerReader) converter).getFormatDescription();
+	  ext  = ((DataContainerReader) converter).getFormatExtensions();
 	}
 	else {
-	  desc = ((AbstractDataContainerWriter) converter).getFormatDescription();
-	  ext  = ((AbstractDataContainerWriter) converter).getFormatExtensions();
+	  desc = ((DataContainerWriter) converter).getFormatDescription();
+	  ext  = ((DataContainerWriter) converter).getFormatExtensions();
 	}
       }
       catch (Exception e) {
@@ -190,9 +189,9 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
 
       // files or directories?
       if (m_DialogType == OPEN_DIALOG)
-	onlyFiles = ((AbstractDataContainerReader) m_CurrentHandler).isInputFile();
+	onlyFiles = ((DataContainerReader) m_CurrentHandler).isInputFile();
       else
-	onlyFiles = ((AbstractDataContainerWriter) m_CurrentHandler).isOutputFile();
+	onlyFiles = ((DataContainerWriter) m_CurrentHandler).isOutputFile();
       if (onlyFiles)
 	setFileSelectionMode(FILES_ONLY);
       else
@@ -234,23 +233,23 @@ public abstract class AbstractDataContainerFileChooser<T extends DataContainer, 
     }
 
     // wrong type?
-    if (m_CurrentHandler instanceof AbstractDataContainerReader)
-      onlyFiles = ((AbstractDataContainerReader) m_CurrentHandler).isInputFile();
+    if (m_CurrentHandler instanceof DataContainerReader)
+      onlyFiles = ((DataContainerReader) m_CurrentHandler).isInputFile();
     else
-      onlyFiles = ((AbstractDataContainerWriter) m_CurrentHandler).isOutputFile();
+      onlyFiles = ((DataContainerWriter) m_CurrentHandler).isOutputFile();
     if ((onlyFiles && selFile.isDirectory()) || (!onlyFiles && !selFile.isDirectory()))
       return;
 
     try {
-      if (m_CurrentHandler instanceof AbstractDataContainerReader)
-	currFile = ((AbstractDataContainerReader) m_CurrentHandler).getInput();
+      if (m_CurrentHandler instanceof DataContainerReader)
+	currFile = ((DataContainerReader) m_CurrentHandler).getInput();
       else
-	currFile = ((AbstractDataContainerWriter) m_CurrentHandler).getOutput();
+	currFile = ((DataContainerWriter) m_CurrentHandler).getOutput();
       if ((currFile == null) || (!currFile.getAbsolutePath().equals(selFile.getAbsolutePath()))) {
-	if (m_CurrentHandler instanceof AbstractDataContainerReader)
-	  ((AbstractDataContainerReader) m_CurrentHandler).setInput(selFile);
+	if (m_CurrentHandler instanceof DataContainerReader)
+	  ((DataContainerReader) m_CurrentHandler).setInput(selFile);
 	else
-	  ((AbstractDataContainerWriter) m_CurrentHandler).setOutput(selFile);
+	  ((DataContainerWriter) m_CurrentHandler).setOutput(selFile);
       }
     }
     catch (Exception e) {

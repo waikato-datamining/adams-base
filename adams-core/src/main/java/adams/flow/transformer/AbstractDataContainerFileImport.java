@@ -15,14 +15,14 @@
 
 /*
  * AbstractDataContainerFileImport.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.db.DataProvider;
 import adams.db.DatabaseConnectionHandler;
 import adams.flow.core.Token;
@@ -51,7 +51,7 @@ public abstract class AbstractDataContainerFileImport<T extends DataContainer>
   public final static String BACKUP_CONTAINERS = "containers";
 
   /** the reader to use for processing the containers. */
-  protected AbstractDataContainerReader<T> m_Reader;
+  protected DataContainerReader<T> m_Reader;
 
   /** the IDs of the containers that have been imported. */
   protected List<Integer> m_IDs;
@@ -90,14 +90,14 @@ public abstract class AbstractDataContainerFileImport<T extends DataContainer>
    *
    * @return		the default reader
    */
-  protected abstract AbstractDataContainerReader<T> getDefaultReader();
+  protected abstract DataContainerReader<T> getDefaultReader();
 
   /**
    * Sets the reader to use.
    *
    * @param value	the reader
    */
-  public void setReader(AbstractDataContainerReader value) {
+  public void setReader(DataContainerReader value) {
     m_Reader = value;
     reset();
   }
@@ -107,7 +107,7 @@ public abstract class AbstractDataContainerFileImport<T extends DataContainer>
    *
    * @return		the reader
    */
-  public AbstractDataContainerReader getReader() {
+  public DataContainerReader getReader() {
     return m_Reader;
   }
 

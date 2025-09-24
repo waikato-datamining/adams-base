@@ -13,25 +13,24 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CompressableDataContainerWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data;
 
-import adams.core.option.OptionHandler;
-import adams.data.io.output.AbstractDataContainerWriter;
+import adams.data.container.DataContainer;
+import adams.data.io.output.DataContainerWriter;
 
 
 /**
- * Interface for {@link AbstractDataContainerWriter} classes that support
+ * Interface for {@link DataContainerWriter} classes that support
  * compression.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public interface CompressionSupporter 
-  extends OptionHandler {
+public interface CompressionSupporter<T extends DataContainer>
+  extends DataContainerWriter<T> {
 
   /**
    * Sets whether to use compression.

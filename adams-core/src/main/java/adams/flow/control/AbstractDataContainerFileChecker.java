@@ -13,18 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataContainerFileChecker.java
- * Copyright (C) 2010-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
@@ -34,9 +27,16 @@ import adams.core.base.BaseTime;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.flow.core.Compatibility;
 import adams.flow.core.Token;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Abstract ancestor for transformers that check data container files
@@ -49,7 +49,6 @@ import adams.flow.core.Token;
  * the tee actor.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of container to read
  */
 public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
@@ -64,7 +63,6 @@ public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
    * should get checked again.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class FileInfo
     implements Serializable {
@@ -154,10 +152,10 @@ public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
   protected Hashtable<File,FileInfo> m_BlackListFinal;
 
   /** the reader to use for loading the data containers. */
-  protected AbstractDataContainerReader<T> m_Reader;
+  protected DataContainerReader<T> m_Reader;
 
   /** the actual reader to use for loading. */
-  protected AbstractDataContainerReader<T> m_ActualReader;
+  protected DataContainerReader<T> m_ActualReader;
 
   /** the expiry interval for temporary blacklisted items, before moving them into the final list. */
   protected BaseDateTime m_ExpiryInterval;
@@ -282,14 +280,14 @@ public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
    *
    * @return		the reader
    */
-  protected abstract AbstractDataContainerReader<T> getDefaultReader();
+  protected abstract DataContainerReader<T> getDefaultReader();
 
   /**
    * Sets the reader to use.
    *
    * @param value	the reader
    */
-  public void setReader(AbstractDataContainerReader<T> value) {
+  public void setReader(DataContainerReader<T> value) {
     m_Reader = value;
     reset();
   }
@@ -299,7 +297,7 @@ public abstract class AbstractDataContainerFileChecker<T extends DataContainer>
    *
    * @return		the reader
    */
-  public AbstractDataContainerReader<T> getReader() {
+  public DataContainerReader<T> getReader() {
     return m_Reader;
   }
 

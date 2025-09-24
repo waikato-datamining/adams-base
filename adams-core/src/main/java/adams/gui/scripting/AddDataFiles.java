@@ -15,7 +15,7 @@
 
 /*
  * AddDataFiles.java
- * Copyright (C) 2015-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -23,7 +23,7 @@ import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.visualization.container.AbstractContainerManager;
 
@@ -98,7 +98,7 @@ public class AddDataFiles
   protected String doProcess(String options) throws Exception {
     String			result;
     List<DataContainer> 	data;
-    AbstractDataContainerReader	reader;
+    DataContainerReader		reader;
     int				n;
     int				i;
     AbstractContainerManager	manager;
@@ -114,7 +114,7 @@ public class AddDataFiles
 	"At least data container reader commandline and one file is expected, provided: " + options);
 
     // obtain reader
-    reader = (AbstractDataContainerReader) OptionUtils.forCommandLine(AbstractDataContainerReader.class, opts[0]);
+    reader = (DataContainerReader) OptionUtils.forCommandLine(DataContainerReader.class, opts[0]);
 
     // undo
     addUndoPoint("Saving undo data...", "Loading data with: " + OptionUtils.getCommandLine(reader));

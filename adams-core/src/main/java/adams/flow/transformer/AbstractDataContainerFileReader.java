@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileReader.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -25,7 +25,7 @@ import adams.core.StoppableUtils;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.data.io.input.IncrementalDataContainerReader;
 import adams.flow.core.ArrayProvider;
 import adams.flow.core.Token;
@@ -53,7 +53,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
   public final static String BACKUP_CONTAINERS = "containers";
 
   /** the reader to use. */
-  protected AbstractDataContainerReader<T> m_Reader;
+  protected DataContainerReader<T> m_Reader;
 
   /** whether to output an array instead of single items. */
   protected boolean m_OutputArray;
@@ -82,14 +82,14 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
    *
    * @return		the default reader
    */
-  protected abstract AbstractDataContainerReader getDefaultReader();
+  protected abstract DataContainerReader getDefaultReader();
 
   /**
    * Sets the reader to use.
    *
    * @param value	the filter
    */
-  public void setReader(AbstractDataContainerReader value) {
+  public void setReader(DataContainerReader value) {
     m_Reader = value;
     reset();
   }
@@ -99,7 +99,7 @@ public abstract class AbstractDataContainerFileReader<T extends DataContainer>
    *
    * @return		the reader
    */
-  public AbstractDataContainerReader getReader() {
+  public DataContainerReader getReader() {
     return m_Reader;
   }
 

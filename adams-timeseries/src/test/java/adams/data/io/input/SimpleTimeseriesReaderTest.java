@@ -19,9 +19,9 @@
  */
 package adams.data.io.input;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the SimpleTimeseriesReader class.
@@ -60,7 +60,7 @@ public class SimpleTimeseriesReaderTest
    * @return		the setups
    */
   @Override
-  protected AbstractDataContainerReader[] getRegressionSetups() {
+  protected DataContainerReader[] getRegressionSetups() {
     return new SimpleTimeseriesReader[]{
 	new SimpleTimeseriesReader()
     };

@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstanceReaderTest.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Test class for the InstanceReader data container reader. Run from the command line with: <br><br>
  * java adams.data.io.input.InstanceReaderTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstanceReaderTest
   extends AbstractDataContainerReaderTestCase {
@@ -68,8 +67,8 @@ public class InstanceReaderTest
    *
    * @return		the setups
    */
-  protected AbstractDataContainerReader[] getRegressionSetups() {
-    return new AbstractDataContainerReader[]{
+  protected DataContainerReader[] getRegressionSetups() {
+    return new DataContainerReader[]{
 	new InstanceReader()
     };
   }

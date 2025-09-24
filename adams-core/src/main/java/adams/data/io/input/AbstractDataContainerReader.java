@@ -15,16 +15,12 @@
 
 /*
  * AbstractDataContainerReader.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
 
-import adams.core.AdditionalInformationHandler;
-import adams.core.CleanUpHandler;
-import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
-import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.OptionUtils;
@@ -40,13 +36,11 @@ import java.util.List;
  * turn them into data containers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to read
  */
 public abstract class AbstractDataContainerReader<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerReader>,
-             FileFormatHandler, AdditionalInformationHandler {
+  implements DataContainerReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -4690065186988048507L;
@@ -72,6 +66,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @return 			a description suitable for displaying in the
    * 				file chooser
    */
+  @Override
   public abstract String getFormatDescription();
 
   /**
@@ -79,6 +74,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return 			the extension (without the dot!)
    */
+  @Override
   public abstract String[] getFormatExtensions();
 
   /**
@@ -86,6 +82,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return 			the default extension (without the dot!)
    */
+  @Override
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
   }
@@ -95,14 +92,15 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return		the additional information, null or 0-length string for no information
    */
+  @Override
   public String getAdditionalInformation() {
     StringBuilder	result;
 
     result = new StringBuilder();
 
-    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("Supported file extensions: ").append(Utils.flatten(getFormatExtensions(), ", "));
     result.append("\n");
-    result.append("Default file extension: " + getDefaultFormatExtension());
+    result.append("Default file extension: ").append(getDefaultFormatExtension());
 
     return result.toString();
   }
@@ -153,6 +151,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @return		true if the input needs to be a file, a directory
    * 			otherwise
    */
+  @Override
   public boolean isInputFile() {
     return m_InputIsFile;
   }
@@ -162,6 +161,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @param value	the file/directory to read
    */
+  @Override
   public void setInput(PlaceholderFile value) {
     if (value == null)
       m_Input = new PlaceholderFile(".");
@@ -175,6 +175,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return		the file/directory to read
    */
+  @Override
   public PlaceholderFile getInput() {
     return m_Input;
   }
@@ -185,6 +186,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String inputTipText() {
     if (m_InputIsFile)
       return "The file to read and turn into a container.";
@@ -197,6 +199,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @param value	if true then a dummy report is generated if necessary
    */
+  @Override
   public void setCreateDummyReport(boolean value) {
     m_CreateDummyReport = value;
     reset();
@@ -207,6 +210,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return		true if a dummy report is generated if necessary
    */
+  @Override
   public boolean getCreateDummyReport() {
     return m_CreateDummyReport;
   }
@@ -217,6 +221,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String createDummyReportTipText() {
     return "If true, then a dummy report is created if none present.";
   }
@@ -227,6 +232,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return		the spectrums generated from the file
    */
+  @Override
   public List<T> read() {
     if (this instanceof IncrementalDataContainerReader) {
       m_ReadData.clear();
@@ -291,7 +297,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * <br><br>
    * Default implementation adds dummy reports.
    *
-   * @see #createDummyReport()
+   * @see #createDummyReport(T)
    */
   protected void postProcessData() {
     int				i;
@@ -330,6 +336,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @see		#reset()
    */
+  @Override
   public void cleanUp() {
     reset();
   }
@@ -359,6 +366,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @throws ClassCastException 	if the specified object's type prevents it
    *         				from being compared to this object.
    */
+  @Override
   public int compareTo(Object o) {
     if (o == null)
       return 1;
@@ -384,7 +392,8 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    *
    * @return		the shallow copy
    */
-  public AbstractDataContainerReader shallowCopy() {
+  @Override
+  public DataContainerReader shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -394,7 +403,8 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
    * @param expand	whether to expand variables to their current values
    * @return		the shallow copy
    */
-  public AbstractDataContainerReader shallowCopy(boolean expand) {
-    return (AbstractDataContainerReader) OptionUtils.shallowCopy(this, expand);
+  @Override
+  public DataContainerReader shallowCopy(boolean expand) {
+    return (DataContainerReader) OptionUtils.shallowCopy(this, expand);
   }
 }

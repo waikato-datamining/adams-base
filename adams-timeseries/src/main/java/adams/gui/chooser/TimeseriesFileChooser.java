@@ -15,20 +15,20 @@
 
 /*
  * TimeseriesFileChooser.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.chooser;
 
-import java.io.File;
-
-import adams.data.io.input.AbstractDataContainerReader;
 import adams.data.io.input.AbstractTimeseriesReader;
+import adams.data.io.input.DataContainerReader;
 import adams.data.io.input.SimpleTimeseriesReader;
-import adams.data.io.output.AbstractDataContainerWriter;
 import adams.data.io.output.AbstractTimeseriesWriter;
+import adams.data.io.output.DataContainerWriter;
 import adams.data.io.output.SimpleTimeseriesWriter;
 import adams.data.timeseries.Timeseries;
+
+import java.io.File;
 
 /**
  * A specialized JFileChooser that lists all available file Readers and Writers
@@ -38,7 +38,7 @@ import adams.data.timeseries.Timeseries;
  * @version $Revision$
  */
 public class TimeseriesFileChooser
-  extends AbstractDataContainerFileChooser<Timeseries, AbstractDataContainerReader<Timeseries>, AbstractDataContainerWriter<Timeseries>> {
+  extends AbstractDataContainerFileChooser<Timeseries, DataContainerReader<Timeseries>, DataContainerWriter<Timeseries>> {
 
   /** for serialization. */
   private static final long serialVersionUID = -5373058011025481738L;
@@ -74,7 +74,7 @@ public class TimeseriesFileChooser
    * @return		the default reader
    */
   @Override
-  protected AbstractDataContainerReader<Timeseries> getDefaultReader() {
+  protected DataContainerReader<Timeseries> getDefaultReader() {
     return new SimpleTimeseriesReader();
   }
 
@@ -84,7 +84,7 @@ public class TimeseriesFileChooser
    * @return		the default writer
    */
   @Override
-  protected AbstractDataContainerWriter<Timeseries> getDefaultWriter() {
+  protected DataContainerWriter<Timeseries> getDefaultWriter() {
     return new SimpleTimeseriesWriter();
   }
 

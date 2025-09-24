@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDataContainerReaderTestCase.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -38,11 +38,10 @@ import java.util.List;
  * Ancestor for data container reader test cases.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <A> the type of reader to use
  * @param <D> the type of data to read
  */
-public abstract class AbstractDataContainerReaderTestCase<A extends AbstractDataContainerReader, D extends DataContainer>
+public abstract class AbstractDataContainerReaderTestCase<A extends DataContainerReader, D extends DataContainer>
   extends AbstractDatabaseTestCase {
 
   /**

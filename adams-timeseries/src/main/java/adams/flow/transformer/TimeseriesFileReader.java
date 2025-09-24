@@ -15,12 +15,12 @@
 
 /*
  * TimeseriesFileReader.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.data.io.input.SimpleTimeseriesReader;
 import adams.data.timeseries.Timeseries;
 
@@ -103,7 +103,7 @@ public class TimeseriesFileReader
    * @return		the default reader
    */
   @Override
-  protected AbstractDataContainerReader getDefaultReader() {
+  protected DataContainerReader getDefaultReader() {
     return new SimpleTimeseriesReader();
   }
 

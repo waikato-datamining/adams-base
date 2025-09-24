@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractTimeseriesReaderTestCase.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -27,11 +27,10 @@ import adams.test.TimeseriesTestHelper;
  * Abstract test class for the timeseries readers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <A> the type of reader
  * @param <D> the type of data container
  */
-public abstract class AbstractTimeseriesReaderTestCase<A extends AbstractDataContainerReader, D extends Timeseries>
+public abstract class AbstractTimeseriesReaderTestCase<A extends DataContainerReader, D extends Timeseries>
   extends AbstractDataContainerReaderTestCase<A, D> {
 
   /**

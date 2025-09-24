@@ -13,21 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetTimeseriesReaderTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the SpreadSheetTimeseriesReader class.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetTimeseriesReaderTest
   extends AbstractTimeseriesReaderTestCase {
@@ -60,7 +59,7 @@ public class SpreadSheetTimeseriesReaderTest
    * @return		the setups
    */
   @Override
-  protected AbstractDataContainerReader[] getRegressionSetups() {
+  protected DataContainerReader[] getRegressionSetups() {
     return new SpreadSheetTimeseriesReader[]{
 	new SpreadSheetTimeseriesReader()
     };

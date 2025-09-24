@@ -174,7 +174,7 @@ adams.data.id.AbstractIDGenerator=\
   adams.data.id
 
 # the container readers
-adams.data.io.input.AbstractDataContainerReader=\
+adams.data.io.input.DataContainerReader=\
   adams.data.io.input
 
 # the report readers
@@ -218,7 +218,7 @@ adams.data.io.input.AbstractIndexedSplitsRunsReader=\
   adams.data.io.input
 
 # the container writers
-adams.data.io.output.AbstractDataContainerWriter=\
+adams.data.io.output.DataContainerWriter=\
   adams.data.io.output
 
 # the report writers

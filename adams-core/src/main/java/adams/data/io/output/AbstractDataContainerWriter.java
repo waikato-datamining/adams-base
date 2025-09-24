@@ -15,17 +15,13 @@
 
 /*
  * AbstractDataContainerWriter.java
- * Copyright (C) 2008-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.output;
 
-import adams.core.AdditionalInformationHandler;
 import adams.core.ClassLister;
-import adams.core.CleanUpHandler;
-import adams.core.ShallowCopySupporter;
 import adams.core.Utils;
-import adams.core.io.FileFormatHandler;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
 import adams.core.option.AbstractOptionConsumer;
@@ -42,13 +38,11 @@ import java.util.List;
  * formats.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to handle
  */
 public abstract class AbstractDataContainerWriter<T extends DataContainer>
   extends AbstractOptionHandler
-  implements Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDataContainerWriter>,
-             FileFormatHandler, AdditionalInformationHandler {
+  implements DataContainerWriter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 7097110023547675936L;
@@ -64,6 +58,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return a description suitable for displaying in the file chooser
    */
+  @Override
   public abstract String getFormatDescription();
 
   /**
@@ -71,6 +66,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return the extension(s) (without the dot!)
    */
+  @Override
   public abstract String[] getFormatExtensions();
 
   /**
@@ -78,6 +74,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return 			the default extension (without the dot!)
    */
+  @Override
   public String getDefaultFormatExtension() {
     return getFormatExtensions()[0];
   }
@@ -87,14 +84,15 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return		the additional information, null or 0-length string for no information
    */
+  @Override
   public String getAdditionalInformation() {
     StringBuilder	result;
 
     result = new StringBuilder();
 
-    result.append("Supported file extensions: " + Utils.flatten(getFormatExtensions(), ", "));
+    result.append("Supported file extensions: ").append(Utils.flatten(getFormatExtensions(), ", "));
     result.append("\n");
-    result.append("Default file extension: " + getDefaultFormatExtension());
+    result.append("Default file extension: ").append(getDefaultFormatExtension());
 
     return result.toString();
   }
@@ -127,6 +125,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return true if the output needs to be a file, a directory otherwise
    */
+  @Override
   public boolean isOutputFile() {
     return m_OutputIsFile;
   }
@@ -137,6 +136,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @param value
    *          the file/directory to write to
    */
+  @Override
   public void setOutput(PlaceholderFile value) {
     if (value == null)
       m_Output = new PlaceholderFile(".");
@@ -149,6 +149,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return the file/directory to write to
    */
+  @Override
   public PlaceholderFile getOutput() {
     return m_Output;
   }
@@ -159,6 +160,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @return tip text for this property suitable for displaying in the GUI or
    *         for listing the options.
    */
+  @Override
   public String outputTipText() {
     if (m_OutputIsFile)
       return "The file to write the container to.";
@@ -171,6 +173,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * 
    * @return 		true if multiple containers are supported
    */
+  @Override
   public abstract boolean canWriteMultiple();
 
   /**
@@ -180,6 +183,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @return		true if successfully written
    * @see		#write(List)
    */
+  @Override
   public boolean write(T data) {
     List<T>	list;
 
@@ -195,6 +199,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @param data	the data to write
    * @return		true if successfully written
    */
+  @Override
   public boolean write(List<T> data) {
     checkData(data);
     return writeData(data);
@@ -243,6 +248,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @see #reset()
    */
+  @Override
   public void cleanUp() {
     reset();
   }
@@ -273,6 +279,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *           if the specified object's type prevents it from being compared to
    *           this object.
    */
+  @Override
   public int compareTo(Object o) {
     if (o == null)
       return 1;
@@ -298,7 +305,8 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *
    * @return the shallow copy
    */
-  public AbstractDataContainerWriter shallowCopy() {
+  @Override
+  public DataContainerWriter shallowCopy() {
     return shallowCopy(false);
   }
 
@@ -308,8 +316,9 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @param expand	whether to expand variables to their current values
    * @return 		the shallow copy
    */
-  public AbstractDataContainerWriter shallowCopy(boolean expand) {
-    return (AbstractDataContainerWriter) OptionUtils.shallowCopy(this, expand);
+  @Override
+  public DataContainerWriter shallowCopy(boolean expand) {
+    return (DataContainerWriter) OptionUtils.shallowCopy(this, expand);
   }
 
   /**
@@ -318,8 +327,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    * @return the writer classnames
    */
   public static String[] getWriters() {
-    return ClassLister.getSingleton().getClassnames(
-	AbstractDataContainerWriter.class);
+    return ClassLister.getSingleton().getClassnames(DataContainerWriter.class);
   }
 
   /**
@@ -331,13 +339,11 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *          the options for the writer
    * @return the instantiated writer or null if an error occurred
    */
-  public static AbstractDataContainerWriter forName(String classname,
-      String[] options) {
-    AbstractDataContainerWriter result;
+  public static DataContainerWriter forName(String classname, String[] options) {
+    DataContainerWriter result;
 
     try {
-      result = (AbstractDataContainerWriter) OptionUtils.forName(
-	  AbstractDataContainerWriter.class, classname, options);
+      result = (DataContainerWriter) OptionUtils.forName(DataContainerWriter.class, classname, options);
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -355,7 +361,7 @@ public abstract class AbstractDataContainerWriter<T extends DataContainer>
    *          the classname (and optional options) of the writer to instantiate
    * @return the instantiated writer or null if an error occurred
    */
-  public static AbstractDataContainerWriter forCommandLine(String cmdline) {
-    return (AbstractDataContainerWriter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  public static DataContainerWriter forCommandLine(String cmdline) {
+    return (DataContainerWriter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
   }
 }

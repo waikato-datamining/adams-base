@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesExplorer.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.timeseries;
@@ -28,7 +28,7 @@ import adams.core.base.BaseString;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.data.timeseries.PeriodicityHelper;
 import adams.data.timeseries.PeriodicityType;
 import adams.data.timeseries.Timeseries;
@@ -353,7 +353,7 @@ public class TimeseriesExplorer
 	  for (int i = 0; i < getContainerManager().count(); i++) {
 	    if (getContainerManager().isVisible(i)) {
 	      List<TimeseriesPoint> points = ((TimeseriesContainer) getContainerManager().get(i)).getData().toList();
-	      if (points.size() > 0) {
+	      if (!points.isEmpty()) {
 		point = points.get(points.size() / 2);
 		getTimeseriesPanel().getSelectedTimestampPaintlet().setPoint(point);
 		break;
@@ -561,7 +561,7 @@ public class TimeseriesExplorer
     m_MenuScripts.addSeparator();
 
     // add scripts
-    if (scripts.size() > 0) {
+    if (!scripts.isEmpty()) {
       for (i = 0; i < scripts.size(); i++) {
 	final File file = new File(scripts.get(i));
 	name = file.getName().replaceAll("_", " ");
@@ -696,7 +696,7 @@ public class TimeseriesExplorer
 
         @Override
         public void recentItemSelected(RecentItemEvent<JMenu, Setup> e) {
-          AbstractDataContainerReader reader = (AbstractDataContainerReader) e.getItem().getHandler();
+          DataContainerReader reader = (DataContainerReader) e.getItem().getHandler();
           reader.setInput(new PlaceholderFile(e.getItem().getFile()));
           getScriptingEngine().setDatabaseConnection(getDatabaseConnection());
           getScriptingEngine().add(TimeseriesExplorer.this, AddDataFile.ACTION + " " + OptionUtils.getCommandLine(reader));
@@ -918,7 +918,7 @@ public class TimeseriesExplorer
     int				i;
     PlaceholderFile[]		files;
     List<String>		opts;
-    AbstractDataContainerReader	reader;
+    DataContainerReader	reader;
 
     retVal = m_TimeseriesFileChooser.showOpenDialog(this);
     if (retVal != TimeseriesFileChooser.APPROVE_OPTION)
@@ -941,7 +941,7 @@ public class TimeseriesExplorer
 	opts.add(files[i].toString());
       getScriptingEngine().setDatabaseConnection(DatabaseConnection.getSingleton());
       getScriptingEngine().add(
-	getTimeseriesPanel(), AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[opts.size()])));
+	getTimeseriesPanel(), AddDataFiles.ACTION + " " + OptionUtils.joinOptions(opts.toArray(new String[0])));
       if (m_RecentFilesHandler != null) {
 	for (i = 0; i < files.length; i++)
 	  m_RecentFilesHandler.addRecentItem(new Setup(files[i], reader));
@@ -997,12 +997,12 @@ public class TimeseriesExplorer
 
     TimeseriesReportDbUpdater upd = new TimeseriesReportDbUpdater();
     upd.setLenient(true);
-    if (props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_KEYVALUE, "").trim().length() > 0) {
+    if (!props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_KEYVALUE, "").trim().isEmpty()) {
       upd.setQueryType(QueryType.KEY_VALUE);
       upd.setSQL(new SQLStatement(props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_KEYVALUE)));
       seq.add(upd);
     }
-    else if (props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_ROW, "").trim().length() > 0) {
+    else if (!props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_ROW, "").trim().isEmpty()) {
       upd.setQueryType(QueryType.COLUMN_AS_KEY);
       upd.setSQL(new SQLStatement(props.getProperty(TimeseriesImportDatabaseDialog.QUERY_METADATA_ROW)));
       seq.add(upd);

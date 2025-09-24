@@ -13,15 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetTimeseriesWriterTest.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.env.Environment;
 
 /**
  * Tests the SpreadSheetTimeseriesWriter class.
@@ -60,7 +60,7 @@ public class SpreadSheetTimeseriesWriterTest
    * @return		the setups
    */
   @Override
-  protected AbstractDataContainerWriter[] getRegressionSetups() {
+  protected DataContainerWriter[] getRegressionSetups() {
     return new SpreadSheetTimeseriesWriter[]{
 	new SpreadSheetTimeseriesWriter()
     };

@@ -15,14 +15,14 @@
 
 /*
  * AddDataFile.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
 import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.gui.core.AntiAliasingSupporter;
 import adams.gui.visualization.container.AbstractContainer;
 import adams.gui.visualization.container.AbstractContainerManager;
@@ -98,7 +98,7 @@ public class AddDataFile
   protected String doProcess(String options) throws Exception {
     String			result;
     List<DataContainer> 	data;
-    AbstractDataContainerReader	reader;
+    DataContainerReader		reader;
     List<AbstractContainer> 	cont;
     int				i;
     AbstractContainerManager	manager;
@@ -107,7 +107,7 @@ public class AddDataFile
     result = null;
 
     // obtain reader
-    reader = (AbstractDataContainerReader) OptionUtils.forCommandLine(AbstractDataContainerReader.class, options);
+    reader = (DataContainerReader) OptionUtils.forCommandLine(DataContainerReader.class, options);
 
     // undo
     addUndoPoint("Saving undo data...", "Loading data with: " + OptionUtils.getCommandLine(reader));

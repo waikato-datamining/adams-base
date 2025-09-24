@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerFileWriter.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,7 +28,7 @@ import adams.data.CompressionSupporter;
 import adams.data.DataUtils;
 import adams.data.container.DataContainer;
 import adams.data.id.DatabaseIDHandler;
-import adams.data.io.output.AbstractDataContainerWriter;
+import adams.data.io.output.DataContainerWriter;
 import adams.data.io.output.MetaFileWriter;
 import adams.flow.core.Token;
 
@@ -61,7 +61,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /** the writer to use. */
-  protected AbstractDataContainerWriter<T> m_Writer;
+  protected DataContainerWriter<T> m_Writer;
 
   /** the output directory. */
   protected PlaceholderDirectory m_OutputDir;
@@ -101,14 +101,14 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    *
    * @return		the default writer
    */
-  protected abstract AbstractDataContainerWriter<T> getDefaultWriter();
+  protected abstract DataContainerWriter<T> getDefaultWriter();
 
   /**
    * Sets the writer to use.
    *
    * @param value	the writer
    */
-  public void setWriter(AbstractDataContainerWriter value) {
+  public void setWriter(DataContainerWriter value) {
     m_Writer = value;
     reset();
   }
@@ -118,7 +118,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
    *
    * @return		the writer
    */
-  public AbstractDataContainerWriter getWriter() {
+  public DataContainerWriter getWriter() {
     return m_Writer;
   }
 

@@ -15,14 +15,14 @@
 
 /*
  * SetData.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
 import adams.core.Constants;
 import adams.core.option.OptionUtils;
 import adams.data.container.DataContainer;
-import adams.data.io.input.AbstractDataContainerReader;
+import adams.data.io.input.DataContainerReader;
 import adams.data.report.Report;
 import adams.data.report.ReportHandler;
 import adams.gui.visualization.container.AbstractContainer;
@@ -105,7 +105,7 @@ public class SetData
     AbstractContainerManager	manager;
     String			idNew;
     Report			report;
-    AbstractDataContainerReader	reader;
+    DataContainerReader		reader;
 
     list    = OptionUtils.splitOptions(options);
     index   = Integer.parseInt(list[0]) - 1;
@@ -118,8 +118,8 @@ public class SetData
       if (cont.getPayload() instanceof ReportHandler) {
 	report = ((ReportHandler) cont.getPayload()).getReport();
 	if (report.hasValue(READER_SETUP)) {
-	  reader = (AbstractDataContainerReader) OptionUtils.forAnyCommandLine(
-	    AbstractDataContainerReader.class,
+	  reader = (DataContainerReader) OptionUtils.forAnyCommandLine(
+	    DataContainerReader.class,
 	    report.getStringValue(READER_SETUP));
 	}
       }
