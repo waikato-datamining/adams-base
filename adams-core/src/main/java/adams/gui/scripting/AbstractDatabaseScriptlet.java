@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractDatabaseScriptlet.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -25,13 +25,22 @@ import adams.db.AbstractDatabaseConnection;
  * Ancestor for scriptlets that need access to the database.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractDatabaseScriptlet
   extends AbstractScriptlet {
 
   /** for serialization. */
   private static final long serialVersionUID = -7051048031205784713L;
+
+  /**
+   * Returns whether a data provider is necessary for this scriptlet.
+   *
+   * @return		true if required
+   */
+  @Override
+  public boolean requiresDataProvider() {
+    return true;
+  }
 
   /**
    * Returns the database connection instance.

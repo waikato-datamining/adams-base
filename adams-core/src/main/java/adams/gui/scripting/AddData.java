@@ -84,6 +84,16 @@ public class AddData
   }
 
   /**
+   * Returns whether a data provider is necessary for this scriptlet.
+   *
+   * @return		true if required
+   */
+  @Override
+  public boolean requiresDataProvider() {
+    return true;
+  }
+
+  /**
    * Processes the options.
    *
    * @param options	additional/optional options for the action

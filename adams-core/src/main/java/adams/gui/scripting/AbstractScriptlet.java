@@ -15,7 +15,7 @@
 
 /*
  * AbstractScriplet.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -129,10 +129,16 @@ public abstract class AbstractScriptlet
    * 			default value
    */
   public Object getParameter(String key, Object defValue) {
-    if (m_Parameters.containsKey(key))
-      return m_Parameters.get(key);
-    else
-      return defValue;
+    return m_Parameters.getOrDefault(key, defValue);
+  }
+
+  /**
+   * Returns whether a data provider is necessary for this scriptlet.
+   *
+   * @return		true if required
+   */
+  public boolean requiresDataProvider() {
+    return false;
   }
 
   /**
