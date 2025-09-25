@@ -357,6 +357,29 @@ public class FileUtils {
   }
 
   /**
+   * Returns bytes from the given stream, null in case of an error.
+   *
+   * @param in		the stream to load from
+   * @return		the content/lines of the file
+   */
+  public static byte[] loadFromBinaryStream(InputStream in) {
+    ByteArrayOutputStream	result;
+    int				b;
+
+    result = new ByteArrayOutputStream();
+
+    try {
+      while ((b = in.read()) != -1)
+	result.write(b);
+      return result.toByteArray();
+    }
+    catch (Exception e) {
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read bytes from binary stream:", e);
+      return null;
+    }
+  }
+
+  /**
    * Loads the binary file and returns the hexadecimal representation.
    * Uses 16 columns.
    *
