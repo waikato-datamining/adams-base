@@ -33,6 +33,7 @@ import gnu.trove.list.array.TByteArrayList;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -189,13 +190,53 @@ public class FileUtils {
 
   /**
    * Removes byte order marks (BOMs) from the start of the string (if present).
-   * For UTDF-8, UTF-16 and UTF-32.
+   * For UTF-8, UTF-16 and UTF-32.
    *
    * @param s		the string to process
    * @return		the processed string
    */
   public static String removeAllByteOrderMarks(String s) {
     return removeUTF8BOM(removeByteOrderMarks(s));
+  }
+
+  /**
+   * Returns lines from the given stream (split on newline), null in case of an error.
+   *
+   * @param in		the stream to load from
+   * @return		the content/lines of the file
+   */
+  public static List<String> loadLinesFromStream(InputStream in) {
+    return loadLinesFromStream(in, null);
+  }
+
+  /**
+   * Returns lines from the given stream (split on newline), null in case of an error.
+   *
+   * @param in		the stream to load from
+   * @param encoding 	the encoding to use, null to use default
+   * @return		the content/lines of the file
+   */
+  public static List<String> loadLinesFromStream(InputStream in, String encoding) {
+    ByteArrayOutputStream	out;
+    int				b;
+    String			s;
+
+    out = new ByteArrayOutputStream();
+    try {
+      while ((b = in.read()) != -1) {
+	out.write(b);
+      }
+      if (encoding == null)
+	s = out.toString();
+      else
+	s = out.toString(encoding);
+      s = removeAllByteOrderMarks(s);
+      return new ArrayList<>(Arrays.asList(s.split("\n")));
+    }
+    catch (Exception e) {
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read lines from stream:", e);
+      return null;
+    }
   }
 
   /**
