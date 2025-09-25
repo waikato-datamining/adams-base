@@ -26,7 +26,7 @@ import adams.data.timeseries.Timeseries;
 
 /**
  <!-- globalinfo-start -->
- * Loads a file/directory containing spectrums from disk with a specified reader and passes them on.
+ * Loads a file/directory containing timeseries containers from disk with a specified reader and passes them on.
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -61,7 +61,7 @@ import adams.data.timeseries.Timeseries;
  * </pre>
  *
  * <pre>-reader &lt;knir.data.input.AbstractTimeseriesReader [options]&gt; (property: reader)
- *         The reader to use for importing the spectrums.
+ *         The reader to use for importing the timeseries containers.
  *         default: knir.data.input.SimpleTimeseriesReader -input .
  * </pre>
  *

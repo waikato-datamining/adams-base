@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataContainerPanelWithContainerList.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.container;
@@ -47,7 +47,6 @@ import java.util.List;
  * Data container panel with a container list in the side panel.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class DataContainerPanelWithContainerList<T extends DataContainer, M extends AbstractContainerManager, C extends AbstractContainer>
   extends DataContainerPanelWithSidePanel<T,M>
@@ -140,7 +139,7 @@ public abstract class DataContainerPanelWithContainerList<T extends DataContaine
   protected abstract AbstractContainerList<M, C> createContainerList();
 
   /**
-   * Returns the panel listing the spectrums.
+   * Returns the panel listing the data containers.
    *
    * @return		the panel
    */

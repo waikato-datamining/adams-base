@@ -484,7 +484,7 @@ public class SpreadSheetRowPanel
   }
 
   /**
-   * Returns whether the display is adjusted to only the visible spectrums
+   * Returns whether the display is adjusted to only the visible rows
    * or all of them.
    *
    * @return		true if the plot is adjusted to only the visible data

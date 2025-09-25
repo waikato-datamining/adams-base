@@ -227,10 +227,10 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
   }
 
   /**
-   * Returns the spectrums generated from the file. If necessary,
+   * Returns the data containers generated from the file. If necessary,
    * performs the parsing (e.g., if not yet read).
    *
-   * @return		the spectrums generated from the file
+   * @return		the data containers generated from the file
    */
   @Override
   public List<T> read() {
@@ -252,7 +252,7 @@ public abstract class AbstractDataContainerReader<T extends DataContainer>
   /**
    * Performs checks and (always) reads the data.
    *
-   * @return		the spectrums generated from the file
+   * @return		the data containers generated from the file
    */
   protected List<T> doRead() {
     if (!m_Processed)

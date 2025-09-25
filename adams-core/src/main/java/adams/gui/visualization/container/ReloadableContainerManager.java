@@ -15,7 +15,7 @@
 
 /*
  * ReloadableContainerManager.java
- * Copyright (C) 2009 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.container;
@@ -30,16 +30,16 @@ package adams.gui.visualization.container;
 public interface ReloadableContainerManager {
   
   /**
-   * Sets whether the spectrums are reloadable (from the database) or not.
+   * Sets whether the data containers are reloadable (from the database) or not.
    * 
-   * @param value	true if the spectrums can be reloaded
+   * @param value	true if the data containers can be reloaded
    */
   public void setReloadable(boolean value);
   
   /**
-   * Returns whether the spectrums can be reloaded from the database or not.
+   * Returns whether the data containers can be reloaded from the database or not.
    * 
-   * @return		true if the spectrums can be reloaded
+   * @return		true if the data containers can be reloaded
    */
   public boolean isReloadable();
 }

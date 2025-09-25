@@ -548,7 +548,7 @@ public class InstancePanel
   }
 
   /**
-   * Returns whether the display is adjusted to only the visible spectrums
+   * Returns whether the display is adjusted to only the visible instances
    * or all of them.
    *
    * @return		true if the plot is adjusted to only the visible data

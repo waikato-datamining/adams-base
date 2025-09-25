@@ -133,7 +133,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /**
-   * Sets the output directory for the spectrums.
+   * Sets the output directory for the data containers.
    *
    * @param value	the directory
    */
@@ -143,7 +143,7 @@ public abstract class AbstractDataContainerFileWriter<T extends DataContainer>
   }
 
   /**
-   * Returns the current output directory for the spectrums.
+   * Returns the current output directory for the data containers.
    *
    * @return		the directory
    */

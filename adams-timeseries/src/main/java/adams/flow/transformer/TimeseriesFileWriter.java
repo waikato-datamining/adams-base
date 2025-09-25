@@ -62,12 +62,12 @@ import adams.data.timeseries.Timeseries;
  * </pre>
  *
  * <pre>-writer &lt;knir.data.output.AbstractTimeseriesWriter [options]&gt; (property: writer)
- *         The writer to use for saving the spectrums.
+ *         The writer to use for saving the timeseries containers.
  *         default: knir.data.output.SimpleTimeseriesWriter -output /tmp/out.spec
  * </pre>
  *
  * <pre>-dir &lt;java.io.File&gt; (property: outputDir)
- *         The output directory for the spectrums.
+ *         The output directory for the timeseries containers.
  *         default: .
  * </pre>
  *

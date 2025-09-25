@@ -15,7 +15,7 @@
 
 /*
  * Visible.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.scripting;
 
@@ -28,9 +28,9 @@ package adams.gui.scripting;
  *
  <!-- scriptlet-description-start -->
  * Description:
- * <pre>   Sets the visibility of the specified spectrums to true.
- *    NB: index is based on the order the spectrums haven beeen loaded into the
- *    system, includes all spectrums, not just visible ones.</pre>
+ * <pre>   Sets the visibility of the specified data containers to true.
+ *    NB: index is based on the order the data containers haven beeen loaded into the
+ *    system, includes all data containers, not just visible ones.</pre>
  * <br><br>
  <!-- scriptlet-description-end -->
  *
@@ -61,9 +61,9 @@ public class Visible
    */
   public String getDescription() {
     return
-        "Sets the visibility of the specified spectrums to true.\n"
-      + "NB: index is based on the order the spectrums haven beeen loaded "
-      + "into the system, includes all spectrums, not just visible ones.";
+        "Sets the visibility of the specified data containers to true.\n"
+      + "NB: index is based on the order the data containers haven beeen loaded "
+      + "into the system, includes all data containers, not just visible ones.";
   }
 
   /**
