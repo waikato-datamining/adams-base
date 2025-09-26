@@ -181,6 +181,14 @@ adams.data.io.input.DataContainerReader=\
 adams.data.io.input.StreamableDataContainerReader=\
   adams.data.io.input
 
+# the container readers that can read from InputStream objects (binary)
+adams.data.io.input.StreamableBinaryDataContainerReader=\
+  adams.data.io.input
+
+# the container readers that can read from InputStream objects (text-based)
+adams.data.io.input.StreamableTextBasedDataContainerReader=\
+  adams.data.io.input
+
 # the report readers
 adams.data.io.input.AbstractReportReader=\
   adams.data.io.input
@@ -227,6 +235,14 @@ adams.data.io.output.DataContainerWriter=\
 
 # the container writers that can write to OutputStream objects
 adams.data.io.output.StreamableDataContainerWriter=\
+  adams.data.io.output
+
+# the container writers that can write to OutputStream objects (binary)
+adams.data.io.output.StreamableBinaryDataContainerWriter=\
+  adams.data.io.output
+
+# the container writers that can write to OutputStream objects (text-based)
+adams.data.io.output.StreamableTextBasedDataContainerWriter=\
   adams.data.io.output
 
 # the report writers
