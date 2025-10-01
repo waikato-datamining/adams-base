@@ -15,15 +15,15 @@
 
 /*
  * Brightness.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.jai.transformer;
 
+import adams.data.image.BufferedImageContainer;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-
-import adams.data.image.BufferedImageContainer;
 
 /**
  <!-- globalinfo-start -->
@@ -155,6 +155,18 @@ public class Brightness
    */
   public String offsetTipText() {
     return "The offset to use for brightening/darkening.";
+  }
+
+  /**
+   * Optional checks of the image.
+   *
+   * @param img		the image to check
+   */
+  @Override
+  protected void checkImage(BufferedImageContainer img) {
+    super.checkImage(img);
+    if (img.getImage().getType() == BufferedImage.TYPE_BYTE_INDEXED)
+      throw new IllegalStateException("Brightness operation cannot be applied to indexed image!");
   }
 
   /**

@@ -22,6 +22,7 @@ package adams.gui.visualization.segmentation.layer;
 
 import adams.data.image.BufferedImageHelper;
 import adams.gui.core.BaseFlatButton;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.ImageManager;
 import adams.gui.core.NumberTextField;
@@ -198,7 +199,12 @@ public class ImageLayer
       image         = m_Image;
       if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
         image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
-      m_BrightImage = op.filter(image, m_BrightImage);
+      try {
+	m_BrightImage = op.filter(image, m_BrightImage);
+      }
+      catch (Exception e) {
+	ConsolePanel.getSingleton().append("Failed to apply brightening operation!", e);
+      }
       m_LastBrightness = brightness;
     }
     g2d.drawImage(m_BrightImage, null, 0, 0);

@@ -27,6 +27,7 @@ import adams.data.io.output.ImageWriter;
 import adams.gui.chooser.ImageFileChooser;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseScrollPane;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.KeyUtils;
@@ -710,7 +711,12 @@ public class CanvasPanel
 	image         = m_Image;
 	if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
 	  image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
-	m_BrightImage = op.filter(image, m_BrightImage);
+	try {
+	  m_BrightImage = op.filter(image, m_BrightImage);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append("Failed to apply brightening operation!", e);
+	}
 	m_LastBrightness = m_Brightness;
       }
       g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
@@ -744,7 +750,12 @@ public class CanvasPanel
 	image         = m_Image;
 	if (m_Image.getType() == BufferedImage.TYPE_BYTE_INDEXED)
 	  image = BufferedImageHelper.convert(m_Image, BufferedImage.TYPE_INT_ARGB);
-	m_BrightImage = op.filter(image, m_BrightImage);
+	try {
+	  m_BrightImage = op.filter(image, m_BrightImage);
+	}
+	catch (Exception e) {
+	  ConsolePanel.getSingleton().append("Failed to apply brightening operation!", e);
+	}
 	m_LastBrightness = m_Brightness;
       }
       g.drawImage(m_BrightImage, 0, 0, getOwner().getBackground(), null);
