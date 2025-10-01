@@ -15,7 +15,7 @@
 
 /*
  * PolygonFill.java
- * Copyright (C) 2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.segmentation.tool;
@@ -66,6 +66,9 @@ public class PolygonFill
   /** the text field for the polygon stroke thickness. */
   protected NumberTextField m_TextPolygonStroke;
 
+  /** the marker size. */
+  protected NumberTextField m_TextMarkerSize;
+
   /** the radio button for background. */
   protected JRadioButton m_RadioBackground;
 
@@ -80,6 +83,9 @@ public class PolygonFill
 
   /** the polygon stroke thickness. */
   protected float m_PolygonStroke;
+
+  /** the marker size. */
+  protected int m_MarkerSize;
 
   /** whether to fill in foreground. */
   protected boolean m_Foreground;
@@ -111,6 +117,7 @@ public class PolygonFill
     super.initialize();
     m_PolygonColor  = Color.RED;
     m_PolygonStroke = 1.0f;
+    m_MarkerSize    = 15;
     m_Foreground    = true;
     m_Size          = DEFAULT_SIZE;
     m_Zoom          = 100.0;
@@ -176,6 +183,15 @@ public class PolygonFill
   }
 
   /**
+   * Returns the size of the vertex markers.
+   *
+   * @return		the size
+   */
+  public int getMarkerSize() {
+    return m_MarkerSize;
+  }
+
+  /**
    * Returns the polygon to paint.
    *
    * @return		the polygon, null if not enough points
@@ -185,6 +201,15 @@ public class PolygonFill
       return null;
     else
       return PolygonUtils.toPolygon(m_Points);
+  }
+
+  /**
+   * Returns the underlying points.
+   *
+   * @return		the points
+   */
+  public List<Point> getPoints() {
+    return m_Points;
   }
 
   /**
@@ -283,9 +308,12 @@ public class PolygonFill
    */
   @Override
   protected void doApply() {
-    m_Foreground = m_RadioForeground.isSelected();
-    m_Zoom       = m_TextZoom.getValue().doubleValue();
-    m_Size       = DEFAULT_SIZE;
+    m_PolygonColor  = m_TextPolygonColor.getColor();
+    m_PolygonStroke = m_TextPolygonStroke.getValue().floatValue();
+    m_MarkerSize    = m_TextMarkerSize.getValue().intValue();
+    m_Foreground    = m_RadioForeground.isSelected();
+    m_Zoom          = m_TextZoom.getValue().doubleValue();
+    m_Size          = DEFAULT_SIZE;
   }
 
   /**
@@ -300,6 +328,20 @@ public class PolygonFill
     m_TextPolygonColor = new BaseColorTextField(m_PolygonColor);
     m_TextPolygonColor.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
     paramPanel.addParameter("Polygon color", m_TextPolygonColor);
+
+    m_TextPolygonStroke = new NumberTextField(Type.FLOAT, "" + m_PolygonStroke);
+    m_TextPolygonStroke.setColumns(5);
+    m_TextPolygonStroke.setToolTipText("The width of the stroke in pixels");
+    m_TextPolygonStroke.setCheckModel(new BoundedNumberCheckModel(Type.FLOAT, 1.0f, null));
+    m_TextPolygonStroke.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
+    paramPanel.addParameter("Stroke width", m_TextPolygonStroke);
+
+    m_TextMarkerSize = new NumberTextField(Type.INTEGER, "" + m_MarkerSize);
+    m_TextMarkerSize.setColumns(5);
+    m_TextMarkerSize.setToolTipText("The size of the vertex markers");
+    m_TextMarkerSize.setCheckModel(new BoundedNumberCheckModel(Type.INTEGER, 1, null));
+    m_TextMarkerSize.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
+    paramPanel.addParameter("Marker size", m_TextMarkerSize);
 
     group = new ButtonGroup();
 

@@ -15,7 +15,7 @@
 
 /*
  * PolygonOverlay.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.segmentation.paintoperation;
@@ -25,6 +25,7 @@ import adams.gui.visualization.segmentation.tool.PolygonFill;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Polygon;
 
 /**
@@ -57,10 +58,15 @@ public class PolygonOverlay
     Polygon 	poly;
     float 	stroke;
     PolygonFill pf;
+    boolean	canPaint;
+    int		x;
+    int		y;
+    int		s;
 
-    pf = (PolygonFill) getOwner();
-    poly = pf.getPolygon();
-    if (poly == null)
+    pf       = (PolygonFill) getOwner();
+    poly     = pf.getPolygon();
+    canPaint = (poly != null) || (!pf.getPoints().isEmpty());
+    if (!canPaint)
       return;
 
     stroke = 1.0f;
@@ -68,7 +74,21 @@ public class PolygonOverlay
       stroke = ((BasicStroke) g.getStroke()).getLineWidth();
     g.setStroke(new BasicStroke(pf.getPolygonStroke()));
     g.setColor(pf.getPolygonColor());
-    g.drawPolygon(poly);
+
+    // markers
+    s = pf.getMarkerSize();
+    if (s > 1) {
+      for (Point p : pf.getPoints()) {
+	x = (int) p.getX();
+	y = (int) p.getY();
+	g.drawLine(x - s / 2, y, x + s / 2, y);
+	g.drawLine(x, y - s / 2, x, y + s / 2);
+      }
+    }
+
+    if (poly != null)
+      g.drawPolygon(poly);
+
     g.setStroke(new BasicStroke(stroke));
   }
 }
