@@ -15,7 +15,7 @@
 
 /*
  * ArrayHistogram.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.statistics;
 
@@ -125,6 +125,9 @@ public class ArrayHistogram<T extends Number>
 
   /** the key for the x-values for all the bins in the meta-data. */
   public final static String METADATA_BINX = "bin-x";
+
+  /** the key for the bins. */
+  public final static String METADATA_BINS = "bins";
 
   /** the key for the minimum used in the meta-data. */
   public final static String METADATA_MINIMUM = "minimum";
@@ -784,6 +787,7 @@ public class ArrayHistogram<T extends Number>
     result.setMetaData(METADATA_NUMBINS,  bins.length);
     result.setMetaData(METADATA_BINWIDTH, binWidth);
     result.setMetaData(METADATA_BINX,     binX);
+    result.setMetaData(METADATA_BINS,     bins);
     result.setMetaData(METADATA_MINIMUM,  min);
     result.setMetaData(METADATA_MAXIMUM,  max);
 
