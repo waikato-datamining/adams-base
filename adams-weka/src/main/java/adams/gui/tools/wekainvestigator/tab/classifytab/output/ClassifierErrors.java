@@ -768,7 +768,7 @@ public class ClassifierErrors
     sink.setShowSidePanel(false);
     sink.setAdditional(new SpreadSheetColumnRange(SpreadSheetColumnRange.ALL));
     sink.setMetaDataColor(ObjectCopyHelper.copyObject(m_MetaDataColor));
-    sink.setUseCustomPaintlet(true);
+    sink.setUseCustomPaintlet(m_UseCustomPaintlet);
     if (m_UseCustomPaintlet)
       sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
     else
