@@ -15,7 +15,7 @@
 
 /*
  * PolygonPointAnnotator.java
- * Copyright (C) 2023-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -59,6 +59,9 @@ public class PolygonPointAnnotator
   /** the thickness of the stroke. */
   protected float m_StrokeThickness;
 
+  /** the marker size. */
+  protected int m_MarkerSize;
+
   /** the label suffix to use. */
   protected String m_LabelSuffix;
 
@@ -97,6 +100,10 @@ public class PolygonPointAnnotator
     m_OptionManager.add(
       "stroke-thickness", "strokeThickness",
       1.0f, 0.01f, null);
+
+    m_OptionManager.add(
+      "marker-size", "markerSize",
+      15, 1, null);
 
     m_OptionManager.add(
       "label-suffix", "labelSuffix",
@@ -159,6 +166,35 @@ public class PolygonPointAnnotator
    */
   public String strokeThicknessTipText() {
     return "The thickness of the stroke for the polygon.";
+  }
+
+  /**
+   * Sets the size of the vertex markers.
+   *
+   * @param value	the size
+   */
+  public void setMarkerSize(int value) {
+    m_MarkerSize = value;
+    reset();
+  }
+
+  /**
+   * Returns the size of the vertex markers.
+   *
+   * @return		the size
+   */
+  public int getMarkerSize() {
+    return m_MarkerSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String markerSizeTipText() {
+    return "The size of the vertex markers.";
   }
 
   /**
@@ -351,6 +387,8 @@ public class PolygonPointAnnotator
   protected void doPaintSelection(Graphics g) {
     Polygon 	poly;
     float	width;
+    int		x;
+    int		y;
 
     if (m_Points.isEmpty())
       return;
@@ -360,10 +398,17 @@ public class PolygonPointAnnotator
 
     g.setColor(m_Color);
 
-    if (m_Points.size() == 1) {
-      g.drawOval((int) m_Points.get(0).getX(), (int) m_Points.get(0).getY(), 3, 3);
+    // markers
+    if (m_MarkerSize > 1) {
+      for (Point p : m_Points) {
+	x = (int) p.getX();
+	y = (int) p.getY();
+	g.drawLine(x - m_MarkerSize / 2, y, x + m_MarkerSize / 2, y);
+	g.drawLine(x, y - m_MarkerSize / 2, x, y + m_MarkerSize / 2);
+      }
     }
-    else if (m_Points.size() == 2) {
+
+    if (m_Points.size() == 2) {
       g.drawLine(
 	(int) m_Points.get(0).getX(), (int) m_Points.get(0).getY(),
 	(int) m_Points.get(1).getX(), (int) m_Points.get(1).getY());
