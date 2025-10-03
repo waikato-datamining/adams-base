@@ -277,22 +277,23 @@ public class Density
    */
   @Override
   public void initialize(List<XYSequencePoint> points) {
-    RenderState	state;
-    double[]	x;
-    double[]	y;
-    int		i;
-    int 	xIndex;
-    int 	yIndex;
-    int		xi;
-    int		yi;
-    double	h2;
-    double 	norm;
-    double 	xCenter;
-    double 	yCenter;
-    double 	sum;
-    double 	dx;
-    double 	dy;
-    double 	r2;
+    RenderState		state;
+    DataContainer	parent;
+    double[]		x;
+    double[]		y;
+    int			i;
+    int 		xIndex;
+    int 		yIndex;
+    int			xi;
+    int			yi;
+    double		h2;
+    double 		norm;
+    double 		xCenter;
+    double 		yCenter;
+    double 		sum;
+    double 		dx;
+    double 		dy;
+    double 		r2;
 
     if (m_Cache == null)
       m_Cache = new HashMap<>();
@@ -300,11 +301,12 @@ public class Density
     if (points.isEmpty())
       return;
 
-    if (m_Cache.containsKey(points.get(0).getParent()))
+    parent = points.get(0).getParent();
+    if (m_Cache.containsKey(parent))
       return;
 
     state = new RenderState();
-    m_Cache.put(points.get(0).getParent(), state);
+    m_Cache.put(parent, state);
 
     // colors
     state.colors = m_Generator.generate();
