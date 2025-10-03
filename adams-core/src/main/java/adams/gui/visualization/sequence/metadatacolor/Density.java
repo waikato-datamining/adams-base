@@ -20,13 +20,16 @@
 
 package adams.gui.visualization.sequence.metadatacolor;
 
+import adams.data.container.DataContainer;
 import adams.data.sequence.XYSequencePoint;
 import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.BiColorGenerator;
 import adams.gui.visualization.core.ColorGradientGenerator;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generates colors based on the point density in the grid of numBins x numBins bins.
@@ -46,6 +49,48 @@ public class Density
     KDE
   }
 
+  /**
+   * The rendering state.
+   */
+  public static class RenderState {
+
+    /** the generated colors. */
+    public Color[] colors;
+
+    /** the bins. */
+    public double[][] bins;
+
+    /** the starting values for X bins. */
+    public double[] startX;
+
+    /** the starting values for Y bins. */
+    public double[] startY;
+
+    /** the smallest bin value. */
+    public double binMin;
+
+    /** the largest bin value. */
+    public double binMax;
+
+    /** the minimum x value. */
+    public double xMin;
+
+    /** the maximum x value. */
+    public double xMax;
+
+    /** the minimum x value. */
+    public double yMin;
+
+    /** the maximum x value. */
+    public double yMax;
+
+    /** the X bin width. */
+    public double xWidth;
+
+    /** the Y bin width. */
+    public double yWidth;
+  }
+  
   /** the mode to use. */
   protected Mode m_Mode;
 
@@ -58,41 +103,8 @@ public class Density
   /** the generator to use. */
   protected ColorGradientGenerator m_Generator;
 
-  /** the generated colors. */
-  protected transient Color[] m_Colors;
-
-  /** the bins. */
-  protected transient double[][] m_Bins;
-
-  /** the starting values for X bins. */
-  protected transient double[] m_StartX;
-
-  /** the starting values for Y bins. */
-  protected transient double[] m_StartY;
-
-  /** the smallest bin value. */
-  protected transient double m_BinMin;
-
-  /** the largest bin value. */
-  protected transient double m_BinMax;
-
-  /** the minimum x value. */
-  protected transient double m_XMin;
-
-  /** the maximum x value. */
-  protected transient double m_XMax;
-
-  /** the minimum x value. */
-  protected transient double m_YMin;
-
-  /** the maximum x value. */
-  protected transient double m_YMax;
-
-  /** the X bin width. */
-  protected transient double m_XWidth;
-
-  /** the Y bin width. */
-  protected transient double m_YWidth;
+  /** the cached states. */
+  protected transient Map<DataContainer, RenderState> m_Cache;
 
   /**
    * Returns a string describing the object.
@@ -135,10 +147,7 @@ public class Density
   protected void reset() {
     super.reset();
 
-    m_Colors = null;
-    m_Bins   = null;
-    m_StartX = null;
-    m_StartY = null;
+    m_Cache = null;
   }
 
   /**
@@ -268,6 +277,7 @@ public class Density
    */
   @Override
   public void initialize(List<XYSequencePoint> points) {
+    RenderState	state;
     double[]	x;
     double[]	y;
     int		i;
@@ -284,44 +294,48 @@ public class Density
     double 	dy;
     double 	r2;
 
-    m_Colors = null;
-    m_Bins   = null;
-    m_StartX = null;
-    m_StartY = null;
+    if (m_Cache == null)
+      m_Cache = new HashMap<>();
 
     if (points.isEmpty())
       return;
 
+    if (m_Cache.containsKey(points.get(0).getParent()))
+      return;
+
+    state = new RenderState();
+    m_Cache.put(points.get(0).getParent(), state);
+
     // colors
-    m_Colors = m_Generator.generate();
+    state.colors = m_Generator.generate();
 
     // init bins
-    m_Bins   = new double[m_NumBins][m_NumBins];
-    m_StartX = new double[m_NumBins];
-    m_StartY = new double[m_NumBins];
+    state.bins = new double[m_NumBins][m_NumBins];
+    state.startX = new double[m_NumBins];
+    state.startY = new double[m_NumBins];
     x        = new double[points.size()];
     y        = new double[points.size()];
     for (i = 0; i < points.size(); i++) {
       x[i] = points.get(i).getX();
       y[i] = points.get(i).getY();
     }
-    m_XMin = StatUtils.min(x);
-    m_XMax = StatUtils.max(x);
-    m_XWidth = (m_XMax - m_XMin) / m_NumBins;
-    m_YMin = StatUtils.min(y);
-    m_YMax = StatUtils.max(y);
-    m_YWidth = (m_YMax - m_YMin) / m_NumBins;
+    state.xMin = StatUtils.min(x);
+    state.xMax = StatUtils.max(x);
+    state.xWidth = (state.xMax - state.xMin) / m_NumBins;
+    state.yMin = StatUtils.min(y);
+    state.yMax = StatUtils.max(y);
+    state.yWidth = (state.yMax - state.yMin) / m_NumBins;
     for (i = 0; i < m_NumBins; i++) {
-      m_StartX[i] = m_XMin + i* m_XWidth;
-      m_StartY[i] = m_YMin + i* m_YWidth;
+      state.startX[i] = state.xMin + i* state.xWidth;
+      state.startY[i] = state.yMin + i* state.yWidth;
     }
 
     // fill bins
     if (m_Mode == Mode.HISTOGRAM) {
       for (i = 0; i < x.length; i++) {
-	xIndex = (int) ((x[i] - m_XMin) / (m_XMax - m_XMin) * (m_NumBins - 1));
-	yIndex = (int) ((y[i] - m_YMin) / (m_YMax - m_YMin) * (m_NumBins - 1));
-	m_Bins[yIndex][xIndex]++;
+	xIndex = (int) ((x[i] - state.xMin) / (state.xMax - state.xMin) * (m_NumBins - 1));
+	yIndex = (int) ((y[i] - state.yMin) / (state.yMax - state.yMin) * (m_NumBins - 1));
+	state.bins[yIndex][xIndex]++;
       }
     }
     else {
@@ -331,9 +345,9 @@ public class Density
       norm = 1.0 / (2.0 * Math.PI * h2 * points.size());
 
       for (xi = 0; xi < m_NumBins; xi++) {
-	xCenter = m_XMin + (xi + 0.5) * (m_XMax - m_XMin) / m_NumBins;
+	xCenter = state.xMin + (xi + 0.5) * (state.xMax - state.xMin) / m_NumBins;
 	for (yi = 0; yi < m_NumBins; yi++) {
-	  yCenter = m_YMin + (yi + 0.5) * (m_YMax - m_YMin) / m_NumBins;
+	  yCenter = state.yMin + (yi + 0.5) * (state.yMax - state.yMin) / m_NumBins;
 	  sum = 0.0;
 	  for (i = 0; i < x.length; i++) {
 	    dx = xCenter - x[i];
@@ -341,18 +355,18 @@ public class Density
 	    r2 = dx * dx + dy * dy;
 	    sum += Math.exp(-0.5 * r2 / h2); // Gaussian kernel unnormalized
 	  }
-	  m_Bins[xi][yi] = sum * norm;
+	  state.bins[xi][yi] = sum * norm;
 	}
       }
     }
 
     // determine min/max
-    m_BinMin = Integer.MAX_VALUE;
-    m_BinMax = 0;
+    state.binMin = Integer.MAX_VALUE;
+    state.binMax = 0;
     for (yIndex = 0; yIndex < m_NumBins; yIndex++) {
       for (xIndex = 0; xIndex < m_NumBins; xIndex++) {
-	m_BinMin = Math.min(m_BinMin, m_Bins[yIndex][xIndex]);
-	m_BinMax = Math.max(m_BinMax, m_Bins[yIndex][xIndex]);
+	state.binMin = Math.min(state.binMin, state.bins[yIndex][xIndex]);
+	state.binMax = Math.max(state.binMax, state.bins[yIndex][xIndex]);
       }
     }
   }
@@ -373,17 +387,21 @@ public class Density
     int 	xIndex;
     int 	yIndex;
     double	count;
+    RenderState	state;
 
     result = defColor;
 
-    if (m_Bins != null) {
+    state = null;
+    if (m_Cache != null)
+      state = m_Cache.get(point.getParent());
+    if (state != null) {
       x      = point.getX();
       y      = point.getY();
-      xIndex = (int) ((x - m_XMin) / (m_XMax - m_XMin) * (m_NumBins - 1));
-      yIndex = (int) ((y - m_YMin) / (m_YMax - m_YMin) * (m_NumBins - 1));
-      count  = m_Bins[yIndex][xIndex];
-      index  = (int) ((count - m_BinMin) / (m_BinMax - m_BinMin) * (m_Colors.length - 1));
-      result = m_Colors[index];
+      xIndex = (int) ((x - state.xMin) / (state.xMax - state.xMin) * (m_NumBins - 1));
+      yIndex = (int) ((y - state.yMin) / (state.yMax - state.yMin) * (m_NumBins - 1));
+      count  = state.bins[yIndex][xIndex];
+      index  = (int) ((count - state.binMin) / (state.binMax - state.binMin) * (state.colors.length - 1));
+      result = state.colors[index];
     }
 
     return result;
