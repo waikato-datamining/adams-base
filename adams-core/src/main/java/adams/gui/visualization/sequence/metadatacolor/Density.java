@@ -38,17 +38,31 @@ public class Density
 
   private static final long serialVersionUID = 83719639628991590L;
 
-  /** the generator to use. */
-  protected ColorGradientGenerator m_Generator;
+  /**
+   * The mode for calculating the density.
+   */
+  public enum Mode {
+    HISTOGRAM,
+    KDE
+  }
+
+  /** the mode to use. */
+  protected Mode m_Mode;
 
   /** the number of bins to generate on X and Y. */
   protected int m_NumBins;
+
+  /** the bandwidth. */
+  protected double m_Bandwidth;
+
+  /** the generator to use. */
+  protected ColorGradientGenerator m_Generator;
 
   /** the generated colors. */
   protected transient Color[] m_Colors;
 
   /** the bins. */
-  protected transient int[][] m_Bins;
+  protected transient double[][] m_Bins;
 
   /** the starting values for X bins. */
   protected transient double[] m_StartX;
@@ -57,10 +71,10 @@ public class Density
   protected transient double[] m_StartY;
 
   /** the smallest bin value. */
-  protected transient int m_BinMin;
+  protected transient double m_BinMin;
 
   /** the largest bin value. */
-  protected transient int m_BinMax;
+  protected transient double m_BinMax;
 
   /** the minimum x value. */
   protected transient double m_XMin;
@@ -98,8 +112,16 @@ public class Density
     super.defineOptions();
 
     m_OptionManager.add(
+      "mode", "mode",
+      Mode.HISTOGRAM);
+
+    m_OptionManager.add(
       "num-bins", "numBins",
       50, 1, null);
+
+    m_OptionManager.add(
+      "bandwidth", "bandwidth",
+      1.0, 0.0, null);
 
     m_OptionManager.add(
       "generator", "generator",
@@ -117,6 +139,35 @@ public class Density
     m_Bins   = null;
     m_StartX = null;
     m_StartY = null;
+  }
+
+  /**
+   * Sets the mode to use.
+   *
+   * @param value	the mode
+   */
+  public void setMode(Mode value) {
+    m_Mode = value;
+    reset();
+  }
+
+  /**
+   * Returns the mode to use.
+   *
+   * @return		the mode
+   */
+  public Mode getMode() {
+    return m_Mode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String modeTipText() {
+    return "The mode to use for generating the density.";
   }
 
   /**
@@ -148,6 +199,37 @@ public class Density
    */
   public String numBinsTipText() {
     return "The number of bins to generate on X and Y axis.";
+  }
+
+  /**
+   * Sets the bandwidth for kernel density estimates.
+   *
+   * @param value	the bandwidth
+   */
+  public void setBandwidth(double value) {
+    if (getOptionManager().isValid("bandwidth", value)) {
+      m_Bandwidth = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the bandwidth for kernel density estimates.
+   *
+   * @return		the bandwidth
+   */
+  public double getBandwidth() {
+    return m_Bandwidth;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bandwidthTipText() {
+    return "The bandwidth for kernel density estimates.";
   }
 
   /**
@@ -191,6 +273,8 @@ public class Density
     int		i;
     int 	xIndex;
     int 	yIndex;
+    int		xi;
+    int		yi;
 
     m_Colors = null;
     m_Bins   = null;
@@ -204,7 +288,7 @@ public class Density
     m_Colors = m_Generator.generate();
 
     // init bins
-    m_Bins   = new int[m_NumBins][m_NumBins];
+    m_Bins   = new double[m_NumBins][m_NumBins];
     m_StartX = new double[m_NumBins];
     m_StartY = new double[m_NumBins];
     x        = new double[points.size()];
@@ -225,10 +309,34 @@ public class Density
     }
 
     // fill bins
-    for (i = 0; i < x.length; i++) {
-      xIndex = (int) ((x[i] - m_XMin) / (m_XMax - m_XMin) * (m_NumBins - 1));
-      yIndex = (int) ((y[i] - m_YMin) / (m_YMax - m_YMin) * (m_NumBins - 1));
-      m_Bins[yIndex][xIndex]++;
+    if (m_Mode == Mode.HISTOGRAM) {
+      for (i = 0; i < x.length; i++) {
+	xIndex = (int) ((x[i] - m_XMin) / (m_XMax - m_XMin) * (m_NumBins - 1));
+	yIndex = (int) ((y[i] - m_YMin) / (m_YMax - m_YMin) * (m_NumBins - 1));
+	m_Bins[yIndex][xIndex]++;
+      }
+    }
+    else {
+      // Gaussian kernel KDE evaluated at bin centers
+      double h = m_Bandwidth;
+      double h2 = h * h;
+      // normalization factor for 2D Gaussian: 1 / (2π h^2 n)
+      double norm = 1.0 / (2.0 * Math.PI * h2 * points.size());
+
+      for (xi = 0; xi < m_NumBins; xi++) {
+	double xCenter = m_XMin + (xi + 0.5) * (m_XMax - m_XMin) / m_NumBins;
+	for (yi = 0; yi < m_NumBins; yi++) {
+	  double yCenter = m_YMin + (yi + 0.5) * (m_YMax - m_YMin) / m_NumBins;
+	  double sum = 0.0;
+	  for (i = 0; i < x.length; i++) {
+	    double dx = xCenter - x[i];
+	    double dy = yCenter - y[i];
+	    double r2 = dx * dx + dy * dy;
+	    sum += Math.exp(-0.5 * r2 / h2); // Gaussian kernel unnormalized
+	  }
+	  m_Bins[xi][yi] = sum * norm;
+	}
+      }
     }
 
     // determine min/max
@@ -257,7 +365,7 @@ public class Density
     double	y;
     int 	xIndex;
     int 	yIndex;
-    int		count;
+    double	count;
 
     result = defColor;
 
@@ -267,7 +375,7 @@ public class Density
       xIndex = (int) ((x - m_XMin) / (m_XMax - m_XMin) * (m_NumBins - 1));
       yIndex = (int) ((y - m_YMin) / (m_YMax - m_YMin) * (m_NumBins - 1));
       count  = m_Bins[yIndex][xIndex];
-      index  = (int) (((double) count - m_BinMin) / (m_BinMax - m_BinMin) * (m_Colors.length - 1));
+      index  = (int) ((count - m_BinMin) / (m_BinMax - m_BinMin) * (m_Colors.length - 1));
       result = m_Colors[index];
     }
 
