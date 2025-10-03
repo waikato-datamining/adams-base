@@ -275,6 +275,14 @@ public class Density
     int 	yIndex;
     int		xi;
     int		yi;
+    double	h2;
+    double 	norm;
+    double 	xCenter;
+    double 	yCenter;
+    double 	sum;
+    double 	dx;
+    double 	dy;
+    double 	r2;
 
     m_Colors = null;
     m_Bins   = null;
@@ -318,20 +326,19 @@ public class Density
     }
     else {
       // Gaussian kernel KDE evaluated at bin centers
-      double h = m_Bandwidth;
-      double h2 = h * h;
+      h2 = m_Bandwidth * m_Bandwidth;
       // normalization factor for 2D Gaussian: 1 / (2π h^2 n)
-      double norm = 1.0 / (2.0 * Math.PI * h2 * points.size());
+      norm = 1.0 / (2.0 * Math.PI * h2 * points.size());
 
       for (xi = 0; xi < m_NumBins; xi++) {
-	double xCenter = m_XMin + (xi + 0.5) * (m_XMax - m_XMin) / m_NumBins;
+	xCenter = m_XMin + (xi + 0.5) * (m_XMax - m_XMin) / m_NumBins;
 	for (yi = 0; yi < m_NumBins; yi++) {
-	  double yCenter = m_YMin + (yi + 0.5) * (m_YMax - m_YMin) / m_NumBins;
-	  double sum = 0.0;
+	  yCenter = m_YMin + (yi + 0.5) * (m_YMax - m_YMin) / m_NumBins;
+	  sum = 0.0;
 	  for (i = 0; i < x.length; i++) {
-	    double dx = xCenter - x[i];
-	    double dy = yCenter - y[i];
-	    double r2 = dx * dx + dy * dy;
+	    dx = xCenter - x[i];
+	    dy = yCenter - y[i];
+	    r2 = dx * dx + dy * dy;
 	    sum += Math.exp(-0.5 * r2 / h2); // Gaussian kernel unnormalized
 	  }
 	  m_Bins[xi][yi] = sum * norm;
