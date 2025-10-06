@@ -180,7 +180,7 @@ public class WekaClassifierModelReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"model", "ser"};
+    return new String[]{"model", "model.gz", "ser", "ser.gz"};
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * SerializableObjectReader.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -68,7 +68,7 @@ public class SerializableObjectReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"model", "ser"};
+    return new String[]{"model", "model.gz", "ser", "ser.gz"};
   }
 
   /**
