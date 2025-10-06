@@ -516,6 +516,7 @@ public class TagArrayEditor
     props.setProperty("value", tag.tagValue());
     dialog.setProperties(props);
     dialog.pack();
+    GUIHelper.makeAtMost(dialog, GUIHelper.getDefaultDialogDimension());
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
     if (dialog.getOption() != PropertiesParameterDialog.APPROVE_OPTION)
