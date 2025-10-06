@@ -454,10 +454,8 @@ public class TagArrayEditor
       if (parent != null) {
 	dlg = (GenericObjectEditorDialog) parent;
 	obj = dlg.getCurrent();
-	System.out.println(obj.getClass());
 	if (obj != null)
 	  result = TagProcessorHelper.getApplicableTags(obj.getClass());
-	System.out.println(result);
       }
     }
 
