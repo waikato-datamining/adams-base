@@ -574,6 +574,7 @@ public class GenericObjectEditor
 	    this, "Object loaded from '" + selected + "' not of type:\n" + m_ClassType.getName(), "Open object");
 	  return null;
 	}
+	obj = ObjectCopyHelper.copyObject(obj);
 	return obj;
       }
       return null;
