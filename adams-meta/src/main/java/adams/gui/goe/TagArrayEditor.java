@@ -34,6 +34,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
+import adams.gui.core.MouseUtils;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
 import adams.gui.core.TagInfoTableModel;
 import adams.gui.core.TagTableModel;
@@ -57,6 +58,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
@@ -562,6 +565,17 @@ public class TagArrayEditor
     tagInfoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tagInfoTable.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     tagInfoTable.setOptimalColumnWidth();
+    tagInfoTable.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+	if (MouseUtils.isDoubleClick(e) && (tagInfoTable.getSelectedRows().length == 1)) {
+	  e.consume();
+	  tagInfoDialog.approveDialog();
+	}
+	if (!e.isConsumed())
+	  super.mouseClicked(e);
+      }
+    });
     panelTable = new JPanel(new BorderLayout());
     panelTable.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panelTable.add(new BaseScrollPane(tagInfoTable), BorderLayout.CENTER);
