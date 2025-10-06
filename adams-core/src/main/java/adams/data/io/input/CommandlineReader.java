@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CommandlineReader.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -31,7 +31,6 @@ import java.util.logging.Level;
  * Loads objects using the commandline store in the file.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CommandlineReader
   extends AbstractObjectReader {
@@ -66,7 +65,7 @@ public class CommandlineReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"cmdline"};
+    return new String[]{"cmdline", "txt"};
   }
 
   /**

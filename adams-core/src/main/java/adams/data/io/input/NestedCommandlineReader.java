@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NestedCommandlineReader.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.input;
@@ -34,7 +34,6 @@ import java.util.logging.Level;
  * Works only with ADAMS objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class NestedCommandlineReader
   extends AbstractObjectReader
@@ -75,7 +74,7 @@ public class NestedCommandlineReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"cmdnested"};
+    return new String[]{"cmdnested", "txt"};
   }
 
   /**
