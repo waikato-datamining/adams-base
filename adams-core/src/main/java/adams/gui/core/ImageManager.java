@@ -15,10 +15,12 @@
 
 /*
  * ImageManager.java
- * Copyright (C) 2022-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
+
+import adams.core.logging.LoggingHelper;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Manages images and icons.
@@ -281,8 +284,7 @@ public class ImageManager {
 	m_BufferedImageCache.put(filename, result);
       }
       catch (Exception e) {
-	System.err.println("Failed to load image: " + filename);
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to load image: " + filename, e);
       }
     }
     return result;
@@ -300,8 +302,7 @@ public class ImageManager {
 	return ImageIO.read(ClassLoader.getSystemClassLoader().getResource(filename));
       }
       catch (Exception e) {
-	System.err.println("Failed to load image: " + filename);
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to load image: " + filename, e);
       }
     }
     return null;
@@ -319,7 +320,7 @@ public class ImageManager {
     result = null;
 
     filename = GUIHelper.getString("LogoImage", "");
-    if (filename.length() != 0)
+    if (!filename.isEmpty())
       result = getIcon(filename);
 
     return result;
@@ -337,7 +338,7 @@ public class ImageManager {
     result = null;
 
     filename = GUIHelper.getString("LogoIcon", "");
-    if (filename.length() != 0)
+    if (!filename.isEmpty())
       result = getIcon(filename);
 
     return result;
