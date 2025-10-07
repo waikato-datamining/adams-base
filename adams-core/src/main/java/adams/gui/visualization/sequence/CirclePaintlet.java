@@ -15,7 +15,7 @@
 
 /*
  * CirclePaintlet.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.sequence;
@@ -86,6 +86,9 @@ public class CirclePaintlet
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
 
+  /** whether to fill the circle. */
+  protected boolean m_Filled;
+
   /**
    * Returns a string describing the object.
    *
@@ -110,6 +113,10 @@ public class CirclePaintlet
     m_OptionManager.add(
       "anti-aliasing-enabled", "antiAliasingEnabled",
       GUIHelper.getBoolean(getClass(), "antiAliasingEnabled", true));
+
+    m_OptionManager.add(
+      "filled", "filled",
+      false);
   }
 
   /**
@@ -168,6 +175,35 @@ public class CirclePaintlet
    */
   public String antiAliasingEnabledTipText() {
     return "If enabled, uses anti-aliasing for drawing circles.";
+  }
+
+  /**
+   * Sets whether to fill the circle.
+   *
+   * @param value	if true then the circles are filled
+   */
+  public void setFilled(boolean value) {
+    m_Filled = value;
+    memberChanged();
+  }
+
+  /**
+   * Returns whether to fill the circle.
+   *
+   * @return		true then the circles are filled
+   */
+  public boolean isFilled() {
+    return m_Filled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String filledTipText() {
+    return "If enabled, fills the circle rather than just drawing the outline.";
   }
 
   /**
@@ -239,7 +275,10 @@ public class CirclePaintlet
       currY -= ((m_Diameter - 1) / 2);
 
       // draw circle
-      g.drawOval(currX, currY, m_Diameter, m_Diameter);
+      if (m_Filled)
+	g.fillOval(currX, currY, m_Diameter, m_Diameter);
+      else
+	g.drawOval(currX, currY, m_Diameter, m_Diameter);
     }
   }
 
