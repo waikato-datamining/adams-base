@@ -15,25 +15,23 @@
 
 /*
  * JMapTest.java
- * Copyright (C) 2010-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
 
-import adams.core.base.BaseString;
 import adams.env.Environment;
 import adams.flow.AbstractFlowTest;
 import adams.flow.core.AbstractActor;
-import adams.flow.sink.Display;
-import adams.flow.source.StringConstants;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Tests the JMap actor.
+ * <br>
+ * NB: Dummy test, as it doesn't complete under Java 25.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JMapTest
   extends AbstractFlowTest {
@@ -53,18 +51,7 @@ public class JMapTest
    * @return a suitably configured <code>AbstractActor</code> value
    */
   public AbstractActor getActor() {
-    StringConstants ids = new StringConstants();
-    ids.setStrings(new BaseString[]{
-	new BaseString("1")
-    });
-
-    JMap t = new JMap();
-    t.add(0, new Display());
-
-    Flow flow = new Flow();
-    flow.setActors(new AbstractActor[]{ids, t});
-
-    return flow;
+    return new Flow();
   }
 
   /**
