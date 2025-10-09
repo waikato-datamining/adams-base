@@ -82,7 +82,7 @@ public abstract class AbstractImageWatermark
 
     m_OptionManager.add(
       "alpha", "alpha",
-      255, 0, 255);
+      getDefaultAlpha(), 0, 255);
   }
 
   /**
@@ -249,9 +249,18 @@ public abstract class AbstractImageWatermark
   }
 
   /**
+   * Returns the default alpha value: 0=transparent, 255=opaque.
+   *
+   * @return		the default
+   */
+  protected int getDefaultAlpha() {
+    return 255;
+  }
+
+  /**
    * Sets the alpha value to use for the overlay: 0=transparent, 255=opaque.
    *
-   * @param value	the alphae value
+   * @param value	the alpha value
    */
   public void setAlpha(int value) {
     if (getOptionManager().isValid("alpha", value)) {
