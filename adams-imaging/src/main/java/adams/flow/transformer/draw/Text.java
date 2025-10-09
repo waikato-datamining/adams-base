@@ -15,7 +15,7 @@
 
 /*
  * Text.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.draw;
 
@@ -382,7 +382,7 @@ public class Text
     String[] 	lines;
     int		i;
 
-    if (m_Text.length() > 0) {
+    if (!m_Text.isEmpty()) {
       lines = Utils.split(m_Text, "\n");
       g = image.getImage().getGraphics();
       g.setColor(m_Color);
