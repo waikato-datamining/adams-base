@@ -362,7 +362,7 @@ public class Text
   /**
    * Sets the alpha value to use for the overlay: 0=transparent, 255=opaque.
    *
-   * @param value	the alphae value
+   * @param value	the alpha value
    */
   public void setAlpha(int value) {
     if (getOptionManager().isValid("alpha", value)) {
