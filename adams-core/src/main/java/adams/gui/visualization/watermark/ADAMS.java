@@ -47,13 +47,23 @@ public class ADAMS
   }
 
   /**
+   * Returns the default alpha value: 0=transparent, 255=opaque.
+   *
+   * @return		the default
+   */
+  @Override
+  protected int getDefaultAlpha() {
+    return 63;
+  }
+
+  /**
    * Returns the default scale factor to use.
    *
    * @return		the default
    */
   @Override
   protected double getDefaultScale() {
-    return 0.5;
+    return 0.25;
   }
 
   /**
