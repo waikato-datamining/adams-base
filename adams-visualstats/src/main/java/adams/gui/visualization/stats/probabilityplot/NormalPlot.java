@@ -15,7 +15,7 @@
 
 /*
  * NormalPlot.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.probabilityplot;
@@ -25,11 +25,15 @@ import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.event.PaintEvent;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.event.PaintListener;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.Normal;
+import adams.gui.visualization.watermark.Null;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -43,7 +47,6 @@ import java.awt.event.MouseEvent;
  * used in the 4-in1 plot.
  *
  * @author msf8
- * @version $Revision$
  */
 public class NormalPlot
   extends PaintablePanel
@@ -69,6 +72,9 @@ public class NormalPlot
 
   /** the file chooser for saving a specific sequence. */
   protected SpreadSheetFileChooser m_FileChooser;
+
+  /** the watermark paint listener. */
+  protected PaintListener m_WatermarkListener;
 
   /**
    * Initializes the members.
@@ -109,6 +115,18 @@ public class NormalPlot
     m_NormOptions = val;
     m_NormOptions.getAxisX().configure(m_Plot, Axis.BOTTOM);
     m_NormOptions.getAxisY().configure(m_Plot, Axis.LEFT);
+    if (m_WatermarkListener != null)
+      m_Plot.removePaintListener(m_WatermarkListener);
+    if (!(m_NormOptions.getWatermark() instanceof Null)) {
+      m_WatermarkListener = new PaintListener() {
+	@Override
+	public void painted(PaintEvent e) {
+	  if (e.getPaintMoment() == PaintMoment.POST_PAINT)
+	    m_NormOptions.getWatermark().applyWatermark(e.getGraphics(), m_Plot.getContent().getSize());
+	}
+      };
+      m_Plot.addPaintListener(m_WatermarkListener);
+    }
     update();
   }
 

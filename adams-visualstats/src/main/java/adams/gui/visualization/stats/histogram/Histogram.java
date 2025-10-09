@@ -36,6 +36,9 @@ import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.dialog.SpreadSheetDialog;
+import adams.gui.event.PaintEvent;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.event.PaintListener;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
@@ -43,6 +46,7 @@ import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.histogram.HistogramOptions.BoxType;
 import adams.gui.visualization.stats.paintlet.HistogramPaintlet;
+import adams.gui.visualization.watermark.Null;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -100,6 +104,9 @@ public class Histogram
   /** the file chooser for saving a specific sequence. */
   protected SpreadSheetFileChooser m_FileChooser;
 
+  /** the watermark paint listener. */
+  protected PaintListener m_WatermarkListener;
+
   /**
    * Initializes the members.
    */
@@ -146,6 +153,18 @@ public class Histogram
     removePaintlet(m_Val);
     m_Val = (HistogramPaintlet) m_HistOptions.getPaintlet().shallowCopy(true);
     m_Val.setPanel(this);
+    if (m_WatermarkListener != null)
+      m_Plot.removePaintListener(m_WatermarkListener);
+    if (!(m_HistOptions.getWatermark() instanceof Null)) {
+      m_WatermarkListener = new PaintListener() {
+	@Override
+	public void painted(PaintEvent e) {
+	  if (e.getPaintMoment() == PaintMoment.POST_PAINT)
+	    m_HistOptions.getWatermark().applyWatermark(e.getGraphics(), m_Plot.getContent().getSize());
+	}
+      };
+      m_Plot.addPaintListener(m_WatermarkListener);
+    }
   }
 
   /**

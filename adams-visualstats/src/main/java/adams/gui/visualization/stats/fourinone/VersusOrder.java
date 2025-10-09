@@ -15,7 +15,7 @@
 
 /*
  * VersusOrder.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.fourinone;
@@ -27,12 +27,16 @@ import adams.data.statistics.StatUtils;
 import adams.gui.chooser.SpreadSheetFileChooser;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
+import adams.gui.event.PaintEvent;
+import adams.gui.event.PaintEvent.PaintMoment;
+import adams.gui.event.PaintListener;
 import adams.gui.visualization.core.AxisPanel;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.PlotPanel;
 import adams.gui.visualization.core.PopupMenuCustomizer;
 import adams.gui.visualization.core.plot.Axis;
 import adams.gui.visualization.stats.paintlet.VsOrderPaintlet;
+import adams.gui.visualization.watermark.Null;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -46,7 +50,6 @@ import java.awt.event.MouseEvent;
  * on the y axis and the position in the data on the x axis.
  *
  * @author msf8
- * @version $Revision$
  */
 public class VersusOrder
   extends PaintablePanel
@@ -72,6 +75,9 @@ public class VersusOrder
 
   /** the file chooser for saving a specific sequence. */
   protected SpreadSheetFileChooser m_FileChooser;
+
+  /** the watermark paint listener. */
+  protected PaintListener m_WatermarkListener;
 
   /**
    * Initializes the members.
@@ -112,6 +118,18 @@ public class VersusOrder
     removePaintlet(m_Val);
     m_Val = (VsOrderPaintlet) m_VsOrderOptions.getPaintlet().shallowCopy(true);
     m_Val.setPanel(this);
+    if (m_WatermarkListener != null)
+      m_Plot.removePaintListener(m_WatermarkListener);
+    if (!(m_VsOrderOptions.getWatermark() instanceof Null)) {
+      m_WatermarkListener = new PaintListener() {
+	@Override
+	public void painted(PaintEvent e) {
+	  if (e.getPaintMoment() == PaintMoment.POST_PAINT)
+	    m_VsOrderOptions.getWatermark().applyWatermark(e.getGraphics(), m_Plot.getContent().getSize());
+	}
+      };
+      m_Plot.addPaintListener(m_WatermarkListener);
+    }
   }
   
   /**

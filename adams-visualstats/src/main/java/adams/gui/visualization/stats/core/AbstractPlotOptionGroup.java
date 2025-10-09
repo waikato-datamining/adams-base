@@ -13,20 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractPlotOptionGroup.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.stats.core;
 
 import adams.core.option.AbstractOptionGroup;
 import adams.gui.visualization.core.AxisPanelOptions;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 
 /**
  * Ancestor for option groups for plots.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractPlotOptionGroup
   extends AbstractOptionGroup {
@@ -40,6 +41,9 @@ public abstract class AbstractPlotOptionGroup
   /** the options for the Y axis. */
   protected AxisPanelOptions m_AxisY;
 
+  /** the watermark to apply. */
+  protected Watermark m_Watermark;
+
   /**
    * Configures the options.
    */
@@ -48,12 +52,16 @@ public abstract class AbstractPlotOptionGroup
     super.defineOptions();
 
     m_OptionManager.add(
-	    "axis-x", "axisX",
-	    getDefaultAxisX());
+      "axis-x", "axisX",
+      getDefaultAxisX());
 
     m_OptionManager.add(
-	    "axis-y", "axisY",
-	    getDefaultAxisY());
+      "axis-y", "axisY",
+      getDefaultAxisY());
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      getDefaultWatermark());
   }
 
   /**
@@ -126,5 +134,43 @@ public abstract class AbstractPlotOptionGroup
    */
   public String axisYTipText() {
     return "The setup for the Y axis.";
+  }
+
+  /**
+   * Returns the default watermark.
+   *
+   * @return 		the default
+   */
+  protected Watermark getDefaultWatermark() {
+    return new Null();
+  }
+
+  /**
+   * Sets the watermark to apply.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to apply.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to apply.";
   }
 }
