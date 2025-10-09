@@ -991,6 +991,10 @@ adams.gui.visualization.sequence.AbstractXYSequencePointHitDetector=\
   adams.gui.visualization.sequence,\
   adams.flow.sink.sequenceplotter
 
+# the watermark plugins
+adams.gui.visualization.watermark.Watermark=\
+  adams.gui.visualization.watermark
+
 # the job runners to use
 adams.multiprocess.JobRunner=\
   adams.multiprocess

@@ -1,7 +1,9 @@
 # Project: adams
-# Date: 2017-11-22 12:05:07
+# Date: 2025-10-09 13:41:43
 # User: fracpete
 # Charset: UTF-8
+# Modules: adams-core,adams-imaging,adams-json,adams-spreadsheet,adams-xml
+#
 adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw transformer and its\\nvarious draw operations." -flow-execution-listener adams.flow.execution.NullListener
  adams.flow.standalone.CallableActors
   adams.flow.source.SequenceSource -name image
@@ -18,7 +20,8 @@ adams.flow.control.Flow -annotation "Drawing on images is easy using the Draw tr
  adams.flow.transformer.Draw -name "Filled Rectangle" -operation "adams.flow.transformer.draw.Rectangle -color #3399ff -x 480 -y 350 -width 20 -fill true"
  adams.flow.transformer.Draw -name Text -operation "adams.flow.transformer.draw.Text -color #006666 -x 50 -y 300 -font Monospaced-PLAIN-16"
  adams.flow.transformer.Draw -name "Text (multiple lines)" -operation "adams.flow.transformer.draw.Text -color #ff0000 -x 50 -y 350 -font Monospaced-PLAIN-14 -text \"The quick brown fox\\\\njumps over the lazy dog\\\\n-- an English-language pangram\""
- adams.flow.transformer.Draw -operation "adams.flow.transformer.draw.Image -x 10 -y 100 -image-actor image"
+ adams.flow.transformer.Draw -name Image -operation "adams.flow.transformer.draw.Image -x 10 -y 100 -image-actor image"
+ adams.flow.transformer.Draw -name Watermark -operation "adams.flow.transformer.draw.Watermark -watermark \"adams.gui.visualization.watermark.ADAMS -scale 0.25 -alpha 63\""
  adams.flow.control.SubProcess -name "location overlay"
   adams.flow.transformer.SetReportValue -name x -field Object.1.x[N] -value 200
   adams.flow.transformer.SetReportValue -name y -field Object.1.y[N] -value 60

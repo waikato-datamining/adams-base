@@ -27,7 +27,6 @@ import adams.flow.core.CallableActorHelper;
 import adams.flow.core.CallableActorReference;
 
 import java.awt.AlphaComposite;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -292,7 +291,7 @@ public class Image
   @Override
   protected String doDraw(BufferedImageContainer image) {
     String		result;
-    Graphics		g;
+    Graphics2D		g;
     Object		obj;
     BufferedImage	todraw;
     MessageCollection	errors;
@@ -316,10 +315,11 @@ public class Image
     }
 
     if ((result == null) && (todraw != null)) {
-      g = image.getImage().getGraphics();
+      g = image.getImage().createGraphics();
       if (m_Alpha < 255)
-	((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) m_Alpha / 255));
+	g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) m_Alpha / 255));
       g.drawImage(todraw, m_X - 1, m_Y - 1, null);
+      g.dispose();
     }
 
     return result;

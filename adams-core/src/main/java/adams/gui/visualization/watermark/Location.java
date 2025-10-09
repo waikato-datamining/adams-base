@@ -14,40 +14,21 @@
  */
 
 /*
- * ImageOverlayPaintlet.java
+ * Location.java
  * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.visualization.sequence;
+package adams.gui.visualization.watermark;
 
 /**
- * Paints the image at the specified location.
+ * Where to place the watermark image.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ImageOverlayPaintlet
-  extends adams.gui.visualization.core.ImageOverlayPaintlet
-  implements XYSequencePaintlet {
-
-  private static final long serialVersionUID = -939223491959967434L;
-
-  /**
-   * Returns the XY sequence panel currently in use.
-   *
-   * @return		the panel in use
-   */
-  @Override
-  public XYSequencePanel getSequencePanel() {
-    return (XYSequencePanel) getPanel();
-  }
-
-  /**
-   * Returns a new instance of the hit detector to use.
-   *
-   * @return the hit detector
-   */
-  @Override
-  public AbstractXYSequencePointHitDetector newHitDetector() {
-    return null;
-  }
+public enum Location {
+  ABSOLUTE,
+  TOP_LEFT,
+  TOP_RIGHT,
+  BOTTOM_LEFT,
+  BOTTOM_RIGHT,
 }
