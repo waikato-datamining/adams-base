@@ -50,9 +50,12 @@ import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.tools.wekainvestigator.tab.classifytab.output.classifiererrors.RemoveOutliersClickAction;
 import adams.gui.visualization.sequence.MetaDataValuePaintlet;
 import adams.gui.visualization.sequence.StraightLineOverlayPaintlet;
+import adams.gui.visualization.sequence.WatermarkPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 import com.github.fracpete.javautils.enumerate.Enumerated;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -66,6 +69,7 @@ import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Dialog.ModalityType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.github.fracpete.javautils.Enumerate.enumerate;
@@ -123,6 +127,9 @@ public class ClassifierErrors
 
   /** the overlays to use. */
   protected XYSequencePaintlet[] m_Overlays;
+
+  /** the watermark to use. */
+  protected Watermark m_Watermark;
 
   /** the ID of the last dataset selected. */
   protected int m_LastID;
@@ -208,6 +215,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "overlay", "overlays",
       new XYSequencePaintlet[]{new StraightLineOverlayPaintlet()});
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      new Null());
   }
 
   /**
@@ -614,6 +625,35 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets the watermark to use.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to use.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to use for painting the data.";
+  }
+
+  /**
    * Checks whether output can be generated from this item.
    *
    * @param item	the item to check
@@ -747,6 +787,8 @@ public class ClassifierErrors
     int					i;
     JPanel 				panel;
     RemoveOutliersClickAction 		action;
+    List<XYSequencePaintlet>		overlays;
+    WatermarkPaintlet			wmPaintlet;
 
     showError = m_UseError && eval.getHeader().classAttribute().isNumeric();
     sheet     = PredictionHelper.toSpreadSheet(this, errors, eval, originalIndices, additionalAttributes, showError);
@@ -773,7 +815,13 @@ public class ClassifierErrors
       sink.setCustomPaintlet(ObjectCopyHelper.copyObject(m_CustomPaintlet));
     else
       sink.setCustomPaintlet(new OutlierPaintlet());
-    sink.setOverlays(ObjectCopyHelper.copyObjects(m_Overlays));
+    overlays = new ArrayList<>(Arrays.asList(ObjectCopyHelper.copyObjects(m_Overlays)));
+    if (!(m_Watermark instanceof Null)) {
+      wmPaintlet = new WatermarkPaintlet();
+      wmPaintlet.setWatermark(ObjectCopyHelper.copyObject(m_Watermark));
+      overlays.add(wmPaintlet);
+    }
+    sink.setOverlays(overlays.toArray(new XYSequencePaintlet[0]));
     action = new RemoveOutliersClickAction();
     action.setRemoveDataListener((SpreadSheet data) -> removeData(item, data));
     sink.setMouseClickAction(action);

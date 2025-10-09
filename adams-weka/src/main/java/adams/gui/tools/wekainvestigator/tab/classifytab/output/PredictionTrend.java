@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SequencePlotterContainer;
@@ -35,7 +36,10 @@ import adams.gui.visualization.core.ColorProvider;
 import adams.gui.visualization.core.ColorProviderHandler;
 import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.sequence.LinePaintlet;
+import adams.gui.visualization.sequence.WatermarkPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 import weka.classifiers.Evaluation;
 
 import java.awt.Color;
@@ -58,6 +62,9 @@ public class PredictionTrend
 
   /** the color provider to use. */
   protected ColorProvider m_ColorProvider;
+
+  /** the watermark to use. */
+  protected Watermark m_Watermark;
 
   /**
    * Returns a string describing the object.
@@ -84,6 +91,10 @@ public class PredictionTrend
     m_OptionManager.add(
       "color-provider", "colorProvider",
       getDefaultColorProvider());
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      new Null());
   }
 
   /**
@@ -173,6 +184,35 @@ public class PredictionTrend
   }
 
   /**
+   * Sets the watermark to use.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to use.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to use for painting the data.";
+  }
+
+  /**
    * The title to use for the tab.
    *
    * @return		the title
@@ -212,6 +252,7 @@ public class PredictionTrend
     Row				row;
     int				i;
     int				n;
+    WatermarkPaintlet 		wmPaintlet;
 
     sheet = PredictionHelper.toSpreadSheet(
       this, errors, eval, originalIndices, additionalAttributes, false, false, false, false, false);
@@ -231,6 +272,11 @@ public class PredictionTrend
     plot.setMouseClickAction(new ViewDataClickAction());
     plot.getAxisX().setLabel("index");
     plot.getAxisY().setLabel("class value");
+    if (!(m_Watermark instanceof Null)) {
+      wmPaintlet = new WatermarkPaintlet();
+      wmPaintlet.setWatermark(ObjectCopyHelper.copyObject(m_Watermark));
+      plot.setOverlayPaintlet(wmPaintlet);
+    }
 
     panel  = plot.createDisplayPanel(null);
     conts = new SequencePlotterContainer[2];

@@ -21,6 +21,7 @@
 package adams.gui.tools.wekainvestigator.tab.classifytab.output;
 
 import adams.core.MessageCollection;
+import adams.core.ObjectCopyHelper;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.flow.container.SequencePlotterContainer;
 import adams.flow.core.Token;
@@ -28,6 +29,9 @@ import adams.flow.sink.AbstractDisplayPanel;
 import adams.flow.sink.SimplePlot;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
+import adams.gui.visualization.sequence.WatermarkPaintlet;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Prediction;
 
@@ -43,7 +47,10 @@ public class ResidualsVsFitted
  extends AbstractOutputGeneratorWithSeparateFoldsSupport<ComponentContentPanel> {
 
   private static final long serialVersionUID = -8530631855400627283L;
-
+  
+  /** the watermark to use. */
+  protected Watermark m_Watermark;
+  
   /**
    * Returns a string describing the object.
    *
@@ -52,6 +59,47 @@ public class ResidualsVsFitted
   @Override
   public String globalInfo() {
     return "Plots the residuals vs the fitted values (= predictions).";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      new Null());
+  }
+
+  /**
+   * Sets the watermark to use.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to use.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to use for painting the data.";
   }
 
   /**
@@ -95,6 +143,7 @@ public class ResidualsVsFitted
     SequencePlotterContainer		point;
     String				name;
     AbstractDisplayPanel		panel;
+    WatermarkPaintlet			wmPaintlet;
 
     points = new ArrayList<>();
     name   = eval.getHeader().relationName();
@@ -107,6 +156,11 @@ public class ResidualsVsFitted
     plot.setTitle("Residuals vs Fitted");
     plot.getAxisX().setLabel("Fitted");
     plot.getAxisY().setLabel("Residuals");
+    if (!(m_Watermark instanceof Null)) {
+      wmPaintlet = new WatermarkPaintlet();
+      wmPaintlet.setWatermark(ObjectCopyHelper.copyObject(m_Watermark));
+      plot.setOverlayPaintlet(wmPaintlet);
+    }
     panel = plot.createDisplayPanel(new Token(points.toArray(new SequencePlotterContainer[0])));
     panel.wrapUp();
 
