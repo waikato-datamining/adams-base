@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RunInformationHelper.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.output;
@@ -31,7 +31,6 @@ import java.util.List;
  * Helper class for run information.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RunInformationHelper {
 
@@ -86,14 +85,16 @@ public class RunInformationHelper {
     result = new StringBuilder();
     result.append("<table>");
     for (Row row: info.rows()) {
-      result.append("<tr>");
-      result.append("<td>");
-      result.append(row.getCell(0).getContent());
-      result.append("</td>");
-      result.append("<td>");
-      result.append(Shortening.shortenEnd(row.getCell(1).getContent(), MAX_HTML_LENGTH));
-      result.append("</td>");
-      result.append("</tr>");
+      if (row.hasCell(0) && !row.getCell(0).isMissing()) {
+	result.append("<tr>");
+	result.append("<td>");
+	result.append(row.getCell(0).getContent());
+	result.append("</td>");
+	result.append("<td>");
+	result.append(Shortening.shortenEnd(row.getCell(1).getContent(), MAX_HTML_LENGTH));
+	result.append("</td>");
+	result.append("</tr>");
+      }
     }
     result.append("</table>");
 
