@@ -26,8 +26,10 @@ import adams.gui.core.ColorHelper;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 
+import java.awt.AlphaComposite;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  <!-- globalinfo-start -->
@@ -40,46 +42,46 @@ import java.awt.Graphics;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-color &lt;java.awt.Color&gt; (property: color)
  * &nbsp;&nbsp;&nbsp;The color of the pixel.
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
- * 
+ *
  * <pre>-x &lt;int&gt; (property: X)
  * &nbsp;&nbsp;&nbsp;The X position of the top-left corner of the text (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-y &lt;int&gt; (property: Y)
  * &nbsp;&nbsp;&nbsp;The Y position of the top-left corner of the text (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-y-increment &lt;int&gt; (property: YIncrement)
  * &nbsp;&nbsp;&nbsp;The Y increment when outputting multiple lines of text.
  * &nbsp;&nbsp;&nbsp;default: 16
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-font &lt;java.awt.Font&gt; (property: font)
  * &nbsp;&nbsp;&nbsp;The font to use for the text.
  * &nbsp;&nbsp;&nbsp;default: Monospaced-PLAIN-12
  * </pre>
- * 
+ *
  * <pre>-text &lt;java.lang.String&gt; (property: text)
  * &nbsp;&nbsp;&nbsp;The text to draw; it is possible to multiple lines of text, simply use '
  * &nbsp;&nbsp;&nbsp;\n' as line break.
  * &nbsp;&nbsp;&nbsp;default: Hello World!
  * </pre>
- * 
+ *
  * <pre>-anti-aliasing-enabled &lt;boolean&gt; (property: antiAliasingEnabled)
  * &nbsp;&nbsp;&nbsp;If enabled, uses anti-aliasing for drawing.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -109,6 +111,9 @@ public class Text
   /** whether anti-aliasing is enabled. */
   protected boolean m_AntiAliasingEnabled;
 
+  /** the alpha value to use for the overlay (0: transparent, 255: opaque). */
+  protected int m_Alpha;
+
   /**
    * Returns a string describing the object.
    *
@@ -127,28 +132,32 @@ public class Text
     super.defineOptions();
 
     m_OptionManager.add(
-	    "x", "X",
-	    1, 1, null);
+      "x", "X",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "y", "Y",
-	    1, 1, null);
+      "y", "Y",
+      1, 1, null);
 
     m_OptionManager.add(
-	    "y-increment", "YIncrement",
-	    16, 1, null);
+      "y-increment", "YIncrement",
+      16, 1, null);
 
     m_OptionManager.add(
-	    "font", "font",
-	    Fonts.getMonospacedFont());
+      "font", "font",
+      Fonts.getMonospacedFont());
 
     m_OptionManager.add(
-	    "text", "text",
-	    "Hello World!");
+      "text", "text",
+      "Hello World!");
 
     m_OptionManager.add(
-	    "anti-aliasing-enabled", "antiAliasingEnabled",
-	    true);
+      "anti-aliasing-enabled", "antiAliasingEnabled",
+      true);
+
+    m_OptionManager.add(
+      "alpha", "alpha",
+      255, 0, 255);
   }
 
   /**
@@ -166,7 +175,7 @@ public class Text
     result += QuickInfoHelper.toString(this, "font", Fonts.encodeFont(m_Font), ", F: ");
     result += QuickInfoHelper.toString(this, "text", m_Text, ", T: ");
     result += QuickInfoHelper.toString(this, "color", ColorHelper.toHex(m_Color), ", Color: ");
-    
+
     return result;
   }
 
@@ -351,6 +360,37 @@ public class Text
   }
 
   /**
+   * Sets the alpha value to use for the overlay: 0=transparent, 255=opaque.
+   *
+   * @param value	the alphae value
+   */
+  public void setAlpha(int value) {
+    if (getOptionManager().isValid("alpha", value)) {
+      m_Alpha = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the alpha value to use for the overlay: 0=transparent, 255=opaque.
+   *
+   * @return		the alpha value
+   */
+  public int getAlpha() {
+    return m_Alpha;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the gui
+   */
+  public String alphaTipText() {
+    return "The alpha value to use for the overlay: 0=transparent, 255=opaque.";
+  }
+
+  /**
    * Checks the image.
    *
    * @param image	the image to check
@@ -363,9 +403,9 @@ public class Text
 
     if (result == null) {
       if (m_X > image.getWidth())
-        result = "X is larger than image width: " + m_X + " > " + image.getWidth();
+	result = "X is larger than image width: " + m_X + " > " + image.getWidth();
       else if (m_Y > image.getHeight())
-        result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
+	result = "Y is larger than image height: " + m_Y + " > " + image.getHeight();
     }
 
     return result;
@@ -373,7 +413,7 @@ public class Text
 
   /**
    * Performs the actual draw operation.
-   * 
+   *
    * @param image	the image to draw on
    */
   @Override
@@ -388,10 +428,12 @@ public class Text
       g.setColor(m_Color);
       GUIHelper.configureAntiAliasing(g, m_AntiAliasingEnabled);
       g.setFont(m_Font);
+      if (m_Alpha < 255)
+	((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) m_Alpha / 255));
       for (i = 0; i < lines.length; i++)
 	g.drawString(lines[i], m_X - 1, m_Y - 1 + i * m_YIncrement);
     }
-    
+
     return null;
   }
 }
