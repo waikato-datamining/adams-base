@@ -45,6 +45,9 @@ public abstract class AbstractImageWatermark
   /** the Y position. */
   protected int m_Y;
 
+  /** the padding to use. */
+  protected int m_Padding;
+
   /** the scale to use (1 = 100%). */
   protected double m_Scale;
 
@@ -75,6 +78,10 @@ public abstract class AbstractImageWatermark
     m_OptionManager.add(
       "y", "Y",
       getDefaultY(), 1, null);
+
+    m_OptionManager.add(
+      "padding", "padding",
+      getDefaultPadding(), 0, null);
 
     m_OptionManager.add(
       "scale", "scale",
@@ -173,7 +180,7 @@ public abstract class AbstractImageWatermark
   }
 
   /**
-   * Returns the default X position (1-based).
+   * Returns the default Y position (1-based).
    *
    * @return		the default
    */
@@ -208,6 +215,44 @@ public abstract class AbstractImageWatermark
    */
   public String YTipText() {
     return "The Y position in pixels (1-based).";
+  }
+
+  /**
+   * Returns the default padding around the image.
+   *
+   * @return		the default
+   */
+  protected int getDefaultPadding() {
+    return 0;
+  }
+
+  /**
+   * Sets the padding around the image.
+   *
+   * @param value	the padding
+   */
+  public void setPadding(int value) {
+    m_Padding = value;
+    reset();
+  }
+
+  /**
+   * Returns the padding around the image.
+   *
+   * @return		the padding
+   */
+  public int getPadding() {
+    return m_Padding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String paddingTipText() {
+    return "The padding to use around the image.";
   }
 
   /**
@@ -309,6 +354,9 @@ public abstract class AbstractImageWatermark
 	  Image.SCALE_SMOOTH);
       }
 
+      if (isLoggingEnabled())
+	getLogger().info("image width=" + m_Image.getWidth(null) + ", height=" + m_Image.getHeight(null));
+
       m_Initialized = true;
     }
   }
@@ -344,33 +392,36 @@ public abstract class AbstractImageWatermark
 
     switch (m_Location) {
       case ABSOLUTE:
-	x = m_X - 1;
-	y = m_Y - 1;
+	x = m_X - 1 + m_Padding;
+	y = m_Y - 1 + m_Padding;
 	break;
 
       case TOP_LEFT:
-	x = 0;
-	y = 0;
+	x = m_Padding;
+	y = m_Padding;
 	break;
 
       case TOP_RIGHT:
-	x = (int) dimension.getWidth() - m_Image.getWidth(null);
-	y = 0;
+	x = (int) dimension.getWidth() - m_Image.getWidth(null) - m_Padding;
+	y = m_Padding;
 	break;
 
       case BOTTOM_LEFT:
-	x = 0;
-	y = (int) dimension.getHeight() - m_Image.getHeight(null);
+	x = m_Padding;
+	y = (int) dimension.getHeight() - m_Image.getHeight(null) - m_Padding;
 	break;
 
       case BOTTOM_RIGHT:
-	x = (int) dimension.getWidth()  - m_Image.getWidth(null);
-	y = (int) dimension.getHeight() - m_Image.getHeight(null);
+	x = (int) dimension.getWidth()  - m_Image.getWidth(null) - m_Padding;
+	y = (int) dimension.getHeight() - m_Image.getHeight(null) - m_Padding;
 	break;
 
       default:
 	throw new IllegalStateException("Unhandled location: " + m_Location);
     }
+
+    if (isLoggingEnabled())
+      getLogger().info("x=" + x + ", y=" + y);
 
     if (m_Alpha < 255)
       ((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) m_Alpha / 255));
