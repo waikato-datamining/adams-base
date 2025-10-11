@@ -15,7 +15,7 @@
 
 /*
  * AbstractRow.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -28,7 +28,6 @@ import java.util.HashMap;
  * Ancestor for row objects.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractRow
   implements Row {
@@ -51,7 +50,7 @@ public abstract class AbstractRow
     super();
 
     m_Owner = owner;
-    m_Cells = new HashMap<String, Cell>();
+    m_Cells = new HashMap<>();
   }
 
   /**
@@ -59,6 +58,7 @@ public abstract class AbstractRow
    * 
    * @param owner	the owner
    */
+  @Override
   public void setOwner(SpreadSheet owner) {
     m_Owner = owner;
   }
@@ -68,6 +68,7 @@ public abstract class AbstractRow
    * 
    * @return		the owner
    */
+  @Override
   public SpreadSheet getOwner() {
     return m_Owner;
   }
@@ -75,6 +76,7 @@ public abstract class AbstractRow
   /**
    * Removes all cells.
    */
+  @Override
   public void clear() {
     m_Cells.clear();
   }
@@ -84,6 +86,7 @@ public abstract class AbstractRow
    *
    * @param row		the row to get the cells from
    */
+  @Override
   public void assign(Row row) {
     int		i;
     
@@ -104,6 +107,7 @@ public abstract class AbstractRow
    * @param cellKey	the key to look for
    * @return		true if the cell already exists
    */
+  @Override
   public boolean hasCell(String cellKey) {
     return m_Cells.containsKey(cellKey);
   }
@@ -134,6 +138,7 @@ public abstract class AbstractRow
    * @param columnIndex	the index of the column
    * @return			the removed cell, null if non removed
    */
+  @Override
   public Cell removeCell(int columnIndex) {
     return removeCell(getCellKey(columnIndex));
   }
@@ -144,6 +149,7 @@ public abstract class AbstractRow
    * @param cellKey	the key of the cell to remove
    * @return			the removed cell, null if non removed
    */
+  @Override
   public Cell removeCell(String cellKey) {
     Cell	result;
     
@@ -163,6 +169,7 @@ public abstract class AbstractRow
    * @param cellKey	the cell to look for
    * @return		the cell or null if not found
    */
+  @Override
   public Cell getCell(String cellKey) {
     return m_Cells.get(cellKey);
   }
@@ -173,6 +180,7 @@ public abstract class AbstractRow
    * @param columnIndex	the index of the column
    * @return			the cell or null if not found
    */
+  @Override
   public Cell getCell(int columnIndex) {
     Cell	result;
     String	key;
@@ -186,11 +194,38 @@ public abstract class AbstractRow
   }
 
   /**
+   * Returns whether the row has a non-empty/non-missing cell at the specified location.
+   *
+   * @param columnIndex	the column index
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(int columnIndex) {
+    return !hasCell(columnIndex)
+	     || getCell(columnIndex).isMissing()
+	     || getCell(columnIndex).getContent().isEmpty();
+  }
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell with the given key.
+   *
+   * @param cellKey	the key to look for
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(String cellKey) {
+    return !hasCell(cellKey)
+	     || getCell(cellKey).isMissing()
+	     || getCell(cellKey).getContent().isEmpty();
+  }
+
+  /**
    * Returns the cell content with the given index.
    *
    * @param columnIndex	the index of the column
    * @return			the content or null if not found
    */
+  @Override
   public String getContent(int columnIndex) {
     String	result;
     String	key;
@@ -223,6 +258,7 @@ public abstract class AbstractRow
    *
    * @return		the number of cells
    */
+  @Override
   public int getCellCount() {
     return m_Cells.size();
   }
@@ -232,12 +268,13 @@ public abstract class AbstractRow
    * 
    * @return		whether any cell was removed
    */
+  @Override
   public boolean removeMissing() {
     boolean		result;
     ArrayList<String>	list;
     
     result = false;
-    list   = new ArrayList<String>(m_Cells.keySet());
+    list   = new ArrayList<>(m_Cells.keySet());
     for (String key: list) {
       if (getCell(key).isMissing()) {
 	removeCell(key);

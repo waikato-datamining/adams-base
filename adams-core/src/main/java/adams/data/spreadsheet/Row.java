@@ -15,21 +15,20 @@
 
 /*
  * Row.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
 
+import adams.core.Mergeable;
+
 import java.io.Serializable;
 import java.util.Collection;
-
-import adams.core.Mergeable;
 
 /**
  * Interface for a row in a {@link SpreadSheet}.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface Row
   extends Serializable, Mergeable<Row> {
@@ -77,7 +76,7 @@ public interface Row
   public Cell newCell(Row owner);
 
   /**
-   * Returns whether the row alread contains the cell at the specified location.
+   * Returns whether the row already contains the cell at the specified location.
    *
    * @param columnIndex	the column index
    * @return		true if the cell already exists
@@ -85,12 +84,28 @@ public interface Row
   public boolean hasCell(int columnIndex);
   
   /**
-   * Returns whether the row alread contains the cell with the given key.
+   * Returns whether the row already contains the cell with the given key.
    *
    * @param cellKey	the key to look for
    * @return		true if the cell already exists
    */
   public boolean hasCell(String cellKey);
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell at the specified location.
+   *
+   * @param columnIndex	the column index
+   * @return		true if the cell already exists
+   */
+  public boolean isEmpty(int columnIndex);
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell with the given key.
+   *
+   * @param cellKey	the key to look for
+   * @return		true if the cell already exists
+   */
+  public boolean isEmpty(String cellKey);
   
   /**
    * Adds a cell with the key of the cell in the header at the specified 

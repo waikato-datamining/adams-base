@@ -15,7 +15,7 @@
 
 /*
  * Cell.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -363,6 +363,13 @@ public interface Cell
    * @return		the column index, -1 if not available
    */
   public int index();
+
+  /**
+   * Checks whether the cell is either missing or has no content.
+   *
+   * @return		true if empty
+   */
+  public boolean isEmpty();
 
   /**
    * Checks whether the stored string is numeric.

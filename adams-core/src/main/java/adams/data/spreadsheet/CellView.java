@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CellView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet;
@@ -32,7 +32,6 @@ import java.util.Date;
  * Wrapper for a cell.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CellView
   implements Cell {
@@ -440,6 +439,17 @@ public class CellView
   @Override
   public int index() {
     return m_Owner.indexOf(this);
+  }
+
+  /**
+   * Checks whether the cell is either missing or has no content.
+   *
+   * @return		true if empty
+   */
+  @Override
+  public boolean isEmpty() {
+    return isMissing()
+	     || getContent().isEmpty();
   }
 
   /**

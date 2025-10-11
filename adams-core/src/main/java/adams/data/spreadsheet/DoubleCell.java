@@ -15,7 +15,7 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -26,10 +26,12 @@ import adams.core.DateUtils;
 import adams.core.Time;
 import adams.core.TimeMsec;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.parser.SpreadSheetFormula;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Represents a single cell.
@@ -86,6 +88,7 @@ public class DoubleCell
    *
    * @param owner	the owner
    */
+  @Override
   public void setOwner(Row owner) {
     m_Owner = owner;
   }
@@ -95,6 +98,7 @@ public class DoubleCell
    *
    * @return		the owner
    */
+  @Override
   public Row getOwner() {
     return m_Owner;
   }
@@ -104,6 +108,7 @@ public class DoubleCell
    *
    * @return		the spreadsheet
    */
+  @Override
   public SpreadSheet getSpreadSheet() {
     return getOwner().getOwner();
   }
@@ -113,6 +118,7 @@ public class DoubleCell
    *
    * @param cell	the cell to get the content/type from
    */
+  @Override
   public void assign(Cell cell) {
     String	content;
     
@@ -147,6 +153,7 @@ public class DoubleCell
   /**
    * Sets the cell to missing.
    */
+  @Override
   public void setMissing() {
     m_Content     = Double.NaN;
     m_Formula     = null;
@@ -160,6 +167,7 @@ public class DoubleCell
    * @param value	the content; null intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Boolean value) {
     if (value == null) {
       setMissing();
@@ -177,6 +185,7 @@ public class DoubleCell
    * @param value	the content; null intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Byte value) {
     if (value == null) {
       setMissing();
@@ -194,6 +203,7 @@ public class DoubleCell
    * @param value	the content; null intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Short value) {
     if (value == null) {
       setMissing();
@@ -211,6 +221,7 @@ public class DoubleCell
    * @param value	the content; null intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Integer value) {
     if (value == null) {
       setMissing();
@@ -228,6 +239,7 @@ public class DoubleCell
    * @param value	the content; null intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Long value) {
     if (value == null) {
       setMissing();
@@ -245,6 +257,7 @@ public class DoubleCell
    * @param value	the content; null or NaN is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Float value) {
     if ((value == null) || (Float.isNaN(value))) {
       setMissing();
@@ -262,6 +275,7 @@ public class DoubleCell
    * @param value	the content; null or NaN is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Double value) {
     if ((value == null) || (Double.isNaN(value))) {
       setMissing();
@@ -279,6 +293,7 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Date value) {
     if (value == null) {
       setMissing();
@@ -296,6 +311,7 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(DateTime value) {
     if (value == null) {
       setMissing();
@@ -313,6 +329,7 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(DateTimeMsec value) {
     if (value == null) {
       setMissing();
@@ -330,6 +347,7 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(Time value) {
     if (value == null) {
       setMissing();
@@ -347,6 +365,7 @@ public class DoubleCell
    * @param value	the content; null is intepreted as missing value
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(TimeMsec value) {
     if (value == null) {
       setMissing();
@@ -468,6 +487,7 @@ public class DoubleCell
    * @param value	the non-empty string to parse
    * @return		the cell itself
    */
+  @Override
   public Cell parseContent(String value) {
     if (checkBoolean(value)) {
       setContent(Boolean.parseBoolean(value));
@@ -511,6 +531,7 @@ public class DoubleCell
    * @param value	the content
    * @return		the cell itself
    */
+  @Override
   public Cell setContent(String value) {
     if ((value == null) || (value.equals(SpreadSheet.MISSING_VALUE))) {
       setMissing();
@@ -552,6 +573,7 @@ public class DoubleCell
    * @param type	the expected type
    * @return		the parsed content
    */
+  @Override
   public Object parseContent(String value, ContentType type) {
     switch (type) {
       case BOOLEAN:
@@ -607,6 +629,7 @@ public class DoubleCell
    * @param value	the content
    * @return		the cell itself
    */
+  @Override
   public Cell setContentAsString(String value) {
     if ((value == null) || (value.equals(SpreadSheet.MISSING_VALUE))) {
       setMissing();
@@ -629,6 +652,7 @@ public class DoubleCell
    * @param type	the type to use
    * @return		the cell itself
    */
+  @Override
   public Cell setContentAs(String value, ContentType type) {
     Object	obj;
 
@@ -647,6 +671,7 @@ public class DoubleCell
    * @param value	the content
    * @return		the cell itself
    */
+  @Override
   public Cell setObject(Object value) {
     if (value == null) {
       setMissing();
@@ -665,6 +690,7 @@ public class DoubleCell
    * @param value	the content
    * @return		the cell itself
    */
+  @Override
   public Cell setFormula(String value) {
     if ((value == null) || (value.equals(SpreadSheet.MISSING_VALUE))) {
       setMissing();
@@ -687,6 +713,7 @@ public class DoubleCell
    *
    * @return		the formula, null if none used
    */
+  @Override
   public String getFormula() {
     return m_Formula;
   }
@@ -696,6 +723,7 @@ public class DoubleCell
    *
    * @return		the object, null if none set
    */
+  @Override
   public Object getObject() {
     return m_Object;
   }
@@ -705,6 +733,7 @@ public class DoubleCell
    *
    * @return		the content
    */
+  @Override
   public String getContent() {
     AbstractObjectHandler	handler;
 
@@ -745,6 +774,7 @@ public class DoubleCell
    *
    * @return		the type
    */
+  @Override
   public ContentType getContentType() {
     calculateIfRequired();
     return m_ContentType;
@@ -757,6 +787,7 @@ public class DoubleCell
    * @param value	the value to set
    * @return		the cell itself
    */
+  @Override
   public Cell setNative(Object value) {
     if (value == null)
       setMissing();
@@ -802,6 +833,7 @@ public class DoubleCell
    *
    * @return		the corresponding object
    */
+  @Override
   public Object getNative() {
     switch (m_ContentType) {
       case MISSING:
@@ -836,8 +868,20 @@ public class DoubleCell
    *
    * @return		the column index, -1 if not available
    */
+  @Override
   public int index() {
     return getOwner().indexOf(this);
+  }
+
+  /**
+   * Checks whether the cell is either missing or has no content.
+   *
+   * @return		true if empty
+   */
+  @Override
+  public boolean isEmpty() {
+    return isMissing()
+      || getContent().isEmpty();
   }
 
   /**
@@ -845,6 +889,7 @@ public class DoubleCell
    *
    * @return		true if the content is numeric
    */
+  @Override
   public boolean isNumeric() {
     calculateIfRequired();
     return
@@ -857,6 +902,7 @@ public class DoubleCell
    *
    * @return		true if missing value
    */
+  @Override
   public boolean isMissing() {
     calculateIfRequired();
     return (m_ContentType == ContentType.MISSING);
@@ -867,6 +913,7 @@ public class DoubleCell
    *
    * @return		true if boolean value
    */
+  @Override
   public boolean isBoolean() {
     calculateIfRequired();
     return (m_ContentType == ContentType.BOOLEAN);
@@ -877,6 +924,7 @@ public class DoubleCell
    *
    * @return		the date, null if not boolean
    */
+  @Override
   public Boolean toBoolean() {
     calculateIfRequired();
     if (m_ContentType == ContentType.BOOLEAN)
@@ -890,6 +938,7 @@ public class DoubleCell
    *
    * @return		true if date, time or date/time value
    */
+  @Override
   public boolean isAnyDateType() {
     calculateIfRequired();
     return (m_ContentType == ContentType.TIME)
@@ -904,6 +953,7 @@ public class DoubleCell
    *
    * @return		the date, null if not date, time or date/time
    */
+  @Override
   public Date toAnyDateType() {
     if (isTime())
       return toTime();
@@ -924,6 +974,7 @@ public class DoubleCell
    *
    * @return		true if date value
    */
+  @Override
   public boolean isDate() {
     calculateIfRequired();
     return (m_ContentType == ContentType.DATE);
@@ -934,6 +985,7 @@ public class DoubleCell
    *
    * @return		the date, null if not date
    */
+  @Override
   public Date toDate() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DATE)
@@ -947,6 +999,7 @@ public class DoubleCell
    *
    * @return		true if date/time value
    */
+  @Override
   public boolean isDateTime() {
     calculateIfRequired();
     return (m_ContentType == ContentType.DATETIME);
@@ -957,6 +1010,7 @@ public class DoubleCell
    *
    * @return		the date/time, null if not date/time
    */
+  @Override
   public DateTime toDateTime() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DATETIME)
@@ -970,6 +1024,7 @@ public class DoubleCell
    *
    * @return		true if date/time value
    */
+  @Override
   public boolean isDateTimeMsec() {
     calculateIfRequired();
     return (m_ContentType == ContentType.DATETIMEMSEC);
@@ -980,6 +1035,7 @@ public class DoubleCell
    *
    * @return		the date/time, null if not date/time
    */
+  @Override
   public DateTimeMsec toDateTimeMsec() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DATETIMEMSEC)
@@ -993,6 +1049,7 @@ public class DoubleCell
    *
    * @return		true if time value
    */
+  @Override
   public boolean isTime() {
     calculateIfRequired();
     return (m_ContentType == ContentType.TIME);
@@ -1003,6 +1060,7 @@ public class DoubleCell
    *
    * @return		the time, null if not time
    */
+  @Override
   public Time toTime() {
     calculateIfRequired();
     if (m_ContentType == ContentType.TIME)
@@ -1016,6 +1074,7 @@ public class DoubleCell
    *
    * @return		true if time/msec value
    */
+  @Override
   public boolean isTimeMsec() {
     calculateIfRequired();
     return (m_ContentType == ContentType.TIMEMSEC);
@@ -1026,6 +1085,7 @@ public class DoubleCell
    *
    * @return		the time/msec, null if not time/msec
    */
+  @Override
   public TimeMsec toTimeMsec() {
     calculateIfRequired();
     if (m_ContentType == ContentType.TIMEMSEC)
@@ -1050,6 +1110,7 @@ public class DoubleCell
    *
    * @return		true if a double
    */
+  @Override
   public boolean isDouble() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DOUBLE)
@@ -1066,6 +1127,7 @@ public class DoubleCell
    * @return		the content as double, if representing a number,
    * 			otherwise null
    */
+  @Override
   public Double toDouble() {
     calculateIfRequired();
     if (m_ContentType == ContentType.DOUBLE) {
@@ -1092,6 +1154,7 @@ public class DoubleCell
    *
    * @return		true if a long
    */
+  @Override
   public boolean isLong() {
     calculateIfRequired();
     if (m_ContentType == ContentType.LONG)
@@ -1109,6 +1172,7 @@ public class DoubleCell
    * @return		the content as long, if representing a number,
    * 			otherwise null
    */
+  @Override
   public Long toLong() {
     calculateIfRequired();
     if (m_ContentType == ContentType.LONG)
@@ -1123,6 +1187,7 @@ public class DoubleCell
    *
    * @return		true if a formula
    */
+  @Override
   public boolean isFormula() {
     return (m_Formula != null);
   }
@@ -1132,6 +1197,7 @@ public class DoubleCell
    *
    * @return		true if an object
    */
+  @Override
   public boolean isObject() {
     return (m_Object != null);
   }
@@ -1139,6 +1205,7 @@ public class DoubleCell
   /**
    * Recalculates the value from the cell's formula.
    */
+  @Override
   public void calculate() {
     Object	eval;
 
@@ -1159,8 +1226,7 @@ public class DoubleCell
 	eval = null;
     }
     catch (Throwable t) {
-      System.err.println("Failed to parse formula: " + getFormula());
-      t.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to parse formula: " + getFormula(), t);
       eval = FORMULA_ERROR;
     }
 

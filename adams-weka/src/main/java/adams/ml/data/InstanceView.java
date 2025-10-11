@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstanceView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -37,7 +37,6 @@ import java.util.List;
  * Wrapper around an {@link Instance} object.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstanceView
   implements DataRow {
@@ -157,6 +156,32 @@ public class InstanceView
   @Override
   public Cell getCell(int columnIndex) {
     return new DataCellView(this, columnIndex);
+  }
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell at the specified location.
+   *
+   * @param columnIndex	the column index
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(int columnIndex) {
+    return !hasCell(columnIndex)
+	     || getCell(columnIndex).isMissing()
+	     || getCell(columnIndex).getContent().isEmpty();
+  }
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell with the given key.
+   *
+   * @param cellKey	the key to look for
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(String cellKey) {
+    return !hasCell(cellKey)
+	     || getCell(cellKey).isMissing()
+	     || getCell(cellKey).getContent().isEmpty();
   }
 
   /**

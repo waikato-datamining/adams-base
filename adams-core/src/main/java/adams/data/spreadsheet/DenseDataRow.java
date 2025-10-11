@@ -13,22 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DenseDataRow.java
- * Copyright (C) 2012-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
+import adams.event.SpreadSheetColumnInsertionEvent;
+
 import java.util.Arrays;
 import java.util.Collection;
-
-import adams.event.SpreadSheetColumnInsertionEvent;
 
 /**
  * A row for dense data representation.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DenseDataRow
   implements DataRow {
@@ -287,6 +286,32 @@ public class DenseDataRow
       return m_Cells[columnIndex];
     else
       return null;
+  }
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell at the specified location.
+   *
+   * @param columnIndex	the column index
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(int columnIndex) {
+    return !hasCell(columnIndex)
+	     || getCell(columnIndex).isMissing()
+	     || getCell(columnIndex).getContent().isEmpty();
+  }
+
+  /**
+   * Returns whether the row has a non-empty/non-missing cell with the given key.
+   *
+   * @param cellKey	the key to look for
+   * @return		true if the cell already exists
+   */
+  @Override
+  public boolean isEmpty(String cellKey) {
+    return !hasCell(cellKey)
+	     || getCell(cellKey).isMissing()
+	     || getCell(cellKey).getContent().isEmpty();
   }
 
   /**

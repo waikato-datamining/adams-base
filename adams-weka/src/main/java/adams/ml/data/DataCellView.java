@@ -509,7 +509,7 @@ public class DataCellView
   public Cell setNative(Object value) {
     if (value == null)
       setMissing();
-    // common
+      // common
     else if (value instanceof String)
       setContentAsString((String) value);
     else if (value instanceof Integer)
@@ -530,7 +530,7 @@ public class DataCellView
       setContent((Date) value);
     else if (value instanceof Boolean)
       setContent((Boolean) value);
-    // less common
+      // less common
     else if (value instanceof Byte)
       setContent((Byte) value);
     else if (value instanceof Short)
@@ -589,6 +589,17 @@ public class DataCellView
   @Override
   public int index() {
     return m_ColIndex;
+  }
+
+  /**
+   * Checks whether the cell is either missing or has no content.
+   *
+   * @return		true if empty
+   */
+  @Override
+  public boolean isEmpty() {
+    return isMissing()
+	     || getContent().isEmpty();
   }
 
   /**
