@@ -38,6 +38,7 @@ import adams.gui.visualization.core.CustomColorProvider;
 import adams.gui.visualization.sequence.LinePaintlet;
 import adams.gui.visualization.sequence.WatermarkPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Null;
 import adams.gui.visualization.watermark.Watermark;
 import weka.classifiers.Evaluation;
@@ -94,7 +95,7 @@ public class PredictionTrend
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**

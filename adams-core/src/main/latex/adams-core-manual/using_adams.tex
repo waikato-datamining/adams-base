@@ -159,10 +159,10 @@ the menu, as shown in Figure \ref{floweditor-helloworld-addactor1}.
   \label{floweditor-helloworld-addactor1}
 \end{figure}
 
-ADAMS tries to suggest an actor depending on pre-defined rules and the context 
-where the actor will get placed. The ones pre-defined by rules will be 
-automatically available through the combobox at the top. But due to the large 
-amount of actors, quite often you will choose a different one. You can do this 
+ADAMS tries to suggest an actor depending on pre-defined rules and the context
+where the actor will get placed. The ones pre-defined by rules will be
+automatically available through the combobox at the top. But due to the large
+amount of actors, quite often you will choose a different one. You can do this
 by either scrolling through the list of actors on the left and selecting it
 (see Figure \ref{floweditor-helloworld-addactor2}).
 
@@ -524,7 +524,7 @@ to it.
 
 A variant of the \textit{Trigger} actor is the \textit{ConditionalTrigger}
 actor. This actor only executes the sub-flow if its boolean condition returns
-\textit{true}. \textit{TriggerOnce}, another variant, triggers the sub-flow 
+\textit{true}. \textit{TriggerOnce}, another variant, triggers the sub-flow
 exactly once, useful for initializations.
 
 \subsubsection{Branching -- or how to grow your flow}
@@ -703,34 +703,34 @@ control actors. In the following a short introduction to the others:
 By default, ADAMS tries to stop the flow execution as fast as possible. However,
 this behavior might not be desired in case of mission critical steps that should
 never get interrupted. For instance, when reading (and in the same step, removing)
-data from the database, that the output of said data on disk should get 
-interrupted. 
+data from the database, that the output of said data on disk should get
+interrupted.
 
-In order to allow the user to protect the execution of certain 
+In order to allow the user to protect the execution of certain
 sub-flows, a fair amount of actors offer a flag for \textit{atomic execution}.
-This flag is called \textit{finishBeforeStopping} in the option dialog. When 
+This flag is called \textit{finishBeforeStopping} in the option dialog. When
 enabled, this actor will wait with stopping its sub-actors until the sub-actors
-have finished processing all their data. Actors that support this, are for 
-example, \textit{Sequence}, \textit{Branch}, \textit{Tee}, \textit{Trigger} 
+have finished processing all their data. Actors that support this, are for
+example, \textit{Sequence}, \textit{Branch}, \textit{Tee}, \textit{Trigger}
 (and derived classes).
 
-Be careful how and where you use this flag, as it can have undesired 
-side-effects: if you enable this flag in the \textit{Flow} control actor, then 
+Be careful how and where you use this flag, as it can have undesired
+side-effects: if you enable this flag in the \textit{Flow} control actor, then
 the flow cannot be stopped before all processing has finished.
 
 \clearpage
 \section{Running flows}
 \label{running_flows}
 Executing flows from the \textit{Flow editor} is just one of the options of
-how to execute a flow. Unless you want the ability to edit the flow, you could 
+how to execute a flow. Unless you want the ability to edit the flow, you could
 use one of the following options.
 
 \subsection{Flow runner - GUI}
 The \textit{Flow runner} is an interface to execute flows without the user
 being able to modify them. This interface is used for merely executing flow.
 This can be useful for users that only \textit{run} flows, but never modify
-them. Depending on the flow, the user is still able to influence its 
-execution. The Flow runner interface analyzes the flow and displays the 
+them. Depending on the flow, the user is still able to influence its
+execution. The Flow runner interface analyzes the flow and displays the
 topmost \texttt{SetVariable} standalones as parameters that the user then
 can modify. Figure \ref{floweditor-mandelbrot} shows the flow in the editor
 interface and Figure \ref{flowrunner-mandelbrot} in the runner interface.
@@ -767,7 +767,7 @@ Available options:
 	\item \textit{-headless} -- whether to suppress all graphical output.
 	\item \textit{-clean-up} -- remove any graphical output, like dialogs and
 	plots when the flow finishes.
-	\item \textit{-no-execute} -- if you only want to test flows whether they 
+	\item \textit{-no-execute} -- if you only want to test flows whether they
 	still load and pass the tests in the \textit{setUp} phase, use this option.
 \end{tight_itemize}
 
@@ -841,7 +841,7 @@ collections.
 	array.
 	\item \textit{SequenceToCollection} -- turns a sequence of tokens into a
 	collection (type is specified by user).
-	\item \textit{SetArrayElement} -- sets the value of a speficied array 
+	\item \textit{SetArrayElement} -- sets the value of a speficied array
 	element, either from a given value (or variable) or from a storage item.
 	\item \textit{StorageCollectionInsert} -- inserts the object passing through
 	into the specified collection in storage.
@@ -864,10 +864,10 @@ creating a new array from the sequence with known length
 \label{converting_objects}
 Quite often, you will be faced with converting objects from one type into
 another, due to ADAMS' strong typing. Adding new actors for converting an object
-from one type to another (e.g., from \textit{String} to \textit{Integer} and 
+from one type to another (e.g., from \textit{String} to \textit{Integer} and
 vice versa), would just increase the already large number of actors even
 further. To avoid this, ADAMS offers a \textit{catch-all} transformer for these
-simple conversions: \textit{Convert}. 
+simple conversions: \textit{Convert}.
 
 All conversion schemes are derived from the super class
 \textit{AbstractConversion} (package \texttt{adams.data.conversion}).
@@ -885,13 +885,13 @@ Here are some conversion for numbers:
   \item \textit{CharArrayToString} -- generates a string from a char array.
 	\item \textit{DoubleToInt} -- turns a double into an integer (calling the
 	\textit{intValue()} method of the Double object).
-	\item \textit{DoubleToFloat} -- converts a double into a float (calling the 
+	\item \textit{DoubleToFloat} -- converts a double into a float (calling the
 	\textit{floatValue()} method of the Double object).
 	\item \textit{DoubleToLong} -- turns a double into a long (calling the
 	\textit{longValue()} method of the Double object).
 	\item \textit{DoubleToString} -- turns the double into a string, with the number
 	of decimals specified by the user.
-	\item \textit{FloatToDouble} -- converts a float into a double (calling the 
+	\item \textit{FloatToDouble} -- converts a float into a double (calling the
 	\textit{doubleValue()} method of the Float object).
 	\item \textit{HexToByte} -- turns hexadecimal strings into bytes.
 	\item \textit{HexToInt} -- turns hexadecimal strings into integers.
@@ -930,8 +930,8 @@ Some more string conversions:
 	\item \textit{AnyToString} -- Uses the Object's \textit{toString()} method.
 	\item CommandlineToAny -- Creates an object from the commandline (class +
 	options).
-	\item \textit{BackQuote} -- Escapes special characters like tab, new line, 
-	single and double quotes with backslashes. This can be reversed with 
+	\item \textit{BackQuote} -- Escapes special characters like tab, new line,
+	single and double quotes with backslashes. This can be reversed with
 	\textit{UnBackQuote}.
 	\item \textit{BooleanToString} -- turns boolean values into strings.
 	\item \textit{FieldToString} -- turns the Field object into its string
@@ -943,7 +943,7 @@ Some more string conversions:
 	\item \textit{LowerCase} -- turns a string into its lower case representation.
 	\item \textit{Quote} -- surrounds a string quite single or double quotes
 	if it contains blanks or special characters like tabs or new lines. Special
-	characters will get backquoted as well. Thereverse operations is done 
+	characters will get backquoted as well. Thereverse operations is done
 	using \textit{UnQuote}.
 	\item \textit{RightPad} -- right pads a string up to a maximum number of
 	characters, e.g.: turning ``1.1'' into ``1.100''.
@@ -960,19 +960,19 @@ Some more string conversions:
 \end{tight_itemize}
 Some more date/time conversions:
 \begin{tight_itemize}
-	\item \textit{BaseDateTimeToString} -- evaluates a date/time format string 
+	\item \textit{BaseDateTimeToString} -- evaluates a date/time format string
 	and it into a string.
-	\item \textit{BaseDateToString} -- evaluates a date format string 
+	\item \textit{BaseDateToString} -- evaluates a date format string
 	and it into a string.
-	\item \textit{BaseTimeToString} -- evaluates a time format string 
+	\item \textit{BaseTimeToString} -- evaluates a time format string
 	and it into a string.
 	\item \textit{ConvertDateTimeType} -- turns one date/time type into another,
 	e.g., milliseconds into Date.
-	\item \textit{DateTimeTypeToString} -- turns various date/time types into a 
+	\item \textit{DateTimeTypeToString} -- turns various date/time types into a
 	string using a format string.
-	\item \textit{ExtractDateTimeField} -- extracts various date/time fields 
+	\item \textit{ExtractDateTimeField} -- extracts various date/time fields
 	(year, hour, day of week, etc) from date/time types.
-	\item \textit{StringToDateTimeType} -- parses a date/time string using a 
+	\item \textit{StringToDateTimeType} -- parses a date/time string using a
 	specified format string and turns it into various date/time types.
 \end{tight_itemize}
 
@@ -983,8 +983,8 @@ Quite often when designing flows, you will be dealing with strings that need
 tweaking, e.g., for file names. The following set of common string operations is
 already implemented in ADAMS:
 \begin{tight_itemize}
-	\item \textit{BreakUpString} -- breaks up the string into multiple lines 
-	(separated by line-feed) using word-boundaries if wider than specified 
+	\item \textit{BreakUpString} -- breaks up the string into multiple lines
+	(separated by line-feed) using word-boundaries if wider than specified
 	number of columns.
 	\item \textit{GroupByRegExp} allows the grouping of strings in an array
 	using a regular expression and a grouping expression that can use
@@ -1035,14 +1035,14 @@ the actors and conversion that offer file-related actions.
 
 Available conversions:
 \begin{tight_itemize}
-	\item \textit{FileToString} -- turns a file object into a string, either with a 
+	\item \textit{FileToString} -- turns a file object into a string, either with a
 	relative or absolute path. The reverse is possible as well, using
 	\item \textit{PathSplit} -- splits the file name into its parts (drive or
 	server from UNC path (if applicable), directory names, file name).
 	\item \textit{ReplaceFileExtension} -- replaces the file's extension with
 	a user-supplied one (or removes it if no new extension supplied).
 	\textit{StringToFile}.
-	\item \textit{StringToValidFileName} -- ensures that the string passing through can 
+	\item \textit{StringToValidFileName} -- ensures that the string passing through can
 	be used as filename (excluding the path).
 \end{tight_itemize}
 Available standalone actors:
@@ -1072,7 +1072,7 @@ And transformers:
 	through.
 	\item \textit{BaseName} -- strips the parent directory and forwards the
 	remainder.
-	\item \textit{BinaryFileReader} -- reads a specific range of bytes from 
+	\item \textit{BinaryFileReader} -- reads a specific range of bytes from
 	a binary file and outputs the bytes one-by-one or as array.
 	\item \textit{CopyFile} -- copies the file passing through to a target
 	directory (if pattern matches).
@@ -1080,7 +1080,7 @@ And transformers:
 	matches.
 	\item \textit{Deserialize} -- loads a serialized Java object from disk with
 	the specified object reader.
-	\item \textit{Diff} -- generates a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}} 
+	\item \textit{Diff} -- generates a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}}
 	between two files.
 	\item \textit{DirName} -- extracts the directory part of the file (or parent
 	directory in case of a directory).
@@ -1112,7 +1112,7 @@ And transformers:
 \end{tight_itemize}
 Sink actors:
 \begin{tight_itemize}
-	\item \textit{BinaryFileWriter} -- writes a byte array of 
+	\item \textit{BinaryFileWriter} -- writes a byte array of
 	\textit{BlobContainer} to a binary file.
 	\item \textit{CloseInputStream} -- closes an instance of \textit{java.io.InputStream}.
 	\item \textit{CloseReader} -- closes an instance of \textit{java.io.Reader}.
@@ -1126,7 +1126,7 @@ Sink actors:
 	use for glueing the lines together. Works similar to the Unix \textit{paste}
 	command.
 	\item \textit{Serialize} -- saves a Java object to a file using the specified object writer.
-	\item \textit{SideBySideDiff} -- displays a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}} 
+	\item \textit{SideBySideDiff} -- displays a diff\footnote{\url{http://en.wikipedia.org/wiki/Diff}{}}
 	between two files visually.
 \end{tight_itemize}
 Finally, control actors:
@@ -1135,11 +1135,11 @@ Finally, control actors:
 	them in \textit{processed} or \textit{failed} directories, depending on
 	successful execution of sub-flow.
 \end{tight_itemize}
-Conditional control actors, like \textit{IfThenElse}, \textit{Switch}, 
+Conditional control actors, like \textit{IfThenElse}, \textit{Switch},
 \textit{ConditionalTee} or \textit{ConditionalTrigger} you can use the following
 boolean conditions:
 \begin{tight_itemize}
-	\item \textit{DirectoriesMatch} -- scans a directory for sub-directories 
+	\item \textit{DirectoriesMatch} -- scans a directory for sub-directories
 	that must match a regular expression.
 	\item \textit{DirectoryExists} -- checks whether a directory exists.
 	\item \textit{FileExists} -- checks whether a file exists.
@@ -1187,7 +1187,7 @@ The following transformers are available:
 	\item \textit{GetPropertyNames} -- outputs all property names.
 	\item \textit{GetPropertyValue} -- outputs the values of properties
 	which key matches a supplied regular expression.
-	\item \textit{PropertiesFileReader} -- reads the specific properties file 
+	\item \textit{PropertiesFileReader} -- reads the specific properties file
 	and forwards a properties object.
 	\item \textit{PropertiesToVariables} -- turns the key-value pairs into
 	 variables and their associated values.
@@ -1200,7 +1200,7 @@ The following sinks are available:
 \end{tight_itemize}
 The following conversion are available:
 \begin{tight_itemize}
-	\item \textit{DOMToProperties} -- flattens a DOM document object into a 
+	\item \textit{DOMToProperties} -- flattens a DOM document object into a
 	properties object.
 	\item \textit{PropertiesToKeyValuePairs} -- turns the properties into an
 	array of key-value pairs.
@@ -1342,9 +1342,9 @@ a number of predefined setups.
 
 \heading{Combining views}
 The \textit{GridView} standalone allows you to define several graphical actors
-to be displayed in a grid layout, by adding them below this actor. This can be 
-useful, for instance, if two plots have very different scales and plotting them 
-in the same graph wouldn't make much sense. Using \textit{GridView}, you can create 
+to be displayed in a grid layout, by adding them below this actor. This can be
+useful, for instance, if two plots have very different scales and plotting them
+in the same graph wouldn't make much sense. Using \textit{GridView}, you can create
 a plot with two rows and one column for displaying the two \textit{SequencePlotter}
 actors below each other. The actors below the \textit{GridView} actor get
 referenced from within the flow using \textit{CallableSink} actors.
@@ -1384,8 +1384,8 @@ Here are the available meta actors:
 	\item \textit{ExternalSink} -- for processing data in an external sink.
 \end{tight_itemize}
 
-Once you have an \textit{ExternalXYZ} actor, you can edit this flow directly by 
-selecting the \textit{Edit\ldots} menu item as shown in Figure 
+Once you have an \textit{ExternalXYZ} actor, you can edit this flow directly by
+selecting the \textit{Edit\ldots} menu item as shown in Figure
 \ref{floweditor-externalactors1_editsubflow}.
 \begin{figure}[htb]
   \centering
@@ -1604,7 +1604,7 @@ The output generated by the three sub-flows is shown on screen in the same
 \heading{Overview of actors}
 The following actors are available to handle variables:
 \begin{tight_itemize}
-	\item \textit{ListVariables} -- source actor for outputting the names of 
+	\item \textit{ListVariables} -- source actor for outputting the names of
 	currently available variables.
 	\item \textit{DumpVariables} -- source actor for outputting a spreadsheet with
 	variable names and their associated values.
@@ -1817,22 +1817,22 @@ The following actors are available to handle storage values:
 \begin{tight_itemize}
 	\item \textit{InitStorageCache} -- standalone actor for initializing a named
 	LRU cache with a specific size.
-	\item \textit{CombineStorage} -- source actor for combining string 
+	\item \textit{CombineStorage} -- source actor for combining string
 	representations of storage items and variables into a string.
 	\item \textit{ExpandStorage} -- similar to the \textit{CombineStorage}
-	source, this actor expands all storage items and variables in the string(s) 
+	source, this actor expands all storage items and variables in the string(s)
 	passing through.
-	\item \textit{GetStorageValue} -- transformer that replaces the incoming 
+	\item \textit{GetStorageValue} -- transformer that replaces the incoming
 	string with the storage value that the string represents.
 	associated with the specified name.
-	\item \textit{ListStorageNames} -- source actor for outputting the names of 
+	\item \textit{ListStorageNames} -- source actor for outputting the names of
 	the currently stored items.
 	\item \textit{DumpStorage} -- source actor for outputting the names of
 	the currently stored items and their associated values (in string
 	representation) in a spreadsheet.
 	\item \textit{StorageValue} -- source actor for outputting the storage value
 	associated with the specified name.
-	\item \textit{StorageValuesArray} -- source actor for outputting the 
+	\item \textit{StorageValuesArray} -- source actor for outputting the
 	storage values associated with the specified names as an array.
 	\item \textit{SetStorageFlag} -- sets/unsets the boolean flag in storage
 	\item \textit{SetStorageValue} -- updates the specified storage value
@@ -1882,7 +1882,7 @@ Figure \ref{floweditor-debugging1_flow} simply outputs integer values, ranging
 from 1 to 10. This value gets stored in the variable \textit{loop\_var} which is
 also part of the condition of the \textit{Breakpoint} actor. Finally, these
 values get displayed in a \textit{Display} sink.
-\begin{figure}[htb] 
+\begin{figure}[htb]
   \centering
   \includegraphics[width=12.0cm]{images/floweditor-debugging1_flow.png}
   \caption{Example flow with \textit{Breakpoint} actor.}
@@ -1925,14 +1925,14 @@ control panel is displayed.
   \label{floweditor-debugging1_breakpoints}
 \end{figure}
 
-While a flow is running, you have some basic tools for inspection at hand as 
+While a flow is running, you have some basic tools for inspection at hand as
 well (available from the \textit{Run} menu):
 \begin{tight_itemize}
 	\item \textit{Variables} -- allows you to monitor the variables of a flow
 	and how they change. Note that updating the dialog is quite expensive and
 	will slow down your flow considerably.
-	\item \textit{Storage} -- when a flow is paused, you can inspect the 
-	current storage items; as soon as you resume the flow, the dialog will 
+	\item \textit{Storage} -- when a flow is paused, you can inspect the
+	current storage items; as soon as you resume the flow, the dialog will
 	disappear again, as it doesn't get refreshed automatically.
 \end{tight_itemize}
 A breakpoint can be triggered at various stages of executing an actor:
@@ -1950,7 +1950,7 @@ from the control panel, always uses the \textit{preExecute} stage (\textit{pre/p
 are not available, unfortunately due to API limitations).
 
 \subsection{Monitoring}
-With ADAMS it is possible to \textit{eavesdrop} on the flow execution by 
+With ADAMS it is possible to \textit{eavesdrop} on the flow execution by
 attaching a so-called \textit{flow execution listener} to the \textit{Flow}
 actor and enable the listening process there as well. Listeners that have
 graphical output get display, just like the debug view, on the right-hand
@@ -1958,15 +1958,15 @@ side of the Flow editor window.
 
 The following listeners are available:
 \begin{tight_itemize}
-	\item \textit{CurrentlyExecuted} -- displays all the actors (with their 
+	\item \textit{CurrentlyExecuted} -- displays all the actors (with their
 	start times) that are currently being executed.
 	\item \textit{Debug} -- the \textit{Breakpoint} control actors use
 	this listener, setting the appropriately configured breakpoints.
 	\item \textit{ExecutionCounter} -- counts for each actor how often it was
 	executed.
-	\item \textit{ExecutionLog} -- writes all calls to the input, execute 
+	\item \textit{ExecutionLog} -- writes all calls to the input, execute
 	and output methods to a log file.
-	\item \textit{MultiListener} -- allows you to listen with multiple 
+	\item \textit{MultiListener} -- allows you to listen with multiple
 	listener setups to the flow execution.
 	\item \textit{NullListener} -- dummy listener, does nothing.
 \end{tight_itemize}
@@ -1975,16 +1975,16 @@ The following listeners are available:
 \clearpage
 \section{Passwords}
 In various places, ADAMS requires the use of passwords, for instance, when
-connecting to databases. ADAMS does not offer any proper encryption of the 
-passwords, merely a weak obfuscation using 
-Base64\footnote{\url{http://en.wikipedia.org/wiki/Base64}{}} encoding. Keep 
+connecting to databases. ADAMS does not offer any proper encryption of the
+passwords, merely a weak obfuscation using
+Base64\footnote{\url{http://en.wikipedia.org/wiki/Base64}{}} encoding. Keep
 this in mind when designing flows and making the available to other people.
 
 
 \clearpage
 \section{External processes and classes}
 ADAMS allows you to start up external processes or call Java classes that
-are present in the classpath from within a flow. The following actors are 
+are present in the classpath from within a flow. The following actors are
 available:
 \begin{tight_itemize}
 	\item \textit{Command} -- source that calls any external executable and
@@ -2171,7 +2171,7 @@ with the \textit{FilePreview} and \textit{ObjectPreview} sinks.
   \label{previewbrowser-plaintext1}
 \end{figure}
 
-Serialized files can be inspected as well, e.g., for model files generated 
+Serialized files can be inspected as well, e.g., for model files generated
 by WEKA. Other modules may offer specific viewers for the objects stored
 in such a file.
 
@@ -2385,8 +2385,12 @@ if your flow is processing files.
 \clearpage
 \section{Windows servers}
 ADAMS can be run as background process on Windows as well. There are two options,
-which are described in the following sub-sections: NSSM\cite{nssm} or WinSW\cite{winsw}.
+which are described in the following sub-sections: NSSM\cite{nssm}, WinSW\cite{winsw}
+or Task Scheduler\cite{taskschd}.
 
+%%%%%%%%
+% NSSM %
+%%%%%%%%
 \subsection{NSSM}
 Using the NSSM\cite{nssm} tool, you can install a Windows service that executes the flow \textit{myflow.flow}.
 ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
@@ -2437,6 +2441,9 @@ as follows:
 nssm install adams
 \end{verbatim}
 
+%%%%%%%%%
+% WinSW %
+%%%%%%%%%
 \subsection{WinSW}
 Using the WinSW\cite{winsw} tool, you can install a Windows service that executes the flow \textit{myflow.flow}.
 ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
@@ -2488,6 +2495,36 @@ directory. The JDK is available from \textit{C:\textbackslash java\textbackslash
 \end{tight_itemize}
 \textbf{NB:} Whenever you make a change, you need to \textit{stop}, \textit{uninstall},
 \textit{install} and \textit{start} the service, before the changes will take effect.
+
+
+%%%%%%%%%%%%%%%%%%
+% Task Scheduler %
+%%%%%%%%%%%%%%%%%%
+\subsection{Task Scheduler}
+Using the Task Scheduler\cite{taskschd} tool, you can run a task that executes the flow \textit{myflow.flow}.
+ADAMS is assumed for be installed in \textit{C:\textbackslash adams} for this
+example and \textit{myflow.flow} resides in the \textit{C:\textbackslash flows}
+directory.
+
+\begin{tight_itemize}
+    \item Launch the \textit{Task Scheduler}\footnote{How to launch the Task Scheduler: \url{https://windowsloop.com/how-to-open-task-scheduler/}{}}
+    \item Open the \textit{Task Scheduler Library} folder
+    \item Create a new folder, e.g., \textit{ADAMS}
+    \item Create a \textit{Basic task}
+    \item For the \textit{Trigger} select \textit{When the computer starts}
+    \item For the \textit{Action} select \textit{Program}
+    \item As \textit{Program/script}, select the batch file \textit{daemon.bat}
+    from the ADAMS \textit{bin} directory.
+    \item Use the following \textit{Arguments} to execute the flow with 1GB of
+      heap and the remote command scripting engine on port 12345:
+        \begin{verbatim}
+        start C:\textbackslash myflow.flow 1g 12345
+        \end{verbatim}
+    \item \textit{Finish} the task
+    \item \textit{Edit} the task
+    \item On the \textit{General} tab, switch to \textit{Run whether the user is logged on or not}
+    and provide your password.
+\end{tight_itemize}
 
 \clearpage
 \subsection{Directory layout for processing files}
@@ -2587,7 +2624,7 @@ The \textit{Flow runner} is an interface to execute flows without the user
 being able to modify them. See chapter \ref{running_flows} for more information.
 
 \section{Text editor}
-The \textit{Text editor} is a very simply editor for plain text files. It 
+The \textit{Text editor} is a very simply editor for plain text files. It
 allows you to view and edit one file at a time. It also supports printing
 and, if the \textit{net} module is present, sending the files via Email.
 
@@ -2600,10 +2637,10 @@ and, if the \textit{net} module is present, sending the files via Email.
 
 \clearpage
 \section{Comparing text}
-The \textit{Comparing text} tool allows you two compare two files or content 
+The \textit{Comparing text} tool allows you two compare two files or content
 pasted from the clipboard (using the \textit{paste} buttons at the bottom) or
 a mixture of both. Figure \ref{diff-files} shows the open dialog and the
-comparison of the files in the background (\textit{red} depicts changes 
+comparison of the files in the background (\textit{red} depicts changes
 between the files, \textit{blue} a deletion and \textit{green} an addition).
 
 \begin{figure}[htb]
@@ -2636,16 +2673,16 @@ or
 \section{Placeholder management}
 Whenever file names are being used in a flow, you run the danger for making
 your flow only executable on your own machine. In order to make it easy to use
-flows on multiple computers with different directory structures, ADAMS 
-introduces the concept of \textit{placeholders}. Placeholders are basically 
+flows on multiple computers with different directory structures, ADAMS
+introduces the concept of \textit{placeholders}. Placeholders are basically
 system-wide defined variables for directories. This allows you to define a
 placeholder called \textit{XYZ} and point it to directory \textit{/some/where}
-on computer 1. On computer 2, on the other hand, you point it to 
+on computer 1. On computer 2, on the other hand, you point it to
 \textit{/somewhere/completely/different}. As long as the directory structure
 below this placeholder is the same, the flow is guaranteed to work.
 
 In Figure \ref{placeholdermanagement-main} you can some see placeholders already
-defined. Here, the placeholders are used for example flows for various 
+defined. Here, the placeholders are used for example flows for various
 presentations.
 
 \begin{figure}[htb]
@@ -2659,13 +2696,13 @@ presentations.
 \heading{Adding placeholders}
 In order to add a new placeholder, you need the following two steps:
 \begin{tight_enumerate}
-	\item Add the name for the new placeholder, e.g., \textit{TEST} 
+	\item Add the name for the new placeholder, e.g., \textit{TEST}
 	(see \ref{placeholdermanagement-add1})
-	\item Add the directory that this placeholder is to represent 
+	\item Add the directory that this placeholder is to represent
 	(see \ref{placeholdermanagement-add2}).
 \end{tight_enumerate}
 After you added this placeholder the management panel will look as shown in panel \ref{placeholdermanagement-add3}.
-In order to make the changes persisten, you need to save the changes (see 
+In order to make the changes persisten, you need to save the changes (see
 \ref{placeholdermanagement-save}) and restart the application.
 
 \begin{figure}[htb]
@@ -2746,13 +2783,13 @@ Favorites get grouped by the superclass they belong to in the object editor.
 \end{figure}
 
 ADAMS distinguishes between \textit{permanent} and \textit{temporary} favorites.
-The latter are only available in the current session and won't get stored on 
-disk (in \textit{GenericObjectEditorFavorites.props}). They are considered 
+The latter are only available in the current session and won't get stored on
+disk (in \textit{GenericObjectEditorFavorites.props}). They are considered
 more of an extended clipboard.
 
 Of course, ADAMS comes with a management interface for maintaining all the
-various setups, allowing you to store, edit, rename and remove (named) 
-configurations. 
+various setups, allowing you to store, edit, rename and remove (named)
+configurations.
 
 \clearpage
 \heading{Adding a favorite}
@@ -2842,7 +2879,7 @@ displayed as shown in Figure \ref{favoritesmanagement-rename2}.
 
 \clearpage
 \heading{Saving the favorites}
-Of course, in order to make the changes permanent, you have to save them to 
+Of course, in order to make the changes permanent, you have to save them to
 disk. You can do this by selecting \textit{File $\rightarrow$ Save} from the
 menu as shown in Figure \ref{favoritesmanagement-save}.
 
@@ -2983,16 +3020,16 @@ The following menu items are only available if you switch to user mode
 %%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Customizing ADAMS}
-Though ADAMS may lack somewhat preference dialogs in the user interface, it 
+Though ADAMS may lack somewhat preference dialogs in the user interface, it
 nonetheless allows you to customize a lot of the behavior and the way things
-are displayed using properties files or environment variables. The following 
-sections explain the basics of how this customization works and goes into 
+are displayed using properties files or environment variables. The following
+sections explain the basics of how this customization works and goes into
 detail for some of the user interfaces in ADAMS.
 
 \section{Environment variables}
 The following variables are recognized:
 \begin{tight_itemize}
-	\item \texttt{ADAMS\_OPTS} -- Instead of supplying command-line options, 
+	\item \texttt{ADAMS\_OPTS} -- Instead of supplying command-line options,
 	you can also set the options using this variable. For instance, to always
 	use the expert menu mode, use the following:\\
 	\texttt{ADAMS\_OPTS=-user-mode EXPERT}
@@ -3046,7 +3083,7 @@ file:
   adams/gui/Main.props
 \end{verbatim}
 With this configuration you can determine the menu layout, the shortcuts, whether additional
-menu items get automatically discovered and added (see section \ref{mainmenu} 
+menu items get automatically discovered and added (see section \ref{mainmenu}
 for details on adding new menu items) and whether certain menu items should
 get black-listed, i.e., not shown in the menu (in case of automatic menu
 item discovery).
@@ -3068,16 +3105,16 @@ For instance, the entry for the \textit{Visualization} key could look like thisL
     adams.gui.menu.ImageViewer,\
     adams.gui.menu.PreviewBrowser
 \end{verbatim}
-The \textit{Windows} menu is a special one which gets populated automatically. 
+The \textit{Windows} menu is a special one which gets populated automatically.
 
 \heading{Shortcuts}
-Keyboard shortcuts do not only speed up interaction with an application, they 
+Keyboard shortcuts do not only speed up interaction with an application, they
 are also a very personal thing. A key for shortcut consists of the prefix
-\textit{Shortcut-} and the class name of the menu item. The value for the 
+\textit{Shortcut-} and the class name of the menu item. The value for the
 key is then according to the format defined for the \textit{getKeyStroke(String s)}
 method of the \textit{javax.swing.KeyStroke} class. You can use \texttt{ctrl}
 for the \textit{Control} key, \texttt{shift} for the \textit{Shift} key,
-\texttt{alt} for the \textit{Alt} key and \textit{meta} for the 
+\texttt{alt} for the \textit{Alt} key and \textit{meta} for the
 \textit{Apple key}. The following key defines the \texttt{Ctrl+F} shortcut
 for the Flow editor.
 \begin{verbatim}
@@ -3085,9 +3122,9 @@ for the Flow editor.
 \end{verbatim}
 
 \heading{Automatic menu item discovery}
-Adding new menu items to the main menu, e.g., from other modules that you 
+Adding new menu items to the main menu, e.g., from other modules that you
 refernce, can be quite useful. Automatic discovery takes out the hassle of
-having to manually maintain the properties file by adding menu items whenever 
+having to manually maintain the properties file by adding menu items whenever
 a module offers a new menu item. Turning the automation on or off is done using
 the following key and using either ``true'' or ``false'' as value:
 \begin{verbatim}
@@ -3095,13 +3132,13 @@ the following key and using either ``true'' or ``false'' as value:
 \end{verbatim}
 
 \heading{Black-listing menu items}
-With automatic discover enabled, you give up control on \textit{what} menu 
-items are being displayed (and the \textit{where} as well). In some cases, 
+With automatic discover enabled, you give up control on \textit{what} menu
+items are being displayed (and the \textit{where} as well). In some cases,
 in can be necessary to suppress a menu item (or lift the ban for one).
 Suppressing or \textit{black-listing} an item is very easy, you simply need
-to add a key to properties file that prefixes the menu item's class name 
+to add a key to properties file that prefixes the menu item's class name
 with \textit{Blacklisted-}. The value for this property is of course boolean,
-with the values ``true'' or ``false''. For instance, the menu item 
+with the values ``true'' or ``false''. For instance, the menu item
 \textit{adams.gui.menu.SomeViewer} can be suppressed using the following key:
 \begin{verbatim}
   Blacklisted-adams.gui.menu.SomeViewer=true
@@ -3118,9 +3155,9 @@ as follows:
 \end{verbatim}
 
 \section{Flow editor}
-The flow editor already comes with a basic preference dialog (\textit{Program 
+The flow editor already comes with a basic preference dialog (\textit{Program
 $\rightarrow$ Preferences $\rightarrow$ Flow}), but you can still customize it further.
-See section \ref{floweditor_mainmenu} for customizing the shortcuts in the 
+See section \ref{floweditor_mainmenu} for customizing the shortcuts in the
 main menu and section \ref{floweditor_popupmenu} for customizing the popup
 menu for the actor tree (menu layout and shortcuts). If you want to attach
 keyboard shortcuts to some specific actions, like adding a specific actor
@@ -3143,14 +3180,14 @@ of the preferences page for fonts.
 
 \section{Proxy}
 In companies or organizations, the use of proxies for internet access is quite
-common. In order for you to be able to go through the proxy, you need to 
+common. In order for you to be able to go through the proxy, you need to
 configure ADAMS' proxy settings accordingly. You can find the settings in the
 \textit{Preferences} dialog (\textit{Program $\rightarrow$ Preferences $\rightarrow$ Proxy}).
-Basically, you have to specify the type of proxy (http or socks), the proxy server 
-and the port its listening on and also exclude hosts on your network from being 
-accessed through the proxy. These are usually: \textit{localhost}, \textit{127.0.0.1} 
-and everything inside your domain. For instance, if your local domain is 
-\textit{blah.com}, then you can use the following wildcard: \textit{*.blah.com}. 
+Basically, you have to specify the type of proxy (http or socks), the proxy server
+and the port its listening on and also exclude hosts on your network from being
+accessed through the proxy. These are usually: \textit{localhost}, \textit{127.0.0.1}
+and everything inside your domain. For instance, if your local domain is
+\textit{blah.com}, then you can use the following wildcard: \textit{*.blah.com}.
 Some proxies require authentication, which you can provide as well in the dialog,
 once you have checked the \textit{Requires authentication} checkbox.
 See Figure \ref{proxy_setup} for an example setup.
@@ -3196,16 +3233,16 @@ default locale. See Figure \ref{locale_setup} for an example setup.
 
 \section{Browser}
 Since release 6, Java can launch the desktop's default browser. With the huge
-variety of desktops for Linux, this does not work properly all the time, 
-unfortunately. Or it simply launches the wrong browser. If your desktop on 
-Linux is not supported, ADAMS uses a fallback method to determine an available browser. 
-The \textit{LinuxBrowsers} property in the \textit{adams/gui/core/Browser.props} 
+variety of desktops for Linux, this does not work properly all the time,
+unfortunately. Or it simply launches the wrong browser. If your desktop on
+Linux is not supported, ADAMS uses a fallback method to determine an available browser.
+The \textit{LinuxBrowsers} property in the \textit{adams/gui/core/Browser.props}
 properties file defines the order of the binaries that ADAMS looks for. The first
 binary that it can find, it will use.
 
 However, if you want to use a specific browser, you can do that as well.
 You simply have to supply an absolute path to the browser's binary in the
-\textit{DefaultBrowser} property. This will override any automatic browser 
+\textit{DefaultBrowser} property. This will override any automatic browser
 discovery. Here is an example for specifying the \textit{Firefox} browser on Linux:
 \begin{verbatim}
   DefaultBrowser=/usr/bin/firefox

@@ -21,7 +21,7 @@ package adams.gui.visualization.stats.core;
 
 import adams.core.option.AbstractOptionGroup;
 import adams.gui.visualization.core.AxisPanelOptions;
-import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Watermark;
 
 /**
@@ -142,7 +142,7 @@ public abstract class AbstractPlotOptionGroup
    * @return 		the default
    */
   protected Watermark getDefaultWatermark() {
-    return new Null();
+    return new Default();
   }
 
   /**

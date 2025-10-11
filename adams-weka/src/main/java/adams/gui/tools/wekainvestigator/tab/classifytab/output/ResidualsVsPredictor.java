@@ -30,6 +30,7 @@ import adams.flow.sink.SimplePlot;
 import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
 import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
 import adams.gui.visualization.sequence.WatermarkPaintlet;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Null;
 import adams.gui.visualization.watermark.Watermark;
 import weka.classifiers.Evaluation;
@@ -70,7 +71,7 @@ public class ResidualsVsPredictor
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**

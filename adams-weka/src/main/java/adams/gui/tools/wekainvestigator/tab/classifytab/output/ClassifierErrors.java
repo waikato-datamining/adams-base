@@ -54,6 +54,7 @@ import adams.gui.visualization.sequence.WatermarkPaintlet;
 import adams.gui.visualization.sequence.XYSequencePaintlet;
 import adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor;
 import adams.gui.visualization.sequence.metadatacolor.Dummy;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Null;
 import adams.gui.visualization.watermark.Watermark;
 import com.github.fracpete.javautils.enumerate.Enumerated;
@@ -218,7 +219,7 @@ public class ClassifierErrors
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**

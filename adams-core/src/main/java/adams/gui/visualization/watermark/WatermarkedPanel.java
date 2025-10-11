@@ -45,7 +45,7 @@ public class WatermarkedPanel
   protected void initialize() {
     super.initialize();
 
-    m_Watermark = new Null();
+    m_Watermark = new Default();
   }
 
   /**

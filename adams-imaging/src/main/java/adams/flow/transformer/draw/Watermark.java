@@ -21,7 +21,7 @@
 package adams.flow.transformer.draw;
 
 import adams.data.image.BufferedImageContainer;
-import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Default;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -59,7 +59,7 @@ public class Watermark
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**

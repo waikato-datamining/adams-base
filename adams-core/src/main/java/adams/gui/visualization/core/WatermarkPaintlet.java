@@ -21,7 +21,7 @@
 package adams.gui.visualization.core;
 
 import adams.gui.event.PaintEvent.PaintMoment;
-import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Watermark;
 
 import java.awt.Graphics;
@@ -58,7 +58,7 @@ public class WatermarkPaintlet
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**

@@ -21,7 +21,7 @@
 package adams.gui.visualization.image;
 
 import adams.gui.visualization.image.ImagePanel.PaintPanel;
-import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Default;
 import adams.gui.visualization.watermark.Watermark;
 
 import java.awt.Dimension;
@@ -59,7 +59,7 @@ public class WatermarkOverlay
 
     m_OptionManager.add(
       "watermark", "watermark",
-      new Null());
+      new Default());
   }
 
   /**
