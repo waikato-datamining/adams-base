@@ -51,6 +51,9 @@ public class Text
   /** the Y position of the text (1-based). */
   protected int m_Y;
 
+  /** the padding to use. */
+  protected int m_Padding;
+
   /** the Y increment when outputting multiple lines. */
   protected int m_YIncrement;
 
@@ -97,6 +100,10 @@ public class Text
     m_OptionManager.add(
       "y", "Y",
       16, 1, null);
+
+    m_OptionManager.add(
+      "padding", "padding",
+      getDefaultPadding(), 0, null);
 
     m_OptionManager.add(
       "y-increment", "YIncrement",
@@ -221,6 +228,44 @@ public class Text
    */
   public String YTipText() {
     return "The Y position of the top-left corner of the text (1-based).";
+  }
+
+  /**
+   * Returns the default padding around the image.
+   *
+   * @return		the default
+   */
+  protected int getDefaultPadding() {
+    return 0;
+  }
+
+  /**
+   * Sets the padding around the image.
+   *
+   * @param value	the padding
+   */
+  public void setPadding(int value) {
+    m_Padding = value;
+    reset();
+  }
+
+  /**
+   * Returns the padding around the image.
+   *
+   * @return		the padding
+   */
+  public int getPadding() {
+    return m_Padding;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String paddingTipText() {
+    return "The padding to use around the image.";
   }
 
   /**
@@ -442,28 +487,28 @@ public class Text
 
     switch (m_Location) {
       case ABSOLUTE:
-	x = m_X - 1;
-	y = m_Y - 1;
+	x = m_X - 1 + m_Padding;
+	y = m_Y - 1 + m_Padding;
 	break;
 
       case TOP_LEFT:
-	x = 0;
-	y = height;
+	x = m_Padding;
+	y = height + m_Padding;
 	break;
 
       case TOP_RIGHT:
-	x = (int) dimension.getWidth() - width;
-	y = height;
+	x = (int) dimension.getWidth() - width - m_Padding;
+	y = height + m_Padding;
 	break;
 
       case BOTTOM_LEFT:
-	x = 0;
-	y = (int) dimension.getHeight() - (lines.length - 1) * height;
+	x = m_Padding;
+	y = (int) dimension.getHeight() - (lines.length - 1) * height - m_Padding;
 	break;
 
       case BOTTOM_RIGHT:
-	x = (int) dimension.getWidth()  - width;
-	y = (int) dimension.getHeight() - (lines.length - 1) * height;
+	x = (int) dimension.getWidth()  - width - m_Padding;
+	y = (int) dimension.getHeight() - (lines.length - 1) * height - m_Padding;
 	break;
 
       default:
