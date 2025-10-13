@@ -286,12 +286,13 @@ public class Launcher {
   }
 
   /**
-   * Adds the JVM option.
+   * Adds the JVM option. Checks for duplicates.
    *
    * @param value	the option
    */
   public void addJVMOption(String value) {
-    m_JVMOptions.add(value);
+    if (!m_JVMOptions.contains(value))
+      m_JVMOptions.add(value);
   }
 
   /**
