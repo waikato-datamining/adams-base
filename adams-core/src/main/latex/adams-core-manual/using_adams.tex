@@ -1293,6 +1293,16 @@ For more functionality, see the documentation on the \textit{adams-spreadsheet}
 module. On more information on JDBC URLs and databases, see \ref{using_adams_database_access},
 \ref{extending_adams_database_access} and the manual for the \textit{adams-db} module.
 
+The \textit{Table.props} configuration file contains various parameters for
+tweaking database access, e.g.:
+\begin{tight_itemize}
+    \item \texttt{InitTables.Debug} -- outputs a stacktrace in case the initTable call for table fails (false|true)
+    \item \texttt{AnsiQuotes} -- whether to use ANSI quotes, i.e., double quotes, around table and column names
+    \item \texttt{TablePrefix} -- whether to prefix the table names with this string
+    \item \texttt{TABLE\_CLASSNAME.Debug} -- whether debugging information is enabled for \texttt{TABLE\_CLASSNAME}
+\end{tight_itemize}
+
+
 \clearpage
 \section{Callable actors}
 \label{callable_actors}

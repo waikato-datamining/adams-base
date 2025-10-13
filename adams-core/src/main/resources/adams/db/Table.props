@@ -8,6 +8,9 @@ InitTables.Debug=false
 # Whether to use ANSI quotes, i.e., double quotes, around table and column names
 AnsiQuotes=false
 
+# The prefix to use for table names
+TablePrefix=
+
 # The logging table
 adams.db.mysql.LogT.Debug=false
 adams.db.postgresql.LogT.Debug=false

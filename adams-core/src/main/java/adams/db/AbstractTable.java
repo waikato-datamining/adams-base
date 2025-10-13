@@ -64,7 +64,7 @@ public abstract class AbstractTable
   public AbstractTable(AbstractDatabaseConnection dbcon, String tableName) {
     super(dbcon);
 
-    m_TableName = tableName;
+    m_TableName = getProperties().getProperty("TablePrefix", "") + tableName;
     m_DatabaseConnection.addChangeListener(this);
     
     setDebug(
