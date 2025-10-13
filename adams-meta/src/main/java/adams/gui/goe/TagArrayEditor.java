@@ -30,6 +30,7 @@ import adams.core.tags.TagInfo;
 import adams.core.tags.TagProcessorHelper;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
+import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTable;
 import adams.gui.core.BaseTableWithButtons;
@@ -40,9 +41,14 @@ import adams.gui.core.TagInfoTableModel;
 import adams.gui.core.TagTableModel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PropertiesParameterDialog;
+import adams.gui.event.PopupMenuListener;
+import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,6 +72,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -103,6 +110,12 @@ public class TagArrayEditor
 
   /** the button for removing the selected tag(s). */
   protected BaseButton m_ButtonRemove;
+
+  /** the button for copying the selected tag(s). */
+  protected BaseButton m_ButtonCopy;
+
+  /** the button for pasting tags from clipboard. */
+  protected BaseButton m_ButtonPaste;
 
   /** the OK button. */
   protected BaseButton m_ButtonOK;
@@ -160,6 +173,18 @@ public class TagArrayEditor
     m_Table = new BaseTableWithButtons(m_TableModel);
     m_Table.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     m_Table.getComponent().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> updateButtons());
+    m_Table.addCellPopupMenuListener(new PopupMenuListener() {
+      @Override
+      public void showPopupMenu(MouseEvent e) {
+	if (MouseUtils.isRightClick(e)) {
+	  JPopupMenu menu = createCellPopup(e);
+	  if (menu != null) {
+	    e.consume();
+	    menu.show(m_Table.getComponent(), e.getX(), e.getY());
+	  }
+	}
+      }
+    });
     add(m_Table, BorderLayout.CENTER);
 
     m_ButtonAdd = new BaseButton("Add");
@@ -170,6 +195,18 @@ public class TagArrayEditor
     m_ButtonEdit.addActionListener((ActionEvent e) -> editTag());
     m_Table.addToButtonsPanel(m_ButtonEdit);
     m_Table.setDoubleClickButton(m_ButtonEdit);
+
+    m_Table.addToButtonsPanel(new JLabel());
+
+    m_ButtonCopy = new BaseButton("Copy");
+    m_ButtonCopy.addActionListener((ActionEvent e) -> copySelectedTags());
+    m_Table.addToButtonsPanel(m_ButtonCopy);
+
+    m_ButtonPaste = new BaseButton("Paste");
+    m_ButtonPaste.addActionListener((ActionEvent e) -> pasteTags());
+    m_Table.addToButtonsPanel(m_ButtonPaste);
+
+    m_Table.addToButtonsPanel(new JLabel());
 
     m_ButtonRemove = new BaseButton("Remove");
     m_ButtonRemove.addActionListener((ActionEvent e) -> removeSelectedTags());
@@ -213,6 +250,43 @@ public class TagArrayEditor
   protected void updateButtons() {
     m_ButtonEdit.setEnabled(m_Table.getSelectedRowCount() == 1);
     m_ButtonRemove.setEnabled(m_Table.getSelectedRowCount() > 0);
+    m_ButtonCopy.setEnabled(m_Table.getSelectedRowCount() > 0);
+    m_ButtonPaste.setEnabled(ClipboardHelper.canPasteStringFromClipboard() && !tagsFromClipboard().isEmpty());
+  }
+
+  /**
+   * Creates the cell popup menu.
+   *
+   * @param e		the trigger event
+   * @return		the menu, null if none available
+   */
+  protected JPopupMenu createCellPopup(MouseEvent e) {
+    JPopupMenu	result;
+    JMenuItem	menuitem;
+
+    result = new BasePopupMenu();
+
+    menuitem = new JMenuItem("Copy name");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard("" + m_Table.getValueAt(m_Table.getSelectedRow(), 0)));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Copy value");
+    menuitem.setEnabled(m_Table.getSelectedRowCount() == 1);
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard("" + m_Table.getValueAt(m_Table.getSelectedRow(), 1)));
+    result.add(menuitem);
+
+    menuitem = new JMenuItem("Copy tag" + (m_Table.getSelectedRowCount() == 1 ? "" : "s"));
+    menuitem.setEnabled(m_Table.getSelectedRowCount() >= 1);
+    menuitem.addActionListener((ActionEvent ae) -> {
+      List<String> lines = new ArrayList<>();
+      for (int row: m_Table.getSelectedRows())
+	lines.add(m_TableModel.get(row).toString());
+      ClipboardHelper.copyToClipboard(Utils.flatten(lines, "\n"));
+    });
+    result.add(menuitem);
+
+    return result;
   }
 
   /**
@@ -624,6 +698,65 @@ public class TagArrayEditor
     indices = m_Table.getSelectedRows();
     for (i = indices.length - 1; i >= 0; i--)
       m_TableModel.remove(indices[i]);
+  }
+
+  /**
+   * Copies the selected tags to the clipboard.
+   */
+  protected void copySelectedTags() {
+    List<String> 	lines;
+
+    lines = new ArrayList<>();
+    for (int row: m_Table.getSelectedRows())
+      lines.add(m_TableModel.get(row).getValue());
+
+    ClipboardHelper.copyToClipboard(Utils.flatten(lines, "\n"));
+
+    updateButtons();
+  }
+
+  /**
+   * Parses the clipboard content as tags.
+   *
+   * @return		the parsed tags, if any
+   */
+  protected List<Tag> tagsFromClipboard() {
+    String[]		lines;
+    int			i;
+    List<Tag> result;
+    Tag			tag;
+
+    result = new ArrayList<>();
+
+    if (!ClipboardHelper.canPasteStringFromClipboard())
+      return result;
+
+    lines = Utils.split(ClipboardHelper.pasteStringFromClipboard(), "\n");
+    for (i = 0; i < lines.length; i++) {
+      if (lines[i].contains("=")) {
+	tag = new Tag(lines[i]);
+	if (tag.getValue().equals(lines[i]))
+	  result.add(tag);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Pastes the tags from the clipboard.
+   */
+  protected void pasteTags() {
+    List<Tag>		tags;
+
+    if (!ClipboardHelper.canPasteStringFromClipboard())
+      return;
+
+    tags = tagsFromClipboard();
+    if (!tags.isEmpty()) {
+      for (Tag t: tags)
+	m_TableModel.add(t);
+    }
   }
 
   /**
