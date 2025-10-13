@@ -74,7 +74,8 @@ public class Tag
    */
   @Override
   public boolean isValid(String value) {
-    return value.isEmpty() || value.contains(SEPARATOR);
+    return value.isEmpty()
+	     || (value.contains(SEPARATOR) && !value.substring(0, value.indexOf(SEPARATOR)).contains(" "));
   }
 
   /**
