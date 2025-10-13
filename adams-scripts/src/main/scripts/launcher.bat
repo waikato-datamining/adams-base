@@ -127,6 +127,12 @@ set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\*"
 set AGENT=%REPO%\sizeofag-1.1.0.jar
+
+@rem Starting with Java 17, we add --enable-native-access=ALL-UNNAMED
+for /f tokens^=2-5^ delims^=.-_^" %%j in ('"%JCMD%" -fullversion 2^>^&1') do set "MAJOR_VERSION=%%j"
+set ENABLE_NATIVE_ACCESS=
+if %MAJOR_VERSION% GEQ 17 set ENABLE_NATIVE_ACCESS="-jvm --enable-native-access=ALL-UNNAMED"
+
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
@@ -145,6 +151,7 @@ goto endInit
  -jvm --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED^
  -jvm --add-exports=java.base/sun.nio.cs=ALL-UNNAMED^
  -jvm --add-exports=java.base/sun.util.calendar=ALL-UNNAMED^
+ %ENABLE_NATIVE_ACCESS%^
  -main %MAIN%^
  -doc-dir "%BASEDIR%\docs"^
  %CMD_LINE_ARGS%

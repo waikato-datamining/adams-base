@@ -41,6 +41,12 @@ set BASEDIR=%~dp0\..
 set REPO=%BASEDIR%\lib
 set RESOURCES=%BASEDIR%\resources
 set CLASSPATH="%RESOURCES%";"%REPO%\java-cup-11b-20160615.jar";"%REPO%\*"
+
+@rem Starting with Java 17, we add --enable-native-access=ALL-UNNAMED
+for /f tokens^=2-5^ delims^=.-_^" %%j in ('"%JCMD%" -fullversion 2^>^&1') do set "MAJOR_VERSION=%%j"
+set ENABLE_NATIVE_ACCESS=
+if %MAJOR_VERSION% GEQ 17 set ENABLE_NATIVE_ACCESS="--enable-native-access=ALL-UNNAMED"
+
 goto endInit
 
 @REM Reaching here means variables are defined and arguments have been captured
@@ -59,6 +65,7 @@ goto wrongcmd
  --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED^
  --add-exports=java.base/sun.nio.cs=ALL-UNNAMED^
  --add-exports=java.base/sun.util.calendar=ALL-UNNAMED^
+ %ENABLE_NATIVE_ACCESS%^
 adams.flow.FlowRunner^
  -input "%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^

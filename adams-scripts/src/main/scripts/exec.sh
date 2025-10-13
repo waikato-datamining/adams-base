@@ -78,6 +78,15 @@ do
   fi
 done
 
+# Starting with Java 17, we add --enable-native-access=ALL-UNNAMED
+MAJOR_VERSION=`java -fullversion 2>&1 | head -1 | cut -d'"' -f2 | sed 's/^1\.//' | cut -d'.' -f1`
+if [ "$MAJOR_VERSION" -ge 17 ]
+then
+  ENABLE_NATIVE_ACCESS="--enable-native-access=ALL-UNNAMED"
+else
+  ENABLE_NATIVE_ACCESS=
+fi
+
 # launch class
 "$JCMD" \
   -classpath "$CLASSPATH" \
@@ -87,6 +96,7 @@ done
   --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
   --add-exports=java.base/sun.nio.cs=ALL-UNNAMED \
   --add-exports=java.base/sun.util.calendar=ALL-UNNAMED \
+  $ENABLE_NATIVE_ACCESS \
   $HEADLESS \
   $MAIN \
   $ARGS

@@ -32,6 +32,15 @@ if $cygwin; then
   [ -n "$CLASSPATH" ] && CLASSPATH=`cygpath --path --windows "$CLASSPATH"`
 fi
 
+# Starting with Java 17, we add --enable-native-access=ALL-UNNAMED
+MAJOR_VERSION=`java -fullversion 2>&1 | head -1 | cut -d'"' -f2 | sed 's/^1\.//' | cut -d'.' -f1`
+if [ "$MAJOR_VERSION" -ge 17 ]
+then
+  ENABLE_NATIVE_ACCESS="--enable-native-access=ALL-UNNAMED"
+else
+  ENABLE_NATIVE_ACCESS=
+fi
+
 if [ "$1" = "start" ] && [ $# = 4 ]
 then
   unset DISPLAY
@@ -43,6 +52,7 @@ then
     --add-exports=java.desktop/com.sun.media.sound=ALL-UNNAMED \
     --add-exports=java.base/sun.nio.cs=ALL-UNNAMED \
     --add-exports=java.base/sun.util.calendar=ALL-UNNAMED \
+    $ENABLE_NATIVE_ACCESS \
     adams.flow.FlowRunner \
     -input "$3" \
     -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port $4" \
