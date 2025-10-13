@@ -35,11 +35,15 @@ import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
 import adams.gui.visualization.jfreechart.shape.Default;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.general.Dataset;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 
@@ -148,6 +152,11 @@ import java.awt.image.BufferedImage;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
+ * <pre>-watermark &lt;adams.gui.visualization.watermark.Watermark&gt; (property: watermark)
+ * &nbsp;&nbsp;&nbsp;The watermark to use for painting the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.watermark.Default
+ * </pre>
+ *
  * <pre>-writer &lt;adams.data.io.output.ImageWriter&gt; (property: writer)
  * &nbsp;&nbsp;&nbsp;The image writer to use.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.output.JAIImageWriter
@@ -189,6 +198,9 @@ public class JFreeChartFileWriter
 
   /** the height of the plot. */
   protected int m_Height;
+
+  /** the watermark to use. */
+  protected Watermark m_Watermark;
 
   /** the image writer to use. */
   protected ImageWriter m_Writer;
@@ -246,6 +258,10 @@ public class JFreeChartFileWriter
     m_OptionManager.add(
       "height", "height",
       600, -1, null);
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      new adams.gui.visualization.watermark.Default());
 
     m_OptionManager.add(
       "writer", "writer",
@@ -524,6 +540,35 @@ public class JFreeChartFileWriter
   }
 
   /**
+   * Sets the watermark to use.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to use.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to use for painting the data.";
+  }
+
+  /**
    * Sets the image writer.
    *
    * @param value	the writer
@@ -577,6 +622,7 @@ public class JFreeChartFileWriter
     result += QuickInfoHelper.toString(this, "shape", m_Shape, ", shape: ");
     result += QuickInfoHelper.toString(this, "width", m_Width, ", width:");
     result += QuickInfoHelper.toString(this, "height", m_Height, ", height:");
+    result += QuickInfoHelper.toString(this, "watermark", m_Watermark, ", watermark: ");
     result += QuickInfoHelper.toString(this, "writer", m_Writer, ", writer: ");
 
     return result;
@@ -597,6 +643,7 @@ public class JFreeChartFileWriter
     BufferedImageContainer	cont;
     Shape			shape;
     XYPlot			plot;
+    Graphics2D			g;
 
     result = null;
 
@@ -622,6 +669,12 @@ public class JFreeChartFileWriter
 	ChartUtils.applyShape(plot, shape);
       }
       image = jfreechart.createBufferedImage(m_Width, m_Height);
+      // apply watermark
+      if (!(m_Watermark instanceof Null)) {
+	g = image.createGraphics();
+	m_Watermark.applyWatermark(g, new Dimension(image.getWidth(), image.getHeight()));
+	g.dispose();
+      }
       cont  = new BufferedImageContainer();
       cont.setImage(image);
       m_Writer.write(m_OutputFile, cont);

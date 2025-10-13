@@ -34,14 +34,19 @@ import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import adams.gui.visualization.jfreechart.dataset.DefaultXY;
 import adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator;
 import adams.gui.visualization.jfreechart.shape.Default;
+import adams.gui.visualization.watermark.Null;
+import adams.gui.visualization.watermark.Watermark;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.event.OverlayChangeListener;
+import org.jfree.chart.panel.Overlay;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.general.Dataset;
 
 import javax.swing.JComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 
 /**
@@ -181,6 +186,11 @@ import java.awt.Shape;
  * &nbsp;&nbsp;&nbsp;default: #000000
  * </pre>
  *
+ * <pre>-watermark &lt;adams.gui.visualization.watermark.Watermark&gt; (property: watermark)
+ * &nbsp;&nbsp;&nbsp;The watermark to use for painting the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.gui.visualization.watermark.Default
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -211,6 +221,9 @@ public class JFreeChartPlot
 
   /** the color for the diagonal plot. */
   protected Color m_DiagonalColor;
+
+  /** the watermark to use. */
+  protected Watermark m_Watermark;
 
   /** the generated chart. */
   protected JFreeChart m_JFreeChart;
@@ -263,6 +276,10 @@ public class JFreeChartPlot
     m_OptionManager.add(
       "diagonal-color", "diagonalColor",
       Color.BLACK);
+
+    m_OptionManager.add(
+      "watermark", "watermark",
+      new adams.gui.visualization.watermark.Default());
   }
 
   /**
@@ -469,6 +486,35 @@ public class JFreeChartPlot
   }
 
   /**
+   * Sets the watermark to use.
+   *
+   * @param value 	the watermark
+   */
+  public void setWatermark(Watermark value) {
+    m_Watermark = value;
+    reset();
+  }
+
+  /**
+   * Returns the watermark to use.
+   *
+   * @return 		the watermark
+   */
+  public Watermark getWatermark() {
+    return m_Watermark;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String watermarkTipText() {
+    return "The watermark to use for painting the data.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -481,6 +527,7 @@ public class JFreeChartPlot
     result += QuickInfoHelper.toString(this, "dataset", m_Dataset, ", dataset: ");
     result += QuickInfoHelper.toString(this, "chart", m_Chart, ", chart: ");
     result += QuickInfoHelper.toString(this, "shape", m_Shape, ", shape: ");
+    result += QuickInfoHelper.toString(this, "watermark", m_Watermark, ", watermark: ");
 
     return result;
   }
@@ -527,7 +574,22 @@ public class JFreeChartPlot
       ChartUtils.applyColor(plot, m_PlotColor, m_DiagonalColor, m_ColorProvider);
       ChartUtils.applyShape(plot, shape);
     }
-    m_PlotPanel  = new ChartPanel(m_JFreeChart);
+    m_PlotPanel = new ChartPanel(m_JFreeChart);
+    // add watermark
+    if (!(m_Watermark instanceof Null)) {
+      m_PlotPanel.addOverlay(new Overlay() {
+	@Override
+	public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
+	  m_Watermark.applyWatermark(g2, chartPanel.getSize());
+	}
+	@Override
+	public void addChangeListener(OverlayChangeListener listener) {
+	}
+	@Override
+	public void removeChangeListener(OverlayChangeListener listener) {
+	}
+      });
+    }
     m_Panel.removeAll();
     m_Panel.add(m_PlotPanel, BorderLayout.CENTER);
   }
@@ -608,6 +670,21 @@ public class JFreeChartPlot
 	  ChartUtils.applyShape(plot, shape);
 	}
 	m_PlotPanel = new ChartPanel(m_JFreeChart);
+	// add watermark
+	if (!(m_Watermark instanceof Null)) {
+	  m_PlotPanel.addOverlay(new Overlay() {
+	    @Override
+	    public void paintOverlay(Graphics2D g2, ChartPanel chartPanel) {
+	      m_Watermark.applyWatermark(g2, chartPanel.getSize());
+	    }
+	    @Override
+	    public void addChangeListener(OverlayChangeListener listener) {
+	    }
+	    @Override
+	    public void removeChangeListener(OverlayChangeListener listener) {
+	    }
+	  });
+	}
 	removeAll();
 	add(m_PlotPanel, BorderLayout.CENTER);
       }
