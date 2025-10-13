@@ -82,8 +82,24 @@ public class TagTableModel
    * @param tag		the tag to add
    */
   public void add(Tag tag) {
-    m_Tags.add(tag);
-    fireTableRowsInserted(m_Tags.size() - 1, m_Tags.size() - 1);
+    int		index;
+    int		i;
+
+    index = -1;
+    for (i = 0; i < m_Tags.size(); i++) {
+      if (m_Tags.get(i).tagName().equals(tag.tagName())) {
+	index = i;
+	break;
+      }
+    }
+    if (index == -1) {
+      m_Tags.add(tag);
+      fireTableRowsInserted(m_Tags.size() - 1, m_Tags.size() - 1);
+    }
+    else {
+      m_Tags.set(index, tag);
+      fireTableRowsUpdated(index, index);
+    }
   }
 
   /**
