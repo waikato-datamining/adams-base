@@ -74,14 +74,15 @@ public class Default
     Properties	props;
 
     if (m_Default == null) {
-      props     = getProperties();
-      m_Default = new Null();
+      props = getProperties();
       try {
 	m_Default = props.getObject("Default", Watermark.class, new Null());
       }
       catch (Exception e) {
 	getLogger().log(Level.SEVERE, "Failed to load default watermark setup!", e);
       }
+      if (m_Default == null)
+	m_Default = new Null();
     }
 
     m_Default.applyWatermark(g, dimension);
