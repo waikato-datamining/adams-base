@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BufferHistoryPanel.java
- * Copyright (C) 2009-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -26,6 +26,7 @@ import adams.gui.chooser.TextFileChooser;
 import adams.gui.core.AbstractNamedHistoryPanel.FrameDisplaySupporter;
 
 import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +39,6 @@ import java.util.Hashtable;
  * containing experiments results.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BufferHistoryPanel
   extends AbstractNamedHistoryPanel<StringBuilder>
@@ -51,7 +51,6 @@ public class BufferHistoryPanel
    * A specialized frame class for displaying a StringBuilder in a BaseTextArea.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class BufferFrame
     extends AbstractHistoryEntryFrame<StringBuilder> {
@@ -105,7 +104,7 @@ public class BufferHistoryPanel
   protected Hashtable<String,BufferFrame> m_Frames;
 
   /** the text area to display the result in. */
-  protected BaseTextArea m_TextArea;
+  protected JTextArea m_TextArea;
 
   /** the file chooser for saving buffers. */
   protected transient TextFileChooser m_FileChooser;
@@ -146,7 +145,7 @@ public class BufferHistoryPanel
    *
    * @param value	the text area to use
    */
-  public void setTextArea(BaseTextArea value) {
+  public void setTextArea(JTextArea value) {
     m_TextArea = value;
   }
 
