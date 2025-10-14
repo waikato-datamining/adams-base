@@ -15,7 +15,7 @@
 
 /*
  * AbstractTable.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.db;
 
@@ -64,7 +64,7 @@ public abstract class AbstractTable
   public AbstractTable(AbstractDatabaseConnection dbcon, String tableName) {
     super(dbcon);
 
-    m_TableName = getProperties().getProperty("TablePrefix", "") + tableName;
+    m_TableName = getTablePrefix() + tableName;
     m_DatabaseConnection.addChangeListener(this);
     
     setDebug(
@@ -76,7 +76,16 @@ public abstract class AbstractTable
 
     m_AnsiQuotes = getProperties().getBoolean("AnsiQuotes", false);
   }
-  
+
+  /**
+   * Returns the table prefix.
+   *
+   * @return		the table prefix
+   */
+  protected String getTablePrefix() {
+    return getProperties().getProperty("TablePrefix", "");
+  }
+
   /**
    * Returns whether the specified table is enabled and should get created if non-existent.
    * 
