@@ -43,7 +43,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2012-2022} &
+		\parbox[c][2cm]{2cm}{\copyright 2012-2025} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -246,7 +246,9 @@ The following sinks are available:
 \end{tight_itemize}
 The following boolean conditions are available:
 \begin{tight_itemize}
-	\item \textit{HasColumn} -- checks whether the spreadsheet passing through
+	\item \textit{HasCell} -- whether the spreadsheet has the specified cell and, optionally, the specified value
+	\item \textit{HasColumn} -- whether the spreadsheet has the specified column
+	\item \textit{HasRows} -- whether the spreadsheet has the specified number of rows (min/max)
 	has a column with that name.
 \end{tight_itemize}
 The following conversion schemes are available:

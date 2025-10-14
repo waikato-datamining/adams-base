@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.HasCell-out0.txt
+true
+
+--> adams.flow.condition.bool.HasCell-out1.txt
+true
+
+--> adams.flow.condition.bool.HasCell-out2.txt
+false
+
+--> adams.flow.condition.bool.HasCell-out3.txt
+true
+
+--> adams.flow.condition.bool.HasCell-out4.txt
+false
+
