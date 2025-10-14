@@ -18,7 +18,7 @@
 #   Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
 #   reserved.
 
-#   Copyright (C) 2011-2024 University of Waikato, Hamilton, NZ
+#   Copyright (C) 2011-2025 University of Waikato, Hamilton, NZ
 
 BASEDIR=`dirname $0`/..
 BASEDIR=`(cd "$BASEDIR"; pwd)`
