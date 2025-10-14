@@ -410,7 +410,7 @@ public class GenericObjectEditor
 	  if (MouseUtils.isRightClick(e)) {
 	    e.consume();
 	    GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, GOEPanel.this);
-	    menu.show(GOEPanel.this, e.getX(), e.getY());
+	    menu.show(m_ComboBoxClassname, e.getX(), e.getY());
 	  }
 	  else {
 	    super.mouseClicked(e);
