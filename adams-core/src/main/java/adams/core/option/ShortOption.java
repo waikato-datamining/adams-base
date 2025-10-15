@@ -38,29 +38,9 @@ public class ShortOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected ShortOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option (no leading dash)
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected ShortOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected ShortOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
   }
 
   /**
@@ -75,32 +55,8 @@ public class ShortOption
    * 				use null to use unbounded
    * @param upper		the upper bound (incl; only for numeric values),
    * 				use null to use unbounded
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected ShortOption(OptionManager owner, String commandline, String property,
-      Object defValue, Short lower, Short upper, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, lower, upper, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param lower		the lower bound (incl; only for numeric values),
-   * 				use null to use unbounded
-   * @param upper		the upper bound (incl; only for numeric values),
-   * 				use null to use unbounded
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected ShortOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, Short lower, Short upper, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, lower, upper, minUserMode);
+  protected ShortOption(OptionManager owner, String commandline, String property, Object defValue, Short lower, Short upper) {
+    super(owner, commandline, property, defValue, lower, upper);
   }
 }

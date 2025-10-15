@@ -14,18 +14,20 @@
  */
 
 /*
- * ClassOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * EnumOption.java
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.EnumWithCustomDisplay;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.gui.goe.EnumEditor;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Option class for enums. Enums get automatically registered with the
@@ -50,29 +52,9 @@ public class EnumOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected EnumOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected EnumOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected EnumOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
 
     // register enums automatically with the GOE
     EnumEditor.registerEditor(this);
@@ -117,13 +99,13 @@ public class EnumOption
     Object			values;
 
     try {
-      method = cls.getMethod("values", new Class[0]);
-      values = method.invoke(null, new Object[0]);
+      method = cls.getMethod("values");
+      values = method.invoke(null);
       result = (EnumWithCustomDisplay) Array.get(values, 0);
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate enum class: " + cls.getName(), e);
     }
 
     return result;
@@ -185,19 +167,18 @@ public class EnumOption
   protected void addArgumentInfo(StringBuilder buffer) {
     String	text;
     Method	method;
-    Object[]	vals;
+    Object[] 	values;
 
-    text = "";
     try {
-      method = getBaseClass().getMethod("values", new Class[0]);
-      vals   = (Object[]) method.invoke(null, new Object[0]);
-      text   = Utils.arrayToString(vals).replaceAll(",", "|");
+      method = getBaseClass().getMethod("values");
+      values = (Object[]) method.invoke(null, new Object[0]);
+      text   = Utils.arrayToString(values).replaceAll(",", "|");
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Error retrieving enum values!", e);
       text = "Error retrieving enum values";
     }
-    buffer.append(" <" + text + ">");
+    buffer.append(" <").append(text).append(">");
   }
 
   /**

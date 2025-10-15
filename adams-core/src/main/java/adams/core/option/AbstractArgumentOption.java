@@ -62,22 +62,6 @@ public abstract class AbstractArgumentOption
   protected Boolean m_VariableReferencesObject;
 
   /**
-   * Initializes the option. Always outputs the default value.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option (no leading dash)
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected AbstractArgumentOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, true, minUserMode);
-  }
-
-  /**
    * Initializes the option.
    *
    * @param owner		the owner of this option
@@ -85,13 +69,10 @@ public abstract class AbstractArgumentOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected AbstractArgumentOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
+  protected AbstractArgumentOption(OptionManager owner, String commandline, String property, Object defValue) {
 
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+    super(owner, commandline, property, defValue);
 
     m_Variable                  = null;
     m_VariableModified          = false;
@@ -457,7 +438,7 @@ public abstract class AbstractArgumentOption
     Object		currValues;
     int			i;
 
-    result = new ArrayList<String>();
+    result = new ArrayList<>();
 
     if (isVariableAttached()) {
       result.add("-" + getCommandline());
@@ -486,7 +467,7 @@ public abstract class AbstractArgumentOption
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**

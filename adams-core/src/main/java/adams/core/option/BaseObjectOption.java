@@ -41,29 +41,9 @@ public class BaseObjectOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected BaseObjectOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected BaseObjectOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected BaseObjectOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
 
     // since we don't list the class for handling the value as superclass
     // or in the string, the default value needs to declare it explicitly!

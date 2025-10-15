@@ -498,46 +498,46 @@ public class OptionManager
 
     // boolean option
     if ((baseclass == Boolean.TYPE) || (baseclass == Boolean.class)) {
-      result = new BooleanOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+      result = new BooleanOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
 
     // string option
     if (baseclass == String.class) {
-      result = new StringOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+      result = new StringOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
 
     // numeric options
     if ((baseclass == Integer.TYPE) || (baseclass == Integer.class)) {
-      result = new IntegerOption(this, commandline, property, defValue, outputDefValue, (Integer) lower, (Integer) upper, minUserMode);
+      result = new IntegerOption(this, commandline, property, defValue, (Integer) lower, (Integer) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Double.TYPE) || (baseclass == Double.class)) {
-      result = new DoubleOption(this, commandline, property, defValue, outputDefValue, (Double) lower, (Double) upper, minUserMode);
+      result = new DoubleOption(this, commandline, property, defValue, (Double) lower, (Double) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Long.TYPE) || (baseclass == Long.class)) {
-      result = new LongOption(this, commandline, property, defValue, outputDefValue, (Long) lower, (Long) upper, minUserMode);
+      result = new LongOption(this, commandline, property, defValue, (Long) lower, (Long) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Float.TYPE) || (baseclass == Float.class)) {
-      result = new FloatOption(this, commandline, property, defValue, outputDefValue, (Float) lower, (Float) upper, minUserMode);
+      result = new FloatOption(this, commandline, property, defValue, (Float) lower, (Float) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Byte.TYPE) || (baseclass == Byte.class)) {
-      result = new ByteOption(this, commandline, property, defValue, outputDefValue, (Byte) lower, (Byte) upper, minUserMode);
+      result = new ByteOption(this, commandline, property, defValue, (Byte) lower, (Byte) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Short.TYPE) || (baseclass == Short.class)) {
-      result = new ShortOption(this, commandline, property, defValue, outputDefValue, (Short) lower, (Short) upper, minUserMode);
+      result = new ShortOption(this, commandline, property, defValue, (Short) lower, (Short) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }
@@ -550,7 +550,7 @@ public class OptionManager
 
       // base object
       if (ClassLocator.isSubclass(BaseObject.class, baseclass)) {
-	result = new BaseObjectOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+	result = new BaseObjectOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
@@ -558,20 +558,20 @@ public class OptionManager
       // enums
       if (   ClassLocator.hasInterface(EnumWithCustomDisplay.class, baseclass)
 	|| ClassLocator.isSubclass(Enum.class, baseclass)) {
-	result = new EnumOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+	result = new EnumOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
 
       // custom hook
       if ((OptionUtils.getValueOfHook(baseclass) != null) || (OptionUtils.getToStringHook(baseclass) != null)) {
-	result = new CustomHooksOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+	result = new CustomHooksOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
 	m_Options.add(index, result);
 	return result;
       }
 
       // class option (default)
-      result = new ClassOption(this, commandline, property, defValue, outputDefValue, minUserMode);
+      result = new ClassOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
       m_Options.add(index, result);
       return result;
     }

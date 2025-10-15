@@ -15,16 +15,18 @@
 
 /*
  * ClassOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
+import adams.core.logging.LoggingHelper;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  * Option class for OptionHandler options.
@@ -45,29 +47,9 @@ public class ClassOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected ClassOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, true, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected ClassOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected ClassOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
   }
 
   /**
@@ -188,10 +170,10 @@ public class ClassOption
 	  else {
 	    handler = AbstractCommandLineHandler.getHandler(element);
 	    nested  = (ArrayList) pair.get(1);
-	    options = new ArrayList<String>();
+	    options = new ArrayList<>();
 	    for (n = 0; n < nested.size(); n++)
 	      options.add((String) nested.get(n));
-	    handler.setOptions(element, options.toArray(new String[options.size()]));
+	    handler.setOptions(element, options.toArray(new String[0]));
 	  }
 	}
       }
@@ -204,14 +186,8 @@ public class ClassOption
     }
     catch (Exception e) {
       if (!m_Owner.isQuiet()) {
-	System.err.println(
-	    "Error setting nested values for "
-		+ getOptionHandler().getClass().getName() + "/"
-		+ getClass().getName() + "/"
-		+ "-" + getCommandline() + ": " + values);
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Error setting nested values for " + getOptionHandler().getClass().getName() + "/" + getClass().getName() + "/" + "-" + getCommandline() + ": " + values, e);
       }
-      return;
     }
   }
 
@@ -221,7 +197,7 @@ public class ClassOption
    * @param buffer	the buffer to add the information to
    */
   protected void addArgumentInfo(StringBuilder buffer) {
-    buffer.append(" <" + getBaseClass().getName() + " [options]>");
+    buffer.append(" <").append(getBaseClass().getName()).append(" [options]>");
   }
 
   /**
@@ -264,8 +240,7 @@ public class ClassOption
 	}
 	catch (Exception e) {
 	  if (!m_Owner.isQuiet()) {
-	    System.err.println("Error calling cleanUp()/" + getProperty() + ":");
-	    e.printStackTrace();
+	    LoggingHelper.global().log(Level.SEVERE, "Error calling cleanUp()/" + getProperty() + ":", e);
 	  }
 	}
       }

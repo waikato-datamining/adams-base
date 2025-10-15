@@ -15,7 +15,7 @@
 
 /*
  * StringOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -38,29 +38,9 @@ public class StringOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected StringOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, true, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option (no leading dash)
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected StringOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected StringOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
   }
 
   /**

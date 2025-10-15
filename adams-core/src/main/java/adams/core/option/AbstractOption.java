@@ -15,16 +15,18 @@
 
 /*
  * AbstractOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
 import adams.core.CleanUpHandler;
+import adams.core.logging.LoggingHelper;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * The ancestor of all option classes.
@@ -69,11 +71,8 @@ public abstract class AbstractOption
    * @param property 		the name of the bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param outputDefValue	whether to output the default value or not when listing the options
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected AbstractOption(OptionManager owner, String commandline, String property,
-			   Object defValue, boolean outputDefValue, UserMode minUserMode) {
+  protected AbstractOption(OptionManager owner, String commandline, String property, Object defValue) {
 
     super();
 
@@ -83,14 +82,14 @@ public abstract class AbstractOption
     m_Commandline  	 = commandline;
     m_Property     	 = property;
     m_DefaultValue 	 = defValue;
-    m_OutputDefaultValue = outputDefValue;
-    m_MinUserMode        = minUserMode;
+    m_OutputDefaultValue = true;
+    m_MinUserMode        = UserMode.BASIC;
     m_Debug              = OptionUtils.getDebug();
 
     // obtain default value if not provided
     if (m_DefaultValue == null) {
       try {
-	m_DefaultValue = getDescriptor().getReadMethod().invoke(getOptionHandler(), new Object[]{});
+	m_DefaultValue = getDescriptor().getReadMethod().invoke(getOptionHandler());
       }
       catch (Exception e) {
 	if (!m_Owner.isQuiet())
@@ -108,6 +107,38 @@ public abstract class AbstractOption
    */
   public boolean getDebug() {
     return m_Debug;
+  }
+
+  /**
+   * Sets whether the default is to be output or not in help strings etc.
+   *
+   * @param value	true if the default value is to be output
+   * @return		itself
+   */
+  public AbstractOption setOutputDefaultValue(boolean value) {
+    m_OutputDefaultValue = value;
+    return this;
+  }
+
+  /**
+   * Returns whether the default value is to be output or not in help
+   * strings, etc.
+   *
+   * @return		true if the default value is to be output
+   */
+  public boolean getOutputDefaultValue() {
+    return m_OutputDefaultValue;
+  }
+
+  /**
+   * Sets the minimum user mode.
+   *
+   * @param value	the minimum user mode
+   * @return		itself
+   */
+  public AbstractOption setMinUserMode(UserMode value) {
+    m_MinUserMode = value;
+    return this;
   }
 
   /**
@@ -176,14 +207,13 @@ public abstract class AbstractOption
     try {
       method = getReadMethod();
       if (method != null)
-	result = method.invoke(getOptionHandler(), new Object[0]);
+	result = method.invoke(getOptionHandler());
       else
 	result = m_DefaultValue;
     }
     catch (Exception e) {
       if (!m_Owner.isQuiet()) {
-	System.err.println("Error getting current value of '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Error getting current value of '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':", e);
       }
       result = m_DefaultValue;
     }
@@ -203,28 +233,17 @@ public abstract class AbstractOption
 
     method = getWriteMethod();
     try {
-      method.invoke(getOptionHandler(), new Object[]{value});
+      method.invoke(getOptionHandler(), value);
       result = true;
     }
     catch (Exception e) {
       if (!m_Owner.isQuiet()) {
-	System.err.println("Error setting value for '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':");
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Error setting value for '" + getOptionHandler().getClass().getName() + "/" +  getProperty() + "':", e);
       }
       result = false;
     }
 
     return result;
-  }
-
-  /**
-   * Returns whether the default value is to be output or not in help
-   * strings, etc.
-   *
-   * @return		true if the default value is to be output
-   */
-  public boolean getOutputDefaultValue() {
-    return m_OutputDefaultValue;
   }
 
   /**
@@ -247,16 +266,13 @@ public abstract class AbstractOption
     Method	result;
 
     try {
-      result = getOptionHandler().getClass().getMethod(
-	getProperty() + TOOLTIP_SUFFIX, new Class[]{});
+      result = getOptionHandler().getClass().getMethod(getProperty() + TOOLTIP_SUFFIX);
     }
     catch (Exception e) {
       // ignored, means that there's no tooltip available
       result = null;
       if (!m_Owner.isQuiet())
-	System.err.println(
-	  "Missing tooltip: " + getOptionHandler().getClass().getName()
-	    + "." + getProperty() + TOOLTIP_SUFFIX);
+	System.err.println("Missing tooltip: " + getOptionHandler().getClass().getName() + "." + getProperty() + TOOLTIP_SUFFIX);
     }
 
     return result;

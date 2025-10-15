@@ -48,46 +48,8 @@ public abstract class AbstractNumericOption<T extends Number>
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
    */
-  protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, true, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option (no leading dash)
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   */
-  protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, outputDefValue, null, null, minUserMode);
-  }
-
-  /**
-   * Initializes the option. Will always output the default value.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param lower		the lower bound (incl; only for numeric values),
-   * 				use null to use unbounded
-   * @param upper		the upper bound (incl; only for numeric values),
-   * 				use null to use unbounded
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, T lower, T upper, UserMode minUserMode) {
-
-    this(owner, commandline, property, defValue, true, lower, upper, minUserMode);
+  protected AbstractNumericOption(OptionManager owner, String commandline, String property, Object defValue) {
+    this(owner, commandline, property, defValue, null, null);
   }
 
   /**
@@ -98,17 +60,15 @@ public abstract class AbstractNumericOption<T extends Number>
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
    * @param lower		the lower bound (incl; only for numeric values),
    * 				use null to use unbounded
    * @param upper		the upper bound (incl; only for numeric values),
    * 				use null to use unbounded
-   * @param minUserMode 	the minimum user mode before showing this option
    */
   protected AbstractNumericOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, T lower, T upper, UserMode minUserMode) {
+      Object defValue, T lower, T upper) {
 
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+    super(owner, commandline, property, defValue);
 
     m_LowerBound = lower;
     m_UpperBound = upper;

@@ -15,13 +15,15 @@
 
 /*
  * ClassOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
  * Option class for options with custom hooks for valueOf and toString.
@@ -42,29 +44,9 @@ public class CustomHooksOption
    * @param property 		the name of bean property
    * @param defValue		the default value, if null then the owner's
    * 				current state is used
-   * @param minUserMode 	the minimum user mode before showing this option
    */
-  protected CustomHooksOption(OptionManager owner, String commandline, String property,
-      Object defValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, minUserMode);
-  }
-
-  /**
-   * Initializes the option.
-   *
-   * @param owner		the owner of this option
-   * @param commandline		the commandline string to identify the option
-   * @param property 		the name of bean property
-   * @param defValue		the default value, if null then the owner's
-   * 				current state is used
-   * @param outputDefValue	whether to output the default value or not
-   * @param minUserMode 	the minimum user mode before showing this option
-   */
-  protected CustomHooksOption(OptionManager owner, String commandline, String property,
-      Object defValue, boolean outputDefValue, UserMode minUserMode) {
-
-    super(owner, commandline, property, defValue, outputDefValue, minUserMode);
+  protected CustomHooksOption(OptionManager owner, String commandline, String property, Object defValue) {
+    super(owner, commandline, property, defValue);
   }
 
   /**
@@ -106,7 +88,7 @@ public class CustomHooksOption
     if (method == null)
       throw new IllegalStateException("No 'valueOf' method defined for base class '" + Utils.getArrayClass(getBaseClass()).getName() + "'?");
     else
-      result = method.invoke(getOptionHandler(), new Object[]{this, s});
+      result = method.invoke(getOptionHandler(), this, s);
 
     return result;
   }
@@ -141,8 +123,7 @@ public class CustomHooksOption
       }
       catch (Exception e) {
 	if (!m_Owner.isQuiet()) {
-	  System.err.println("Error obtaining string representation for '" + getProperty() + "' (" + Utils.getArrayClass(obj.getClass()).getName() + "):");
-	  e.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Error obtaining string representation for '" + getProperty() + "' (" + Utils.getArrayClass(obj.getClass()).getName() + "):", e);
 	}
       }
     }
