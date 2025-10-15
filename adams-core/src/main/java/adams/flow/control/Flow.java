@@ -308,27 +308,27 @@ public class Flow
 
     m_OptionManager.add(
       "log-errors", "logErrors",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "execute-on-error", "executeOnError",
-      new adams.flow.control.postflowexecution.Null(), UserMode.EXPERT);
+      new adams.flow.control.postflowexecution.Null()).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "execute-on-finish", "executeOnFinish",
-      new adams.flow.control.postflowexecution.Null(), UserMode.EXPERT);
+      new adams.flow.control.postflowexecution.Null()).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-execution-listening-enabled", "flowExecutionListeningEnabled",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-execution-listener", "flowExecutionListener",
-      new NullListener(), UserMode.EXPERT);
+      new NullListener()).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "flow-restart-manager", "flowRestartManager",
-      new NullManager(), UserMode.EXPERT);
+      new NullManager()).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

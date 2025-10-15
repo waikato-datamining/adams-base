@@ -239,7 +239,7 @@ public class TryCatch
 
     m_OptionManager.add(
       "error-post-processors", "errorPostProcessor",
-      new adams.flow.control.errorpostprocessor.Null(), UserMode.EXPERT);
+      new adams.flow.control.errorpostprocessor.Null()).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

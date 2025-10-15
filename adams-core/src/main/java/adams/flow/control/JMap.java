@@ -159,7 +159,7 @@ public class JMap
 
     m_OptionManager.add(
       "executable", "executable",
-      new PlaceholderFile(getJMapExecutablePath()), false);
+      new PlaceholderFile(getJMapExecutablePath())).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "additional", "additionalOptions",

@@ -306,11 +306,11 @@ public class SSHConnection
 
     m_OptionManager.add(
       "user", "user",
-      User.getName(), false);
+      User.getName()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      new BasePassword(""), false);
+      new BasePassword("")).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "private-key-file", "privateKeyFile",
@@ -323,7 +323,7 @@ public class SSHConnection
 
     m_OptionManager.add(
       "private-key-passphrase", "privateKeyPassphrase",
-      new BasePassword(""), false);
+      new BasePassword("")).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "known-hosts", "knownHosts",

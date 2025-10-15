@@ -119,7 +119,7 @@ public abstract class AbstractTextualDisplay
 
     m_OptionManager.add(
       "show-flow-control-submenu", "showFlowControlSubMenu",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

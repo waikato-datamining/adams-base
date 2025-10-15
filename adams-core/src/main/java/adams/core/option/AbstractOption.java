@@ -110,6 +110,15 @@ public abstract class AbstractOption
   }
 
   /**
+   * Suppresses the output of the default value in help strings etc.
+   *
+   * @return		itself
+   */
+  public AbstractOption dontOutputDefaultValue() {
+    return setOutputDefaultValue(false);
+  }
+
+  /**
    * Sets whether the default is to be output or not in help strings etc.
    *
    * @param value	true if the default value is to be output

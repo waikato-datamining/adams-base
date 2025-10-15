@@ -110,7 +110,7 @@ public abstract class AbstractDisplay
 
     m_OptionManager.add(
       "display-type", "displayType",
-      getDefaultDisplayType(), UserMode.EXPERT);
+      getDefaultDisplayType()).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "width", "width",

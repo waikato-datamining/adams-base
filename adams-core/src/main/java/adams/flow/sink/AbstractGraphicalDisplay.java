@@ -108,7 +108,7 @@ public abstract class AbstractGraphicalDisplay
 
     m_OptionManager.add(
       "show-flow-control-submenu", "showFlowControlSubMenu",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

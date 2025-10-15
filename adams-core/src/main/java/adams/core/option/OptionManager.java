@@ -224,22 +224,7 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue) {
-    return insert(-1, commandline, property, defValue, true, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * This call will always output the default value.
-   * Adds the option at the end.
-   *
-   * @param commandline	the commandline string (without the leading dash "-")
-   * @param property	the Java Beans property name
-   * @param defValue	the default value
-   * @param minUserMode the minimum user mode before showing this option
-   * @return		the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, UserMode minUserMode) {
-    return insert(-1, commandline, property, defValue, true, minUserMode);
+    return insert(-1, commandline, property, defValue, null, null);
   }
 
   /**
@@ -253,80 +238,7 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue) {
-    return insert(index, commandline, property, defValue, true, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * This call will always output the default value.
-   *
-   * @param index	the position for the option, use -1 to add at the end
-   * @param commandline	the commandline string (without the leading dash "-")
-   * @param property	the Java Beans property name
-   * @param defValue	the default value
-   * @param minUserMode the minimum user mode before showing this option
-   * @return		the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, UserMode minUserMode) {
-    return insert(index, commandline, property, defValue, true, minUserMode);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * Adds the option at the end.
-   *
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @return			the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue) {
-    return insert(-1, commandline, property, defValue, outputDefValue, null, null, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * Adds the option at the end.
-   *
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @param minUserMode 	the minimum user mode before showing this option
-   * @return			the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, UserMode minUserMode) {
-    return insert(-1, commandline, property, defValue, outputDefValue, null, null, minUserMode);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   *
-   * @param index		the position for the option, use -1 to add at the end
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @return			the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue) {
-    return insert(index, commandline, property, defValue, outputDefValue, null, null, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   *
-   * @param index		the position for the option, use -1 to add at the end
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @param minUserMode 	the minimum user mode before showing this option
-   * @return			the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, UserMode minUserMode) {
-    return insert(index, commandline, property, defValue, outputDefValue, null, null, minUserMode);
+    return insert(index, commandline, property, defValue, null, null);
   }
 
   /**
@@ -342,122 +254,21 @@ public class OptionManager
    * @return		the generated option object
    */
   public AbstractOption add(String commandline, String property, Object defValue, Number lower, Number upper) {
-    return insert(-1, commandline, property, defValue, true, lower, upper, UserMode.LOWEST);
+    return insert(-1, commandline, property, defValue, lower, upper);
   }
 
   /**
    * Determines the appropriate concrete option class, sets it up and returns it.
-   * This call will always output the default value.
-   * Adds the option at the end.
    *
-   * @param commandline	the commandline string (without the leading dash "-")
-   * @param property	the Java Beans property name
-   * @param defValue	the default value
-   * @param lower	the lower bound
-   * @param upper	the upper bound
-   * @param minUserMode the minimum user mode before showing this option
-   * @return		the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, Number lower, Number upper, UserMode minUserMode) {
-    return insert(-1, commandline, property, defValue, true, lower, upper, minUserMode);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * This call will always output the default value.
-   *
-   * @param index	the position for the option, use -1 to add at the end
-   * @param commandline	the commandline string (without the leading dash "-")
-   * @param property	the Java Beans property name
-   * @param defValue	the default value
-   * @param lower	the lower bound
-   * @param upper	the upper bound
-   * @return		the generated option object
+   * @param index		the position for the option, use -1 to add at the end
+   * @param commandline		the commandline string (without the leading dash "-")
+   * @param property		the Java Beans property name
+   * @param defValue		the default value
+   * @param lower		the lower bound
+   * @param upper		the upper bound
+   * @return			the generated option object
    */
   public AbstractOption insert(int index, String commandline, String property, Object defValue, Number lower, Number upper) {
-    return insert(index, commandline, property, defValue, true, lower, upper, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * This call will always output the default value.
-   *
-   * @param index	the position for the option, use -1 to add at the end
-   * @param commandline	the commandline string (without the leading dash "-")
-   * @param property	the Java Beans property name
-   * @param defValue	the default value
-   * @param lower	the lower bound
-   * @param upper	the upper bound
-   * @param minUserMode the minimum user mode before showing this option
-   * @return		the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, Number lower, Number upper, UserMode minUserMode) {
-    return insert(index, commandline, property, defValue, true, lower, upper, minUserMode);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * Adds the option at the end.
-   *
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param lower		the lower bound
-   * @param upper		the upper bound
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @return			the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper) {
-    return insert(-1, commandline, property, defValue, outputDefValue, lower, upper, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   * Adds the option at the end.
-   *
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param lower		the lower bound
-   * @param upper		the upper bound
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @param minUserMode 	the minimum user mode before showing this option
-   * @return			the generated option object
-   */
-  public AbstractOption add(String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper, UserMode minUserMode) {
-    return insert(-1, commandline, property, defValue, outputDefValue, lower, upper, minUserMode);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   *
-   * @param index		the position for the option, use -1 to add at the end
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param lower		the lower bound
-   * @param upper		the upper bound
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @return			the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper) {
-    return insert(index, commandline, property, defValue, outputDefValue, lower, upper, UserMode.LOWEST);
-  }
-
-  /**
-   * Determines the appropriate concrete option class, sets it up and returns it.
-   *
-   * @param index		the position for the option, use -1 to add at the end
-   * @param commandline		the commandline string (without the leading dash "-")
-   * @param property		the Java Beans property name
-   * @param defValue		the default value
-   * @param lower		the lower bound
-   * @param upper		the upper bound
-   * @param outputDefValue	if true then the default value will be listed in the Javadoc
-   * @param minUserMode 	the minimum user mode before showing this option
-   * @return			the generated option object
-   */
-  public AbstractOption insert(int index, String commandline, String property, Object defValue, boolean outputDefValue, Number lower, Number upper, UserMode minUserMode) {
     AbstractOption	result;
     PropertyDescriptor	descriptor;
     Class		baseclass;
@@ -498,46 +309,46 @@ public class OptionManager
 
     // boolean option
     if ((baseclass == Boolean.TYPE) || (baseclass == Boolean.class)) {
-      result = new BooleanOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new BooleanOption(this, commandline, property, defValue);
       m_Options.add(index, result);
       return result;
     }
 
     // string option
     if (baseclass == String.class) {
-      result = new StringOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new StringOption(this, commandline, property, defValue);
       m_Options.add(index, result);
       return result;
     }
 
     // numeric options
     if ((baseclass == Integer.TYPE) || (baseclass == Integer.class)) {
-      result = new IntegerOption(this, commandline, property, defValue, (Integer) lower, (Integer) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new IntegerOption(this, commandline, property, defValue, (Integer) lower, (Integer) upper);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Double.TYPE) || (baseclass == Double.class)) {
-      result = new DoubleOption(this, commandline, property, defValue, (Double) lower, (Double) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new DoubleOption(this, commandline, property, defValue, (Double) lower, (Double) upper);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Long.TYPE) || (baseclass == Long.class)) {
-      result = new LongOption(this, commandline, property, defValue, (Long) lower, (Long) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new LongOption(this, commandline, property, defValue, (Long) lower, (Long) upper);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Float.TYPE) || (baseclass == Float.class)) {
-      result = new FloatOption(this, commandline, property, defValue, (Float) lower, (Float) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new FloatOption(this, commandline, property, defValue, (Float) lower, (Float) upper);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Byte.TYPE) || (baseclass == Byte.class)) {
-      result = new ByteOption(this, commandline, property, defValue, (Byte) lower, (Byte) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new ByteOption(this, commandline, property, defValue, (Byte) lower, (Byte) upper);
       m_Options.add(index, result);
       return result;
     }
     if ((baseclass == Short.TYPE) || (baseclass == Short.class)) {
-      result = new ShortOption(this, commandline, property, defValue, (Short) lower, (Short) upper).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new ShortOption(this, commandline, property, defValue, (Short) lower, (Short) upper);
       m_Options.add(index, result);
       return result;
     }
@@ -550,7 +361,7 @@ public class OptionManager
 
       // base object
       if (ClassLocator.isSubclass(BaseObject.class, baseclass)) {
-	result = new BaseObjectOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+	result = new BaseObjectOption(this, commandline, property, defValue);
 	m_Options.add(index, result);
 	return result;
       }
@@ -558,20 +369,20 @@ public class OptionManager
       // enums
       if (   ClassLocator.hasInterface(EnumWithCustomDisplay.class, baseclass)
 	|| ClassLocator.isSubclass(Enum.class, baseclass)) {
-	result = new EnumOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+	result = new EnumOption(this, commandline, property, defValue);
 	m_Options.add(index, result);
 	return result;
       }
 
       // custom hook
       if ((OptionUtils.getValueOfHook(baseclass) != null) || (OptionUtils.getToStringHook(baseclass) != null)) {
-	result = new CustomHooksOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+	result = new CustomHooksOption(this, commandline, property, defValue);
 	m_Options.add(index, result);
 	return result;
       }
 
       // class option (default)
-      result = new ClassOption(this, commandline, property, defValue).setOutputDefaultValue(outputDefValue).setMinUserMode(minUserMode);
+      result = new ClassOption(this, commandline, property, defValue);
       m_Options.add(index, result);
       return result;
     }

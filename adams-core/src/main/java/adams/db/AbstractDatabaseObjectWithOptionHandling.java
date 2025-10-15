@@ -61,18 +61,15 @@ public abstract class AbstractDatabaseObjectWithOptionHandling
 
     m_OptionManager.add(
 	    "url", "URL",
-	    DatabaseConnection.getSingleton().getDefaultURL(),
-	    false);
+	    DatabaseConnection.getSingleton().getDefaultURL()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	    "user", "user",
-	    DatabaseConnection.getSingleton().getDefaultUser(),
-	    false);
+	    DatabaseConnection.getSingleton().getDefaultUser()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	    "password", "password",
-	    DatabaseConnection.getSingleton().getDefaultPassword(),
-	    false);
+	    DatabaseConnection.getSingleton().getDefaultPassword()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	    "no-connect", "noDatabaseConnect",

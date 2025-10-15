@@ -230,11 +230,11 @@ public class SMTPConnection
 
     m_OptionManager.add(
       "user", "user",
-      EmailHelper.getSmtpUser(), false);
+      EmailHelper.getSmtpUser()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      EmailHelper.getSmtpPassword(), false);
+      EmailHelper.getSmtpPassword()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",

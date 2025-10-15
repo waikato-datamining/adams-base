@@ -80,7 +80,7 @@ public class Email
 
     m_OptionManager.add(
       "sender", "sender",
-      new EmailAddress(EmailHelper.getDefaultFromAddress()), false);
+      new EmailAddress(EmailHelper.getDefaultFromAddress())).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "recipient", "recipients",

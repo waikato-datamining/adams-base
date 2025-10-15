@@ -315,11 +315,11 @@ public abstract class AbstractActor
 
     m_OptionManager.add(
 	"stop-flow-on-error", "stopFlowOnError",
-	false, UserMode.EXPERT);
+	false).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
 	"silent", "silent",
-	false, UserMode.EXPERT);
+	false).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

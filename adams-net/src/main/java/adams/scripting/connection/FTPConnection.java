@@ -95,11 +95,11 @@ public class FTPConnection
 
     m_OptionManager.add(
       "user", "user",
-      "anonymous", false);
+      "anonymous").dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      new BasePassword(""), false);
+      new BasePassword("")).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "passive", "usePassiveMode",

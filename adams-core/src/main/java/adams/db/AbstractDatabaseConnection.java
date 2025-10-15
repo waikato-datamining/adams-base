@@ -242,15 +242,15 @@ public abstract class AbstractDatabaseConnection
 
     m_OptionManager.add(
 	"url", "URL",
-	getDefaultURL(), false);
+	getDefaultURL()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	"user", "user",
-	getDefaultUser(), false);
+	getDefaultUser()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	"password", "password",
-	getDefaultPassword(), false);
+	getDefaultPassword()).dontOutputDefaultValue();
 
     m_OptionManager.add(
 	"max-attempts", "maxConnectAttempts",

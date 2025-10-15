@@ -104,11 +104,11 @@ public class SmbRemoteDirectorySetup
 
     m_OptionManager.add(
       "user", "user",
-      User.getName(), false);
+      User.getName()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      new BasePassword(""), false);
+      new BasePassword("")).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "remote-dir", "remoteDir",

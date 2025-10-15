@@ -341,11 +341,11 @@ public class SelectFile
 
     m_OptionManager.add(
       "parent-component-actor", "parentComponentActor",
-      new CallableActorReference(CallableActorReference.UNKNOWN), UserMode.EXPERT);
+      new CallableActorReference(CallableActorReference.UNKNOWN)).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "use-outer-window", "useOuterWindow",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

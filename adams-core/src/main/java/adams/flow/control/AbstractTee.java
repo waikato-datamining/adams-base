@@ -139,7 +139,7 @@ public abstract class AbstractTee
 
     m_OptionManager.add(
       "asynchronous", "asynchronous",
-      false, UserMode.EXPERT);
+      false).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "tee", "actors",

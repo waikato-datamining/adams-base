@@ -88,15 +88,15 @@ public abstract class AbstractDatabaseConnection
 
     m_OptionManager.add(
       "url", "URL",
-      new JdbcUrl(JdbcUrl.DEFAULT_URL), false);
+      new JdbcUrl(JdbcUrl.DEFAULT_URL)).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "user", "user",
-      "", false);
+      "").dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      new BasePassword(), false);
+      new BasePassword()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",

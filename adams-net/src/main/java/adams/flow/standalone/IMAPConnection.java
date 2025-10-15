@@ -240,11 +240,11 @@ public class IMAPConnection
 
     m_OptionManager.add(
       "user", "user",
-      "", false);
+      "").dontOutputDefaultValue();
 
     m_OptionManager.add(
       "password", "password",
-      new BasePassword(), false);
+      new BasePassword()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",

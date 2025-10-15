@@ -1050,7 +1050,7 @@ public class CsvSpreadSheetReader
 
     m_OptionManager.add(
       "time-zone", "timeZone",
-      TimeZone.getDefault(), false);
+      TimeZone.getDefault()).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "locale", "locale",

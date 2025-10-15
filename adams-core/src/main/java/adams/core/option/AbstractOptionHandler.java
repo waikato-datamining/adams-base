@@ -89,7 +89,7 @@ public abstract class AbstractOptionHandler
 
     m_OptionManager.add(
 	"logging-level", "loggingLevel",
-	getDefaultLoggingLevel(), UserMode.EXPERT);
+	getDefaultLoggingLevel()).setMinUserMode(UserMode.EXPERT);
   }
 
   /**

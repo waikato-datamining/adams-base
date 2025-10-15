@@ -69,7 +69,7 @@ public abstract class AbstractExternalActor
 
     m_OptionManager.add(
       "monitor", "monitor",
-      new NoChange(), UserMode.EXPERT);
+      new NoChange()).setMinUserMode(UserMode.EXPERT);
 
     m_OptionManager.add(
       "on-the-fly", "onTheFly",

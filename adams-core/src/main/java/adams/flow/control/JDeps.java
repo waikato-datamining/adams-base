@@ -146,7 +146,7 @@ public class JDeps
 
     m_OptionManager.add(
       "executable", "executable",
-      new PlaceholderFile(getJDepsExecutablePath()), false);
+      new PlaceholderFile(getJDepsExecutablePath())).dontOutputDefaultValue();
 
     m_OptionManager.add(
       "classpath-dir", "classpathDirs",
