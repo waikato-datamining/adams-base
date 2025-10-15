@@ -83,7 +83,7 @@ public abstract class AbstractOption
     m_Property     	 = property;
     m_DefaultValue 	 = defValue;
     m_OutputDefaultValue = true;
-    m_MinUserMode        = UserMode.BASIC;
+    m_MinUserMode        = UserMode.LOWEST;
     m_Debug              = OptionUtils.getDebug();
 
     // obtain default value if not provided
