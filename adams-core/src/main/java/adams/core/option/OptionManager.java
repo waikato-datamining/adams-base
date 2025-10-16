@@ -489,27 +489,6 @@ public class OptionManager
   }
 
   /**
-   * Tries to locate the option for the given commandline string
-   * (without the leading dash) and then set the constraints.
-   *
-   * @param flag	the commandline to look for (no leading dash)
-   * @param constraint 	the constraint to set, null to remove any constraint
-   * @return		true if successfully updated
-   */
-  public boolean setConstraintForFlag(String flag, AbstractOptionConstraint constraint) {
-    AbstractOption	opt;
-
-    opt = findByFlag(flag);
-
-    if (opt != null) {
-      opt.setConstraint(constraint);
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
    * Tries to locate the option for the given property name and then set the constraint.
    *
    * @param property	the property name to look for
@@ -527,6 +506,54 @@ public class OptionManager
     }
 
     return false;
+  }
+
+  /**
+   * Tries to locate the option for the given property name and then checks for any constraint.
+   *
+   * @param property	the property name to look for
+   * @return		true if property located and constraint available
+   */
+  public boolean hasConstraintForProperty(String property) {
+    AbstractOption	opt;
+
+    opt = findByProperty(property);
+    return (opt != null) && (opt.getConstraint() != null);
+  }
+
+  /**
+   * Tries to locate the option for the given property name and then return any constraint.
+   *
+   * @param property	the property name to look for
+   * @return		the constraint, null if none set or property not found
+   */
+  public AbstractOptionConstraint getConstraintForProperty(String property) {
+    AbstractOption	opt;
+
+    opt = findByProperty(property);
+
+    if (opt != null)
+      return opt.getConstraint();
+
+    return null;
+  }
+
+  /**
+   * Tries to locate the option for the given property name and then return any constraint.
+   *
+   * @param property	the property name to look for
+   * @param type	the constraint type to cast to
+   * @return		the constraint, null if none set or property not found
+   */
+  public <T extends AbstractOptionConstraint> T getConstraintForProperty(String property, Class<T> type) {
+    AbstractOption	opt;
+
+    opt = findByProperty(property);
+
+    if (opt != null)
+      return (T) opt.getConstraint();
+
+    return null;
   }
 
   /**
