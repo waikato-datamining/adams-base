@@ -15,7 +15,7 @@
 
 /*
  * ByteEditor.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -92,14 +92,14 @@ public class ByteEditor
    * @param model	the model to update
    */
   protected void updateBounds(SpinnerNumberModel model) {
-    if (m_LowerBound == null)
+    if ((getConstraint() != null) && getConstraint().hasLowerBound())
+      model.setMinimum(getConstraint().getLowerBound().byteValue());
+    else
       model.setMinimum(Byte.MIN_VALUE);
-    else
-      model.setMinimum(m_LowerBound.byteValue());
 
-    if (m_UpperBound == null)
-      model.setMaximum(Byte.MAX_VALUE);
+    if ((getConstraint() != null) && getConstraint().hasUpperBound())
+      model.setMaximum(getConstraint().getUpperBound().byteValue());
     else
-      model.setMaximum(m_UpperBound.byteValue());
+      model.setMaximum(Byte.MAX_VALUE);
   }
 }

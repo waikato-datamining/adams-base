@@ -13,29 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractFloatingPointNumberEditor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import adams.gui.core.NumberTextField;
+import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
 
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-
-import adams.gui.core.NumberTextField;
-import adams.gui.core.NumberTextField.BoundedNumberCheckModel;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 /**
  * An abstract ancestor for custom editors for floating point numbers, like
  * floats and doubles.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFloatingPointNumberEditor
   extends AbstractNumberEditor {
@@ -53,12 +51,14 @@ public abstract class AbstractFloatingPointNumberEditor
    *
    * @return		the check model
    * @see		#getType()
-   * @see		#getLowerBound()
-   * @see		#getUpperBound()
+   * @see		#getConstraint()
    * @see		#getDefaultValue()
    */
   protected BoundedNumberCheckModel createCheckModel() {
-    return new BoundedNumberCheckModel(getType(), getLowerBound(), getUpperBound(), getDefaultValue());
+    if (getConstraint() != null)
+      return new BoundedNumberCheckModel(getType(), getConstraint().getLowerBound(), getConstraint().getUpperBound(), getDefaultValue());
+    else
+      return new BoundedNumberCheckModel(getType(), null, null, getDefaultValue());
   }
 
   /**

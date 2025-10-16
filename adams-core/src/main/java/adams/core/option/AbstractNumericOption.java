@@ -15,11 +15,11 @@
 
 /*
  * AbstractNumericOption.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
-import adams.core.logging.LoggingObject;
+import adams.core.option.constraint.NumericBounds;
 
 /**
  * Handles options with numeric arguments.
@@ -32,12 +32,6 @@ public abstract class AbstractNumericOption<T extends Number>
 
   /** for serialization. */
   private static final long serialVersionUID = 5499914416554286605L;
-
-  /** the lower bound for numeric values. */
-  protected T m_LowerBound;
-
-  /** the upper bound for numeric values. */
-  protected T m_UpperBound;
 
   /**
    * Initializes the option. Will always output the default value.
@@ -70,8 +64,7 @@ public abstract class AbstractNumericOption<T extends Number>
 
     super(owner, commandline, property, defValue);
 
-    m_LowerBound = lower;
-    m_UpperBound = upper;
+    m_Constraint = new NumericBounds<>(this, lower, upper);
   }
 
   /**
@@ -80,7 +73,7 @@ public abstract class AbstractNumericOption<T extends Number>
    * @return		true if lower bound exists
    */
   public boolean hasLowerBound() {
-    return (m_LowerBound != null);
+    return ((NumericBounds<T>) m_Constraint).hasLowerBound();
   }
 
   /**
@@ -89,7 +82,7 @@ public abstract class AbstractNumericOption<T extends Number>
    * @return		the lower bound, can be null if none defined
    */
   public T getLowerBound() {
-    return m_LowerBound;
+    return ((NumericBounds<T>) m_Constraint).getLowerBound();
   }
 
   /**
@@ -98,7 +91,7 @@ public abstract class AbstractNumericOption<T extends Number>
    * @return		true if lower bound exists
    */
   public boolean hasUpperBound() {
-    return (m_UpperBound != null);
+    return ((NumericBounds<T>) m_Constraint).hasUpperBound();
   }
 
   /**
@@ -107,7 +100,7 @@ public abstract class AbstractNumericOption<T extends Number>
    * @return		the lower bound, can be null if none defined
    */
   public T getUpperBound() {
-    return m_UpperBound;
+    return ((NumericBounds<T>) m_Constraint).getUpperBound();
   }
 
   /**
@@ -128,83 +121,18 @@ public abstract class AbstractNumericOption<T extends Number>
   }
 
   /**
-   * Checks whether the number is within the specified bounds (if any).
-   *
-   * @param number	the number to check
-   * @return		the default value for this option, if the bounds
-   * 			were defined and the value was outside
-   */
-  protected T checkBounds(T number) {
-    T		result;
-    boolean	invalid;
-
-    result  = number;
-    invalid = false;
-
-    if (hasLowerBound() && (number.doubleValue() < getLowerBound().doubleValue()))
-      invalid = true;
-
-    if (hasUpperBound() && (number.doubleValue() > getUpperBound().doubleValue()))
-      invalid = true;
-
-    if (invalid)
-      result = (T) getDefaultValue();
-
-    return result;
-  }
-
-  /**
-   * Checks whether the number is within the specified bounds (if any).
-   * If not, uses the owner's logger to output a warning message.
-   *
-   * @param number	the number to check
-   * @return		the default value for this option, if the bounds
-   * 			were defined and the value was outside
-   */
-  public boolean isValid(T number) {
-    boolean	result;
-    String	msg;
-    String	expr;
-
-    result = true;
-
-    if (hasLowerBound() && (number.doubleValue() < getLowerBound().doubleValue()))
-      result = false;
-
-    if (hasUpperBound() && (number.doubleValue() > getUpperBound().doubleValue()))
-      result = false;
-
-    if (!result) {
-      if (hasLowerBound() && hasUpperBound())
-	expr = getLowerBound() + " <= x <= " + getUpperBound();
-      else if (hasLowerBound())
-	expr = getLowerBound() + " <= x";
-      else
-	expr = getUpperBound() + " >= x";
-      msg = getProperty() + "/-" + getCommandline() + " must satisfy " + expr + ", provided: " + number;
-      if (getOptionHandler() instanceof LoggingObject)
-        ((LoggingObject) getOptionHandler()).getLogger().warning(msg);
-      else
-	System.err.println(msg);
-    }
-
-    return result;
-  }
-
-  /**
    * Turns the string into the appropriate number.
    *
    * @param s		the string to parse
    * @return		the generated number
    * @throws Exception	if parsing of string fails
-   * @see		#checkBounds(Number)
    */
   public T valueOf(String s) throws Exception {
     T		result;
 
     result = (T) OptionUtils.valueOf(m_BaseClass, s);
     if (result != null)
-      result = checkBounds(result);
+      result = ((NumericBounds<T>) m_Constraint).checkBounds(result);
     else
       throw new IllegalArgumentException("Unhandled numeric type: " + m_BaseClass);
 

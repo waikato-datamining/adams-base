@@ -13,20 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractNumberEditor.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
+
+import adams.core.option.constraint.NumericBounds;
 
 /**
  * An abstract ancestor for custom editors for numbers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractNumberEditor
-  extends AbstractBasicTypePropertyEditor {
+  extends AbstractBasicTypePropertyEditor
+  implements PropertyEditorWithConstraint<NumericBounds>, PropertyEditorWithDefaultValue {
 
   /** the current value. */
   protected Number m_CurrentValue;
@@ -34,11 +36,8 @@ public abstract class AbstractNumberEditor
   /** the default value. May get ignored by the concrete editor. */
   protected Number m_DefaultValue;
 
-  /** the lower bound. */
-  protected Number m_LowerBound;
-
-  /** the upper bound. */
-  protected Number m_UpperBound;
+  /** the constraint. */
+  protected NumericBounds m_Constraint;
 
   /**
    * Initializes the editor.
@@ -48,8 +47,7 @@ public abstract class AbstractNumberEditor
 
     m_CurrentValue = null;
     m_DefaultValue = null;
-    m_LowerBound   = null;
-    m_UpperBound   = null;
+    m_Constraint   = null;
   }
 
   /**
@@ -57,8 +55,9 @@ public abstract class AbstractNumberEditor
    *
    * @param value	the default value
    */
-  public void setDefaultValue(Number value) {
-    m_DefaultValue = value;
+  @Override
+  public void setDefaultValue(Object value) {
+    m_DefaultValue = (Number) value;
   }
 
   /**
@@ -66,46 +65,30 @@ public abstract class AbstractNumberEditor
    *
    * @return		the default value
    */
-  public Number getDefaultValue() {
+  @Override
+  public Object getDefaultValue() {
     return m_DefaultValue;
   }
 
   /**
-   * Sets the optional lower bound.
+   * The constraint to use.
    *
-   * @param value	the lower bound to use, use null to use no bound
+   * @param value	the constraint, null to remove
    */
-  public void setLowerBound(Number value) {
-    m_LowerBound = value;
+  @Override
+  public void setConstraint(NumericBounds value) {
+    m_Constraint = value;
     updateBounds();
   }
 
   /**
-   * Returns the optional lower bound.
+   * Return the constraint in use.
    *
-   * @return		the lower bound, can be null if none set
+   * @return		the constraint, null if none set
    */
-  public Number getLowerBound() {
-    return m_LowerBound;
-  }
-
-  /**
-   * Sets the optional upper bound.
-   *
-   * @param upper	the upper bound to use, use null to use no bound
-   */
-  public void setUpperBound(Number upper) {
-    m_UpperBound = upper;
-    updateBounds();
-  }
-
-  /**
-   * Returns the optional upper bound.
-   *
-   * @return		the upper bound, can be null if none set
-   */
-  public Number getUpperBound() {
-    return m_UpperBound;
+  @Override
+  public NumericBounds getConstraint() {
+    return m_Constraint;
   }
 
   /**

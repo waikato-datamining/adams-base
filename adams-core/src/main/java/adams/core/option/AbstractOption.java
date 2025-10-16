@@ -22,6 +22,7 @@ package adams.core.option;
 
 import adams.core.CleanUpHandler;
 import adams.core.logging.LoggingHelper;
+import adams.core.option.constraint.AbstractOptionConstraint;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
@@ -63,6 +64,9 @@ public abstract class AbstractOption
   /** in what usermode to show this option. */
   protected UserMode m_MinUserMode;
 
+  /** the constraint in use. */
+  protected AbstractOptionConstraint m_Constraint;
+
   /**
    * Initializes the option.
    *
@@ -73,7 +77,6 @@ public abstract class AbstractOption
    * 				current state is used
    */
   protected AbstractOption(OptionManager owner, String commandline, String property, Object defValue) {
-
     super();
 
     OptionUtils.registerCustomHooks();
@@ -85,6 +88,7 @@ public abstract class AbstractOption
     m_OutputDefaultValue = true;
     m_MinUserMode        = UserMode.LOWEST;
     m_Debug              = OptionUtils.getDebug();
+    m_Constraint         = null;
 
     // obtain default value if not provided
     if (m_DefaultValue == null) {
@@ -327,6 +331,57 @@ public abstract class AbstractOption
     }
 
     return result;
+  }
+
+  /**
+   * Checks whether a constraint is in place.
+   *
+   * @return		true if constraint present
+   */
+  public boolean hasConstraint() {
+    return (m_Constraint != null);
+  }
+
+  /**
+   * Removes any constraints.
+   *
+   * @return		itself
+   */
+  public AbstractOption noConstraint() {
+    setConstraint(null);
+    return this;
+  }
+
+  /**
+   * Sets the constraint to use.
+   *
+   * @param value	the constraint, null to remove
+   * @return		itself
+   */
+  public AbstractOption setConstraint(AbstractOptionConstraint value) {
+    m_Constraint = value;
+    if (m_Constraint != null)
+      m_Constraint.setOwner(this);
+    return this;
+  }
+
+  /**
+   * Returns the current constraint, if any.
+   *
+   * @return		the constraint, null if none set
+   */
+  public AbstractOptionConstraint getConstraint() {
+    return m_Constraint;
+  }
+
+  /**
+   * Checks the validity of the value.
+   *
+   * @param value	the value to check
+   * @return		true if valid
+   */
+  public boolean isValid(Object value) {
+    return (m_Constraint == null) || m_Constraint.isValid(value);
   }
 
   /**

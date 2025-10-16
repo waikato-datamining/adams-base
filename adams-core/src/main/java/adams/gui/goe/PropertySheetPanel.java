@@ -26,7 +26,6 @@ import adams.core.discovery.IntrospectionHelper;
 import adams.core.discovery.IntrospectionHelper.IntrospectionContainer;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractArgumentOption;
-import adams.core.option.AbstractNumericOption;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.core.option.UserMode;
@@ -581,11 +580,10 @@ public class PropertySheetPanel
 	label.setToolTipText("Command-line option: -" + m_Options.get(i).getCommandline());
 	if (m_Options.get(i) instanceof AbstractArgumentOption) {
 	  VariableSupport.updateLabel(label, ((AbstractArgumentOption) m_Options.get(i)).getVariableName());
-	  if (m_Editors[i] instanceof AbstractNumberEditor) {
-	    ((AbstractNumberEditor) m_Editors[i]).setDefaultValue((Number) m_Options.get(i).getDefaultValue());
-	    ((AbstractNumberEditor) m_Editors[i]).setLowerBound(((AbstractNumericOption) m_Options.get(i)).getLowerBound());
-	    ((AbstractNumberEditor) m_Editors[i]).setUpperBound(((AbstractNumericOption) m_Options.get(i)).getUpperBound());
-	  }
+	  if (m_Editors[i] instanceof PropertyEditorWithConstraint)
+	    ((PropertyEditorWithConstraint) m_Editors[i]).setConstraint(m_Options.get(i).getConstraint());
+	  if (m_Editors[i] instanceof PropertyEditorWithDefaultValue)
+	    ((PropertyEditorWithDefaultValue) m_Editors[i]).setDefaultValue(m_Options.get(i).getDefaultValue());
 	}
       }
       if (m_TipTexts[i] != null)

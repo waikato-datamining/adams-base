@@ -28,6 +28,7 @@ import adams.core.VariablesHandler;
 import adams.core.base.BaseObject;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import adams.core.option.constraint.AbstractOptionConstraint;
 import adams.env.Environment;
 import adams.env.OptionManagerDefinition;
 import adams.flow.core.Actor;
@@ -485,6 +486,47 @@ public class OptionManager
    */
   public AbstractOption findByProperty(String property) {
     return findOption(property, false);
+  }
+
+  /**
+   * Tries to locate the option for the given commandline string
+   * (without the leading dash) and then set the constraints.
+   *
+   * @param flag	the commandline to look for (no leading dash)
+   * @param constraint 	the constraint to set, null to remove any constraint
+   * @return		true if successfully updated
+   */
+  public boolean setConstraintForFlag(String flag, AbstractOptionConstraint constraint) {
+    AbstractOption	opt;
+
+    opt = findByFlag(flag);
+
+    if (opt != null) {
+      opt.setConstraint(constraint);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Tries to locate the option for the given property name and then set the constraint.
+   *
+   * @param property	the property name to look for
+   * @param constraint 	the constraint to set, null to remove any constraint
+   * @return		true if successfully updated
+   */
+  public boolean setConstraintForProperty(String property, AbstractOptionConstraint constraint) {
+    AbstractOption	opt;
+
+    opt = findByProperty(property);
+
+    if (opt != null) {
+      opt.setConstraint(constraint);
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -1142,24 +1184,21 @@ public class OptionManager
   }
 
   /**
-   * Checks whether the numeric value is valid (within the bounds, if any).
+   * Checks whether the value is valid, in case there is a constraint in place for the property.
    *
    * @param property	the property to check
-   * @param n		the number to check
+   * @param value	the value to check
    * @return		true if valid
    */
-  public boolean isValid(String property, Number n) {
+  public boolean isValid(String property, Object value) {
     boolean			result;
     AbstractOption 		opt;
-    AbstractNumericOption	numeric;
 
     result = true;
 
     opt = findByProperty(property);
-    if (opt instanceof  AbstractNumericOption) {
-      numeric = (AbstractNumericOption) opt;
-      result  = numeric.isValid(n);
-    }
+    if (opt != null)
+      result = opt.isValid(value);
 
     return result;
   }
