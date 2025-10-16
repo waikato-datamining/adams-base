@@ -15,7 +15,7 @@
 
 /*
  * BaseObjectEditor.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,6 +25,7 @@ import adams.core.HelpProvider;
 import adams.core.Utils;
 import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.parsing.BaseObjectParsing;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
@@ -48,6 +49,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * A PropertyEditor for BaseObject-derived objects.
@@ -101,7 +103,7 @@ public class BaseObjectEditor
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate from custom string representation: " + str, e);
     }
 
     return result;
@@ -167,7 +169,7 @@ public class BaseObjectEditor
       result.setValue(s);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to parse: " + s, e);
       result = null;
     }
 
