@@ -578,13 +578,12 @@ public class PropertySheetPanel
       });
       if (m_Options != null) {
 	label.setToolTipText("Command-line option: -" + m_Options.get(i).getCommandline());
-	if (m_Options.get(i) instanceof AbstractArgumentOption) {
+	if (m_Options.get(i) instanceof AbstractArgumentOption)
 	  VariableSupport.updateLabel(label, ((AbstractArgumentOption) m_Options.get(i)).getVariableName());
-	  if (m_Editors[i] instanceof PropertyEditorWithConstraint)
-	    ((PropertyEditorWithConstraint) m_Editors[i]).setConstraint(m_Options.get(i).getConstraint());
-	  if (m_Editors[i] instanceof PropertyEditorWithDefaultValue)
-	    ((PropertyEditorWithDefaultValue) m_Editors[i]).setDefaultValue(m_Options.get(i).getDefaultValue());
-	}
+	if (m_Editors[i] instanceof PropertyEditorWithConstraint)
+	  ((PropertyEditorWithConstraint) m_Editors[i]).setConstraint(m_Options.get(i).getConstraint());
+	if (m_Editors[i] instanceof PropertyEditorWithDefaultValue)
+	  ((PropertyEditorWithDefaultValue) m_Editors[i]).setDefaultValue(m_Options.get(i).getDefaultValue());
       }
       if (m_TipTexts[i] != null)
 	m_Views[i].setToolTipText(GUIHelper.processTipText(m_TipTexts[i], GUIHelper.getMaxTooltipWidth()));
