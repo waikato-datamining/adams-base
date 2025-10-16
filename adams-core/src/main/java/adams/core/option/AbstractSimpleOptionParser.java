@@ -15,7 +15,7 @@
 
 /*
  * AbstractSimpleOptionParser.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -32,8 +32,10 @@ import net.sourceforge.argparse4j.inf.Namespace;
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractSimpleOptionParser
-    extends LoggingObject
-    implements SimpleOptionParser {
+  extends LoggingObject
+  implements SimpleOptionParser {
+
+  private static final long serialVersionUID = 7095472634480910487L;
 
   /**
    * Configures and returns the commandline parser.
@@ -44,7 +46,7 @@ public abstract class AbstractSimpleOptionParser
   public ArgumentParser getParser() {
     ArgumentParser 	parser;
 
-    parser = ArgumentParsers.newArgumentParser(getClass().getName());
+    parser = ArgumentParsers.newFor(getClass().getName()).build();
     parser.description(globalInfo());
 
     return parser;
