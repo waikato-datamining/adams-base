@@ -20,6 +20,7 @@
 
 package adams.core.option.constraint;
 
+import adams.core.logging.LoggingSupporter;
 import adams.core.option.AbstractOption;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionManager;
@@ -86,6 +87,20 @@ public abstract class AbstractOptionConstraint<T>
   }
 
   /**
+   * Logs the message, either with the owner's logger or just System.err.
+   *
+   * @param msg		the message to log, ignored if null
+   */
+  public void logMsg(String msg) {
+    if (msg != null) {
+      if (getOptionHandler() instanceof LoggingSupporter)
+	((LoggingSupporter) getOptionHandler()).getLogger().warning(msg);
+      else
+	System.err.println(msg);
+    }
+  }
+
+  /**
    * Checks the value against the constraints.
    * If it violates the constraints, uses the owner's logger to output a warning message.
    *
@@ -93,7 +108,12 @@ public abstract class AbstractOptionConstraint<T>
    * @return		true if valid
    */
   public boolean isValid(T value) {
-    return (isValidMsg(value) == null);
+    String	msg;
+
+    msg = isValidMsg(value);
+    logMsg(msg);
+
+    return (msg == null);
   }
 
   /**
