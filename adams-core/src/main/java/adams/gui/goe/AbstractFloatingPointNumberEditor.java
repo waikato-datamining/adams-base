@@ -56,9 +56,9 @@ public abstract class AbstractFloatingPointNumberEditor
    */
   protected BoundedNumberCheckModel createCheckModel() {
     if (getConstraint() != null)
-      return new BoundedNumberCheckModel(getType(), getConstraint().getLowerBound(), getConstraint().getUpperBound(), getDefaultValue());
+      return new BoundedNumberCheckModel(getType(), getConstraint().getLowerBound(), getConstraint().getUpperBound(), (Number) getDefaultValue());
     else
-      return new BoundedNumberCheckModel(getType(), null, null, getDefaultValue());
+      return new BoundedNumberCheckModel(getType(), null, null, (Number) getDefaultValue());
   }
 
   /**
