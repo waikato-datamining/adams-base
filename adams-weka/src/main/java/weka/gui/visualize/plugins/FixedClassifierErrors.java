@@ -15,13 +15,13 @@
 
 /*
  * FixedClassifierErrors.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.visualize.plugins;
 
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.GUIHelper;
-import weka.core.FastVector;
 import weka.core.Instances;
 import weka.gui.visualize.Plot2D;
 import weka.gui.visualize.PlotData2D;
@@ -34,6 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  * Displays the classifier errors using Weka panels, but with a fixed size of
@@ -76,34 +78,34 @@ public class FixedClassifierErrors
 	VisualizePanel vp = new VisualizePanel();
 	vp.setName("Absolute classifier errors for " + predInstF.relationName());
 	PlotData2D tempd = new PlotData2D(predInstF);
-	FastVector plotSize = new FastVector();
-	FastVector plotShape = new FastVector();
+	ArrayList plotSize = new ArrayList();
+	ArrayList plotShape = new ArrayList();
 	for (int i = 0; i < predInstF.numInstances(); i++) {
 	  double actual = predInstF.instance(i).value(predInstF.classIndex());
 	  double predicted = predInstF.instance(i).value(predInstF.classIndex() - 1);
 	  if (predInstF.classAttribute().isNominal()) {
 	    if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
-	      plotShape.addElement(Plot2D.MISSING_SHAPE);
+	      plotShape.add(Plot2D.MISSING_SHAPE);
 	    }
 	    else if (actual != predicted) {
 	      // set to default error point shape
-	      plotShape.addElement(Plot2D.ERROR_SHAPE);
+	      plotShape.add(Plot2D.ERROR_SHAPE);
 	    }
 	    else {
 	      // otherwise set to constant (automatically assigned) point shape
-	      plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
+	      plotShape.add(Plot2D.CONST_AUTOMATIC_SHAPE);
 	    }
-	    plotSize.addElement(PLOT_SIZE);
+	    plotSize.add(PLOT_SIZE);
 	  }
 	  else {
 	    if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
 	      // missing shape if actual class not present or prediction is missing
-	      plotShape.addElement(Plot2D.MISSING_SHAPE);
+	      plotShape.add(Plot2D.MISSING_SHAPE);
 	    }
 	    else {
-	      plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
+	      plotShape.add(Plot2D.CONST_AUTOMATIC_SHAPE);
 	    }
-	    plotSize.addElement(PLOT_SIZE);
+	    plotSize.add(PLOT_SIZE);
 	  }
 	}
 	try {
@@ -116,7 +118,7 @@ public class FixedClassifierErrors
 	  vp.setColourIndex(predInstF.classIndex()+1);
 	}
 	catch (Exception ex) {
-	  ex.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to add plot!", e);
 	  return;
 	}
 	// pre-select class and predicted class

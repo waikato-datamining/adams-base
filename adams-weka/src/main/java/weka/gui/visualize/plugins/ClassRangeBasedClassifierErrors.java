@@ -15,13 +15,13 @@
 
 /*
  * ClassRangeBasedClassifierErrors.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.gui.visualize.plugins;
 
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.GUIHelper;
-import weka.core.FastVector;
 import weka.core.Instances;
 import weka.gui.visualize.Plot2D;
 import weka.gui.visualize.PlotData2D;
@@ -34,6 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  * Displays the classifier errors using Weka panels, but with a sizes adjusted
@@ -79,8 +81,8 @@ public class ClassRangeBasedClassifierErrors
 	VisualizePanel vp = new VisualizePanel();
 	vp.setName("Absolute classifier errors for " + predInst.relationName());
 	PlotData2D tempd = new PlotData2D(predInst);
-	FastVector plotSize = new FastVector();
-	FastVector plotShape = new FastVector();
+	ArrayList plotSize = new ArrayList();
+	ArrayList plotShape = new ArrayList();
 	// determine class range
 	double minClass = Double.MAX_VALUE;
 	double maxClass = Double.MIN_VALUE;
@@ -98,13 +100,13 @@ public class ClassRangeBasedClassifierErrors
 	  double predicted = predInst.instance(i).value(predInst.classIndex() - 1);
 	  if (weka.core.Utils.isMissingValue(actual) || weka.core.Utils.isMissingValue(predicted)) {
 	    // missing shape if actual class not present or prediction is missing
-	    plotShape.addElement(Plot2D.MISSING_SHAPE);
-	    plotSize.addElement(1);
+	    plotShape.add(Plot2D.MISSING_SHAPE);
+	    plotSize.add(1);
 	  }
 	  else {
 	    int size = (int) (Math.abs(actual - predicted) / refClass * REFERENCE_SIZE);
-	    plotShape.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
-	    plotSize.addElement(size);
+	    plotShape.add(Plot2D.CONST_AUTOMATIC_SHAPE);
+	    plotSize.add(size);
 	  }
 	}
 	try {
@@ -117,7 +119,7 @@ public class ClassRangeBasedClassifierErrors
 	  vp.setColourIndex(predInst.classIndex()+1);
 	}
 	catch (Exception ex) {
-	  ex.printStackTrace();
+	  LoggingHelper.global().log(Level.SEVERE, "Failed to add plot!", e);
 	  return;
 	}
 	// pre-select class and predicted class

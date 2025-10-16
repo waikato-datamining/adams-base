@@ -15,13 +15,14 @@
 
 /*
  * WekaClassifierErrors.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.weka.predictions.AbstractErrorScaler;
 import adams.data.weka.predictions.AutoScaler;
@@ -33,7 +34,6 @@ import weka.classifiers.evaluation.Prediction;
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
-import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.gui.visualize.Plot2D;
@@ -149,10 +149,10 @@ public class WekaClassifierErrors
     protected Instances m_PlotInstances;
 
     /** for storing the plot shapes. */
-    protected FastVector m_PlotShapes;
+    protected ArrayList m_PlotShapes;
 
     /** for storing the plot sizes. */
-    protected FastVector m_PlotSizes;
+    protected ArrayList m_PlotSizes;
 
     /** the scaler scheme to use. */
     protected AbstractErrorScaler m_ErrorScaler;
@@ -192,14 +192,14 @@ public class WekaClassifierErrors
 	cap = m_ErrorScaler.getCapabilities();
 	cap.testWithFail(m_PlotInstances.classAttribute(), true);
 	scaled = m_ErrorScaler.scale(m_PlotSizes);
-	m_PlotSizes = new FastVector();
+	m_PlotSizes = new ArrayList();
 	m_PlotSizes.addAll(scaled);
       }
       catch (Exception e) {
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to process data!", e);
 	m_PlotInstances = new Instances(m_PlotInstances, 0);
-	m_PlotSizes     = new FastVector();
-	m_PlotShapes    = new FastVector();
+	m_PlotSizes     = new ArrayList();
+	m_PlotShapes    = new ArrayList();
       }
     }
 
@@ -246,8 +246,8 @@ public class WekaClassifierErrors
       Instance			inst;
       Prediction		pred;
 
-      m_PlotShapes = new FastVector();
-      m_PlotSizes  = new FastVector();
+      m_PlotShapes = new ArrayList();
+      m_PlotSizes  = new ArrayList();
       classAtt     = eval.getHeader().classAttribute();
       preds        = eval.predictions();
 
@@ -268,30 +268,30 @@ public class WekaClassifierErrors
 
         if (classAtt.isNominal()) {
           if (weka.core.Utils.isMissingValue(pred.actual()) || weka.core.Utils.isMissingValue(pred.predicted())) {
-            m_PlotShapes.addElement(Plot2D.MISSING_SHAPE);
+            m_PlotShapes.add(Plot2D.MISSING_SHAPE);
           }
           else if (pred.predicted() != pred.actual()) {
             // set to default error point shape
-            m_PlotShapes.addElement(Plot2D.ERROR_SHAPE);
+            m_PlotShapes.add(Plot2D.ERROR_SHAPE);
           }
           else {
             // otherwise set to constant (automatically assigned) point shape
-            m_PlotShapes.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
+            m_PlotShapes.add(Plot2D.CONST_AUTOMATIC_SHAPE);
           }
-          m_PlotSizes.addElement(Plot2D.DEFAULT_SHAPE_SIZE);
+          m_PlotSizes.add(Plot2D.DEFAULT_SHAPE_SIZE);
         }
         else {
           // store the error (to be converted to a point size later)
           Double errd = null;
           if (!weka.core.Utils.isMissingValue(pred.actual()) && !weka.core.Utils.isMissingValue(pred.predicted())) {
             errd = pred.predicted() - pred.actual();
-            m_PlotShapes.addElement(Plot2D.CONST_AUTOMATIC_SHAPE);
+            m_PlotShapes.add(Plot2D.CONST_AUTOMATIC_SHAPE);
           }
           else {
             // missing shape if actual class not present or prediction is missing
-            m_PlotShapes.addElement(Plot2D.MISSING_SHAPE);
+            m_PlotShapes.add(Plot2D.MISSING_SHAPE);
           }
-          m_PlotSizes.addElement(errd);
+          m_PlotSizes.add(errd);
         }
       }
     }
@@ -537,7 +537,7 @@ public class WekaClassifierErrors
 
     result = new AbstractComponentDisplayPanel(name) {
       private static final long serialVersionUID = -7362768698548152899L;
-      protected VisualizePanel m_VisualizePanel;
+      private VisualizePanel m_VisualizePanel;
       @Override
       protected void initGUI() {
 	super.initGUI();

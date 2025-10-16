@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetToWekaInstances.java
- * Copyright (C) 2011-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -29,7 +29,6 @@ import adams.env.Environment;
 import adams.ml.data.Dataset;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
-import weka.core.FastVector;
 import weka.core.Instances;
 
 import java.util.ArrayList;
@@ -60,7 +59,6 @@ import java.util.HashSet;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetToWekaInstances
   extends AbstractConversion {
@@ -214,7 +212,7 @@ public class SpreadSheetToWekaInstances
 	    unique.add(cell.getContent());
 	}
 	if ((unique.size() > m_MaxLabels) || (m_MaxLabels < 1)) {
-	  atts.add(new Attribute(sheet.getHeaderRow().getCell(i).getContent(), (FastVector) null));
+	  atts.add(new Attribute(sheet.getHeaderRow().getCell(i).getContent(), (ArrayList) null));
 	}
 	else {
 	  labels = new ArrayList<>(unique);

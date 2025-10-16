@@ -13,24 +13,17 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * JoinAttributes.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.filters.unsupervised.attribute;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Vector;
 
 import weka.core.Attribute;
 import weka.core.Capabilities;
 import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
-import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Option;
@@ -40,6 +33,12 @@ import weka.core.SparseInstance;
 import weka.core.Utils;
 import weka.filters.SimpleBatchFilter;
 import weka.filters.UnsupervisedFilter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
@@ -64,7 +63,6 @@ import weka.filters.UnsupervisedFilter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class JoinAttributes
   extends SimpleBatchFilter
@@ -143,13 +141,13 @@ public class JoinAttributes
     reset();
 
     tmpStr = Utils.getOption("R", options);
-    if (tmpStr.length() > 0)
+    if (!tmpStr.isEmpty())
       setAttributeRange(tmpStr);
     else
       setAttributeRange("first-last");
 
     tmpStr = Utils.getOption("glue", options);
-    if (tmpStr.length() > 0)
+    if (!tmpStr.isEmpty())
       setGlue(tmpStr);
     else
       setGlue("");
@@ -174,7 +172,7 @@ public class JoinAttributes
     result.add("-glue");
     result.add(getGlue());
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -290,7 +288,7 @@ public class JoinAttributes
       throw new IllegalStateException("No attributes selected!");
 
     // combined name
-    m_Hashed  = new HashSet<Integer>();
+    m_Hashed  = new HashSet<>();
     newName = "";
     for (i = 0; i < m_Indices.length; i++) {
       m_Hashed.add(m_Indices[i]);
@@ -301,10 +299,10 @@ public class JoinAttributes
     }
 
     // create new header
-    atts = new ArrayList<Attribute>();
+    atts = new ArrayList<>();
     for (i = 0; i < inputFormat.numAttributes(); i++) {
       if (i == m_Indices[0])
-	atts.add(new Attribute(newName, (FastVector) null));
+	atts.add(new Attribute(newName, (ArrayList) null));
       if (m_Hashed.contains(i))
 	continue;
       atts.add((Attribute) inputFormat.attribute(i).copy());
