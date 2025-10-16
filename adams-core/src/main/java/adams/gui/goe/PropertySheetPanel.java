@@ -486,6 +486,14 @@ public class PropertySheetPanel
 
 	m_Editors[i].setValue(m_Values[i]);
 
+	// constraint and default value
+	if (m_Options != null) {
+	  if (m_Editors[i] instanceof PropertyEditorWithConstraint)
+	    ((PropertyEditorWithConstraint) m_Editors[i]).setConstraint(m_Options.get(i).getConstraint());
+	  if (m_Editors[i] instanceof PropertyEditorWithDefaultValue)
+	    ((PropertyEditorWithDefaultValue) m_Editors[i]).setDefaultValue(m_Options.get(i).getDefaultValue());
+	}
+
 	// Now figure out how to display it...
 	if ((m_Editors[i] instanceof InlineEditorSupport) && ((InlineEditorSupport) m_Editors[i]).isInlineEditingAvailable()) {
 	  m_Views[i]   = new InlineEditor(m_Editors[i], this);
@@ -580,10 +588,6 @@ public class PropertySheetPanel
 	label.setToolTipText("Command-line option: -" + m_Options.get(i).getCommandline());
 	if (m_Options.get(i) instanceof AbstractArgumentOption)
 	  VariableSupport.updateLabel(label, ((AbstractArgumentOption) m_Options.get(i)).getVariableName());
-	if (m_Editors[i] instanceof PropertyEditorWithConstraint)
-	  ((PropertyEditorWithConstraint) m_Editors[i]).setConstraint(m_Options.get(i).getConstraint());
-	if (m_Editors[i] instanceof PropertyEditorWithDefaultValue)
-	  ((PropertyEditorWithDefaultValue) m_Editors[i]).setDefaultValue(m_Options.get(i).getDefaultValue());
       }
       if (m_TipTexts[i] != null)
 	m_Views[i].setToolTipText(GUIHelper.processTipText(m_TipTexts[i], GUIHelper.getMaxTooltipWidth()));
