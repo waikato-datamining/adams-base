@@ -84,7 +84,7 @@ public class StringLength
   }
 
   /**
-   * Returns whether a upper limit is set.
+   * Returns whether an upper limit is set.
    *
    * @return		true if limit set
    */
@@ -105,15 +105,15 @@ public class StringLength
    * Checks the value against the constraints.
    * If it violates the constraints, uses the owner's logger to output a warning message.
    *
-   * @param value the value to check
-   * @return true if valid
+   * @param value	the value to check
+   * @return		null if valid otherwise the error message
    */
   @Override
-  public boolean isValid(String value) {
+  public String isValidMsg(String value) {
     if (hasMin() && (value.length() < getMin()))
-      return false;
+      return "Too short: " + value.length() + " < " + getMin();
     if (hasMax() && (value.length() > getMax()))
-      return false;
-    return true;
+      return "Too long: " + value.length() + " > " + getMax();
+    return null;
   }
 }

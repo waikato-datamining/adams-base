@@ -102,35 +102,35 @@ public class NumericBounds<T extends Number>
    * Checks the value against the constraints.
    * If it violates the constraints, uses the owner's logger to output a warning message.
    *
-   * @param value the value to check
-   * @return true if valid
+   * @param value 	the value to check
+   * @return		null if valid otherwise the error message
    */
   @Override
-  public boolean isValid(Number value) {
-    boolean	result;
-    String	msg;
+  public String isValidMsg(Number value) {
+    String	result;
+    boolean	valid;
     String	expr;
 
-    result = true;
+    result = null;
+    valid  = true;
 
     if (hasLowerBound() && (value.doubleValue() < getLowerBound().doubleValue()))
-      result = false;
+      valid = false;
+    else if (hasUpperBound() && (value.doubleValue() > getUpperBound().doubleValue()))
+      valid = false;
 
-    if (hasUpperBound() && (value.doubleValue() > getUpperBound().doubleValue()))
-      result = false;
-
-    if (!result) {
+    if (!valid) {
       if (hasLowerBound() && hasUpperBound())
 	expr = getLowerBound() + " <= x <= " + getUpperBound();
       else if (hasLowerBound())
 	expr = getLowerBound() + " <= x";
       else
 	expr = getUpperBound() + " >= x";
-      msg = getOwner().getProperty() + "/-" + getOwner().getCommandline() + " must satisfy " + expr + ", provided: " + value;
+      result = getOwner().getProperty() + "/-" + getOwner().getCommandline() + " must satisfy " + expr + ", provided: " + value;
       if (getOptionHandler() instanceof LoggingObject)
-	((LoggingObject) getOptionHandler()).getLogger().warning(msg);
+	((LoggingObject) getOptionHandler()).getLogger().warning(result);
       else
-	System.err.println(msg);
+	System.err.println(result);
     }
 
     return result;
@@ -145,18 +145,17 @@ public class NumericBounds<T extends Number>
    */
   public T checkBounds(T number) {
     T		result;
-    boolean	invalid;
+    boolean 	valid;
 
-    result  = number;
-    invalid = false;
+    result = number;
+    valid  = true;
 
     if (hasLowerBound() && (number.doubleValue() < getLowerBound().doubleValue()))
-      invalid = true;
+      valid = false;
+    else if (hasUpperBound() && (number.doubleValue() > getUpperBound().doubleValue()))
+      valid = false;
 
-    if (hasUpperBound() && (number.doubleValue() > getUpperBound().doubleValue()))
-      invalid = true;
-
-    if (invalid)
+    if (!valid)
       result = (T) getOwner().getDefaultValue();
 
     return result;

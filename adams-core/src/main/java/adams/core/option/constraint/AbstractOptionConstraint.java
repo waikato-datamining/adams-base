@@ -89,9 +89,19 @@ public abstract class AbstractOptionConstraint<T>
    * Checks the value against the constraints.
    * If it violates the constraints, uses the owner's logger to output a warning message.
    *
-   * @param owner 	the owner
    * @param value	the value to check
    * @return		true if valid
    */
-  public abstract boolean isValid(T value);
+  public boolean isValid(T value) {
+    return (isValidMsg(value) == null);
+  }
+
+  /**
+   * Checks the value against the constraints.
+   * If it violates the constraints, uses the owner's logger to output a warning message.
+   *
+   * @param value	the value to check
+   * @return		null if valid otherwise the error message
+   */
+  public abstract String isValidMsg(T value);
 }
