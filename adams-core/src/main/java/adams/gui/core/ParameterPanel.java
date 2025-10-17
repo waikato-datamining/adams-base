@@ -35,9 +35,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -65,6 +66,104 @@ public class ParameterPanel
   /** for serialization. */
   private static final long serialVersionUID = 7164103981772081436L;
 
+  /**
+   * Wrapper panel with an additional help text.
+   */
+  public static class HelpWrapperPanel
+    extends BasePanel {
+
+    /** the wrapped component. */
+    protected Component m_Wrapped;
+
+    /** the help panel. */
+    protected BasePanel m_PanelHelp;
+
+    /** the help text. */
+    protected JTextPane m_TextHelp;
+
+    /**
+     * Initializes the panel.
+     *
+     * @param wrapped	the component to wrap
+     */
+    public HelpWrapperPanel(Component wrapped) {
+      super();
+      setWrapped(wrapped);
+    }
+
+    /**
+     * Initializes the widgets.
+     */
+    @Override
+    protected void initGUI() {
+      super.initGUI();
+      setLayout(new BorderLayout());
+
+      m_PanelHelp = new BasePanel(new BorderLayout());
+      m_PanelHelp.setVisible(false);
+      add(m_PanelHelp, BorderLayout.CENTER);
+
+      m_TextHelp = new JTextPane();
+      m_TextHelp.setEditable(false);
+      m_TextHelp.setBackground(Color.WHITE);
+      m_TextHelp.setForeground(Color.DARK_GRAY);
+      m_PanelHelp.add(new BaseScrollPane(m_TextHelp), BorderLayout.CENTER);
+    }
+
+    /**
+     * Sets the wrapped component.
+     *
+     * @param value	the component to wrap
+     */
+    public void setWrapped(Component value) {
+      if (m_Wrapped != null)
+	remove(m_Wrapped);
+      m_Wrapped = value;
+      if (m_Wrapped != null)
+	add(m_Wrapped, BorderLayout.NORTH);
+
+      invalidate();
+      doLayout();
+      revalidate();
+    }
+
+    /**
+     * Hides and shows the help.
+     *
+     * @param value	true if to show the help
+     */
+    public void setHelpVisible(boolean value) {
+      m_PanelHelp.setVisible(value);
+    }
+
+    /**
+     * Returns whether the help is visible.
+     *
+     * @return		true if visible
+     */
+    public boolean isHelpVisible() {
+      return m_PanelHelp.isVisible();
+    }
+
+    /**
+     * Sets the help text to display.
+     *
+     * @param value	the help
+     */
+    public void setHelp(String value) {
+      m_TextHelp.setText(value);
+    }
+
+    /**
+     * Returns the current help text.
+     *
+     * @return		the help
+     */
+    public String getHelp() {
+      return m_TextHelp.getText();
+    }
+  }
+
   /** the check boxes. */
   protected List<BaseCheckBox> m_CheckBoxes;
 
@@ -76,6 +175,9 @@ public class ParameterPanel
 
   /** the actual parameters. */
   protected List<Component> m_ActualParameters;
+
+  /** the help panels. */
+  protected List<HelpWrapperPanel> m_HelpWrappers;
 
   /** the horizontal gap. */
   protected int m_GapHorizontal;
@@ -161,6 +263,7 @@ public class ParameterPanel
     m_Labels                     = new ArrayList<>();
     m_Parameters                 = new ArrayList<>();
     m_ActualParameters           = new ArrayList<>();
+    m_HelpWrappers = new ArrayList<>();
     m_PreferredDimensionJSpinner = new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150), GUIHelper.getInteger("GOESpinnerHeight", 20));
     m_MinDimensionJComboBox      = new Dimension(GUIHelper.getInteger("GOEComboBoxWidth", 150), GUIHelper.getInteger("GOEComboBoxHeight", 20));
     m_ChangeListeners            = new HashSet<>();
@@ -210,6 +313,7 @@ public class ParameterPanel
     m_Labels.clear();
     m_Parameters.clear();
     m_ActualParameters.clear();
+    m_HelpWrappers.clear();
     update();
   }
 
@@ -352,9 +456,6 @@ public class ParameterPanel
   public int addParameter(int index, boolean checked, String label, Component comp) {
     JLabel		lbl;
     BaseCheckBox	check;
-    JPanel		panel;
-    GridBagConstraints	con;
-    GridBagLayout	layout;
     Component 		actual;
 
     actual = comp;
@@ -379,43 +480,6 @@ public class ParameterPanel
     else if (comp instanceof JTextPane)
       comp = new BaseScrollPane(comp);
 
-    layout = new GridBagLayout();
-    panel  = new JPanel(layout);
-
-    if (m_UseCheckBoxes) {
-      con        = new GridBagConstraints();
-      con.anchor = GridBagConstraints.WEST;
-      con.gridy  = 0;
-      con.gridx  = 0;
-      con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-      layout.setConstraints(check, con);
-      panel.add(check);
-    }
-
-    con        = new GridBagConstraints();
-    con.anchor = GridBagConstraints.WEST;
-    con.gridy  = 0;
-    con.gridx  = 0;
-    if (m_UseCheckBoxes)
-      con.gridx++;
-    con.ipadx  = 20;
-    con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-    layout.setConstraints(lbl, con);
-    panel.add(lbl);
-
-    con = new GridBagConstraints();
-    con.anchor = GridBagConstraints.WEST;
-    con.fill   = GridBagConstraints.HORIZONTAL;
-    con.gridy  = 0;
-    con.gridx  = 1;
-    if (m_UseCheckBoxes)
-      con.gridx++;
-    con.weightx = 100;
-    con.ipadx   = 20;
-    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-    layout.setConstraints(comp, con);
-    panel.add(comp);
-
     if (index == -1) {
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(check);
@@ -423,6 +487,7 @@ public class ParameterPanel
       index = m_Parameters.size();
       m_Parameters.add(comp);
       m_ActualParameters.add(actual);
+      m_HelpWrappers.add(new HelpWrapperPanel(comp));
     }
     else {
       if (m_UseCheckBoxes)
@@ -430,6 +495,7 @@ public class ParameterPanel
       m_Labels.add(index, lbl);
       m_Parameters.add(index, comp);
       m_ActualParameters.add(index, actual);
+      m_HelpWrappers.add(index, new HelpWrapperPanel(comp));
     }
 
     addChangeListenerTo(actual);
@@ -479,9 +545,6 @@ public class ParameterPanel
   public int addParameter(int index, boolean checked, String label, Component actual, JPanel wrapper) {
     JLabel		lbl;
     BaseCheckBox	check;
-    JPanel		panel;
-    GridBagConstraints	con;
-    GridBagLayout	layout;
 
     if (m_UseMnemonicIndicators) {
       lbl = new JLabel(label.replace("" + GUIHelper.MNEMONIC_INDICATOR, ""));
@@ -498,43 +561,6 @@ public class ParameterPanel
     else
       check = null;
 
-    layout = new GridBagLayout();
-    panel  = new JPanel(layout);
-
-    if (m_UseCheckBoxes) {
-      con        = new GridBagConstraints();
-      con.anchor = GridBagConstraints.WEST;
-      con.gridy  = 0;
-      con.gridx  = 0;
-      con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-      layout.setConstraints(check, con);
-      panel.add(check);
-    }
-
-    con        = new GridBagConstraints();
-    con.anchor = GridBagConstraints.WEST;
-    con.gridy  = 0;
-    con.gridx  = 0;
-    if (m_UseCheckBoxes)
-      con.gridx++;
-    con.ipadx  = 20;
-    con.insets = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-    layout.setConstraints(lbl, con);
-    panel.add(lbl);
-
-    con = new GridBagConstraints();
-    con.anchor = GridBagConstraints.WEST;
-    con.fill   = GridBagConstraints.HORIZONTAL;
-    con.gridy  = 0;
-    con.gridx  = 1;
-    if (m_UseCheckBoxes)
-      con.gridx++;
-    con.weightx = 100;
-    con.ipadx   = 20;
-    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-    layout.setConstraints(wrapper, con);
-    panel.add(wrapper);
-
     if (index == -1) {
       if (m_UseCheckBoxes)
 	m_CheckBoxes.add(check);
@@ -542,6 +568,7 @@ public class ParameterPanel
       index = m_Parameters.size();
       m_Parameters.add(wrapper);
       m_ActualParameters.add(actual);
+      m_HelpWrappers.add(new HelpWrapperPanel(wrapper));
     }
     else {
       if (m_UseCheckBoxes)
@@ -549,6 +576,7 @@ public class ParameterPanel
       m_Labels.add(index, lbl);
       m_Parameters.add(index, wrapper);
       m_ActualParameters.add(index, actual);
+      m_HelpWrappers.add(index, new HelpWrapperPanel(wrapper));
     }
 
     addChangeListenerTo(actual);
@@ -579,42 +607,12 @@ public class ParameterPanel
    * @return		the index of the parameter
    */
   public int addParameter(int index, boolean checked, AbstractChooserPanel chooser) {
-    JPanel		panel;
-    BaseCheckBox		check;
-    GridBagConstraints	con;
-    GridBagLayout	layout;
-
-    layout = new GridBagLayout();
-    panel  = new JPanel(layout);
+    BaseCheckBox	check;
 
     if (m_UseCheckBoxes)
       check = new BaseCheckBox("", checked);
     else
       check = null;
-
-    if (m_UseCheckBoxes) {
-      con           = new GridBagConstraints();
-      con.anchor    = GridBagConstraints.WEST;
-      con.gridy     = 0;
-      con.gridx     = 0;
-      con.insets    = new Insets(m_GapVertical + 1, m_GapHorizontal, m_GapVertical + 1, m_GapHorizontal);
-      layout.setConstraints(check, con);
-      add(check);
-    }
-
-    con   = new GridBagConstraints();
-    con.anchor  = GridBagConstraints.WEST;
-    con.fill    = GridBagConstraints.HORIZONTAL;
-    con.gridy   = 0;
-    con.gridx   = 0;
-    con.weightx = 100;
-    con.ipadx   = 20;
-    con.insets  = new Insets(m_GapVertical, m_GapHorizontal, m_GapVertical, m_GapHorizontal);
-    layout.setConstraints(chooser, con);
-    panel.add(chooser);
-
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    panel.add(chooser);
 
     if (index == -1) {
       if (m_UseCheckBoxes)
@@ -623,6 +621,7 @@ public class ParameterPanel
       index = m_Parameters.size();
       m_Parameters.add(chooser);
       m_ActualParameters.add(chooser);
+      m_HelpWrappers.add(new HelpWrapperPanel(chooser));
     }
     else {
       if (m_UseCheckBoxes)
@@ -630,6 +629,7 @@ public class ParameterPanel
       m_Labels.add(index, chooser.getPrefixLabel());
       m_Parameters.add(index, chooser);
       m_ActualParameters.add(index, chooser);
+      m_HelpWrappers.add(index, new HelpWrapperPanel(chooser));
     }
 
     addChangeListenerTo(chooser);
@@ -649,6 +649,7 @@ public class ParameterPanel
 
     m_Labels.remove(index);
     m_Parameters.remove(index);
+    m_HelpWrappers.remove(index);
     actual = m_ActualParameters.remove(index);
     removeChangeListenerFrom(actual);
     update();
@@ -773,6 +774,7 @@ public class ParameterPanel
     GridBagLayout	layout;
     GridBagConstraints	con;
     JPanel		panel;
+    int			anchor;
 
     removeAll();
 
@@ -783,9 +785,14 @@ public class ParameterPanel
     fixDimensions();
 
     for (i = 0; i < m_Labels.size(); i++) {
+      if (m_HelpWrappers.get(i).isHelpVisible())
+	anchor = GridBagConstraints.NORTHWEST;
+      else
+	anchor = GridBagConstraints.WEST;
+
       if (m_UseCheckBoxes) {
 	con           = new GridBagConstraints();
-	con.anchor    = GridBagConstraints.WEST;
+	con.anchor    = anchor;
 	con.gridy     = i;
 	con.gridx     = 0;
 	con.insets    = new Insets(m_GapVertical + 1, m_GapHorizontal, m_GapVertical + 1, m_GapHorizontal);
@@ -794,7 +801,7 @@ public class ParameterPanel
       }
 
       con        = new GridBagConstraints();
-      con.anchor = GridBagConstraints.WEST;
+      con.anchor = anchor;
       con.gridy  = i;
       con.gridx  = 0;
       if (m_UseCheckBoxes)
@@ -805,7 +812,7 @@ public class ParameterPanel
       add(m_Labels.get(i));
 
       con           = new GridBagConstraints();
-      con.anchor    = GridBagConstraints.WEST;
+      con.anchor    = anchor;
       con.fill      = GridBagConstraints.HORIZONTAL;
       con.gridy     = i;
       con.gridx     = 1;
@@ -815,8 +822,8 @@ public class ParameterPanel
       con.ipadx     = 20;
       con.gridwidth = GridBagConstraints.REMAINDER;
       con.insets    = new Insets(m_GapVertical + 1, 5, m_GapVertical + 1, 5);
-      layout.setConstraints(m_Parameters.get(i), con);
-      add(m_Parameters.get(i));
+      layout.setConstraints(m_HelpWrappers.get(i), con);
+      add(m_HelpWrappers.get(i));
     }
 
     // filler at bottom
@@ -935,5 +942,38 @@ public class ParameterPanel
       ((PropertyPanel) comp).getPropertyEditor().removePropertyChangeListener(m_PropertyChangeListener);
     //else
     //  System.err.println("Failed to remove change listener from component type: " + Utils.classToString(comp));
+  }
+
+  /**
+   * Sets the help for the specified parameter.
+   *
+   * @param index	the index of the parameter to set the help for
+   * @param help	the help to set
+   */
+  public void setHelp(int index, String help) {
+    m_HelpWrappers.get(index).setHelp(help);
+  }
+
+  /**
+   * Returns the help for the specified parameter, if any.
+   *
+   * @param index	the index of the parameter to get the help for
+   * @return		the help, can be empty
+   */
+  public String getHelp(int index) {
+    return m_HelpWrappers.get(index).getHelp();
+  }
+
+  /**
+   * Changes the visibility of all the help panels with actual text.
+   *
+   * @param value	true if to make visible
+   */
+  public void showHelp(boolean value) {
+    int		i;
+
+    for (i = 0; i < m_HelpWrappers.size(); i++)
+      m_HelpWrappers.get(i).setHelpVisible(value && !m_HelpWrappers.get(i).getHelp().isEmpty());
+    update();
   }
 }
