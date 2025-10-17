@@ -233,6 +233,9 @@ public class PropertiesParameterPanel
   /** the save props button. */
   protected BaseButton m_ButtonSave;
 
+  /** the help button. */
+  protected BaseToggleButton m_ButtonHelp;
+
   /** the filechooser for loading/saving properties. */
   protected BaseFileChooser m_FileChooser;
 
@@ -294,6 +297,11 @@ public class PropertiesParameterPanel
     m_ButtonSave.setToolTipText("Save current settings to file");
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
     panel.add(m_ButtonSave);
+
+    m_ButtonHelp = new BaseToggleButton(ImageManager.getIcon("help.gif"));
+    m_ButtonHelp.setToolTipText("Show or hide help");
+    m_ButtonHelp.addActionListener((ActionEvent e) -> toggleHelp());
+    panel.add(m_ButtonHelp);
   }
 
   /**
@@ -367,10 +375,14 @@ public class PropertiesParameterPanel
    * @throws IllegalArgumentException	if the identifier already exists
    */
   public void addProperty(String identifier, String label, Component comp) {
+    int		index;
+
     if (m_Identifiers.contains(identifier))
       throw new IllegalArgumentException("Identifier '" + identifier + "' already present!");
     m_Identifiers.add(identifier);
-    m_PanelProperties.addParameter(label, comp);
+    index = m_PanelProperties.addParameter(label, comp);
+    if (hasHelp(identifier))
+      m_PanelProperties.setHelp(index, getHelp(identifier));
   }
 
   /**
@@ -382,11 +394,15 @@ public class PropertiesParameterPanel
    * @throws IllegalArgumentException	if the identifier already exists
    */
   public void addProperty(String identifier, String label, AbstractChooserPanel chooser) {
+    int		index;
+
     if (m_Identifiers.contains(identifier))
       throw new IllegalArgumentException("Identifier '" + identifier + "' already present!");
     m_Identifiers.add(identifier);
-    m_PanelProperties.addParameter(label, chooser);
+    index = m_PanelProperties.addParameter(label, chooser);
     setLabel(identifier, label);
+    if (hasHelp(identifier))
+      m_PanelProperties.setHelp(index, getHelp(identifier));
   }
 
   /**
@@ -991,6 +1007,8 @@ public class PropertiesParameterPanel
     String			sep;
 
     clearProperties();
+    m_ButtonHelp.setVisible(!m_Help.isEmpty());
+
     keys = new ArrayList<>(value.keySetAll());
     keys.removeAll(m_Order);
     Collections.sort(keys);
@@ -1557,6 +1575,17 @@ public class PropertiesParameterPanel
     props = getProperties();
     if (!props.save(getFileChooser().getSelectedFile().getAbsolutePath()))
       GUIHelper.showErrorMessage(this, "Failed to save properties to: " + getFileChooser().getSelectedFile());
+  }
+
+  /**
+   * Toggles the help display.
+   */
+  protected void toggleHelp() {
+    m_PanelProperties.showHelp(m_ButtonHelp.isSelected());
+    if (getParentDialog() != null)
+      getParentDialog().pack();
+    else if (getParentFrame() != null)
+      getParentFrame().pack();
   }
 
   /**
