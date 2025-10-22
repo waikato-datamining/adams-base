@@ -197,6 +197,9 @@ public class ParameterPanel
   /** the minimum dimensions for BaseComboBox components. */
   protected Dimension m_MinDimensionJComboBox;
 
+  /** the minimum dimensions for AbstractChooserPanel components. */
+  protected Dimension m_MinDimensionChooserPanel;
+
   /** the change listeners. */
   protected Set<ChangeListener> m_ChangeListeners;
 
@@ -265,7 +268,8 @@ public class ParameterPanel
     m_ActualParameters           = new ArrayList<>();
     m_HelpWrappers = new ArrayList<>();
     m_PreferredDimensionJSpinner = new Dimension(GUIHelper.getInteger("GOESpinnerWidth", 150), GUIHelper.getInteger("GOESpinnerHeight", 20));
-    m_MinDimensionJComboBox      = new Dimension(GUIHelper.getInteger("GOEComboBoxWidth", 150), GUIHelper.getInteger("GOEComboBoxHeight", 20));
+    m_MinDimensionJComboBox      = new Dimension(GUIHelper.getInteger("GOEComboBoxWidth", 150), GUIHelper.getInteger("GOEComboBoxHeight", 25));
+    m_MinDimensionChooserPanel   = new Dimension(GUIHelper.getInteger("GOEChooserPanelWidth", 150), GUIHelper.getInteger("GOEChooserPanelHeight", 25));
     m_ChangeListeners            = new HashSet<>();
     m_UseMnemonicIndicators      = true;
     m_DocumentListener = new DocumentListener() {
@@ -383,6 +387,25 @@ public class ParameterPanel
    */
   public Dimension getMinDimensionJComboBox() {
     return m_MinDimensionJComboBox;
+  }
+
+  /**
+   * Sets the minimum dimension for AbstractChooserPanel and derived classes.
+   *
+   * @param value	the minimum dimensions (do not use 0 for height!)
+   */
+  public void setMinDimensionChooserPanel(Dimension value) {
+    m_MinDimensionChooserPanel = (Dimension) value.clone();
+    update();
+  }
+
+  /**
+   * Returns the minimum dimension for AbstractChooserPanel and derived classes.
+   *
+   * @return		the minimum dimensions
+   */
+  public Dimension getMinDimensionChooserPanel() {
+    return m_MinDimensionChooserPanel;
   }
 
   /**
@@ -754,6 +777,7 @@ public class ParameterPanel
    *
    * @see	#m_PreferredDimensionJSpinner
    * @see	#m_MinDimensionJComboBox
+   * @see	#m_MinDimensionChooserPanel
    */
   protected void fixDimensions() {
     int			i;
@@ -763,6 +787,8 @@ public class ParameterPanel
 	m_ActualParameters.get(i).setPreferredSize((Dimension) m_PreferredDimensionJSpinner.clone());
       if (m_ActualParameters.get(i) instanceof JComboBox)
 	m_ActualParameters.get(i).setMinimumSize((Dimension) m_MinDimensionJComboBox.clone());
+      if (m_ActualParameters.get(i) instanceof AbstractChooserPanel)
+	m_ActualParameters.get(i).setMinimumSize((Dimension) m_MinDimensionChooserPanel.clone());
     }
   }
 

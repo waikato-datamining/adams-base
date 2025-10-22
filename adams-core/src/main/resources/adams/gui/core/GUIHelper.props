@@ -87,11 +87,13 @@ ComboBoxHeight=25
 
 # The preferred defaults in the GOE
 GOESpinnerWidth=200
-GOESpinnerHeight=20
+GOESpinnerHeight=22
 GOECheckBoxWidth=25
 GOECheckBoxHeight=20
 GOEComboBoxWidth=200
-GOEComboBoxHeight=20
+GOEComboBoxHeight=25
+GOEChooserPanelWidth=200
+GOEChooserPanelHeight=28
 GOEDefaultWidth=200
 GOEDefaultHeight=20
 
