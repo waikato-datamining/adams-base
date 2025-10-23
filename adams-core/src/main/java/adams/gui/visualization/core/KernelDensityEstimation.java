@@ -113,6 +113,23 @@ public class KernelDensityEstimation
     }
 
     /**
+     * Returns the color index for the data point.
+     *
+     * @param x    	the x coordinate
+     * @param y 	the y coordinate
+     * @return 		the color
+     */
+    public int getIndex(double x, double y) {
+      int result;
+      double 	density;
+
+      density = getDensity(x, y);
+      result  = (int) ((density - binMin) / (binMax - binMin) * (colors.length - 1));
+
+      return result;
+    }
+
+    /**
      * Returns the color to use for the data point.
      *
      * @param x    	the x coordinate
@@ -122,10 +139,8 @@ public class KernelDensityEstimation
     public Color getColor(double x, double y) {
       Color	result;
       int	index;
-      double 	density;
 
-      density = getDensity(x, y);
-      index  = (int) ((density - binMin) / (binMax - binMin) * (colors.length - 1));
+      index  = getIndex(x, y);
       result = colors[index];
 
       return result;
