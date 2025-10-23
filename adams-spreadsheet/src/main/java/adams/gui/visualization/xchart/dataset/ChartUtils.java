@@ -21,6 +21,8 @@
 package adams.gui.visualization.xchart.dataset;
 
 import adams.gui.visualization.xchart.marker.AbstractMarkerGenerator;
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.array.TDoubleArrayList;
 import org.knowm.xchart.internal.chartpart.Chart;
 import org.knowm.xchart.style.markers.Marker;
 
@@ -44,7 +46,18 @@ public class ChartUtils {
    * @param max		the maximum Y
    */
   public static void addDiagonal(Datasets<XYDataset> dataset, double min, double max) {
-    dataset.add(0, new XYDataset(KEY_DIAGONAL, new double[]{min, max}, new double[]{min, max}));
+    int		num;
+    double	inc;
+    TDoubleList	values;
+    int		i;
+
+    num    = 1000;
+    inc    = (max - min) / (num - 1);
+    values = new TDoubleArrayList();
+    for (i = 0; i < num - 1; i++)
+      values.add(min + i*inc);
+    values.add(max);
+    dataset.add(0, new XYDataset(KEY_DIAGONAL, values.toArray(), values.toArray()));
   }
 
   /**
