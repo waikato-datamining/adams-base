@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2025-10-24 11:10:52
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Loads predictions from a CSV file and generates a density-based scatter plot." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/fried_predictions.csv -use-forward-slashes true
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet -parse-formulas false"
+ adams.flow.sink.ActualVsPredictedPlot -display-type adams.flow.core.displaytype.Default -width 1200 -height 800 -writer adams.gui.print.NullWriter -title "LinearRegression: fried dataset" -show-side-panel false -meta-data-color adams.gui.visualization.sequence.metadatacolor.Dummy -use-custom-paintlet true -custom-paintlet "adams.gui.visualization.sequence.CirclePaintlet -point-preprocessor adams.gui.visualization.sequence.pointpreprocessor.PassThrough -meta-data-color \"adams.gui.visualization.sequence.metadatacolor.Density -mode KDE -generator \\\"adams.gui.visualization.core.BiColorGenerator -first-color #0000cc -second-color #ff6600 -alpha 127\\\"\" -filled true" -overlay adams.gui.visualization.sequence.StraightLineOverlayPaintlet -mouse-click-action "adams.flow.sink.sequenceplotter.ViewDataClickAction -hit-detector adams.gui.visualization.sequence.CircleHitDetector"

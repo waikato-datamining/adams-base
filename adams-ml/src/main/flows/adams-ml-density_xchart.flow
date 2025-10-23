@@ -1,0 +1,10 @@
+# Project: adams
+# Date: 2025-10-24 12:53:49
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-math,adams-ml,adams-spreadsheet,adams-visualstats
+#
+adams.flow.control.Flow -annotation "Loads predictions from a CSV file and generates a density-based scatter plot using XChart." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${EXAMPLE_FLOWS}/data/fried_predictions.csv -use-forward-slashes true
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet -parse-formulas false"
+ adams.flow.sink.XChartPlot -display-type adams.flow.core.displaytype.Default -x -3 -writer adams.gui.print.NullWriter -dataset "adams.gui.visualization.xchart.dataset.XYDatasetGenerator -x Actual -y Predicted -add-diagonal-series true" -chart "adams.gui.visualization.xchart.chart.DensityScatterPlotChart -label-x actual -label-y predicted -mode KDE -generator \"adams.gui.visualization.core.BiColorGenerator -first-color #0000cc -second-color #ff9900 -alpha 127\"" -marker adams.gui.visualization.xchart.marker.Circle -watermark adams.gui.visualization.watermark.Default
