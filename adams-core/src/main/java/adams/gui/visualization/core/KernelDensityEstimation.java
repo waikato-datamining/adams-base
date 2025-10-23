@@ -383,7 +383,7 @@ public class KernelDensityEstimation
 	    r2 = dx * dx + dy * dy;
 	    sum += Math.exp(-0.5 * r2 / h2); // Gaussian kernel unnormalized
 	  }
-	  result.bins[xi][yi] = sum * norm;
+	  result.bins[yi][xi] = sum * norm;
 	}
       }
     }
