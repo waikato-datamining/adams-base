@@ -68,7 +68,8 @@ public abstract class AbstractFloatingPointNumberEditor
    */
   @Override
   protected void updateBounds() {
-    ((NumberTextField) m_CustomEditor).setCheckModel(createCheckModel());
+    if (m_CustomEditor != null)
+      ((NumberTextField) m_CustomEditor).setCheckModel(createCheckModel());
   }
 
   /**
