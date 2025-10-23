@@ -23,7 +23,9 @@ package adams.gui.visualization.watermark;
 import adams.gui.core.BasePanel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  * For overlaying watermarks on panels.
@@ -37,6 +39,25 @@ public class WatermarkedPanel
 
   /** the watermark to apply. */
   protected Watermark m_Watermark;
+
+  /**
+   * Initializes the panel.
+   */
+  public WatermarkedPanel() {
+    super();
+  }
+
+  /**
+   * Wraps the component and applies the specified panel.
+   *
+   * @param comp	the component to wrap
+   * @param watermark	the watermark to use
+   */
+  public WatermarkedPanel(Component comp, Watermark watermark) {
+    this();
+    add(comp, BorderLayout.CENTER);
+    setWatermark(watermark);
+  }
 
   /**
    * Initializes the members.
@@ -84,7 +105,9 @@ public class WatermarkedPanel
   @Override
   public void paint(Graphics g) {
     super.paint(g);
-    m_Watermark.applyWatermark(g, getSize());
+    Graphics2D g2d = (Graphics2D) g.create();
+    m_Watermark.applyWatermark(g2d, getSize());
+    g2d.dispose();
   }
 
   /**
@@ -95,7 +118,9 @@ public class WatermarkedPanel
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
-    m_Watermark.applyWatermark(g, getSize());
+    Graphics2D g2d = (Graphics2D) g.create();
+    m_Watermark.applyWatermark(g2d, getSize());
+    g2d.dispose();
   }
 
   /**
@@ -106,6 +131,8 @@ public class WatermarkedPanel
   @Override
   protected void printComponent(Graphics g) {
     super.printComponent(g);
-    m_Watermark.applyWatermark(g, getSize());
+    Graphics2D g2d = (Graphics2D) g.create();
+    m_Watermark.applyWatermark(g2d, getSize());
+    g2d.dispose();
   }
 }
