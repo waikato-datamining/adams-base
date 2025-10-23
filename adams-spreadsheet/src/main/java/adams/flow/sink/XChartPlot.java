@@ -394,7 +394,7 @@ public class XChartPlot
       dataset = (Datasets<Dataset>) token.getPayload();
     }
     chart = m_Chart.generate(dataset);
-    ChartUtils.setMarkers(chart, dataset, m_Marker);
+    ChartUtils.setMarkers(chart, m_Marker);
     panel = new XChartPanel(chart);
     // add watermark
     if (!(m_Watermark instanceof Null))
@@ -466,7 +466,7 @@ public class XChartPlot
 	SpreadSheet sheet = (SpreadSheet) token.getPayload();
 	Datasets<Dataset> dataset = m_Dataset.generate(sheet);
 	Chart chart = m_Chart.generate(dataset);
-	ChartUtils.setMarkers(chart, dataset, m_Marker);
+	ChartUtils.setMarkers(chart, m_Marker);
 	XChartPanel panel = new XChartPanel(chart);
 	// add watermark
 	if (!(m_Watermark instanceof Null))

@@ -24,6 +24,7 @@ import adams.gui.visualization.xchart.marker.AbstractMarkerGenerator;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.array.TDoubleArrayList;
 import org.knowm.xchart.internal.chartpart.Chart;
+import org.knowm.xchart.internal.series.Series;
 import org.knowm.xchart.style.markers.Marker;
 
 import java.util.ArrayList;
@@ -100,23 +101,33 @@ public class ChartUtils {
   }
 
   /**
+   * Checks the series whether it is the one for the diagonal.
+   *
+   * @param series	the series to check
+   * @return		true if present
+   */
+  public static boolean isDiagonal(Series series) {
+    return series.getName().equals(KEY_DIAGONAL);
+  }
+
+  /**
    * Sets the markers.
    *
    * @param chart	the chart to update
-   * @param datasets	the underlying datasets
    * @param generator	the marker generator
    */
-  public static void setMarkers(Chart chart, Datasets<? extends Dataset> datasets, AbstractMarkerGenerator generator) {
+  public static void setMarkers(Chart chart, AbstractMarkerGenerator generator) {
     List<Marker>	markers;
-    int			i;
+    Series		series;
 
     // default?
     if (generator.generate() == null)
       return;
 
     markers = new ArrayList<>();
-    for (i = 0; i < datasets.size(); i++) {
-      if (isDiagonal(datasets.get(i)))
+    for (Object key: chart.getSeriesMap().keySet()) {
+      series = (Series) chart.getSeriesMap().get(key);
+      if (isDiagonal(series))
 	markers.add(null);
       else
 	markers.add(generator.generate());

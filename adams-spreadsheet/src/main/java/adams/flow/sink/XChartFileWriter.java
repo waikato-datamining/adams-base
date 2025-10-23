@@ -483,7 +483,7 @@ public class XChartFileWriter
 	dataset = (Datasets<Dataset>) m_InputToken.getPayload();
       }
       chart = m_Chart.generate(dataset);
-      ChartUtils.setMarkers(chart, dataset, m_Marker);
+      ChartUtils.setMarkers(chart, m_Marker);
       image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
       g2d   = image.createGraphics();
       if (chart instanceof XYChart)
