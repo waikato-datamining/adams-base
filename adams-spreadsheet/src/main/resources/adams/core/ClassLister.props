@@ -71,6 +71,18 @@ adams.gui.visualization.jfreechart.chart.AbstractChartGenerator=\
 adams.gui.visualization.jfreechart.shape.AbstractShapeGenerator=\
   adams.gui.visualization.jfreechart.shape
 
+# the dataset generators for the XChartPlot sink
+adams.gui.visualization.xchart.dataset.AbstractDatasetGenerator=\
+  adams.gui.visualization.xchart.dataset
+
+# the plot generators for the XChartPlot sink
+adams.gui.visualization.xchart.chart.AbstractChartGenerator=\
+  adams.gui.visualization.xchart.chart
+
+# the marker generators for the XChartPlot sink
+adams.gui.visualization.xchart.marker.AbstractMarkerGenerator=\
+  adams.gui.visualization.xchart.marker
+
 # merge actors
 adams.flow.transformer.SpreadSheetMergeActor=\
   adams.flow.transformer

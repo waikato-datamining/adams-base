@@ -106,6 +106,8 @@ The following transformers are available:
 	table.\footnote{adams-spreadsheet-lookup.flow}
 	\item \textit{MakeJFreeChartDataset} -- generates a JFreeChart\cite{jfreechart} dataset
 	from a spreadsheet.
+	\item \textit{MakeXChartDataset} -- generates XChart\cite{xchart} datasets
+	from a spreadsheet.
 	\item \textit{MultiSpreadSheetOperation} -- applies the specified operation
 	to the incoming spreadsheet array (e.g., calculating difference, merging, etc)
 	\item \textit{SpreadSheetAggregate} -- aggregates rows in a spreadsheet
@@ -227,6 +229,8 @@ The following transformers are available:
 	variables.\footnote{adams-spreadsheet-variable\_row\_iterator.flow}
 	\item \textit{StorageJFreeChartAddSeries} -- generates a JFreeChart\cite{jfreechart}
 	series from the spreadsheet and adds it to the specified dataset in storage.
+	\item \textit{StorageXChartAddDataset} -- generates XChart\cite{xchart}
+	datasets from the spreadsheet and adds them to the specified datasets in storage.
 \end{tight_itemize}
 The following sinks are available:
 \begin{tight_itemize}
@@ -243,6 +247,10 @@ The following sinks are available:
 	multiple sheets can get written at once.
 	\item \textit{SpreadSheetRowViewer} -- displays the numeric values of
 	rows from a spreadsheet as line plots.
+	\item \textit{XChartFileWriter} -- generates plots from spreadsheet
+	columns or XChart\cite{xchart} datasets and writes them to disk.
+	\item \textit{XChartPlot} -- allows plotting of columns from
+	spreadsheets or XChart\cite{xchart} datasets.
 \end{tight_itemize}
 The following boolean conditions are available:
 \begin{tight_itemize}

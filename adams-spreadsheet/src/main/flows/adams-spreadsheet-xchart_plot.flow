@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2025-10-23 13:41:24
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "Plots spectral data using XChart." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/sample_nir_spectrum.csv
+ adams.flow.control.Tee -name "file name"
+  adams.flow.transformer.BaseName -remove-extensions true
+  adams.flow.transformer.SetVariable -var-name file
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.CsvSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet"
+ adams.flow.sink.XChartPlot -display-type adams.flow.core.displaytype.Default -writer adams.gui.print.NullWriter -dataset "adams.gui.visualization.xchart.dataset.XYDatasetGenerator -x waveno -y amplitude" -chart "adams.gui.visualization.xchart.chart.XYLineChart -title @{file}" -marker adams.gui.visualization.xchart.marker.None -color-provider adams.gui.visualization.core.DefaultColorProvider -watermark adams.gui.visualization.watermark.Default
