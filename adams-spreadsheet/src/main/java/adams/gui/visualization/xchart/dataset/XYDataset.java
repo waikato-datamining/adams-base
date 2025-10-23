@@ -20,6 +20,9 @@
 
 package adams.gui.visualization.xchart.dataset;
 
+import gnu.trove.list.TDoubleList;
+import gnu.trove.list.array.TDoubleArrayList;
+
 /**
  * Container for XY data.
  *
@@ -31,13 +34,24 @@ public class XYDataset
   private static final long serialVersionUID = 8071626595959879341L;
 
   /** the x data. */
-  protected double[] m_X;
+  protected TDoubleList m_X;
 
   /** the y data. */
-  protected double[] m_Y;
+  protected TDoubleList m_Y;
 
   /**
-   * Initializes the container.
+   * Initializes the container with no data.
+   *
+   * @param name 	the name of the dataset
+   */
+  public XYDataset(String name) {
+    super(name);
+    m_X = new TDoubleArrayList();
+    m_Y = new TDoubleArrayList();
+  }
+
+  /**
+   * Initializes the container with the specified x/y values.
    *
    * @param name 	the name of the dataset
    * @param x		the x data
@@ -45,8 +59,19 @@ public class XYDataset
    */
   public XYDataset(String name, double[] x, double[] y) {
     super(name);
-    m_X = x;
-    m_Y = y;
+    m_X = new TDoubleArrayList(x);
+    m_Y = new TDoubleArrayList(y);
+  }
+
+  /**
+   * Adds the data point to the dataset.
+   *
+   * @param x		the X to add
+   * @param y		the Y to add
+   */
+  public void add(double x, double y) {
+    m_X.add(x);
+    m_Y.add(y);
   }
 
   /**
@@ -55,7 +80,7 @@ public class XYDataset
    * @return		the data
    */
   public double[] getX() {
-    return m_X;
+    return m_X.toArray();
   }
 
   /**
@@ -64,6 +89,6 @@ public class XYDataset
    * @return		the data
    */
   public double[] getY() {
-    return m_Y;
+    return m_Y.toArray();
   }
 }
