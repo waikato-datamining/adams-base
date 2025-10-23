@@ -185,6 +185,24 @@ public abstract class AbstractColorProvider
   }
 
   /**
+   * Generates the specified number of colors.
+   *
+   * @param numColors 	the number of colors
+   * @return		the colors
+   */
+  @Override
+  public Color[] generate(int numColors) {
+    Color[]	result;
+    int		i;
+
+    result = new Color[numColors];
+    for (i = 0; i < numColors; i++)
+      result[i] = next();
+
+    return result;
+  }
+
+  /**
    * Returns a shallow copy of itself.
    *
    * @return		the shallow copy

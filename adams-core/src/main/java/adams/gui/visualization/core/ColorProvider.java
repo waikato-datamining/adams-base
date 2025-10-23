@@ -15,7 +15,7 @@
 
 /*
  * ColorProvider.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.core;
@@ -29,7 +29,6 @@ import java.awt.Color;
  * Interface for color providing classes.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface ColorProvider
   extends OptionHandler, ShallowCopySupporter<ColorProvider> {
@@ -59,4 +58,12 @@ public interface ColorProvider
    * @param c		the color to exclude
    */
   public void exclude(Color c);
+
+  /**
+   * Generates the specified number of colors.
+   *
+   * @param numColors 	the number of colors
+   * @return		the colors
+   */
+  public Color[] generate(int numColors);
 }

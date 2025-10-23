@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * RegExpColorProvider.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.core;
@@ -55,7 +55,6 @@ import java.awt.Color;
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class RegExpColorProvider
   extends AbstractOptionHandler
@@ -237,6 +236,24 @@ public class RegExpColorProvider
 	break;
       }
     }
+
+    return result;
+  }
+
+  /**
+   * Generates the specified number of colors.
+   *
+   * @param numColors 	the number of colors
+   * @return		the colors
+   */
+  @Override
+  public Color[] generate(int numColors) {
+    Color[]	result;
+    int		i;
+
+    result = new Color[numColors];
+    for (i = 0; i < numColors; i++)
+      result[i] = next();
 
     return result;
   }
