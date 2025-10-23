@@ -22,6 +22,7 @@ package adams.gui.visualization.jfreechart.chart;
 
 import adams.gui.visualization.core.BiColorGenerator;
 import adams.gui.visualization.core.ColorGradientGenerator;
+import adams.gui.visualization.core.KernelDensityEstimation.Mode;
 import adams.gui.visualization.jfreechart.dataset.ChartUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -32,7 +33,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.PaintScale;
 import org.jfree.chart.renderer.xy.DensityPlotXYItemRenderer;
-import org.jfree.chart.renderer.xy.DensityPlotXYItemRenderer.DensityMode;
 import org.jfree.data.xy.XYDataset;
 
 import java.awt.Color;
@@ -48,7 +48,7 @@ public class DensityScatterPlot
   private static final long serialVersionUID = -4759011723765395176L;
 
   /** how to calculate the density. */
-  protected DensityMode m_Mode;
+  protected Mode m_Mode;
 
   /** the number of bins to generate on X and Y. */
   protected int m_NumBins;
@@ -81,7 +81,7 @@ public class DensityScatterPlot
 
     m_OptionManager.add(
       "mode", "mode",
-      DensityMode.HISTOGRAM);
+      Mode.HISTOGRAM);
 
     m_OptionManager.add(
       "num-bins", "numBins",
@@ -105,7 +105,7 @@ public class DensityScatterPlot
    *
    * @param value	the mode
    */
-  public void setMode(DensityMode value) {
+  public void setMode(Mode value) {
     m_Mode = value;
     reset();
   }
@@ -115,7 +115,7 @@ public class DensityScatterPlot
    *
    * @return		the mode
    */
-  public DensityMode getMode() {
+  public Mode getMode() {
     return m_Mode;
   }
 
@@ -297,7 +297,7 @@ public class DensityScatterPlot
     if (m_ToolTips)
       toolTipGenerator = new StandardXYToolTipGenerator();
 
-    renderer = new DensityPlotXYItemRenderer(m_NumBins, m_NumBins, m_Generator.generate(), m_Mode, m_Bandwidth);
+    renderer = new DensityPlotXYItemRenderer(m_NumBins, m_Generator, m_Mode, m_Bandwidth);
     renderer.setBandwidth(m_Bandwidth);
     renderer.setDefaultToolTipGenerator(toolTipGenerator);
     renderer.setURLGenerator(null);

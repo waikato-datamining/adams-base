@@ -20,11 +20,14 @@
 
 package adams.gui.visualization.sequence.metadatacolor;
 
+import adams.core.ObjectCopyHelper;
 import adams.data.container.DataContainer;
 import adams.data.sequence.XYSequencePoint;
-import adams.data.statistics.StatUtils;
 import adams.gui.visualization.core.BiColorGenerator;
 import adams.gui.visualization.core.ColorGradientGenerator;
+import adams.gui.visualization.core.KernelDensityEstimation;
+import adams.gui.visualization.core.KernelDensityEstimation.Mode;
+import adams.gui.visualization.core.KernelDensityEstimation.RenderState;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -41,56 +44,6 @@ public class Density
 
   private static final long serialVersionUID = 83719639628991590L;
 
-  /**
-   * The mode for calculating the density.
-   */
-  public enum Mode {
-    HISTOGRAM,
-    KDE
-  }
-
-  /**
-   * The rendering state.
-   */
-  public static class RenderState {
-
-    /** the generated colors. */
-    public Color[] colors;
-
-    /** the bins. */
-    public double[][] bins;
-
-    /** the starting values for X bins. */
-    public double[] startX;
-
-    /** the starting values for Y bins. */
-    public double[] startY;
-
-    /** the smallest bin value. */
-    public double binMin;
-
-    /** the largest bin value. */
-    public double binMax;
-
-    /** the minimum x value. */
-    public double xMin;
-
-    /** the maximum x value. */
-    public double xMax;
-
-    /** the minimum x value. */
-    public double yMin;
-
-    /** the maximum x value. */
-    public double yMax;
-
-    /** the X bin width. */
-    public double xWidth;
-
-    /** the Y bin width. */
-    public double yWidth;
-  }
-  
   /** the mode to use. */
   protected Mode m_Mode;
 
@@ -277,23 +230,12 @@ public class Density
    */
   @Override
   public void initialize(List<XYSequencePoint> points) {
-    RenderState		state;
-    DataContainer	parent;
-    double[]		x;
-    double[]		y;
-    int			i;
-    int 		xIndex;
-    int 		yIndex;
-    int			xi;
-    int			yi;
-    double		h2;
-    double 		norm;
-    double 		xCenter;
-    double 		yCenter;
-    double 		sum;
-    double 		dx;
-    double 		dy;
-    double 		r2;
+    RenderState			state;
+    DataContainer		parent;
+    double[]			x;
+    double[]			y;
+    int				i;
+    KernelDensityEstimation	kde;
 
     if (m_Cache == null)
       m_Cache = new HashMap<>();
@@ -305,72 +247,20 @@ public class Density
     if (m_Cache.containsKey(parent))
       return;
 
-    state = new RenderState();
-    m_Cache.put(parent, state);
-
-    // colors
-    state.colors = m_Generator.generate();
-
-    // init bins
-    state.bins = new double[m_NumBins][m_NumBins];
-    state.startX = new double[m_NumBins];
-    state.startY = new double[m_NumBins];
-    x        = new double[points.size()];
-    y        = new double[points.size()];
+    x = new double[points.size()];
+    y = new double[points.size()];
     for (i = 0; i < points.size(); i++) {
       x[i] = points.get(i).getX();
       y[i] = points.get(i).getY();
     }
-    state.xMin = StatUtils.min(x);
-    state.xMax = StatUtils.max(x);
-    state.xWidth = (state.xMax - state.xMin) / m_NumBins;
-    state.yMin = StatUtils.min(y);
-    state.yMax = StatUtils.max(y);
-    state.yWidth = (state.yMax - state.yMin) / m_NumBins;
-    for (i = 0; i < m_NumBins; i++) {
-      state.startX[i] = state.xMin + i* state.xWidth;
-      state.startY[i] = state.yMin + i* state.yWidth;
-    }
 
-    // fill bins
-    if (m_Mode == Mode.HISTOGRAM) {
-      for (i = 0; i < x.length; i++) {
-	xIndex = (int) ((x[i] - state.xMin) / (state.xMax - state.xMin) * (m_NumBins - 1));
-	yIndex = (int) ((y[i] - state.yMin) / (state.yMax - state.yMin) * (m_NumBins - 1));
-	state.bins[yIndex][xIndex]++;
-      }
-    }
-    else {
-      // Gaussian kernel KDE evaluated at bin centers
-      h2 = m_Bandwidth * m_Bandwidth;
-      // normalization factor for 2D Gaussian: 1 / (2π h^2 n)
-      norm = 1.0 / (2.0 * Math.PI * h2 * points.size());
-
-      for (xi = 0; xi < m_NumBins; xi++) {
-	xCenter = state.xMin + (xi + 0.5) * (state.xMax - state.xMin) / m_NumBins;
-	for (yi = 0; yi < m_NumBins; yi++) {
-	  yCenter = state.yMin + (yi + 0.5) * (state.yMax - state.yMin) / m_NumBins;
-	  sum = 0.0;
-	  for (i = 0; i < x.length; i++) {
-	    dx = xCenter - x[i];
-	    dy = yCenter - y[i];
-	    r2 = dx * dx + dy * dy;
-	    sum += Math.exp(-0.5 * r2 / h2); // Gaussian kernel unnormalized
-	  }
-	  state.bins[xi][yi] = sum * norm;
-	}
-      }
-    }
-
-    // determine min/max
-    state.binMin = Integer.MAX_VALUE;
-    state.binMax = 0;
-    for (yIndex = 0; yIndex < m_NumBins; yIndex++) {
-      for (xIndex = 0; xIndex < m_NumBins; xIndex++) {
-	state.binMin = Math.min(state.binMin, state.bins[yIndex][xIndex]);
-	state.binMax = Math.max(state.binMax, state.bins[yIndex][xIndex]);
-      }
-    }
+    kde = new KernelDensityEstimation();
+    kde.setMode(m_Mode);
+    kde.setNumBins(m_NumBins);
+    kde.setBandwidth(m_Bandwidth);
+    kde.setGenerator(ObjectCopyHelper.copyObject(m_Generator));
+    state = kde.calculate(x, y);
+    m_Cache.put(parent, state);
   }
 
   /**
@@ -383,28 +273,14 @@ public class Density
   @Override
   public Color getColor(XYSequencePoint point, Color defColor) {
     Color	result;
-    int		index;
-    double	x;
-    double	y;
-    int 	xIndex;
-    int 	yIndex;
-    double	count;
     RenderState	state;
 
     result = defColor;
-
-    state = null;
+    state  = null;
     if (m_Cache != null)
       state = m_Cache.get(point.getParent());
-    if (state != null) {
-      x      = point.getX();
-      y      = point.getY();
-      xIndex = (int) ((x - state.xMin) / (state.xMax - state.xMin) * (m_NumBins - 1));
-      yIndex = (int) ((y - state.yMin) / (state.yMax - state.yMin) * (m_NumBins - 1));
-      count  = state.bins[yIndex][xIndex];
-      index  = (int) ((count - state.binMin) / (state.binMax - state.binMin) * (state.colors.length - 1));
-      result = state.colors[index];
-    }
+    if (state != null)
+      result = state.getColor(point.getX(), point.getY());
 
     return result;
   }
