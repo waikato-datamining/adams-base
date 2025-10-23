@@ -24,6 +24,8 @@ import adams.core.option.AbstractOptionHandler;
 import adams.data.statistics.StatUtils;
 
 import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * For calculating kernel-density estimates for plots.
@@ -92,6 +94,9 @@ public class KernelDensityEstimation
 
     /** the Y range. */
     public double yRange;
+
+    /** for storing additional information. */
+    public Map<String,Object> additional = new HashMap<>();
 
     /**
      * Returns the density for the data point.
