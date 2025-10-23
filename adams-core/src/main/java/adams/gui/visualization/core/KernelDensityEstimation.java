@@ -107,12 +107,12 @@ public class KernelDensityEstimation
      */
     public double getDensity(double x, double y) {
       double 	result;
-      int 	xIndex;
-      int 	yIndex;
+      int 	xi;
+      int 	yi;
 
-      xIndex = (int) ((x - xMin) / (xMax - xMin) * (numBins - 1));
-      yIndex = (int) ((y - yMin) / (yMax - yMin) * (numBins - 1));
-      result = bins[yIndex][xIndex];
+      xi = (int) ((x - xMin) / (xMax - xMin) * (numBins - 1));
+      yi = (int) ((y - yMin) / (yMax - yMin) * (numBins - 1));
+      result = bins[yi][xi];
 
       return result;
     }
@@ -325,10 +325,8 @@ public class KernelDensityEstimation
    * @param y 		the y values
    */
   public RenderState calculate(double[] x, double[] y) {
-    RenderState result;
+    RenderState 	result;
     int			i;
-    int 		xIndex;
-    int 		yIndex;
     int			xi;
     int			yi;
     double		h2;
@@ -366,9 +364,9 @@ public class KernelDensityEstimation
     // fill bins
     if (m_Mode == Mode.HISTOGRAM) {
       for (i = 0; i < x.length; i++) {
-	xIndex = (int) ((x[i] - result.xMin) / (result.xMax - result.xMin) * (m_NumBins - 1));
-	yIndex = (int) ((y[i] - result.yMin) / (result.yMax - result.yMin) * (m_NumBins - 1));
-	result.bins[yIndex][xIndex]++;
+	xi = (int) ((x[i] - result.xMin) / (result.xMax - result.xMin) * (m_NumBins - 1));
+	yi = (int) ((y[i] - result.yMin) / (result.yMax - result.yMin) * (m_NumBins - 1));
+	result.bins[yi][xi]++;
       }
     }
     else {
@@ -396,10 +394,10 @@ public class KernelDensityEstimation
     // determine min/max
     result.binMin = Integer.MAX_VALUE;
     result.binMax = 0;
-    for (yIndex = 0; yIndex < m_NumBins; yIndex++) {
-      for (xIndex = 0; xIndex < m_NumBins; xIndex++) {
-	result.binMin = Math.min(result.binMin, result.bins[yIndex][xIndex]);
-	result.binMax = Math.max(result.binMax, result.bins[yIndex][xIndex]);
+    for (yi = 0; yi < m_NumBins; yi++) {
+      for (xi = 0; xi < m_NumBins; xi++) {
+	result.binMin = Math.min(result.binMin, result.bins[yi][xi]);
+	result.binMax = Math.max(result.binMax, result.bins[yi][xi]);
       }
     }
     
