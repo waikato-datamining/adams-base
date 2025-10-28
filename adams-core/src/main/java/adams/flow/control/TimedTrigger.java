@@ -591,6 +591,12 @@ public class TimedTrigger
 	    }
 	  }
 	}
+	else {
+	  if (isLoggingEnabled())
+	    getLogger().info(getPrefix() + m_StopWatch.getTime() + " msec");
+	  else
+	    System.out.println(getPrefix() + m_StopWatch.getTime() + " msec");
+	}
       }
     }
 
