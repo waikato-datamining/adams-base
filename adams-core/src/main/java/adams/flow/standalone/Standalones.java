@@ -280,10 +280,15 @@ public class Standalones
   public String getQuickInfo() {
     String result;
 
-    result = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
+    result = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads, true));
 
-    if (super.getQuickInfo() != null)
-      result += ", " + super.getQuickInfo();
+    if (super.getQuickInfo() != null) {
+      if (result == null)
+	result = "";
+      if (!result.isEmpty())
+	result += ", ";
+      result += super.getQuickInfo();
+    }
 
     return result;
   }
