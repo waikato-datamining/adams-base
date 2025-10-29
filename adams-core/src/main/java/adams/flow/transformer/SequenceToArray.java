@@ -15,7 +15,7 @@
 
 /*
  * SequenceToArray.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -35,7 +35,10 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Turns a sequence of tokens into arrays with a specified length.<br>
- * In case of unspecified length (ie -1), an array containing all elements collected so far is output each time a token arrives, i.e., the internal buffer never gets reset.
+ * In case of unspecified length (ie -1), an array containing all elements collected so far is output each time a token arrives, i.e., the internal buffer never gets reset.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.ArrayToSequence
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -52,35 +55,38 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SequenceToArray
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-length &lt;int&gt; (property: arrayLength)
@@ -103,7 +109,7 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;element is used.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -131,14 +137,41 @@ public class SequenceToArray
   protected BaseClassname m_ArrayClass;
 
   /**
+   * Default constructor.
+   */
+  public SequenceToArray() {
+    super();
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public SequenceToArray(Class cls) {
+    this();
+    setArrayClass(new BaseClassname(cls));
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public SequenceToArray(BaseClassname cls) {
+    this();
+    setArrayClass(cls);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
    */
   @Override
   public String globalInfo() {
-    return 
-	"Turns a sequence of tokens into arrays with a specified length.\n"
+    return
+      "Turns a sequence of tokens into arrays with a specified length.\n"
 	+ "In case of unspecified length (ie -1), an array containing all "
 	+ "elements collected so far is output each time a token arrives, "
 	+ "i.e., the internal buffer never gets reset.";
@@ -283,8 +316,8 @@ public class SequenceToArray
    */
   public String arrayClassTipText() {
     return
-        "The class to use for the array; if none is specified, the class of "
-      + "the first element is used.";
+      "The class to use for the array; if none is specified, the class of "
+	+ "the first element is used.";
   }
 
   /**
@@ -384,7 +417,7 @@ public class SequenceToArray
 	if (isLoggingEnabled())
 	  getLogger().info("Buffered elements: " + m_Elements.size());
 	if ((m_ArrayLength == -1) || (m_Elements.size() == m_ArrayLength)) {
-	  if (m_ArrayClass.length() == 0)
+	  if (m_ArrayClass.isEmpty())
 	    array = Array.newInstance(m_Elements.get(0).getClass(), m_Elements.size());
 	  else
 	    array = Utils.newArray(m_ArrayClass.getValue(), m_Elements.size());

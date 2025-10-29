@@ -15,7 +15,7 @@
 
 /*
  * CollectionToArray.java
- * Copyright (C) 2018-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -33,7 +33,10 @@ import java.util.Iterator;
 
 /**
  <!-- globalinfo-start -->
- * Turns a collection of any type into an array.
+ * Turns a collection of any type into an array.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.ArrayToCollection
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -50,6 +53,7 @@ import java.util.Iterator;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -73,12 +77,14 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-array-class &lt;adams.core.base.BaseClassname&gt; (property: arrayClass)
@@ -100,6 +106,33 @@ public class CollectionToArray
 
   /** the class for the array. */
   protected BaseClassname m_ArrayClass;
+
+  /**
+   * Default constructor.
+   */
+  public CollectionToArray() {
+    super();
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public CollectionToArray(Class cls) {
+    this();
+    setArrayClass(new BaseClassname(cls));
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public CollectionToArray(BaseClassname cls) {
+    this();
+    setArrayClass(cls);
+  }
 
   /**
    * Returns a string describing the object.
@@ -161,8 +194,8 @@ public class CollectionToArray
    */
   public String arrayClassTipText() {
     return
-        "The class to use for the array; if none is specified, the class of "
-      + "the first element is used.";
+      "The class to use for the array; if none is specified, the class of "
+	+ "the first element is used.";
   }
 
   /**
@@ -214,10 +247,10 @@ public class CollectionToArray
       // initialize array
       array = null;
       if (m_ArrayClass.isEmpty()) {
-        iter = coll.iterator();
-        if (iter.hasNext())
-          array = Array.newInstance(iter.next().getClass(), coll.size());
-        else
+	iter = coll.iterator();
+	if (iter.hasNext())
+	  array = Array.newInstance(iter.next().getClass(), coll.size());
+	else
 	  result = "Failed to construct array: no elements in collection, cannot determine array type! Specify array class manually.";
       }
       else {
@@ -231,17 +264,17 @@ public class CollectionToArray
 	while (iter.hasNext()) {
 	  element = iter.next();
 	  try {
-            Array.set(array, i, element);
-          }
-          catch (Exception e) {
+	    Array.set(array, i, element);
+	  }
+	  catch (Exception e) {
 	    result = handleException("Failed to set element #" + (i+1) + " (" + Utils.classToString(element) + ") in array (" + Utils.classToString(array) + ")!", e);
-          }
+	  }
 	  i++;
 	  if (result != null)
 	    break;
 	}
 	if (result == null)
-          m_OutputToken = new Token(array);
+	  m_OutputToken = new Token(array);
       }
     }
     catch (Exception e) {

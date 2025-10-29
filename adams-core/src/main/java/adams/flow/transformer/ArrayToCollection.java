@@ -15,7 +15,7 @@
 
 /*
  * ArrayToCollection.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -32,7 +32,10 @@ import java.util.Collection;
 
 /**
  <!-- globalinfo-start -->
- * Turns an array into a collection.
+ * Turns an array into a collection.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.CollectionToArray
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -49,6 +52,7 @@ import java.util.Collection;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -72,12 +76,14 @@ import java.util.Collection;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-collection-class &lt;adams.core.base.BaseClassname&gt; (property: collectionClass)
@@ -97,6 +103,33 @@ public class ArrayToCollection
 
   /** the class for the array. */
   protected BaseClassname m_CollectionClass;
+
+  /**
+   * Default constructor.
+   */
+  public ArrayToCollection() {
+    super();
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public ArrayToCollection(Class cls) {
+    this();
+    setCollectionClass(new BaseClassname(cls));
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public ArrayToCollection(BaseClassname cls) {
+    this();
+    setCollectionClass(cls);
+  }
 
   /**
    * Returns a string describing the object.
@@ -189,10 +222,9 @@ public class ArrayToCollection
   }
 
   /**
-   * Performs the actual conversion.
+   * Executes the flow item.
    *
-   * @return		the converted data
-   * @throws Exception	if something goes wrong with the conversion
+   * @return		null if everything is fine, otherwise error message
    */
   @Override
   protected String doExecute() {

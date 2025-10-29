@@ -15,13 +15,13 @@
 
 /*
  * SequenceToCollection.java
- * Copyright (C) 2012-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
-import adams.core.classmanager.ClassManager;
+import adams.core.base.BaseClassname;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -50,55 +50,59 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SequenceToCollection
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-size &lt;int&gt; (property: collectionSize)
  * &nbsp;&nbsp;&nbsp;The size of the collection(s).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
  * <pre>-overlap &lt;int&gt; (property: overlap)
- * &nbsp;&nbsp;&nbsp;The overlap of elements between collections; e.g., sequence of 1,2,3,4 with 
- * &nbsp;&nbsp;&nbsp;length=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1, 
+ * &nbsp;&nbsp;&nbsp;The overlap of elements between collections; e.g., sequence of 1,2,3,4 with
+ * &nbsp;&nbsp;&nbsp;length=2 and overlap=0 gets packaged in to (1,2),(3,4); with overlap=1,
  * &nbsp;&nbsp;&nbsp;this changes to (1,2),(2,3),(3,4); collection size option must be &gt; 0.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
- * <pre>-collection-class &lt;java.lang.String&gt; (property: collectionClass)
+ *
+ * <pre>-collection-class &lt;adams.core.base.BaseClassname&gt; (property: collectionClass)
  * &nbsp;&nbsp;&nbsp;The class to use for the collection.
  * &nbsp;&nbsp;&nbsp;default: java.util.ArrayList
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -122,7 +126,34 @@ public class SequenceToCollection
   protected int m_Overlap;
 
   /** the class for the collection. */
-  protected String m_CollectionClass;
+  protected BaseClassname m_CollectionClass;
+
+  /**
+   * Default constructor.
+   */
+  public SequenceToCollection() {
+    super();
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public SequenceToCollection(Class cls) {
+    this();
+    setCollectionClass(new BaseClassname(cls));
+  }
+
+  /**
+   * Initializing with the specified class.
+   *
+   * @param cls		the class to use
+   */
+  public SequenceToCollection(BaseClassname cls) {
+    this();
+    setCollectionClass(cls);
+  }
 
   /**
    * Returns a string describing the object.
@@ -133,9 +164,9 @@ public class SequenceToCollection
   public String globalInfo() {
     return
       "Turns a sequence of tokens into a collection.\n"
-        + "In case of unspecified length (ie -1), a collection containing all "
-        + "elements collected so far is output each time a token arrives, "
-        + "i.e., the internal buffer never gets reset.";
+	+ "In case of unspecified length (ie -1), a collection containing all "
+	+ "elements collected so far is output each time a token arrives, "
+	+ "i.e., the internal buffer never gets reset.";
   }
 
   /**
@@ -155,7 +186,7 @@ public class SequenceToCollection
 
     m_OptionManager.add(
       "collection-class", "collectionClass",
-      ArrayList.class.getName());
+      new BaseClassname(ArrayList.class));
   }
 
   /**
@@ -169,7 +200,7 @@ public class SequenceToCollection
 
     result  = QuickInfoHelper.toString(this, "collectionSize", m_CollectionSize, "size: ");
     result += QuickInfoHelper.toString(this, "overlap", m_Overlap, ", overlap: ");
-    result += QuickInfoHelper.toString(this, "collectionClass", (m_CollectionClass.length() != 0 ? m_CollectionClass : "-none-"), ", class: ");
+    result += QuickInfoHelper.toString(this, "collectionClass", (!m_CollectionClass.isEmpty() ? m_CollectionClass : "-none-"), ", class: ");
 
     return result;
   }
@@ -246,13 +277,20 @@ public class SequenceToCollection
    * 			element
    */
   public void setCollectionClass(String value) {
-    if (value.length() > 0) {
-      m_CollectionClass = value;
-      reset();
-    }
-    else {
+    if (!value.isEmpty())
+      setCollectionClass(new BaseClassname(value));
+    else
       getLogger().severe("Class cannot be empty!");
-    }
+  }
+
+  /**
+   * Sets the class for the collection.
+   *
+   * @param value	the classname
+   */
+  public void setCollectionClass(BaseClassname value) {
+    m_CollectionClass = value;
+    reset();
   }
 
   /**
@@ -260,7 +298,7 @@ public class SequenceToCollection
    *
    * @return		the classname
    */
-  public String getCollectionClass() {
+  public BaseClassname getCollectionClass() {
     return m_CollectionClass;
   }
 
@@ -342,7 +380,7 @@ public class SequenceToCollection
    */
   public Class[] generates() {
     try {
-      return new Class[]{ClassManager.getSingleton().forName(m_CollectionClass)};
+      return new Class[]{m_CollectionClass.classValue()};
     }
     catch (Exception e) {
       return new Class[]{Collection.class};
@@ -375,7 +413,7 @@ public class SequenceToCollection
 	if (isLoggingEnabled())
 	  getLogger().info("Buffered elements: " + m_Elements.size());
 	if ((m_CollectionSize == -1) || (m_Elements.size() == m_CollectionSize)) {
-	  coll = (Collection) ClassManager.getSingleton().forName(m_CollectionClass).getDeclaredConstructor().newInstance();
+	  coll = (Collection) m_CollectionClass.classValue().getDeclaredConstructor().newInstance();
 	  if (isLoggingEnabled())
 	    getLogger().info("Collection type: " + coll.getClass().getComponentType());
 	  coll.addAll(m_Elements);
