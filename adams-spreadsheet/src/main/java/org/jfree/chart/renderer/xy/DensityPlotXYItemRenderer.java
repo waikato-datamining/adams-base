@@ -108,6 +108,10 @@ public class DensityPlotXYItemRenderer
     int			i;
     double		inc;
 
+    // in case we only have a single point
+    if (max <= min)
+      max = min + 1e06;
+
     result = new LookupPaintScale(min, max, Color.BLUE);
     inc    = (max - min) / (m_RenderState.colors.length - 1);
     for (i = 0; i < m_RenderState.colors.length; i++)
