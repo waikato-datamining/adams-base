@@ -15,7 +15,7 @@
 
 /*
  * EndlessLoop.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -88,7 +88,7 @@ public class EndlessLoop
     result.setCondition(new True());
     
     result.add(new Start());
-    result.add(new Sleep());
+    result.add(new Sleep(-1));
 
     return result;
   }

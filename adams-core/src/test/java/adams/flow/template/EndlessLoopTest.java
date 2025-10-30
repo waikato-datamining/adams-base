@@ -20,11 +20,9 @@
 
 package adams.flow.template;
 
+import adams.env.Environment;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import adams.core.VariableName;
-import adams.env.Environment;
-import adams.test.TmpFile;
 
 /**
  * Tests the EndlessLoop template.

@@ -6,5 +6,7 @@ adams.flow.control.WhileLoop
 		adams.flow.source.Start
 	-loop
 		adams.flow.control.Sleep
+			-interval
+			-1
 
 
