@@ -15,7 +15,7 @@
 
 /*
  * Sleep.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -79,9 +79,10 @@ import adams.flow.transformer.AbstractTransformer;
  * </pre>
  *
  * <pre>-interval &lt;int&gt; (property: interval)
- * &nbsp;&nbsp;&nbsp;The interval in milliseconds to wait before continuing with the execution.
+ * &nbsp;&nbsp;&nbsp;The interval in milliseconds to wait before continuing with the execution;
+ * &nbsp;&nbsp;&nbsp; use &lt;= 0 for indefinite sleep.
  * &nbsp;&nbsp;&nbsp;default: 1000
- * &nbsp;&nbsp;&nbsp;minimum: 1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
  <!-- options-end -->
@@ -97,6 +98,23 @@ public class Sleep
 
   /** the interval in milliseconds. */
   protected int m_Interval;
+
+  /**
+   * Default constructor.
+   */
+  public Sleep() {
+    super();
+  }
+
+  /**
+   * Initializes actor with the specified interval.
+   *
+   * @param interval	the interval to use
+   */
+  public Sleep(int interval) {
+    this();
+    setInterval(interval);
+  }
 
   /**
    * Returns a string describing the object.
@@ -117,7 +135,7 @@ public class Sleep
 
     m_OptionManager.add(
       "interval", "interval",
-      1000, 1, null);
+      1000, -1, null);
   }
 
   /**
@@ -148,7 +166,7 @@ public class Sleep
    * 			displaying in the GUI or for listing the options.
    */
   public String intervalTipText() {
-    return "The interval in milliseconds to wait before continuing with the execution.";
+    return "The interval in milliseconds to wait before continuing with the execution; use <= 0 for indefinite sleep.";
   }
 
   /**
@@ -158,7 +176,7 @@ public class Sleep
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "interval", m_Interval) + "ms";
+    return QuickInfoHelper.toString(this, "interval", (m_Interval <= 0 ? "indefinite" : (m_Interval + "ms")));
   }
 
   /**
@@ -187,19 +205,25 @@ public class Sleep
   @Override
   protected String doExecute() {
     String	result;
+    int		interval;
+    boolean	indefinite;
 
-    result = null;
+    result     = null;
+    indefinite = (m_Interval <= 0);
+    interval   = indefinite ? 1000 : m_Interval;
 
-    try {
-      synchronized(m_Self) {
-	wait(m_Interval);
+    while (indefinite && !isStopped()) {
+      try {
+	synchronized (m_Self) {
+	  wait(interval);
+	}
       }
-    }
-    catch (InterruptedException e) {
-      // ignored
-    }
-    catch (Exception e) {
-      result = handleException("Failed to sleep:", e);
+      catch (InterruptedException e) {
+	// ignored
+      }
+      catch (Exception e) {
+	result = handleException("Failed to sleep:", e);
+      }
     }
 
     m_OutputToken = m_InputToken;
