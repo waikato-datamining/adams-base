@@ -212,7 +212,7 @@ public class Sleep
     indefinite = (m_Interval <= 0);
     interval   = indefinite ? 1000 : m_Interval;
 
-    while (indefinite && !isStopped()) {
+    do {
       try {
 	synchronized (m_Self) {
 	  wait(interval);
@@ -225,6 +225,7 @@ public class Sleep
 	result = handleException("Failed to sleep:", e);
       }
     }
+    while (indefinite && !isStopped());
 
     m_OutputToken = m_InputToken;
 
