@@ -355,8 +355,12 @@ public class FlowPanel
 
     m_Tree.addActorChangeListener((ActorChangeEvent e) -> update());
     m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
-      if (m_Tree.getSelectionPath() != null)
+      if (m_Tree.getSelectionPaths().length == 1)
 	showStatus(false, m_Tree.getSelectedFullName());
+      else if (m_Tree.getSelectionPaths().length > 1)
+	showStatus(false, m_Tree.getSelectionPaths().length + " actors selected");
+      else
+	showStatus(false, "");
     });
 
     m_PanelTree = new JPanel(new BorderLayout());
