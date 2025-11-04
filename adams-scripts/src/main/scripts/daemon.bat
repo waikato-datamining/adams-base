@@ -66,7 +66,7 @@ goto wrongcmd
  --add-exports=java.base/sun.nio.cs=ALL-UNNAMED^
  --add-exports=java.base/sun.util.calendar=ALL-UNNAMED^
  %ENABLE_NATIVE_ACCESS%^
-adams.flow.FlowRunner^
+ adams.flow.FlowRunner^
  -input "%3"^
  -remote-scripting-engine-cmdline "adams.scripting.engine.DefaultScriptingEngine -port %4"^
  -shutdown-hook "adams.core.shutdown.StopFlows -time-out 5000"^
