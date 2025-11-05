@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DefaultDataset.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.ml.data;
 
@@ -34,7 +34,6 @@ import java.util.List;
  * learning functionality.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DefaultDataset
   extends DefaultSpreadSheet
@@ -111,7 +110,7 @@ public class DefaultDataset
   }
   
   /**
-   * Returns the a spreadsheet with the same header and comments.
+   * Returns a spreadsheet with the same header and comments.
    *
    * @return		the spreadsheet
    */
@@ -131,6 +130,7 @@ public class DefaultDataset
    * @param name	the name of the column to locate
    * @return		the index, -1 if failed to locate
    */
+  @Override
   public int indexOfColumn(String name) {
     return getHeaderRow().indexOfContent(name);
   }
@@ -150,6 +150,7 @@ public class DefaultDataset
   /**
    * Removes all set class attributes.
    */
+  @Override
   public void removeClassAttributes() {
     m_ClassAttributes.clear();
   }
@@ -160,6 +161,7 @@ public class DefaultDataset
    * @param colKey	they key of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttribute(String colKey) {
     if (colKey == null)
       return false;
@@ -173,6 +175,7 @@ public class DefaultDataset
    * @param colIndex	they index of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttribute(int colIndex) {
     if (colIndex > -1)
       return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
@@ -186,6 +189,7 @@ public class DefaultDataset
    * @param name	they name of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttributeByName(String name) {
     return isClassAttribute(getHeaderRow().indexOfContent(name));
   }
@@ -198,6 +202,7 @@ public class DefaultDataset
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttribute(String colKey, boolean isClass) {
     if (colKey == null)
       return false;
@@ -220,6 +225,7 @@ public class DefaultDataset
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttribute(int colIndex, boolean isClass) {
     return setClassAttribute(m_HeaderRow.getCellKey(colIndex), isClass);
   }
@@ -232,6 +238,7 @@ public class DefaultDataset
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttributeByName(String name, boolean isClass) {
     int		col;
 
@@ -244,8 +251,9 @@ public class DefaultDataset
    *
    * @return		the column keys of class attributes (not ordered)
    */
+  @Override
   public String[] getClassAttributeKeys() {
-    return m_ClassAttributes.toArray(new String[m_ClassAttributes.size()]);
+    return m_ClassAttributes.toArray(new String[0]);
   }
 
   /**
@@ -253,6 +261,7 @@ public class DefaultDataset
    *
    * @return		the column names of class attributes (not ordered)
    */
+  @Override
   public String[] getClassAttributeNames() {
     List<String>	result;
 
@@ -260,7 +269,7 @@ public class DefaultDataset
     for (int index: getClassAttributeIndices())
       result.add(getColumnName(index));
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -268,6 +277,7 @@ public class DefaultDataset
    *
    * @return		the indices of class attributes (sorted asc)
    */
+  @Override
   public int[] getClassAttributeIndices() {
     int[]	result;
     String[]	keys;
@@ -345,13 +355,14 @@ public class DefaultDataset
    * 
    * @return		the input features, null if data conists only of class columns
    */
+  @Override
   public SpreadSheet getInputs() {
     SpreadSheet		result;
     TIntArrayList	indices;
     int			i;
     Row			newRow;
     
-    if (m_ClassAttributes.size() == 0)
+    if (m_ClassAttributes.isEmpty())
       return getClone();
     else if (m_ClassAttributes.size() == getColumnCount())
       return null;
@@ -388,13 +399,14 @@ public class DefaultDataset
    * 
    * @return		the output features, null if data has no class columns
    */
+  @Override
   public SpreadSheet getOutputs() {
     SpreadSheet		result;
     TIntArrayList	indices;
     int			i;
     Row			newRow;
     
-    if (m_ClassAttributes.size() == 0)
+    if (m_ClassAttributes.isEmpty())
       return null;
     else if (m_ClassAttributes.size() == getColumnCount())
       return getClone();
@@ -432,6 +444,7 @@ public class DefaultDataset
    * @param rows	the rows to use, null for all
    * @return		the view
    */
+  @Override
   public DatasetView toView(int[] rows, int[] columns) {
     return new DatasetView(this, rows, columns);
   }

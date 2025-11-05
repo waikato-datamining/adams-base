@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetView.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.spreadsheet;
@@ -1313,7 +1313,19 @@ public class SpreadSheetView
    * @param rows	the rows to use, null for all
    * @return		the view
    */
+  @Override
   public SpreadSheet toView(int[] rows, int[] columns) {
     return new SpreadSheetView(this, rows, columns);
+  }
+
+  /**
+   * Searches for cells.
+   *
+   * @param parameters		the search parameters
+   * @return			the iterator for the cells
+   */
+  @Override
+  public FindCellsIterator find(FindCellsParameters parameters) {
+    return new FindCellsIterator(this, parameters);
   }
 }

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * InstancesView.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -29,6 +29,8 @@ import adams.data.SharedStringsTable;
 import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.DataRow;
+import adams.data.spreadsheet.FindCellsIterator;
+import adams.data.spreadsheet.FindCellsParameters;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.RowComparator;
@@ -56,7 +58,6 @@ import java.util.TimeZone;
  * Provides a view of an {@link Instances} object.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class InstancesView
   implements Dataset {
@@ -744,14 +745,13 @@ public class InstancesView
     int			i;
     Cell		cell;
 
-    result = new ArrayList<>();
     values = new HashSet<>();
     for (i = 0; i < getRowCount(); i++) {
       cell = getCell(i, colIndex);
       if ((cell != null) && !cell.isMissing())
 	values.add(cell.getContent());
     }
-    result.addAll(values);
+    result = new ArrayList<>(values);
     Collections.sort(result);
 
     return result;
@@ -1385,7 +1385,19 @@ public class InstancesView
    * @param rows	the rows to use, null for all
    * @return		the view
    */
+  @Override
   public SpreadSheetView toView(int[] rows, int[] columns) {
     return new SpreadSheetView(this, rows, columns);
+  }
+
+  /**
+   * Searches for cells.
+   *
+   * @param parameters		the search parameters
+   * @return			the iterator for the cells
+   */
+  @Override
+  public FindCellsIterator find(FindCellsParameters parameters) {
+    return new FindCellsIterator(this, parameters);
   }
 }

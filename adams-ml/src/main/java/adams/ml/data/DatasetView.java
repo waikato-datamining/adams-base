@@ -15,7 +15,7 @@
 
 /*
  * DatasetView.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.ml.data;
@@ -29,6 +29,8 @@ import adams.data.spreadsheet.Cell;
 import adams.data.spreadsheet.Cell.ContentType;
 import adams.data.spreadsheet.DataRow;
 import adams.data.spreadsheet.DataRowView;
+import adams.data.spreadsheet.FindCellsIterator;
+import adams.data.spreadsheet.FindCellsParameters;
 import adams.data.spreadsheet.HeaderRow;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.RowComparator;
@@ -51,7 +53,6 @@ import java.util.TimeZone;
  * Provides a view of another dataset.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatasetView
   implements Dataset {
@@ -1261,6 +1262,7 @@ public class DatasetView
    * <br>
    * Not implemented!
    */
+  @Override
   public void removeClassAttributes() {
     throw new NotImplementedException();
   }
@@ -1271,6 +1273,7 @@ public class DatasetView
    * @param colKey	they key of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttribute(String colKey) {
     if ((colKey == null) || (getActualColumn(colKey) == null))
       return false;
@@ -1284,6 +1287,7 @@ public class DatasetView
    * @param colIndex	they index of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttribute(int colIndex) {
     if (colIndex > -1)
       return isClassAttribute(m_HeaderRow.getCellKey(colIndex));
@@ -1297,6 +1301,7 @@ public class DatasetView
    * @param name	they name of the column to query
    * @return		true if column a class attribute
    */
+  @Override
   public boolean isClassAttributeByName(String name) {
     return isClassAttribute(getHeaderRow().indexOfContent(name));
   }
@@ -1311,6 +1316,7 @@ public class DatasetView
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttribute(String colKey, boolean isClass) {
     throw new NotImplementedException();
   }
@@ -1325,6 +1331,7 @@ public class DatasetView
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttribute(int colIndex, boolean isClass) {
     throw new NotImplementedException();
   }
@@ -1339,6 +1346,7 @@ public class DatasetView
    * 			attribute, otherwise the flag will get removed
    * @return		true if successfully updated
    */
+  @Override
   public boolean setClassAttributeByName(String name, boolean isClass) {
     throw new NotImplementedException();
   }
@@ -1348,6 +1356,7 @@ public class DatasetView
    *
    * @return		the column keys of class attributes (not ordered)
    */
+  @Override
   public String[] getClassAttributeKeys() {
     List<String>	result;
 
@@ -1358,7 +1367,7 @@ public class DatasetView
 	result.add(key);
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -1366,6 +1375,7 @@ public class DatasetView
    *
    * @return		the column names of class attributes (not ordered)
    */
+  @Override
   public String[] getClassAttributeNames() {
     List<String>	result;
 
@@ -1373,7 +1383,7 @@ public class DatasetView
     for (int index: getClassAttributeIndices())
       result.add(getColumnName(index));
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -1381,6 +1391,7 @@ public class DatasetView
    *
    * @return		the indices of class attributes (sorted asc)
    */
+  @Override
   public int[] getClassAttributeIndices() {
     int[]	result;
     String[]	keys;
@@ -1401,6 +1412,7 @@ public class DatasetView
    *
    * @return		the input features, null if data conists only of class columns
    */
+  @Override
   public SpreadSheet getInputs() {
     SpreadSheet		result;
     TIntArrayList	indices;
@@ -1444,6 +1456,7 @@ public class DatasetView
    *
    * @return		the output features, null if data has no class columns
    */
+  @Override
   public SpreadSheet getOutputs() {
     SpreadSheet		result;
     TIntArrayList	indices;
@@ -1550,7 +1563,19 @@ public class DatasetView
    * @param rows	the rows to use, null for all
    * @return		the view
    */
+  @Override
   public DatasetView toView(int[] rows, int[] columns) {
     return new DatasetView(this, rows, columns);
+  }
+
+  /**
+   * Searches for cells.
+   *
+   * @param parameters		the search parameters
+   * @return			the iterator for the cells
+   */
+  @Override
+  public FindCellsIterator find(FindCellsParameters parameters) {
+    return new FindCellsIterator(this, parameters);
   }
 }

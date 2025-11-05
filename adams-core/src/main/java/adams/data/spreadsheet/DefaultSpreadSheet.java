@@ -15,18 +15,18 @@
 
 /*
  * DefaultSpreadSheet.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
 
 import adams.core.DateFormat;
 import adams.core.DateUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.LocaleHelper;
 import adams.data.SharedStringsTable;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.Cell.ContentType;
-import adams.env.Environment;
 import adams.event.SpreadSheetColumnInsertionEvent;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /**
  * Represents a generic spreadsheet object.
@@ -142,6 +143,7 @@ public class DefaultSpreadSheet
    * 
    * @param sheet	the data to copy
    */
+  @Override
   public void assign(SpreadSheet sheet) {
     clear();
 
@@ -173,6 +175,7 @@ public class DefaultSpreadSheet
    * @param cls				the class, null resets it to the default one
    * @throws IllegalArgumentException	if class does not implement {@link DataRow}
    */
+  @Override
   public void setDataRowClass(Class cls) {
     if (cls == null)
       cls = DenseDataRow.class;
@@ -188,6 +191,7 @@ public class DefaultSpreadSheet
    *
    * @return		the class
    */
+  @Override
   public Class getDataRowClass() {
     return m_DataRowClass;
   }
@@ -197,6 +201,7 @@ public class DefaultSpreadSheet
    * 
    * @return		the new instance, null if failed to create new instance
    */
+  @Override
   public SpreadSheet newInstance() {
     SpreadSheet	result;
     
@@ -205,8 +210,7 @@ public class DefaultSpreadSheet
       result.setDataRowClass(getDataRowClass());
     }
     catch (Exception e) {
-      System.err.println("Failed to create new instance of " + getClass().getName());
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to create new instance of " + getClass().getName(), e);
       result = null;
     }
     
@@ -246,10 +250,11 @@ public class DefaultSpreadSheet
   }
 
   /**
-   * Returns the a spreadsheet with the same header and comments.
+   * Returns a spreadsheet with the same header and comments.
    *
    * @return		the spreadsheet
    */
+  @Override
   public SpreadSheet getHeader() {
     DefaultSpreadSheet	result;
 
@@ -275,6 +280,7 @@ public class DefaultSpreadSheet
    * @return		the formatter
    * @see		DateUtils#getDateFormatter()
    */
+  @Override
   public DateFormat getDateFormat() {
     return m_DateFormat;
   }
@@ -285,6 +291,7 @@ public class DefaultSpreadSheet
    * @return		the formatter
    * @see		DateUtils#getTimestampFormatter()
    */
+  @Override
   public DateFormat getDateTimeFormat() {
     return m_DateTimeFormat;
   }
@@ -295,6 +302,7 @@ public class DefaultSpreadSheet
    * @return		the formatter
    * @see		DateUtils#getTimestampFormatterMsecs()
    */
+  @Override
   public DateFormat getDateTimeMsecFormat() {
     return m_DateTimeMsecFormat;
   }
@@ -305,6 +313,7 @@ public class DefaultSpreadSheet
    * @return		the formatter
    * @see		DateUtils#getTimeFormatter()
    */
+  @Override
   public DateFormat getTimeFormat() {
     return m_TimeFormat;
   }
@@ -315,6 +324,7 @@ public class DefaultSpreadSheet
    * @return		the formatter
    * @see		DateUtils#getTimeFormatterMsecs()
    */
+  @Override
   public DateFormat getTimeMsecFormat() {
     return m_TimeMsecFormat;
   }
@@ -324,6 +334,7 @@ public class DefaultSpreadSheet
    * 
    * @return		the formatter
    */
+  @Override
   public NumberFormat getNumberFormat() {
     return m_NumberFormat;
   }
@@ -333,6 +344,7 @@ public class DefaultSpreadSheet
    *
    * @param value	the name
    */
+  @Override
   public void setName(String value) {
     m_Name = value;
   }
@@ -342,6 +354,7 @@ public class DefaultSpreadSheet
    *
    * @return		the name, can be null
    */
+  @Override
   public String getName() {
     return m_Name;
   }
@@ -351,6 +364,7 @@ public class DefaultSpreadSheet
    *
    * @return		true if the spreadsheet is named
    */
+  @Override
   public boolean hasName() {
     return (m_Name != null);
   }
@@ -362,6 +376,7 @@ public class DefaultSpreadSheet
    *
    * @param comment	the comment to add
    */
+  @Override
   public void addComment(String comment) {
     if (comment.indexOf('\n') > 0)
       addComment(Arrays.asList(comment.split("\n")));
@@ -374,6 +389,7 @@ public class DefaultSpreadSheet
    *
    * @param comment	the comment to add
    */
+  @Override
   public void addComment(List<String> comment) {
     m_Comments.addAll(comment);
   }
@@ -383,6 +399,7 @@ public class DefaultSpreadSheet
    *
    * @return		the comments
    */
+  @Override
   public List<String> getComments() {
     return m_Comments;
   }
@@ -390,6 +407,7 @@ public class DefaultSpreadSheet
   /**
    * Removes all cells, but leaves comments.
    */
+  @Override
   public void clear() {
     String[]	header;
     int		i;
@@ -419,6 +437,7 @@ public class DefaultSpreadSheet
    *
    * @return		the row
    */
+  @Override
   public HeaderRow getHeaderRow() {
     return m_HeaderRow;
   }
@@ -429,6 +448,7 @@ public class DefaultSpreadSheet
    * @param colIndex	the index of the column
    * @return		the name of the column
    */
+  @Override
   public String getColumnName(int colIndex) {
     return getHeaderRow().getCell(colIndex).getContent();
   }
@@ -439,6 +459,7 @@ public class DefaultSpreadSheet
    *
    * @return		the names of the columns
    */
+  @Override
   public List<String> getColumnNames() {
     ArrayList<String>	result;
     int			i;
@@ -457,6 +478,7 @@ public class DefaultSpreadSheet
    * @param rowIndex	the index to look for
    * @return		true if the row already exists
    */
+  @Override
   public boolean hasRow(int rowIndex) {
     return (rowIndex >= 0) && (rowIndex < m_Rows.size());
   }
@@ -467,6 +489,7 @@ public class DefaultSpreadSheet
    * @param rowKey	the key to look for
    * @return		true if the row already exists
    */
+  @Override
   public boolean hasRow(String rowKey) {
     return m_Rows.containsKey(rowKey);
   }
@@ -498,6 +521,7 @@ public class DefaultSpreadSheet
    *
    * @return		the new instance, null in case of an instantiation error
    */
+  @Override
   public Cell newCell() {
     Cell	result;
     DataRow	row;
@@ -515,6 +539,7 @@ public class DefaultSpreadSheet
    *
    * @return		the created row
    */
+  @Override
   public DataRow addRow() {
     int		i;
 
@@ -533,6 +558,7 @@ public class DefaultSpreadSheet
    * @param rowKey	the key for the row to create
    * @return		the created row or the already existing row
    */
+  @Override
   public DataRow addRow(String rowKey) {
     DataRow	result;
 
@@ -554,6 +580,7 @@ public class DefaultSpreadSheet
    * @param index	the index where to insert the row
    * @return		the created row
    */
+  @Override
   public DataRow insertRow(int index) {
     DataRow	result;
     int		i;
@@ -580,6 +607,7 @@ public class DefaultSpreadSheet
    * @param rowIndex	the row to remove
    * @return		the row that was removed, null if none removed
    */
+  @Override
   public Row removeRow(int rowIndex) {
     return removeRow(getRowKey(rowIndex));
   }
@@ -590,6 +618,7 @@ public class DefaultSpreadSheet
    * @param rowKey	the row to remove
    * @return		the row that was removed, null if none removed
    */
+  @Override
   public Row removeRow(String rowKey) {
     Row		result;
 
@@ -610,6 +639,7 @@ public class DefaultSpreadSheet
    * @param columnIndex	the position of the column
    * @param header	the name of the column
    */
+  @Override
   public void insertColumn(int columnIndex, String header) {
     insertColumn(columnIndex, header, null);
   }
@@ -622,6 +652,7 @@ public class DefaultSpreadSheet
    * @param initial	the initial value for the cells, "null" for missing
    * 			values (in that case no cells are added)
    */
+  @Override
   public void insertColumn(int columnIndex, String header, String initial) {
     insertColumn(columnIndex, header, initial, false);
   }
@@ -635,6 +666,7 @@ public class DefaultSpreadSheet
    * 			values (in that case no cells are added)
    * @param forceString	whether to enforce the value to be set as string
    */
+  @Override
   public void insertColumn(int columnIndex, String header, String initial, boolean forceString) {
     String				key;
     SpreadSheetColumnInsertionEvent	e;
@@ -661,6 +693,7 @@ public class DefaultSpreadSheet
    * @param columnIndex	the column to remove
    * @return		true if removed
    */
+  @Override
   public boolean removeColumn(int columnIndex) {
     return removeColumn(getHeaderRow().getCellKey(columnIndex));
   }
@@ -671,6 +704,7 @@ public class DefaultSpreadSheet
    * @param columnKey	the column to remove
    * @return		true if removed
    */
+  @Override
   public boolean removeColumn(String columnKey) {
     int		i;
 
@@ -693,6 +727,7 @@ public class DefaultSpreadSheet
    * @param rowKey	the key of the row to retrieve
    * @return		the row or null if not found
    */
+  @Override
   public DataRow getRow(String rowKey) {
     return m_Rows.get(rowKey);
   }
@@ -703,6 +738,7 @@ public class DefaultSpreadSheet
    * @param rowIndex	the 0-based index of the row to retrieve
    * @return		the row
    */
+  @Override
   public DataRow getRow(int rowIndex) {
     return m_Rows.get(m_RowKeys.get(rowIndex));
   }
@@ -713,6 +749,7 @@ public class DefaultSpreadSheet
    * @param rowIndex	the 0-based index of the row key to retrieve
    * @return		the row key
    */
+  @Override
   public String getRowKey(int rowIndex) {
     return m_RowKeys.get(rowIndex);
   }
@@ -723,6 +760,7 @@ public class DefaultSpreadSheet
    * @param rowKey	the row identifier
    * @return		the 0-based row index, -1 if not found
    */
+  @Override
   public int getRowIndex(String rowKey) {
     int		result;
     int		i;
@@ -745,6 +783,7 @@ public class DefaultSpreadSheet
    * @param cellKey	the cell identifier
    * @return		the 0-based column index, -1 if not found
    */
+  @Override
   public int getCellIndex(String cellKey) {
     int		result;
     int		i;
@@ -768,6 +807,7 @@ public class DefaultSpreadSheet
    * @param columnIndex	the index of the cell in the row to look for
    * @return		true if the cell exists
    */
+  @Override
   public boolean hasCell(int rowIndex, int columnIndex) {
     boolean	result;
     Row		row;
@@ -789,6 +829,7 @@ public class DefaultSpreadSheet
    * @param columnIndex	the column of the cell to retrieve
    * @return		the cell or null if not found
    */
+  @Override
   public Cell getCell(int rowIndex, int columnIndex) {
     Cell	result;
     Row		row;
@@ -816,6 +857,7 @@ public class DefaultSpreadSheet
    * @param cellKey	the key of the cell to retrieve
    * @return		the position string or null if not found
    */
+  @Override
   public String getCellPosition(String rowKey, String cellKey) {
     int		rowIndex;
     int		cellIndex;
@@ -831,6 +873,7 @@ public class DefaultSpreadSheet
    *
    * @return		the row keys
    */
+  @Override
   public Collection<String> rowKeys() {
     return Collections.unmodifiableCollection(m_RowKeys);
   }
@@ -840,10 +883,11 @@ public class DefaultSpreadSheet
    *
    * @return		the rows
    */
+  @Override
   public Collection<DataRow> rows() {
     ArrayList<DataRow>	result;
 
-    result = new ArrayList<DataRow>();
+    result = new ArrayList<>();
     for (String key: m_RowKeys)
       result.add(m_Rows.get(key));
 
@@ -855,6 +899,7 @@ public class DefaultSpreadSheet
    *
    * @see	#rowKeys()
    */
+  @Override
   public void sortRowKeys() {
     Collections.sort(m_RowKeys);
   }
@@ -865,6 +910,7 @@ public class DefaultSpreadSheet
    * @param comp	the comparator to use
    * @see		#rowKeys()
    */
+  @Override
   public void sortRowKeys(Comparator<String> comp) {
     Collections.sort(m_RowKeys, comp);
   }
@@ -878,6 +924,7 @@ public class DefaultSpreadSheet
    * @param asc		wether sorting is ascending or descending
    * @see 		#sort(RowComparator)
    */
+  @Override
   public void sort(int index, boolean asc) {
     sort(new RowComparator(new int[]{index}, new boolean[]{asc}));
   }
@@ -889,6 +936,7 @@ public class DefaultSpreadSheet
    *
    * @param comp	the row comparator to use
    */
+  @Override
   public void sort(RowComparator comp) {
     sort(comp, false);
   }
@@ -901,6 +949,7 @@ public class DefaultSpreadSheet
    * @param comp	the row comparator to use
    * @param unique	whether to drop any duplicate rows (based on row comparator)
    */
+  @Override
   public void sort(RowComparator comp, boolean unique) {
     ArrayList<DataRow>	list;
     String		rkey;
@@ -908,10 +957,10 @@ public class DefaultSpreadSheet
     DataRow		last;
     DataRow		current;
 
-    list = new ArrayList<DataRow>();
+    list = new ArrayList<>();
     for (String key: m_RowKeys)
       list.add(m_Rows.get(key));
-    Collections.sort(list, comp);
+    list.sort(comp);
     m_Rows.clear();
     m_RowKeys.clear();
     if (unique) {
@@ -940,6 +989,7 @@ public class DefaultSpreadSheet
    *
    * @return		the number of columns
    */
+  @Override
   public int getColumnCount() {
     return getHeaderRow().getCellCount();
   }
@@ -949,6 +999,7 @@ public class DefaultSpreadSheet
    *
    * @return		the number of rows
    */
+  @Override
   public int getRowCount() {
     return m_RowKeys.size();
   }
@@ -961,6 +1012,7 @@ public class DefaultSpreadSheet
    * @return		true if purely numeric
    * @see		#getContentTypes(int)
    */
+  @Override
   public boolean isNumeric(int columnIndex) {
     return isNumeric(columnIndex, false);
   }
@@ -973,18 +1025,19 @@ public class DefaultSpreadSheet
    * @return		true if purely numeric
    * @see		#getContentTypes(int)
    */
+  @Override
   public boolean isNumeric(int columnIndex, boolean allowMissing) {
     boolean			result;
     Collection<ContentType>	found;
 
     result = false;
     found  = getContentTypes(columnIndex);
-    if (found.size() > 0) {
+    if (!found.isEmpty()) {
       found.remove(ContentType.DOUBLE);
       found.remove(ContentType.LONG);
       if (allowMissing)
 	found.remove(ContentType.MISSING);
-      result = (found.size() == 0);
+      result = (found.isEmpty());
     }
 
     return result;
@@ -998,6 +1051,7 @@ public class DefaultSpreadSheet
    * @return		true if column purely consists of this content type
    * @see		#getContentType(int)
    */
+  @Override
   public boolean isContentType(int columnIndex, ContentType type) {
     boolean		result;
     ContentType		found;
@@ -1014,6 +1068,7 @@ public class DefaultSpreadSheet
    * @param columnIndex	the index of the column to check
    * @return		the content type that this column consists of solely, null if mixed
    */
+  @Override
   public ContentType getContentType(int columnIndex) {
     ContentType			result;
     Collection<ContentType>	types;
@@ -1033,13 +1088,14 @@ public class DefaultSpreadSheet
    * @param columnIndex	the index of the column to check
    * @return		the content types that this column consists of
    */
+  @Override
   public Collection<ContentType> getContentTypes(int columnIndex) {
     HashSet<ContentType>	results;
     int				i;
     String			colKey;
     Cell			cell;
 
-    results = new HashSet<ContentType>();
+    results = new HashSet<>();
     colKey  = m_HeaderRow.getCellKey(columnIndex);
 
     for (i = 0; i < getRowCount(); i++) {
@@ -1058,17 +1114,17 @@ public class DefaultSpreadSheet
    * @param colKey	the column to retrieve the values for
    * @return		the sorted, list of unique values
    */
+  @Override
   public List<String> getCellValues(String colKey) {
     List<String>	result;
     HashSet<String>	unique;
 
-    result = new ArrayList<String>();
-    unique = new HashSet<String>();
+    unique = new HashSet<>();
     for (Row row: rows()) {
       if (row.hasCell(colKey) && !row.getCell(colKey).isMissing())
 	unique.add(row.getCell(colKey).getContent());
     }
-    result.addAll(unique);
+    result = new ArrayList<>(unique);
     Collections.sort(result);
     
     return result;
@@ -1081,6 +1137,7 @@ public class DefaultSpreadSheet
    * @param colIndex	the column to retrieve the values for
    * @return		the sorted, list of unique values
    */
+  @Override
   public List<String> getCellValues(int colIndex) {
     return getCellValues(getHeaderRow().getCellKey(colIndex));
   }
@@ -1091,6 +1148,7 @@ public class DefaultSpreadSheet
    * @param other	the other spreadsheet to compare with
    * @return		null if equal, otherwise details what differs
    */
+  @Override
   public String equalsHeader(SpreadSheet other) {
     String	result;
     Row		header;
@@ -1143,6 +1201,7 @@ public class DefaultSpreadSheet
    *
    * @return		the row-wise matrix
    */
+  @Override
   public Object[][] toMatrix() {
     Object[][]	result;
     int		i;
@@ -1186,6 +1245,7 @@ public class DefaultSpreadSheet
    *
    * @return		true if any cell was removed
    */
+  @Override
   public boolean removeMissing() {
     boolean	result;
 
@@ -1202,6 +1262,7 @@ public class DefaultSpreadSheet
    *
    * @return		the table
    */
+  @Override
   public SharedStringsTable getSharedStringsTable() {
     return m_StringsTable;
   }
@@ -1212,6 +1273,7 @@ public class DefaultSpreadSheet
    * @param value	if true lenient parsing is used, otherwise not
    * @see		SimpleDateFormat#setLenient(boolean)
    */
+  @Override
   public void setDateLenient(boolean value) {
     m_DateFormat.setLenient(value);
   }
@@ -1222,6 +1284,7 @@ public class DefaultSpreadSheet
    * @return		true if parsing is lenient
    * @see		SimpleDateFormat#isLenient()
    */
+  @Override
   public boolean isDateLenient() {
     return m_DateFormat.isLenient();
   }
@@ -1232,6 +1295,7 @@ public class DefaultSpreadSheet
    * @param value	if true lenient parsing is used, otherwise not
    * @see		SimpleDateFormat#setLenient(boolean)
    */
+  @Override
   public void setDateTimeLenient(boolean value) {
     m_DateTimeFormat.setLenient(value);
   }
@@ -1242,6 +1306,7 @@ public class DefaultSpreadSheet
    * @return		true if parsing is lenient
    * @see		SimpleDateFormat#isLenient()
    */
+  @Override
   public boolean isDateTimeLenient() {
     return m_DateTimeFormat.isLenient();
   }
@@ -1252,6 +1317,7 @@ public class DefaultSpreadSheet
    * @param value	if true lenient parsing is used, otherwise not
    * @see		SimpleDateFormat#setLenient(boolean)
    */
+  @Override
   public void setDateTimeMsecLenient(boolean value) {
     m_DateTimeMsecFormat.setLenient(value);
   }
@@ -1262,6 +1328,7 @@ public class DefaultSpreadSheet
    * @return		true if parsing is lenient
    * @see		SimpleDateFormat#isLenient()
    */
+  @Override
   public boolean isDateTimeMsecLenient() {
     return m_DateTimeMsecFormat.isLenient();
   }
@@ -1271,6 +1338,7 @@ public class DefaultSpreadSheet
    *
    * @param value	if true lenient parsing is used, otherwise not
    */
+  @Override
   public void setTimeLenient(boolean value) {
     m_TimeFormat.setLenient(value);
   }
@@ -1280,6 +1348,7 @@ public class DefaultSpreadSheet
    *
    * @return		true if parsing is lenient
    */
+  @Override
   public boolean isTimeLenient() {
     return m_TimeFormat.isLenient();
   }
@@ -1289,6 +1358,7 @@ public class DefaultSpreadSheet
    *
    * @param value	if true lenient parsing is used, otherwise not
    */
+  @Override
   public void setTimeMsecLenient(boolean value) {
     m_TimeMsecFormat.setLenient(value);
   }
@@ -1298,6 +1368,7 @@ public class DefaultSpreadSheet
    *
    * @return		true if parsing is lenient
    */
+  @Override
   public boolean isTimeMsecLenient() {
     return m_TimeMsecFormat.isLenient();
   }
@@ -1308,6 +1379,7 @@ public class DefaultSpreadSheet
    * @param value	the new timezone
    * @see		SimpleDateFormat#setTimeZone(TimeZone)
    */
+  @Override
   public void setTimeZone(TimeZone value) {
     m_DateFormat.setTimeZone(value);
     m_DateTimeFormat.setTimeZone(value);
@@ -1323,6 +1395,7 @@ public class DefaultSpreadSheet
    * @return		the current timezone
    * @see		SimpleDateFormat#getTimeZone()
    */
+  @Override
   public TimeZone getTimeZone() {
     return m_DateFormat.getTimeZone();
   }
@@ -1332,6 +1405,7 @@ public class DefaultSpreadSheet
    * 
    * @param value	the locale to use
    */
+  @Override
   public void setLocale(Locale value) {
     m_Locale       = value;
     m_NumberFormat = LocaleHelper.getSingleton().getNumberFormat(m_Locale);
@@ -1342,6 +1416,7 @@ public class DefaultSpreadSheet
    * 
    * @return		the locale
    */
+  @Override
   public Locale getLocale() {
     return m_Locale;
   }
@@ -1349,6 +1424,7 @@ public class DefaultSpreadSheet
   /**
    * Triggers all formula cells to recalculate their values.
    */
+  @Override
   public void calculate() {
     for (Row row: rows()) {
       for (Cell cell: row.cells()) {
@@ -1363,6 +1439,7 @@ public class DefaultSpreadSheet
    * 
    * @param other		the spreadsheet to merge with
    */
+  @Override
   public void mergeWith(SpreadSheet other) {
     int		n;
     Row		rowOther;
@@ -1389,33 +1466,19 @@ public class DefaultSpreadSheet
    * @param rows	the rows to use, null for all
    * @return		the view
    */
+  @Override
   public SpreadSheet toView(int[] rows, int[] columns) {
     return new SpreadSheetView(this, rows, columns);
   }
 
-  public static void main(String[] args) {
-    Environment.setEnvironmentClass(Environment.class);
-    SpreadSheet sheet = new DefaultSpreadSheet();
-    sheet.getHeaderRow().addCell("Col").setContent("Col");
-    Row row;
-    row = sheet.addRow();
-    row.addCell(0).setContent("C");
-    row = sheet.addRow();
-    row.addCell(0).setContent("C");
-    row = sheet.addRow();
-    row.addCell(0).setContent("C");
-    row = sheet.addRow();
-    row.addCell(0).setContent("A");
-    row = sheet.addRow();
-    row.addCell(0).setContent("A");
-    row = sheet.addRow();
-    row.addCell(0).setContent("B");
-    row = sheet.addRow();
-    row.addCell(0).setContent("B");
-    System.out.println(sheet);
-    sheet.sort(new RowComparator(new int[]{0}), true);
-    System.out.println(sheet);
-    sheet.clear();
-    System.out.println(sheet);
+  /**
+   * Searches for cells.
+   *
+   * @param parameters		the search parameters
+   * @return			the iterator for the cells
+   */
+  @Override
+  public FindCellsIterator find(FindCellsParameters parameters) {
+    return new FindCellsIterator(this, parameters);
   }
 }

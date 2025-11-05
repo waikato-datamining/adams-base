@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheet.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -41,7 +41,6 @@ import java.util.TimeZone;
  * Represents a generic spreadsheet object.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 12570 $
  */
 public interface SpreadSheet
   extends Serializable, CloneHandler<SpreadSheet>, LocaleSupporter,
@@ -695,4 +694,12 @@ public interface SpreadSheet
    * @param rows	the rows to use, null for all
    */
   public SpreadSheet toView(int[] rows, int[] columns);
+
+  /**
+   * Searches for cells.
+   *
+   * @param parameters		the search parameters
+   * @return			the iterator for the cells
+   */
+  public FindCellsIterator find(FindCellsParameters parameters);
 }
