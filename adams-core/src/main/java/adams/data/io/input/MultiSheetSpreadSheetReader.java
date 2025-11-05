@@ -15,7 +15,7 @@
 
 /*
  * MultiSheetSpreadSheetReader.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -62,7 +62,7 @@ public interface MultiSheetSpreadSheetReader<T extends Range>
    * Reads the spreadsheet from the specified file.
    *
    * @param file	the file to read from
-   * @return		null in case of an error, otherwise the spreadsheet
+   * @return		the spreadsheets or null in case of an error
    */
   public List<SpreadSheet> readRange(File file);
 

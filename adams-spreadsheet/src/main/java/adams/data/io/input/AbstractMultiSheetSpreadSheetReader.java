@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiSheetSpreadSheetReader.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -301,7 +301,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader<T extends Range>
     List<SpreadSheet>	result;
     
     result = doReadRange(file);
-    if ((result != null) && (result.size() > 0))
+    if ((result != null) && (!result.isEmpty()))
       return result.get(0);
     
     return null;
@@ -321,7 +321,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader<T extends Range>
     List<SpreadSheet>	result;
     
     result = doReadRange(r);
-    if ((result != null) && (result.size() > 0))
+    if ((result != null) && (!result.isEmpty()))
       return result.get(0);
     
     return null;
@@ -341,7 +341,7 @@ public abstract class AbstractMultiSheetSpreadSheetReader<T extends Range>
     List<SpreadSheet>	result;
     
     result = doReadRange(in);
-    if ((result != null) && (result.size() > 0))
+    if ((result != null) && (!result.isEmpty()))
       return result.get(0);
     
     return null;
