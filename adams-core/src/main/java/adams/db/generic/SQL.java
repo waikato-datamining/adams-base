@@ -367,6 +367,42 @@ public class SQL
   }
 
   /**
+   * Returns the keys that were generated with the statement.
+   *
+   * @param stmt	the statement that generated the keys
+   * @return		the list of keys, null in case of an error
+   */
+  @Override
+  public List<Long> getKeys(Statement stmt) {
+    List<Long>	result;
+    ResultSet		rs;
+
+    result = new ArrayList<>();
+    rs     = null;
+    try {
+      rs = stmt.getGeneratedKeys();
+      while (rs.next())
+	result.add(rs.getLong(1));
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to retrieve the generated keys!", e);
+      return null;
+    }
+    finally {
+      if (rs != null) {
+	try {
+	  rs.close();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Update table.
    *
    * @param updateString 	comma separated updates. e.g weight='80',height=180

@@ -179,6 +179,17 @@ public class SQL
   }
 
   /**
+   * Returns the keys that were generated with the statement.
+   *
+   * @param stmt	the statement that generated the keys
+   * @return		the list of keys, null in case of an error
+   */
+  @Override
+  public List<Long> getKeys(Statement stmt) {
+    return m_DB.getKeys(stmt);
+  }
+
+  /**
    * Update table.
    *
    * @param updateString 	comma separated updates. e.g weight='80',height=180

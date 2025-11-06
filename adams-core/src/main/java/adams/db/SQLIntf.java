@@ -125,6 +125,14 @@ public interface SQLIntf
   public PreparedStatement prepareStatement(Connection conn, String query, boolean returnKeys) throws Exception;
 
   /**
+   * Returns the keys that were generated with the statement.
+   *
+   * @param stmt	the statement that generated the keys
+   * @return		the list of keys
+   */
+  public List<Long> getKeys(Statement stmt);
+
+  /**
    * Update table.
    *
    * @param updateString 	comma separated updates. e.g weight='80',height=180
