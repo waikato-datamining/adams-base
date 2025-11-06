@@ -15,7 +15,7 @@
 
 /*
  * SQLUtils.java
- * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -24,7 +24,10 @@ import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
+import gnu.trove.list.TByteList;
+import gnu.trove.list.array.TByteArrayList;
 
+import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
@@ -308,5 +311,31 @@ public class SQLUtils {
       result[i - 1] = rs.getColumnLabel(i);
 
     return result;
+  }
+
+  /**
+   * Reads byte data from the stream. The stream gets automatically closed.
+   *
+   * @param in		the stream to read from, can be null
+   * @return		the data that was read, null in case of error or the stream was null
+   */
+  public static byte[] readStream(InputStream in) {
+    TByteList result;
+    int		d;
+
+    if (in == null)
+      return null;
+
+    try {
+      result = new TByteArrayList();
+      while ((d = in.read()) != -1)
+	result.add((byte) d);
+      in.close();
+      return result.toArray();
+    }
+    catch (Exception e) {
+      LoggingHelper.global().log(Level.SEVERE, "Failed to read data from stream!", e);
+      return null;
+    }
   }
 }
