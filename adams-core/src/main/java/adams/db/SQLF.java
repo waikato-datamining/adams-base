@@ -15,7 +15,7 @@
 
 /*
  * SQLF.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -99,6 +100,19 @@ public class SQLF
     if (isLoggingEnabled())
       getLogger().info(LoggingHelper.getMethodName() + ": query=" + query);
     return m_DB.getSimpleResultSet(query);
+  }
+
+  /**
+   * Create a statement.
+   *
+   * @return 		Statement
+   * @throws Exception 	if something goes wrong
+   */
+  @Override
+  public Statement createStatement() throws Exception {
+    if (isLoggingEnabled())
+      getLogger().info(LoggingHelper.getMethodName());
+    return m_DB.createStatement();
   }
 
   /**

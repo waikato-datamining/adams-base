@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2019-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.mirrored;
@@ -36,6 +36,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -124,6 +125,17 @@ public class SQL
   @Override
   public SimpleResultSet getSimpleResultSet(String query) throws Exception {
     return m_DB.getSimpleResultSet(query);
+  }
+
+  /**
+   * Create a statement.
+   *
+   * @return 		Statement
+   * @throws Exception 	if something goes wrong
+   */
+  @Override
+  public Statement createStatement() throws Exception {
+    return m_DB.createStatement();
   }
 
   /**

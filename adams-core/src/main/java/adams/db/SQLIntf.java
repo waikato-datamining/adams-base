@@ -15,7 +15,7 @@
 
 /*
  * SQLIntf.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 /**
@@ -82,6 +83,14 @@ public interface SQLIntf
    * @throws Exception if something goes wrong
    */
   public SimpleResultSet getSimpleResultSet(String query) throws Exception;
+
+  /**
+   * Create a statement.
+   *
+   * @return 		Statement
+   * @throws Exception 	if something goes wrong
+   */
+  public Statement createStatement() throws Exception;
 
   /**
    * Create a Prepared statement with given query.

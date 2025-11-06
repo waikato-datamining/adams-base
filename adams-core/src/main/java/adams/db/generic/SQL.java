@@ -117,6 +117,7 @@ public class SQL
    *
    * @return		the database connection
    */
+  @Override
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_DatabaseConnection;
   }
@@ -126,6 +127,7 @@ public class SQL
    *
    * @param value	if true debugging is enabled
    */
+  @Override
   public void setDebug(boolean value) {
     m_Debug = value;
     getLogger().setLevel(value ? Level.INFO : Level.WARNING);
@@ -136,6 +138,7 @@ public class SQL
    *
    * @return		true if debugging is enabled
    */
+  @Override
   public boolean getDebug() {
     return m_Debug;
   }
@@ -162,6 +165,7 @@ public class SQL
    * @param table	the table to look for
    * @return true if the table exists.
    */
+  @Override
   public boolean tableExists(String table) {
     boolean 		result;
     Connection 		connection;
@@ -237,6 +241,7 @@ public class SQL
    * @param column	the column to look for
    * @return 		true if the column exists.
    */
+  @Override
   public boolean columnExists(String table, String column) {
     boolean 		result;
     ResultSet 		rs;
@@ -281,8 +286,20 @@ public class SQL
    * @return resulting ResultSet, or null if Error
    * @throws Exception if something goes wrong
    */
+  @Override
   public SimpleResultSet getSimpleResultSet(String query) throws Exception {
     return(new SimpleResultSet(getResultSet(query)));
+  }
+
+  /**
+   * Create a statement.
+   *
+   * @return 		Statement
+   * @throws Exception 	if something goes wrong
+   */
+  @Override
+  public Statement createStatement() throws Exception {
+    return getDatabaseConnection().getConnection(true).createStatement();
   }
 
   /**
@@ -292,6 +309,7 @@ public class SQL
    * @return 		PreparedStatement
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public PreparedStatement prepareStatement(String query) throws Exception {
     return prepareStatement(query, false);
   }
@@ -305,6 +323,7 @@ public class SQL
    * @return 		PreparedStatement
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception {
     return prepareStatement(getDatabaseConnection().getConnection(true), query, returnKeys);
   }
@@ -319,6 +338,7 @@ public class SQL
    * @return 		PreparedStatement
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public PreparedStatement prepareStatement(Connection conn, String query, boolean returnKeys) throws Exception {
     PreparedStatement   stmt;
 
@@ -355,6 +375,7 @@ public class SQL
    * @return			number of rows affected
    * @throws Exception 		if something goes wrong
    */
+  @Override
   public int update(String updateString, String table, String where) throws Exception {
     String query="UPDATE " + table + " SET " + updateString + " WHERE " + where;
     Connection connection = m_DatabaseConnection.getConnection(true);
@@ -400,6 +421,7 @@ public class SQL
    * @return Generated keys as a resultset, or null if failure
    * @throws Exception if something goes wrong
    */
+  @Override
   public ResultSet executeGeneratedKeys(String query) throws Exception {
     Connection connection = m_DatabaseConnection.getConnection(true);
     Statement stmt = null;
@@ -431,6 +453,7 @@ public class SQL
    * @return true if the query generated results, false if it didn't, null in case of an error
    * @throws Exception if an error occurs
    */
+  @Override
   public Boolean execute(String query) throws Exception {
     Connection 	connection;
     Statement 	stmt;
@@ -477,6 +500,7 @@ public class SQL
    * @param table	the table to empty
    * @return		success?
    */
+  @Override
   public boolean truncate(String table) {
     boolean	result;
 
@@ -498,6 +522,7 @@ public class SQL
    * @param table	the table to empty
    * @return		success?
    */
+  @Override
   public boolean drop(String table) {
     boolean	result;
 
@@ -522,6 +547,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public ResultSet select(String columns, String tables, String where) throws Exception {
     return doSelect(false, columns, tables, where);
   }
@@ -536,6 +562,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public ResultSet selectDistinct(String columns, String tables, String where) throws Exception {
     return doSelect(true, columns, tables, where);
   }
@@ -607,6 +634,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public List<String> selectString(boolean distinct, String column, String tables, String where) throws Exception {
     List<String>	result;
     ResultSet		rs;
@@ -641,6 +669,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public List<String[]> selectStrings(boolean distinct, String[] columns, String tables, String where) throws Exception {
     List<String[]>	result;
     StringBuilder	columnsStr;
@@ -696,6 +725,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public TIntList selectInt(boolean distinct, String column, String tables, String where) throws Exception {
     TIntList	result;
     ResultSet	rs;
@@ -729,6 +759,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public TLongList selectLong(boolean distinct, String column, String tables, String where) throws Exception {
     TLongList	result;
     ResultSet	rs;
@@ -762,6 +793,7 @@ public class SQL
    * @return		resultset of data
    * @throws Exception 	if something goes wrong
    */
+  @Override
   public TDoubleList selectDouble(boolean distinct, String column, String tables, String where) throws Exception {
     TDoubleList result;
     ResultSet	rs;
@@ -792,6 +824,7 @@ public class SQL
    * @return resulset
    * @throws Exception if something goes wrong
    */
+  @Override
   public ResultSet getResultSet(String query) throws Exception {
     Connection connection = m_DatabaseConnection.getConnection(true);
     if (isLoggingEnabled())
@@ -827,6 +860,7 @@ public class SQL
    * @return			the maximum length
    * @throws SQLException	if the query fails
    */
+  @Override
   public int getMaxColumnNameLength() throws SQLException {
     int			result;
     DatabaseMetaData	meta;
