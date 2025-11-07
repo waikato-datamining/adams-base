@@ -15,7 +15,7 @@
 
 /*
  * Placeholders.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -355,6 +355,7 @@ public class Placeholders
 	    if (currLeft < bestLeft) {
 	      bestKey    = key;
 	      bestLeft   = currLeft;
+	      bestKeyLen = currKeyLen;
 	    }
 	    else if (currLeft == bestLeft) {
 	      // favor shorter key
