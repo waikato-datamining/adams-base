@@ -34,7 +34,7 @@ public class True
    * @return		Unknown
    */
   public Class[] accepts() {
-    return [Unknown.class] as Object[]
+    return [Unknown.class] as Class[]
   }
 
   /**

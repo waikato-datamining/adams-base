@@ -37,7 +37,7 @@ public class TemplateBooleanCondition
    */
   public Class[] accepts() {
     // FIXME
-    return [Unknown.class] as Object[]
+    return [Unknown.class] as Class[]
   }
 
   /**

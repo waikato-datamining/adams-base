@@ -27,7 +27,7 @@ class SimpleTransformer
    * @return		Integer.class
    */
   public Class[] accepts() {
-    return [Integer.class] as Object[]
+    return [Integer.class] as Class[]
   }
 
   /**
@@ -36,7 +36,7 @@ class SimpleTransformer
    * @return		Integer.class
    */
   public Class[] generates() {
-    return [Integer.class] as Object[]
+    return [Integer.class] as Class[]
   }
 
   /**
@@ -46,7 +46,7 @@ class SimpleTransformer
    */
   protected String doExecute() {
     Integer input = (Integer) m_InputToken.getPayload()
-    m_OutputToken = new Token(new Integer(input + getAdditionalOptions().getInteger("add", 1)))
+    m_OutputToken = new Token(input + getAdditionalOptions().getInteger("add", 1))
     return null
   }
 }

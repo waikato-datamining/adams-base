@@ -26,7 +26,7 @@ class TemplateTransformer
    * @return		the accepted classes
    */
   public Class[] accepts() {
-    return [Object.class] as Object[]  // FIXME
+    return [Object.class] as Class[]  // FIXME
   }
 
   /**
@@ -35,7 +35,7 @@ class TemplateTransformer
    * @return		the generated classes
    */
   public Class[] generates() {
-    return [Object.class] as Object[]  // FIXME
+    return [Object.class] as Class[]  // FIXME
   }
 
   /**

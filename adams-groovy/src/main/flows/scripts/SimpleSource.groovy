@@ -41,7 +41,7 @@ class SimpleSource
    * @return		Integer.class
    */
   public Class[] generates() {
-    return [Integer.class] as Object[]
+    return [Integer.class] as Class[]
   }
 
   /**
@@ -52,7 +52,7 @@ class SimpleSource
   protected String doExecute() {
   	def rand = new Random(1)
   	for (i in 1..10)
-  	  m_Tokens.add(new Token(new Integer(rand.nextInt(100))))
+  	  m_Tokens.add(new Token(rand.nextInt(100)))
     return null
   }
 

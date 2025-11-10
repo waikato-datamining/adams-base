@@ -16,7 +16,7 @@ class DummySource
   }
 
   protected Actor doGenerate() {
-    return new StringConstants();
+    return new StringConstants()
   }
 
   /**
@@ -26,7 +26,7 @@ class DummySource
    */
   @Override
   public boolean isInteractive() {
-    return false;
+    return false
   }
 }
 

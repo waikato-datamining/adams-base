@@ -41,7 +41,7 @@ class TemplateSource
    * @return		the generated classes
    */
   public Class[] generates() {
-    return [Object.class] as Object[]  // FIXME
+    return [Object.class] as Class[]  // FIXME
   }
 
   /**

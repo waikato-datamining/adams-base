@@ -23,7 +23,7 @@ class TemplateSink
    * @return		the accepted classes
    */
   public Class[] accepts() {
-    return [Object.class] as Object[]  // FIXME
+    return [Object.class] as Class[]  // FIXME
   }
 
   /**
