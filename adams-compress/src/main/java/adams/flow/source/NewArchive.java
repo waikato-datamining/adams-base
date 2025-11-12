@@ -241,7 +241,7 @@ public class NewArchive
     result = super.setUp();
 
     if (result == null) {
-      if (m_Output.isDirectory())
+      if (m_Output.isDirectory() && !getOptionManager().hasVariableForProperty("output"))
 	result = "Output file points to a directory: " + m_Output;
     }
 
