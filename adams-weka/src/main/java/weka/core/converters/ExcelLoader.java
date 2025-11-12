@@ -1162,7 +1162,7 @@ public class ExcelLoader
    */
   @Override
   public Instance getNextInstance(Instances structure) throws IOException {
-    throw new IOException("SpreadSheetLoader can't read data sets incrementally.");
+    throw new IOException("ExcelLoader can't read data sets incrementally.");
   }
 
   /**
