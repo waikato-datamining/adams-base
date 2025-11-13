@@ -286,6 +286,19 @@ public abstract class AbstractRow
   }
 
   /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    if (m_Owner != null)
+      return m_Owner.isQuiet();
+    else
+      return false;
+  }
+
+  /**
    * Simply returns the internal hashtable of cells as string.
    *
    * @return		the values of the row

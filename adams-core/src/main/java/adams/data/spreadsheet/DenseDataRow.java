@@ -489,4 +489,17 @@ public class DenseDataRow
 	m_Cells[start + i].assign(other.getCell(i));
     }
   }
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    if (m_Owner != null)
+      return m_Owner.isQuiet();
+    else
+      return false;
+  }
 }

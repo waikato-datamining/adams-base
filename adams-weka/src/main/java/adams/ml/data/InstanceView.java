@@ -431,4 +431,17 @@ public class InstanceView
   public void spreadSheetColumnInserted(SpreadSheetColumnInsertionEvent e) {
 
   }
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    if (m_Owner != null)
+      return m_Owner.isQuiet();
+    else
+      return false;
+  }
 }

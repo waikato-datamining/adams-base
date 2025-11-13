@@ -1203,6 +1203,19 @@ public class FloatCell
   }
 
   /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    if (m_Owner != null)
+      return m_Owner.isQuiet();
+    else
+      return false;
+  }
+
+  /**
    * Recalculates the value from the cell's formula.
    */
   @Override
@@ -1226,7 +1239,8 @@ public class FloatCell
 	eval = null;
     }
     catch (Throwable t) {
-      LoggingHelper.global().log(Level.SEVERE, "Failed to parse formula: " + getFormula(), t);
+      if (!isQuiet())
+	LoggingHelper.global().log(Level.SEVERE, "Failed to parse formula: " + getFormula(), t);
       eval = FORMULA_ERROR;
     }
 

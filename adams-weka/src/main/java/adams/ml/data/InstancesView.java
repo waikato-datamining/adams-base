@@ -73,6 +73,9 @@ public class InstancesView
   /** the shared string table. */
   protected SharedStringsTable m_SharedStringsTable;
 
+  /** whether to suppress logging output. */
+  protected boolean m_Quiet;
+
   /**
    * Initializes the view with a dummy dataset.
    */
@@ -1399,5 +1402,25 @@ public class InstancesView
   @Override
   public FindCellsIterator find(FindCellsParameters parameters) {
     return new FindCellsIterator(this, parameters);
+  }
+
+  /**
+   * Whether to suppress logging output, e.g., from parse errors.
+   *
+   * @param value	true to be quiet
+   */
+  @Override
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+  }
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    return m_Quiet;
   }
 }

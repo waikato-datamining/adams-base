@@ -105,9 +105,11 @@ public class DefaultSpreadSheet
   /** the default data row class to use. */
   protected Class m_DataRowClass;
 
+  /** whether to suppress logging output. */
+  protected boolean m_Quiet;
+
   /** the constructor for the datarow. */
   protected transient Constructor m_DataRowConstructor;
-
 
   /**
    * default constructor.
@@ -208,6 +210,7 @@ public class DefaultSpreadSheet
     try {
       result = getClass().getDeclaredConstructor().newInstance();
       result.setDataRowClass(getDataRowClass());
+      result.setQuiet(isQuiet());
     }
     catch (Exception e) {
       LoggingHelper.global().log(Level.SEVERE, "Failed to create new instance of " + getClass().getName(), e);
@@ -1480,5 +1483,25 @@ public class DefaultSpreadSheet
   @Override
   public FindCellsIterator find(FindCellsParameters parameters) {
     return new FindCellsIterator(this, parameters);
+  }
+
+  /**
+   * Whether to suppress logging output, e.g., from parse errors.
+   *
+   * @param value	true to be quiet
+   */
+  @Override
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+  }
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    return m_Quiet;
   }
 }

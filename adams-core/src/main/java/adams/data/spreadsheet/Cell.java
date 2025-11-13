@@ -33,7 +33,6 @@ import java.util.Date;
  * Represents a single cell.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public interface Cell
   extends Serializable {
@@ -536,6 +535,13 @@ public interface Cell
    * @return		true if an object
    */
   public boolean isObject();
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  public boolean isQuiet();
 
   /**
    * Recalculates the value from the cell's formula.

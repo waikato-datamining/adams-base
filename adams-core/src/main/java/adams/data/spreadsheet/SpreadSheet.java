@@ -91,7 +91,7 @@ public interface SpreadSheet
   public SpreadSheet getClone();
 
   /**
-   * Returns the a spreadsheet with the same header and comments.
+   * Returns the spreadsheet with the same header and comments.
    *
    * @return		the spreadsheet
    */
@@ -702,4 +702,18 @@ public interface SpreadSheet
    * @return			the iterator for the cells
    */
   public FindCellsIterator find(FindCellsParameters parameters);
+
+  /**
+   * Whether to suppress logging output, e.g., from parse errors.
+   *
+   * @param value	true to be quiet
+   */
+  public void setQuiet(boolean value);
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  public boolean isQuiet();
 }

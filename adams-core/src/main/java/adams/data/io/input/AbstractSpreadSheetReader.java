@@ -84,6 +84,9 @@ public abstract class AbstractSpreadSheetReader
   /** the type of spreadsheet to use. */
   protected SpreadSheet m_SpreadSheetType;
 
+  /** whether to suppress logging output in the spreadsheet, e.g., parse errors of formulas. */
+  protected boolean m_Quiet;
+
   /** whether the read process was stopped through an external source. */
   protected boolean m_Stopped;
 
@@ -107,6 +110,10 @@ public abstract class AbstractSpreadSheetReader
     m_OptionManager.add(
       "spreadsheet-type", "spreadSheetType",
       new DefaultSpreadSheet());
+
+    m_OptionManager.add(
+      "quiet", "quiet",
+      false);
   }
 
   /**
@@ -216,6 +223,7 @@ public abstract class AbstractSpreadSheetReader
    */
   public void setSpreadSheetType(SpreadSheet value) {
     m_SpreadSheetType = value;
+    m_SpreadSheetType.setQuiet(m_Quiet);
     reset();
   }
 
@@ -265,6 +273,37 @@ public abstract class AbstractSpreadSheetReader
    */
   public String encodingTipText() {
     return "The type of encoding to use when reading using a reader, leave empty for default.";
+  }
+
+  /**
+   * Sets whether to suppress logging output in the spreasdheet, e.g., from parsing errors of formulas.
+   *
+   * @param value	true if to suppress
+   */
+  public void setQuiet(boolean value) {
+    m_Quiet = value;
+    if (m_SpreadSheetType != null)
+      m_SpreadSheetType.setQuiet(m_Quiet);
+    reset();
+  }
+
+  /**
+   * Returns whether to suppress logging output in the spreasdheet, e.g., from parsing errors of formulas.
+   *
+   * @return		true if to suppress
+   */
+  public boolean isQuiet() {
+    return m_Quiet;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String quietTipText() {
+    return "If enabled, logging output in the spreadsheet is suppressed, e.g., from parsing errors of formulas.";
   }
 
   /**

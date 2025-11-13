@@ -224,4 +224,11 @@ public interface Row
    * @return		the values of the row
    */
   public String toString();
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  public boolean isQuiet();
 }

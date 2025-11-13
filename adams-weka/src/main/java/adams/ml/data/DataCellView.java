@@ -829,6 +829,16 @@ public class DataCellView
   }
 
   /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    return m_Owner.isQuiet();
+  }
+
+  /**
    * Does nothing.
    */
   @Override

@@ -676,6 +676,16 @@ public class CellView
   }
 
   /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    return m_Cell.isQuiet();
+  }
+
+  /**
    * Recalculates the value from the cell's formula.
    */
   @Override

@@ -1578,4 +1578,24 @@ public class DatasetView
   public FindCellsIterator find(FindCellsParameters parameters) {
     return new FindCellsIterator(this, parameters);
   }
+
+  /**
+   * Whether to suppress logging output, e.g., from parse errors.
+   *
+   * @param value	true to be quiet
+   */
+  @Override
+  public void setQuiet(boolean value) {
+    m_Dataset.setQuiet(value);
+  }
+
+  /**
+   * Returns whether logging output is suppressed, e.g., from parse errors.
+   *
+   * @return		true if quiet
+   */
+  @Override
+  public boolean isQuiet() {
+    return m_Dataset.isQuiet();
+  }
 }
