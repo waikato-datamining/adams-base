@@ -36,16 +36,40 @@ import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
+ * Writes MS Excel files (using fast-excel).
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-sheet-prefix &lt;java.lang.String&gt; (property: sheetPrefix)
+ * &nbsp;&nbsp;&nbsp;The prefix for sheet names.
+ * &nbsp;&nbsp;&nbsp;default: Sheet
+ * </pre>
+ *
+ * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
+ * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-output-as-displayed &lt;boolean&gt; (property: outputAsDisplayed)
+ * &nbsp;&nbsp;&nbsp;If enabled, cells are output as displayed, ie, results of formulas instead
+ * &nbsp;&nbsp;&nbsp;of the formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FastExcelSpreadSheetWriter
-    extends AbstractMultiSheetSpreadSheetWriterWithMissingValueSupport
-    implements SpreadSheetWriterWithFormulaSupport {
+  extends AbstractMultiSheetSpreadSheetWriterWithMissingValueSupport
+  implements SpreadSheetWriterWithFormulaSupport {
 
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
@@ -74,8 +98,8 @@ public class FastExcelSpreadSheetWriter
     super.defineOptions();
 
     m_OptionManager.add(
-	"output-as-displayed", "outputAsDisplayed",
-	false);
+      "output-as-displayed", "outputAsDisplayed",
+      false);
   }
 
   /**

@@ -42,9 +42,81 @@ import java.util.stream.Stream;
 
 /**
  <!-- globalinfo-start -->
+ * Reads MS Excel files (using fast-excel).
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
+ * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
+ * </pre>
+ *
+ * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
+ * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
+ * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
+ * </pre>
+ *
+ * <pre>-sheets &lt;adams.data.spreadsheet.SheetRange&gt; (property: sheetRange)
+ * &nbsp;&nbsp;&nbsp;The range of sheets to load.
+ * &nbsp;&nbsp;&nbsp;default: first
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; sheet names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); sheet names can be surrounded by double quotes.
+ * </pre>
+ *
+ * <pre>-missing &lt;adams.core.base.BaseRegExp&gt; (property: missingValue)
+ * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
+ * &nbsp;&nbsp;&nbsp;default: ^(\\\\?|)$
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
+ * </pre>
+ *
+ * <pre>-no-auto-extend-header &lt;boolean&gt; (property: autoExtendHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, the header gets automatically extended if rows have more cells
+ * &nbsp;&nbsp;&nbsp;than the header.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
+ * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
+ * &nbsp;&nbsp;&nbsp;default:
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * </pre>
+ *
+ * <pre>-no-header &lt;boolean&gt; (property: noHeader)
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get
+ * &nbsp;&nbsp;&nbsp;inserted.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
+ * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
+ * &nbsp;&nbsp;&nbsp; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-first-row &lt;int&gt; (property: firstRow)
+ * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
+ * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
+ * <pre>-num-rows &lt;int&gt; (property: numRows)
+ * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-keep-formulas &lt;boolean&gt; (property: keepFormulas)
+ * &nbsp;&nbsp;&nbsp;If enabled, will use the formulas instead of the displayed text.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
