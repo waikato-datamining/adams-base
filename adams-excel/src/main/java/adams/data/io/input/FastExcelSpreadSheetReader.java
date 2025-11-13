@@ -300,7 +300,7 @@ public class FastExcelSpreadSheetReader
 		    spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
 		  break;
 		default:
-		  spRow.addCell("" + (i + 1)).setContentAsString(exCell.asString());
+		  spRow.addCell("" + (i + 1)).setContentAsString(exCell.getText());
 	      }
 	    }
 	  }
