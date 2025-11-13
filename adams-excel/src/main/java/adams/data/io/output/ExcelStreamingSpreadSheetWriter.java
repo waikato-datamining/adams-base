@@ -15,7 +15,7 @@
 
 /*
  * ExcelStreamingSpreadSheetWriter.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -297,7 +297,7 @@ public class ExcelStreamingSpreadSheetWriter
 	    cell   = row.createCell(i);
 	    spCell = spRow.getCell(i);
 	    if ((spCell == null) || spCell.isMissing()) {
-	      if (m_MissingValue.length() > 0)
+	      if (!m_MissingValue.isEmpty())
 		cell.setCellValue(m_MissingValue);
 	      else
 		cell.setBlank();
