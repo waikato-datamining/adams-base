@@ -1,0 +1,13 @@
+# Project: adams
+# Date: 2025-11-13 16:03:29
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core,adams-excel,adams-spreadsheet
+#
+adams.flow.control.Flow -annotation "This flows loads both sheets from the spreadsheet\\nand displays them together in a DisplayPanelManager.\\nUses fastexcel." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.FileSupplier -file ${FLOWS}/data/sample.xlsx
+ adams.flow.transformer.SpreadSheetFileReader -reader "adams.data.io.input.FastExcelSpreadSheetReader -data-row-type adams.data.spreadsheet.DenseDataRow -spreadsheet-type adams.data.spreadsheet.DefaultSpreadSheet -sheets first-last"
+ adams.flow.control.Tee -name "get sheet name"
+  adams.flow.transformer.SpreadSheetInfo -stop-flow-on-error true -type NAME
+  adams.flow.transformer.SetVariable -var-name sheet
+ adams.flow.sink.DisplayPanelManager -display-type adams.flow.core.displaytype.Default -provider "adams.flow.sink.SpreadSheetDisplay -display-type adams.flow.core.displaytype.Default -cell-rendering-customizer adams.gui.core.spreadsheettable.DefaultCellRenderingCustomizer -writer adams.data.io.output.NullWriter -preview adams.gui.core.spreadsheetpreview.NullPreview" -entry-name-variable sheet
