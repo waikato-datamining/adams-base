@@ -154,7 +154,7 @@ import java.io.*;
   "-Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.NEGATIVE_INFINITY); }
   "Infinity" { return sf.newSymbol("Number", sym.NUMBER, Double.POSITIVE_INFINITY); }
   "NaN" { return sf.newSymbol("Number", sym.NUMBER, Double.NaN); }
-  [A-Z]+[0-9]+ { return sf.newSymbol("Cell", sym.CELL, yytext()); }
+  ((\$)?[A-Za-z0-9]+\.)(\$)?[A-Z]+(\$)?[0-9]+ { return sf.newSymbol("Cell", sym.CELL, yytext()); }
 
   // comment
   "#".* { /* ignore line comments. */ }

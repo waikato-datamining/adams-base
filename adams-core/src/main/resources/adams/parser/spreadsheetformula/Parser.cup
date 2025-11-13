@@ -206,9 +206,13 @@ expr      ::=
                 {: RESULT = !parser.getHelper().toBoolean(b); :}
               | expr:l AND expr:r
                 {: RESULT = parser.getHelper().toBoolean(l) && parser.getHelper().toBoolean(r); :}
+              | AND LPAREN expr:l semi_or_comma expr:r RPAREN
+                {: RESULT = parser.getHelper().toBoolean(l) && parser.getHelper().toBoolean(r); :}
               | expr:l OR expr:r
                 {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
-                
+              | OR LPAREN expr:l semi_or_comma expr:r RPAREN
+                {: RESULT = parser.getHelper().toBoolean(l) || parser.getHelper().toBoolean(r); :}
+
               | expr:l PLUS expr:r
                 {: RESULT = (double) (parser.getHelper().toDouble(l) + parser.getHelper().toDouble(r)); :}
               | expr:l MINUS expr:r
