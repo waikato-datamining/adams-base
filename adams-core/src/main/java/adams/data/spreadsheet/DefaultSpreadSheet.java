@@ -279,6 +279,8 @@ public class DefaultSpreadSheet
     result.m_DateTimeFormat.applyPattern(m_DateTimeFormat.toPattern());
     result.m_TimeFormat.applyPattern(m_TimeFormat.toPattern());
     result.m_TimeMsecFormat.applyPattern(m_TimeMsecFormat.toPattern());
+    result.m_Quiet             = m_Quiet;
+    result.m_OnlyStoreFormulas = m_OnlyStoreFormulas;
 
     return result;
   }

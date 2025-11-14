@@ -189,6 +189,8 @@ public class DatasetView
     result.addComment(getComments());
     for (int index: getClassAttributeIndices())
       result.setClassAttribute(index, true);
+    result.setQuiet(isQuiet());
+    result.setOnlyStoreFormulas(getOnlyStoreFormulas());
 
     return result;
   }

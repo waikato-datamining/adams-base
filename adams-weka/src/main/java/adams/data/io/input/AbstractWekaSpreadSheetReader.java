@@ -19,13 +19,13 @@
  */
 package adams.data.io.input;
 
-import java.io.File;
-import java.util.logging.Level;
-
-import weka.core.Instances;
-import weka.core.converters.AbstractFileLoader;
 import adams.data.conversion.WekaInstancesToSpreadSheet;
 import adams.data.spreadsheet.SpreadSheet;
+import weka.core.Instances;
+import weka.core.converters.AbstractFileLoader;
+
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Ancestor for WEKA file format readers.
@@ -113,7 +113,7 @@ public abstract class AbstractWekaSpreadSheetReader
       m_Loader.reset();
       // convert
       convert = new WekaInstancesToSpreadSheet();
-      convert.setSpreadSheetType(m_SpreadSheetType);
+      convert.setSpreadSheetType(getSpreadSheetType());
       convert.setInput(data);
       msg = convert.convert();
       if (msg == null)

@@ -380,7 +380,7 @@ public class SimpleStreamSpreadSheetReader
       // header?
       cells = null;
       if (m_Header == null) {
-	m_Header = m_SpreadSheetType.newInstance();
+	m_Header = getSpreadSheetType().newInstance();
 	m_Header.setDataRowClass(m_DataRowType.getClass());
 	row = m_Header.getHeaderRow();
 	if (!m_CustomColumnHeaders.isEmpty() || m_NoHeader) {

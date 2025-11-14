@@ -778,7 +778,7 @@ public class FixedTabularSpreadSheetReader
       columnWidth = m_ColumnWidth;
     }
 
-    result = m_SpreadSheetType.newInstance();
+    result = getSpreadSheetType().newInstance();
     result.setDataRowClass(getDataRowType().getClass());
     //result.setLocale(m_Locale);
     //result.setTimeZone(m_TimeZone);

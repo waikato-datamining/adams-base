@@ -437,7 +437,7 @@ public class ODFSpreadSheetReader
       firstRow = m_FirstRow - 1;
       dataRowStart = getNoHeader() ? firstRow : firstRow + 1;
       for (int index: indices) {
-	spsheet = m_SpreadSheetType.newInstance();
+	spsheet = getSpreadSheetType().newInstance();
 	spsheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(spsheet);
 	sheet   = spreadsheet.getSheet(index);

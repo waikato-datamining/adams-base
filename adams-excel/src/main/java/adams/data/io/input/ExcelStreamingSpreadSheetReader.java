@@ -900,7 +900,7 @@ public class ExcelStreamingSpreadSheetReader
 	try {
 	  sheet = sheets.next();
 	  if (indices.contains(count)) {
-	    spsheet = m_SpreadSheetType.newInstance();
+	    spsheet = getSpreadSheetType().newInstance();
 	    spsheet.setDataRowClass(m_DataRowType.getClass());
 	    spsheet.setName(sheets.getSheetName());
 	    parser = new SAXParser();

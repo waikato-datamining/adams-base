@@ -1066,10 +1066,14 @@ public class InstancesView
    */
   @Override
   public Dataset getHeader() {
-    Instances 	data;
+    InstancesView	result;
+    Instances 		data;
 
-    data = new Instances(m_Data);
-    return new InstancesView(data);
+    data   = new Instances(m_Data);
+    result = new InstancesView(data);
+    result.setQuiet(isQuiet());
+    result.setOnlyStoreFormulas(getOnlyStoreFormulas());
+    return result;
   }
 
   /**

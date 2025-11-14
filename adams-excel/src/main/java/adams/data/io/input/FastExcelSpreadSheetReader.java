@@ -317,7 +317,7 @@ public class FastExcelSpreadSheetReader
 	if (m_Stopped)
 	  break;
 
-	spsheet = m_SpreadSheetType.newInstance();
+	spsheet = getSpreadSheetType().newInstance();
 	spsheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(spsheet);
 

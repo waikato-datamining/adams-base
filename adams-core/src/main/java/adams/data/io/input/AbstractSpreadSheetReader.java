@@ -230,8 +230,6 @@ public abstract class AbstractSpreadSheetReader
    */
   public void setSpreadSheetType(SpreadSheet value) {
     m_SpreadSheetType = value;
-    m_SpreadSheetType.setQuiet(m_Quiet);
-    m_SpreadSheetType.setOnlyStoreFormulas(m_OnlyStoreFormulas);
     reset();
   }
 
@@ -241,6 +239,8 @@ public abstract class AbstractSpreadSheetReader
    * @return		the type
    */
   public SpreadSheet getSpreadSheetType() {
+    m_SpreadSheetType.setQuiet(m_Quiet);
+    m_SpreadSheetType.setOnlyStoreFormulas(m_OnlyStoreFormulas);
     return m_SpreadSheetType;
   }
 
@@ -290,8 +290,6 @@ public abstract class AbstractSpreadSheetReader
    */
   public void setQuiet(boolean value) {
     m_Quiet = value;
-    if (m_SpreadSheetType != null)
-      m_SpreadSheetType.setQuiet(m_Quiet);
     reset();
   }
 
@@ -321,8 +319,6 @@ public abstract class AbstractSpreadSheetReader
    */
   public void setOnlyStoreFormulas(boolean value) {
     m_OnlyStoreFormulas = value;
-    if (m_SpreadSheetType != null)
-      m_SpreadSheetType.setOnlyStoreFormulas(m_OnlyStoreFormulas);
     reset();
   }
 

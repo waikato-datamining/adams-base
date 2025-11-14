@@ -539,7 +539,7 @@ public class DoubleCell
     else {
       if (!value.isEmpty()) {
 	if (value.startsWith(PREFIX_FORMULA)) {
-	  if (checkFormula(value)) {
+	  if (getOnlyStoreFormulas() || checkFormula(value)) {
 	    m_Formula = value;
 	    m_Object  = null;
 	    m_Content = Double.NaN;

@@ -612,7 +612,7 @@ public class AutoWidthTabularSpreadSheetReader
     else
       reader = new BufferedReader(r);
 
-    result = m_SpreadSheetType.newInstance();
+    result = getSpreadSheetType().newInstance();
 
     first     = true;
     colStarts = new int[0];
