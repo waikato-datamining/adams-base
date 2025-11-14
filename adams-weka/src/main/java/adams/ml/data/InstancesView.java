@@ -76,6 +76,9 @@ public class InstancesView
   /** whether to suppress logging output. */
   protected boolean m_Quiet;
 
+  /** whether to only store formulas and not evaluate them. */
+  protected boolean m_OnlyStoreFormulas;
+
   /**
    * Initializes the view with a dummy dataset.
    */
@@ -1422,5 +1425,25 @@ public class InstancesView
   @Override
   public boolean isQuiet() {
     return m_Quiet;
+  }
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  @Override
+  public void setOnlyStoreFormulas(boolean value) {
+    m_OnlyStoreFormulas = value;
+  }
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_OnlyStoreFormulas;
   }
 }

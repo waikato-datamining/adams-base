@@ -231,4 +231,11 @@ public interface Row
    * @return		true if quiet
    */
   public boolean isQuiet();
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  public boolean getOnlyStoreFormulas();
 }

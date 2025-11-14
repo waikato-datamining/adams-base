@@ -544,6 +544,13 @@ public interface Cell
   public boolean isQuiet();
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  public boolean getOnlyStoreFormulas();
+
+  /**
    * Recalculates the value from the cell's formula.
    */
   public void calculate();

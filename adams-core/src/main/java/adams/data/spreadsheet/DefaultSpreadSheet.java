@@ -108,6 +108,9 @@ public class DefaultSpreadSheet
   /** whether to suppress logging output. */
   protected boolean m_Quiet;
 
+  /** whether to only store formulas and not evaluate them. */
+  protected boolean m_OnlyStoreFormulas;
+
   /** the constructor for the datarow. */
   protected transient Constructor m_DataRowConstructor;
 
@@ -211,6 +214,7 @@ public class DefaultSpreadSheet
       result = getClass().getDeclaredConstructor().newInstance();
       result.setDataRowClass(getDataRowClass());
       result.setQuiet(isQuiet());
+      result.setOnlyStoreFormulas(getOnlyStoreFormulas());
     }
     catch (Exception e) {
       LoggingHelper.global().log(Level.SEVERE, "Failed to create new instance of " + getClass().getName(), e);
@@ -248,6 +252,8 @@ public class DefaultSpreadSheet
       row = m_Rows.get(m_RowKeys.get(i)).getClone(result);
       result.m_Rows.put(m_RowKeys.get(i), row);
     }
+    result.m_Quiet             = m_Quiet;
+    result.m_OnlyStoreFormulas = m_OnlyStoreFormulas;
 
     return result;
   }
@@ -1503,5 +1509,25 @@ public class DefaultSpreadSheet
   @Override
   public boolean isQuiet() {
     return m_Quiet;
+  }
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  @Override
+  public void setOnlyStoreFormulas(boolean value) {
+    m_OnlyStoreFormulas = value;
+  }
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_OnlyStoreFormulas;
   }
 }

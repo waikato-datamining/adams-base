@@ -461,6 +461,19 @@ public class DataRowView
   }
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    if (m_Owner != null)
+      return m_Owner.getOnlyStoreFormulas();
+    else
+      return false;
+  }
+
+  /**
    * Returns the internal array of cells as string.
    *
    * @return		the values of the row

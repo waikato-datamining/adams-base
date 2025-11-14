@@ -1598,4 +1598,24 @@ public class DatasetView
   public boolean isQuiet() {
     return m_Dataset.isQuiet();
   }
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  @Override
+  public void setOnlyStoreFormulas(boolean value) {
+    m_Dataset.setOnlyStoreFormulas(value);
+  }
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_Dataset.getOnlyStoreFormulas();
+  }
 }

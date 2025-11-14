@@ -299,6 +299,19 @@ public abstract class AbstractRow
   }
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    if (m_Owner != null)
+      return m_Owner.getOnlyStoreFormulas();
+    else
+      return false;
+  }
+
+  /**
    * Simply returns the internal hashtable of cells as string.
    *
    * @return		the values of the row

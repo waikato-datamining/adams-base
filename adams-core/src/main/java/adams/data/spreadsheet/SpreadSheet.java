@@ -716,4 +716,18 @@ public interface SpreadSheet
    * @return		true if quiet
    */
   public boolean isQuiet();
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  public void setOnlyStoreFormulas(boolean value);
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  public boolean getOnlyStoreFormulas();
 }

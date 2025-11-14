@@ -1348,4 +1348,24 @@ public class SpreadSheetView
   public boolean isQuiet() {
     return m_Sheet.isQuiet();
   }
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  @Override
+  public void setOnlyStoreFormulas(boolean value) {
+    m_Sheet.setOnlyStoreFormulas(value);
+  }
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_Sheet.getOnlyStoreFormulas();
+  }
 }

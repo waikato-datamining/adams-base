@@ -87,6 +87,9 @@ public abstract class AbstractSpreadSheetReader
   /** whether to suppress logging output in the spreadsheet, e.g., parse errors of formulas. */
   protected boolean m_Quiet;
 
+  /** whether to only store formulas and not evaluate them. */
+  protected boolean m_OnlyStoreFormulas;
+
   /** whether the read process was stopped through an external source. */
   protected boolean m_Stopped;
 
@@ -113,6 +116,10 @@ public abstract class AbstractSpreadSheetReader
 
     m_OptionManager.add(
       "quiet", "quiet",
+      false);
+
+    m_OptionManager.add(
+      "only-store-formulas", "onlyStoreFormulas",
       false);
   }
 
@@ -224,6 +231,7 @@ public abstract class AbstractSpreadSheetReader
   public void setSpreadSheetType(SpreadSheet value) {
     m_SpreadSheetType = value;
     m_SpreadSheetType.setQuiet(m_Quiet);
+    m_SpreadSheetType.setOnlyStoreFormulas(m_OnlyStoreFormulas);
     reset();
   }
 
@@ -304,6 +312,37 @@ public abstract class AbstractSpreadSheetReader
    */
   public String quietTipText() {
     return "If enabled, logging output in the spreadsheet is suppressed, e.g., from parsing errors of formulas.";
+  }
+
+  /**
+   * Sets whether to only store formulas and not evaluate them.
+   *
+   * @param value	true to store only
+   */
+  public void setOnlyStoreFormulas(boolean value) {
+    m_OnlyStoreFormulas = value;
+    if (m_SpreadSheetType != null)
+      m_SpreadSheetType.setOnlyStoreFormulas(m_OnlyStoreFormulas);
+    reset();
+  }
+
+  /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  public boolean getOnlyStoreFormulas() {
+    return m_OnlyStoreFormulas;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String onlyStoreFormulasTipText() {
+    return "If enabled, formulas are only stored but never evaluated; useful for spreadsheets with unsupported functions in formulas.";
   }
 
   /**

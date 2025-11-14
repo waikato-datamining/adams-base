@@ -1216,6 +1216,19 @@ public class FloatCell
   }
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    if (m_Owner != null)
+      return m_Owner.getOnlyStoreFormulas();
+    else
+      return false;
+  }
+
+  /**
    * Recalculates the value from the cell's formula.
    */
   @Override
@@ -1224,6 +1237,11 @@ public class FloatCell
 
     if (!isFormula())
       return;
+
+    if (getOnlyStoreFormulas()) {
+      setContentAsString(FORMULA_ERROR);
+      return;
+    }
 
     if (m_Calculating) {
       setContentAsString(FORMULA_ERROR);

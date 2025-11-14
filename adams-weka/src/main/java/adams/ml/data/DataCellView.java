@@ -829,6 +829,16 @@ public class DataCellView
   }
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_Owner.getOnlyStoreFormulas();
+  }
+
+  /**
    * Returns whether logging output is suppressed, e.g., from parse errors.
    *
    * @return		true if quiet

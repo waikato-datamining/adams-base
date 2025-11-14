@@ -686,6 +686,16 @@ public class CellView
   }
 
   /**
+   * Returns whether to only store formulas and not evaluate them.
+   *
+   * @return		true if only stored
+   */
+  @Override
+  public boolean getOnlyStoreFormulas() {
+    return m_Cell.getOnlyStoreFormulas();
+  }
+
+  /**
    * Recalculates the value from the cell's formula.
    */
   @Override
