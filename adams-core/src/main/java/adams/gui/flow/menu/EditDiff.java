@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EditDiff.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -24,6 +24,7 @@ import adams.core.DiffUtils.SideBySideDiff;
 import adams.gui.core.GUIHelper;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.flow.tree.Tree.TreeState;
+import adams.gui.flow.tree.TreeHelper;
 import adams.gui.visualization.debug.SideBySideDiffPanel;
 
 import java.awt.BorderLayout;
@@ -35,7 +36,6 @@ import java.util.List;
  * Shows differences between versions of flows.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EditDiff
   extends AbstractFlowEditorMenuItemAction {
@@ -72,9 +72,9 @@ public class EditDiff
 
     // undo step
     state = (TreeState) m_State.getCurrentPanel().getUndo().peekUndo().getData();
-    if (state.actors.size() == 0)
+    if (state.actors.isEmpty())
       return null;
-    prev = state.actors;
+    prev = TreeHelper.getCommandLines(state.actors);
 
     // generate diff
     result = DiffUtils.sideBySide(prev, current);
