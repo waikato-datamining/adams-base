@@ -15,7 +15,7 @@
 
 /*
  * TreeHelper.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.tree;
 
@@ -234,7 +234,7 @@ public class TreeHelper {
     Node 		node;
     int			i;
 
-    if (nested.size() == 0)
+    if (nested.isEmpty())
       return null;
 
     i = 0;
@@ -366,7 +366,7 @@ public class TreeHelper {
    * nesting level.
    *
    * @param root	the root node
-   * @return		the tree as nested commandlines
+   * @return		the tree as indented commandlines
    */
   public static List<String> getCommandLines(Node root) {
     return getCommandLines(root, false);
@@ -378,13 +378,47 @@ public class TreeHelper {
    *
    * @param root	the root node
    * @param noExtActors	whether to exclude external actors
-   * @return		the tree as nested commandlines
+   * @return		the tree as indented commandlines
    */
   public static List<String> getCommandLines(Node root, boolean noExtActors) {
     List<String>	result;
 
     result = new ArrayList<>();
     getCommandLines(root, result, noExtActors);
+
+    return result;
+  }
+
+  /**
+   * Adds the list and its children to the list of commandlines.
+   *
+   * @param list      	the list to add
+   * @param cmdlines	the command lines to add to
+   * @param level 	the current indentation level
+   */
+  protected static void getCommandLines(List list, List<String> cmdlines, int level) {
+    int		i;
+
+    for (i = 0; i < list.size(); i++) {
+      if (list.get(i) instanceof Line)
+	cmdlines.add(indent(((Line) list.get(i)).getContent(), level));
+      else if (list.get(i) instanceof List)
+	getCommandLines((List) list.get(i), cmdlines, level+1);
+    }
+  }
+
+  /**
+   * Returns the nested commandlines (from tree state) as flat list of indented commandlines.
+   * Indentation in blanks represents nesting level.
+   *
+   * @param list	the nested list of commandlines
+   * @return		the nested lists as flat, indented commandlines
+   */
+  public static List<String> getCommandLines(List list) {
+    List<String>	result;
+
+    result = new ArrayList<>();
+    getCommandLines(list, result, 0);
 
     return result;
   }
