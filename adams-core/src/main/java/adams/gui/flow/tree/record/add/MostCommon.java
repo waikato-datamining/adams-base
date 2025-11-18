@@ -15,7 +15,7 @@
 
 /*
  * MostCommon.java
- * Copyright (C) 2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow.tree.record.add;
@@ -149,7 +149,8 @@ public class MostCommon
     m_SaveRunnable.queue(new DelayedActionRunnable.AbstractAction(m_SaveRunnable) {
       @Override
       public String execute() {
-	m_SaveRunnable.stopExecution();
+	if (m_SaveRunnable != null)
+	  m_SaveRunnable.stopExecution();
 	m_SaveRunnable = null;
 	return save();
       }
