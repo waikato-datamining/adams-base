@@ -1,0 +1,15 @@
+# Configuration file for enabling/disabling evaluation metrics.
+#
+# Format:
+# metric_classname=false|true
+#
+# true: enabled
+# false: disabled
+
+weka.classifiers.evaluation.Bias=true
+weka.classifiers.evaluation.Dice=true
+weka.classifiers.evaluation.MinMax=true
+weka.classifiers.evaluation.MSLE=true
+weka.classifiers.evaluation.RPD=true
+weka.classifiers.evaluation.RSquared=true
+weka.classifiers.evaluation.SDR=true

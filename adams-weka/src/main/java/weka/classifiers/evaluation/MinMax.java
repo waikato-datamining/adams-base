@@ -14,8 +14,8 @@
  */
 
 /*
- * Dice.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * MinMax.java
+ * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.evaluation;
@@ -27,19 +27,27 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Sørensen–Dice coefficient:
- *
- * https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
+ * Simply records the minimum and maximum of the numeric class attribute.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class Dice
+public class MinMax
   extends AbstractEvaluationMetric
   implements StandardEvaluationMetric, InformationRetrievalEvaluationMetric {
 
   private static final long serialVersionUID = -6174771017324139350L;
 
-  public static final String NAME = "Dice";
+  public static final String NAME = "MinMax";
+
+  public static final String MIN = "Min";
+
+  public static final String MAX = "Max";
+
+  /** the minimum. */
+  protected double m_Minimum = Double.MAX_VALUE;
+
+  /** the maximum. */
+  protected double m_Maximum = -Double.MAX_VALUE;
 
   /**
    * Get the name of this metric
@@ -58,7 +66,7 @@ public class Dice
    */
   @Override
   public String getMetricDescription() {
-    return "Sørensen–Dice coefficient: DSC = 2TP / (2TP + FP + FN); calculated for the first class label.";
+    return "Simply records the minimum and maximum of the numeric class attribute.";
   }
 
   /**
@@ -70,7 +78,7 @@ public class Dice
    */
   @Override
   public boolean appliesToNominalClass() {
-    return EvaluationMetricManager.isEnabled(this);
+    return false;
   }
 
   /**
@@ -82,7 +90,7 @@ public class Dice
    */
   @Override
   public boolean appliesToNumericClass() {
-    return false;
+    return EvaluationMetricManager.isEnabled(this);
   }
 
   /**
@@ -103,7 +111,7 @@ public class Dice
    * @param statName the name of the statistic to compute the value for
    * @return the computed statistic or Utils.missingValue() if the statistic
    * can't be computed for some reason
-   * @see #getStatistic(String, int) 
+   * @see #getStatistic(String, int)
    */
   @Override
   public double getStatistic(String statName) {
@@ -125,13 +133,12 @@ public class Dice
    */
   @Override
   public double getStatistic(String statName, int classIndex) {
-    if (statName.equals(NAME)) {
-      return 2 * m_baseEvaluation.numTruePositives(classIndex)
-	/ (2 * m_baseEvaluation.numTruePositives(classIndex) + m_baseEvaluation.numFalsePositives(classIndex) + m_baseEvaluation.numFalseNegatives(classIndex));
-    }
-    else {
+    if (statName.equals(MIN))
+      return m_Minimum;
+    else if (statName.equals(MAX))
+      return m_Maximum;
+    else
       return Utils.missingValue();
-    }
   }
 
   /**
@@ -155,7 +162,8 @@ public class Dice
    */
   @Override
   public String toSummaryString() {
-    return Utils.padRight(NAME, 41) + Utils.doubleToString(getStatistic(NAME), 4) + "\n";
+    return Utils.padRight("Min class value", 41) + Utils.doubleToString(getStatistic(MIN), 4) + "\n"
+	     + Utils.padRight("Max class value", 41) + Utils.doubleToString(getStatistic(MAX), 4) + "\n";
   }
 
   /**
@@ -185,6 +193,7 @@ public class Dice
    */
   @Override
   public void updateStatsForPredictor(double predictedValue, Instance instance) throws Exception {
-    // ignored
+    m_Minimum = Math.min(m_Minimum, instance.classValue());
+    m_Maximum = Math.max(m_Maximum, instance.classValue());
   }
 }

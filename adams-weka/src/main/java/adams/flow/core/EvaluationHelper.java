@@ -21,7 +21,9 @@ package adams.flow.core;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.Bias;
+import weka.classifiers.evaluation.Dice;
 import weka.classifiers.evaluation.MSLE;
+import weka.classifiers.evaluation.MinMax;
 import weka.classifiers.evaluation.RPD;
 import weka.classifiers.evaluation.RSquared;
 import weka.classifiers.evaluation.SDR;
@@ -142,6 +144,12 @@ public class EvaluationHelper {
 	return eval.unweightedMicroFmeasure();
       case BIAS:
         return eval.getPluginMetric(Bias.class.getName()).getStatistic(Bias.NAME);
+      case DICE:
+	return eval.getPluginMetric(Dice.class.getName()).getStatistic(Dice.NAME);
+      case MIN:
+	return eval.getPluginMetric(MinMax.class.getName()).getStatistic(MinMax.MIN);
+      case MAX:
+	return eval.getPluginMetric(MinMax.class.getName()).getStatistic(MinMax.MAX);
       case MSLE:
         return eval.getPluginMetric(MSLE.class.getName()).getStatistic(MSLE.NAME);
       case RSQUARED:

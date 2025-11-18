@@ -63,7 +63,7 @@ public abstract class AbstractSimpleRegressionMeasure
    */
   @Override
   public boolean appliesToNumericClass() {
-    return true;
+    return EvaluationMetricManager.isEnabled(this);
   }
 
   /**
