@@ -15,7 +15,7 @@
 
 /*
  * AbstractTee.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -815,7 +815,6 @@ public abstract class AbstractTee
   @Override
   public void wrapUp() {
     waitForAsynchronousExecution();
-    m_Actors.wrapUp();
     m_InputToken  = null;
     m_OutputToken = null;
     super.wrapUp();
