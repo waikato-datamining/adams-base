@@ -95,7 +95,7 @@ public class Performance {
   }
 
   /**
-   * Detetermines the actual number of threads to use:
+   * Determines the actual number of threads to use:
    * <ul>
    *   <li>&gt; 0: specific number of threads to use</li>
    *   <li>= 0: use all cores (eg 4 threads on 4 core machine)</li>
@@ -107,13 +107,30 @@ public class Performance {
    * @see		ProcessUtils#getAvailableProcessors()
    */
   public static int determineNumThreads(int threads) {
+    return determineNumThreads(threads, true);
+  }
+
+  /**
+   * Determines the actual number of threads to use:
+   * <ul>
+   *   <li>&gt; 0: specific number of threads to use</li>
+   *   <li>= 0: use all cores (eg 4 threads on 4 core machine)</li>
+   *   <li>&lt; 0: # of cores + X (eg -1 equals 3 threads on 4 core machine)</li>
+   * </ul>
+   * @param threads		the number of threads
+   * @param useThreadCap 	whether to limit the number of threads
+   * @return			the actual number of threads
+   * @see			#getMaxNumProcessors()
+   * @see			ProcessUtils#getAvailableProcessors()
+   */
+  public static int determineNumThreads(int threads, boolean useThreadCap) {
     int		result;
     int		max;
 
     max = getMaxNumProcessors();
     if (max < 1)
       max = ProcessUtils.getAvailableProcessors();
-    if (threads > 0)
+    if ((threads > 0) && useThreadCap)
       result = Math.min(threads, max);
     else if (threads == 0)
       result = max;
@@ -160,7 +177,18 @@ public class Performance {
     if (numThreads == 0)
       return "parallel, threads: #cores";
     if (numThreads > 1)
-      return "parallel, threads: " + numThreads + " cores";
+      return "parallel, threads: " + numThreads + " threads";
     return "parallel, threads: #cores - " + Math.abs(numThreads);
+  }
+
+  /**
+   * Returns a help string explaining the "useThreadCap" flag, to be used in
+   * the options/tiptext.
+   *
+   * @return		the help string
+   */
+  public static String getUseThreadCapHelp() {
+    return
+      "If enabled, an upper limit will be enforced on the number of threads - disable with caution!";
   }
 }
