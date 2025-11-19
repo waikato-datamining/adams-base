@@ -22,7 +22,7 @@ package adams.flow.control;
 
 import adams.core.Performance;
 import adams.core.QuickInfoHelper;
-import adams.core.ThreadLimiter;
+import adams.core.ThreadLimiterWithOptionalCap;
 import adams.flow.core.Actor;
 import adams.flow.core.ActorExecution;
 import adams.flow.core.ActorHandler;
@@ -131,7 +131,7 @@ import java.util.logging.Level;
  */
 public class Branch
   extends AbstractControlActor
-  implements InputConsumer, MutableActorHandler, AtomicExecution, ThreadLimiter {
+  implements InputConsumer, MutableActorHandler, AtomicExecution, ThreadLimiterWithOptionalCap {
 
   /** for serialization. */
   private static final long serialVersionUID = -706232800503932715L;
@@ -147,6 +147,9 @@ public class Branch
 
   /** the actual number of threads to use. */
   protected int m_ActualNumThreads;
+
+  /** whether to enforce upper limit number of threads. */
+  protected boolean m_UseThreadCap;
 
   /** the executor service to use for parallel execution. */
   protected ExecutorService m_Executor;
@@ -237,6 +240,10 @@ public class Branch
     m_OptionManager.add(
       "num-threads", "numThreads",
       0);
+
+    m_OptionManager.add(
+      "use-thread-cap", "useThreadCap",
+      false);
   }
 
   /**
@@ -408,6 +415,37 @@ public class Branch
   }
 
   /**
+   * Sets whether to restrict number of threads or not.
+   *
+   * @param value 	true if to restrict
+   */
+  @Override
+  public void setUseThreadCap(boolean value) {
+    m_UseThreadCap = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to restrict number of threads or not.
+   *
+   * @return	 	true if to restrict
+   */
+  @Override
+  public boolean getUseThreadCap() {
+    return m_UseThreadCap;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String useThreadCapTipText() {
+    return Performance.getUseThreadCapHelp();
+  }
+
+  /**
    * Whether to collect the output of the branches.
    *
    * @param value	true if to collect the output
@@ -447,7 +485,9 @@ public class Branch
     result = super.setUp();
 
     if (result == null) {
-      m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads);
+      m_ActualNumThreads = Performance.determineNumThreads(m_NumThreads, m_UseThreadCap);
+      if (isLoggingEnabled())
+	getLogger().info("actual #threads: " + m_ActualNumThreads);
 
       if (m_ActualNumThreads > 1) {
 	m_HasCallableTransformers = hasCallableTransformers();
