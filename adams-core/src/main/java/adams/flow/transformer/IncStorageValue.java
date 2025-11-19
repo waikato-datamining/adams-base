@@ -15,7 +15,7 @@
 
 /*
  * IncStorageValue.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,7 +28,7 @@ import adams.flow.core.Unknown;
 
 /**
  <!-- globalinfo-start -->
- * Increments the value of a storage value by either an integer or double increment.<br>
+ * Increments the value of a storage value by either an integer&#47;long or double increment.<br>
  * If the storage value has not been set yet, it will get set to 0.<br>
  * If the storage value contains a non-numerical value, no increment will be performed.<br>
  * It is also possible to directly output the updated storage value (while discarding the input token).
@@ -48,69 +48,77 @@ import adams.flow.core.Unknown;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: IncStorageValue
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the storage value to increment.
  * &nbsp;&nbsp;&nbsp;default: storage
  * </pre>
- * 
- * <pre>-inc-type &lt;INTEGER|DOUBLE&gt; (property: incrementType)
+ *
+ * <pre>-inc-type &lt;INTEGER|LONG|DOUBLE&gt; (property: incrementType)
  * &nbsp;&nbsp;&nbsp;The type of increment to perform.
  * &nbsp;&nbsp;&nbsp;default: INTEGER
  * </pre>
- * 
+ *
  * <pre>-inc-int &lt;int&gt; (property: integerIncrement)
- * &nbsp;&nbsp;&nbsp;The increment in case of INTEGER increments.
+ * &nbsp;&nbsp;&nbsp;The increment in case of INTEGER or LONG increments.
  * &nbsp;&nbsp;&nbsp;default: 1
  * </pre>
- * 
+ *
  * <pre>-inc-double &lt;double&gt; (property: doubleIncrement)
  * &nbsp;&nbsp;&nbsp;The increment in case of DOUBLE increments.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * </pre>
- * 
+ *
  * <pre>-output-storage-value &lt;boolean&gt; (property: outputStorageValue)
- * &nbsp;&nbsp;&nbsp;If enabled, the input token gets discarded and the current storage value 
+ * &nbsp;&nbsp;&nbsp;If enabled, the input token gets discarded and the current storage value
  * &nbsp;&nbsp;&nbsp;get forwarded instead.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-suppress-notifications &lt;boolean&gt; (property: suppressNotifications)
+ * &nbsp;&nbsp;&nbsp;If enabled, storage change listeners will NOT get notified.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class IncStorageValue
-  extends AbstractTransformer 
+  extends AbstractTransformer
   implements StorageUpdater {
 
   /** for serialization. */
@@ -146,6 +154,9 @@ public class IncStorageValue
   /** whether to output the incremented storage value instead of input token. */
   protected boolean m_OutputStorageValue;
 
+  /** whether to suppress notifications. */
+  protected boolean m_SuppressNotifications;
+
   /**
    * Returns a string describing the object.
    *
@@ -154,13 +165,13 @@ public class IncStorageValue
   @Override
   public String globalInfo() {
     return
-        "Increments the value of a storage value by either an integer/long or double "
-      + "increment.\n"
-      + "If the storage value has not been set yet, it will get set to 0.\n"
-      + "If the storage value contains a non-numerical value, no increment will be "
-      + "performed.\n"
-      + "It is also possible to directly output the updated storage value (while "
-      + "discarding the input token).";
+      "Increments the value of a storage value by either an integer/long or double "
+	+ "increment.\n"
+	+ "If the storage value has not been set yet, it will get set to 0.\n"
+	+ "If the storage value contains a non-numerical value, no increment will be "
+	+ "performed.\n"
+	+ "It is also possible to directly output the updated storage value (while "
+	+ "discarding the input token).";
   }
 
   /**
@@ -171,29 +182,33 @@ public class IncStorageValue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName());
+      "storage-name", "storageName",
+      new StorageName());
 
     m_OptionManager.add(
-	    "inc-type", "incrementType",
-	    IncrementType.INTEGER);
+      "inc-type", "incrementType",
+      IncrementType.INTEGER);
 
     m_OptionManager.add(
-	    "inc-int", "integerIncrement",
-	    1);
+      "inc-int", "integerIncrement",
+      1);
 
     m_OptionManager.add(
-	    "inc-double", "doubleIncrement",
-	    1.0);
+      "inc-double", "doubleIncrement",
+      1.0);
 
     m_OptionManager.add(
-	    "output-storage-value", "outputStorageValue",
-	    false);
+      "output-storage-value", "outputStorageValue",
+      false);
+
+    m_OptionManager.add(
+      "suppress-notifications", "suppressNotifications",
+      false);
   }
 
   /**
    * Returns whether storage items are being updated.
-   * 
+   *
    * @return		true if storage items are updated
    */
   public boolean isUpdatingStorage() {
@@ -229,6 +244,7 @@ public class IncStorageValue
       }
     }
     result += QuickInfoHelper.toString(this, "outputStorageValue", m_OutputStorageValue, "output storage", ", ");
+    result += QuickInfoHelper.toString(this, "suppressNotifications", m_SuppressNotifications, "suppress notifications", ", ");
 
     return result;
   }
@@ -379,6 +395,35 @@ public class IncStorageValue
   }
 
   /**
+   * Sets whether to notify storage change listeners.
+   *
+   * @param value	true if to notify listeners
+   */
+  public void setSuppressNotifications(boolean value) {
+    m_SuppressNotifications = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to notify storage change listeners.
+   *
+   * @return		true if to notify listeners
+   */
+  public boolean getSuppressNotifications() {
+    return m_SuppressNotifications;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppressNotificationsTipText() {
+    return "If enabled, storage change listeners will NOT get notified.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.core.Unknown.class<!-- flow-accepts-end -->
@@ -450,7 +495,7 @@ public class IncStorageValue
 	  default:
 	    throw new IllegalStateException("Unhandled increment type: " + m_IncrementType);
 	}
-	getStorageHandler().getStorage().put(m_StorageName, value);
+	getStorageHandler().getStorage().put(m_StorageName, value, !m_SuppressNotifications);
 	if (isLoggingEnabled())
 	  getLogger().info("Incremented storage '" + m_StorageName + "': " + value);
 	m_OutputToken = new Token(value);

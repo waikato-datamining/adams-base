@@ -15,7 +15,7 @@
 
 /*
  * Storage.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -107,17 +107,30 @@ public class Storage
   }
 
   /**
-   * Adds the given value under the specified name.
+   * Adds the given value under the specified name and notifies the listeners.
    *
    * @param name	the name to store the value under
    * @param value	the value to store
    * @return		any previous value stored under the same name
    */
   public synchronized Object put(StorageName name, Object value) {
+    return put(name, value, true);
+  }
+
+  /**
+   * Adds the given value under the specified name.
+   *
+   * @param name	the name to store the value under
+   * @param value	the value to store
+   * @param notify 	whether to notify the listeners
+   * @return		any previous value stored under the same name
+   */
+  public synchronized Object put(StorageName name, Object value, boolean notify) {
     Object	result;
 
     result = m_Data.put(name.getValue(), value);
-    notifyChangeListeners(new StorageChangeEvent(this, (result != null) ? Type.MODIFIED : Type.ADDED, name.getValue()));
+    if (notify)
+      notifyChangeListeners(new StorageChangeEvent(this, (result != null) ? Type.MODIFIED : Type.ADDED, name.getValue()));
 
     return result;
   }

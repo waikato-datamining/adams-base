@@ -15,7 +15,7 @@
 
 /*
  * Variables.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -138,12 +138,23 @@ public class Variables
   }
 
   /**
-   * Stores the value for the variable.
+   * Stores the value for the variable and notifies the listeners.
    *
    * @param name	the name (or placeholder string) of the variable
    * @param value	the value of the variable
    */
   public void set(String name, String value) {
+    set(name, value, true);
+  }
+
+  /**
+   * Stores the value for the variable.
+   *
+   * @param name	the name (or placeholder string) of the variable
+   * @param value	the value of the variable
+   * @param notify 	whether to notify the listeners
+   */
+  public void set(String name, String value, boolean notify) {
     Type	type;
     String	strippedName;
 
@@ -165,7 +176,8 @@ public class Variables
       getLogger().log(Level.INFO, "set: name=" + name + ", value=" + value);
 
     m_Variables.put(strippedName, value);
-    notifyVariableChangeListeners(new VariableChangeEvent(this, type, name));
+    if (notify)
+      notifyVariableChangeListeners(new VariableChangeEvent(this, type, name));
   }
 
   /**
