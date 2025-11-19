@@ -1,0 +1,12 @@
+--> adams.flow.condition.bool.ReportValueMatches-out0.txt
+false
+
+--> adams.flow.condition.bool.ReportValueMatches-out1.txt
+true
+
+--> adams.flow.condition.bool.ReportValueMatches-out2.txt
+true
+
+--> adams.flow.condition.bool.ReportValueMatches-out3.txt
+true
+
