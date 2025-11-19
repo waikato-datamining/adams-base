@@ -146,4 +146,11 @@ public abstract class AbstractMultiCondition
     for (BooleanCondition cond: m_Conditions)
       cond.stopExecution();
   }
+
+  /**
+   * Returns a simplified boolean condition, if possible.
+   *
+   * @return		a potentially simplified boolean condition
+   */
+  public abstract BooleanCondition simplify();
 }

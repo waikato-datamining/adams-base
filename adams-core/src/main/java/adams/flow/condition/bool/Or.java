@@ -15,7 +15,7 @@
 
 /*
  * Or.java
- * Copyright (C) 2012-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -125,5 +125,18 @@ public class Or
     }
     
     return result;
+  }
+
+  /**
+   * Returns a simplified boolean condition, if possible.
+   *
+   * @return		a potentially simplified boolean condition
+   */
+  @Override
+  public BooleanCondition simplify() {
+    if (m_Conditions.length == 1)
+      return m_Conditions[0];
+    else
+      return this;
   }
 }
