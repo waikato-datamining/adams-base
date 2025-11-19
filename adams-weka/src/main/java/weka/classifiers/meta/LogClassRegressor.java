@@ -82,14 +82,7 @@ public class LogClassRegressor
    */
   public Instance transform(Instance inst) {
     double[] vals = inst.toDoubleArray();
-    for (int i = 0; i < inst.numAttributes(); i++) {
-      if (!(inst.isMissing(i))) {
-	if (inst.attribute(i).isNumeric()) {
-	  if (i == inst.classIndex())
-	    vals[i] = Math.log(CLASS_CONSTANT + vals[i]);
-	}
-      }
-    }
+    vals[inst.classIndex()] = Math.log(CLASS_CONSTANT + vals[inst.classIndex()]);
     Instance newInst = new DenseInstance(inst.weight(), vals);
     newInst.setDataset(inst.dataset());
     return newInst;
