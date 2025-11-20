@@ -15,7 +15,7 @@
 
 /*
  * ViewStatistics.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow.menu;
 
@@ -49,7 +49,7 @@ public class ViewStatistics
    */
   @Override
   protected void doActionPerformed(ActionEvent e) {
-    m_State.getCurrentPanel().processActors(new ActorStatistics());
+    m_State.getCurrentPanel().processActorsPrompt(new ActorStatistics());
   }
 
   /**
