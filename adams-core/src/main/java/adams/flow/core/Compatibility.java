@@ -15,7 +15,7 @@
 
 /*
  * Compatibility.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -25,6 +25,7 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Class that determines compatibility between inputs and outputs.
@@ -39,7 +40,6 @@ import java.util.HashSet;
  * "Strict" mode does not perform any special treatment of Object/Unknown.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Unknown
  */
 public class Compatibility
@@ -174,22 +174,28 @@ public class Compatibility
    * @param input	the accepting actor
    * @return		the classes that are in common
    */
-  public HashSet<Class> getCompatibleClasses(OutputProducer output, InputConsumer input) {
-    HashSet<Class>	result;
-    Class[]		outCls;
-    Class[]		inCls;
-    int			i;
-    int			n;
+  public Set<Class> getCompatibleClasses(OutputProducer output, InputConsumer input) {
+    return getCompatibleClasses(output.generates(), input.accepts());
+  }
 
-    result = new HashSet<Class>();
+  /**
+   * Returns all the classes that the two arrays have in common.
+   *
+   * @param first	the first array of classes
+   * @param second	the second array of classes
+   * @return		the classes that are in common
+   */
+  public Set<Class> getCompatibleClasses(Class[] first, Class[] second) {
+    Set<Class>	result;
+    int		i;
+    int		n;
 
-    outCls = output.generates();
-    inCls  = input.accepts();
+    result = new HashSet<>();
 
-    for (i = 0; i < outCls.length; i++) {
-      for (n = 0; n < inCls.length; n++) {
-	if (isCompatible(outCls[i], inCls[n])) {
-	  result.add(outCls[i]);
+    for (i = 0; i < first.length; i++) {
+      for (n = 0; n < second.length; n++) {
+	if (isCompatible(first[i], second[n])) {
+	  result.add(first[i]);
 	  break;
 	}
       }
