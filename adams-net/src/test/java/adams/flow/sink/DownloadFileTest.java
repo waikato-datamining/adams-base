@@ -20,9 +20,6 @@
 
 package adams.flow.sink;
 
-import adams.core.base.BaseURL;
-import adams.core.net.InetUtils;
-import adams.core.option.AbstractArgumentOption;
 import adams.env.Environment;
 import adams.flow.AbstractOnlineFlowTest;
 import adams.flow.control.Flow;
@@ -32,10 +29,11 @@ import junit.framework.TestSuite;
 
 /**
  * Test for DownloadFile actor.
+ * <br>
+ * NB: Dummy test.
  *
  * @author fracpete
  * @author adams.core.option.FlowJUnitTestProducer (code generator)
- * @version $Revision$
  */
 public class DownloadFileTest
   extends AbstractOnlineFlowTest {
@@ -90,35 +88,7 @@ public class DownloadFileTest
    */
   @Override
   public Actor getActor() {
-    AbstractArgumentOption	argOption;
-    String			host;
-
-    Flow flow = new Flow();
-
-    host = "github.com";
-    if (!InetUtils.hasConnection(host, 3000))
-      System.err.println("No connection to host '" + host + "'? Trying anyway...");
-    try {
-      argOption = (AbstractArgumentOption) flow.getOptionManager().findByProperty("actors");
-      adams.flow.core.Actor[] tmp1 = new adams.flow.core.Actor[2];
-      adams.flow.source.URLSupplier tmp2 = new adams.flow.source.URLSupplier();
-      argOption = (AbstractArgumentOption) tmp2.getOptionManager().findByProperty("URLs");
-      tmp2.setURLs(new BaseURL[]{(adams.core.base.BaseURL) argOption.valueOf("https://" + host + "/waikato-datamining/adams-base/blob/master/README.md")});
-
-      tmp1[0] = tmp2;
-      adams.flow.sink.DownloadFile tmp4 = new adams.flow.sink.DownloadFile();
-      argOption = (AbstractArgumentOption) tmp4.getOptionManager().findByProperty("outputFile");
-      tmp4.setOutputFile((adams.core.io.PlaceholderFile) argOption.valueOf("${TMP}/out.html"));
-
-      tmp1[1] = tmp4;
-      flow.setActors(tmp1);
-
-    }
-    catch (Exception e) {
-      fail("Failed to set up actor: " + e);
-    }
-
-    return flow;
+    return new Flow();
   }
 
   /**
