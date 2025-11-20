@@ -32,7 +32,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractMultiCondition
-  extends AbstractBooleanCondition {
+  extends AbstractBooleanCondition
+  implements BooleanConditionWithSimplification {
 
   /** for serialization. */
   private static final long serialVersionUID = -7930281929775307418L;
@@ -146,11 +147,4 @@ public abstract class AbstractMultiCondition
     for (BooleanCondition cond: m_Conditions)
       cond.stopExecution();
   }
-
-  /**
-   * Returns a simplified boolean condition, if possible.
-   *
-   * @return		a potentially simplified boolean condition
-   */
-  public abstract BooleanCondition simplify();
 }
