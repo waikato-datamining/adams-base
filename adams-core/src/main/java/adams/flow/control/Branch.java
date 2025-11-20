@@ -125,6 +125,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: 0
  * </pre>
  *
+ * <pre>-use-thread-cap &lt;boolean&gt; (property: useThreadCap)
+ * &nbsp;&nbsp;&nbsp;If enabled, an upper limit will be enforced on the number of threads - disable
+ * &nbsp;&nbsp;&nbsp;with caution!
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -243,7 +249,7 @@ public class Branch
 
     m_OptionManager.add(
       "use-thread-cap", "useThreadCap",
-      false);
+      true);
   }
 
   /**
