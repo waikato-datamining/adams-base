@@ -1,0 +1,12 @@
+--> adams.flow.condition.bool.Xor-out0.txt
+false
+
+--> adams.flow.condition.bool.Xor-out1.txt
+true
+
+--> adams.flow.condition.bool.Xor-out2.txt
+true
+
+--> adams.flow.condition.bool.Xor-out3.txt
+false
+
