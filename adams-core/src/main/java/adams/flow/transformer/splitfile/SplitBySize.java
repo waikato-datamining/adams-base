@@ -176,7 +176,7 @@ public class SplitBySize
       reader = new FileReader(file.getAbsoluteFile());
       writer = null;
       count  = 0;
-      while ((read = reader.read(buffer)) > -1) {
+      while (((read = reader.read(buffer)) > -1) && !m_Stopped) {
 	count += read;
 
 	if (writer == null)
@@ -236,7 +236,7 @@ public class SplitBySize
       in = new FileInputStream(file.getAbsoluteFile());
       out = null;
       count  = 0;
-      while ((read = in.read(buffer)) > -1) {
+      while (((read = in.read(buffer)) > -1) && !m_Stopped) {
 	count += read;
 
 	if (out == null)

@@ -19,13 +19,13 @@
  */
 package adams.flow.transformer.splitfile;
 
+import adams.core.io.PlaceholderFile;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
-
-import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
@@ -147,7 +147,7 @@ public class SplitByLineCount
       reader = new BufferedReader(new FileReader(file.getAbsoluteFile()));
       writer = null;
       count  = 0;
-      while ((line = reader.readLine()) != null) {
+      while (((line = reader.readLine()) != null) && !m_Stopped) {
 	if (writer == null)
 	  writer = new BufferedWriter(new FileWriter(nextFile().getAbsoluteFile()));
 	
