@@ -15,21 +15,32 @@
 
 /*
  * MergeFiles.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
+import adams.core.ClassCrossReference;
+import adams.core.QuickInfoHelper;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.flow.transformer.SplitFile;
+import adams.flow.transformer.splitfile.FileType;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  <!-- globalinfo-start -->
- * Combines the incoming files in a single one.
+ * Combines the incoming files in a single one.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.transformer.SplitFile
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -45,45 +56,72 @@ import java.io.FileWriter;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MergeFiles
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-output &lt;adams.core.io.PlaceholderFile&gt; (property: outputFile)
  * &nbsp;&nbsp;&nbsp;The output file containing the combined content.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
- * 
+ *
+ * <pre>-file-type &lt;TEXT|BINARY&gt; (property: fileType)
+ * &nbsp;&nbsp;&nbsp;Defines how to treat the file(s).
+ * &nbsp;&nbsp;&nbsp;default: TEXT
+ * </pre>
+ *
+ * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
+ * &nbsp;&nbsp;&nbsp;The size of byte-buffer used for reading the content.
+ * &nbsp;&nbsp;&nbsp;default: 1024
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class MergeFiles
-  extends AbstractFileWriter {
+  extends AbstractFileWriter
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = -6717503477934358351L;
+
+  /** the file type. */
+  protected FileType m_FileType;
+
+  /** the buffer size to use. */
+  protected int m_BufferSize;
 
   /**
    * Returns a string describing the object.
@@ -93,6 +131,60 @@ public class MergeFiles
   @Override
   public String globalInfo() {
     return "Combines the incoming files in a single one.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{SplitFile.class};
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "file-type", "fileType",
+      FileType.TEXT);
+
+    m_OptionManager.add(
+      "buffer-size", "bufferSize",
+      1024, 1, null);
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String fileTypeTipText() {
+    return "Defines how to treat the file(s).";
+  }
+
+  /**
+   * Sets how to process the files.
+   *
+   * @param value	the type of file
+   */
+  public void setFileType(FileType value) {
+    m_FileType = value;
+    reset();
+  }
+
+  /**
+   * Returns how to process the files.
+   *
+   * @return		the type of file
+   */
+  public FileType getFileType() {
+    return m_FileType;
   }
 
   /**
@@ -107,6 +199,53 @@ public class MergeFiles
   }
 
   /**
+   * Sets the size of the buffer.
+   *
+   * @param value	the size
+   */
+  public void setBufferSize(int value) {
+    if (getOptionManager().isValid("bufferSize", value)) {
+      m_BufferSize = value;
+      reset();
+    }
+  }
+
+  /**
+   * Get output file.
+   *
+   * @return	file
+   */
+  public int getBufferSize() {
+    return m_BufferSize;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String bufferSizeTipText() {
+    return "The size of byte-buffer used for reading the content.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "fileType", m_FileType, ", type: ");
+    result += QuickInfoHelper.toString(this, "bufferSize", m_BufferSize, ", buffer: ");
+
+    return result;
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the accepted input
@@ -116,14 +255,13 @@ public class MergeFiles
   }
 
   /**
-   * Executes the flow item.
+   * Merges the text files.
    *
-   * @return		null if everything is fine, otherwise error message
+   * @param files	the files to merge
+   * @return		null if successful, otherwise error message
    */
-  @Override
-  protected String doExecute() {
+  protected String mergeText(PlaceholderFile[] files) {
     String		result;
-    PlaceholderFile[]	files;
     FileReader		reader;
     FileWriter		writer;
     int			i;
@@ -132,11 +270,8 @@ public class MergeFiles
 
     result = null;
 
-    // get input files
-    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
-    
     // set up readers/writer
-    buffer = new char[1024];
+    buffer = new char[m_BufferSize];
     try {
       writer = new FileWriter(m_OutputFile.getAbsoluteFile());
       for (i = 0; i < files.length; i++) {
@@ -155,6 +290,76 @@ public class MergeFiles
     }
     catch (Exception e) {
       result = handleException("Failed to merge files: ", e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Merges the binary files.
+   *
+   * @param files	the files to merge
+   * @return		null if successful, otherwise error message
+   */
+  protected String mergeBinary(PlaceholderFile[] files) {
+    String		result;
+    InputStream 	in;
+    OutputStream 	out;
+    int			i;
+    int			read;
+    byte[]		buffer;
+
+    result = null;
+
+    // set up readers/writer
+    buffer = new byte[m_BufferSize];
+    try {
+      out = new FileOutputStream(m_OutputFile.getAbsoluteFile());
+      for (i = 0; i < files.length; i++) {
+	in = new FileInputStream(files[i].getAbsoluteFile());
+	while ((read = in.read(buffer)) > -1) {
+	  out.write(buffer, 0, read);
+	  if (isStopped())
+	    break;
+	}
+	in.close();
+	out.flush();
+	if (isStopped())
+	  break;
+      }
+      out.close();
+    }
+    catch (Exception e) {
+      result = handleException("Failed to merge files: ", e);
+    }
+
+    return result;
+  }
+
+  /**
+   * Executes the flow item.
+   *
+   * @return		null if everything is fine, otherwise error message
+   */
+  @Override
+  protected String doExecute() {
+    String		result;
+    PlaceholderFile[]	files;
+
+    // get input files
+    files = FileUtils.toPlaceholderFileArray(m_InputToken.getPayload());
+
+    switch (m_FileType) {
+      case BINARY:
+	result = mergeBinary(files);
+	break;
+
+      case TEXT:
+	result = mergeText(files);
+	break;
+
+      default:
+	throw new IllegalArgumentException("Unhandled file type: " + m_FileType);
     }
 
     return result;

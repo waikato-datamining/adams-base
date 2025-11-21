@@ -651,7 +651,7 @@ adams.flow.transformer.report.AbstractReportPreProcessor=\
   adams.flow.transformer.report
 
 # the file splitters
-adams.flow.transformer.splitfile.AbstractFileSplitter=\
+adams.flow.transformer.splitfile.FileSplitter=\
   adams.flow.transformer.splitfile
 
 # the map filters

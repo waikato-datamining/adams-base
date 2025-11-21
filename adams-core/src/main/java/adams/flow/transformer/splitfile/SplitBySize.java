@@ -13,17 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SplitBySize.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer.splitfile;
 
+import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
-
-import adams.core.io.PlaceholderFile;
 
 /**
  <!-- globalinfo-start -->
@@ -35,44 +38,55 @@ import adams.core.io.PlaceholderFile;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;adams.core.io.PlaceholderFile&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The prefix for the generated files.
  * &nbsp;&nbsp;&nbsp;default: .&#47;split
  * </pre>
- * 
+ *
  * <pre>-extension &lt;java.lang.String&gt; (property: extension)
  * &nbsp;&nbsp;&nbsp;The file extension to use.
  * &nbsp;&nbsp;&nbsp;default: .bin
  * </pre>
- * 
+ *
  * <pre>-num-digits &lt;int&gt; (property: numDigits)
  * &nbsp;&nbsp;&nbsp;The number of digits to use for the index of the generated files.
  * &nbsp;&nbsp;&nbsp;default: 3
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
+ * <pre>-file-type &lt;TEXT|BINARY&gt; (property: fileType)
+ * &nbsp;&nbsp;&nbsp;Defines how to treat the file(s).
+ * &nbsp;&nbsp;&nbsp;default: TEXT
+ * </pre>
+ *
+ * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
+ * &nbsp;&nbsp;&nbsp;The size of byte-buffer used for reading the content.
+ * &nbsp;&nbsp;&nbsp;default: 1024
+ * &nbsp;&nbsp;&nbsp;minimum: 1
+ * </pre>
+ *
  * <pre>-max-size &lt;long&gt; (property: maxSize)
  * &nbsp;&nbsp;&nbsp;The maximum size of the generated files.
  * &nbsp;&nbsp;&nbsp;default: 1048576
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SplitBySize
-  extends AbstractFileSplitter {
+  extends AbstractFileSplitterWithBinarySupport {
 
   /** for serialization. */
   private static final long serialVersionUID = 6675923081135115020L;
-  
+
   /** the maximum size in bytes. */
   protected long m_MaxSize;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -82,7 +96,7 @@ public class SplitBySize
   public String globalInfo() {
     return "Splits the file into chunks with the specified maximum size.";
   }
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -91,8 +105,8 @@ public class SplitBySize
     super.defineOptions();
 
     m_OptionManager.add(
-	    "max-size", "maxSize",
-	    1024*1024L, 1L, null);
+      "max-size", "maxSize",
+      1024*1024L, 1L, null);
   }
 
   /**
@@ -101,12 +115,9 @@ public class SplitBySize
    * @param value	the maximum size
    */
   public void setMaxSize(long value) {
-    if (value > 0) {
+    if (getOptionManager().isValid("maxSize", value)) {
       m_MaxSize = value;
       reset();
-    }
-    else {
-      getLogger().warning("Maximum size must be >0, provided: " + value);
     }
   }
 
@@ -130,12 +141,27 @@ public class SplitBySize
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String 	result;
+
+    result = super.getQuickInfo();
+    result += QuickInfoHelper.toString(this, "maxSize", m_MaxSize, ", max size: ");
+
+    return result;
+  }
+
+  /**
    * Performs the actual splitting of the file.
-   * 
+   *
    * @param file	the file to split
    */
   @Override
-  protected void doSplit(PlaceholderFile file) {
+  protected void doSplitText(PlaceholderFile file) {
     FileReader	reader;
     FileWriter	writer;
     char[]	buffer;
@@ -143,8 +169,8 @@ public class SplitBySize
     long	count;
     int		partial;
     int		bufferSize;
-    
-    bufferSize = (int) Math.min(1024, m_MaxSize);
+
+    bufferSize = (int) Math.min(m_BufferSize, m_MaxSize);
     buffer     = new char[bufferSize];
     try {
       reader = new FileReader(file.getAbsoluteFile());
@@ -167,7 +193,7 @@ public class SplitBySize
 	  writer.close();
 	  writer = null;
 	  count  = 0;
-	  
+
 	  if (partial < bufferSize) {
 	    writer = new FileWriter(nextFile().getAbsoluteFile());
 	    writer.write(buffer, partial, read - partial);
@@ -183,6 +209,66 @@ public class SplitBySize
 	writer.close();
       }
       reader.close();
+    }
+    catch (Exception e) {
+      getLogger().log(Level.SEVERE, "Failed to split file: " + file, e);
+    }
+  }
+
+  /**
+   * Performs the actual splitting of the file.
+   *
+   * @param file	the file to split
+   */
+  @Override
+  protected void doSplitBinary(PlaceholderFile file) {
+    FileInputStream 	in;
+    FileOutputStream 	out;
+    byte[]		buffer;
+    int			read;
+    long		count;
+    int			partial;
+    int			bufferSize;
+
+    bufferSize = (int) Math.min(m_BufferSize, m_MaxSize);
+    buffer     = new byte[bufferSize];
+    try {
+      in = new FileInputStream(file.getAbsoluteFile());
+      out = null;
+      count  = 0;
+      while ((read = in.read(buffer)) > -1) {
+	count += read;
+
+	if (out == null)
+	  out = new FileOutputStream(nextFile().getAbsoluteFile());
+
+	if (count >= m_MaxSize) {
+	  partial = (int) (m_MaxSize - (count - bufferSize));
+	  if (count > m_MaxSize)
+	    out.write(buffer, 0, partial);
+	  else
+	    out.write(buffer, 0, read);
+
+	  out.flush();
+	  out.close();
+	  out = null;
+	  count  = 0;
+
+	  if (partial < bufferSize) {
+	    out = new FileOutputStream(nextFile().getAbsoluteFile());
+	    out.write(buffer, partial, read - partial);
+	    count += read - partial;
+	  }
+	}
+	else {
+	  out.write(buffer, 0, read);
+	}
+      }
+      if (out != null) {
+	out.flush();
+	out.close();
+      }
+      in.close();
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to split file: " + file, e);

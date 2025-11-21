@@ -1,1 +1,1 @@
-SplitBySize
+SplitBySize (prefix: ./split, ext: .bin, #digits: 3, type: TEXT, buffer: 1024, max size: 1048576)

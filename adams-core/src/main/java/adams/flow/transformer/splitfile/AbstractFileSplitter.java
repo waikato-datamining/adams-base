@@ -19,24 +19,25 @@
  */
 package adams.flow.transformer.splitfile;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import adams.core.Stoppable;
+import adams.core.QuickInfoHelper;
+import adams.core.QuickInfoSupporter;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.AbstractOptionHandler;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Ancestor for file splitters.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @version $Revision$
  */
 public abstract class AbstractFileSplitter
   extends AbstractOptionHandler
-  implements Stoppable {
+  implements FileSplitter, QuickInfoSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 929718454245646770L;
@@ -46,16 +47,16 @@ public abstract class AbstractFileSplitter
 
   /** the file extension to use. */
   protected String m_Extension;
-  
+
   /** the number of digits to use for the index of output files. */
   protected int m_NumDigits;
-  
+
   /** whether the splitting has been stopped. */
   protected boolean m_Stopped;
-  
+
   /** the files that were generated. */
   protected List<File> m_Generated;
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -64,16 +65,16 @@ public abstract class AbstractFileSplitter
     super.defineOptions();
 
     m_OptionManager.add(
-	    "prefix", "prefix",
-	    new PlaceholderFile("./split"));
+      "prefix", "prefix",
+      new PlaceholderFile("./split"));
 
     m_OptionManager.add(
-	    "extension", "extension",
-	    ".bin");
+      "extension", "extension",
+      ".bin");
 
     m_OptionManager.add(
-	    "num-digits", "numDigits",
-	    3, 1, null);
+      "num-digits", "numDigits",
+      3, 1, null);
   }
 
   /**
@@ -82,10 +83,10 @@ public abstract class AbstractFileSplitter
   @Override
   protected void reset() {
     super.reset();
-    
-    m_Generated = new ArrayList<File>();
+
+    m_Generated = new ArrayList<>();
   }
-  
+
   /**
    * Sets the prefix for the generated files.
    *
@@ -114,7 +115,7 @@ public abstract class AbstractFileSplitter
   public String prefixTipText() {
     return "The prefix for the generated files.";
   }
-  
+
   /**
    * Sets the extension for the generated files.
    *
@@ -143,7 +144,7 @@ public abstract class AbstractFileSplitter
   public String extensionTipText() {
     return "The file extension to use.";
   }
-  
+
   /**
    * Sets the number of digits to use for the index of the generated files.
    *
@@ -174,11 +175,27 @@ public abstract class AbstractFileSplitter
   }
 
   /**
+   * Returns a quick info about the object, which can be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "prefix", m_Prefix, "prefix: ");
+    result += QuickInfoHelper.toString(this, "extension", m_Extension, ", ext: ");
+    result += QuickInfoHelper.toString(this, "numDigits", m_NumDigits, ", #digits: ");
+
+    return result;
+  }
+
+  /**
    * Performs checks on the file.
    * <br><br>
    * Default implementation only ensures that the file is present and not a 
    * directory.
-   * 
+   *
    * @param file	the file to check
    */
   protected void check(PlaceholderFile file) {
@@ -187,50 +204,50 @@ public abstract class AbstractFileSplitter
     if (file.isDirectory())
       throw new IllegalArgumentException("File is a directory: " + file);
   }
-  
+
   /**
    * Creates a new filename, automatically adding it to the list of generated
    * files.
-   * 
+   *
    * @return		the next file
    */
   protected File nextFile() {
     PlaceholderFile	result;
     String		file;
-    
+
     file  = m_Prefix.getAbsolutePath();
     file += Utils.padLeft("" + (m_Generated.size() + 1), '0', m_NumDigits);
     file += m_Extension;
-    
+
     result = new PlaceholderFile(file);
     m_Generated.add(result);
-    
+
     return result;
   }
-  
+
   /**
    * Performs the actual splitting of the file.
-   * 
+   *
    * @param file	the file to split
    */
   protected abstract void doSplit(PlaceholderFile file);
-  
+
   /**
    * Splits the file and returns the filenames of the generated files.
-   * 
+   *
    * @param file	the file to split
    * @return		the filenames of the new files generated
    */
   public String[] split(PlaceholderFile file) {
     String[]	result;
     int		i;
-    
+
     m_Stopped = false;
     m_Generated.clear();
-    
+
     check(file);
     doSplit(file);
-    
+
     if (m_Stopped) {
       result = new String[0];
     }
@@ -239,7 +256,7 @@ public abstract class AbstractFileSplitter
       for (i = 0; i < m_Generated.size(); i++)
 	result[i] = m_Generated.get(i).getAbsolutePath();
     }
-      
+
     return result;
   }
 

@@ -15,22 +15,27 @@
 
 /*
  * SplitFile.java
- * Copyright (C) 2014-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Token;
-import adams.flow.transformer.splitfile.AbstractFileSplitter;
+import adams.flow.sink.MergeFiles;
+import adams.flow.transformer.splitfile.FileSplitter;
 import adams.flow.transformer.splitfile.SplitBySize;
 
 import java.io.File;
 
 /**
  <!-- globalinfo-start -->
- * Splits the file into several smaller files using the specified splitter algorithm.
+ * Splits the file into several smaller files using the specified splitter algorithm.<br>
+ * <br>
+ * See also:<br>
+ * adams.flow.sink.MergeFiles
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -48,48 +53,58 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SplitFile
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-splitter &lt;adams.flow.transformer.splitfile.AbstractFileSplitter&gt; (property: splitter)
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-splitter &lt;adams.flow.transformer.splitfile.FileSplitter&gt; (property: splitter)
  * &nbsp;&nbsp;&nbsp;The split algorithm to use.
  * &nbsp;&nbsp;&nbsp;default: adams.flow.transformer.splitfile.SplitBySize
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SplitFile
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements ClassCrossReference {
 
   /** for serialization. */
   private static final long serialVersionUID = 1704879993786242375L;
-  
+
   /** the split algorithm. */
-  protected AbstractFileSplitter m_Splitter;
+  protected FileSplitter m_Splitter;
 
   /**
    * Returns a string describing the object.
@@ -102,6 +117,15 @@ public class SplitFile
   }
 
   /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  public Class[] getClassCrossReferences() {
+    return new Class[]{MergeFiles.class};
+  }
+
+  /**
    * Adds options to the internal list of options.
    */
   @Override
@@ -109,8 +133,8 @@ public class SplitFile
     super.defineOptions();
 
     m_OptionManager.add(
-	    "splitter", "splitter",
-	    new SplitBySize());
+      "splitter", "splitter",
+      new SplitBySize());
   }
 
   /**
@@ -118,7 +142,7 @@ public class SplitFile
    *
    * @param value	the split algorithm
    */
-  public void setSplitter(AbstractFileSplitter value) {
+  public void setSplitter(FileSplitter value) {
     m_Splitter = value;
     reset();
   }
@@ -128,7 +152,7 @@ public class SplitFile
    *
    * @return		the split algorithm
    */
-  public AbstractFileSplitter getSplitter() {
+  public FileSplitter getSplitter() {
     return m_Splitter;
   }
 
@@ -169,7 +193,7 @@ public class SplitFile
   public Class[] generates() {
     return new Class[]{String[].class};
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -182,28 +206,28 @@ public class SplitFile
     String[]		files;
 
     result = null;
-    
+
     if (m_InputToken.hasPayload(String.class))
       file = new PlaceholderFile(m_InputToken.getPayload(String.class));
     else
       file = new PlaceholderFile(m_InputToken.getPayload(File.class));
-    
+
     files = m_Splitter.split(file);
     if (!isStopped())
       m_OutputToken = new Token(files);
 
     if (!isStopped() && isLoggingEnabled())
       getLogger().info(m_InputToken.getPayload() + " -> " + m_OutputToken.getPayload());
-    
+
     return result;
   }
-  
+
   /**
    * Stops the execution. No message set.
    */
   @Override
   public void stopExecution() {
-    super.stopExecution();
     m_Splitter.stopExecution();
+    super.stopExecution();
   }
 }

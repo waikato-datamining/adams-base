@@ -1,1 +1,1 @@
-${CWD}
+${CWD}, type: TEXT, buffer: 1024
