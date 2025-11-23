@@ -1,0 +1,16 @@
+# Project: adams
+# Date: 2025-11-24 12:11:35
+# User: fracpete
+# Charset: UTF-8
+# Modules: adams-core
+#
+adams.flow.control.Flow -annotation "You can use this flow to combine files that have been split using the following flow:\\n  adams-core-split_file.flow\\nThe flow will prompt you to select the files to merge." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.source.Start
+ adams.flow.control.Trigger -name "prompt user"
+  adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
+  adams.flow.source.EnterManyValues -name Parameters -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input dir\" -help \"the directory with the files to merge\" -file-chooser-title \"Input dir\" -use-forward-slashes true -use-absolute-path true" -value "adams.flow.source.valuedefinition.ListSelectionValueDefinition -name file_type -display \"File type\" -help \"how to treat the files\" -value TEXT -value BINARY -default-value BINARY" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name buffer_size -display \"Buffer size\" -help \"used for the buffer for copying data\" -type INTEGER -default-value 10240000" -value "adams.flow.source.valuedefinition.FileValueDefinition -name output_file -display \"Output file\" -help \"the file to generate from the splits\" -file-chooser-title \"Output file\" -use-forward-slashes true -use-absolute-path true -accept-all-file-filter true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.transformer.MapToVariables
+ adams.flow.control.Trigger -name process
+  adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -sorting SORT_BY_NAME" -use-forward-slashes true
+  adams.flow.transformer.SelectArraySubset -stop-if-canceled true -message "Please select files to merge" -allow-search true -initial-selection 1-last
+  adams.flow.sink.MergeFiles -output @{output_file} -file-type @{file_type} -buffer-size @{buffer_size}
