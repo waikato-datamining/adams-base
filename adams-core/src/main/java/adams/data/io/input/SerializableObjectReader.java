@@ -20,6 +20,7 @@
 
 package adams.data.io.input;
 
+import adams.core.LenientModeSupporter;
 import adams.core.SerializableObject;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
@@ -36,9 +37,30 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class SerializableObjectReader
-  extends AbstractObjectReader {
+  extends AbstractObjectReader
+  implements LenientModeSupporter {
 
   private static final long serialVersionUID = -5427726959059688884L;
+
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
+
+  /**
+   * Default constructor.
+   */
+  public SerializableObjectReader() {
+    super();
+  }
+
+  /**
+   * Initializes the reader with specified lenient mode.
+   *
+   * @param lenient 	whether to be lenient or not
+   */
+  public SerializableObjectReader(boolean lenient) {
+    this();
+    setLenient(lenient);
+  }
 
   /**
    * Returns a string describing the object.
@@ -48,6 +70,50 @@ public class SerializableObjectReader
   @Override
   public String globalInfo() {
     return "Reads a file containing data from a " + SerializableObject.class.getName() + ".";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "lenient", "lenient",
+      false);
+  }
+
+  /**
+   * Sets whether lenient, ie first tries to load the object as {@link SerializableObject}
+   * and if that fails just deserializes it.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie first tries to load the object as {@link SerializableObject}
+   * and if that fails just deserializes it.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, first tries to load the object as "
+	     + Utils.classToString(SerializableObject.class) +
+	     " and if that fails just deserializes it.";
   }
 
   /**
@@ -107,6 +173,9 @@ public class SerializableObjectReader
 	  result.setSetupLoadedOrGenerated(true);
 	  return result;
 	}
+      }
+      else if (m_Lenient) {
+	return obj;
       }
       getLogger().severe("Expected to read array of length 2 (classname string and data Object array), instead found: " + Utils.classToString(obj));
       return null;
