@@ -15,7 +15,7 @@
 
 /*
  * AbstractStandaloneGroup.java
- * Copyright (C) 2014-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -374,10 +374,10 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   }
 
   /**
-   * Returns a list of actors comprising of the requested actor type
+   * Returns a list of actors comprised of the requested actor type
    * (exact match).
    *
-   * @param actor	the actor type too look here
+   * @param actor	the actor type to look here
    * @param <A>		the type
    * @return		the list of actors that were located
    */
@@ -425,11 +425,11 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
   }
 
   /**
-   * Returns a list of actors comprising of the requested actor type
+   * Returns a list of actors comprised of the requested actor type
    * (exact match).
    *
    * @param parent	the parent the actors need to be below (assumed to be ActorHandler, uses first occurrence)
-   * @param actor	the actor type too look here
+   * @param actor	the actor type to look here
    * @param <A>		the type
    * @return		the list of actors that were located
    */
@@ -441,7 +441,7 @@ public abstract class AbstractStandaloneGroup<T extends Actor>
 
     result  = new ArrayList<>();
     parents = getActors(parent);
-    if ((parents.size() > 0) && (parents.get(0) instanceof ActorHandler)) {
+    if ((!parents.isEmpty()) && (parents.get(0) instanceof ActorHandler)) {
       p = (ActorHandler) parents.get(0);
       for (i = 0; i < p.size(); i++) {
 	if (p.get(i).getClass().equals(actor) && !p.get(i).getSkip())
