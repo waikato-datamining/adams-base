@@ -15,7 +15,7 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -76,6 +76,7 @@ import java.util.HashMap;
  *               | expr | expr (or: expr or expr)<br>
  *               | if[else] ( expr , expr (if true) , expr (if false) )<br>
  *               | ifmissing ( variable , expr (default value if variable is missing) )<br>
+ *               | has ( variable )<br>
  *               | isNaN ( expr )<br>
  * <br>
  * # arithmetics<br>
@@ -110,6 +111,10 @@ import java.util.HashMap;
  *               | ceil ( expr )<br>
  *               | min ( expr1 , expr2 )<br>
  *               | max ( expr1 , expr2 )<br>
+ *               | rand () (unseeded double, 0-1)<br>
+ *               | rand ( seed ) (seeded double, 0-1)<br>
+ *               | randint ( bound ) (unseeded int from 0 to bound-1)<br>
+ *               | randint ( seed, bound ) (seeded int from 0 to bound-1)<br>
  *               | year ( expr )<br>
  *               | month ( expr )<br>
  *               | day ( expr )<br>
@@ -132,13 +137,24 @@ import java.util.HashMap;
  *               | matches ( expr , regexp )<br>
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
- *               | find ( search , expr [, pos] )<br>
+ *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
+ *               | startswith ( str , find ) (checks whether 'str' string starts with 'find' string)<br>
+ *               | endswith ( str , find ) (checks whether 'str' string ends with 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
+ *               | str ( expr )<br>
+ *               | str ( expr  , numdecimals )<br>
+ *               | str ( expr  , decimalformat )<br>
+ *               | ext ( file_str )  (extracts extension from file)<br>
+ *               | replaceext ( file_str, ext_str )  (replaces the extension of the file with the new one)<br>
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
  * - Line comments start with '#'.<br>
@@ -148,6 +164,7 @@ import java.util.HashMap;
  * - times have to be of format 'HH:mm:ss' or 'yyyy-MM-dd HH:mm:ss'<br>
  * - the characters in square brackets in function names are optional:<br>
  *   e.g. 'len("abc")' is the same as 'length("abc")'<br>
+ * - 'str' uses java.text.DecimalFormat when supplying a format string<br>
  * <br>
  * A lot of the functions have been modeled after LibreOffice:<br>
  *   https:&#47;&#47;help.libreoffice.org&#47;Calc&#47;Functions_by_Category<br>
@@ -167,9 +184,13 @@ import java.util.HashMap;
  <!-- flow-summary-start -->
  * Input&#47;output:<br>
  * - accepts:<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Byte<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Short<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Integer<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Long<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Float<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
+ * &nbsp;&nbsp;&nbsp;java.lang.Number<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.Report<br>
  * &nbsp;&nbsp;&nbsp;adams.data.report.ReportHandler<br>
  * - generates:<br>
@@ -181,57 +202,75 @@ import java.util.HashMap;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: MathExpression
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console.
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-expression &lt;adams.parser.MathematicalExpressionText&gt; (property: expression)
- * &nbsp;&nbsp;&nbsp;The mathematical expression to evaluate; the input value can be accessed 
+ * &nbsp;&nbsp;&nbsp;The mathematical expression to evaluate; the input value can be accessed
  * &nbsp;&nbsp;&nbsp;via 'X'.
  * &nbsp;&nbsp;&nbsp;default: X
  * </pre>
- * 
+ *
  * <pre>-output-value-pair &lt;boolean&gt; (property: outputValuePair)
  * &nbsp;&nbsp;&nbsp;If enabled, a double array with X and Y is output and not just Y.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-round-output &lt;boolean&gt; (property: roundOutput)
- * &nbsp;&nbsp;&nbsp;If enabled, the output of the expression is rounding with the specified 
+ * &nbsp;&nbsp;&nbsp;If enabled, the output of the expression is rounding with the specified
  * &nbsp;&nbsp;&nbsp;type of rounding.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
- * &nbsp;&nbsp;&nbsp;The rounding type to perform on the doubles passing through.
+ *
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The rounding type to perform on the doubles passing through; ROUND: the
+ * &nbsp;&nbsp;&nbsp;closest integer to the argument, with ties rounding to positive infinity;
+ * &nbsp;&nbsp;&nbsp; CEILING: the smallest (closest to negative infinity) double value that
+ * &nbsp;&nbsp;&nbsp;is greater than or equal to the argument and is equal to a mathematical
+ * &nbsp;&nbsp;&nbsp;integer; FLOOR: the largest (closest to positive infinity) double value
+ * &nbsp;&nbsp;&nbsp;that is less than or equal to the argument and is equal to a mathematical
+ * &nbsp;&nbsp;&nbsp;integer; RINT: the double value that is closest in value to the argument
+ * &nbsp;&nbsp;&nbsp;and is equal to a mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
  * </pre>
- * 
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -268,12 +307,12 @@ public class MathExpression
   @Override
   public String globalInfo() {
     return
-        "Evaluates a mathematical expression.\n"
-      + "The input value (double or integer) can be accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.\n"
-      + "Variables are supported as well, e.g.: pow(X,@{exp}) with '@{exp}' "
-      + "being a variable available at execution time.\n\n"
-      + "The following grammar is used for the expressions:\n\n"
-      + getGrammar();
+      "Evaluates a mathematical expression.\n"
+	+ "The input value (double or integer) can be accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.\n"
+	+ "Variables are supported as well, e.g.: pow(X,@{exp}) with '@{exp}' "
+	+ "being a variable available at execution time.\n\n"
+	+ "The following grammar is used for the expressions:\n\n"
+	+ getGrammar();
   }
 
   /**
@@ -356,8 +395,8 @@ public class MathExpression
    */
   public String expressionTipText() {
     return
-        "The mathematical expression to evaluate; the input value can be "
-      + "accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.";
+      "The mathematical expression to evaluate; the input value can be "
+	+ "accessed via '" + MathematicalExpression.PLACEHOLDER_OBJECT + "'.";
   }
 
   /**
@@ -444,7 +483,7 @@ public class MathExpression
    * 			displaying in the GUI or for listing the options.
    */
   public String roundingTypeTipText() {
-    return "The rounding type to perform on the doubles passing through.";
+    return "The rounding type to perform on the doubles passing through; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**
@@ -557,7 +596,7 @@ public class MathExpression
       exp = getVariables().expand(exp);
       if (isLoggingEnabled())
 	getLogger().info("--> expanded: " + exp);
-      
+
       // get input
       symbols = MathematicalExpression.objectToSymbols(m_InputToken.getPayload());
       x       = (m_InputToken.getPayload() instanceof Number ? ((Number) m_InputToken.getPayload()).doubleValue() : null);

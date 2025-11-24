@@ -15,7 +15,7 @@
 
 /*
  * Scale.java
- * Copyright (C) 2017-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -38,6 +38,7 @@ import java.awt.Polygon;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-scale-x &lt;double&gt; (property: scaleX)
@@ -57,9 +58,21 @@ import java.awt.Polygon;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
- * &nbsp;&nbsp;&nbsp;The type of rounding to perform.
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The type of rounding to perform; ROUND: the closest integer to the argument,
+ * &nbsp;&nbsp;&nbsp; with ties rounding to positive infinity; CEILING: the smallest (closest
+ * &nbsp;&nbsp;&nbsp;to negative infinity) double value that is greater than or equal to the
+ * &nbsp;&nbsp;&nbsp;argument and is equal to a mathematical integer; FLOOR: the largest (closest
+ * &nbsp;&nbsp;&nbsp;to positive infinity) double value that is less than or equal to the argument
+ * &nbsp;&nbsp;&nbsp;and is equal to a mathematical integer; RINT: the double value that is closest
+ * &nbsp;&nbsp;&nbsp;in value to the argument and is equal to a mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  <!-- options-end -->
@@ -241,7 +254,7 @@ public class Scale
    * 			displaying in the GUI or for listing the options.
    */
   public String roundingTypeTipText() {
-    return "The type of rounding to perform.";
+    return "The type of rounding to perform; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**
@@ -330,22 +343,22 @@ public class Scale
       xpoints = new int[0];
       ypoints = new int[0];
       if (hasPoly) {
-        xpoints = obj.getPolygon().xpoints.clone();
-        ypoints = obj.getPolygon().ypoints.clone();
-        for (i = 0; i < xpoints.length; i++) {
-          xpoints[i] *= m_ScaleX;
-          ypoints[i] *= m_ScaleY;
+	xpoints = obj.getPolygon().xpoints.clone();
+	ypoints = obj.getPolygon().ypoints.clone();
+	for (i = 0; i < xpoints.length; i++) {
+	  xpoints[i] *= m_ScaleX;
+	  ypoints[i] *= m_ScaleY;
 	}
       }
       newObj = new LocatedObject(
-        obj.getImage(),
+	obj.getImage(),
 	(int) round(obj.getX() * m_ScaleX),
 	(int) round(obj.getY() * m_ScaleY),
 	(int) round(obj.getWidth() * m_ScaleX),
 	(int) round(obj.getHeight() * m_ScaleY),
 	obj.getMetaData(true));
       if (hasPoly)
-        newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
+	newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
       result.add(newObj);
     }
 

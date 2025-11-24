@@ -15,7 +15,7 @@
 
 /*
  * TimeseriesRound.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.filter;
 
@@ -31,23 +31,34 @@ import adams.data.timeseries.TimeseriesPoint;
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-no-id-update &lt;boolean&gt; (property: dontUpdateID)
  * &nbsp;&nbsp;&nbsp;If enabled, suppresses updating the ID of adams.data.id.IDHandler data containers.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-type &lt;ROUND|CEILING|FLOOR&gt; (property: type)
- * &nbsp;&nbsp;&nbsp;The type of rounding to perform.
+ *
+ * <pre>-type &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: type)
+ * &nbsp;&nbsp;&nbsp;The type of rounding to perform; ROUND: the closest integer to the argument,
+ * &nbsp;&nbsp;&nbsp; with ties rounding to positive infinity; CEILING: the smallest (closest
+ * &nbsp;&nbsp;&nbsp;to negative infinity) double value that is greater than or equal to the
+ * &nbsp;&nbsp;&nbsp;argument and is equal to a mathematical integer; FLOOR: the largest (closest
+ * &nbsp;&nbsp;&nbsp;to positive infinity) double value that is less than or equal to the argument
+ * &nbsp;&nbsp;&nbsp;and is equal to a mathematical integer; RINT: the double value that is closest
+ * &nbsp;&nbsp;&nbsp;in value to the argument and is equal to a mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
  * </pre>
- * 
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -57,7 +68,7 @@ public class TimeseriesRound
 
   /** for serialization. */
   private static final long serialVersionUID = 2616498525816421178L;
-  
+
   /** the rounding type. */
   protected RoundingType m_Type;
 
@@ -116,7 +127,7 @@ public class TimeseriesRound
    * 			displaying in the GUI or for listing the options.
    */
   public String typeTipText() {
-    return "The type of rounding to perform.";
+    return "The type of rounding to perform; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**
@@ -169,7 +180,7 @@ public class TimeseriesRound
       value = RoundingUtils.apply(m_Type, point.getValue(), m_NumDecimals);
       result.add(new TimeseriesPoint(point.getTimestamp(), value));
     }
-    
+
     return result;
   }
 }

@@ -15,7 +15,7 @@
 
 /*
  * Round.java
- * Copyright (C) 2009-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -28,12 +28,13 @@ import adams.flow.core.Token;
 
 /**
  <!-- globalinfo-start -->
- * Performs 'round', 'ceiling' or 'floor' on double tokens and generates integers.
+ * Performs the specified rounding operation on double tokens.<br>
+ * If 'numDecimals' is zero, it will generate integers otherwise doubles.
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- flow-summary-start -->
- * Input/output:<br>
+ * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double<br>
  * &nbsp;&nbsp;&nbsp;java.lang.Double[]<br>
@@ -44,10 +45,10 @@ import adams.flow.core.Token;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D (property: debug)
- * &nbsp;&nbsp;&nbsp;If set to true, scheme may output additional info to the console.
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -55,19 +56,48 @@ import adams.flow.core.Token;
  * &nbsp;&nbsp;&nbsp;default: Round
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-action &lt;ROUND|CEILING|FLOOR&gt; (property: action)
- * &nbsp;&nbsp;&nbsp;The action to perform on the doubles passing through.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-action &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: action)
+ * &nbsp;&nbsp;&nbsp;The action to perform on the doubles passing through; ROUND: the closest
+ * &nbsp;&nbsp;&nbsp;integer to the argument, with ties rounding to positive infinity; CEILING:
+ * &nbsp;&nbsp;&nbsp; the smallest (closest to negative infinity) double value that is greater
+ * &nbsp;&nbsp;&nbsp;than or equal to the argument and is equal to a mathematical integer; FLOOR:
+ * &nbsp;&nbsp;&nbsp; the largest (closest to positive infinity) double value that is less than
+ * &nbsp;&nbsp;&nbsp;or equal to the argument and is equal to a mathematical integer; RINT: the
+ * &nbsp;&nbsp;&nbsp;double value that is closest in value to the argument and is equal to a
+ * &nbsp;&nbsp;&nbsp;mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  <!-- options-end -->
@@ -94,7 +124,7 @@ public class Round
   @Override
   public String globalInfo() {
     return "Performs the specified rounding operation on double tokens.\n"
-      + "If 'numDecimals' is zero, it will generate integers otherwise doubles.";
+	     + "If 'numDecimals' is zero, it will generate integers otherwise doubles.";
   }
 
   /**
@@ -154,7 +184,7 @@ public class Round
    * 			displaying in the GUI or for listing the options.
    */
   public String actionTipText() {
-    return "The action to perform on the doubles passing through.";
+    return "The action to perform on the doubles passing through; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**

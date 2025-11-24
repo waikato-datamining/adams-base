@@ -15,7 +15,7 @@
 
 /*
  * ScaleReportObjects.java
- * Copyright (C) 2017-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -60,66 +60,81 @@ import adams.flow.transformer.locateobjects.ObjectPrefixHandler;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: ScaleReportObjects
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-prefix &lt;java.lang.String&gt; (property: prefix)
  * &nbsp;&nbsp;&nbsp;The prefix of the objects to scale.
  * &nbsp;&nbsp;&nbsp;default: Object.
  * </pre>
- * 
+ *
  * <pre>-scale-x &lt;double&gt; (property: scaleX)
  * &nbsp;&nbsp;&nbsp;The factor for scaling x&#47;width.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
- * 
+ *
  * <pre>-scale-y &lt;double&gt; (property: scaleY)
  * &nbsp;&nbsp;&nbsp;The factor for scaling y&#47;width.
  * &nbsp;&nbsp;&nbsp;default: 1.0
  * &nbsp;&nbsp;&nbsp;minimum: 0.0
  * &nbsp;&nbsp;&nbsp;maximum: 1.0
  * </pre>
- * 
+ *
  * <pre>-round &lt;boolean&gt; (property: round)
  * &nbsp;&nbsp;&nbsp;If enabled, the scaled values get round.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
- * &nbsp;&nbsp;&nbsp;The type of rounding to perform.
+ *
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The type of rounding to perform; ROUND: the closest integer to the argument,
+ * &nbsp;&nbsp;&nbsp; with ties rounding to positive infinity; CEILING: the smallest (closest
+ * &nbsp;&nbsp;&nbsp;to negative infinity) double value that is greater than or equal to the
+ * &nbsp;&nbsp;&nbsp;argument and is equal to a mathematical integer; FLOOR: the largest (closest
+ * &nbsp;&nbsp;&nbsp;to positive infinity) double value that is less than or equal to the argument
+ * &nbsp;&nbsp;&nbsp;and is equal to a mathematical integer; RINT: the double value that is closest
+ * &nbsp;&nbsp;&nbsp;in value to the argument and is equal to a mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
  * </pre>
- * 
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -344,7 +359,7 @@ public class ScaleReportObjects
    * 			displaying in the GUI or for listing the options.
    */
   public String roundingTypeTipText() {
-    return "The type of rounding to perform.";
+    return "The type of rounding to perform; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**

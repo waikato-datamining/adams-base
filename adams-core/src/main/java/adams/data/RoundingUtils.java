@@ -15,7 +15,7 @@
 
 /*
  * RoundUtils.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data;
@@ -259,5 +259,40 @@ public class RoundingUtils {
     rounded = apply(type, value, decimals);
     result  = fixDecimals("" + rounded, decimals);
     return result;
+  }
+
+  /**
+   * Returns a tiptext that explains the rounding types.
+   *
+   * @return		the tip text
+   */
+  public static String roundingTypeTipText() {
+    StringBuilder	result;
+
+    result = new StringBuilder();
+
+    for (RoundingType type: RoundingType.values()) {
+      if (result.length() > 0)
+	result.append("; ");
+      result.append(type).append(": ");
+      switch (type) {
+	case ROUND:
+	  result.append("the closest integer to the argument, with ties rounding to positive infinity");
+	  break;
+	case CEILING:
+	  result.append("the smallest (closest to negative infinity) double value that is greater than or equal to the argument and is equal to a mathematical integer");
+	  break;
+	case FLOOR:
+	  result.append("the largest (closest to positive infinity) double value that is less than or equal to the argument and is equal to a mathematical integer");
+	  break;
+	case RINT:
+	  result.append("the double value that is closest in value to the argument and is equal to a mathematical integer");
+	  break;
+	default:
+	  result.append("???");
+      }
+    }
+
+    return result.toString();
   }
 }

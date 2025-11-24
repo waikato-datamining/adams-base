@@ -25,25 +25,37 @@ import adams.data.RoundingUtils;
 
 /**
  <!-- globalinfo-start -->
- * Rounds double values and turns them into integers..
+ * Rounds double values and turns them into integers.<br>
+ * When specifying a value larger than zero for 'numDecimals', the rounding will happen at that decimal. In other words:<br>
+ *   rounding(value * 10^numDecimals) &#47; 10^numDecimals
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-action &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: action)
+ * &nbsp;&nbsp;&nbsp;The action to perform on the doubles passing through; ROUND: the closest
+ * &nbsp;&nbsp;&nbsp;integer to the argument, with ties rounding to positive infinity; CEILING:
+ * &nbsp;&nbsp;&nbsp; the smallest (closest to negative infinity) double value that is greater
+ * &nbsp;&nbsp;&nbsp;than or equal to the argument and is equal to a mathematical integer; FLOOR:
+ * &nbsp;&nbsp;&nbsp; the largest (closest to positive infinity) double value that is less than
+ * &nbsp;&nbsp;&nbsp;or equal to the argument and is equal to a mathematical integer; RINT: the
+ * &nbsp;&nbsp;&nbsp;double value that is closest in value to the argument and is equal to a
+ * &nbsp;&nbsp;&nbsp;mathematical integer
+ * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
- * <pre>-action &lt;ROUND|CEILING|FLOOR&gt; (property: action)
- * &nbsp;&nbsp;&nbsp;The action to perform on the doubles passing through.
- * &nbsp;&nbsp;&nbsp;default: ROUND
- * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -53,7 +65,7 @@ public class Round
 
   /** for serialization. */
   private static final long serialVersionUID = -4941255219517637632L;
-  
+
   /** the action to perform. */
   protected RoundingType m_Action;
 
@@ -68,9 +80,9 @@ public class Round
   @Override
   public String globalInfo() {
     return "Rounds double values and turns them into integers.\n"
-      + "When specifying a value larger than zero for 'numDecimals', the "
-      + "rounding will happen at that decimal. In other words:\n"
-      + "  rounding(value * 10^numDecimals) / 10^numDecimals";
+	     + "When specifying a value larger than zero for 'numDecimals', the "
+	     + "rounding will happen at that decimal. In other words:\n"
+	     + "  rounding(value * 10^numDecimals) / 10^numDecimals";
   }
 
   /**
@@ -130,7 +142,7 @@ public class Round
    * 			displaying in the GUI or for listing the options.
    */
   public String actionTipText() {
-    return "The action to perform on the doubles passing through.";
+    return "The action to perform on the doubles passing through; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * MathExpression.java
- * Copyright (C) 2018-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
@@ -108,6 +108,10 @@ import java.util.HashMap;
  *               | ceil ( expr )<br>
  *               | min ( expr1 , expr2 )<br>
  *               | max ( expr1 , expr2 )<br>
+ *               | rand () (unseeded double, 0-1)<br>
+ *               | rand ( seed ) (seeded double, 0-1)<br>
+ *               | randint ( bound ) (unseeded int from 0 to bound-1)<br>
+ *               | randint ( seed, bound ) (seeded int from 0 to bound-1)<br>
  *               | year ( expr )<br>
  *               | month ( expr )<br>
  *               | day ( expr )<br>
@@ -131,7 +135,11 @@ import java.util.HashMap;
  *               | trim ( expr )<br>
  *               | len[gth] ( str )<br>
  *               | find ( search , expr [, pos] ) (find 'search' in 'expr', return 1-based position)<br>
+ *               | contains ( str , find ) (checks whether 'str' string contains 'find' string)<br>
+ *               | startswith ( str , find ) (checks whether 'str' string starts with 'find' string)<br>
+ *               | endswith ( str , find ) (checks whether 'str' string ends with 'find' string)<br>
  *               | replace ( str , pos , len , newstr )<br>
+ *               | replaceall ( str , regexp , replace ) (applies regular expression to 'str' and replaces all matches with 'replace')<br>
  *               | substitute ( str , find , replace [, occurrences] )<br>
  *               | str ( expr )<br>
  *               | str ( expr  , numdecimals )<br>
@@ -141,7 +149,9 @@ import java.util.HashMap;
  *               ;<br>
  * <br>
  * Notes:<br>
- * - Variables are either all upper case letters (e.g., "ABC") or any character   apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]").<br>
+ * - Variables are either all alphanumeric and _, starting with uppercase letter (e.g., "ABc_12"),<br>
+ *   any character apart from "]" enclosed by "[" and "]" (e.g., "[Hello World]") or<br>
+ *   enclosed by single quotes (e.g., "'Hello World'").<br>
  * - 'start' and 'end' for function 'substr' are indices that start at 1.<br>
  * - Index 'end' for function 'substr' is excluded (like Java's 'String.substring(int,int)' method)<br>
  * - Line comments start with '#'.<br>
@@ -172,6 +182,7 @@ import java.util.HashMap;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-expression &lt;adams.parser.MathematicalExpressionText&gt; (property: expression)
@@ -186,9 +197,22 @@ import java.util.HashMap;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR&gt; (property: roundingType)
- * &nbsp;&nbsp;&nbsp;The rounding type to perform on the doubles passing through.
+ * <pre>-rounding-type &lt;ROUND|CEILING|FLOOR|RINT&gt; (property: roundingType)
+ * &nbsp;&nbsp;&nbsp;The rounding type to perform on the doubles passing through; ROUND: the
+ * &nbsp;&nbsp;&nbsp;closest integer to the argument, with ties rounding to positive infinity;
+ * &nbsp;&nbsp;&nbsp; CEILING: the smallest (closest to negative infinity) double value that
+ * &nbsp;&nbsp;&nbsp;is greater than or equal to the argument and is equal to a mathematical
+ * &nbsp;&nbsp;&nbsp;integer; FLOOR: the largest (closest to positive infinity) double value
+ * &nbsp;&nbsp;&nbsp;that is less than or equal to the argument and is equal to a mathematical
+ * &nbsp;&nbsp;&nbsp;integer; RINT: the double value that is closest in value to the argument
+ * &nbsp;&nbsp;&nbsp;and is equal to a mathematical integer
  * &nbsp;&nbsp;&nbsp;default: ROUND
+ * </pre>
+ *
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals after the decimal point to use.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
  *
  <!-- options-end -->
@@ -364,7 +388,7 @@ public class MathExpression
    * displaying in the GUI or for listing the options.
    */
   public String roundingTypeTipText() {
-    return "The rounding type to perform on the doubles passing through.";
+    return "The rounding type to perform on the doubles passing through; " + RoundingUtils.roundingTypeTipText();
   }
 
   /**
