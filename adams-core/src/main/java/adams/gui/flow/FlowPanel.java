@@ -354,14 +354,7 @@ public class FlowPanel
     m_Tree.setKeyboardActions(keyboardActions);
 
     m_Tree.addActorChangeListener((ActorChangeEvent e) -> update());
-    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> {
-      if (m_Tree.getSelectionPaths().length == 1)
-	showStatus(false, m_Tree.getSelectedFullName());
-      else if (m_Tree.getSelectionPaths().length > 1)
-	showStatus(false, m_Tree.getSelectionPaths().length + " actors selected");
-      else
-	showStatus(false, "");
-    });
+    m_Tree.getSelectionModel().addTreeSelectionListener((TreeSelectionEvent e) -> updateSelectedStatus());
 
     m_PanelTree = new JPanel(new BorderLayout());
     m_PanelTreeLabel = new JPanel(new FlowLayout());
@@ -1971,6 +1964,34 @@ public class FlowPanel
     SwingUtilities.invokeLater(() -> {
       setPageIcon(icon);
     });
+  }
+
+  /**
+   * Updates the statusbar on the right, either displaying the select actor path
+   * or the number of selected actors.
+   */
+  protected void updateSelectedStatus() {
+    TreePath[]	selPaths;
+    int		numDisabled;
+
+    selPaths = m_Tree.getSelectionPaths();
+    if (selPaths.length == 1) {
+      showStatus(false, m_Tree.getSelectedFullName());
+    }
+    else if (selPaths.length > 1) {
+      numDisabled = 0;
+      for (TreePath selPath: selPaths) {
+	if (TreeHelper.pathToNode(selPath).getActor().getSkip())
+	  numDisabled++;
+      }
+      if (numDisabled == 0)
+	showStatus(false, m_Tree.getSelectionPaths().length + " actors selected");
+      else
+	showStatus(false, m_Tree.getSelectionPaths().length + " actors selected (" + numDisabled + " disabled)");
+    }
+    else {
+      showStatus(false, "");
+    }
   }
 
   /**
