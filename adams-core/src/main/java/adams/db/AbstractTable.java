@@ -65,13 +65,14 @@ public abstract class AbstractTable
     super(dbcon);
 
     m_TableName = getTablePrefix() + tableName;
-    m_DatabaseConnection.addChangeListener(this);
+    if (m_DatabaseConnection != null)
+      m_DatabaseConnection.addChangeListener(this);
     
     setDebug(
       getProperties().getBoolean(this.getClass().getName() + ".Debug", false)
         || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO));
 
-    if (getDebug())
+    if (getDebug() && (m_DatabaseConnection != null))
       getLogger().info(m_DatabaseConnection.toString());
 
     m_AnsiQuotes = getProperties().getBoolean("AnsiQuotes", false);

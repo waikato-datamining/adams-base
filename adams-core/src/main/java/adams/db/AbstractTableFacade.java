@@ -65,7 +65,9 @@ public abstract class AbstractTableFacade
   protected void updatePrefix() {
     String	prefix;
 
-    prefix   = getClass().getName() + "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
+    prefix = getClass().getName();
+    if (getDatabaseConnection() != null)
+      prefix += "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
     m_Logger = LoggingHelper.getLogger(prefix);
     m_Logger.setLevel(getDebug() || LoggingHelper.isAtLeast(LoggingHelper.getLevel(getClass()), Level.INFO) ? Level.INFO : Level.WARNING);
   }

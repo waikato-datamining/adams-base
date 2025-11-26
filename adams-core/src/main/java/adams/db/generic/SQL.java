@@ -85,8 +85,10 @@ public class SQL
     super();
 
     m_DatabaseConnection = dbcon;
-    m_Quirks             = AbstractDatabaseQuirks.getHandler(dbcon.getURL());
-    m_Queries            = AbstractDatabaseQueries.getHandler(dbcon.getURL());
+    if (dbcon != null) {
+      m_Quirks  = AbstractDatabaseQuirks.getHandler(dbcon.getURL());
+      m_Queries = AbstractDatabaseQueries.getHandler(dbcon.getURL());
+    }
 
     updatePrefix();
   }
@@ -107,7 +109,9 @@ public class SQL
   protected void updatePrefix() {
     String	prefix;
 
-    prefix   = getClass().getName() + "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
+    prefix = getClass().getName();
+    if (getDatabaseConnection() != null)
+      prefix += "(" + getDatabaseConnection().toStringShort() + "/" + getDatabaseConnection().hashCode() + ")";
     m_Logger = LoggingHelper.getLogger(prefix);
     m_Logger.setLevel(getDebug() ? Level.INFO : Level.WARNING);
   }
