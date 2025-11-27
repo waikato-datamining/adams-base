@@ -180,7 +180,11 @@ public abstract class AbstractFileChangeMonitor
   public String update(File file) {
     String	result;
 
-    result = checkFile(file);
+    result = null;
+    if (!m_File.equals(file))
+      result = "Trying to update with a different file? initialized=" + m_File + ", current=" + file;
+    if (result == null)
+      result = checkFile(file);
     if (result == null)
       result = doUpdate(file);
 

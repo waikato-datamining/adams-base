@@ -40,6 +40,10 @@ adams.core.io.filesearch.StreamableFileSearchHandler=\
 adams.core.io.fileuse.AbstractFileUseCheck=\
   adams.core.io.fileuse
 
+# the dir change monitors
+adams.core.io.dirchanged.DirChangeMonitor=\
+  adams.core.io.dirchanged
+
 # the file change monitors
 adams.core.io.filechanged.FileChangeMonitor=\
   adams.core.io.filechanged
