@@ -466,6 +466,28 @@ public class OptionManager
   }
 
   /**
+   * Checks whether an option is available for the given property name.
+   *
+   * @param property	the property name to look for
+   * @return		true if option available
+   * @see		#findByProperty(String)
+   */
+  public boolean hasProperty(String property) {
+    return (findByProperty(property) != null);
+  }
+
+  /**
+   * Checks whether an option is available for the given flag.
+   *
+   * @param flag	the flag to look for
+   * @return		true if option available
+   * @see		#findByFlag(String)
+   */
+  public boolean hasFlag(String flag) {
+    return (findByFlag(flag) != null);
+  }
+
+  /**
    * Tries to locate the corresponding option for the given commandline string
    * (without the leading dash).
    *
