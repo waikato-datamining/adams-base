@@ -380,9 +380,13 @@ public class ConfusionMatrix
 
     // initialize array
     length = 0;
-    for (String label: labels) {
-      length = predLayers.get(label).getWidth() * predLayers.get(label).getHeight();
-      break;
+    if (predLayers != null) {
+      for (String label : labels) {
+	if (predLayers.containsKey(label)) {
+	  length = predLayers.get(label).getWidth() * predLayers.get(label).getHeight();
+	  break;
+	}
+      }
     }
     if (length == 0)
       return new DefaultSpreadSheet();

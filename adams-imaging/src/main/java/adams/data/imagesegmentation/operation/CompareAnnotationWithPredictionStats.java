@@ -245,7 +245,10 @@ public class CompareAnnotationWithPredictionStats
       missed     = counts[1];
       additional = counts[2];
       annoTotal  = StatUtils.countDifferent(annoPixels.get(label), Color.BLACK.getRGB());
-      predTotal  = StatUtils.countDifferent(predPixels.get(label), Color.BLACK.getRGB());
+      if (predPixels.containsKey(label))
+	predTotal = StatUtils.countDifferent(predPixels.get(label), Color.BLACK.getRGB());
+      else
+	predTotal = 0;
       row        = result.addRow();
       row.addCell("L").setContentAsString(label);
       row.addCell("CC").setContent(overlap);
