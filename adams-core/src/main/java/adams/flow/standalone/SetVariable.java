@@ -23,7 +23,7 @@ package adams.flow.standalone;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.VariableName;
-import adams.core.VariableUpdater;
+import adams.core.VariableUpdaterWithNotificationSuppression;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -540,7 +540,7 @@ import java.util.List;
  */
 public class SetVariable
   extends AbstractStandalone
-  implements VariableUpdater {
+  implements VariableUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = -3383735680425581504L;
@@ -565,6 +565,9 @@ public class SetVariable
 
   /** whether to override using an environment variable. */
   protected boolean m_EnvVarOptional;
+
+  /** whether to suppress notifications. */
+  protected boolean m_SuppressNotifications;
 
   /**
    * Default constructor.
@@ -667,6 +670,10 @@ public class SetVariable
     m_OptionManager.add(
       "env-var-optional", "envVarOptional",
       true);
+
+    m_OptionManager.add(
+      "suppress-notifications", "suppressNotifications",
+      false);
   }
 
   /**
@@ -899,6 +906,37 @@ public class SetVariable
   }
 
   /**
+   * Sets whether to notify variable change listeners.
+   *
+   * @param value	false if to notify listeners
+   */
+  @Override
+  public void setSuppressNotifications(boolean value) {
+    m_SuppressNotifications = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to notify variable change listeners.
+   *
+   * @return		false if to notify listeners
+   */
+  @Override
+  public boolean getSuppressNotifications() {
+    return m_SuppressNotifications;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppressNotificationsTipText() {
+    return "If enabled, variable change listeners will NOT get notified.";
+  }
+
+  /**
    * Returns whether variables are being updated.
    *
    * @return		true if variables are updated
@@ -1033,7 +1071,7 @@ public class SetVariable
 	  throw new IllegalStateException("Unhandled value type: " + m_ValueType);
       }
 
-      getVariables().set(m_VariableName.getValue(), value);
+      getVariables().set(m_VariableName.getValue(), value, !m_SuppressNotifications);
       if (isLoggingEnabled())
 	getLogger().info("Setting variable '" + m_VariableName + "': " + value);
     }

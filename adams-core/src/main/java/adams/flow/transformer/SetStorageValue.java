@@ -22,7 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
-import adams.flow.control.StorageUpdater;
+import adams.flow.control.StorageUpdaterWithNotificationSuppression;
 import adams.flow.core.Unknown;
 
 /**
@@ -87,7 +87,7 @@ import adams.flow.core.Unknown;
  */
 public class SetStorageValue
   extends AbstractTransformer
-  implements StorageUpdater {
+  implements StorageUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = 3086015634110488066L;
@@ -97,6 +97,9 @@ public class SetStorageValue
 
   /** the name of the value to store. */
   protected StorageName m_StorageName;
+
+  /** whether to suppress notifications. */
+  protected boolean m_SuppressNotifications;
 
   /**
    * Default constructor.
@@ -133,8 +136,8 @@ public class SetStorageValue
   @Override
   public String globalInfo() {
     return
-        "Stores the payload of the token passing through under the specified "
-      + "name in temporary storage.";
+      "Stores the payload of the token passing through under the specified "
+	+ "name in temporary storage.";
   }
 
   /**
@@ -145,12 +148,16 @@ public class SetStorageValue
     super.defineOptions();
 
     m_OptionManager.add(
-	    "cache", "cache",
-	    "");
+      "cache", "cache",
+      "");
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName());
+      "storage-name", "storageName",
+      new StorageName());
+
+    m_OptionManager.add(
+      "suppress-notifications", "suppressNotifications",
+      false);
   }
 
   /**
@@ -221,8 +228,39 @@ public class SetStorageValue
   }
 
   /**
+   * Sets whether to notify storage change listeners.
+   *
+   * @param value	false if to notify listeners
+   */
+  @Override
+  public void setSuppressNotifications(boolean value) {
+    m_SuppressNotifications = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to notify storage change listeners.
+   *
+   * @return		false if to notify listeners
+   */
+  @Override
+  public boolean getSuppressNotifications() {
+    return m_SuppressNotifications;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppressNotificationsTipText() {
+    return "If enabled, storage change listeners will NOT get notified - only for non-cached.";
+  }
+
+  /**
    * Returns whether storage items are being updated.
-   * 
+   *
    * @return		true if storage items are updated
    */
   public boolean isUpdatingStorage() {
@@ -240,7 +278,7 @@ public class SetStorageValue
     String	value;
 
     result = QuickInfoHelper.toString(this, "storageName", m_StorageName);
-    value  = QuickInfoHelper.toString(this, "cache", (m_Cache.length() > 0 ? m_Cache : ""), " cache: ");
+    value  = QuickInfoHelper.toString(this, "cache", (!m_Cache.isEmpty() ? m_Cache : ""), " cache: ");
     if (value != null)
       result += value;
 
@@ -270,7 +308,7 @@ public class SetStorageValue
 
     if (result == null) {
       if (canPerformSetUpCheck(fromSetUp, "storageName")) {
-	if ((m_StorageName == null) || (m_StorageName.getValue().length() == 0))
+	if ((m_StorageName == null) || (m_StorageName.getValue().isEmpty()))
 	  result = "No name specified for storing value!";
       }
     }
@@ -291,8 +329,8 @@ public class SetStorageValue
 
     if (result == null) {
       if (m_InputToken.getPayload() != null) {
-	if (m_Cache.length() == 0)
-	  getStorageHandler().getStorage().put(m_StorageName, m_InputToken.getPayload());
+	if (m_Cache.isEmpty())
+	  getStorageHandler().getStorage().put(m_StorageName, m_InputToken.getPayload(), !m_SuppressNotifications);
 	else
 	  getStorageHandler().getStorage().put(m_Cache, m_StorageName, m_InputToken.getPayload());
       }

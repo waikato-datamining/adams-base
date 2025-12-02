@@ -22,7 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
-import adams.core.VariableUpdater;
+import adams.core.VariableUpdaterWithNotificationSuppression;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -119,7 +119,7 @@ import adams.flow.core.Unknown;
  */
 public class IncVariable
   extends AbstractTransformer
-  implements VariableUpdater {
+  implements VariableUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = -8466653808821254082L;
@@ -396,8 +396,9 @@ public class IncVariable
   /**
    * Sets whether to notify variable change listeners.
    *
-   * @param value	true if to notify listeners
+   * @param value	false if to notify listeners
    */
+  @Override
   public void setSuppressNotifications(boolean value) {
     m_SuppressNotifications = value;
     reset();
@@ -406,8 +407,9 @@ public class IncVariable
   /**
    * Returns whether to notify variable change listeners.
    *
-   * @return		true if to notify listeners
+   * @return		false if to notify listeners
    */
+  @Override
   public boolean getSuppressNotifications() {
     return m_SuppressNotifications;
   }

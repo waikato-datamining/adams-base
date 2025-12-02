@@ -22,7 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.flow.control.StorageName;
-import adams.flow.control.StorageUpdater;
+import adams.flow.control.StorageUpdaterWithNotificationSuppression;
 import adams.flow.core.Token;
 import adams.flow.core.Unknown;
 
@@ -119,7 +119,7 @@ import adams.flow.core.Unknown;
  */
 public class IncStorageValue
   extends AbstractTransformer
-  implements StorageUpdater {
+  implements StorageUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = 4563837784851442207L;
@@ -397,8 +397,9 @@ public class IncStorageValue
   /**
    * Sets whether to notify storage change listeners.
    *
-   * @param value	true if to notify listeners
+   * @param value	false if to notify listeners
    */
+  @Override
   public void setSuppressNotifications(boolean value) {
     m_SuppressNotifications = value;
     reset();
@@ -407,8 +408,9 @@ public class IncStorageValue
   /**
    * Returns whether to notify storage change listeners.
    *
-   * @return		true if to notify listeners
+   * @return		false if to notify listeners
    */
+  @Override
   public boolean getSuppressNotifications() {
     return m_SuppressNotifications;
   }

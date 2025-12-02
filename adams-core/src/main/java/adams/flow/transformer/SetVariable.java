@@ -15,7 +15,7 @@
 
 /*
  * SetVariable.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,7 +23,7 @@ package adams.flow.transformer;
 import adams.core.QuickInfoHelper;
 import adams.core.Shortening;
 import adams.core.VariableName;
-import adams.core.VariableUpdater;
+import adams.core.VariableUpdaterWithNotificationSuppression;
 import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
@@ -537,14 +537,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;through.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SetVariable
   extends AbstractTransformer
-  implements VariableUpdater {
+  implements VariableUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = -3383735680425581504L;
@@ -562,7 +562,7 @@ public class SetVariable
     /** prepends the value to the existing value. */
     PREPEND
   }
-  
+
   /** the name of the variable. */
   protected VariableName m_VariableName;
 
@@ -574,12 +574,15 @@ public class SetVariable
 
   /** how to update the variable value. */
   protected UpdateType m_UpdateType;
-  
+
   /** whether to expand the value. */
   protected boolean m_ExpandValue;
 
   /** whether to output the value. */
   protected boolean m_OutputValue;
+
+  /** whether to suppress notifications. */
+  protected boolean m_SuppressNotifications;
 
   /**
    * Default constructor.
@@ -640,7 +643,7 @@ public class SetVariable
   @Override
   public String globalInfo() {
     return
-	"Sets the value of a variable. Each time a token passes "
+      "Sets the value of a variable. Each time a token passes "
 	+ "through, the variable value will get updated according to the "
 	+ "update type.\n"
 	+ "Optionally, the specified value (or incoming value) can be expanded, "
@@ -649,13 +652,13 @@ public class SetVariable
 	+ "variable has been set.\n"
 	+ "\n"
 	+ "Grammar for mathematical expressions (value type '" + VariableValueType.MATH_EXPRESSION + ", " + VariableValueType.MATH_EXPRESSION_ROUND + "'):\n\n"
-        + new MathematicalExpression().getGrammar()
+	+ new MathematicalExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for boolean expressions (value type '" + VariableValueType.BOOL_EXPRESSION + "'):\n\n"
-        + new BooleanExpression().getGrammar()
+	+ new BooleanExpression().getGrammar()
 	+ "\n\n"
 	+ "Grammar for string expressions (value type '" + VariableValueType.STRING_EXPRESSION + "'):\n\n"
-        + new adams.parser.StringExpression().getGrammar();
+	+ new adams.parser.StringExpression().getGrammar();
   }
 
   /**
@@ -666,28 +669,32 @@ public class SetVariable
     super.defineOptions();
 
     m_OptionManager.add(
-	    "var-name", "variableName",
-	    new VariableName());
+      "var-name", "variableName",
+      new VariableName());
 
     m_OptionManager.add(
-	    "var-value", "variableValue",
-	    new BaseText(""));
+      "var-value", "variableValue",
+      new BaseText(""));
 
     m_OptionManager.add(
-	    "value-type", "valueType",
-	    VariableValueType.STRING);
+      "value-type", "valueType",
+      VariableValueType.STRING);
 
     m_OptionManager.add(
-	    "update-type", "updateType",
-	    UpdateType.REPLACE);
+      "update-type", "updateType",
+      UpdateType.REPLACE);
 
     m_OptionManager.add(
-	    "expand-value", "expandValue",
-	    false);
+      "expand-value", "expandValue",
+      false);
 
     m_OptionManager.add(
-	    "output-value", "outputValue",
-	    false);
+      "output-value", "outputValue",
+      false);
+
+    m_OptionManager.add(
+      "suppress-notifications", "suppressNotifications",
+      false);
   }
 
   /**
@@ -852,8 +859,8 @@ public class SetVariable
    * 			displaying in the GUI or for listing the options.
    */
   public String expandValueTipText() {
-    return 
-	"If enabled, the value (either parameter value or incoming token) "
+    return
+      "If enabled, the value (either parameter value or incoming token) "
 	+ "gets expanded first in case it is made up of variables itself.";
   }
 
@@ -884,12 +891,43 @@ public class SetVariable
    */
   public String outputValueTipText() {
     return
-	"If enabled, the variable values is forwarded instead of the token passing through.";
+      "If enabled, the variable values is forwarded instead of the token passing through.";
+  }
+
+  /**
+   * Sets whether to notify variable change listeners.
+   *
+   * @param value	false if to notify listeners
+   */
+  @Override
+  public void setSuppressNotifications(boolean value) {
+    m_SuppressNotifications = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to notify variable change listeners.
+   *
+   * @return		false if to notify listeners
+   */
+  @Override
+  public boolean getSuppressNotifications() {
+    return m_SuppressNotifications;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppressNotificationsTipText() {
+    return "If enabled, variable change listeners will NOT get notified.";
   }
 
   /**
    * Returns whether variables are being updated.
-   * 
+   *
    * @return		true if variables are updated
    */
   public boolean isUpdatingVariables() {
@@ -1039,7 +1077,7 @@ public class SetVariable
 	      throw new IllegalStateException("Unhandled value type: " + m_ValueType);
 	  }
 
-	  getVariables().set(m_VariableName.getValue(), newValue);
+	  getVariables().set(m_VariableName.getValue(), newValue, !m_SuppressNotifications);
 	  if (isLoggingEnabled())
 	    getLogger().info(msg + " variable '" + m_VariableName + "' (" + getVariables().hashCode() + "): " + newValue);
 	}
