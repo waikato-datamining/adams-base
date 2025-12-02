@@ -66,6 +66,28 @@ public interface Filter<T extends DataContainer>
   public String dontUpdateIDTipText();
 
   /**
+   * Sets whether processing information update is suppressed.
+   *
+   * @param value 	true if to suppress
+   */
+  public void setDontUpdateProcessingInfo(boolean value);
+
+  /**
+   * Returns whether processing information update is suppressed.
+   *
+   * @return 		true if suppressed
+   */
+  public boolean getDontUpdateProcessingInfo();
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String dontUpdateProcessingInfoTipText();
+
+  /**
    * Resets the filter.
    * Derived classes must call this method in set-methods of parameters to
    * assure the invalidation of previously generated data.

@@ -222,6 +222,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    *
    * @param value 	true if to suppress
    */
+  @Override
   public void setDontUpdateID(boolean value) {
     m_DontUpdateID = value;
     reset();
@@ -232,6 +233,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    *
    * @return 		true if suppressed
    */
+  @Override
   public boolean getDontUpdateID() {
     return m_DontUpdateID;
   }
@@ -242,6 +244,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String dontUpdateIDTipText() {
     return "If enabled, suppresses updating the ID of " + IDHandler.class.getName() + " data containers.";
   }
@@ -251,6 +254,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    *
    * @param value 	true if to suppress
    */
+  @Override
   public void setDontUpdateProcessingInfo(boolean value) {
     m_DontUpdateProcessingInfo = value;
     reset();
@@ -261,6 +265,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    *
    * @return 		true if suppressed
    */
+  @Override
   public boolean getDontUpdateProcessingInfo() {
     return m_DontUpdateProcessingInfo;
   }
@@ -271,6 +276,7 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String dontUpdateProcessingInfoTipText() {
     return "If enabled, suppresses updating the processing information of " + NotesHandler.class.getName() + " data containers.";
   }
