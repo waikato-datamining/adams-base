@@ -127,7 +127,7 @@ public abstract class AbstractIndexedTable
     StringBuilder 	sql;
 
     result     = true;
-    connection = m_DatabaseConnection.getConnection(true);
+    connection = getConnection(true);
     rs         = null;
     try {
       meta    = connection.getMetaData();

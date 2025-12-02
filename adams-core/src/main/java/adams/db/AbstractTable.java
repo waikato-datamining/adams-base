@@ -197,7 +197,7 @@ public abstract class AbstractTable
    *
    * @return		the properties
    */
-  protected static synchronized Properties getProperties() {
+  public static synchronized Properties getProperties() {
     if (m_Properties == null)
       m_Properties = Environment.getInstance().read(TableDefinition.KEY);
 

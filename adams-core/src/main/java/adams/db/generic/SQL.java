@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.db.AbstractDatabaseConnection;
+import adams.db.AbstractTable;
 import adams.db.SQLIntf;
 import adams.db.SQLUtils;
 import adams.db.SimpleResultSet;
@@ -73,6 +74,15 @@ public class SQL
   /** for helping with queries. */
   protected AbstractDatabaseQueries m_Queries;
 
+  /** the last connection object used. */
+  protected transient Connection m_LastConnection;
+
+  /** the time the last connection object was retrieved. */
+  protected transient Long m_LastConnectionTimestamp;
+
+  /** the maximum age for the last connection. */
+  protected long m_MaxAgeCachedConnection;
+
   /** the table manager. */
   protected static TableManager<SQL> m_TableManager;
 
@@ -91,6 +101,8 @@ public class SQL
     }
 
     updatePrefix();
+
+    m_MaxAgeCachedConnection = AbstractTable.getProperties().getLong("MaxAgeCachedConnection", 1000L);
   }
 
   /**
@@ -124,6 +136,20 @@ public class SQL
   @Override
   public AbstractDatabaseConnection getDatabaseConnection() {
     return m_DatabaseConnection;
+  }
+
+  /**
+   * Returns the current connection object. Caches it to speed up queries.
+   *
+   * @param keepTrying	whether to keep trying
+   * @return		the connection object
+   */
+  protected Connection getConnection(boolean keepTrying) {
+    if ((m_LastConnection == null) || (System.currentTimeMillis() - m_LastConnectionTimestamp) > m_MaxAgeCachedConnection) {
+      m_LastConnection          = getDatabaseConnection().getConnection(keepTrying);
+      m_LastConnectionTimestamp = System.currentTimeMillis();
+    }
+    return m_LastConnection;
   }
 
   /**
@@ -183,7 +209,7 @@ public class SQL
 
     result     = false;
     rs         = null;
-    connection = m_DatabaseConnection.getConnection(true);
+    connection = getConnection(true);
     try {
       dbmd        = connection.getMetaData();
       connCatalog = connection.getCatalog();
@@ -254,7 +280,7 @@ public class SQL
 
     result = false;
     rs     = null;
-    conn   = m_DatabaseConnection.getConnection(true);
+    conn   = getConnection(true);
     try{
       dbmd   = conn.getMetaData();
       table  = updateTableName(dbmd, table);
@@ -303,7 +329,7 @@ public class SQL
    */
   @Override
   public Statement createStatement() throws Exception {
-    return getDatabaseConnection().getConnection(true).createStatement();
+    return getConnection(true).createStatement();
   }
 
   /**
@@ -329,7 +355,7 @@ public class SQL
    */
   @Override
   public PreparedStatement prepareStatement(String query, boolean returnKeys) throws Exception {
-    return prepareStatement(getDatabaseConnection().getConnection(true), query, returnKeys);
+    return prepareStatement(getConnection(true), query, returnKeys);
   }
 
   /**
@@ -418,7 +444,7 @@ public class SQL
   @Override
   public int update(String updateString, String table, String where) throws Exception {
     String query="UPDATE " + table + " SET " + updateString + " WHERE " + where;
-    Connection connection = m_DatabaseConnection.getConnection(true);
+    Connection connection = getConnection(true);
     Statement stmt = null;
     if (isLoggingEnabled())
       getLogger().info("Updating: " + query);
@@ -463,7 +489,7 @@ public class SQL
    */
   @Override
   public ResultSet executeGeneratedKeys(String query) throws Exception {
-    Connection connection = m_DatabaseConnection.getConnection(true);
+    Connection connection = getConnection(true);
     Statement stmt = null;
     if (isLoggingEnabled())
       getLogger().info("Execute generated keys: " + query);
@@ -499,7 +525,7 @@ public class SQL
     Statement 	stmt;
     Boolean 	result;
 
-    connection = m_DatabaseConnection.getConnection(true);
+    connection = getConnection(true);
     if (connection == null)
       throw new IllegalStateException(
 	  "Connection object is null (" + m_DatabaseConnection.toStringShort() + "/" + m_DatabaseConnection.hashCode() + ")!");
@@ -866,7 +892,7 @@ public class SQL
    */
   @Override
   public ResultSet getResultSet(String query) throws Exception {
-    Connection connection = m_DatabaseConnection.getConnection(true);
+    Connection connection = getConnection(true);
     if (isLoggingEnabled())
       getLogger().info("Get ResultSet for : " + query);
     if (connection == null)
@@ -905,7 +931,7 @@ public class SQL
     int			result;
     DatabaseMetaData	meta;
 
-    meta = m_DatabaseConnection.getConnection(false).getMetaData();
+    meta = getConnection(false).getMetaData();
     result = meta.getMaxColumnNameLength();
     if (result == 0)
       result = Integer.MAX_VALUE;

@@ -2,6 +2,9 @@
 #
 # Author: FracPete (fracpete at waikato dot ac dot nz)
 
+# The maximum age of a cached connection object in milliseconds
+MaxAgeCachedConnection=1000
+
 # Outputs a stacktrace in case the initTable call for table fails (false|true)
 InitTables.Debug=false
 
