@@ -22,6 +22,7 @@ package adams.data.container;
 
 import adams.core.CompareUtils;
 import adams.core.UniqueIDs;
+import adams.core.logging.LoggingHelper;
 import adams.data.id.MutableIDHandler;
 
 import java.util.ArrayList;
@@ -30,11 +31,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Level;
 
 /**
  * Superclass for all data structures.
  *
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  * @param <T> the type of the container
  */
 public abstract class AbstractDataContainer<T extends DataPoint>
@@ -98,6 +100,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
   public Object getClone() {
     AbstractDataContainer<T>	result;
     Iterator<T>			iter;
+    List<T>			points;
 
     try {
       result = (AbstractDataContainer<T>) getClass().getDeclaredConstructor().newInstance();
@@ -107,9 +110,11 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     }
     result.ensureCapacity(size());
     result.assign(this);
-    iter = iterator();
+    iter  = iterator();
+    points = new ArrayList<>();
     while (iter.hasNext())
-      result.add((T) iter.next().getClone());
+      points.add((T) iter.next().getClone());
+    result.addAll(points);
 
     return result;
   }
@@ -280,7 +285,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     T		point;
     Iterator	iter;
 
-    if (m_Points.size() > 0) {
+    if (!m_Points.isEmpty()) {
       // remove parents
       iter = iterator();
       while (iter.hasNext()) {
@@ -330,21 +335,16 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    */
   public synchronized boolean add(T point) {
     int 	index;
-    boolean	modified;
 
     point.setParent(this);
 
     index = Collections.binarySearch(m_Points, point, getComparator());
-    if (index < 0) {
+    if (index < 0)
       m_Points.add(-index-1, point);
-      modified = true;
-    }
-    else {
+    else
       m_Points.set(index, point);
-      modified = true;
-    }
 
-    return modifiedListener(modified);
+    return modifiedListener(true);
   }
 
   /**
@@ -375,15 +375,12 @@ public abstract class AbstractDataContainer<T extends DataPoint>
 	point.setParent(this);
 
 	// insert/replace
+	modified = true;
 	index = Collections.binarySearch(m_Points, point, getComparator());
-	if (index < 0) {
+	if (index < 0)
 	  m_Points.add(-index - 1, point);
-	  modified = true;
-	}
-	else {
+	else
 	  m_Points.set(index, point);
-	  modified = true;
-	}
       }
     }
 
@@ -410,7 +407,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    * @param points	the points to remove
    * @return		true if the points changed
    */
-  public synchronized boolean removeAll(Collection points) {
+  public synchronized boolean removeAll(Collection<?> points) {
     Iterator	iter;
     T		point;
 
@@ -441,7 +438,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    * @param points	the points to check
    * @return		true if points already exist in list
    */
-  public synchronized boolean containsAll(Collection points) {
+  public synchronized boolean containsAll(Collection<?> points) {
     return m_Points.containsAll(points);
   }
 
@@ -451,7 +448,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    * @param points	the points to keep
    * @return		true if points changed
    */
-  public synchronized boolean retainAll(Collection points) {
+  public synchronized boolean retainAll(Collection<?> points) {
     Iterator	iter;
     T		point;
 
@@ -545,8 +542,8 @@ public abstract class AbstractDataContainer<T extends DataPoint>
   public List<T> toList(DataPointComparator comparator) {
     List<T>	result;
 
-    result = new ArrayList<T>(m_Points);
-    Collections.sort(result, comparator);
+    result = new ArrayList<>(m_Points);
+    result.sort(comparator);
 
     return result;
   }
@@ -583,7 +580,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
    */
   @Override
   public int hashCode() {
-    return new String(getID() + super.hashCode()).hashCode();
+    return (getID() + super.hashCode()).hashCode();
   }
 
   /**
@@ -611,7 +608,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     }
     catch (Exception e) {
       result = null;
-      e.printStackTrace();
+      LoggingHelper.global().log(Level.SEVERE, "Failed to create new data container instance!", e);
     }
 
     return result;
