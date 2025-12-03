@@ -15,7 +15,7 @@
 
 /*
  * JsonProducerTest.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -56,13 +56,13 @@ public class JsonProducerTest
     producer.produce(handler);
 
     assertEquals(
-	"getOutput() differs",
-	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
-	"" + producer.getOutput());
+      "getOutput() differs",
+      "{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
+      "" + producer.getOutput());
     assertEquals(
-	"toString() differs",
-	"{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
-	producer.toString());
+      "toString() differs",
+      "{\"numAttempts\":1,\"stopFlowOnError\":false,\"silent\":false,\"attemptInterval\":1000,\"annotations\":\"\",\"skip\":false,\"encoding\":\"Default\",\"outputFile\":\"${TMP}\\/dumpfile.arff\",\"name\":\"DumpFile\",\"class\":\"adams.flow.sink.DumpFile\",\"loggingLevel\":\"INFO\",\"append\":true,\"bufferSize\":1}",
+      producer.toString());
   }
 
   /**
@@ -104,15 +104,17 @@ public class JsonProducerTest
     JsonProducer producer = new JsonProducer();
     producer.setOutputFull(true);
     producer.produce(handler);
+    // for updating the string uncomment:
+    //System.out.println(Utils.backQuoteChars("" + producer.getOutput()));
 
     assertEquals(
-	"getOutput() differs",
-	"{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
-	"" + producer.getOutput());
+      "getOutput() differs",
+      "{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
+      "" + producer.getOutput());
     assertEquals(
-	"toString() differs",
-	"{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
-	producer.toString());
+      "toString() differs",
+      "{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"FINE\"},{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"subFilters\":[{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"class\":\"adams.data.filter.PassThrough\",\"loggingLevel\":\"WARNING\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"FINEST\"}],\"class\":\"adams.data.filter.MultiFilter\",\"loggingLevel\":\"INFO\"}",
+      producer.toString());
   }
 
   /**
@@ -127,15 +129,17 @@ public class JsonProducerTest
     JsonProducer producer = new JsonProducer();
     producer.setOutputFull(true);
     producer.produce(handler);
+    // for updating the string uncomment:
+    //System.out.println(Utils.backQuoteChars("" + producer.getOutput()));
 
     assertEquals(
-	"getOutput() differs",
-	"{\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
-	"" + producer.getOutput());
+      "getOutput() differs",
+      "{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
+      "" + producer.getOutput());
     assertEquals(
-	"toString() differs",
-	"{\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
-	producer.toString());
+      "toString() differs",
+      "{\"dontUpdateProcessingInfo\":false,\"dontUpdateID\":false,\"baselineCorrection\":{\"numLeft\":30,\"numRight\":30,\"baselineCorrection\":{\"class\":\"adams.data.baseline.PassThrough\",\"loggingLevel\":\"WARNING\"},\"class\":\"adams.data.baseline.SlidingWindow\",\"loggingLevel\":\"FINE\"},\"class\":\"adams.data.filter.BaselineCorrection\",\"loggingLevel\":\"WARNING\"}",
+      producer.toString());
   }
 
   /**
