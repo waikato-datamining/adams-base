@@ -24,8 +24,8 @@ import adams.core.LenientModeSupporter;
 import adams.core.SerializableObject;
 import adams.core.SerializationHelper;
 import adams.core.Utils;
-import adams.core.classmanager.ClassManager;
 import adams.core.io.PlaceholderFile;
+import adams.core.option.OptionUtils;
 import adams.data.io.output.AbstractObjectWriter;
 import adams.data.io.output.SerializableObjectWriter;
 
@@ -157,7 +157,7 @@ public class SerializableObjectReader
   protected Object doRead(PlaceholderFile file) {
     Object		obj;
     Object[]		all;
-    String 		cname;
+    String 		cmdline;
     Object[]		data;
     SerializableObject 	result;
 
@@ -166,9 +166,9 @@ public class SerializableObjectReader
       if (obj instanceof Object[]) {
 	all = (Object[]) obj;
 	if (all.length == 2) {
-	  cname = (String) all[0];
-	  data  = (Object[]) all[1];
-	  result = (SerializableObject) ClassManager.getSingleton().forName(cname).getDeclaredConstructor().newInstance();
+	  cmdline = (String) all[0];
+	  data    = (Object[]) all[1];
+	  result  = (SerializableObject) OptionUtils.forCommandLine(SerializableObject.class, cmdline);
 	  result.setSerializationSetup(data);
 	  result.setSetupLoadedOrGenerated(true);
 	  return result;
@@ -177,7 +177,7 @@ public class SerializableObjectReader
       else if (m_Lenient) {
 	return obj;
       }
-      getLogger().severe("Expected to read array of length 2 (classname string and data Object array), instead found: " + Utils.classToString(obj));
+      getLogger().severe("Expected to read array of length 2 (commandline string and data Object array), instead found: " + Utils.classToString(obj));
       return null;
     }
     catch (Exception e) {

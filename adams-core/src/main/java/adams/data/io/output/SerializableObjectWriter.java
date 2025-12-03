@@ -15,7 +15,7 @@
 
 /*
  * SerializableObjectWriter.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.io.output;
@@ -25,6 +25,7 @@ import adams.core.SerializationHelper;
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
+import adams.core.option.OptionUtils;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializableObjectReader;
 
@@ -114,7 +115,9 @@ public class SerializableObjectWriter
     try {
       sobj = (SerializableObject) obj;
       data = ((SerializableObject) obj).retrieveSerializationSetup();
-      SerializationHelper.write(file.getAbsolutePath(), new Object[]{sobj.getClass().getName(), data});
+      SerializationHelper.write(file.getAbsolutePath(), new Object[]{
+	OptionUtils.getCommandLine(sobj),
+	data});
     }
     catch (Exception e) {
       result = "Failed to write object to: " + file + "\n" + LoggingHelper.throwableToString(e);
