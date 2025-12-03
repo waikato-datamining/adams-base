@@ -15,7 +15,7 @@
 
 /*
  * MultiFilter.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -46,7 +46,6 @@ import adams.db.DatabaseConnectionHandler;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to pass through the filter
  */
 public class MultiFilter<T extends DataContainer>
@@ -150,14 +149,21 @@ public class MultiFilter<T extends DataContainer>
     T			input;
     T			output;
     Filter<T>		filter;
+    boolean		copy;
 
     input  = data;
-    output = data;  // in case there are no filters provided
+    // in case there are no filters provided
+    output = data;
+    copy   = true;
 
     for (i = 0; i < m_Filters.length; i++) {
-      getLogger().info(
-	    "Filter " + (i+1) + "/" + m_Filters.length + ": "
+      copy = false;
+
+      if (isLoggingEnabled()) {
+	getLogger().info(
+	  "Filter " + (i + 1) + "/" + m_Filters.length + ": "
 	    + OptionUtils.getCommandLine(m_Filters[i]));
+      }
 
       filter = m_Filters[i];
       output = filter.filter(input);
@@ -167,10 +173,14 @@ public class MultiFilter<T extends DataContainer>
       input = output;
     }
 
-    getLogger().info("Finished!");
+    if (isLoggingEnabled())
+      getLogger().info("Finished!");
 
     // final output
-    result = (T) output.getClone();
+    if (copy)
+      result = (T) output.getClone();
+    else
+      result = output;
 
     return result;
   }
