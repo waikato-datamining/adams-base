@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.data.InPlaceProcessing;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.outlier.AbstractOutlierDetector;
@@ -102,7 +103,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class OutlierDetector
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements InPlaceProcessing {
 
   private static final long serialVersionUID = 6697547899481901585L;
 
@@ -114,6 +116,9 @@ public class OutlierDetector
 
   /** whether to output a container. */
   protected boolean m_OutputContainer;
+
+  /** whether to skip creating a copy of the container. */
+  protected boolean m_NoCopy;
 
   /**
    * Returns a string describing the object.
@@ -145,6 +150,10 @@ public class OutlierDetector
     m_OptionManager.add(
       "output-container", "outputContainer",
       false);
+
+    m_OptionManager.add(
+      "no-copy", "noCopy",
+      false);
   }
 
   /**
@@ -159,6 +168,7 @@ public class OutlierDetector
     result = QuickInfoHelper.toString(this, "detector", m_Detector);
     result += QuickInfoHelper.toString(this, "onlyWarning", m_OnlyWarning, "only warning", ", ");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
+    result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no-copy", ", ");
 
     return result;
   }
@@ -255,6 +265,38 @@ public class OutlierDetector
   }
 
   /**
+   * Sets whether to skip creating a copy of the data container before updating the notes.
+   *
+   * @param value	true if to skip creating copy
+   */
+  @Override
+  public void setNoCopy(boolean value) {
+    m_NoCopy = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to skip creating a copy of the data container before updating the notes.
+   *
+   * @return		true if copying is skipped
+   */
+  @Override
+  public boolean getNoCopy() {
+    return m_NoCopy;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String noCopyTipText() {
+    return "If enabled, no copy of the data container is created before updating the notes.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -302,12 +344,15 @@ public class OutlierDetector
     try {
       detections = m_Detector.detect(input);
       if (m_OutputContainer) {
-	cont          = new OutlierDetectorContainer(m_Detector, detections.toArray(new String[detections.size()]), input);
+	cont          = new OutlierDetectorContainer(m_Detector, detections.toArray(new String[0]), input);
 	m_OutputToken = new Token(cont);
       }
       else {
 	if (input instanceof NotesHandler) {
-	  handler = (NotesHandler) input.getClone();
+	  if (m_NoCopy)
+	    handler = (NotesHandler) input;
+	  else
+	    handler = (NotesHandler) input.getClone();
 	  for (i = 0; i < detections.size(); i++) {
 	    if (m_OnlyWarning)
 	      handler.getNotes().addWarning(m_Detector.getClass(), detections.get(i));
