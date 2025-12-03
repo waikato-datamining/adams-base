@@ -67,6 +67,9 @@ public class LocalJobRunner<T extends Job>
 
   private static final long serialVersionUID = -7957101716595901777L;
 
+  /** the wait time in msec when terminating. */
+  protected int m_WaitTime;
+
   /** the number of threads to use. */
   protected int m_NumThreads;
 
@@ -96,6 +99,7 @@ public class LocalJobRunner<T extends Job>
     m_Jobs                 = new ArrayList<>();
     m_Queue                = new ArrayList<>();
     m_JobCompleteListeners = new HashSet<>();
+    m_WaitTime             = 100;
   }
 
   /**
@@ -116,8 +120,41 @@ public class LocalJobRunner<T extends Job>
     super.defineOptions();
 
     m_OptionManager.add(
+      "wait-time", "waitTime",
+      100, 1, null);
+
+    m_OptionManager.add(
       "num-threads", "numThreads",
       -1);
+  }
+
+  /**
+   * Sets the timeout interval in milliseconds when waiting for the jobrunner to terminate.
+   *
+   * @param value 	the time in msec
+   */
+  public void setWaitTime(int value) {
+    m_WaitTime = value;
+    reset();
+  }
+
+  /**
+   * Returns the timeout interval in milliseconds when waiting for the jobrunner to terminate.
+   *
+   * @return		the time in msec
+   */
+  public int getWaitTime() {
+    return m_WaitTime;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String waitTimeTipText() {
+    return "The timeout interval in milliseconds when waiting for the jobrunner to terminate.";
   }
 
   /**
@@ -125,6 +162,7 @@ public class LocalJobRunner<T extends Job>
    *
    * @param value 	the number of threads
    */
+  @Override
   public void setNumThreads(int value) {
     m_NumThreads = value;
     reset();
@@ -135,6 +173,7 @@ public class LocalJobRunner<T extends Job>
    *
    * @return		the number of threads
    */
+  @Override
   public int getNumThreads() {
     return m_NumThreads;
   }
@@ -272,7 +311,7 @@ public class LocalJobRunner<T extends Job>
     if (m_Executor == null)
       return result;
 
-    if (m_Queue.size() > 0) {
+    if (!m_Queue.isEmpty()) {
       synchronized(m_Queue) {
 	queue = new ArrayList<>();
 
@@ -404,7 +443,7 @@ public class LocalJobRunner<T extends Job>
   protected void waitForComplete() {
     while ((m_Executor != null) && !m_Executor.isTerminated()) {
       try {
-	m_Executor.awaitTermination(100, TimeUnit.MILLISECONDS);
+	m_Executor.awaitTermination(m_WaitTime, TimeUnit.MILLISECONDS);
       }
       catch (Exception e) {
 	// ignored
