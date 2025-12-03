@@ -315,8 +315,10 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
       if (data.size() < m_NumPointsLeft + m_NumPointsRight + 1) {
 	getLogger().severe("Not enough data points: #" + data);
 	result = (T) data.getClone();
-	if (result instanceof NotesHandler)
-	  ((NotesHandler) result).getNotes().addWarning(this.getClass(), "Not enough data points!");
+	if (!m_DontUpdateProcessingInfo) {
+	  if (result instanceof NotesHandler)
+	    ((NotesHandler) result).getNotes().addWarning(this.getClass(), "Not enough data points!");
+	}
 	return result;
       }
       m_Coefficients = adams.data.utils.SavitzkyGolay.determineCoefficients(

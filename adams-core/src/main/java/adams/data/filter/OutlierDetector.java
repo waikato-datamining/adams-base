@@ -203,14 +203,16 @@ public class OutlierDetector<T extends DataContainer>
 
     getLogger().info("Data: " + data + ", detection size: " + detection.size());
     result = (T) data.getClone();
-    if (result instanceof NotesHandler) {
-      handler = (NotesHandler) result;
-      for (i = 0; i < detection.size(); i++) {
-	if (m_OnlyWarning)
-	  handler.getNotes().addWarning(m_OutlierDetector.getClass(), detection.get(i));
-	else
-	  handler.getNotes().addError(m_OutlierDetector.getClass(), detection.get(i));
-	getLogger().info((i+1) + ". " + detection.get(i));
+    if (!m_DontUpdateProcessingInfo) {
+      if (result instanceof NotesHandler) {
+	handler = (NotesHandler) result;
+	for (i = 0; i < detection.size(); i++) {
+	  if (m_OnlyWarning)
+	    handler.getNotes().addWarning(m_OutlierDetector.getClass(), detection.get(i));
+	  else
+	    handler.getNotes().addError(m_OutlierDetector.getClass(), detection.get(i));
+	  getLogger().info((i + 1) + ". " + detection.get(i));
+	}
       }
     }
 

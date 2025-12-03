@@ -213,7 +213,7 @@ public abstract class AbstractFilter<T extends DataContainer>
       false);
 
     m_OptionManager.add(
-      "no-processing-info", "dontUpdateProcessingInfo",
+      "no-processing-info-update", "dontUpdateProcessingInfo",
       false);
   }
 

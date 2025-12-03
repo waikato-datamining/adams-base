@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractBatchFilter.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.filter;
@@ -27,7 +27,6 @@ import adams.data.container.DataContainer;
  * Ancestor for batch filters.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractBatchFilter<T extends DataContainer>
   extends AbstractFilter<T>
@@ -72,9 +71,11 @@ public abstract class AbstractBatchFilter<T extends DataContainer>
 	r.setID(r.getID() + "'");
     }
 
-    for (T r: result) {
-      if (r instanceof NotesHandler)
-	((NotesHandler) r).getNotes().addProcessInformation(this);
+    if (!m_DontUpdateProcessingInfo) {
+      for (T r : result) {
+	if (r instanceof NotesHandler)
+	  ((NotesHandler) r).getNotes().addProcessInformation(this);
+      }
     }
 
     return result;

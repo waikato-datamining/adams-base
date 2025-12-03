@@ -24,6 +24,7 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
+import adams.data.filter.OptionalProcessingInfoUpdate;
 import adams.data.outlier.AbstractOutlierDetector;
 import adams.data.outlier.PassThrough;
 import adams.flow.container.OutlierDetectorContainer;
@@ -102,7 +103,8 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class OutlierDetector
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements OptionalProcessingInfoUpdate {
 
   private static final long serialVersionUID = 6697547899481901585L;
 
@@ -114,6 +116,9 @@ public class OutlierDetector
 
   /** whether to output a container. */
   protected boolean m_OutputContainer;
+
+  /** whether to suppress updating of processing information. */
+  protected boolean m_DontUpdateProcessingInfo;
 
   /**
    * Returns a string describing the object.
@@ -145,6 +150,10 @@ public class OutlierDetector
     m_OptionManager.add(
       "output-container", "outputContainer",
       false);
+
+    m_OptionManager.add(
+      "no-processing-info-update", "dontUpdateProcessingInfo",
+      false);
   }
 
   /**
@@ -159,6 +168,7 @@ public class OutlierDetector
     result = QuickInfoHelper.toString(this, "detector", m_Detector);
     result += QuickInfoHelper.toString(this, "onlyWarning", m_OnlyWarning, "only warning", ", ");
     result += QuickInfoHelper.toString(this, "outputContainer", m_OutputContainer, "output container", ", ");
+    result += QuickInfoHelper.toString(this, "dontUpdateProcessingInfo", m_DontUpdateProcessingInfo, "no processing info update", ", ");
 
     return result;
   }
@@ -255,6 +265,38 @@ public class OutlierDetector
   }
 
   /**
+   * Sets whether processing information update is suppressed.
+   *
+   * @param value 	true if to suppress
+   */
+  @Override
+  public void setDontUpdateProcessingInfo(boolean value) {
+    m_DontUpdateProcessingInfo = value;
+    reset();
+  }
+
+  /**
+   * Returns whether processing information update is suppressed.
+   *
+   * @return 		true if suppressed
+   */
+  @Override
+  public boolean getDontUpdateProcessingInfo() {
+    return m_DontUpdateProcessingInfo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String dontUpdateProcessingInfoTipText() {
+    return "If enabled, suppresses updating the processing information of " + NotesHandler.class.getName() + " data containers.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -308,12 +350,14 @@ public class OutlierDetector
       else {
 	if (input instanceof NotesHandler) {
 	  handler = (NotesHandler) input.getClone();
-	  for (i = 0; i < detections.size(); i++) {
-	    if (m_OnlyWarning)
-	      handler.getNotes().addWarning(m_Detector.getClass(), detections.get(i));
-	    else
-	      handler.getNotes().addError(m_Detector.getClass(), detections.get(i));
-	    getLogger().info((i+1) + ". " + detections.get(i));
+	  if (!m_DontUpdateProcessingInfo) {
+	    for (i = 0; i < detections.size(); i++) {
+	      if (m_OnlyWarning)
+		handler.getNotes().addWarning(m_Detector.getClass(), detections.get(i));
+	      else
+		handler.getNotes().addError(m_Detector.getClass(), detections.get(i));
+	      getLogger().info((i + 1) + ". " + detections.get(i));
+	    }
 	  }
 	  m_OutputToken = new Token(handler);
 	}

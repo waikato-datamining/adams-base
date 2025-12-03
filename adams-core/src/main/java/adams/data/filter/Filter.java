@@ -41,7 +41,7 @@ import adams.data.container.DataContainer;
  */
 public interface Filter<T extends DataContainer>
   extends Comparable, LoggingSupporter, LoggingLevelHandler, CleanUpHandler,
-          ShallowCopySupporter<Filter>, OptionHandler {
+          ShallowCopySupporter<Filter>, OptionHandler, OptionalProcessingInfoUpdate {
 
   /**
    * Sets whether ID update is suppressed.
@@ -64,28 +64,6 @@ public interface Filter<T extends DataContainer>
    * 			displaying in the GUI or for listing the options.
    */
   public String dontUpdateIDTipText();
-
-  /**
-   * Sets whether processing information update is suppressed.
-   *
-   * @param value 	true if to suppress
-   */
-  public void setDontUpdateProcessingInfo(boolean value);
-
-  /**
-   * Returns whether processing information update is suppressed.
-   *
-   * @return 		true if suppressed
-   */
-  public boolean getDontUpdateProcessingInfo();
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String dontUpdateProcessingInfoTipText();
 
   /**
    * Resets the filter.

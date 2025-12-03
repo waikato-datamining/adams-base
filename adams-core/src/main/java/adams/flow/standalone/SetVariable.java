@@ -978,6 +978,8 @@ public class SetVariable
       result += QuickInfoHelper.flatten(options);
     }
 
+    result += QuickInfoHelper.toString(this, "suppressNotifications", m_SuppressNotifications, "suppress notifications", ", ");
+
     return result;
   }
 

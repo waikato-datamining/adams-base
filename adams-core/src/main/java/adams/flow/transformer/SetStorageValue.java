@@ -282,6 +282,8 @@ public class SetStorageValue
     if (value != null)
       result += value;
 
+    result += QuickInfoHelper.toString(this, "suppressNotifications", m_SuppressNotifications, "suppress notifications", ", ");
+
     return result;
   }
 

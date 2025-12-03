@@ -15,7 +15,7 @@
 
 /*
  * AbstractDenoiser.java
- * Copyright (C) 2008-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.noise;
@@ -30,6 +30,7 @@ import adams.core.option.OptionUtils;
 import adams.data.NotesHandler;
 import adams.data.RegionRecorder;
 import adams.data.container.DataContainer;
+import adams.data.filter.OptionalProcessingInfoUpdate;
 import adams.data.id.DatabaseIDHandler;
 import adams.multiprocess.AbstractJob;
 
@@ -40,12 +41,11 @@ import java.util.List;
  * An abstract super class for algorithms that remove noise from data.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data the denoiser is handling
  */
 public abstract class AbstractDenoiser<T extends DataContainer>
   extends AbstractOptionHandler
-  implements RegionRecorder<T>, Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDenoiser> {
+  implements RegionRecorder<T>, Comparable, CleanUpHandler, ShallowCopySupporter<AbstractDenoiser>, OptionalProcessingInfoUpdate {
 
   /** for serialization. */
   private static final long serialVersionUID = -1247356707842924341L;
@@ -54,7 +54,6 @@ public abstract class AbstractDenoiser<T extends DataContainer>
    * A job class specific to denoisers.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public static class DenoiserJob<T extends DataContainer>
     extends AbstractJob {
@@ -143,7 +142,7 @@ public abstract class AbstractDenoiser<T extends DataContainer>
 
     /**
      * Does the actual execution of the job.
-     * 
+     *
      * @throws Exception if fails to execute job
      */
     @Override
@@ -199,6 +198,9 @@ public abstract class AbstractDenoiser<T extends DataContainer>
   /** whether to record elution regions as well. */
   protected boolean m_RecordRegions;
 
+  /** whether to suppress updating of processing information. */
+  protected boolean m_DontUpdateProcessingInfo;
+
   /** the collected elution regions. */
   protected List<T> m_Regions;
 
@@ -211,7 +213,7 @@ public abstract class AbstractDenoiser<T extends DataContainer>
   protected void reset() {
     super.reset();
 
-    m_Regions = new ArrayList<T>();
+    m_Regions = new ArrayList<>();
   }
 
   /**
@@ -241,8 +243,12 @@ public abstract class AbstractDenoiser<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "regions", "recordRegions",
-	    false);
+      "regions", "recordRegions",
+      false);
+
+    m_OptionManager.add(
+      "no-processing-info-update", "dontUpdateProcessingInfo",
+      false);
   }
 
   /**
@@ -274,6 +280,38 @@ public abstract class AbstractDenoiser<T extends DataContainer>
    */
   public String recordRegionsTipText() {
     return "If set to true, the noisy regions will be recorded as well.";
+  }
+
+  /**
+   * Sets whether processing information update is suppressed.
+   *
+   * @param value 	true if to suppress
+   */
+  @Override
+  public void setDontUpdateProcessingInfo(boolean value) {
+    m_DontUpdateProcessingInfo = value;
+    reset();
+  }
+
+  /**
+   * Returns whether processing information update is suppressed.
+   *
+   * @return 		true if suppressed
+   */
+  @Override
+  public boolean getDontUpdateProcessingInfo() {
+    return m_DontUpdateProcessingInfo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String dontUpdateProcessingInfoTipText() {
+    return "If enabled, suppresses updating the processing information of " + NotesHandler.class.getName() + " data containers.";
   }
 
   /**
@@ -329,8 +367,10 @@ public abstract class AbstractDenoiser<T extends DataContainer>
     checkData(data);
     result = processData(data);
     result = postprocessData(data, result);
-    if (result instanceof NotesHandler)
-      ((NotesHandler) result).getNotes().addProcessInformation(this);
+    if (!m_DontUpdateProcessingInfo) {
+      if (result instanceof NotesHandler)
+	((NotesHandler) result).getNotes().addProcessInformation(this);
+    }
 
     return result;
   }
@@ -352,10 +392,10 @@ public abstract class AbstractDenoiser<T extends DataContainer>
       for (i = 0; i < m_Regions.size(); i++) {
 	result += "\n";
 	result +=   (i+1) + ". "
-	+ m_Regions.get(i).toTreeSet().first()
-	+ "-"
-	+ m_Regions.get(i).toTreeSet().last()
-	+ " (= " + m_Regions.get(i).size() + " points)";
+		      + m_Regions.get(i).toTreeSet().first()
+		      + "-"
+		      + m_Regions.get(i).toTreeSet().last()
+		      + " (= " + m_Regions.get(i).size() + " points)";
       }
     }
 
