@@ -888,7 +888,7 @@ public class OptionManager
 	return true;
       }
       public boolean canRecurse(Class cls) {
-	return !ClassLocator.hasInterface(VariablesHandler.class, cls) && !ClassLocator.hasInterface(Actor.class, cls);
+	return !ClassLocator.hasInterface(Actor.class, cls) && !ClassLocator.hasInterface(VariablesHandler.class, cls);
       }
       public boolean canRecurse(Object obj) {
 	return (obj != null) && canRecurse(obj.getClass());
