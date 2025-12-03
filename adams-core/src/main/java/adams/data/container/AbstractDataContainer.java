@@ -15,7 +15,7 @@
 
 /*
  * DataContainer.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.container;
@@ -35,7 +35,6 @@ import java.util.TreeSet;
  * Superclass for all data structures.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of the container
  */
 public abstract class AbstractDataContainer<T extends DataPoint>
@@ -361,20 +360,30 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     boolean	modified;
 
     modified = false;
-    iter     = points.iterator();
-    while (iter.hasNext()) {
-      point = (T) iter.next();
-      point.setParent(this);
 
-      // insert/replace
-      index = Collections.binarySearch(m_Points, point, getComparator());
-      if (index < 0) {
-        m_Points.add(-index-1, point);
-        modified = true;
-      }
-      else {
-        m_Points.set(index, point);
-        modified = true;
+    if (isEmpty() && !points.isEmpty()) {
+      m_Points.addAll(points);
+      m_Points.sort(getComparator());
+      for (index = 0; index < m_Points.size(); index++)
+	m_Points.get(index).setParent(this);
+      modified = !isEmpty();
+    }
+    else {
+      iter = points.iterator();
+      while (iter.hasNext()) {
+	point = (T) iter.next();
+	point.setParent(this);
+
+	// insert/replace
+	index = Collections.binarySearch(m_Points, point, getComparator());
+	if (index < 0) {
+	  m_Points.add(-index - 1, point);
+	  modified = true;
+	}
+	else {
+	  m_Points.set(index, point);
+	  modified = true;
+	}
       }
     }
 
