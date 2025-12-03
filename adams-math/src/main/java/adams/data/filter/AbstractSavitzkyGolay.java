@@ -27,6 +27,7 @@ import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 import adams.data.utils.SavitzkyGolay;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -308,6 +309,7 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
     int			n;
     int			width;
     List<DataPoint>	points;
+    List<DataPoint>	pointsNew;
     DataPoint		newPoint;
     double		value;
 
@@ -325,9 +327,10 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
 	  m_NumPointsLeft, m_NumPointsRight, m_PolynomialOrder, m_DerivativeOrder, isLoggingEnabled());
     }
 
-    result = (T) data.getHeader();
-    points = data.toList();
-    width  = m_NumPointsLeft + m_NumPointsRight + 1;
+    result    = (T) data.getHeader();
+    points    = data.toList();
+    pointsNew = new ArrayList<>();
+    width     = m_NumPointsLeft + m_NumPointsRight + 1;
     for (i = 0; i <= points.size() - width; i++) {
       // apply coefficients to window
       value = 0;
@@ -337,8 +340,9 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
       newPoint = newDataPoint(points.get(i + m_NumPointsLeft), value);
       postProcess(points.get(i + m_NumPointsLeft), newPoint);
 
-      result.add(newPoint);
+      pointsNew.add(newPoint);
     }
+    result.addAll(pointsNew);
 
     return result;
   }

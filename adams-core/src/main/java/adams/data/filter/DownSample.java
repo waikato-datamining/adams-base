@@ -15,7 +15,7 @@
 
 /*
  * DownSample.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -23,6 +23,7 @@ package adams.data.filter;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -135,14 +136,17 @@ public class DownSample<T extends DataContainer>
     T			result;
     int			i;
     List<DataPoint>	points;
+    List<DataPoint>	pointsNew;
 
     result = (T) data.getHeader();
 
-    points = data.toList();
+    points    = data.toList();
+    pointsNew = new ArrayList<>();
     for (i = 0; i < points.size(); i++) {
       if ((i+1) % m_NthPoint == 0)
-	result.add(copy(i, points));
+	pointsNew.add(copy(i, points));
     }
+    result.addAll(pointsNew);
 
     return result;
   }

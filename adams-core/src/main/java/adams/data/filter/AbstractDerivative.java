@@ -15,17 +15,17 @@
 
 /*
  * AbstractDerivative.java
- * Copyright (C) 2008-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
+import adams.data.container.DataContainer;
+import adams.data.container.DataPoint;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import adams.data.container.DataContainer;
-import adams.data.container.DataPoint;
 
 /**
  * Abstract ancestor for Derivative filters.
@@ -297,10 +297,11 @@ public abstract class AbstractDerivative<T extends DataContainer>
     int			i;
     List<DataPoint>	datapoints;
     List<Point>		points;
+    List<DataPoint>	datapointsNew;
 
     // transform data to doubles
     datapoints = data.toList();
-    points     = new ArrayList<Point>();
+    points     = new ArrayList<>();
     for (i = 0; i < datapoints.size(); i++)
       points.add(toPoint(datapoints.get(i)));
 
@@ -308,10 +309,12 @@ public abstract class AbstractDerivative<T extends DataContainer>
     for (i = 0; i < m_Order; i++)
       points = derive(points);
 
-    // transform data back into chromatogram
-    result = (T) data.getHeader();
+    // transform data back into data point
+    result        = (T) data.getHeader();
+    datapointsNew = new ArrayList<>();
     for (i = 0; i < points.size(); i++)
-      result.add(toDataPoint(points.get(i)));
+      datapointsNew.add(toDataPoint(points.get(i)));
+    result.addAll(datapointsNew);
 
     return result;
   }

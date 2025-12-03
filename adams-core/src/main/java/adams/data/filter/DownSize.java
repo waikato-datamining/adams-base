@@ -15,15 +15,16 @@
 
 /*
  * DownSize.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
 
-import java.util.List;
-
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -133,23 +134,25 @@ public class DownSize<T extends DataContainer>
    */
   @Override
   protected T processData(T data) {
-    T		result;
-    int		i;
-    int		index;
-    
+    T			result;
+    int			i;
+    int			index;
     List<DataPoint>	points;
+    List<DataPoint>	pointsNew;
 
     // no subset?
     if (data.size() <= m_NumPoints)
       return (T) data.getClone();
     
-    points = data.toList();
-    result = (T) data.getHeader();
+    points    = data.toList();
+    result    = (T) data.getHeader();
+    pointsNew = new ArrayList<>();
     
     for (i = 0; i < m_NumPoints; i++) {
       index = (int) Math.round(i * ((double) data.size() / (double) m_NumPoints));
-      result.add((DataPoint) points.get(index).getClone());
+      pointsNew.add((DataPoint) points.get(index).getClone());
     }
+    result.addAll(pointsNew);
 
     return result;
   }
