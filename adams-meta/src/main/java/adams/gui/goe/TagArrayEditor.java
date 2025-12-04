@@ -37,11 +37,15 @@ import adams.gui.core.BaseTableWithButtons;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
 import adams.gui.core.PropertiesParameterPanel.PropertyType;
+import adams.gui.core.SearchPanel;
+import adams.gui.core.SearchPanel.LayoutType;
+import adams.gui.core.SortableAndSearchableTable;
 import adams.gui.core.TagInfoTableModel;
 import adams.gui.core.TagTableModel;
 import adams.gui.dialog.ApprovalDialog;
 import adams.gui.dialog.PropertiesParameterDialog;
 import adams.gui.event.PopupMenuListener;
+import adams.gui.event.SearchEvent;
 import com.github.fracpete.jclipboardhelper.ClipboardHelper;
 
 import javax.swing.BorderFactory;
@@ -608,14 +612,15 @@ public class TagArrayEditor
    * Lets the user add a tag.
    */
   protected void addTag() {
-    ApprovalDialog	tagInfoDialog;
-    TagInfoTableModel	tagInfoModel;
-    BaseTable		tagInfoTable;
-    JPanel		panelTable;
-    List<TagInfo>	infos;
-    TagInfo		info;
-    Tag			tag;
-    Tag			tagNew;
+    ApprovalDialog		tagInfoDialog;
+    TagInfoTableModel		tagInfoModel;
+    SortableAndSearchableTable	tagInfoTable;
+    JPanel			panelTable;
+    SearchPanel			panelSearch;
+    List<TagInfo>		infos;
+    TagInfo			info;
+    Tag				tag;
+    Tag				tagNew;
 
     // get possible tags
     infos = determineTagInfos();
@@ -635,7 +640,7 @@ public class TagArrayEditor
     tagInfoDialog.setDefaultCloseOperation(ApprovalDialog.DISPOSE_ON_CLOSE);
     tagInfoDialog.setTitle("Select tag to add");
     tagInfoModel = new TagInfoTableModel(infos);
-    tagInfoTable = new BaseTable(tagInfoModel);
+    tagInfoTable = new SortableAndSearchableTable(tagInfoModel);
     tagInfoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     tagInfoTable.setAutoResizeMode(BaseTable.AUTO_RESIZE_OFF);
     tagInfoTable.setOptimalColumnWidth();
@@ -650,9 +655,12 @@ public class TagArrayEditor
 	  super.mouseClicked(e);
       }
     });
+    panelSearch = new SearchPanel(LayoutType.HORIZONTAL, false);
+    panelSearch.addSearchListener((SearchEvent se) -> tagInfoTable.search(se.getParameters().getSearchString(), se.getParameters().isRegExp()));
     panelTable = new JPanel(new BorderLayout());
     panelTable.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     panelTable.add(new BaseScrollPane(tagInfoTable), BorderLayout.CENTER);
+    panelTable.add(panelSearch, BorderLayout.SOUTH);
     tagInfoDialog.getContentPane().add(panelTable, BorderLayout.CENTER);
     tagInfoDialog.pack();
     tagInfoDialog.setLocationRelativeTo(this);
@@ -661,7 +669,7 @@ public class TagArrayEditor
       return;
 
     // 2. enter tag value
-    info   = tagInfoModel.get(tagInfoTable.getSelectedRow());
+    info   = tagInfoModel.get(tagInfoTable.getActualRow(tagInfoTable.getSelectedRow()));
     tag    = new Tag(info.getName(), "" + info.getDefaultValue());
     tagNew = enterTag(tag, "Add tag");
     if (tagNew == null)
