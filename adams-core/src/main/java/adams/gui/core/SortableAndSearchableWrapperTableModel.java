@@ -15,7 +15,7 @@
 
 /*
  * SortableAndSearchableWrapperTableModel.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -893,6 +893,8 @@ public class SortableAndSearchableWrapperTableModel
 	    else {
 	      show = !((m_ColumnFilters.containsKey(col)) || (m_ColumnFiltersRegExp.containsKey(col)));
             }
+	    if (!show)
+	      break;
 	  }
 	}
 
