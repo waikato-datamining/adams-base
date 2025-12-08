@@ -146,7 +146,7 @@ public class DownSample<T extends DataContainer>
       if ((i+1) % m_NthPoint == 0)
 	pointsNew.add(copy(i, points));
     }
-    result.addAll(pointsNew);
+    result.replaceAll(pointsNew, true);
 
     return result;
   }

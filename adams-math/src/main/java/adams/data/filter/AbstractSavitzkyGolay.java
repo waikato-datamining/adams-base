@@ -15,7 +15,7 @@
 
 /*
  * AbstractSavitzkyGolay.java
- * Copyright (C) 2008-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -34,7 +34,6 @@ import java.util.List;
  * Abstract ancestor for Savitzky-Golay filters.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to process
  */
 public abstract class AbstractSavitzkyGolay<T extends DataContainer>
@@ -342,7 +341,7 @@ public abstract class AbstractSavitzkyGolay<T extends DataContainer>
 
       pointsNew.add(newPoint);
     }
-    result.addAll(pointsNew);
+    result.replaceAll(pointsNew, true);
 
     return result;
   }

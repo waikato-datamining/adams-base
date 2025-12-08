@@ -314,7 +314,7 @@ public abstract class AbstractDerivative<T extends DataContainer>
     datapointsNew = new ArrayList<>();
     for (i = 0; i < points.size(); i++)
       datapointsNew.add(toDataPoint(points.get(i)));
-    result.addAll(datapointsNew);
+    result.replaceAll(datapointsNew, true);
 
     return result;
   }

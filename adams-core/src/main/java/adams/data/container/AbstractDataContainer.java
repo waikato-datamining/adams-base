@@ -362,10 +362,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     modified = false;
 
     if (isEmpty() && !points.isEmpty()) {
-      m_Points.addAll(points);
-      m_Points.sort(getComparator());
-      for (index = 0; index < m_Points.size(); index++)
-	m_Points.get(index).setParent(this);
+      replaceAll(points, false);
       modified = !isEmpty();
     }
     else {
@@ -385,6 +382,34 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     }
 
     return modifiedListener(modified);
+  }
+
+  /**
+   * Replaces all the points with the collection of points.
+   *
+   * @param points	the points to use from now on
+   */
+  @Override
+  public void replaceAll(Collection points) {
+    replaceAll(points, false);
+  }
+
+  /**
+   * Replaces all the points with the collection of points.
+   *
+   * @param points	the points to use from now on
+   * @param sorted 	whether the data points are sorted - ignored
+   */
+  @Override
+  public void replaceAll(Collection points, boolean sorted) {
+    int 	i;
+
+    clear();
+    m_Points.addAll(points);
+    if (!sorted)
+      m_Points.sort(getComparator());
+    for (i = 0; i < m_Points.size(); i++)
+      m_Points.get(i).setParent(this);
   }
 
   /**

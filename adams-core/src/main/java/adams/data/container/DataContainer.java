@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DataContainer.java
- * Copyright (C) 2009-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.container;
@@ -34,12 +34,26 @@ import java.util.TreeSet;
  * Generic Interface for data containers.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data points this container deals with
  */
 public interface DataContainer<T extends DataPoint>
   extends Serializable, Comparable, CloneHandler,
           Collection<T>, Mergeable<DataContainer>, MutableIDHandler, UniqueIDHandler {
+
+  /**
+   * Replaces all the points with the collection of points.
+   *
+   * @param points	the points to use from now on
+   */
+  public void replaceAll(Collection points);
+
+  /**
+   * Replaces all the points with the collection of points.
+   *
+   * @param points	the points to use from now on
+   * @param sorted 	whether the data points are sorted
+   */
+  public void replaceAll(Collection points, boolean sorted);
 
   /**
    * Returns a new instance of the default comparator.

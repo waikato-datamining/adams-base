@@ -27,6 +27,7 @@ import adams.core.TechnicalInformationHandler;
 import adams.data.container.DataContainer;
 import adams.data.container.DataPoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -165,21 +166,24 @@ public abstract class AbstractSimpleSavitzkyGolay<T extends DataContainer>
     T			result;
     int			i;
     List<DataPoint>	points;
+    List<DataPoint>	pointsNew;
     DataPoint		newPoint;
     int 		winOff;
     double 		y;
     int 		j;
 
-    result = (T) data.getHeader();
-    points = data.toList();
-    winOff = (m_WindowSize - 1)/2;
+    result    = (T) data.getHeader();
+    points    = data.toList();
+    pointsNew = new ArrayList<>();
+    winOff    = (m_WindowSize - 1)/2;
     for (i = winOff; i < points.size() - winOff; i++) {
       y = 0;
       for (j = -winOff; j <= winOff; j++)
 	y += j * getValue(points.get(i+j));
       newPoint = newDataPoint(points.get(i - winOff), y);
-      result.add(newPoint);
+      pointsNew.add(newPoint);
     }
+    result.replaceAll(pointsNew, true);
 
     return result;
   }
