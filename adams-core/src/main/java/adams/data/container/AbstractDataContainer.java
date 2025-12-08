@@ -114,7 +114,7 @@ public abstract class AbstractDataContainer<T extends DataPoint>
     points = new ArrayList<>();
     while (iter.hasNext())
       points.add((T) iter.next().getClone());
-    result.addAll(points);
+    result.replaceAll(points, true);
 
     return result;
   }
