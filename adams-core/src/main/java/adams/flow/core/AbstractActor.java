@@ -15,7 +15,7 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -338,7 +338,7 @@ public abstract class AbstractActor
    * @return		the default name
    */
   public String getDefaultName() {
-    return getClass().getName().replaceAll(".*\\.", "");
+    return getClass().getSimpleName();
   }
 
   /**
@@ -869,14 +869,16 @@ public abstract class AbstractActor
     ActorVariablesFinder	finder;
     HashSet<String>		result;
 
-    getLogger().finest("Locating variables in " + actor.getFullName() + "...");
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      getLogger().finest("Locating variables in " + actor.getFullName() + "...");
 
     finder = new ActorVariablesFinder();
     finder.setInspection(actor);
     actor.getOptionManager().traverse(finder);
     result = finder.getResult();
 
-    getLogger().finest("Found variables in " + actor.getFullName() + " (" + result.size() + "): " + result);
+    if (LoggingHelper.isAtLeast(getLogger(), Level.FINEST))
+      getLogger().finest("Found variables in " + actor.getFullName() + " (" + result.size() + "): " + result);
 
     return result;
   }
@@ -887,14 +889,15 @@ public abstract class AbstractActor
    * @param e		the event
    */
   public void variableChanged(VariableChangeEvent e) {
-    if ((m_DetectedVariables == null) || (m_DetectedVariables.size() == 0))
+    if ((m_DetectedVariables == null) || m_DetectedVariables.isEmpty())
       return;
     if (m_VariablesUpdated.contains(e.getName()))
       return;
 
     if (m_DetectedVariables.contains(e.getName()) && (e.getType() != Type.REMOVED)) {
       m_VariablesUpdated.add(e.getName());
-      getLogger().info("Changes in variable '" + e.getName() + "' (" + e.getVariables().hashCode() + ")");
+      if (isLoggingEnabled())
+	getLogger().info("Changes in variable '" + e.getName() + "' (" + e.getVariables().hashCode() + ")");
     }
   }
 
@@ -909,7 +912,7 @@ public abstract class AbstractActor
     if (m_DetectedVariables != null)
       result = m_DetectedVariables;
     else
-      result = new HashSet<String>();
+      result = new HashSet<>();
 
     return result;
   }
@@ -1116,7 +1119,7 @@ public abstract class AbstractActor
       getLogger().finest("Size before execute: " + sizeOf());
 
     // do we need to re-setup the actor, due to changes in variables?
-    if ((m_VariablesUpdated.size() > 0)
+    if ((!m_VariablesUpdated.isEmpty())
 	|| ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
       updateVariables();
       result = performSetUpChecks(false);
