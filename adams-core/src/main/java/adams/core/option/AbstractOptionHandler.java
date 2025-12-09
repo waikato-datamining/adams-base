@@ -15,7 +15,7 @@
 
 /*
  * AbstractOptionHandler.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -141,16 +141,6 @@ public abstract class AbstractOptionHandler
    */
   protected LoggingLevel getDefaultLoggingLevel() {
     return LoggingLevel.WARNING;
-  }
-
-  /**
-   * Sets the logging level.
-   *
-   * @param value 	the level
-   */
-  public synchronized void setLoggingLevel(LoggingLevel value) {
-    super.setLoggingLevel(value);
-    reset();
   }
 
   /**
