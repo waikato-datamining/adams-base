@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractOptionTraverserWithResult.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -23,7 +23,6 @@ package adams.core.option;
  * Ancestor for option traversers that return a result.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of the result
  */
 public abstract class AbstractOptionTraverserWithResult<T>
@@ -32,14 +31,22 @@ public abstract class AbstractOptionTraverserWithResult<T>
 
   /** for serialization. */
   private static final long serialVersionUID = 7516066249256588141L;
-  
+
+  /**
+   * Initializes the members.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+    resetResult();
+  }
+
   /**
    * Resets the object.
    */
   @Override
   protected void reset() {
     super.reset();
-    
     resetResult();
   }
   
