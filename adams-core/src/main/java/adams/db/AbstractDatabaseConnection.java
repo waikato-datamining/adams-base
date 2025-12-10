@@ -1113,6 +1113,30 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
+   * Opens a new connection to the same URL.
+   *
+   * @param autoCommit	whether to use auto commit
+   * @return		the connection, null if failed to open
+   */
+  public Connection newConnection(boolean autoCommit) {
+    Connection 	result;
+
+    try {
+      if (getUser().isEmpty())
+	result = DriverManager.getConnection(getURL());
+      else
+	result = DriverManager.getConnection(getURL(), getUser(), getPassword().getValue());
+      result.setAutoCommit(autoCommit);
+    }
+    catch(Exception e) {
+      getLogger().warning("Failed to open separate connection to " + getURL() + "!");
+      result = null;
+    }
+
+    return result;
+  }
+
+  /**
    * Returns a new instance of a ConnectionParameters object.
    *
    * @return		the new instance
