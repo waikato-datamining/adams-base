@@ -519,10 +519,8 @@ public abstract class AbstractActor
     Properties			props;
     boolean			stop;
 
-    flow    = null;
-    handler = null;
-    entry   = null;
-    props   = null;
+    flow  = null;
+    entry = null;
 
     // add log entry?
     if (source.getRoot() instanceof Flow) {
@@ -555,9 +553,7 @@ public abstract class AbstractActor
 	  break;
 
 	case ACTORS_DECIDE_TO_STOP_ON_ERROR:
-	  stop = false;
-	  if (getStopFlowOnError())
-	    stop = true;
+	  stop = getStopFlowOnError();
 	  if ((source instanceof InteractiveActor) && ((InteractiveActor) source).getStopFlowIfCanceled())
 	    stop = true;
 	  if (source instanceof OptionalPasswordPrompt)
@@ -679,7 +675,7 @@ public abstract class AbstractActor
     }
     m_DetectedVariables.removeAll(m_DetectedObjectVariables);
 
-    if (m_DetectedVariables.size() > 0)
+    if (!m_DetectedVariables.isEmpty())
       getVariables().addVariableChangeListener(this);
   }
 
@@ -1120,7 +1116,7 @@ public abstract class AbstractActor
 
     // do we need to re-setup the actor, due to changes in variables?
     if ((!m_VariablesUpdated.isEmpty())
-	|| ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
+	|| ((m_DetectedVariables != null) && !m_DetectedObjectVariables.isEmpty())) {
       updateVariables();
       result = performSetUpChecks(false);
     }
@@ -1215,8 +1211,8 @@ public abstract class AbstractActor
    * untouched.
    */
   public void wrapUp() {
-    if (    (m_VariablesUpdated.size() > 0)
-	|| ((m_DetectedVariables != null) && (m_DetectedObjectVariables.size() > 0))) {
+    if (    !m_VariablesUpdated.isEmpty()
+	|| ((m_DetectedVariables != null) && !m_DetectedObjectVariables.isEmpty())) {
       finalUpdateVariables();
     }
 
@@ -1464,7 +1460,7 @@ public abstract class AbstractActor
     }
     catch (Exception e) {
       if (!quiet)
-	e.printStackTrace();
+	LoggingHelper.global().log(Level.SEVERE, "Failed to instantiate actor: " + classname, e);
       result = null;
     }
 
