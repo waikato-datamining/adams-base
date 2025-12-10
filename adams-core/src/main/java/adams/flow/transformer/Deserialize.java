@@ -15,13 +15,16 @@
 
 /*
  * Deserialize.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.updater.LoggingLevelUpdater;
+import adams.core.logging.updater.NoUpdate;
 import adams.data.io.input.AbstractObjectReader;
 import adams.data.io.input.SerializedObjectReader;
 import adams.flow.core.Token;
@@ -49,6 +52,7 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -72,23 +76,29 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-reader &lt;adams.data.io.input.AbstractObjectReader&gt; (property: reader)
  * &nbsp;&nbsp;&nbsp;The reader to use for loading the object.
  * &nbsp;&nbsp;&nbsp;default: adams.data.io.input.SerializedObjectReader
  * </pre>
- * 
+ *
+ * <pre>-logging-level-updater &lt;adams.core.logging.updater.LoggingLevelUpdater&gt; (property: loggingLevelUpdater)
+ * &nbsp;&nbsp;&nbsp;The scheme for updating the logging level of the deserialized object.
+ * &nbsp;&nbsp;&nbsp;default: adams.core.logging.updater.NoUpdate
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Deserialize
   extends AbstractTransformer {
@@ -98,6 +108,9 @@ public class Deserialize
 
   /** the object reader to use. */
   protected AbstractObjectReader m_Reader;
+
+  /** the logging level updater. */
+  protected LoggingLevelUpdater m_LoggingLevelUpdater;
 
   /**
    * Returns a string describing the object.
@@ -119,6 +132,10 @@ public class Deserialize
     m_OptionManager.add(
       "reader", "reader",
       new SerializedObjectReader());
+
+    m_OptionManager.add(
+      "logging-level-updater", "loggingLevelUpdater",
+      new NoUpdate());
   }
 
   /**
@@ -151,13 +168,47 @@ public class Deserialize
   }
 
   /**
+   * Sets the scheme for updating the logging level of the deserialized object.
+   *
+   * @param value	the updater
+   */
+  public void setLoggingLevelUpdater(LoggingLevelUpdater value) {
+    m_LoggingLevelUpdater = value;
+    reset();
+  }
+
+  /**
+   * Returns the scheme for updating the logging level of the deserialized object.
+   *
+   * @return		the updater
+   */
+  public LoggingLevelUpdater getLoggingLevelUpdater() {
+    return m_LoggingLevelUpdater;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String loggingLevelUpdaterTipText() {
+    return "The scheme for updating the logging level of the deserialized object.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "reader", m_Reader, "reader: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "reader", m_Reader, "reader: ");
+    result += QuickInfoHelper.toString(this, "loggingLevelUpdater", m_LoggingLevelUpdater, ", updater: ");
+
+    return result;
   }
 
   /**
@@ -191,6 +242,7 @@ public class Deserialize
     Object		fileObj;
     PlaceholderFile	file;
     Object		obj;
+    boolean		updated;
 
     result = null;
 
@@ -201,7 +253,16 @@ public class Deserialize
       file = new PlaceholderFile((String) fileObj);
 
     try {
-      obj           = m_Reader.read(file);
+      obj = m_Reader.read(file);
+      if (m_LoggingLevelUpdater.canUpdateLoggingLevel(obj)) {
+	updated = m_LoggingLevelUpdater.updateLoggingLevel(obj);
+	if (!updated && isLoggingEnabled())
+	  getLogger().warning("Logging level updater failed to update object: " + Utils.classToString(obj));
+      }
+      else {
+	if (isLoggingEnabled())
+	  getLogger().warning("Logging level updater cannot update object: " + Utils.classToString(obj));
+      }
       m_OutputToken = new Token(obj);
     }
     catch (Exception e) {

@@ -1,1 +1,1 @@
-reader: SerializedObjectReader
+reader: SerializedObjectReader, updater: NoUpdate
