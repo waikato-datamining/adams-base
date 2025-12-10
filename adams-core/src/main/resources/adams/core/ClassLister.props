@@ -20,6 +20,10 @@ java.util.Comparator=\
 java.util.logging.Handler=\
   adams.core.logging
 
+# the logging level updaters
+adams.core.logging.updater.LoggingLevelUpdater=\
+  adams.core.logging.updater
+
 # the custom class managers
 adams.core.classmanager.CustomClassManager=\
   adams.core.classmanager
