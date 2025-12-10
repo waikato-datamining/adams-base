@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Counting.java
- * Copyright (C) 2011-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -63,7 +63,6 @@ import adams.flow.core.Unknown;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Counting
   extends AbstractBooleanCondition {
@@ -82,6 +81,27 @@ public class Counting
 
   /** the current count. */
   protected int m_Current;
+
+  /**
+   * Default constructor.
+   */
+  public Counting() {
+    super();
+  }
+
+  /**
+   * Initializes the condition with the specified parameters.
+   *
+   * @param minimum	the minimum
+   * @param maximum	the maximum
+   * @param interval	the interval
+   */
+  public Counting(int minimum, int maximum, int interval) {
+    this();
+    setMinimum(minimum);
+    setMaximum(maximum);
+    setInterval(interval);
+  }
 
   /**
    * Returns a string describing the object.

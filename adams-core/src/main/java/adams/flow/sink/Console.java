@@ -83,6 +83,23 @@ public class Console
   protected String m_Prefix;
 
   /**
+   * Default constructor.
+   */
+  public Console() {
+    super();
+  }
+
+  /**
+   * Initializes the actor with the specified parameters.
+   *
+   * @param prefix	the prefix to use
+   */
+  public Console(String prefix) {
+    this();
+    setPrefix(prefix);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui
