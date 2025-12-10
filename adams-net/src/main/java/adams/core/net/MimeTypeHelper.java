@@ -22,6 +22,7 @@ package adams.core.net;
 import adams.core.io.FileUtils;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
 
@@ -78,7 +79,7 @@ public class MimeTypeHelper {
       parser   = new AutoDetectParser();
       detector = parser.getDetector();
       md       = new Metadata();
-      md.add(Metadata.RESOURCE_NAME_KEY, filename);
+      md.add(TikaCoreProperties.RESOURCE_NAME_KEY, filename);
       result = detector.detect(bis, md);
       bis.close();
       return result;
