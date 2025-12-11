@@ -101,6 +101,9 @@ public class ExcelSpreadSheetWriter
   /** the OOXML file extension. */
   public static String FILE_EXTENSION_OOXML = ".xlsx";
 
+  /** the OOXML file extension. */
+  public static String FILE_EXTENSION_OOXML_MACRO = ".xlsm";
+
   /** whether to write OOXML instead of binary Excel files (latter is default). */
   protected boolean m_WriteOOXML;
 
@@ -168,7 +171,7 @@ public class ExcelSpreadSheetWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"xls", "xlsx"};
+    return new String[]{"xls", "xlsx", "xlsm"};
   }
 
   /**
@@ -336,7 +339,7 @@ public class ExcelSpreadSheetWriter
    */
   protected void preWriteFile(String filename) {
     super.preWriteFile(filename);
-    setWriteOOXML(filename.endsWith(FILE_EXTENSION_OOXML));
+    setWriteOOXML(filename.endsWith(FILE_EXTENSION_OOXML) || filename.endsWith(FILE_EXTENSION_OOXML_MACRO));
   }
 
   /**

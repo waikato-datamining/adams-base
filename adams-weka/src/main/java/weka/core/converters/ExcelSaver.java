@@ -224,7 +224,7 @@ public class ExcelSaver
    */
   @Override
   public String[] getFileExtensions() {
-    return new String[]{".xls", ".xlsx"};
+    return new String[]{".xls", ".xlsx", ".xlsm"};
   }
 
   /**
@@ -350,10 +350,10 @@ public class ExcelSaver
     if (getRetrieval() == INCREMENTAL)
       throw new IOException("Batch and incremental saving cannot be mixed.");
 
-    if (m_OutputFile.getName().toLowerCase().endsWith(".xlsx"))
-      workbook = new XSSFWorkbook();
-    else
+    if (m_OutputFile.getName().toLowerCase().endsWith(".xls"))
       workbook = new HSSFWorkbook();
+    else
+      workbook = new XSSFWorkbook();
 
     writeData(getInstances(), workbook);
 

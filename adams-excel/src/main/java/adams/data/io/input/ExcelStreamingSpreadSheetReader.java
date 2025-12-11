@@ -677,7 +677,7 @@ public class ExcelStreamingSpreadSheetReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"xlsx"};
+    return new String[]{"xlsx", "xlsm"};
   }
 
   /**

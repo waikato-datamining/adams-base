@@ -629,7 +629,7 @@ public class ExcelLoader
    */
   @Override
   public String[] getFileExtensions() {
-    return new String[]{".xls", ".xlsx"};
+    return new String[]{".xls", ".xlsx", ".xlsm"};
   }
 
   /**

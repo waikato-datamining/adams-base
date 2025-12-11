@@ -180,7 +180,7 @@ public class FastExcelSpreadSheetReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"xlsx"};
+    return new String[]{"xlsx", "xlsm"};
   }
 
   /**

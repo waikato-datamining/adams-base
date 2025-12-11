@@ -74,9 +74,6 @@ public class FastExcelSpreadSheetWriter
   /** for serialization. */
   private static final long serialVersionUID = -3549185519778801930L;
 
-  /** the OOXML file extension. */
-  public static String FILE_EXTENSION_OOXML = ".xlsx";
-
   /** whether to output the cells as displayed (disable to output formulas). */
   protected boolean m_OutputAsDisplayed;
 
@@ -120,7 +117,7 @@ public class FastExcelSpreadSheetWriter
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"xlsx"};
+    return new String[]{"xlsx", "xlsm"};
   }
 
   /**

@@ -160,7 +160,7 @@ public class ExcelSpreadSheetReader
    */
   @Override
   public String[] getFormatExtensions() {
-    return new String[]{"xls", "xlsx"};
+    return new String[]{"xls", "xlsx", "xlsm"};
   }
 
   /**

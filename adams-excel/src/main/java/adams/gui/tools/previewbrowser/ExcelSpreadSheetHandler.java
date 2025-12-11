@@ -63,11 +63,11 @@ public class ExcelSpreadSheetHandler
    * Returns the list of extensions (without dot) that this handler can
    * take care of.
    *
-   * @return		the list of extensions (no dot)
+   * @return		the array of extensions (no dot)
    */
   @Override
   public String[] getExtensions() {
-    return new String[]{"xls", "xlsx"};
+    return new String[]{"xls", "xlsx", "xlsm"};
   }
 
   /**
@@ -119,6 +119,6 @@ public class ExcelSpreadSheetHandler
     if (result == null)
       result = new ArrayList<>();
 
-    return result.toArray(new SpreadSheet[result.size()]);
+    return result.toArray(new SpreadSheet[0]);
   }
 }
