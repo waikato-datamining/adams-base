@@ -22,6 +22,7 @@
 package adams.db;
 
 import adams.core.CloneHandler;
+import adams.core.Properties;
 import adams.core.base.BasePassword;
 import adams.core.classmanager.ClassManager;
 import adams.core.logging.LoggingLevel;
@@ -327,6 +328,41 @@ public class ConnectionParameters
     return m_User
       + "@"
       + m_URL.replaceAll(".*\\/\\/", "");
+  }
+
+  /**
+   * Turns the parameters into a properties object.
+   *
+   * @return		the properties
+   */
+  public Properties toProperties() {
+    return toProperties("");
+  }
+
+  /**
+   * Turns the parameters into a properties object.
+   *
+   * @param prefix 	the prefix to use, ignored if null
+   * @return		the properties
+   */
+  public Properties toProperties(String prefix) {
+    Properties		result;
+    Enumeration<String>	params;
+    String		param;
+    String		value;
+
+    if (prefix == null)
+      prefix = "";
+
+    result = new Properties();
+    params = parameters();
+    while (params.hasMoreElements()) {
+      param = params.nextElement();
+      value = getParameter(param);
+      result.setProperty(prefix + param, value);
+    }
+
+    return result;
   }
 
   /**

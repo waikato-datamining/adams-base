@@ -1212,22 +1212,15 @@ public abstract class AbstractDatabaseConnection
    */
   protected boolean connectionsToProperties(List<ConnectionParameters> connections) {
     Properties			props;
+    Properties			subProps;
     int				i;
-    Enumeration<String>		params;
-    String			param;
-    String 			value;
 
     props = getProperties();
     props.removeWithPrefix(PREFIX_CONNECTION);
     props.setInteger(PREFIX_CONNECTION + "." + SUFFIX_COUNT, connections.size());
     for (i = 0; i < connections.size(); i++) {
-      props.setProperty(PREFIX_CONNECTION  + "." + i + "." + ConnectionParameters.PARAM_CLASS, connections.get(i).getClass().getName());
-      params = connections.get(i).parameters();
-      while (params.hasMoreElements()) {
-	param = params.nextElement();
-	value = connections.get(i).getParameter(param);
-        props.setProperty(PREFIX_CONNECTION  + "." + i + "." + param, value);
-      }
+      subProps = connections.get(i).toProperties(PREFIX_CONNECTION  + "." + i + ".");
+      props.add(subProps);
     }
 
     return updateConnectionParameters();

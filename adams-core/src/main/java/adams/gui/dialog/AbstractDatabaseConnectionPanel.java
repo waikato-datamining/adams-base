@@ -20,18 +20,22 @@
 
 package adams.gui.dialog;
 
+import adams.core.Properties;
 import adams.core.StatusMessageHandler;
 import adams.core.logging.LoggingLevel;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.ConnectionParameters;
+import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
 import adams.db.DatabaseManager;
+import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BasePasswordFieldWithButton;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.ExtensionFileFilter;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ImageManager;
 import adams.gui.core.ParameterPanel;
@@ -45,6 +49,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -93,6 +98,9 @@ public abstract class AbstractDatabaseConnectionPanel
   /** the button removing the database connection. */
   protected BaseButton m_ButtonRemove;
 
+  /** the button for saving the database connection. */
+  protected BaseButton m_ButtonSave;
+
   /** the button for making a connection the default one. */
   protected BaseButton m_ButtonMakeDefault;
 
@@ -107,6 +115,9 @@ public abstract class AbstractDatabaseConnectionPanel
 
   /** the change listeners. */
   protected HashSet<ChangeListener> m_ChangeListeners;
+
+  /** the file chooser for saving connections as props files. */
+  protected BaseFileChooser m_FileChooserConnections;
 
   /**
    * For initializing members.
@@ -212,6 +223,15 @@ public abstract class AbstractDatabaseConnectionPanel
       m_ButtonRemove.setEnabled(false);
       removeConnection();
       m_ButtonRemove.setEnabled(true);
+    });
+
+    m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
+    m_ButtonSave.setToolTipText("Save current connection as properties file");
+    panel.add(m_ButtonSave);
+    m_ButtonSave.addActionListener((ActionEvent e) -> {
+      m_ButtonSave.setEnabled(false);
+      saveConnection();
+      m_ButtonSave.setEnabled(true);
     });
 
     m_ButtonMakeDefault = new BaseButton("Make default");
@@ -391,6 +411,36 @@ public abstract class AbstractDatabaseConnectionPanel
       else
 	newConnection();
     }
+  }
+
+  /**
+   * Saves the current parameters as properties file.
+   */
+  protected void saveConnection() {
+    ExtensionFileFilter	filter;
+    int			retVal;
+    File		file;
+    Properties		props;
+
+    if (m_FileChooserConnections == null) {
+      m_FileChooserConnections = new BaseFileChooser();
+      filter = ExtensionFileFilter.getPropertiesFileFilter();
+      m_FileChooserConnections.addChoosableFileFilter(filter);
+      m_FileChooserConnections.setFileFilter(filter);
+      m_FileChooserConnections.setFileSelectionMode(BaseFileChooser.FILES_ONLY);
+      m_FileChooserConnections.setAcceptAllFileFilterUsed(false);
+      m_FileChooserConnections.setPromptOverwriteFile(true);
+      m_FileChooserConnections.setSelectedFile(new File(DatabaseConnection.FILENAME));
+    }
+
+    retVal = m_FileChooserConnections.showSaveDialog(getParent());
+    if (retVal != BaseFileChooser.APPROVE_OPTION)
+      return;
+
+    file  = m_FileChooserConnections.getSelectedFile();
+    props = getCurrentParameters().toProperties();
+    if (!props.save(file.getAbsolutePath()))
+      GUIHelper.showErrorMessage(m_Self, "Failed to save connection parameters as:\n" + file);
   }
 
   /**
