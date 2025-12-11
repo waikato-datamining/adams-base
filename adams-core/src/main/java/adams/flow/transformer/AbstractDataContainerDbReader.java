@@ -15,7 +15,7 @@
 
 /*
  * AbstractDataContainerDbReader.java
- * Copyright (C) 2009-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -23,7 +23,6 @@ package adams.flow.transformer;
 import adams.core.LenientModeSupporter;
 import adams.data.container.DataContainer;
 import adams.db.DataProvider;
-import adams.db.FilteredDataProvider;
 import adams.flow.core.Token;
 import adams.flow.transformer.datacontainer.AbstractDataContainerPostProcessor;
 import adams.flow.transformer.datacontainer.NoPostProcessing;
@@ -41,9 +40,6 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
   /** for serialization. */
   private static final long serialVersionUID = -4736058667429890220L;
 
-  /** whether to return the raw data or not. */
-  protected boolean m_Raw;
-
   /** whether to ignore not finding any IDs. */
   protected boolean m_Lenient;
 
@@ -58,49 +54,12 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-      "raw", "raw",
-      false);
-
-    m_OptionManager.add(
       "lenient", "lenient",
       false);
 
     m_OptionManager.add(
       "post-processor", "postProcessor",
       new NoPostProcessing());
-  }
-
-  /**
-   * Sets whether to return the raw data or not (only FilteredDataProviders).
-   *
-   * @param value 	true if transformation is to be skipped
-   * @see		FilteredDataProvider
-   */
-  public void setRaw(boolean value) {
-    m_Raw = value;
-    reset();
-  }
-
-  /**
-   * Returns whether to return the raw data or not (only FilteredDataProviders).
-   *
-   * @return 		true if transformation is skipped
-   * @see		FilteredDataProvider
-   */
-  public boolean getRaw() {
-    return m_Raw;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String rawTipText() {
-    return
-        "If set to true, then the raw data is returned instead of being "
-      + "filtered through the global data container filter.";
   }
 
   /**
@@ -196,10 +155,7 @@ public abstract class AbstractDataContainerDbReader<T extends DataContainer>
 
     provider = getDataProvider();
     id       = (Integer) m_InputToken.getPayload();
-    if (m_Raw)
-      cont = ((FilteredDataProvider<T>) provider).loadRaw(id);
-    else
-      cont = provider.load(id);
+    cont     = provider.load(id);
     if (cont == null) {
       if (!m_Lenient)
 	result = "No container loaded for ID: " + m_InputToken;
