@@ -318,7 +318,7 @@ public class SQL
    */
   @Override
   public SimpleResultSet getSimpleResultSet(String query) throws Exception {
-    return(new SimpleResultSet(getResultSet(query)));
+    return new SimpleResultSet(getResultSet(query));
   }
 
   /**
@@ -404,7 +404,7 @@ public class SQL
    */
   @Override
   public List<Long> getKeys(Statement stmt) {
-    List<Long>	result;
+    List<Long>		result;
     ResultSet		rs;
 
     result = new ArrayList<>();
@@ -443,12 +443,17 @@ public class SQL
    */
   @Override
   public int update(String updateString, String table, String where) throws Exception {
-    String query="UPDATE " + table + " SET " + updateString + " WHERE " + where;
-    Connection connection = getConnection(true);
-    Statement stmt = null;
+    int 	result;
+    String 	query;
+    Connection 	connection;
+    Statement 	stmt;
+
+    query = "UPDATE " + table + " SET " + updateString + " WHERE " + where;
+    connection = getConnection(true);
+    stmt = null;
     if (isLoggingEnabled())
       getLogger().info("Updating: " + query);
-    int uc = 0;
+    result = 0;
     try {
       stmt = connection.createStatement();
       stmt.execute(query);
@@ -463,20 +468,21 @@ public class SQL
       }
       catch (Exception ex) {
 	getLogger().log(Level.SEVERE, "Error executing 'update': " + query, ex);
-	return(-1);
+	return -1;
       }
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to create/execute statement", e);
-      return(-1);
+      return -1;
     }
     finally {
       if (stmt != null) {
-	uc = stmt.getUpdateCount();
+	result = stmt.getUpdateCount();
 	stmt.close();
       }
     }
-    return(uc);
+
+    return result;
   }
 
   /**
@@ -892,13 +898,15 @@ public class SQL
    */
   @Override
   public ResultSet getResultSet(String query) throws Exception {
-    Connection connection = getConnection(true);
+    Connection 	connection;
+    Statement 	stmt;
+
+    connection = getConnection(true);
     if (isLoggingEnabled())
       getLogger().info("Get ResultSet for : " + query);
     if (connection == null)
       throw new IllegalStateException("Connection object is null!");
 
-    Statement stmt = null;
     try {
       stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
     }
@@ -906,7 +914,8 @@ public class SQL
       // try again
       stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
     }
-    return(stmt.executeQuery(query));
+
+    return stmt.executeQuery(query);
   }
 
   /**
