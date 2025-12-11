@@ -486,6 +486,16 @@ public class Debug
   }
 
   /**
+   * Marks the actor (and sub-flow) to be stepped over.
+   *
+   * @param actor	the actor/sub-flow to skip
+   */
+  public void setStepOver(Actor actor) {
+    if (m_ControlPanel != null)
+      m_ControlPanel.setStepOver(actor);
+  }
+
+  /**
    * The title of this listener.
    *
    * @return		the title

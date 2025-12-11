@@ -13,15 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * PathBreakpoint.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+/*
+ * AnyActorBreakpoint.java
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.execution.debug;
 
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
-import adams.flow.execution.debug.AbstractBreakpoint;
 
 /**
  <!-- globalinfo-start -->
@@ -93,13 +92,15 @@ import adams.flow.execution.debug.AbstractBreakpoint;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AnyActorBreakpoint
   extends AbstractBreakpoint {
 
   /** for serialization. */
   private static final long serialVersionUID = 3782327753485131754L;
+
+  /** the path to skip. */
+  protected String m_StepOver;
 
   /**
    * Returns a string describing the object.
@@ -112,6 +113,58 @@ public class AnyActorBreakpoint
   }
 
   /**
+   * Initializes the scheme.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_StepOver = null;
+  }
+
+  /**
+   * Sets the path to skip.
+   *
+   * @param value	the path, null to remove
+   */
+  public void setStepOver(String value) {
+    m_StepOver = value;
+  }
+
+  /**
+   * Returns the current path to skip, if any.
+   *
+   * @return		the path, null if none set
+   */
+  public String getStepOver() {
+    return m_StepOver;
+  }
+
+  /**
+   * Whether to skip this actor.
+   *
+   * @param actor	the actor to check
+   * @return		true if to skip
+   * @see		#getStepOver()
+   */
+  protected boolean skipActor(Actor actor) {
+    boolean	result;
+    String	full;
+
+    if (m_StepOver == null)
+      return false;
+
+    full   = actor.getFullName();
+    result = full.equals(m_StepOver) || full.startsWith(m_StepOver + ".");
+
+    // finished stepping over? -> clear
+    if (!result)
+      m_StepOver = null;
+
+    return result;
+  }
+
+  /**
    * Evaluates the breakpoint at pre-input.
    * 
    * @param actor	the current actor
@@ -120,7 +173,7 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePreInput(Actor actor, Token token) {
-    return true;
+    return !skipActor(actor);
   }
   
   /**
@@ -131,7 +184,7 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePostInput(Actor actor) {
-    return true;
+    return !skipActor(actor);
   }
   
   /**
@@ -142,7 +195,7 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePreExecute(Actor actor) {
-    return true;
+    return !skipActor(actor);
   }
   
   /**
@@ -153,7 +206,7 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePostExecute(Actor actor) {
-    return true;
+    return !skipActor(actor);
   }
   
   /**
@@ -164,7 +217,7 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePreOutput(Actor actor) {
-    return true;
+    return !skipActor(actor);
   }
   
   /**
@@ -176,6 +229,6 @@ public class AnyActorBreakpoint
    */
   @Override
   protected boolean evaluatePostOutput(Actor actor, Token token) {
-    return true;
+    return !skipActor(actor);
   }
 }

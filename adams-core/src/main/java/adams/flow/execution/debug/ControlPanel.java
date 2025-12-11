@@ -15,7 +15,7 @@
 
 /*
  * ControlPanel.java
- * Copyright (C) 2015-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -93,6 +93,9 @@ public class ControlPanel
 
   /** the button for performing the next step when in manual mode. */
   protected BaseButton m_ButtonStep;
+
+  /** the button for stepping over a sub-flow in manual mode. */
+  protected BaseButton m_ButtonStepOver;
 
   /** the button for displaying dialog with watch expressions. */
   protected BaseToggleButton m_ButtonExpressions;
@@ -224,6 +227,12 @@ public class ControlPanel
     m_ButtonStep.setToolTipText("Step to next actor");
     m_ButtonStep.addActionListener((ActionEvent e) -> nextStep());
     panelButtons1.add(m_ButtonStep);
+
+    m_ButtonStepOver = new BaseButton(ImageManager.getIcon("step_over.gif"));
+    m_ButtonStepOver.setMnemonic('e');
+    m_ButtonStepOver.setToolTipText("Step over actor/sub-flow");
+    m_ButtonStepOver.addActionListener((ActionEvent e) -> stepOver());
+    panelButtons1.add(m_ButtonStepOver);
 
     m_ButtonToggle = new BaseButton(ImageManager.getIcon("debug_off.png"));
     m_ButtonToggle.setMnemonic('D');
@@ -634,6 +643,16 @@ public class ControlPanel
   }
 
   /**
+   * Marks the actor (and sub-flow) to be stepped over.
+   *
+   * @param actor	the actor/sub-flow to skip
+   */
+  public void setStepOver(Actor actor) {
+    if (m_PanelBreakpoints != null)
+      m_PanelBreakpoints.setStepOver(actor);
+  }
+
+  /**
    * Disable/enable the breakpoint.
    */
   protected void disableEnableBreakpoint() {
@@ -671,6 +690,21 @@ public class ControlPanel
    */
   protected void nextStep() {
     getOwner().setStepMode(true);
+
+    if (getOwner().isBlocked())
+      continueFlowExecution();
+
+    queueUpdate();
+  }
+
+  /**
+   * Steps over the next actor/sub-flow in manual mode.
+   */
+  protected void stepOver() {
+    if (getCurrentActor() == null)
+      return;
+
+    getOwner().setStepOver(getCurrentActor());
 
     if (getOwner().isBlocked())
       continueFlowExecution();

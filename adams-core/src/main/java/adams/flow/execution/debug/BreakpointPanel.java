@@ -15,12 +15,13 @@
 
 /*
  * BreakpointPanel.java
- * Copyright (C) 2015-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
 
 import adams.core.CleanUpHandler;
+import adams.flow.core.Actor;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BasePanel;
 import adams.gui.core.BaseTableWithButtons;
@@ -312,8 +313,8 @@ public class BreakpointPanel
    * @param enabled	if true step mode is enabled
    */
   public void setStepModeEnabled(boolean enabled) {
-    AnyActorBreakpoint breakpoint;
-    List<AbstractBreakpoint> breakpoints;
+    AnyActorBreakpoint 		breakpoint;
+    List<AbstractBreakpoint> 	breakpoints;
 
     if ((getOwner() == null) || (getOwner().getOwner() == null))
       return;
@@ -339,6 +340,31 @@ public class BreakpointPanel
     }
 
     breakpoint.setDisabled(!enabled);
+  }
+
+  /**
+   * Marks the actor (and sub-flow) to be stepped over.
+   *
+   * @param actor	the actor/sub-flow to skip
+   */
+  public void setStepOver(Actor actor) {
+    AnyActorBreakpoint 		breakpoint;
+
+    if ((getOwner() == null) || (getOwner().getOwner() == null))
+      return;
+
+    setStepModeEnabled(true);
+
+    breakpoint = null;
+    for (AbstractBreakpoint bp: getOwner().getOwner().getBreakpoints()) {
+      if (bp instanceof AnyActorBreakpoint) {
+	breakpoint = (AnyActorBreakpoint) bp;
+	break;
+      }
+    }
+
+    if (breakpoint != null)
+      breakpoint.setStepOver(actor.getFullName());
   }
 
   /**
