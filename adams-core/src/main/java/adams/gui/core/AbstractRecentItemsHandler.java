@@ -15,7 +15,7 @@
 
 /*
  * AbstractRecentItemsHandler.java
- * Copyright (C) 2013-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -43,7 +43,6 @@ import java.util.logging.Level;
  * a props file in the application's home directory.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see Environment#getHome()
  * @param <M> the type of menu to use
  * @param <T> the type of item to use
@@ -279,7 +278,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
     m_RecentItems.clear();
     for (i = count - 1; i >= 0; i--) {
       itemStr = props.getPath(expand(getItemPrefix() + i), "");
-      if (itemStr.length() > 0) {
+      if (!itemStr.isEmpty()) {
 	item = fromString(itemStr);
 	if (check(item))
 	  addRecentItem(item);
@@ -336,11 +335,11 @@ public abstract class AbstractRecentItemsHandler<M, T>
     // clear menu
     if (m_Menu instanceof JMenu) {
       ((JMenu) m_Menu).removeAll();
-      ((JMenu) m_Menu).setEnabled(m_RecentItems.size() > 0);
+      ((JMenu) m_Menu).setEnabled(!m_RecentItems.isEmpty());
     }
     else if (m_Menu instanceof JPopupMenu) {
       ((JPopupMenu) m_Menu).removeAll();
-      ((JPopupMenu) m_Menu).setEnabled(m_RecentItems.size() > 0);
+      ((JPopupMenu) m_Menu).setEnabled(!m_RecentItems.isEmpty());
     }
 
     // add menu items
@@ -367,7 +366,7 @@ public abstract class AbstractRecentItemsHandler<M, T>
     }
     
     // add "clear"
-    if (m_RecentItems.size() > 0) {
+    if (!m_RecentItems.isEmpty()) {
       if (m_Menu instanceof JMenu)
 	((JMenu) m_Menu).addSeparator();
       else if (m_Menu instanceof JPopupMenu)
@@ -404,10 +403,19 @@ public abstract class AbstractRecentItemsHandler<M, T>
    * @param item	the item to add to the list
    */
   public synchronized void addRecentItem(T item) {
-    item = fromString(toString(item));
+    String	s;
+
+    if (item == null)
+      return;
+
+    s = toString(item);
+    if (s == null)
+      return;
+
+    item = fromString(s);
 
     // is it the first item again? -> ignore it
-    if (m_RecentItems.size() > 0) {
+    if (!m_RecentItems.isEmpty()) {
       if (item.equals(m_RecentItems.get(0)))
 	return;
     }
