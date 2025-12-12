@@ -106,202 +106,184 @@ public class CellView
 
   /**
    * Sets the cell to missing.
-   * <br>
-   * Not implemented!
    */
   @Override
   public void setMissing() {
-    throw new NotImplementedException();
+    m_Cell.setMissing();
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Boolean value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Byte value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Short value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Integer value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Long value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Float value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Double value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Date value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(DateTime value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(DateTimeMsec value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(Time value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell.
-   * <br>
-   * Not implemented!
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
   public Cell setContent(TimeMsec value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Attempts to determine the data type of the string.
-   * <br>
-   * Not implemented!
    *
    * @param value	the non-empty string to parse
    * @return		the cell itself
    */
   @Override
   public Cell parseContent(String value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell. Tries to determine whether the cell
    * content is numeric or not.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @return		the cell itself
    */
   @Override
   public Cell setContent(String value) {
-    throw new NotImplementedException();
+    m_Cell.setContent(value);
+    return this;
   }
 
   /**
    * Parses the content of the cell using the specified type. If the string
    * cannot be parsed according to the type, missing is used instead.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @param type	the expected type
@@ -309,53 +291,48 @@ public class CellView
    */
   @Override
   public Object parseContent(String value, ContentType type) {
-    throw new NotImplementedException();
+    return m_Cell.parseContent(value, type);
   }
 
   /**
    * Sets the string content of the cell.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @return		the cell itself
    */
   @Override
   public Cell setContentAsString(String value) {
-    throw new NotImplementedException();
+    m_Cell.setContentAsString(value);
+    return this;
   }
 
   /**
    * Sets the content of the cell, trying to parse the content using the
    * specified content type.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @param type	the type to use
    * @return		the cell itself
    */
   public Cell setContentAs(String value, ContentType type) {
-    throw new NotImplementedException();
+    m_Cell.setContentAs(value, type);
+    return this;
   }
 
   /**
    * Sets the object content of the cell.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @return		the cell itself
    */
   @Override
   public Cell setObject(Object value) {
-    throw new NotImplementedException();
+    m_Cell.setObject(value);
+    return this;
   }
 
   /**
    * Sets the formula content of the cell.
-   * <br>
-   * Not implemented!
    *
    * @param value	the content
    * @return		the cell itself
@@ -416,7 +393,8 @@ public class CellView
    */
   @Override
   public Cell setNative(Object value) {
-    throw new NotImplementedException();
+    m_Cell.setNative(value);
+    return this;
   }
 
   /**
@@ -543,9 +521,9 @@ public class CellView
   }
 
   /**
-   * Checks whether the cell represents a date/time with msec value.
+   * Returns the date/time content, null if not a date/time.
    *
-   * @return		true if date/time msec value
+   * @return		the date/time, null if not date/time
    */
   @Override
   public DateTime toDateTime() {
