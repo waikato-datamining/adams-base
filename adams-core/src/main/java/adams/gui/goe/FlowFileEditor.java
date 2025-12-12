@@ -239,7 +239,6 @@ public class FlowFileEditor
     PopupMenuActions.openInPreviewBrowser(menu, file);
     PopupMenuActions.openInFileBrowser(menu, file);
     PopupMenuActions.openInTerminal(menu, file);
-    PopupMenuActions.copyAbsolutePath(menu, file);
   }
 }
 
