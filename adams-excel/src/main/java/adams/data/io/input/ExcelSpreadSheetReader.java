@@ -15,7 +15,7 @@
 
 /*
  * ExcelSpreadSheetReader.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -53,65 +53,85 @@ import java.util.logging.Level;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-data-row-type &lt;adams.data.spreadsheet.DataRow&gt; (property: dataRowType)
  * &nbsp;&nbsp;&nbsp;The type of row to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DenseDataRow
  * </pre>
- * 
+ *
  * <pre>-spreadsheet-type &lt;adams.data.spreadsheet.SpreadSheet&gt; (property: spreadSheetType)
  * &nbsp;&nbsp;&nbsp;The type of spreadsheet to use for the data.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
- * 
- * <pre>-sheets &lt;adams.core.Range&gt; (property: sheetRange)
+ *
+ * <pre>-quiet &lt;boolean&gt; (property: quiet)
+ * &nbsp;&nbsp;&nbsp;If enabled, logging output in the spreadsheet is suppressed, e.g., from
+ * &nbsp;&nbsp;&nbsp;parsing errors of formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-only-store-formulas &lt;boolean&gt; (property: onlyStoreFormulas)
+ * &nbsp;&nbsp;&nbsp;If enabled, formulas are only stored but never evaluated; useful for spreadsheets
+ * &nbsp;&nbsp;&nbsp;with unsupported functions in formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-sheets &lt;adams.data.spreadsheet.SheetRange&gt; (property: sheetRange)
  * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; sheet names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); sheet names can be surrounded by double quotes.
  * </pre>
- * 
- * <pre>-missing &lt;java.lang.String&gt; (property: missingValue)
+ *
+ * <pre>-missing &lt;adams.core.base.BaseRegExp&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The placeholder for missing values.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default: ^(\\\\?|)$
+ * &nbsp;&nbsp;&nbsp;more: https:&#47;&#47;docs.oracle.com&#47;javase&#47;tutorial&#47;essential&#47;regex&#47;
+ * &nbsp;&nbsp;&nbsp;https:&#47;&#47;docs.oracle.com&#47;en&#47;java&#47;javase&#47;11&#47;docs&#47;api&#47;java.base&#47;java&#47;util&#47;regex&#47;Pattern.html
  * </pre>
- * 
+ *
  * <pre>-no-auto-extend-header &lt;boolean&gt; (property: autoExtendHeader)
- * &nbsp;&nbsp;&nbsp;If enabled, the header gets automatically extended if rows have more cells 
+ * &nbsp;&nbsp;&nbsp;If enabled, the header gets automatically extended if rows have more cells
  * &nbsp;&nbsp;&nbsp;than the header.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
  * <pre>-text-columns &lt;adams.core.Range&gt; (property: textColumns)
  * &nbsp;&nbsp;&nbsp;The range of columns to treat as text.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-no-header &lt;boolean&gt; (property: noHeader)
- * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get 
+ * &nbsp;&nbsp;&nbsp;If enabled, all rows get added as data rows and a dummy header will get
  * &nbsp;&nbsp;&nbsp;inserted.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-custom-column-headers &lt;java.lang.String&gt; (property: customColumnHeaders)
  * &nbsp;&nbsp;&nbsp;The custom headers to use for the columns instead (comma-separated list);
  * &nbsp;&nbsp;&nbsp; ignored if empty.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-first-row &lt;int&gt; (property: firstRow)
  * &nbsp;&nbsp;&nbsp;The index of the first row to retrieve (1-based).
  * &nbsp;&nbsp;&nbsp;default: 1
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  * <pre>-num-rows &lt;int&gt; (property: numRows)
  * &nbsp;&nbsp;&nbsp;The number of data rows to retrieve; use -1 for unlimited.
  * &nbsp;&nbsp;&nbsp;default: -1
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
- * 
+ *
+ * <pre>-fill-empty-header-cells &lt;boolean&gt; (property: fillEmptyHeaderCells)
+ * &nbsp;&nbsp;&nbsp;If enabled, will use the formulas instead of the displayed text.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -122,6 +142,12 @@ public class ExcelSpreadSheetReader
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
 
+  /** the prefix for empty header cells. */
+  public final static String HEADER_CELL_PREFIX = "column-";
+
+  /** whether to fill empty header cells. */
+  protected boolean m_FillEmptyHeaderCells;
+
   /**
    * Returns a string describing the object.
    *
@@ -130,6 +156,18 @@ public class ExcelSpreadSheetReader
   @Override
   public String globalInfo() {
     return "Reads MS Excel files (using DOM).";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "fill-empty-header-cells", "fillEmptyHeaderCells",
+      true);
   }
 
   /**
@@ -165,7 +203,7 @@ public class ExcelSpreadSheetReader
 
   /**
    * Returns, if available, the corresponding writer.
-   * 
+   *
    * @return		the writer, null if none available
    */
   public SpreadSheetWriter getCorrespondingWriter() {
@@ -180,6 +218,35 @@ public class ExcelSpreadSheetReader
   @Override
   protected InputType getInputType() {
     return InputType.STREAM;
+  }
+
+  /**
+   * Sets whether to fill empty header cells with a name.
+   *
+   * @param value	true if to fill
+   */
+  public void setFillEmptyHeaderCells(boolean value) {
+    m_FillEmptyHeaderCells = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to fill empty header cells with a name.
+   *
+   * @return		true if to fill
+   */
+  public boolean getFillEmptyHeaderCells() {
+    return m_FillEmptyHeaderCells;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String fillEmptyHeaderCellsTipText() {
+    return "If enabled, will use the formulas instead of the displayed text.";
   }
 
   /**
@@ -237,7 +304,7 @@ public class ExcelSpreadSheetReader
       workbook = WorkbookFactory.create(in);
       sheetNames = new String[workbook.getNumberOfSheets()];
       for (i = 0; i < workbook.getNumberOfSheets(); i++)
-        sheetNames[i] = workbook.getSheetName(i);
+	sheetNames[i] = workbook.getSheetName(i);
       m_SheetRange.setSheetNames(sheetNames);
       indices      = m_SheetRange.getIntIndices();
       firstRow     = m_FirstRow - 1;
@@ -245,21 +312,21 @@ public class ExcelSpreadSheetReader
       for (int index: indices) {
 	if (m_Stopped)
 	  break;
-	
+
 	spsheet = getSpreadSheetType().newInstance();
 	spsheet.setDataRowClass(m_DataRowType.getClass());
 	result.add(spsheet);
 
 	if (isLoggingEnabled())
 	  getLogger().info("sheet: " + (index+1));
-	
+
 	sheet = workbook.getSheetAt(index);
 	if (sheet.getLastRowNum() == 0) {
 	  getLogger().severe("No rows in sheet #" + index);
 	  return null;
 	}
 	spsheet.setName(sheet.getSheetName());
-	
+
 	// header
 	if (isLoggingEnabled())
 	  getLogger().info("header row");
@@ -294,7 +361,10 @@ public class ExcelSpreadSheetReader
 		switch (exCell.getCellType()) {
 		  case BLANK:
 		  case ERROR:
-		    spRow.addCell("" + (i + 1)).setContent("column-" + (i + 1));
+		    if (m_FillEmptyHeaderCells)
+		      spRow.addCell("" + (i + 1)).setContent("column-" + (i + 1));
+		    else
+		      spRow.addCell("" + (i + 1)).setContent("");
 		    break;
 		  case NUMERIC:
 		    if (DateUtil.isCellDateFormatted(exCell))

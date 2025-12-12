@@ -63,6 +63,18 @@ import java.util.stream.Stream;
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.DefaultSpreadSheet
  * </pre>
  *
+ * <pre>-quiet &lt;boolean&gt; (property: quiet)
+ * &nbsp;&nbsp;&nbsp;If enabled, logging output in the spreadsheet is suppressed, e.g., from
+ * &nbsp;&nbsp;&nbsp;parsing errors of formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-only-store-formulas &lt;boolean&gt; (property: onlyStoreFormulas)
+ * &nbsp;&nbsp;&nbsp;If enabled, formulas are only stored but never evaluated; useful for spreadsheets
+ * &nbsp;&nbsp;&nbsp;with unsupported functions in formulas.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  * <pre>-sheets &lt;adams.data.spreadsheet.SheetRange&gt; (property: sheetRange)
  * &nbsp;&nbsp;&nbsp;The range of sheets to load.
  * &nbsp;&nbsp;&nbsp;default: first
@@ -117,6 +129,11 @@ import java.util.stream.Stream;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-fill-empty-header-cells &lt;boolean&gt; (property: fillEmptyHeaderCells)
+ * &nbsp;&nbsp;&nbsp;If enabled, will use the formulas instead of the displayed text.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -127,8 +144,14 @@ public class FastExcelSpreadSheetReader
   /** for serialization. */
   private static final long serialVersionUID = 4755872204697328246L;
 
+  /** the prefix for empty header cells. */
+  public final static String HEADER_CELL_PREFIX = "column-";
+
   /** whether to keep formulas. */
   protected boolean m_KeepFormulas;
+
+  /** whether to fill empty header cells. */
+  protected boolean m_FillEmptyHeaderCells;
 
   /**
    * Returns a string describing the object.
@@ -150,6 +173,10 @@ public class FastExcelSpreadSheetReader
     m_OptionManager.add(
       "keep-formulas", "keepFormulas",
       false);
+
+    m_OptionManager.add(
+      "fill-empty-header-cells", "fillEmptyHeaderCells",
+      true);
   }
 
   /**
@@ -228,6 +255,35 @@ public class FastExcelSpreadSheetReader
    *         		displaying in the explorer/experimenter gui
    */
   public String keepFormulasTipText() {
+    return "If enabled, will use the formulas instead of the displayed text.";
+  }
+
+  /**
+   * Sets whether to fill empty header cells with a name.
+   *
+   * @param value	true if to fill
+   */
+  public void setFillEmptyHeaderCells(boolean value) {
+    m_FillEmptyHeaderCells = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to fill empty header cells with a name.
+   *
+   * @return		true if to fill
+   */
+  public boolean getFillEmptyHeaderCells() {
+    return m_FillEmptyHeaderCells;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   *         		displaying in the explorer/experimenter gui
+   */
+  public String fillEmptyHeaderCellsTipText() {
     return "If enabled, will use the formulas instead of the displayed text.";
   }
 
@@ -363,7 +419,10 @@ public class FastExcelSpreadSheetReader
 	      switch (exCell.getType()) {
 		case EMPTY:
 		case ERROR:
-		  spRow.addCell("" + (i + 1)).setContent("column-" + (i + 1));
+		  if (m_FillEmptyHeaderCells)
+		    spRow.addCell("" + (i + 1)).setContent(HEADER_CELL_PREFIX + (i + 1));
+		  else
+		    spRow.addCell("" + (i + 1)).setContent("");
 		  break;
 		case NUMBER:
 		  if (numeric)
