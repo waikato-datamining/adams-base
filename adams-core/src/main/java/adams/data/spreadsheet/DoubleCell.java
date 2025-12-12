@@ -640,6 +640,7 @@ public class DoubleCell
       m_Content     = getSpreadSheet().getSharedStringsTable().getIndex(value);
       m_Object      = null;
       m_ContentType = ContentType.STRING;
+      m_Formula     = null;
     }
     return this;
   }
@@ -680,6 +681,7 @@ public class DoubleCell
       m_Content     = Double.NaN;
       m_Object      = value;
       m_ContentType = ContentType.OBJECT;
+      m_Formula     = null;
     }
     return this;
   }
@@ -823,6 +825,7 @@ public class DoubleCell
       setContent(((Number) value).doubleValue());
     else
       setObject(value);
+    m_Formula = null;
     return this;
   }
 
