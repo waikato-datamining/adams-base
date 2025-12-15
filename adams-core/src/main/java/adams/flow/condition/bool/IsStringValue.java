@@ -55,6 +55,23 @@ public class IsStringValue
   protected String m_Value;
 
   /**
+   * Default constructor.
+   */
+  public IsStringValue() {
+    super();
+  }
+
+  /**
+   * For initializing the condition with the specified value.
+   *
+   * @param value	the value to check
+   */
+  public IsStringValue(String value) {
+    this();
+    setValue(value);
+  }
+
+  /**
    * Returns a string describing the object.
    *
    * @return 			a description suitable for displaying in the gui

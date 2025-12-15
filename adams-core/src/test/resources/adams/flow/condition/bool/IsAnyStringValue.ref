@@ -1,0 +1,15 @@
+--> adams.flow.condition.bool.IsAnyStringValue-out0.txt
+false
+
+--> adams.flow.condition.bool.IsAnyStringValue-out1.txt
+true
+
+--> adams.flow.condition.bool.IsAnyStringValue-out2.txt
+true
+
+--> adams.flow.condition.bool.IsAnyStringValue-out3.txt
+false
+
+--> adams.flow.condition.bool.IsAnyStringValue-out4.txt
+false
+

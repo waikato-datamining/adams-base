@@ -20,6 +20,7 @@
 package adams.flow.condition.bool;
 
 import adams.core.QuickInfoHelper;
+import adams.core.base.BaseObject;
 import adams.core.base.BaseString;
 import adams.flow.core.Actor;
 import adams.flow.core.Token;
@@ -60,6 +61,33 @@ public class IsAnyStringValue
 
   /** the set of values. */
   protected Set<String> m_ValuesSet;
+
+  /**
+   * Default constructor.
+   */
+  public IsAnyStringValue() {
+    super();
+  }
+
+  /**
+   * Initializes the condition with the specified values.
+   *
+   * @param values	the values to use
+   */
+  public IsAnyStringValue(String[] values) {
+    this();
+    setValues((BaseString[]) BaseObject.toObjectArray(values, BaseString.class));
+  }
+
+  /**
+   * Initializes the condition with the specified values.
+   *
+   * @param values	the values to use
+   */
+  public IsAnyStringValue(BaseString[] values) {
+    this();
+    setValues(values);
+  }
 
   /**
    * Returns a string describing the object.
