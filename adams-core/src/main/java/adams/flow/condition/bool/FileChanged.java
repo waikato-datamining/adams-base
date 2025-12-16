@@ -59,6 +59,11 @@ import adams.flow.core.Unknown;
  * &nbsp;&nbsp;&nbsp;default: adams.core.io.filechanged.NoChange
  * </pre>
  *
+ * <pre>-trigger-initial &lt;boolean&gt; (property: triggerInitial)
+ * &nbsp;&nbsp;&nbsp;If enabled, triggers a 'file changed' event the first time the file is checked.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -77,6 +82,9 @@ public class FileChanged
 
   /** the check scheme to use. */
   protected FileChangeMonitor m_Check;
+
+  /** whether to trigger a 'file changed' the first time the file is checked. */
+  protected boolean m_TriggerInitial;
 
   /**
    * Returns a string describing the object.
@@ -110,6 +118,10 @@ public class FileChanged
     m_OptionManager.add(
       "check", "check",
       new NoChange());
+
+    m_OptionManager.add(
+      "trigger-initial", "triggerInitial",
+      false);
   }
 
   /**
@@ -200,6 +212,35 @@ public class FileChanged
   }
 
   /**
+   * Sets whether to trigger a 'file changed' event the first time the file is checked.
+   *
+   * @param value	true if to trigger initially
+   */
+  public void setTriggerInitial(boolean value) {
+    m_TriggerInitial = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to trigger a 'file changed' event the first time the file is checked.
+   *
+   * @return		true if to trigger initially
+   */
+  public boolean getTriggerInitial() {
+    return m_TriggerInitial;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String triggerInitialTipText() {
+    return "If enabled, triggers a 'file changed' event the first time the file is checked.";
+  }
+
+  /**
    * Returns the quick info string to be displayed in the flow editor.
    *
    * @return		the info or null if no info to be displayed
@@ -265,9 +306,12 @@ public class FileChanged
       file = m_File;
 
     if (file.exists() && !file.isDirectory()) {
-      if (!m_Check.isInitialized(file))
+      if (!m_Check.isInitialized(file)) {
 	m_Check.initialize(file);
-      result = m_Check.hasChanged(file);
+	if (m_TriggerInitial)
+	  result = true;
+      }
+      result = result || m_Check.hasChanged(file);
       m_Check.update(file);
     }
 
