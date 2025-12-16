@@ -15,7 +15,7 @@
 
 /*
  * Shortening.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.core;
@@ -32,14 +32,17 @@ public class Shortening {
    * specified number of characters.
    *
    * @param s		the string to (potentially) shorten
-   * @param max		the maximum number of chars
+   * @param max		the maximum number of chars, <= 0 for no limit
    * @return		the processed string
    */
   public static String shortenStart(String s, int max) {
     if (s == null)
       return null;
-    else
-      return (s.length() > max ? ("..." + s.substring(s.length() - max, s.length())) : s);
+
+    if (max <= 0)
+      return s;
+
+    return (s.length() > max ? ("..." + s.substring(s.length() - max, s.length())) : s);
   }
 
   /**
@@ -47,7 +50,7 @@ public class Shortening {
    * specified number of characters.
    *
    * @param s		the string to (potentially) shorten
-   * @param max		the maximum number of chars
+   * @param max		the maximum number of characters, <= 0 for no limit
    * @return		the processed string
    */
   public static String shortenMiddle(String s, int max) {
@@ -56,6 +59,9 @@ public class Shortening {
 
     if (s == null)
       return null;
+
+    if (max <= 0)
+      return s;
 
     if (s.length() > max) {
       len    = max / 2;
@@ -73,12 +79,15 @@ public class Shortening {
    * maximum number of characters.
    *
    * @param s		the string to process
-   * @param max		the maximum number of characters.
+   * @param max		the maximum number of characters, <= 0 for no limit
    * @return		the processed string
    */
   public static String shortenEnd(String s, int max) {
     if (s == null)
       return null;
+
+    if (max <= 0)
+      return s;
 
     if (s.length() > max)
       return s.substring(0, max) + "...";
@@ -90,7 +99,7 @@ public class Shortening {
    * Shortens a string if longer than the maximum.
    *
    * @param s		the string to process
-   * @param max		the maximum number of characters
+   * @param max		the maximum number of characters, <= 0 for no limit
    * @param type	the type of shortening
    * @return		the processed string
    */
