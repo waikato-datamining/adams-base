@@ -15,7 +15,7 @@
 
 /*
  * InvestigatorPanel.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator;
@@ -127,6 +127,9 @@ public class InvestigatorPanel
 
   /** the menu item for enabling/disabling sorting of attribute names. */
   protected JCheckBoxMenuItem m_MenuItemOptionsSortAttributeNames;
+
+  /** the menu item for enabling/disabling strict dataset compatibility. */
+  protected JCheckBoxMenuItem m_MenuItemOptionsStrictCompatibility;
 
   /** the action for clearing all datasets. */
   protected BaseAction m_ActionFileClear;
@@ -544,6 +547,12 @@ public class InvestigatorPanel
       m_MenuItemOptionsSortAttributeNames.setSelected(getProperties().getBoolean("General.SortAttributeNames", true));
       m_MenuItemOptionsSortAttributeNames.addActionListener((ActionEvent e) -> toggleSortAttributeNames());
       menu.add(m_MenuItemOptionsSortAttributeNames);
+
+      // Options/Strict compatibility
+      m_MenuItemOptionsStrictCompatibility = new JCheckBoxMenuItem("Strict compatibility");
+      m_MenuItemOptionsStrictCompatibility.setSelected(getProperties().getBoolean("General.StrictCompatibility", true));
+      m_MenuItemOptionsStrictCompatibility.addActionListener((ActionEvent e) -> toggleStrictCompatibility());
+      menu.add(m_MenuItemOptionsStrictCompatibility);
 
       // Tab
       menu = new JMenu("Tab");
@@ -972,7 +981,7 @@ public class InvestigatorPanel
 	try {
 	  loader.setFile(e.getItem().getFile());
 	  final FileContainer cont = new FileContainer(loader, e.getItem().getFile());
-          cont.getUndo().setEnabled(isUndoEnabled());
+	  cont.getUndo().setEnabled(isUndoEnabled());
 	  updateClassAttribute(cont.getData());
 	  updateRelationName(e.getItem().getFile(), cont.getData());
 	  SwingUtilities.invokeLater(() -> {
@@ -1153,6 +1162,29 @@ public class InvestigatorPanel
     event = new WekaInvestigatorDataEvent(
       this,
       getSortAttributeNames() ? WekaInvestigatorDataEvent.ATTRIBUTE_NAMES_SORTED : WekaInvestigatorDataEvent.ATTRIBUTES_NAMES_UNSORTED);
+    fireDataChange(event);
+  }
+
+  /**
+   * Returns whether to be strict when checking the compatibility of datasets.
+   *
+   * @return		true if to be strict
+   */
+  public boolean getStrictCompatibility() {
+    // make sure that the menu has been built
+    getMenuBar();
+    return m_MenuItemOptionsStrictCompatibility.isSelected();
+  }
+
+  /**
+   * Toggles the "strict compatibility" option.
+   */
+  protected void toggleStrictCompatibility() {
+    WekaInvestigatorDataEvent 	event;
+
+    event = new WekaInvestigatorDataEvent(
+      this,
+      getStrictCompatibility() ? WekaInvestigatorDataEvent.ATTRIBUTES_STRICT_COMPATIBILITY : WekaInvestigatorDataEvent.ATTRIBUTES_LENIENT_COMPATIBILITY);
     fireDataChange(event);
   }
 

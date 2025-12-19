@@ -47,6 +47,10 @@ General.TestingUpdateInterval=1000
 # (true|false)
 General.SortAttributeNames=true
 
+# Whether to be strict when checking the compatibility of datasets or not
+# (true|false)
+General.StrictCompatibility=true
+
 # Whether to show tool tips in the result histories
 # (true|false)
 General.ResultHistoryToolTips=true

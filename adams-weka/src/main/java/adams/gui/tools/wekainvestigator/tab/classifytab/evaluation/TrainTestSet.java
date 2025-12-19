@@ -27,6 +27,7 @@ import adams.core.StoppableUtils;
 import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.instances.Compatibility;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.SelectOptionPanel;
 import adams.gui.core.BaseCheckBox;
@@ -170,6 +171,7 @@ public class TrainTestSet
     Instances 		train;
     Instances 		test;
     Capabilities 	caps;
+    String		comp;
 
     if (!isValidDataIndex(m_ComboBoxTrain))
       return "No train data available!";
@@ -195,18 +197,19 @@ public class TrainTestSet
     test = getOwner().getData().get(m_ComboBoxTest.getSelectedIndex()).getData();
     try {
       if (!caps.test(test)) {
-        if (caps.getFailReason() != null)
-          return caps.getFailReason().getMessage();
-        else
-          return "Classifier cannot handle test data!";
+	if (caps.getFailReason() != null)
+	  return caps.getFailReason().getMessage();
+	else
+	  return "Classifier cannot handle test data!";
       }
     }
     catch (Exception e) {
       return "Classifier cannot handle data: " + e;
     }
 
-    if (!train.equalHeaders(test))
-      return train.equalHeadersMsg(test);
+    comp = Compatibility.isCompatible(train, test, getOwner().getOwner().getStrictCompatibility());
+    if (comp != null)
+      return comp;
 
     return null;
   }
@@ -280,7 +283,7 @@ public class TrainTestSet
     TestingHelper.evaluateModel(m_Model, test, m_Evaluation, getTestingUpdateInterval(), new TestingUpdateListener() {
       @Override
       public void testingUpdateRequested(Instances data, int numTested, int numTotal) {
-        getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
+	getOwner().logMessage("Used " + numTested + "/" + numTotal + " of '" + testCont.getID() + "/" + test.relationName() + "' to evaluate " + OptionUtils.getCommandLine(classifier));
       }
     });
 

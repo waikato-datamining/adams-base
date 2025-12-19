@@ -15,7 +15,7 @@
 
 /*
  * WekaInvestigatorDataEvent.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.event;
@@ -63,6 +63,12 @@ public class WekaInvestigatorDataEvent
 
   /** don't sort attribute names. */
   public final static int ATTRIBUTES_NAMES_UNSORTED = 104;
+
+  /** strict compatibility. */
+  public final static int ATTRIBUTES_STRICT_COMPATIBILITY = 105;
+
+  /** lenient compatibility. */
+  public final static int ATTRIBUTES_LENIENT_COMPATIBILITY = 106;
 
   /** the event type. */
   protected int m_Type;
