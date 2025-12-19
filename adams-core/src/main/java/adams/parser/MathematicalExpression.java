@@ -15,7 +15,7 @@
 
 /*
  * MathematicalExpression.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -30,6 +30,7 @@ import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -424,10 +425,22 @@ public class MathematicalExpression
    */
   @Override
   protected Object initializeSymbol(String name, String value) {
-    if (Utils.isDouble(value))
-      return Double.parseDouble(value);
-    else
-      return value;
+    Object	result;
+
+    result = value;
+
+    try {
+      if (Utils.isDouble(value))
+	result = Double.parseDouble(value);
+      else if (Utils.isBoolean(value))
+	result = Boolean.parseBoolean(value);
+    }
+    catch (Exception e) {
+      result = null;
+      getLogger().log(Level.SEVERE, "Failed to parse the value of symbol '" + name + "': " + value, e);
+    }
+
+    return result;
   }
 
   /**

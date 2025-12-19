@@ -15,7 +15,7 @@
 
 /*
  * BooleanExpression.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -407,10 +407,15 @@ public class BooleanExpression
    */
   @Override
   protected Object initializeSymbol(String name, String value) {
-    Double	result;
+    Object	result;
+
+    result = value;
 
     try {
-      result = Double.parseDouble(value);
+      if (Utils.isDouble(value))
+	result = Double.parseDouble(value);
+      else if (Utils.isBoolean(value))
+	result = Boolean.parseBoolean(value);
     }
     catch (Exception e) {
       result = null;

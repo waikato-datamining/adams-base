@@ -20,6 +20,7 @@
 
 package adams.parser;
 
+import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.input.CsvSpreadSheetReader;
 import adams.data.io.input.SpreadSheetReader;
@@ -518,10 +519,15 @@ public class SpreadSheetFormula
    */
   @Override
   protected Object initializeSymbol(String name, String value) {
-    Double	result;
+    Object	result;
+
+    result = value;
 
     try {
-      result = Double.parseDouble(value);
+      if (Utils.isDouble(value))
+	result = Double.parseDouble(value);
+      else if (Utils.isBoolean(value))
+	result = Boolean.parseBoolean(value);
     }
     catch (Exception e) {
       result = null;

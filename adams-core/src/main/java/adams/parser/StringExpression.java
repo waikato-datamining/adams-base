@@ -403,10 +403,15 @@ public class StringExpression
    */
   @Override
   protected Object initializeSymbol(String name, String value) {
-    Double	result;
+    Object	result;
+
+    result = value;
 
     try {
-      result = Double.parseDouble(value);
+      if (Utils.isDouble(value))
+	result = Double.parseDouble(value);
+      else if (Utils.isBoolean(value))
+	result = Boolean.parseBoolean(value);
     }
     catch (Exception e) {
       result = null;

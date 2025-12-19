@@ -34,6 +34,7 @@ import java_cup.runtime.SymbolFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -566,11 +567,17 @@ public class LookUpUpdate
   protected Object initializeSymbol(String name, String value) {
     Object	result;
 
+    result = value;
+
     try {
-      result = Double.parseDouble(value);
+      if (Utils.isDouble(value))
+	result = Double.parseDouble(value);
+      else if (Utils.isBoolean(value))
+	result = Boolean.parseBoolean(value);
     }
     catch (Exception e) {
-      result = value;
+      result = null;
+      getLogger().log(Level.SEVERE, "Failed to parse the value of symbol '" + name + "': " + value, e);
     }
 
     return result;
