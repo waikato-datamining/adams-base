@@ -1002,4 +1002,15 @@ public class ParameterPanel
       m_HelpWrappers.get(i).setHelpVisible(value && !m_HelpWrappers.get(i).getHelp().isEmpty());
     update();
   }
+
+  /**
+   * Returns whether the help is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isHelpVisible() {
+    if (m_HelpWrappers.isEmpty())
+      return false;
+    return m_HelpWrappers.get(0).isHelpVisible();
+  }
 }
