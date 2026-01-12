@@ -1600,6 +1600,15 @@ public class PropertiesParameterPanel
   }
 
   /**
+   * Returns whether any help has been supplied.
+   *
+   * @return		true if at least one parameter has help associated
+   */
+  public boolean hasAnyHelp() {
+    return !m_Help.isEmpty();
+  }
+
+  /**
    * Returns whether the help is visible.
    *
    * @return		true if visible
