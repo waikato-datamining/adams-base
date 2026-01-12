@@ -1578,14 +1578,43 @@ public class PropertiesParameterPanel
   }
 
   /**
-   * Toggles the help display.
+   * Toggles the help display and packs the parent dialog/frame.
    */
-  protected void toggleHelp() {
+  public void toggleHelp() {
+    toggleHelp(true);
+  }
+
+  /**
+   * Toggles the help display.
+   *
+   * @param pack	whether to pack the parent dialog
+   */
+  public void toggleHelp(boolean pack) {
     m_PanelProperties.showHelp(m_ButtonHelp.isSelected());
-    if (getParentDialog() != null)
-      getParentDialog().pack();
-    else if (getParentFrame() != null)
-      getParentFrame().pack();
+    if (pack) {
+      if (getParentDialog() != null)
+	getParentDialog().pack();
+      else if (getParentFrame() != null)
+	getParentFrame().pack();
+    }
+  }
+
+  /**
+   * Returns whether the help is visible.
+   *
+   * @return		true if visible
+   */
+  public boolean isHelpVisible() {
+    return m_PanelProperties.isHelpVisible();
+  }
+
+  /**
+   * Changes the visibility of all the help panels with actual text.
+   *
+   * @param value	true if to make visible
+   */
+  public void showHelp(boolean value) {
+    m_PanelProperties.showHelp(value);
   }
 
   /**
