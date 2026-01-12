@@ -15,7 +15,7 @@
 
 /*
  * AbstractWizardPage.java
- * Copyright (C) 2013-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
@@ -71,6 +71,9 @@ public abstract class AbstractWizardPage
   /** the action to perform when proceeding. */
   protected ProceedAction m_ProceedAction;
 
+  /** the bottom panel. */
+  protected JPanel m_PanelBottom;
+
   /** the panel for the buttons. */
   protected JPanel m_PanelButtons;
 
@@ -105,8 +108,6 @@ public abstract class AbstractWizardPage
    */
   @Override
   protected void initGUI() {
-    JPanel	panel;
-
     super.initGUI();
     
     setLayout(new BorderLayout());
@@ -118,19 +119,21 @@ public abstract class AbstractWizardPage
     m_ScrollPaneDescription = new BaseScrollPane(m_TextDescription);
     add(m_ScrollPaneDescription, BorderLayout.NORTH);
 
-    m_PanelButtons = new JPanel(new BorderLayout());
-    add(m_PanelButtons, BorderLayout.SOUTH);
+    m_PanelBottom = new JPanel(new BorderLayout());
+    add(m_PanelBottom, BorderLayout.SOUTH);
 
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    m_PanelButtons.add(panel, BorderLayout.WEST);
+    m_PanelButtons = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    m_PanelBottom.add(m_PanelButtons, BorderLayout.WEST);
 
     m_ButtonLoad = new BaseButton(ImageManager.getIcon("open.gif"));
     m_ButtonLoad.addActionListener((ActionEvent e) -> loadProperties());
-    panel.add(m_ButtonLoad);
+    m_ButtonLoad.setToolTipText("Load the properties for this page from disk");
+    m_PanelButtons.add(m_ButtonLoad);
 
     m_ButtonSave = new BaseButton(ImageManager.getIcon("save.gif"));
     m_ButtonSave.addActionListener((ActionEvent e) -> saveProperties());
-    panel.add(m_ButtonSave);
+    m_ButtonSave.setToolTipText("Save the current properties of this page to disk");
+    m_PanelButtons.add(m_ButtonSave);
   }
 
   /**
