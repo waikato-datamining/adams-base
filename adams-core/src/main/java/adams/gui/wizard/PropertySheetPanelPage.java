@@ -63,7 +63,7 @@ public class PropertySheetPanelPage
   }
   
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {

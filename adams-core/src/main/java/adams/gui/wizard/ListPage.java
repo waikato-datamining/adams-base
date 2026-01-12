@@ -86,7 +86,7 @@ public class ListPage
   }
   
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {

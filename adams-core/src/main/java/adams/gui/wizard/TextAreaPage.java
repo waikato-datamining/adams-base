@@ -61,7 +61,7 @@ public class TextAreaPage
   }
 
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {

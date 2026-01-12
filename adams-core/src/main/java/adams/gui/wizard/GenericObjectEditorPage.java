@@ -63,7 +63,7 @@ public class GenericObjectEditorPage
   }
   
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {

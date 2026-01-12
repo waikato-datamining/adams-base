@@ -65,7 +65,7 @@ public class SelectDirectoryPage
   }
 
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
