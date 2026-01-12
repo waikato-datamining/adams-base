@@ -20,10 +20,12 @@
 
 package adams.flow.transformer;
 
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.StoppableUtils;
 import adams.core.Utils;
 import adams.core.option.OptionUtils;
+import adams.data.instances.Compatibility;
 import adams.flow.container.WekaEvaluationContainer;
 import adams.flow.container.WekaTrainTestSetContainer;
 import adams.flow.core.Token;
@@ -121,13 +123,18 @@ import weka.core.Instances;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then only the attribute types must match, not also the names.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaTrainTestSetEvaluator
   extends AbstractCallableWekaClassifierEvaluator
-  implements JobRunnerSupporter {
+  implements JobRunnerSupporter, LenientModeSupporter {
 
   public static class EvaluateJob
     extends AbstractJob {
@@ -149,6 +156,9 @@ public class WekaTrainTestSetEvaluator
     /** for collecting the output. */
     protected AbstractOutput m_Output;
 
+    /** whether to be lenient. */
+    protected boolean m_Lenient;
+
     /**
      * Initializes the job.
      *
@@ -157,14 +167,16 @@ public class WekaTrainTestSetEvaluator
      * @param test 		the test data
      * @param eval 		the evaluation object to use
      * @param output 		for collecting the output
+     * @param lenient		whether to be lenient
      */
-    public EvaluateJob(Classifier classifier, Instances train, Instances test, StoppableEvaluation eval, AbstractOutput output) {
+    public EvaluateJob(Classifier classifier, Instances train, Instances test, StoppableEvaluation eval, AbstractOutput output, boolean lenient) {
       super();
       m_Classifier = classifier;
       m_Train      = train;
       m_Test       = test;
       m_Evaluation = eval;
       m_Output     = output;
+      m_Lenient    = lenient;
     }
 
     /**
@@ -184,8 +196,8 @@ public class WekaTrainTestSetEvaluator
 	return "No test data!";
       if (m_Test.classIndex() == -1)
 	return "No class attribute set in test data!";
-      if (!m_Train.equalHeaders(m_Test))
-	return m_Train.equalHeadersMsg(m_Test);
+      if (Compatibility.isCompatible(m_Train, m_Test, !m_Lenient) != null)
+	return Compatibility.isCompatible(m_Train, m_Test, !m_Lenient);
       if (m_Evaluation == null)
 	return "No evaluation object set!";
       if (m_Output == null)
@@ -255,6 +267,9 @@ public class WekaTrainTestSetEvaluator
   /** whether to offload train/evaluate onto a JobRunnerInstance. */
   protected boolean m_PreferJobRunner;
 
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
+
   /** the JobRunnerInstance to use. */
   protected transient JobRunnerInstance m_JobRunnerInstance;
 
@@ -286,6 +301,10 @@ public class WekaTrainTestSetEvaluator
 
     m_OptionManager.add(
       "prefer-jobrunner", "preferJobRunner",
+      false);
+
+    m_OptionManager.add(
+      "lenient", "lenient",
       false);
   }
 
@@ -331,6 +350,35 @@ public class WekaTrainTestSetEvaluator
   }
 
   /**
+   * Sets whether lenient, ie only attribute types must match.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie only attribute types must match.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then only the attribute types must match, not also the names.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		<!-- flow-accepts-start -->adams.flow.container.WekaTrainTestSetContainer.class<!-- flow-accepts-end -->
@@ -350,6 +398,7 @@ public class WekaTrainTestSetEvaluator
 
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "preferJobRunner", m_PreferJobRunner, "jobrunner", ", ");
+    result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
 
     return result;
   }
@@ -403,7 +452,7 @@ public class WekaTrainTestSetEvaluator
       m_CurrentEvaluation = new StoppableEvaluation(train);
       m_CurrentEvaluation.setDiscardPredictions(m_DiscardPredictions);
       if (m_JobRunnerInstance != null) {
-	job = new EvaluateJob(m_CurrentClassifier, train, test, m_CurrentEvaluation, m_Output);
+	job = new EvaluateJob(m_CurrentClassifier, train, test, m_CurrentEvaluation, m_Output, m_Lenient);
 	result = m_JobRunnerInstance.executeJob(job);
 	if (result != null)
 	  throw new Exception(result);

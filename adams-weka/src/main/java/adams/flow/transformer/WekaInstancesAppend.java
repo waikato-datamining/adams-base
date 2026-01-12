@@ -15,12 +15,15 @@
 
 /*
  * WekaInstancesAppend.java
- * Copyright (C) 2012 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.LenientModeSupporter;
+import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
+import adams.data.instances.Compatibility;
 import adams.flow.core.Token;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -48,45 +51,61 @@ import java.io.File;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: WekaInstancesAppend
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then only the attribute types must match, not also the names.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaInstancesAppend
-  extends AbstractTransformer {
+  extends AbstractTransformer
+  implements LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -268487303904639474L;
+
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
 
   /**
    * Returns a string describing the object.
@@ -96,7 +115,57 @@ public class WekaInstancesAppend
   @Override
   public String globalInfo() {
     return
-        "Creates one large dataset by appending all one after the other.";
+      "Creates one large dataset by appending all one after the other.";
+  }
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "lenient", "lenient",
+      false);
+  }
+
+  /**
+   * Sets whether lenient, ie only attribute types must match.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie only attribute types must match.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then only the attribute types must match, not also the names.";
+  }
+
+  /**
+   * Returns a quick info about the actor, which will be displayed in the GUI.
+   *
+   * @return		null if no info available, otherwise short string
+   */
+  @Override
+  public String getQuickInfo() {
+    return QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", "");
   }
 
   /**
@@ -155,7 +224,7 @@ public class WekaInstancesAppend
     else {
       throw new IllegalStateException("Unhandled input type: " + m_InputToken.getPayload().getClass());
     }
-    
+
     // load data?
     if (files != null) {
       inst = new Instances[files.length];
@@ -171,10 +240,10 @@ public class WekaInstancesAppend
     }
 
     // test compatibility
-    if (result == null) {
+    if ((result == null) && (inst != null)) {
       for (i = 0; i < inst.length - 1; i++) {
 	for (n = i + 1; n < inst.length; n++) {
-	  if ((msg = inst[i].equalHeadersMsg(inst[n])) != null) {
+	  if ((msg = Compatibility.isCompatible(inst[i], inst[n], !m_Lenient)) != null) {
 	    result = "Dataset #" + (i+1) + " and #" + (n+1) + " are not compatible:\n" + msg;
 	    break;
 	  }
@@ -185,11 +254,11 @@ public class WekaInstancesAppend
     }
 
     // append
-    if (result == null) {
+    if ((result == null) && (inst != null)) {
       full     = new Instances(inst[0]);
       relation = new StringBuilder(inst[0].relationName());
       for (i = 1; i < inst.length; i++) {
-	relation.append("+" + inst[i].relationName());
+	relation.append("+").append(inst[i].relationName());
 	for (Instance row: inst[i]) {
 	  values = row.toDoubleArray();
 	  for (n = 0; n < values.length; n++) {
@@ -208,7 +277,7 @@ public class WekaInstancesAppend
       full.setRelationName(relation.toString());
       m_OutputToken = new Token(full);
     }
-    
+
     return result;
   }
 }

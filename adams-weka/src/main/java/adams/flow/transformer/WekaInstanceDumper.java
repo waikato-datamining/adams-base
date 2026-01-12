@@ -15,16 +15,18 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
 import adams.core.BufferSupporter;
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
+import adams.data.instances.Compatibility;
 import adams.flow.core.FlushSupporter;
 import adams.flow.core.Token;
 import weka.core.Attribute;
@@ -131,7 +133,7 @@ import java.util.List;
  */
 public class WekaInstanceDumper
   extends AbstractTransformer
-  implements BufferSupporter, FlushSupporter  {
+  implements BufferSupporter, FlushSupporter, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 5071747277597147724L;
@@ -168,6 +170,9 @@ public class WekaInstanceDumper
 
   /** whether to check the header. */
   protected boolean m_CheckHeader;
+
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
 
   /** the output prefix. */
   protected PlaceholderFile m_OutputPrefix;
@@ -214,6 +219,10 @@ public class WekaInstanceDumper
 
     m_OptionManager.add(
       "check", "checkHeader",
+      false);
+
+    m_OptionManager.add(
+      "lenient", "lenient",
       false);
 
     m_OptionManager.add(
@@ -279,6 +288,8 @@ public class WekaInstanceDumper
     if (value != null)
       result += value;
 
+    result += QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient", ", ");
+
     return result;
   }
 
@@ -311,6 +322,35 @@ public class WekaInstanceDumper
     return
       "Whether to check the headers - if the headers change, the Instance "
 	+ "object gets dumped into a new file.";
+  }
+
+  /**
+   * Sets whether lenient, ie only attribute types must match.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie only attribute types must match.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then only the attribute types must match, not also the names.";
   }
 
   /**
@@ -821,7 +861,7 @@ public class WekaInstanceDumper
     }
     else {
       if (m_CheckHeader) {
-	if (!m_Header.equalHeaders(newHeader)) {
+	if (Compatibility.isCompatible(m_Header, newHeader, !m_Lenient) != null) {
 	  m_Counter++;
 	  m_Header = new Instances(newHeader, 0);
 	  append  = false;

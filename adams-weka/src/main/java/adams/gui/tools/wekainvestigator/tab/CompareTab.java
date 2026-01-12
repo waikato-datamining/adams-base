@@ -15,7 +15,7 @@
 
 /*
  * CompareTab.java
- * Copyright (C) 2018 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -25,6 +25,7 @@ import adams.core.Range;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
 import adams.data.instance.InstancePoint;
+import adams.data.instances.Compatibility;
 import adams.data.report.DataType;
 import adams.data.report.Field;
 import adams.data.report.Report;
@@ -436,10 +437,10 @@ public class CompareTab
       public void changedUpdate(DocumentEvent e) {
 	update();
       }
-      protected void update() {
+      private void update() {
         String text = textArea.getText().trim();
         int lines = 0;
-        if (text.length() > 0)
+        if (!text.isEmpty())
           lines = text.split("\n").length;
         labelNumItems.setText(lines + " IDs");
         buttonCopy.setEnabled(lines > 0);
@@ -502,7 +503,7 @@ public class CompareTab
     range.setData(data);
     indices.clear();
     indices.addAll(range.getIntIndices());
-    if (indices.size() == 0)
+    if (indices.isEmpty())
       return result;
     remove = new Remove();
     remove.setAttributeIndicesArray(indices.toArray());
@@ -533,7 +534,7 @@ public class CompareTab
     firstStructure  = getStructure(m_FirstData, m_TextFirstRange.getText(), m_FirstAttributes);
     secondStructure = getStructure(m_SecondData, m_TextSecondRange.getText(), m_SecondAttributes);
 
-    structure = firstStructure.equalHeadersMsg(secondStructure);
+    structure = Compatibility.isCompatible(firstStructure, secondStructure, getOwner().getStrictCompatibility());
     if (structure == null)
       structure = "Same structure";
     m_TextStructure.setText(structure);
@@ -811,7 +812,7 @@ public class CompareTab
     changed    = false;
     indexFirst = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxFirstDataset.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelFirstDataset)) {
-      m_ModelFirstDataset = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelFirstDataset = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxFirstDataset.setModel(m_ModelFirstDataset);
       if ((indexFirst == -1) && (m_ModelFirstDataset.getSize() > 0)) {
 	m_ComboBoxFirstDataset.setSelectedIndex(0);
@@ -823,7 +824,7 @@ public class CompareTab
     }
     indexSecond = DatasetHelper.indexOfDataset(getOwner().getData(), m_ComboBoxSecondDataset.getSelectedItem());
     if (DatasetHelper.hasDataChanged(datasets, m_ModelSecondDataset)) {
-      m_ModelSecondDataset = new DefaultComboBoxModel<>(datasets.toArray(new String[datasets.size()]));
+      m_ModelSecondDataset = new DefaultComboBoxModel<>(datasets.toArray(new String[0]));
       m_ComboBoxSecondDataset.setModel(m_ModelSecondDataset);
       if ((indexSecond == -1) && (m_ModelSecondDataset.getSize() > 0)) {
 	m_ComboBoxSecondDataset.setSelectedIndex(0);

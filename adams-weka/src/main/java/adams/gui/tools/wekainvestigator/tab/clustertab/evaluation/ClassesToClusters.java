@@ -23,6 +23,7 @@ package adams.gui.tools.wekainvestigator.tab.clustertab.evaluation;
 import adams.core.MessageCollection;
 import adams.core.ObjectCopyHelper;
 import adams.core.option.OptionUtils;
+import adams.data.instances.Compatibility;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.ParameterPanel;
@@ -173,8 +174,8 @@ public class ClassesToClusters
       }
     }
 
-    if (!train.equalHeaders(test))
-      return train.equalHeadersMsg(test);
+    if (Compatibility.isCompatible(train, test, getOwner().getOwner().getStrictCompatibility()) != null)
+      return Compatibility.isCompatible(train, test, getOwner().getOwner().getStrictCompatibility());
 
     return null;
   }

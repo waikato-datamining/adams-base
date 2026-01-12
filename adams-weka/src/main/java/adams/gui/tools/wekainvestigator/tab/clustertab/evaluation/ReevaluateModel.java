@@ -25,6 +25,7 @@ import adams.core.ObjectCopyHelper;
 import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
+import adams.data.instances.Compatibility;
 import adams.data.spreadsheet.MetaData;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseComboBox;
@@ -206,8 +207,8 @@ public class ReevaluateModel
 
     data = getOwner().getData().get(m_ComboBoxDatasets.getSelectedIndex()).getData();
     if (m_Header != null) {
-      if (!data.equalHeaders(m_Header))
-	return data.equalHeadersMsg(m_Header);
+      if (Compatibility.isCompatible(data, m_Header, getOwner().getOwner().getStrictCompatibility()) != null)
+	return Compatibility.isCompatible(data, m_Header, getOwner().getOwner().getStrictCompatibility());
     }
 
     caps = m_Model.getCapabilities();

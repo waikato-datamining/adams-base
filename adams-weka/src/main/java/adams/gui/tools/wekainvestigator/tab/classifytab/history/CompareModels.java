@@ -13,14 +13,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * CompareModels.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab.classifytab.history;
 
 import adams.core.MessageCollection;
+import adams.data.instances.Compatibility;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -47,7 +48,6 @@ import java.awt.event.ActionEvent;
  * Compares the predictions of two models.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class CompareModels
   extends AbstractHistoryPopupMenuItem {
@@ -219,8 +219,8 @@ public class CompareModels
 	&& (item0.getEvaluation().predictions() != null)
 	&& (item1.hasEvaluation())
 	&& (item1.getEvaluation().predictions() != null)
-	&& (item0.getEvaluation().getHeader().equalHeaders(item0.getEvaluation().getHeader()))
-	&& (item0.getEvaluation().numInstances() == item0.getEvaluation().numInstances())
+	&& (item0.getEvaluation().numInstances() == item1.getEvaluation().numInstances())
+	&& (Compatibility.isCompatible(item0.getEvaluation().getHeader(), item1.getEvaluation().getHeader(), getOwner().getOwner().getStrictCompatibility()) == null)
 	&& item0.getEvaluation().getHeader().classAttribute().isNumeric();
     }
 

@@ -15,13 +15,15 @@
 
 /*
  * WekaInstanceBuffer.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
+import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableName;
+import adams.data.instances.Compatibility;
 import adams.event.VariableChangeEvent;
 import adams.flow.core.Token;
 import adams.flow.core.VariableMonitor;
@@ -60,6 +62,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -83,12 +86,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-operation &lt;INSTANCES_TO_INSTANCE|INSTANCE_TO_INSTANCES&gt; (property: operation)
@@ -99,6 +104,11 @@ import java.util.List;
  * <pre>-check &lt;boolean&gt; (property: checkHeader)
  * &nbsp;&nbsp;&nbsp;Whether to check the headers - if the headers change, the Instance object
  * &nbsp;&nbsp;&nbsp;gets dumped into a new file (in case of INSTANCE_TO_INSTANCES).
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then only the attribute types must match, not also the names.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
@@ -125,8 +135,8 @@ import java.util.List;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class WekaInstanceBuffer
-    extends AbstractTransformer
-    implements VariableMonitor {
+  extends AbstractTransformer
+  implements VariableMonitor, LenientModeSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 6774529845778672623L;
@@ -162,6 +172,9 @@ public class WekaInstanceBuffer
   /** whether to check the header. */
   protected boolean m_CheckHeader;
 
+  /** whether to be lenient. */
+  protected boolean m_Lenient;
+
   /** the interval of when to output the Instances object. */
   protected int m_Interval;
 
@@ -182,13 +195,13 @@ public class WekaInstanceBuffer
   @Override
   public String globalInfo() {
     return
-	"Can act in two different ways:\n"
-	    + "1. Instance -> Instances (row -> dataset)\n"
-	    + "Buffers weka.core.Instance objects and outputs a weka.core.Instances "
-	    + "object, whenever the interval condition has been met.\n"
-	    + "2. Instances -> Instance (dataset -> row)\n"
-	    + "Outputs all the weka.core.Instance objects that the incoming "
-	    + "weka.core.Instances object contains.";
+      "Can act in two different ways:\n"
+	+ "1. Instance -> Instances (row -> dataset)\n"
+	+ "Buffers weka.core.Instance objects and outputs a weka.core.Instances "
+	+ "object, whenever the interval condition has been met.\n"
+	+ "2. Instances -> Instance (dataset -> row)\n"
+	+ "Outputs all the weka.core.Instance objects that the incoming "
+	+ "weka.core.Instances object contains.";
   }
 
   /**
@@ -199,24 +212,28 @@ public class WekaInstanceBuffer
     super.defineOptions();
 
     m_OptionManager.add(
-	"operation", "operation",
-	Operation.INSTANCE_TO_INSTANCES);
+      "operation", "operation",
+      Operation.INSTANCE_TO_INSTANCES);
 
     m_OptionManager.add(
-	"check", "checkHeader",
-	false);
+      "check", "checkHeader",
+      false);
 
     m_OptionManager.add(
-	"interval", "interval",
-	1, 1, null);
+      "lenient", "lenient",
+      false);
 
     m_OptionManager.add(
-	"clear-buffer", "clearBuffer",
-	false);
+      "interval", "interval",
+      1, 1, null);
 
     m_OptionManager.add(
-	"var-name", "variableName",
-	new VariableName());
+      "clear-buffer", "clearBuffer",
+      false);
+
+    m_OptionManager.add(
+      "var-name", "variableName",
+      new VariableName());
   }
 
   /**
@@ -234,6 +251,7 @@ public class WekaInstanceBuffer
 
     options = new ArrayList<>();
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "checkHeader", m_CheckHeader, "check header"));
+    QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "lenient", m_Lenient, "lenient"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "clearBuffer", m_ClearBuffer, "clear"));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "variableName", m_VariableName.paddedValue()));
     result += QuickInfoHelper.flatten(options);
@@ -297,8 +315,37 @@ public class WekaInstanceBuffer
    */
   public String checkHeaderTipText() {
     return
-	"Whether to check the headers - if the headers change, the Instance "
-	    + "object gets dumped into a new file (in case of " + Operation.INSTANCE_TO_INSTANCES + ").";
+      "Whether to check the headers - if the headers change, the Instance "
+	+ "object gets dumped into a new file (in case of " + Operation.INSTANCE_TO_INSTANCES + ").";
+  }
+
+  /**
+   * Sets whether lenient, ie only attribute types must match.
+   *
+   * @param value	true if lenient
+   */
+  public void setLenient(boolean value) {
+    m_Lenient = value;
+    reset();
+  }
+
+  /**
+   * Returns whether lenient, ie only attribute types must match.
+   *
+   * @return		true if lenient
+   */
+  public boolean getLenient() {
+    return m_Lenient;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String lenientTipText() {
+    return "If enabled, then only the attribute types must match, not also the names.";
   }
 
   /**
@@ -328,8 +375,8 @@ public class WekaInstanceBuffer
    */
   public String intervalTipText() {
     return
-	"The interval at which to output the Instances object (in case of "
-	    + Operation.INSTANCE_TO_INSTANCES + ").";
+      "The interval at which to output the Instances object (in case of "
+	+ Operation.INSTANCE_TO_INSTANCES + ").";
   }
 
   /**
@@ -359,8 +406,8 @@ public class WekaInstanceBuffer
    */
   public String clearBufferTipText() {
     return
-	"Whether to clear the buffer once the dataset has been forwarded "
-	    + "(in case of " + Operation.INSTANCE_TO_INSTANCES + ").";
+      "Whether to clear the buffer once the dataset has been forwarded "
+	+ "(in case of " + Operation.INSTANCE_TO_INSTANCES + ").";
   }
 
   /**
@@ -534,7 +581,7 @@ public class WekaInstanceBuffer
 	inst = insts[n];
 
 	if ((m_Buffer != null) && m_CheckHeader) {
-	  if (!m_Buffer.equalHeaders(inst.dataset())) {
+	  if (Compatibility.isCompatible(m_Buffer, inst.dataset(), !m_Lenient) != null) {
 	    getLogger().info("Header changed, resetting buffer");
 	    m_Buffer = null;
 	  }
@@ -572,8 +619,8 @@ public class WekaInstanceBuffer
 	  else {
 	    if (!(inst instanceof DenseInstance)) {
 	      getLogger().severe(
-		  "Unhandled instance class (" + inst.getClass().getName() + "), "
-		      + "defaulting to " + DenseInstance.class.getName());
+		"Unhandled instance class (" + inst.getClass().getName() + "), "
+		  + "defaulting to " + DenseInstance.class.getName());
 	    }
 	    inst = new DenseInstance(inst.weight(), values);
 	  }

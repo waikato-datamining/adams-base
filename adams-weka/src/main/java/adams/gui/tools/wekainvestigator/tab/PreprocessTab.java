@@ -15,7 +15,7 @@
 
 /*
  * PreprocessTab.java
- * Copyright (C) 2016-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2025 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.wekainvestigator.tab;
@@ -27,6 +27,7 @@ import adams.core.SerializationHelper;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingLevel;
 import adams.core.option.OptionUtils;
+import adams.data.instances.Compatibility;
 import adams.gui.chooser.FileChooserPanel;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -390,7 +391,7 @@ public class PreprocessTab
     errors = new MessageCollection();
     for (int i = 1; i < indices.length; i++) {
       other = getData().get(indices[i]);
-      msg   = first.getData().equalHeadersMsg(other.getData());
+      msg   = Compatibility.isCompatible(first.getData(), other.getData(), getOwner().getStrictCompatibility());
       if (msg != null)
 	errors.add("Dataset " + other.getID() + " is not compatible:\n" + msg);
     }
