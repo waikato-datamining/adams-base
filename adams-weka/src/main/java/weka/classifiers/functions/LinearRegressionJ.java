@@ -46,54 +46,50 @@ import java.util.Vector;
 
 /**
  <!-- globalinfo-start -->
- * Class for using linear regression for prediction.
- * Uses the Akaike criterion for model selection, and is able to deal with
- * weighted instances.
- * <p/>
+ * Class for using linear regression for prediction. Uses the Akaike criterion for model selection, and is able to deal with weighted instances.
+ * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are:
- * <p/>
+ * Valid options are: <p>
  *
- * <pre>
- * -S &lt;number of selection method&gt;
+ * <pre> -S &lt;number of selection method&gt;
  *  Set the attribute selection method to use. 1 = None, 2 = Greedy.
- *  (default 0 = M5' method)
- * </pre>
+ *  (default 0 = M5' method)</pre>
  *
- * <pre>
- * -C
- *  Do not try to eliminate colinear attributes.
- * </pre>
+ * <pre> -C
+ *  Do not try to eliminate colinear attributes.</pre>
  *
- * <pre>
- * -R &lt;double&gt;
+ * <pre> -R &lt;double&gt;
  *  Set ridge parameter (default 1.0e-8).
  * </pre>
  *
- * <pre>
- * -minimal
+ * <pre> -minimal
  *  Conserve memory, don't keep dataset header and means/stdevs.
- *  Model cannot be printed out if this option is enabled. (default: keep data)
- * </pre>
+ *  Model cannot be printed out if this option is enabled. (default: keep data)</pre>
  *
- * <pre>
- * -additional-stats
- *  Output additional statistics.
- * </pre>
+ * <pre> -additional-stats
+ *  Output additional statistics.</pre>
  *
- * <pre>
- * -output-debug-info
+ * <pre> -disable-preprocessing
+ *  Disable preprocessing.</pre>
+ *
+ * <pre> -disable-input-scaling
+ *  Disable input scaling.</pre>
+ *
+ * <pre> -output-debug-info
  *  If set, classifier is run in debug mode and
- *  may output additional info to the console
- * </pre>
+ *  may output additional info to the console</pre>
  *
- * <pre>
- * -do-not-check-capabilities
+ * <pre> -do-not-check-capabilities
  *  If set, classifier capabilities are not checked before classifier is built
- *  (use with caution).
- * </pre>
+ *  (use with caution).</pre>
+ *
+ * <pre> -num-decimal-places
+ *  The number of decimal places for the output of numbers in the model (default 4).</pre>
+ *
+ * <pre> -batch-size
+ *  The desired batch size for batch prediction  (default 100).</pre>
  *
  <!-- options-end -->
  *
@@ -104,85 +100,102 @@ import java.util.Vector;
  */
 public class LinearRegressionJ extends StoppableClassifier implements
   OptionHandler, WeightedInstancesHandler {
+  /** for serialization */
+  private static final long serialVersionUID = -3364580862046573747L;
 
   /** Attribute selection method: M5 method */
   public static final int SELECTION_M5 = 0;
+
   /** Attribute selection method: No attribute selection */
   public static final int SELECTION_NONE = 1;
+
   /** Attribute selection method: Greedy method */
   public static final int SELECTION_GREEDY = 2;
+
   /** Attribute selection methods */
   public static final Tag[] TAGS_SELECTION = {
     new Tag(SELECTION_NONE, "No attribute selection"),
     new Tag(SELECTION_M5, "M5 method"),
     new Tag(SELECTION_GREEDY, "Greedy method") };
-  /** for serialization */
-  static final long serialVersionUID = -3364580862046573747L;
+
   /** Array for storing coefficients of linear regression. */
   protected double[] m_Coefficients;
+
   /** Which attributes are relevant? */
   protected boolean[] m_SelectedAttributes;
+
   /** Variable for storing transformed training data. */
   protected Instances m_TransformedData;
+
   /** The filter for removing missing values. */
   protected ReplaceMissingValues m_MissingFilter;
-  /**
-   * The filter storing the transformation from nominal to binary attributes.
-   */
+
+  /** The filter storing the transformation from nominal to binary attributes. */
   protected NominalToBinary m_TransformFilter;
+
   /** The standard deviations of the class attribute */
   protected double m_ClassStdDev;
+
   /** The mean of the class attribute */
   protected double m_ClassMean;
+
   /** The index of the class attribute */
   protected int m_ClassIndex;
+
   /** The attributes means */
   protected double[] m_Means;
+
   /** The attribute standard deviations */
   protected double[] m_StdDevs;
-  /**
-   * Whether to output additional statistics such as std. dev. of coefficients
-   * and t-stats
-   */
-  protected boolean m_outputAdditionalStats;
+
+  /** Whether to output additional statistics such as std. dev. of coefficients and t-stats */
+  protected boolean m_OutputAdditionalStats;
+
   /** The current attribute selection method */
   protected int m_AttributeSelection;
+
   /** Try to eliminate correlated attributes? */
   protected boolean m_EliminateColinearAttributes = true;
+
   /** whether to perform preprocessing. */
   protected boolean m_EnablePreprocessing = true;
+
   /** whether to scale the input. */
   protected boolean m_EnableInputScaling = true;
+
   /** The ridge parameter */
   protected double m_Ridge = 1.0e-8;
+
   /** Conserve memory? */
   protected boolean m_Minimal = false;
+
   /** Model already built? */
   protected boolean m_ModelBuilt = false;
-  /** The degrees of freedom of the regression model */
-  private int m_df;
-  /** The R-squared value of the regression model */
-  private double m_RSquared;
-  /** The adjusted R-squared value of the regression model */
-  private double m_RSquaredAdj;
-  /** The F-statistic of the regression model */
-  private double m_FStat;
-  /** Array for storing the standard error of each coefficient */
-  private double[] m_StdErrorOfCoef;
-  /** Array for storing the t-statistic of each coefficient */
-  private double[] m_TStats;
 
-  public LinearRegressionJ() {
-    m_numDecimalPlaces = 4;
-  }
+  /** The degrees of freedom of the regression model */
+  protected int m_DF;
+
+  /** The R-squared value of the regression model */
+  protected double m_RSquared;
+
+  /** The adjusted R-squared value of the regression model */
+  protected double m_RSquaredAdj;
+
+  /** The F-statistic of the regression model */
+  protected double m_FStat;
+
+  /** Array for storing the standard error of each coefficient */
+  protected double[] m_StdErrorOfCoef;
+
+  /** Array for storing the t-statistic of each coefficient */
+  protected double[] m_TStats;
 
   /**
-   * Generates a linear regression function predictor.
-   *
-   * @param argv the options
+   * Default constructor.
    */
-  public static void main(String argv[]) {
-    runClassifier(new LinearRegressionJ(), argv);
+  public LinearRegressionJ() {
+    super();
+    setNumDecimalPlaces(4);
   }
 
   /**
@@ -238,7 +251,7 @@ public class LinearRegressionJ extends StoppableClassifier implements
     // can classifier handle the data?
     getCapabilities().testWithFail(data);
 
-    if (m_outputAdditionalStats) {
+    if (m_OutputAdditionalStats) {
       // check that the instances weights are all 1
       // because the RegressionAnalysis class does
       // not handle weights
@@ -292,9 +305,8 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	m_SelectedAttributes[j] = true; // Turn attributes on for a start
 	m_Means[j] = data.meanOrMode(j);
 	m_StdDevs[j] = Math.sqrt(data.variance(j));
-	if (m_StdDevs[j] == 0) {
+	if (m_StdDevs[j] == 0)
 	  m_SelectedAttributes[j] = false;
-	}
       }
     }
 
@@ -304,33 +316,25 @@ public class LinearRegressionJ extends StoppableClassifier implements
     // Perform the regression
     findBestModel();
 
-    if (m_outputAdditionalStats) {
+    if (m_OutputAdditionalStats) {
       // find number of coefficients, degrees of freedom
       int k = 1;
       for (int i = 0; i < data.numAttributes(); i++) {
 	if (i != data.classIndex()) {
-	  if (m_SelectedAttributes[i]) {
+	  if (m_SelectedAttributes[i])
 	    k++;
-	  }
 	}
       }
-      m_df = m_TransformedData.numInstances() - k;
+      m_DF = m_TransformedData.numInstances() - k;
 
       // calculate R^2 and F-stat
       double se = calculateSE(m_SelectedAttributes, m_Coefficients);
       m_RSquared = RegressionAnalysis.calculateRSquared(m_TransformedData, se);
-      m_RSquaredAdj =
-	RegressionAnalysis.calculateAdjRSquared(m_RSquared,
-	  m_TransformedData.numInstances(), k);
-      m_FStat =
-	RegressionAnalysis.calculateFStat(m_RSquared,
-	  m_TransformedData.numInstances(), k);
+      m_RSquaredAdj = RegressionAnalysis.calculateAdjRSquared(m_RSquared, m_TransformedData.numInstances(), k);
+      m_FStat = RegressionAnalysis.calculateFStat(m_RSquared, m_TransformedData.numInstances(), k);
       // calculate std error of coefficients and t-stats
-      m_StdErrorOfCoef =
-	RegressionAnalysis.calculateStdErrorOfCoef(m_TransformedData,
-	  m_SelectedAttributes, se, m_TransformedData.numInstances(), k);
-      m_TStats =
-	RegressionAnalysis.calculateTStats(m_Coefficients, m_StdErrorOfCoef, k);
+      m_StdErrorOfCoef = RegressionAnalysis.calculateStdErrorOfCoef(m_TransformedData, m_SelectedAttributes, se, m_TransformedData.numInstances(), k);
+      m_TStats = RegressionAnalysis.calculateTStats(m_Coefficients, m_StdErrorOfCoef, k);
     }
 
     // Save memory
@@ -338,7 +342,8 @@ public class LinearRegressionJ extends StoppableClassifier implements
       m_TransformedData = null;
       m_Means = null;
       m_StdDevs = null;
-    } else {
+    }
+    else {
       m_TransformedData = new Instances(data, 0);
     }
 
@@ -369,102 +374,6 @@ public class LinearRegressionJ extends StoppableClassifier implements
 
     // Calculate the dependent variable from the regression model
     return regressionPrediction(transformedInstance, m_SelectedAttributes, m_Coefficients);
-  }
-
-  /**
-   * Outputs the linear regression model as a string.
-   *
-   * @return the model as string
-   */
-  @Override
-  public String toString() {
-    if (!m_ModelBuilt) {
-      return "Linear Regression: No model built yet.";
-    }
-
-    if (m_Minimal) {
-      return "Linear Regression: Model built.";
-    }
-
-    try {
-      StringBuilder text = new StringBuilder();
-      int column = 0;
-      boolean first = true;
-
-      text.append("\nLinear Regression Model\n\n");
-
-      text.append(m_TransformedData.classAttribute().name() + " =\n\n");
-      for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
-	if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
-	  if (!first) {
-	    text.append(" +\n");
-	  } else {
-	    first = false;
-	  }
-	  text.append(Utils.doubleToString(m_Coefficients[column], 12,
-	    m_numDecimalPlaces) + " * ");
-	  text.append(m_TransformedData.attribute(i).name());
-	  column++;
-	}
-      }
-      text.append(" +\n"
-		    + Utils.doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces));
-
-      if (m_outputAdditionalStats) {
-	int maxAttLength = 0;
-	for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
-	  if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
-	    if (m_TransformedData.attribute(i).name().length() > maxAttLength) {
-	      maxAttLength = m_TransformedData.attribute(i).name().length();
-	    }
-	  }
-	}
-	maxAttLength += 3;
-	if (maxAttLength < "Variable".length() + 3) {
-	  maxAttLength = "Variable".length() + 3;
-	}
-
-	text.append("\n\nRegression Analysis:\n\n"
-		      + Utils.padRight("Variable", maxAttLength)
-		      + "  Coefficient     SE of Coef        t-Stat");
-	column = 0;
-	for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
-	  if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
-	    text.append("\n"
-			  + Utils.padRight(m_TransformedData.attribute(i).name(),
-	      maxAttLength));
-	    text.append(Utils.doubleToString(m_Coefficients[column], 12,
-	      m_numDecimalPlaces));
-	    text.append("   "
-			  + Utils.doubleToString(m_StdErrorOfCoef[column], 12,
-	      m_numDecimalPlaces));
-	    text.append("   "
-			  + Utils.doubleToString(m_TStats[column], 12, m_numDecimalPlaces));
-	    column++;
-	  }
-	}
-	text.append(Utils.padRight("\nconst", maxAttLength + 1)
-		      + Utils
-			  .doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces));
-	text.append("   "
-		      + Utils.doubleToString(m_StdErrorOfCoef[column], 12,
-	  m_numDecimalPlaces));
-	text.append("   "
-		      + Utils.doubleToString(m_TStats[column], 12, m_numDecimalPlaces));
-
-	text.append("\n\nDegrees of freedom = " + Integer.toString(m_df));
-	text.append("\nR^2 value = "
-		      + Utils.doubleToString(m_RSquared, m_numDecimalPlaces));
-	text.append("\nAdjusted R^2 = "
-		      + Utils.doubleToString(m_RSquaredAdj, 5));
-	text.append("\nF-statistic = "
-		      + Utils.doubleToString(m_FStat, m_numDecimalPlaces));
-      }
-
-      return text.toString();
-    } catch (Exception e) {
-      return "Can't print Linear Regression!";
-    }
   }
 
   /**
@@ -518,13 +427,11 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return the coefficients for this linear model
    */
   public double[] coefficients() {
-
     double[] coefficients = new double[m_SelectedAttributes.length + 1];
     int counter = 0;
     for (int i = 0; i < m_SelectedAttributes.length; i++) {
-      if ((m_SelectedAttributes[i]) && ((i != m_ClassIndex))) {
+      if ((m_SelectedAttributes[i]) && ((i != m_ClassIndex)))
 	coefficients[i] = m_Coefficients[counter++];
-      }
     }
     coefficients[m_SelectedAttributes.length] = m_Coefficients[counter];
     return coefficients;
@@ -614,18 +521,16 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return Value of Ridge.
    */
   public double getRidge() {
-
     return m_Ridge;
   }
 
   /**
    * Set the value of Ridge.
    *
-   * @param newRidge Value to assign to Ridge.
+   * @param value Value to assign to Ridge.
    */
-  public void setRidge(double newRidge) {
-
-    m_Ridge = newRidge;
+  public void setRidge(double value) {
+    m_Ridge = value;
   }
 
   /**
@@ -644,20 +549,17 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return Value of EliminateColinearAttributes.
    */
   public boolean getEliminateColinearAttributes() {
-
     return m_EliminateColinearAttributes;
   }
 
   /**
    * Set the value of EliminateColinearAttributes.
    *
-   * @param newEliminateColinearAttributes Value to assign to
+   * @param value Value to assign to
    *          EliminateColinearAttributes.
    */
-  public void setEliminateColinearAttributes(
-    boolean newEliminateColinearAttributes) {
-
-    m_EliminateColinearAttributes = newEliminateColinearAttributes;
+  public void setEliminateColinearAttributes(boolean value) {
+    m_EliminateColinearAttributes = value;
   }
 
   /**
@@ -691,20 +593,17 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return the method to use.
    */
   public SelectedTag getAttributeSelectionMethod() {
-
     return new SelectedTag(m_AttributeSelection, TAGS_SELECTION);
   }
 
   /**
    * Sets the method used to select attributes for use in the linear regression.
    *
-   * @param method the attribute selection method to use.
+   * @param value the attribute selection method to use.
    */
-  public void setAttributeSelectionMethod(SelectedTag method) {
-
-    if (method.getTags() == TAGS_SELECTION) {
-      m_AttributeSelection = method.getSelectedTag().getID();
-    }
+  public void setAttributeSelectionMethod(SelectedTag value) {
+    if (value.getTags() == TAGS_SELECTION)
+      m_AttributeSelection = value.getSelectedTag().getID();
   }
 
   /**
@@ -745,8 +644,7 @@ public class LinearRegressionJ extends StoppableClassifier implements
    *         explorer/experimenter gui
    */
   public String outputAdditionalStatsTipText() {
-    return "Output additional statistics (such as "
-	     + "std deviation of coefficients and t-statistics)";
+    return "Output additional statistics (such as std deviation of coefficients and t-statistics)";
   }
 
   /**
@@ -756,17 +654,17 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return true if additional stats are to be output
    */
   public boolean getOutputAdditionalStats() {
-    return m_outputAdditionalStats;
+    return m_OutputAdditionalStats;
   }
 
   /**
    * Set whether to output additional statistics (such as std. deviation of
    * coefficients and t-statistics
    *
-   * @param additional true if additional stats are to be output
+   * @param value true if additional stats are to be output
    */
-  public void setOutputAdditionalStats(boolean additional) {
-    m_outputAdditionalStats = additional;
+  public void setOutputAdditionalStats(boolean value) {
+    m_OutputAdditionalStats = value;
   }
 
   /**
@@ -864,15 +762,13 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @param coefficients an array of coefficients for the regression model
    * @return true if an attribute was removed
    */
-  protected boolean deselectColinearAttributes(boolean[] selectedAttributes,
-					       double[] coefficients) {
-
+  protected boolean deselectColinearAttributes(boolean[] selectedAttributes, double[] coefficients) {
     double maxSC = 1.5;
-    int maxAttr = -1, coeff = 0;
+    int maxAttr = -1;
+    int coeff = 0;
     for (int i = 0; i < selectedAttributes.length; i++) {
       if (selectedAttributes[i]) {
-	double SC =
-	  Math.abs(coefficients[coeff] * m_StdDevs[i] / m_ClassStdDev);
+	double SC = Math.abs(coefficients[coeff] * m_StdDevs[i] / m_ClassStdDev);
 	if (SC > maxSC) {
 	  maxSC = SC;
 	  maxAttr = i;
@@ -882,10 +778,8 @@ public class LinearRegressionJ extends StoppableClassifier implements
     }
     if (maxAttr >= 0) {
       selectedAttributes[maxAttr] = false;
-      if (m_Debug) {
-	System.out.println("Deselected colinear attribute:" + (maxAttr + 1)
-			     + " with standardised coefficient: " + maxSC);
-      }
+      if (m_Debug)
+	System.out.println("Deselected colinear attribute:" + (maxAttr + 1) + " with standardised coefficient: " + maxSC);
       return true;
     }
     return false;
@@ -898,44 +792,38 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @throws Exception if regression can't be done
    */
   protected void findBestModel() throws Exception {
-
     // For the weighted case we still use numInstances in
     // the calculation of the Akaike criterion.
     int numInstances = m_TransformedData.numInstances();
 
-    if (m_Debug) {
-      System.out.println((new Instances(m_TransformedData, 0)).toString());
-    }
+    if (m_Debug)
+      System.out.println((new Instances(m_TransformedData, 0)));
 
     // Perform a regression for the full model, and remove colinear attributes
     do {
       if (m_Stopped)
 	throw new StoppedException();
       m_Coefficients = doRegression(m_SelectedAttributes);
-    } while (m_EliminateColinearAttributes
-	       && deselectColinearAttributes(m_SelectedAttributes, m_Coefficients));
+    }
+    while (m_EliminateColinearAttributes && deselectColinearAttributes(m_SelectedAttributes, m_Coefficients));
 
     // Figure out current number of attributes + 1. (We treat this model
     // as the full model for the Akaike-based methods.)
     int numAttributes = 1;
     for (boolean m_SelectedAttribute : m_SelectedAttributes) {
-      if (m_SelectedAttribute) {
+      if (m_SelectedAttribute)
 	numAttributes++;
-      }
     }
 
     double fullMSE = calculateSE(m_SelectedAttributes, m_Coefficients);
     double akaike = (numInstances - numAttributes) + 2 * numAttributes;
-    if (m_Debug) {
+    if (m_Debug)
       System.out.println("Initial Akaike value: " + akaike);
-    }
 
     boolean improved;
     int currentNumAttributes = numAttributes;
     switch (m_AttributeSelection) {
-
       case SELECTION_GREEDY:
-
 	// Greedy attribute removal
 	do {
 	  boolean[] currentSelected = m_SelectedAttributes.clone();
@@ -947,28 +835,21 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	      throw new StoppedException();
 
 	    if (currentSelected[i]) {
-
 	      // Calculate the akaike rating without this attribute
 	      currentSelected[i] = false;
 	      double[] currentCoeffs = doRegression(currentSelected);
 	      double currentMSE = calculateSE(currentSelected, currentCoeffs);
-	      double currentAkaike =
-		currentMSE / fullMSE * (numInstances - numAttributes) + 2
-									  * currentNumAttributes;
-	      if (m_Debug) {
+	      double currentAkaike = currentMSE / fullMSE * (numInstances - numAttributes) + 2 * currentNumAttributes;
+	      if (m_Debug)
 		System.out.println("(akaike: " + currentAkaike);
-	      }
 
 	      // If it is better than the current best
 	      if (currentAkaike < akaike) {
-		if (m_Debug) {
-		  System.err.println("Removing attribute " + (i + 1)
-				       + " improved Akaike: " + currentAkaike);
-		}
+		if (m_Debug)
+		  System.err.println("Removing attribute " + (i + 1) + " improved Akaike: " + currentAkaike);
 		improved = true;
 		akaike = currentAkaike;
-		System.arraycopy(currentSelected, 0, m_SelectedAttributes, 0,
-		  m_SelectedAttributes.length);
+		System.arraycopy(currentSelected, 0, m_SelectedAttributes, 0, m_SelectedAttributes.length);
 		m_Coefficients = currentCoeffs;
 	      }
 	      currentSelected[i] = true;
@@ -978,7 +859,6 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	break;
 
       case SELECTION_M5:
-
 	// Step through the attributes removing the one with the smallest
 	// standardised coefficient until no improvement in Akaike
 	do {
@@ -993,8 +873,7 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	      throw new StoppedException();
 
 	    if (m_SelectedAttributes[i]) {
-	      double SC =
-		Math.abs(m_Coefficients[coeff] * m_StdDevs[i] / m_ClassStdDev);
+	      double SC = Math.abs(m_Coefficients[coeff] * m_StdDevs[i] / m_ClassStdDev);
 	      if ((coeff == 0) || (SC < minSC)) {
 		minSC = SC;
 		minAttr = i;
@@ -1008,23 +887,19 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	    m_SelectedAttributes[minAttr] = false;
 	    double[] currentCoeffs = doRegression(m_SelectedAttributes);
 	    double currentMSE = calculateSE(m_SelectedAttributes, currentCoeffs);
-	    double currentAkaike =
-	      currentMSE / fullMSE * (numInstances - numAttributes) + 2
-									* currentNumAttributes;
-	    if (m_Debug) {
+	    double currentAkaike = currentMSE / fullMSE * (numInstances - numAttributes) + 2 * currentNumAttributes;
+	    if (m_Debug)
 	      System.out.println("(akaike: " + currentAkaike);
-	    }
 
 	    // If it is better than the current best
 	    if (currentAkaike < akaike) {
-	      if (m_Debug) {
-		System.err.println("Removing attribute " + (minAttr + 1)
-				     + " improved Akaike: " + currentAkaike);
-	      }
+	      if (m_Debug)
+		System.err.println("Removing attribute " + (minAttr + 1) + " improved Akaike: " + currentAkaike);
 	      improved = true;
 	      akaike = currentAkaike;
 	      m_Coefficients = currentCoeffs;
-	    } else {
+	    }
+	    else {
 	      m_SelectedAttributes[minAttr] = true;
 	    }
 	  }
@@ -1045,14 +920,10 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return the mean squared error on the training data
    * @throws Exception if there is a missing class value in the training data
    */
-  protected double calculateSE(boolean[] selectedAttributes,
-			       double[] coefficients) throws Exception {
-
+  protected double calculateSE(boolean[] selectedAttributes, double[] coefficients) throws Exception {
     double mse = 0;
     for (int i = 0; i < m_TransformedData.numInstances(); i++) {
-      double prediction =
-	regressionPrediction(m_TransformedData.instance(i), selectedAttributes,
-	  coefficients);
+      double prediction = regressionPrediction(m_TransformedData.instance(i), selectedAttributes, coefficients);
       double error = prediction - m_TransformedData.instance(i).classValue();
       mse += error * error;
     }
@@ -1071,9 +942,7 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @throws Exception if the class attribute of the input instance is not
    *           assigned
    */
-  protected double regressionPrediction(Instance transformedInstance,
-					boolean[] selectedAttributes, double[] coefficients) throws Exception {
-
+  protected double regressionPrediction(Instance transformedInstance, boolean[] selectedAttributes, double[] coefficients) throws Exception {
     double result = 0;
     int column = 0;
     for (int j = 0; j < transformedInstance.numAttributes(); j++) {
@@ -1096,14 +965,11 @@ public class LinearRegressionJ extends StoppableClassifier implements
    * @return an array of coefficients for the linear regression model.
    * @throws Exception if an error occurred during the regression.
    */
-  protected double[] doRegression(boolean[] selectedAttributes)
-    throws Exception {
-
+  protected double[] doRegression(boolean[] selectedAttributes) throws Exception {
     if (m_Debug) {
       System.out.print("doRegression(");
-      for (boolean selectedAttribute : selectedAttributes) {
+      for (boolean selectedAttribute : selectedAttributes)
 	System.out.print(" " + selectedAttribute);
-      }
       System.out.println(" )");
     }
     int numAttributes = 0;
@@ -1127,15 +993,15 @@ public class LinearRegressionJ extends StoppableClassifier implements
 	for (int j = 0; j < m_TransformedData.numAttributes(); j++) {
 	  if (j == m_ClassIndex) {
 	    dependent.set(i, 0, inst.classValue() * sqrt_weight);
-	  } else {
+	  }
+	  else {
 	    if (selectedAttributes[j]) {
 	      double value = inst.value(j) - m_Means[j];
 
 	      // We only need to do this if we want to
 	      // scale the input
-	      if (m_EnableInputScaling) {
+	      if (m_EnableInputScaling)
 		value /= m_StdDevs[j];
-	      }
 	      independent.set(i, column, value * sqrt_weight);
 	      column++;
 	    }
@@ -1149,10 +1015,8 @@ public class LinearRegressionJ extends StoppableClassifier implements
     // by the ridge constant.)
     double[] coefficients = new double[numAttributes + 1];
     if (numAttributes > 0) {
-      double[] coeffsWithoutIntercept =
-	independent.regression(dependent, m_Ridge).getCoefficients();
-      System.arraycopy(coeffsWithoutIntercept, 0, coefficients, 0,
-	numAttributes);
+      double[] coeffsWithoutIntercept = independent.regression(dependent, m_Ridge).getCoefficients();
+      System.arraycopy(coeffsWithoutIntercept, 0, coefficients, 0, numAttributes);
     }
     coefficients[numAttributes] = m_ClassMean;
 
@@ -1160,21 +1024,95 @@ public class LinearRegressionJ extends StoppableClassifier implements
     int column = 0;
     for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
       if ((i != m_TransformedData.classIndex()) && (selectedAttributes[i])) {
-
 	// We only need to do this if we have scaled the
 	// input.
-	if (m_EnableInputScaling) {
+	if (m_EnableInputScaling)
 	  coefficients[column] /= m_StdDevs[i];
-	}
 
 	// We have centred the input
-	coefficients[coefficients.length - 1] -=
-	  coefficients[column] * m_Means[i];
+	coefficients[coefficients.length - 1] -= coefficients[column] * m_Means[i];
 	column++;
       }
     }
 
     return coefficients;
+  }
+
+  /**
+   * Outputs the linear regression model as a string.
+   *
+   * @return the model as string
+   */
+  @Override
+  public String toString() {
+    if (!m_ModelBuilt)
+      return "Linear Regression: No model built yet.";
+
+    if (m_Minimal)
+      return "Linear Regression: Model built.";
+
+    try {
+      StringBuilder text = new StringBuilder();
+      int column = 0;
+      boolean first = true;
+
+      text.append("\nLinear Regression Model\n\n");
+
+      text.append(m_TransformedData.classAttribute().name()).append(" =\n\n");
+      for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
+	if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
+	  if (!first) {
+	    text.append(" +\n");
+	  } else {
+	    first = false;
+	  }
+	  text.append(Utils.doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces)).append(" * ");
+	  text.append(m_TransformedData.attribute(i).name());
+	  column++;
+	}
+      }
+      text.append(" +\n").append(Utils.doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces));
+
+      if (m_OutputAdditionalStats) {
+	int maxAttLength = 0;
+	for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
+	  if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
+	    if (m_TransformedData.attribute(i).name().length() > maxAttLength) {
+	      maxAttLength = m_TransformedData.attribute(i).name().length();
+	    }
+	  }
+	}
+	maxAttLength += 3;
+	if (maxAttLength < "Variable".length() + 3) {
+	  maxAttLength = "Variable".length() + 3;
+	}
+
+	text.append("\n\nRegression Analysis:\n\n").append(Utils.padRight("Variable", maxAttLength)).append("  Coefficient     SE of Coef        t-Stat");
+	column = 0;
+	for (int i = 0; i < m_TransformedData.numAttributes(); i++) {
+	  if ((i != m_ClassIndex) && (m_SelectedAttributes[i])) {
+	    text.append("\n").append(Utils.padRight(m_TransformedData.attribute(i).name(), maxAttLength));
+	    text.append(Utils.doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces));
+	    text.append("   ").append(Utils.doubleToString(m_StdErrorOfCoef[column], 12, m_numDecimalPlaces));
+	    text.append("   ").append(Utils.doubleToString(m_TStats[column], 12, m_numDecimalPlaces));
+	    column++;
+	  }
+	}
+	text.append(Utils.padRight("\nconst", maxAttLength + 1)).append(Utils.doubleToString(m_Coefficients[column], 12, m_numDecimalPlaces));
+	text.append("   ").append(Utils.doubleToString(m_StdErrorOfCoef[column], 12, m_numDecimalPlaces));
+	text.append("   ").append(Utils.doubleToString(m_TStats[column], 12, m_numDecimalPlaces));
+
+	text.append("\n\nDegrees of freedom = ").append(m_DF);
+	text.append("\nR^2 value = ").append(Utils.doubleToString(m_RSquared, m_numDecimalPlaces));
+	text.append("\nAdjusted R^2 = ").append(Utils.doubleToString(m_RSquaredAdj, 5));
+	text.append("\nF-statistic = ").append(Utils.doubleToString(m_FStat, m_numDecimalPlaces));
+      }
+
+      return text.toString();
+    }
+    catch (Exception e) {
+      return "Can't print Linear Regression!";
+    }
   }
 
   /**
@@ -1184,6 +1122,15 @@ public class LinearRegressionJ extends StoppableClassifier implements
    */
   @Override
   public String getRevision() {
-    return RevisionUtils.extract("$Revision: 12246 $");
+    return RevisionUtils.extract("$Revision: 1 $");
+  }
+
+  /**
+   * Generates a linear regression function predictor.
+   *
+   * @param args the options
+   */
+  public static void main(String[] args) {
+    runClassifier(new LinearRegressionJ(), args);
   }
 }
