@@ -13,24 +13,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ParameterPanelPage.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.wizard;
 
 import adams.core.Properties;
+import adams.gui.core.BaseToggleButton;
+import adams.gui.core.ImageManager;
 import adams.gui.core.PropertiesParameterPanel;
 
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 
 /**
  * Wizard page that use a {@link PropertiesParameterPanel} for displaying
  * the parameters. Parameters can be set using {@link Properties} object.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ParameterPanelPage
   extends AbstractWizardPage {
@@ -40,7 +42,10 @@ public class ParameterPanelPage
   
   /** the parameter panel for displaying the parameters. */
   protected PropertiesParameterPanel m_PanelParameter;
-  
+
+  /** the button for toggling the help. */
+  protected BaseToggleButton m_ButtonHelp;
+
   /**
    * Default constructor.
    */
@@ -59,15 +64,20 @@ public class ParameterPanelPage
   }
   
   /**
-   * Initializes the widets.
+   * Initializes the widgets.
    */
   @Override
   protected void initGUI() {
     super.initGUI();
-    
+
     m_PanelParameter = new PropertiesParameterPanel();
     m_PanelParameter.addChangeListener((ChangeEvent e) -> updateButtons());
     add(m_PanelParameter, BorderLayout.CENTER);
+
+    m_ButtonHelp = new BaseToggleButton(ImageManager.getIcon("help"));
+    m_ButtonHelp.addActionListener((ActionEvent e) -> m_PanelParameter.showHelp(m_ButtonHelp.isSelected()));
+    m_ButtonHelp.setToolTipText("Display/hide help for parameters");
+    m_PanelButtons.add(m_ButtonHelp);
   }
   
   /**
@@ -78,12 +88,20 @@ public class ParameterPanelPage
   public PropertiesParameterPanel getParameterPanel() {
     return m_PanelParameter;
   }
-  
+
   /**
-   * Sets the parameters from the properties object.
-   * 
-   * @param value	the parameters to set
+   * Updates the wizard's buttons.
    */
+  public void updateButtons() {
+    super.updateButtons();
+    m_ButtonHelp.setVisible(m_PanelParameter.hasAnyHelp());
+  }
+
+    /**
+     * Sets the parameters from the properties object.
+     *
+     * @param value	the parameters to set
+     */
   public void setProperties(Properties value) {
     m_PanelParameter.setProperties(value);
     updateButtons();
