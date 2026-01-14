@@ -15,7 +15,7 @@
 
 /*
  * PasswordDialog.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
@@ -51,6 +51,9 @@ public class PasswordDialog
 
   /** the text field for entering the password. */
   protected BasePasswordFieldWithButton m_TextPassword;
+
+  /** the panel for the comments. */
+  protected JPanel m_PanelComments;
 
   /** the comments box. */
   protected BaseTextArea m_TextComments;
@@ -183,13 +186,13 @@ public class PasswordDialog
     panel.add(m_TextPassword);
 
     // the comments
-    panel = new JPanel(new BorderLayout());
-    panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    getContentPane().add(panel, BorderLayout.CENTER);
+    m_PanelComments = new JPanel(new BorderLayout());
+    m_PanelComments.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+    getContentPane().add(m_PanelComments, BorderLayout.CENTER);
     m_TextComments = new BaseTextArea();
     m_TextComments.setEditable(false);
-    m_TextComments.setVisible(false);
-    panel.add(new BaseScrollPane(m_TextComments), BorderLayout.CENTER);
+    m_PanelComments.setVisible(false);
+    m_PanelComments.add(new BaseScrollPane(m_TextComments), BorderLayout.CENTER);
 
     pack();
   }
@@ -239,7 +242,7 @@ public class PasswordDialog
     if (value == null)
       value = "";
     m_TextComments.setText(value);
-    m_TextComments.setVisible(!value.trim().isEmpty());
+    m_PanelComments.setVisible(!value.trim().isEmpty());
     pack();
   }
 
