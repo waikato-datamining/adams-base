@@ -20,6 +20,7 @@
 
 package adams.flow.standalone;
 
+import adams.core.EnvironmentPasswordSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.Placeholders;
@@ -39,7 +40,7 @@ import adams.flow.core.StopMode;
  */
 public abstract class AbstractDatabaseConnection
   extends AbstractStandalone
-  implements PasswordPrompter, InteractiveActor {
+  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;
@@ -58,6 +59,9 @@ public abstract class AbstractDatabaseConnection
 
   /** whether to prompt the user for a password if none provided. */
   protected boolean m_PromptForPassword;
+
+  /** the environment variable to obtain the password from. */
+  protected String m_PasswordEnvVar;
 
   /** whether to stop the flow if canceled. */
   protected boolean m_StopFlowIfCanceled;
@@ -95,6 +99,10 @@ public abstract class AbstractDatabaseConnection
     m_OptionManager.add(
       "password", "password",
       new BasePassword()).dontOutputDefaultValue();
+
+    m_OptionManager.add(
+      "password-env-var", "passwordEnvVar",
+      "");
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",
@@ -243,6 +251,38 @@ public abstract class AbstractDatabaseConnection
    */
   public String passwordTipText() {
     return "The password of the database user.";
+  }
+
+  /**
+   * Sets the environment variable to obtaining the password from.
+   *
+   * @param value	the variable
+   */
+  @Override
+  public void setPasswordEnvVar(String value) {
+    m_PasswordEnvVar = value;
+    reset();
+  }
+
+  /**
+   * Returns the environment variable to obtaining the password from.
+   *
+   * @return 		the variable
+   */
+  @Override
+  public String getPasswordEnvVar() {
+    return m_PasswordEnvVar;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String passwordEnvVarTipText() {
+    return "The environment variable to obtain the password from, before potentially prompting for it; ignored if empty.";
   }
 
   /**
@@ -491,7 +531,9 @@ public abstract class AbstractDatabaseConnection
 
     m_ActualPassword = m_Password;
     conn             = null;
-    result           = PasswordHelper.prompt(this);
+    result           = PasswordHelper.fromEnvVar(this);
+    if ((result == null) && (m_ActualPassword.isEmpty()))
+      result = PasswordHelper.prompt(this);
 
     if (result == null) {
       conn = getConnection();

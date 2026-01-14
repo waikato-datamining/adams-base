@@ -21,6 +21,7 @@
 
 package adams.flow.standalone;
 
+import adams.core.EnvironmentPasswordSupporter;
 import adams.core.License;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
@@ -196,7 +197,7 @@ import java.util.logging.Level;
 )
 public class SSHConnection
   extends AbstractStandalone
-  implements TechnicalInformationHandler, SSHSessionProvider, PasswordPrompter, InteractiveActor {
+  implements TechnicalInformationHandler, SSHSessionProvider, PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -239,6 +240,9 @@ public class SSHConnection
 
   /** the actual SMTP password to use. */
   protected BasePassword m_ActualPassword;
+
+  /** the environment variable to obtain the password from. */
+  protected String m_PasswordEnvVar;
 
   /** whether to prompt the user for a password if none provided. */
   protected boolean m_PromptForPassword;
@@ -346,6 +350,10 @@ public class SSHConnection
     m_OptionManager.add(
       "x-port", "XPort",
       6000, 1, 65535);
+
+    m_OptionManager.add(
+      "password-env-var", "passwordEnvVar",
+      "");
 
     m_OptionManager.add(
       "prompt-for-password", "promptForPassword",
@@ -771,6 +779,38 @@ public class SSHConnection
   }
 
   /**
+   * Sets the environment variable to obtaining the password from.
+   *
+   * @param value	the variable
+   */
+  @Override
+  public void setPasswordEnvVar(String value) {
+    m_PasswordEnvVar = value;
+    reset();
+  }
+
+  /**
+   * Returns the environment variable to obtaining the password from.
+   *
+   * @return 		the variable
+   */
+  @Override
+  public String getPasswordEnvVar() {
+    return m_PasswordEnvVar;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String passwordEnvVarTipText() {
+    return "The environment variable to obtain the password from, before potentially prompting for it; ignored if empty.";
+  }
+
+  /**
    * Sets whether to prompt for a password if none currently provided.
    *
    * @param value	true if to prompt for a password
@@ -1080,7 +1120,9 @@ public class SSHConnection
           throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
 
-      result = PasswordHelper.prompt(this);
+      result = PasswordHelper.fromEnvVar(this);
+      if ((result == null) && (m_ActualPassword.isEmpty()))
+	result = PasswordHelper.prompt(this);
 
       if (result == null) {
         if (!m_Host.isEmpty()) {

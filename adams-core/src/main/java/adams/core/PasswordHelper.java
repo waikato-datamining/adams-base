@@ -38,16 +38,40 @@ import java.awt.Dialog.ModalityType;
 public class PasswordHelper {
 
   /**
+   * Obtains the password from the specified environment variable.
+   *
+   * @param context	the context for obtaining the env var name
+   * @return		null if no env var specified or successfully obtained, otherwise error message
+   * @param <T>		the type of context
+   */
+  public static <T extends EnvironmentPasswordSupporter> String fromEnvVar(T context) {
+    String	result;
+    String	password;
+
+    result = null;
+
+    if (!context.getPasswordEnvVar().isEmpty()) {
+      password = System.getenv(context.getPasswordEnvVar());
+      if (password == null)
+	result = "Environment variable for password not set: " + context.getPasswordEnvVar();
+      else
+	context.setActualPassword(new BasePassword(password));
+    }
+
+    return result;
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
    * @param <T>		the type of actor
    */
-  public static <T extends InteractiveActor & PasswordPrompter> String interact(T prompter) {
+  public static <T extends InteractiveActor & PasswordPrompter> String interact(T context) {
     BasePassword password;
 
-    password = promptPassword(prompter);
-    prompter.setActualPassword(password);
+    password = promptPassword(context);
+    context.setActualPassword(password);
     if (password == null)
       return InteractiveActor.INTERACTION_CANCELED;
     else
@@ -60,15 +84,15 @@ public class PasswordHelper {
    * @return		null if successfully interacted, otherwise error message
    * @param <T>		the type of actor
    */
-  public static <T extends InteractiveActor & PasswordPrompter> String interactHeadless(T prompter) {
+  public static <T extends InteractiveActor & PasswordPrompter> String interactHeadless(T context) {
     String		result;
     BasePassword 	password;
 
     result   = InteractiveActor.INTERACTION_CANCELED;
-    password = ConsoleHelper.enterPassword("Please enter password (" + prompter.getName() + "):");
+    password = ConsoleHelper.enterPassword("Please enter password (" + context.getName() + "):");
     if (password != null) {
       result = null;
-      prompter.setActualPassword(password);
+      context.setActualPassword(password);
     }
 
     return result;
@@ -77,38 +101,38 @@ public class PasswordHelper {
   /**
    * Performs the prompting, if necessary.
    *
-   * @param prompter	the actor that triggered the prompt
+   * @param context	the actor that triggered the prompt
    * @return		null if successfully prompted, otherwise error message
    * @param <T>		the type of actor
    */
-  public static <T extends InteractiveActor & PasswordPrompter> String prompt(T prompter) {
+  public static <T extends InteractiveActor & PasswordPrompter> String prompt(T context) {
     String	result;
     String	msg;
 
     result = null;
 
-    if (prompter.getPromptForPassword() && (prompter.getActualPassword().getValue().isEmpty())) {
-      if (!prompter.isHeadless()) {
-	msg = prompter.doInteract();
+    if (context.getPromptForPassword() && (context.getActualPassword().getValue().isEmpty())) {
+      if (!context.isHeadless()) {
+	msg = context.doInteract();
 	if (msg != null) {
-	  if (prompter.getStopFlowIfCanceled()) {
-	    if ((prompter.getCustomStopMessage() == null) || (prompter.getCustomStopMessage().trim().isEmpty()))
-	      StopHelper.stop(prompter, prompter.getStopMode(), "Flow canceled: " + prompter.getFullName());
+	  if (context.getStopFlowIfCanceled()) {
+	    if ((context.getCustomStopMessage() == null) || (context.getCustomStopMessage().trim().isEmpty()))
+	      StopHelper.stop(context, context.getStopMode(), "Flow canceled: " + context.getFullName());
 	    else
-	      StopHelper.stop(prompter, prompter.getStopMode(), prompter.getCustomStopMessage());
-	    result = prompter.getStopMessage();
+	      StopHelper.stop(context, context.getStopMode(), context.getCustomStopMessage());
+	    result = context.getStopMessage();
 	  }
 	}
       }
-      else if (prompter.supportsHeadlessInteraction()) {
-	msg = prompter.doInteractHeadless();
+      else if (context.supportsHeadlessInteraction()) {
+	msg = context.doInteractHeadless();
 	if (msg != null) {
-	  if (prompter.getStopFlowIfCanceled()) {
-	    if ((prompter.getCustomStopMessage() == null) || (prompter.getCustomStopMessage().trim().isEmpty()))
-	      StopHelper.stop(prompter, prompter.getStopMode(), "Flow canceled: " + prompter.getFullName());
+	  if (context.getStopFlowIfCanceled()) {
+	    if ((context.getCustomStopMessage() == null) || (context.getCustomStopMessage().trim().isEmpty()))
+	      StopHelper.stop(context, context.getStopMode(), "Flow canceled: " + context.getFullName());
 	    else
-	      StopHelper.stop(prompter, prompter.getStopMode(), prompter.getCustomStopMessage());
-	    result = prompter.getStopMessage();
+	      StopHelper.stop(context, context.getStopMode(), context.getCustomStopMessage());
+	    result = context.getStopMessage();
 	  }
 	}
       }

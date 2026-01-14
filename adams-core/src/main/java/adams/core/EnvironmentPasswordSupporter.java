@@ -14,32 +14,32 @@
  */
 
 /*
- * PasswordPrompter.java
- * Copyright (C) 2019-2026 University of Waikato, Hamilton, New Zealand
+ * EnvironmentPasswordSupporter.java
+ * Copyright (C) 2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
 /**
- * Interface for classes that prompt the user to enter a password.
+ * Interface for classes that handle a password.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
-public interface PasswordPrompter
-  extends PasswordSupporter, ActualPasswordSupporter {
+public interface EnvironmentPasswordSupporter
+  extends ActualPasswordSupporter {
 
   /**
-   * Sets whether to prompt for a password if none currently provided.
-   * 
-   * @param value	true if to prompt for a password
+   * Sets the environment variable to obtaining the password from.
+   *
+   * @param value	the variable
    */
-  public void setPromptForPassword(boolean value);
-  
+  public void setPasswordEnvVar(String value);
+
   /**
-   * Returns whether to prompt for a password if none currently provided.
-   * 
-   * @return		true if to prompt for a password
+   * Returns the environment variable to obtaining the password from.
+   *
+   * @return 		the variable
    */
-  public boolean getPromptForPassword();
+  public String getPasswordEnvVar();
 
   /**
    * Returns the tip text for this property.
@@ -47,5 +47,5 @@ public interface PasswordPrompter
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String promptForPasswordTipText();
+  public String passwordEnvVarTipText();
 }
