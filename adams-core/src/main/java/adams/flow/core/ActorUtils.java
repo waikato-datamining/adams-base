@@ -15,7 +15,7 @@
 
 /*
  * ActorUtils.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -23,10 +23,10 @@ package adams.flow.core;
 import adams.core.ClassLister;
 import adams.core.DateUtils;
 import adams.core.MessageCollection;
+import adams.core.PasswordPrompter;
 import adams.core.Utils;
 import adams.core.Variables;
 import adams.core.VariablesHandler;
-import adams.core.base.BasePassword;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
 import adams.core.logging.Logger;
@@ -68,14 +68,11 @@ import adams.flow.transformer.CallableTransformer;
 import adams.gui.application.AbstractApplicationFrame;
 import adams.gui.chooser.FlowFileChooser;
 import adams.gui.core.GUIHelper;
-import adams.gui.dialog.PasswordDialog;
 import adams.gui.visualization.core.FlowAwarePaintlet;
 import adams.gui.visualization.core.PaintablePanel;
 import adams.gui.visualization.core.Paintlet;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
@@ -709,8 +706,8 @@ public class ActorUtils {
       if (actor instanceof AutomatableInteraction) {
 	result = !((AutomatableInteraction) actor).isNonInteractive();
       }
-      else if (actor instanceof OptionalPasswordPrompt) {
-	result = ((OptionalPasswordPrompt) actor).getPromptForPassword();
+      else if (actor instanceof PasswordPrompter) {
+	result = ((PasswordPrompter) actor).getPromptForPassword();
       }
       else if (actor instanceof InteractiveActor) {
 	result = true;
@@ -2105,38 +2102,5 @@ public class ActorUtils {
       return ((Flow) source.getRoot()).getFlowID();
     else
       return -1;
-  }
-
-  /**
-   * Performs the interaction with the user.
-   *
-   * @param context	the context to use
-   * @return		null if successfully interacted, otherwise error message
-   */
-  public static BasePassword promptPassword(Actor context) {
-    return promptPassword(context, null);
-  }
-
-  /**
-   * Performs the interaction with the user.
-   *
-   * @param context	the context to use
-   * @param labelText 	the text for the label, ignored if null
-   * @return		null if successfully interacted, otherwise error message
-   */
-  public static BasePassword promptPassword(Actor context, String labelText) {
-    PasswordDialog 	dlg;
-
-    dlg = new PasswordDialog((Dialog) null, ModalityType.DOCUMENT_MODAL);
-    if (labelText != null)
-      dlg.setLabelPassword(labelText);
-    dlg.setLocationRelativeTo(context.getParentComponent());
-    ((Flow) context.getRoot()).registerWindow(dlg, dlg.getTitle());
-    dlg.setVisible(true);
-    ((Flow) context.getRoot()).deregisterWindow(dlg);
-    if (dlg.getOption() == PasswordDialog.APPROVE_OPTION)
-      return dlg.getPassword();
-    else
-      return null;
   }
 }

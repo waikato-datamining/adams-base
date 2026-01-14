@@ -15,22 +15,20 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
+import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
-import adams.core.io.ConsoleHelper;
 import adams.db.JdbcUrl;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.OptionalPasswordPrompt;
-import adams.flow.core.StopHelper;
+import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopMode;
 
 /**
@@ -41,7 +39,7 @@ import adams.flow.core.StopMode;
  */
 public abstract class AbstractDatabaseConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt, PasswordPrompter {
+  implements PasswordPrompter, InteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;
@@ -221,6 +219,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	the password
    */
+  @Override
   public void setPassword(BasePassword value) {
     m_Password = value;
     reset();
@@ -231,6 +230,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return 		the password
    */
+  @Override
   public BasePassword getPassword() {
     return m_Password;
   }
@@ -250,6 +250,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @param value	true if to prompt for a password
    */
+  @Override
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
@@ -260,6 +261,7 @@ public abstract class AbstractDatabaseConnection
    *
    * @return		true if to prompt for a password
    */
+  @Override
   public boolean getPromptForPassword() {
     return m_PromptForPassword;
   }
@@ -270,10 +272,31 @@ public abstract class AbstractDatabaseConnection
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String promptForPasswordTipText() {
     return
       "If enabled and authentication is required, the user gets prompted "
         + "for enter a password if none has been provided in the setup.";
+  }
+
+  /**
+   * Sets the actual password to use.
+   *
+   * @param value	the password
+   */
+  @Override
+  public void setActualPassword(BasePassword value) {
+    m_ActualPassword = value;
+  }
+
+  /**
+   * Returns the current actual password in use.
+   *
+   * @return		the password
+   */
+  @Override
+  public BasePassword getActualPassword() {
+    return m_ActualPassword;
   }
 
   /**
@@ -433,11 +456,7 @@ public abstract class AbstractDatabaseConnection
    */
   @Override
   public String doInteract() {
-    m_ActualPassword = ActorUtils.promptPassword(this);
-    if (m_ActualPassword == null)
-      return INTERACTION_CANCELED;
-    else
-      return null;
+    return PasswordHelper.interact(this);
   }
 
   /**
@@ -456,17 +475,7 @@ public abstract class AbstractDatabaseConnection
    */
   @Override
   public String doInteractHeadless() {
-    String		result;
-    BasePassword	password;
-
-    result   = INTERACTION_CANCELED;
-    password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
-    if (password != null) {
-      result           = null;
-      m_ActualPassword = password;
-    }
-
-    return result;
+    return PasswordHelper.interactHeadless(this);
   }
 
   /**
@@ -480,37 +489,9 @@ public abstract class AbstractDatabaseConnection
     String				msg;
     adams.db.AbstractDatabaseConnection	conn;
 
-    result = null;
-
     m_ActualPassword = m_Password;
     conn             = null;
-
-    if (m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-      if (!isHeadless()) {
-        msg = doInteract();
-        if (msg != null) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-            else
-              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-            result = getStopMessage();
-          }
-        }
-      }
-      else if (supportsHeadlessInteraction()) {
-        msg = doInteractHeadless();
-        if (msg != null) {
-          if (m_StopFlowIfCanceled) {
-            if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-              StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-            else
-              StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-            result = getStopMessage();
-          }
-        }
-      }
-    }
+    result           = PasswordHelper.prompt(this);
 
     if (result == null) {
       conn = getConnection();

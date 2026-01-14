@@ -15,12 +15,13 @@
 
 /*
  * AbstractActor.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
 import adams.core.ClassLister;
+import adams.core.PasswordPrompter;
 import adams.core.Properties;
 import adams.core.SizeOf;
 import adams.core.Utils;
@@ -556,7 +557,7 @@ public abstract class AbstractActor
 	  stop = getStopFlowOnError();
 	  if ((source instanceof InteractiveActor) && ((InteractiveActor) source).getStopFlowIfCanceled())
 	    stop = true;
-	  if (source instanceof OptionalPasswordPrompt)
+	  if (source instanceof PasswordPrompter)
 	    stop = true;
 	  if (stop)
 	    flow.stopExecution(msg);

@@ -15,9 +15,11 @@
 
 /*
  * PasswordPrompter.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
+
+import adams.core.base.BasePassword;
 
 /**
  * Interface for classes that prompt the user to enter a password.
@@ -48,4 +50,18 @@ public interface PasswordPrompter
    * 			displaying in the GUI or for listing the options.
    */
   public String promptForPasswordTipText();
+
+  /**
+   * Sets the actual password to use.
+   *
+   * @param value	the password
+   */
+  public void setActualPassword(BasePassword value);
+
+  /**
+   * Returns the current actual password in use.
+   *
+   * @return		the password
+   */
+  public BasePassword getActualPassword();
 }

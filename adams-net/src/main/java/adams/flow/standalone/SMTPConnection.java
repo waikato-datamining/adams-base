@@ -15,20 +15,18 @@
 
 /*
  * SMTPConnection.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
 
+import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
-import adams.core.io.ConsoleHelper;
 import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
-import adams.flow.core.ActorUtils;
-import adams.flow.core.OptionalPasswordPrompt;
-import adams.flow.core.StopHelper;
+import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopMode;
 
 import java.util.ArrayList;
@@ -135,7 +133,7 @@ import java.util.List;
  */
 public class SMTPConnection
   extends AbstractStandalone
-  implements OptionalPasswordPrompt, PasswordPrompter {
+  implements PasswordPrompter, InteractiveActor {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
@@ -538,6 +536,7 @@ public class SMTPConnection
    *
    * @param value	the password
    */
+  @Override
   public void setPassword(BasePassword value) {
     m_Password = value;
     reset();
@@ -548,6 +547,7 @@ public class SMTPConnection
    *
    * @return		the password
    */
+  @Override
   public BasePassword getPassword() {
     return m_Password;
   }
@@ -567,6 +567,7 @@ public class SMTPConnection
    *
    * @param value	true if to prompt for a password
    */
+  @Override
   public void setPromptForPassword(boolean value) {
     m_PromptForPassword = value;
     reset();
@@ -577,6 +578,7 @@ public class SMTPConnection
    *
    * @return		true if to prompt for a password
    */
+  @Override
   public boolean getPromptForPassword() {
     return m_PromptForPassword;
   }
@@ -587,10 +589,31 @@ public class SMTPConnection
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
+  @Override
   public String promptForPasswordTipText() {
     return
       "If enabled and authentication is required, the user gets prompted "
 	+ "for enter a password if none has been provided in the setup.";
+  }
+
+  /**
+   * Sets the actual password to use.
+   *
+   * @param value	the password
+   */
+  @Override
+  public void setActualPassword(BasePassword value) {
+    m_ActualPassword = value;
+  }
+
+  /**
+   * Returns the current actual password in use.
+   *
+   * @return		the password
+   */
+  @Override
+  public BasePassword getActualPassword() {
+    return m_ActualPassword;
   }
 
   /**
@@ -692,11 +715,7 @@ public class SMTPConnection
    */
   @Override
   public String doInteract() {
-    m_ActualPassword = ActorUtils.promptPassword(this);
-    if (m_ActualPassword == null)
-      return INTERACTION_CANCELED;
-    else
-      return null;
+    return PasswordHelper.interact(this);
   }
 
   /**
@@ -715,17 +734,7 @@ public class SMTPConnection
    */
   @Override
   public String doInteractHeadless() {
-    String		result;
-    BasePassword	password;
-
-    result   = INTERACTION_CANCELED;
-    password = ConsoleHelper.enterPassword("Please enter password (" + getName() + "):");
-    if (password != null) {
-      result           = null;
-      m_ActualPassword = password;
-    }
-
-    return result;
+    return PasswordHelper.interactHeadless(this);
   }
 
   /**
@@ -755,38 +764,12 @@ public class SMTPConnection
   @Override
   protected String doExecute() {
     String	result;
-    String	msg;
 
     result = null;
 
     m_ActualPassword = m_Password;
-
-    if (m_RequiresAuthentication && m_PromptForPassword && (m_Password.getValue().length() == 0)) {
-      if (!isHeadless()) {
-        msg = doInteract();
-	if (msg != null) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-	    else
-	      StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
-      }
-      else if (supportsHeadlessInteraction()) {
-        msg = doInteractHeadless();
-	if (msg != null) {
-	  if (m_StopFlowIfCanceled) {
-	    if ((m_CustomStopMessage == null) || (m_CustomStopMessage.trim().length() == 0))
-	      StopHelper.stop(this, m_StopMode, "Flow canceled: " + getFullName());
-	    else
-	      StopHelper.stop(this, m_StopMode, m_CustomStopMessage);
-	    result = getStopMessage();
-	  }
-	}
-      }
-    }
+    if (m_RequiresAuthentication)
+      result = PasswordHelper.prompt(this);
 
     return result;
   }

@@ -13,22 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * OptionalPasswordPromptTransfer.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+/*
+ * PasswordPrompterTransfer.java
+ * Copyright (C) 2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.optiontransfer;
 
-import adams.flow.core.OptionalPasswordPrompt;
+import adams.core.PasswordPrompter;
+import adams.core.option.OptionHandler;
 
 /**
- * Transfers options between {@link OptionalPasswordPrompt} objects.
+ * Transfers options between {@link PasswordPrompter} objects.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public class OptionalPasswordPromptTransfer
+public class PasswordPrompterTransfer
   extends AbstractOptionTransfer {
 
   /**
@@ -40,7 +40,8 @@ public class OptionalPasswordPromptTransfer
    */
   @Override
   public boolean handles(Object source, Object target) {
-    return (source instanceof OptionalPasswordPrompt) && (target instanceof OptionalPasswordPrompt);
+    return (source instanceof PasswordPrompter) && (target instanceof PasswordPrompter)
+      && (source instanceof OptionHandler) && (target instanceof OptionHandler);
   }
 
   /**
@@ -52,14 +53,14 @@ public class OptionalPasswordPromptTransfer
    */
   @Override
   protected String doTransfer(Object source, Object target) {
-    OptionalPasswordPrompt 	asource;
-    OptionalPasswordPrompt 	atarget;
+    PasswordPrompter 	asource;
+    PasswordPrompter 	atarget;
 
-    asource = (OptionalPasswordPrompt) source;
-    atarget = (OptionalPasswordPrompt) target;
+    asource = (PasswordPrompter) source;
+    atarget = (PasswordPrompter) target;
 
     atarget.setPromptForPassword(asource.getPromptForPassword());
-    transferVariable(asource, atarget, "promptForPassword");
+    transferVariable((OptionHandler) asource, (OptionHandler) atarget, "promptForPassword");
 
     return null;
   }
