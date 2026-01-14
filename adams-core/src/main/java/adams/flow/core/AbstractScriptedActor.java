@@ -15,7 +15,7 @@
 
 /*
  *    AbstractScriptedActor.java
- *    Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -77,7 +77,7 @@ public abstract class AbstractScriptedActor
   public String getQuickInfo() {
     String	result;
 
-    result = QuickInfoHelper.toString(this, "scriptFile", (m_ScriptFile + " " + m_ScriptOptions).trim());
+    result = QuickInfoHelper.toString(this, "scriptFile", m_ScriptFile);
     result += QuickInfoHelper.toString(this, "scriptOptions", (m_ScriptOptions.isEmpty() ? "-none-" : m_ScriptOptions), ", options: ");
 
     return result;
