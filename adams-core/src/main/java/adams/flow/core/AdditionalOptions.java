@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AdditionalOptions.java
- * Copyright (C) 2010-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  * An extended Hashtable class for easier retrieval of options.
@@ -31,7 +31,7 @@ import java.util.Hashtable;
  * @version $Revision$
  */
 public class AdditionalOptions
-  extends Hashtable<String, String> {
+  extends HashMap<String, String> {
 
   /** for serialization. */
   private static final long serialVersionUID = -2378624659828475769L;
@@ -120,7 +120,7 @@ public class AdditionalOptions
 	result = Boolean.parseBoolean(get(key));
     }
     catch (Exception e) {
-      result = defValue;
+      // ignored
     }
 
     return result;
@@ -153,7 +153,7 @@ public class AdditionalOptions
 	result = Integer.parseInt(get(key));
     }
     catch (Exception e) {
-      result = defValue;
+      // ignored
     }
 
     return result;
@@ -186,7 +186,7 @@ public class AdditionalOptions
 	result = Utils.toDouble(get(key));
     }
     catch (Exception e) {
-      result = defValue;
+      // ignored
     }
 
     return result;

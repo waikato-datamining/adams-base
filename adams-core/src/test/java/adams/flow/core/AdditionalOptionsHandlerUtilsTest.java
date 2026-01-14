@@ -15,25 +15,25 @@
 
 /*
  * AdditionalOptionsHandlerUtilsTest.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
-import java.util.Hashtable;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import adams.core.Variables;
 import adams.env.Environment;
 import adams.test.AdamsTestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tests the adams.flow.core.AdditionalOptionsHandlerUtils class. Run from commandline with: <br><br>
  * java adams.flow.core.AdditionalOptionsHandlerUtilsTest
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class AdditionalOptionsHandlerUtilsTest
   extends AdamsTestCase {
@@ -53,8 +53,8 @@ public class AdditionalOptionsHandlerUtilsTest
    * @param optStr	the option string to break up
    * @param expected	the expected key-value relations
    */
-  protected void performBreakUpTest(String optStr, Hashtable<String,String> expected) {
-    Hashtable<String,String>	generated;
+  protected void performBreakUpTest(String optStr, Map<String,String> expected) {
+    Map<String,String> generated;
 
     try {
       generated = AdditionalOptionsHandlerUtils.breakUpOptions(optStr, new Variables());
@@ -70,11 +70,11 @@ public class AdditionalOptionsHandlerUtilsTest
    * Tests the break-up of an empty options string.
    */
   public void testSingleEmptyBreakUp() {
-    String 			optStr;
-    Hashtable<String,String>	expected;
+    String 		optStr;
+    Map<String,String>	expected;
 
     optStr   = "";
-    expected = new Hashtable<String,String>();
+    expected = new HashMap<>();
 
     performBreakUpTest(optStr, expected);
   }
@@ -83,11 +83,11 @@ public class AdditionalOptionsHandlerUtilsTest
    * Tests the break-up of a single key-value pair.
    */
   public void testSinglePairBreakUp() {
-    String 			optStr;
-    Hashtable<String,String>	expected;
+    String 		optStr;
+    Map<String,String>	expected;
 
     optStr   = "blah=10";
-    expected = new Hashtable<String,String>();
+    expected = new HashMap<>();
     expected.put("blah", "10");
 
     performBreakUpTest(optStr, expected);
@@ -97,11 +97,11 @@ public class AdditionalOptionsHandlerUtilsTest
    * Tests the break-up of multiple key-value pairs.
    */
   public void testMultiPairBreakUp() {
-    String 			optStr;
-    Hashtable<String,String>	expected;
+    String 		optStr;
+    Map<String,String>	expected;
 
     optStr   = "blah=10 hello=world what=the f**k=42";
-    expected = new Hashtable<String,String>();
+    expected = new HashMap<>();
     expected.put("blah",  "10");
     expected.put("hello", "world");
     expected.put("what",  "the");
@@ -114,11 +114,11 @@ public class AdditionalOptionsHandlerUtilsTest
    * Tests the break-up of an option string with an invalid key-value pairs.
    */
   public void testInvalidOption() {
-    String 			optStr;
-    Hashtable<String,String>	expected;
+    String 		optStr;
+    Map<String,String>	expected;
 
     optStr   = "blah=10 hello what=the what:ever";
-    expected = new Hashtable<String,String>();
+    expected = new HashMap<>();
     expected.put("blah",  "10");
     expected.put("what",  "the");
 
