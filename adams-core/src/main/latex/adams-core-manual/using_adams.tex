@@ -3371,9 +3371,24 @@ Here are JDBC URL templates for accessing various types of databases:
 \end{tight_itemize}
 
 
+\subsection{MySQL imports}
+Importing database dumps can take a long time. However, you can influence the speed by
+turning off the double write buffer in your \texttt{mysql.cnf} config
+file (section \texttt{mysqld}):
+
+{\scriptsize
+\begin{verbatim}
+[mysqld]
+# for faster sql dump imports
+# https://dev.mysql.com/doc/refman/9.3/en/innodb-parameters.html#sysvar_innodb_doublewrite
+innodb_doublewrite=off
+\end{verbatim}}
+
+
+
 \subsection{MySQL SSL connections}
 \label{mysql_ssl_connections}
-These sections in the MySQL reference manual are used as basis for the instructions:
+These sections in the MySQL reference manual were used as basis for the instructions:
 \begin{tight_itemize}
     \item \href{https://dev.mysql.com/doc/refman/8.4/en/using-encrypted-connections.html}{Configuring MySQL to Use Encrypted Connections}
     \item \href{https://dev.mysql.com/doc/refman/8.4/en/creating-ssl-rsa-files-using-mysql.html}{Creating SSL and RSA Certificates and Keys using MySQL}
