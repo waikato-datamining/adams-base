@@ -1400,7 +1400,7 @@ public abstract class AbstractApplicationFrame
     SimpleTimer.getSingleton().reset();
 
     Environment.setEnvironmentClass(env);
-    LoggingHelper.useHandlerFromOptions(options);
+    LoggingHelper.useHandler(options);
 
     try {
       if (OptionUtils.helpRequested(options)) {

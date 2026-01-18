@@ -417,7 +417,7 @@ public class CommandRunner
 
     Environment.setEnvironmentClass(env);
     Environment.setHome(OptionUtils.getOption(args, "-home"));
-    LoggingHelper.useHandlerFromOptions(args);
+    LoggingHelper.useHandler(args);
 
     try {
       if (OptionUtils.helpRequested(args)) {

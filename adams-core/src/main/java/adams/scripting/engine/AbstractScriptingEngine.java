@@ -468,7 +468,7 @@ public abstract class AbstractScriptingEngine
     String			msg;
 
     Environment.setEnvironmentClass(env);
-    LoggingHelper.useHandlerFromOptions(options);
+    LoggingHelper.useHandler(options);
 
     try {
       if (OptionUtils.helpRequested(options)) {

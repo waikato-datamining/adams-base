@@ -207,7 +207,7 @@ public abstract class RunScheme
     RunScheme	schemeInst;
 
     Environment.setEnvironmentClass(env);
-    LoggingHelper.useHandlerFromOptions(args);
+    LoggingHelper.useHandler(args);
 
     try {
       if (OptionUtils.helpRequested(args)) {

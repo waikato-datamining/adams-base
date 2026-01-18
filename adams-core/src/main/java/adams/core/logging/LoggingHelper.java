@@ -44,6 +44,9 @@ public class LoggingHelper {
   /** the environment variable suffix of the log level to look for. */
   public final static String LOGLEVEL_SUFFIX = ".LOGLEVEL";
 
+  /** the environment variable for the logging handler. */
+  public final static String ADAMS_LOGGING_HANDLER = "ADAMS_LOGGING_HANDLER";
+
   /** the cache for the loglevels. */
   protected static Map<Class,Level> m_LogLevelCache = new HashMap<>();
 
@@ -597,22 +600,19 @@ public class LoggingHelper {
   }
 
   /**
-   * Interprets the "-logging-handler &lt;classname&gt;" option in the command-line
-   * options and sets the logging handler accordingly.
+   * Tries to initialize the default handler specified by the classname.
    *
-   * @param options	the command-line options
-   * @return		true if handler updated
+   * @param classname	the classname of the handler, can be null or invalid
+   * @return		true if handler updated successfully
    */
-  public static boolean useHandlerFromOptions(String[] options) {
+  protected static boolean useHandlerFromClassname(String classname) {
     boolean		result;
-    String		classname;
     Handler		handler;
     MultiHandler	multi;
 
     result = false;
 
-    classname = OptionUtils.removeOption(options, "-logging-handler");
-    if (classname != null) {
+    if ((classname != null) && !classname.trim().isEmpty()) {
       try {
 	handler = (Handler) Class.forName(classname).getDeclaredConstructor().newInstance();
 	multi   = new MultiHandler();
@@ -625,6 +625,44 @@ public class LoggingHelper {
 	e.printStackTrace();
       }
     }
+
+    return result;
+  }
+
+  /**
+   * Initializes the handler from the {@link #ADAMS_LOGGING_HANDLER} environment variable.
+   *
+   * @return		true if handler updated
+   */
+  public static boolean useHandlerFromEnvVar() {
+    return useHandlerFromClassname(System.getenv(ADAMS_LOGGING_HANDLER));
+  }
+
+  /**
+   * Interprets the "-logging-handler &lt;classname&gt;" option in the command-line
+   * options and sets the logging handler accordingly.
+   *
+   * @param options	the command-line options
+   * @return		true if handler updated
+   */
+  public static boolean useHandlerFromOptions(String[] options) {
+    return useHandlerFromClassname(OptionUtils.removeOption(options, "-logging-handler"));
+  }
+
+  /**
+   * Initializes the handler from the {@link #ADAMS_LOGGING_HANDLER} environment variable
+   * or the supplied options.
+   *
+   * @param options	the command-line options to parse
+   * @return		true if the default handler was updated
+   * @see		#useHandlerFromEnvVar()
+   * @see		#useHandlerFromOptions(String[])
+   */
+  public static boolean useHandler(String[] options) {
+    boolean	result;
+
+    result = useHandlerFromEnvVar();
+    result = useHandlerFromOptions(options) || result;
 
     return result;
   }

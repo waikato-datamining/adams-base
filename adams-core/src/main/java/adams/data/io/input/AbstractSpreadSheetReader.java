@@ -645,7 +645,7 @@ public abstract class AbstractSpreadSheetReader
     SpreadSheet			sheet;
 
     Environment.setEnvironmentClass(env);
-    LoggingHelper.useHandlerFromOptions(args);
+    LoggingHelper.useHandler(args);
 
     try {
       if (OptionUtils.helpRequested(args)) {

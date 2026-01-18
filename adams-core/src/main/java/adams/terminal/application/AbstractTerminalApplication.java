@@ -459,7 +459,7 @@ public abstract class AbstractTerminalApplication
     AbstractTerminalApplication application;
 
     Environment.setEnvironmentClass(env);
-    LoggingHelper.useHandlerFromOptions(options);
+    LoggingHelper.useHandler(options);
 
     try {
       if (OptionUtils.helpRequested(options)) {
