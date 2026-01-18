@@ -19,6 +19,8 @@
  */
 package adams.core.logging;
 
+import adams.core.Stoppable;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -32,7 +34,7 @@ import java.util.logging.LogRecord;
  */
 public abstract class AbstractLogHandler
   extends Handler
-  implements Comparable<Handler> {
+  implements Comparable<Handler>, Stoppable {
 
   /** the log listeners. */
   protected HashSet<LoggingListener> m_LoggingListeners;
@@ -66,9 +68,25 @@ public abstract class AbstractLogHandler
   }
 
   /**
+   * Hook method before the {@link #setUp()} method is called.
+   *
+   * @see	#setUp()
+   */
+  protected void preSetUp() {
+  }
+
+  /**
    * Hook method for performing setup before processing first log record.
    */
   protected void setUp() {
+  }
+
+  /**
+   * Hook method after the {@link #setUp()} method was called.
+   *
+   * @see	#setUp()
+   */
+  protected void postSetUp() {
   }
 
   /**
@@ -119,8 +137,11 @@ public abstract class AbstractLogHandler
    */
   @Override
   public void publish(LogRecord record) {
-    if (!isSetUp())
+    if (!isSetUp()) {
+      preSetUp();
       setUp();
+      postSetUp();
+    }
     doPublish(record);
     postPublish(record);
   }
@@ -224,5 +245,14 @@ public abstract class AbstractLogHandler
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof Handler) && (compareTo((Handler) obj) == 0);
+  }
+
+  /**
+   * Stops the execution.
+   * <br/>
+   * Default implementation does nothing.
+   */
+  @Override
+  public void stopExecution() {
   }
 }

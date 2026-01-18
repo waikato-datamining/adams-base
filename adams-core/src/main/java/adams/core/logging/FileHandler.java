@@ -19,6 +19,8 @@
  */
 package adams.core.logging;
 
+import adams.core.Stoppable;
+import adams.core.StoppableWithFeedback;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
@@ -28,6 +30,9 @@ import adams.env.Environment;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -42,10 +47,109 @@ import java.util.logging.LogRecord;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class FileHandler
-  extends AbstractLogHandler {
+  extends AbstractLogHandler
+  implements Stoppable {
 
   /** the environment variable to inject a prefix into the log file. */
   public final static String ADAMS_LOGFILE_PREFIX = "ADAMS_LOGFILE_PREFIX";
+
+  /**
+   * Runnable for doing the actual writing.
+   */
+  public static class DelayedPublishRunnable
+    implements Runnable, StoppableWithFeedback {
+
+    /** the file to write to. */
+    protected File m_LogFile;
+
+    /** whether the writing has been stopped. */
+    protected boolean m_Stopped;
+
+    /** the queue of log records to output. */
+    protected BlockingQueue<LogRecord> m_Queue;
+
+    /**
+     * Initializes the runnable.
+     *
+     * @param logFile	the file to write to
+     */
+    public DelayedPublishRunnable(File logFile) {
+      m_LogFile = logFile;
+      m_Queue   = new ArrayBlockingQueue<>(65535);
+      m_Stopped = false;
+    }
+
+    /**
+     * Writes the record to disk.
+     *
+     * @param record	the record to write
+     */
+    protected void doPublish(LogRecord record) {
+      String	msg;
+
+      msg = LoggingHelper.assembleMessage(record).toString();
+      if (!FileUtils.writeToFile(m_LogFile.getAbsolutePath(), msg, true)) {
+	m_LogFile.getParentFile().mkdirs();
+	FileUtils.writeToFile(m_LogFile.getAbsolutePath(), msg, true);
+      }
+    }
+
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run() {
+      LogRecord		record;
+
+      m_Queue.clear();
+      m_Stopped = false;
+      while (!m_Stopped) {
+	try {
+	  record = m_Queue.poll(100, TimeUnit.MILLISECONDS);
+	  if (record != null)
+	    doPublish(record);
+	}
+	catch (Exception e) {
+	  // pass
+	}
+      }
+    }
+
+    /**
+     * Adds the record to write to disk.
+     *
+     * @param record	the record to write out
+     */
+    public void publish(LogRecord record) {
+      m_Queue.add(record);
+    }
+
+    /**
+     * Stops the execution.
+     */
+    @Override
+    public void stopExecution() {
+      m_Stopped = true;
+    }
+
+    /**
+     * Whether the execution has been stopped.
+     *
+     * @return true if stopped
+     */
+    @Override
+    public boolean isStopped() {
+      return m_Stopped;
+    }
+  }
 
   /** whether the file has been configured. */
   protected final static Map<File,Boolean> m_Configured = new HashMap<>();
@@ -55,6 +159,9 @@ public class FileHandler
 
   /** whether the file points to a directory. */
   protected boolean m_LogIsDir;
+
+  /** the runnable for writing the log records. */
+  protected DelayedPublishRunnable m_Runnable;
 
   /**
    * Initializes the members.
@@ -127,6 +234,16 @@ public class FileHandler
   }
 
   /**
+   * Hook method after the {@link #setUp()} method was called.
+   */
+  @Override
+  protected void postSetUp() {
+    super.postSetUp();
+    m_Runnable = new DelayedPublishRunnable(m_LogFile);
+    new Thread(m_Runnable).start();
+  }
+
+  /**
    * Publish a <tt>LogRecord</tt>.
    * <p>
    * The logging request was made initially to a <tt>Logger</tt> object,
@@ -170,5 +287,17 @@ public class FileHandler
     }
 
     return result;
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    if (m_Runnable != null) {
+      m_Runnable.stopExecution();
+      m_Runnable = null;
+    }
+    super.stopExecution();
   }
 }
