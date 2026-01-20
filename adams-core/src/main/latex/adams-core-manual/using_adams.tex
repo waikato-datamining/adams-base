@@ -3298,10 +3298,15 @@ environment variables:
 inserts the value via the \texttt{-priority} argument of the \texttt{Launcher} class.
 
 \heading{Logging}
-\noindent When using \texttt{FileHandler} or \texttt{RotatingFileHandler} (package: \texttt{adams.core.logging})
-for managing the logging output (e.g., via the `-logging-handler` command-line option), then the
-\texttt{ADAMS\_LOGFILE\_PREFIX} environment variable can be used to prefix the files. This is useful for separating
-the log files when running multiple ADAMS processes on the same machine (e.g., as Linux daemon or Windows service).
+\noindent Various applications have the \texttt{-logging-handler} option which allows you to specify the classname(s)
+of the log handlers you want to use (package: \texttt{adams.core.logging}.
+Alternatively, you can also use the \texttt{ADAMS\_LOGGING\_HANDLER} environment variable for that.
+Both approaches support a blank-separated list of classnames for specifying multiple handlers.
+
+When using \texttt{FileHandler} or \texttt{RotatingFileHandler} for managing the logging output, then the
+\texttt{ADAMS\_LOGFILE\_PREFIX} environment variable can be used to prefix the files. This is useful
+for separating the log files when running multiple ADAMS processes on the same machine (e.g., as
+Linux daemon or Windows service).
 
 Classes, when implementing the \texttt{adams.core.logging.LoggingSupporter} interface,
 allow setting their logging level via environment variables, consisting of their class name and the
