@@ -15,7 +15,7 @@
 
 /*
  * LoggingHelper.java
- * Copyright (C) 2013-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -25,10 +25,12 @@ import adams.core.option.OptionUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -83,7 +85,7 @@ public class LoggingHelper {
 	result = LoggingLevel.valueOf(level).getLevel();
       }
       catch (Exception e) {
-        // ignored
+	// ignored
       }
     }
 
@@ -600,23 +602,36 @@ public class LoggingHelper {
   }
 
   /**
-   * Tries to initialize the default handler specified by the classname.
+   * Tries to initialize the default handler specified by the classname(s).
    *
-   * @param classname	the classname of the handler, can be null or invalid
+   * @param classname	the classname of the handler, can be null or invalid; blank-separated list of classnames
    * @return		true if handler updated successfully
    */
   protected static boolean useHandlerFromClassname(String classname) {
     boolean		result;
     Handler		handler;
     MultiHandler	multi;
+    String[]		classnames;
+    List<Handler>	handlers;
+    int			i;
 
     result = false;
 
     if ((classname != null) && !classname.trim().isEmpty()) {
       try {
-	handler = (Handler) Class.forName(classname).getDeclaredConstructor().newInstance();
+	classname = classname.trim();
+	if (classname.contains(" "))
+	  classnames = classname.split(" ");
+	else
+	  classnames = new String[]{classname};
+	handlers = new ArrayList<>();
+	for (i = 0; i < classnames.length; i++) {
+	  System.out.println("Using log handler: " + classnames[i]);
+	  handler = (Handler) Class.forName(classnames[i]).getDeclaredConstructor().newInstance();
+	  handlers.add(handler);
+	}
 	multi   = new MultiHandler();
-	multi.setHandlers(new Handler[]{handler});
+	multi.setHandlers(handlers.toArray(new Handler[0]));
 	setDefaultHandler(multi);
 	result = true;
       }
@@ -631,6 +646,7 @@ public class LoggingHelper {
 
   /**
    * Initializes the handler from the {@link #ADAMS_LOGGING_HANDLER} environment variable.
+   * The value of the env var is a blank-separated list of classnames.
    *
    * @return		true if handler updated
    */
@@ -641,6 +657,7 @@ public class LoggingHelper {
   /**
    * Interprets the "-logging-handler &lt;classname&gt;" option in the command-line
    * options and sets the logging handler accordingly.
+   * The value of the option is a blank-separated list of classnames.
    *
    * @param options	the command-line options
    * @return		true if handler updated
@@ -671,8 +688,8 @@ public class LoggingHelper {
    * Outputs the handler option definition on {@link System#out}.
    */
   public static void outputHandlerOption() {
-    System.out.println("-logging-handler <classname>");
-    System.out.println("\t" + "logging handler to use");
+    System.out.println("-logging-handler <classname(s)>");
+    System.out.println("\t" + "logging handler(s) to use, blank-separated list");
     System.out.println("\t" + "default: " + ConsolePanelHandler.class.getName());
   }
 
