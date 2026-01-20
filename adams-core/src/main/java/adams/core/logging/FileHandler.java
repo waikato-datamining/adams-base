@@ -15,7 +15,7 @@
 
 /*
  * FileHandler.java
- * Copyright (C) 2016-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.logging;
 
@@ -173,7 +173,9 @@ public class FileHandler
 
     super.initialize();
 
-    env    = EnvVar.get(ADAMS_LOGFILE_PREFIX, "");
+    env = EnvVar.get(ADAMS_LOGFILE_PREFIX, "");
+    if (!env.isEmpty())
+      System.out.println("Using logfile prefix: " + env);
     logDir = new PlaceholderDirectory(Environment.getInstance().getHome() + File.separator + "log");
     setLogFile(new PlaceholderFile(logDir.getAbsolutePath() + File.separator + env + "console.log"));
   }
