@@ -3509,4 +3509,9 @@ sudo chown adamsuser:adamsuser *.pem
   \begin{verbatim}
   export JAVA_TOOL_OPTIONS="-Dsun.java2d.opengl=true"
   \end{verbatim}
+
+  \item The JVM crashes on Windows after disconnecting the session. Windows 11 and
+  later seems to be more aggressive with freeing up resources. Adding
+  \texttt{-Dsun.java2d.d3d=false} to your Java call helps avoiding this (ADAMS does
+  not rely on any 3D libraries).
 \end{tight_itemize}
