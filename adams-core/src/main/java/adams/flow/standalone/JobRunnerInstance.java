@@ -15,7 +15,7 @@
 
 /*
  * JobRunnerInstance.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -178,7 +178,8 @@ public class JobRunnerInstance
       throw new Exception("No JobRunner available, cannot queue job: " + job);
 
     runner.add(job);
-    runner.start();
+    if (!runner.isRunning())
+      runner.start();
     while (runner.isRunning() && !job.isComplete()) {
       Utils.wait(this, 1000, 100);
     }
