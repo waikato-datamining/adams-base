@@ -15,7 +15,7 @@
 
 /*
  * RoundUtils.java
- * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data;
@@ -223,6 +223,8 @@ public class RoundingUtils {
     pos = s.lastIndexOf('.');
     if (s.length() > pos + decimals + 1)
       s = s.substring(0, pos + decimals + 1);
+    if (s.endsWith("."))
+      s = s.substring(0, s.length() - 1);
 
     return s;
   }
