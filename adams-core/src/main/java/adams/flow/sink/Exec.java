@@ -15,7 +15,7 @@
 
 /*
  * Exec.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.sink;
 
@@ -399,7 +399,7 @@ public class Exec
    */
   @Override
   public String envVarsTipText() {
-    return "The environment variables to overlay on top of the current ones.";
+    return "The environment variables to overlay on top of the current ones; flow variables in the values part get automatically expanded.";
   }
 
   /**
@@ -562,7 +562,7 @@ public class Exec
       try {
 	cmd       = OptionUtils.splitOptions(m_Command.getValue());
 	cwd       = m_WorkingDirectory.isEmpty() ? null : new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile();
-	env       = ProcessUtils.getEnvironment(m_EnvVars, true);
+	env       = ProcessUtils.getEnvironment(m_EnvVars, true, getVariables());
 	m_Process = Runtime.getRuntime().exec(cmd, ProcessUtils.flattenEnvironment(env), cwd);
 	m_Writer  = new BufferedWriter(new OutputStreamWriter(m_Process.getOutputStream()));
 	m_Stdout  = new OutputProcessStream(m_Process, LoggingObjectOutputPrinter.class, true);

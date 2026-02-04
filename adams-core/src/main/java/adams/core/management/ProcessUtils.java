@@ -15,12 +15,13 @@
 
 /*
  * ProcessUtils.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.management;
 
 import adams.core.Utils;
+import adams.core.Variables;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.io.PlaceholderDirectory;
 import com.github.fracpete.processoutput4j.core.EnvironmentUtils;
@@ -318,7 +319,7 @@ public class ProcessUtils {
       result.append("Command succeeded!");
     }
     else {
-      result.append("Command failed with exit code " + output.getExitCode() + "!\n");
+      result.append("Command failed with exit code ").append(output.getExitCode()).append("!\n");
       result.append("--> Command:\n");
       result.append(Utils.flatten(output.getCommand(), "\n"));
       result.append("\n\n");
@@ -367,15 +368,31 @@ public class ProcessUtils {
    * 				null if nullIfEmpty is true and no custom environment variables
    */
   public static HashMap<String, String> getEnvironment(BaseKeyValuePair[] envVars, boolean nullIfEmpty) {
+    return getEnvironment(envVars, nullIfEmpty, null);
+  }
+
+  /**
+   * Returns the system's environment variables with the provided ones overlayed
+   * on top.
+   *
+   * @param envVars		the environment variables to overlay
+   * @param nullIfEmpty 	if true and no custom environment variables, then returns null
+   * @param vars		the variables reference for expanding variables, ignored if null
+   * @return 			the environment variables as key-value pairs or
+   * 				null if nullIfEmpty is true and no custom environment variables
+   */
+  public static HashMap<String, String> getEnvironment(BaseKeyValuePair[] envVars, boolean nullIfEmpty, Variables vars) {
     HashMap<String, String> result;
 
     if (nullIfEmpty && (envVars.length == 0))
       return null;
 
     result = getEnvironment();
-    if (envVars.length > 0) {
-      for (BaseKeyValuePair envVar: envVars)
-        result.put(envVar.getPairKey(), envVar.getPairValue());
+    for (BaseKeyValuePair envVar : envVars) {
+      if (vars != null)
+	result.put(envVar.getPairKey(), vars.expand(envVar.getPairValue()));
+      else
+	result.put(envVar.getPairKey(), envVar.getPairValue());
     }
 
     return result;

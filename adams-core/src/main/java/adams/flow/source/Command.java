@@ -15,7 +15,7 @@
 
 /*
  * Command.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source;
@@ -380,7 +380,7 @@ public class Command
    */
   @Override
   public String envVarsTipText() {
-    return "The environment variables to overlay on top of the current ones.";
+    return "The environment variables to overlay on top of the current ones; flow variables in the values part get automatically expanded.";
   }
 
   /**
@@ -614,7 +614,7 @@ public class Command
           if (!m_WorkingDirectory.isEmpty())
             builder.directory(new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile());
           if (m_EnvVars.length > 0)
-            builder.environment().putAll(ProcessUtils.getEnvironment(m_EnvVars, false));
+            builder.environment().putAll(ProcessUtils.getEnvironment(m_EnvVars, false, getVariables()));
 	  m_ProcessOutput.monitor(builder);
 	}
 	catch (Exception e) {
