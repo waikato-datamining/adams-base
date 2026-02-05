@@ -3514,4 +3514,13 @@ sudo chown adamsuser:adamsuser *.pem
   later seems to be more aggressive with freeing up resources. Adding
   \texttt{-Dsun.java2d.d3d=false} to your Java call helps avoiding this (ADAMS does
   not rely on any 3D libraries).
+
+  \item You get the error \texttt{Failed to exec spawn helper} when launching
+  external processes via the \textit{Exec} or \textit{Command} actors. Add the
+  following option to your Java call (or to the \texttt{\_JAVA\_OPTS} environment
+  variable)\footnote{Found here: \url{https://stackoverflow.com/a/61325264}{}}: \
+  \begin{verbatim}
+  -Djdk.lang.Process.launchMechanism=vfork
+  \end{verbatim}
+
 \end{tight_itemize}
