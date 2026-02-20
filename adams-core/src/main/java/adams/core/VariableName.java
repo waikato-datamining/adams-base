@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * VariableName.java
- * Copyright (C) 2011-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -25,7 +25,6 @@ import adams.core.base.AbstractBaseString;
  * Wrapper around the name of a variable (= string).
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class VariableName
   extends AbstractBaseString {
@@ -58,6 +57,15 @@ public class VariableName
   @Override
   protected void initialize() {
     m_Internal = DEFAULT;
+  }
+
+  /**
+   * Checks whether the name is the default one.
+   *
+   * @return		true if the default
+   */
+  public boolean isDefault() {
+    return m_Internal.equals(DEFAULT);
   }
 
   /**
