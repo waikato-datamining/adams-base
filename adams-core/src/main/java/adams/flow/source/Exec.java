@@ -23,6 +23,7 @@ package adams.flow.source;
 import adams.core.ClassCrossReference;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
@@ -60,87 +61,96 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: Exec
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-cmd &lt;adams.core.base.BaseText&gt; (property: command)
  * &nbsp;&nbsp;&nbsp;The external command to run.
  * &nbsp;&nbsp;&nbsp;default: ls -l .
  * </pre>
- * 
+ *
  * <pre>-working-directory &lt;java.lang.String&gt; (property: workingDirectory)
  * &nbsp;&nbsp;&nbsp;The current working directory for the command.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-env-var &lt;adams.core.base.BaseKeyValuePair&gt; [-env-var ...] (property: envVars)
- * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones.
+ * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones; flow variables
+ * &nbsp;&nbsp;&nbsp;in the values part get automatically expanded.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-placeholder &lt;boolean&gt; (property: commandContainsPlaceholder)
- * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic placeholder expansion for the command 
+ * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic placeholder expansion for the command
  * &nbsp;&nbsp;&nbsp;string.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-variable &lt;boolean&gt; (property: commandContainsVariable)
- * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic variable expansion for the command 
+ * &nbsp;&nbsp;&nbsp;Set this to true to enable automatic variable expansion for the command
  * &nbsp;&nbsp;&nbsp;string.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-output-type &lt;STDOUT|STDERR|BOTH&gt; (property: outputType)
- * &nbsp;&nbsp;&nbsp;Determines the output type; if BOTH is selected then an array is output 
+ * &nbsp;&nbsp;&nbsp;Determines the output type; if BOTH is selected then an array is output
  * &nbsp;&nbsp;&nbsp;with stdout as first element and stderr as second
  * &nbsp;&nbsp;&nbsp;default: STDOUT
  * </pre>
- * 
+ *
  * <pre>-split-output &lt;boolean&gt; (property: splitOutput)
- * &nbsp;&nbsp;&nbsp;If set to true, then the output gets split on newline; does not apply when 
+ * &nbsp;&nbsp;&nbsp;If set to true, then the output gets split on newline; does not apply when
  * &nbsp;&nbsp;&nbsp;outputting stdout and stderr together.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-conversion &lt;adams.data.conversion.ConversionFromString&gt; (property: conversion)
- * &nbsp;&nbsp;&nbsp;The conversion scheme to apply to the output; does not apply when outputting 
+ * &nbsp;&nbsp;&nbsp;The conversion scheme to apply to the output; does not apply when outputting
  * &nbsp;&nbsp;&nbsp;stdout and stderr together.
  * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
- * 
+ *
  * <pre>-fail-on-process-error &lt;boolean&gt; (property: failOnProcessError)
  * &nbsp;&nbsp;&nbsp;If enabled, the actor will fail as well if the process failed.
  * &nbsp;&nbsp;&nbsp;default: true
  * </pre>
- * 
+ *
+ * <pre>-var-exit-code &lt;adams.core.VariableName&gt; (property: variableExitCode)
+ * &nbsp;&nbsp;&nbsp;The optional variable to store the exit code in.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -180,18 +190,21 @@ public class Exec
 
   /** whether to output stderr instead of stdout. */
   protected OutputType m_OutputType;
-  
+
   /** whether to split the string output on the new line before converting. */
   protected boolean m_SplitOutput;
 
   /** the conversion scheme to process the output with. */
   protected ConversionFromString m_Conversion;
-  
+
   /** the tokens to forward. */
   protected List m_Output;
 
   /** whether to fail on process error. */
   protected boolean m_FailOnProcessError;
+
+  /** the optional variable to store the exit code in. */
+  protected VariableName m_VariableExitCode;
 
   /** for executing the command and collecting stdout/err output. */
   protected transient CollectingProcessOutput m_ProcessOutput;
@@ -204,8 +217,8 @@ public class Exec
   @Override
   public String globalInfo() {
     return
-        "Runs an external system command and broadcasts the generated output "
-      + "(stdout or stderr).";
+      "Runs an external system command and broadcasts the generated output "
+	+ "(stdout or stderr).";
   }
 
   /**
@@ -259,15 +272,19 @@ public class Exec
     m_OptionManager.add(
       "fail-on-process-error", "failOnProcessError",
       true);
+
+    m_OptionManager.add(
+      "var-exit-code", "variableExitCode",
+      new VariableName());
   }
-  
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Output = new ArrayList();
   }
 
@@ -566,6 +583,35 @@ public class Exec
   }
 
   /**
+   * Sets the optional variable name to store the exit code in.
+   *
+   * @param value	the variable
+   */
+  public void setVariableExitCode(VariableName value) {
+    m_VariableExitCode = value;
+    reset();
+  }
+
+  /**
+   * Returns the optional variable name to store the exit code in.
+   *
+   * @return		the variable
+   */
+  public VariableName getVariableExitCode() {
+    return m_VariableExitCode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variableExitCodeTipText() {
+    return "The optional variable to store the exit code in.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
@@ -597,7 +643,7 @@ public class Exec
     result = null;
 
     m_Output.clear();
-    
+
     // preprocess command
     cmd = m_Command.getValue();
     if (m_CommandContainsVariable)
@@ -609,11 +655,13 @@ public class Exec
       if (!m_WorkingDirectory.isEmpty())
 	getLogger().info("Working dir: " + m_WorkingDirectory);
     }
-    
+
     try {
       cwd = m_WorkingDirectory.isEmpty() ? null : new PlaceholderDirectory(m_WorkingDirectory);
       env = ProcessUtils.getEnvironment(m_EnvVars, true, getVariables());
       m_ProcessOutput = ProcessUtils.execute(OptionUtils.splitOptions(cmd), env, cwd);
+      if (!m_VariableExitCode.isDefault())
+	getVariables().set(getVariableExitCode().getValue(), "" + m_ProcessOutput.getExitCode());
       if (!m_ProcessOutput.hasSucceeded() && m_FailOnProcessError) {
 	result = ProcessUtils.toErrorOutput(m_ProcessOutput);
       }
@@ -686,7 +734,7 @@ public class Exec
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return (m_Output.size() > 0);
+    return !m_Output.isEmpty();
   }
 
   /**
