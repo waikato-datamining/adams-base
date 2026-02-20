@@ -24,6 +24,7 @@ import adams.core.ClassCrossReference;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
+import adams.core.VariableName;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseText;
 import adams.core.io.PlaceholderDirectory;
@@ -60,6 +61,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -83,12 +85,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-cmd &lt;adams.core.base.BaseText&gt; (property: command)
@@ -102,7 +106,8 @@ import java.util.List;
  * </pre>
  *
  * <pre>-env-var &lt;adams.core.base.BaseKeyValuePair&gt; [-env-var ...] (property: envVars)
- * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones.
+ * &nbsp;&nbsp;&nbsp;The environment variables to overlay on top of the current ones; flow variables
+ * &nbsp;&nbsp;&nbsp;in the values part get automatically expanded.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
@@ -141,6 +146,11 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
+ * <pre>-var-exit-code &lt;adams.core.VariableName&gt; (property: variableExitCode)
+ * &nbsp;&nbsp;&nbsp;The optional variable to store the exit code in.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -148,7 +158,7 @@ import java.util.List;
 public class Command
   extends AbstractSource
   implements ClassCrossReference, StreamingProcessOwner,
-             EnvironmentVariablesHandler, WorkingDirectoryHandler {
+	       EnvironmentVariablesHandler, WorkingDirectoryHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -132045002653940359L;
@@ -191,8 +201,11 @@ public class Command
   /** in case an exception occurred executing the command (gets rethrown). */
   protected IllegalStateException m_ExecutionFailure;
 
-  /** the time out in seconds. */
+  /** the timeout in seconds. */
   protected int m_TimeOut;
+
+  /** the optional variable to store the exit code in. */
+  protected VariableName m_VariableExitCode;
 
   /**
    * Returns a string describing the object.
@@ -258,6 +271,10 @@ public class Command
     m_OptionManager.add(
       "time-out", "timeOut",
       -1, -1, null);
+
+    m_OptionManager.add(
+      "var-exit-code", "variableExitCode",
+      new VariableName());
   }
 
   /**
@@ -567,6 +584,35 @@ public class Command
   }
 
   /**
+   * Sets the optional variable name to store the exit code in.
+   *
+   * @param value	the variable
+   */
+  public void setVariableExitCode(VariableName value) {
+    m_VariableExitCode = value;
+    reset();
+  }
+
+  /**
+   * Returns the optional variable name to store the exit code in.
+   *
+   * @return		the variable
+   */
+  public VariableName getVariableExitCode() {
+    return m_VariableExitCode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String variableExitCodeTipText() {
+    return "The optional variable to store the exit code in.";
+  }
+
+  /**
    * Returns the class of objects that it generates.
    *
    * @return		<!-- flow-generates-start -->java.lang.String.class<!-- flow-generates-end -->
@@ -609,24 +655,26 @@ public class Command
       private static final long serialVersionUID = -4475355379511760429L;
       @Override
       protected void doRun() {
-        try {
-          ProcessBuilder builder = new ProcessBuilder(OptionUtils.splitOptions(fCmd));
-          if (!m_WorkingDirectory.isEmpty())
-            builder.directory(new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile());
-          if (m_EnvVars.length > 0)
-            builder.environment().putAll(ProcessUtils.getEnvironment(m_EnvVars, false, getVariables()));
+	try {
+	  ProcessBuilder builder = new ProcessBuilder(OptionUtils.splitOptions(fCmd));
+	  if (!m_WorkingDirectory.isEmpty())
+	    builder.directory(new PlaceholderDirectory(m_WorkingDirectory).getAbsoluteFile());
+	  if (m_EnvVars.length > 0)
+	    builder.environment().putAll(ProcessUtils.getEnvironment(m_EnvVars, false, getVariables()));
 	  m_ProcessOutput.monitor(builder);
+	  if (!m_VariableExitCode.isDefault())
+	    getVariables().set(m_VariableExitCode.getValue(), "" + m_ProcessOutput.getExitCode());
 	}
 	catch (Exception e) {
-          m_ExecutionFailure = new IllegalStateException("Failed to execute: " + fCmd, e);
+	  m_ExecutionFailure = new IllegalStateException("Failed to execute: " + fCmd, e);
 	}
 	m_Monitor       = null;
-        m_ProcessOutput = null;
+	m_ProcessOutput = null;
       }
       @Override
       public void stopExecution() {
-        if (m_ProcessOutput != null)
-          m_ProcessOutput.destroy();
+	if (m_ProcessOutput != null)
+	  m_ProcessOutput.destroy();
 	super.stopExecution();
       }
     };
@@ -659,7 +707,7 @@ public class Command
 
     result = null;
 
-    while ((m_Output.size() == 0) && !isStopped() && (m_Monitor != null)) {
+    while (m_Output.isEmpty() && !isStopped() && (m_Monitor != null)) {
       Utils.wait(this, this, 1000, 100);
     }
 
@@ -669,7 +717,7 @@ public class Command
       throw exc;
     }
 
-    if (!isStopped() && (m_Output.size() > 0)) {
+    if (!isStopped() && !m_Output.isEmpty()) {
       result = new Token(m_Output.get(0));
       m_Output.remove(0);
     }
@@ -684,7 +732,7 @@ public class Command
    * @return		true if there is pending output
    */
   public boolean hasPendingOutput() {
-    return (m_Output.size() > 0) || (m_Monitor != null);
+    return !m_Output.isEmpty() || (m_Monitor != null);
   }
 
   /**
