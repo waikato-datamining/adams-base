@@ -661,7 +661,7 @@ public class Exec
       env = ProcessUtils.getEnvironment(m_EnvVars, true, getVariables());
       m_ProcessOutput = ProcessUtils.execute(OptionUtils.splitOptions(cmd), env, cwd);
       if (!m_VariableExitCode.isDefault())
-	getVariables().set(getVariableExitCode().getValue(), "" + m_ProcessOutput.getExitCode());
+	getVariables().set(m_VariableExitCode.getValue(), "" + m_ProcessOutput.getExitCode());
       if (!m_ProcessOutput.hasSucceeded() && m_FailOnProcessError) {
 	result = ProcessUtils.toErrorOutput(m_ProcessOutput);
       }
