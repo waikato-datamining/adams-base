@@ -15,17 +15,20 @@
 
 /*
  * HttpRequest.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.core.base.BaseCharset;
 import adams.core.base.BaseKeyValuePair;
 import adams.core.base.BaseURL;
 import adams.core.io.EncodingSupporter;
 import adams.flow.container.HttpRequestResult;
+import adams.flow.core.HttpRedirectSupporter;
+import adams.flow.core.HttpResponseVariableSupporter;
 import adams.flow.core.Token;
 import com.github.fracpete.requests4j.core.MediaTypeHelper;
 import com.github.fracpete.requests4j.request.Method;
@@ -56,6 +59,7 @@ import okhttp3.MediaType;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -79,12 +83,14 @@ import okhttp3.MediaType;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-url &lt;adams.core.base.BaseURL&gt; (property: URL)
@@ -111,14 +117,29 @@ import okhttp3.MediaType;
  * &nbsp;&nbsp;&nbsp;The type of encoding to use for incoming strings.
  * &nbsp;&nbsp;&nbsp;default: UTF-8
  * </pre>
- * 
+ *
+ * <pre>-allow-redirects &lt;boolean&gt; (property: allowRedirects)
+ * &nbsp;&nbsp;&nbsp;If enabled, redirects are allowed to occur.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-var-status-code &lt;adams.core.VariableName&gt; (property: variableStatusCode)
+ * &nbsp;&nbsp;&nbsp;The (optional) variable to store the status code in directly.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
+ * <pre>-var-body &lt;adams.core.VariableName&gt; (property: variableBody)
+ * &nbsp;&nbsp;&nbsp;The (optional) variable to store the body in directly.
+ * &nbsp;&nbsp;&nbsp;default: variable
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class HttpRequest
   extends AbstractTransformer
-  implements EncodingSupporter {
+  implements EncodingSupporter, HttpResponseVariableSupporter, HttpRedirectSupporter {
 
   private static final long serialVersionUID = 3114594997972970790L;
 
@@ -136,6 +157,15 @@ public class HttpRequest
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding;
+
+  /** whether to allow redirects. */
+  protected boolean m_AllowRedirects;
+
+  /** the variable for the status code. */
+  protected VariableName m_VariableStatusCode;
+
+  /** the variable for the body. */
+  protected VariableName m_VariableBody;
 
   /**
    * Returns a string describing the object.
@@ -175,6 +205,18 @@ public class HttpRequest
     m_OptionManager.add(
       "encoding", "encoding",
       new BaseCharset("UTF-8"));
+
+    m_OptionManager.add(
+      "allow-redirects", "allowRedirects",
+      false);
+
+    m_OptionManager.add(
+      "var-status-code", "variableStatusCode",
+      new VariableName());
+
+    m_OptionManager.add(
+      "var-body", "variableBody",
+      new VariableName());
   }
 
   /**
@@ -189,6 +231,11 @@ public class HttpRequest
     result  = QuickInfoHelper.toString(this, "URL", m_URL, "URL: ");
     result += QuickInfoHelper.toString(this, "method", m_Method, ", method: ");
     result += QuickInfoHelper.toString(this, "mimeType", (m_MimeType.isEmpty() ? MediaTypeHelper.OCTECT_STREAM : m_MimeType), ", mime-type: ");
+    result += QuickInfoHelper.toString(this, "allowRedirects", m_AllowRedirects, "redirects", ", ");
+    if (!m_VariableStatusCode.isDefault())
+      result += QuickInfoHelper.toString(this, "variableStatusCode", m_VariableStatusCode, ", status code var: ");
+    if (!m_VariableBody.isDefault())
+      result += QuickInfoHelper.toString(this, "variableBody", m_VariableBody, ", body var: ");
 
     return result;
   }
@@ -339,6 +386,102 @@ public class HttpRequest
   }
 
   /**
+   * Sets whether to allow redirects.
+   *
+   * @param value	true if to allow
+   */
+  @Override
+  public void setAllowRedirects(boolean value) {
+    m_AllowRedirects = value;
+    reset();
+  }
+
+  /**
+   * Returns whether redirects are allowed.
+   *
+   * @return		true if allowed
+   */
+  @Override
+  public boolean getAllowRedirects() {
+    return m_AllowRedirects;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String allowRedirectsTipText() {
+    return "If enabled, redirects are allowed to occur.";
+  }
+
+  /**
+   * Sets the (optional) variable name for storing the status code in.
+   *
+   * @param value	the variable name
+   */
+  @Override
+  public void setVariableStatusCode(VariableName value) {
+    m_VariableStatusCode = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) variable name for storing the status code in.
+   *
+   * @return		the variable name
+   */
+  @Override
+  public VariableName getVariableStatusCode() {
+    return m_VariableStatusCode;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String variableStatusCodeTipText() {
+    return "The (optional) variable to store the status code in directly.";
+  }
+
+  /**
+   * Sets the (optional) variable name for storing the body in.
+   *
+   * @param value	the variable name
+   */
+  @Override
+  public void setVariableBody(VariableName value) {
+    m_VariableBody = value;
+    reset();
+  }
+
+  /**
+   * Returns the (optional) variable name for storing the body in.
+   *
+   * @return		the variable name
+   */
+  @Override
+  public VariableName getVariableBody() {
+    return m_VariableBody;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String variableBodyTipText() {
+    return "The (optional) variable to store the body in directly.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -374,19 +517,24 @@ public class HttpRequest
 
     try {
       req = new Request(m_Method)
-      	.url(m_URL.urlValue())
-	.headers(BaseKeyValuePair.toMap(m_Headers));
+	      .url(m_URL.urlValue())
+	      .headers(BaseKeyValuePair.toMap(m_Headers));
       if (!m_Method.hasBody())
-        throw new IllegalStateException("Method " + m_Method + " does not support a body in the request!");
+	throw new IllegalStateException("Method " + m_Method + " does not support a body in the request!");
       if (m_InputToken.hasPayload(String.class))
-        bytes = ((String) m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue());
+	bytes = ((String) m_InputToken.getPayload()).getBytes(m_Encoding.charsetValue());
       else
-        bytes = (byte[]) m_InputToken.getPayload();
+	bytes = (byte[]) m_InputToken.getPayload();
       if (m_MimeType.isEmpty())
 	req.body(bytes);
       else
-        req.body(bytes, MediaType.parse(m_MimeType));
+	req.body(bytes, MediaType.parse(m_MimeType));
+      req.allowRedirects(m_AllowRedirects);
       res = req.execute();
+      if (!m_VariableStatusCode.isDefault())
+	getVariables().set(m_VariableStatusCode.getValue(), "" + res.statusCode());
+      if (!m_VariableBody.isDefault())
+	getVariables().set(m_VariableBody.getValue(), res.text());
       m_OutputToken = new Token(new HttpRequestResult(res.statusCode(), res.statusMessage(), res.text()));
     }
     catch (Exception e) {
