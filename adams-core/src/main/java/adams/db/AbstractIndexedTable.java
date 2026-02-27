@@ -15,7 +15,7 @@
 
 /*
  * AbstractIndexedTable.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -148,7 +148,7 @@ public abstract class AbstractIndexedTable
 	}
 	else if (!expectedColumn.equivalentTo(getDatabaseConnection(), columnType)) {
 	  if (expectedColumn.isEncompassed(getDatabaseConnection(), columnType)) {
-	    if (print)
+	    if (print && getDebug())
 	      getLogger().warning(
 		"column type different (but encompassed) for '" + cname + "': "
 		  + expectedColumn.getCompareType(getDatabaseConnection())
