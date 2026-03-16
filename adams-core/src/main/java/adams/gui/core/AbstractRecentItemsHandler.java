@@ -15,7 +15,7 @@
 
 /*
  * AbstractRecentItemsHandler.java
- * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -408,9 +408,14 @@ public abstract class AbstractRecentItemsHandler<M, T>
     if (item == null)
       return;
 
-    s = toString(item);
-    if (s == null)
+    try {
+      s = toString(item);
+      if (s == null)
+	return;
+    }
+    catch (Exception e) {
       return;
+    }
 
     item = fromString(s);
 
