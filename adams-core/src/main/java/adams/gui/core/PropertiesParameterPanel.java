@@ -15,7 +15,7 @@
 
 /*
  * PropertiesParameterPanel.java
- * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -1015,7 +1015,8 @@ public class PropertiesParameterPanel
     keys.addAll(0, m_Order);
     for (String key: keys) {
       if (!m_PropertyTypes.containsKey(key)) {
-	System.err.println(getClass().getName() + ": key '" + key + "' in properties is not defined as a parameter, skipping!");
+	LoggingHelper.global().warning(getClass().getName() + ": key '" + key + "' in properties is not defined as a parameter, skipping!");
+	LoggingHelper.global().fine(getClass().getName() + " : " + value);
 	continue;
       }
 
