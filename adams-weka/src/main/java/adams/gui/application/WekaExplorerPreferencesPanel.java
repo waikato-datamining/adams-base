@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * WekaExplorerPreferencesPanel.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.application;
 
@@ -30,16 +30,15 @@ import java.io.File;
 
 /**
  * Preferences for the WEKA Explorer.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class WekaExplorerPreferencesPanel
   extends AbstractPropertiesPreferencesPanel {
 
   /** for serialization. */
   private static final long serialVersionUID = 3895159356677639564L;
-  
+
   @Override
   protected void initGUI() {
     super.initGUI();
@@ -48,6 +47,7 @@ public class WekaExplorerPreferencesPanel
     addPropertyType("InitialDirectory", PropertyType.DIRECTORY_ABSOLUTE);
     addPropertyType("enableUndo", PropertyType.BOOLEAN);
     addPropertyType("undoDirectory", PropertyType.DIRECTORY_ABSOLUTE);
+    addPropertyType("InitGenericObjectEditorFilter", PropertyType.BOOLEAN);
     addPropertyType("Filter", PropertyType.OBJECT_EDITOR);
     setChooser("Filter", new GenericObjectEditorPanel(weka.filters.Filter.class, new weka.filters.AllFilter(), true));
     addPropertyType("Classifier", PropertyType.OBJECT_EDITOR);
@@ -100,10 +100,10 @@ public class WekaExplorerPreferencesPanel
       setPreferences(new Properties());
     }
   }
-  
+
   /**
    * The title of the preferences.
-   * 
+   *
    * @return		the title
    */
   @Override
@@ -113,7 +113,7 @@ public class WekaExplorerPreferencesPanel
 
   /**
    * Returns whether the panel requires a wrapper scrollpane/panel for display.
-   * 
+   *
    * @return		true if wrapper required
    */
   @Override
@@ -123,23 +123,23 @@ public class WekaExplorerPreferencesPanel
 
   /**
    * Activates the settings.
-   * 
+   *
    * @return		null if successfully activated, otherwise error message
    */
   @Override
   public String activate() {
     String	filename;
-    
+
     if (!WekaPackageManager.PROPERTIES_DIR.exists()) {
       WekaPackageManager.PROPERTIES_DIR.mkdirs();
       if (!WekaPackageManager.PROPERTIES_DIR.exists())
 	return "Failed to create WEKA props directory: " + WekaPackageManager.PROPERTIES_DIR;
     }
-    
+
     filename = WekaPackageManager.PROPERTIES_DIR.getAbsolutePath() + File.separator + new File(ExplorerDefaults.PROPERTY_FILE).getName();
     if (!getPreferences().save(filename))
       return "Failed to save WEKA Explorer properties: " + filename;
-    
+
     return null;
   }
 }
