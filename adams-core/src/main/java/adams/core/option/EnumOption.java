@@ -15,7 +15,7 @@
 
 /*
  * EnumOption.java
- * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -151,10 +151,12 @@ public class EnumOption
 
     result = "";
 
-    if (ClassLocator.hasInterface(EnumWithCustomDisplay.class, getBaseClass()))
-      result = ((EnumWithCustomDisplay) obj).toRaw();
-    else if (ClassLocator.isSubclass(Enum.class, getBaseClass()))
-      result = obj.toString();
+    if (obj != null) {
+      if (ClassLocator.hasInterface(EnumWithCustomDisplay.class, getBaseClass()))
+	result = ((EnumWithCustomDisplay) obj).toRaw();
+      else if (ClassLocator.isSubclass(Enum.class, getBaseClass()))
+	result = obj.toString();
+    }
 
     return result;
   }
