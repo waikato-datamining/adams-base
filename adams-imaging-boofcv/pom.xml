@@ -162,6 +162,14 @@
           <groupId>net.sf.trove4j</groupId>
           <artifactId>trove4j</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>io.github.vincenzopalazzo</groupId>
+          <artifactId>material-ui-swing</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.weisj</groupId>
+          <artifactId>darklaf-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
