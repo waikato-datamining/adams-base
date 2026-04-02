@@ -21,6 +21,7 @@ package adams.gui.tools;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
+import adams.core.NaturalOrderComparator;
 import adams.core.Properties;
 import adams.core.ShorteningType;
 import adams.core.Utils;
@@ -126,6 +127,8 @@ public class PreviewBrowserPanel
   public static class FileComparator
       implements Comparator<File> {
 
+    protected NaturalOrderComparator m_Comparator = new NaturalOrderComparator();
+
     /**
      * Compares its two arguments for order.  Returns a negative integer,
      * zero, or a positive integer as the first argument is less than, equal
@@ -147,7 +150,7 @@ public class PreviewBrowserPanel
 	return -1;
       if (o2 == null)
 	return 1;
-      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+      return m_Comparator.compare(o1.getName().toLowerCase(), o2.getName().toLowerCase());
     }
   }
 
