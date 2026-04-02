@@ -37,7 +37,16 @@ import java.util.Random;
   license = License.ZLIB,
   url = "https://github.com/paour/natorder/blob/9d683d9524312a1d4782da96edaec852a8ba2d8f/NaturalOrderComparator.java"
 )
-public class NaturalOrderComparator implements Comparator {
+public class NaturalOrderComparator implements Comparator, GlobalInfoSupporter {
+
+  /**
+   * Returns a string describing the object.
+   *
+   * @return 			a description suitable for displaying in the gui
+   */
+  public String globalInfo() {
+    return "Perform 'natural order' comparisons of strings in Java.";
+  }
 
   int compareRight(String a, String b) {
     int bias = 0, ia = 0, ib = 0;
