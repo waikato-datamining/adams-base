@@ -15,7 +15,7 @@
 
 /*
  * PreviewBrowserPanel.java
- * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools;
 
@@ -513,7 +513,7 @@ public class PreviewBrowserPanel
       showTemp = PropertiesManager.getProperties().getBoolean("ShowTempFiles", false);
     regExp = new BaseRegExp(BaseRegExp.MATCH_ALL);
     exp    = PropertiesManager.getProperties().getProperty("TempFiles", ".*\\.bak|.*\\.backup|.*~");
-    if (exp.length() > 0) {
+    if (!exp.isEmpty()) {
       expList = Utils.split(exp, '|');
       exp = "";
       for (String item: expList) {
@@ -540,7 +540,7 @@ public class PreviewBrowserPanel
       result.add(file);
     }
 
-    return result.toArray(new File[result.size()]);
+    return result.toArray(new File[0]);
   }
 
   /**
@@ -663,7 +663,7 @@ public class PreviewBrowserPanel
 	fileList.add(file);
       }
     }
-    Collections.sort(fileList, new FileComparator());
+    fileList.sort(new FileComparator());
     m_ListLocalFiles.clearSelection();
     m_ModelLocalFiles.clear();
     for (File file: fileList)
@@ -813,7 +813,7 @@ public class PreviewBrowserPanel
       exts.add(ext);
     }
 
-    PropertiesManager.updatePreferredArchiveHandler(exts.toArray(new String[exts.size()]), handler);
+    PropertiesManager.updatePreferredArchiveHandler(exts.toArray(new String[0]), handler);
   }
 
   /**
@@ -1183,9 +1183,22 @@ public class PreviewBrowserPanel
     List	selected;
 
     selected = m_ListLocalFiles.getSelectedValuesList();
-    open(new PlaceholderDirectory(m_PanelDir.getCurrent()));
-    if (selected.size() > 0)
-      m_ListLocalFiles.setSelectedValue(selected.get(0), true);
+    reload(selected.isEmpty() ? null : (String) selected.get(0));
+  }
+
+  /**
+   * Reloads the directory and content.
+   *
+   * @param selected	the file to select again after the reload, ignored if null
+   */
+  public void reload(String selected) {
+    refreshLocalFiles();
+    if (selected != null) {
+      SwingUtilities.invokeLater(() -> {
+	m_ListLocalFiles.setSelectedValue(selected, true);
+	displayLocalFile();
+      });
+    }
   }
 
   /**
@@ -1229,7 +1242,7 @@ public class PreviewBrowserPanel
       if (result.getReusePreviews() != getReusePreviews())
 	result.setReusePreviews(getReusePreviews());
       if (result.getShowHiddenFiles() != getShowHiddenFiles())
-      result.setShowHiddenFiles(getShowHiddenFiles());
+	result.setShowHiddenFiles(getShowHiddenFiles());
       if (result.getShowTempFiles() != getShowTempFiles())
 	result.setShowTempFiles(getShowTempFiles());
     }
