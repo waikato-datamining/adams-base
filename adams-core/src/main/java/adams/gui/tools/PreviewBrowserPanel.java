@@ -21,7 +21,6 @@ package adams.gui.tools;
 
 import adams.core.ClassLister;
 import adams.core.CleanUpHandler;
-import adams.core.NaturalOrderComparator;
 import adams.core.Properties;
 import adams.core.ShorteningType;
 import adams.core.Utils;
@@ -112,8 +111,8 @@ import java.util.Map;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class PreviewBrowserPanel
-    extends BasePanel
-    implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
+  extends BasePanel
+  implements MenuBarProvider, SendToActionSupporter, CleanUpHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 5284765971012530865L;
@@ -125,9 +124,7 @@ public class PreviewBrowserPanel
    * @author  fracpete (fracpete at waikato dot ac dot nz)
    */
   public static class FileComparator
-      implements Comparator<File> {
-
-    protected NaturalOrderComparator m_Comparator = new NaturalOrderComparator();
+    implements Comparator<File> {
 
     /**
      * Compares its two arguments for order.  Returns a negative integer,
@@ -150,7 +147,7 @@ public class PreviewBrowserPanel
 	return -1;
       if (o2 == null)
 	return 1;
-      return m_Comparator.compare(o1.getName().toLowerCase(), o2.getName().toLowerCase());
+      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
     }
   }
 
@@ -569,7 +566,7 @@ public class PreviewBrowserPanel
    * Based on check state of menu item, sets whether to reuse the views.
    */
   protected void updateCacheViews() {
-      setReusePreviews(m_MenuItemCacheViews.isSelected());
+    setReusePreviews(m_MenuItemCacheViews.isSelected());
   }
 
   /**
@@ -616,7 +613,7 @@ public class PreviewBrowserPanel
 
   /**
    * Returns whether to show hidden files or not.
-   * 
+   *
    * @return		true if to show
    */
   public boolean getShowHiddenFiles() {
@@ -724,9 +721,9 @@ public class PreviewBrowserPanel
       catch (Exception e) {
 	m_ArchiveHandler = null;
 	ConsolePanel.getSingleton().append(
-	    LoggingLevel.SEVERE,
-	    "Failed to obtain archive handler for '" + localFiles[0] + "':",
-	    e);
+	  LoggingLevel.SEVERE,
+	  "Failed to obtain archive handler for '" + localFiles[0] + "':",
+	  e);
       }
     }
     else {
@@ -776,16 +773,16 @@ public class PreviewBrowserPanel
 	tmpFiles[i] = File.createTempFile("adams-pb-", "." + FileUtils.getExtension(selFiles.get(i).toString()), TempUtils.getTempDirectory());
 	if (!m_ArchiveHandler.extract(selFiles.get(i).toString(), tmpFiles[i])) {
 	  ConsolePanel.getSingleton().append(
-	      LoggingLevel.SEVERE,
-	      "Failed to extract file '" + selFiles.get(i) + "'!");
+	    LoggingLevel.SEVERE,
+	    "Failed to extract file '" + selFiles.get(i) + "'!");
 	  return;
 	}
       }
       catch (Exception e) {
 	ConsolePanel.getSingleton().append(
-	    LoggingLevel.SEVERE,
-	    "Failed to extract file '" + selFiles.get(i) + "':",
-	    e);
+	  LoggingLevel.SEVERE,
+	  "Failed to extract file '" + selFiles.get(i) + "':",
+	  e);
       }
     }
     m_PanelContent.display(tmpFiles, false);
@@ -896,7 +893,7 @@ public class PreviewBrowserPanel
       submenu = new JMenu("Open recent");
       menu.add(submenu);
       m_RecentFilesHandler = new RecentFilesHandler<>(
-	  SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
+	SESSION_FILE, PropertiesManager.getProperties().getInteger("MaxRecentDirs", 5), submenu);
       m_RecentFilesHandler.addRecentItemListener(new RecentItemListener<JMenu,File>() {
 	public void recentItemAdded(RecentItemEvent<JMenu,File> e) {
 	  // ignored
