@@ -15,7 +15,7 @@
 
 /*
  * PascalVOCObjectLocationsReader.java
- * Copyright (C) 2021-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.io.input;
@@ -40,9 +40,6 @@ import java.util.logging.Level;
 /**
  <!-- globalinfo-start -->
  * Reads object locations in Pascal VOC format.<br>
- * <br>
- * See more:<br>
- * https:&#47;&#47;github.com&#47;WaikatoLink2020&#47;objdet-predictions-exchange-format
  * <br><br>
  <!-- globalinfo-end -->
  *
@@ -114,9 +111,7 @@ public class PascalVOCObjectLocationsReader
    */
   @Override
   public String globalInfo() {
-    return "Reads object locations in Pascal VOC format.\n\n"
-      + "See more:\n"
-      + "https://github.com/WaikatoLink2020/objdet-predictions-exchange-format";
+    return "Reads object locations in Pascal VOC format.";
   }
 
   /**
