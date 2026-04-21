@@ -15,7 +15,7 @@
 
 /*
  * ControlPanel.java
- * Copyright (C) 2015-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.execution.debug;
@@ -400,6 +400,7 @@ public class ControlPanel
     m_ButtonToggle.setEnabled(actorPresent && !stopped && (m_CurrentBreakpoint != null));
     m_ButtonPauseResume.setEnabled(actorPresent && !stopped);
     m_ButtonStep.setEnabled(actorPresent && !stopped && blocked);
+    m_ButtonStepOver.setEnabled(actorPresent && !stopped && blocked);
     m_ButtonVariables.setEnabled(actorPresent);
     m_ButtonStorage.setEnabled(actorPresent);
     m_ButtonExpressions.setEnabled(actorPresent && !stopped && blocked);
