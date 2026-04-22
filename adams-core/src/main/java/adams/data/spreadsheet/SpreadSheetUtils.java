@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetUtils.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
@@ -509,6 +509,35 @@ public class SpreadSheetUtils {
       unique.addAll(Arrays.asList(SpreadSheetUtils.getColumn(sheet, i, true, false)));
     result = new ArrayList<>(unique);
     Collections.sort(result);
+
+    return result;
+  }
+
+  /**
+   * Turns the columns into a spreadsheet.
+   *
+   * @param cols	the columns in the spreadsheet
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet columnsToSpreadSheet(List<String> cols) {
+    return columnsToSpreadSheet(cols.toArray(new String[0]));
+  }
+
+  /**
+   * Turns the columns into a spreadsheet.
+   *
+   * @param cols	the columns in the spreadsheet
+   * @return		the generated spreadsheet
+   */
+  public static SpreadSheet columnsToSpreadSheet(String[] cols) {
+    SpreadSheet 	result;
+    Row			row;
+    int			i;
+
+    result = new DefaultSpreadSheet();
+    row   = result.getHeaderRow();
+    for (i = 0; i < cols.length; i++)
+      row.addCell("" + i).setContentAsString(cols[i]);
 
     return result;
   }
