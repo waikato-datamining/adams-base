@@ -13,21 +13,22 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SpreadSheetColumnIndex.java
- * Copyright (C) 2013-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
 import adams.core.AbstractDataBackedIndex;
 import adams.core.Index;
 
+import java.util.List;
+
 /**
  * Extended {@link Index} class that can use a column name to determine an
  * index of a column as well.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SpreadSheetColumnIndex
   extends AbstractDataBackedIndex<SpreadSheet> {
@@ -70,7 +71,25 @@ public class SpreadSheetColumnIndex
   public void setSpreadSheet(SpreadSheet value) {
     setData(value);
   }
-  
+
+  /**
+   * Sets the columns to use. Constructs a spreadsheet on-the-fly.
+   *
+   * @param cols	the columns in the spreadsheet
+   */
+  public void setSpreadSheetColumns(List<String> cols) {
+    setSpreadSheet(SpreadSheetUtils.columnsToSpreadSheet(cols));
+  }
+
+  /**
+   * Sets the columns to use. Constructs a spreadsheet on-the-fly.
+   *
+   * @param cols	the columns in the spreadsheet
+   */
+  public void setSpreadSheetColumns(String[] cols) {
+    setSpreadSheet(SpreadSheetUtils.columnsToSpreadSheet(cols));
+  }
+
   /**
    * Returns the underlying spreadsheet.
    * 
