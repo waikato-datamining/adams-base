@@ -27,6 +27,8 @@ import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import org.dhatim.fastexcel.reader.Cell;
 import org.dhatim.fastexcel.reader.CellType;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
@@ -355,6 +357,8 @@ public class FastExcelSpreadSheetReader
     int 			lastRow;
     List<String>        	header;
     String			valueStr;
+    TIntSet 			check;
+    List<String>		cols;
 
     result = new ArrayList<>();
 
@@ -397,16 +401,19 @@ public class FastExcelSpreadSheetReader
 	m_TextColumns.setMax(exRow.size());
 	if (getNoHeader()) {
 	  header = SpreadSheetUtils.createHeader(exRow.size(), m_CustomColumnHeaders);
+	  m_TextColumns.setSpreadSheetColumns(header);
 	  for (i = 0; i < header.size(); i++)
 	    spRow.addCell("" + (i + 1)).setContent(header.get(i));
 	}
 	else {
 	  if (!m_CustomColumnHeaders.trim().isEmpty()) {
 	    header = SpreadSheetUtils.createHeader(exRow.size(), m_CustomColumnHeaders);
+	    m_TextColumns.setSpreadSheetColumns(header);
 	    for (i = 0; i < header.size(); i++)
 	      spRow.addCell("" + (i + 1)).setContent(header.get(i));
 	  }
 	  else {
+	    check = new TIntHashSet();
 	    for (i = 0; i < exRow.size(); i++) {
 	      if (m_Stopped)
 		break;
@@ -415,7 +422,6 @@ public class FastExcelSpreadSheetReader
 		spRow.addCell("" + (i + 1)).setMissing();
 		continue;
 	      }
-	      numeric = !m_TextColumns.isInRange(i);
 	      switch (exCell.getType()) {
 		case EMPTY:
 		case ERROR:
@@ -425,14 +431,21 @@ public class FastExcelSpreadSheetReader
 		    spRow.addCell("" + (i + 1)).setContent("");
 		  break;
 		case NUMBER:
-		  if (numeric)
-		    spRow.addCell("" + (i + 1)).setContent(exCell.asNumber().doubleValue());
-		  else
-		    spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
+		  check.add(i);
+		  spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
 		  break;
 		default:
 		  spRow.addCell("" + (i + 1)).setContentAsString(exCell.getText());
 	      }
+	    }
+	    // specify/correct header cols
+	    cols = new ArrayList<>();
+	    for (i = 0; i < spRow.getCellCount(); i++)
+	      cols.add(spRow.getCell(i).getContent());
+	    m_TextColumns.setSpreadSheetColumns(cols);
+	    for (int col: check.toArray()) {
+	      if (!m_TextColumns.isInRange(col))
+		spRow.getCell(col).setContent(exRow.get(col).asNumber().doubleValue());
 	    }
 	  }
 	}

@@ -29,6 +29,8 @@ import adams.data.spreadsheet.SheetRange;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
+import gnu.trove.set.TIntSet;
+import gnu.trove.set.hash.TIntHashSet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -295,10 +297,11 @@ public class ExcelSpreadSheetReader
     int 			lastRow;
     List<String>        	header;
     String			valueStr;
+    TIntSet			check;
+    List<String>		cols;
 
     result = new ArrayList<>();
 
-    workbook = null;
     dformat  = DateUtils.getTimestampFormatter();
     try {
       workbook = WorkbookFactory.create(in);
@@ -334,21 +337,24 @@ public class ExcelSpreadSheetReader
 	if (exRow == null) {
 	  getLogger().warning("No data in sheet #" + (index + 1) + "?");
 	}
-	else if (exRow != null) {
+	else {
 	  spRow = spsheet.getHeaderRow();
 	  m_TextColumns.setMax(exRow.getLastCellNum());
 	  if (getNoHeader()) {
 	    header = SpreadSheetUtils.createHeader(exRow.getLastCellNum(), m_CustomColumnHeaders);
+	    m_TextColumns.setSpreadSheetColumns(header);
 	    for (i = 0; i < header.size(); i++)
 	      spRow.addCell("" + (i + 1)).setContent(header.get(i));
 	  }
 	  else {
 	    if (!m_CustomColumnHeaders.trim().isEmpty()) {
 	      header = SpreadSheetUtils.createHeader(exRow.getLastCellNum(), m_CustomColumnHeaders);
+	      m_TextColumns.setSpreadSheetColumns(header);
 	      for (i = 0; i < header.size(); i++)
 		spRow.addCell("" + (i + 1)).setContent(header.get(i));
 	    }
 	    else {
+	      check = new TIntHashSet();
 	      for (i = 0; i < exRow.getLastCellNum(); i++) {
 		if (m_Stopped)
 		  break;
@@ -357,7 +363,6 @@ public class ExcelSpreadSheetReader
 		  spRow.addCell("" + (i + 1)).setMissing();
 		  continue;
 		}
-		numeric = !m_TextColumns.isInRange(i);
 		switch (exCell.getCellType()) {
 		  case BLANK:
 		  case ERROR:
@@ -367,16 +372,26 @@ public class ExcelSpreadSheetReader
 		      spRow.addCell("" + (i + 1)).setContent("");
 		    break;
 		  case NUMERIC:
-		    if (DateUtil.isCellDateFormatted(exCell))
+		    if (DateUtil.isCellDateFormatted(exCell)) {
 		      spRow.addCell("" + (i + 1)).setContent(new DateTime(DateUtil.getJavaDate(exCell.getNumericCellValue())));
-		    else if (numeric)
-		      spRow.addCell("" + (i + 1)).setContent(exCell.getNumericCellValue());
-		    else
+		    }
+		    else {
+		      check.add(i);
 		      spRow.addCell("" + (i + 1)).setContentAsString(numericToString(exCell));
+		    }
 		    break;
 		  default:
 		    spRow.addCell("" + (i + 1)).setContentAsString(exCell.getStringCellValue());
 		}
+	      }
+	      // specify/correct header cols
+	      cols = new ArrayList<>();
+	      for (i = 0; i < spRow.getCellCount(); i++)
+		cols.add(spRow.getCell(i).getContent());
+	      m_TextColumns.setSpreadSheetColumns(cols);
+	      for (int col: check.toArray()) {
+		if (!m_TextColumns.isInRange(col))
+		  spRow.getCell(col).setContent(exRow.getCell(col).getNumericCellValue());
 	      }
 	    }
 	  }

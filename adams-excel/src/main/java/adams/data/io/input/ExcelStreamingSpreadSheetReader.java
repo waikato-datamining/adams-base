@@ -15,7 +15,7 @@
 
 /*
  * ExcelStreamingSpreadSheetReader.java
- * Copyright (C) 2010-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Foundation (example SAX handler)
  */
 package adams.data.io.input;
@@ -418,6 +418,7 @@ public class ExcelStreamingSpreadSheetReader
 	  loc = ExcelHelper.getCellLocation(m_Reference);
 	  if (isInRange(loc[0])) {
 	    actualRow = loc[0] - m_FirstRow;
+
 	    // fill in rows, if necessary
 	    if (m_Owner.getNoHeader()) {
 	      while (m_Sheet.getRowCount() < actualRow + 1)
@@ -427,6 +428,7 @@ public class ExcelStreamingSpreadSheetReader
 	      while (m_Sheet.getRowCount() < actualRow)
 		m_Sheet.addRow();
 	    }
+
 	    // fill in columns, if necessary
 	    while (m_Sheet.getColumnCount() <= loc[1])
 	      m_Sheet.insertColumn(m_Sheet.getColumnCount(), SpreadSheetUtils.PREFIX_COL + (m_Sheet.getColumnCount() + 1));
@@ -434,25 +436,35 @@ public class ExcelStreamingSpreadSheetReader
 	      row = m_Sheet.getRow(actualRow);
 	    }
 	    else {
-	      if (actualRow == 0)
+	      if (actualRow == 0) {
 		row = m_Sheet.getHeaderRow();
-	      else
+		// header may have changed, reset text-columns set
+		m_TextColumns = null;
+	      }
+	      else {
 		row = m_Sheet.getRow(actualRow - 1);
+	      }
 	    }
-	    if ((m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount()) || (m_TextColumns == null)) {
-	      m_Owner.getTextColumns().setMax(m_Sheet.getColumnCount());
-	      m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
-	    }
+
+	    // header seems to have changed, reset text-columns set
+	    if (m_Owner.getTextColumns().getMax() < m_Sheet.getColumnCount())
+	      m_TextColumns = null;
+
 	    cell = row.addCell(loc[1]);
 	  }
 	}
 	catch (Exception e) {
 	  loc = null;
-	  cell = null;
 	  m_Owner.getLogger().log(Level.SEVERE,
 	    "Failed to set cell content at " + m_Reference
 	      + " (rows=" + m_Sheet.getRowCount() + ", cols=" + m_Sheet.getColumnCount() + "):", e);
 	}
+      }
+
+      // do we need to update the text columns?
+      if (m_TextColumns == null) {
+	m_Owner.getTextColumns().setSpreadSheet(m_Sheet);
+	m_TextColumns = new TIntHashSet(m_Owner.getTextColumns().getIntIndices());
       }
 
       // v => contents of a cell
@@ -918,14 +930,14 @@ public class ExcelStreamingSpreadSheetReader
 	    result.add(spsheet);
 	    // missing types?
 	    if (!m_Handler.getUnknownCellTypes().isEmpty()) {
-	      getLogger().severe("Unknown cell types: " + m_Handler.getUnknownCellTypes());
+	      getLogger().warning("Unknown cell types: " + m_Handler.getUnknownCellTypes());
 	      for (String type : m_Handler.getUnknownCellTypes())
-		getLogger().severe("- cell type '" + type + "': " + m_Handler.getUnknownCellTypesExamples().get(type));
+		getLogger().warning("- cell type '" + type + "': " + m_Handler.getUnknownCellTypesExamples().get(type));
 	    }
 	    if (!m_Handler.getUnknownCellStrings().isEmpty()) {
-	      getLogger().severe("Unknown cell strings: " + m_Handler.getUnknownCellStrings());
+	      getLogger().warning("Unknown cell strings: " + m_Handler.getUnknownCellStrings());
 	      for (String str : m_Handler.getUnknownCellStrings())
-		getLogger().severe("- cell string '" + str + "': " + m_Handler.getUnknownCellStringsExamples().get(str));
+		getLogger().warning("- cell string '" + str + "': " + m_Handler.getUnknownCellStringsExamples().get(str));
 	    }
 	  }
 	}

@@ -15,11 +15,12 @@
 
 /*
  * AbstractExcelSpreadSheetReader.java
- * Copyright (C) 2010-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import adams.core.Range;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 
 /**
  * Ancestor for special Excel readers.
@@ -37,7 +38,7 @@ public abstract class AbstractExcelSpreadSheetReader<T extends Range>
   protected boolean m_AutoExtendHeader;
 
   /** the range of columns to force to be text. */
-  protected Range m_TextColumns;
+  protected SpreadSheetColumnRange m_TextColumns;
 
   /** whether the file has a header or not. */
   protected boolean m_NoHeader;
@@ -64,7 +65,7 @@ public abstract class AbstractExcelSpreadSheetReader<T extends Range>
 
     m_OptionManager.add(
       "text-columns", "textColumns",
-      new Range());
+      new SpreadSheetColumnRange());
 
     m_OptionManager.add(
       "no-header", "noHeader",
@@ -90,7 +91,7 @@ public abstract class AbstractExcelSpreadSheetReader<T extends Range>
   protected void initialize() {
     super.initialize();
 
-    m_TextColumns = new Range();
+    m_TextColumns = new SpreadSheetColumnRange();
   }
 
   /**
@@ -127,7 +128,7 @@ public abstract class AbstractExcelSpreadSheetReader<T extends Range>
    *
    * @param value	the range of columns
    */
-  public void setTextColumns(Range value) {
+  public void setTextColumns(SpreadSheetColumnRange value) {
     m_TextColumns = value;
     reset();
   }
@@ -137,7 +138,7 @@ public abstract class AbstractExcelSpreadSheetReader<T extends Range>
    *
    * @return		the range of columns
    */
-  public Range getTextColumns() {
+  public SpreadSheetColumnRange getTextColumns() {
     return m_TextColumns;
   }
 
