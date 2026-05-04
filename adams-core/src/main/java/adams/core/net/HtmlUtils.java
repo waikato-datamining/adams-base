@@ -15,7 +15,7 @@
 
 /*
  * HtmlUtils.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -24,6 +24,7 @@ import adams.core.License;
 import adams.core.Utils;
 import adams.core.annotation.MixedCopyright;
 
+import java.awt.Color;
 import java.util.Set;
 
 /**
@@ -267,5 +268,31 @@ public class HtmlUtils {
     }
 
     return result;
+  }
+
+  /**
+   * Generates a 'rgb(...)' code snippet from the color.
+   *
+   * @param color	the color to convert
+   * @return		the generated rgba(...) code snippet
+   */
+  public static String rgb(Color color) {
+    int[]	rgba;
+
+    rgba    = new int[]{color.getRed(), color.getGreen(), color.getBlue()};
+    return "rgb(" + rgba[0] + ", " + rgba[1] + ", " + rgba[2] + ")";
+  }
+
+  /**
+   * Generates a 'rgba(...)' code snippet from the color.
+   *
+   * @param color	the color to convert
+   * @return		the generated rgba(...) code snippet
+   */
+  public static String rgba(Color color) {
+    int[]	rgba;
+
+    rgba    = new int[]{color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()};
+    return "rgba(" + rgba[0] + ", " + rgba[1] + ", " + rgba[2] + ", " + ((double) rgba[3] / 255) + ")";
   }
 }
