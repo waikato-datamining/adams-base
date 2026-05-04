@@ -85,15 +85,17 @@ public class RunInformationHelper {
     result = new StringBuilder();
     result.append("<table>");
     for (Row row: info.rows()) {
-      if (row.hasCell(0) && !row.getCell(0).isMissing()) {
-	result.append("<tr>");
-	result.append("<td>");
-	result.append(row.getCell(0).getContent());
-	result.append("</td>");
-	result.append("<td>");
-	result.append(Shortening.shortenEnd(row.getCell(1).getContent(), MAX_HTML_LENGTH));
-	result.append("</td>");
-	result.append("</tr>");
+      if (row != null) {
+	if (row.hasCell(0) && !row.getCell(0).isMissing()) {
+	  result.append("<tr>");
+	  result.append("<td>");
+	  result.append(row.getCell(0).getContent());
+	  result.append("</td>");
+	  result.append("<td>");
+	  result.append(Shortening.shortenEnd(row.getCell(1).getContent(), MAX_HTML_LENGTH));
+	  result.append("</td>");
+	  result.append("</tr>");
+	}
       }
     }
     result.append("</table>");
