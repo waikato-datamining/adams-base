@@ -75,7 +75,7 @@ public class ClassifierErrorsKernelDensityEstimate
 
     m_OptionManager.add(
       "num-bins", "numBins",
-      50, 1, null);
+      100, 1, null);
 
     m_OptionManager.add(
       "bandwidth", "bandwidth",
