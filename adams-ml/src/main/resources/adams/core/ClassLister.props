@@ -11,6 +11,14 @@
 adams.data.spreadsheet.SpreadSheet=\
   adams.ml.data
 
+# the actual vs predicted processors
+adams.flow.transformer.actualvspredictedprocessor.ActualVsPredictedProcessor=\
+  adams.flow.transformer.actualvspredictedprocessor
+
+# the actual vs predicted HTML processors
+adams.flow.transformer.actualvspredictedprocessor.ActualVsPredictedHtmlProcessor=\
+  adams.flow.transformer.actualvspredictedprocessor
+
 # the file-based dataset preparation schemes
 adams.flow.transformer.preparefilebaseddataset.AbstractFileBasedDatasetPreparation=\
   adams.flow.transformer.preparefilebaseddataset

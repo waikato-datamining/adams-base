@@ -14,52 +14,27 @@
  */
 
 /*
- * ClassifierErrorsHTML.java
+ * ClassifierErrors.java
  * Copyright (C) 2026 University of Waikato, Hamilton, New Zealand
  */
 
-package adams.gui.tools.wekainvestigator.tab.classifytab.output;
+package adams.flow.transformer.actualvspredictedprocessor;
 
-import adams.core.MessageCollection;
-import adams.core.Shortening;
 import adams.core.Utils;
-import adams.core.io.FileUtils;
-import adams.core.io.PlaceholderFile;
-import adams.core.io.TempUtils;
 import adams.core.net.HtmlUtils;
-import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
-import adams.data.spreadsheet.SpreadSheetUtils;
-import adams.gui.chooser.FileChooserPanel;
-import adams.gui.core.BaseButton;
-import adams.gui.core.BrowserHelper;
-import adams.gui.core.ImageManager;
-import adams.gui.core.MultiPagePane;
-import adams.gui.core.ParameterPanel;
-import adams.gui.tools.wekainvestigator.output.ComponentContentPanel;
-import adams.gui.tools.wekainvestigator.tab.classifytab.PredictionHelper;
-import adams.gui.tools.wekainvestigator.tab.classifytab.ResultItem;
-import com.github.fracpete.javautils.enumerate.Enumerated;
-import weka.classifiers.Evaluation;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-import static com.github.fracpete.javautils.Enumerate.enumerate;
 
 /**
  * Generates a self-contained HTML file displaying a scatter plot of actual vs predicted.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ClassifierErrorsHTML
-  extends AbstractOutputGenerator {
+public class ClassifierErrors
+  extends AbstractActualVsPredictedHtmlProcessor {
 
-  private static final long serialVersionUID = 3326496263530951885L;
+  private static final long serialVersionUID = -4001003730048047162L;
 
   /** the circle fill color. */
   protected Color m_CircleFillColor;
@@ -73,9 +48,6 @@ public class ClassifierErrorsHTML
   /** the thickness of the border. */
   protected double m_BorderThickness;
 
-  /** the output file to generate. */
-  protected PlaceholderFile m_OutputFile;
-
   /**
    * Returns a string describing the object.
    *
@@ -84,14 +56,11 @@ public class ClassifierErrorsHTML
   @Override
   public String globalInfo() {
     return "Generates a self-contained HTML file displaying a scatter plot of actual vs predicted.\n"
-      + "When not explicitly specifying a file name, one will get generated automatically using the "
-      + "users temp directory. These files will get automatically deleted when application/JVM shut "
-      + "down in a controlled manner.\n"
-      + "Additional attributes can be associated with the data points and are displayed when hovering "
-      + "over a data point in the plot. The format for the hover display is:\n"
-      + "Actual: ...\n"
-      + "Predicted: ...\n"
-      + "Data: <InstIndex>: att1,att2,...";
+	     + "Additional attributes can be associated with the data points and are displayed when hovering "
+	     + "over a data point in the plot. The format for the hover display is:\n"
+	     + "Actual: ...\n"
+	     + "Predicted: ...\n"
+	     + "Data: <InstIndex>: att1,att2,...";
   }
 
   /**
@@ -116,10 +85,6 @@ public class ClassifierErrorsHTML
     m_OptionManager.add(
       "border-thickness", "borderThickness",
       0.4, 0.0, null);
-
-    m_OptionManager.add(
-      "output-file", "outputFile",
-      new PlaceholderFile("."));
   }
 
   /**
@@ -243,81 +208,28 @@ public class ClassifierErrorsHTML
   }
 
   /**
-   * Sets the output file to generate.
+   * Processes the actual vs predicted data and returns
+   * the output generated.
    *
-   * @param value	the output, automatically generated if pointing to a dir
-   */
-  public void setOutputFile(PlaceholderFile value) {
-    m_OutputFile = value;
-    reset();
-  }
-
-  /**
-   * Returns the output file to generate.
-   *
-   * @return		the output, automatically generated if pointing to a dir
-   */
-  public PlaceholderFile getOutputFile() {
-    return m_OutputFile;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String outputFileTipText() {
-    return "The output file to generate, gets automatically determined if pointing to a directory.";
-  }
-
-  /**
-   * The title to use for the tab.
-   *
-   * @return the title
+   * @param sheet the data to process
+   * @return the output
    */
   @Override
-  public String getTitle() {
-    return "Errors (HTML)";
-  }
-
-  /**
-   * Checks whether output can be generated from this item.
-   *
-   * @param item the item to check
-   * @return true if output can be generated
-   */
-  @Override
-  public boolean canGenerateOutput(ResultItem item) {
-    return item.hasEvaluation()
-	     && (item.getEvaluation().predictions() != null)
-	     && (item.getEvaluation().getHeader() != null)
-	     && (item.getEvaluation().getHeader().classAttribute().isNumeric());
-  }
-
-  /**
-   * Generates the HTML from the data.
-   *
-   * @param x		the actual values
-   * @param y		the predictions
-   * @param data	the associated data strings
-   * @return		the HTML
-   */
-  protected String generateHtml(double[] x, double[] y, String[] data, String title) {
+  protected String doProcess(SpreadSheet sheet) {
     StringBuilder	result;
     String		xStr;
     String		yStr;
     String 		dataStr;
 
-    xStr    = Utils.arrayToString(x);
-    yStr    = Utils.arrayToString(y);
-    dataStr = Utils.arrayToString(data);
+    xStr    = Utils.arrayToString(getActualNumeric(sheet));
+    yStr    = Utils.arrayToString(getPredictedNumeric(sheet));
+    dataStr = Utils.arrayToString(getAdditional(sheet));
 
     result = new StringBuilder();
     result.append("<!DOCTYPE html>\n");
     result.append("<html>\n");
     result.append("<head>\n");
-    result.append("    <title>").append(title).append("</title>\n");
+    result.append("    <title>").append(m_Title).append("</title>\n");
     result.append("    <script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>\n");
     result.append("    <style>\n");
     result.append("        body { font-family: Arial, sans-serif; margin: 20px; }\n");
@@ -358,15 +270,16 @@ public class ClassifierErrorsHTML
     result.append("            x: [minVal, maxVal],\n");
     result.append("            y: [minVal, maxVal],\n");
     result.append("            mode: 'lines',\n");
-    result.append("            name: 'Ideal (y=x)',\n");
+    result.append("            name: '',\n");
     result.append("            line: { color: 'red', dash: 'dash', width: 2 },\n");
+    result.append("            showlegend: false,\n");
     result.append("            type: 'scatter'\n");
     result.append("        };\n");
     result.append("\n");
     result.append("        var data = [trace1, trace2];\n");
     result.append("\n");
     result.append("        var layout = {\n");
-    result.append("            title: '").append(title).append("',\n");
+    result.append("            title: '").append(m_Title).append("',\n");
     result.append("            xaxis: { title: 'Actual Values', zeroline: false },\n");
     result.append("            yaxis: { title: 'Predicted Values', zeroline: false },\n");
     result.append("            hovermode: 'closest',\n");
@@ -380,122 +293,5 @@ public class ClassifierErrorsHTML
     result.append("\n");
 
     return result.toString();
-  }
-
-
-  /**
-   * Generates a plot actor from the evaluation.
-   *
-   * @param index 		the 0-based fold index, -1 if not for fold
-   * @param eval		the evaluation to use
-   * @param originalIndices 	the original indices, can be null
-   * @param additionalAttributes 	the additional attribute to use, can be null
-   * @param errors 		for collecting errors
-   * @return			the generated panel, null if failed to generate
-   */
-  protected ComponentContentPanel createOutput(int index, ResultItem item, Evaluation eval, int[] originalIndices, SpreadSheet additionalAttributes, MessageCollection errors) {
-    SpreadSheet		sheet;
-    Row			row;
-    ParameterPanel	paramPanel;
-    JPanel		panel;
-    FileChooserPanel	fileChooser;
-    BaseButton		buttonOpen;
-    double[] 		actual;
-    double[] 		predicted;
-    String[] 		data;
-    String		title;
-    String		html;
-    int			i;
-    int			n;
-    File 		outputFile;
-    final String	url;
-    StringBuilder 	cell;
-
-    sheet = PredictionHelper.toSpreadSheet(this, errors, eval, originalIndices, additionalAttributes, false);
-    if (sheet == null) {
-      if (errors.isEmpty())
-	errors.add("Failed to generate prediction!");
-      return null;
-    }
-
-    actual    = SpreadSheetUtils.getNumericColumn(sheet, 0);
-    predicted = SpreadSheetUtils.getNumericColumn(sheet, 1);
-    if (sheet.getColumnCount() > 3) {
-      data = new String[sheet.getRowCount()];
-      for (i = 0; i < sheet.getRowCount(); i++) {
-	row = sheet.getRow(i);
-	cell = new StringBuilder("\"").append(row.getCell(2).getContent()).append(":");  // instance index
-	for (n = 3; n < sheet.getColumnCount(); n++) {
-	  if (n > 3)
-	    cell.append(",");
-	  cell.append(row.getCell(n).getContent().replace("\"", ""));
-	}
-	cell.append("\"");
-	data[i] = cell.toString();
-      }
-    }
-    else {
-      data = new String[sheet.getRowCount()];
-      for (i = 0; i < data.length; i++)
-	data[i] = "" + (i+1);
-    }
-    title = Shortening.shortenEnd(item.getEvaluation().getHeader().relationName(), 40);
-    if (index > -1)
-      title += " (" + (index+1) + ")";
-    html = generateHtml(actual, predicted, data, title);
-
-    if (m_OutputFile.isDirectory()) {
-      outputFile = TempUtils.createTempFile("adams-", ".html");
-      outputFile.deleteOnExit();
-    }
-    else {
-      outputFile = m_OutputFile;
-    }
-    if (index > -1)
-      outputFile = FileUtils.replaceExtension(outputFile, "-" + (index+1) + ".html");
-
-    if (!FileUtils.writeToFile(outputFile.getAbsolutePath(), html))
-      return null;
-
-    paramPanel = new ParameterPanel();
-
-    fileChooser = new FileChooserPanel();
-    fileChooser.setCurrent(outputFile);
-    fileChooser.setEnabled(false);
-    paramPanel.addParameter("Output file", fileChooser);
-
-    url = outputFile.toURI().toString();
-    buttonOpen = new BaseButton(ImageManager.getIcon("browser"));
-    buttonOpen.addActionListener((ActionEvent e) -> BrowserHelper.openURL(url));
-    panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    panel.add(buttonOpen);
-    paramPanel.addParameter("Open in browser", panel);
-
-    return new ComponentContentPanel(paramPanel, true);
-  }
-
-  /**
-   * Generates output from the item.
-   *
-   * @param item   the item to generate output for
-   * @param errors for collecting error messages
-   * @return the output component, null if failed to generate
-   */
-  @Override
-  public JComponent createOutput(ResultItem item, MessageCollection errors) {
-    MultiPagePane multiPage;
-
-    if (item.hasFoldEvaluations()) {
-      multiPage = newMultiPagePane(item);
-      addPage(multiPage, "Full", createOutput(-1, item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors), 0);
-      for (Enumerated<Evaluation> eval: enumerate(item.getFoldEvaluations()))
-	addPage(multiPage, "Fold " + (eval.index + 1), createOutput(eval.index, item, item.getFoldEvaluation(eval.index), item.getFoldOriginalIndices(eval.index), item.getAdditionalAttributes(), errors), eval.index + 1);
-      if (multiPage.getPageCount() > 0)
-	multiPage.setSelectedIndex(0);
-      return multiPage;
-    }
-    else {
-      return createOutput(-1, item, item.getEvaluation(), item.getOriginalIndices(), item.getAdditionalAttributes(), errors);
-    }
   }
 }
