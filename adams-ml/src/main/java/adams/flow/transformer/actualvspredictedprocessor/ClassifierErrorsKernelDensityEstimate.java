@@ -91,7 +91,7 @@ public class ClassifierErrorsKernelDensityEstimate
 
     m_OptionManager.add(
       "circle-size", "circleSize",
-      4, 1, null);
+      10, 1, null);
   }
 
   /**
