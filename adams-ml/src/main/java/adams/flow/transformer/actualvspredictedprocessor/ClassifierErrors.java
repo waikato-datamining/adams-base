@@ -48,6 +48,9 @@ public class ClassifierErrors
   /** the thickness of the border. */
   protected double m_BorderThickness;
 
+  /** whether to show the legend. */
+  protected boolean m_ShowLegend;
+
   /**
    * Returns a string describing the object.
    *
@@ -85,6 +88,10 @@ public class ClassifierErrors
     m_OptionManager.add(
       "border-thickness", "borderThickness",
       0.4, 0.0, null);
+
+    m_OptionManager.add(
+      "show-legend", "showLegend",
+      true);
   }
 
   /**
@@ -208,6 +215,35 @@ public class ClassifierErrors
   }
 
   /**
+   * Sets whether to show the legend.
+   *
+   * @param value	true if to show
+   */
+  public void setShowLegend(boolean value) {
+    m_ShowLegend = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the legend.
+   *
+   * @return		true if to show
+   */
+  public boolean getShowLegend() {
+    return m_ShowLegend;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showLegendTipText() {
+    return "If enabled, the legend is displayed.";
+  }
+
+  /**
    * Processes the actual vs predicted data and returns
    * the output generated.
    *
@@ -249,8 +285,9 @@ public class ClassifierErrors
     result.append("            y: predicted,\n");
     result.append("            text: data.map(id => id),\n");
     result.append("            mode: 'markers',\n");
-    result.append("            name: '',\n");  // to suppress "trace 0"
+    result.append("            name: 'data',\n");
     result.append("            type: 'scattergl',\n");
+    result.append("            showlegend: true,\n");
     result.append("            marker: {\n");
     result.append("                color: '").append(HtmlUtils.rgba(m_CircleFillColor)).append("',\n");
     result.append("                size: ").append(m_CircleSize).append(",\n");
@@ -271,9 +308,9 @@ public class ClassifierErrors
     result.append("            x: [minVal, maxVal],\n");
     result.append("            y: [minVal, maxVal],\n");
     result.append("            mode: 'lines',\n");
-    result.append("            name: '',\n");
+    result.append("            name: 'diagonal',\n");
     result.append("            line: { color: 'red', dash: 'dash', width: 2 },\n");
-    result.append("            showlegend: false,\n");
+    result.append("            showlegend: true,\n");
     result.append("            type: 'scatter'\n");
     result.append("        };\n");
     result.append("\n");
@@ -284,7 +321,7 @@ public class ClassifierErrors
     result.append("            xaxis: { title: 'Actual Values', zeroline: false },\n");
     result.append("            yaxis: { title: 'Predicted Values', zeroline: false },\n");
     result.append("            hovermode: 'closest',\n");
-    result.append("            showlegend: true\n");
+    result.append("            showlegend: ").append(m_ShowLegend).append("\n");
     result.append("        };\n");
     result.append("\n");
     result.append("        Plotly.newPlot('plot', data, layout);\n");
