@@ -227,6 +227,7 @@ public class ClassifierErrors
 
     result = new StringBuilder();
     result.append("<!DOCTYPE html>\n");
+    result.append(generatedByAdams());
     result.append("<html>\n");
     result.append("<head>\n");
     result.append("    <title>").append(m_Title).append("</title>\n");
