@@ -22,9 +22,12 @@ package adams.flow.transformer.actualvspredictedprocessor;
 
 import adams.core.Utils;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.gui.core.ColorHelper;
 import adams.gui.visualization.core.KernelDensityEstimation;
 import adams.gui.visualization.core.KernelDensityEstimation.Mode;
 import adams.gui.visualization.core.KernelDensityEstimation.RenderState;
+
+import java.awt.Color;
 
 /**
  * Generates a self-contained HTML file displaying a kernel density based scatter plot of actual vs predicted.
@@ -36,14 +39,31 @@ public class ClassifierErrorsKernelDensityEstimate
 
   private static final long serialVersionUID = -1672249549785770694L;
 
+  /**
+   * The type of color palette to use.
+   */
+  public enum ColorPaletteType {
+    PREDEFINED,
+    BICOLOR,
+  }
+
   /** the number of bins to generate on X and Y. */
   protected int m_NumBins;
 
   /** the bandwidth. */
   protected double m_Bandwidth;
 
+  /** the type of color palette to use. */
+  protected ColorPaletteType m_ColorPaletteType;
+
   /** the color palette. */
-  protected String m_ColorPalette;
+  protected String m_ColorPalettePredefined;
+
+  /** the start color. */
+  protected Color m_ColorStart;
+
+  /** the end color. */
+  protected Color m_ColorEnd;
 
   /** the opacity to use. */
   protected double m_Opacity;
@@ -82,8 +102,20 @@ public class ClassifierErrorsKernelDensityEstimate
       1.0, 0.0, null);
 
     m_OptionManager.add(
-      "color-palette", "colorPalette",
+      "color-palette-type", "colorPaletteType",
+      ColorPaletteType.PREDEFINED);
+
+    m_OptionManager.add(
+      "color-palette-predefined", "colorPalettePredefined",
       "Blues");
+
+    m_OptionManager.add(
+      "color-start", "colorStart",
+      Color.WHITE);
+
+    m_OptionManager.add(
+      "color-end", "colorEnd",
+      Color.BLUE);
 
     m_OptionManager.add(
       "opacity", "opacity",
@@ -157,22 +189,22 @@ public class ClassifierErrorsKernelDensityEstimate
   }
 
   /**
-   * Sets the color palette to use.
+   * Sets what color palette type to use.
    *
-   * @param value	the palette
+   * @param value	the type
    */
-  public void setColorPalette(String value) {
-    m_ColorPalette = value;
+  public void setColorPaletteType(ColorPaletteType value) {
+    m_ColorPaletteType = value;
     reset();
   }
 
   /**
-   * Returns the color palette to use.
+   * Returns what color palette type to use.
    *
-   * @return		the palette
+   * @return		the type
    */
-  public String getColorPalette() {
-    return m_ColorPalette;
+  public ColorPaletteType getColorPaletteType() {
+    return m_ColorPaletteType;
   }
 
   /**
@@ -181,8 +213,95 @@ public class ClassifierErrorsKernelDensityEstimate
    * @return 		tip text for this property suitable for
    * 			displaying in the GUI or for listing the options.
    */
-  public String colorPaletteTipText() {
-    return "The name of the color palette to use; see https://plotly.com/python/builtin-colorscales/";
+  public String colorPaletteTypeTipText() {
+    return "Determines what color palette type to use, e.g., a predefined one.";
+  }
+
+  /**
+   * Sets the color palette to use.
+   *
+   * @param value	the palette
+   */
+  public void setColorPalettePredefined(String value) {
+    m_ColorPalettePredefined = value;
+    reset();
+  }
+
+  /**
+   * Returns the color palette to use.
+   *
+   * @return		the palette
+   */
+  public String getColorPalettePredefined() {
+    return m_ColorPalettePredefined;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorPalettePredefinedTipText() {
+    return "The name of the predefined color palette to use; see https://plotly.com/python/builtin-colorscales/";
+  }
+
+  /**
+   * Sets the starting color for the color palette ({@link ColorPaletteType#BICOLOR}).
+   *
+   * @param value	the color
+   */
+  public void setColorStart(Color value) {
+    m_ColorStart = value;
+    reset();
+  }
+
+  /**
+   * Returns the starting color for the color palette ({@link ColorPaletteType#BICOLOR}).
+   *
+   * @return		the color
+   */
+  public Color getColorStart() {
+    return m_ColorStart;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorStartTipText() {
+    return "The starting color when using " + ColorPaletteType.BICOLOR + ".";
+  }
+
+  /**
+   * Sets the end color for the color palette ({@link ColorPaletteType#BICOLOR}).
+   *
+   * @param value	the color
+   */
+  public void setColorEnd(Color value) {
+    m_ColorEnd = value;
+    reset();
+  }
+
+  /**
+   * Returns the end color for the color palette ({@link ColorPaletteType#BICOLOR}).
+   *
+   * @return		the color
+   */
+  public Color getColorEnd() {
+    return m_ColorEnd;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String colorEndTipText() {
+    return "The end color when using " + ColorPaletteType.BICOLOR + ".";
   }
 
   /**
@@ -313,7 +432,19 @@ public class ClassifierErrorsKernelDensityEstimate
     result.append("            marker: {\n");
     result.append("                size: ").append(m_CircleSize).append(",\n");
     result.append("                color: density,\n");
-    result.append("                colorscale: '").append(m_ColorPalette).append("',\n");
+    switch (m_ColorPaletteType) {
+      case PREDEFINED:
+	result.append("                colorscale: '").append(m_ColorPalettePredefined).append("',\n");
+	break;
+      case BICOLOR:
+	result.append("                colorscale: [\n");
+	result.append("                    [0, '").append(ColorHelper.toHex(m_ColorStart)).append("'],\n");
+	result.append("                    [1, '").append(ColorHelper.toHex(m_ColorEnd)).append("'],\n");
+	result.append("                ],\n");
+	break;
+      default:
+	throw new IllegalStateException("Unhandled color palette type: " + m_ColorPaletteType);
+    }
     result.append("                reversescale: true,\n");
     result.append("                showscale: true,\n");
     result.append("                colorbar: { title: '' },\n");
