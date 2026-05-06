@@ -65,11 +65,17 @@ public class ClassifierErrorsKernelDensityEstimate
   /** the end color. */
   protected Color m_ColorEnd;
 
+  /** whether to show the colorbar. */
+  protected boolean m_ShowColorBar;
+
   /** the opacity to use. */
   protected double m_Opacity;
 
   /** the circle size. */
   protected int m_CircleSize;
+
+  /** whether to show the legend. */
+  protected boolean m_ShowLegend;
 
   /**
    * Returns a string describing the object.
@@ -118,12 +124,20 @@ public class ClassifierErrorsKernelDensityEstimate
       Color.BLUE);
 
     m_OptionManager.add(
+      "show-colorbar", "showColorBar",
+      true);
+
+    m_OptionManager.add(
       "opacity", "opacity",
       0.8, 0.0, 1.0);
 
     m_OptionManager.add(
       "circle-size", "circleSize",
       10, 1, null);
+
+    m_OptionManager.add(
+      "show-legend", "showLegend",
+      true);
   }
 
   /**
@@ -305,6 +319,35 @@ public class ClassifierErrorsKernelDensityEstimate
   }
 
   /**
+   * Sets whether to show the colorbar.
+   *
+   * @param value	true if to show
+   */
+  public void setShowColorBar(boolean value) {
+    m_ShowColorBar = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the colorbar.
+   *
+   * @return		true if to show
+   */
+  public boolean getShowColorBar() {
+    return m_ShowColorBar;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showColorBarTipText() {
+    return "If enabled, the colorbar is display, showing how the density values correspond with the colors.";
+  }
+
+  /**
    * Sets the opacity to use.
    *
    * @param value	the opacity
@@ -364,6 +407,35 @@ public class ClassifierErrorsKernelDensityEstimate
    */
   public String circleSizeTipText() {
     return "The size of the circles.";
+  }
+
+  /**
+   * Sets whether to show the legend.
+   *
+   * @param value	true if to show
+   */
+  public void setShowLegend(boolean value) {
+    m_ShowLegend = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to show the legend.
+   *
+   * @return		true if to show
+   */
+  public boolean getShowLegend() {
+    return m_ShowLegend;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String showLegendTipText() {
+    return "If enabled, the legend is displayed.";
   }
 
   /**
@@ -428,8 +500,9 @@ public class ClassifierErrorsKernelDensityEstimate
     result.append("            y: predicted,\n");
     result.append("            text: data.map(id => id),\n");
     result.append("            mode: 'markers',\n");
-    result.append("            name: '',\n");  // to suppress "trace 0"
+    result.append("            name: 'data',\n");  // to suppress "trace 0"
     result.append("            type: 'scattergl',\n");
+    result.append("            showlegend: true,\n");
     result.append("            marker: {\n");
     result.append("                size: ").append(m_CircleSize).append(",\n");
     result.append("                color: density,\n");
@@ -447,7 +520,7 @@ public class ClassifierErrorsKernelDensityEstimate
 	throw new IllegalStateException("Unhandled color palette type: " + m_ColorPaletteType);
     }
     result.append("                reversescale: true,\n");
-    result.append("                showscale: true,\n");
+    result.append("                showscale: ").append(m_ShowColorBar).append(",\n");
     result.append("                colorbar: { title: '' },\n");
     result.append("                opacity: ").append(m_Opacity).append(",\n");
     result.append("            },\n");
@@ -463,9 +536,9 @@ public class ClassifierErrorsKernelDensityEstimate
     result.append("            x: [minVal, maxVal],\n");
     result.append("            y: [minVal, maxVal],\n");
     result.append("            mode: 'lines',\n");
-    result.append("            name: '',\n");
+    result.append("            name: 'diagonal',\n");
     result.append("            line: { color: 'red', dash: 'dash', width: 2 },\n");
-    result.append("            showlegend: false,\n");
+    result.append("            showlegend: true,\n");
     result.append("            type: 'scatter'\n");
     result.append("        };\n");
     result.append("\n");
@@ -476,7 +549,7 @@ public class ClassifierErrorsKernelDensityEstimate
     result.append("            xaxis: { title: 'Actual Values', zeroline: false },\n");
     result.append("            yaxis: { title: 'Predicted Values', zeroline: false },\n");
     result.append("            hovermode: 'closest',\n");
-    result.append("            showlegend: true\n");
+    result.append("            showlegend: ").append(m_ShowLegend).append("\n");
     result.append("        };\n");
     result.append("\n");
     result.append("        Plotly.newPlot('plot', data, layout);\n");
