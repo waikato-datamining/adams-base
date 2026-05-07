@@ -15,7 +15,7 @@
 
 /*
  * WebSocketClient.java
- * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink;
@@ -100,7 +100,7 @@ public class WebSocketClient
   protected WebSocketClientGenerator m_Generator;
 
   /** the client instance. */
-  protected transient com.pusher.java_websocket.client.WebSocketClient m_Client;
+  protected transient org.java_websocket.client.WebSocketClient m_Client;
 
   /** whether to disconnect immediately. */
   protected boolean m_Disconnect;

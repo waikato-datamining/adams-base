@@ -13,16 +13,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EchoServerGenerator.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.websocket.server;
 
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
-import com.pusher.java_websocket.server.WebSocketServer;
+import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
 
@@ -30,7 +30,6 @@ import java.net.InetSocketAddress;
  * Generates a simple echo server.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EchoServerGenerator
   extends AbstractWebSocketServerGenerator {

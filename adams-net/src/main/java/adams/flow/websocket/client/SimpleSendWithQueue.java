@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleSendWithQueue.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.websocket.client;
@@ -25,8 +25,8 @@ import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
 import adams.flow.core.QueueHelper;
-import com.pusher.java_websocket.client.WebSocketClient;
-import com.pusher.java_websocket.handshake.ServerHandshake;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.util.logging.Level;
@@ -35,7 +35,6 @@ import java.util.logging.Level;
  * Simple client for sending messages, forwards the received response in the specified queue.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleSendWithQueue
   extends WebSocketClient

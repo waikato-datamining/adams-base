@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * SimpleSendGenerator.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.websocket.client;
@@ -23,13 +23,12 @@ package adams.flow.websocket.client;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import adams.flow.websocket.server.EchoServer;
-import com.pusher.java_websocket.client.WebSocketClient;
+import org.java_websocket.client.WebSocketClient;
 
 /**
  * Generates the SimpleSend client.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SimpleSendGenerator
   extends AbstractWebSocketClientGenerator {

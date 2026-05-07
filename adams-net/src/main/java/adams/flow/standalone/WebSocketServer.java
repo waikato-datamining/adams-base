@@ -15,7 +15,7 @@
 
 /*
  * WebSocketServer.java
- * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -89,7 +89,7 @@ public class WebSocketServer
   protected WebSocketServerGenerator m_Generator;
 
   /** the server instance. */
-  protected transient com.pusher.java_websocket.server.WebSocketServer m_Server;
+  protected transient org.java_websocket.server.WebSocketServer m_Server;
 
   /**
    * Returns a string describing the object.

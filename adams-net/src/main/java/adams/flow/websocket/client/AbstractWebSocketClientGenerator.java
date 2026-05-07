@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractWebSocketClientGenerator.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.websocket.client;
@@ -24,13 +24,12 @@ import adams.core.QuickInfoHelper;
 import adams.core.QuickInfoSupporter;
 import adams.core.base.BaseURI;
 import adams.core.option.AbstractOptionHandler;
-import com.pusher.java_websocket.client.WebSocketClient;
+import org.java_websocket.client.WebSocketClient;
 
 /**
  * Ancestor for client generators.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractWebSocketClientGenerator
   extends AbstractOptionHandler

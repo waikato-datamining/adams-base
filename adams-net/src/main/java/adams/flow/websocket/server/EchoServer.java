@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EchoServer.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.websocket.server;
@@ -24,10 +24,10 @@ import adams.core.Utils;
 import adams.core.logging.Logger;
 import adams.flow.core.Actor;
 import adams.flow.core.FlowContextHandler;
-import com.pusher.java_websocket.WebSocket;
-import com.pusher.java_websocket.framing.CloseFrame;
-import com.pusher.java_websocket.handshake.ClientHandshake;
-import com.pusher.java_websocket.server.WebSocketServer;
+import org.java_websocket.WebSocket;
+import org.java_websocket.framing.CloseFrame;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -37,7 +37,6 @@ import java.util.logging.Level;
  * Just sends the messages back to the client.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EchoServer
   extends WebSocketServer
@@ -84,6 +83,14 @@ public class EchoServer
    */
   protected synchronized Logger getLogger() {
     return m_Logger;
+  }
+
+  /**
+   * Called after the server starts.
+   */
+  @Override
+  public void onStart() {
+    getLogger().info("onStart");
   }
 
   /**
