@@ -15,7 +15,7 @@
 
 /*
  * QueueInit.java
- * Copyright (C) 2014-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -142,6 +142,32 @@ public class QueueInit
 
   /** the helper class. */
   protected CallableActorHelper m_Helper;
+
+  /**
+   * Default constructor.
+   */
+  public QueueInit() {
+    super();
+  }
+
+  /**
+   * Initializes the queue with the specified storage name.
+   *
+   * @param storageName		the name
+   */
+  public QueueInit(StorageName storageName) {
+    this(new StorageName[]{storageName});
+  }
+
+  /**
+   * Initializes the queue with the specified storage names.
+   *
+   * @param storageName		the names
+   */
+  public QueueInit(StorageName[] storageName) {
+    this();
+    setStorageName(storageName);
+  }
 
   /**
    * Returns a string describing the object.
