@@ -15,7 +15,7 @@
 
 /*
  * StorageQueueHandler.java
- * Copyright (C) 2014-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control;
 
@@ -339,6 +339,8 @@ public class StorageQueueHandler
     Object	result;
 
     result = m_Queue.poll();
+    if (result != null)
+      result = ((QueueItem) result).payload;
     if (hasMonitoring())
       logMonitor("Remove", result);
     return result;
