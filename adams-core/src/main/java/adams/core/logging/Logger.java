@@ -15,7 +15,7 @@
 
 /*
  * Logger.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.logging;
@@ -158,12 +158,40 @@ public class Logger
   }
 
   /**
+   * Logs a {@link Level#SEVERE} message.
+   *
+   * @param msg		the message to log
+   * @param t 		the associated exception
+   */
+  public void severe(String msg, Throwable t) {
+    LogRecord	record;
+
+    record = new LogRecord(Level.SEVERE, msg);
+    record.setThrown(t);
+    log(record);
+  }
+
+  /**
    * Logs a {@link Level#WARNING} message.
    *
    * @param msg		the message to log
    */
   public void warning(String msg) {
     log(new LogRecord(Level.WARNING, msg));
+  }
+
+  /**
+   * Logs a {@link Level#WARNING} message.
+   *
+   * @param msg		the message to log
+   * @param t 		the associated exception
+   */
+  public void warning(String msg, Throwable t) {
+    LogRecord	record;
+
+    record = new LogRecord(Level.SEVERE, msg);
+    record.setThrown(t);
+    log(record);
   }
 
   /**
