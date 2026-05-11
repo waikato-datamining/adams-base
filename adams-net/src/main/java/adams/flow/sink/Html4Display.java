@@ -15,7 +15,7 @@
 
 /*
  * Html4Display.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
@@ -258,6 +258,7 @@ public class Html4Display
   protected void display(Token token) {
     m_EditorPane.setDocument(m_EditorPane.getEditorKit().createDefaultDocument());
     m_EditorPane.setText(token.getPayload(String.class));
+    m_EditorPane.setCaretPosition(0);
   }
 
   /**
