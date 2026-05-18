@@ -15,7 +15,7 @@
 
 /*
  * InstancesTable.java
- * Copyright (C) 2016-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.instances;
@@ -383,6 +383,10 @@ public class InstancesTable
       menu.add(menuitem);
       menu.addSeparator();
     }
+
+    menuitem = new JMenuItem("Copy name", ImageManager.getIcon("copy.gif"));
+    menuitem.addActionListener((ActionEvent ae) -> ClipboardHelper.copyToClipboard(((InstancesTableModel) getUnsortedModel()).toSpreadSheet().getColumnName(state.actCol)));
+    menu.add(menuitem);
 
     menuitem = new JMenuItem("Rename...", ImageManager.getEmptyIcon());
     menuitem.addActionListener((ActionEvent ae) -> {
