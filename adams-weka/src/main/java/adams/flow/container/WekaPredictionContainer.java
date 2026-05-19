@@ -15,7 +15,7 @@
 
 /*
  * WekaPredictionContainer.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.container;
@@ -49,6 +49,9 @@ public class WekaPredictionContainer
   /** the identifier for the Classification's label. */
   public final static String VALUE_CLASSIFICATION_LABEL = "Classification label";
 
+  /** the identifier for the probability of the Classification's label. */
+  public final static String VALUE_CLASSIFICATION_PROBABILITY = "Classification probability";
+
   /** the identifier for the Distribution. */
   public final static String VALUE_DISTRIBUTION = "Distribution";
 
@@ -60,6 +63,9 @@ public class WekaPredictionContainer
 
   /** the identifier for the classification label of an abstaining classifier. */
   public final static String VALUE_ABSTENTION_CLASSIFICATION_LABEL = "Abstention classification label";
+
+  /** the identifier for the probability of the classification label of an abstaining classifier. */
+  public final static String VALUE_ABSTENTION_CLASSIFICATION_PROBABILITY = "Abstention classification probability";
 
   /** the identifier for the distribution of an abstaining classifier. */
   public final static String VALUE_ABSTENTION_DISTRIBUTION = "Abstention distribution";
@@ -114,10 +120,12 @@ public class WekaPredictionContainer
     addHelp(VALUE_INSTANCE, "data row used for prediction", Instance.class);
     addHelp(VALUE_CLASSIFICATION, "predicted value", Double.class);
     addHelp(VALUE_CLASSIFICATION_LABEL, "predicted label", String.class);
+    addHelp(VALUE_CLASSIFICATION_PROBABILITY, "probability of the predicted label", Double.class);
     addHelp(VALUE_DISTRIBUTION, "class distribution; array of " + Double.TYPE.getName());
     addHelp(VALUE_RANGECHECK, "range check", String.class);
     addHelp(VALUE_ABSTENTION_CLASSIFICATION, "predicted value that made classifier abstain", Double.class);
     addHelp(VALUE_ABSTENTION_CLASSIFICATION_LABEL, "predicted label that made classifier abstain", String.class);
+    addHelp(VALUE_ABSTENTION_CLASSIFICATION_PROBABILITY, "probability of the predicted label that made classifier abstain", String.class);
     addHelp(VALUE_ABSTENTION_DISTRIBUTION, "class distribution that made classifier abstain; array of " + Double.TYPE.getName());
     addHelp(VALUE_REPORT, "report for storing meta-data", Report.class);
   }
@@ -136,10 +144,12 @@ public class WekaPredictionContainer
     result.add(VALUE_INSTANCE);
     result.add(VALUE_CLASSIFICATION);
     result.add(VALUE_CLASSIFICATION_LABEL);
+    result.add(VALUE_CLASSIFICATION_PROBABILITY);
     result.add(VALUE_DISTRIBUTION);
     result.add(VALUE_RANGECHECK);
     result.add(VALUE_ABSTENTION_CLASSIFICATION);
     result.add(VALUE_ABSTENTION_CLASSIFICATION_LABEL);
+    result.add(VALUE_ABSTENTION_CLASSIFICATION_PROBABILITY);
     result.add(VALUE_ABSTENTION_DISTRIBUTION);
     result.add(VALUE_REPORT);
 

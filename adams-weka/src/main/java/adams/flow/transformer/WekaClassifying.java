@@ -46,12 +46,12 @@ import java.util.List;
  * Input&#47;output:<br>
  * - accepts:<br>
  * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
+ * &nbsp;&nbsp;&nbsp;adams.data.instance.WekaInstanceContainer<br>
  * - generates:<br>
  * &nbsp;&nbsp;&nbsp;adams.flow.container.WekaPredictionContainer<br>
- * &nbsp;&nbsp;&nbsp;weka.core.Instance<br>
  * <br><br>
  * Container information:<br>
- * - adams.flow.container.WekaPredictionContainer: Instance, Classification, Classification label, Distribution, Range check, Abstention classification, Abstention classification label, Abstention distribution
+ * - adams.flow.container.WekaPredictionContainer: Instance, Classification, Classification label, Classification probability, Distribution, Range check, Abstention classification, Abstention classification label, Abstention classification probability, Abstention distribution, Report
  * <br><br>
  <!-- flow-summary-end -->
  *
@@ -59,6 +59,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -82,12 +83,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-model-loading-type &lt;AUTO|FILE|SOURCE_ACTOR|STORAGE&gt; (property: modelLoadingType)
@@ -156,8 +159,8 @@ public class WekaClassifying
   public String globalInfo() {
     return
       "Uses a serialized model to perform predictions on the data being "
-        + "passed through.\n"
-        + m_ModelLoader.automaticOrderInfo();
+	+ "passed through.\n"
+	+ m_ModelLoader.automaticOrderInfo();
   }
 
   /**
@@ -168,8 +171,8 @@ public class WekaClassifying
     super.defineOptions();
 
     m_OptionManager.add(
-	    "output-instance", "outputInstance",
-	    false);
+      "output-instance", "outputInstance",
+      false);
   }
 
   /**
@@ -216,7 +219,7 @@ public class WekaClassifying
   /**
    * Returns the class of objects that it generates.
    *
-   * @return		<!-- flow-generates-start -->adams.flow.container.WekaPredictionContainer.class, weka.core.Instance.class<!-- flow-generates-end -->
+   * @return		<!-- flow-generates-start -->adams.flow.container.WekaPredictionContainer.class<!-- flow-generates-end -->
    */
   @Override
   public Class[] generates() {
@@ -242,50 +245,50 @@ public class WekaClassifying
     AbstainingClassifier	abstain;
     double			classification;
     double[]			distribution;
-    
+
     synchronized(m_Model) {
       // does the classifier support range checks?
       rangeCheck = null;
       if (m_Model instanceof RangeCheckClassifier) {
-        rangeChecks = ((RangeCheckClassifier) m_Model).checkRangeForInstance(inst);
-        if (rangeChecks.size() > 0)
-          rangeCheck = Utils.flatten(rangeChecks, "\n");
+	rangeChecks = ((RangeCheckClassifier) m_Model).checkRangeForInstance(inst);
+	if (rangeChecks.size() > 0)
+	  rangeCheck = Utils.flatten(rangeChecks, "\n");
       }
 
       if (inst.classAttribute().isNumeric()) {
-        classification = m_Model.classifyInstance(inst);
-        distribution = new double[]{classification};
+	classification = m_Model.classifyInstance(inst);
+	distribution = new double[]{classification};
       }
       else {
-        distribution = m_Model.distributionForInstance(inst);
-        classification = StatUtils.maxIndex(distribution);
-        if (distribution[(int) Math.round(classification)] == 0)
-          classification = weka.core.Utils.missingValue();
+	distribution = m_Model.distributionForInstance(inst);
+	classification = StatUtils.maxIndex(distribution);
+	if (distribution[(int) Math.round(classification)] == 0)
+	  classification = weka.core.Utils.missingValue();
       }
       cont = new WekaPredictionContainer(inst, classification, distribution, rangeCheck);
 
       // abstaining classifier?
       if (m_Model instanceof AbstainingClassifier) {
-        abstain = (AbstainingClassifier) m_Model;
-        if (abstain.canAbstain()) {
-          if (inst.classAttribute().isNumeric()) {
-            classification = abstain.getAbstentionClassification(inst);
-            distribution = new double[]{classification};
-          }
-          else {
-            distribution = abstain.getAbstentionDistribution(inst);
-            classification = StatUtils.maxIndex(distribution);
-            if (distribution[(int) Math.round(classification)] == 0)
-              classification = weka.core.Utils.missingValue();
-          }
-          cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_CLASSIFICATION, classification);
-          if (inst.classAttribute().isNominal() && !weka.core.Utils.isMissingValue(classification))
-            cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_CLASSIFICATION_LABEL, inst.classAttribute().value((int) Math.round(classification)));
-          cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_DISTRIBUTION, distribution);
-        }
+	abstain = (AbstainingClassifier) m_Model;
+	if (abstain.canAbstain()) {
+	  if (inst.classAttribute().isNumeric()) {
+	    classification = abstain.getAbstentionClassification(inst);
+	    distribution = new double[]{classification};
+	  }
+	  else {
+	    distribution = abstain.getAbstentionDistribution(inst);
+	    classification = StatUtils.maxIndex(distribution);
+	    if (distribution[(int) Math.round(classification)] == 0)
+	      classification = weka.core.Utils.missingValue();
+	  }
+	  cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_CLASSIFICATION, classification);
+	  if (inst.classAttribute().isNominal() && !weka.core.Utils.isMissingValue(classification))
+	    cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_CLASSIFICATION_LABEL, inst.classAttribute().value((int) Math.round(classification)));
+	  cont.setValue(WekaPredictionContainer.VALUE_ABSTENTION_DISTRIBUTION, distribution);
+	}
       }
     }
-    
+
     if (m_OutputInstance) {
       inst = (Instance) ((Instance) cont.getValue(WekaPredictionContainer.VALUE_INSTANCE)).copy();
       inst.setClassValue((Double) cont.getValue(WekaPredictionContainer.VALUE_CLASSIFICATION));
