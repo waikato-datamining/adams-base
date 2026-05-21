@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetVariableRowIterator.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -23,6 +23,7 @@ import adams.core.LenientModeSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Range;
 import adams.core.Utils;
+import adams.core.VariableUpdaterWithNotificationSuppression;
 import adams.core.Variables;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
@@ -53,78 +54,95 @@ import java.util.Hashtable;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetVariableRowIterator
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-rows &lt;adams.core.Range&gt; (property: rows)
- * &nbsp;&nbsp;&nbsp;The rows to retrieve the values from; A range is a comma-separated list 
+ * &nbsp;&nbsp;&nbsp;The rows to retrieve the values from; A range is a comma-separated list
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the 
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the
  * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
- * &nbsp;&nbsp;&nbsp; last
+ * &nbsp;&nbsp;&nbsp; last; numeric indices can be enforced by preceding them with '#' (eg '#12'
+ * &nbsp;&nbsp;&nbsp;); column names can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: first-last
  * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; the following placeholders can be used as well: first, second, third, last_2, last_1, last
  * </pre>
- * 
+ *
  * <pre>-columns &lt;adams.data.spreadsheet.SpreadSheetColumnRange&gt; (property: columns)
- * &nbsp;&nbsp;&nbsp;The columns to retrieve the values from; A range is a comma-separated list 
+ * &nbsp;&nbsp;&nbsp;The columns to retrieve the values from; A range is a comma-separated list
  * &nbsp;&nbsp;&nbsp;of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(..
- * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the 
+ * &nbsp;&nbsp;&nbsp;.)' inverts the range '...'; column names (case-sensitive) as well as the
  * &nbsp;&nbsp;&nbsp;following placeholders can be used: first, second, third, last_2, last_1,
- * &nbsp;&nbsp;&nbsp; last
+ * &nbsp;&nbsp;&nbsp; last; numeric indices can be enforced by preceding them with '#' (eg '#12'
+ * &nbsp;&nbsp;&nbsp;); column names can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: first-last
- * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last
+ * &nbsp;&nbsp;&nbsp;example: A range is a comma-separated list of single 1-based indices or sub-ranges of indices ('start-end'); 'inv(...)' inverts the range '...'; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
  * <pre>-variable-prefix &lt;java.lang.String&gt; (property: variablePrefix)
  * &nbsp;&nbsp;&nbsp;The prefix to prepend the header names with to make up the variable name.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-missing-value &lt;java.lang.String&gt; (property: missingValue)
  * &nbsp;&nbsp;&nbsp;The value to use as variable value in case of missing cells.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-output-modified &lt;boolean&gt; (property: outputModified)
  * &nbsp;&nbsp;&nbsp;If enabled, the modified spreadsheet (current row with subset of columns
  * &nbsp;&nbsp;&nbsp;) is output instead of the full dataset (computationally expensive).
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-lenient &lt;boolean&gt; (property: lenient)
  * &nbsp;&nbsp;&nbsp;If enabled, then no error message is generated if no rows are found.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-suppress-notifications &lt;boolean&gt; (property: suppressNotifications)
+ * &nbsp;&nbsp;&nbsp;If enabled, variable change listeners will NOT get notified.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SpreadSheetVariableRowIterator
   extends AbstractTransformer
-  implements LenientModeSupporter {
+  implements LenientModeSupporter, VariableUpdaterWithNotificationSuppression {
 
   /** for serialization. */
   private static final long serialVersionUID = 1117931423508873847L;
@@ -140,30 +158,33 @@ public class SpreadSheetVariableRowIterator
 
   /** the range of columns to use. */
   protected SpreadSheetColumnRange m_Columns;
-  
+
   /** the range of rows to use. */
   protected Range m_Rows;
-  
+
   /** the prefix for the variables. */
   protected String m_VariablePrefix;
-  
+
   /** the value to use for missing cells. */
   protected String m_MissingValue;
-  
+
   /** the rows to iterate. */
   protected ArrayList<Integer> m_Queue;
-  
+
   /** the underlying sheet. */
   protected SpreadSheet m_Sheet;
-  
+
   /** the column indices. */
   protected int[] m_ColumnIndices;
-  
+
   /** whether to output the modified spreadsheet. */
   protected boolean m_OutputModified;
 
   /** whether to suppress the error message if no rows selected. */
   protected boolean m_Lenient;
+
+  /** whether to suppress notifications. */
+  protected boolean m_SuppressNotifications;
 
   /**
    * Returns a string describing the object.
@@ -172,8 +193,8 @@ public class SpreadSheetVariableRowIterator
    */
   @Override
   public String globalInfo() {
-    return 
-	"Iterates through a defined range of rows. In each iteration the "
+    return
+      "Iterates through a defined range of rows. In each iteration the "
 	+ "cell values of the defined column range are mapped to variables.\n"
 	+ "By default the (cleaned up) header names of the columns are used as "
 	+ "variable names. To avoid name clashes, a prefix can be chosen for "
@@ -191,28 +212,32 @@ public class SpreadSheetVariableRowIterator
     super.defineOptions();
 
     m_OptionManager.add(
-	    "rows", "rows",
-	    new Range(Range.ALL));
+      "rows", "rows",
+      new Range(Range.ALL));
 
     m_OptionManager.add(
-	    "columns", "columns",
-	    new SpreadSheetColumnRange(Range.ALL));
+      "columns", "columns",
+      new SpreadSheetColumnRange(Range.ALL));
 
     m_OptionManager.add(
-	    "variable-prefix", "variablePrefix",
-	    "");
+      "variable-prefix", "variablePrefix",
+      "");
 
     m_OptionManager.add(
-	    "missing-value", "missingValue",
-	    "");
+      "missing-value", "missingValue",
+      "");
 
     m_OptionManager.add(
-	    "output-modified", "outputModified",
-	    false);
+      "output-modified", "outputModified",
+      false);
 
     m_OptionManager.add(
-	    "lenient", "lenient",
-	    false);
+      "lenient", "lenient",
+      false);
+
+    m_OptionManager.add(
+      "suppress-notifications", "suppressNotifications",
+      false);
   }
 
   /**
@@ -221,19 +246,19 @@ public class SpreadSheetVariableRowIterator
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Queue         = new ArrayList<Integer>();
     m_Sheet         = null;
     m_ColumnIndices = null;
   }
-  
+
   /**
    * Resets the actor.
    */
   @Override
   protected void reset() {
     super.reset();
-    
+
     m_Queue.clear();
     m_Sheet         = null;
     m_ColumnIndices = null;
@@ -245,12 +270,12 @@ public class SpreadSheetVariableRowIterator
   @Override
   protected void pruneBackup() {
     super.pruneBackup();
-    
+
     pruneBackup(BACKUP_QUEUE);
     pruneBackup(BACKUP_SHEET);
     pruneBackup(BACKUP_COLUMNS);
   }
-  
+
   /**
    * Backs up the current state of the actor before update the variables.
    *
@@ -441,8 +466,8 @@ public class SpreadSheetVariableRowIterator
    * 			displaying in the GUI or for listing the options.
    */
   public String outputModifiedTipText() {
-    return 
-	"If enabled, the modified spreadsheet (current row with subset of "
+    return
+      "If enabled, the modified spreadsheet (current row with subset of "
 	+ "columns) is output instead of the full dataset (computationally "
 	+ "expensive).";
   }
@@ -477,6 +502,46 @@ public class SpreadSheetVariableRowIterator
   }
 
   /**
+   * Sets whether to notify variable change listeners.
+   *
+   * @param value	false if to notify listeners
+   */
+  @Override
+  public void setSuppressNotifications(boolean value) {
+    m_SuppressNotifications = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to notify variable change listeners.
+   *
+   * @return		false if to notify listeners
+   */
+  @Override
+  public boolean getSuppressNotifications() {
+    return m_SuppressNotifications;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String suppressNotificationsTipText() {
+    return "If enabled, variable change listeners will NOT get notified.";
+  }
+
+  /**
+   * Returns whether variables are being updated.
+   *
+   * @return		true if variables are updated
+   */
+  public boolean isUpdatingVariables() {
+    return !getSkip();
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -488,10 +553,10 @@ public class SpreadSheetVariableRowIterator
 
     result  = QuickInfoHelper.toString(this, "rows", m_Rows, "rows: ");
     result += QuickInfoHelper.toString(this, "columns", m_Columns, ", cols: ");
-    value = QuickInfoHelper.toString(this, "variablePrefix", (m_VariablePrefix.length() > 0 ? m_VariablePrefix : null), ", prefix: ");
+    value = QuickInfoHelper.toString(this, "variablePrefix", (!m_VariablePrefix.isEmpty() ? m_VariablePrefix : null), ", prefix: ");
     if (value != null)
       result += value;
-    value = QuickInfoHelper.toString(this, "missingValue", (m_MissingValue.length() > 0 ? m_MissingValue : null), ", missing: ");
+    value = QuickInfoHelper.toString(this, "missingValue", (!m_MissingValue.isEmpty() ? m_MissingValue : null), ", missing: ");
     if (value != null)
       result += value;
     value = QuickInfoHelper.toString(this, "outputModified", m_OutputModified, ", output modified");
@@ -500,13 +565,14 @@ public class SpreadSheetVariableRowIterator
     value = QuickInfoHelper.toString(this, "lenient", m_Lenient, ", lenient");
     if (value != null)
       result += value;
+    result += QuickInfoHelper.toString(this, "suppressNotifications", m_SuppressNotifications, "suppress notifications", ", ");
 
     return result;
   }
 
   /**
    * Returns the class that the consumer accepts.
-   * 
+   *
    * @return		the Class of objects that can be processed
    */
   @Override
@@ -532,30 +598,30 @@ public class SpreadSheetVariableRowIterator
   @Override
   protected String doExecute() {
     String	result;
-    
+
     result = null;
-    
+
     m_Queue.clear();
     m_Sheet = (SpreadSheet) m_InputToken.getPayload();
-    
+
     m_Columns.setSpreadSheet(m_Sheet);
     if (m_Columns.getIntIndices().length == 0)
       result = "No columns available with range '" + m_Columns.getRange() + "'?";
-    
+
     if (result == null) {
       m_Rows.setMax(m_Sheet.getRowCount());
       if ((m_Rows.getIntIndices().length == 0) && !m_Lenient)
 	result = "No rows available with range '" + m_Rows.getRange() + "'?";
     }
-    
+
     if (result == null) {
       m_ColumnIndices = m_Columns.getIntIndices();
       m_Queue.addAll(Utils.toList(m_Rows.getIntIndices()));
     }
-    
+
     return result;
   }
-  
+
   /**
    * Checks whether there is pending output to be collected after
    * executing the flow item.
@@ -566,7 +632,7 @@ public class SpreadSheetVariableRowIterator
   public boolean hasPendingOutput() {
     return (m_Queue != null) && !m_Queue.isEmpty();
   }
-  
+
   /**
    * Returns the generated token.
    *
@@ -585,7 +651,7 @@ public class SpreadSheetVariableRowIterator
     SpreadSheetRemoveColumn	remove;
     SpreadSheetColumnRange	range;
     String			msg;
-    
+
     result   = null;
     rowIndex = m_Queue.get(0);
     m_Queue.remove(0);
@@ -620,21 +686,21 @@ public class SpreadSheetVariableRowIterator
     else {
       result = new Token(m_Sheet);
     }
-    
+
     header = m_Sheet.getHeaderRow();
     row    = m_Sheet.getRow(rowIndex);
     for (i = 0; i < m_ColumnIndices.length; i++) {
       col  = m_ColumnIndices[i];
       name = Variables.toValidName(m_VariablePrefix + header.getCell(col).getContent());
       if (!row.hasCell(col) || row.getCell(col).isMissing())
-	getVariables().set(name, m_MissingValue);
+	getVariables().set(name, m_MissingValue, !m_SuppressNotifications);
       else
-	getVariables().set(name, row.getCell(col).getContent());
+	getVariables().set(name, row.getCell(col).getContent(), !m_SuppressNotifications);
     }
-    
+
     return result;
   }
-  
+
   /**
    * Frees up memory.
    */
@@ -642,12 +708,12 @@ public class SpreadSheetVariableRowIterator
   public void wrapUp() {
     if (m_Queue != null)
       m_Queue.clear();
-    
+
     m_Sheet = null;
-    
+
     super.wrapUp();
   }
-  
+
   /**
    * Cleans up after the execution has finished. Also removes graphical
    * components.
@@ -655,7 +721,7 @@ public class SpreadSheetVariableRowIterator
   @Override
   public void cleanUp() {
     m_Queue = null;
-    
+
     super.cleanUp();
   }
 }
