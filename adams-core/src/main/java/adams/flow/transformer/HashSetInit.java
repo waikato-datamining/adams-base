@@ -411,7 +411,7 @@ public class HashSetInit
 	// create hashset
 	if (result == null) {
 	  if (m_InitialCapacity <= 0)
-	    hashset = new HashSet();
+	    hashset = new HashSet(sheet.getRowCount());
 	  else
 	    hashset = new HashSet(m_InitialCapacity);
 	  for (Row row : sheet.rows()) {
@@ -430,7 +430,10 @@ public class HashSetInit
       }
       else {
 	array = m_InputToken.getPayload();
-	hashset = new HashSet();
+	if (m_InitialCapacity <= 0)
+	  hashset = new HashSet(Array.getLength(array));
+	else
+	  hashset = new HashSet(m_InitialCapacity);
 	for (i = 0; i < Array.getLength(array); i++) {
 	  val = Array.get(array, i);
 	  result = addValue(hashset, val);
