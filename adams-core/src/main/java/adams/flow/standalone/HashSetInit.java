@@ -15,7 +15,7 @@
 
 /*
  * HashSetInit.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.standalone;
 
@@ -50,6 +50,7 @@ import java.util.HashSet;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -73,17 +74,25 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name of the hashset in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: hashset
+ * </pre>
+ *
+ * <pre>-initial-capacity &lt;int&gt; (property: initialCapacity)
+ * &nbsp;&nbsp;&nbsp;The initial capacity for the set, use &lt;= 0 for default.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
  * </pre>
  *
  * <pre>-initial &lt;adams.core.base.BaseString&gt; [-initial ...] (property: initial)
@@ -95,7 +104,7 @@ import java.util.HashSet;
  * &nbsp;&nbsp;&nbsp;The type of conversion to perform.
  * &nbsp;&nbsp;&nbsp;default: adams.data.conversion.StringToString
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -109,6 +118,9 @@ public class HashSetInit
 
   /** the name of the hashset in the internal storage. */
   protected StorageName m_StorageName;
+
+  /** the initial capacity. */
+  protected int m_InitialCapacity;
 
   /** the initial strings to populate the hashset with. */
   protected BaseString[] m_Initial;
@@ -146,21 +158,25 @@ public class HashSetInit
     super.defineOptions();
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName("hashset"));
+      "storage-name", "storageName",
+      new StorageName("hashset"));
 
     m_OptionManager.add(
-	    "initial", "initial",
-	    new BaseString[0]);
+      "initial-capacity", "initialCapacity",
+      -1, -1, null);
 
     m_OptionManager.add(
-	    "conversion", "conversion",
-	    new StringToString());
+      "initial", "initial",
+      new BaseString[0]);
+
+    m_OptionManager.add(
+      "conversion", "conversion",
+      new StringToString());
   }
 
   /**
    * Returns whether storage items are being updated.
-   * 
+   *
    * @return		true if storage items are updated
    */
   public boolean isUpdatingStorage() {
@@ -177,6 +193,7 @@ public class HashSetInit
     String	result;
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "initialCapacity", (m_InitialCapacity <= 0 ? "-default-" : m_InitialCapacity), ", initial capacity: ");
     result += QuickInfoHelper.toString(this, "initial", (m_Initial.length == 0 ? "-no initial values-" : m_Initial), ", initial: ");
     result += QuickInfoHelper.toString(this, "conversion", m_Conversion, ", conversion: ");
 
@@ -210,6 +227,35 @@ public class HashSetInit
    */
   public String storageNameTipText() {
     return "The name of the hashset in the internal storage.";
+  }
+
+  /**
+   * Sets the initial capacity.
+   *
+   * @param value	the capacity, <= 0 for default
+   */
+  public void setInitialCapacity(int value) {
+    m_InitialCapacity = value;
+    reset();
+  }
+
+  /**
+   * Returns the initial capacity.
+   *
+   * @return		the capacity, <= 0 for default
+   */
+  public int getInitialCapacity() {
+    return m_InitialCapacity;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String initialCapacityTipText() {
+    return "The initial capacity for the set, use <= 0 for default.";
   }
 
   /**
@@ -284,17 +330,20 @@ public class HashSetInit
     result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
     if (result == null) {
-      hashset = new HashSet();
+      if (m_InitialCapacity <= 0)
+	hashset = new HashSet();
+      else
+	hashset = new HashSet(m_InitialCapacity);
       for (BaseString value : m_Initial) {
-        m_Conversion.setInput(value.stringValue());
-        result = m_Conversion.convert();
-        if (result != null)
-          result = getFullName() + ": " + result;
-        if ((result == null) && (m_Conversion.getOutput() != null))
-          hashset.add(m_Conversion.getOutput());
-        m_Conversion.cleanUp();
-        if (result != null)
-          break;
+	m_Conversion.setInput(value.stringValue());
+	result = m_Conversion.convert();
+	if (result != null)
+	  result = getFullName() + ": " + result;
+	if ((result == null) && (m_Conversion.getOutput() != null))
+	  hashset.add(m_Conversion.getOutput());
+	m_Conversion.cleanUp();
+	if (result != null)
+	  break;
       }
       getStorageHandler().getStorage().put(m_StorageName, hashset);
     }
