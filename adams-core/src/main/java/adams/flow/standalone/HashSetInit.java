@@ -235,8 +235,10 @@ public class HashSetInit
    * @param value	the capacity, <= 0 for default
    */
   public void setInitialCapacity(int value) {
-    m_InitialCapacity = value;
-    reset();
+    if (getOptionManager().isValid("initialCapacity", value)) {
+      m_InitialCapacity = value;
+      reset();
+    }
   }
 
   /**
