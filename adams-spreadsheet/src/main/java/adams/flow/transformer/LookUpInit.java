@@ -15,7 +15,7 @@
 
 /*
  * LookUpInit.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.transformer;
 
@@ -44,54 +44,79 @@ import java.util.HashMap;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: LookUpInit
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name for the lookup table in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: lookup
  * </pre>
- * 
- * <pre>-key-column &lt;adams.core.Index&gt; (property: keyColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a 
- * &nbsp;&nbsp;&nbsp;number starting with 1; the following placeholders can be used as well: 
- * &nbsp;&nbsp;&nbsp;first, second, third, last_2, last_1, last
+ *
+ * <pre>-initial-capacity &lt;int&gt; (property: initialCapacity)
+ * &nbsp;&nbsp;&nbsp;The initial capacity for the set, use &lt;= 0 for default.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
+ * <pre>-key-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: keyColumn)
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as key; An index is a
+ * &nbsp;&nbsp;&nbsp;number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
+ * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 1
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
- * <pre>-value-column &lt;adams.core.Index&gt; (property: valueColumn)
- * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is 
- * &nbsp;&nbsp;&nbsp;a number starting with 1; the following placeholders can be used as well:
- * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
+ *
+ * <pre>-value-column &lt;adams.data.spreadsheet.SpreadSheetColumnIndex&gt; (property: valueColumn)
+ * &nbsp;&nbsp;&nbsp;The index of the column in the spreadsheet to use as value; An index is
+ * &nbsp;&nbsp;&nbsp;a number starting with 1; column names (case-sensitive) as well as the following
+ * &nbsp;&nbsp;&nbsp;placeholders can be used: first, second, third, last_2, last_1, last; numeric
+ * &nbsp;&nbsp;&nbsp;indices can be enforced by preceding them with '#' (eg '#12'); column names
+ * &nbsp;&nbsp;&nbsp;can be surrounded by double quotes.
  * &nbsp;&nbsp;&nbsp;default: 2
+ * &nbsp;&nbsp;&nbsp;example: An index is a number starting with 1; column names (case-sensitive) as well as the following placeholders can be used: first, second, third, last_2, last_1, last; numeric indices can be enforced by preceding them with '#' (eg '#12'); column names can be surrounded by double quotes.
  * </pre>
- * 
+ *
+ * <pre>-use-native &lt;boolean&gt; (property: useNative)
+ * &nbsp;&nbsp;&nbsp;If enabled, native objects are used as value rather than strings.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -106,12 +131,15 @@ public class LookUpInit
   /** the name of the lookup table in the internal storage. */
   protected StorageName m_StorageName;
 
+  /** the initial capacity. */
+  protected int m_InitialCapacity;
+
   /** the index of the column to use as key. */
   protected SpreadSheetColumnIndex m_KeyColumn;
 
   /** the index of the column to use as value. */
   protected SpreadSheetColumnIndex m_ValueColumn;
-  
+
   /** whether to output native objects rather than strings. */
   protected boolean m_UseNative;
 
@@ -122,12 +150,12 @@ public class LookUpInit
    */
   @Override
   public String globalInfo() {
-    return 
-	"Creates a lookup table from a spreadsheet, using one column as key "
+    return
+      "Creates a lookup table from a spreadsheet, using one column as key "
 	+ "and another one as value. The lookup table itself gets stored in "
 	+ "the internal storage under the specified name.";
   }
-  
+
   /**
    * Adds options to the internal list of options.
    */
@@ -136,25 +164,29 @@ public class LookUpInit
     super.defineOptions();
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName("lookup"));
+      "storage-name", "storageName",
+      new StorageName("lookup"));
 
     m_OptionManager.add(
-	    "key-column", "keyColumn",
-	    new SpreadSheetColumnIndex("1"));
+      "initial-capacity", "initialCapacity",
+      -1, -1, null);
 
     m_OptionManager.add(
-	    "value-column", "valueColumn",
-	    new SpreadSheetColumnIndex("2"));
+      "key-column", "keyColumn",
+      new SpreadSheetColumnIndex("1"));
 
     m_OptionManager.add(
-	    "use-native", "useNative",
-	    false);
+      "value-column", "valueColumn",
+      new SpreadSheetColumnIndex("2"));
+
+    m_OptionManager.add(
+      "use-native", "useNative",
+      false);
   }
 
   /**
    * Returns whether storage items are being updated.
-   * 
+   *
    * @return		true if storage items are updated
    */
   public boolean isUpdatingStorage() {
@@ -172,6 +204,7 @@ public class LookUpInit
     String	value;
 
     result  = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "initialCapacity", (m_InitialCapacity <= 0 ? "-default-" : m_InitialCapacity), ", initial capacity: ");
     result += QuickInfoHelper.toString(this, "keyColumn", m_KeyColumn, ", key: ");
     result += QuickInfoHelper.toString(this, "valueColumn", m_ValueColumn, ", value: ");
     value = QuickInfoHelper.toString(this, "useNative", m_UseNative, ", native");
@@ -208,6 +241,37 @@ public class LookUpInit
    */
   public String storageNameTipText() {
     return "The name for the lookup table in the internal storage.";
+  }
+
+  /**
+   * Sets the initial capacity.
+   *
+   * @param value	the capacity, <= 0 for default
+   */
+  public void setInitialCapacity(int value) {
+    if (getOptionManager().isValid("initialCapacity", value)) {
+      m_InitialCapacity = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the initial capacity.
+   *
+   * @return		the capacity, <= 0 for default
+   */
+  public int getInitialCapacity() {
+    return m_InitialCapacity;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String initialCapacityTipText() {
+    return "The initial capacity for the set, use <= 0 for default.";
   }
 
   /**
@@ -314,16 +378,16 @@ public class LookUpInit
     if (result == null) {
       sheet = (SpreadSheet) m_InputToken.getPayload();
       error = new StringBuilder();
-      lookup = LookUpHelper.load(sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
+      lookup = LookUpHelper.load(m_InitialCapacity, sheet, m_KeyColumn.getIndex(), m_ValueColumn.getIndex(), m_UseNative, error);
       if (lookup == null)
-        result = error.toString();
+	result = error.toString();
       else
-        getStorageHandler().getStorage().put(m_StorageName, lookup);
+	getStorageHandler().getStorage().put(m_StorageName, lookup);
     }
-    
+
     if (result == null)
       m_OutputToken = m_InputToken;
-    
+
     return result;
   }
 }

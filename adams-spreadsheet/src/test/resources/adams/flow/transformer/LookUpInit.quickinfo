@@ -1,1 +1,1 @@
-storage: lookup, key: 1, value: 2
+storage: lookup, initial capacity: -default-, key: 1, value: 2

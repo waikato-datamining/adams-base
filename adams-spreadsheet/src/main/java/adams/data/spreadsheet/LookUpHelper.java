@@ -13,15 +13,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * LookUpHelper.java
- * Copyright (C) 2014-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet;
 
-import adams.core.base.BaseRegExp;
-import adams.core.io.PlaceholderFile;
-import adams.data.io.input.CsvSpreadSheetReader;
 import adams.flow.control.StorageName;
 import adams.flow.core.Actor;
 
@@ -31,17 +28,29 @@ import java.util.HashMap;
  * Helper class for LookUp related stuff.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class LookUpHelper {
 
   /**
    * Returns an empty new lookup table.
    *
-   * @return		the empty table
+   * @return		the empty lookup
    */
   public static HashMap<String,Object> newTable() {
-    return new HashMap<>();
+    return newTable(-1);
+  }
+
+  /**
+   * Returns an empty new lookup table.
+   *
+   * @param initialCapacity 	the initial capacity for the map
+   * @return			the empty lookup
+   */
+  public static HashMap<String,Object> newTable(int initialCapacity) {
+    if (initialCapacity > 0)
+      return new HashMap<>(initialCapacity);
+    else
+      return new HashMap<>();
   }
 
   /**
@@ -54,30 +63,8 @@ public class LookUpHelper {
   }
 
   /**
-   * Generates a lookup table from the given file. Uses empty string as 
-   * missing value.
-   * 
-   * @param file	the spreadsheet (CSV) to load
-   * @param key		the key column (or 1-based index)
-   * @param value	the value column (or 1-based index)
-   * @param useNative	whether to use native objects or just string representation
-   * @param error	for storing error messages
-   * @return		the lookup table, null in case of an error
-   */
-  public static HashMap<String,Object> load(PlaceholderFile file, String key, String value, boolean useNative, StringBuilder error) {
-    CsvSpreadSheetReader	reader;
-    SpreadSheet			sheet;
-    
-    reader = new CsvSpreadSheetReader();
-    reader.setMissingValue(new BaseRegExp(""));
-    sheet  = reader.read(file);
-    
-    return load(sheet, key, value, useNative, error);
-  }
-
-  /**
    * Generates a lookup table from the given spreadsheet.
-   * 
+   *
    * @param sheet	the spreadsheet to use
    * @param key		the key column (or 1-based index)
    * @param value	the value column (or 1-based index)
@@ -86,6 +73,21 @@ public class LookUpHelper {
    * @return		the lookup table, null in case of an error
    */
   public static HashMap<String,Object> load(SpreadSheet sheet, String key, String value, boolean useNative, StringBuilder error) {
+    return load(-1, sheet, key, value, useNative, error);
+  }
+
+  /**
+   * Generates a lookup table from the given spreadsheet.
+   *
+   * @param initialCap	the initial capacity to use for the lookup table, <= 0 for default
+   * @param sheet	the spreadsheet to use
+   * @param key		the key column (or 1-based index)
+   * @param value	the value column (or 1-based index)
+   * @param useNative	whether to use native objects or just string representation
+   * @param error	for storing error messages
+   * @return		the lookup table, null in case of an error
+   */
+  public static HashMap<String,Object> load(int initialCap, SpreadSheet sheet, String key, String value, boolean useNative, StringBuilder error) {
     HashMap<String,Object>	result;
     int				keyCol;
     int				valCol;
@@ -94,11 +96,8 @@ public class LookUpHelper {
     SpreadSheetColumnIndex	m_KeyColumn;
     SpreadSheetColumnIndex	m_ValueColumn;
     
-    keyCol = -1;
-    valCol = -1;
-    
     if (sheet.getColumnCount() < 2) {
-      error.append("Spreadsheet must have at least 2 columns, available: " + sheet.getColumnCount());
+      error.append("Spreadsheet must have at least 2 columns, available: ").append(sheet.getColumnCount());
       return null;
     }
 
@@ -107,7 +106,7 @@ public class LookUpHelper {
     m_KeyColumn.setSpreadSheet(sheet);
     keyCol = m_KeyColumn.getIntIndex();
     if (keyCol == -1) {
-      error.append("Failed to locate key column: " + m_KeyColumn.getIndex());
+      error.append("Failed to locate key column: ").append(m_KeyColumn.getIndex());
       return null;
     }
 
@@ -116,12 +115,15 @@ public class LookUpHelper {
     m_ValueColumn.setSpreadSheet(sheet);
     valCol = m_ValueColumn.getIntIndex();
     if (valCol == -1) {
-      error.append("Failed to locate value column: " + m_ValueColumn.getIndex());
+      error.append("Failed to locate value column: ").append(m_ValueColumn.getIndex());
       return null;
     }
 
     // create lookup table
-    result = newTable();
+    if (initialCap > 0)
+      result = newTable(initialCap);
+    else
+      result = newTable(sheet.getRowCount());
     for (Row row: sheet.rows()) {
       if (!row.hasCell(keyCol) || row.getCell(keyCol).isMissing())
 	continue;

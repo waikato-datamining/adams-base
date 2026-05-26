@@ -15,7 +15,7 @@
 
 /*
  * LookUpInit.java
- * Copyright (C) 2016-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.standalone;
@@ -43,42 +43,51 @@ import adams.flow.transformer.LookUpAdd;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: LookUpInit
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this 
- * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical 
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-silent &lt;boolean&gt; (property: silent)
- * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing 
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-storage-name &lt;adams.flow.control.StorageName&gt; (property: storageName)
  * &nbsp;&nbsp;&nbsp;The name for the lookup table in the internal storage.
  * &nbsp;&nbsp;&nbsp;default: lookup
  * </pre>
- * 
+ *
+ * <pre>-initial-capacity &lt;int&gt; (property: initialCapacity)
+ * &nbsp;&nbsp;&nbsp;The initial capacity for the set, use &lt;= 0 for default.
+ * &nbsp;&nbsp;&nbsp;default: -1
+ * &nbsp;&nbsp;&nbsp;minimum: -1
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
@@ -91,6 +100,9 @@ public class LookUpInit
 
   /** the name of the lookup table in the internal storage. */
   protected StorageName m_StorageName;
+
+  /** the initial capacity. */
+  protected int m_InitialCapacity;
 
   /**
    * Returns a string describing the object.
@@ -110,8 +122,12 @@ public class LookUpInit
     super.defineOptions();
 
     m_OptionManager.add(
-	    "storage-name", "storageName",
-	    new StorageName("lookup"));
+      "storage-name", "storageName",
+      new StorageName("lookup"));
+
+    m_OptionManager.add(
+      "initial-capacity", "initialCapacity",
+      -1, -1, null);
   }
 
   /**
@@ -139,7 +155,12 @@ public class LookUpInit
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "storageName", m_StorageName, "storage: ");
+    result += QuickInfoHelper.toString(this, "initialCapacity", (m_InitialCapacity <= 0 ? "-default-" : m_InitialCapacity), ", initial capacity: ");
+
+    return result;
   }
 
   /**
@@ -172,6 +193,37 @@ public class LookUpInit
   }
 
   /**
+   * Sets the initial capacity.
+   *
+   * @param value	the capacity, <= 0 for default
+   */
+  public void setInitialCapacity(int value) {
+    if (getOptionManager().isValid("initialCapacity", value)) {
+      m_InitialCapacity = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the initial capacity.
+   *
+   * @return		the capacity, <= 0 for default
+   */
+  public int getInitialCapacity() {
+    return m_InitialCapacity;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String initialCapacityTipText() {
+    return "The initial capacity for the set, use <= 0 for default.";
+  }
+
+  /**
    * Executes the flow item.
    *
    * @return		null if everything is fine, otherwise error message
@@ -183,7 +235,7 @@ public class LookUpInit
     result = getOptionManager().ensureVariableForPropertyExists("storageName");
 
     if (result == null)
-      getStorageHandler().getStorage().put(m_StorageName, LookUpHelper.newTable());
+      getStorageHandler().getStorage().put(m_StorageName, LookUpHelper.newTable(m_InitialCapacity));
 
     return result;
   }
