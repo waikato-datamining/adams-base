@@ -15,7 +15,7 @@
 
 /*
  * DeleteVariable.java
- * Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.standalone;
@@ -113,6 +113,31 @@ public class DeleteVariable
 
   /** the regexp to match against variable names. */
   protected BaseRegExp m_RegExp;
+  /**
+   * Default constructor.
+   */
+  public DeleteVariable() {
+    super();
+  }
+
+  /**
+   * Initializes with the specified variable name.
+   *
+   * @param varName	the variable name to use
+   */
+  public DeleteVariable(VariableName varName) {
+    this();
+    setVariableName(varName);
+  }
+
+  /**
+   * Initializes with the specified variable name.
+   *
+   * @param varName	the variable name to use
+   */
+  public DeleteVariable(String varName) {
+    this(new VariableName(varName));
+  }
 
   /**
    * Returns a string describing the object.
