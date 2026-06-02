@@ -22,6 +22,7 @@ package adams.flow.transformer;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
 import adams.core.Variables;
@@ -519,7 +520,6 @@ import java.util.List;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class SetManyVariables
   extends AbstractTransformer
@@ -597,6 +597,26 @@ public class SetManyVariables
   public void addVariablePair(VariableNameValuePair value) {
     m_VariablePairs.add(value);
     reset();
+  }
+
+  /**
+   * Adds the variable name/value pair.
+   *
+   * @param name 	the name of the variable
+   * @param value	the value of the variable
+   */
+  public void addVariablePair(String name, String value) {
+    addVariablePair(new VariableNameValuePair(name, value));
+  }
+
+  /**
+   * Adds the variable name/value pair.
+   *
+   * @param name 	the name of the variable
+   * @param value	the value of the variable
+   */
+  public void addVariablePair(VariableName name, String value) {
+    addVariablePair(new VariableNameValuePair(name.getValue(), value));
   }
 
   /**

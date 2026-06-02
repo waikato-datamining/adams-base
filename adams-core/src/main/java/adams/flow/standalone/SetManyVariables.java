@@ -22,6 +22,7 @@ package adams.flow.standalone;
 
 import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
+import adams.core.VariableName;
 import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
 import adams.core.Variables;
@@ -590,6 +591,26 @@ public class SetManyVariables
   public void addVariablePair(VariableNameValuePair value) {
     m_VariablePairs.add(value);
     reset();
+  }
+
+  /**
+   * Adds the variable name/value pair.
+   *
+   * @param name 	the name of the variable
+   * @param value	the value of the variable
+   */
+  public void addVariablePair(String name, String value) {
+    addVariablePair(new VariableNameValuePair(name, value));
+  }
+
+  /**
+   * Adds the variable name/value pair.
+   *
+   * @param name 	the name of the variable
+   * @param value	the value of the variable
+   */
+  public void addVariablePair(VariableName name, String value) {
+    addVariablePair(new VariableNameValuePair(name.getValue(), value));
   }
 
   /**
