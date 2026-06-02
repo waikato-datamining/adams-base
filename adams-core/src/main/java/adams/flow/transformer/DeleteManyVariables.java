@@ -95,6 +95,15 @@ public class DeleteManyVariables
   }
 
   /**
+   * Adds the variable name.
+   *
+   * @param value	the name to add
+   */
+  public void addVariableName(String value) {
+    addVariableName(new VariableName(value));
+  }
+
+  /**
    * Sets the variable names.
    *
    * @param value	the names
