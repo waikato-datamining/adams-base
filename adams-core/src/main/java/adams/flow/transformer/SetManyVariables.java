@@ -15,7 +15,7 @@
 
 /*
  * SetManyVariables.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.VariableNameValuePair;
 import adams.core.VariableUpdater;
+import adams.core.Variables;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.flow.core.Unknown;
@@ -748,14 +749,16 @@ public class SetManyVariables
     String		result;
     String		value;
     MessageCollection	errors;
+    Variables		vars;
 
     result = null;
 
     errors = new MessageCollection();
+    vars   = getVariables();
     for (VariableNameValuePair pair: m_VariablePairs) {
       value = pair.varValue();
       if (m_ExpandValue) {
-	value = getVariables().expand(value);
+	value = vars.expand(value);
 	if (isLoggingEnabled())
 	  getLogger().info("Expanded value: " + value);
       }
@@ -808,7 +811,7 @@ public class SetManyVariables
 	  throw new IllegalStateException("Unhandled value type (" + pair.varValue() + "): " + m_ValueType);
       }
 
-      getVariables().set(pair.varName().getValue(), value);
+      vars.set(pair.varName().getValue(), value);
       if (isLoggingEnabled())
 	getLogger().info("Setting variable '" + pair.varName() + "': " + value);
     }
