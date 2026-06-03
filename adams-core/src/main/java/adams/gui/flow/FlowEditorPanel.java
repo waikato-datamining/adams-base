@@ -15,7 +15,7 @@
 
 /*
  * FlowEditorPanel.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -580,7 +580,7 @@ public class FlowEditorPanel
     m_SplitPane = new BaseSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
     m_SplitPane.setDividerLocation(UISettings.get(this, "TabsDivider", props.getInteger("DividerLocation", 850)));
     m_SplitPane.setOneTouchExpandable(true);
-    m_SplitPane.setResizeWeight(0.5);
+    m_SplitPane.setResizeWeight(0);
     m_SplitPane.setUISettingsParameters(getClass(), "TabsDivider");
     getContentPanel().add(m_SplitPane, BorderLayout.CENTER);
 
