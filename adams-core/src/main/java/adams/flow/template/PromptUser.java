@@ -15,7 +15,7 @@
 
 /*
  * PromptUser.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.template;
 
@@ -43,6 +43,7 @@ import adams.flow.transformer.MapToVariables;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -77,6 +78,11 @@ import adams.flow.transformer.MapToVariables;
  * &nbsp;&nbsp;&nbsp;default: &#64;{flow_filename_long}.props
  * </pre>
  *
+ * <pre>-stop-if-canceled &lt;boolean&gt; (property: stopFlowIfCanceled)
+ * &nbsp;&nbsp;&nbsp;If enabled, the flow gets stopped in case the user cancels the dialog.
+ * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -102,6 +108,9 @@ public class PromptUser
   /** the name of the restore file. */
   protected String m_RestoreFile;
 
+  /** whether to stop the flow if canceled. */
+  protected boolean m_StopFlowIfCanceled;
+
   /**
    * Returns a string describing the object.
    *
@@ -111,7 +120,7 @@ public class PromptUser
   public String globalInfo() {
     return
       "Generates a sub-flow that prompts the user with the specified "
-        + "parameters and stores the values in variables.";
+	+ "parameters and stores the values in variables.";
   }
 
   /**
@@ -140,6 +149,10 @@ public class PromptUser
     m_OptionManager.add(
       "restore-file", "restoreFile",
       Variables.padName(ActorUtils.FLOW_FILENAME_LONG) + ".props");
+
+    m_OptionManager.add(
+      "stop-if-canceled", "stopFlowIfCanceled",
+      true);
   }
 
   /**
@@ -288,6 +301,35 @@ public class PromptUser
   }
 
   /**
+   * Sets whether to stop the flow if dialog canceled.
+   *
+   * @param value	if true flow gets stopped if dialog canceled
+   */
+  public void setStopFlowIfCanceled(boolean value) {
+    m_StopFlowIfCanceled = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to stop the flow if dialog canceled.
+   *
+   * @return 		true if the flow gets stopped if dialog canceled
+   */
+  public boolean getStopFlowIfCanceled() {
+    return m_StopFlowIfCanceled;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *             	displaying in the GUI or for listing the options.
+   */
+  public String stopFlowIfCanceledTipText() {
+    return "If enabled, the flow gets stopped in case the user cancels the dialog.";
+  }
+
+  /**
    * Whether the flow generated is an interactive one.
    *
    * @return		true if interactive
@@ -326,8 +368,8 @@ public class PromptUser
     enter.setName("Parameters");
     enter.setMessage(m_Message);
     enter.setValues(m_Values);
-    enter.setStopFlowIfCanceled(true);
     enter.setOutputType(OutputType.MAP);
+    enter.setStopFlowIfCanceled(m_StopFlowIfCanceled);
     if (m_RestoreEnabled) {
       enter.setRestorationEnabled(true);
       enter.getOptionManager().setVariableForProperty("restorationFile", m_RestoreVar.getValue());
