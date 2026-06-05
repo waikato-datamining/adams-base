@@ -15,7 +15,7 @@
 
 /*
  * HasVariableValue.java
- * Copyright (C) 2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.condition.bool;
 
@@ -62,6 +62,35 @@ public class HasVariableValue
 
   /** the value that the variable value gets compared with. */
   protected String m_Value;
+
+  /**
+   * Default constructor.
+   */
+  public HasVariableValue() {
+    super();
+  }
+
+  /**
+   * Initializes the condition with the specified var name and value.
+   *
+   * @param variableName	the variable to check
+   * @param value		the value to check against
+   */
+  public HasVariableValue(String variableName, String value) {
+    this(new VariableName(variableName), value);
+  }
+
+  /**
+   * Initializes the condition with the specified var name and value.
+   *
+   * @param variableName	the variable to check
+   * @param value		the value to check against
+   */
+  public HasVariableValue(VariableName variableName, String value) {
+    this();
+    setVariableName(variableName);
+    setValue(value);
+  }
 
   /**
    * Returns a string describing the object.
