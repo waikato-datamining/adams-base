@@ -15,7 +15,7 @@
 
 /*
  * DeleteStorageValue.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -388,8 +388,8 @@ public class DeleteStorageValue
 
     if (result == null) {
       if (canPerformSetUpCheck(fromSetUp, "storageName")) {
-	if ((m_StorageName == null) || (m_StorageName.getValue().length() == 0))
-	  result = "No name specified for storing value!";
+	if ((m_StorageName == null) || m_StorageName.getValue().isEmpty())
+	  result = "No storage name specified!";
       }
     }
 
