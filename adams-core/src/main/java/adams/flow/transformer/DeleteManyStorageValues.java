@@ -26,6 +26,10 @@ import adams.flow.control.StorageName;
 import adams.flow.control.StorageUpdater;
 import adams.flow.core.Unknown;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  <!-- globalinfo-start -->
  * Removes the specified values from temporary storage whenever a token passes through.<br>
@@ -106,7 +110,7 @@ public class DeleteManyStorageValues
   protected String m_Cache;
 
   /** the names of the value to delete. */
-  protected StorageName[] m_StorageNames;
+  protected List<StorageName> m_StorageNames;
 
   /**
    * Default constructor.
@@ -165,6 +169,16 @@ public class DeleteManyStorageValues
   }
 
   /**
+   * Initializes the scheme.
+   */
+  @Override
+  protected void initialize() {
+    super.initialize();
+
+    m_StorageNames = new ArrayList<>();
+  }
+
+  /**
    * Sets the name of the LRU cache to use, regular storage if left empty.
    *
    * @param value	the cache
@@ -194,6 +208,24 @@ public class DeleteManyStorageValues
   }
 
   /**
+   * Adds the specified storage name.
+   *
+   * @param value	the name to add
+   */
+  public void addStorageName(String value) {
+    addStorageName(new StorageName(value));
+  }
+
+  /**
+   * Adds the specified storage name.
+   *
+   * @param value	the name to add
+   */
+  public void addStorageName(StorageName value) {
+    m_StorageNames.add(value);
+  }
+
+  /**
    * Sets the names of the stored values.
    *
    * @param value	the names
@@ -208,7 +240,8 @@ public class DeleteManyStorageValues
    * @param value	the names
    */
   public void setStorageNames(StorageName[] value) {
-    m_StorageNames = value;
+    m_StorageNames.clear();
+    m_StorageNames.addAll(Arrays.asList(value));
     reset();
   }
 
@@ -218,7 +251,7 @@ public class DeleteManyStorageValues
    * @return		the names
    */
   public StorageName[] getStorageNames() {
-    return m_StorageNames;
+    return m_StorageNames.toArray(new StorageName[0]);
   }
 
   /**
@@ -250,7 +283,7 @@ public class DeleteManyStorageValues
     String	result;
     String	value;
 
-    result = QuickInfoHelper.toString(this, "storageNames", m_StorageNames);
+    result = QuickInfoHelper.toString(this, "storageNames", getStorageNames());
     value = QuickInfoHelper.toString(this, "cache", (!m_Cache.isEmpty() ? m_Cache : ""), " cache: ");
     if (value != null)
       result += value;
@@ -290,7 +323,7 @@ public class DeleteManyStorageValues
 
     if (result == null) {
       if (canPerformSetUpCheck(fromSetUp, "storageName")) {
-	if ((m_StorageNames == null) || (m_StorageNames.length == 0))
+	if ((m_StorageNames == null) || m_StorageNames.isEmpty())
 	  result = "No storage names specified!";
       }
     }
