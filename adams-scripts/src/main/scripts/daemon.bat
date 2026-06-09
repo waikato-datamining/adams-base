@@ -24,15 +24,19 @@
 set ERROR_CODE=0
 
 :AssembleCmd
+@REM default command
 set JCMD=java
 
+@REM JAVA_HOME defined?
 if defined JAVA_HOME if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
-if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
+if not "%JAVA_HOME%"=="" set JCMD=%JAVA_HOME%\bin\java
 
+@REM JAVA_CMD defined?
 if defined JAVACMD if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
 if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
 
-where /q "java"
+@REM is java on PATH?
+if "%JCMD%"=="java" where /q java
 if %ERRORLEVEL% NEQ 0 echo "No Java installed?" & goto javaerror
 
 echo Using: %JCMD%
@@ -58,7 +62,7 @@ goto wrongcmd
 
 @REM Start the daemon
 :startdaemon
-%JCMD% -classpath %CLASSPATH% -Xmx%2^
+"%JCMD%" -classpath %CLASSPATH% -Xmx%2^
  --add-opens=java.desktop/sun.awt.shell=ALL-UNNAMED^
  --add-exports=java.base/jdk.internal.misc=ALL-UNNAMED^
  --add-exports=java.desktop/sun.awt.image=ALL-UNNAMED^
@@ -79,7 +83,7 @@ goto end
 
 @REM Stop the daemon
 :stopdaemon
-%JCMD% -classpath %CLASSPATH% adams.scripting.CommandRunner^
+"%JCMD%" -classpath %CLASSPATH% adams.scripting.CommandRunner^
  -start-local-engine false^
  -connection "adams.scripting.connection.DefaultConnection -host 127.0.0.1 -port %2"^
  -command adams.scripting.command.basic.Stop

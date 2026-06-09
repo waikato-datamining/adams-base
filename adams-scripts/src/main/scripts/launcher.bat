@@ -110,15 +110,20 @@ set BASEDIR=%~dp0\..
   goto Loop
 
 :AssembleCmd
+@REM default command
 set JCMD=java
-where /q "java"
-if %ERRORLEVEL% NEQ 0 set JCMD=""
 
+@REM JAVA_HOME defined?
 if defined JAVA_HOME if not EXIST "%JAVA_HOME%\bin\java.exe" echo JAVA_HOME variable is incorrect: %JAVA_HOME% & goto javaerror
-if not "%JAVA_HOME%"=="" set JCMD="%JAVA_HOME%\bin\java"
+if not "%JAVA_HOME%"=="" set JCMD=%JAVA_HOME%\bin\java
 
+@REM JAVA_CMD defined?
 if defined JAVACMD if not EXIST "%JAVACMD%" echo JAVACMD variable is incorrect: %JAVACMD% & goto javaerror
-if not "%JAVACMD%"=="" set JCMD="%JAVACMD%"
+if not "%JAVACMD%"=="" set JCMD=%JAVACMD%
+
+@REM is java on PATH?
+if "%JCMD%"=="java" where /q java
+if %ERRORLEVEL% NEQ 0 echo "No Java installed?" & goto javaerror
 
 echo Using: %JCMD%
 
@@ -138,7 +143,7 @@ goto endInit
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JCMD% %JAVA_OPTS%^
+"%JCMD%" %JAVA_OPTS%^
  -classpath %CLASSPATH_PREFIX%;%CLASSPATH%^
  -Dbasedir="%BASEDIR%"^
  adams.core.management.Launcher^
