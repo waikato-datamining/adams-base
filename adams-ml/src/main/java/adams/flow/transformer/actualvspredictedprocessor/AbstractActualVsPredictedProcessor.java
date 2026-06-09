@@ -24,6 +24,7 @@ import adams.core.MessageCollection;
 import adams.core.option.AbstractOptionHandler;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
+import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.data.spreadsheet.SpreadSheetUtils;
 
 /**
@@ -38,6 +39,50 @@ public abstract class AbstractActualVsPredictedProcessor<T>
   implements ActualVsPredictedProcessor<T> {
 
   private static final long serialVersionUID = 6189283310735592329L;
+
+  /** the range of the additional columns to include. */
+  protected SpreadSheetColumnRange m_AdditionalRange;
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "additional-range", "additionalRange",
+      new SpreadSheetColumnRange());
+  }
+
+  /**
+   * Sets the range of columns to include.
+   *
+   * @param value	the columns
+   */
+  public void setAdditionalRange(SpreadSheetColumnRange value) {
+    m_AdditionalRange = value;
+    reset();
+  }
+
+  /**
+   * Returns the range of columns to include.
+   *
+   * @return		the columns
+   */
+  public SpreadSheetColumnRange getAdditionalRange() {
+    return m_AdditionalRange;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String additionalRangeTipText() {
+    return "The range of columns to obtain additional values from.";
+  }
 
   /**
    * Checks whether the data can be processed.
@@ -79,20 +124,23 @@ public abstract class AbstractActualVsPredictedProcessor<T>
    */
   protected String[] getAdditional(SpreadSheet sheet) {
     String[] 		result;
+    int[]		indices;
     int			i;
     int			n;
     Row 		row;
     StringBuilder	cell;
 
-    if (sheet.getColumnCount() > 3) {
+    m_AdditionalRange.setSpreadSheet(sheet);
+    indices = m_AdditionalRange.getIntIndices();
+    if (indices.length > 0) {
       result = new String[sheet.getRowCount()];
       for (i = 0; i < sheet.getRowCount(); i++) {
 	row = sheet.getRow(i);
-	cell = new StringBuilder("\"").append(row.getCell(2).getContent()).append(":");  // instance index
-	for (n = 3; n < sheet.getColumnCount(); n++) {
-	  if (n > 3)
+	cell = new StringBuilder("\"");
+	for (n = 0; n < indices.length; n++) {
+	  if (n > 0)
 	    cell.append(",");
-	  cell.append(row.getCell(n).getContent().replace("\"", ""));
+	  cell.append(row.getCell(indices[n]).getContent().replace("\"", ""));
 	}
 	cell.append("\"");
 	result[i] = cell.toString();
