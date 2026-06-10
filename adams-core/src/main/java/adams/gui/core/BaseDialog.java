@@ -15,7 +15,7 @@
 
 /*
  * BaseDialog.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -512,8 +512,7 @@ public class BaseDialog
   public void maximize() {
     m_SizeBeforeMaximize     = getSize();
     m_LocationBeforeMaximize = getLocation();
-    setSize(GUIHelper.getScreenBounds(this).getSize());
-    setLocation(0, 0);
+    getGraphicsConfiguration().getDevice().setFullScreenWindow(this);
   }
 
   /**
@@ -530,10 +529,12 @@ public class BaseDialog
    */
   public void minimize() {
     if (m_SizeBeforeMaximize != null) {
+      getGraphicsConfiguration().getDevice().setFullScreenWindow(null);
       setSize(m_SizeBeforeMaximize);
       m_SizeBeforeMaximize = null;
     }
     if (m_LocationBeforeMaximize != null) {
+      getGraphicsConfiguration().getDevice().setFullScreenWindow(null);
       setLocation(m_LocationBeforeMaximize);
       m_LocationBeforeMaximize = null;
     }
