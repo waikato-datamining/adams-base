@@ -15,7 +15,7 @@
 
 /*
  * PolygonPointAnnotator.java
- * Copyright (C) 2023-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2023-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -366,7 +366,6 @@ public class PolygonPointAnnotator
   protected void doInstall() {
     getOwner().getCanvas().addMouseListener(m_MouseListener);
     getOwner().getCanvas().addKeyListener(m_KeyListener);
-    getOwner().getLabelSelectorPanel().setUnsetButtonVisible(false);
   }
 
   /**
@@ -376,7 +375,6 @@ public class PolygonPointAnnotator
   protected void doUninstall() {
     getOwner().getCanvas().removeMouseListener(m_MouseListener);
     getOwner().getCanvas().removeKeyListener(m_KeyListener);
-    getOwner().getLabelSelectorPanel().setUnsetButtonVisible(true);
   }
 
   /**
