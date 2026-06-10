@@ -15,7 +15,7 @@
 
 /*
  * PolygonAnnotator.java
- * Copyright (C) 2020-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotator;
@@ -87,7 +87,15 @@ public class PolygonAnnotator
    */
   @Override
   public String globalInfo() {
-    return "For annotating objects with bounding boxes.";
+    return "For annotating objects with bounding boxes or polygons.\n"
+	     + "Bounding boxes:\n"
+	     + "- left-click top-left or top-right corner\n"
+	     + "- drag mouse while holding the button to adjust size of box\n"
+	     + "- release mouse button to finalize the box\n"
+	     + "Polygons:\n"
+	     + "- left-click to start the polygon\n"
+	     + "- drag the mouse while holding the button, tracing the outline of the object\n"
+	     + "- release mouse button to close the polygon";
   }
 
   /**
