@@ -15,7 +15,7 @@
 
 /*
  * CompareAnnotationWithPredictionStats.java
- * Copyright (C) 2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.imagesegmentation.operation;
@@ -252,13 +252,28 @@ public class CompareAnnotationWithPredictionStats
       row        = result.addRow();
       row.addCell("L").setContentAsString(label);
       row.addCell("CC").setContent(overlap);
-      row.addCell("CP").setContent((double) overlap / annoTotal * 100.0);
+      if (annoTotal == 0)
+	row.addCell("CP").setContent(0.0);
+      else
+	row.addCell("CP").setContent((double) overlap / annoTotal * 100.0);
       row.addCell("MC").setContent(missed);
-      row.addCell("MP").setContent((double) missed / annoTotal * 100.0);
+      if (annoTotal == 0)
+	row.addCell("MP").setContent(0.0);
+      else
+	row.addCell("MP").setContent((double) missed / annoTotal * 100.0);
       row.addCell("AC").setContent(additional);
-      row.addCell("AP").setContent((double) additional / annoTotal * 100.0);
-      row.addCell("IOU").setContent((double) overlap / (double) (overlap + missed + additional));
-      row.addCell("DC").setContent((double) (2*overlap) / (double) (annoTotal + predTotal));
+      if (annoTotal == 0)
+	row.addCell("AP").setContent(0.0);
+      else
+	row.addCell("AP").setContent((double) additional / annoTotal * 100.0);
+      if (overlap + missed + additional == 0)
+	row.addCell("IOU").setContent(0.0);
+      else
+	row.addCell("IOU").setContent((double) overlap / (double) (overlap + missed + additional));
+      if (annoTotal + predTotal == 0)
+	row.addCell("DC").setContent(0.0);
+      else
+	row.addCell("DC").setContent((double) (2*overlap) / (double) (annoTotal + predTotal));
     }
 
     return result;
