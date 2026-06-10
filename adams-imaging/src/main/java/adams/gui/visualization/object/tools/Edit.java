@@ -15,7 +15,7 @@
 
 /*
  * Edit.java
- * Copyright (C) 2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.object.tools;
@@ -71,6 +71,9 @@ public class Edit
   /** the radio button for polygon. */
   protected JRadioButton m_RadioPolygon;
 
+  /** the size of the handles. */
+  protected NumberTextField m_TextHandleSize;
+
   /** the tolerance in pixels for selecting a vertex. */
   protected NumberTextField m_TextSelectionTolerance;
 
@@ -79,6 +82,9 @@ public class Edit
 
   /** whether to edit bboxes. */
   protected boolean m_BoundingBox;
+
+  /** the handle size. */
+  protected int m_HandleSize;
 
   /** the tolerance in pixels for selecting a vertex. */
   protected int m_SelectionTolerance;
@@ -130,9 +136,10 @@ public class Edit
     m_VertexOld          = null;
     m_VertexNew          = null;
     m_SelectedObjects    = new ArrayList<>();
+    m_HandleSize         = 7;
     m_PolygonVertices    = new PolygonVertices();
     m_PolygonVertices.setShape(VertexShape.BOX_FILLED);
-    m_PolygonVertices.setExtent(7);
+    m_PolygonVertices.setExtent(m_HandleSize);
   }
 
   /**
@@ -169,7 +176,8 @@ public class Edit
    * Updates overlay(s) for the vertices.
    */
   protected void updateVertexOverlays() {
-    if (m_SelectedObjects.size() == 0)
+    m_PolygonVertices.setExtent(m_HandleSize);
+    if (m_SelectedObjects.isEmpty())
       m_PolygonVertices.setPlotSubset(new LocatedObject[0]);
     else
       m_PolygonVertices.setPlotSubset(m_SelectedObjects);
@@ -445,8 +453,8 @@ public class Edit
 
       @Override
       public void mousePressed(MouseEvent e) {
-	if (m_SelectedObjects.size() > 0) {
-	  if (KeyUtils.isCtrlDown(e.getModifiersEx()) && KeyUtils.isShiftDown(e.getModifiersEx()) &&!m_BoundingBox) {
+	if (!m_SelectedObjects.isEmpty()) {
+	  if (KeyUtils.isCtrlDown(e.getModifiersEx()) && KeyUtils.isShiftDown(e.getModifiersEx()) && !m_BoundingBox) {
 	    Point vertex = getCanvas().mouseToPixelLocation(e.getPoint());
 	    addVertex(m_SelectedObjects.get(0), vertex);
 	    e.consume();
@@ -533,6 +541,7 @@ public class Edit
   @Override
   protected void doApply() {
     m_BoundingBox        = m_RadioBoundingBox.isSelected();
+    m_HandleSize         = m_TextHandleSize.getValue().intValue();
     m_SelectionTolerance = m_TextSelectionTolerance.getValue().intValue();
     m_Prefix             = m_TextPrefix.getText();
 
@@ -566,6 +575,13 @@ public class Edit
     paramPanel.addParameter("Polygon", m_RadioPolygon);
 
     m_RadioBoundingBox.setSelected(true);
+
+    m_TextHandleSize = new NumberTextField(NumberTextField.Type.INTEGER, "7");
+    m_TextHandleSize.setColumns(5);
+    m_TextHandleSize.setToolTipText("The size of the handles in pixels for the vertices");
+    m_TextHandleSize.setCheckModel(new NumberTextField.BoundedNumberCheckModel(NumberTextField.Type.INTEGER, 1, null));
+    m_TextHandleSize.addAnyChangeListener((ChangeEvent e) -> setApplyButtonState(m_ButtonApply, true));
+    paramPanel.addParameter("Handle size", m_TextHandleSize);
 
     m_TextSelectionTolerance = new NumberTextField(NumberTextField.Type.INTEGER, "5");
     m_TextSelectionTolerance.setColumns(5);
