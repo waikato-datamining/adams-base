@@ -15,7 +15,7 @@
 
 /*
  * DatabaseConnection.java
- * Copyright (C) 2008-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,7 +25,6 @@ import adams.core.base.BasePassword;
 import adams.core.option.OptionUtils;
 import adams.env.AbstractEnvironment;
 import adams.env.DatabaseConnectionDefinition;
-import adams.env.Environment;
 
 /**
  * DatabaseConnection manages the interface to the database back-end.
@@ -71,7 +70,7 @@ public class DatabaseConnection
    * @return		the instance
    */
   protected AbstractEnvironment createEnvironment() {
-    return new Environment();
+    return AbstractEnvironment.getInstance();
   }
 
   /**
