@@ -15,7 +15,7 @@
 
 /*
  * Launcher.java
- * Copyright (C) 2011-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -645,6 +645,8 @@ public class Launcher {
         System.out.println("\nGenerated command-line:\n" + Utils.flatten(cmd, "\n"));
         System.out.println("\nEnvironment variables:\n" + Utils.flatten(m_EnvVars, "\n"));
       }
+
+      System.out.println("Launching...");
 
       m_Process = m_Runtime.exec(
           cmd.toArray(new String[0]),
