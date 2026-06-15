@@ -15,7 +15,7 @@
 
 /*
  * AbstractEnvironment.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
@@ -23,6 +23,7 @@ package adams.env;
 import adams.core.Properties;
 import adams.core.StaticClassLister;
 import adams.core.Utils;
+import adams.core.logging.LoggingHelper;
 import adams.core.logging.LoggingObject;
 import adams.core.management.EnvVar;
 import adams.core.management.OS;
@@ -139,7 +140,7 @@ public abstract class AbstractEnvironment
       m_HomeDirectory = file;
     }
     if (!m_HomeDirectory.getAbsolutePath().equals(getDefaultHome()))
-      System.err.println(getClass().getName() + ": Using home directory '" + m_HomeDirectory + "'");
+      System.out.println(getClass().getName() + ": Using home directory '" + m_HomeDirectory + "'");
   }
 
   /**
@@ -167,8 +168,7 @@ public abstract class AbstractEnvironment
 	m_Definitions.put(definition.getKey(), definition);
       }
       catch (Exception e) {
-	System.err.println("Failed to process definition '" + name + "':");
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to process definition '" + name + "'!", e);
       }
     }
   }
@@ -189,7 +189,7 @@ public abstract class AbstractEnvironment
    * 			use default home
    */
   public static void setHome(String value) {
-    if ((value == null) || (value.length() == 0))
+    if ((value == null) || value.isEmpty())
       m_HomeDirectory = null;
     else
       m_HomeDirectory = new File(value);
@@ -472,12 +472,10 @@ public abstract class AbstractEnvironment
     boolean		result;
     String		filename;
 
-    result = false;
-
     filename = getCustomPropertiesFilename(key);
     if (filename == null) {
       System.err.println("Properties definition '" + key + "' not found, properties not saved!");
-      return result;
+      return false;
     }
     result = props.save(filename);
 
@@ -565,7 +563,7 @@ public abstract class AbstractEnvironment
 	m_Environment = (AbstractEnvironment) m_EnvironmentClass.getDeclaredConstructor().newInstance();
       }
       catch (Exception e) {
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to instantiate environment!", e);
 	m_Environment = new Environment();
       }
       m_InstantiationTimestamp = new Date();
@@ -601,10 +599,10 @@ public abstract class AbstractEnvironment
     Collections.sort(keys);
 
     for (String key: keys) {
-      result.append("\n--> " + key + "\n");
+      result.append("\n--> ").append(key).append("\n");
       setups = m_Properties.get(key);
       for (Setup setup: setups) {
-	result.append(setup.toString() + "\n");
+	result.append(setup.toString()).append("\n");
       }
     }
 
@@ -618,6 +616,7 @@ public abstract class AbstractEnvironment
    * @param cls		the concrete Environment class to use
    */
   public static void setEnvironmentClass(Class cls) {
+    System.out.println("Using environment class: " + cls.getName());
     m_EnvironmentClass = cls;
     m_Environment      = null;
   }
