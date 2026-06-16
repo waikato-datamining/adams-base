@@ -15,7 +15,7 @@
 
 /*
  * ApplicationFrame.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -878,7 +878,7 @@ public abstract class AbstractApplicationFrame
       newTitle = name + ":" + newTitle;
 
     conns = DatabaseManager.getActiveConnectionObjects();
-    if (conns.size() > 0) {
+    if (!conns.isEmpty()) {
       connsStr = new HashSet<>();
       for (AbstractDatabaseConnection conn: conns)
 	connsStr.add(conn.toStringShort());
@@ -889,7 +889,7 @@ public abstract class AbstractApplicationFrame
       newTitle += " " + connsList;
     }
 
-    if (title.length() != 0) {
+    if (!title.isEmpty()) {
       if (title.contains(name + ":"))
 	title = title.replace(name + ":", "");
       if (title.length() > 50)
@@ -1060,7 +1060,7 @@ public abstract class AbstractApplicationFrame
 	  ((ChildFrame) child).setExtendedState(JFrame.ICONIFIED);
       }
       catch (Exception e) {
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to minimize windows!", e);
       }
     }
   }
@@ -1080,7 +1080,7 @@ public abstract class AbstractApplicationFrame
 	  ((ChildFrame) child).setExtendedState(JFrame.NORMAL);
       }
       catch (Exception e) {
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to restore windows!", e);
       }
     }
   }
@@ -1143,7 +1143,7 @@ public abstract class AbstractApplicationFrame
       useEmpty = true;
       if (child instanceof Window) {
 	images = ((Window) child).getIconImages();
-	if (images.size() > 0) {
+	if (!images.isEmpty()) {
 	  useEmpty = false;
 	  menuitem.setIcon(new ImageIcon(images.get(0)));
 	}
@@ -1242,7 +1242,7 @@ public abstract class AbstractApplicationFrame
     }
 
     // start up menu items
-    if (items.size() > 0) {
+    if (!items.isEmpty()) {
       SwingUtilities.invokeLater(() -> {
 	for (AbstractBasicMenuItemDefinition it: items)
 	  it.launch();
@@ -1427,7 +1427,7 @@ public abstract class AbstractApplicationFrame
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to run application!", e);
       result = null;
     }
 
@@ -1450,7 +1450,7 @@ public abstract class AbstractApplicationFrame
       result = (AbstractApplicationFrame) OptionUtils.forName(AbstractApplicationFrame.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to instantiate application: " + classname, e);
       result = null;
     }
 
