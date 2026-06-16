@@ -15,12 +15,13 @@
 
 /*
  * AbstractFrameWithOptionHandling.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.core;
 
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionHandler;
 import adams.core.option.OptionManager;
 import adams.core.option.OptionUtils;
@@ -31,7 +32,6 @@ import adams.env.HomeRelocator;
  * Ancestor to all frames that handle command-line options.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public abstract class AbstractFrameWithOptionHandling
   extends BaseFrame
@@ -192,7 +192,7 @@ public abstract class AbstractFrameWithOptionHandling
       result = (AbstractFrameWithOptionHandling) OptionUtils.forName(AbstractFrameWithOptionHandling.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to instantiate frame: " + classname, e);
       result = null;
     }
 
@@ -228,7 +228,7 @@ public abstract class AbstractFrameWithOptionHandling
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to run frame!", e);
       result = null;
     }
 
