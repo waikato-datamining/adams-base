@@ -15,7 +15,7 @@
 
 /*
  * Environment.java
- * Copyright (C) 2009-2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.env;
@@ -28,7 +28,6 @@ import java.util.List;
  * Manages properties files and returns merged versions.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Environment
   extends AbstractEnvironment {
@@ -43,11 +42,7 @@ public class Environment
    */
   @Override
   protected List<String> getPropertiesDefinitions() {
-    return new ArrayList<String>(
-	Arrays.asList(
-	    new String[]{
-		"adams/env/" + FILENAME
-	    }));
+    return new ArrayList<>(Arrays.asList("adams/env/" + FILENAME));
   }
 
   /**
@@ -63,7 +58,6 @@ public class Environment
   /**
    * Outputs a list of available conversions.
    * 
-   * @param lister	the classname lister to use
    * @param args	the commandline options: [-project] [-home] [-definitions] [-properties] [-resource path]
    */
   public static void main(String[] args) throws Exception {

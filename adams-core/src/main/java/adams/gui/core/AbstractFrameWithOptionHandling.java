@@ -26,7 +26,6 @@ import adams.core.option.OptionHandler;
 import adams.core.option.OptionManager;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
-import adams.env.HomeRelocator;
 
 /**
  * Ancestor to all frames that handle command-line options.
@@ -35,16 +34,13 @@ import adams.env.HomeRelocator;
  */
 public abstract class AbstractFrameWithOptionHandling
   extends BaseFrame
-  implements OptionHandler, HomeRelocator {
+  implements OptionHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = -5800519559483605870L;
 
   /** for managing the available options. */
   protected OptionManager m_OptionManager;
-
-  /** the directory to use as the project's home directory. */
-  protected String m_Home;
 
   /**
    * Constructor for creating frame with no title.
@@ -89,10 +85,6 @@ public abstract class AbstractFrameWithOptionHandling
    */
   public void defineOptions() {
     m_OptionManager = newOptionManager();
-
-    m_OptionManager.add(
-	"home", "home",
-        "");
   }
 
   /**
@@ -134,38 +126,6 @@ public abstract class AbstractFrameWithOptionHandling
    */
   public void destroy() {
     cleanUpOptions();
-  }
-
-  /**
-   * Overrides the automatic detection of the project's home directory and uses
-   * the specified directory instead. No placeholders allowed, should be
-   * absolute.
-   *
-   * @param value	the directory to use
-   */
-  public void setHome(String value) {
-    m_Home = value;
-    reset();
-  }
-
-  /**
-   * Returns the directory to use as home directory instead of the automatically
-   * determined one.
-   *
-   * @return		the directory to use
-   */
-  public String getHome() {
-    return m_Home;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String homeTipText() {
-    return "The directory to use as the project's home directory, overriding the automatically determined one.";
   }
 
   /**

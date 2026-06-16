@@ -15,7 +15,7 @@
 
 /*
  * FlowSetupRunner.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow;
@@ -27,7 +27,6 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.OptionUtils;
 import adams.env.Environment;
-import adams.env.HomeRelocator;
 import adams.flow.setup.FlowSetup;
 import adams.flow.setup.FlowSetupManager;
 import adams.gui.application.AbstractInitialization;
@@ -47,13 +46,7 @@ import adams.gui.application.AbstractInitialization;
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
- * <pre>-home &lt;java.lang.String&gt; (property: home)
- * &nbsp;&nbsp;&nbsp;The directory to use as the project's home directory, overriding the automatically 
- * &nbsp;&nbsp;&nbsp;determined one.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
+ *
  * <pre>-setup &lt;adams.core.io.PlaceholderFile&gt; (property: setupFile)
  * &nbsp;&nbsp;&nbsp;The setup file to load and execute.
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
@@ -67,11 +60,9 @@ import adams.gui.application.AbstractInitialization;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class FlowSetupRunner
-  extends AbstractOptionHandler
-  implements HomeRelocator {
+  extends AbstractOptionHandler {
 
   /** for serialization. */
   private static final long serialVersionUID = 8691311691669858254L;
@@ -81,9 +72,6 @@ public class FlowSetupRunner
 
   /** the name of the setup to execute. */
   protected String m_SetupName;
-
-  /** the directory to use as the project's home directory. */
-  protected String m_Home;
 
   /**
    * Returns a string describing the object.
@@ -103,48 +91,12 @@ public class FlowSetupRunner
     super.defineOptions();
 
     m_OptionManager.add(
-	    "home", "home",
-	    "");
-
-    m_OptionManager.add(
 	    "setup", "setupFile",
 	    new PlaceholderFile("."));
 
     m_OptionManager.add(
 	    "name", "setupName",
 	    "");
-  }
-
-  /**
-   * Overrides the automatic detection of the project's home directory and uses
-   * the specified directory instead. No placeholders allowed, should be
-   * absolute.
-   *
-   * @param value	the directory to use
-   */
-  public void setHome(String value) {
-    m_Home = value;
-    reset();
-  }
-
-  /**
-   * Returns the directory to use as home directory instead of the automatically
-   * determined one.
-   *
-   * @return		the directory to use
-   */
-  public String getHome() {
-    return m_Home;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String homeTipText() {
-    return "The directory to use as the project's home directory, overriding the automatically determined one.";
   }
 
   /**
@@ -242,7 +194,7 @@ public class FlowSetupRunner
 
     // check target
     if (result == null) {
-      if (manager.indexOf(m_SetupName) == -1)
+      if (!manager.contains(m_SetupName))
 	result = "Cannot find setup '" + m_SetupName + "' in setup file '" + m_SetupFile + "'!";
       else
 	setup = manager.get(manager.indexOf(m_SetupName));
@@ -271,7 +223,7 @@ public class FlowSetupRunner
       result = (FlowSetupRunner) OptionUtils.forName(FlowSetupRunner.class, classname, options);
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to instantiate setup runner:" + classname, e);
       result = null;
     }
 
@@ -326,7 +278,7 @@ public class FlowSetupRunner
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to run setup!", e);
     }
   }
 

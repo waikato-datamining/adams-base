@@ -15,7 +15,7 @@
 
 /*
  * Main.java
- * Copyright (C) 2009-2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -30,19 +30,9 @@ import adams.gui.application.AbstractApplicationFrame;
  * GUI for ADAMS.
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-home &lt;java.lang.String&gt; (property: home)
- * &nbsp;&nbsp;&nbsp;The directory to use as the project's home directory, overriding the automatically
- * &nbsp;&nbsp;&nbsp;determined one.
- * &nbsp;&nbsp;&nbsp;default:
- * </pre>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level to use.
+ * &nbsp;&nbsp;&nbsp;default: INFO
  * </pre>
  *
  * <pre>-title &lt;java.lang.String&gt; (property: applicationTitle)
@@ -50,32 +40,44 @@ import adams.gui.application.AbstractApplicationFrame;
  * &nbsp;&nbsp;&nbsp;default: ADAMS
  * </pre>
  *
- * <pre>-driver &lt;java.lang.String&gt; (property: driver)
- * &nbsp;&nbsp;&nbsp;The Java classname of the driver.
- * &nbsp;&nbsp;&nbsp;default: com.mysql.jdbc.Driver
- * </pre>
- *
- * <pre>-url &lt;java.lang.String&gt; (property: URL)
- * &nbsp;&nbsp;&nbsp;The JDBC database URL to connect to.
- * </pre>
- *
- * <pre>-user &lt;java.lang.String&gt; (property: user)
- * &nbsp;&nbsp;&nbsp;The name of the database user.
- * </pre>
- *
- * <pre>-password &lt;java.lang.String&gt; (property: password)
- * &nbsp;&nbsp;&nbsp;The password of the database user.
- * </pre>
- *
  * <pre>-user-mode &lt;BASIC|EXPERT|DEVELOPER|DEBUGGER&gt; (property: userMode)
  * &nbsp;&nbsp;&nbsp;The user mode, which determines the visibility of the menu items.
- * &nbsp;&nbsp;&nbsp;default: BASIC
+ * &nbsp;&nbsp;&nbsp;default: EXPERT
+ * </pre>
+ *
+ * <pre>-minimal-window &lt;boolean&gt; (property: minimalWindow)
+ * &nbsp;&nbsp;&nbsp;If enabled, the main window does not extend the full width of the screen.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-start-up &lt;adams.core.base.BaseString&gt; [-start-up ...] (property: startUps)
+ * &nbsp;&nbsp;&nbsp;The menu items to start up immediately; each consists of classname and optional
+ * &nbsp;&nbsp;&nbsp;parameters (in case the menu definition implements adams.gui.application.AdditionalParameterHandler
+ * &nbsp;&nbsp;&nbsp;).
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-doc-dir &lt;adams.core.io.PlaceholderDirectory&gt; [-doc-dir ...] (property: documentationDirectories)
+ * &nbsp;&nbsp;&nbsp;The directories containing PDF documentation (may get listed in the Help
+ * &nbsp;&nbsp;&nbsp;menu).
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-enable-restart &lt;boolean&gt; (property: enableRestart)
+ * &nbsp;&nbsp;&nbsp;If enabled and started through the adams.core.management.Launcher class,
+ * &nbsp;&nbsp;&nbsp;the application can be restarted through the menu.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-remote-scripting-engine-cmdline &lt;java.lang.String&gt; (property: remoteScriptingEngineCmdLine)
+ * &nbsp;&nbsp;&nbsp;The command-line of the remote scripting engine to execute at startup time;
+ * &nbsp;&nbsp;&nbsp; use empty string for disable scripting.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Main
   extends AbstractApplicationFrame {
