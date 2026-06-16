@@ -15,7 +15,7 @@
 
 /*
  * AbstractTypes.java
- * Copyright (C) 2017-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.types;
@@ -148,6 +148,16 @@ public abstract class AbstractTypes
   public abstract boolean handles(String url);
 
   /**
+   * Just returns the class name.
+   *
+   * @return		the name
+   */
+  @Override
+  public String toString() {
+    return getClass().getName();
+  }
+
+  /**
    * Returns the handler for the JDBC url.
    *
    * @param url		the URL
@@ -178,7 +188,7 @@ public abstract class AbstractTypes
     }
 
     if (!m_Cache.containsKey(url))
-      throw new IllegalStateException("Unsupported JDBC connection: " + url);
+      throw new IllegalStateException("Unsupported JDBC connection: " + url + "\nAvailable types: " + m_Types);
 
     return m_Cache.get(url);
   }
