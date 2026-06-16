@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * BrowserDefinition.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
@@ -25,7 +25,6 @@ import adams.gui.core.BrowserHelper;
  * Definition for the Browser props file.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class BrowserDefinition
   extends AbstractPropertiesDefinition {
@@ -64,6 +63,6 @@ public class BrowserDefinition
    */
   @Override
   public void update(AbstractEnvironment env) {
-    add(env, Project.NAME + "/gui/core", env.getDefaultHome(Project.NAME), new String[0]);
+    add(env, Project.NAME + "/gui/core", env.getHome(), new String[0]);
   }
 }

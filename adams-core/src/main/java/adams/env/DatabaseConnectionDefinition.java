@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * DatabaseConnectionDefinition.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.env;
 
@@ -25,7 +25,6 @@ import adams.db.DatabaseConnection;
  * Definition for the DatabaseConnection props file.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class DatabaseConnectionDefinition
   extends AbstractPropertiesDefinition {
@@ -72,6 +71,6 @@ public class DatabaseConnectionDefinition
    * @param env		the environment object to update
    */
   public void update(AbstractEnvironment env) {
-    add(env, Project.NAME + "/db", env.getDefaultHome(Project.NAME), new String[0]);
+    add(env, Project.NAME + "/db", env.getHome(), new String[0]);
   }
 }
