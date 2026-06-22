@@ -13,13 +13,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MakeTimed.java
- * Copyright (C) 2015 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2026 University of Waikato, Hamilton, NZ
  */
 package adams.gui.flow.tree.menu;
-
-import adams.flow.core.ActorWithTimedEquivalent;
 
 import java.awt.event.ActionEvent;
 
@@ -27,7 +25,6 @@ import java.awt.event.ActionEvent;
  * For turning an actor into its timed equivalent.
  * 
  * @author fracpete
- * @version $Revision: 9906 $
  */
 public class MakeTimed
   extends AbstractTreePopupMenuItemAction {
@@ -53,8 +50,7 @@ public class MakeTimed
     setEnabled(	     
 	   m_State.editable 
 	&& m_State.isSingleSel 
-	&& (m_State.tree.getOwner() != null) 
-	&& (m_State.selNode.getActor() instanceof ActorWithTimedEquivalent));
+	&& (m_State.tree.getOwner() != null));
   }
 
   /**

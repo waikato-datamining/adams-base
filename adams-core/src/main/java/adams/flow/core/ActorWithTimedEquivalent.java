@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ActorWithTimedEquivalent.java
- * Copyright (C) 2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.core;
 
@@ -24,7 +24,6 @@ package adams.flow.core;
  * {@link TimedActor}.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 8731 $
  */
 public interface ActorWithTimedEquivalent
   extends Actor {
@@ -35,4 +34,11 @@ public interface ActorWithTimedEquivalent
    * @return		the class, null if none available
    */
   public Class getTimedEquivalent();
+
+  /**
+   * Returns whether a timed equivalent is available.
+   *
+   * @return		true if equivalent available
+   */
+  public boolean hasTimedEquivalent();
 }

@@ -15,7 +15,7 @@
 
 /*
  * TreeOperations.java
- * Copyright (C) 2015-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2015-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.tree;
@@ -46,6 +46,8 @@ import adams.flow.control.ConditionalTrigger;
 import adams.flow.control.Flow;
 import adams.flow.control.SubProcess;
 import adams.flow.control.Tee;
+import adams.flow.control.TimedSubProcess;
+import adams.flow.control.TimedTee;
 import adams.flow.control.Trigger;
 import adams.flow.core.AbstractCallableActor;
 import adams.flow.core.Actor;
@@ -63,6 +65,7 @@ import adams.flow.core.ExternalActorHandler;
 import adams.flow.core.InputConsumer;
 import adams.flow.core.MutableActorHandler;
 import adams.flow.core.OutputProducer;
+import adams.flow.core.TimedActor;
 import adams.flow.processor.ActorProcessor;
 import adams.flow.processor.ActorProcessorWithFlowPanelContext;
 import adams.flow.processor.GraphicalOutputProducingProcessor;
@@ -76,11 +79,13 @@ import adams.flow.source.CallableSource;
 import adams.flow.source.EnterManyValues;
 import adams.flow.source.EnterManyValues.OutputType;
 import adams.flow.source.ExternalSource;
+import adams.flow.source.TimedSource;
 import adams.flow.source.valuedefinition.DefaultValueDefinition;
 import adams.flow.standalone.AbstractMultiView;
 import adams.flow.standalone.CallableActors;
 import adams.flow.standalone.ExternalStandalone;
 import adams.flow.standalone.SetVariable;
+import adams.flow.standalone.TimedStandalone;
 import adams.flow.transformer.CallableTransformer;
 import adams.flow.transformer.ExternalTransformer;
 import adams.flow.transformer.MapToVariables;
@@ -2101,9 +2106,20 @@ public class TreeOperations
     }
 
     if (noEquiv) {
+      if (ActorUtils.isStandalone(currActor))
+	timedEquiv = TimedStandalone.class;
+      else if (ActorUtils.isSource(currActor))
+	timedEquiv = TimedSource.class;
+      else if (ActorUtils.isTransformer(currActor))
+	timedEquiv = TimedSubProcess.class;
+      else if (ActorUtils.isSink(currActor))
+	timedEquiv = TimedTee.class;
+    }
+
+    if (timedEquiv == null) {
       GUIHelper.showErrorMessage(
 	  getOwner(),
-	  "Actor '" + currActor.getClass().getName() + "' does not have a timed equivalent!");
+	  "Failed to determine timed wrapper for Actor '" + currActor.getClass().getName() + "'!");
       return;
     }
 
@@ -2112,10 +2128,16 @@ public class TreeOperations
     newActor = null;
     try {
       newActor = (Actor) timedEquiv.getDeclaredConstructor().newInstance();
-      // transfer some basic options
-      newActor.setAnnotations(currActor.getAnnotations());
-      newActor.setSkip(currActor.getSkip());
-      newActor.setLoggingLevel(currActor.getLoggingLevel());
+      if (!noEquiv) {
+	// transfer some basic options
+	newActor.setAnnotations(currActor.getAnnotations());
+	newActor.setSkip(currActor.getSkip());
+	newActor.setLoggingLevel(currActor.getLoggingLevel());
+      }
+      if (newActor instanceof TimedActor) {
+	((TimedActor) newActor).setPrefix(currActor.getName() + ": ");
+	((TimedActor) newActor).setOptional(true);
+      }
     }
     catch (Exception e) {
       GUIHelper.showErrorMessage(
@@ -2129,15 +2151,21 @@ public class TreeOperations
 
     getOwner().addUndoPoint("Making timed actor from '" + currNode.getActor().getFullName());
 
-    // move children
-    for (BaseTreeNode child: currNode.getChildren())
-      newNode.add(child);
-
-    // replace node
     defaultName = currActor.getName().equals(currActor.getDefaultName());
     index       = parentNode.getIndex(currNode);
-    parentNode.insert(newNode, index);
     parentNode.remove(currNode);
+
+    // move children
+    if (!noEquiv) {
+      for (BaseTreeNode child : currNode.getChildren())
+	newNode.add(child);
+    }
+    else {
+      newNode.add(currNode);
+    }
+
+    // replace node
+    parentNode.insert(newNode, index);
     if (!defaultName) {
       newActor.setName(currActor.getName());
       newNode.setActor(newActor);

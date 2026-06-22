@@ -15,7 +15,7 @@
 
 /*
  * Trigger.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -144,8 +144,22 @@ public class Trigger
    * 
    * @return		the class, null if none available
    */
+  @Override
   public Class getTimedEquivalent() {
-    return TimedTrigger.class;
+    if (hasTimedEquivalent())
+      return TimedTrigger.class;
+    else
+      return null;
+  }
+
+  /**
+   * Returns whether a timed equivalent is available.
+   *
+   * @return		true if equivalent available
+   */
+  @Override
+  public boolean hasTimedEquivalent() {
+    return (getClass().equals(Trigger.class));
   }
 
   /**
