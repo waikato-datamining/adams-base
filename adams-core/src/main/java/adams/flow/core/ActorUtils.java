@@ -48,6 +48,7 @@ import adams.data.io.output.DefaultFlowWriter;
 import adams.data.io.output.FlowWriter;
 import adams.env.Environment;
 import adams.env.Modules;
+import adams.flow.control.Breakpoint;
 import adams.flow.control.Flow;
 import adams.flow.control.Sequence;
 import adams.flow.control.SubProcess;
@@ -2102,5 +2103,27 @@ public class ActorUtils {
       return ((Flow) source.getRoot()).getFlowID();
     else
       return -1;
+  }
+
+  /**
+   * Checks whether any active {@link Breakpoint} actors present.
+   *
+   * @param actor	the sub-flow
+   * @return		true if at least one active Breakpoint present
+   */
+  public static boolean breakPointPresent(Actor actor) {
+    boolean		result;
+    List<Actor>		breakpoints;
+
+    result      = false;
+    breakpoints = ActorUtils.enumerate(actor, new Class[]{Breakpoint.class});
+    for (Actor breakpoint: breakpoints) {
+      if (!breakpoint.getSkip()) {
+	result = true;
+	break;
+      }
+    }
+
+    return result;
   }
 }
