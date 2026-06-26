@@ -15,7 +15,7 @@
 
 /*
  * GenericObjectEditorPopupMenu.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -212,6 +212,11 @@ public class GenericObjectEditorPopupMenu
       if (content.length() > 0)
 	ClipboardHelper.copyToClipboard(content.toString());
     });
+    add(item);
+
+    // copy classname
+    item = new JMenuItem("Copy class name", ImageManager.getEmptyIcon());
+    item.addActionListener((ActionEvent e) -> ClipboardHelper.copyToClipboard(editor.getValue().getClass().getName()));
     add(item);
 
     // paste
