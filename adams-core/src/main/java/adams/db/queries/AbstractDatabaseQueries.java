@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseQueries.java
- * Copyright (C) 2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.db.queries;
@@ -87,6 +87,50 @@ public abstract class AbstractDatabaseQueries
    */
   public String limit(int max) {
     return limitKeyword() + " " + max;
+  }
+
+  /**
+   * Returns the IN keyword.
+   *
+   * @return		the IN keyword
+   */
+  public String inKeyword() {
+    return "IN";
+  }
+
+  /**
+   * Returns the IN (...) fragment.
+   * Strings are surrouned by single quotes.
+   * If only one element in the array, an equals (=) statement gets returned.
+   *
+   * @param values	the values for the IN-list
+   * @return		the fragment
+   */
+  public String in(Object[] values) {
+    StringBuilder	result;
+    int			i;
+
+    if (values.length == 1) {
+      result = new StringBuilder("= ");
+      if (values[0] instanceof String)
+	result.append("'").append(values[0]).append("'");
+      else
+	result.append(values[0]);
+    }
+    else {
+      result = new StringBuilder(inKeyword()).append(" (");
+      for (i = 0; i < values.length; i++) {
+	if (i > 0)
+	  result.append(", ");
+	if (values[i] instanceof String)
+	  result.append("'").append(values[i]).append("'");
+	else
+	  result.append(values[i]);
+      }
+      result.append(")");
+    }
+
+    return result.toString();
   }
 
   /**
