@@ -15,7 +15,7 @@
 
 /*
  *    GenericObjectEditor.java
- *    Copyright (C) 2002-2025 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2002-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -238,7 +238,7 @@ public class GenericObjectEditor
     protected transient ObjectFileChooser m_FileChooser;
 
     /** the button for copy/paste menu. */
-    protected BaseButton m_ButtonCopyPaste;
+    protected BaseButton m_ButtonActionMenu;
 
     /** the top panel with the classname and choose button. */
     protected JPanel m_TopPanel;
@@ -388,22 +388,35 @@ public class GenericObjectEditor
 	}
       });
 
-      m_ButtonCopyPaste = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
-      m_ButtonCopyPaste.setToolTipText("Displays copy/paste/favorites action menu");
-      m_ButtonCopyPaste.addActionListener((ActionEvent e) -> {
-	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonCopyPaste);
-	menu.show(m_ButtonCopyPaste, 0, m_ButtonCopyPaste.getHeight());
+      m_ButtonActionMenu = new BaseButton(ImageManager.getIcon("arrow-head-down.png"));
+      m_ButtonActionMenu.setToolTipText("Displays copy/paste/favorites action menu");
+      m_ButtonActionMenu.addActionListener((ActionEvent e) -> {
+	GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, m_ButtonActionMenu);
+	menu.show(m_ButtonActionMenu, 0, m_ButtonActionMenu.getHeight());
       });
 
       m_TopPanel = new JPanel(new BorderLayout());
       JPanel chooseButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-      chooseButtonPanel.add(m_ButtonCopyPaste);
+      chooseButtonPanel.add(m_ButtonActionMenu);
       m_TopPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
       m_TopPanel.add(chooseButtonPanel, BorderLayout.EAST);
       m_TopPanel.add(m_ComboBoxClassname, BorderLayout.CENTER);
       m_PanelRight.add(m_TopPanel, BorderLayout.NORTH);
 
-      // popup menu
+      // popup menus
+      m_LabelClassname.addMouseListener(new MouseAdapter() {
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	  if (MouseUtils.isRightClick(e)) {
+	    e.consume();
+	    GenericObjectEditorPopupMenu menu = new GenericObjectEditorPopupMenu(GenericObjectEditor.this, GOEPanel.this);
+	    menu.show(m_LabelClassname, e.getX(), e.getY());
+	  }
+	  else {
+	    super.mouseClicked(e);
+	  }
+	}
+      });
       m_ComboBoxClassname.addMouseListener(new MouseAdapter() {
 	@Override
 	public void mouseClicked(MouseEvent e) {
