@@ -15,7 +15,7 @@
 
 /*
  * PolygonUtils.java
- * Copyright (C) 2023-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2023-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.geometry;
@@ -196,7 +196,7 @@ public class PolygonUtils {
    * @param vertex 	the vertex to insert
    * @return		the new polygon
    */
-  public static Polygon addVertext(Polygon poly, Point vertex) {
+  public static Polygon addVertex(Polygon poly, Point vertex) {
     Polygon		result;
     List<Point>		points;
     Point		A;
@@ -237,6 +237,30 @@ public class PolygonUtils {
     // create new polygon
     result = new Polygon(x.toArray(), y.toArray(), x.size());
     return result;
+  }
+
+  /**
+   * Removes the specified vertex from the polygon.
+   *
+   * @param poly	the polygon to update
+   * @param vertex 	the vertex to remove
+   * @return		the new polygon
+   */
+  public static Polygon removeVertex(Polygon poly, Point vertex) {
+    TIntList	xpoints;
+    TIntList	ypoints;
+    int		i;
+
+    xpoints = new TIntArrayList();
+    ypoints = new TIntArrayList();
+    for (i = 0; i < poly.npoints; i++) {
+      if ((poly.xpoints[i] == vertex.x) && (poly.ypoints[i] == vertex.y))
+	continue;
+      xpoints.add(poly.xpoints[i]);
+      ypoints.add(poly.ypoints[i]);
+    }
+
+    return new Polygon(xpoints.toArray(), ypoints.toArray(), xpoints.size());
   }
 
   /**

@@ -120,7 +120,8 @@ public class Edit
     return "For editing existing annotations.\n"
       + "Double-click on annotation to select for editing, handles for vertices will show up.\n"
       + "Left-click on existing handle and drag it to new position.\n"
-      + "Left-click while holding CTRL+SHIFT to add a new vertex.";
+      + "Left-click while holding CTRL+SHIFT to add a new vertex.\n"
+      + "Right-click while holding CTRL+SHIFT to remove a vertex.";
   }
 
   /**
@@ -402,7 +403,7 @@ public class Edit
     else
       polyOld = objectOld.getPolygon();
 
-    polyNew = PolygonUtils.addVertext(polyOld, vertex);
+    polyNew = PolygonUtils.addVertex(polyOld, vertex);
     objectNew = new LocatedObject(polyNew.getBounds());
     objectNew.getMetaData().putAll(objectOld.getMetaData(true));
     objectNew.setPolygon(polyNew);
@@ -420,6 +421,67 @@ public class Edit
     index = m_SelectedObjects.indexOf(objectOld);
     if (index == -1) {
       getLogger().warning("addVertex: Failed to locate object: " + objectOld);
+      m_SelectedObjects.clear();
+    }
+    else {
+      m_SelectedObjects.set(index, objectNew);
+    }
+
+    updateVertexOverlays();
+
+    return true;
+  }
+
+  /**
+   * Removes the vertex from the specified object.
+   *
+   * @param objectOld	the object to update
+   * @param vertex	the vertex to add
+   * @return 		whether updated successfully
+   */
+  protected boolean removeVertex(LocatedObject objectOld, Point vertex) {
+    int			index;
+    Polygon 		polyOld;
+    Polygon		polyNew;
+    LocatedObject	objectNew;
+    LocatedObjects	objectsNew;
+    Report		reportNew;
+
+    if ((objectOld == null) || (vertex == null))
+      return false;
+    if (m_BoundingBox)
+      return false;
+
+    objectsNew = new LocatedObjects(getCanvas().getOwner().getObjects());
+    index      = objectsNew.indexOf(objectOld);
+    if (index == -1) {
+      getLogger().warning("Failed to locate object, cannot update: " + objectOld);
+      return false;
+    }
+
+    if (!objectOld.hasPolygon() || !objectOld.hasValidPolygon())
+      polyOld = PolygonUtils.toPolygon(objectOld.getRectangle());
+    else
+      polyOld = objectOld.getPolygon();
+
+    polyNew = PolygonUtils.removeVertex(polyOld, vertex);
+    objectNew = new LocatedObject(polyNew.getBounds());
+    objectNew.getMetaData().putAll(objectOld.getMetaData(true));
+    objectNew.setPolygon(polyNew);
+
+    if (isLoggingEnabled())
+      getLogger().info("objectNew: " + objectNew);
+
+    objectsNew.set(index, objectNew);
+    reportNew = objectsNew.toReport(m_Prefix);
+    getCanvas().getOwner().addUndoPoint("Updated object: " + objectOld + " -> " + objectNew);
+    getCanvas().getOwner().setReport(reportNew);
+    getCanvas().getOwner().annotationsChanged(this);
+    getCanvas().getOwner().update();
+
+    index = m_SelectedObjects.indexOf(objectOld);
+    if (index == -1) {
+      getLogger().warning("removeVertex: Failed to locate object: " + objectOld);
       m_SelectedObjects.clear();
     }
     else {
@@ -454,12 +516,19 @@ public class Edit
       @Override
       public void mousePressed(MouseEvent e) {
 	if (!m_SelectedObjects.isEmpty()) {
-	  if (KeyUtils.isCtrlDown(e.getModifiersEx()) && KeyUtils.isShiftDown(e.getModifiersEx()) && !m_BoundingBox) {
+	  if (MouseUtils.isLeftClick(e) && KeyUtils.isCtrlDown(e.getModifiersEx()) && KeyUtils.isShiftDown(e.getModifiersEx()) && !KeyUtils.isAltDown(e.getModifiersEx()) && !m_BoundingBox) {
 	    Point vertex = getCanvas().mouseToPixelLocation(e.getPoint());
 	    addVertex(m_SelectedObjects.get(0), vertex);
 	    e.consume();
 	    if (isLoggingEnabled())
 	      getLogger().info("mousePressed/addVertex: obj=" + m_Object + ", vertex=" + vertex);
+	  }
+	  else if (MouseUtils.isRightClick(e) && KeyUtils.isCtrlDown(e.getModifiersEx()) && !m_BoundingBox) {
+	    Struct2<LocatedObject, Point> hit = selectVertex(getCanvas().mouseToPixelLocation(e.getPoint()));
+	    removeVertex(hit.value1, hit.value2);
+	    e.consume();
+	    if (isLoggingEnabled())
+	      getLogger().info("mousePressed/removeVertex: obj=" + hit.value1 + ", vertex=" + hit.value2);
 	  }
 	  else {
 	    m_VertexNew = null;
@@ -474,7 +543,8 @@ public class Edit
 	      getLogger().info("mousePressed/selectVertex: obj=" + m_Object + ", vertexOld=" + m_VertexOld);
 	  }
 	}
-	super.mousePressed(e);
+	if (!e.isConsumed())
+	  super.mousePressed(e);
       }
 
       @Override
