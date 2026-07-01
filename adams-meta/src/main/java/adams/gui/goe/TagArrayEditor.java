@@ -15,7 +15,7 @@
 
 /*
  * TagArrayEditor.java
- * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe;
@@ -74,7 +74,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +88,7 @@ import java.util.Set;
  */
 public class TagArrayEditor
   extends BasePanel
-  implements PropertyEditor {
+  implements TextRepresentationEditor {
 
   /** if there are no elements in the list. */
   public static final String NONE = "[none]";
@@ -312,6 +311,8 @@ public class TagArrayEditor
     m_TableModel.addAll(Arrays.asList(ObjectCopyHelper.copyObjects(tags)));
     m_TableModelBackup.addAll(Arrays.asList(ObjectCopyHelper.copyObjects(tags)));
     m_Table.setOptimalColumnWidth();
+    firePropertyChange();
+    validate();
   }
 
   /**
@@ -458,6 +459,19 @@ public class TagArrayEditor
     catch (Exception e) {
       throw new IllegalArgumentException("Failed to parse: " + text, e);
     }
+  }
+
+  /**
+   * Indicates whether it supports setting/getting via the {@link #setAsText(String)}
+   * and {@link #getAsText()} methods.
+   *
+   * @return		true if supported
+   * @see 		#getAsText()
+   * @see 		#setAsText(String)
+   */
+  @Override
+  public boolean supportsTextRepresentation() {
+    return true;
   }
 
   /**
