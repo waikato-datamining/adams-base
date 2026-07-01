@@ -96,6 +96,7 @@ public class GenericObjectEditorPopupMenu
     JMenu			menu;
     boolean 			hasNested;
     final boolean 		customStringRepresentation;
+    final boolean 		textRepresentation;
     final String 		itemText;
     final boolean		canChangeClass;
     final GenericObjectEditor 	goeEditor;
@@ -124,8 +125,9 @@ public class GenericObjectEditorPopupMenu
       customStringRepresentation = (gaeEditor.getElementEditor() instanceof CustomStringRepresentationHandler);
     else
       customStringRepresentation = (editor instanceof CustomStringRepresentationHandler);
+    textRepresentation = (editor instanceof TextRepresentationEditor);
 
-    itemText = getMenuItemText(customStringRepresentation);
+    itemText = getMenuItemText(customStringRepresentation || textRepresentation);
 
     if (gaeEditor != null)
       canChangeClass = getCanChangeClassInDialog(gaeEditor.getElementEditor());
@@ -182,7 +184,7 @@ public class GenericObjectEditorPopupMenu
     }
 
     // copy cmdline
-    if (customStringRepresentation)
+    if (customStringRepresentation || textRepresentation)
       item = new JMenuItem("Copy " + itemText, ImageManager.getEmptyIcon());
     else
       item = new JMenuItem("Copy command-line setup", ImageManager.getEmptyIcon());
@@ -193,7 +195,10 @@ public class GenericObjectEditorPopupMenu
       PropertyEditor actualEditor = editor;
       if (gaeEditor != null)
 	actualEditor = gaeEditor.getElementEditor();
-      if (isArray) {
+      if (textRepresentation) {
+	content.append(editor.getAsText());
+      }
+      else if (isArray) {
 	for (int i = 0; i < Array.getLength(current); i++) {
 	  if (i > 0)
 	    content.append("\n");
@@ -223,7 +228,7 @@ public class GenericObjectEditorPopupMenu
     item = new JMenuItem("Paste " + itemText, ImageManager.getIcon("paste.gif"));
     item.setEnabled(ClipboardHelper.canPasteStringFromClipboard());
     item.addActionListener((ActionEvent e) -> updateEditor(
-      editor, comp, canChangeClass, customStringRepresentation, OptionUtils.pasteSetupFromClipboard()));
+      editor, comp, canChangeClass, customStringRepresentation, textRepresentation, OptionUtils.pasteSetupFromClipboard()));
     add(item);
 
     // enter setup
@@ -246,7 +251,7 @@ public class GenericObjectEditorPopupMenu
       buttonOK.setMnemonic('O');
       buttonOK.addActionListener((ActionEvent ae) -> {
 	dlg.setVisible(false);
-	updateEditor(editor, comp, canChangeClass, customStringRepresentation, textpanel.getContent());
+	updateEditor(editor, comp, canChangeClass, customStringRepresentation, textRepresentation, textpanel.getContent());
       });
       BaseButton buttonCancel = new BaseButton("Cancel");
       buttonCancel.setMnemonic('C');
@@ -317,9 +322,10 @@ public class GenericObjectEditorPopupMenu
    * @param editor			the editor to update
    * @param canChangeClass		whether the user can change the class
    * @param customStringRepresentation	whether editor/element editor supports custom string representation
+   * @param textRepresentation		whether editor supports getAsText/setAsText
    * @param str				the string to use
    */
-  protected boolean updateEditor(PropertyEditor editor, JComponent comp, boolean canChangeClass, boolean customStringRepresentation, String str) {
+  protected boolean updateEditor(PropertyEditor editor, JComponent comp, boolean canChangeClass, boolean customStringRepresentation, boolean textRepresentation, String str) {
     boolean 		result;
     PropertyEditor 	actualEditor;
     GenericArrayEditor 	gae;
@@ -339,7 +345,10 @@ public class GenericObjectEditorPopupMenu
     }
 
     try {
-      if (customStringRepresentation) {
+      if (textRepresentation) {
+	editor.setAsText(str);
+      }
+      else if (customStringRepresentation) {
 	if (gae != null) {
 	  for (String part: parts) {
 	    obj = ((CustomStringRepresentationHandler) actualEditor).fromCustomStringRepresentation(part);
