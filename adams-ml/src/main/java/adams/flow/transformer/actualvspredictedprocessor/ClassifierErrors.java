@@ -63,7 +63,8 @@ public class ClassifierErrors
 	     + "over a data point in the plot. The format for the hover display is:\n"
 	     + "Actual: ...\n"
 	     + "Predicted: ...\n"
-	     + "Data: <InstIndex>: att1,att2,...";
+	     + "Data: <InstIndex>: att1,att2,...\n"
+	     + "By left-clicking on a data point, this data gets displayed below the plot.";
   }
 
   /**
@@ -275,6 +276,9 @@ public class ClassifierErrors
     result.append("</head>\n");
     result.append("<body>\n");
     result.append("    <div id=\"plot\"></div>\n");
+    result.append("    <div id=\"click-info\" style=\"margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 5px; min-height: 50px;\">\n");
+    result.append("        <strong>Clicked Data Point:</strong> <span style=\"color: #666;\">Click a point on the graph to pin its details here.</span>\n");
+    result.append("    </div>\n");
     result.append("    <script>\n");
     result.append("        var actual = [").append(xStr).append("];\n");
     result.append("        var predicted = [").append(yStr).append("];\n");
@@ -325,6 +329,34 @@ public class ClassifierErrors
     result.append("        };\n");
     result.append("\n");
     result.append("        Plotly.newPlot('plot', data, layout);\n");
+    result.append("\n");
+    result.append("        var plotDiv = document.getElementById('plot');\n");
+    result.append("        var infoDiv = document.getElementById('click-info');\n");
+    result.append("\n");
+    result.append("        plotDiv.on('plotly_click', function(eventData) {\n");
+    result.append("            // Check if a point from our actual data scatter plot (trace1) was clicked\n");
+    result.append("            if (eventData && eventData.points && eventData.points.length > 0) {\n");
+    result.append("                var point = eventData.points[0];\n");
+    result.append("\n");
+    result.append("                // Avoid capturing clicks on the diagonal line (trace2) which won't have custom .text definitions\n");
+    result.append("                if (point.curveNumber === 0) {\n");
+    result.append("                    var actualVal = point.x;\n");
+    result.append("                    var predictedVal = point.y;\n");
+    result.append("                    var data = point.text;\n");
+    result.append("\n");
+    result.append("                    // Update the text in our container dynamically\n");
+    result.append("                    infoDiv.innerHTML = `\n");
+    result.append("                        <strong>Pinned Data Point:</strong><br>\n");
+    result.append("                        <ul>\n");
+    result.append("                            <li><strong>Data:</strong> ${data}</li>\n");
+    result.append("                            <li><strong>Actual Value:</strong> ${actualVal}</li>\n");
+    result.append("                            <li><strong>Predicted Value:</strong> ${predictedVal}</li>\n");
+    result.append("                            <li><strong>Residual Error:</strong> ${(actualVal - predictedVal).toFixed(4)}</li>\n");
+    result.append("                        </ul>\n");
+    result.append("                    `;\n");
+    result.append("                }\n");
+    result.append("            }\n");
+    result.append("        });\n");
     result.append("    </script>\n");
     result.append("</body>\n");
     result.append("</html>\n");
