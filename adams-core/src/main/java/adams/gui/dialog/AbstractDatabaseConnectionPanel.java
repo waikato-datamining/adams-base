@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnectionPanel.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.dialog;
@@ -28,6 +28,7 @@ import adams.db.ConnectionParameters;
 import adams.db.DatabaseConnection;
 import adams.db.DatabaseConnectionProvider;
 import adams.db.DatabaseManager;
+import adams.db.JdbcUrl;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseCheckBox;
@@ -172,27 +173,34 @@ public abstract class AbstractDatabaseConnectionPanel
         return;
       displayConnection(m_ComboBoxConnections.getSelectedItem());
     });
+    m_ComboBoxConnections.setToolTipText("The available database connections");
     m_PanelParameters.addParameter("_Connections", m_ComboBoxConnections);
 
     m_TextURL = new BaseTextField(20);
+    m_TextURL.setToolTipText(new JdbcUrl().getTipText());
     m_PanelParameters.addParameter("_URL", m_TextURL);
 
     m_TextUser = new BaseTextField(20);
+    m_TextUser.setToolTipText("The database user");
     m_PanelParameters.addParameter("U_ser", m_TextUser);
 
     m_TextPassword = new BasePasswordFieldWithButton(20);
     m_TextPassword.setShowPopupMenu(true);
+    m_TextPassword.setToolTipText("The password for the database user");
     m_PanelParameters.addParameter("_Password", m_TextPassword);
 
     m_ComboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
+    m_ComboBoxLoggingLevel.setToolTipText("The logging level to use");
     m_PanelParameters.addParameter("_Logging level", m_ComboBoxLoggingLevel);
 
     m_CheckBoxConnectOnStartUp = new BaseCheckBox();
     m_CheckBoxConnectOnStartUp.setSelected(false);
+    m_CheckBoxConnectOnStartUp.setToolTipText("Whether to automatically connect to this database on startup");
     m_PanelParameters.addParameter("Co_nnect on startup", m_CheckBoxConnectOnStartUp);
 
     m_CheckBoxAutoCommit = new BaseCheckBox();
     m_CheckBoxAutoCommit.setSelected(true);
+    m_CheckBoxAutoCommit.setToolTipText("Whether to automatically commit the transcation after every SQL command");
     m_PanelParameters.addParameter("Auto co_mmit", m_CheckBoxAutoCommit);
 
     panel2 = new JPanel(new BorderLayout());
