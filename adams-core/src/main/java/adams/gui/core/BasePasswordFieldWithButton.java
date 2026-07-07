@@ -15,7 +15,7 @@
 
 /*
  * BasePasswordFieldWithButton.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -288,5 +288,24 @@ public class BasePasswordFieldWithButton
    */
   public BaseButton getButton() {
     return m_Button;
+  }
+
+  /**
+   * Sets the tool tip.
+   *
+   * @param t		the tool tip
+   */
+  public void setToolTipText(String t) {
+    m_Field.setToolTipText(t);
+  }
+
+  /**
+   * Returns the tool tip.
+   *
+   * @return		the tool tip
+   */
+  @Override
+  public String getToolTipText() {
+    return m_Field.getToolTipText();
   }
 }
