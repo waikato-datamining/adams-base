@@ -15,7 +15,7 @@
 
 /*
  * SqlConnectionPanel.java
- * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -199,15 +199,18 @@ public class SqlConnectionPanel
 
     textUser = new BaseTextField(20);
     textUser.setText(getDatabaseConnection().getUser());
+    textUser.setToolTipText("The database user");
     panelParameters.addParameter("U_ser", textUser);
 
     textPassword = new BasePasswordFieldWithButton(20);
     textPassword.setShowPopupMenu(true);
     textPassword.setText(getDatabaseConnection().getPassword().getValue());
+    textPassword.setToolTipText("The password for the database user");
     panelParameters.addParameter("_Password", textPassword);
 
     comboBoxLoggingLevel = new BaseComboBox<>(LoggingLevel.values());
     comboBoxLoggingLevel.setSelectedItem(getDatabaseConnection().getLoggingLevel());
+    comboBoxLoggingLevel.setToolTipText("The logging level to use");
     panelParameters.addParameter("_Logging level", comboBoxLoggingLevel);
 
     if (getParentDialog() != null)
