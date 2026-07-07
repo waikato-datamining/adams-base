@@ -15,7 +15,7 @@
 
 /*
  * AbstractDatabaseConnection.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -1491,7 +1491,7 @@ public abstract class AbstractDatabaseConnection
 
     result  = "url=" + getURL();
     result += ", user=" + getUser();
-    result += ", password=" + getPassword();
+    result += ", password=" + getPassword().getMaskedValue();
     result += ", connected=" + isConnected();
     result += ", #listeners=" + getChangeListeners().size();
 
