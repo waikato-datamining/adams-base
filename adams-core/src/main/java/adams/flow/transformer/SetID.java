@@ -15,7 +15,7 @@
 
 /*
  * SetID.java
- * Copyright (C) 2012-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -125,7 +125,7 @@ public class SetID
   }
 
   /**
-   * Returns the generator in use.
+   * Returns the new ID to use.
    *
    * @return		the generator
    */
