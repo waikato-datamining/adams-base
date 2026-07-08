@@ -15,7 +15,7 @@
 
 /*
  * SendErrorReport.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.flow.notificationareaaction;
@@ -24,9 +24,7 @@ import adams.core.DateUtils;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingLevel;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.Email;
-import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
 import adams.data.io.output.CsvSpreadSheetWriter;
 import adams.data.spreadsheet.SpreadSheet;
@@ -78,18 +76,20 @@ public class SendErrorReport
 
     // comment?
     comment = GUIHelper.showInputDialog(null, "Please supply some additional information on error report");
+    if (comment == null)
+      return;
 
     worker = new SwingWorker() {
       @Override
       protected Object doInBackground() throws Exception {
-	AbstractSendEmail 	sendEmail;
-	Email 			email;
-	List<File> 		atts;
-	File			prefix;
-	File			file;
-	String			console;
-	SpreadSheet 		info;
-	CsvSpreadSheetWriter 	writer;
+	adams.core.net.SendEmail	sendEmail;
+	Email 				email;
+	List<File> 			atts;
+	File				prefix;
+	File				file;
+	String				console;
+	SpreadSheet 			info;
+	CsvSpreadSheetWriter 		writer;
 
 	SwingUtilities.invokeLater(() -> m_Owner.getOwner().showStatus("Preparing error report..."));
 
@@ -128,14 +128,14 @@ public class SendErrorReport
 	SwingUtilities.invokeLater(() -> m_Owner.getOwner().showStatus("Sending error report..."));
 
 	// email
-	email = new Email(
-	  new EmailAddress(EmailHelper.getDefaultFromAddress()),
-	  new EmailAddress(EmailHelper.getSupportEmail()),
-	  Environment.getInstance().getProject() + " error report",
-	  "Error report generated at " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n"
-	    + "See attachements for details"
-	    + (comment == null ? "" : "\nUser comment:\n" + comment),
-	  atts.toArray(new File[atts.size()]));
+	email = new Email()
+		  .from(EmailHelper.getDefaultFromAddress())
+		  .to(EmailHelper.getSupportEmail())
+		  .subject(Environment.getInstance().getProject() + " error report")
+		  .body("Error report generated at " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n"
+			  + "See attachments for details"
+			  + (comment.isEmpty() ? "" : "\nUser comment:\n" + comment))
+		  .attachments(atts.toArray(new File[0]));
 
 	// send
 	sendEmail = EmailHelper.getDefaultSendEmail();

@@ -14,30 +14,19 @@
  */
 
 /*
- * AbstractSendEmail.java
- * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
+ * InMemorySendEmail.java
+ * Copyright (C) 2026 University of Waikato, Hamilton, New Zealand
  */
+
 package adams.core.net;
 
-import adams.core.option.AbstractOptionHandler;
-
 /**
- * Ancestor for classes that can send emails.
- * 
- * @author  fracpete (fracpete at waikato dot ac dot nz)
+ * Interface for SendEmail schemes that can handle in-memory attachments,
+ * i.e., byte arrays.
+ *
+ * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public abstract class AbstractSendEmail
-  extends AbstractOptionHandler
-  implements SendEmail {
-  
-  /** for serialization. */
-  private static final long serialVersionUID = -5248888725267599119L;
+public interface InMemorySendEmail
+  extends SendEmail {
 
-  /**
-   * Cleans up data structures, frees up memory.
-   * <br><br>
-   * Default implementation does nothing.
-   */
-  public void cleanUp() {
-  }
 }

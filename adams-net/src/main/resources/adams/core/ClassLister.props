@@ -5,10 +5,13 @@
 # class.name=package1,package2,...
 #
 # Author:  FracPete (fracpete at waikato dot ac dot nz)
-# Version: $Revision$
 
 # classes for sending emails
-adams.core.net.AbstractSendEmail=\
+adams.core.net.SendEmail=\
+  adams.core.net
+
+# classes for sending emails that handle in-memory attachments
+adams.core.net.InMemorySendEmail=\
   adams.core.net
 
 # the host name verifiers

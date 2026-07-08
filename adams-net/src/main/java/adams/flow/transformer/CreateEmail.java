@@ -15,7 +15,7 @@
 
 /*
  * CreateEmail.java
- * Copyright (C) 2009-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -508,14 +508,14 @@ public class CreateEmail
 	getVariables().expand(m_Signature.getValue()));
 
     try {
-      email = new adams.core.net.Email(
-	  m_Sender, 
-	  m_Recipients,
-	  m_CC,
-	  m_BCC,
-	  subject,
-	  body,
-	  attachments);
+      email = new adams.core.net.Email()
+		.from(m_Sender)
+		.to(m_Recipients)
+		.cc(m_CC)
+		.bcc(m_BCC)
+		.subject(subject)
+		.body(body)
+		.attachments(attachments);
       if (isLoggingEnabled())
 	getLogger().info(email.toString());
       m_OutputToken = new Token(email);

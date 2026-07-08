@@ -15,7 +15,7 @@
 
 /*
  * Email.java
- * Copyright (C) 2019-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.sink.sendnotification;
@@ -24,7 +24,6 @@ import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
 import adams.core.logging.LoggingHelper;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
 import adams.flow.core.ActorUtils;
@@ -59,7 +58,7 @@ public class Email
   protected BaseText m_Signature;
 
   /** for sending the emails. */
-  protected AbstractSendEmail m_SendEmail;
+  protected adams.core.net.SendEmail m_SendEmail;
 
   /**
    * Returns a string describing the object.
@@ -329,7 +328,7 @@ public class Email
    *
    * @param value	the object
    */
-  public void setSendEmail(AbstractSendEmail value) {
+  public void setSendEmail(adams.core.net.SendEmail value) {
     m_SendEmail = value;
     reset();
   }
@@ -339,7 +338,7 @@ public class Email
    *
    * @return 		the object
    */
-  public AbstractSendEmail getSendEmail() {
+  public adams.core.net.SendEmail getSendEmail() {
     return m_SendEmail;
   }
 
@@ -417,14 +416,13 @@ public class Email
     subject = m_FlowContext.getVariables().expand(m_Subject);
     email = null;
     try {
-      email = new adams.core.net.Email(
-	  m_Sender,
-	  m_Recipients,
-	  m_CC,
-	  m_BCC,
-	  subject,
-	  msg,
-	  null);
+      email = new adams.core.net.Email()
+		.from(m_Sender)
+		.to(m_Recipients)
+		.cc(m_CC)
+		.bcc(m_BCC)
+		.subject(subject)
+		.body(msg);
       if (isLoggingEnabled())
 	getLogger().info(email.toString());
     }

@@ -25,7 +25,6 @@ import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
 import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopMode;
@@ -783,7 +782,7 @@ public class SMTPConnection
    * @param sendEmail	the object to initialize
    * @throws Exception	if initialization fails
    */
-  public void initializeSmtpSession(AbstractSendEmail sendEmail) throws Exception {
+  public void initializeSmtpSession(adams.core.net.SendEmail sendEmail) throws Exception {
     sendEmail.initializeSmtpSession(
       m_Server,
       m_Port,

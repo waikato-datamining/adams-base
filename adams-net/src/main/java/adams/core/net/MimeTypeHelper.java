@@ -15,7 +15,7 @@
 
 /*
  * MimeTypeHelper.java
- * Copyright (C) 2013-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -27,6 +27,7 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AutoDetectParser;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -90,6 +91,41 @@ public class MimeTypeHelper {
     finally {
       FileUtils.closeQuietly(bis);
       FileUtils.closeQuietly(fis);
+    }
+  }
+
+  /**
+   * Tries to determine the MIME type of a byte array by checking its magic bytes.
+   * Taken from here:
+   * <a href="http://stackoverflow.com/a/16626396" target="_blank">http://stackoverflow.com/a/16626396</a>.
+   *
+   * @param data	the data to check
+   * @param filename 	the associated filename
+   * @return		the MIME type, {@link MediaType#OCTET_STREAM} if it fails
+   */
+  public static MediaType getMimeType(byte[] data, String filename) {
+    MediaType 			result;
+    ByteArrayInputStream 	bis;
+    AutoDetectParser 		parser;
+    Detector 			detector;
+    Metadata 			md;
+
+    bis = null;
+    try {
+      bis      = new ByteArrayInputStream(data);
+      parser   = new AutoDetectParser();
+      detector = parser.getDetector();
+      md       = new Metadata();
+      md.add(TikaCoreProperties.RESOURCE_NAME_KEY, filename);
+      result = detector.detect(bis, md);
+      bis.close();
+      return result;
+    }
+    catch (Exception e) {
+      return MediaType.OCTET_STREAM;
+    }
+    finally {
+      FileUtils.closeQuietly(bis);
     }
   }
 }

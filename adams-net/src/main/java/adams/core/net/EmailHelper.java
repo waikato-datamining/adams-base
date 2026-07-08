@@ -15,7 +15,7 @@
 
 /*
  * EmailHelper.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.net;
@@ -225,11 +225,11 @@ public class EmailHelper {
    */
   public static String getDefaultFromAddress() {
     String	result;
-    
+
     result = getProperties().getProperty(DEFAULT_ADDRESS_FROM, EmailAddress.DUMMY_ADDRESS);
     if (result.trim().isEmpty() || !(new EmailAddress().isValid(result)))
       result = EmailAddress.DUMMY_ADDRESS;
-    
+
     return result;
   }
 
@@ -248,11 +248,11 @@ public class EmailHelper {
    *
    * @return		the default class
    */
-  public static AbstractSendEmail getDefaultSendEmail() {
+  public static SendEmail getDefaultSendEmail() {
     try {
-      return (AbstractSendEmail) OptionUtils.forCommandLine(
-	  AbstractSendEmail.class, 
-	  getProperties().getProperty(DEFAULT_SENDEMAIL, JavaMailSendEmail.class.getName()));
+      return (SendEmail) OptionUtils.forCommandLine(
+	SendEmail.class,
+	getProperties().getProperty(DEFAULT_SENDEMAIL, JavaMailSendEmail.class.getName()));
     }
     catch (Exception e) {
       return new JavaMailSendEmail();

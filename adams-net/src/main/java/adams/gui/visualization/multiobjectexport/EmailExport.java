@@ -15,7 +15,7 @@
 
 /*
  * EmailExport.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -26,7 +26,6 @@ import adams.core.base.BaseText;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.TempUtils;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.Email;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
@@ -63,7 +62,7 @@ public class EmailExport
   protected BaseText m_Body;
 
   /** for sending the emails. */
-  protected AbstractSendEmail m_SendEmail;
+  protected adams.core.net.SendEmail m_SendEmail;
 
   /**
    * Returns a string describing the object.
@@ -257,7 +256,7 @@ public class EmailExport
    *
    * @param value	the object
    */
-  public void setSendEmail(AbstractSendEmail value) {
+  public void setSendEmail(adams.core.net.SendEmail value) {
     m_SendEmail = value;
     reset();
   }
@@ -267,7 +266,7 @@ public class EmailExport
    *
    * @return 		the object
    */
-  public AbstractSendEmail getSendEmail() {
+  public adams.core.net.SendEmail getSendEmail() {
     return m_SendEmail;
   }
 
@@ -328,7 +327,12 @@ public class EmailExport
     
     // create and send email
     if (errors.isEmpty()) {
-      email = new Email(m_Sender, m_Recipients, m_Subject, m_Body.getValue(), files.toArray(new File[files.size()]));
+      email = new Email()
+		.from(m_Sender)
+		.to(m_Recipients)
+		.subject(m_Subject)
+		.body(m_Body.getValue())
+		.attachments(files.toArray(new File[0]));
       try {
 	if (m_SendEmail.requiresSmtpSessionInitialization()) {
           m_SendEmail.initializeSmtpSession(

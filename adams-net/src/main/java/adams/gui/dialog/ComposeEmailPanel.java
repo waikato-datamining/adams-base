@@ -15,13 +15,12 @@
 
 /*
  * ComposeEmailPanel.java
- * Copyright (C) 2011-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.dialog;
 
 import adams.core.Utils;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.Email;
 import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
@@ -31,6 +30,7 @@ import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTabbedPane;
 import adams.gui.core.BaseTextArea;
 import adams.gui.core.BaseTextField;
+import adams.gui.core.ConsolePanel;
 import adams.gui.core.Fonts;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.ParameterPanel;
@@ -373,7 +373,7 @@ public class ComposeEmailPanel
     PlaceholderFile[]	files;
 
     // sender
-    if (m_TextFrom.getText().trim().length() == 0)
+    if (m_TextFrom.getText().trim().isEmpty())
       return "No sender!";
     
     // any recipients?
@@ -385,11 +385,11 @@ public class ComposeEmailPanel
       return "No recipients added!";
 
     // subject
-    if (m_TextSubject.getText().trim().length() == 0)
+    if (m_TextSubject.getText().trim().isEmpty())
       return "No subject entered!";
 
     // body
-    if (m_TextBody.getText().trim().length() == 0)
+    if (m_TextBody.getText().trim().isEmpty())
       return "No message body entered!";
 
     // do files exist?
@@ -410,10 +410,10 @@ public class ComposeEmailPanel
    * @return		null if successfully sent
    */
   public String send() {
-    String		msg;
-    Runnable		run;
-    AbstractSendEmail	send;
-    Email		email;
+    String			msg;
+    Runnable			run;
+    adams.core.net.SendEmail	send;
+    Email			email;
 
     m_LastSendResult = check();
 
@@ -430,20 +430,19 @@ public class ComposeEmailPanel
 	    EmailHelper.getSmtpUser(), 
 	    EmailHelper.getSmtpPassword(),
             EmailHelper.getSmtpProtocols());
-	email = new Email(
-	    new EmailAddress(m_TextFrom.getText()),
-	    (EmailAddress[]) m_GAEPanelTO.getCurrent(),
-	    (EmailAddress[]) m_GAEPanelCC.getCurrent(),
-	    (EmailAddress[]) m_GAEPanelBCC.getCurrent(),
-	    m_TextSubject.getText(),
-	    EmailHelper.combine(m_TextBody.getText(), m_TextSignature.getText()),
-	    (PlaceholderFile[]) m_GAEPanelAttachments.getCurrent());
+	email = new Email()
+		  .from(m_TextFrom.getText())
+		  .to((EmailAddress[]) m_GAEPanelTO.getCurrent())
+		  .cc((EmailAddress[]) m_GAEPanelCC.getCurrent())
+		  .bcc((EmailAddress[]) m_GAEPanelBCC.getCurrent())
+		  .subject(m_TextSubject.getText())
+		  .body(EmailHelper.combine(m_TextBody.getText(), m_TextSignature.getText()))
+		  .attachments((PlaceholderFile[]) m_GAEPanelAttachments.getCurrent());
 	send.sendMail(email);
       }
       catch (Exception e) {
 	msg = "Failed to send email: ";
-	System.err.println(msg);
-	e.printStackTrace();
+	ConsolePanel.getSingleton().append(msg, e);
 	m_LastSendResult = msg + e;
       }
     }

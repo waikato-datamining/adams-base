@@ -15,7 +15,7 @@
 
 /*
  * SendErrorReport.java
- * Copyright (C) 2016-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -25,9 +25,7 @@ import adams.core.DateUtils;
 import adams.core.io.FileUtils;
 import adams.core.io.TempUtils;
 import adams.core.logging.LoggingLevel;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.Email;
-import adams.core.net.EmailAddress;
 import adams.core.net.EmailHelper;
 import adams.core.option.UserMode;
 import adams.data.io.output.CsvSpreadSheetWriter;
@@ -109,7 +107,7 @@ public class SendErrorReport
   @Override
   public void launch() {
     String			comment;
-    AbstractSendEmail 		sendEmail;
+    adams.core.net.SendEmail 	sendEmail;
     Email			email;
     List<File> 			atts;
     File			prefix;
@@ -120,6 +118,8 @@ public class SendErrorReport
 
     // comment?
     comment = GUIHelper.showInputDialog(null, "Please supply some additional information on error report");
+    if (comment == null)
+      return;
 
     // data
     console = ConsolePanel.getSingleton().getPanel(PanelType.ALL).getContent();
@@ -145,14 +145,14 @@ public class SendErrorReport
 	LoggingLevel.SEVERE, "Failed to write system info for error report to: " + file);
 
     // email
-    email = new Email(
-      new EmailAddress(EmailHelper.getDefaultFromAddress()),
-      new EmailAddress(EmailHelper.getSupportEmail()),
-      Environment.getInstance().getProject() + " error report",
-      "Error report generated at " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n"
-      + "See attachements for details"
-      + (comment == null ? "" : "\nUser comment:\n" + comment),
-      atts.toArray(new File[atts.size()]));
+    email = new Email()
+	      .from(EmailHelper.getDefaultFromAddress())
+	      .to(EmailHelper.getSupportEmail())
+	      .subject(Environment.getInstance().getProject() + " error report")
+	      .body("Error report generated at " + DateUtils.getTimestampFormatterMsecs().format(new Date()) + "\n"
+		      + "See attachments for details"
+		      + (comment.isEmpty() ? "" : "\nUser comment:\n" + comment))
+	      .attachments(atts.toArray(new File[0]));
 
     // send
     sendEmail = EmailHelper.getDefaultSendEmail();

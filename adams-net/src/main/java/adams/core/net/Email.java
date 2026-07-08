@@ -15,7 +15,7 @@
 
 /*
  * Email.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -26,13 +26,15 @@ import org.apache.tika.mime.MediaType;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Container object for an email.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Email
   extends LoggingObject {
@@ -63,88 +65,136 @@ public class Email
   
   /** the attachments. */
   protected File[] m_Attachments;
-  
+
+  /** the in-memory attachments (filename -> byte array). */
+  protected Map<String,byte[]> m_InMemoryAttachments;
+
   /**
-   * Initializes the email.
-   * 
-   * @param from	the sender
-   * @param to		the recipient
-   * @param subject	the subject
-   * @param body	the content
+   * Default constructor.
    */
-  public Email(EmailAddress from, EmailAddress to, String subject, String body) {
-    this(from, new EmailAddress[]{to}, subject, body, new File[]{});
-  }
-  
-  /**
-   * Initializes the email.
-   * 
-   * @param from	the sender
-   * @param to		the recipient
-   * @param subject	the subject
-   * @param body	the content
-   * @param attachments	the attachments
-   */
-  public Email(EmailAddress from, EmailAddress to, String subject, String body, File[] attachments) {
-    this(from, new EmailAddress[]{to}, subject, body, attachments);
-  }
-  
-  /**
-   * Initializes the email.
-   * 
-   * @param from	the sender
-   * @param to		the recipients
-   * @param subject	the subject
-   * @param body	the content
-   * @param attachments	the attachments
-   */
-  public Email(EmailAddress from, EmailAddress[] to, String subject, String body, File[] attachments) {
-    this(from, to, new EmailAddress[]{}, new EmailAddress[]{}, subject, body, attachments);
-  }
-  
-  /**
-   * Initializes the email.
-   * 
-   * @param from	the sender
-   * @param to		the recipients
-   * @param cc		the CC recipients
-   * @param bcc		the BCC recipients
-   * @param subject	the subject
-   * @param body	the content
-   * @param attachments	the attachments
-   */
-  public Email(EmailAddress from, EmailAddress[] to, EmailAddress[] cc, EmailAddress[] bcc, String subject, String body, File[] attachments) {
+  public Email() {
     super();
-    
-    if (to == null)
-      to = new EmailAddress[0];
-    if (cc == null)
-      cc = new EmailAddress[0];
-    if (bcc == null)
-      bcc = new EmailAddress[0];
-    if (subject.trim().length() == 0)
-      subject = NO_SUBJECT;
-    if (attachments == null)
-      attachments = new File[0];
-    
+
+    m_From                = new EmailAddress(EmailHelper.getDefaultFromAddress());
+    m_To                  = new EmailAddress[0];
+    m_CC                  = new EmailAddress[0];
+    m_BCC                 = new EmailAddress[0];
+    m_Subject             = NO_SUBJECT;
+    m_Attachments         = new File[0];
+    m_InMemoryAttachments = new HashMap<>();
+  }
+
+  /**
+   * Sets the FROM email address.
+   *
+   * @param from	the FROM address
+   * @return		itself
+   */
+  public Email from(String from) {
+    return from(new EmailAddress(from));
+  }
+
+  /**
+   * Sets the FROM email address.
+   *
+   * @param from	the FROM address
+   * @return		itself
+   */
+  public Email from(EmailAddress from) {
     if (from == null)
       throw new IllegalArgumentException("Sender cannot be null!");
-    if (to.length + cc.length + bcc.length == 0)
-      throw new IllegalArgumentException("At least one recipient must be specified (to, cc or bcc)!");
-    for (int i = 0; i < attachments.length; i++) {
-      if (!attachments[i].exists())
-	throw new IllegalArgumentException("Attachment #" + (i+1) + " does not exist: " + attachments[i]);
-    }
-    
-    m_From        = from;
-    m_To          = to;
-    m_CC          = cc;
-    m_BCC         = bcc;
-    m_Subject     = subject;
-    m_Body        = body;
-    m_Attachments = attachments;
+    m_From = from;
+    return this;
   }
-  
+
+  /**
+   * Sets the TO email address.
+   *
+   * @param to		the address, can be null
+   * @return		itself
+   */
+  public Email to(String to) {
+    return to(new EmailAddress(to));
+  }
+
+  /**
+   * Sets the TO email address.
+   *
+   * @param to		the address, can be null
+   * @return		itself
+   */
+  public Email to(EmailAddress to) {
+    if (to == null)
+      return to(new EmailAddress[0]);
+    else
+      return to(new EmailAddress[]{to});
+  }
+
+  /**
+   * Sets the TO email addresses.
+   *
+   * @param to		the addresses, can be null
+   * @return		itself
+   */
+  public Email to(EmailAddress[] to) {
+    if (to == null)
+      to = new EmailAddress[0];
+    m_To = to;
+    return this;
+  }
+
+  /**
+   * Sets the CC email address.
+   *
+   * @param cc		the address, can be null
+   * @return		itself
+   */
+  public Email cc(EmailAddress cc) {
+    if (cc == null)
+      return cc(new EmailAddress[0]);
+    else
+      return cc(new EmailAddress[]{cc});
+  }
+
+  /**
+   * Sets the CC email addresses.
+   *
+   * @param cc		the addresses, can be null
+   * @return		itself
+   */
+  public Email cc(EmailAddress[] cc) {
+    if (cc == null)
+      cc = new EmailAddress[0];
+    m_CC = cc;
+    return this;
+  }
+
+  /**
+   * Sets the BCC email address.
+   *
+   * @param bcc		the address, can be null
+   * @return		itself
+   */
+  public Email bcc(EmailAddress bcc) {
+    if (bcc == null)
+      return bcc(new EmailAddress[0]);
+    else
+      return bcc(new EmailAddress[]{bcc});
+  }
+
+  /**
+   * Sets the BCC email addresses.
+   *
+   * @param bcc		the BCC addresses, can be null
+   * @return		itself
+   */
+  public Email bcc(EmailAddress[] bcc) {
+    if (bcc == null)
+      bcc = new EmailAddress[0];
+    m_BCC = bcc;
+    return this;
+  }
+
   /**
    * Returns the sender.
    * 
@@ -153,7 +203,64 @@ public class Email
   public EmailAddress getFrom() {
     return m_From;
   }
-  
+
+  /**
+   * Sets the subject.
+   *
+   * @param subject	the subject to use
+   * @return		itself
+   */
+  public Email subject(String subject) {
+    if (subject.trim().isEmpty())
+      subject = NO_SUBJECT;
+    m_Subject = subject;
+    return this;
+  }
+
+  /**
+   * Sets the body.
+   *
+   * @param body	the body to use
+   * @return		itself
+   */
+  public Email body(String body) {
+    if (body == null)
+      body = "";
+    m_Body = body;
+    return this;
+  }
+
+  /**
+   * Sets the attachments.
+   *
+   * @param attachments	the attachments, can be null
+   * @return		itself
+   */
+  public Email attachments(File[] attachments) {
+    if (attachments == null)
+      attachments = new File[0];
+    for (int i = 0; i < attachments.length; i++) {
+      if (!attachments[i].exists())
+	throw new IllegalArgumentException("Attachment #" + (i+1) + " does not exist: " + attachments[i]);
+    }
+    m_Attachments = attachments;
+    return this;
+  }
+
+  /**
+   * Sets the in-memory attachments.
+   *
+   * @param attachments	the attachments, can be null
+   * @return		itself
+   */
+  public Email inMemoryAttachments(Map<String,byte[]> attachments) {
+    if (attachments == null)
+      attachments = new HashMap<>();
+    m_InMemoryAttachments.clear();
+    m_InMemoryAttachments.putAll(attachments);
+    return this;
+  }
+
   /**
    * Returns the TO recipients.
    * 
@@ -189,7 +296,16 @@ public class Email
   public File[] getAttachments() {
     return m_Attachments;
   }
-  
+
+  /**
+   * Returns the in-memory attachments.
+   *
+   * @return		the attachments
+   */
+  public Map<String,byte[]> getInMemoryAttachments() {
+    return m_InMemoryAttachments;
+  }
+
   /**
    * Returns the subject.
    * 
@@ -223,7 +339,9 @@ public class Email
   }
   
   /**
-   * 
+   * Turns the email into a plain text string.
+   *
+   * @return		the generated string
    */
   public String toPlainText() {
     List<String>	list;
@@ -233,7 +351,7 @@ public class Email
     byte[]		content;
     
     boundary = HttpRequestHelper.createBoundary();
-    list  = new ArrayList<String>();
+    list  = new ArrayList<>();
     list.add("MIME-Version: 1.0");
     list.add("Sender: " + getFrom().strippedValue());
     for (EmailAddress addr: getCC())
@@ -253,19 +371,16 @@ public class Email
     list.add("");
     list.add("");
 
-    if (getAttachments().length > 0) {
-      for (File file: getAttachments()) {
-	list.add("--" + boundary);
-	mime = MimeTypeHelper.getMimeType(file);
-	list.add("Content-Type: " + mime.toString() + "; name=\"" + file.getName() + "\"");
-	list.add("Content-Disposition: attachment; filename=\"" + file.getName() + "\"");
-	list.add("Content-Transfer-Encoding: base64");
-	list.add("");
-	content = FileUtils.loadFromBinaryFile(file);
-	lines   = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
-	for (String line: lines)
-	  list.add(line);
-      }
+    for (File file : getAttachments()) {
+      list.add("--" + boundary);
+      mime = MimeTypeHelper.getMimeType(file);
+      list.add("Content-Type: " + mime.toString() + "; name=\"" + file.getName() + "\"");
+      list.add("Content-Disposition: attachment; filename=\"" + file.getName() + "\"");
+      list.add("Content-Transfer-Encoding: base64");
+      list.add("");
+      content = FileUtils.loadFromBinaryFile(file);
+      lines = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
+      Collections.addAll(list, lines);
     }
 
     // finish message

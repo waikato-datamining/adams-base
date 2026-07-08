@@ -15,14 +15,13 @@
 
 /*
  * SendEmail.java
- * Copyright (C) 2009-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
 
 import adams.core.QuickInfoHelper;
 import adams.core.logging.LoggingHelper;
-import adams.core.net.AbstractSendEmail;
 import adams.core.net.EmailHelper;
 import adams.flow.core.ActorUtils;
 import adams.flow.standalone.SMTPConnection;
@@ -123,7 +122,7 @@ public class SendEmail
   private static final long serialVersionUID = -5959868605503747649L;
   
   /** for sending the emails. */
-  protected AbstractSendEmail m_SendEmail;
+  protected adams.core.net.SendEmail m_SendEmail;
   
   /** whether to queue the emails rather than waiting for sending to finish. */
   protected boolean m_Queue;
@@ -196,7 +195,7 @@ public class SendEmail
    *
    * @param value	the object
    */
-  public void setSendEmail(AbstractSendEmail value) {
+  public void setSendEmail(adams.core.net.SendEmail value) {
     m_SendEmail = value;
     reset();
   }
@@ -206,7 +205,7 @@ public class SendEmail
    *
    * @return 		the object
    */
-  public AbstractSendEmail getSendEmail() {
+  public adams.core.net.SendEmail getSendEmail() {
     return m_SendEmail;
   }
 
@@ -374,7 +373,7 @@ public class SendEmail
    */
   @Override
   public void wrapUp() {
-    while ((m_Sending.size() > 0) && !isStopped()) {
+    while ((!m_Sending.isEmpty()) && !isStopped()) {
       try {
 	synchronized(this) {
 	  wait(100);

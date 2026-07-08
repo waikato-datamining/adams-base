@@ -15,7 +15,7 @@
 
 /*
  * SimpleMailer.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -24,6 +24,7 @@ import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
 import adams.core.io.lister.LocalDirectoryLister;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.EmailFileReader;
 import adams.data.io.input.MultiEmailReader;
@@ -54,7 +55,7 @@ public class SimpleMailer {
   protected BaseRegExp m_RegExp;
   
   /** for sending the mail. */
-  protected AbstractSendEmail m_SendEmail;
+  protected SendEmail m_SendEmail;
   
   /** the suffix for the successfully sent emails. */
   protected String m_SuccessfulSuffix;
@@ -74,7 +75,7 @@ public class SimpleMailer {
   /**
    * Returns the debugging level (0 = turned off).
    *
-   * @return 		true if debugging output is on
+   * @return 		the level
    */
   public int getDebugLevel() {
     return m_DebugLevel;
@@ -208,7 +209,7 @@ public class SimpleMailer {
    *
    * @param value	the send email
    */
-  public void setSendEmail(AbstractSendEmail value) {
+  public void setSendEmail(SendEmail value) {
     m_SendEmail = value;
   }
 
@@ -217,7 +218,7 @@ public class SimpleMailer {
    *
    * @return		the send email
    */
-  public AbstractSendEmail getSendEmail() {
+  public SendEmail getSendEmail() {
     return m_SendEmail;
   }
 
@@ -347,14 +348,13 @@ public class SimpleMailer {
 	    System.err.println("Failed to load email from file: " + file);
 	  }
 	  else {
-	    emails = new ArrayList<Email>();
+	    emails = new ArrayList<>();
 	    emails.add(email);
 	  }
 	}
       }
       catch (Exception e) {
-	System.err.println("Failed to load email file: " + file);
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to load email file: " + file, e);
 	emails = null;
 	failed = true;
       }
@@ -387,8 +387,7 @@ public class SimpleMailer {
 	    }
 	  }
 	  catch (Exception e) {
-	    System.err.println("Failed to send email: " + eml);
-	    e.printStackTrace();
+	    LoggingHelper.global().severe("Failed to send email: " + eml, e);
 	    failed = true;
 	  }
 	}
@@ -408,8 +407,7 @@ public class SimpleMailer {
 	  debug("--> Success!");
       }
       catch (Exception e) {
-	System.err.println("Failed to move file from '" + from + "' to '" + to + "'!");
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to move file from '" + from + "' to '" + to + "'!", e);
 	if (isDebugOn())
 	  debug("--> Failed!");
       }
@@ -422,8 +420,6 @@ public class SimpleMailer {
    * Runs the mailer from the commandline.
    *
    * @param options	the commandline options
-   * @return		the instantiated frame, null in case of an error or
-   * 			invocation of help
    */
   public static void runMailer(String[] options) {
     SimpleMailer	simple;
@@ -476,7 +472,7 @@ public class SimpleMailer {
 	else
 	  simple.setRegExp(new BaseRegExp(BaseRegExp.MATCH_ALL));
 	if ((opt = OptionUtils.getOption(options, "-send-email")) != null)
-	  simple.setSendEmail((AbstractSendEmail) OptionUtils.forCommandLine(AbstractSendEmail.class, opt));
+	  simple.setSendEmail((SendEmail) OptionUtils.forCommandLine(SendEmail.class, opt));
 	else
 	  simple.setSendEmail(new JavaMailSendEmail());
 	if ((opt = OptionUtils.getOption(options, "-successful-suffix")) != null)
@@ -491,7 +487,7 @@ public class SimpleMailer {
       }
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe("Failed to run mailer!", e);
     }
   }
 

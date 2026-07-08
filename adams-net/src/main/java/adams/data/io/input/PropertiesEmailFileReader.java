@@ -13,20 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesEmailFileReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import java.io.File;
-import java.util.logging.Level;
 
 import adams.core.Properties;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.Email;
 import adams.core.net.EmailAddress;
 import adams.core.option.OptionUtils;
+
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  <!-- globalinfo-start -->
@@ -162,13 +162,6 @@ public class PropertiesEmailFileReader
   protected Email doRead() {
     Email		result;
     Properties		props;
-    EmailAddress	from;
-    EmailAddress[]	to;
-    EmailAddress[]	cc;
-    EmailAddress[]	bcc;
-    String		subject;
-    String		body;
-    File[]		attachments;
 
     result = null;
     
@@ -179,14 +172,14 @@ public class PropertiesEmailFileReader
     }
     
     try {
-      from        = new EmailAddress(props.getProperty(KEY_FROM, ""));
-      to          = getAddresses(props, KEY_TO);
-      cc          = getAddresses(props, KEY_CC);
-      bcc         = getAddresses(props, KEY_BCC);
-      subject     = props.getProperty(KEY_SUBJECT);
-      body        = props.getProperty(KEY_BODY);
-      attachments = getFiles(props, KEY_ATTACHMENTS);
-      result      = new Email(from, to, cc, bcc, subject, body, attachments);
+      result = new Email()
+		 .from(props.getProperty(KEY_FROM, ""))
+		 .to(getAddresses(props, KEY_TO))
+		 .cc(getAddresses(props, KEY_CC))
+		 .bcc(getAddresses(props, KEY_BCC))
+		 .subject(props.getProperty(KEY_SUBJECT))
+		 .body(props.getProperty(KEY_BODY))
+		 .attachments(getFiles(props, KEY_ATTACHMENTS));
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to load email properties!", e);

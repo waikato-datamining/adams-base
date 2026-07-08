@@ -15,7 +15,7 @@
 
 /*
  * JavaMailSendEmail.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.net;
 
@@ -44,7 +44,8 @@ import javax.mail.util.ByteArrayDataSource;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class JavaMailSendEmail
-  extends AbstractSendEmail {
+  extends AbstractSendEmail
+  implements InMemorySendEmail {
 
   /** for serialization. */
   private static final long serialVersionUID = 4065886204614191616L;
@@ -215,6 +216,7 @@ public class JavaMailSendEmail
     BodyPart 			messageBodyPart;
     Multipart 			multipart;
     int				i;
+    byte[]			data;
 
     if (m_Session == null)
       throw new IllegalStateException("SMTP session not initialized!");
@@ -233,6 +235,15 @@ public class JavaMailSendEmail
       messageBodyPart = new MimeBodyPart();
       messageBodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(FileUtils.loadFromBinaryFile(email.getAttachments()[i]), MimeTypeHelper.getMimeType(email.getAttachments()[i]).toString())));
       messageBodyPart.setFileName(email.getAttachments()[i].getName());
+      multipart.addBodyPart(messageBodyPart);
+    }
+
+    // in-memory attachments
+    for (String filename: email.getInMemoryAttachments().keySet()) {
+      data = email.getInMemoryAttachments().get(filename);
+      messageBodyPart = new MimeBodyPart();
+      messageBodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(data, MimeTypeHelper.getMimeType(data, filename).toString())));
+      messageBodyPart.setFileName(filename);
       multipart.addBodyPart(messageBodyPart);
     }
 

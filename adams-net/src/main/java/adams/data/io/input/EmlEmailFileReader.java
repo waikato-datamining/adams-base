@@ -15,7 +15,7 @@
 
 /*
  * EmlEmailFileReader.java
- * Copyright (C) 2014-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -25,7 +25,6 @@ import jodd.mail.EMLParser;
 import jodd.mail.EmailMessage;
 import jodd.mail.ReceivedEmail;
 
-import java.io.File;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -122,19 +121,16 @@ public class EmlEmailFileReader
       body  = new StringBuilder();
       for (i = 0; i < msgs.size(); i++) {
 	if (msgs.size() > 1)
-	  body.append("---Message #" + (i+1) + " " + msgs.get(i).getMimeType() + " " + msgs.get(i).getEncoding() + "\n");
+	  body.append("---Message #").append(i + 1).append(" ").append(msgs.get(i).getMimeType()).append(" ").append(msgs.get(i).getEncoding()).append("\n");
 	body.append(msgs.get(i).getContent());
 	body.append("\n");
       }
-      result = new Email(
-	  new EmailAddress(email.from().getEmail()),
-	  (EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class),
-	  (EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class),
-	  new EmailAddress[0],
-	  email.subject(),
-	  body.toString(),
-	  new File[0]);
-      
+      result = new Email()
+		 .from(email.from().getEmail())
+		 .to((EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class))
+		 .cc((EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class))
+		 .subject(email.subject())
+		 .body(body.toString());
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read: " + m_Input, e);
