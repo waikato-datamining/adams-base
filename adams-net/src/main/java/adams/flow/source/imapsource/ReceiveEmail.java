@@ -15,7 +15,7 @@
 
 /*
  * ReceiveEmail.java
- * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.source.imapsource;
@@ -327,7 +327,11 @@ public class ReceiveEmail
     if (!m_Subject.isEmpty())
       emailFilter.subject(m_Subject);
 
-    Flag.updateFilter(m_Flags, emailFilter);
+    // are we filtering anything?
+    if (emailFilter.getSearchTerm() != null)
+      Flag.updateFilter(m_Flags, emailFilter);
+    else
+      emailFilter = null;
 
     if (m_OnlyEnvelopes) {
       return conn.getImapSession().receiveEnvelopes(emailFilter);
