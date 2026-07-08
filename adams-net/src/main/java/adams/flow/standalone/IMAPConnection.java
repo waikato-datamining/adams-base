@@ -294,6 +294,7 @@ public class IMAPConnection
     if (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
       result += QuickInfoHelper.toString(this, "user", m_User) + ":***";
 
+    result += "@";
     result += QuickInfoHelper.toString(this, "server", m_Server);
     result += QuickInfoHelper.toString(this, "port", m_Port, ":");
 

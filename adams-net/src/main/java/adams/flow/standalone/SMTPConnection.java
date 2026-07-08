@@ -267,16 +267,12 @@ public class SMTPConnection
   public String getQuickInfo() {
     String		result;
     List<String>	options;
-    String		value;
 
     result = "";
 
     if (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication) {
       result += QuickInfoHelper.toString(this, "user", m_User);
-      value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
-      if (value != null)
-	result += ":" + value;
-      result += "@";
+      result += ":***@";
     }
 
     result += QuickInfoHelper.toString(this, "server", m_Server);
