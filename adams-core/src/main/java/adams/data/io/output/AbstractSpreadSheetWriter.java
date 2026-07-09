@@ -15,7 +15,7 @@
 
 /*
  * AbstractSpreadSheetWriter.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -304,13 +304,24 @@ public abstract class AbstractSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet content, OutputStream stream) {
+    boolean		result;
+    OutputStreamWriter	writer;
+
     switch (getOutputType()) {
       case FILE:
         throw new IllegalStateException("Only supports writing to files, not output streams!");
       case STREAM:
         return doWrite(content, stream);
       case WRITER:
-        return doWrite(content, new OutputStreamWriter(stream));
+	writer = new OutputStreamWriter(stream);
+        result = doWrite(content, writer);
+	try {
+	  writer.flush();
+	}
+	catch (Exception e) {
+	  // ignored
+	}
+	return result;
       default:
         throw new IllegalStateException("Unhandled output type: " + getOutputType());
     }
@@ -326,12 +337,18 @@ public abstract class AbstractSpreadSheetWriter
    */
   @Override
   public boolean write(SpreadSheet content, Writer writer) {
+    boolean		result;
+    WriterOutputStream	stream;
+
     switch (getOutputType()) {
       case FILE:
         throw new IllegalStateException("Only supports writing to files, not output streams!");
       case STREAM:
 	try {
-	  return doWrite(content, WriterOutputStream.builder().setWriter(writer).get());
+	  stream = WriterOutputStream.builder().setWriter(writer).get();
+	  result = doWrite(content, stream);
+	  stream.flush();
+	  return result;
 	}
 	catch (Exception e) {
 	  getLogger().log(Level.SEVERE, "Failed to write to stream!", e);
