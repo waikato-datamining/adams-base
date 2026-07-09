@@ -327,10 +327,11 @@ public class ReceiveEmail
     if (!m_Subject.isEmpty())
       emailFilter.subject(m_Subject);
 
+    // apply any flags
+    Flag.updateFilter(m_Flags, emailFilter);
+
     // are we filtering anything?
-    if (emailFilter.getSearchTerm() != null)
-      Flag.updateFilter(m_Flags, emailFilter);
-    else
+    if (emailFilter.getSearchTerm() == null)
       emailFilter = null;
 
     if (m_OnlyEnvelopes) {
