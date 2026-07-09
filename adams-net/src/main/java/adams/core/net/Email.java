@@ -80,6 +80,7 @@ public class Email
     m_CC                  = new EmailAddress[0];
     m_BCC                 = new EmailAddress[0];
     m_Subject             = NO_SUBJECT;
+    m_Body                = "";
     m_Attachments         = new File[0];
     m_InMemoryAttachments = new HashMap<>();
   }
