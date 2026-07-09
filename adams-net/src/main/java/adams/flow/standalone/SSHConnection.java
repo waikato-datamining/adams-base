@@ -23,6 +23,8 @@ package adams.flow.standalone;
 
 import adams.core.EnvironmentPasswordSupporter;
 import adams.core.License;
+import adams.core.ParametersFromFileHelper;
+import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
@@ -158,6 +160,12 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;maximum: 65535
  * </pre>
  *
+ * <pre>-password-env-var &lt;java.lang.String&gt; (property: passwordEnvVar)
+ * &nbsp;&nbsp;&nbsp;The environment variable to obtain the password from, before potentially
+ * &nbsp;&nbsp;&nbsp;prompting for it; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled, the user gets prompted for enter a password if none has been
  * &nbsp;&nbsp;&nbsp;provided in the setup.
@@ -186,6 +194,14 @@ import java.util.logging.Level;
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
+ * <pre>-parameters-file &lt;adams.core.io.PlaceholderFile&gt; (property: parametersFile)
+ * &nbsp;&nbsp;&nbsp;The Java properties file containing the parameters and their associated
+ * &nbsp;&nbsp;&nbsp;values to apply. The properties in the file must align with the Bean properties
+ * &nbsp;&nbsp;&nbsp;&#47;ADAMS option of the object that is to be updated. If the option takes an
+ * &nbsp;&nbsp;&nbsp;array, then the values for the array must be blank-separated.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -197,7 +213,8 @@ import java.util.logging.Level;
 )
 public class SSHConnection
   extends AbstractStandalone
-  implements TechnicalInformationHandler, SSHSessionProvider, PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
+  implements TechnicalInformationHandler, SSHSessionProvider, PasswordPrompter, EnvironmentPasswordSupporter,
+	       InteractiveActor, ParametersFromFileSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -259,6 +276,9 @@ public class SSHConnection
   /** how to perform the stop. */
   protected StopMode m_StopMode;
 
+  /** the parameters file to load. */
+  protected PlaceholderFile m_ParametersFile;
+
   /** the SSH session. */
   protected transient Session m_Session;
 
@@ -271,8 +291,8 @@ public class SSHConnection
   public String globalInfo() {
     return
       "Provides access to a remote host via SSH.\n\n"
-        + "For more information see:\n\n"
-        + getTechnicalInformation().toString();
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -316,11 +336,11 @@ public class SSHConnection
     m_OptionManager.add(
       "private-key-file", "privateKeyFile",
       new PlaceholderFile(
-        User.getHomeDir()
-          + File.separator
-          + ".ssh"
-          + File.separator
-          + "id_rsa"));
+	User.getHomeDir()
+	  + File.separator
+	  + ".ssh"
+	  + File.separator
+	  + "id_rsa"));
 
     m_OptionManager.add(
       "private-key-passphrase", "privateKeyPassphrase",
@@ -329,11 +349,11 @@ public class SSHConnection
     m_OptionManager.add(
       "known-hosts", "knownHosts",
       new PlaceholderFile(
-        User.getHomeDir()
-          + File.separator
-          + ".ssh"
-          + File.separator
-          + "known_hosts"));
+	User.getHomeDir()
+	  + File.separator
+	  + ".ssh"
+	  + File.separator
+	  + "known_hosts"));
 
     m_OptionManager.add(
       "strict-host-key-checking", "strictHostKeyChecking",
@@ -374,6 +394,10 @@ public class SSHConnection
     m_OptionManager.add(
       "stop-mode", "stopMode",
       StopMode.GLOBAL);
+
+    m_OptionManager.add(
+      "parameters-file", "parametersFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -397,11 +421,14 @@ public class SSHConnection
     List<String>	options;
     String		value;
 
+    if (!getParametersFile().isDirectory())
+      return QuickInfoHelper.toString(this, "parametersFile", m_ParametersFile, "parameters from: ");
+
     if (m_AuthenticationType == SSHAuthenticationType.CREDENTIALS) {
       result = QuickInfoHelper.toString(this, "user", m_User);
       value = QuickInfoHelper.toString(this, "password", m_Password.getValue().replaceAll(".", "*"));
       if (value != null)
-        result += ":" + value;
+	result += ":" + value;
     }
     else {
       result = QuickInfoHelper.toString(this, "privateKeyFile", m_PrivateKeyFile);
@@ -686,7 +713,7 @@ public class SSHConnection
   public String strictHostKeyCheckingTipText() {
     return
       "Enables/disables strict host key checking - strict checking is the "
-        + "recommended setting, as disabling it is very insecure!";
+	+ "recommended setting, as disabling it is very insecure!";
   }
 
   /**
@@ -841,7 +868,7 @@ public class SSHConnection
   public String promptForPasswordTipText() {
     return
       "If enabled, the user gets prompted "
-        + "for enter a password if none has been provided in the setup.";
+	+ "for enter a password if none has been provided in the setup.";
   }
 
   /**
@@ -952,7 +979,7 @@ public class SSHConnection
   public String customStopMessageTipText() {
     return
       "The custom stop message to use in case a user cancelation stops the "
-        + "flow (default is the full name of the actor)";
+	+ "flow (default is the full name of the actor)";
   }
 
   /**
@@ -985,6 +1012,38 @@ public class SSHConnection
   @Override
   public String stopModeTipText() {
     return "The stop mode to use.";
+  }
+
+  /**
+   * Sets the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setParametersFile(PlaceholderFile value) {
+    m_ParametersFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @return 		the file
+   */
+  @Override
+  public PlaceholderFile getParametersFile() {
+    return m_ParametersFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String parametersFileTipText() {
+    return ParametersFromFileHelper.parametersFileTipText();
   }
 
   /**
@@ -1025,12 +1084,12 @@ public class SSHConnection
   public synchronized Session getSession() {
     if (m_Session != null) {
       if (!m_Session.isConnected()) {
-        try {
-          m_Session.connect();
-        }
-        catch (Exception e) {
-          getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
-        }
+	try {
+	  m_Session.connect();
+	}
+	catch (Exception e) {
+	  getLogger().log(Level.SEVERE, "Failed to reconnect session!", e);
+	}
       }
     }
     else {
@@ -1066,22 +1125,22 @@ public class SSHConnection
     try {
       jsch = JSchUtils.newJsch(m_KnownHosts);
       switch (m_AuthenticationType) {
-        case CREDENTIALS:
-          result = JSchUtils.newSession(jsch, m_User, password, host, port);
-          break;
-        case PUBLIC_KEY:
-          if (!m_PrivateKeyFile.exists())
-            throw new IllegalStateException("Private key does not exist: " + m_PrivateKeyFile);
-          if (m_PrivateKeyFile.isDirectory())
-            throw new IllegalStateException("Private key points to directory: " + m_PrivateKeyFile);
-          result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
-          break;
-        default:
-          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+	case CREDENTIALS:
+	  result = JSchUtils.newSession(jsch, m_User, password, host, port);
+	  break;
+	case PUBLIC_KEY:
+	  if (!m_PrivateKeyFile.exists())
+	    throw new IllegalStateException("Private key does not exist: " + m_PrivateKeyFile);
+	  if (m_PrivateKeyFile.isDirectory())
+	    throw new IllegalStateException("Private key points to directory: " + m_PrivateKeyFile);
+	  result = JSchUtils.newSession(jsch, m_User, m_PrivateKeyFile, password, host, port);
+	  break;
+	default:
+	  throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
       }
       JSchUtils.configureStrictHostKeyChecking(result, m_StrictHostKeyChecking);
       if (m_ForwardX)
-        JSchUtils.configureX11(result, m_XHost, m_XPort);
+	JSchUtils.configureX11(result, m_XHost, m_XPort);
       result.setTimeout(m_Timeout);
       result.connect();
     }
@@ -1102,42 +1161,43 @@ public class SSHConnection
   protected String doExecute() {
     String	result;
 
-    result = null;
+    result = ParametersFromFileHelper.applyParameters(this);
+    if (result == null) {
+      if (m_Session == null) {
+	if (isLoggingEnabled())
+	  getLogger().info("Starting new session");
 
-    if (m_Session == null) {
-      if (isLoggingEnabled())
-        getLogger().info("Starting new session");
+	// password
+	switch (m_AuthenticationType) {
+	  case CREDENTIALS:
+	    m_ActualPassword = m_Password;
+	    break;
+	  case PUBLIC_KEY:
+	    m_ActualPassword = m_PrivateKeyPassphrase;
+	    break;
+	  default:
+	    throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+	}
 
-      // password
-      switch (m_AuthenticationType) {
-        case CREDENTIALS:
-          m_ActualPassword = m_Password;
-          break;
-        case PUBLIC_KEY:
-          m_ActualPassword = m_PrivateKeyPassphrase;
-          break;
-        default:
-          throw new IllegalStateException("Unhandled authentication type: " + m_AuthenticationType);
+	result = PasswordHelper.fromEnvVar(this);
+	if ((result == null) && (m_ActualPassword.isEmpty()))
+	  result = PasswordHelper.prompt(this);
+
+	if (result == null) {
+	  if (!m_Host.isEmpty()) {
+	    m_Session = newSession();
+	    if (m_Session == null)
+	      result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
+	  }
+	  else {
+	    getLogger().warning("No host supplied, not initiating session!");
+	  }
+	}
       }
-
-      result = PasswordHelper.fromEnvVar(this);
-      if ((result == null) && (m_ActualPassword.isEmpty()))
-	result = PasswordHelper.prompt(this);
-
-      if (result == null) {
-        if (!m_Host.isEmpty()) {
-          m_Session = newSession();
-          if (m_Session == null)
-            result = "Failed to connect to '" + m_Host + "' as user '" + m_User + "'!";
-        }
-        else {
-          getLogger().warning("No host supplied, not initiating session!");
-        }
+      else {
+	if (isLoggingEnabled())
+	  getLogger().info("Re-using current session");
       }
-    }
-    else {
-      if (isLoggingEnabled())
-        getLogger().info("Re-using current session");
     }
 
     return result;
@@ -1149,12 +1209,12 @@ public class SSHConnection
   protected void disconnect() {
     if (m_Session != null) {
       if (m_Session.isConnected()) {
-        try {
-          m_Session.disconnect();
-        }
-        catch (Exception e) {
-          handleException("Failed to disconnect from '" + m_Host + "':", e);
-        }
+	try {
+	  m_Session.disconnect();
+	}
+	catch (Exception e) {
+	  handleException("Failed to disconnect from '" + m_Host + "':", e);
+	}
       }
     }
     m_Session = null;

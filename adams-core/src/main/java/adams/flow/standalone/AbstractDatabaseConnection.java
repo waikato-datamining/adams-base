@@ -21,11 +21,14 @@
 package adams.flow.standalone;
 
 import adams.core.EnvironmentPasswordSupporter;
+import adams.core.ParametersFromFileHelper;
+import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.Placeholders;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderFile;
 import adams.db.JdbcUrl;
 import adams.db.datatype.AbstractDataTypeSetup;
 import adams.db.datatype.DummySetup;
@@ -40,7 +43,7 @@ import adams.flow.core.StopMode;
  */
 public abstract class AbstractDatabaseConnection
   extends AbstractStandalone
-  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
+  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor, ParametersFromFileSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1726172998200420556L;
@@ -77,6 +80,9 @@ public abstract class AbstractDatabaseConnection
 
   /** whether to close the connection when the flow wraps up. */
   protected boolean m_CloseConnection;
+
+  /** the parameters file to load. */
+  protected PlaceholderFile m_ParametersFile;
 
   /** the database connection in use. */
   protected transient adams.db.AbstractDatabaseConnection m_Connection;
@@ -127,6 +133,10 @@ public abstract class AbstractDatabaseConnection
     m_OptionManager.add(
       "close-connection", "closeConnection",
       false);
+
+    m_OptionManager.add(
+      "parameters-file", "parametersFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -137,6 +147,9 @@ public abstract class AbstractDatabaseConnection
   @Override
   public String getQuickInfo() {
     String	result;
+
+    if (!getParametersFile().isDirectory())
+      return QuickInfoHelper.toString(this, "parametersFile", m_ParametersFile, "parameters from: ");
 
     result = QuickInfoHelper.toString(this, "URL", m_URL);
 
@@ -490,6 +503,38 @@ public abstract class AbstractDatabaseConnection
   }
 
   /**
+   * Sets the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setParametersFile(PlaceholderFile value) {
+    m_ParametersFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @return 		the file
+   */
+  @Override
+  public PlaceholderFile getParametersFile() {
+    return m_ParametersFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String parametersFileTipText() {
+    return ParametersFromFileHelper.parametersFileTipText();
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -529,36 +574,39 @@ public abstract class AbstractDatabaseConnection
     String				msg;
     adams.db.AbstractDatabaseConnection	conn;
 
-    m_ActualPassword = m_Password;
-    conn             = null;
-    result           = PasswordHelper.fromEnvVar(this);
-    if ((result == null) && (m_ActualPassword.isEmpty()))
-      result = PasswordHelper.prompt(this);
-
+    result = ParametersFromFileHelper.applyParameters(this);
     if (result == null) {
-      conn = getConnection();
-      msg  = null;
-      if (!conn.isConnected() && !conn.getConnectOnStartUp()) {
-        try {
-          conn.connect();
-        }
-        catch (Exception e) {
-          msg = handleException("Failed to connect to database (" + getURL() + "):", e);
-        }
-      }
-      if (!conn.isConnected()) {
-        result = "Failed to connect to database (" + getURL() + ")";
-        if (msg == null)
-          result += "!";
-        else
-          result += ": " + msg;
-      }
-    }
+      m_ActualPassword = m_Password;
+      conn = null;
+      result = PasswordHelper.fromEnvVar(this);
+      if ((result == null) && (m_ActualPassword.isEmpty()))
+	result = PasswordHelper.prompt(this);
 
-    if (result == null) {
-      msg = m_DataTypeSetup.setupDataTypes(conn.getConnection(false));
-      if (msg != null)
-        result = "Failed to setup data types: " + msg;
+      if (result == null) {
+	conn = getConnection();
+	msg = null;
+	if (!conn.isConnected() && !conn.getConnectOnStartUp()) {
+	  try {
+	    conn.connect();
+	  }
+	  catch (Exception e) {
+	    msg = handleException("Failed to connect to database (" + getURL() + "):", e);
+	  }
+	}
+	if (!conn.isConnected()) {
+	  result = "Failed to connect to database (" + getURL() + ")";
+	  if (msg == null)
+	    result += "!";
+	  else
+	    result += ": " + msg;
+	}
+      }
+
+      if (result == null) {
+	msg = m_DataTypeSetup.setupDataTypes(conn.getConnection(false));
+	if (msg != null)
+	  result = "Failed to setup data types: " + msg;
+      }
     }
 
     return result;

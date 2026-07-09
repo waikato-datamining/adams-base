@@ -21,10 +21,13 @@
 package adams.flow.standalone;
 
 import adams.core.EnvironmentPasswordSupporter;
+import adams.core.ParametersFromFileHelper;
+import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderFile;
 import adams.core.net.EmailHelper;
 import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopMode;
@@ -45,6 +48,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -54,19 +58,28 @@ import java.util.List;
  *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-server &lt;java.lang.String&gt; (property: server)
@@ -84,6 +97,11 @@ import java.util.List;
  * <pre>-use-tls &lt;boolean&gt; (property: useTLS)
  * &nbsp;&nbsp;&nbsp;If enabled, TLS (transport layer security) is used.
  * &nbsp;&nbsp;&nbsp;default: true
+ * </pre>
+ *
+ * <pre>-protocols &lt;java.lang.String&gt; (property: protocols)
+ * &nbsp;&nbsp;&nbsp;The SMTP protocols to use, e.g., 'TLSv1.2'.
+ * &nbsp;&nbsp;&nbsp;default: TLSv1.2
  * </pre>
  *
  * <pre>-use-ssl &lt;boolean&gt; (property: useSSL)
@@ -110,8 +128,14 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The password of the SMTP user.
  * </pre>
  *
+ * <pre>-password-env-var &lt;java.lang.String&gt; (property: passwordEnvVar)
+ * &nbsp;&nbsp;&nbsp;The environment variable to obtain the password from, before potentially
+ * &nbsp;&nbsp;&nbsp;prompting for it; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
- * &nbsp;&nbsp;&nbsp;If enabled and authentication is required, the user gets prompted for enter 
+ * &nbsp;&nbsp;&nbsp;If enabled and authentication is required, the user gets prompted for enter
  * &nbsp;&nbsp;&nbsp;a password if none has been provided in the setup.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
@@ -122,9 +146,22 @@ import java.util.List;
  * </pre>
  *
  * <pre>-custom-stop-message &lt;java.lang.String&gt; (property: customStopMessage)
- * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow 
+ * &nbsp;&nbsp;&nbsp;The custom stop message to use in case a user cancelation stops the flow
  * &nbsp;&nbsp;&nbsp;(default is the full name of the actor)
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
+ * <pre>-stop-mode &lt;GLOBAL|STOP_RESTRICTOR&gt; (property: stopMode)
+ * &nbsp;&nbsp;&nbsp;The stop mode to use.
+ * &nbsp;&nbsp;&nbsp;default: GLOBAL
+ * </pre>
+ *
+ * <pre>-parameters-file &lt;adams.core.io.PlaceholderFile&gt; (property: parametersFile)
+ * &nbsp;&nbsp;&nbsp;The Java properties file containing the parameters and their associated
+ * &nbsp;&nbsp;&nbsp;values to apply. The properties in the file must align with the Bean properties
+ * &nbsp;&nbsp;&nbsp;&#47;ADAMS option of the object that is to be updated. If the option takes an
+ * &nbsp;&nbsp;&nbsp;array, then the values for the array must be blank-separated.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
  <!-- options-end -->
@@ -133,7 +170,7 @@ import java.util.List;
  */
 public class SMTPConnection
   extends AbstractStandalone
-  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
+  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor, ParametersFromFileSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
@@ -182,6 +219,9 @@ public class SMTPConnection
 
   /** how to perform the stop. */
   protected StopMode m_StopMode;
+
+  /** the parameters file to load. */
+  protected PlaceholderFile m_ParametersFile;
 
   /**
    * Returns a string describing the object.
@@ -256,6 +296,10 @@ public class SMTPConnection
     m_OptionManager.add(
       "stop-mode", "stopMode",
       StopMode.GLOBAL);
+
+    m_OptionManager.add(
+      "parameters-file", "parametersFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -267,6 +311,9 @@ public class SMTPConnection
   public String getQuickInfo() {
     String		result;
     List<String>	options;
+
+    if (!getParametersFile().isDirectory())
+      return QuickInfoHelper.toString(this, "parametersFile", m_ParametersFile, "parameters from: ");
 
     result = "";
 
@@ -283,7 +330,7 @@ public class SMTPConnection
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "protocols", m_Protocols));
     QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "useSSL", m_UseSSL, "SSL"));
     if (   (QuickInfoHelper.hasVariable(this, "requiresAuthentication") || m_RequiresAuthentication)
-      && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
+	     && (QuickInfoHelper.hasVariable(this, "promptForPassword") || m_PromptForPassword) ) {
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "promptForPassword", m_PromptForPassword, "prompt for password"));
       QuickInfoHelper.add(options, QuickInfoHelper.toString(this, "stopFlowIfCanceled", m_StopFlowIfCanceled, "stop flow"));
     }
@@ -744,6 +791,38 @@ public class SMTPConnection
   }
 
   /**
+   * Sets the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setParametersFile(PlaceholderFile value) {
+    m_ParametersFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @return 		the file
+   */
+  @Override
+  public PlaceholderFile getParametersFile() {
+    return m_ParametersFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String parametersFileTipText() {
+    return ParametersFromFileHelper.parametersFileTipText();
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -800,13 +879,14 @@ public class SMTPConnection
   protected String doExecute() {
     String	result;
 
-    result = null;
-
-    m_ActualPassword = m_Password;
-    if (m_RequiresAuthentication) {
-      result = PasswordHelper.fromEnvVar(this);
-      if ((result == null) && (m_ActualPassword.isEmpty()))
-	result = PasswordHelper.prompt(this);
+    result = ParametersFromFileHelper.applyParameters(this);
+    if (result == null) {
+      m_ActualPassword = m_Password;
+      if (m_RequiresAuthentication) {
+	result = PasswordHelper.fromEnvVar(this);
+	if ((result == null) && (m_ActualPassword.isEmpty()))
+	  result = PasswordHelper.prompt(this);
+      }
     }
 
     return result;

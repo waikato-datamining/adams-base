@@ -21,10 +21,13 @@
 package adams.flow.standalone;
 
 import adams.core.EnvironmentPasswordSupporter;
+import adams.core.ParametersFromFileHelper;
+import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderFile;
 import adams.flow.core.InteractiveActor;
 import adams.flow.core.StopMode;
 import jodd.mail.ImapServer;
@@ -117,6 +120,12 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The password of the IMAP user.
  * </pre>
  *
+ * <pre>-password-env-var &lt;java.lang.String&gt; (property: passwordEnvVar)
+ * &nbsp;&nbsp;&nbsp;The environment variable to obtain the password from, before potentially
+ * &nbsp;&nbsp;&nbsp;prompting for it; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
  * &nbsp;&nbsp;&nbsp;If enabled and authentication is required, the user gets prompted for enter
  * &nbsp;&nbsp;&nbsp;a password if none has been provided in the setup.
@@ -139,13 +148,21 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
+ * <pre>-parameters-file &lt;adams.core.io.PlaceholderFile&gt; (property: parametersFile)
+ * &nbsp;&nbsp;&nbsp;The Java properties file containing the parameters and their associated
+ * &nbsp;&nbsp;&nbsp;values to apply. The properties in the file must align with the Bean properties
+ * &nbsp;&nbsp;&nbsp;&#47;ADAMS option of the object that is to be updated. If the option takes an
+ * &nbsp;&nbsp;&nbsp;array, then the values for the array must be blank-separated.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class IMAPConnection
   extends AbstractStandalone
-  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor {
+  implements PasswordPrompter, EnvironmentPasswordSupporter, InteractiveActor, ParametersFromFileSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = 9145039564243937635L;
@@ -199,6 +216,9 @@ public class IMAPConnection
 
   /** the server. */
   protected transient ImapServer m_ImapServer;
+
+  /** the parameters file to load. */
+  protected PlaceholderFile m_ParametersFile;
 
   /** the session. */
   protected transient ReceiveMailSession m_ImapSession;
@@ -267,6 +287,10 @@ public class IMAPConnection
     m_OptionManager.add(
       "stop-mode", "stopMode",
       StopMode.GLOBAL);
+
+    m_OptionManager.add(
+      "parameters-file", "parametersFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -288,6 +312,9 @@ public class IMAPConnection
   public String getQuickInfo() {
     String		result;
     List<String>	options;
+
+    if (!getParametersFile().isDirectory())
+      return QuickInfoHelper.toString(this, "parametersFile", m_ParametersFile, "parameters from: ");
 
     result = QuickInfoHelper.toString(this, "scheme", m_Scheme) + "://";
 
@@ -703,6 +730,38 @@ public class IMAPConnection
   }
 
   /**
+   * Sets the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setParametersFile(PlaceholderFile value) {
+    m_ParametersFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @return 		the file
+   */
+  @Override
+  public PlaceholderFile getParametersFile() {
+    return m_ParametersFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String parametersFileTipText() {
+    return ParametersFromFileHelper.parametersFileTipText();
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -771,12 +830,14 @@ public class IMAPConnection
   protected String doExecute() {
     String	result;
 
-    result           = null;
-    m_ActualPassword = m_Password;
-    if (m_RequiresAuthentication) {
-      result = PasswordHelper.fromEnvVar(this);
-      if ((result == null) && (m_ActualPassword.isEmpty()))
-	result = PasswordHelper.prompt(this);
+    result = ParametersFromFileHelper.applyParameters(this);
+    if (result == null) {
+      m_ActualPassword = m_Password;
+      if (m_RequiresAuthentication) {
+	result = PasswordHelper.fromEnvVar(this);
+	if ((result == null) && (m_ActualPassword.isEmpty()))
+	  result = PasswordHelper.prompt(this);
+      }
     }
 
     return result;

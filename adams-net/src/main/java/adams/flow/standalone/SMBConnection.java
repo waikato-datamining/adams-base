@@ -21,10 +21,13 @@
 package adams.flow.standalone;
 
 import adams.core.EnvironmentPasswordSupporter;
+import adams.core.ParametersFromFileHelper;
+import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
 import adams.core.base.BasePassword;
+import adams.core.io.PlaceholderFile;
 import adams.core.management.User;
 import adams.core.net.SMBSessionProvider;
 import adams.flow.core.InteractiveActor;
@@ -50,6 +53,7 @@ import java.util.List;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -73,16 +77,23 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-domain &lt;java.lang.String&gt; (property: domain)
  * &nbsp;&nbsp;&nbsp;The domain name to connect to.
+ * &nbsp;&nbsp;&nbsp;default: WORKGROUP
+ * </pre>
+ *
+ * <pre>-host &lt;java.lang.String&gt; (property: host)
+ * &nbsp;&nbsp;&nbsp;The host (name&#47;IP address) to connect to.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
@@ -92,6 +103,12 @@ import java.util.List;
  *
  * <pre>-password &lt;adams.core.base.BasePassword&gt; (property: password)
  * &nbsp;&nbsp;&nbsp;The password of the SMB user to use for connecting.
+ * </pre>
+ *
+ * <pre>-password-env-var &lt;java.lang.String&gt; (property: passwordEnvVar)
+ * &nbsp;&nbsp;&nbsp;The environment variable to obtain the password from, before potentially
+ * &nbsp;&nbsp;&nbsp;prompting for it; ignored if empty.
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
  * <pre>-prompt-for-password &lt;boolean&gt; (property: promptForPassword)
@@ -116,13 +133,21 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: GLOBAL
  * </pre>
  *
+ * <pre>-parameters-file &lt;adams.core.io.PlaceholderFile&gt; (property: parametersFile)
+ * &nbsp;&nbsp;&nbsp;The Java properties file containing the parameters and their associated
+ * &nbsp;&nbsp;&nbsp;values to apply. The properties in the file must align with the Bean properties
+ * &nbsp;&nbsp;&nbsp;&#47;ADAMS option of the object that is to be updated. If the option takes an
+ * &nbsp;&nbsp;&nbsp;array, then the values for the array must be blank-separated.
+ * &nbsp;&nbsp;&nbsp;default: ${CWD}
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SMBConnection
   extends AbstractStandalone
-  implements SMBSessionProvider, EnvironmentPasswordSupporter, PasswordPrompter, InteractiveActor {
+  implements SMBSessionProvider, EnvironmentPasswordSupporter, PasswordPrompter, InteractiveActor, ParametersFromFileSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -1959430342987913960L;
@@ -156,6 +181,9 @@ public class SMBConnection
 
   /** how to perform the stop. */
   protected StopMode m_StopMode;
+
+  /** the parameters file to load. */
+  protected PlaceholderFile m_ParametersFile;
 
   /** the SMB client. */
   protected transient SMBClient m_Client;
@@ -218,6 +246,10 @@ public class SMBConnection
     m_OptionManager.add(
       "stop-mode", "stopMode",
       StopMode.GLOBAL);
+
+    m_OptionManager.add(
+      "parameters-file", "parametersFile",
+      new PlaceholderFile());
   }
 
   /**
@@ -239,6 +271,9 @@ public class SMBConnection
     String		result;
     List<String>	options;
     String		value;
+
+    if (!getParametersFile().isDirectory())
+      return QuickInfoHelper.toString(this, "parametersFile", m_ParametersFile, "parameters from: ");
 
     result = QuickInfoHelper.toString(this, "domain", (m_Domain.isEmpty() ? "no domain" : m_Domain), "domain: ");
     result += QuickInfoHelper.toString(this, "user", m_User, ", user: ");
@@ -553,6 +588,38 @@ public class SMBConnection
   }
 
   /**
+   * Sets the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @param value	the file
+   */
+  @Override
+  public void setParametersFile(PlaceholderFile value) {
+    m_ParametersFile = value;
+    reset();
+  }
+
+  /**
+   * Returns the properties file with the parameters to load. Ignored if pointing to a directory.
+   *
+   * @return 		the file
+   */
+  @Override
+  public PlaceholderFile getParametersFile() {
+    return m_ParametersFile;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String parametersFileTipText() {
+    return ParametersFromFileHelper.parametersFileTipText();
+  }
+
+  /**
    * Performs the interaction with the user.
    *
    * @return		null if successfully interacted, otherwise error message
@@ -632,24 +699,25 @@ public class SMBConnection
   protected String doExecute() {
     String	result;
 
-    result = null;
+    result = ParametersFromFileHelper.applyParameters(this);
+    if (result == null) {
+      if (m_Session == null) {
+	if (isLoggingEnabled())
+	  getLogger().info("Starting new session");
 
-    if (m_Session == null) {
-      if (isLoggingEnabled())
-	getLogger().info("Starting new session");
+	// password
+	m_ActualPassword = m_Password;
+	result = PasswordHelper.fromEnvVar(this);
+	if ((result == null) && (m_ActualPassword.isEmpty()))
+	  result = PasswordHelper.prompt(this);
 
-      // password
-      m_ActualPassword = m_Password;
-      result           = PasswordHelper.fromEnvVar(this);
-      if ((result == null) && (m_ActualPassword.isEmpty()))
-	result = PasswordHelper.prompt(this);
-
-      if (result == null)
-	m_Session = newSession();
-    }
-    else {
-      if (isLoggingEnabled())
-	getLogger().info("Re-using current session");
+	if (result == null)
+	  m_Session = newSession();
+      }
+      else {
+	if (isLoggingEnabled())
+	  getLogger().info("Re-using current session");
+      }
     }
 
     return result;
