@@ -88,6 +88,19 @@ These JDBC drivers use the following JDBC URLs:
 \end{tight_itemize}
 
 \clearpage
+\section{PostgreSQL}
+The PostgreSQL JDBC driver can hang when sending large batch statements with a lot of columns. You can address
+this issue by either reducing the number of statements in the batch of by increasing the values for the
+\texttt{sendBuffer} and \texttt{recvBufferSize} parameters that you supply via the JDBC
+URL\footnote{\url{https://github.com/pgjdbc/pgjdbc/issues/3199\#issuecomment-4769803847}{}}. For example,
+append the following:
+\begin{verbatim}
+?sendBufferSize=819200&recvBufferSize=819200
+\end{verbatim}
+For more information on parameters to the JDBC driver, see the following: \\
+\url{https://jdbc.postgresql.org/documentation/use/}{}
+
+\clearpage
 \section{H2}
 The H2 database requires a more strict ANSI SQL syntax than MySQL uses by default.
 In order for the automatic table generation to work, you need to set the following property
