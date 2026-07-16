@@ -15,7 +15,7 @@
 
 /*
  * AbstractIDExtractor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.idextraction;
@@ -68,17 +68,29 @@ public abstract class AbstractIDExtractor
   protected abstract String doExtractID(Object obj);
 
   /**
+   * Hook method for post-processing the ID.
+   *
+   * @param id	the extracted ID
+   * @return		the (potentially) updated ID
+   */
+  protected String postProcessID(String id) {
+    return id;
+  }
+
+  /**
    * Extracts the ID from a object.
    *
    * @param obj		the object to process
    * @return		the extracted ID, null if failed to extract or not handled
    */
   public String extractID(Object obj) {
+    String	result;
     String	msg;
 
     msg = check(obj);
     if (msg != null)
       throw new IllegalStateException(msg);
-    return doExtractID(obj);
+    result = doExtractID(obj);
+    return postProcessID(result);
   }
 }

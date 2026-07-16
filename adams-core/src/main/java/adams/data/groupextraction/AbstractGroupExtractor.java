@@ -15,7 +15,7 @@
 
 /*
  * AbstractGroupExtractor.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.groupextraction;
@@ -68,17 +68,29 @@ public abstract class AbstractGroupExtractor
   protected abstract String doExtractGroup(Object obj);
 
   /**
+   * Hook method for post-processing the group.
+   *
+   * @param group	the extracted group
+   * @return		the (potentially) updated group
+   */
+  protected String postProcessGroup(String group) {
+    return group;
+  }
+
+  /**
    * Extracts the group from the object.
    *
    * @param obj		the object to process
    * @return		the extracted group, null if failed to extract or not handled
    */
   public String extractGroup(Object obj) {
+    String	result;
     String	msg;
 
     msg = check(obj);
     if (msg != null)
       throw new IllegalStateException(msg);
-    return doExtractGroup(obj);
+    result = doExtractGroup(obj);
+    return postProcessGroup(result);
   }
 }
