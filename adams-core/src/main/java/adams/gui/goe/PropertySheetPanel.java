@@ -15,7 +15,7 @@
 
 /*
  *    PropertySheet.java
- *    Copyright (C) 1999-2025 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 1999-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -598,8 +598,13 @@ public class PropertySheetPanel
       scrollablePanel.add(empty);
     }
 
-    m_SplitPaneContent.validate();
+    m_PanelAbout.invalidate();
+    m_PanelAbout.validate();
+    m_PanelAbout.doLayout();
     m_SplitPaneContent.setBottomComponentHidden(false);
+    m_SplitPaneContent.invalidate();
+    m_SplitPaneContent.validate();
+    m_SplitPaneContent.doLayout();
     updateHelpPanel();
 
     // tabbedpane doesn't properly update itself, need to switch between pages to achieve that...
