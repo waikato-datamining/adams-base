@@ -15,7 +15,7 @@
 
 /*
  * InstanceComparator.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.visualization.instance;
 
@@ -344,8 +344,8 @@ public class InstanceComparePanel
       if (index != null) {
 	inst = m_Dataset.instance(index);
 	if (m_Remove != null) {
-	  m_Remove.input(m_Dataset.instance(index));
 	  try {
+	    m_Remove.input(m_Dataset.instance(index));
 	    m_Remove.batchFinished();
 	    inst = m_Remove.output();
 	  }
