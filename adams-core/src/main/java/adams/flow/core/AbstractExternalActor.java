@@ -15,7 +15,7 @@
 
 /*
  * AbstractExternalActor.java
- * Copyright (C) 2009-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
@@ -252,7 +252,7 @@ public abstract class AbstractExternalActor
 	if (result == null) {
 	  warning = m_ExternalActor.getOptionManager().updateVariableValues(true);
 	  if (warning != null)
-	    getLogger().severe(
+	    getLogger().warning(
 		"Updating variables ('" + getFullName() + "'/'" + file + "') resulted in the following error output "
 	    + "(which gets ignored since variables might get initialized later on):\n" + warning);
 	}
