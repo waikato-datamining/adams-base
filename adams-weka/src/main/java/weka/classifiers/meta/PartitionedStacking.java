@@ -13,23 +13,19 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PartitionedStackingClassifier.java
- * Copyright (C) 2010 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package weka.classifiers.meta;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.ParallelMultipleClassifiersCombiner;
 import weka.classifiers.trees.M5P;
 import weka.core.Attribute;
 import weka.core.Capabilities;
+import weka.core.Capabilities.Capability;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -37,9 +33,17 @@ import weka.core.Option;
 import weka.core.Range;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
-import weka.core.Capabilities.Capability;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  <!-- globalinfo-start -->
@@ -79,7 +83,6 @@ import weka.filters.unsupervised.attribute.Remove;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PartitionedStacking
   extends ParallelMultipleClassifiersCombiner {
@@ -197,9 +200,9 @@ public class PartitionedStacking
         break;
       ranges.add(new Range(tmpStr));
     }
-    if (ranges.size() == 0)
+    if (ranges.isEmpty())
       ranges.add(new Range("first-last"));
-    setRanges(ranges.toArray(new Range[ranges.size()]));
+    setRanges(ranges.toArray(new Range[0]));
 
     tmpStr = Utils.getOption('M', options);
     if (tmpStr.length() != 0) {
@@ -228,7 +231,7 @@ public class PartitionedStacking
   public String[] getOptions() {
     Vector<String>	result;
 
-    result = new Vector<String>();
+    result = new Vector<>();
 
     for (Range range: getRanges()) {
       result.add("-R");
@@ -240,7 +243,7 @@ public class PartitionedStacking
 
     result.addAll(Arrays.asList(super.getOptions()));
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -316,24 +319,6 @@ public class PartitionedStacking
   }
 
   /**
-   * Performs blocking or notifying.
-   *
-   * @param tf		if true the method blocks, otherwise notifies
-   */
-  private synchronized void block(boolean tf) {
-    if (tf) {
-      try {
-        wait();
-      }
-      catch (InterruptedException ex) {
-      }
-    }
-    else {
-      notifyAll();
-    }
-  }
-
-  /**
    * Does the actual construction of the base-classifiers.
    *
    * @param data	the data to use as basis for base-classifiers
@@ -343,6 +328,29 @@ public class PartitionedStacking
     int		i;
 
     m_Remove = new Remove[m_Classifiers.length];
+
+    if (m_numExecutionSlots <= 1) {
+      for (i = 0; i < m_Classifiers.length; i++) {
+	if (Thread.currentThread().isInterrupted()) throw new InterruptedException();
+	m_Ranges[i].setUpper(data.numAttributes() - 1);
+	m_Remove[i] = new Remove();
+	m_Remove[i].setAttributeIndicesArray(m_Ranges[i].getSelection());
+	m_Remove[i].setInvertSelection(true);
+	m_Remove[i].setInputFormat(data);
+	Instances newData = Filter.useFilter(data, m_Remove[i]);
+	m_Classifiers[i].buildClassifier(newData);
+      }
+      return;
+    }
+
+    if (m_Debug)
+      System.out.println(
+	"Starting executor pool with " + m_numExecutionSlots + " slot(s)...");
+    ExecutorService executorPool = Executors.newFixedThreadPool(m_numExecutionSlots);
+
+    final CountDownLatch doneSignal = new CountDownLatch(m_Classifiers.length);
+    final AtomicInteger numFailed = new AtomicInteger();
+    final AtomicInteger numCompleted = new AtomicInteger();
 
     for (i = 0; i < m_Classifiers.length; i++) {
       final Classifier currentClassifier = m_Classifiers[i];
@@ -365,21 +373,34 @@ public class PartitionedStacking
 	    currentClassifier.buildClassifier(newData);
 	    if (m_Debug)
 	      System.out.println("Finished classifier (" + (iteration +1) + ")");
-	    completedClassifier(iteration, true);
+	    numCompleted.incrementAndGet();
 	  }
 	  catch (Exception ex) {
 	    ex.printStackTrace();
-	    completedClassifier(iteration, false);
+	    numFailed.incrementAndGet();
+	  } finally {
+	    doneSignal.countDown();
 	  }
 	}
       };
 
       // launch this task
-      m_executorPool.execute(newTask);
+      executorPool.execute(newTask);
     }
 
-    if (m_completed + m_failed < m_Classifiers.length)
-      block(true);
+    try {
+      doneSignal.await();
+    } catch (InterruptedException ie) {
+      Thread.currentThread().interrupt(); // preserve cancellation signal
+      throw ie; // propagate as "cancelled"
+    } finally {
+      executorPool.shutdownNow();
+    }
+    if (m_Debug && numFailed.intValue() > 0) {
+      System.err.println("Problem building classifiers - some iterations failed.");
+    }
+    m_completed = numCompleted.intValue();
+    m_failed = numFailed.intValue();
   }
 
   /**
@@ -408,10 +429,6 @@ public class PartitionedStacking
     data = new Instances(data);
     data.deleteWithMissingClass();
 
-    if (m_Debug)
-      System.out.println(
-	  "Starting executor pool with " + m_numExecutionSlots + " slot(s)...");
-    startExecutorPool();
     m_completed = 0;
     m_failed    = 0;
 
