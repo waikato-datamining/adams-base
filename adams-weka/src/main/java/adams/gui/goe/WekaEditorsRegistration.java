@@ -15,7 +15,7 @@
 
 /*
  * WekaEditorsRegistration.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -27,6 +27,7 @@ import weka.core.PluginManager;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,14 @@ public class WekaEditorsRegistration
      * @return		the plugins
      */
     public static Map<String, Map<String, String>> getPlugins() {
-      return PLUGINS;
+      Map<String, Map<String, String>>	result;
+
+      result = new HashMap<>(PLUGINS);
+
+      // can't be located for some reason?
+      result.remove("weka.gui.GUIChooser.GUIChooserMenuPlugin");
+
+      return result;
     }
 
     /**
@@ -198,7 +206,7 @@ public class WekaEditorsRegistration
 	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + key, e);
 	}
       }
-      if (classList.size() > 0) {
+      if (!classList.isEmpty()) {
         try {
 	  ClassLister.getSingleton().addHierarchy(ClassManager.getSingleton().forName(superclass), classList.toArray(new Class[0]));
 	  getLogger().info("Registering class hierarchy: " + key);
@@ -280,7 +288,7 @@ public class WekaEditorsRegistration
 	  getLogger().log(Level.SEVERE, "Failed to register class hierarchy: " + superclass, e);
 	}
       }
-      if (classList.size() > 0) {
+      if (!classList.isEmpty()) {
         try {
 	  ClassLister.getSingleton().addHierarchy(ClassManager.getSingleton().forName(superclass), classList.toArray(new Class[0]));
 	  getLogger().info("Registering class hierarchy: " + superclass);
