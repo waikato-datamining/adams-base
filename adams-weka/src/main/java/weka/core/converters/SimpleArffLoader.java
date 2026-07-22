@@ -15,11 +15,12 @@
 
 /*
  * SimpleArffLoader.java
- * Copyright (C) 2017-2021 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package weka.core.converters;
 
+import adams.core.StoppableWithFeedback;
 import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
@@ -59,7 +60,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class SimpleArffLoader
   extends AbstractFileLoader
-  implements WeightedInstancesHandler, OptionHandler, EncodingSupporter {
+  implements WeightedInstancesHandler, OptionHandler, EncodingSupporter, StoppableWithFeedback {
 
   private static final long serialVersionUID = 8692708185900983930L;
 
@@ -77,6 +78,9 @@ public class SimpleArffLoader
 
   /** the encoding to use. */
   protected BaseCharset m_Encoding = new BaseCharset();
+
+  /** whether the loading was stopped. */
+  protected boolean m_Stopped;
 
   /**
    * Initializes the loader.
@@ -198,7 +202,7 @@ public class SimpleArffLoader
     }
     else {
       if (!new BaseCharset().isValid(tmpStr))
-        throw new IllegalArgumentException("Invalid file encoding: " + tmpStr);
+	throw new IllegalArgumentException("Invalid file encoding: " + tmpStr);
       setEncoding(new BaseCharset(tmpStr));
     }
   }
@@ -318,8 +322,8 @@ public class SimpleArffLoader
       last = curr;
       curr = s.charAt(i);
       if ((curr == chr) && (last != '\\')) {
-        result = i;
-        break;
+	result = i;
+	break;
       }
     }
 
@@ -409,7 +413,7 @@ public class SimpleArffLoader
       current = removeAttributeType(current);   // remove "date "
       format = current;
       if (format.endsWith("}"))
-        format = format.substring(0, format.indexOf('{')).trim();
+	format = format.substring(0, format.indexOf('{')).trim();
       if (format.startsWith("'"))
 	format = Utils.unquote(format);
       else if (format.startsWith("\""))
@@ -420,7 +424,7 @@ public class SimpleArffLoader
       else
 	throw new IllegalStateException("Invalid date format: " + format);
       if (current.endsWith("}"))
-        current = current.substring(current.indexOf('{')).trim();
+	current = current.substring(current.indexOf('{')).trim();
     }
 
     // nominal values
@@ -482,7 +486,7 @@ public class SimpleArffLoader
 
     if (data.containsKey("weight")) {
       if (Utils.isDouble(data.get("weight")))
-        result.setWeight(Utils.toDouble(data.get("weight")));
+	result.setWeight(Utils.toDouble(data.get("weight")));
       else
 	throw new IllegalStateException("Invalid weight for attribute " + result.name() + ": " + data.get("weight"));
     }
@@ -626,6 +630,9 @@ public class SimpleArffLoader
       while ((line = reader.readLine()) != null) {
 	lineIndex++;
 
+	if (m_Stopped)
+	  return null;
+
 	line = line.trim();
 	if (line.isEmpty())
 	  continue;
@@ -717,7 +724,7 @@ public class SimpleArffLoader
       else {
 	fis     = new FileInputStream(m_sourceFile.getAbsolutePath());
 	isr     = new InputStreamReader(fis, charset.newDecoder());
-        breader = new BufferedReader(isr);
+	breader = new BufferedReader(isr);
       }
       result  = read(breader);
     }
@@ -746,6 +753,24 @@ public class SimpleArffLoader
   @Override
   public Instance getNextInstance(Instances structure) throws IOException {
     throw new IOException("Incremental mode not supported!");
+  }
+
+  /**
+   * Stops the execution.
+   */
+  @Override
+  public void stopExecution() {
+    m_Stopped = true;
+  }
+
+  /**
+   * Whether the execution has been stopped.
+   *
+   * @return		true if stopped
+   */
+  @Override
+  public boolean isStopped() {
+    return m_Stopped;
   }
 
   /**
