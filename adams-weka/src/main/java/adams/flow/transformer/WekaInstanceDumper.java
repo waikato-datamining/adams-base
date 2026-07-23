@@ -15,7 +15,7 @@
 
 /*
  * WekaInstanceDumper.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -39,6 +39,7 @@ import weka.core.converters.CSVLoader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -46,6 +47,7 @@ import java.util.List;
 /**
  <!-- globalinfo-start -->
  * Dumps weka.core.Instance objects into an ARFF file. If the headers change and the header-check is enabled, then a new file will be used.<br>
+ * The '_SIMPLE' formats can only handle date&#47;numeric&#47;nominal&#47;string attribute types.<br>
  * The actor can also turn double arrays into weka.core.Instance objects (all attributes are assumed to be numeric).
  * <br><br>
  <!-- globalinfo-end -->
@@ -61,13 +63,10 @@ import java.util.List;
  <!-- flow-summary-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- *
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -75,24 +74,41 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: WekaInstanceDumper
  * </pre>
  *
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
- * <pre>-skip (property: skip)
+ * <pre>-skip &lt;boolean&gt; (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
- * <pre>-check (property: checkHeader)
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
+ * </pre>
+ *
+ * <pre>-check &lt;boolean&gt; (property: checkHeader)
  * &nbsp;&nbsp;&nbsp;Whether to check the headers - if the headers change, the Instance object
  * &nbsp;&nbsp;&nbsp;gets dumped into a new file.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
+ * <pre>-lenient &lt;boolean&gt; (property: lenient)
+ * &nbsp;&nbsp;&nbsp;If enabled, then only the attribute types must match, not also the names.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-prefix &lt;adams.core.io.PlaceholderFile&gt; (property: outputPrefix)
@@ -101,23 +117,31 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;default: ${CWD}
  * </pre>
  *
- * <pre>-format &lt;ARFF|CSV|TAB&gt; (property: outputFormat)
+ * <pre>-format &lt;ARFF|ARFF_SIMPLE|CSV|CSV_SIMPLE|TAB|TAB_SIMPLE&gt; (property: outputFormat)
  * &nbsp;&nbsp;&nbsp;The format to output the data in.
  * &nbsp;&nbsp;&nbsp;default: ARFF
  * </pre>
  *
- * <pre>-use-relation (property: useRelationNameAsFilename)
+ * <pre>-num-decimals &lt;int&gt; (property: numDecimals)
+ * &nbsp;&nbsp;&nbsp;The number of decimals to use in the output.
+ * &nbsp;&nbsp;&nbsp;default: 6
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-use-relation &lt;boolean&gt; (property: useRelationNameAsFilename)
  * &nbsp;&nbsp;&nbsp;If set to true, then the relation name replaces the name of the output file;
  * &nbsp;&nbsp;&nbsp; eg if the output file is '&#47;some&#47;where&#47;file.arff' and the relation is 'anneal'
  * &nbsp;&nbsp;&nbsp; then the resulting file name will be '&#47;some&#47;where&#47;anneal.arff'.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
- * <pre>-keep-existing (property: keepExisting)
+ * <pre>-keep-existing &lt;boolean&gt; (property: keepExisting)
  * &nbsp;&nbsp;&nbsp;If enabled, any output file that exists when the actor is executed for the
  * &nbsp;&nbsp;&nbsp;first time (or variables modify the actor) won't get replaced with the current
  * &nbsp;&nbsp;&nbsp;header; useful when outputting data in multiple locations in the flow, but
  * &nbsp;&nbsp;&nbsp;one needs to be cautious as to not stored mixed content (eg varying number
  * &nbsp;&nbsp;&nbsp;of attributes, etc).
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
  * <pre>-buffer-size &lt;int&gt; (property: bufferSize)
@@ -142,15 +166,20 @@ public class WekaInstanceDumper
    * The format to output the data in.
    *
    * @author  fracpete (fracpete at waikato dot ac dot nz)
-   * @version $Revision$
    */
   public enum OutputFormat {
     /** ARFF. */
     ARFF,
+    /** ARFF (simple). */
+    ARFF_SIMPLE,
     /** comma-separated. */
     CSV,
+    /** comma-separated (simple). */
+    CSV_SIMPLE,
     /** tab-separated. */
-    TAB
+    TAB,
+    /** tab-separated (simple). */
+    TAB_SIMPLE
   }
 
   /** the key for storing the header in the backup. */
@@ -180,6 +209,9 @@ public class WekaInstanceDumper
   /** the output format. */
   protected OutputFormat m_OutputFormat;
 
+  /** the number of decimals to use. */
+  protected int m_NumDecimals;
+
   /** whether to use the relation name as filename. */
   protected boolean m_UseRelationNameAsFilename;
 
@@ -196,6 +228,9 @@ public class WekaInstanceDumper
   /** whether currently writing to disk. */
   protected boolean m_Writing;
 
+  /** the number format to use. */
+  protected DecimalFormat m_Format;
+
   /**
    * Returns a string describing the object.
    *
@@ -206,6 +241,7 @@ public class WekaInstanceDumper
     return
       "Dumps weka.core.Instance objects into an ARFF file. If the headers "
 	+ "change and the header-check is enabled, then a new file will be used.\n"
+	+ "The '_SIMPLE' formats can only handle date/numeric/nominal/string attribute types.\n"
 	+ "The actor can also turn double arrays into weka.core.Instance objects "
 	+ "(all attributes are assumed to be numeric).";
   }
@@ -234,6 +270,10 @@ public class WekaInstanceDumper
       OutputFormat.ARFF);
 
     m_OptionManager.add(
+      "num-decimals", "numDecimals",
+      6, 0, null);
+
+    m_OptionManager.add(
       "use-relation", "useRelationNameAsFilename",
       false);
 
@@ -255,6 +295,7 @@ public class WekaInstanceDumper
 
     m_Buffer  = new ArrayList<>();
     m_Writing = false;
+    m_Format  = new DecimalFormat("0.#######");
   }
 
   /**
@@ -279,7 +320,7 @@ public class WekaInstanceDumper
     }
     else {
       if (QuickInfoHelper.hasVariable(this, "useRelationNameAsFilename") || m_UseRelationNameAsFilename)
-	result += new PlaceholderFile(m_OutputPrefix.getParent()).toString() + File.separator + "<relation>";
+	result += new PlaceholderFile(m_OutputPrefix.getParent()) + File.separator + "<relation>";
       else
 	result += m_OutputPrefix;
     }
@@ -424,6 +465,38 @@ public class WekaInstanceDumper
    */
   public String outputFormatTipText() {
     return "The format to output the data in.";
+  }
+
+  /**
+   * Sets the number of decimals to use.
+   *
+   * @param value	the decimals
+   */
+  public void setNumDecimals(int value) {
+    if (getOptionManager().isValid("numDecimals", value)) {
+      m_NumDecimals = value;
+      m_Format = new DecimalFormat("0." + Utils.padLeft("", '#', m_NumDecimals));
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of decimals to use.
+   *
+   * @return		the decimals
+   */
+  public int getNumDecimals() {
+    return m_NumDecimals;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String numDecimalsTipText() {
+    return "The number of decimals to use in the output.";
   }
 
   /**
@@ -661,10 +734,13 @@ public class WekaInstanceDumper
 
     switch (m_OutputFormat) {
       case ARFF:
+      case ARFF_SIMPLE:
 	result += ArffLoader.FILE_EXTENSION;
 	break;
       case CSV:
+      case CSV_SIMPLE:
       case TAB:
+      case TAB_SIMPLE:
 	result += CSVLoader.FILE_EXTENSION;
 	break;
       default:
@@ -683,26 +759,32 @@ public class WekaInstanceDumper
   protected String createHeader(Instances header) {
     StringBuilder	result;
     int			i;
+    String		sep;
 
     result = new StringBuilder();
 
     switch (m_OutputFormat) {
+      case TAB:
+      case TAB_SIMPLE:
+	sep = "\t";
+	break;
+      default:
+	sep = ",";
+    }
+
+    switch (m_OutputFormat) {
       case ARFF:
+      case ARFF_SIMPLE:
 	result.append(new Instances(header, 0).toString());
 	break;
 
       case CSV:
-	for (i = 0; i < header.numAttributes(); i++) {
-	  if (i > 0)
-	    result.append(",");
-	  result.append(Utils.quote(header.attribute(i).name()));
-	}
-	break;
-
+      case CSV_SIMPLE:
       case TAB:
+      case TAB_SIMPLE:
 	for (i = 0; i < header.numAttributes(); i++) {
 	  if (i > 0)
-	    result.append("\t");
+	    result.append(sep);
 	  result.append(Utils.quote(header.attribute(i).name()));
 	}
 	break;
@@ -723,27 +805,43 @@ public class WekaInstanceDumper
   protected String createRow(Instance row) {
     StringBuilder	result;
     int			i;
+    String		sep;
 
     result = new StringBuilder();
 
     switch (m_OutputFormat) {
+      case TAB:
+      case TAB_SIMPLE:
+	sep = "\t";
+	break;
+      default:
+	sep = ",";
+    }
+
+    switch (m_OutputFormat) {
       case ARFF:
-	result.append(row.toString());
+	result.append(row.toStringMaxDecimalDigits(m_NumDecimals));
 	break;
 
-      case CSV:
+      case ARFF_SIMPLE:
+      case CSV_SIMPLE:
+      case TAB_SIMPLE:
 	for (i = 0; i < row.numAttributes(); i++) {
 	  if (i > 0)
-	    result.append(",");
-	  result.append(row.toString(i));
+	    result.append(sep);
+	  if (row.attribute(i).type() == Attribute.NUMERIC)
+	    result.append(m_Format.format(row.value(i)));
+	  else
+	    result.append(row.stringValue(i));
 	}
 	break;
 
+      case CSV:
       case TAB:
 	for (i = 0; i < row.numAttributes(); i++) {
 	  if (i > 0)
-	    result.append("\t");
-	  result.append(row.toString(i));
+	    result.append(sep);
+	  result.append(row.toString(i, m_NumDecimals));
 	}
 	break;
 
