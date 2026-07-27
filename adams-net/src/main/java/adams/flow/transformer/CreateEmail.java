@@ -43,6 +43,7 @@ import java.io.File;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
@@ -66,12 +67,14 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-sender &lt;adams.core.net.EmailAddress&gt; (property: sender)
@@ -93,6 +96,11 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
  *
+ * <pre>-reply-to &lt;adams.core.net.EmailAddress&gt; [-reply-to ...] (property: replyTo)
+ * &nbsp;&nbsp;&nbsp;The ReplyTo recipients.
+ * &nbsp;&nbsp;&nbsp;default:
+ * </pre>
+ *
  * <pre>-subject &lt;java.lang.String&gt; (property: subject)
  * &nbsp;&nbsp;&nbsp;The subject of the email, can contain variables.
  * &nbsp;&nbsp;&nbsp;default:
@@ -108,7 +116,7 @@ import java.io.File;
  * &nbsp;&nbsp;&nbsp;'--', can contain variables.
  * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -131,6 +139,9 @@ public class CreateEmail
   /** the recipients (BCC). */
   protected EmailAddress[] m_BCC;
 
+  /** the ReplyTo addresses. */
+  protected EmailAddress[] m_ReplyTo;
+
   /** the subject. */
   protected String m_Subject;
 
@@ -139,7 +150,7 @@ public class CreateEmail
 
   /** the signature. */
   protected BaseText m_Signature;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -148,10 +159,10 @@ public class CreateEmail
   @Override
   public String globalInfo() {
     return
-        "Actor for creating emails to be sent. The (optional) attachments are taken from the input.\n"
-      + "Variables in 'subject', 'body' and 'signature' are automatically replaced "
-      + "whenever the actor is executed.\n"
-      + (EmailHelper.isEnabled() ? "" : "Email support not enabled, check email setup!");
+      "Actor for creating emails to be sent. The (optional) attachments are taken from the input.\n"
+	+ "Variables in 'subject', 'body' and 'signature' are automatically replaced "
+	+ "whenever the actor is executed.\n"
+	+ (EmailHelper.isEnabled() ? "" : "Email support not enabled, check email setup!");
   }
 
   /**
@@ -162,34 +173,38 @@ public class CreateEmail
     super.defineOptions();
 
     m_OptionManager.add(
-	    "sender", "sender",
-	    new EmailAddress(EmailHelper.getDefaultFromAddress())).dontOutputDefaultValue();
+      "sender", "sender",
+      new EmailAddress(EmailHelper.getDefaultFromAddress())).dontOutputDefaultValue();
 
     m_OptionManager.add(
-	    "recipient", "recipients",
-	    new EmailAddress[0]);
+      "recipient", "recipients",
+      new EmailAddress[0]);
 
     m_OptionManager.add(
-	    "cc", "CC",
-	    new EmailAddress[0]);
+      "cc", "CC",
+      new EmailAddress[0]);
 
     m_OptionManager.add(
-	    "bcc", "BCC",
-	    new EmailAddress[0]);
+      "bcc", "BCC",
+      new EmailAddress[0]);
 
     m_OptionManager.add(
-	    "subject", "subject",
-	    "");
+      "reply-to", "replyTo",
+      new EmailAddress[0]);
 
     m_OptionManager.add(
-	    "body", "body",
-	    new BaseText(""));
+      "subject", "subject",
+      "");
 
     m_OptionManager.add(
-	    "signature", "signature",
-	    new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
+      "body", "body",
+      new BaseText(""));
+
+    m_OptionManager.add(
+      "signature", "signature",
+      new BaseText(Utils.unbackQuoteChars(EmailHelper.getDefaultSignature())));
   }
-  
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -225,7 +240,15 @@ public class CreateEmail
     value = QuickInfoHelper.toString(this, "BCC", value, ", BCC: ");
     if (value != null)
       result += value;
-    
+
+    if ((m_ReplyTo != null) && (m_ReplyTo.length > 0))
+      value = Utils.flatten(m_ReplyTo, ", ");
+    else
+      value = null;
+    value = QuickInfoHelper.toString(this, "replyTo", value, ", reply-to: ");
+    if (value != null)
+      result += value;
+
     return result;
   }
 
@@ -346,6 +369,35 @@ public class CreateEmail
   }
 
   /**
+   * Sets the ReplyTo recipients.
+   *
+   * @param value	the recipients
+   */
+  public void setReplyTo(EmailAddress[] value) {
+    m_ReplyTo = value;
+    reset();
+  }
+
+  /**
+   * Returns the ReplyTo recipients.
+   *
+   * @return 		the recipients
+   */
+  public EmailAddress[] getReplyTo() {
+    return m_ReplyTo;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *			displaying in the GUI or for listing the options.
+   */
+  public String replyToTipText() {
+    return "The ReplyTo recipients.";
+  }
+
+  /**
    * Sets the subject.
    *
    * @param value	the subject
@@ -430,8 +482,8 @@ public class CreateEmail
    */
   public String signatureTipText() {
     return
-        "The signature of the email, gets separated by an extra line "
-      + "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "', can contain variables.";
+      "The signature of the email, gets separated by an extra line "
+	+ "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "', can contain variables.";
   }
 
   /**
@@ -452,7 +504,7 @@ public class CreateEmail
   public Class[] generates() {
     return new Class[]{adams.core.net.Email.class};
   }
-  
+
   /**
    * Initializes the item for flow execution.
    *
@@ -476,7 +528,7 @@ public class CreateEmail
 
     return result;
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -489,7 +541,7 @@ public class CreateEmail
     String			subject;
     String			body;
     adams.core.net.Email	email;
-    
+
 
     result = null;
 
@@ -504,8 +556,8 @@ public class CreateEmail
     // replace variables
     subject = getVariables().expand(m_Subject);
     body    = EmailHelper.combine(
-	getVariables().expand(m_Body.getValue()), 
-	getVariables().expand(m_Signature.getValue()));
+      getVariables().expand(m_Body.getValue()),
+      getVariables().expand(m_Signature.getValue()));
 
     try {
       email = new adams.core.net.Email()
@@ -513,6 +565,7 @@ public class CreateEmail
 		.to(m_Recipients)
 		.cc(m_CC)
 		.bcc(m_BCC)
+		.replyTo(m_ReplyTo)
 		.subject(subject)
 		.body(body)
 		.attachments(attachments);

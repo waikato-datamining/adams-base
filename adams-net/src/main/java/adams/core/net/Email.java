@@ -56,7 +56,10 @@ public class Email
 
   /** the BCC recipients. */
   protected EmailAddress[] m_BCC;
-  
+
+  /** the ReplyTo recipients. */
+  protected EmailAddress[] m_ReplyTo;
+
   /** the subject. */
   protected String m_Subject;
   
@@ -79,6 +82,7 @@ public class Email
     m_To                  = new EmailAddress[0];
     m_CC                  = new EmailAddress[0];
     m_BCC                 = new EmailAddress[0];
+    m_ReplyTo             = new EmailAddress[0];
     m_Subject             = NO_SUBJECT;
     m_Body                = "";
     m_Attachments         = new File[0];
@@ -197,6 +201,32 @@ public class Email
   }
 
   /**
+   * Sets the ReplyTo email address.
+   *
+   * @param replyTo	the address, can be null
+   * @return		itself
+   */
+  public Email replyTo(EmailAddress replyTo) {
+    if (replyTo == null)
+      return replyTo(new EmailAddress[0]);
+    else
+      return replyTo(new EmailAddress[]{replyTo});
+  }
+
+  /**
+   * Sets the ReplyTo email addresses.
+   *
+   * @param replyTo	the ReplyTo addresses, can be null
+   * @return		itself
+   */
+  public Email replyTo(EmailAddress[] replyTo) {
+    if (replyTo == null)
+      replyTo = new EmailAddress[0];
+    m_ReplyTo = replyTo;
+    return this;
+  }
+
+  /**
    * Returns the sender.
    * 
    * @return		the sender
@@ -288,7 +318,16 @@ public class Email
   public EmailAddress[] getBCC() {
     return m_BCC;
   }
-  
+
+  /**
+   * Returns the ReplyTo recipients.
+   *
+   * @return		the recipients
+   */
+  public EmailAddress[] getReplyTo() {
+    return m_ReplyTo;
+  }
+
   /**
    * Returns the attachments.
    * 

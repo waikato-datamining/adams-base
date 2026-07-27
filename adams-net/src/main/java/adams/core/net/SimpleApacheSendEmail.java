@@ -15,7 +15,7 @@
 
 /*
  * SimpleApacheSendEmail.java
- * Copyright (C) 2013-2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
@@ -151,6 +151,8 @@ public class SimpleApacheSendEmail
       mail.addCc(address.getValue());
     for (EmailAddress address: email.getBCC())
       mail.addBcc(address.getValue());
+    for (EmailAddress address: email.getReplyTo())
+      mail.addReplyTo(address.getValue());
     mail.setSubject(email.getSubject());
     mail.setMsg(email.getBody());
     mail.setHostName(m_Server);

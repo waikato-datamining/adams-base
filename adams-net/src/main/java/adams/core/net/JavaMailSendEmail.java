@@ -217,12 +217,20 @@ public class JavaMailSendEmail
     Multipart 			multipart;
     int				i;
     byte[]			data;
+    InternetAddress[]		replyTo;
 
     if (m_Session == null)
       throw new IllegalStateException("SMTP session not initialized!");
 
     // setup message
-    message   = newMessage(email.getFrom(), email.getTo(), email.getCC(), email.getBCC(), email.getSubject());
+    message = newMessage(email.getFrom(), email.getTo(), email.getCC(), email.getBCC(), email.getSubject());
+    // replyTo
+    if (email.getReplyTo().length > 0) {
+      replyTo = new InternetAddress[email.getReplyTo().length];
+      for (i = 0; i < email.getReplyTo().length; i++)
+	replyTo[i] = new InternetAddress(email.getReplyTo()[i].getValue());
+      message.setReplyTo(replyTo);
+    }
     multipart = new MimeMultipart();
 
     // body

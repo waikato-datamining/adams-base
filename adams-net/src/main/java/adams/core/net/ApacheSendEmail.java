@@ -15,7 +15,7 @@
 
 /*
  * ApacheSendEmail.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache Software Foundation (original SMTPMail example)
  */
 package adams.core.net;
@@ -225,6 +225,8 @@ public class ApacheSendEmail
       m_Client.addRecipient(email.getCC()[i].strippedValue());
     for (i = 0; i < email.getBCC().length; i++)
       m_Client.addRecipient(email.getBCC()[i].stringValue());
+    if (email.getReplyTo().length > 0)
+      getLogger().warning("No support for ReplyTo!");
 
     // start message
     writer = m_Client.sendMessageData();
@@ -245,19 +247,17 @@ public class ApacheSendEmail
     writer.write("\n");
     
     // attachements
-    if (email.getAttachments().length > 0) {
-      for (File file: email.getAttachments()) {
-	writer.write("--" + boundary + "\n");
-	mime = MimeTypeHelper.getMimeType(file);
-	writer.write("Content-Type: " + mime.toString() + "; name=\"" + file.getName() + "\"\n");
-	writer.write("Content-Disposition: attachment; filename=\"" + file.getName() + "\"\n");
-	writer.write("Content-Transfer-Encoding: base64\n");
-	writer.write("\n");
-	content = FileUtils.loadFromBinaryFile(file);
-	lines   = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
-	for (String line: lines)
-	  writer.write(line + "\n");
-      }
+    for (File file: email.getAttachments()) {
+      writer.write("--" + boundary + "\n");
+      mime = MimeTypeHelper.getMimeType(file);
+      writer.write("Content-Type: " + mime.toString() + "; name=\"" + file.getName() + "\"\n");
+      writer.write("Content-Disposition: attachment; filename=\"" + file.getName() + "\"\n");
+      writer.write("Content-Transfer-Encoding: base64\n");
+      writer.write("\n");
+      content = FileUtils.loadFromBinaryFile(file);
+      lines   = HttpRequestHelper.breakUp(InternetHelper.encodeBase64(content), 76);
+      for (String line: lines)
+	writer.write(line + "\n");
     }
 
     // finish message
