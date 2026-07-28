@@ -15,7 +15,7 @@
 
 /*
  * JsonHelper.java
- * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.json;
@@ -69,7 +69,7 @@ public class JsonHelper {
    * Parses the JSON String.
    *
    * @param json	the string to parse
-   * @param logging	for logging error messages, uses stderr if null
+   * @param logging	for logging error messages, uses global logger if null
    * @return		the object, null if failed to parse
    */
   public static Object parse(String json, LoggingSupporter logging) {
@@ -88,8 +88,7 @@ public class JsonHelper {
 	logging.getLogger().log(Level.SEVERE, "Failed to read JSON string: " + json, e);
       }
       else {
-	System.err.println("Failed to read JSON string: " + json);
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to read JSON string: " + json, e);
       }
       return null;
     }
@@ -104,7 +103,7 @@ public class JsonHelper {
    * Parses the JSON file.
    *
    * @param file	the file to parse
-   * @param logging	for logging error messages, uses stderr if null
+   * @param logging	for logging error messages, uses global logger if null
    * @return		the object, null if failed to parse
    */
   public static Object parse(File file, LoggingSupporter logging) {
@@ -123,8 +122,7 @@ public class JsonHelper {
 	logging.getLogger().log(Level.SEVERE, "Failed to read JSON file: " + file, e);
       }
       else {
-	System.err.println("Failed to read JSON file: " + file);
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to read JSON file: " + file, e);
       }
       return null;
     }
