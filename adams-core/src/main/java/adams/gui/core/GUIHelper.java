@@ -15,7 +15,7 @@
 
 /*
  * GUIHelper.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -44,10 +44,12 @@ import nz.ac.waikato.cms.locator.ClassLocator;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -2929,6 +2931,41 @@ public class GUIHelper {
     }
 
     return true;
+  }
+
+  /**
+   * Sets the new menubar in the parent dialog/frame.
+   *
+   * @param comp	the component that belongs to the dialog/frame to update
+   * @param menubar	the new menubar to use
+   * @return		true if updated
+   */
+  public static boolean setJMenuBar(Component comp, JMenuBar menubar) {
+    if (GUIHelper.getParentDialog(comp) != null) {
+      JDialog parent = (JDialog) GUIHelper.getParentDialog(comp);
+      parent.setJMenuBar(null);
+      parent.setJMenuBar(menubar);
+      parent.revalidate();
+      parent.repaint();
+      return true;
+    }
+    else if (GUIHelper.getParentFrame(comp) != null) {
+      JFrame parent = ((JFrame) GUIHelper.getParentFrame(comp));
+      parent.setJMenuBar(null);
+      parent.setJMenuBar(menubar);
+      parent.revalidate();
+      parent.repaint();
+      return true;
+    }
+    else if (GUIHelper.getParentInternalFrame(comp) != null) {
+      JInternalFrame parent = GUIHelper.getParentInternalFrame(comp);
+      parent.setJMenuBar(null);
+      parent.setJMenuBar(menubar);
+      parent.revalidate();
+      parent.repaint();
+      return true;
+    }
+    return false;
   }
 
   /**
