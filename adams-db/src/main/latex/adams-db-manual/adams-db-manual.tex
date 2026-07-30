@@ -42,7 +42,7 @@
 \center
 \begin{table}[b]
 	\begin{tabular}{c l l}
-		\parbox[c][2cm]{2cm}{\copyright 2019-2025} &
+		\parbox[c][2cm]{2cm}{\copyright 2019-2026} &
 		\parbox[c][2cm]{5cm}{\includegraphics[width=5cm]{images/coat_of_arms.pdf}} \\
 	\end{tabular}
 	\includegraphics[width=12cm]{images/cc.png} \\
@@ -108,6 +108,24 @@ in \texttt{Table.props} and place that file, e.g., in the ADAMS home directory o
 \begin{verbatim}
 AnsiQuotes=true
 \end{verbatim}
+
+\subsection{Remote access}
+By default, only the process that started the in-memory database has access to it.
+By adding the \textit{H2RemoteAccess} standalone, it is possible for other processes
+to connect to it as well using the following JDBC format:
+\begin{verbatim}
+jdbc:h2:tcp://<host>:<port>/<database>
+\end{verbatim}
+E.g., if the main process uses the following connection for the database and the default port
+for the remote access:
+\begin{verbatim}
+jdbc:h2:mem:1;DB_CLOSE_DELAY=-1;NON_KEYWORDS=VALUE
+\end{verbatim}
+Then another process on the same machine can access the database as follows:
+\begin{verbatim}
+jdbc:h2:tcp://localhost:9092/mem:1;NON_KEYWORDS=VALUE
+\end{verbatim}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{bibliography}
