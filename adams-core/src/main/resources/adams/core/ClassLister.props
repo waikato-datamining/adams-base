@@ -586,6 +586,10 @@ adams.flow.source.inputstreamsource.AbstractInputStreamGenerator=\
 adams.flow.source.readersource.AbstractReaderGenerator=\
   adams.flow.source.readersource
 
+# the variable loaders
+adams.flow.standalone.loadvariables.VariableLoader=\
+  adams.flow.standalone.loadvariables
+
 # conditions for the, e.g., IfThenElse control actor
 adams.flow.condition.bool.BooleanCondition=\
   adams.flow.condition.bool
