@@ -15,7 +15,7 @@
 
 /*
  * Java.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
@@ -57,38 +57,47 @@ public class Java {
   /**
    * Returns the major version of Java.
    *
+   * @param version	the version string to parse
+   * @return		the major version, -1 if failed to determine
+   */
+  public static int getMajorVersion(String version) {
+    int 	result;
+    String	versionStr;
+
+    result     = -1;
+    versionStr = version;
+    if (versionStr.startsWith("1."))
+      versionStr = versionStr.substring(2);
+
+    if (versionStr.contains(".")) {
+      versionStr = versionStr.substring(0, versionStr.indexOf('.'));
+      try {
+	result = Integer.parseInt(versionStr);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to determine major version in Java version string: " + version);
+      }
+    }
+    else if (Utils.isInteger(versionStr)) {
+      try {
+	result = Integer.parseInt(versionStr);
+      }
+      catch (Exception e) {
+	System.err.println("Failed to determine major version in Java version string: " + version);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Returns the major version of Java.
+   *
    * @return	the major version, -1 if failed to determine
    */
   public static int getMajorVersion() {
-    String 	versionStr;
-    int 	versionInt;
-
-    if (MAJOR_VERSION == null) {
-      versionInt = -1;
-      versionStr = System.getProperty("java.version");
-      if (versionStr.startsWith("1."))
-	versionStr = versionStr.substring(2);
-
-      if (versionStr.contains(".")) {
-	versionStr = versionStr.substring(0, versionStr.indexOf('.'));
-	try {
-	  versionInt = Integer.parseInt(versionStr);
-	}
-	catch (Exception e) {
-	  System.err.println("Failed to determine major version in Java version string: " + System.getProperty("java.version"));
-	}
-      }
-      else if (Utils.isInteger(versionStr)) {
-	try {
-	  versionInt = Integer.parseInt(versionStr);
-	}
-	catch (Exception e) {
-	  System.err.println("Failed to determine major version in Java version string: " + System.getProperty("java.version"));
-	}
-      }
-
-      MAJOR_VERSION = versionInt;
-    }
+    if (MAJOR_VERSION == null)
+      MAJOR_VERSION = getMajorVersion(System.getProperty("java.version"));
 
     return MAJOR_VERSION;
   }
