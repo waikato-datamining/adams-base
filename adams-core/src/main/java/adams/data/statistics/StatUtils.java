@@ -987,8 +987,15 @@ public class StatUtils {
    * @param array	the array to work on
    * @return		the sum
    */
-  public static double sum(int[] array) {
-    return sum(toNumberArray(array));
+  public static int sum(int[] array) {
+    int		result;
+    int		i;
+
+    result = 0;
+    for (i = 0; i < array.length; i++)
+      result += array[i];
+
+    return result;
   }
 
   /**
@@ -998,7 +1005,14 @@ public class StatUtils {
    * @return		the sum
    */
   public static double sum(double[] array) {
-    return sum(toNumberArray(array));
+    double	result;
+    int		i;
+
+    result = 0.0;
+    for (i = 0; i < array.length; i++)
+      result += array[i];
+
+    return result;
   }
 
   /**
