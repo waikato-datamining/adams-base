@@ -15,7 +15,7 @@
 
 /*
  * DateFormat.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -35,7 +35,6 @@ import java.util.logging.Level;
  * A threadsafe class for date formatting/parsing.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see SimpleDateFormat
  */
 public class DateFormat
@@ -83,7 +82,7 @@ public class DateFormat
     result = new TechnicalInformation(Type.MISC);
     result.setValue(Field.AUTHOR, "Javadoc");
     result.setValue(Field.TITLE, "java.text.SimpleDateFormat");
-    result.setValue(Field.HTTP, "http://download.oracle.com/javase/1,5.0/docs/api/java/text/SimpleDateFormat.html");
+    result.setValue(Field.HTTP, "https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/SimpleDateFormat.html");
 
     return result;
   }
