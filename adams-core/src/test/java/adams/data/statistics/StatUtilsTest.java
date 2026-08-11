@@ -15,7 +15,7 @@
 
 /*
  * StatUtilsTest.java
- * Copyright (C) 2015-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2015-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.statistics;
@@ -143,6 +143,58 @@ public class StatUtilsTest
     assertEquals("counts differ", 3, StatUtils.countDifferent(new double[]{-0.0, 1.0, 2.0, 3.0, -0.0, +0.0}, 0.0));
     assertEquals("counts differ", 3, StatUtils.countDifferent(new double[]{0.0, 1.0, 2.0, 3.0, 0.0, 0.0}, 0.0));
     assertEquals("counts differ", 3, StatUtils.countDifferent(new float[]{0.0f, 1.0f, 2.0f, 3.0f, 0.0f, 0.0f}, 0.0f));
+  }
+
+  /**
+   * Tests the sort methods.
+   */
+  public void testSort() {
+    assertEqualsArrays("sort differs", new Byte[]{1, 2, 3}, StatUtils.sort(new Byte[]{1, 2, 3}));
+    assertEqualsArrays("sort differs", new Byte[]{3, 2, 1}, StatUtils.sort(new Byte[]{1, 2, 3}, false));
+    assertEqualsArrays("sort differs", new Byte[]{-1, 1, 3, 4}, StatUtils.sort(new Byte[]{1, 4, 3, -1}));
+    assertEqualsArrays("sort differs", new Byte[]{4, 3, 1, -1}, StatUtils.sort(new Byte[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sort differs", new Integer[]{1, 2, 3}, StatUtils.sort(new Integer[]{1, 2, 3}));
+    assertEqualsArrays("sort differs", new Integer[]{3, 2, 1}, StatUtils.sort(new Integer[]{1, 2, 3}, false));
+    assertEqualsArrays("sort differs", new Integer[]{-1, 1, 3, 4}, StatUtils.sort(new Integer[]{1, 4, 3, -1}));
+    assertEqualsArrays("sort differs", new Integer[]{4, 3, 1, -1}, StatUtils.sort(new Integer[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sort differs", new Double[]{1., 2., 3.}, StatUtils.sort(new Double[]{1., 2., 3.}));
+    assertEqualsArrays("sort differs", new Double[]{3., 2., 1.}, StatUtils.sort(new Double[]{1., 2., 3.}, false));
+    assertEqualsArrays("sort differs", new Double[]{-1., 1., 3., 4.}, StatUtils.sort(new Double[]{1., 4., 3., -1.}));
+    assertEqualsArrays("sort differs", new Double[]{4., 3., 1., -1.}, StatUtils.sort(new Double[]{1., 4., 3., -1.}, false));
+    assertEqualsArrays("sort differs", new int[]{1, 2, 3}, StatUtils.sort(new int[]{1, 2, 3}));
+    assertEqualsArrays("sort differs", new int[]{3, 2, 1}, StatUtils.sort(new int[]{1, 2, 3}, false));
+    assertEqualsArrays("sort differs", new int[]{-1, 1, 3, 4}, StatUtils.sort(new int[]{1, 4, 3, -1}));
+    assertEqualsArrays("sort differs", new int[]{4, 3, 1, -1}, StatUtils.sort(new int[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sort differs", new double[]{1., 2., 3.}, StatUtils.sort(new double[]{1., 2., 3.}));
+    assertEqualsArrays("sort differs", new double[]{3., 2., 1.}, StatUtils.sort(new double[]{1., 2., 3.}, false));
+    assertEqualsArrays("sort differs", new double[]{-1., 1., 3., 4.}, StatUtils.sort(new double[]{1., 4., 3., -1.}));
+    assertEqualsArrays("sort differs", new double[]{4., 3., 1., -1.}, StatUtils.sort(new double[]{1., 4., 3., -1.}, false));
+  }
+
+  /**
+   * Tests the sort methods.
+   */
+  public void testSortIndex() {
+    assertEqualsArrays("sortIndex differs", new int[]{0, 1, 2}, StatUtils.sortIndex(new Byte[]{1, 2, 3}));
+    assertEqualsArrays("sortIndex differs", new int[]{2, 1, 0}, StatUtils.sortIndex(new Byte[]{1, 2, 3}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{3, 0, 2, 1}, StatUtils.sortIndex(new Byte[]{1, 4, 3, -1}));
+    assertEqualsArrays("sortIndex differs", new int[]{1, 2, 0, 3}, StatUtils.sortIndex(new Byte[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{0, 1, 2}, StatUtils.sortIndex(new Integer[]{1, 2, 3}));
+    assertEqualsArrays("sortIndex differs", new int[]{2, 1, 0}, StatUtils.sortIndex(new Integer[]{1, 2, 3}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{3, 0, 2, 1}, StatUtils.sortIndex(new Integer[]{1, 4, 3, -1}));
+    assertEqualsArrays("sortIndex differs", new int[]{1, 2, 0, 3}, StatUtils.sortIndex(new Integer[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{0, 1, 2}, StatUtils.sortIndex(new Double[]{1., 2., 3.}));
+    assertEqualsArrays("sortIndex differs", new int[]{2, 1, 0}, StatUtils.sortIndex(new Double[]{1., 2., 3.}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{3, 0, 2, 1}, StatUtils.sortIndex(new Double[]{1., 4., 3., -1.}));
+    assertEqualsArrays("sortIndex differs", new int[]{1, 2, 0, 3}, StatUtils.sortIndex(new Double[]{1., 4., 3., -1.}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{0, 1, 2}, StatUtils.sortIndex(new int[]{1, 2, 3}));
+    assertEqualsArrays("sortIndex differs", new int[]{2, 1, 0}, StatUtils.sortIndex(new int[]{1, 2, 3}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{3, 0, 2, 1}, StatUtils.sortIndex(new int[]{1, 4, 3, -1}));
+    assertEqualsArrays("sortIndex differs", new int[]{1, 2, 0, 3}, StatUtils.sortIndex(new int[]{1, 4, 3, -1}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{0, 1, 2}, StatUtils.sortIndex(new double[]{1., 2., 3.}));
+    assertEqualsArrays("sortIndex differs", new int[]{2, 1, 0}, StatUtils.sortIndex(new double[]{1., 2., 3.}, false));
+    assertEqualsArrays("sortIndex differs", new int[]{3, 0, 2, 1}, StatUtils.sortIndex(new double[]{1., 4., 3., -1.}));
+    assertEqualsArrays("sortIndex differs", new int[]{1, 2, 0, 3}, StatUtils.sortIndex(new double[]{1., 4., 3., -1.}, false));
   }
 
   /**

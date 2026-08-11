@@ -52,6 +52,7 @@ import gnu.trove.set.hash.TShortHashSet;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -1136,6 +1137,117 @@ public class StatUtils {
       result[i] = sorted[i];
 
     return result;
+  }
+
+  /**
+   * Sorts the array in ascending order and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(int[] array) {
+    return sortIndex(array, true);
+  }
+
+  /**
+   * Sorts the array and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @param asc		whether to sort in ascending order
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(int[] array, boolean asc) {
+    Integer[] 	indices;
+    int		i;
+
+    indices = new Integer[array.length];
+    for (i = 0; i < array.length; i++)
+      indices[i] = i;
+
+    Arrays.sort(indices, Comparator.comparingInt(n -> asc ? array[n] : -array[n]));
+
+    return toIntArray(indices);
+  }
+
+  /**
+   * Sorts the array in ascending order and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(long[] array) {
+    return sortIndex(array, true);
+  }
+
+  /**
+   * Sorts the array and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @param asc		whether to sort in ascending order
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(long[] array, boolean asc) {
+    Integer[] 	indices;
+    int		i;
+
+    indices = new Integer[array.length];
+    for (i = 0; i < array.length; i++)
+      indices[i] = i;
+
+    Arrays.sort(indices, Comparator.comparingLong(n -> asc ? array[n] : -array[n]));
+
+    return toIntArray(indices);
+  }
+
+  /**
+   * Sorts the array in ascending order and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(double[] array) {
+    return sortIndex(array, true);
+  }
+
+  /**
+   * Sorts the array and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @param asc		whether to sort in ascending order
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(double[] array, boolean asc) {
+    Integer[] 	indices;
+    int		i;
+
+    indices = new Integer[array.length];
+    for (i = 0; i < array.length; i++)
+      indices[i] = i;
+
+    Arrays.sort(indices, Comparator.comparingDouble(n -> asc ? array[n] : -array[n]));
+
+    return toIntArray(indices);
+  }
+
+  /**
+   * Sorts the array in ascending order and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(Number[] array) {
+    return sortIndex(array, true);
+  }
+
+  /**
+   * Sorts the array and returns the indices of the sorting outcome.
+   *
+   * @param array	the array to sort
+   * @param asc		whether to sort in ascending order
+   * @return		the indices of the sorted values
+   */
+  public static int[] sortIndex(Number[] array, boolean asc) {
+    return sortIndex(toDoubleArray(array), asc);
   }
 
   /**
