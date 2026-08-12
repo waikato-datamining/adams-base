@@ -15,7 +15,7 @@
 
 /*
  * AbstractLOWESS.java
- * Copyright (C) 2013-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.filter;
@@ -35,7 +35,6 @@ import java.util.List;
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  * @author  Michael Fowke (msf8 at waikato dot ac dot nz)
- * @version $Revision$
  * @param <T> the type of data to process
  */
 public abstract class AbstractLOWESS<T extends DataContainer>
@@ -44,7 +43,7 @@ public abstract class AbstractLOWESS<T extends DataContainer>
 
   /** for serialization. */
   private static final long serialVersionUID = 7714239052976065971L;
-  
+
   /** Size of window size for calculating lowess. */
   protected int m_WindowSize;
 
@@ -56,9 +55,9 @@ public abstract class AbstractLOWESS<T extends DataContainer>
   @Override
   public String globalInfo() {
     return
-        "A filter that applies LOWESS smoothing.\n\n"
-      + "For more information see:\n\n"
-      + getTechnicalInformation().toString();
+      "A filter that applies LOWESS smoothing.\n\n"
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -80,30 +79,26 @@ public abstract class AbstractLOWESS<T extends DataContainer>
     super.defineOptions();
 
     m_OptionManager.add(
-	    "window-size", "windowSize",
-	    20, LOWESS.MIN_WINDOW_SIZE, null);
+      "window-size", "windowSize",
+      20, LOWESS.MIN_WINDOW_SIZE, null);
   }
 
   /**
-   * Sets the polynomial order.
+   * Sets the window size.
    *
-   * @param value 	the order
+   * @param value 	the size
    */
   public void setWindowSize(int value) {
-    if (value >= LOWESS.MIN_WINDOW_SIZE) {
+    if (getOptionManager().isValid("windowSize", value)) {
       m_WindowSize = value;
       reset();
     }
-    else {
-      getLogger().severe(
-	  "The window size must be at least " + LOWESS.MIN_WINDOW_SIZE + " (provided: " + value + ")!");
-    }
   }
 
   /**
-   * Returns the polynominal order.
+   * Returns the window size.
    *
-   * @return 		the order
+   * @return 		the size
    */
   public int getWindowSize() {
     return m_WindowSize;
@@ -148,7 +143,7 @@ public abstract class AbstractLOWESS<T extends DataContainer>
     List<Point2D>	raw;
     List<Point2D>	smoothed;
 
-    raw = new ArrayList<Point2D>();
+    raw = new ArrayList<>();
     for (i = 0; i < data.size(); i++)
       raw.add(convert((DataPoint) data.toList().get(i)));
     smoothed = LOWESS.calculate(raw, m_WindowSize);
