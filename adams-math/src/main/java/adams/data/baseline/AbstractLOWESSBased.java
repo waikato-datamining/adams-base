@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractLOWESSBased.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.baseline;
 
@@ -94,18 +94,18 @@ public abstract class AbstractLOWESSBased<T extends DataContainer>
   protected abstract AbstractLOWESS getFilter();
 
   /**
-   * Sets the polynomial order.
+   * Sets the window size.
    *
-   * @param value 	the order
+   * @param value 	the size
    */
   public void setWindowSize(int value) {
     m_Filter.setWindowSize(value);
   }
 
   /**
-   * Returns the polynominal order.
+   * Returns the window size.
    *
-   * @return 		the order
+   * @return 		the size
    */
   public int getWindowSize() {
     return m_Filter.getWindowSize();
