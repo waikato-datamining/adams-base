@@ -15,7 +15,7 @@
 
 /*
  * LOWESS.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.control.plotprocessor;
 
@@ -54,19 +54,19 @@ import java.util.List;
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
  * </pre>
- * 
+ *
  * <pre>-plot-name-suffix &lt;java.lang.String&gt; (property: plotNameSuffix)
  * &nbsp;&nbsp;&nbsp;The suffix for the plot name; if left empty, the plot container automatically 
  * &nbsp;&nbsp;&nbsp;becomes an OVERLAY.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-window-size &lt;int&gt; (property: windowSize)
  * &nbsp;&nbsp;&nbsp;The window size to use, must be at least 20.
  * &nbsp;&nbsp;&nbsp;default: 20
  * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -74,10 +74,10 @@ import java.util.List;
 public class LOWESS
   extends AbstractPlotProcessorWithBuffer<Point2D>
   implements TechnicalInformationHandler {
-  
+
   /** for serialization. */
   private static final long serialVersionUID = 5171916489269022308L;
-  
+
   /** Size of window size for calculating lowess. */
   protected int m_WindowSize;
 
@@ -89,9 +89,9 @@ public class LOWESS
   @Override
   public String globalInfo() {
     return
-        "A processor that applies LOWESS smoothing.\n\n"
-      + "For more information see:\n\n"
-      + getTechnicalInformation().toString();
+      "A processor that applies LOWESS smoothing.\n\n"
+	+ "For more information see:\n\n"
+	+ getTechnicalInformation().toString();
   }
 
   /**
@@ -113,30 +113,26 @@ public class LOWESS
     super.defineOptions();
 
     m_OptionManager.add(
-	    "window-size", "windowSize",
-	    20, adams.data.utils.LOWESS.MIN_WINDOW_SIZE, null);
+      "window-size", "windowSize",
+      20, adams.data.utils.LOWESS.MIN_WINDOW_SIZE, null);
   }
 
   /**
-   * Sets the polynomial order.
+   * Sets the window size.
    *
-   * @param value 	the order
+   * @param value 	the size
    */
   public void setWindowSize(int value) {
-    if (value >= adams.data.utils.LOWESS.MIN_WINDOW_SIZE) {
+    if (getOptionManager().isValid("windowSize", value)) {
       m_WindowSize = value;
       reset();
     }
-    else {
-      getLogger().severe(
-	  "The window size must be at least " + adams.data.utils.LOWESS.MIN_WINDOW_SIZE + " (provided: " + value + ")!");
-    }
   }
 
   /**
-   * Returns the polynominal order.
+   * Returns the window size.
    *
-   * @return 		the order
+   * @return 		the size
    */
   public int getWindowSize() {
     return m_WindowSize;
@@ -149,7 +145,7 @@ public class LOWESS
    * 			displaying in the GUI or for listing the options.
    */
   public String windowSizeTipText() {
-    return "The window size to use, must be at least 20.";
+    return "The window size to use.";
   }
 
   /**
@@ -160,17 +156,17 @@ public class LOWESS
   @Override
   public String getQuickInfo() {
     String	result;
-    
+
     result  = super.getQuickInfo();
     result += QuickInfoHelper.toString(this, "windowSize", m_WindowSize, ", window: ");
-    
+
     return result;
   }
-  
+
   /**
    * Processes the provided container. Generates new containers
    * if applicable.
-   * 
+   *
    * @param cont	the container to process
    * @return		null if no new containers were produced
    */
@@ -181,14 +177,14 @@ public class LOWESS
     Comparable				x;
     Comparable				y;
     List<Point2D>			smoothed;
-    
+
     result = null;
-    
+
     x = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_X);
     if (x == null)
       x = m_XIndex;
     y = (Comparable) cont.getValue(SequencePlotterContainer.VALUE_Y);
-    
+
     if ((x instanceof Number) && (y instanceof Number)) {
       point = new Point2D.Double(((Number) x).doubleValue(), ((Number) y).doubleValue());
       m_Data.add(point);
@@ -196,7 +192,7 @@ public class LOWESS
 	m_Data.remove(0);
       if (m_Data.size() == m_WindowSize) {
 	smoothed = adams.data.utils.LOWESS.calculate(m_Data, m_WindowSize);
-	if (smoothed.size() > 0) {
+	if (!smoothed.isEmpty()) {
 	  point  = smoothed.get(smoothed.size() / 2);
 	  result = new ArrayList<>();
 	  result.add(new SequencePlotterContainer(getPlotName(cont), point.getX(), point.getY(), getPlotType()));
