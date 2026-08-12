@@ -15,7 +15,7 @@
 
 /*
  * AbstractOverlayPaintlet.java
- * Copyright (C) 2011-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.visualization.stats.paintlet;
@@ -31,7 +31,6 @@ import java.awt.Graphics;
  * Abstract class for paintlets that draw the overlays.
  *
  * @author msf8
- * @version $Revision$
  */
 public abstract class AbstractOverlayPaintlet
 extends AbstractColorPaintlet{
@@ -72,16 +71,22 @@ extends AbstractColorPaintlet{
   }
 
   /**
-   * Set the window size, only applicable for the lowess overlay paintlet
-   * @param val				int size of window
+   * Set the window size, only applicable for the overlay paintlet
+   *
+   * @param value	int size of window
    */
-  public void setWindowSize(int val) {}
+  public void setWindowSize(int value) {
+
+  }
 
   /**
    * Set whether an indicator should be shown on the sides
-   * @param val			true if indicator shown
+   *
+   * @param value		true if indicator shown
    */
-  public void setIndicator(boolean val){}
+  public void setIndicator(boolean value) {
+
+  }
 
   /**
    * Calculates the data for the paintlet, doesn't handle the drawing
@@ -101,8 +106,10 @@ extends AbstractColorPaintlet{
     drawData(g);
   }
 
-  /**Draw the overlay onto the scatter plot, only calculates the
-   * value to position in this method
+  /**
+   * Draw the overlay onto the scatter plot, only calculates the
+   * value to position in this method.
+   *
    * @param g		Graphics drawn on
    */
   protected abstract void drawData(Graphics g);

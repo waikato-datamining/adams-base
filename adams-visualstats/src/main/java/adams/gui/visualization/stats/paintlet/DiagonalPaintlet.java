@@ -20,12 +20,12 @@
 
 package adams.gui.visualization.stats.paintlet;
 
+import adams.gui.core.AntiAliasingSupporter;
+import adams.gui.core.GUIHelper;
+
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import adams.gui.core.AntiAliasingSupporter;
-import adams.gui.core.GUIHelper;
 
 /**
  <!-- globalinfo-start -->
@@ -244,8 +244,8 @@ public class DiagonalPaintlet
   }
 
   @Override
-  public void setIndicator(boolean val) {
-    m_Indicator = val;
+  public void setIndicator(boolean value) {
+    m_Indicator = value;
     memberChanged();
   }
 }

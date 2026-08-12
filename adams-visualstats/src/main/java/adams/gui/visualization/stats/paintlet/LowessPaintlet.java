@@ -129,8 +129,8 @@ public class LowessPaintlet
   }
 
   @Override
-  public void setWindowSize(int val) {
-    m_WindowSize = val;
+  public void setWindowSize(int value) {
+    m_WindowSize = value;
     memberChanged();
   }
 
