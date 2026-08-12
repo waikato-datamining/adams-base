@@ -15,7 +15,7 @@
 
 /*
  * SQL.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
@@ -27,6 +27,7 @@ import adams.core.logging.LoggingObject;
 import adams.db.AbstractDatabaseConnection;
 import adams.db.AbstractTable;
 import adams.db.SQLIntf;
+import adams.db.SQLIntfAccess;
 import adams.db.SQLUtils;
 import adams.db.SimpleResultSet;
 import adams.db.TableManager;
@@ -57,7 +58,7 @@ import java.util.logging.Level;
  */
 public class SQL
   extends LoggingObject
-  implements SQLIntf {
+  implements SQLIntf, SQLIntfAccess {
 
   /** for serialization. */
   private static final long serialVersionUID = -7708896486343190549L;
@@ -946,6 +947,40 @@ public class SQL
       result = Integer.MAX_VALUE;
 
     return result;
+  }
+
+  /**
+   * Returns whether a {@link SQLIntf} instance is available.
+   *
+   * @return		true if available
+   */
+  @Override
+  public boolean hasSQLIntf() {
+    return true;
+  }
+
+  /**
+   * Returns the underlying {@link SQLIntf} instance.
+   *
+   * @return		the instance, null if if unavailable
+   */
+  @Override
+  public SQLIntf getSQLIntf() {
+    return this;
+  }
+
+  /**
+   * Returns the column/table quoted according to the ANSI quotes parameter.
+   *
+   * @param name	the table/column name to quote (if necessary)
+   * @param ansiQuotes 	if true then use ANSI quotes
+   * @return		the potentially quoted name
+   */
+  public static String quoteName(String name, boolean ansiQuotes) {
+    if (ansiQuotes)
+      return "\"" + name + "\"";
+    else
+      return name;
   }
 
   /**

@@ -132,10 +132,7 @@ public abstract class AbstractTable
    * @see		#useAnsiQuotes()
    */
   public String quoteName(String name) {
-    if (m_AnsiQuotes)
-      return "\"" + name + "\"";
-    return
-      name;
+    return SQL.quoteName(name, m_AnsiQuotes);
   }
 
   /**

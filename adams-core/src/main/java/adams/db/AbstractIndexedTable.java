@@ -46,7 +46,8 @@ import java.util.logging.Level;
  * @author dale
  */
 public abstract class AbstractIndexedTable
-  extends AbstractTable {
+  extends AbstractTable
+  implements IndexedTableInterface {
 
   /** for serialization. */
   private static final long serialVersionUID = 2013793322024355971L;

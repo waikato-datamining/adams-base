@@ -31,7 +31,8 @@ import java.util.logging.Level;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public abstract class AbstractTableFacade
-  extends LoggingObject {
+  extends LoggingObject
+  implements SQLIntfAccess {
 
   private static final long serialVersionUID = 8540313627448845885L;
 

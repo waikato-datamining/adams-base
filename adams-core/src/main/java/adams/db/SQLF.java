@@ -15,7 +15,7 @@
 
 /*
  * SQLF.java
- * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
@@ -390,6 +390,29 @@ public class SQLF
     if (isLoggingEnabled())
       getLogger().info(LoggingHelper.getMethodName());
     return m_DB.getMaxColumnNameLength();
+  }
+
+  /**
+   * Returns whether a {@link SQLIntf} instance is available.
+   *
+   * @return		true if available
+   */
+  @Override
+  public boolean hasSQLIntf() {
+    return (m_DB instanceof SQLIntfAccess);
+  }
+
+  /**
+   * Returns the underlying {@link SQLIntf} instance.
+   *
+   * @return		the instance, null if if unavailable
+   */
+  @Override
+  public SQLIntf getSQLIntf() {
+    if (m_DB instanceof SQLIntfAccess)
+      return ((SQLIntfAccess) m_DB).getSQLIntf();
+    else
+      return null;
   }
 
   /**

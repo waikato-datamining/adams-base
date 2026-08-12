@@ -15,12 +15,14 @@
 
 /*
  * LogF.java
- * Copyright (C) 2017-2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
 
 import adams.core.logging.LoggingHelper;
+import adams.db.generic.SQL;
+import adams.db.queries.AbstractDatabaseQueries;
 
 import java.util.List;
 
@@ -30,7 +32,7 @@ import java.util.List;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class LogF
-  extends AbstractTableFacade
+  extends AbstractIndexedTableFacade
   implements LogIntf {
 
   private static final long serialVersionUID = 3061846359366161539L;
@@ -123,6 +125,67 @@ public class LogF
     if (isLoggingEnabled())
       getLogger().info(LoggingHelper.getMethodName() + ": log=" + log);
     return m_DB.remove(log);
+  }
+
+  /**
+   * Returns whether a {@link SQLIntf} instance is available.
+   *
+   * @return		true if available
+   */
+  @Override
+  public boolean hasSQLIntf() {
+    return (m_DB instanceof SQLIntfAccess);
+  }
+
+  /**
+   * Returns the underlying {@link SQLIntf} instance.
+   *
+   * @return		the instance, null if if unavailable
+   */
+  @Override
+  public SQLIntf getSQLIntf() {
+    if (m_DB instanceof SQLIntfAccess)
+      return ((SQLIntfAccess) m_DB).getSQLIntf();
+    else
+      return null;
+  }
+
+  /**
+   * Returns whether ANSI quotes are to be used around table/column names.
+   *
+   * @return		true if to be used
+   */
+  @Override
+  public boolean useAnsiQuotes() {
+    if (m_DB instanceof IndexedTableInterface)
+      return ((IndexedTableInterface) m_DB).useAnsiQuotes();
+    else
+      return false;
+  }
+
+  /**
+   * Returns the column/table quoted if ANSI quotes are to be used.
+   *
+   * @param name	the table/column name to quote (if necessary)
+   * @return		the potentially quoted name
+   * @see		#useAnsiQuotes()
+   */
+  @Override
+  public String quoteName(String name) {
+    return SQL.quoteName(name, useAnsiQuotes());
+  }
+
+  /**
+   * Returns the underlying queries helper instance.
+   *
+   * @return		the instance, null if not available
+   */
+  @Override
+  public AbstractDatabaseQueries getQueries() {
+    if (m_DB instanceof IndexedTableInterface)
+      return ((IndexedTableInterface) m_DB).getQueries();
+    else
+      return null;
   }
 
   /**
