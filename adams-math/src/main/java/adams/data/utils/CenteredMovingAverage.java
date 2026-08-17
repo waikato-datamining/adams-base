@@ -23,6 +23,7 @@ package adams.data.utils;
 import adams.core.TechnicalInformation;
 import adams.core.TechnicalInformation.Field;
 import adams.core.TechnicalInformation.Type;
+import adams.core.Utils;
 import adams.data.statistics.StatUtils;
 
 import java.awt.geom.Point2D;
@@ -44,6 +45,18 @@ public class CenteredMovingAverage {
    * @return		the smoothed points
    */
   public static double[] calculate(double[] points, int window) {
+    return calculate(points, window, false);
+  }
+
+  /**
+   * Applies Centered Moving Average to the data points.
+   *
+   * @param points	the data to smooth
+   * @param window	the window size (uneven number)
+   * @param debug 	whether to output debugging information
+   * @return		the smoothed points
+   */
+  public static double[] calculate(double[] points, int window, boolean debug) {
     double[]	result;
     int		left;
     int		right;
@@ -55,31 +68,45 @@ public class CenteredMovingAverage {
     left   = window / 2;
     right  = window - 1 - left;
 
+    if (debug)
+      System.out.println("=== window=" + window + ", #points=" + points.length);
+
     // left edge
-    for (i = 0; i < left; i++) {
-      len  = i + 1 + right;
+    for (i = 0; i < left + 1; i++) {
+      len  = i + right + 1;
       data = new double[len];
-      System.arraycopy(points, i, data, 0, len);
+      System.arraycopy(points, 0, data, 0, len);
       result[i] = StatUtils.sum(data) / len;
+      if (debug)
+	System.out.println(i + "/" + len + ": " + Utils.arrayToString(data) + " = " + result[i]);
     }
+
+    if (debug)
+      System.out.println("---");
 
     data = new double[window];
-    for (i = left; i < points.length - right; i++) {
+    for (i = left + 1; i < points.length - (right + 1); i++) {
       System.arraycopy(points, i - left, data, 0, window);
       result[i] = StatUtils.sum(data) / window;
+      if (debug && (i == left+1) || (i+1 == points.length - (right + 1)))
+	System.out.println(i + ": " + Utils.arrayToString(data) + " = " + result[i]);
     }
 
+    if (debug)
+      System.out.println("---");
+
     // right edge
-    for (i = points.length - window; i < points.length - right; i++) {
-      len  = points.length - i;
+    for (i = points.length - (right + 1); i < points.length; i++) {
+      len  = points.length - i + left;
       data = new double[len];
-      System.arraycopy(points, i, data, 0, len);
+      System.arraycopy(points, i - left, data, 0, len);
       result[i] = StatUtils.sum(data) / len;
+      if (debug)
+	System.out.println(i + "/" + len + ": " + Utils.arrayToString(data) + " = " + result[i]);
     }
 
     return result;
   }
-
 
   /**
    * Applies Centered Moving Average to the Y of the data points.
@@ -89,6 +116,18 @@ public class CenteredMovingAverage {
    * @return		the smoothed points
    */
   public static List<Point2D> calculate(List<Point2D> points, int window) {
+    return calculate(points, window, false);
+  }
+
+  /**
+   * Applies Centered Moving Average to the Y of the data points.
+   *
+   * @param points	the data to smooth
+   * @param window	the window size (uneven number)
+   * @param debug 	whether to output debugging information
+   * @return		the smoothed points
+   */
+  public static List<Point2D> calculate(List<Point2D> points, int window, boolean debug) {
     List<Point2D>	result;
     double[]		dpoints;
     int			i;
@@ -96,7 +135,7 @@ public class CenteredMovingAverage {
     dpoints = new double[points.size()];
     for (i = 0; i < points.size(); i++)
       dpoints[i] = points.get(i).getY();
-    dpoints = calculate(dpoints, window);
+    dpoints = calculate(dpoints, window, debug);
     result  = new ArrayList<>();
     for (i = 0; i < points.size(); i++)
       result.add(new Point2D.Double(points.get(i).getX(), dpoints[i]));

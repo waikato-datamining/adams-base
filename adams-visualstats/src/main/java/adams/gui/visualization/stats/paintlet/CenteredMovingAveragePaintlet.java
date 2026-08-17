@@ -201,12 +201,12 @@ public class CenteredMovingAveragePaintlet
     double[] x_data = SpreadSheetUtils.getNumericColumn(m_Data, m_XInd);
     double[] y_data = SpreadSheetUtils.getNumericColumn(m_Data, m_YInd);
     //create an arraylist of points from the instance data
-    ArrayList<Point2D> points = new ArrayList<Point2D>();
+    ArrayList<Point2D> points = new ArrayList<>();
     for(int i = 0; i< x_data.length; i++) {
       Point2D p = new Point2D.Double(x_data[i], y_data[i]);
       points.add(p);
     }
-    m_ToPlot = CenteredMovingAverage.calculate(points, m_WindowSize);
+    m_ToPlot = CenteredMovingAverage.calculate(points, m_WindowSize, isLoggingEnabled());
     m_Calculated = true;
   }
 

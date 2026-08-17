@@ -192,7 +192,7 @@ public class CenteredMovingAverage
       while (m_Data.size() > m_WindowSize)
 	m_Data.remove(0);
       if (m_Data.size() == m_WindowSize) {
-	smoothed = adams.data.utils.CenteredMovingAverage.calculate(m_Data, m_WindowSize);
+	smoothed = adams.data.utils.CenteredMovingAverage.calculate(m_Data, m_WindowSize, isLoggingEnabled());
 	if (!smoothed.isEmpty()) {
 	  point  = smoothed.get(smoothed.size() / 2);
 	  result = new ArrayList<>();

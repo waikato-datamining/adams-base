@@ -145,7 +145,7 @@ public abstract class AbstractCenteredMovingAverage<T extends DataContainer>
     raw = new ArrayList<>();
     for (i = 0; i < data.size(); i++)
       raw.add(convert((DataPoint) data.toList().get(i)));
-    smoothed = CenteredMovingAverage.calculate(raw, m_WindowSize);
+    smoothed = CenteredMovingAverage.calculate(raw, m_WindowSize, isLoggingEnabled());
 
     result = (T) data.getHeader();
     for (i = 0; i < smoothed.size(); i++)
