@@ -15,7 +15,7 @@
 
 /*
  * SerializationHelper.java
- * Copyright (C) 2007-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -50,13 +50,21 @@ import java.util.zip.GZIPOutputStream;
  * Based on WEKA's weka.core.SerializationHelper
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  * @see weka.core.SerializationHelper
  */
 public class SerializationHelper {
 
   /** the field name of serialVersionUID. */
   public final static String SERIAL_VERSION_UID = "serialVersionUID";
+
+  /** the size to use for buffered input/output streams. */
+  public final static int BUFFER_SIZE_BUFFEREDSTREAMS = 65536;
+
+  /** the size to use for gzip input/output streams. */
+  public final static int BUFFER_SIZE_GZIPSTREAMS = 65536;
+
+  /** the size to use for byte array input/output streams. */
+  public final static int BUFFER_SIZE_BYTEARRAYSTREAMS = 65536;
 
   /**
    * checks whether a class is serializable.
@@ -230,7 +238,7 @@ public class SerializationHelper {
       buffer = new byte[2];
       fis    = new FileInputStream(filename);
       if (filename.endsWith(".gz")) {
-	gis  = new GZIPInputStream(fis);
+	gis  = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
 	read = gis.read(buffer, 0, 2);
       }
       else {
@@ -264,7 +272,7 @@ public class SerializationHelper {
     gos = null;
     try {
       if (filename.endsWith(".gz")) {
-	gos = new GZIPOutputStream(fos);
+	gos = new GZIPOutputStream(fos, BUFFER_SIZE_GZIPSTREAMS);
 	write(gos, o);
       }
       else {
@@ -291,7 +299,7 @@ public class SerializationHelper {
     ObjectOutputStream	oos;
 
     if (!(stream instanceof BufferedOutputStream))
-      stream = new BufferedOutputStream(stream);
+      stream = new BufferedOutputStream(stream, BUFFER_SIZE_BUFFEREDSTREAMS);
 
     oos = new ObjectOutputStream(stream);
     oos.writeObject(o);
@@ -313,7 +321,7 @@ public class SerializationHelper {
     gos = null;
     try {
       if (filename.endsWith(".gz")) {
-	gos = new GZIPOutputStream(fos);
+	gos = new GZIPOutputStream(fos, BUFFER_SIZE_GZIPSTREAMS);
 	writeAll(gos, o);
       }
       else {
@@ -341,7 +349,7 @@ public class SerializationHelper {
     int			i;
 
     if (!(stream instanceof BufferedOutputStream))
-      stream = new BufferedOutputStream(stream);
+      stream = new BufferedOutputStream(stream, BUFFER_SIZE_BUFFEREDSTREAMS);
 
     oos = new ObjectOutputStream(stream);
     try {
@@ -377,7 +385,7 @@ public class SerializationHelper {
     gis = null;
     try {
       if (filename.endsWith(".gz")) {
-	gis    = new GZIPInputStream(fis);
+	gis    = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
 	result = read(gis);
       }
       else
@@ -406,7 +414,7 @@ public class SerializationHelper {
     Object		result;
 
     if (!(stream instanceof BufferedInputStream))
-      stream = new BufferedInputStream(stream);
+      stream = new BufferedInputStream(stream, BUFFER_SIZE_BUFFEREDSTREAMS);
 
     ois    = new ObjectInputStream(stream);
     result = ois.readObject();
@@ -433,7 +441,7 @@ public class SerializationHelper {
     gis = null;
     try {
       if (filename.endsWith(".gz")) {
-	gis    = new GZIPInputStream(fis);
+	gis    = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
 	result = readAll(gis);
       }
       else {
@@ -462,7 +470,7 @@ public class SerializationHelper {
     List<Object>	result;
 
     if (!(stream instanceof BufferedInputStream))
-      stream = new BufferedInputStream(stream);
+      stream = new BufferedInputStream(stream, BUFFER_SIZE_BUFFEREDSTREAMS);
 
     result = new ArrayList<>();
     ois    = new ObjectInputStream(stream);
@@ -487,7 +495,7 @@ public class SerializationHelper {
       FileUtils.closeQuietly(ois);
     }
 
-    return result.toArray(new Object[result.size()]);
+    return result.toArray(new Object[0]);
   }
 
   /**
@@ -501,7 +509,7 @@ public class SerializationHelper {
     ByteArrayOutputStream	bos;
     ObjectOutputStream		oos;
 
-    bos = new ByteArrayOutputStream();
+    bos = new ByteArrayOutputStream(BUFFER_SIZE_BYTEARRAYSTREAMS);
     oos = new ObjectOutputStream(bos);
     try {
       oos.writeObject(o);
@@ -524,7 +532,7 @@ public class SerializationHelper {
     ByteArrayOutputStream	bos;
     ObjectOutputStream		oos;
 
-    bos = new ByteArrayOutputStream();
+    bos = new ByteArrayOutputStream(BUFFER_SIZE_BYTEARRAYSTREAMS);
     oos = new ObjectOutputStream(bos);
     try {
       for (Object o : os)
