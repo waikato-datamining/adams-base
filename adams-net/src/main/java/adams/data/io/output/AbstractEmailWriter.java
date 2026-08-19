@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEmailWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
-import adams.core.net.Email;
 import adams.core.option.AbstractOptionHandler;
 
 /**
  * Ancestor for classes that write emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email to write
  */
-public abstract class AbstractEmailWriter
+public abstract class AbstractEmailWriter<T>
   extends AbstractOptionHandler 
-  implements EmailWriter {
+  implements EmailWriter<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = 4854099676125904439L;
@@ -42,7 +41,7 @@ public abstract class AbstractEmailWriter
    * 
    * @return		the error message, null if everything OK
    */
-  protected String check(Email email) {
+  protected String check(T email) {
     if (email == null)
       return "No email provided!";
     return null;
@@ -54,7 +53,7 @@ public abstract class AbstractEmailWriter
    * @param email	the email to write
    * @return		the error message, null if everything OK
    */
-  protected abstract String doWrite(Email email);
+  protected abstract String doWrite(T email);
   
   /**
    * Writes the email.
@@ -62,7 +61,7 @@ public abstract class AbstractEmailWriter
    * @param email	the email to write
    * @return		the error message, null if everything OK
    */
-  public String write(Email email) {
+  public String write(T email) {
     String	result;
     
     result = check(email);

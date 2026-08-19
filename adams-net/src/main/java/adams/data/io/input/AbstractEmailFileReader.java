@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEmailFileReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -23,17 +23,16 @@ import adams.core.io.PlaceholderFile;
 
 /**
  * Ancestor of email readers that read emails from files.
- * 
+ *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class AbstractEmailFileReader
-  extends AbstractEmailReader 
-  implements EmailFileReader {
+public abstract class AbstractEmailFileReader<T>
+  extends AbstractEmailReader<T>
+  implements EmailFileReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -815445698354646307L;
-  
+
   /** the file to read the email from. */
   protected PlaceholderFile m_Input;
 
@@ -45,8 +44,8 @@ public abstract class AbstractEmailFileReader
     super.defineOptions();
 
     m_OptionManager.add(
-	    "input", "input",
-	    new PlaceholderFile("."));
+      "input", "input",
+      new PlaceholderFile("."));
   }
 
   /**

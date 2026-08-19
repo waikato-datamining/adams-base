@@ -15,19 +15,18 @@
 
 /*
  * EmailFileReader.java
- * Copyright (C) 2010-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
 
-import java.io.File;
-import java.util.List;
-
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
-import adams.core.net.Email;
 import adams.data.io.input.MultiEmailReader;
 import adams.data.io.input.PropertiesEmailFileReader;
+
+import java.io.File;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -145,7 +144,7 @@ public class EmailFileReader
    */
   @Override
   protected Class getItemClass() {
-    return Email.class;
+    return m_Reader.generates();
   }
 
   /**
@@ -207,8 +206,8 @@ public class EmailFileReader
     String		result;
     Object		fileObj;
     PlaceholderFile	file;
-    Email		email;
-    List<Email>		emails;
+    Object		email;
+    List<Object>	emails;
 
     result = null;
 
@@ -231,7 +230,7 @@ public class EmailFileReader
       }
     }
     catch (Exception e) {
-      result = handleException("Failed to write email(s)!", e);
+      result = handleException("Failed to read email(s)!", e);
     }
 
     return result;

@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * PropertiesEmailFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -48,10 +48,9 @@ import adams.data.io.input.PropertiesEmailFileReader;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesEmailFileWriter
-  extends AbstractEmailFileWriter {
+  extends AbstractEmailFileWriter<Email> {
 
   /** for serialization. */
   private static final long serialVersionUID = 8613890718581689507L;
@@ -82,6 +81,16 @@ public class PropertiesEmailFileWriter
    */
   public String[] getFormatExtensions() {
     return new String[]{"props", "properties"};
+  }
+
+  /**
+   * Returns the type of email that is written.
+   *
+   * @return		the type of email
+   */
+  @Override
+  public Class accepts() {
+    return Email.class;
   }
 
   /**

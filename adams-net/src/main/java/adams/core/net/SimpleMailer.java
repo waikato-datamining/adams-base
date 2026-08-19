@@ -19,6 +19,7 @@
  */
 package adams.core.net;
 
+import adams.core.Utils;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderDirectory;
@@ -310,12 +311,12 @@ public class SimpleMailer {
    * Locates and sends the emails.
    */
   public void execute() {
-    String[]	files;
-    Email	email;
-    List<Email>	emails;
-    boolean	failed;
-    File	from;
-    File	to;
+    String[]		files;
+    Object		email;
+    List<Object>	emails;
+    boolean		failed;
+    File		from;
+    File		to;
     
     // list files
     files = list();
@@ -361,7 +362,11 @@ public class SimpleMailer {
       
       // send emails
       if (emails != null) {
-	for (Email eml: emails) {
+	for (Object eml: emails) {
+	  if (!(eml instanceof Email)) {
+	    System.err.println("Not of type " + Utils.classToString(Email.class) + ", skipping: " + eml);
+	    continue;
+	  }
 	  if (isDebugOn())
 	    debug("--> Sending: " + eml);
 
@@ -376,7 +381,7 @@ public class SimpleMailer {
 		EmailHelper.getSmtpUser(), 
 		EmailHelper.getSmtpPassword(),
 		EmailHelper.getSmtpProtocols());
-	    if (!m_SendEmail.sendMail(eml)) {
+	    if (!m_SendEmail.sendMail((Email) eml)) {
 	      System.err.println("Failed to send email!");
 	      if (isDebugOn())
 		debug("--> Failed!");

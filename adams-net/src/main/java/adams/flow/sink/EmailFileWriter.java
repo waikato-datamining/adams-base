@@ -15,17 +15,19 @@
 
 /*
  * EmailFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.sink;
-
-import java.util.Arrays;
 
 import adams.core.QuickInfoHelper;
 import adams.core.io.PlaceholderFile;
 import adams.data.io.output.MultiEmailWriter;
 import adams.data.io.output.PropertiesEmailFileWriter;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  <!-- globalinfo-start -->
@@ -83,7 +85,6 @@ import adams.data.io.output.PropertiesEmailFileWriter;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class EmailFileWriter
   extends AbstractFileWriter {
@@ -187,10 +188,13 @@ public class EmailFileWriter
    * @return		<!-- flow-accepts-start -->adams.core.net.Email.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
+    Class	cls;
+
+    cls = m_Writer.accepts();
     if (m_Writer instanceof MultiEmailWriter)
-      return new Class[]{adams.core.net.Email[].class, adams.core.net.Email.class};
+      return new Class[]{Array.newInstance(cls, 0).getClass(), cls};
     else
-      return new Class[]{adams.core.net.Email.class};
+      return new Class[]{cls};
   }
 
   /**
@@ -200,23 +204,28 @@ public class EmailFileWriter
    */
   @Override
   protected String doExecute() {
-    String			result;
-    adams.core.net.Email	sheet;
-    adams.core.net.Email[]	sheets;
-    String			msg;
+    String	result;
+    Object 	email;
+    Object 	emails;
+    List 	list;
+    int		i;
+    String	msg;
 
     result = null;
 
     m_Writer.setOutput(m_OutputFile);
     if (m_InputToken.getPayload() instanceof adams.core.net.Email) {
-      sheet = (adams.core.net.Email) m_InputToken.getPayload();
-      msg   = m_Writer.write(sheet);
+      email = m_InputToken.getPayload();
+      msg   = m_Writer.write(email);
       if (msg != null)
 	result = "Problems writing email to '" + m_OutputFile + "': " + msg;
     }
     else {
-      sheets = (adams.core.net.Email[]) m_InputToken.getPayload();
-      msg    = ((MultiEmailWriter) m_Writer).write(Arrays.asList(sheets));
+      emails = m_InputToken.getPayload();
+      list   = new ArrayList();
+      for (i = 0; i < Array.getLength(emails); i++)
+	list.add(Array.get(emails, i));
+      msg    = ((MultiEmailWriter) m_Writer).write(list);
       if (msg != null)
 	result = "Problems writing emails to '" + m_OutputFile + "': " + msg;
     }

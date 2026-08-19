@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -26,10 +26,10 @@ import adams.core.io.PlaceholderFile;
  * Interface for email writers that write to files.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email to write
  */
-public interface EmailFileWriter
-  extends EmailWriter, FileFormatHandler {
+public interface EmailFileWriter<T>
+  extends EmailWriter<T>, FileFormatHandler {
 
   /**
    * Sets the file to write the email to.

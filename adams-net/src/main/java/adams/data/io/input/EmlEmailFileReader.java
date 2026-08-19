@@ -50,10 +50,18 @@ import java.util.logging.Level;
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class EmlEmailFileReader
-  extends AbstractEmailFileReader {
+  extends AbstractEmailFileReader<Object> {
 
   /** for serialization. */
   private static final long serialVersionUID = -341050738394654936L;
+
+  public enum EmailType {
+    EMAIL,
+    RECEIVED_EMAIL,
+  }
+
+  /** what type of email to return. */
+  protected EmailType m_EmailType;
 
   /**
    * Returns a string describing the object.
@@ -64,7 +72,48 @@ public class EmlEmailFileReader
   public String globalInfo() {
     return "Reads emails stored in EML files.";
   }
-  
+
+  /**
+   * Adds options to the internal list of options.
+   */
+  @Override
+  public void defineOptions() {
+    super.defineOptions();
+
+    m_OptionManager.add(
+      "email-type", "emailType",
+      EmailType.EMAIL);
+  }
+
+  /**
+   * Sets what type of email to return.
+   *
+   * @param value	the type
+   */
+  public void setEmailType(EmailType value) {
+    m_EmailType = value;
+    reset();
+  }
+
+  /**
+   * Returns the type of email to return.
+   *
+   * @return 		the type
+   */
+  public EmailType getEmailType() {
+    return m_EmailType;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   *			displaying in the GUI or for listing the options.
+   */
+  public String emailTypeTipText() {
+    return "The type of email to return.";
+  }
+
   /**
    * Returns the description of the file format.
    * 
@@ -81,6 +130,23 @@ public class EmlEmailFileReader
    */
   public String[] getFormatExtensions() {
     return new String[]{"eml"};
+  }
+
+  /**
+   * Returns the type of email class the reader returns.
+   *
+   * @return		the type of email
+   */
+  @Override
+  public Class generates() {
+    switch (m_EmailType) {
+      case EMAIL:
+	return Email.class;
+      case RECEIVED_EMAIL:
+	return ReceivedEmail.class;
+      default:
+	throw new IllegalStateException("Unhandled email type: " + m_EmailType);
+    }
   }
 
   /**
@@ -106,8 +172,8 @@ public class EmlEmailFileReader
    * @return		the email that was read, null in case of error
    */
   @Override
-  protected Email doRead() {
-    Email		result;
+  protected Object doRead() {
+    Object		result;
     ReceivedEmail	email;
     List<EmailMessage>	msgs;
     StringBuilder	body;
@@ -117,20 +183,31 @@ public class EmlEmailFileReader
 
     try {
       email = new EMLParser().parse(m_Input.getAbsoluteFile());
-      msgs  = email.messages();
-      body  = new StringBuilder();
-      for (i = 0; i < msgs.size(); i++) {
-	if (msgs.size() > 1)
-	  body.append("---Message #").append(i + 1).append(" ").append(msgs.get(i).getMimeType()).append(" ").append(msgs.get(i).getEncoding()).append("\n");
-	body.append(msgs.get(i).getContent());
-	body.append("\n");
+      switch (m_EmailType) {
+	case EMAIL:
+	  msgs  = email.messages();
+	  body  = new StringBuilder();
+	  for (i = 0; i < msgs.size(); i++) {
+	    if (msgs.size() > 1)
+	      body.append("---Message #").append(i + 1).append(" ").append(msgs.get(i).getMimeType()).append(" ").append(msgs.get(i).getEncoding()).append("\n");
+	    body.append(msgs.get(i).getContent());
+	    body.append("\n");
+	  }
+	  result = new Email()
+		     .from(email.from().getEmail())
+		     .to((EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class))
+		     .cc((EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class))
+		     .subject(email.subject())
+		     .body(body.toString());
+	  break;
+
+	case RECEIVED_EMAIL:
+	  result = email;
+	  break;
+
+	default:
+	  throw new IllegalStateException("Unhandled email type: " + m_EmailType);
       }
-      result = new Email()
-		 .from(email.from().getEmail())
-		 .to((EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class))
-		 .cc((EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class))
-		 .subject(email.subject())
-		 .body(body.toString());
     }
     catch (Exception e) {
       getLogger().log(Level.SEVERE, "Failed to read: " + m_Input, e);

@@ -13,23 +13,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiEmailWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
 import java.util.List;
 
-import adams.core.net.Email;
-
 /**
  * Interface for email writers that can write multiple emails at once.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email to write
  */
-public interface MultiEmailWriter {
+public interface MultiEmailWriter<T> {
   
   /**
    * Writes the emails.
@@ -37,5 +35,5 @@ public interface MultiEmailWriter {
    * @param emails	the emails to write
    * @return		null if everything OK, otherwise error message
    */
-  public String write(List<Email> emails);
+  public String write(List<T> emails);
 }

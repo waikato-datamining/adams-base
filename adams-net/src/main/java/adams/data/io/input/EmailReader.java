@@ -13,26 +13,31 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
-
-import adams.core.net.Email;
 
 /**
  * Interface for classes that read emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email that is returned
  */
-public interface EmailReader {
-  
+public interface EmailReader<T> {
+
+  /**
+   * Returns the type of email class the reader returns.
+   *
+   * @return		the type of email
+   */
+  public Class generates();
+
   /**
    * Reads the email.
    * 
    * @return		the email, null in case of an error
    */
-  public Email read();
+  public T read();
 }

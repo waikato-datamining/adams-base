@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEmailFileWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
 
@@ -25,11 +25,10 @@ import adams.core.io.PlaceholderFile;
  * Ancestor for email writers that write to files.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
-public abstract class AbstractEmailFileWriter
-  extends AbstractEmailWriter 
-  implements EmailFileWriter {
+public abstract class AbstractEmailFileWriter<T>
+  extends AbstractEmailWriter<T>
+  implements EmailFileWriter<T> {
   
   /** for serialization. */
   private static final long serialVersionUID = -6792804203008870703L;

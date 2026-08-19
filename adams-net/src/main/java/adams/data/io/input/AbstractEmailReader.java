@@ -13,24 +13,23 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * AbstractEmailReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
-import adams.core.net.Email;
 import adams.core.option.AbstractOptionHandler;
 
 /**
  * Ancestor for classes that read emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email that is being returned
  */
-public abstract class AbstractEmailReader
+public abstract class AbstractEmailReader<T>
   extends AbstractOptionHandler 
-  implements EmailReader {
+  implements EmailReader<T> {
 
   /** for serialization. */
   private static final long serialVersionUID = -9737701248226890L;
@@ -49,14 +48,14 @@ public abstract class AbstractEmailReader
    * 
    * @return		the email that was read, null in case of error
    */
-  protected abstract Email doRead();
+  protected abstract T doRead();
   
   /**
    * Reads the email.
    * 
    * @return		the email, null in case of an error
    */
-  public Email read() {
+  public T read() {
     check();
     return doRead();
   }

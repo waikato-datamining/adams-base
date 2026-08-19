@@ -13,29 +13,27 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * MultiEmailReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
 import java.util.List;
 
-import adams.core.net.Email;
-
 /**
  * Interface for readers that can read multiple emails at once.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email that is being returned
  */
-public interface MultiEmailReader 
-  extends EmailReader {
+public interface MultiEmailReader<T>
+  extends EmailReader<T> {
   
   /**
    * Reads the emails.
    * 
    * @return		the emails, null in case of an error
    */
-  public List<Email> readAll();
+  public List<T> readAll();
 }

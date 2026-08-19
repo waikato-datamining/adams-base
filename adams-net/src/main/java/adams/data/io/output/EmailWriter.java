@@ -13,27 +13,32 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailWriter.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.output;
-
-import adams.core.net.Email;
 
 /**
  * Interface for classes that write emails.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email to write
  */
-public interface EmailWriter {
-  
+public interface EmailWriter<T> {
+
+  /**
+   * Returns the type of email that is written.
+   *
+   * @return		the type of email
+   */
+  public Class accepts();
+
   /**
    * Writes the email.
    * 
    * @param email	the email to write
    * @return		the error message, null if everything OK
    */
-  public String write(Email email);
+  public String write(T email);
 }

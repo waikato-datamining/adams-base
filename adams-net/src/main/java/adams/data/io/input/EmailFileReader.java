@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * EmailFileReader.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -26,10 +26,10 @@ import adams.core.io.PlaceholderFile;
  * Interface for readers that read from files.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
+ * @param <T> the type of email that is being returned
  */
-public interface EmailFileReader 
-  extends EmailReader, FileFormatHandler {
+public interface EmailFileReader<T>
+  extends EmailReader<T>, FileFormatHandler {
 
   /**
    * Sets the file to read.

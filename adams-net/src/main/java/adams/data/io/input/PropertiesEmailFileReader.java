@@ -52,10 +52,9 @@ import java.util.logging.Level;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class PropertiesEmailFileReader
-  extends AbstractEmailFileReader {
+  extends AbstractEmailFileReader<Email> {
 
   /** for serialization. */
   private static final long serialVersionUID = -2721293194938632889L;
@@ -107,6 +106,16 @@ public class PropertiesEmailFileReader
    */
   public String[] getFormatExtensions() {
     return new String[]{"props", "properties"};
+  }
+
+  /**
+   * Returns the type of email class the reader returns.
+   *
+   * @return		the type of email
+   */
+  @Override
+  public Class generates() {
+    return Email.class;
   }
 
   /**
